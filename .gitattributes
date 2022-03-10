@@ -1,0 +1,4 @@
+* text=auto
+# Reviewing the lockfile contents is an important step in verifying that
+# we're using the dependencies we expect to be using
+yarn.lock linguist-generated=false

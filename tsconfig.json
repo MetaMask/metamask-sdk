@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es5",
+    "lib": ["DOM", "ES2016"]
+  },
+  "include": ["./**/*.ts"]
+}
