@@ -1,9 +1,20 @@
 import typescript from 'rollup-plugin-typescript2';
-import resolve from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
+
+const listDepForRollup = [
+  'bowser',
+  'pump',
+  'obj-multiplex',
+  '@metamask/post-message-stream',
+  '@metamask/providers',
+];
 
 const config = [
   {
-    external: ['bowser'],
+    external: listDepForRollup,
     input: 'src/index.ts',
     output: [
       {
@@ -26,7 +37,13 @@ const config = [
         name: 'MetaMaskSDK',
       },
     ],
-    plugins: [typescript(), resolve()],
+    plugins: [
+      typescript(),
+      nodeResolve({ browser: true, preferBuiltins: false }),
+      commonjs(),
+      nodePolyfills(),
+      json(),
+    ],
   },
 ];
 
