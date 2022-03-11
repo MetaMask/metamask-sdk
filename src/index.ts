@@ -8,12 +8,14 @@ interface MetaMaskSDKOptions {
   forceImportProvider?: boolean;
   forceDeleteProvider?: boolean;
   neverImportProvider?: boolean;
+  checkInstallationImmediately?: boolean;
 }
 export default class MetaMaskSDK {
   constructor({
     forceImportProvider,
     forceDeleteProvider,
     neverImportProvider,
+    checkInstallationImmediately,
   }: MetaMaskSDKOptions = {}) {
     if (
       !neverImportProvider &&
@@ -33,7 +35,9 @@ export default class MetaMaskSDK {
       }
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
-      manageMetaMaskInstallation();
+      if (checkInstallationImmediately) {
+        manageMetaMaskInstallation({ wait: true });
+      }
     }
   }
 }
