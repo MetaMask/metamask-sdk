@@ -33,13 +33,7 @@ export default class MetaMaskSDK {
       }
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
-      manageMetaMaskInstallation()
-        .then((res) => {
-          console.log('IS INSTALLED', res);
-        })
-        .catch((e) => {
-          console.log('ERR', e);
-        });
+      manageMetaMaskInstallation();
     }
   }
 }
