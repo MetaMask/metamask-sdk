@@ -225,7 +225,20 @@ WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
       })
       .catch((error) => {
         // Error returned when rejected
-        console.error(error);
+        const res = {
+          data: {
+            name: ProviderConstants.PROVIDER,
+            data: {
+              id: data.data.id,
+              jsonrpc: '2.0',
+              error: error.toString(),
+            },
+          },
+          target: ProviderConstants.INPAGE,
+        };
+
+        // Returns request result
+        this._onMessage(res);
       });
 
     const METHODS_TO_REDIRECT = {
