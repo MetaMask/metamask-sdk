@@ -1,4 +1,28 @@
 <script src="/dist/metamask-sdk.bundle.js"></script>
 <script>
-    new MetaMaskSDK({checkInstallationImmediately: true})
+  new MetaMaskSDK();
 </script>
+<script>
+  function connect() {
+    ethereum
+      .request({
+        method: "eth_requestAccounts",
+        params: [],
+      })
+      .then((res) => console.log("request accounts", res))
+      .catch((e) => console.log("request accounts ERR", e));
+  }
+
+  function addEthereumChain() {
+    ethereum
+      .request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0xf00" }],
+      })
+      .then((res) => console.log("add", res))
+      .catch((e) => console.log("ADD ERR", e));
+  }
+</script>
+<button onclick="connect()">Connect</button>
+
+<button onclick="addEthereumChain()">ADD ETHEREUM CHAIN</button>

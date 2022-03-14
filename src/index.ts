@@ -1,14 +1,17 @@
 import shouldInjectProvider from './provider/shouldInject';
 import initializeProvider from './provider/initializeProvider';
 import setupProviderStreams from './provider/setupProviderStreams';
-import portStreamToUse from './PortStreams';
-import manageMetaMaskInstallation from './environmentCheck/manageMetaMaskInstallation';
+import portStreamToUse from './portStreams';
+import WalletConnect from './services/WalletConnect';
+import ManageMetaMaskInstallation from './environmentCheck/ManageMetaMaskInstallation';
 
 interface MetaMaskSDKOptions {
   forceImportProvider?: boolean;
   forceDeleteProvider?: boolean;
   neverImportProvider?: boolean;
   checkInstallationImmediately?: boolean;
+  forceRestartWalletConnect?: boolean;
+  checkInstallationOnAllCalls?: boolean;
 }
 export default class MetaMaskSDK {
   constructor({
@@ -16,6 +19,8 @@ export default class MetaMaskSDK {
     forceDeleteProvider,
     neverImportProvider,
     checkInstallationImmediately,
+    forceRestartWalletConnect,
+    checkInstallationOnAllCalls,
   }: MetaMaskSDKOptions = {}) {
     if (
       !neverImportProvider &&
@@ -25,8 +30,12 @@ export default class MetaMaskSDK {
         delete window.ethereum;
       }
 
-      initializeProvider();
+      WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
 
+      // Inject our provider into window.ethereum
+      initializeProvider({ checkInstallationOnAllCalls });
+
+      // Get PortStream for Mobile (either our own or Waku)
       const PortStream = portStreamToUse();
 
       // It returns false if we don't need to setup a provider stream
@@ -36,7 +45,7 @@ export default class MetaMaskSDK {
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
-        manageMetaMaskInstallation({ wait: true });
+        ManageMetaMaskInstallation.start({ wait: true });
       }
     }
   }
