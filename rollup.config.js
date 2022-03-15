@@ -4,13 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-const listDepForRollup = [
-  'bowser',
-  'pump',
-  'obj-multiplex',
-  '@metamask/post-message-stream',
-  '@metamask/providers',
-];
+const listDepForRollup = ['bowser'];
 
 const config = [
   {
@@ -26,7 +20,13 @@ const config = [
         format: 'es',
       },
     ],
-    plugins: [typescript()],
+    plugins: [
+      typescript(),
+      nodeResolve({ browser: true, preferBuiltins: false }),
+      commonjs(),
+      nodePolyfills(),
+      json(),
+    ],
   },
   {
     input: 'src/index.ts',
