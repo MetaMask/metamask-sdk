@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-const listDepForRollup = ['bowser'];
+const listDepForRollup = [];
 
 const config = [
   {

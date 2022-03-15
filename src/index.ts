@@ -15,6 +15,8 @@ interface MetaMaskSDKOptions {
   preferDesktop?: boolean;
 }
 export default class MetaMaskSDK {
+  provider: any;
+
   constructor({
     forceImportProvider,
     forceDeleteProvider,
@@ -36,7 +38,7 @@ export default class MetaMaskSDK {
       ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
 
       // Inject our provider into window.ethereum
-      initializeProvider({ checkInstallationOnAllCalls });
+      this.provider = initializeProvider({ checkInstallationOnAllCalls });
 
       // Get PortStream for Mobile (either our own or Waku)
       const PortStream = portStreamToUse();
@@ -54,9 +56,14 @@ export default class MetaMaskSDK {
   }
 
   // Get the connector object from WalletConnect
-  getWalletConnectConnector = () => {
+  getWalletConnectConnector() {
     return WalletConnect.connector;
-  };
+  }
+
+  // Return the ethereum provider object
+  getProvider() {
+    return this.provider;
+  }
 }
 
 declare global {
