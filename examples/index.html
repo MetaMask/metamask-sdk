@@ -1,6 +1,6 @@
 <script src="/dist/metamask-sdk.bundle.js"></script>
 <script>
-  new MetaMaskSDK();
+  new MetaMaskSDK({ forceRestartWalletConnect: false });
 </script>
 <script>
   function connect() {
@@ -16,8 +16,16 @@
   function addEthereumChain() {
     ethereum
       .request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0xf00" }],
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: "0x64",
+            chainName: "xDai",
+            blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
+            nativeCurrency: { symbol: "xDai", decimals: 18 },
+            rpcUrls: ["https://rpc.xdaichain.com/"],
+          },
+        ],
       })
       .then((res) => console.log("add", res))
       .catch((e) => console.log("ADD ERR", e));

@@ -36,6 +36,7 @@
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
     "@walletconnect/client": "^1.7.4",
+    "awesome-qr": "^2.1.5-rc.0",
     "bowser": "^2.9.0",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",

@@ -1,4 +1,5 @@
 import WC from '@walletconnect/client';
+import InstallModal from '../ui/InstallModal';
 
 const connector = new WC({
   bridge: 'https://bridge.walletconnect.org', // Required
@@ -10,6 +11,7 @@ const WalletConnect = {
   isConnected() {
     return connector.connected;
   },
+  isDesktop: false,
   sentFirstConnect: false,
   startConnection() {
     return new Promise((resolve, reject) => {
@@ -23,8 +25,12 @@ const WalletConnect = {
           const link = `${'https://metamask.app.link/wc?uri='}${encodeURIComponent(
             connector.uri,
           )}`;
-          // window.location.assign(link);
-          window.open(link, '_self');
+          if (this.isDesktop) {
+            InstallModal({ link });
+          } else {
+            // window.location.assign(link);
+            window.open(link, '_self');
+          }
 
           WalletConnect.connector.on('connect', () => {
             if (this.sentFirstConnect) {

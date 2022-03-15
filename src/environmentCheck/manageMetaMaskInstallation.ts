@@ -9,6 +9,12 @@ const ManageMetaMaskInstallation = {
   isInstalling: false,
   hasInstalled: false,
   resendRequest: null,
+  preferDesktop: false,
+  startDesktopOnboarding() {
+    delete window.ethereum;
+    const onboardingExtension = new MetaMaskOnboarding();
+    onboardingExtension.startOnboarding();
+  },
   async redirectToProperInstall() {
     // If it's running on our mobile in-app browser but communication is still not working
     if (isMetaMaskMobileWebView()) {
@@ -20,21 +26,28 @@ const ManageMetaMaskInstallation = {
     // If is not installed and is Extension, start Extension onboarding
     if (!isMobile()) {
       this.isInstalling = true;
-      delete window.ethereum;
-      const onboardingExtension = new MetaMaskOnboarding();
-      onboardingExtension.startOnboarding();
-      return false;
+      if (this.preferDesktop) {
+        this.startDesktopOnboarding();
+        return false;
+      }
+
+      const startedWCConnection = await WalletConnect.startConnection();
+      if (startedWCConnection) {
+        this.isInstalling = false;
+        this.hasInstalled = true;
+      }
+      return startedWCConnection;
     }
 
     // If is not installed and is Mobile, start Mobile onboarding
     if (isMobile()) {
       this.isInstalling = true;
-      const startedWCConncetion = await WalletConnect.startConnection();
-      if (startedWCConncetion) {
+      const startedWCConnection = await WalletConnect.startConnection();
+      if (startedWCConnection) {
         this.isInstalling = false;
         this.hasInstalled = true;
       }
-      return startedWCConncetion;
+      return startedWCConnection;
     }
 
     return false;

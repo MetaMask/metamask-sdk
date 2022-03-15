@@ -1,4 +1,5 @@
 import { isMetaMaskMobileWebView, isMobile } from '../environmentCheck';
+import WalletConnect from '../services/WalletConnect';
 import MobilePortStream from './MobilePortStream';
 import WalletConnectPortStream from './WalletConnectPortStream';
 
@@ -17,7 +18,8 @@ const portStreamToUse = () => {
 
   // Is a desktop browser
   if (!isMobile_) {
-    return false;
+    WalletConnect.isDesktop = true;
+    return WalletConnectPortStream;
   }
 
   return false;

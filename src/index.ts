@@ -12,6 +12,7 @@ interface MetaMaskSDKOptions {
   checkInstallationImmediately?: boolean;
   forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
+  preferDesktop?: boolean;
 }
 export default class MetaMaskSDK {
   constructor({
@@ -21,6 +22,7 @@ export default class MetaMaskSDK {
     checkInstallationImmediately,
     forceRestartWalletConnect,
     checkInstallationOnAllCalls,
+    preferDesktop,
   }: MetaMaskSDKOptions = {}) {
     if (
       !neverImportProvider &&
@@ -31,6 +33,7 @@ export default class MetaMaskSDK {
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
+      ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
 
       // Inject our provider into window.ethereum
       initializeProvider({ checkInstallationOnAllCalls });
@@ -49,6 +52,11 @@ export default class MetaMaskSDK {
       }
     }
   }
+
+  // Get the connector object from WalletConnect
+  getWalletConnectConnector = () => {
+    return WalletConnect.connector;
+  };
 }
 
 declare global {

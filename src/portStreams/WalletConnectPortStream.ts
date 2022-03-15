@@ -256,7 +256,7 @@ WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
     };
 
     // Check if should open app
-    if (METHODS_TO_REDIRECT[data?.data?.method]) {
+    if (METHODS_TO_REDIRECT[data?.data?.method] && !WalletConnect.isDesktop) {
       window.open('https://metamask.app.link/', '_self');
     }
   } catch (err) {
