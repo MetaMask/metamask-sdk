@@ -143,7 +143,6 @@ const App: () => Node = () => {
     ethereum.on('chainChanged', args =>
       console.log('EVENT chainChanged', args),
     );
-    ethereum.init();
   };
 
   const onMessage = message => {
