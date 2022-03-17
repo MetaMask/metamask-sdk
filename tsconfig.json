@@ -1,13 +1,8 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    "esModuleInterop": true,
-    "module": "ES6",
-    "moduleResolution": "Node",
-    "sourceMap": true,
-    "strict": false,
-    "target": "es5",
-    "lib": ["DOM", "ES2016"]
-  },
-  "include": ["./**/*.ts"]
+  "references": [
+    { "path": "./packages/sdk" },
+  ],
+  "files": [],
+  "include": [],
+  "exclude": ["**/node_modules"]
 }

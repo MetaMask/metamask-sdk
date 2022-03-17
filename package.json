@@ -1,73 +1,65 @@
 {
-  "name": "@metamask/sdk",
-  "version": "0.0.1",
-  "description": "",
-  "main": "dist/metamask-sdk.cjs.js",
-  "module": "dist/metamask-sdk.es.js",
-  "types": "dist/index.d.ts",
-  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
-  "bugs": {
-    "url": "https://github.com/MetaMask/metamask-sdk/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
-  "license": "MIT",
-  "files": [
-    "/src",
-    "/dist"
-  ],
-  "scripts": {
-    "setup": "yarn install && yarn allow-scripts",
-    "prepublishOnly": "yarn build",
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
-    "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build": "rm -rf dist && rollup -c"
-  },
-  "dependencies": {
-    "@metamask/onboarding": "^1.0.1",
-    "@metamask/post-message-stream": "^4.0.0",
-    "@metamask/providers": "^8.1.1",
-    "@walletconnect/client": "^1.7.4",
-    "awesome-qr": "^2.1.5-rc.0",
-    "bowser": "^2.9.0",
-    "extension-port-stream": "^2.0.1",
-    "obj-multiplex": "^1.0.0",
-    "pump": "^3.0.0",
-    "readable-stream": "^2.3.7"
-  },
-  "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
-    "@metamask/auto-changelog": "^2.3.0",
-    "@metamask/eslint-config": "^6.0.0",
-    "@metamask/eslint-config-nodejs": "^6.0.0",
-    "@metamask/eslint-config-typescript": "^6.0.0",
-    "@rollup/plugin-commonjs": "^22.0.0-13",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^13.1.3",
-    "@typescript-eslint/eslint-plugin": "^4.26.0",
-    "@typescript-eslint/parser": "^4.26.0",
-    "eslint": "^7.27.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.23.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "prettier": "^2.3.0",
-    "rollup": "^2.70.0",
-    "rollup-plugin-polyfill-node": "^0.8.0",
-    "rollup-plugin-typescript2": "^0.31.2",
-    "typescript": "^4.3.2"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false
+    "name": "root",
+    "version": "0.0.1",
+    "private": true,
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/MetaMask/metamask-sdk.git"
+    },
+    "workspaces": {
+      "packages": [
+        "packages/*"
+      ],
+      "nohoist": [
+        "**/@metamask/sdk/**"
+      ]
+    },
+    "scripts": {
+      "setup": "yarn install && yarn allow-scripts && yarn postinstall",
+      "postinstall": "patch-package",
+      "publish:all": "./scripts/publish-all.sh",
+      "link-packages": "./scripts/link-packages.sh",
+      "lint:eslint": "eslint . --cache --ext js,ts",
+      "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+      "lint:changelogs": "yarn workspaces run lint:changelog",
+      "lint": "yarn lint:eslint && yarn lint:misc --check",
+      "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+      "build:tsc": "tsc --build --force tsconfig.json",
+      "build": "yarn workspaces run build:pre-tsc && yarn build:tsc && yarn workspaces run build:post-tsc",
+      "build:clean": "yarn clean && yarn build",
+      "clean": "yarn workspaces run clean",
+      "test": "yarn workspaces run test",
+      "test:ci": "yarn workspaces run test:ci"
+    },
+    "devDependencies": {
+      "@lavamoat/allow-scripts": "^1.0.6",
+      "@metamask/auto-changelog": "^2.5.0",
+      "@metamask/eslint-config": "^8.0.0",
+      "@metamask/eslint-config-jest": "^8.0.0",
+      "@metamask/eslint-config-nodejs": "^8.0.0",
+      "@metamask/eslint-config-typescript": "^8.0.0",
+      "@types/jest": "^26.0.20",
+      "@types/node": "^14.14.25",
+      "@typescript-eslint/eslint-plugin": "^4.28.1",
+      "@typescript-eslint/parser": "^4.28.1",
+      "eslint": "^7.30.0",
+      "eslint-config-prettier": "^8.3.0",
+      "eslint-plugin-import": "^2.23.4",
+      "eslint-plugin-jest": "^24.4.0",
+      "eslint-plugin-node": "^11.1.0",
+      "eslint-plugin-prettier": "^3.4.0",
+      "patch-package": "^6.4.7",
+      "prettier": "^2.3.2",
+      "rimraf": "^3.0.2",
+      "typescript": "^4.3.5"
+    },
+    "engines": {
+      "node": ">=12.11.0"
+    },
+    "lavamoat": {
+      "allowScripts": {
+        "@lavamoat/preinstall-always-fail": false
+      }
     }
   }
-}
+  

@@ -10,7 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@metamask/sdk": "file:./../../",
     "eventemitter2": "^6.4.5",
     "react": "17.0.2",
     "react-native": "0.67.3",
