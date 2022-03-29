@@ -2,7 +2,8 @@ import typescript from 'rollup-plugin-typescript2';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import nodePolyfills from 'rollup-plugin-polyfill-node';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
 
 const listDepForRollup = [];
 
@@ -23,8 +24,9 @@ const config = [
     plugins: [
       typescript(),
       nodeResolve({ browser: true, preferBuiltins: false }),
-      commonjs(),
-      nodePolyfills({ include: '../**/node_modules/**/*.js'}),
+      commonjs({ transformMixedEsModules: true }),
+      globals(),
+      builtins({ crypto: true }),
       json(),
     ],
   },
@@ -41,7 +43,8 @@ const config = [
       typescript(),
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs(),
-      nodePolyfills({ include: '../**/node_modules/**/*.js'}),
+      globals(),
+      builtins({ crypto: true }),
       json(),
     ],
   },

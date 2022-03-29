@@ -1,4 +1,3 @@
-import { shimWeb3 } from '@metamask/providers';
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { WindowPostMessageStream } from '@metamask/post-message-stream';
@@ -35,9 +34,6 @@ function setupProviderStreams(PortStream) {
 
   // forward communication across inpage-background for these channels only
   forwardTrafficBetweenMuxes(ProviderConstants.PROVIDER, pageMux, appMux);
-
-  // add web3 shim
-  shimWeb3(window.ethereum);
 }
 
 /**

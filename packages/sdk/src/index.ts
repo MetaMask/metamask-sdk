@@ -5,7 +5,8 @@ import portStreamToUse from './portStreams';
 import WalletConnect from './services/WalletConnect';
 import ManageMetaMaskInstallation from './environmentCheck/ManageMetaMaskInstallation';
 
-interface MetaMaskSDKOptions {
+type MetaMaskSDKOptions = {
+  dontInjectProvider?: boolean;
   forceImportProvider?: boolean;
   forceDeleteProvider?: boolean;
   neverImportProvider?: boolean;
@@ -13,11 +14,12 @@ interface MetaMaskSDKOptions {
   forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
-}
+};
 export default class MetaMaskSDK {
   provider: any;
 
   constructor({
+    dontInjectProvider,
     forceImportProvider,
     forceDeleteProvider,
     neverImportProvider,
@@ -38,7 +40,10 @@ export default class MetaMaskSDK {
       ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
 
       // Inject our provider into window.ethereum
-      this.provider = initializeProvider({ checkInstallationOnAllCalls });
+      this.provider = initializeProvider({
+        checkInstallationOnAllCalls,
+        dontInjectProvider,
+      });
 
       // Get PortStream for Mobile (either our own or Waku)
       const PortStream = portStreamToUse();

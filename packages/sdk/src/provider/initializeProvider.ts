@@ -4,7 +4,10 @@ import { ProviderConstants } from '../constants';
 import { isMetaMaskInstalled } from '../environmentCheck';
 import ManageMetaMaskInstallation from '../environmentCheck/ManageMetaMaskInstallation';
 
-const initializeProvider = ({ checkInstallationOnAllCalls = false }) => {
+const initializeProvider = ({
+  checkInstallationOnAllCalls = false,
+  dontInjectProvider
+}) => {
   // Setup stream for content script communication
   const metamaskStream = new WindowPostMessageStream({
     name: ProviderConstants.INPAGE,
@@ -12,18 +15,20 @@ const initializeProvider = ({ checkInstallationOnAllCalls = false }) => {
   });
 
   // Initialize provider object (window.ethereum)
-  initProvider({
+  const ethereum = initProvider({
+    shouldSetOnWindow: !dontInjectProvider,
     // @ts-ignore
     connectionStream: metamaskStream,
     shouldSendMetadata: false,
+    shouldShimWeb3: true
   });
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
   // eslint-disable-next-line prefer-destructuring
-  const request = window.ethereum.request;
-  window.ethereum.request = async (...args) => {
+  const request = ethereum.request;
+  ethereum.request = async (...args) => {
     // This will check if the connection was correctly done or if the user needs to install MetaMask
-    const isInstalled = isMetaMaskInstalled();
+    const isInstalled = isMetaMaskInstalled(ethereum);
 
     if (!isInstalled) {
       if (
@@ -45,6 +50,8 @@ const initializeProvider = ({ checkInstallationOnAllCalls = false }) => {
     }
     return request(...args);
   };
+
+  return ethereum;
 };
 
 export default initializeProvider;

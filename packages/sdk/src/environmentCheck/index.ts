@@ -1,7 +1,8 @@
 import Bowser from 'bowser';
 
-export const isMetaMaskInstalled = () => {
-  return window.ethereum?.isMetaMask && window.ethereum?.isConnected();
+export const isMetaMaskInstalled = (ethereum?: any) => {
+  const eth = ethereum || window?.ethereum;
+  return eth?.isMetaMask && eth?.isConnected();
 };
 
 export const isMobile = () => {

@@ -39,11 +39,14 @@
     "@walletconnect/client": "^1.7.4",
     "awesome-qr": "^2.1.5-rc.0",
     "bowser": "^2.9.0",
+    "eventemitter2": "^6.4.5",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "readable-stream": "^2.3.7",
-    "util": "^0.12.4"
+    "socket.io-client": "^4.4.1",
+    "util": "^0.12.4",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.6",
@@ -63,6 +66,8 @@
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
     "rollup": "^2.70.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-polyfill-node": "^0.8.0",
     "rollup-plugin-typescript2": "^0.31.2",
     "typescript": "^4.3.2"

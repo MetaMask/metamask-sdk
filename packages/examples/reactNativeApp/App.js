@@ -116,7 +116,6 @@ class Ethereum extends EventEmitter {
 const ethereum = new Ethereum();
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
-
   const webViewRef = useRef();
   useEffect(() => {
     ethereum.webViewRef = webViewRef;
