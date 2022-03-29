@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import type {Node} from 'react';
 import {
   Button,
@@ -19,10 +19,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import {WebView} from 'react-native-webview';
-
-import sdk from './sdk.html';
-
 import {
   Colors,
   DebugInstructions,
@@ -30,10 +26,16 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import crypto from 'crypto';
 
-//import EventEmitter from 'es-event-emitter';
-import EventEmitter2Pkg from 'eventemitter2';
-const {EventEmitter2: EventEmitter} = EventEmitter2Pkg;
+import MetaMaskSDK from './metamask-sdk.es';
+
+import WC from '@walletconnect/client';
+
+const sdk = new MetaMaskSDK({
+  openLink: link => Linking.openURL(link),
+  WalletConnectInstance: WC,
+});
 
 const Section = ({children, title}): Node => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -60,70 +62,22 @@ const Section = ({children, title}): Node => {
     </View>
   );
 };
+const ethereum = sdk.getProvider();
 
-class Ethereum extends EventEmitter {
-  activeRequests = {};
-
-  isMetaMask = true;
-
-  webViewRef = null;
-
-  events = {};
-
-  chainId = undefined;
-  selectedAddress = undefined;
-
-  initListeners() {
-    const accountsChangedRun = `(function(){ 
-      ethereum.on('accountsChanged', (result) => window.ReactNativeWebView.postMessage(JSON.stringify({method: 'accountsChanged', result})));
-    })()`;
-
-    this.webViewRef.current.injectJavaScript(accountsChangedRun);
-
-    const chainChanged = `(function(){ 
-      ethereum.on('chainChanged', (result) => window.ReactNativeWebView.postMessage(JSON.stringify({method: 'chainChanged', result})));
-    })()`;
-
-    this.webViewRef.current.injectJavaScript(chainChanged);
-
-    this.request({method: 'eth_accounts'});
-    this.request({method: 'eth_chainId'});
-  }
-
-  async request(args) {
-    const id = new Date().getTime();
-
-    const run = `(function(){ 
-      ethereum.request(${JSON.stringify(args)}).then((result)=>{
-        window.ReactNativeWebView.postMessage(JSON.stringify({id: ${id}, result}))
-      }).catch((error)=>{
-        window.ReactNativeWebView.postMessage(JSON.stringify({id: ${id}, error}))
-      })
-    })()`;
-    this.webViewRef.current.injectJavaScript(run);
-    return new Promise((resolve, reject) => {
-      this.activeRequests[id] = {resolve, reject, method: args.method};
-    });
-  }
-
-  isConnected() {
-    return true;
-  }
-
-  _metamask = {isUnlocked: () => true};
-}
-
-const ethereum = new Ethereum();
 const App: () => Node = () => {
   const isDarkMode = useColorScheme() === 'dark';
-  const webViewRef = useRef();
-  useEffect(() => {
-    ethereum.webViewRef = webViewRef;
-    ethereum.initListeners();
-  }, []);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const connect = async () => {
+    try {
+      const result = await ethereum.request({method: 'eth_requestAccounts'});
+      console.log('RESULT', result);
+    } catch (e) {
+      console.log('ERROR', e);
+    }
   };
 
   const exampleRequest = async () => {
@@ -202,16 +156,11 @@ const App: () => Node = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <WebView
-          ref={webViewRef}
-          style={{height: 0}}
-          originWhitelist={['*']}
-          source={sdk}
-          onMessage={onMessage}
-        />
         <Button title="Listen Ethereum Events" onPress={listenEthereumEvents} />
 
-        <Button title="Connect" onPress={exampleRequest} />
+        <Button title="Connect" onPress={connect} />
+
+        <Button title="Add chain" onPress={exampleRequest} />
 
         <Button title="Log provider" onPress={logProvider} />
         <Header />

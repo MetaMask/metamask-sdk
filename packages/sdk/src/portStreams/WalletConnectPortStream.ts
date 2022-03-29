@@ -2,6 +2,7 @@ import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
 import WalletConnect from '../services/WalletConnect';
 import { ProviderConstants } from '../constants';
+import Ethereum from '../services/Ethereum';
 
 const noop = () => undefined;
 
@@ -42,7 +43,7 @@ class WalletConnectPortStream extends Duplex {
   }
 
   getProviderState() {
-    return window.ethereum.request({ method: 'metamask_getProviderState' });
+    return Ethereum.ethereum.request({ method: 'metamask_getProviderState' });
   }
 
   setProviderState({ chainId, accounts }) {
@@ -80,7 +81,7 @@ class WalletConnectPortStream extends Duplex {
   }
 
   subscribeToConnectionEvents() {
-    window.ethereum.isConnected = WalletConnect.isConnected;
+    Ethereum.ethereum.isConnected = () => WalletConnect.isConnected();
 
     if (WalletConnect.isConnected()) {
       this.getProviderState();
@@ -91,12 +92,12 @@ class WalletConnectPortStream extends Duplex {
     }
 
     if (WalletConnect.forceRestart) {
-      WalletConnect.connector.killSession();
+      WalletConnect.getConnector().killSession();
       WalletConnect.forceRestart = false;
     }
 
     // Subscribe to connection events
-    WalletConnect.connector.on('connect', (error, payload) => {
+    WalletConnect.getConnector().on('connect', (error, payload) => {
       if (error) {
         throw error;
       }
@@ -108,7 +109,7 @@ class WalletConnectPortStream extends Duplex {
       }, 5000);
     });
 
-    WalletConnect.connector.on('session_update', (error, payload) => {
+    WalletConnect.getConnector().on('session_update', (error, payload) => {
       if (error) {
         throw error;
       }
@@ -117,7 +118,7 @@ class WalletConnectPortStream extends Duplex {
       this.setProviderState({ accounts, chainId });
     });
 
-    WalletConnect.connector.on('disconnect', (error, payload) => {
+    WalletConnect.getConnector().on('disconnect', (error, payload) => {
       if (error) {
         throw error;
       }
@@ -205,7 +206,7 @@ WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
       data = msg;
     }
 
-    WalletConnect.connector
+    WalletConnect.getConnector()
       .sendCustomRequest(data?.data)
       .then((result) => {
         const res = {

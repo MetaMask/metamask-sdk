@@ -1,15 +1,9 @@
 import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
 import WalletConnect from '../services/WalletConnect';
-import RemoteCommunication from '../services/RemoteCommunication';
-import WebRTC from '../services/RemoteCommunication/WebRTC';
+import { ProviderConstants } from '../constants';
+import Ethereum from '../services/Ethereum';
 
-const comm = new RemoteCommunication({ CommLayer: WebRTC });
-console.log(comm);
-comm.generateChannelId();
-comm.on('channel_created', (channel) =>
-  console.log('CHANNEL CREATED', channel),
-);
 const noop = () => undefined;
 
 /**
@@ -32,8 +26,6 @@ class RemoteCommunicationPortStream extends Duplex {
 
   _onDisconnect: () => void;
 
-  comm: any;
-
   private _alreadySubscribed: boolean;
 
   constructor(port) {
@@ -44,10 +36,101 @@ class RemoteCommunicationPortStream extends Duplex {
     this._name = port.name;
     this._targetWindow = window;
     this._port = port;
-    this._origin = location.origin;
     this._alreadySubscribed = false;
-    window.addEventListener('message', this._onMessage.bind(this), false);
-    // this.comm = new RemoteCommunication({ CommLayer: WebRTC });
+    console.log('SUBSCRIBING');
+  }
+
+  start() {
+    this.subscribeToConnectionEvents();
+  }
+
+  getProviderState() {
+    return Ethereum.ethereum.request({ method: 'metamask_getProviderState' });
+  }
+
+  setProviderState({ chainId, accounts }) {
+    const resChainChanged = {
+      data: {
+        name: ProviderConstants.PROVIDER,
+        data: {
+          method: 'metamask_chainChanged',
+          params: {
+            chainId: `0x${parseInt(chainId, 10).toString(16)}`,
+            // For compatibility purposes
+            networkVersion: chainId.toString(),
+          },
+        },
+      },
+      target: ProviderConstants.INPAGE,
+    };
+
+    const resAccountsChanged = {
+      data: {
+        name: ProviderConstants.PROVIDER,
+        data: {
+          method: 'metamask_accountsChanged',
+          params: [accounts[0]],
+        },
+      },
+      target: ProviderConstants.INPAGE,
+    };
+
+    this._onMessage(resChainChanged);
+    this._onMessage(resAccountsChanged);
+
+    // No problem in checking the provider state again
+    this.getProviderState();
+  }
+
+  subscribeToConnectionEvents() {
+    if (WalletConnect.forceRestart) {
+      WalletConnect.getConnector().killSession();
+      WalletConnect.forceRestart = false;
+    }
+
+    console.log('WalletConnect.isConnected()', WalletConnect.isConnected());
+
+    Ethereum.ethereum.isConnected = () => WalletConnect.isConnected();
+
+    if (WalletConnect.isConnected()) {
+      this.getProviderState();
+    }
+
+    if (this._alreadySubscribed) {
+      return;
+    }
+
+    // Subscribe to connection events
+    WalletConnect.getConnector().on('connect', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+
+      // Get provided accounts and chainId
+      const { accounts, chainId } = payload.params[0];
+      setTimeout(() => {
+        this.setProviderState({ accounts, chainId });
+      }, 5000);
+    });
+
+    WalletConnect.getConnector().on('session_update', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+      // Get updated accounts and chainId
+      const { accounts, chainId } = payload.params[0];
+      this.setProviderState({ accounts, chainId });
+    });
+
+    WalletConnect.getConnector().on('disconnect', (error, payload) => {
+      if (error) {
+        throw error;
+      }
+
+      // Delete connector
+      location.reload();
+    });
+    this._alreadySubscribed = true;
   }
 }
 
@@ -127,7 +210,8 @@ RemoteCommunicationPortStream.prototype._write = function (msg, _encoding, cb) {
       data = msg;
     }
 
-    /* RemoteCommunication.sendMessage(data?.data)
+    WalletConnect.getConnector()
+      .sendCustomRequest(data?.data)
       .then((result) => {
         const res = {
           data: {
@@ -156,11 +240,11 @@ RemoteCommunicationPortStream.prototype._write = function (msg, _encoding, cb) {
             },
           },
           target: ProviderConstants.INPAGE,
-        };*/
+        };
 
-    // Returns request result
-    // this._onMessage(res);
-    //  });
+        // Returns request result
+        this._onMessage(res);
+      });
 
     const METHODS_TO_REDIRECT = {
       eth_requestAccounts: false,

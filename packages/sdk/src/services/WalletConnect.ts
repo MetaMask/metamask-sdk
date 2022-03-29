@@ -1,38 +1,51 @@
 import WC from '@walletconnect/client';
 import InstallModal from '../ui/InstallModal';
 
-const connector = new WC({
-  bridge: 'https://bridge.walletconnect.org', // Required
-});
-
 const WalletConnect = {
-  connector,
+  WalletConnectInstance: null,
+  connector: null,
+  getConnector() {
+    if (!this.connector) {
+      const WCInstance = this.WalletConnectInstance || WC;
+      this.connector = new WCInstance({
+        bridge: 'https://bridge.walletconnect.org', // Required
+      });
+    }
+
+    return this.connector;
+  },
   forceRestart: false,
   isConnected() {
-    return connector.connected;
+    return this.getConnector().connected;
   },
   isDesktop: false,
   sentFirstConnect: false,
+  openLink: null,
   startConnection() {
     return new Promise((resolve, reject) => {
-      if (connector.connected) {
+      if (this.getConnector().connected) {
         return resolve(true);
       }
 
-      connector
+      this.getConnector()
         .createSession()
         .then(() => {
           const link = `${'https://metamask.app.link/wc?uri='}${encodeURIComponent(
-            connector.uri,
+            this.getConnector().uri,
           )}`;
           if (this.isDesktop) {
             InstallModal({ link });
           } else {
+            console.log('OPEN LINK', link);
             // window.location.assign(link);
-            window.open(link, '_self');
+            if (this.openLink) {
+              this.openLink(link);
+            } else {
+              window.open(link, '_self');
+            }
           }
 
-          WalletConnect.connector.on('connect', () => {
+          this.getConnector().on('connect', () => {
             if (this.sentFirstConnect) {
               return;
             }

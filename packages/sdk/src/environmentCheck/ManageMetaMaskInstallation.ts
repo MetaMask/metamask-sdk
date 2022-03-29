@@ -1,7 +1,13 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
 import WalletConnect from '../services/WalletConnect';
 import { waitPromise } from '../utils';
-import { isMetaMaskInstalled, isMetaMaskMobileWebView, isMobile } from '.';
+import {
+  isMetaMaskInstalled,
+  isMetaMaskMobileWebView,
+  isMobile,
+  notBrowser,
+} from '.';
+import Ethereum from '../services/Ethereum';
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
@@ -11,11 +17,22 @@ const ManageMetaMaskInstallation = {
   resendRequest: null,
   preferDesktop: false,
   startDesktopOnboarding() {
+    Ethereum.ethereum = null;
     delete window.ethereum;
     const onboardingExtension = new MetaMaskOnboarding();
     onboardingExtension.startOnboarding();
   },
   async redirectToProperInstall() {
+    if (notBrowser()) {
+      this.isInstalling = true;
+      const startedWCConnection = await WalletConnect.startConnection();
+      if (startedWCConnection) {
+        this.isInstalling = false;
+        this.hasInstalled = true;
+      }
+      return startedWCConnection;
+    }
+
     // If it's running on our mobile in-app browser but communication is still not working
     if (isMetaMaskMobileWebView()) {
       // eslint-disable-next-line no-alert

@@ -4,6 +4,8 @@ import setupProviderStreams from './provider/setupProviderStreams';
 import portStreamToUse from './portStreams';
 import WalletConnect from './services/WalletConnect';
 import ManageMetaMaskInstallation from './environmentCheck/ManageMetaMaskInstallation';
+import { notBrowser } from './environmentCheck';
+import Ethereum from './services/Ethereum';
 
 type MetaMaskSDKOptions = {
   dontInjectProvider?: boolean;
@@ -14,6 +16,8 @@ type MetaMaskSDKOptions = {
   forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
+  openLink?: (string) => void;
+  WalletConnectInstance?: any;
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -27,13 +31,24 @@ export default class MetaMaskSDK {
     forceRestartWalletConnect,
     checkInstallationOnAllCalls,
     preferDesktop,
+    openLink,
+    WalletConnectInstance,
   }: MetaMaskSDKOptions = {}) {
+    const nonBrowser = notBrowser();
+
     if (
       !neverImportProvider &&
-      (forceImportProvider || shouldInjectProvider())
+      (forceImportProvider || nonBrowser || shouldInjectProvider())
     ) {
       if (forceImportProvider && forceDeleteProvider) {
+        Ethereum.ethereum = null;
         delete window.ethereum;
+      }
+
+      WalletConnect.WalletConnectInstance = WalletConnectInstance;
+
+      if (nonBrowser) {
+        WalletConnect.openLink = openLink;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
@@ -43,6 +58,7 @@ export default class MetaMaskSDK {
       this.provider = initializeProvider({
         checkInstallationOnAllCalls,
         dontInjectProvider,
+        nonBrowser,
       });
 
       // Get PortStream for Mobile (either our own or Waku)
@@ -62,7 +78,7 @@ export default class MetaMaskSDK {
 
   // Get the connector object from WalletConnect
   getWalletConnectConnector() {
-    return WalletConnect.connector;
+    return WalletConnect.getConnector();
   }
 
   // Return the ethereum provider object

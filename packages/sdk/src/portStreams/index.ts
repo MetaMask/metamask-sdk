@@ -1,9 +1,12 @@
-import { isMetaMaskMobileWebView, isMobile } from '../environmentCheck';
+import { isMetaMaskMobileWebView, isMobile, notBrowser } from '../environmentCheck';
 import WalletConnect from '../services/WalletConnect';
 import MobilePortStream from './MobilePortStream';
 import WalletConnectPortStream from './WalletConnectPortStream';
 
 const portStreamToUse = () => {
+
+  if(notBrowser()) return false
+
   // Is our webview / in-app browser
   if (isMetaMaskMobileWebView()) {
     return MobilePortStream;

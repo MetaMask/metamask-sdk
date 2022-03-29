@@ -1,7 +1,9 @@
 import Bowser from 'bowser';
+import Ethereum from '../services/Ethereum';
 
-export const isMetaMaskInstalled = (ethereum?: any) => {
-  const eth = ethereum || window?.ethereum;
+
+export const isMetaMaskInstalled = () => {
+  const eth = Ethereum.ethereum || window?.ethereum;
   return eth?.isMetaMask && eth?.isConnected();
 };
 
@@ -18,3 +20,5 @@ export const isMetaMaskMobileWebView = () => {
     Boolean(navigator.userAgent.endsWith('MetaMaskMobile'))
   );
 };
+
+export const notBrowser = () => !window || !window?.navigator || (global?.navigator?.product === "ReactNative") || navigator?.product === "ReactNative"

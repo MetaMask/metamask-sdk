@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import MetaMaskSDK from "@metamask/sdk"
 
-new MetaMaskSDK();
+new MetaMaskSDK({forceRestartWalletConnect: false});
 
 function App() {
   const connect = () => {

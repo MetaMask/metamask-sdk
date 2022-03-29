@@ -77,7 +77,7 @@ function blockedDomainCheck() {
   return false;
 }
 
-const isProviderAlreadyInjected = () => Boolean(window.ethereum);
+const isProviderAlreadyInjected = () => Boolean(window?.ethereum);
 
 const shouldInjectProvider = () => {
   return (

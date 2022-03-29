@@ -7,13 +7,23 @@
     "ios": "react-native run-ios --simulator='iPhone 11 Pro'",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "rn-nodeify --install 'crypto,react-native-randombytes,process,stream' --hack"
   },
   "dependencies": {
+    "@walletconnect/client": "^1.7.7",
     "eventemitter2": "^6.4.5",
+    "events": "^3.3.0",
+    "process": "^0.11.10",
     "react": "17.0.2",
     "react-native": "0.67.3",
-    "react-native-webview": "^11.17.2"
+    "react-native-crypto": "^2.2.0",
+    "react-native-randombytes": "^3.6.1",
+    "react-native-webview": "^11.17.2",
+    "readable-stream": "1.0.33",
+    "rn-nodeify": "^10.3.0",
+    "stream": "^0.0.2",
+    "stream-browserify": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -27,5 +37,23 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "react-native": {
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
+  },
+  "browser": {
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify"
   }
 }
