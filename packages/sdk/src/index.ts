@@ -18,6 +18,7 @@ type MetaMaskSDKOptions = {
   preferDesktop?: boolean;
   openLink?: (string) => void;
   WalletConnectInstance?: any;
+  shouldShimWeb3?: boolean;
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -33,6 +34,7 @@ export default class MetaMaskSDK {
     preferDesktop,
     openLink,
     WalletConnectInstance,
+    shouldShimWeb3 = true,
   }: MetaMaskSDKOptions = {}) {
     const nonBrowser = notBrowser();
 
@@ -59,6 +61,7 @@ export default class MetaMaskSDK {
         checkInstallationOnAllCalls,
         dontInjectProvider,
         nonBrowser,
+        shouldShimWeb3,
       });
 
       // Get PortStream for Mobile (either our own or Waku)

@@ -28,13 +28,12 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import crypto from 'crypto';
 
-import MetaMaskSDK from './metamask-sdk.es';
+import MetaMaskSDK from '@metamask/sdk';
 
-import WC from '@walletconnect/client';
+//import WC from '@walletconnect/client';
 
 const sdk = new MetaMaskSDK({
   openLink: link => Linking.openURL(link),
-  WalletConnectInstance: WC,
 });
 
 const Section = ({children, title}): Node => {

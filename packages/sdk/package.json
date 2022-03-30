@@ -2,9 +2,12 @@
   "name": "@metamask/sdk",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/metamask-sdk.cjs.js",
-  "module": "dist/metamask-sdk.es.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/node/metamask-sdk.js",
+  "module": "dist/es/browser/metamask-sdk.js",
+  "browser": "dist/umd/browser/metamask-sdk.js",
+  "react-native": "dist/es/node/metamask-sdk.js",
+  "unpkg": "dist/umd/browsermetamask.js",
+  "types": "dist/es/browser/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
@@ -39,6 +42,7 @@
     "@walletconnect/client": "^1.7.4",
     "awesome-qr": "^2.1.5-rc.0",
     "bowser": "^2.9.0",
+    "canvas": "^2.9.1",
     "eventemitter2": "^6.4.5",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",
@@ -66,6 +70,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
     "rollup": "^2.70.0",
+    "rollup-plugin-natives": "^0.7.5",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-polyfill-node": "^0.8.0",
@@ -74,7 +79,8 @@
   },
   "lavamoat": {
     "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false
+      "@lavamoat/preinstall-always-fail": false,
+      "canvas": true
     }
   }
 }

@@ -9,6 +9,7 @@ const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   dontInjectProvider,
   nonBrowser,
+  shouldShimWeb3,
 }) => {
   const PostMessageStream = nonBrowser
     ? RemoteCommunicationPortStream
@@ -25,6 +26,7 @@ const initializeProvider = ({
     shouldSetOnWindow: !(dontInjectProvider || nonBrowser),
     // @ts-ignore
     connectionStream: metamaskStream,
+    shouldShimWeb3
   });
   
   //@ts-ignore

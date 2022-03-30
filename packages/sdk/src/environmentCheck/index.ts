@@ -21,4 +21,4 @@ export const isMetaMaskMobileWebView = () => {
   );
 };
 
-export const notBrowser = () => !window || !window?.navigator || (global?.navigator?.product === "ReactNative") || navigator?.product === "ReactNative"
+export const notBrowser = () => typeof window === 'undefined' || !window?.navigator || (typeof global !== 'undefined' && global?.navigator?.product === "ReactNative") || navigator?.product === "ReactNative"

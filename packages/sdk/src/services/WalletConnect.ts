@@ -1,5 +1,5 @@
 import WC from '@walletconnect/client';
-import InstallModal from '../ui/InstallModal';
+//import InstallModal from '../ui/InstallModal';
 
 const WalletConnect = {
   WalletConnectInstance: null,
@@ -34,7 +34,7 @@ const WalletConnect = {
             this.getConnector().uri,
           )}`;
           if (this.isDesktop) {
-            InstallModal({ link });
+            //InstallModal({ link });
           } else {
             console.log('OPEN LINK', link);
             // window.location.assign(link);

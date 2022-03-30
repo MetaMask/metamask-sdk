@@ -2,28 +2,72 @@
   "name": "reactnativeapp",
   "version": "0.0.1",
   "private": true,
+  "browser": {
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "zlib": "browserify-zlib",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "fs": "react-native-level-fs",
+    "tls": false
+  },
+  "react-native": {
+    "crypto": "react-native-crypto",
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "zlib": "browserify-zlib",
+    "net": "react-native-tcp",
+    "http": "@tradle/react-native-http",
+    "https": "https-browserify",
+    "fs": "react-native-level-fs",
+    "tls": false
+  },
   "scripts": {
     "android": "react-native run-android",
+    "postinstall": "rn-nodeify --install 'crypto,react-native-randombytes,process,stream,fs,https,http,net,tls,crypto,url,zlib' --hack",
     "ios": "react-native run-ios --simulator='iPhone 11 Pro'",
-    "start": "react-native start",
-    "test": "jest",
     "lint": "eslint .",
-    "postinstall": "rn-nodeify --install 'crypto,react-native-randombytes,process,stream' --hack"
+    "start": "react-native start",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "dependencies": {
+    "@metamask/sdk": "file:../../sdk",
+    "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/client": "^1.7.7",
+    "assert": "^2.0.0",
+    "asyncstorage-down": "^4.2.0",
+    "browserify-zlib": "~0.1.4",
     "eventemitter2": "^6.4.5",
     "events": "^3.3.0",
+    "http": "^0.0.1-security",
+    "https-browserify": "~0.0.0",
+    "path": "^0.12.7",
     "process": "^0.11.10",
     "react": "17.0.2",
     "react-native": "0.67.3",
     "react-native-crypto": "^2.2.0",
+    "react-native-level-fs": "^3.0.0",
     "react-native-randombytes": "^3.6.1",
+    "react-native-tcp": "^3.2.1",
     "react-native-webview": "^11.17.2",
     "readable-stream": "1.0.33",
     "rn-nodeify": "^10.3.0",
     "stream": "^0.0.2",
-    "stream-browserify": "^1.0.0"
+    "stream-browserify": "^1.0.0",
+    "url": "~0.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -34,26 +78,5 @@
     "jest": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "react-test-renderer": "17.0.2"
-  },
-  "jest": {
-    "preset": "react-native"
-  },
-  "react-native": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
-  },
-  "browser": {
-    "crypto": "react-native-crypto",
-    "_stream_transform": "readable-stream/transform",
-    "_stream_readable": "readable-stream/readable",
-    "_stream_writable": "readable-stream/writable",
-    "_stream_duplex": "readable-stream/duplex",
-    "_stream_passthrough": "readable-stream/passthrough",
-    "stream": "stream-browserify"
   }
 }

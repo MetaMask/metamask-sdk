@@ -535,6 +535,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
+"@lavamoat/aa@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@lavamoat/aa/-/aa-2.0.0.tgz#4f73e8bdb349635e88afc2edd5a24db78d4ce5f7"
+  integrity sha512-jJNKVFyezXLcA4fghVb4R+KSpK4eEN/GVwMLLumAbm6usPSuokkfqLqtLl7TTWe37Fnq09JxgGhPiVM0nN6A+A==
+  dependencies:
+    resolve "^1.20.0"
+
 "@lavamoat/allow-scripts@^1.0.5", "@lavamoat/allow-scripts@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@lavamoat/allow-scripts/-/allow-scripts-1.0.6.tgz#fbdf7c35a5c2c2cff05ba002b7bc8f3355bda22c"
@@ -546,6 +553,15 @@
     npm-logical-tree "^1.2.1"
     resolve "^1.20.0"
     semver "^7.3.4"
+    yargs "^16.2.0"
+
+"@lavamoat/allow-scripts@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@lavamoat/allow-scripts/-/allow-scripts-2.0.1.tgz#4923016ae35262fc68dbb8d523dc76c138a1da7e"
+  integrity sha512-hDFvYTHLQoq4kAju10lxxaqw2t3/comT5ihVWLLa0gYkLBmsiRYoHTpZpaODGQGnjhsB0dRkPkiuwLiIUPvhSA==
+  dependencies:
+    "@lavamoat/aa" "^2.0.0"
+    "@npmcli/run-script" "^1.8.1"
     yargs "^16.2.0"
 
 "@lavamoat/preinstall-always-fail@^1.0.0":
@@ -5618,14 +5634,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
   dependencies:
     hash-base "^3.0.0"
     inherits "^2.0.1"
-
-rollup-plugin-natives@^0.7.5:
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-natives/-/rollup-plugin-natives-0.7.5.tgz#98731534ca1d3616b72c418bd655620c41bc597c"
-  integrity sha512-lILuVGw46DSJIIdgIfl0c1f00g2g5DNwlthTHa8mW04Y/T0v1kEAeIbRpK/4vQOHr1qRkaiIoxeBW5OOzYmmTw==
-  dependencies:
-    fs-extra "^10.0.0"
-    magic-string "^0.25.7"
 
 rollup-plugin-node-builtins@^2.1.2:
   version "2.1.2"
