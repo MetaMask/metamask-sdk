@@ -1,4 +1,4 @@
-import WC from '@walletconnect/client';
+import Platform, { PlatformName } from '../Platform';
 //import InstallModal from '../ui/InstallModal';
 
 const WalletConnect = {
@@ -6,7 +6,8 @@ const WalletConnect = {
   connector: null,
   getConnector() {
     if (!this.connector) {
-      const WCInstance = this.WalletConnectInstance || WC;
+      const WCInstance = this.WalletConnectInstance;
+      if(!WCInstance) throw new Error("WalletConnectInstance must be provided")
       this.connector = new WCInstance({
         bridge: 'https://bridge.walletconnect.org', // Required
       });
@@ -18,9 +19,7 @@ const WalletConnect = {
   isConnected() {
     return this.getConnector().connected;
   },
-  isDesktop: false,
   sentFirstConnect: false,
-  openLink: null,
   startConnection() {
     return new Promise((resolve, reject) => {
       if (this.getConnector().connected) {
@@ -33,16 +32,16 @@ const WalletConnect = {
           const link = `${'https://metamask.app.link/wc?uri='}${encodeURIComponent(
             this.getConnector().uri,
           )}`;
-          if (this.isDesktop) {
+
+          const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
+
+          if (isDesktop) {
             //InstallModal({ link });
+            console.log('OPEN LINK', link);
           } else {
             console.log('OPEN LINK', link);
             // window.location.assign(link);
-            if (this.openLink) {
-              this.openLink(link);
-            } else {
-              window.open(link, '_self');
-            }
+            Platform.openLink(link);
           }
 
           this.getConnector().on('connect', () => {

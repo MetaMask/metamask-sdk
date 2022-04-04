@@ -1,19 +1,17 @@
-import { WindowPostMessageStream } from '@metamask/post-message-stream';
 import { ProviderConstants } from '../constants';
-import { isMetaMaskInstalled } from '../environmentCheck';
-import ManageMetaMaskInstallation from '../environmentCheck/ManageMetaMaskInstallation';
-import RemoteCommunicationPortStream from '../portStreams/RemoteCommunicationPortStream';
+import Platform, { isMetaMaskInstalled, PlatformName } from '../Platform';
+import ManageMetaMaskInstallation from '../Platform/ManageMetaMaskInstallation';
+import PostMessageStreams from '../PostMessageStreams';
 import Ethereum from '../services/Ethereum';
 
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   dontInjectProvider,
-  nonBrowser,
   shouldShimWeb3,
 }) => {
-  const PostMessageStream = nonBrowser
-    ? RemoteCommunicationPortStream
-    : WindowPostMessageStream;
+  const PostMessageStream = PostMessageStreams.getPostMessageStreamToUse();
+
+  const platform = Platform.getPlatform();
 
   // Setup stream for content script communication
   const metamaskStream = new PostMessageStream({
@@ -23,12 +21,16 @@ const initializeProvider = ({
 
   // Initialize provider object (window.ethereum)
   const ethereum = Ethereum.initializeProvider({
-    shouldSetOnWindow: !(dontInjectProvider || nonBrowser),
+    shouldSetOnWindow: !(
+      dontInjectProvider ||
+      // Don't inject if it's non browser
+      platform === PlatformName.NonBrowser
+    ),
     // @ts-ignore
     connectionStream: metamaskStream,
-    shouldShimWeb3
+    shouldShimWeb3,
   });
-  
+
   //@ts-ignore
   metamaskStream.start?.();
 
@@ -48,6 +50,8 @@ const initializeProvider = ({
         const isConnectedNow = await ManageMetaMaskInstallation.start({
           wait: false,
         });
+
+        console.log('IS CONNECTED NOW');
 
         // Installation/connection is now completed so we are sending the request
         if (isConnectedNow) {

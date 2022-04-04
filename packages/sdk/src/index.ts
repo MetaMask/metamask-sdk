@@ -1,11 +1,12 @@
 import shouldInjectProvider from './provider/shouldInject';
 import initializeProvider from './provider/initializeProvider';
 import setupProviderStreams from './provider/setupProviderStreams';
-import portStreamToUse from './portStreams';
 import WalletConnect from './services/WalletConnect';
-import ManageMetaMaskInstallation from './environmentCheck/ManageMetaMaskInstallation';
-import { notBrowser } from './environmentCheck';
+import ManageMetaMaskInstallation from './Platform/ManageMetaMaskInstallation';
+import Platform, { PlatformName } from './Platform';
 import Ethereum from './services/Ethereum';
+import PostMessageStreams from './PostMessageStreams';
+import PortStreams from './PortStreams';
 
 type MetaMaskSDKOptions = {
   dontInjectProvider?: boolean;
@@ -17,6 +18,7 @@ type MetaMaskSDKOptions = {
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
   openLink?: (string) => void;
+  useWalletConnect?: boolean;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
 };
@@ -24,33 +26,42 @@ export default class MetaMaskSDK {
   provider: any;
 
   constructor({
+    // Provider
     dontInjectProvider,
     forceImportProvider,
     forceDeleteProvider,
     neverImportProvider,
+    // Shim web3 on Provider
+    shouldShimWeb3 = true,
+    // Installation
     checkInstallationImmediately,
-    forceRestartWalletConnect,
     checkInstallationOnAllCalls,
+    // Platform settings
     preferDesktop,
     openLink,
+    // WalletConnect
+    useWalletConnect,
     WalletConnectInstance,
-    shouldShimWeb3 = true,
+    forceRestartWalletConnect,
   }: MetaMaskSDKOptions = {}) {
-    const nonBrowser = notBrowser();
+    const platform = Platform.getPlatform();
 
     if (
       !neverImportProvider &&
-      (forceImportProvider || nonBrowser || shouldInjectProvider())
+      (forceImportProvider ||
+        platform === PlatformName.NonBrowser ||
+        shouldInjectProvider())
     ) {
       if (forceImportProvider && forceDeleteProvider) {
         Ethereum.ethereum = null;
         delete window.ethereum;
       }
 
+      PostMessageStreams.useWalletConnect = useWalletConnect;
       WalletConnect.WalletConnectInstance = WalletConnectInstance;
 
-      if (nonBrowser) {
-        WalletConnect.openLink = openLink;
+      if (platform === PlatformName.NonBrowser) {
+        Platform.openLink = openLink;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
@@ -60,14 +71,11 @@ export default class MetaMaskSDK {
       this.provider = initializeProvider({
         checkInstallationOnAllCalls,
         dontInjectProvider,
-        nonBrowser,
         shouldShimWeb3,
       });
 
-      // Get PortStream for Mobile (either our own or Waku)
-      const PortStream = portStreamToUse();
-
-      // It returns false if we don't need to setup a provider stream
+      // Setup provider streams, only needed for our in-app browser
+      const PortStream = PortStreams.getPortStreamToUse();
       if (PortStream) {
         setupProviderStreams(PortStream);
       }

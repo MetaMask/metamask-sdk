@@ -1,13 +1,13 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
 import WalletConnect from '../services/WalletConnect';
 import { waitPromise } from '../utils';
-import {
+import Platform, {
   isMetaMaskInstalled,
-  isMetaMaskMobileWebView,
-  isMobile,
-  notBrowser,
+  PlatformName,
 } from '.';
 import Ethereum from '../services/Ethereum';
+import RemoteConnection from '../services/RemoteConnection';
+import PostMessageStreams from '../PostMessageStreams';
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
@@ -23,51 +23,36 @@ const ManageMetaMaskInstallation = {
     onboardingExtension.startOnboarding();
   },
   async redirectToProperInstall() {
-    if (notBrowser()) {
-      this.isInstalling = true;
-      const startedWCConnection = await WalletConnect.startConnection();
-      if (startedWCConnection) {
-        this.isInstalling = false;
-        this.hasInstalled = true;
-      }
-      return startedWCConnection;
-    }
+    const platform = Platform.getPlatform();
 
     // If it's running on our mobile in-app browser but communication is still not working
-    if (isMetaMaskMobileWebView()) {
+    if (platform === PlatformName.MetaMaskMobileWebview) {
       // eslint-disable-next-line no-alert
       alert('Please save your seedphrase and try to reinstall MetaMask Mobile');
       return false;
     }
 
     // If is not installed and is Extension, start Extension onboarding
-    if (!isMobile()) {
+    if (platform === PlatformName.DesktopWeb) {
       this.isInstalling = true;
       if (this.preferDesktop) {
         this.startDesktopOnboarding();
         return false;
       }
-
-      const startedWCConnection = await WalletConnect.startConnection();
-      if (startedWCConnection) {
-        this.isInstalling = false;
-        this.hasInstalled = true;
-      }
-      return startedWCConnection;
     }
 
-    // If is not installed and is Mobile, start Mobile onboarding
-    if (isMobile()) {
-      this.isInstalling = true;
-      const startedWCConnection = await WalletConnect.startConnection();
-      if (startedWCConnection) {
-        this.isInstalling = false;
-        this.hasInstalled = true;
-      }
-      return startedWCConnection;
-    }
+    // If is not installed, start remote connection
+    const Remote = PostMessageStreams.useWalletConnect
+      ? WalletConnect
+      : RemoteConnection;
 
-    return false;
+    this.isInstalling = true;
+    const startedRemoteConnection = Remote.startConnection();
+    if (startedRemoteConnection) {
+      this.isInstalling = false;
+      this.hasInstalled = true;
+    }
+    return startedRemoteConnection;
   },
   async checkInstallation() {
     const isInstalled = isMetaMaskInstalled();

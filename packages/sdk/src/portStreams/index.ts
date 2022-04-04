@@ -1,31 +1,22 @@
-import { isMetaMaskMobileWebView, isMobile, notBrowser } from '../environmentCheck';
-import WalletConnect from '../services/WalletConnect';
+import Platform, { PlatformName } from '../Platform';
 import MobilePortStream from './MobilePortStream';
-import WalletConnectPortStream from './WalletConnectPortStream';
 
-const portStreamToUse = () => {
+const getPortStreamToUse = () => {
+  const platform = Platform.getPlatform();
 
-  if(notBrowser()) return false
-
-  // Is our webview / in-app browser
-  if (isMetaMaskMobileWebView()) {
-    return MobilePortStream;
-  }
-
-  const isMobile_ = isMobile();
-
-  // Is a mobile browser (other than our webview)
-  if (isMobile_) {
-    return WalletConnectPortStream;
-  }
-
-  // Is a desktop browser
-  if (!isMobile_) {
-    WalletConnect.isDesktop = true;
-    return WalletConnectPortStream;
-  }
+  if (platform === PlatformName.MetaMaskMobileWebview) return MobilePortStream;
 
   return false;
 };
 
-export default portStreamToUse;
+const PortStreams = {
+  portStream: null,
+  getPortStreamToUse() {
+    if (this.portStream) return this.portStream;
+
+    this.portStream = getPortStreamToUse();
+    return this.portStream;
+  },
+};
+
+export default PortStreams;

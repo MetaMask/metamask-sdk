@@ -1,8 +1,9 @@
 import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
 import WalletConnect from '../services/WalletConnect';
-import { ProviderConstants } from '../constants';
+import { METHODS_TO_REDIRECT, ProviderConstants } from '../constants';
 import Ethereum from '../services/Ethereum';
+import Platform, { PlatformName } from '../Platform';
 
 const noop = () => undefined;
 
@@ -13,10 +14,8 @@ const noop = () => undefined;
  * @class
  * @param {Object} port Remote Port object
  */
-class WalletConnectPortStream extends Duplex {
+class WalletConnectPostMessageStream extends Duplex {
   _name: any;
-
-  _targetWindow: Window & typeof globalThis;
 
   _port: any;
 
@@ -34,11 +33,15 @@ class WalletConnectPortStream extends Duplex {
       objectMode: true,
     });
     this._name = port.name;
-    this._targetWindow = window;
     this._port = port;
-    this._origin = location.origin;
     this._alreadySubscribed = false;
-    window.addEventListener('message', this._onMessage.bind(this), false);
+
+    if (Ethereum.ethereum) {
+      this.subscribeToConnectionEvents();
+    }
+  }
+
+  start() {
     this.subscribeToConnectionEvents();
   }
 
@@ -81,6 +84,13 @@ class WalletConnectPortStream extends Duplex {
   }
 
   subscribeToConnectionEvents() {
+    if (WalletConnect.forceRestart) {
+      WalletConnect.getConnector().killSession();
+      WalletConnect.forceRestart = false;
+    }
+
+    console.log('WalletConnect.isConnected()', WalletConnect.isConnected());
+
     Ethereum.ethereum.isConnected = () => WalletConnect.isConnected();
 
     if (WalletConnect.isConnected()) {
@@ -89,11 +99,6 @@ class WalletConnectPortStream extends Duplex {
 
     if (this._alreadySubscribed) {
       return;
-    }
-
-    if (WalletConnect.forceRestart) {
-      WalletConnect.getConnector().killSession();
-      WalletConnect.forceRestart = false;
     }
 
     // Subscribe to connection events
@@ -137,7 +142,7 @@ class WalletConnectPortStream extends Duplex {
  * @private
  * @param {Object} msg - Payload from the onMessage listener of Port
  */
-WalletConnectPortStream.prototype._onMessage = function (event) {
+WalletConnectPostMessageStream.prototype._onMessage = function (event) {
   const msg = event.data;
   // validate message
   /* if (this._origin !== '*' && event.origin !== this._origin) {
@@ -174,14 +179,14 @@ WalletConnectPortStream.prototype._onMessage = function (event) {
  *
  * @private
  */
-WalletConnectPortStream.prototype._onDisconnect = function () {
+WalletConnectPostMessageStream.prototype._onDisconnect = function () {
   this.destroy();
 };
 
 /**
  * Explicitly sets read operations to a no-op
  */
-WalletConnectPortStream.prototype._read = noop;
+WalletConnectPostMessageStream.prototype._read = noop;
 
 /**
  * Called internally when data should be written to
@@ -192,7 +197,13 @@ WalletConnectPortStream.prototype._read = noop;
  * @param {string} encoding Encoding to use when writing payload
  * @param {Function} cb Called when writing is complete or an error occurs
  */
-WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
+WalletConnectPostMessageStream.prototype._write = function (
+  msg,
+  _encoding,
+  cb,
+) {
+  if (!WalletConnect.isConnected()) return;
+
   try {
     let data;
     if (Buffer.isBuffer(msg)) {
@@ -206,6 +217,7 @@ WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
       data = msg;
     }
 
+    console.log("SENDING---")
     WalletConnect.getConnector()
       .sendCustomRequest(data?.data)
       .then((result) => {
@@ -242,28 +254,16 @@ WalletConnectPortStream.prototype._write = function (msg, _encoding, cb) {
         this._onMessage(res);
       });
 
-    const METHODS_TO_REDIRECT = {
-      eth_requestAccounts: false,
-      eth_sendTransaction: true,
-      eth_signTransaction: true,
-      eth_sign: true,
-      personal_sign: true,
-      eth_signTypedData: true,
-      eth_signTypedData_v3: true,
-      eth_signTypedData_v4: true,
-      wallet_watchAsset: true,
-      wallet_addEthereumChain: true,
-      wallet_switchEthereumChain: true,
-    };
+    const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 
     // Check if should open app
-    if (METHODS_TO_REDIRECT[data?.data?.method] && !WalletConnect.isDesktop) {
-      window.open('https://metamask.app.link/', '_self');
+    if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
+      Platform.openLink('https://metamask.app.link/', '_self');
     }
   } catch (err) {
-    return cb(new Error('WalletConnectPortStream - disconnected'));
+    return cb(new Error('WalletConnectPostMessageStream - disconnected'));
   }
   return cb();
 };
 
-export default WalletConnectPortStream;
+export default WalletConnectPostMessageStream;

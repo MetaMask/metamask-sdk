@@ -18,7 +18,7 @@ export default class Socket extends EventEmitter2 {
   constructor() {
     super();
 
-    this.socket = io('http://localhost:3000');
+    this.socket = io('http://localhost:4000');
 
     this.keyExchange = new KeyExchange({ commLayer: this });
 
@@ -98,7 +98,7 @@ export default class Socket extends EventEmitter2 {
 
   connectToChannel(id) {
     this.channelId = id;
-    this.socket.emit('handshake', id);
+    this.socket.emit('join_channel', id);
   }
 
   createChannel(id) {
@@ -106,6 +106,6 @@ export default class Socket extends EventEmitter2 {
     if (!id) {
       throw new Error('Id must exist');
     }
-    this.socket.emit('create_channel', id);
+    this.socket.emit('join_channel', id);
   }
 }

@@ -25,11 +25,11 @@ export default class WebRTC extends EventEmitter2 {
     const configuration = {
       iceServers: [
         { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
+        /*{ urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:stun3.l.google.com:19302' },
         { urls: 'stun:stun.l.google.com:19302' },
         { urls: 'stun:stun.services.mozilla.com' },
-        { urls: 'stun:23.21.150.121' },
+        { urls: 'stun:23.21.150.121' },*/
       ],
     };
 
@@ -72,13 +72,16 @@ export default class WebRTC extends EventEmitter2 {
       console.log('Data channel is created!');
       const receiveChannel = evt.channel;
       receiveChannel.onopen = () => {
-        console.log('Data channel is open and ready to be used.', this);
+        console.log('Data channel is open and ready to be used.');
         this.clientsConnected = true;
 
         if (this.isOriginator) {
           this.keyExchange.start();
         }
       };
+
+      this.onMessage = this.onMessage.bind(this)
+
       receiveChannel.onmessage = this.onMessage;
     };
 
@@ -110,7 +113,7 @@ export default class WebRTC extends EventEmitter2 {
         const answerLocal = await this.webrtc.createAnswer();
         await this.webrtc.setLocalDescription(answerLocal);
 
-        this.socket.sendMessage({ type: 'answer', answer });
+        this.socket.sendMessage({ type: 'answer', answer: answerLocal });
       } else if (type === 'answer') {
         await this.webrtc.setRemoteDescription(
           new RTCSessionDescription(answer),
@@ -144,9 +147,9 @@ export default class WebRTC extends EventEmitter2 {
   }
 
   onMessage(message) {
-    if (!message.isTrusted) {
+    /*if (!message.isTrusted) {
       throw new Error('Message not trusted');
-    }
+    }*/
 
     if (!this.keyExchange.keysExchanged) {
       const messageReceived = JSON.parse(message.data);

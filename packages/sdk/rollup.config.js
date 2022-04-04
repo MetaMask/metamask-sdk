@@ -14,33 +14,6 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/cjs/node/metamask-sdk.js',
-        format: 'cjs',
-      },
-      {
-        file: 'dist/es/node/metamask-sdk.js',
-        format: 'es',
-      },
-    ],
-    plugins: [
-      nativePlugin({
-        // Use `dlopen` instead of `require`/`import`.
-        // This must be set to true if using a different file extension that '.node'
-        dlopen: false,
-        // Generate sourcemap
-        sourcemap: true,
-      }),
-      typescript(),
-      nodeResolve({ browser: false, preferBuiltins: false }),
-      commonjs({ transformMixedEsModules: true }),
-      json(),
-    ],
-  },
-  {
-    external: listDepForRollup,
-    input: 'src/index.ts',
-    output: [
-      {
         file: 'dist/cjs/browser/metamask-sdk.js',
         format: 'cjs',
       },
@@ -49,7 +22,7 @@ const config = [
         format: 'es',
       },
       {
-        name: "browser",
+        name: 'browser',
         file: 'dist/umd/browser/metamask-sdk.js',
         format: 'umd',
       },
@@ -78,6 +51,33 @@ const config = [
       commonjs(),
       globals(),
       builtins({ crypto: true }),
+      json(),
+    ],
+  },
+  {
+    external: listDepForRollup,
+    input: 'src/index.ts',
+    output: [
+      {
+        file: 'dist/cjs/node/metamask-sdk.js',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/es/node/metamask-sdk.js',
+        format: 'es',
+      },
+    ],
+    plugins: [
+      nativePlugin({
+        // Use `dlopen` instead of `require`/`import`.
+        // This must be set to true if using a different file extension that '.node'
+        dlopen: false,
+        // Generate sourcemap
+        sourcemap: true,
+      }),
+      typescript(),
+      nodeResolve({ browser: false, preferBuiltins: false }),
+      commonjs({ transformMixedEsModules: true }),
       json(),
     ],
   },

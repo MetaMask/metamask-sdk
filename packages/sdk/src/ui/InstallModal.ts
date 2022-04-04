@@ -1,5 +1,5 @@
 import { AwesomeQR } from 'awesome-qr';
-import ManageMetaMaskInstallation from '../environmentCheck/ManageMetaMaskInstallation';
+import ManageMetaMaskInstallation from '../Platform/ManageMetaMaskInstallation';
 
 const InstallModal = ({ link }) => {
   const div = document.createElement('div');
