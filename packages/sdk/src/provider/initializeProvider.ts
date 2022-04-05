@@ -51,7 +51,7 @@ const initializeProvider = ({
           wait: false,
         });
 
-        console.log('IS CONNECTED NOW');
+        console.log('IS CONNECTED NOW', isConnectedNow);
 
         // Installation/connection is now completed so we are sending the request
         if (isConnectedNow) {

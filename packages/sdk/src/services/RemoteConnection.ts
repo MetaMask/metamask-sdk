@@ -1,5 +1,6 @@
 import Platform, { PlatformName } from '../Platform';
 import RemoteCommunication from './RemoteCommunication';
+import InstallModal from '../ui/InstallModal';
 
 const RemoteConnection = {
   RemoteCommunication: null,
@@ -25,7 +26,7 @@ const RemoteConnection = {
     const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb
 
     if (isDesktop) {
-      //InstallModal({ link });
+      InstallModal({ link });
       console.log('OPEN LINK', link);
     } else {
       console.log('OPEN LINK', link);
@@ -33,6 +34,7 @@ const RemoteConnection = {
     }
     return new Promise((resolve) => {
       this.getConnector().on('clients_ready', () => {
+        console.log("clients_ready")
         if (this.sentFirstConnect) {
           return;
         }

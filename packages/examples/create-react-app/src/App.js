@@ -1,8 +1,9 @@
 import logo from "./logo.svg";
 import "./App.css";
 import MetaMaskSDK from "@metamask/sdk"
+import WC from '@walletconnect/client'
 
-new MetaMaskSDK();
+new MetaMaskSDK({useWalletConnect: true, WalletConnectInstance:WC});
 
 function App() {
   const connect = () => {

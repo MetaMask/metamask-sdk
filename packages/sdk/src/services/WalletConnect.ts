@@ -1,5 +1,5 @@
 import Platform, { PlatformName } from '../Platform';
-//import InstallModal from '../ui/InstallModal';
+import InstallModal from '../ui/InstallModal';
 
 const WalletConnect = {
   WalletConnectInstance: null,
@@ -36,7 +36,7 @@ const WalletConnect = {
           const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 
           if (isDesktop) {
-            //InstallModal({ link });
+            InstallModal({ link });
             console.log('OPEN LINK', link);
           } else {
             console.log('OPEN LINK', link);
