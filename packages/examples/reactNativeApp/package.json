@@ -33,12 +33,13 @@
     "tls": false
   },
   "scripts": {
+    "setup": "yarn && cd node_modules/react-native-webrtc/ && yarn postinstall && cd ../../ && yarn postinstall",
     "android": "react-native run-android",
-    "postinstall": "rn-nodeify --install 'crypto,react-native-randombytes,process,stream,fs,https,http,net,tls,crypto,url,zlib' --hack",
     "ios": "react-native run-ios --simulator='iPhone 11 Pro'",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "rn-nodeify --install 'crypto,process,stream,events' --hack"
   },
   "jest": {
     "preset": "react-native"
@@ -47,21 +48,13 @@
     "@metamask/sdk": "file:../../sdk",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/client": "^1.7.7",
-    "assert": "^2.0.0",
-    "asyncstorage-down": "^4.2.0",
-    "browserify-zlib": "~0.1.4",
-    "eventemitter2": "^6.4.5",
-    "events": "^3.3.0",
-    "http": "^0.0.1-security",
-    "https-browserify": "~0.0.0",
-    "path": "^0.12.7",
+    "events": "^1.0.0",
     "process": "^0.11.10",
     "react": "17.0.2",
     "react-native": "0.67.3",
     "react-native-crypto": "^2.2.0",
-    "react-native-level-fs": "^3.0.0",
     "react-native-randombytes": "^3.6.1",
-    "react-native-tcp": "^3.2.1",
+    "react-native-webrtc": "^1.100.0",
     "react-native-webview": "^11.17.2",
     "readable-stream": "1.0.33",
     "rn-nodeify": "^10.3.0",

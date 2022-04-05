@@ -5,6 +5,7 @@ import json from '@rollup/plugin-json';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
+import jscc from 'rollup-plugin-jscc';
 
 const listDepForRollup = [];
 
@@ -14,20 +15,28 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/cjs/browser/metamask-sdk.js',
+        file: 'dist/browser/cjs/metamask-sdk.js',
         format: 'cjs',
       },
       {
-        file: 'dist/es/browser/metamask-sdk.js',
+        file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
       },
       {
         name: 'browser',
-        file: 'dist/umd/browser/metamask-sdk.js',
+        file: 'dist/browser/umd/metamask-sdk.js',
         format: 'umd',
+      },
+      {
+        file: 'dist/browser/iife/metamask-sdk.js',
+        format: 'iife',
+        name: 'MetaMaskSDK',
       },
     ],
     plugins: [
+      jscc({
+        values: { _WEB: 1 },
+      }),
       typescript(),
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
@@ -37,20 +46,29 @@ const config = [
     ],
   },
   {
+    external: ['react-native-webrtc'],
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/iife/browser/metamask-sdk.js',
-        format: 'iife',
-        name: 'MetaMaskSDK',
+        file: 'dist/react-native/cjs/metamask-sdk.js',
+        format: 'cjs',
+      },
+      {
+        file: 'dist/react-native/es/metamask-sdk.js',
+        format: 'es',
       },
     ],
     plugins: [
+      jscc({
+        values: { _REACTNATIVE: 1 },
+      }),
       typescript(),
-      nodeResolve({ browser: true, preferBuiltins: false }),
-      commonjs(),
-      globals(),
-      builtins({ crypto: true }),
+      commonjs({ transformMixedEsModules: true }),
+      nodeResolve({
+        exportConditions: ['react-native', 'node', 'browser'],
+        browser: true,
+        preferBuiltins: true,
+      }),
       json(),
     ],
   },
@@ -59,15 +77,18 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/cjs/node/metamask-sdk.js',
+        file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
       },
       {
-        file: 'dist/es/node/metamask-sdk.js',
+        file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
       },
     ],
     plugins: [
+      jscc({
+        values: { _NODEJS: 1 },
+      }),
       nativePlugin({
         // Use `dlopen` instead of `require`/`import`.
         // This must be set to true if using a different file extension that '.node'

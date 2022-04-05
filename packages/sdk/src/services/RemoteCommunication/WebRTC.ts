@@ -2,6 +2,15 @@ import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
 
+/*#if _REACTNATIVE
+import {
+  RTCPeerConnection,
+  RTCSessionDescription,
+  RTCIceCandidate,
+} from 'react-native-webrtc';
+//#else */
+
+//#endif
 export default class WebRTC extends EventEmitter2 {
   handshakeDone = false;
 
@@ -80,7 +89,7 @@ export default class WebRTC extends EventEmitter2 {
         }
       };
 
-      this.onMessage = this.onMessage.bind(this)
+      this.onMessage = this.onMessage.bind(this);
 
       receiveChannel.onmessage = this.onMessage;
     };

@@ -26,7 +26,6 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import crypto from 'crypto';
 
 import MetaMaskSDK from '@metamask/sdk';
 

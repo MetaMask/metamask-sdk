@@ -59,7 +59,8 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
+      "canvas": true,
+      "react-native-webrtc": true
     }
   }
 }

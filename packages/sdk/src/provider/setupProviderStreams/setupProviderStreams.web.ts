@@ -1,7 +1,7 @@
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { WindowPostMessageStream } from '@metamask/post-message-stream';
-import { ProviderConstants } from '../constants';
+import { ProviderConstants } from '../../constants';
 
 /**
  * Setup function called from content script after the DOM is ready.

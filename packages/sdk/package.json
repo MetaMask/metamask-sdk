@@ -2,12 +2,12 @@
   "name": "@metamask/sdk",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/cjs/node/metamask-sdk.js",
-  "module": "dist/es/browser/metamask-sdk.js",
-  "browser": "dist/umd/browser/metamask-sdk.js",
-  "react-native": "dist/es/node/metamask-sdk.js",
-  "unpkg": "dist/umd/browsermetamask.js",
-  "types": "dist/es/browser/index.d.ts",
+  "main": "dist/node/cjs/metamask-sdk.js",
+  "module": "dist/browser/es/metamask-sdk.js",
+  "browser": "dist/browser/umd/metamask-sdk.js",
+  "react-native": "dist/react-native/es/metamask-sdk.js",
+  "unpkg": "dist/browser/umd/metamask.js",
+  "types": "dist/browser/es/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
@@ -51,6 +51,9 @@
     "util": "^0.12.4",
     "uuid": "^8.3.2"
   },
+  "peerDependencies": {
+    "react-native-webrtc": "*"
+  },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
@@ -68,7 +71,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
+    "react-native-webrtc": "^1.100.0",
     "rollup": "^2.70.0",
+    "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-natives": "^0.7.5",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
@@ -79,7 +84,8 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
+      "canvas": true,
+      "react-native-webrtc": true
     }
   }
 }
