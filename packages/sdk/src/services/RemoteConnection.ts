@@ -34,7 +34,6 @@ const RemoteConnection = {
     }
     return new Promise((resolve) => {
       this.getConnector().on('clients_ready', () => {
-        console.log("clients_ready")
         if (this.sentFirstConnect) {
           return;
         }

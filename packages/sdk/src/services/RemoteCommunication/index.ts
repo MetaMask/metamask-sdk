@@ -69,19 +69,19 @@ export default class RemoteCommunication extends EventEmitter2 {
         },
       });
       this.originatorInfo = message.originatorInfo;
+      this.connected = true;
       this.emit('clients_ready', {
         isOriginator: this.isOriginator,
         originatorInfo: message.originatorInfo,
       });
-      this.connected = true;
       return;
     } else if (message.type === 'wallet_info') {
       this.walletInfo = message.walletInfo;
+      this.connected = true;
       this.emit('clients_ready', {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,
       });
-      this.connected = true;
       return;
     }
 

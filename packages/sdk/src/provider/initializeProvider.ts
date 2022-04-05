@@ -41,9 +41,9 @@ const initializeProvider = ({
     // This will check if the connection was correctly done or if the user needs to install MetaMask
     const isInstalled = isMetaMaskInstalled();
 
-    if (!isInstalled) {
+    if (!isInstalled && args?.[0]?.method !== 'metamask_getProviderState') {
       if (
-        args[0]?.method === 'eth_requestAccounts' ||
+        args?.[0]?.method === 'eth_requestAccounts' ||
         checkInstallationOnAllCalls
       ) {
         // Start installation and once installed try the request again
@@ -61,6 +61,7 @@ const initializeProvider = ({
 
       throw new Error('Wait until MetaMask is installed');
     }
+
     return request(...args);
   };
 
