@@ -1,6 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { v4 as uuidv4 } from 'uuid';
-import WebRTC from './WebRTC';
+import Socket from './Socket';
 
 export default class RemoteCommunication extends EventEmitter2 {
   commLayer = null;
@@ -14,7 +14,7 @@ export default class RemoteCommunication extends EventEmitter2 {
   originatorInfo: any;
   walletInfo: any;
 
-  constructor({ CommLayer = WebRTC }) {
+  constructor({ CommLayer = Socket }) {
     super();
 
     this.commLayer = new CommLayer();

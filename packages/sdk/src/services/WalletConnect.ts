@@ -35,9 +35,9 @@ const WalletConnect = {
 
           const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 
-          if (isDesktop) {
+          if (isDesktop || Platform.showQRCode) {
             InstallModal({ link });
-            console.log('OPEN LINK', link);
+            console.log('OPEN LINK QR CODE', link);
           } else {
             console.log('OPEN LINK', link);
             // window.location.assign(link);

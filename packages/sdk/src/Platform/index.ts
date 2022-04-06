@@ -39,9 +39,9 @@ export const isNotBrowser = () =>
   navigator?.product === 'ReactNative';
 
 export const getPlatform = () => {
-  if (isMetaMaskMobileWebView()) return PlatformName.MetaMaskMobileWebview;
-
   if (isNotBrowser()) return PlatformName.NonBrowser;
+
+  if (isMetaMaskMobileWebView()) return PlatformName.MetaMaskMobileWebview;
 
   if (isMobile()) return PlatformName.MobileWeb;
 
@@ -51,6 +51,8 @@ export const getPlatform = () => {
 const Platform = {
   platform: null,
   preferredOpenLink: null,
+  webRTCLib: null,
+  showQRCode: undefined,
   openLink(url: string, target?: string) {
     if (this.preferredOpenLink) return this.preferredOpenLink(url, target);
 

@@ -23,14 +23,14 @@ const RemoteConnection = {
       id,
     )}`;
 
-    const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb
+    const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 
-    if (isDesktop) {
+    if (isDesktop || Platform.showQRCode) {
       InstallModal({ link });
-      console.log('OPEN LINK', link);
+      console.log('OPEN LINK QRCODE', link);
     } else {
       console.log('OPEN LINK', link);
-      Platform.openLink(link)
+      Platform.openLink?.(link);
     }
     return new Promise((resolve) => {
       this.getConnector().on('clients_ready', () => {

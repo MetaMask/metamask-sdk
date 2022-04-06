@@ -21,6 +21,8 @@ type MetaMaskSDKOptions = {
   useWalletConnect?: boolean;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
+  webRTCLib?: any
+  showQRCode?: any
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -43,6 +45,8 @@ export default class MetaMaskSDK {
     useWalletConnect,
     WalletConnectInstance,
     forceRestartWalletConnect,
+    webRTCLib,
+    showQRCode
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -60,8 +64,16 @@ export default class MetaMaskSDK {
       PostMessageStreams.useWalletConnect = useWalletConnect;
       WalletConnect.WalletConnectInstance = WalletConnectInstance;
 
-      if (platform === PlatformName.NonBrowser) {
+      if (openLink) {
         Platform.openLink = openLink;
+      }
+
+      if(webRTCLib){
+        Platform.webRTCLib = webRTCLib
+      }
+
+      if(showQRCode){
+        Platform.showQRCode = showQRCode
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);

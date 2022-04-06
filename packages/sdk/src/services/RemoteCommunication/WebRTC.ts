@@ -1,6 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
+import Platform from '../../Platform';
 
 /*#if _REACTNATIVE
 import {
@@ -27,9 +28,23 @@ export default class WebRTC extends EventEmitter2 {
   dataChannel = null;
 
   keyExchange: KeyExchange;
+  RTCPeerConnection: any;
+  RTCSessionDescription: any;
+  RTCIceCandidate: any;
 
   constructor() {
     super();
+
+
+    if(Platform.webRTCLib){
+      this.RTCPeerConnection = Platform.webRTCLib.RTCPeerConnection
+      this.RTCSessionDescription = Platform.webRTCLib.RTCPeerConnection
+      this.RTCIceCandidate = Platform.webRTCLib.RTCPeerConnection
+    }else{
+      this.RTCPeerConnection = RTCPeerConnection
+      this.RTCSessionDescription = RTCSessionDescription
+      this.RTCIceCandidate = RTCIceCandidate
+    }
 
     const configuration = {
       iceServers: [
@@ -42,7 +57,7 @@ export default class WebRTC extends EventEmitter2 {
       ],
     };
 
-    this.webrtc = new RTCPeerConnection(configuration);
+    this.webrtc = new this.RTCPeerConnection(configuration);
 
     this.socket = new Socket();
 
@@ -116,7 +131,7 @@ export default class WebRTC extends EventEmitter2 {
       const { offer, answer, candidate, type } = message;
       if (type === 'offer') {
         await this.webrtc.setRemoteDescription(
-          new RTCSessionDescription(offer),
+          new this.RTCSessionDescription(offer),
         );
 
         const answerLocal = await this.webrtc.createAnswer();
@@ -125,12 +140,12 @@ export default class WebRTC extends EventEmitter2 {
         this.socket.sendMessage({ type: 'answer', answer: answerLocal });
       } else if (type === 'answer') {
         await this.webrtc.setRemoteDescription(
-          new RTCSessionDescription(answer),
+          new this.RTCSessionDescription(answer),
         );
 
         this.handshakeDone = true;
       } else if (type === 'candidate') {
-        this.webrtc.addIceCandidate(new RTCIceCandidate(candidate));
+        this.webrtc.addIceCandidate(new this.RTCIceCandidate(candidate));
       }
     });
 
