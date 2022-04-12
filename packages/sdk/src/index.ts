@@ -7,6 +7,8 @@ import Platform, { PlatformName } from './Platform';
 import Ethereum from './services/Ethereum';
 import PostMessageStreams from './PostMessageStreams';
 import PortStreams from './PortStreams';
+import { CommunicationLayerPreference } from './constants';
+import RemoteConnection from './services/RemoteConnection';
 
 type MetaMaskSDKOptions = {
   dontInjectProvider?: boolean;
@@ -18,11 +20,11 @@ type MetaMaskSDKOptions = {
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
   openLink?: (string) => void;
-  useWalletConnect?: boolean;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any
   showQRCode?: any
+  communicationLayerPreference?: CommunicationLayerPreference
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -41,12 +43,13 @@ export default class MetaMaskSDK {
     // Platform settings
     preferDesktop,
     openLink,
+    showQRCode,
+    communicationLayerPreference = CommunicationLayerPreference.SOCKET,
     // WalletConnect
-    useWalletConnect,
     WalletConnectInstance,
     forceRestartWalletConnect,
+    // WebRTC
     webRTCLib,
-    showQRCode
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -61,15 +64,12 @@ export default class MetaMaskSDK {
         delete window.ethereum;
       }
 
-      PostMessageStreams.useWalletConnect = useWalletConnect;
+      PostMessageStreams.communicationLayerPreference = communicationLayerPreference;
       WalletConnect.WalletConnectInstance = WalletConnectInstance;
+      RemoteConnection.webRTCLib = webRTCLib
 
       if (openLink) {
         Platform.openLink = openLink;
-      }
-
-      if(webRTCLib){
-        Platform.webRTCLib = webRTCLib
       }
 
       if(showQRCode){

@@ -8,6 +8,7 @@ import Platform, {
 import Ethereum from '../services/Ethereum';
 import RemoteConnection from '../services/RemoteConnection';
 import PostMessageStreams from '../PostMessageStreams';
+import { CommunicationLayerPreference } from '../constants';
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
@@ -42,7 +43,7 @@ const ManageMetaMaskInstallation = {
     }
 
     // If is not installed, start remote connection
-    const Remote = PostMessageStreams.useWalletConnect
+    const Remote = PostMessageStreams.communicationLayerPreference === CommunicationLayerPreference.WALLETCONNECT
       ? WalletConnect
       : RemoteConnection;
 

@@ -2,6 +2,10 @@ import { EventEmitter2 } from 'eventemitter2';
 import { v4 as uuidv4 } from 'uuid';
 import Socket from './Socket';
 
+type RemoteCommunicationOptions = {
+  CommLayer: any
+}
+
 export default class RemoteCommunication extends EventEmitter2 {
   commLayer = null;
 
@@ -14,7 +18,7 @@ export default class RemoteCommunication extends EventEmitter2 {
   originatorInfo: any;
   walletInfo: any;
 
-  constructor({ CommLayer = Socket }) {
+  constructor({ CommLayer = Socket }: RemoteCommunicationOptions) {
     super();
 
     this.commLayer = new CommLayer();

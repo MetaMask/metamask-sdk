@@ -51,7 +51,6 @@ export const getPlatform = () => {
 const Platform = {
   platform: null,
   preferredOpenLink: null,
-  webRTCLib: null,
   showQRCode: undefined,
   openLink(url: string, target?: string) {
     if (this.preferredOpenLink) return this.preferredOpenLink(url, target);

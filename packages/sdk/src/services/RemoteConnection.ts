@@ -1,12 +1,22 @@
 import Platform, { PlatformName } from '../Platform';
 import RemoteCommunication from './RemoteCommunication';
 import InstallModal from '../ui/InstallModal';
+import Socket from './RemoteCommunication/Socket';
+import WebRTC from './RemoteCommunication/WebRTC';
+import PostMessageStreams from '../PostMessageStreams';
+import { CommunicationLayerPreference } from '../constants';
 
 const RemoteConnection = {
   RemoteCommunication: null,
+  webRTCLib: null,
   getConnector() {
     if (!this.RemoteCommunication) {
-      this.RemoteCommunication = new RemoteCommunication({});
+      const CommLayer =
+        PostMessageStreams.communicationLayerPreference ===
+        CommunicationLayerPreference.WEBRTC
+          ? WebRTC
+          : Socket;
+      this.RemoteCommunication = new RemoteCommunication({ CommLayer });
     }
 
     return this.RemoteCommunication;
@@ -18,9 +28,11 @@ const RemoteConnection = {
   sentFirstConnect: false,
   startConnection() {
     const id = this.getConnector().generateChannelId();
-
+    
     const link = `${'https://metamask.app.link/connect?uri='}${encodeURIComponent(
       id,
+    )}&comm=${encodeURIComponent(
+      PostMessageStreams.communicationLayerPreference,
     )}`;
 
     const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;

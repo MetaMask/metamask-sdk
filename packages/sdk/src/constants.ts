@@ -1,3 +1,9 @@
+export enum CommunicationLayerPreference {
+  WEBRTC = 'webrtc',
+  SOCKET = 'socket',
+  WALLETCONNECT = 'wc'
+}
+
 export enum ProviderConstants {
   INPAGE = 'metamask-inpage',
   CONTENT_SCRIPT = 'metamask-contentscript',

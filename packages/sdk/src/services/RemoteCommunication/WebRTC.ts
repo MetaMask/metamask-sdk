@@ -1,7 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
-import Platform from '../../Platform';
+import RemoteConnection from '../RemoteConnection';
 
 /*#if _REACTNATIVE
 import {
@@ -36,10 +36,10 @@ export default class WebRTC extends EventEmitter2 {
     super();
 
 
-    if(Platform.webRTCLib){
-      this.RTCPeerConnection = Platform.webRTCLib.RTCPeerConnection
-      this.RTCSessionDescription = Platform.webRTCLib.RTCPeerConnection
-      this.RTCIceCandidate = Platform.webRTCLib.RTCPeerConnection
+    if(RemoteConnection.webRTCLib){
+      this.RTCPeerConnection = RemoteConnection.webRTCLib.RTCPeerConnection
+      this.RTCSessionDescription = RemoteConnection.webRTCLib.RTCPeerConnection
+      this.RTCIceCandidate = RemoteConnection.webRTCLib.RTCPeerConnection
     }else{
       this.RTCPeerConnection = RTCPeerConnection
       this.RTCSessionDescription = RTCSessionDescription
