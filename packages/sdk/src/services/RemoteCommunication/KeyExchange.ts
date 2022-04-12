@@ -13,8 +13,9 @@ export default class KeyExchange extends EventEmitter2 {
   commLayer: any;
 
   myPublicKey: any;
+  sendPublicKey: any;
 
-  constructor({ commLayer }) {
+  constructor({ commLayer, otherPublicKey, sendPublicKey }) {
     super();
 
     this.myECDH = new ECDH();
@@ -22,19 +23,23 @@ export default class KeyExchange extends EventEmitter2 {
     this.commLayer = commLayer;
     this.myPublicKey = this.myECDH.getPublicKey();
 
+    if (otherPublicKey){
+      this.onOtherPublicKey(otherPublicKey);
+    }
+    this.sendPublicKey = sendPublicKey;
+
     this.commLayer.on('key_exchange', ({ message }) => {
       if (this.keysExchanged) {
         return;
       }
       if (message.type === 'key_handshake_SYN') {
-        this.onOtherPublicKey(message.pukey);
-
+        if(message.pubkey && !this.otherPublicKey) this.onOtherPublicKey(message.pubkey);
         this.commLayer.sendMessage({
           type: 'key_handshake_SYNACK',
-          pukey: this.myPublicKey,
+          pubkey: this.myPublicKey,
         });
       } else if (message.type === 'key_handshake_SYNACK') {
-        this.onOtherPublicKey(message.pukey);
+        this.onOtherPublicKey(message.pubkey);
 
         this.commLayer.sendMessage({ type: 'key_handshake_ACK' });
         this.keysExchanged = true;
@@ -49,26 +54,26 @@ export default class KeyExchange extends EventEmitter2 {
   start() {
     this.commLayer.sendMessage({
       type: 'key_handshake_SYN',
-      pukey: this.myPublicKey,
+      pubkey: this.sendPublicKey ? this.myPublicKey : undefined,
     });
   }
 
-  onOtherPublicKey(pukey) {
-    this.otherPublicKey = pukey;
+  onOtherPublicKey(pubkey) {
+    this.otherPublicKey = pubkey;
     this.myECDH.computeECDHSecret(this.otherPublicKey);
     this.secretKey = this.myECDH.secretKey;
   }
 
   encryptMessage(message) {
     if (!this.secretKey) {
-      throw new Error('Keys not exchange');
+      throw new Error('Keys not exchanged');
     }
     return this.myECDH.encryptAuthIV(message);
   }
 
   decryptMessage(message) {
     if (!this.secretKey) {
-      throw new Error('Keys not exchange');
+      throw new Error('Keys not exchanged');
     }
     return this.myECDH.decryptAuthIV(message);
   }

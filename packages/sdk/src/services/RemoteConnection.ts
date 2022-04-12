@@ -16,7 +16,7 @@ const RemoteConnection = {
         CommunicationLayerPreference.WEBRTC
           ? WebRTC
           : Socket;
-      this.RemoteCommunication = new RemoteCommunication({ CommLayer });
+      this.RemoteCommunication = new RemoteCommunication({ CommLayer, webRTCLib: this.webRTCLib });
     }
 
     return this.RemoteCommunication;
@@ -27,13 +27,13 @@ const RemoteConnection = {
   },
   sentFirstConnect: false,
   startConnection() {
-    const id = this.getConnector().generateChannelId();
+    const {channelId, pubKey} = this.getConnector().generateChannelId();
     
-    const link = `${'https://metamask.app.link/connect?uri='}${encodeURIComponent(
-      id,
+    const link = `${'https://metamask.app.link/connect?channelId='}${encodeURIComponent(
+      channelId,
     )}&comm=${encodeURIComponent(
       PostMessageStreams.communicationLayerPreference,
-    )}`;
+    )}&pubkey=${encodeURIComponent(pubKey)}`;
 
     const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 

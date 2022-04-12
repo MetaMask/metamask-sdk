@@ -1,10 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { v4 as uuidv4 } from 'uuid';
 import Socket from './Socket';
 
 type RemoteCommunicationOptions = {
-  CommLayer: any
-}
+  CommLayer: any;
+  otherPublicKey?: string;
+  webRTCLib?: any;
+};
 
 export default class RemoteCommunication extends EventEmitter2 {
   commLayer = null;
@@ -18,10 +19,10 @@ export default class RemoteCommunication extends EventEmitter2 {
   originatorInfo: any;
   walletInfo: any;
 
-  constructor({ CommLayer = Socket }: RemoteCommunicationOptions) {
+  constructor({ CommLayer = Socket, otherPublicKey, webRTCLib }: RemoteCommunicationOptions) {
     super();
 
-    this.commLayer = new CommLayer();
+    this.commLayer = new CommLayer({ otherPublicKey, webRTCLib });
 
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
@@ -95,10 +96,10 @@ export default class RemoteCommunication extends EventEmitter2 {
   generateChannelId() {
     if (this.channelId)
       throw new Error(
-        'Channel already create, you must create a new instance of the SDK',
+        'Channel already created, you must create a new instance of the SDK',
       );
-    this.channelId = uuidv4();
-    this.commLayer.createChannel(this.channelId);
-    return this.channelId;
+    const { channelId, pubKey } = this.commLayer.createChannel();
+    this.channelId = channelId;
+    return { channelId, pubKey }
   }
 }

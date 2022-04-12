@@ -16,7 +16,6 @@ class WalletConnectPostMessageStream extends Duplex {
   }
 
   _write(msg, _encoding, callback) {
-    console.log('WRITE WC', msg);
     if (!WalletConnect.isConnected()) return callback();
 
     try {

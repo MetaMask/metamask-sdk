@@ -1,6 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import KeyExchange from './KeyExchange';
+import { v4 as uuidv4 } from 'uuid';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
@@ -15,12 +16,12 @@ export default class Socket extends EventEmitter2 {
 
   keyExchange: KeyExchange;
 
-  constructor() {
+  constructor({ otherPublicKey }) {
     super();
 
     this.socket = io('https://lizard-positive-office.glitch.me/');
 
-    this.keyExchange = new KeyExchange({ commLayer: this });
+    this.keyExchange = new KeyExchange({ commLayer: this, otherPublicKey, sendPublicKey: false });
 
     this.keyExchange.on('keys_exchanged', () => {
       this.emit('clients_ready', {
@@ -101,11 +102,10 @@ export default class Socket extends EventEmitter2 {
     this.socket.emit('join_channel', id);
   }
 
-  createChannel(id) {
+  createChannel() {
     this.isOriginator = true;
-    if (!id) {
-      throw new Error('Id must exist');
-    }
-    this.socket.emit('join_channel', id);
+    const channelId = uuidv4();
+    this.socket.emit('join_channel', channelId);
+    return { channelId, pubKey: this.keyExchange.myPublicKey };
   }
 }

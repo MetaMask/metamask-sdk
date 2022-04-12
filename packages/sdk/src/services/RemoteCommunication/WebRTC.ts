@@ -1,7 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
-import RemoteConnection from '../RemoteConnection';
 
 /*#if _REACTNATIVE
 import {
@@ -32,14 +31,14 @@ export default class WebRTC extends EventEmitter2 {
   RTCSessionDescription: any;
   RTCIceCandidate: any;
 
-  constructor() {
+  constructor({ otherPublicKey, webRTCLib }) {
     super();
 
 
-    if(RemoteConnection.webRTCLib){
-      this.RTCPeerConnection = RemoteConnection.webRTCLib.RTCPeerConnection
-      this.RTCSessionDescription = RemoteConnection.webRTCLib.RTCPeerConnection
-      this.RTCIceCandidate = RemoteConnection.webRTCLib.RTCPeerConnection
+    if(webRTCLib){
+      this.RTCPeerConnection = webRTCLib.RTCPeerConnection
+      this.RTCSessionDescription = webRTCLib.RTCSessionDescription
+      this.RTCIceCandidate = webRTCLib.RTCIceCandidate
     }else{
       this.RTCPeerConnection = RTCPeerConnection
       this.RTCSessionDescription = RTCSessionDescription
@@ -59,7 +58,7 @@ export default class WebRTC extends EventEmitter2 {
 
     this.webrtc = new this.RTCPeerConnection(configuration);
 
-    this.socket = new Socket();
+    this.socket = new Socket({ otherPublicKey });
 
     this.webrtc.onicecandidate = ({ candidate }) => {
       if (candidate) {
@@ -83,7 +82,7 @@ export default class WebRTC extends EventEmitter2 {
       return error;
     };
 
-    this.keyExchange = new KeyExchange({ commLayer: this });
+    this.keyExchange = new KeyExchange({ commLayer: this, otherPublicKey: null, sendPublicKey: true });
 
     this.keyExchange.on('keys_exchanged', () => {
       this.clientsReady = true;
@@ -205,7 +204,7 @@ export default class WebRTC extends EventEmitter2 {
     return this.dataChannel.send(encryptedMessage);
   }
 
-  createChannel(id) {
-    this.socket.createChannel(id);
+  createChannel() {
+    return this.socket.createChannel();
   }
 }
