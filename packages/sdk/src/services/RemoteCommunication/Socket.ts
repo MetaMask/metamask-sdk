@@ -18,7 +18,7 @@ export default class Socket extends EventEmitter2 {
   constructor() {
     super();
 
-    this.socket = io('http://localhost:4000');
+    this.socket = io('https://lizard-positive-office.glitch.me/');
 
     this.keyExchange = new KeyExchange({ commLayer: this });
 

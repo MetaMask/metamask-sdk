@@ -80,7 +80,18 @@ const App: () => Node = () => {
 
   const exampleRequest = async () => {
     try {
-      const result = await ethereum.request({method: 'eth_requestAccounts'});
+      const result = await ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x64',
+            rpcUrls: ['https://dai.poa.network'],
+            chainName: 'xDAI Chain',
+            nativeCurrency: {name: 'xDAI', decimals: 18, symbol: 'xDAI'},
+            blockExplorerUrls: ['https://blockscout.com/poa/xdai'],
+          },
+        ],
+      });
       console.log('RESULT', result);
     } catch (e) {
       console.log('ERROR', e);
