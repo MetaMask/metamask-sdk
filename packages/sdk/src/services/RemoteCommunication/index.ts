@@ -95,7 +95,6 @@ export default class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === 'wallet_info') {
       this.walletInfo = message.walletInfo;
       this.connected = true;
-      console.log("emitting clients_ready");
       this.emit('clients_ready', {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,

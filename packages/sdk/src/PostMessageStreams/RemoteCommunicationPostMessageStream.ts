@@ -30,7 +30,8 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     });
 
     this.comm.on('clients_disconnected', () => {
-      Ethereum.ethereum._handleDisconnect();
+      Ethereum.ethereum._handleAccountsChanged([]);
+      Ethereum.ethereum._handleDisconnect(true);
     })
   }
 
