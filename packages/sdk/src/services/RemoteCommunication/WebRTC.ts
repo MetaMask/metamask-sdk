@@ -2,15 +2,6 @@ import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
 
-/*#if _REACTNATIVE
-import {
-  RTCPeerConnection,
-  RTCSessionDescription,
-  RTCIceCandidate,
-} from 'react-native-webrtc';
-//#else */
-
-//#endif
 export default class WebRTC extends EventEmitter2 {
   handshakeDone = false;
 

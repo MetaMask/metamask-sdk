@@ -46,7 +46,7 @@ const config = [
     ],
   },
   {
-    external: ['react-native-webrtc'],
+    external: listDepForRollup,
     input: 'src/index.ts',
     output: [
       {

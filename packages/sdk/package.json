@@ -52,9 +52,6 @@
     "util": "^0.12.4",
     "uuid": "^8.3.2"
   },
-  "peerDependencies": {
-    "react-native-webrtc": "*"
-  },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
@@ -72,7 +69,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
-    "react-native-webrtc": "^1.100.0",
     "rollup": "^2.70.0",
     "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-natives": "^0.7.5",
@@ -85,8 +81,7 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "canvas": true,
-      "react-native-webrtc": true
+      "canvas": true
     }
   }
 }
