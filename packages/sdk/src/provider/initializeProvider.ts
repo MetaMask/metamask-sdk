@@ -51,7 +51,7 @@ const initializeProvider = ({
           wait: false,
         });
 
-        // Installation/connection is now completed so we are sending the request
+        // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
           return request(...args);
         }

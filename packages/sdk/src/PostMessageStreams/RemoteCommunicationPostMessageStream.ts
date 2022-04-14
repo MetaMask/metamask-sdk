@@ -28,6 +28,10 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     this.comm.on('clients_ready', () => {
       Ethereum.ethereum._initializeState();
     });
+
+    this.comm.on('clients_disconnected', () => {
+      Ethereum.ethereum._handleDisconnect();
+    })
   }
 
   _write(msg, _encoding, callback) {

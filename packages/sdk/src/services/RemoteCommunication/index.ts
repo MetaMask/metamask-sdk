@@ -12,23 +12,29 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   channelId = null;
 
-  clientsDisconnected = null;
-
   connected = false;
   isOriginator: boolean;
   originatorInfo: any;
   walletInfo: any;
 
-  constructor({ CommLayer = Socket, otherPublicKey, webRTCLib }: RemoteCommunicationOptions) {
+  constructor({
+    CommLayer = Socket,
+    otherPublicKey,
+    webRTCLib,
+  }: RemoteCommunicationOptions) {
     super();
 
+    this.setupCommLayer({CommLayer, otherPublicKey, webRTCLib})
+  }
+
+  setupCommLayer({CommLayer, otherPublicKey, webRTCLib}) {
     this.commLayer = new CommLayer({ otherPublicKey, webRTCLib });
 
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
     });
 
-    this.commLayer.on('clients_ready', ({ isOriginator }) => {
+    this.commLayer.on('clients_ready', ({ isOriginator, id }) => {
       this.isOriginator = isOriginator;
 
       if (!isOriginator) return;
@@ -46,14 +52,20 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_disconnected', () => {
+      this.clean();
       this.commLayer.removeAllListeners();
-      this.clientsDisconnected = true;
+      this.setupCommLayer({CommLayer, otherPublicKey, webRTCLib})
       this.emit('clients_disconnected');
     });
 
     this.commLayer.on('channel_created', (id) => {
       this.emit('channel_created', id);
     });
+  }
+
+  clean() {
+    this.channelId = null;
+    this.connected = false;
   }
 
   connectToChannel(id) {
@@ -83,6 +95,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === 'wallet_info') {
       this.walletInfo = message.walletInfo;
       this.connected = true;
+      console.log("emitting clients_ready");
       this.emit('clients_ready', {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,
@@ -94,12 +107,12 @@ export default class RemoteCommunication extends EventEmitter2 {
   }
 
   generateChannelId() {
-    if (this.channelId)
-      throw new Error(
-        'Channel already created, you must create a new instance of the SDK',
-      );
+    if (this.connected) throw new Error('Channel already created');
+
+    this.clean();
+
     const { channelId, pubKey } = this.commLayer.createChannel();
     this.channelId = channelId;
-    return { channelId, pubKey }
+    return { channelId, pubKey };
   }
 }

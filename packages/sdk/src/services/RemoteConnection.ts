@@ -16,7 +16,13 @@ const RemoteConnection = {
         CommunicationLayerPreference.WEBRTC
           ? WebRTC
           : Socket;
-      this.RemoteCommunication = new RemoteCommunication({ CommLayer, webRTCLib: this.webRTCLib });
+      this.RemoteCommunication = new RemoteCommunication({
+        CommLayer,
+        webRTCLib: this.webRTCLib,
+      });
+      this.RemoteCommunication.on('clients_disconnected', () => {
+        this.sentFirstConnect = false;
+      });
     }
 
     return this.RemoteCommunication;
@@ -27,8 +33,8 @@ const RemoteConnection = {
   },
   sentFirstConnect: false,
   startConnection() {
-    const {channelId, pubKey} = this.getConnector().generateChannelId();
-    
+    const { channelId, pubKey } = this.getConnector().generateChannelId();
+
     const link = `${'https://metamask.app.link/connect?channelId='}${encodeURIComponent(
       channelId,
     )}&comm=${encodeURIComponent(
@@ -45,7 +51,7 @@ const RemoteConnection = {
       Platform.openLink?.(link);
     }
     return new Promise((resolve) => {
-      this.getConnector().on('clients_ready', () => {
+      this.getConnector().once('clients_ready', () => {
         if (this.sentFirstConnect) {
           return;
         }

@@ -86,7 +86,7 @@ export default class MetaMaskSDK {
         shouldShimWeb3,
       });
 
-      // Setup provider streams, only needed for our in-app browser
+      // Setup provider streams, only needed for our mobile in-app browser
       const PortStream = PortStreams.getPortStreamToUse();
       if (PortStream) {
         setupProviderStreams(PortStream);

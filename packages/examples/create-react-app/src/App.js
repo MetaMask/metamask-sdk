@@ -3,7 +3,8 @@ import "./App.css";
 import MetaMaskSDK from "@metamask/sdk"
 import WC from '@walletconnect/client'
 
-const sdk = new MetaMaskSDK({WalletConnectInstance:WC, forceRestartWalletConnect: false, communicationLayerPreference: 'webrtc'});
+const sdk = new MetaMaskSDK({});
+
 function App() {
   const connect = () => {
     window.ethereum

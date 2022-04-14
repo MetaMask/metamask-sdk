@@ -28,9 +28,8 @@ const InstallModal = ({ link }) => {
     const modalFader = document.getElementById('fader');
     const modalWindow = document.getElementById('modal');
 
-    modalFader.style.display = 'none';
-
-    modalWindow.style.display = 'none';
+    modalFader.remove();
+    modalWindow.remove();
   }
 
   const qr = document.getElementById('qr');

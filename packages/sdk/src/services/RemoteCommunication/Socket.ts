@@ -19,7 +19,7 @@ export default class Socket extends EventEmitter2 {
   constructor({ otherPublicKey }) {
     super();
 
-    this.socket = io('https://lizard-positive-office.glitch.me/');
+    this.socket = io('https://socket.codefi.network/');
 
     this.keyExchange = new KeyExchange({ commLayer: this, otherPublicKey, sendPublicKey: false });
 
