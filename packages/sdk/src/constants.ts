@@ -11,7 +11,7 @@ export enum ProviderConstants {
 }
 
 export const METHODS_TO_REDIRECT = {
-  eth_requestAccounts: false,
+  eth_requestAccounts: true,
   eth_sendTransaction: true,
   eth_signTransaction: true,
   eth_sign: true,

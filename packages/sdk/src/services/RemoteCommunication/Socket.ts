@@ -19,9 +19,13 @@ export default class Socket extends EventEmitter2 {
   constructor({ otherPublicKey }) {
     super();
 
-    this.socket = io('https://socket.codefi.network/');
+    this.socket = io('https://lizard-positive-office.glitch.me/');
 
-    this.keyExchange = new KeyExchange({ commLayer: this, otherPublicKey, sendPublicKey: false });
+    this.keyExchange = new KeyExchange({
+      commLayer: this,
+      otherPublicKey,
+      sendPublicKey: false,
+    });
 
     this.keyExchange.on('keys_exchanged', () => {
       this.emit('clients_ready', {
@@ -41,7 +45,29 @@ export default class Socket extends EventEmitter2 {
       this.emit('channel_created', id);
     });
 
-    this.socket.on('message', ({ id, message, error }) => {
+    this.socket.on('clients_disconnected', () => {
+      this.emit('clients_disconnected');
+    });
+  }
+
+  receiveMessages(channelId) {
+    this.socket.on(`clients_connected-${channelId}`, (id) => {
+      this.channelId = id;
+      this.clientsConnected = true;
+      if (this.isOriginator) {
+        this.keyExchange.start();
+      }
+    });
+
+    this.socket.on(`channel_created-${channelId}`, (id) => {
+      this.emit('channel_created', id);
+    });
+
+    this.socket.on(`clients_disconnected-${channelId}`, () => {
+      this.emit('clients_disconnected');
+    });
+
+    this.socket.on(`message-${channelId}`, ({ id, message, error }) => {
       if (error) {
         throw new Error(error);
       }
@@ -59,10 +85,6 @@ export default class Socket extends EventEmitter2 {
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
       return this.emit('message', { message: messageReceived });
-    });
-
-    this.socket.on('clients_disconnected', () => {
-      this.emit('clients_disconnected');
     });
   }
 
@@ -99,12 +121,14 @@ export default class Socket extends EventEmitter2 {
 
   connectToChannel(id) {
     this.channelId = id;
+    this.receiveMessages(this.channelId);
     this.socket.emit('join_channel', id);
   }
 
   createChannel() {
     this.isOriginator = true;
     const channelId = uuidv4();
+    this.receiveMessages(channelId);
     this.socket.emit('join_channel', channelId);
     return { channelId, pubKey: this.keyExchange.myPublicKey };
   }

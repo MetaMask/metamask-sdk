@@ -26,19 +26,18 @@ io.on('connection', (socket) => {
     console.log('create channel', id);
     const room = io.sockets.adapter.rooms.get(id);
     if (!id) {
-      return socket.emit({ error: 'must specify an id' });
+      return socket.emit(`message-${id}`, { error: 'must specify an id' });
     }
 
     if (room) {
-      return socket.emit({ error: 'room already created' });
+      return socket.emit(`message-${id}`, { error: 'room already created' });
     }
     socket.join(id);
-    return socket.emit('channel_created', id);
+    return socket.emit(`channel_created-${id}`, id);
   });
 
   socket.on('message', ({ id, message }) => {
-    console.log('message', { id, message });
-    socket.to(id).emit('message', { id, message });
+    socket.to(id).emit(`message-${id}`, { id, message });
   });
 
   socket.on('join_channel', (id) => {
@@ -47,19 +46,20 @@ io.on('connection', (socket) => {
     const room = io.sockets.adapter.rooms.get(id);
 
     if (room && room.size > 2) {
-      return socket.emit('message', { error: 'room already full' });
+      socket.emit(`message-${id}`, { error: 'room already full' });
+      return io.sockets.in(id).socketsLeave(id);
     }
 
     socket.join(id);
 
     socket.on('disconnect', function () {
       console.log('disconnected');
-      io.sockets.in(id).emit('clients_disconnected');
+      io.sockets.in(id).emit(`clients_disconnected-${id}`);
       io.sockets.in(id).socketsLeave(id);
     });
 
     if (room && room.size === 2) {
-      socket.to(id).emit('clients_connected', id);
+      socket.to(id).emit(`clients_connected-${id}`, id);
     }
     return true;
   });
