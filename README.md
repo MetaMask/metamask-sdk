@@ -43,6 +43,33 @@ ethereum.request({method: 'eth_requestAccounts', params: []})
 
 ## Javascript-based apps
 
+The installation and usage of the MetaMask SDK is very similar for all javascript-based apps. There are some nuances that are explained for each platform on the sections bellow.
+
+The way to instantiate the MetaMask SDK is the same for all javascript-based apps and the options that you can pass to configure the SDK are also the same:
+```
+const ethereum = new MetaMaskSDK(options)
+```
+
+#### For a list of possible `options` check the following table:
+
+| Option name                     | Type                            | Default value        | Description           |
+| ------------------------------- |:-------------------------------:|:--------------------:|:---------------------:|
+| `injectProvider`                | `boolean`                       | `true`               | Whether to inject the provider on the window object, it won't inject for nodeJS or React Native as window object is not available |              
+| `forceInjectProvider`           | `boolean`                       | `false`              | Forces injection of provider even if another provider is already present on the window object |
+| `forceDeleteProvider`           | `boolean`                       | `false`              | Forces the deletion of a provider that exists on window |
+| `checkInstallationImmediately`  | `boolean`                       | `false`              | The SDK normally checks if MetaMask is installed once a call to `eth_requestAccounts` is made, but if `checkInstallationImmediately` it will check before any call is made |
+| `checkInstallationOnAllCalls`   | `boolean`                       | `false`              | Installation is normally checked once a call to `eth_requestAccounts` is made, but if `checkInstallationOnAllCalls` is `true` then it will check on all calls |
+| `shouldShimWeb3`                | `boolean`                       | `true`               | If `window.web3` should be shimmed for legacy compatibility purposes, for reference check [here](https://docs.metamask.io/guide/provider-migration.html#replacing-window-web3) |
+| `preferDesktop`                 | `boolean`                       | `false`              | If a web dapp is running on a desktop browser and MetaMask Extension is not installed, the SDK normally gives the option for the user to connect with their MetaMask Mobile wallet by scanning a QR code. If `preferDesktop` is `true`, then the option to connect with Mobile is not offered and it will automatically guide the user to install MetaMask Extension. |
+| `openDeeplink`                  | `(deeplinkUrl: string) => void` | `undefined`          | Different platforms have different ways of opening deeplinks, for example, on web we do `window.open`, but on React Native we do `Linking.open`, this function receives the deeplink url and gives the developers a chance to customize how to best open it |
+| `communicationLayerPreference`  | `"socket" or "webrtc" : string` | `socket`             | What type of communication library should the dapp and MetaMask wallet use to communicate between each other, options are "socket" or "webrtc. Waku is coming soon. |
+| `webRTCLib`                     | `WebRTC Lib`                    | `undefined`          | WebRTC doesn't come installed on the SDK by default, so you need to install it on your project first. Check the React Native section to see how to do this. |
+| `WalletConnectInstance`         | `WalletConnect Lib`             | `undefined`          | WalletConnect is another way of connecting your dapp to MetaMask wallet but it doesn't come installed by default, check here on how to install it |
+| `forceRestartWalletConnect`     | `boolean`                       | `false`              | If you are using WalletConnect, sometimes it's useful to kill the previous WC session and start another one. To do that set `forceRestartWalletConnect` to true |
+
+
+### Web
+
 Install the SDK:
 ```
 yarn add @metamask/sdk
@@ -50,37 +77,120 @@ or
 npm i @metamask/sdk
 ```
 
-Import the SDK (for possible parameters check this):
+Import the SDK:
 ```
 import MetaMaskSDK from '@metamask/sdk'
-const ethereum = new MetaMaskSDK({ params })
 ```
 
-For a list of possible `params` check the following table:
+If you are using vannila Javascript, you can alternatively import via html script:
+```
+<script src="node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"/>
+```
 
-| Param name                     | Type                            | Default value        | Description           |
-| ------------------------------ |:-------------------------------:|:--------------------:|:---------------------:|
-| `injectProvider`               | `boolean`                       | `true`               | Whether to inject the provider on the window object, it won't inject for nodeJS or React Native as window object is not available |              
-| `forceInjectProvider`          | `boolean`                       | `false`              | Forces injection of provider even if another provider is already present on the window object |
-| `forceDeleteProvider`          | `boolean`                       | `false`              | Forces the deletion of a provider that exists on window |
-| `checkInstallationImmediately` | `boolean`                       | `false`              | The SDK normally checks if MetaMask is installed once a call to `eth_requestAccounts` is made, but if `checkInstallationImmediately` it will check before any call is made |
-| `checkInstallationOnAllCalls`  | `boolean`                       | `false`              | Installation is normally checked once a call to `eth_requestAccounts` is made, but if `checkInstallationOnAllCalls` is `true` then it will check on all calls |
-| `shouldShimWeb3`               | `boolean`                       | `true`               | If `window.web3` should be shimmed for legacy compatibility purposes, for reference check [here](https://docs.metamask.io/guide/provider-migration.html#replacing-window-web3) |
-| `preferDesktop`                | `boolean`                       | `false`              | If a web dapp is running on a desktop browser and MetaMask Extension is not installed, the SDK normally gives the option for the user to connect with their MetaMask Mobile wallet by scanning a QR code. If `preferDesktop` is `true`, then the option to connect with Mobile is not offered and it will automatically guide the user to install MetaMask Extension. |
-| `openDeeplink`                 | `(deeplinkUrl: string) => void` | `undefined`          | Different platforms have different ways of opening deeplinks, for example, on web we do `window.open`, but on React Native we do `Linking.open`, this function receives the deeplink url and gives the developers a chance to customize how to best open it |
-| `communicationLayerPreference` | `"socket" or "webrtc" : string` | `socket`             | What type of communication library should the dapp and MetaMask wallet use to communicate between each other, you can choose socket or webrtc. Waku is coming soon. |
-| `webRTCLib`                    | `WebRTC Lib`                    | `undefined`          | WebRTC doesn't come installed on the SDK by default, so you need to install it on your project first. Check the React Native section to see how to do this. |
-| `WalletConnectInstance`        | `WalletConnect Lib`             | `false`              | WalletConnect is another way of connecting your dapp to MetaMask wallet but it doesn't come installed by default, check here on how to install it |
-| `forceRestartWalletConnect`    | `boolean`                       | `false`              | If you are using WalletConnect, sometimes it's useful to kill the previous WC session and start another one. To do that set `forceRestartWalletConnect` to true |
+Instantiate the SDK (for possible options check [here](#for-a-list-of-possible-options-check-the-following-table)):
+```
+const ethereum = new MetaMaskSDK({ options })
+```
 
+Use the SDK (for possible methods to call check [here](https://docs.metamask.io/guide/ethereum-provider.html))
+```
+ethereum.request({method: 'eth_requestAccounts', params: []})
+```
 
-### Web
+If `injectProvider` is `true` then the `ethereum` object should also be available in `window.ethereum`.
+
+#### Web examples:
+#### [Check a React example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/create-react-app)
+#### [Check a vanila Javascript example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/pure-javascript)
 
 ### React Native
 
-### Electron
+Install the SDK:
+```
+yarn add @metamask/sdk
+or
+npm i @metamask/sdk
+```
+
+Install [rn-nodeify](https://github.com/tradle/rn-nodeify):
+```
+yarn add --dev rn-nodeify
+or
+npm i --dev rn-nodeify
+```
+
+Install libraries
+```
+yarn add react-native-crypto
+yarn add react-native-randombytes
+yarn add process
+yarn add stream
+yarn add events
+```
+
+Insert rn-nodeify postinstall script into `package.json` -> `"scripts"`
+```
+"postinstall": "rn-nodeify --install 'crypto,process,stream,events' --hack"
+```
+
+Import the SDK:
+```
+import MetaMaskSDK from '@metamask/sdk'
+```
+
+Instantiate the SDK (for possible options check [here](#for-a-list-of-possible-options-check-the-following-table)):
+```
+const ethereum = new MetaMaskSDK({ options })
+```
+
+Use the SDK (for possible methods to call check [here](https://docs.metamask.io/guide/ethereum-provider.html))
+```
+ethereum.request({method: 'eth_requestAccounts', params: []})
+```
+
+#### React Native examples:
+#### [Check a React Native example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/reactNativeApp)
 
 ### NodeJS
+
+Install the SDK:
+```
+yarn add @metamask/sdk
+or
+npm i @metamask/sdk
+```
+
+Instantiate the SDK (for possible options check [here](#for-a-list-of-possible-options-check-the-following-table)):
+```
+const ethereum = new MetaMaskSDK({ options })
+```
+
+Use the SDK (for possible methods to call check [here](https://docs.metamask.io/guide/ethereum-provider.html))
+```
+ethereum.request({method: 'eth_requestAccounts', params: []})
+```
+
+#### NodeJS examples:
+#### [Check a NodeJS example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/nodejs)
+
+### Electron
+
+Install the SDK:
+```
+yarn add @metamask/sdk
+or
+npm i @metamask/sdk
+```
+
+Instantiate the SDK (for possible options check [here](#for-a-list-of-possible-options-check-the-following-table)):
+```
+const ethereum = new MetaMaskSDK({ options })
+```
+
+Use the SDK (for possible methods to call check [here](https://docs.metamask.io/guide/ethereum-provider.html))
+```
+ethereum.request({method: 'eth_requestAccounts', params: []})
+```
 
 ## Games
 ### Unity
