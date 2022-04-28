@@ -42,22 +42,37 @@ ethereum.request({method: 'eth_requestAccounts', params: []})
 ```
 
 ## Javascript-based apps
-| Param                        | Description           | Type                           | Default value        |
-| ---------------------------- |:---------------------:|:------------------------------:|:--------------------:|
-| dontInjectProvider           |                       | `boolean`                      |                      |              
-| forceImportProvider          |                       | `boolean`                      |                      |
-| forceDeleteProvider          |                       | `boolean`                      |                      |
-| neverImportProvider          |                       | `boolean`                      |                      |
-| checkInstallationImmediately |                       | `boolean`                      |                      |
-| forceRestartWalletConnect    |                       | `boolean`                      |                      |
-| checkInstallationOnAllCalls  |                       | `boolean`                      |                      |
-| preferDesktop                |                       | `boolean`                      |                      |
-| openLink                     |                       | `(string) => void`             |                      |
-| WalletConnectInstance        |                       | `any`                          |                      |
-| shouldShimWeb3               |                       | `boolean`                      |                      |
-| webRTCLib                    |                       | `any`                          |                      |
-| showQRCode                   |                       | `any`                          |                      |
-| communicationLayerPreference |                       | `CommunicationLayerPreference` |                      |
+
+Install the SDK:
+```
+yarn add @metamask/sdk
+or
+npm i @metamask/sdk
+```
+
+Import the SDK (for possible parameters check this):
+```
+import MetaMaskSDK from '@metamask/sdk'
+const ethereum = new MetaMaskSDK({ params })
+```
+
+For a list of possible `params` check the following table:
+
+| Param name                     | Type                            | Default value        | Description           |
+| ------------------------------ |:-------------------------------:|:--------------------:|:---------------------:|
+| `injectProvider`               | `boolean`                       | `true`               | Whether to inject the provider on the window object, it won't inject for nodeJS or React Native as window object is not available |              
+| `forceInjectProvider`          | `boolean`                       | `false`              | Forces injection of provider even if another provider is already present on the window object |
+| `forceDeleteProvider`          | `boolean`                       | `false`              | Forces the deletion of a provider that exists on window |
+| `checkInstallationImmediately` | `boolean`                       | `false`              | The SDK normally checks if MetaMask is installed once a call to `eth_requestAccounts` is made, but if `checkInstallationImmediately` it will check before any call is made |
+| `checkInstallationOnAllCalls`  | `boolean`                       | `false`              | Installation is normally checked once a call to `eth_requestAccounts` is made, but if `checkInstallationOnAllCalls` is `true` then it will check on all calls |
+| `shouldShimWeb3`               | `boolean`                       | `true`               | If `window.web3` should be shimmed for legacy compatibility purposes, for reference check [here](https://docs.metamask.io/guide/provider-migration.html#replacing-window-web3) |
+| `preferDesktop`                | `boolean`                       | `false`              | If a web dapp is running on a desktop browser and MetaMask Extension is not installed, the SDK normally gives the option for the user to connect with their MetaMask Mobile wallet by scanning a QR code. If `preferDesktop` is `true`, then the option to connect with Mobile is not offered and it will automatically guide the user to install MetaMask Extension. |
+| `openDeeplink`                 | `(deeplinkUrl: string) => void` | `undefined`          | Different platforms have different ways of opening deeplinks, for example, on web we do `window.open`, but on React Native we do `Linking.open`, this function receives the deeplink url and gives the developers a chance to customize how to best open it |
+| `communicationLayerPreference` | `"socket" or "webrtc" : string` | `socket`             | What type of communication library should the dapp and MetaMask wallet use to communicate between each other, you can choose socket or webrtc. Waku is coming soon. |
+| `webRTCLib`                    | `WebRTC Lib`                    | `undefined`          | WebRTC doesn't come installed on the SDK by default, so you need to install it on your project first. Check the React Native section to see how to do this. |
+| `WalletConnectInstance`        | `WalletConnect Lib`             | `false`              | WalletConnect is another way of connecting your dapp to MetaMask wallet but it doesn't come installed by default, check here on how to install it |
+| `forceRestartWalletConnect`    | `boolean`                       | `false`              | If you are using WalletConnect, sometimes it's useful to kill the previous WC session and start another one. To do that set `forceRestartWalletConnect` to true |
+
 
 ### Web
 
