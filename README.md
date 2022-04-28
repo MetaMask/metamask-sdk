@@ -6,7 +6,7 @@ Although users can straightforwardly access dapps within a desktop browser with 
 
 The MetaMask SDK is a library that can be installed by developers on their projects and will automatically guide their users to easily connect with a MetaMask wallet client. For instance, for dapps running on a desktop browser, the SDK will check if Extension is installed and if not it will prompt the user to install it or to connect via QR code with their MetaMask Mobile wallet. Another example, for native mobile applications, the SDK will automatically deeplink into MetaMask Mobile wallet to make the connection.
 
-The MetaMask SDK instance returns a provider, this provider is the ```ethererum``` object that developers are already used to which is [here](https://docs.metamask.io/guide/ethereum-provider.html#table-of-contents). This provider will now be available for:
+The MetaMask SDK instance returns a provider, this provider is the ```ethererum``` object that developers are already used to which is [here](https://docs.metamask.io/guide/ethereum-provider.html). This provider will now be available for:
 - [Javascript-based apps](#javascript-based-apps)
   - [Web (d)apps](#web)
   - [React Native](#react-native)
@@ -42,6 +42,23 @@ ethereum.request({method: 'eth_requestAccounts', params: []})
 ```
 
 ## Javascript-based apps
+| Param                        | Description           | Type                           | Default value        |
+| ---------------------------- |:---------------------:|:------------------------------:|:--------------------:|
+| dontInjectProvider           |                       | `boolean`                      |                      |              
+| forceImportProvider          |                       | `boolean`                      |                      |
+| forceDeleteProvider          |                       | `boolean`                      |                      |
+| neverImportProvider          |                       | `boolean`                      |                      |
+| checkInstallationImmediately |                       | `boolean`                      |                      |
+| forceRestartWalletConnect    |                       | `boolean`                      |                      |
+| checkInstallationOnAllCalls  |                       | `boolean`                      |                      |
+| preferDesktop                |                       | `boolean`                      |                      |
+| openLink                     |                       | `(string) => void`             |                      |
+| WalletConnectInstance        |                       | `any`                          |                      |
+| shouldShimWeb3               |                       | `boolean`                      |                      |
+| webRTCLib                    |                       | `any`                          |                      |
+| showQRCode                   |                       | `any`                          |                      |
+| communicationLayerPreference |                       | `CommunicationLayerPreference` |                      |
+
 ### Web
 
 ### React Native
@@ -64,3 +81,5 @@ Coming soon
 Check [here](#react-native)
 
 # Concepts
+## Communication Layer
+### Security
