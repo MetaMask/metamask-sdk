@@ -6,7 +6,7 @@ Although users can straightforwardly access dapps within a desktop browser with 
 
 The MetaMask SDK is a library that can be installed by developers on their projects and will automatically guide their users to easily connect with a MetaMask wallet client. For instance, for dapps running on a desktop browser, the SDK will check if Extension is installed and if not it will prompt the user to install it or to connect via QR code with their MetaMask Mobile wallet. Another example, for native mobile applications, the SDK will automatically deeplink into MetaMask Mobile wallet to make the connection.
 
-The MetaMask SDK instance returns a provider, this provider is the ```ethererum``` object that developers are already used to which is [here](https://docs.metamask.io/guide/ethereum-provider.html). This provider will now be available for:
+The MetaMask SDK instance returns a provider, this provider is the ```ethereum``` object that developers are already used to which is [here](https://docs.metamask.io/guide/ethereum-provider.html). This provider will now be available for:
 - [Javascript-based apps](#javascript-based-apps)
   - [Web (d)apps](#web)
   - [React Native](#react-native)
@@ -53,7 +53,7 @@ const ethereum = new MetaMaskSDK(options)
 #### For a list of possible `options` check the following table:
 
 | Option name                     | Type                            | Default value        | Description           |
-| ------------------------------- |:-------------------------------:|:--------------------:|:---------------------:|
+| ------------------------------- |:-------------------------------:|:--------------------:| --------------------- |
 | `injectProvider`                | `boolean`                       | `true`               | Whether to inject the provider on the window object, it won't inject for nodeJS or React Native as window object is not available |              
 | `forceInjectProvider`           | `boolean`                       | `false`              | Forces injection of provider even if another provider is already present on the window object |
 | `forceDeleteProvider`           | `boolean`                       | `false`              | Forces the deletion of a provider that exists on window |
@@ -82,7 +82,7 @@ Import the SDK:
 import MetaMaskSDK from '@metamask/sdk'
 ```
 
-If you are using vannila Javascript, you can alternatively import via html script:
+If you are using vanilla Javascript, you can alternatively import via html script:
 ```
 <script src="node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"/>
 ```
@@ -101,7 +101,7 @@ If `injectProvider` is `true` then the `ethereum` object should also be availabl
 
 #### Web examples:
 #### [Check a React example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/create-react-app)
-#### [Check a vanila Javascript example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/pure-javascript)
+#### [Check a vanilla Javascript example here](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/pure-javascript)
 
 ### React Native
 
@@ -217,7 +217,7 @@ Assuming a `dApp` and a user with `MetaMask Mobile app` (`MMM app`) installed, t
 2. `dApp` - sends deeplink containing `session uuid` + `Dpub`
 3. `MMM app` - establishes connection on `session uuid` "channel" (not encrypted)
 4. `MMM app` - generates ECDH `Mpub` `mpriv` keys
-5. `MMM app` - uses `Dpub` to calculate the `simmetric key`
+5. `MMM app` - uses `Dpub` to calculate the `symmetric key`
 6. `MMM app` - sends `Mpub` to dApp via `session guid` "channel" (not encrypted)
 7. `dApp` - receives `Mpub` and calculates the `symmetric key`
 8. From now on, `dApp` and `MMM app` can use the same calculated `symmetric key` with `AES-256-GCM` to encrypt everything is passed on `session uuid` "channel"
