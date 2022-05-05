@@ -33,15 +33,19 @@ const WalletConnect = {
             this.getConnector().uri,
           )}`;
 
-          const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
+          /*#if _REACTNATIVE
+          const showQRCode = false
+          //#else */
+          const showQRCode = true;
+          //#endif
 
-          if (isDesktop || Platform.showQRCode) {
+          if (showQRCode) {
             InstallModal({ link });
             console.log('OPEN LINK QR CODE', link);
           } else {
             console.log('OPEN LINK', link);
             // window.location.assign(link);
-            Platform.openLink(link);
+            Platform.openDeeplink(link);
           }
 
           this.getConnector().on('connect', () => {

@@ -11,19 +11,17 @@ import { CommunicationLayerPreference } from './constants';
 import RemoteConnection from './services/RemoteConnection';
 
 type MetaMaskSDKOptions = {
-  dontInjectProvider?: boolean;
-  forceImportProvider?: boolean;
+  injectProvider?: boolean;
+  forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
-  neverImportProvider?: boolean;
   checkInstallationImmediately?: boolean;
   forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
-  openLink?: (string) => void;
+  openDeeplink?: (string) => void;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any
-  showQRCode?: any
   communicationLayerPreference?: CommunicationLayerPreference
 };
 export default class MetaMaskSDK {
@@ -31,10 +29,9 @@ export default class MetaMaskSDK {
 
   constructor({
     // Provider
-    dontInjectProvider,
-    forceImportProvider,
+    injectProvider = true,
+    forceInjectProvider,
     forceDeleteProvider,
-    neverImportProvider,
     // Shim web3 on Provider
     shouldShimWeb3 = true,
     // Installation
@@ -42,8 +39,7 @@ export default class MetaMaskSDK {
     checkInstallationOnAllCalls,
     // Platform settings
     preferDesktop,
-    openLink,
-    showQRCode,
+    openDeeplink,
     communicationLayerPreference = CommunicationLayerPreference.SOCKET,
     // WalletConnect
     WalletConnectInstance,
@@ -54,12 +50,11 @@ export default class MetaMaskSDK {
     const platform = Platform.getPlatform();
 
     if (
-      !neverImportProvider &&
-      (forceImportProvider ||
+      (forceInjectProvider ||
         platform === PlatformName.NonBrowser ||
         shouldInjectProvider())
     ) {
-      if (forceImportProvider && forceDeleteProvider) {
+      if (forceInjectProvider && forceDeleteProvider) {
         Ethereum.ethereum = null;
         delete window.ethereum;
       }
@@ -68,12 +63,8 @@ export default class MetaMaskSDK {
       WalletConnect.WalletConnectInstance = WalletConnectInstance;
       RemoteConnection.webRTCLib = webRTCLib
 
-      if (openLink) {
-        Platform.openLink = openLink;
-      }
-
-      if(showQRCode){
-        Platform.showQRCode = showQRCode
+      if (openDeeplink) {
+        Platform.preferredOpenLink = openDeeplink;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
@@ -82,7 +73,7 @@ export default class MetaMaskSDK {
       // Inject our provider into window.ethereum
       this.provider = initializeProvider({
         checkInstallationOnAllCalls,
-        dontInjectProvider,
+        injectProvider,
         shouldShimWeb3,
       });
 

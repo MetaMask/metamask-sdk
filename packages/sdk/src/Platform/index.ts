@@ -51,13 +51,12 @@ export const getPlatform = () => {
 const Platform = {
   platform: null,
   preferredOpenLink: null,
-  showQRCode: undefined,
-  openLink(url: string, target?: string) {
+  openDeeplink(url: string, target?: string) {
     if (this.preferredOpenLink) return this.preferredOpenLink(url, target);
 
     if (typeof window !== undefined) return window.open(url, target);
 
-    throw new Error('Please setup the openLink parameter');
+    throw new Error('Please setup the openDeeplink parameter');
   },
   isMetaMaskInstalled,
   isMobile,

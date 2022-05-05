@@ -6,7 +6,7 @@ import Ethereum from '../services/Ethereum';
 
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
-  dontInjectProvider,
+  injectProvider,
   shouldShimWeb3,
 }) => {
   const PostMessageStream = PostMessageStreams.getPostMessageStreamToUse();
@@ -22,7 +22,7 @@ const initializeProvider = ({
   // Initialize provider object (window.ethereum)
   const ethereum = Ethereum.initializeProvider({
     shouldSetOnWindow: !(
-      dontInjectProvider ||
+      !injectProvider ||
       // Don't inject if it's non browser
       platform === PlatformName.NonBrowser
     ),

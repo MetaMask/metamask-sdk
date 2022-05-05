@@ -41,14 +41,18 @@ const RemoteConnection = {
       PostMessageStreams.communicationLayerPreference,
     )}&pubkey=${encodeURIComponent(pubKey)}`;
 
-    const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
+    /*#if _REACTNATIVE
+    const showQRCode = false
+    //#else */
+    const showQRCode = true;
+    //#endif
 
-    if (isDesktop || Platform.showQRCode) {
+    if (showQRCode) {
       InstallModal({ link });
       console.log('OPEN LINK QRCODE', link);
     } else {
       console.log('OPEN LINK', link);
-      Platform.openLink?.(link);
+      Platform.openDeeplink?.(link);
     }
     return new Promise((resolve) => {
       this.getConnector().once('clients_ready', () => {
