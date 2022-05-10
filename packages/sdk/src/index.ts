@@ -7,7 +7,7 @@ import Platform, { PlatformName } from './Platform';
 import Ethereum from './services/Ethereum';
 import PostMessageStreams from './PostMessageStreams';
 import PortStreams from './PortStreams';
-import { CommunicationLayerPreference } from './constants';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import RemoteConnection from './services/RemoteConnection';
 
 type MetaMaskSDKOptions = {

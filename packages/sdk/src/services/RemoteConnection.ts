@@ -1,23 +1,17 @@
-import Platform, { PlatformName } from '../Platform';
-import RemoteCommunication from './RemoteCommunication';
+import Platform from '../Platform';
+import RemoteCommunication from '@metamask/sdk-communication-layer';
 import InstallModal from '../ui/InstallModal';
-import Socket from './RemoteCommunication/Socket';
-import WebRTC from './RemoteCommunication/WebRTC';
 import PostMessageStreams from '../PostMessageStreams';
-import { CommunicationLayerPreference } from '../constants';
 
 const RemoteConnection = {
   RemoteCommunication: null,
   webRTCLib: null,
   getConnector() {
     if (!this.RemoteCommunication) {
-      const CommLayer =
-        PostMessageStreams.communicationLayerPreference ===
-        CommunicationLayerPreference.WEBRTC
-          ? WebRTC
-          : Socket;
+      const commLayer =
+        PostMessageStreams.communicationLayerPreference
       this.RemoteCommunication = new RemoteCommunication({
-        CommLayer,
+        commLayer,
         webRTCLib: this.webRTCLib,
       });
       this.RemoteCommunication.on('clients_disconnected', () => {

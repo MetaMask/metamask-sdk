@@ -1,5 +1,5 @@
 import { WindowPostMessageStream } from '@metamask/post-message-stream';
-import { CommunicationLayerPreference } from '../constants';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import Platform, { PlatformName } from '../Platform';
 import RemoteCommunicationPostMessageStream from './RemoteCommunicationPostMessageStream';
 import WalletConnectPostMessageStream from './WalletConnectPostMessageStream'

@@ -2,7 +2,7 @@ import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
 import { METHODS_TO_REDIRECT, ProviderConstants } from '../constants';
 import Ethereum from '../services/Ethereum';
-import RemoteCommunication from '../services/RemoteCommunication';
+import RemoteCommunication from '@metamask/sdk-communication-layer';
 import RemoteConnection from '../services/RemoteConnection';
 import Platform, { PlatformName } from '../Platform';
 

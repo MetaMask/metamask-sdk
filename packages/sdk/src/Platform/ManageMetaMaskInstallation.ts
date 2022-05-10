@@ -8,7 +8,7 @@ import Platform, {
 import Ethereum from '../services/Ethereum';
 import RemoteConnection from '../services/RemoteConnection';
 import PostMessageStreams from '../PostMessageStreams';
-import { CommunicationLayerPreference } from '../constants';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 

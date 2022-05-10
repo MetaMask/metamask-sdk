@@ -1,20 +1,20 @@
 {
-  "name": "@metamask/sdk",
+  "name": "@metamask/sdk-communication-layer",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/node/cjs/metamask-sdk.js",
-  "module": "dist/browser/es/metamask-sdk.js",
-  "browser": "dist/browser/umd/metamask-sdk.js",
-  "react-native": "dist/react-native/es/metamask-sdk.js",
-  "unpkg": "dist/browser/umd/metamask-sdk.js",
+  "main": "dist/node/cjs/metamask-sdk-communication-layer.js",
+  "module": "dist/browser/es/metamask-sdk-communication-layer.js",
+  "browser": "dist/browser/umd/metamask-sdk-communication-layer.js",
+  "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
+  "unpkg": "dist/browser/umd/metamask-sdk-communication-layer.js",
   "types": "dist/browser/es/index.d.ts",
-  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+    "url": "https://github.com/MetaMask/metamask-sdk-communication-layer/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
+    "url": "https://github.com/MetaMask/metamask-sdk-communication-layer.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -36,18 +36,8 @@
     "build": "rm -rf dist && rollup -c"
   },
   "dependencies": {
-    "@metamask/sdk-communication-layer": "0.0.1",
-    "@metamask/sdk-install-modal-web": "0.0.1",
-    "@metamask/onboarding": "^1.0.1",
-    "@metamask/post-message-stream": "^4.0.0",
-    "@metamask/providers": "^8.1.1",
-    "bowser": "^2.9.0",
-    "extension-port-stream": "^2.0.1",
-    "obj-multiplex": "^1.0.0",
-    "pump": "^3.0.0",
-    "qrcode-terminal": "^0.12.0",
-    "readable-stream": "^2.3.7",
-    "util": "^0.12.4",
+    "eventemitter2": "^6.4.5",
+    "socket.io-client": "^4.4.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

@@ -1,11 +1,18 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
+import WebRTC from './WebRTC';
 
 type RemoteCommunicationOptions = {
-  CommLayer: any;
+  commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
 };
+
+export enum CommunicationLayerPreference {
+  WEBRTC = 'webrtc',
+  SOCKET = 'socket',
+  WALLETCONNECT = 'wc'
+}
 
 export default class RemoteCommunication extends EventEmitter2 {
   commLayer = null;
@@ -18,16 +25,19 @@ export default class RemoteCommunication extends EventEmitter2 {
   walletInfo: any;
 
   constructor({
-    CommLayer = Socket,
+    commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
   }: RemoteCommunicationOptions) {
     super();
 
-    this.setupCommLayer({CommLayer, otherPublicKey, webRTCLib})
+    const CommLayer =
+      commLayer === CommunicationLayerPreference.WEBRTC ? WebRTC : Socket;
+
+    this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib });
   }
 
-  setupCommLayer({CommLayer, otherPublicKey, webRTCLib}) {
+  setupCommLayer({ CommLayer, otherPublicKey, webRTCLib }) {
     this.commLayer = new CommLayer({ otherPublicKey, webRTCLib });
 
     this.commLayer.on('message', ({ message }) => {
@@ -54,7 +64,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.commLayer.on('clients_disconnected', () => {
       this.clean();
       this.commLayer.removeAllListeners();
-      this.setupCommLayer({CommLayer, otherPublicKey, webRTCLib})
+      this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib });
       this.emit('clients_disconnected');
     });
 
