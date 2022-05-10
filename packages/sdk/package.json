@@ -36,10 +36,10 @@
     "build": "rm -rf dist && rollup -c"
   },
   "dependencies": {
+    "@metamask/sdk-install-modal-web": "0.0.1",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
-    "awesome-qr": "^2.1.5-rc.0",
     "bowser": "^2.9.0",
     "canvas": "^2.9.1",
     "eventemitter2": "^6.4.5",

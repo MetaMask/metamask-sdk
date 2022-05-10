@@ -33,6 +33,7 @@ const RemoteConnection = {
   },
   sentFirstConnect: false,
   startConnection() {
+    let installModal = null
     const { channelId, pubKey } = this.getConnector().generateChannelId();
 
     const link = `${'https://metamask.app.link/connect?channelId='}${encodeURIComponent(
@@ -48,7 +49,7 @@ const RemoteConnection = {
     //#endif
 
     if (showQRCode) {
-      InstallModal({ link });
+      installModal = InstallModal({ link });
       console.log('OPEN LINK QRCODE', link);
     } else {
       console.log('OPEN LINK', link);
@@ -56,6 +57,7 @@ const RemoteConnection = {
     }
     return new Promise((resolve) => {
       this.getConnector().once('clients_ready', () => {
+        installModal?.onClose();
         if (this.sentFirstConnect) {
           return;
         }

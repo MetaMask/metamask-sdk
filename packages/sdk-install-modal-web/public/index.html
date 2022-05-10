@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Embeddable Widget Demo</title>
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+  </head>
+  <body>
+    <div class="parent">
+      <div class="header">
+        header
+      </div>
+      <div class="content">
+        content
+        <div id="center">
+          <h1>Example Host Page</h1>
+          <div id="widget-container"></div>
+        </div>
+      </div>
+      <div class="footer">
+        footer
+      </div>
+    </div>
+    <script src="./MyWidget-1.0.0.js"></script>
+    <script>
+      var widget = new MyWidget();
+      widget.mount({
+        parentElement: document.getElementById('widget-container'),
+        displayText: 'hello!'
+      });
+    </script>
+  </body>
+</html>

@@ -29,6 +29,8 @@ const WalletConnect = {
       this.getConnector()
         .createSession()
         .then(() => {
+          let installModal = null
+
           const link = `${'https://metamask.app.link/wc?uri='}${encodeURIComponent(
             this.getConnector().uri,
           )}`;
@@ -40,7 +42,7 @@ const WalletConnect = {
           //#endif
 
           if (showQRCode) {
-            InstallModal({ link });
+            installModal = InstallModal({ link });
             console.log('OPEN LINK QR CODE', link);
           } else {
             console.log('OPEN LINK', link);

@@ -1,0 +1,34 @@
+body {
+  background-color: #343434;
+}
+
+.parent {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-column-gap: 25px;
+  grid-row-gap: 25px;
+}
+
+.header {
+  /* Header */
+  background-color: #eee;
+  grid-area: 1 / 2 / 2 / 5;
+}
+
+.footer {
+  /* Footer */
+  background-color: #eee;
+  grid-area: 5 / 1 / 6 / 6;
+}
+
+.content {
+  /* Main content */
+  background-color: #eee;
+  grid-area: 2 / 1 / 5 / 6;
+}
+
+#center {
+  margin: auto;
+  width: 50%;
+}
