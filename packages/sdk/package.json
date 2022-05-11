@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "dist/node/cjs/metamask-sdk.js",
-  "module": "dist/browser/es/metamask-sdk.js",
+  "module": "dist/node/es/metamask-sdk.js",
   "browser": "dist/browser/umd/metamask-sdk.js",
   "react-native": "dist/react-native/es/metamask-sdk.js",
   "unpkg": "dist/browser/umd/metamask-sdk.js",

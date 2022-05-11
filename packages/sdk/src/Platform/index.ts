@@ -54,9 +54,10 @@ const Platform = {
   openDeeplink(url: string, target?: string) {
     if (this.preferredOpenLink) return this.preferredOpenLink(url, target);
 
-    if (typeof window !== undefined) return window.open(url, target);
+    if (typeof window !== 'undefined') return window.open(url, target);
 
-    throw new Error('Please setup the openDeeplink parameter');
+    //throw new Error('Please setup the openDeeplink parameter');
+    return
   },
   isMetaMaskInstalled,
   isMobile,
