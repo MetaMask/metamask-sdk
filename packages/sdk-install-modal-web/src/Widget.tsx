@@ -9,8 +9,8 @@ import QRCodeStyling from 'qr-code-styling';
 import styles from './styles';
 import CloseButton from './components/CloseButton';
 import InstallIcon from './components/InstallIcon';
-import resetStyles from './helpers/Reset';
-import styled from '@emotion/styled';
+//import resetStyles from './helpers/Reset';
+//import styled from '@emotion/styled';
 
 export type WidgetProps = {
   parentElement?: Element;
@@ -19,13 +19,12 @@ export type WidgetProps = {
   onClose: () => void
 };
 
-const WidgetWrapper = styled.div`
+/*const WidgetWrapper = styled.div`
   ${resetStyles}
   font-family: Roboto,sans-serif;
-`;
+`;*/
 
 const Widget = (props: WidgetProps) => {
-  const [show, setShow] = useState(true);
   const [tab, setTab] = useState<Number>(1);
   const qrCodeContainer = useRef(null);
 

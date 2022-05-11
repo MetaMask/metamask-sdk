@@ -6,6 +6,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
+import { terser } from "rollup-plugin-terser";
 
 const listDepForRollup = [];
 
@@ -43,6 +44,7 @@ const config = [
       globals(),
       builtins({ crypto: true }),
       json(),
+      terser()
     ],
   },
   {
@@ -70,6 +72,7 @@ const config = [
         preferBuiltins: true,
       }),
       json(),
+      terser()
     ],
   },
   {
@@ -100,6 +103,7 @@ const config = [
       nodeResolve({ browser: false, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
       json(),
+      terser()
     ],
   },
 ];

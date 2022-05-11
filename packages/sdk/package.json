@@ -36,11 +36,11 @@
     "build": "rm -rf dist && rollup -c"
   },
   "dependencies": {
-    "@metamask/sdk-communication-layer": "0.0.1",
-    "@metamask/sdk-install-modal-web": "0.0.1",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
+    "@metamask/sdk-communication-layer": "0.0.1",
+    "@metamask/sdk-install-modal-web": "0.0.1",
     "bowser": "^2.9.0",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",
@@ -73,6 +73,7 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-polyfill-node": "^0.8.0",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "typescript": "^4.3.2"
   },
