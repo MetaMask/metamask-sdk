@@ -46,11 +46,9 @@ export default class KeyExchange extends EventEmitter2 {
         this.checkStep(KeySteps.NONE);
         this.step = KeySteps.ACK;
 
-        /*
-        if (message.pubkey && !this.otherPublicKey) {
+        if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
           this.onOtherPublicKey(message.pubkey);
         }
-        */
 
         this.commLayer.sendMessage({
           type: KeySteps.SYNACK,

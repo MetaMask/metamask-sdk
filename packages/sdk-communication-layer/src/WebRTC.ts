@@ -18,28 +18,30 @@ export default class WebRTC extends EventEmitter2 {
   dataChannel = null;
 
   keyExchange: KeyExchange;
+
   RTCPeerConnection: any;
+
   RTCSessionDescription: any;
+
   RTCIceCandidate: any;
 
   constructor({ otherPublicKey, webRTCLib }) {
     super();
 
-
-    if(webRTCLib){
-      this.RTCPeerConnection = webRTCLib.RTCPeerConnection
-      this.RTCSessionDescription = webRTCLib.RTCSessionDescription
-      this.RTCIceCandidate = webRTCLib.RTCIceCandidate
-    }else{
-      this.RTCPeerConnection = RTCPeerConnection
-      this.RTCSessionDescription = RTCSessionDescription
-      this.RTCIceCandidate = RTCIceCandidate
+    if (webRTCLib) {
+      this.RTCPeerConnection = webRTCLib.RTCPeerConnection;
+      this.RTCSessionDescription = webRTCLib.RTCSessionDescription;
+      this.RTCIceCandidate = webRTCLib.RTCIceCandidate;
+    } else {
+      this.RTCPeerConnection = RTCPeerConnection;
+      this.RTCSessionDescription = RTCSessionDescription;
+      this.RTCIceCandidate = RTCIceCandidate;
     }
 
     const configuration = {
       iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' }
-        /*{ urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun.l.google.com:19302' },
+        /* { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:stun3.l.google.com:19302' },
         { urls: 'stun:stun.l.google.com:19302' },
@@ -73,7 +75,11 @@ export default class WebRTC extends EventEmitter2 {
       return error;
     };
 
-    this.keyExchange = new KeyExchange({ commLayer: this, otherPublicKey: null, sendPublicKey: true });
+    this.keyExchange = new KeyExchange({
+      commLayer: this,
+      otherPublicKey: null,
+      sendPublicKey: true,
+    });
 
     this.keyExchange.on('keys_exchanged', () => {
       this.clientsReady = true;
@@ -161,7 +167,7 @@ export default class WebRTC extends EventEmitter2 {
   }
 
   onMessage(message) {
-    /*if (!message.isTrusted) {
+    /* if (!message.isTrusted) {
       throw new Error('Message not trusted');
     }*/
 
