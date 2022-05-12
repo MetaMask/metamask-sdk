@@ -26,6 +26,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     });
 
     this.comm.on('clients_ready', () => {
+      Ethereum.ethereum._state.initialized = true;
       Ethereum.ethereum._initializeState();
     });
 

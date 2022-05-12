@@ -7,6 +7,9 @@ const sdk = new MetaMaskSDK({ });
 
 function App() {
   const connect = () => {
+
+    window.ethereum.on('chainChanged', (chain)=> console.log("CHAIN CHANGED", chain))
+
     window.ethereum
       .request({
         method: "eth_requestAccounts",

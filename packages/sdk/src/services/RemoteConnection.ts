@@ -1,4 +1,4 @@
-import Platform from '../Platform';
+import Platform, { PlatformName } from '../Platform';
 import RemoteCommunication from '@metamask/sdk-communication-layer';
 import InstallModal from '../ui/InstallModal';
 import PostMessageStreams from '../PostMessageStreams';
@@ -39,7 +39,7 @@ const RemoteConnection = {
     /*#if _REACTNATIVE
     const showQRCode = false
     //#else */
-    const showQRCode = true;
+    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb;;
     //#endif
 
     if (showQRCode) {

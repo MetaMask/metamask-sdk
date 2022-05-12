@@ -140,6 +140,7 @@ class WalletConnectPostMessageStream extends Duplex {
     this._onMessage(resAccountsChanged);
 
     // No problem in checking the provider state again
+    Ethereum.ethereum._state.initialized = true;
     Ethereum.ethereum._initializeState();
   }
 
@@ -150,6 +151,7 @@ class WalletConnectPostMessageStream extends Duplex {
     }
 
     if (WalletConnect.isConnected()) {
+      Ethereum.ethereum._state.initialized = true;
       Ethereum.ethereum._initializeState();
     }
 

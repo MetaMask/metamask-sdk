@@ -34,18 +34,11 @@ const initializeProvider = ({
   //@ts-ignore
   metamaskStream.start?.();
 
-  // Wrap ethereum.request call to check if the user needs to install MetaMask
-  // eslint-disable-next-line prefer-destructuring
-  const request = ethereum.request;
-  ethereum.request = async (...args) => {
-    // This will check if the connection was correctly done or if the user needs to install MetaMask
+  const sendRequest = async (method, args, f) => {
     const isInstalled = isMetaMaskInstalled();
 
-    if (!isInstalled && args?.[0]?.method !== 'metamask_getProviderState') {
-      if (
-        args?.[0]?.method === 'eth_requestAccounts' ||
-        checkInstallationOnAllCalls
-      ) {
+    if (!isInstalled && method !== 'metamask_getProviderState') {
+      if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
         // Start installation and once installed try the request again
         const isConnectedNow = await ManageMetaMaskInstallation.start({
           wait: false,
@@ -53,14 +46,25 @@ const initializeProvider = ({
 
         // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
-          return request(...args);
+          return f(...args);
         }
       }
 
       throw new Error('Wait until MetaMask is installed');
     }
 
-    return request(...args);
+    return f(...args);
+  };
+
+  // Wrap ethereum.request call to check if the user needs to install MetaMask
+  const request = ethereum.request;
+  ethereum.request = async (...args) => {
+    return sendRequest(args?.[0].method, args, request);
+  };
+
+  const send = ethereum.send;
+  ethereum.send = async (...args) => {
+    return sendRequest(args?.[0], args, send);
   };
 
   return ethereum;

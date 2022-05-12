@@ -38,7 +38,7 @@ const WalletConnect = {
           /*#if _REACTNATIVE
           const showQRCode = false
           //#else */
-          const showQRCode = true;
+          const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb;;
           //#endif
 
           if (showQRCode) {

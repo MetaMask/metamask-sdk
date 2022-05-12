@@ -1,7 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
-import KeyExchange from './KeyExchange';
 import { v4 as uuidv4 } from 'uuid';
+import KeyExchange from './KeyExchange';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
