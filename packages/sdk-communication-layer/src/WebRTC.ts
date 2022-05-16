@@ -39,14 +39,7 @@ export default class WebRTC extends EventEmitter2 {
     }
 
     const configuration = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        /* { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' },
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:23.21.150.121' },*/
-      ],
+      iceServers: [{ urls: 'stun:15.237.115.65' }],
     };
 
     this.webrtc = new this.RTCPeerConnection(configuration);

@@ -19,6 +19,7 @@ type MetaMaskSDKOptions = {
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
   openDeeplink?: (string) => void;
+  useDeeplink?: boolean,
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any
@@ -40,6 +41,7 @@ export default class MetaMaskSDK {
     // Platform settings
     preferDesktop,
     openDeeplink,
+    useDeeplink,
     communicationLayerPreference = CommunicationLayerPreference.SOCKET,
     // WalletConnect
     WalletConnectInstance,
@@ -65,6 +67,10 @@ export default class MetaMaskSDK {
 
       if (openDeeplink) {
         Platform.preferredOpenLink = openDeeplink;
+      }
+
+      if(useDeeplink){
+        Platform.useDeeplink = useDeeplink
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);

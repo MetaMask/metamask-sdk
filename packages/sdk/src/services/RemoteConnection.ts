@@ -29,12 +29,15 @@ const RemoteConnection = {
   startConnection() {
     let installModal = null
     const { channelId, pubKey } = this.getConnector().generateChannelId();
-
-    const link = `${'https://metamask.app.link/connect?channelId='}${encodeURIComponent(
+    const linkParams = `channelId=${encodeURIComponent(
       channelId,
     )}&comm=${encodeURIComponent(
       PostMessageStreams.communicationLayerPreference,
-    )}&pubkey=${encodeURIComponent(pubKey)}`;
+    )}&pubkey=${encodeURIComponent(pubKey)}`
+    
+    const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+
+    const deeplink =`metamask://connect?${linkParams}`
 
     /*#if _REACTNATIVE
     const showQRCode = false
@@ -43,11 +46,11 @@ const RemoteConnection = {
     //#endif
 
     if (showQRCode) {
-      installModal = InstallModal({ link });
-      console.log('OPEN LINK QRCODE', link);
+      installModal = InstallModal({ link: universalLink });
+      console.log('OPEN LINK QRCODE', universalLink);
     } else {
-      console.log('OPEN LINK', link);
-      Platform.openDeeplink?.(link);
+      console.log('OPEN LINK', universalLink);
+      Platform.openDeeplink?.(universalLink, deeplink, '_self');
     }
     return new Promise((resolve) => {
       this.getConnector().once('clients_ready', () => {

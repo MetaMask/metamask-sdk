@@ -31,9 +31,13 @@ const WalletConnect = {
         .then(() => {
           let installModal = null
 
-          const link = `${'https://metamask.app.link/wc?uri='}${encodeURIComponent(
+          const linkParams = `uri=${encodeURIComponent(
             this.getConnector().uri,
           )}`;
+
+          const universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
+
+          const deeplink =`metamask://connect?${linkParams}`
 
           /*#if _REACTNATIVE
           const showQRCode = false
@@ -42,12 +46,12 @@ const WalletConnect = {
           //#endif
 
           if (showQRCode) {
-            installModal = InstallModal({ link });
-            console.log('OPEN LINK QR CODE', link);
+            installModal = InstallModal({ link: universalLink });
+            console.log('OPEN LINK QR CODE', universalLink);
           } else {
-            console.log('OPEN LINK', link);
+            console.log('OPEN LINK', universalLink);
             // window.location.assign(link);
-            Platform.openDeeplink(link);
+            Platform.openDeeplink(universalLink, deeplink, '_self');
           }
 
           this.getConnector().on('connect', () => {

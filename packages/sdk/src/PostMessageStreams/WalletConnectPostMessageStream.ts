@@ -67,7 +67,7 @@ class WalletConnectPostMessageStream extends Duplex {
 
       // Check if should open app
       if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
-        Platform.openDeeplink('https://metamask.app.link/', '_self');
+        Platform.openDeeplink('https://metamask.app.link/', 'metamask://', '_self');
       }
     } catch (err) {
       return callback(

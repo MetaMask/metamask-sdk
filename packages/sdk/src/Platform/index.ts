@@ -50,14 +50,22 @@ export const getPlatform = () => {
 
 const Platform = {
   platform: null,
+  useDeeplink: null,
   preferredOpenLink: null,
-  openDeeplink(url: string, target?: string) {
-    if (this.preferredOpenLink) return this.preferredOpenLink(url, target);
+  openDeeplink(universalLink: string, deeplink: string, target?: string) {
+    if (this.preferredOpenLink)
+      return this.preferredOpenLink(universalLink, target);
 
-    if (typeof window !== 'undefined') return window.open(url, target);
+    if (typeof window !== 'undefined') {
+      if(Platform.useDeeplink){
+        window.open(deeplink, target);
+      }else{
+        window.open(universalLink, target);
+      }
+    }
 
     //throw new Error('Please setup the openDeeplink parameter');
-    return
+    return;
   },
   isMetaMaskInstalled,
   isMobile,
