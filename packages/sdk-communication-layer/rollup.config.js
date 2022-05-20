@@ -67,6 +67,7 @@ const config = [
       typescript(),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
+        mainFields: ['react-native', 'node', 'browser'],
         exportConditions: ['react-native', 'node', 'browser'],
         browser: true,
         preferBuiltins: true,

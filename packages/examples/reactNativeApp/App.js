@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import type {Node} from 'react';
 import {
   Button,
@@ -32,7 +32,9 @@ import MetaMaskSDK from '@metamask/sdk';
 //import WC from '@walletconnect/client';
 
 const sdk = new MetaMaskSDK({
-  openLink: link => Linking.openURL(link),
+  openDeeplink: link => {
+    Linking.openURL(link);
+  },
 });
 
 const Section = ({children, title}): Node => {
@@ -63,6 +65,8 @@ const Section = ({children, title}): Node => {
 const ethereum = sdk.getProvider();
 
 const App: () => Node = () => {
+  const [response, setResponse] = useState();
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -73,6 +77,7 @@ const App: () => Node = () => {
     try {
       const result = await ethereum.request({method: 'eth_requestAccounts'});
       console.log('RESULT', result);
+      setResponse(result);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -93,9 +98,89 @@ const App: () => Node = () => {
         ],
       });
       console.log('RESULT', result);
+      setResponse(result);
     } catch (e) {
       console.log('ERROR', e);
     }
+  };
+
+  const sign = async () => {
+    const msgParams = JSON.stringify({
+      domain: {
+        // Defining the chain aka Rinkeby testnet or Ethereum Main Net
+        chainId: parseInt(ethereum.chainId, 16),
+        // Give a user friendly name to the specific contract you are signing for.
+        name: 'Ether Mail',
+        // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
+        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
+        // Just let's you know the latest version. Definitely make sure the field name is correct.
+        version: '1',
+      },
+
+      // Defining the message signing data content.
+      message: {
+        /*
+         - Anything you want. Just a JSON Blob that encodes the data you want to send
+         - No required fields
+         - This is DApp Specific
+         - Be as explicit as possible when building out the message schema.
+        */
+        contents: 'Hello, Bob!',
+        attachedMoneyInEth: 4.2,
+        from: {
+          name: 'Cow',
+          wallets: [
+            '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
+            '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
+          ],
+        },
+        to: [
+          {
+            name: 'Bob',
+            wallets: [
+              '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
+              '0xB0BdaBea57B0BDABeA57b0bdABEA57b0BDabEa57',
+              '0xB0B0b0b0b0b0B000000000000000000000000000',
+            ],
+          },
+        ],
+      },
+      // Refers to the keys of the *types* object below.
+      primaryType: 'Mail',
+      types: {
+        // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
+        EIP712Domain: [
+          {name: 'name', type: 'string'},
+          {name: 'version', type: 'string'},
+          {name: 'chainId', type: 'uint256'},
+          {name: 'verifyingContract', type: 'address'},
+        ],
+        // Not an EIP712Domain definition
+        Group: [
+          {name: 'name', type: 'string'},
+          {name: 'members', type: 'Person[]'},
+        ],
+        // Refer to PrimaryType
+        Mail: [
+          {name: 'from', type: 'Person'},
+          {name: 'to', type: 'Person[]'},
+          {name: 'contents', type: 'string'},
+        ],
+        // Not an EIP712Domain definition
+        Person: [
+          {name: 'name', type: 'string'},
+          {name: 'wallets', type: 'address[]'},
+        ],
+      },
+    });
+
+    var from = ethereum.selectedAddress;
+
+    var params = [from, msgParams];
+    var method = 'eth_signTypedData_v4';
+
+    const resp = await ethereum.request({method, params});
+    setResponse(resp);
   };
 
   const listenEthereumEvents = () => {
@@ -170,6 +255,7 @@ const App: () => Node = () => {
         <Button title="Connect" onPress={connect} />
 
         <Button title="Add chain" onPress={exampleRequest} />
+        <Button title="Sign" onPress={sign} />
 
         <Button title="Log provider" onPress={logProvider} />
         <Header />
@@ -177,20 +263,7 @@ const App: () => Node = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          <Section title="Step One">{response}</Section>
         </View>
       </ScrollView>
     </SafeAreaView>
