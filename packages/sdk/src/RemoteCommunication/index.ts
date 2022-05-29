@@ -90,7 +90,6 @@ export default class RemoteCommunication extends EventEmitter2 {
 
     this.commLayer.on('clients_disconnected', () => {
       if (this.paused) {
-        //console.log('DISCONNECTING PAUSED');
         return;
       }
 
