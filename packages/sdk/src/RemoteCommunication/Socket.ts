@@ -27,7 +27,6 @@ export default class Socket extends EventEmitter2 {
     this.socket = io('https://lizard-positive-office.glitch.me');
 
     this.socket.on('error', () => {
-      //console.log('Error, Connecting to channel again', error);
       this.socket.disconnect();
       setTimeout(() => {
         this.reconnect = true;
@@ -38,7 +37,6 @@ export default class Socket extends EventEmitter2 {
 
     this.socket.on('disconnect', () => {
       if (this.manualDisconnect) return;
-      //console.log('Disconnect, Connecting to channel again', error);
       this.socket.disconnect();
       setTimeout(() => {
         this.reconnect = true;
@@ -84,7 +82,6 @@ export default class Socket extends EventEmitter2 {
     });
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
-      if (!this.isOriginator) return;
       this.clientsConnected = false;
       this.emit('clients_disconnected');
     });
