@@ -30,6 +30,7 @@ export default class Socket extends EventEmitter2 {
       //console.log('Error, Connecting to channel again', error);
       this.socket.disconnect();
       setTimeout(() => {
+        this.reconnect = true;
         this.socket = io('https://lizard-positive-office.glitch.me');
         this.socket.emit('join_channel', this.channelId);
       }, 2000);
@@ -40,6 +41,7 @@ export default class Socket extends EventEmitter2 {
       //console.log('Disconnect, Connecting to channel again', error);
       this.socket.disconnect();
       setTimeout(() => {
+        this.reconnect = true;
         this.socket = io('https://lizard-positive-office.glitch.me');
         this.connectToChannel(this.channelId);
       }, 2000);
@@ -63,15 +65,14 @@ export default class Socket extends EventEmitter2 {
       this.channelId = id;
       this.clientsConnected = true;
       if (this.isOriginator) {
-        if (this.keyExchange.keysExchanged) {
-          return;
+        if (!this.keyExchange.keysExchanged) {
+          this.keyExchange.start(this.isOriginator);
         }
-        this.keyExchange.start(this.isOriginator);
       }
       if (this.reconnect) {
         if (this.keyExchange.keysExchanged) {
           this.sendMessage({ type: 'ready' });
-        } else {
+        } else if (!this.isOriginator) {
           this.sendMessage({ type: 'key_handshake_start' });
         }
         this.reconnect = false;
