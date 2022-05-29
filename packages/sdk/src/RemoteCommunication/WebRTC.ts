@@ -25,10 +25,11 @@ export default class WebRTC extends EventEmitter2 {
   RTCSessionDescription: any;
 
   RTCIceCandidate: any;
+  reconnect: boolean;
 
-  constructor({ otherPublicKey, webRTCLib, reconnect }) {
+  constructor({ otherPublicKey, webRTCLib, commLayer, reconnect }) {
     super();
-
+    this.reconnect = reconnect;
     if (webRTCLib) {
       this.RTCPeerConnection = webRTCLib.RTCPeerConnection;
       this.RTCSessionDescription = webRTCLib.RTCSessionDescription;
@@ -39,10 +40,10 @@ export default class WebRTC extends EventEmitter2 {
       this.RTCIceCandidate = RTCIceCandidate;
     }
 
-    this.socket = new Socket({ otherPublicKey, reconnect });
+    this.socket = new Socket({ otherPublicKey, commLayer, reconnect });
 
     this.keyExchange = new KeyExchange({
-      commLayer: this,
+      CommLayer: this,
       otherPublicKey: null,
       sendPublicKey: true,
     });
@@ -81,14 +82,20 @@ export default class WebRTC extends EventEmitter2 {
         this.handshakeDone = true;
       } else if (type === 'candidate') {
         this.webrtc.addIceCandidate(new this.RTCIceCandidate(candidate));
-      } else if (type === 'ready') {
-        this.initiateWebrtcConnection(this.isOriginator);
       }
     });
 
     this.socket.on('clients_ready', async ({ isOriginator }) => {
+      this.setupWebrtc();
+      if (!isOriginator) {
+        return;
+      }
+      const offer = await this.webrtc.createOffer();
+
+      await this.webrtc.setLocalDescription(offer);
+
       this.isOriginator = isOriginator;
-      this.initiateWebrtcConnection(isOriginator);
+      this.socket.sendMessage({ type: 'offer', offer });
     });
 
     this.socket.on('channel_created', (id) => {
@@ -98,18 +105,6 @@ export default class WebRTC extends EventEmitter2 {
     this.socket.on('clients_waiting_to_join', (numberUsers) => {
       this.emit('clients_waiting_to_join', numberUsers);
     });
-  }
-
-  async initiateWebrtcConnection(isOriginator) {
-    this.setupWebrtc();
-    if (!isOriginator) {
-      return;
-    }
-    const offer = await this.webrtc.createOffer();
-
-    await this.webrtc.setLocalDescription(offer);
-
-    this.socket.sendMessage({ type: 'offer', offer });
   }
 
   setupWebrtc() {
@@ -126,8 +121,21 @@ export default class WebRTC extends EventEmitter2 {
         console.log('Data channel is open and ready to be used.');
         this.clientsConnected = true;
 
-        if (this.isOriginator && !this.keyExchange.keysExchanged) {
-          this.keyExchange.start(this.isOriginator);
+        if (this.isOriginator) {
+          if (!this.keyExchange.keysExchanged) {
+            this.keyExchange.start(this.isOriginator);
+          }
+        }
+        if (this.reconnect) {
+          if (this.keyExchange.keysExchanged) {
+            this.sendMessage({ type: 'ready' });
+            this.emit('clients_ready', {
+              isOriginator: this.isOriginator,
+            });
+          } else if (!this.isOriginator) {
+            this.sendMessage({ type: 'key_handshake_start' });
+          }
+          this.reconnect = false;
         }
       };
 
@@ -138,6 +146,7 @@ export default class WebRTC extends EventEmitter2 {
 
     this.webrtc.onconnectionstatechange = () => {
       const connectionStatus = this.webrtc.connectionState;
+      console.log('connectionStatus', connectionStatus);
       if (['disconnected', 'failed', 'closed'].includes(connectionStatus)) {
         return this.emit('clients_disconnected');
       }
@@ -176,14 +185,6 @@ export default class WebRTC extends EventEmitter2 {
     /* if (!message.isTrusted) {
       throw new Error('Message not trusted');
     }*/
-    if (this.isOriginator && this.keyExchange.keysExchanged) {
-      try {
-        const messageReceived = JSON.parse(message.data);
-        if (messageReceived?.type === 'key_handshake_start') {
-          return this.keyExchange.start(this.isOriginator);
-        }
-      } catch (e) {}
-    }
 
     if (!this.keyExchange.keysExchanged) {
       const messageReceived = JSON.parse(message.data);
@@ -228,6 +229,7 @@ export default class WebRTC extends EventEmitter2 {
   }
 
   resume() {
+    this.reconnect = true;
     this.socket.resume();
   }
 }

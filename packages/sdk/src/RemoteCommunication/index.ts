@@ -6,7 +6,7 @@ interface RemoteCommunicationOptions {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
-  reconnect?: any
+  reconnect?: any;
 }
 
 export enum CommunicationLayerPreference {
@@ -44,11 +44,28 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
 
-    this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect });
+    this.setupCommLayer({
+      CommLayer,
+      otherPublicKey,
+      webRTCLib,
+      commLayer,
+      reconnect,
+    });
   }
 
-  setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect }) {
-    this.commLayer = new CommLayer({ otherPublicKey, webRTCLib, reconnect });
+  setupCommLayer({
+    CommLayer,
+    otherPublicKey,
+    webRTCLib,
+    commLayer,
+    reconnect,
+  }) {
+    this.commLayer = new CommLayer({
+      otherPublicKey,
+      webRTCLib,
+      commLayer,
+      reconnect,
+    });
 
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
@@ -76,9 +93,21 @@ export default class RemoteCommunication extends EventEmitter2 {
         //console.log('DISCONNECTING PAUSED');
         return;
       }
+
+      if (!this.isOriginator) {
+        this.paused = true;
+        return;
+      }
+
       this.clean();
       this.commLayer.removeAllListeners();
-      this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect: false });
+      this.setupCommLayer({
+        CommLayer,
+        otherPublicKey,
+        webRTCLib,
+        commLayer: this.commLayer,
+        reconnect: false,
+      });
       this.emit('clients_disconnected');
     });
 
@@ -102,7 +131,6 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   sendMessage(message) {
     if (this.paused) {
-      //console.log('REQUEST BUT PAUSED');
       this.once('clients_ready', () => {
         this.commLayer.sendMessage(message);
       });
@@ -138,7 +166,6 @@ export default class RemoteCommunication extends EventEmitter2 {
       this.paused = false;
       return;
     } else if (message.type === 'pause') {
-      //console.log('PAUSED');
       this.paused = true;
     } else if (message.type === 'ready') {
       this.paused = false;
