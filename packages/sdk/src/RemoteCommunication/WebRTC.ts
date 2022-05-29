@@ -39,35 +39,7 @@ export default class WebRTC extends EventEmitter2 {
       this.RTCIceCandidate = RTCIceCandidate;
     }
 
-    const configuration = {
-      iceServers: [{ urls: 'stun:15.237.115.65' }],
-    };
-
-    this.webrtc = new this.RTCPeerConnection(configuration);
-
     this.socket = new Socket({ otherPublicKey, reconnect });
-
-    this.webrtc.onicecandidate = ({ candidate }) => {
-      if (candidate) {
-        this.socket.sendMessage({
-          type: 'candidate',
-          candidate,
-        });
-      }
-    };
-
-    this.webrtc.onicecandidateerror = (error) =>
-      console.log('ICE ERROR', error);
-
-    this.dataChannel = this.webrtc.createDataChannel('messenger');
-
-    this.dataChannel.onerror = (error) => {
-      if (error.error.code === 0) {
-        return this.emit('clients_disconnected');
-      }
-      console.log('ERROR: datachannel', error);
-      return error;
-    };
 
     this.keyExchange = new KeyExchange({
       commLayer: this,
@@ -81,33 +53,6 @@ export default class WebRTC extends EventEmitter2 {
         isOriginator: this.isOriginator,
       });
     });
-
-    this.webrtc.ondatachannel = (evt) => {
-      console.log('Data channel is created!');
-      const receiveChannel = evt.channel;
-      receiveChannel.onopen = () => {
-        console.log('Data channel is open and ready to be used.');
-        this.clientsConnected = true;
-
-        if (this.isOriginator) {
-          this.keyExchange.start(this.isOriginator);
-        }
-      };
-
-      this.onMessage = this.onMessage.bind(this);
-
-      receiveChannel.onmessage = this.onMessage;
-    };
-
-    this.webrtc.onconnectionstatechange = () => {
-      const connectionStatus = this.webrtc.connectionState;
-      console.log('connectionStatus', connectionStatus);
-      if (['disconnected', 'failed', 'closed'].includes(connectionStatus)) {
-        return this.emit('clients_disconnected');
-      }
-
-      return connectionStatus;
-    };
 
     this.socket.on('clients_disconnected', () => {
       if (!this.clientsConnected) {
@@ -136,19 +81,14 @@ export default class WebRTC extends EventEmitter2 {
         this.handshakeDone = true;
       } else if (type === 'candidate') {
         this.webrtc.addIceCandidate(new this.RTCIceCandidate(candidate));
+      } else if (type === 'ready') {
+        this.initiateWebrtcConnection(this.isOriginator);
       }
     });
 
     this.socket.on('clients_ready', async ({ isOriginator }) => {
-      if (!isOriginator) {
-        return;
-      }
-      const offer = await this.webrtc.createOffer();
-
-      await this.webrtc.setLocalDescription(offer);
-
       this.isOriginator = isOriginator;
-      this.socket.sendMessage({ type: 'offer', offer });
+      this.initiateWebrtcConnection(isOriginator);
     });
 
     this.socket.on('channel_created', (id) => {
@@ -160,6 +100,74 @@ export default class WebRTC extends EventEmitter2 {
     });
   }
 
+  async initiateWebrtcConnection(isOriginator) {
+    this.setupWebrtc();
+    if (!isOriginator) {
+      return;
+    }
+    const offer = await this.webrtc.createOffer();
+
+    await this.webrtc.setLocalDescription(offer);
+
+    this.socket.sendMessage({ type: 'offer', offer });
+  }
+
+  setupWebrtc() {
+    const configuration = {
+      iceServers: [{ urls: 'stun:15.237.115.65' }],
+    };
+
+    this.webrtc = new this.RTCPeerConnection(configuration);
+
+    this.webrtc.ondatachannel = (evt) => {
+      console.log('Data channel is created!');
+      const receiveChannel = evt.channel;
+      receiveChannel.onopen = () => {
+        console.log('Data channel is open and ready to be used.');
+        this.clientsConnected = true;
+
+        if (this.isOriginator && !this.keyExchange.keysExchanged) {
+          this.keyExchange.start(this.isOriginator);
+        }
+      };
+
+      this.onMessage = this.onMessage.bind(this);
+
+      receiveChannel.onmessage = this.onMessage;
+    };
+
+    this.webrtc.onconnectionstatechange = () => {
+      const connectionStatus = this.webrtc.connectionState;
+      if (['disconnected', 'failed', 'closed'].includes(connectionStatus)) {
+        return this.emit('clients_disconnected');
+      }
+
+      return connectionStatus;
+    };
+
+    this.webrtc.onicecandidate = ({ candidate }) => {
+      if (candidate) {
+        this.socket.sendMessage({
+          type: 'candidate',
+          candidate,
+        });
+      }
+    };
+
+    this.webrtc.onicecandidateerror = (error) =>
+      console.log('ICE ERROR', error);
+
+    this.dataChannel = this.webrtc.createDataChannel('messenger');
+
+    this.dataChannel.onerror = (error) => {
+      if (error.error.code === 0) {
+        return this.emit('clients_disconnected');
+      }
+      console.log('ERROR: datachannel', error);
+      return error;
+    };
+  }
+
   connectToChannel(id) {
     this.socket.connectToChannel(id);
   }
@@ -168,6 +176,14 @@ export default class WebRTC extends EventEmitter2 {
     /* if (!message.isTrusted) {
       throw new Error('Message not trusted');
     }*/
+    if (this.isOriginator && this.keyExchange.keysExchanged) {
+      try {
+        const messageReceived = JSON.parse(message.data);
+        if (messageReceived?.type === 'key_handshake_start') {
+          return this.keyExchange.start(this.isOriginator);
+        }
+      } catch (e) {}
+    }
 
     if (!this.keyExchange.keysExchanged) {
       const messageReceived = JSON.parse(message.data);
@@ -203,11 +219,15 @@ export default class WebRTC extends EventEmitter2 {
     return this.socket.createChannel();
   }
 
-  disconnect() {
+  pause() {
     if (this.keyExchange.keysExchanged) this.sendMessage({ type: 'pause' });
     this.webrtc?.close();
-    this.removeAllListeners();
-    this.socket.disconnect();
-    this.socket.removeAllListeners();
+    // this.removeAllListeners();
+    this.socket.pause();
+    //this.socket.removeAllListeners();
+  }
+
+  resume() {
+    this.socket.resume();
   }
 }
