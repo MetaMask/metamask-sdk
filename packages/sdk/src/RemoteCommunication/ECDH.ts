@@ -1,3 +1,4 @@
+/* eslint-disable import/no-nodejs-modules */
 import crypto from 'crypto';
 import { Buffer } from 'buffer';
 

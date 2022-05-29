@@ -6,6 +6,7 @@ interface RemoteCommunicationOptions {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
+  reconnect?: any
 }
 
 export enum CommunicationLayerPreference {
@@ -24,28 +25,36 @@ export default class RemoteCommunication extends EventEmitter2 {
   originatorInfo: any;
   walletInfo: any;
   paused: boolean;
+  CommLayer: typeof WebRTC | typeof Socket;
+  otherPublicKey: string;
+  webRTCLib: any;
 
   constructor({
     commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
+    reconnect,
   }: RemoteCommunicationOptions) {
     super();
 
     const CommLayer =
       commLayer === CommunicationLayerPreference.WEBRTC ? WebRTC : Socket;
 
-    this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib });
+    this.CommLayer = CommLayer;
+    this.otherPublicKey = otherPublicKey;
+    this.webRTCLib = webRTCLib;
+
+    this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect });
   }
 
-  setupCommLayer({ CommLayer, otherPublicKey, webRTCLib }) {
-    this.commLayer = new CommLayer({ otherPublicKey, webRTCLib });
+  setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect }) {
+    this.commLayer = new CommLayer({ otherPublicKey, webRTCLib, reconnect });
 
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
     });
 
-    this.commLayer.on('clients_ready', ({ isOriginator, id }) => {
+    this.commLayer.on('clients_ready', ({ isOriginator }) => {
       this.isOriginator = isOriginator;
 
       if (!isOriginator) return;
@@ -63,13 +72,13 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_disconnected', () => {
-      if(this.paused){
-        console.log("DISCONNECTING PAUSED")
-        return
-      } 
+      if (this.paused) {
+        //console.log('DISCONNECTING PAUSED');
+        return;
+      }
       this.clean();
       this.commLayer.removeAllListeners();
-      this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib });
+      this.setupCommLayer({ CommLayer, otherPublicKey, webRTCLib, reconnect: false });
       this.emit('clients_disconnected');
     });
 
@@ -92,18 +101,17 @@ export default class RemoteCommunication extends EventEmitter2 {
   }
 
   sendMessage(message) {
-    if(this.paused){
-      console.log("REQUEST BUT PAUSED")
-      this.once('clients_ready', ()=>{
+    if (this.paused) {
+      //console.log('REQUEST BUT PAUSED');
+      this.once('clients_ready', () => {
         this.commLayer.sendMessage(message);
-      })
-    }else{
+      });
+    } else {
       this.commLayer.sendMessage(message);
     }
   }
 
   onMessageCommLayer(message) {
-    console.log("MESSAGE", message)
     if (message.type === 'originator_info') {
       this.commLayer.sendMessage({
         type: 'wallet_info',
@@ -118,7 +126,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         isOriginator: this.isOriginator,
         originatorInfo: message.originatorInfo,
       });
-      this.paused = false
+      this.paused = false;
       return;
     } else if (message.type === 'wallet_info') {
       this.walletInfo = message.walletInfo;
@@ -127,13 +135,13 @@ export default class RemoteCommunication extends EventEmitter2 {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,
       });
-      this.paused = false
+      this.paused = false;
       return;
-    }else if(message.type === 'pause'){
-      console.log("PAUSED")
-      this.paused = true
-    }else if(message.type === 'ready'){
-      this.paused = false
+    } else if (message.type === 'pause') {
+      //console.log('PAUSED');
+      this.paused = true;
+    } else if (message.type === 'ready') {
+      this.paused = false;
       this.emit('clients_ready', {
         isOriginator: this.isOriginator,
         walletInfo: this.walletInfo,
@@ -151,5 +159,13 @@ export default class RemoteCommunication extends EventEmitter2 {
     const { channelId, pubKey } = this.commLayer.createChannel();
     this.channelId = channelId;
     return { channelId, pubKey };
+  }
+
+  pause() {
+    this.commLayer.pause();
+  }
+
+  resume() {
+    this.commLayer.resume();
   }
 }

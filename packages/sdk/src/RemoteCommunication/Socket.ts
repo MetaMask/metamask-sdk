@@ -16,34 +16,33 @@ export default class Socket extends EventEmitter2 {
 
   keyExchange: KeyExchange;
 
-  constructor({ otherPublicKey }) {
+  manualDisconnect = false;
+  reconnect: boolean;
+
+  constructor({ otherPublicKey, reconnect }) {
     super();
 
-   
-    this.socket = io('https://lizard-positive-office.glitch.me', {
-      transports: ['websocket'],
-    });
+    this.reconnect = reconnect;
 
-    this.socket.on('error', (error) => {
-      console.log("Error, Connecting to channel again", error)
+    this.socket = io('https://lizard-positive-office.glitch.me');
+
+    this.socket.on('error', () => {
+      //console.log('Error, Connecting to channel again', error);
       this.socket.disconnect();
-        setTimeout(()=> {
-          this.socket = io('https://lizard-positive-office.glitch.me', {
-          transports: ['websocket'],
-        });
+      setTimeout(() => {
+        this.socket = io('https://lizard-positive-office.glitch.me');
         this.socket.emit('join_channel', this.channelId);
-      }, 2000)
+      }, 2000);
     });
 
-    this.socket.on('disconnect', (error) => {
-      console.log("Disconnect, Connecting to channel again", error)
+    this.socket.on('disconnect', () => {
+      if (this.manualDisconnect) return;
+      //console.log('Disconnect, Connecting to channel again', error);
       this.socket.disconnect();
-        setTimeout(()=> {
-          this.socket = io('https://lizard-positive-office.glitch.me', {
-          transports: ['websocket'],
-        });
-        this.connectToChannel(this.channelId)
-      }, 2000)
+      setTimeout(() => {
+        this.socket = io('https://lizard-positive-office.glitch.me');
+        this.connectToChannel(this.channelId);
+      }, 2000);
     });
 
     this.keyExchange = new KeyExchange({
@@ -64,10 +63,18 @@ export default class Socket extends EventEmitter2 {
       this.channelId = id;
       this.clientsConnected = true;
       if (this.isOriginator) {
-        if(this.keyExchange.keysExchanged){
-          return
+        if (this.keyExchange.keysExchanged) {
+          return;
         }
-        this.keyExchange.start();
+        this.keyExchange.start(this.isOriginator);
+      }
+      if (this.reconnect) {
+        if (this.keyExchange.keysExchanged) {
+          this.sendMessage({ type: 'ready' });
+        } else {
+          this.sendMessage({ type: 'key_handshake_start' });
+        }
+        this.reconnect = false;
       }
     });
 
@@ -76,6 +83,8 @@ export default class Socket extends EventEmitter2 {
     });
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
+      if (!this.isOriginator) return;
+      this.clientsConnected = false;
       this.emit('clients_disconnected');
     });
 
@@ -86,8 +95,12 @@ export default class Socket extends EventEmitter2 {
 
       this.checkSameId(id);
 
-      if (this.isOriginator && this.keyExchange.keysExchanged && message?.type === 'key_handshake_start') {
-        return this.keyExchange.start();
+      if (
+        this.isOriginator &&
+        this.keyExchange.keysExchanged &&
+        message?.type === 'key_handshake_start'
+      ) {
+        return this.keyExchange.start(this.isOriginator);
       }
 
       if (!this.keyExchange.keysExchanged) {
@@ -154,5 +167,22 @@ export default class Socket extends EventEmitter2 {
     this.receiveMessages(channelId);
     this.socket.emit('join_channel', channelId);
     return { channelId, pubKey: this.keyExchange.myPublicKey };
+  }
+
+  pause() {
+    this.manualDisconnect = true;
+    if (this.keyExchange.keysExchanged) {
+      this.sendMessage({ type: 'pause' });
+    }
+    this.socket.disconnect();
+  }
+
+  resume() {
+    this.manualDisconnect = false;
+    if (this.keyExchange.keysExchanged) {
+      this.reconnect = true;
+      this.socket.connect();
+      this.socket.emit('join_channel', this.channelId);
+    }
   }
 }

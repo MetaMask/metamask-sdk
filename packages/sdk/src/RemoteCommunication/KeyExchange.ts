@@ -70,16 +70,17 @@ export default class KeyExchange extends EventEmitter2 {
     });
   }
 
-  clean(){
-    console.log("CLEAN")
+  clean() {
     this.step = KeySteps.NONE;
     this.secretKey = null;
     this.keysExchanged = false;
     this.otherPublicKey = null;
   }
 
-  start() {
-    this.clean();
+  start(isOriginator: boolean) {
+    if (isOriginator) {
+      this.clean();
+    }
     this.checkStep(KeySteps.NONE);
     this.step = KeySteps.SYNACK;
     this.commLayer.sendMessage({
