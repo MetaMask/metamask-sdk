@@ -42,9 +42,7 @@ io.on('connection', (socket) => {
 
   socket.on('join_channel', (id) => {
     console.log('join_channel', id);
-
     const room = io.sockets.adapter.rooms.get(id);
-
     if (room && room.size > 2) {
       socket.emit(`message-${id}`, { error: 'room already full' });
       return io.sockets.in(id).socketsLeave(id);
@@ -52,16 +50,25 @@ io.on('connection', (socket) => {
 
     socket.join(id);
 
-    socket.on('disconnect', function () {
-      console.log('disconnected');
-      io.sockets.in(id).emit(`clients_disconnected-${id}`);
-      io.sockets.in(id).socketsLeave(id);
+    if (!room || room.size < 2) {
+      socket.emit(`clients_waiting_to_join-${id}`, room ? room.size : 1);
+    }
+
+    socket.on('disconnect', function (error) {
+      console.log('disconnected', error);
+      io.sockets.in(id).emit(`clients_disconnected-${id}`, error);
+      // io.sockets.in(id).socketsLeave(id);
     });
 
     if (room && room.size === 2) {
-      socket.to(id).emit(`clients_connected-${id}`, id);
+      io.sockets.in(id).emit(`clients_connected-${id}`, id);
     }
     return true;
+  });
+
+  socket.on('leave_channel', (id) => {
+    socket.leave(id);
+    io.sockets.in(id).emit(`clients_disconnected-${id}`);
   });
 });
 
