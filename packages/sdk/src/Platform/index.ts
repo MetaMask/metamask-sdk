@@ -57,11 +57,13 @@ const Platform = {
       return this.preferredOpenLink(universalLink, target);
 
     if (typeof window !== 'undefined') {
+      let win
       if(Platform.useDeeplink){
-        window.open(deeplink, target);
+        win = window.open(deeplink, '_blank')
       }else{
-        window.open(universalLink, target);
+        win = window.open(universalLink, '_blank')
       }
+      setTimeout(()=>win?.close?.(), 500)
     }
 
     //throw new Error('Please setup the openDeeplink parameter');

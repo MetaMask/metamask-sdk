@@ -2,14 +2,17 @@ import logo from "./logo.svg";
 import "./App.css";
 import MetaMaskSDK from "@metamask/sdk"
 import WC from '@walletconnect/client'
+import { useState } from "react";
+import { useEffect } from "react";
 
-const sdk = new MetaMaskSDK({ });
+const sdk = new MetaMaskSDK({ useDeeplink: false, communicationLayerPreference: 'socket' });
 
 function App() {
+
+  const [chain, setChain] = useState('chain')
+  const [account, setAccount] = useState('account')
+
   const connect = () => {
-
-    window.ethereum.on('chainChanged', (chain)=> console.log("CHAIN CHANGED", chain))
-
     window.ethereum
       .request({
         method: "eth_requestAccounts",
@@ -37,6 +40,17 @@ function App() {
       .catch((e) => console.log("ADD ERR", e));
   };
 
+  useEffect(()=>{
+    window.ethereum.on('chainChanged', (chain)=> {
+      console.log(chain)
+      setChain(chain)
+    })
+    window.ethereum.on('accountsChanged', (accounts)=> {
+      console.log(accounts)
+      setAccount(accounts?.[0])
+    })
+  }, [])
+
   return (
     <div className="App">
       <header className="App-header">
@@ -48,14 +62,10 @@ function App() {
         <button onClick={connect}>Connect</button>
 
         <button onClick={addEthereumChain}>ADD ETHEREUM CHAIN</button>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        
+        {chain}
+        <p></p>
+        {account}
       </header>
     </div>
   );
