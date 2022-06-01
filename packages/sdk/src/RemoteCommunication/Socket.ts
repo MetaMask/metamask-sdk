@@ -29,23 +29,33 @@ export default class Socket extends EventEmitter2 {
 
     this.socket = io('https://lizard-positive-office.glitch.me');
 
-    this.socket.on('error', () => {
+    const connectAgain = () => {
+      window.removeEventListener('focus', connectAgain);
+      this.reconnect = true;
+      this.socket.connect();
+      this.socket.emit('join_channel', this.channelId);
+    };
+
+    const checkFocus = () => {
+      if (typeof window === 'undefined') return;
       this.socket.disconnect();
-      setTimeout(() => {
-        this.reconnect = true;
-        this.socket = io('https://lizard-positive-office.glitch.me');
-        this.socket.emit('join_channel', this.channelId);
-      }, 2000);
+      if (document.hasFocus()) {
+        connectAgain();
+      } else {
+        window.addEventListener('focus', connectAgain);
+      }
+    };
+
+    this.socket.on('error', () => {
+      //#if _WEB
+      checkFocus();
+      //#endif
     });
 
     this.socket.on('disconnect', () => {
-      if (this.manualDisconnect) return;
-      this.socket.disconnect();
-      setTimeout(() => {
-        this.reconnect = true;
-        this.socket = io('https://lizard-positive-office.glitch.me');
-        this.connectToChannel(this.channelId);
-      }, 2000);
+      //#if _WEB
+      checkFocus();
+      //#endif
     });
 
     this.keyExchange = new KeyExchange({
