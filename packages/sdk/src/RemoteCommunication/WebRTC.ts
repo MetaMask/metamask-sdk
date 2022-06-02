@@ -27,7 +27,7 @@ export default class WebRTC extends EventEmitter2 {
   RTCIceCandidate: any;
   reconnect: boolean;
 
-  constructor({ otherPublicKey, webRTCLib, commLayer, reconnect }) {
+  constructor({ otherPublicKey, webRTCLib, commLayer, reconnect, transports }) {
     super();
     this.reconnect = reconnect;
     if (webRTCLib) {
@@ -40,7 +40,7 @@ export default class WebRTC extends EventEmitter2 {
       this.RTCIceCandidate = RTCIceCandidate;
     }
 
-    this.socket = new Socket({ otherPublicKey, commLayer, reconnect });
+    this.socket = new Socket({ otherPublicKey, commLayer, reconnect, transports });
 
     this.keyExchange = new KeyExchange({
       CommLayer: this,

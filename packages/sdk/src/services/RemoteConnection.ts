@@ -5,6 +5,8 @@ import PostMessageStreams from '../PostMessageStreams';
 
 const RemoteConnection = {
   RemoteCommunication: null,
+  clientInfo: null,
+  transports: null,
   webRTCLib: null,
   getConnector() {
     if (!this.RemoteCommunication) {
@@ -13,6 +15,8 @@ const RemoteConnection = {
       this.RemoteCommunication = new RemoteCommunication({
         commLayer,
         webRTCLib: this.webRTCLib,
+        clientInfo: this.clientInfo,
+        transports: this.transports
       });
       this.RemoteCommunication.on('clients_disconnected', () => {
         this.sentFirstConnect = false;

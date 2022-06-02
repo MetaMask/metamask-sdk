@@ -9,6 +9,7 @@ import PostMessageStreams from './PostMessageStreams';
 import PortStreams from './PortStreams';
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import RemoteConnection from './services/RemoteConnection';
+import { ClientInfo } from './constants';
 
 type MetaMaskSDKOptions = {
   injectProvider?: boolean;
@@ -19,11 +20,13 @@ type MetaMaskSDKOptions = {
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
   openDeeplink?: (string) => void;
-  useDeeplink?: boolean,
+  useDeeplink?: boolean;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
-  webRTCLib?: any
-  communicationLayerPreference?: CommunicationLayerPreference
+  webRTCLib?: any;
+  communicationLayerPreference?: CommunicationLayerPreference;
+  transports?: string[];
+  clientInfo?: ClientInfo;
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -48,29 +51,40 @@ export default class MetaMaskSDK {
     forceRestartWalletConnect,
     // WebRTC
     webRTCLib,
+    transports,
+    clientInfo,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
     if (
-      (forceInjectProvider ||
-        platform === PlatformName.NonBrowser ||
-        shouldInjectProvider())
+      forceInjectProvider ||
+      platform === PlatformName.NonBrowser ||
+      shouldInjectProvider()
     ) {
       if (forceInjectProvider && forceDeleteProvider) {
         Ethereum.ethereum = null;
         delete window.ethereum;
       }
 
-      PostMessageStreams.communicationLayerPreference = communicationLayerPreference;
+      PostMessageStreams.communicationLayerPreference =
+        communicationLayerPreference;
       WalletConnect.WalletConnectInstance = WalletConnectInstance;
-      RemoteConnection.webRTCLib = webRTCLib
+      RemoteConnection.webRTCLib = webRTCLib;
 
       if (openDeeplink) {
         Platform.preferredOpenLink = openDeeplink;
       }
 
-      if(useDeeplink){
-        Platform.useDeeplink = useDeeplink
+      if (useDeeplink) {
+        Platform.useDeeplink = useDeeplink;
+      }
+
+      if (clientInfo) {
+        RemoteConnection.clientInfo = clientInfo;
+      }
+
+      if (transports) {
+        RemoteConnection.transports = transports;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);

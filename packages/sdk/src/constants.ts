@@ -17,3 +17,8 @@ export const METHODS_TO_REDIRECT = {
   wallet_addEthereumChain: true,
   wallet_switchEthereumChain: true,
 };
+
+export type ClientInfo = {
+  url: string,
+  name: string
+}

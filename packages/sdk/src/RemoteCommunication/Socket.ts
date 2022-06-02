@@ -21,13 +21,17 @@ export default class Socket extends EventEmitter2 {
   reconnect: boolean;
   commLayer: CommunicationLayerPreference;
 
-  constructor({ otherPublicKey, reconnect, commLayer }) {
+  constructor({ otherPublicKey, reconnect, commLayer, transports }) {
     super();
 
     this.reconnect = reconnect;
     this.commLayer = commLayer;
 
-    this.socket = io('https://lizard-positive-office.glitch.me');
+    const options = {}
+
+    if(transports) options['transports'] = transports
+
+    this.socket = io('https://socket.codefi.network/', options);
 
     const connectAgain = () => {
       window.removeEventListener('focus', connectAgain);

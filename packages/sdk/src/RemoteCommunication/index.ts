@@ -1,12 +1,15 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
+import { ClientInfo } from '../constants';
 
 interface RemoteCommunicationOptions {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
   reconnect?: any;
+  clientInfo?: ClientInfo;
+  transports?: string[];
 }
 
 export enum CommunicationLayerPreference {
@@ -28,12 +31,16 @@ export default class RemoteCommunication extends EventEmitter2 {
   CommLayer: typeof WebRTC | typeof Socket;
   otherPublicKey: string;
   webRTCLib: any;
+  clientInfo: ClientInfo;
+  transports: string[];
 
   constructor({
     commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
     reconnect,
+    clientInfo,
+    transports
   }: RemoteCommunicationOptions) {
     super();
 
@@ -43,6 +50,8 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.CommLayer = CommLayer;
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
+    this.clientInfo = clientInfo
+    this.transports = transports
 
     this.setupCommLayer({
       CommLayer,
@@ -65,6 +74,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
+      transports: this.transports
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -76,11 +86,14 @@ export default class RemoteCommunication extends EventEmitter2 {
 
       if (!isOriginator) return;
 
-      const url =
+      let url =
         (typeof document !== 'undefined' && document.URL) || 'url undefined';
-      const title =
+      let title =
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
+
+        if(this.clientInfo?.url) url = this.clientInfo.url
+        if(this.clientInfo?.name) title = this.clientInfo.name
 
       this.commLayer.sendMessage({
         type: 'originator_info',
