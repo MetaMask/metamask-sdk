@@ -18,7 +18,7 @@ export const METHODS_TO_REDIRECT = {
   wallet_switchEthereumChain: true,
 };
 
-export type ClientInfo = {
+export type DappMetadata = {
   url: string,
   name: string
 }

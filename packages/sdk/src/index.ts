@@ -9,7 +9,7 @@ import PostMessageStreams from './PostMessageStreams';
 import PortStreams from './PortStreams';
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import RemoteConnection from './services/RemoteConnection';
-import { ClientInfo } from './constants';
+import { DappMetadata } from './constants';
 
 type MetaMaskSDKOptions = {
   injectProvider?: boolean;
@@ -26,7 +26,8 @@ type MetaMaskSDKOptions = {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  clientInfo?: ClientInfo;
+  dappMetadata?: DappMetadata;
+  timer?: any;
 };
 export default class MetaMaskSDK {
   provider: any;
@@ -52,7 +53,8 @@ export default class MetaMaskSDK {
     // WebRTC
     webRTCLib,
     transports,
-    clientInfo,
+    dappMetadata,
+    timer
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -79,12 +81,16 @@ export default class MetaMaskSDK {
         Platform.useDeeplink = useDeeplink;
       }
 
-      if (clientInfo) {
-        RemoteConnection.clientInfo = clientInfo;
+      if (dappMetadata) {
+        RemoteConnection.dappMetadata = dappMetadata;
       }
 
       if (transports) {
         RemoteConnection.transports = transports;
+      }
+
+      if(timer){
+        RemoteConnection.timer = timer;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);

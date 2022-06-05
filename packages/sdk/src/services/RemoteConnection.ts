@@ -5,22 +5,28 @@ import PostMessageStreams from '../PostMessageStreams';
 
 const RemoteConnection = {
   RemoteCommunication: null,
-  clientInfo: null,
+  dappMetadata: null,
   transports: null,
   webRTCLib: null,
+  timer: null,
   getConnector() {
     if (!this.RemoteCommunication) {
-      const commLayer =
-        PostMessageStreams.communicationLayerPreference
+      const commLayer = PostMessageStreams.communicationLayerPreference;
       this.RemoteCommunication = new RemoteCommunication({
         commLayer,
         webRTCLib: this.webRTCLib,
-        clientInfo: this.clientInfo,
-        transports: this.transports
+        dappMetadata: this.dappMetadata,
+        transports: this.transports,
       });
       this.RemoteCommunication.on('clients_disconnected', () => {
         this.sentFirstConnect = false;
       });
+
+      if (this.timer) {
+        this.timer.runBackgroundTimer?.(() => {
+          
+        }, 5000);
+      }
     }
 
     return this.RemoteCommunication;
@@ -31,22 +37,22 @@ const RemoteConnection = {
   },
   sentFirstConnect: false,
   startConnection() {
-    let installModal = null
+    let installModal = null;
     const { channelId, pubKey } = this.getConnector().generateChannelId();
     const linkParams = `channelId=${encodeURIComponent(
       channelId,
     )}&comm=${encodeURIComponent(
       PostMessageStreams.communicationLayerPreference,
-    )}&pubkey=${encodeURIComponent(pubKey)}`
-    
+    )}&pubkey=${encodeURIComponent(pubKey)}`;
+
     const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
 
-    const deeplink =`metamask://connect?${linkParams}`
+    const deeplink = `metamask://connect?${linkParams}`;
 
     /*#if _REACTNATIVE
     const showQRCode = false
     //#else */
-    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb;;
+    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb;
     //#endif
 
     if (showQRCode) {

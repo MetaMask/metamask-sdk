@@ -1,14 +1,14 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
-import { ClientInfo } from '../constants';
+import { DappMetadata } from '../constants';
 
 interface RemoteCommunicationOptions {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
   reconnect?: any;
-  clientInfo?: ClientInfo;
+  dappMetadata?: DappMetadata;
   transports?: string[];
 }
 
@@ -31,7 +31,7 @@ export default class RemoteCommunication extends EventEmitter2 {
   CommLayer: typeof WebRTC | typeof Socket;
   otherPublicKey: string;
   webRTCLib: any;
-  clientInfo: ClientInfo;
+  dappMetadata: DappMetadata;
   transports: string[];
 
   constructor({
@@ -39,7 +39,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     otherPublicKey,
     webRTCLib,
     reconnect,
-    clientInfo,
+    dappMetadata,
     transports
   }: RemoteCommunicationOptions) {
     super();
@@ -50,7 +50,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.CommLayer = CommLayer;
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
-    this.clientInfo = clientInfo
+    this.dappMetadata = dappMetadata
     this.transports = transports
 
     this.setupCommLayer({
@@ -92,8 +92,8 @@ export default class RemoteCommunication extends EventEmitter2 {
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
 
-        if(this.clientInfo?.url) url = this.clientInfo.url
-        if(this.clientInfo?.name) title = this.clientInfo.name
+        if(this.dappMetadata?.url) url = this.dappMetadata.url
+        if(this.dappMetadata?.name) title = this.dappMetadata.name
 
       this.commLayer.sendMessage({
         type: 'originator_info',

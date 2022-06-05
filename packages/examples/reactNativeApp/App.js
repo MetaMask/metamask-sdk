@@ -26,6 +26,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import BackgroundTimer from 'react-native-background-timer';
 
 import MetaMaskSDK from '@metamask/sdk';
 
@@ -34,6 +35,11 @@ import MetaMaskSDK from '@metamask/sdk';
 const sdk = new MetaMaskSDK({
   openDeeplink: link => {
     Linking.openURL(link);
+  },
+  timer: BackgroundTimer,
+  dappMetadata: {
+    name: 'React Native Test Dapp',
+    url: 'example.com',
   },
 });
 
