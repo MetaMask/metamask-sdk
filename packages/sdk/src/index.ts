@@ -117,12 +117,12 @@ export default class MetaMaskSDK {
   }
 
   // Get the connector object from WalletConnect
-  getWalletConnectConnector() {
+  getWalletConnectConnector = () => {
     return WalletConnect.getConnector();
   }
 
   // Return the ethereum provider object
-  getProvider() {
+  getProvider = () => {
     return this.provider;
   }
 }
