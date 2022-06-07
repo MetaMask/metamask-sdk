@@ -52,7 +52,7 @@ const RemoteConnection = {
     /*#if _REACTNATIVE
     const showQRCode = false
     //#else */
-    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb;
+    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb || Platform.getPlatform() === PlatformName.NonBrowser;
     //#endif
 
     if (showQRCode) {
