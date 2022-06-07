@@ -50,6 +50,9 @@ const Widget = (props: WidgetProps) => {
       cornersDotOptions: {
         color: '#f66a07',
       },
+      qrOptions: {
+        errorCorrectionLevel: 'M'
+      }
     });
     qrCode.append(qrCodeContainer.current);
   }, []);

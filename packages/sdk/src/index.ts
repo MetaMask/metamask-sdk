@@ -33,6 +33,7 @@ export default class MetaMaskSDK {
   provider: any;
 
   constructor({
+    dappMetadata,
     // Provider
     injectProvider = true,
     forceInjectProvider,
@@ -53,7 +54,6 @@ export default class MetaMaskSDK {
     // WebRTC
     webRTCLib,
     transports,
-    dappMetadata,
     timer
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
