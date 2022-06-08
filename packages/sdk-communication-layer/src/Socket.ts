@@ -2,6 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import KeyExchange from './KeyExchange';
+import { CommunicationLayerPreference } from '.';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
@@ -16,13 +17,59 @@ export default class Socket extends EventEmitter2 {
 
   keyExchange: KeyExchange;
 
-  constructor({ otherPublicKey }) {
+  manualDisconnect = false;
+
+  reconnect: boolean;
+
+  commLayer: CommunicationLayerPreference;
+
+  constructor({ otherPublicKey, reconnect, commLayer, transports }) {
     super();
 
-    this.socket = io('https://socket.codefi.network/');
+    this.reconnect = reconnect;
+    this.commLayer = commLayer;
+
+    const options = {};
+
+    if (transports) {
+      options.transports = transports;
+    }
+
+    this.socket = io('https://socket.codefi.network/', options);
+
+    const connectAgain = () => {
+      window.removeEventListener('focus', connectAgain);
+      this.reconnect = true;
+      this.socket.connect();
+      this.socket.emit('join_channel', this.channelId);
+    };
+
+    const checkFocus = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+      this.socket.disconnect();
+      if (document.hasFocus()) {
+        connectAgain();
+      } else {
+        window.addEventListener('focus', connectAgain);
+      }
+    };
+
+    this.socket.on('error', () => {
+      // #if _WEB
+      checkFocus();
+      // #endif
+    });
+
+    this.socket.on('disconnect', () => {
+      // #if _WEB
+      checkFocus();
+      // #endif
+    });
 
     this.keyExchange = new KeyExchange({
-      commLayer: this,
+      CommLayer: this,
       otherPublicKey,
       sendPublicKey: false,
     });
@@ -32,22 +79,6 @@ export default class Socket extends EventEmitter2 {
         isOriginator: this.isOriginator,
       });
     });
-
-    this.socket.on('clients_connected', (id) => {
-      this.channelId = id;
-      this.clientsConnected = true;
-      if (this.isOriginator) {
-        this.keyExchange.start();
-      }
-    });
-
-    this.socket.on('channel_created', (id) => {
-      this.emit('channel_created', id);
-    });
-
-    this.socket.on('clients_disconnected', () => {
-      this.emit('clients_disconnected');
-    });
   }
 
   receiveMessages(channelId) {
@@ -55,7 +86,22 @@ export default class Socket extends EventEmitter2 {
       this.channelId = id;
       this.clientsConnected = true;
       if (this.isOriginator) {
-        this.keyExchange.start();
+        if (!this.keyExchange.keysExchanged) {
+          this.keyExchange.start(this.isOriginator);
+        }
+      }
+      if (this.reconnect) {
+        if (this.keyExchange.keysExchanged) {
+          this.sendMessage({ type: 'ready' });
+          if (this.commLayer === CommunicationLayerPreference.WEBRTC) {
+            this.emit('clients_ready', {
+              isOriginator: this.isOriginator,
+            });
+          }
+        } else if (!this.isOriginator) {
+          this.sendMessage({ type: 'key_handshake_start' });
+        }
+        this.reconnect = false;
       }
     });
 
@@ -64,6 +110,7 @@ export default class Socket extends EventEmitter2 {
     });
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
+      this.clientsConnected = false;
       this.emit('clients_disconnected');
     });
 
@@ -73,6 +120,14 @@ export default class Socket extends EventEmitter2 {
       }
 
       this.checkSameId(id);
+
+      if (
+        this.isOriginator &&
+        this.keyExchange.keysExchanged &&
+        message?.type === 'key_handshake_start'
+      ) {
+        return this.keyExchange.start(this.isOriginator);
+      }
 
       if (!this.keyExchange.keysExchanged) {
         const messageReceived = message;
@@ -86,6 +141,13 @@ export default class Socket extends EventEmitter2 {
       const messageReceived = JSON.parse(decryptedMessage);
       return this.emit('message', { message: messageReceived });
     });
+
+    this.socket.on(
+      `clients_waiting_to_join-${channelId}`,
+      (numberUsers: number) => {
+        this.emit('clients_waiting_to_join', numberUsers);
+      },
+    );
   }
 
   checkSameId(id) {
@@ -131,5 +193,22 @@ export default class Socket extends EventEmitter2 {
     this.receiveMessages(channelId);
     this.socket.emit('join_channel', channelId);
     return { channelId, pubKey: this.keyExchange.myPublicKey };
+  }
+
+  pause() {
+    this.manualDisconnect = true;
+    if (this.keyExchange.keysExchanged) {
+      this.sendMessage({ type: 'pause' });
+    }
+    this.socket.disconnect();
+  }
+
+  resume() {
+    this.manualDisconnect = false;
+    if (this.keyExchange.keysExchanged) {
+      this.reconnect = true;
+      this.socket.connect();
+      this.socket.emit('join_channel', this.channelId);
+    }
   }
 }
