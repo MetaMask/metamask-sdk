@@ -1,7 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { DappMetadata } from '../constants';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
+
+export type DappMetadata = {
+  url: string;
+  name: string;
+};
 
 type RemoteCommunicationOptions = {
   commLayer: string;
