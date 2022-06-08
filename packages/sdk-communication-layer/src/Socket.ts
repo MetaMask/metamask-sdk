@@ -211,4 +211,8 @@ export default class Socket extends EventEmitter2 {
       this.socket.emit('join_channel', this.channelId);
     }
   }
+
+  disconnect() {
+    this.socket.disconnect();
+  }
 }

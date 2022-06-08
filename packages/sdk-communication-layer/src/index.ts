@@ -224,4 +224,8 @@ export default class RemoteCommunication extends EventEmitter2 {
   resume() {
     this.commLayer.resume();
   }
+
+  disconnect() {
+    this.commLayer.disconnect();
+  }
 }
