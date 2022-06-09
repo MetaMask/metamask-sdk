@@ -50,7 +50,7 @@ const initializeProvider = ({
         }
       }
 
-      throw new Error('Wait until MetaMask is installed');
+      throw new Error('MetaMask is not connected/installed, please call eth_requestAccounts to connect first.');
     }
 
     return f(...args);

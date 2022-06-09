@@ -45,7 +45,7 @@ const Widget = (props: WidgetProps) => {
         type: 'rounded',
       },
       imageOptions: {
-        margin: 16,
+        margin: 5,
       },
       cornersDotOptions: {
         color: '#f66a07',

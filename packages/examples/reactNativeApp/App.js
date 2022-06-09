@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import type {Node} from 'react';
 import {
   Button,
@@ -14,18 +14,10 @@ import {
   SafeAreaView,
   ScrollView,
   StatusBar,
-  StyleSheet,
   Text,
   useColorScheme,
-  View,
 } from 'react-native';
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 import BackgroundTimer from 'react-native-background-timer';
 
 import MetaMaskSDK from '@metamask/sdk';
@@ -43,47 +35,40 @@ const sdk = new MetaMaskSDK({
   },
 });
 
-const Section = ({children, title}): Node => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
 const ethereum = sdk.getProvider();
 
 const App: () => Node = () => {
   const [response, setResponse] = useState();
+  const [account, setAccount] = useState();
+  const [chain, setChain] = useState();
 
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  const textStyle = {
+    color: isDarkMode ? Colors.lighter : Colors.darker,
+    margin: 10,
+    fontSize: 16,
+  };
+
+  useEffect(() => {
+    ethereum.on('chainChanged', chain => {
+      console.log(chain);
+      setChain(chain);
+    });
+    ethereum.on('accountsChanged', accounts => {
+      console.log(accounts);
+      setAccount(accounts?.[0]);
+    });
+  }, []);
 
   const connect = async () => {
     try {
       const result = await ethereum.request({method: 'eth_requestAccounts'});
       console.log('RESULT', result);
-      setResponse(result);
+      setAccount(result);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -189,65 +174,26 @@ const App: () => Node = () => {
     setResponse(resp);
   };
 
-  const listenEthereumEvents = () => {
-    ethereum.on('accountsChanged', args =>
-      console.log('EVENT accountsChanged', args),
-    );
-    ethereum.on('chainChanged', args =>
-      console.log('EVENT chainChanged', args),
-    );
-  };
+  const sendTransaction = async () => {
+    const to = '0x0000000000000000000000000000000000000000';
+    const transactionParameters = {
+      to, // Required except during contract publications.
+      from: ethereum.selectedAddress, // must match user's active address.
+      value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+    };
 
-  const onMessage = message => {
-    //console.log(message.nativeEvent.data);
-    const action = JSON.parse(message.nativeEvent.data);
-    console.log('NEW MESSAGE', action);
-    if (action.method === 'openLink') {
-      Linking.openURL(action.link);
-    } else if (action.method === 'accountsChanged') {
-      ethereum.selectedAddress = action.result?.[0];
-      console.log('accountsChanged', action.result);
-      ethereum.emit('accountsChanged', action.result);
-      return;
-    } else if (action.method === 'chainChanged') {
-      ethereum.chainId = action.result;
-      console.log('chainChanged', action.result);
-      ethereum.emit('chainChanged', action.result);
-      return;
-    }
-
-    const activeRequest = ethereum.activeRequests[action.id];
-    if (activeRequest) {
-      if (action.result) {
-        if (
-          activeRequest?.method === 'eth_requestAccounts' ||
-          activeRequest?.method === 'eth_accounts'
-        ) {
-          ethereum.selectedAddress = action.result?.[0];
-          console.log('eth_requestAccounts response', ethereum.selectedAddress);
-        }
-
-        if (activeRequest?.method === 'eth_chainId') {
-          ethereum.chainId = action.result;
-          console.log('eth_chainId response', ethereum.chainId);
-        }
-
-        activeRequest.resolve(action.result);
-      } else if (action.error) {
-        activeRequest.reject(action.error);
-      }
-    }
-  };
-
-  const logProvider = async () => {
     try {
-      const result = await ethereum.request({method: 'eth_chainId'});
-      console.log('chain', result);
-    } catch (e) {
-      console.log('e', e);
-    }
+      // txHash is a hex string
+      // As with any RPC call, it may throw an error
+      const txHash = await ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      });
 
-    console.log(ethereum.chainId, ethereum.selectedAddress);
+      setResponse(txHash);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (
@@ -256,43 +202,23 @@ const App: () => Node = () => {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Button title="Listen Ethereum Events" onPress={listenEthereumEvents} />
-
-        <Button title="Connect" onPress={connect} />
-
-        <Button title="Add chain" onPress={exampleRequest} />
+        <Button title={account ? 'Connected' : 'Connect'} onPress={connect} />
         <Button title="Sign" onPress={sign} />
+        <Button title="Send transaction" onPress={sendTransaction} />
+        <Button title="Add chain" onPress={exampleRequest} />
 
-        <Button title="Log provider" onPress={logProvider} />
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">{response}</Section>
-        </View>
+        <Text style={textStyle}>{chain && `Connected chain: ${chain}`}</Text>
+        <Text style={textStyle}>
+          {' '}
+          {account && `Connected account: ${account}`}
+        </Text>
+        <Text style={textStyle}>
+          {' '}
+          {response && `Last request response: ${response}`}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

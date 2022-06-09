@@ -56,6 +56,8 @@ class RemoteCommunicationPostMessageStream extends Duplex {
       // Check if should open app
       if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
         Platform.openDeeplink('https://metamask.app.link/', 'metamask://', '_self');
+      }else if(RemoteConnection.isPaused()){
+        Platform.openDeeplink('https://metamask.app.link/connect?redirect=true', 'metamask://connect?redirect=true', '_self');
       }
     } catch (err) {
       return callback(

@@ -73,6 +73,9 @@ const RemoteConnection = {
       });
     });
   },
+  isPaused(){
+   return this.RemoteCommunication.paused
+  }
 };
 
 export default RemoteConnection;
