@@ -22,7 +22,7 @@ import BackgroundTimer from 'react-native-background-timer';
 
 import MetaMaskSDK from '@metamask/sdk';
 
-//import WC from '@walletconnect/client';
+import {ethers} from 'ethers';
 
 const sdk = new MetaMaskSDK({
   openDeeplink: link => {
@@ -37,10 +37,13 @@ const sdk = new MetaMaskSDK({
 
 const ethereum = sdk.getProvider();
 
+const provider = new ethers.providers.Web3Provider(ethereum);
+
 const App: () => Node = () => {
   const [response, setResponse] = useState();
   const [account, setAccount] = useState();
   const [chain, setChain] = useState();
+  const [balance, setBalance] = useState();
 
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -53,6 +56,14 @@ const App: () => Node = () => {
     fontSize: 16,
   };
 
+  const getBalance = async acc => {
+    if (!acc) {
+      return;
+    }
+    const bal = await provider.getBalance(acc);
+    setBalance(ethers.utils.formatEther(bal));
+  };
+
   useEffect(() => {
     ethereum.on('chainChanged', chain => {
       console.log(chain);
@@ -61,14 +72,17 @@ const App: () => Node = () => {
     ethereum.on('accountsChanged', accounts => {
       console.log(accounts);
       setAccount(accounts?.[0]);
+
+      getBalance(accounts?.[0]);
     });
   }, []);
 
   const connect = async () => {
     try {
       const result = await ethereum.request({method: 'eth_requestAccounts'});
-      console.log('RESULT', result);
-      setAccount(result);
+      console.log('RESULT', result?.[0]);
+      setAccount(result?.[0]);
+      getBalance(result?.[0]);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -210,7 +224,8 @@ const App: () => Node = () => {
         <Text style={textStyle}>{chain && `Connected chain: ${chain}`}</Text>
         <Text style={textStyle}>
           {' '}
-          {account && `Connected account: ${account}`}
+          {account && `Connected account: ${account}\n\n`}
+          {account && balance && `Balance: ${balance} ETH`}
         </Text>
         <Text style={textStyle}>
           {' '}

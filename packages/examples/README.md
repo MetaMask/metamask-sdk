@@ -1,3 +1,3 @@
-# @metamask/snap-examples
+# @metamask/sdk-examples
 
 Examples using MetaMask SDK.
