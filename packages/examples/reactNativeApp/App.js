@@ -56,11 +56,11 @@ const App: () => Node = () => {
     fontSize: 16,
   };
 
-  const getBalance = async acc => {
-    if (!acc) {
+  const getBalance = async () => {
+    if (!ethereum.selectedAddress) {
       return;
     }
-    const bal = await provider.getBalance(acc);
+    const bal = await provider.getBalance(ethereum.selectedAddress);
     setBalance(ethers.utils.formatEther(bal));
   };
 
@@ -73,7 +73,7 @@ const App: () => Node = () => {
       console.log(accounts);
       setAccount(accounts?.[0]);
 
-      getBalance(accounts?.[0]);
+      getBalance();
     });
   }, []);
 
@@ -82,7 +82,7 @@ const App: () => Node = () => {
       const result = await ethereum.request({method: 'eth_requestAccounts'});
       console.log('RESULT', result?.[0]);
       setAccount(result?.[0]);
-      getBalance(result?.[0]);
+      getBalance();
     } catch (e) {
       console.log('ERROR', e);
     }
