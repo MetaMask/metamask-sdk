@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/node/cjs/metamask-sdk.js",
   "module": "dist/node/es/metamask-sdk.js",
