@@ -54,7 +54,7 @@ export default class MetaMaskSDK {
     // WebRTC
     webRTCLib,
     transports,
-    timer
+    timer,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -89,7 +89,7 @@ export default class MetaMaskSDK {
         RemoteConnection.transports = transports;
       }
 
-      if(timer){
+      if (timer) {
         RemoteConnection.timer = timer;
       }
 
@@ -119,12 +119,20 @@ export default class MetaMaskSDK {
   // Get the connector object from WalletConnect
   getWalletConnectConnector = () => {
     return WalletConnect.getConnector();
-  }
+  };
 
   // Return the ethereum provider object
   getProvider = () => {
     return this.provider;
-  }
+  };
+
+  getUniversalLink = () => {
+    if (RemoteConnection.universalLink) return RemoteConnection.universalLink;
+
+    if(WalletConnect.universalLink) return WalletConnect.universalLink;
+
+    throw new Error("No Universal Link available, please call eth_requestAccounts first.")
+  };
 }
 
 declare global {

@@ -9,6 +9,7 @@ const RemoteConnection = {
   transports: null,
   webRTCLib: null,
   timer: null,
+  universalLink: null,
   getConnector() {
     if (!this.RemoteCommunication) {
       const commLayer = PostMessageStreams.communicationLayerPreference;
@@ -23,9 +24,7 @@ const RemoteConnection = {
       });
 
       if (this.timer) {
-        this.timer.runBackgroundTimer?.(() => {
-          
-        }, 5000);
+        this.timer.runBackgroundTimer?.(() => {}, 5000);
       }
     }
 
@@ -37,6 +36,7 @@ const RemoteConnection = {
   },
   sentFirstConnect: false,
   startConnection() {
+    this.universalLink = null;
     let installModal = null;
     const { channelId, pubKey } = this.getConnector().generateChannelId();
     const linkParams = `channelId=${encodeURIComponent(
@@ -52,7 +52,9 @@ const RemoteConnection = {
     /*#if _REACTNATIVE
     const showQRCode = false
     //#else */
-    const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb || Platform.getPlatform() === PlatformName.NonBrowser;
+    const showQRCode =
+      Platform.getPlatform() === PlatformName.DesktopWeb ||
+      Platform.getPlatform() === PlatformName.NonBrowser;
     //#endif
 
     if (showQRCode) {
@@ -62,6 +64,9 @@ const RemoteConnection = {
       console.log('OPEN LINK', universalLink);
       Platform.openDeeplink?.(universalLink, deeplink, '_self');
     }
+
+    this.universalLink = universalLink;
+
     return new Promise((resolve) => {
       this.getConnector().once('clients_ready', () => {
         installModal?.onClose();
@@ -73,9 +78,9 @@ const RemoteConnection = {
       });
     });
   },
-  isPaused(){
-   return this.RemoteCommunication.paused
-  }
+  isPaused() {
+    return this.RemoteCommunication.paused;
+  },
 };
 
 export default RemoteConnection;

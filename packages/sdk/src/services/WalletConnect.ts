@@ -4,10 +4,12 @@ import InstallModal from '../ui/InstallModal';
 const WalletConnect = {
   WalletConnectInstance: null,
   connector: null,
+  universalLink: null,
   getConnector() {
     if (!this.connector) {
       const WCInstance = this.WalletConnectInstance;
-      if(!WCInstance) throw new Error("WalletConnectInstance must be provided")
+      if (!WCInstance)
+        throw new Error('WalletConnectInstance must be provided');
       this.connector = new WCInstance({
         bridge: 'https://bridge.walletconnect.org', // Required
       });
@@ -21,6 +23,7 @@ const WalletConnect = {
   },
   sentFirstConnect: false,
   startConnection() {
+    this.universalLink = null;
     return new Promise((resolve, reject) => {
       if (this.getConnector().connected) {
         return resolve(true);
@@ -29,7 +32,7 @@ const WalletConnect = {
       this.getConnector()
         .createSession()
         .then(() => {
-          let installModal = null
+          let installModal = null;
 
           const linkParams = `uri=${encodeURIComponent(
             this.getConnector().uri,
@@ -37,12 +40,14 @@ const WalletConnect = {
 
           const universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
 
-          const deeplink =`metamask://connect?${linkParams}`
+          const deeplink = `metamask://connect?${linkParams}`;
 
           /*#if _REACTNATIVE
           const showQRCode = false
           //#else */
-          const showQRCode = Platform.getPlatform() === PlatformName.DesktopWeb || Platform.getPlatform() === PlatformName.NonBrowser;
+          const showQRCode =
+            Platform.getPlatform() === PlatformName.DesktopWeb ||
+            Platform.getPlatform() === PlatformName.NonBrowser;
           //#endif
 
           if (showQRCode) {
@@ -53,6 +58,8 @@ const WalletConnect = {
             // window.location.assign(link);
             Platform.openDeeplink(universalLink, deeplink, '_self');
           }
+
+          this.universalLink = universalLink;
 
           this.getConnector().on('connect', () => {
             if (this.sentFirstConnect) {
