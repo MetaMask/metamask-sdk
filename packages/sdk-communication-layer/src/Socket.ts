@@ -23,7 +23,13 @@ export default class Socket extends EventEmitter2 {
 
   commLayer: CommunicationLayerPreference;
 
-  constructor({ otherPublicKey, reconnect, commLayer, transports }) {
+  constructor({
+    otherPublicKey,
+    reconnect,
+    commLayer,
+    transports,
+    url = 'https://socket.codefi.network/',
+  }) {
     super();
 
     this.reconnect = reconnect;
@@ -36,7 +42,7 @@ export default class Socket extends EventEmitter2 {
       options.transports = transports;
     }
 
-    this.socket = io('https://socket.codefi.network/', options);
+    this.socket = io(url, options);
 
     const connectAgain = () => {
       window.removeEventListener('focus', connectAgain);
