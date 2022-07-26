@@ -14,6 +14,7 @@ type RemoteCommunicationOptions = {
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
+  url?: string;
 };
 
 export enum CommunicationLayerPreference {
@@ -43,6 +44,8 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   webRTCLib: any;
 
+  url?: string;
+
   dappMetadata: DappMetadata;
 
   transports: string[];
@@ -54,6 +57,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     reconnect,
     dappMetadata,
     transports,
+    url,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -72,6 +76,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
+      url,
     });
   }
 
@@ -81,6 +86,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     commLayer,
     reconnect,
+    url: commsUrl,
   }) {
     this.commLayer = new CommLayer({
       otherPublicKey,
@@ -88,6 +94,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       commLayer,
       reconnect,
       transports: this.transports,
+      url: commsUrl,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -138,6 +145,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         webRTCLib,
         commLayer: this.commLayer,
         reconnect: false,
+        url: commsUrl,
       });
       this.emit('clients_disconnected');
     });
