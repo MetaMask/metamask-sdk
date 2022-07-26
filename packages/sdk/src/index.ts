@@ -6,7 +6,7 @@ import ManageMetaMaskInstallation from './Platform/ManageMetaMaskInstallation';
 import Platform, { PlatformName } from './Platform';
 import Ethereum from './services/Ethereum';
 import PostMessageStreams from './PostMessageStreams';
-import PortStreams from './PortStreams';
+import PortStreams from './portStreams';
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
