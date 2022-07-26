@@ -33,12 +33,15 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build": "rm -rf dist && rollup -c"
+    "build": "rm -rf dist && rollup -c",
+    "build:pre-tsc": "echo 'N/A'",
+    "build:post-tsc": "echo 'N/A'"
   },
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
+    "@metamask/sdk-communication-layer": "^0.0.1",
     "bowser": "^2.9.0",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",

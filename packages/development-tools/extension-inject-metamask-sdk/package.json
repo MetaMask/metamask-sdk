@@ -21,6 +21,8 @@
     "build:firefox": "yarn getScript && cross-env NODE_ENV=production cross-env TARGET_BROWSER=firefox webpack",
     "build:opera": "yarn getScript && cross-env NODE_ENV=production cross-env TARGET_BROWSER=opera webpack",
     "build": "yarn getScript && yarn run build:chrome && yarn run build:firefox && yarn run build:opera",
+    "build:pre-tsc": "echo 'N/A'",
+    "build:post-tsc": "echo 'N/A'",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix"
   },
