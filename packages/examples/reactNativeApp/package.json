@@ -45,7 +45,7 @@
     "preset": "react-native"
   },
   "dependencies": {
-    "@metamask/sdk": "file:../../sdk",
+    "@metamask/sdk": "0.0.2",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/client": "^1.7.7",
     "crypto": "^1.0.1",
