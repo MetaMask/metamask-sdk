@@ -39,11 +39,17 @@ export const isNotBrowser = () =>
   navigator?.product === 'ReactNative';
 
 export const getPlatform = () => {
-  if (isNotBrowser()) return PlatformName.NonBrowser;
+  if (isNotBrowser()) {
+    return PlatformName.NonBrowser;
+  }
 
-  if (isMetaMaskMobileWebView()) return PlatformName.MetaMaskMobileWebview;
+  if (isMetaMaskMobileWebView()) {
+    return PlatformName.MetaMaskMobileWebview;
+  }
 
-  if (isMobile()) return PlatformName.MobileWeb;
+  if (isMobile()) {
+    return PlatformName.MobileWeb;
+  }
 
   return PlatformName.DesktopWeb;
 };
@@ -53,28 +59,30 @@ const Platform = {
   useDeeplink: null,
   preferredOpenLink: null,
   openDeeplink(universalLink: string, deeplink: string, target?: string) {
-    if (this.preferredOpenLink)
+    if (this.preferredOpenLink) {
       return this.preferredOpenLink(universalLink, target);
-
-    if (typeof window !== 'undefined') {
-      let win
-      if(Platform.useDeeplink){
-        win = window.open(deeplink, '_blank')
-      }else{
-        win = window.open(universalLink, '_blank')
-      }
-      setTimeout(()=>win?.close?.(), 500)
     }
 
-    //throw new Error('Please setup the openDeeplink parameter');
-    return;
+    if (typeof window !== 'undefined') {
+      let win;
+      if (Platform.useDeeplink) {
+        win = window.open(deeplink, '_blank');
+      } else {
+        win = window.open(universalLink, '_blank');
+      }
+      setTimeout(() => win?.close?.(), 500);
+    }
+
+    // throw new Error('Please setup the openDeeplink parameter');
   },
   isMetaMaskInstalled,
   isMobile,
   isMetaMaskMobileWebView,
   isNotBrowser,
   getPlatform() {
-    if (this.platform) return this.platform;
+    if (this.platform) {
+      return this.platform;
+    }
 
     this.platform = getPlatform();
 

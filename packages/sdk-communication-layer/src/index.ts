@@ -110,6 +110,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       if (this.dappMetadata?.url) {
         url = this.dappMetadata.url;
       }
+
       if (this.dappMetadata?.name) {
         title = this.dappMetadata.name;
       }

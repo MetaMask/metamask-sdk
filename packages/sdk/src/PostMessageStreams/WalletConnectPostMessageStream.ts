@@ -7,7 +7,9 @@ import Platform, { PlatformName } from '../Platform';
 
 class WalletConnectPostMessageStream extends Duplex {
   private _alreadySubscribed: any;
+
   private _name: any;
+
   constructor({ name }) {
     super({
       objectMode: true,
@@ -16,7 +18,9 @@ class WalletConnectPostMessageStream extends Duplex {
   }
 
   _write(msg, _encoding, callback) {
-    if (!WalletConnect.isConnected()) return callback();
+    if (!WalletConnect.isConnected()) {
+      return callback();
+    }
 
     try {
       let data;
@@ -67,7 +71,11 @@ class WalletConnectPostMessageStream extends Duplex {
 
       // Check if should open app
       if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
-        Platform.openDeeplink('https://metamask.app.link/', 'metamask://', '_self');
+        Platform.openDeeplink(
+          'https://metamask.app.link/',
+          'metamask://',
+          '_self',
+        );
       }
     } catch (err) {
       return callback(
@@ -91,6 +99,7 @@ class WalletConnectPostMessageStream extends Duplex {
     if (!msg || typeof msg !== 'object') {
       return;
     }
+
     if (!msg.data || typeof msg.data !== 'object') {
       return;
     }

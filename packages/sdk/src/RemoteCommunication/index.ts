@@ -1,16 +1,16 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { DappMetadata } from '../constants';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
-import { DappMetadata } from '../constants';
 
-interface RemoteCommunicationOptions {
+type RemoteCommunicationOptions = {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
-}
+};
 
 export enum CommunicationLayerPreference {
   WEBRTC = 'webrtc',
@@ -24,14 +24,23 @@ export default class RemoteCommunication extends EventEmitter2 {
   channelId = null;
 
   connected = false;
+
   isOriginator: boolean;
+
   originatorInfo: any;
+
   walletInfo: any;
+
   paused: boolean;
+
   CommLayer: typeof WebRTC | typeof Socket;
+
   otherPublicKey: string;
+
   webRTCLib: any;
+
   dappMetadata: DappMetadata;
+
   transports: string[];
 
   constructor({
@@ -40,7 +49,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     reconnect,
     dappMetadata,
-    transports
+    transports,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -50,8 +59,8 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.CommLayer = CommLayer;
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
-    this.dappMetadata = dappMetadata
-    this.transports = transports
+    this.dappMetadata = dappMetadata;
+    this.transports = transports;
 
     this.setupCommLayer({
       CommLayer,
@@ -74,7 +83,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
-      transports: this.transports
+      transports: this.transports,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -84,7 +93,9 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.commLayer.on('clients_ready', ({ isOriginator }) => {
       this.isOriginator = isOriginator;
 
-      if (!isOriginator) return;
+      if (!isOriginator) {
+        return;
+      }
 
       let url =
         (typeof document !== 'undefined' && document.URL) || 'url undefined';
@@ -92,8 +103,13 @@ export default class RemoteCommunication extends EventEmitter2 {
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
 
-        if(this.dappMetadata?.url) url = this.dappMetadata.url
-        if(this.dappMetadata?.name) title = this.dappMetadata.name
+      if (this.dappMetadata?.url) {
+        url = this.dappMetadata.url;
+      }
+
+      if (this.dappMetadata?.name) {
+        title = this.dappMetadata.name;
+      }
 
       this.commLayer.sendMessage({
         type: 'originator_info',
@@ -191,7 +207,9 @@ export default class RemoteCommunication extends EventEmitter2 {
   }
 
   generateChannelId() {
-    if (this.connected) throw new Error('Channel already created');
+    if (this.connected) {
+      throw new Error('Channel already created');
+    }
 
     this.clean();
 

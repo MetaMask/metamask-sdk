@@ -11,23 +11,23 @@
     "examples/"
   ],
   "scripts": {
-    "setup": "yarn install && yarn allow-scripts",
-    "test": "echo 'N/A'",
-    "test:ci": "yarn test",
-    "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:changelog": "yarn auto-changelog validate",
     "build": "echo 'N/A'",
-    "build:pre-tsc": "echo 'N/A'",
-    "build:post-tsc": "echo 'N/A'",
     "build:clean": "echo 'N/A'",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist/*",
-    "publish": "../../scripts/publish-package.sh"
+    "publish": "../../scripts/publish-package.sh",
+    "setup": "yarn install && yarn allow-scripts",
+    "test": "echo 'N/A'",
+    "test:ci": "yarn test"
   },
   "dependencies": {
-      "@metamask/sdk": "0.0.2"
+    "@metamask/sdk": "0.0.2"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.5",
@@ -39,12 +39,13 @@
     "@types/jest": "^26.0.13",
     "@typescript-eslint/eslint-plugin": "^4.21.0",
     "@typescript-eslint/parser": "^4.21.0",
-    "eslint": "^7.23.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.3.4",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-prettier": "^3.4.0",
     "execa": "^5.1.1",
     "jest": "^26.4.2",
     "prettier": "^2.2.1",

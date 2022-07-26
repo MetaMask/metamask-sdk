@@ -13,12 +13,7 @@
   "homepage_url": "https://github.com/metamask/sdk/packages/development-tools/extension-inject-metamask-sdk",
   "short_name": "Sample Name",
 
-  "permissions": [
-    "activeTab",
-    "storage",
-    "http://*/*",
-    "https://*/*"
-  ],
+  "permissions": ["activeTab", "storage", "http://*/*", "https://*/*"],
 
   "content_security_policy": "script-src 'self'; object-src 'self'",
 
@@ -50,9 +45,7 @@
   },
 
   "background": {
-    "scripts": [
-      "js/background.bundle.js"
-    ],
+    "scripts": ["js/background.bundle.js"],
     "__chrome|opera__persistent": false
   },
   "content_scripts": [
@@ -63,7 +56,5 @@
       "all_frames": true
     }
   ],
-  "web_accessible_resources": [
-    "assets/sdk.js"
-  ]
+  "web_accessible_resources": ["assets/sdk.js"]
 }

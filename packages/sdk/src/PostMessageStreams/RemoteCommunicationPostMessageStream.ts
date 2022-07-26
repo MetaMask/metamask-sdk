@@ -8,6 +8,7 @@ import Platform, { PlatformName } from '../Platform';
 
 class RemoteCommunicationPostMessageStream extends Duplex {
   private _name: any;
+
   comm: RemoteCommunication;
 
   constructor({ name }) {
@@ -33,11 +34,13 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     this.comm.on('clients_disconnected', () => {
       Ethereum.ethereum._handleAccountsChanged([]);
       Ethereum.ethereum._handleDisconnect(true);
-    })
+    });
   }
 
   _write(msg, _encoding, callback) {
-    if (!RemoteConnection.isConnected()) return callback();
+    if (!RemoteConnection.isConnected()) {
+      return callback();
+    }
 
     try {
       let data;
@@ -55,9 +58,17 @@ class RemoteCommunicationPostMessageStream extends Duplex {
 
       // Check if should open app
       if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
-        Platform.openDeeplink('https://metamask.app.link/', 'metamask://', '_self');
-      }else if(RemoteConnection.isPaused()){
-        Platform.openDeeplink('https://metamask.app.link/connect?redirect=true', 'metamask://connect?redirect=true', '_self');
+        Platform.openDeeplink(
+          'https://metamask.app.link/',
+          'metamask://',
+          '_self',
+        );
+      } else if (RemoteConnection.isPaused()) {
+        Platform.openDeeplink(
+          'https://metamask.app.link/connect?redirect=true',
+          'metamask://connect?redirect=true',
+          '_self',
+        );
       }
     } catch (err) {
       return callback(
@@ -81,6 +92,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     if (!message || typeof message !== 'object') {
       return;
     }
+
     if (!message.data || typeof message.data !== 'object') {
       return;
     }
@@ -100,7 +112,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
   }
 
   start() {
-    //Ethereum.ethereum.isConnected = () => RemoteConnection.isConnected();
+    // Ethereum.ethereum.isConnected = () => RemoteConnection.isConnected();
   }
 }
 

@@ -19,6 +19,7 @@ const RemoteConnection = {
         dappMetadata: this.dappMetadata,
         transports: this.transports,
       });
+
       this.RemoteCommunication.on('clients_disconnected', () => {
         this.sentFirstConnect = false;
       });
@@ -49,13 +50,13 @@ const RemoteConnection = {
 
     const deeplink = `metamask://connect?${linkParams}`;
 
-    /*#if _REACTNATIVE
+    /* #if _REACTNATIVE
     const showQRCode = false
     //#else */
     const showQRCode =
       Platform.getPlatform() === PlatformName.DesktopWeb ||
       Platform.getPlatform() === PlatformName.NonBrowser;
-    //#endif
+    // #endif
 
     if (showQRCode) {
       installModal = InstallModal({ link: universalLink });

@@ -1,14 +1,14 @@
 {
-    "name": "sdk-nodejs-example",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@metamask/sdk": "0.0.2"
-    }
+  "name": "sdk-nodejs-example",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@metamask/sdk": "0.0.2"
+  }
 }

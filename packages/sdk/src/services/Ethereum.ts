@@ -2,7 +2,11 @@ import { initializeProvider as initProvider } from '@metamask/providers';
 
 const Ethereum = {
   ethereum: null,
-  initializeProvider({ shouldSetOnWindow, connectionStream, shouldShimWeb3 = true }) {
+  initializeProvider({
+    shouldSetOnWindow,
+    connectionStream,
+    shouldShimWeb3 = true,
+  }) {
     // Initialize provider object (window.ethereum)
     this.ethereum = initProvider({
       shouldSetOnWindow,
@@ -12,7 +16,7 @@ const Ethereum = {
       shouldShimWeb3,
     });
 
-    return this.ethereum
+    return this.ethereum;
   },
 };
 

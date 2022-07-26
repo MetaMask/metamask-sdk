@@ -8,8 +8,10 @@ const WalletConnect = {
   getConnector() {
     if (!this.connector) {
       const WCInstance = this.WalletConnectInstance;
-      if (!WCInstance)
+      if (!WCInstance) {
         throw new Error('WalletConnectInstance must be provided');
+      }
+
       this.connector = new WCInstance({
         bridge: 'https://bridge.walletconnect.org', // Required
       });
@@ -42,13 +44,13 @@ const WalletConnect = {
 
           const deeplink = `metamask://connect?${linkParams}`;
 
-          /*#if _REACTNATIVE
+          /* #if _REACTNATIVE
           const showQRCode = false
           //#else */
           const showQRCode =
             Platform.getPlatform() === PlatformName.DesktopWeb ||
             Platform.getPlatform() === PlatformName.NonBrowser;
-          //#endif
+          // #endif
 
           if (showQRCode) {
             installModal = InstallModal({ link: universalLink });
