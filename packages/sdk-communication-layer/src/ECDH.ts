@@ -12,7 +12,9 @@ import { Buffer } from 'buffer';
 export default class ECDH {
   ecdh = null; // ecdh instance
 
-  secretKey = null; // symmetric secret key to use for webrtc encryption/decryption
+  secretKey = null; // symmetric secret key
+
+  secretKeyHash = null; // 256b hash of the symmetric secret key to use for encryption/decryption
 
   /**
    * Creates ECDH instance
@@ -42,21 +44,10 @@ export default class ECDH {
    */
   computeECDHSecret(otherPublicKey) {
     this.secretKey = this.ecdh.computeSecret(otherPublicKey, 'base64', 'hex');
-  }
-
-  /**
-   * Encrypts a data message using the secret key
-   *
-   * @param {string} data - data string to be encrypted
-   * @returns - encrypted string in base64
-   */
-  encrypt(data) {
-    const cipher = crypto.createCipher('aes-256-cbc', this.secretKey);
-
-    let encryptedData = cipher.update(data, 'utf8', 'base64');
-    encryptedData += cipher.final('base64');
-
-    return encryptedData;
+    this.secretKeyHash = crypto
+      .createHash('sha256')
+      .update(this.secretKey)
+      .digest('hex');
   }
 
   /**
@@ -68,9 +59,10 @@ export default class ECDH {
    */
   encryptAuthIV(data) {
     const iv = crypto.randomBytes(16);
+
     const cipher = crypto.createCipheriv(
       'aes-256-gcm',
-      Buffer.from(this.secretKey, 'hex'),
+      Buffer.from(this.secretKeyHash, 'hex'),
       iv,
     );
 
@@ -83,21 +75,6 @@ export default class ECDH {
     const payload64 = Buffer.from(payload, 'hex').toString('base64');
 
     return payload64;
-  }
-
-  /**
-   * Decrypts a data message using the secret key
-   *
-   * @param {string} encryptedData - base64 data string to be decrypted
-   * @returns - decrypted data
-   */
-  decrypt(encryptedData) {
-    const decipher = crypto.createDecipher('aes-256-cbc', this.secretKey);
-
-    let decryptedData = decipher.update(encryptedData, 'base64', 'utf8');
-    decryptedData += decipher.final('utf8');
-
-    return decryptedData;
   }
 
   /**
@@ -117,7 +94,7 @@ export default class ECDH {
     try {
       const decipher = crypto.createDecipheriv(
         'aes-256-gcm',
-        Buffer.from(this.secretKey, 'hex'),
+        Buffer.from(this.secretKeyHash, 'hex'),
         Buffer.from(iv, 'hex'),
       );
 
