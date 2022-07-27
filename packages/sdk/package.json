@@ -26,7 +26,7 @@
     "/dist"
   ],
   "scripts": {
-    "setup": "yarn install && yarn allow-scripts",
+    "setup": "yarn install",
     "clean": "rimraf ./dist/* ./node_modules/*",
     "prepublishOnly": "yarn build",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -50,7 +50,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
@@ -75,11 +74,5 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "typescript": "^4.3.2"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
-    }
   }
 }

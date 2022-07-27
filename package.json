@@ -15,24 +15,23 @@
     ]
   },
   "scripts": {
-    "setup": "yarn install && yarn allow-scripts && yarn postinstall",
-    "postinstall": "patch-package",
-    "publish:all": "./scripts/publish-all.sh",
-    "link-packages": "./scripts/link-packages.sh",
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
-    "lint:changelogs": "yarn workspaces run lint:changelog",
-    "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build:tsc": "tsc --build --force tsconfig.json",
     "build": "yarn workspaces run build:pre-tsc && yarn build:tsc && yarn workspaces run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
+    "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces run clean",
+    "postinstall": "patch-package",
+    "link-packages": "./scripts/link-packages.sh",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:changelogs": "yarn workspaces run lint:changelog",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+    "publish:all": "./scripts/publish-all.sh",
+    "setup": "yarn install && yarn postinstall",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.5.0",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",
@@ -55,11 +54,5 @@
   },
   "engines": {
     "node": ">=12.11.0"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
-    }
   }
 }

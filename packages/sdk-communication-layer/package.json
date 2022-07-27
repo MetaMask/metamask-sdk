@@ -2,12 +2,6 @@
   "name": "@metamask/sdk-communication-layer",
   "version": "0.0.1",
   "description": "",
-  "main": "dist/node/cjs/metamask-sdk-communication-layer.js",
-  "module": "dist/node/es/metamask-sdk-communication-layer.js",
-  "browser": "dist/browser/es/metamask-sdk-communication-layer.js",
-  "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
-  "unpkg": "dist/browser/umd/metamask-sdk-communication-layer.js",
-  "types": "dist/browser/es/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk-communication-layer/issues"
@@ -16,24 +10,26 @@
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk-communication-layer.git"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
   "license": "MIT",
+  "main": "dist/node/cjs/metamask-sdk-communication-layer.js",
+  "unpkg": "dist/browser/umd/metamask-sdk-communication-layer.js",
+  "module": "dist/node/es/metamask-sdk-communication-layer.js",
+  "browser": "dist/browser/es/metamask-sdk-communication-layer.js",
+  "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
+  "types": "dist/browser/es/index.d.ts",
   "files": [
     "/src",
     "/dist"
   ],
   "scripts": {
-    "setup": "yarn install && yarn allow-scripts",
+    "build": "rm -rf dist && rollup -c",
     "clean": "rimraf ./dist/* ./node_modules/*",
-    "prepublishOnly": "yarn build",
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build": "rm -rf dist && rollup -c"
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+    "prepublishOnly": "yarn build",
+    "setup": "yarn install"
   },
   "dependencies": {
     "eventemitter2": "^6.4.5",
@@ -41,7 +37,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
@@ -66,6 +61,10 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "typescript": "^4.3.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "lavamoat": {
     "allowScripts": {

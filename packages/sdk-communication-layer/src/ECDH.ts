@@ -10,11 +10,11 @@ import { Buffer } from 'buffer';
  * The encryption/decryption is made using a symmetric key coming from the ECDH key exchange
  */
 export default class ECDH {
-  ecdh = null; // ecdh instance
+  ecdh: any; // ecdh instance
 
-  secretKey = null; // symmetric secret key
+  secretKey = ''; // symmetric secret key
 
-  secretKeyHash = null; // 256b hash of the symmetric secret key to use for encryption/decryption
+  secretKeyHash = ''; // 256b hash of the symmetric secret key to use for encryption/decryption
 
   /**
    * Creates ECDH instance
@@ -42,7 +42,7 @@ export default class ECDH {
    * @param {string} otherPublicKey - ECDH key received in base64 format
    * @returns - secret key in hex
    */
-  computeECDHSecret(otherPublicKey) {
+  computeECDHSecret(otherPublicKey: string) {
     this.secretKey = this.ecdh.computeSecret(otherPublicKey, 'base64', 'hex');
     this.secretKeyHash = crypto
       .createHash('sha256')
@@ -57,7 +57,7 @@ export default class ECDH {
    * @param {string} data - data string to be encrypted
    * @returns - encrypted string in base64
    */
-  encryptAuthIV(data) {
+  encryptAuthIV(data: string) {
     const iv = crypto.randomBytes(16);
 
     const cipher = crypto.createCipheriv(
@@ -84,7 +84,7 @@ export default class ECDH {
    * @param {string} encryptedData - base64 data string to be decrypted
    * @returns - decrypted data || false if error
    */
-  decryptAuthIV(encryptedData) {
+  decryptAuthIV(encryptedData: string) {
     const payload = Buffer.from(encryptedData, 'base64').toString('hex');
 
     const iv = payload.substr(0, 32);
@@ -104,7 +104,7 @@ export default class ECDH {
       decrypted += decipher.final('utf8');
 
       return decrypted;
-    } catch (error) {
+    } catch (error: any) {
       return error.message;
     }
   }
