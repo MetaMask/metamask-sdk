@@ -5,6 +5,17 @@ const app = express();
 
 const server = http.createServer(app);
 const { Server } = require('socket.io');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
+
+const rateLimiter = new RateLimiterMemory({
+  points: 5, // 5 points
+  duration: 1, // per second
+});
+
+const rateLimiterMesssage = new RateLimiterMemory({
+  points: 50, // 5 points
+  duration: 1, // per second
+});
 
 const io = new Server(server, {
   cors: {
@@ -13,9 +24,14 @@ const io = new Server(server, {
 });
 const cors = require('cors');
 
+app.use(cors());
+
 const uuid = require('uuid');
 
-app.use(cors());
+const helmet = require('helmet');
+
+app.use(helmet());
+app.disable('x-powered-by');
 
 app.get('/', (req, res) => {
   res.json({ success: true });
@@ -24,7 +40,9 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('create_channel', (id) => {
+  socket.on('create_channel', async (id) => {
+    await rateLimiter.consume(socket.handshake.address);
+
     console.log('create channel', id);
 
     if (!uuid.validate(id)) {
@@ -43,11 +61,23 @@ io.on('connection', (socket) => {
     return socket.emit(`channel_created-${id}`, id);
   });
 
-  socket.on('message', ({ id, message }) => {
+  socket.on('message', async ({ id, message }) => {
+    try {
+      await rateLimiterMesssage.consume(socket.handshake.address);
+    } catch (e) {
+      return;
+    }
+
     socket.to(id).emit(`message-${id}`, { id, message });
   });
 
-  socket.on('join_channel', (id) => {
+  socket.on('join_channel', async (id) => {
+    try {
+      await rateLimiter.consume(socket.handshake.address);
+    } catch (e) {
+      return;
+    }
+
     console.log('join_channel', id);
 
     if (!uuid.validate(id)) {

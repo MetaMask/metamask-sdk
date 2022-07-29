@@ -12,6 +12,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.3",
+    "helmet": "^5.1.1",
+    "rate-limiter-flexible": "^2.3.8",
     "socket.io": "^4.4.1",
     "uuid": "^8.3.2"
   }
