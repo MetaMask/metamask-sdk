@@ -27,7 +27,7 @@
     "publish": "../../scripts/publish-package.sh"
   },
   "dependencies": {
-      "@metamask/sdk": "0.0.1"
+      "@metamask/sdk": "0.0.2"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.5",

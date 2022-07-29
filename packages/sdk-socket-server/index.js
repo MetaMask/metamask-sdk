@@ -13,6 +13,8 @@ const io = new Server(server, {
 });
 const cors = require('cors');
 
+const uuid = require('uuid');
+
 app.use(cors());
 
 app.get('/', (req, res) => {
@@ -24,6 +26,11 @@ io.on('connection', (socket) => {
 
   socket.on('create_channel', (id) => {
     console.log('create channel', id);
+
+    if (!uuid.validate(id)) {
+      return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+    }
+
     const room = io.sockets.adapter.rooms.get(id);
     if (!id) {
       return socket.emit(`message-${id}`, { error: 'must specify an id' });
@@ -42,6 +49,11 @@ io.on('connection', (socket) => {
 
   socket.on('join_channel', (id) => {
     console.log('join_channel', id);
+
+    if (!uuid.validate(id)) {
+      return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+    }
+
     const room = io.sockets.adapter.rooms.get(id);
     if (room && room.size > 2) {
       socket.emit(`message-${id}`, { error: 'room already full' });

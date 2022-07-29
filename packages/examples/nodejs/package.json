@@ -9,6 +9,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@metamask/sdk": "0.0.1"
+        "@metamask/sdk": "0.0.2"
     }
 }
