@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-shadow
 import crypto from 'crypto';
 import { Buffer } from 'buffer';
 
@@ -19,9 +20,9 @@ export default class ECDH {
   /**
    * Creates ECDH instance
    *
-   * @returns - ECDH instance
+   * @returns - generates an ECDH instance
    */
-  generateECDH() {
+  generateECDH(): void {
     this.ecdh = crypto.createECDH('secp256k1');
     this.ecdh.generateKeys();
   }
@@ -32,7 +33,7 @@ export default class ECDH {
    *
    * @returns - public key in base64 format
    */
-  getPublicKey() {
+  getPublicKey(): string {
     return this.ecdh.getPublicKey().toString('base64');
   }
 
@@ -57,7 +58,7 @@ export default class ECDH {
    * @param {string} data - data string to be encrypted
    * @returns - encrypted string in base64
    */
-  encryptAuthIV(data: string) {
+  encryptAuthIV(data: string): string {
     const iv = crypto.randomBytes(16);
 
     const cipher = crypto.createCipheriv(
@@ -82,9 +83,9 @@ export default class ECDH {
    * with Authentication and IV (initialisation vector)
    *
    * @param {string} encryptedData - base64 data string to be decrypted
-   * @returns - decrypted data || false if error
+   * @returns - decrypted data || error message
    */
-  decryptAuthIV(encryptedData: string) {
+  decryptAuthIV(encryptedData: string): string {
     const payload = Buffer.from(encryptedData, 'base64').toString('hex');
 
     const iv = payload.substr(0, 32);
