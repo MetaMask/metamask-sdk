@@ -11,6 +11,11 @@ import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer'
 import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 
+export enum encryptionType {
+  ECDH = 'ECDH',
+  ECIES = 'ECIES',
+}
+
 type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
@@ -28,7 +33,9 @@ type MetaMaskSDKOptions = {
   transports?: string[];
   dappMetadata?: DappMetadata;
   timer?: any;
+  encryption?: encryptionType;
 };
+
 export default class MetaMaskSDK {
   provider: any;
 
@@ -55,6 +62,8 @@ export default class MetaMaskSDK {
     webRTCLib,
     transports,
     timer,
+    // encryption
+    encryption = encryptionType.ECIES,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -129,9 +138,11 @@ export default class MetaMaskSDK {
   getUniversalLink = () => {
     if (RemoteConnection.universalLink) return RemoteConnection.universalLink;
 
-    if(WalletConnect.universalLink) return WalletConnect.universalLink;
+    if (WalletConnect.universalLink) return WalletConnect.universalLink;
 
-    throw new Error("No Universal Link available, please call eth_requestAccounts first.")
+    throw new Error(
+      'No Universal Link available, please call eth_requestAccounts first.',
+    );
   };
 }
 

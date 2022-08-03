@@ -8,7 +8,7 @@ enum KeySteps {
   ACK = 'key_handshake_ACK',
 }
 
-export default class KeyExchange extends EventEmitter2 {
+export default class KeyExchangeECDH extends EventEmitter2 {
   keysExchanged = false;
 
   myECDH = null;

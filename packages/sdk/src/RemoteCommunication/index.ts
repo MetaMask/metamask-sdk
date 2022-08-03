@@ -2,6 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 import { DappMetadata } from '../constants';
+import { encryptionType } from '../index';
 
 interface RemoteCommunicationOptions {
   commLayer: string;
@@ -10,6 +11,7 @@ interface RemoteCommunicationOptions {
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
+  encryption?: encryptionType;
 }
 
 export enum CommunicationLayerPreference {
@@ -34,13 +36,16 @@ export default class RemoteCommunication extends EventEmitter2 {
   dappMetadata: DappMetadata;
   transports: string[];
 
+  encryption: encryptionType;
+
   constructor({
     commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
     reconnect,
     dappMetadata,
-    transports
+    transports,
+    encryption,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -50,8 +55,9 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.CommLayer = CommLayer;
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
-    this.dappMetadata = dappMetadata
-    this.transports = transports
+    this.dappMetadata = dappMetadata;
+    this.transports = transports;
+    this.encryption = encryption;
 
     this.setupCommLayer({
       CommLayer,
@@ -59,6 +65,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
+      encryption,
     });
   }
 
@@ -68,13 +75,15 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     commLayer,
     reconnect,
+    encryption,
   }) {
     this.commLayer = new CommLayer({
       otherPublicKey,
       webRTCLib,
       commLayer,
       reconnect,
-      transports: this.transports
+      transports: this.transports,
+      encryption,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -92,8 +101,8 @@ export default class RemoteCommunication extends EventEmitter2 {
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
 
-        if(this.dappMetadata?.url) url = this.dappMetadata.url
-        if(this.dappMetadata?.name) title = this.dappMetadata.name
+      if (this.dappMetadata?.url) url = this.dappMetadata.url;
+      if (this.dappMetadata?.name) title = this.dappMetadata.name;
 
       this.commLayer.sendMessage({
         type: 'originator_info',
@@ -119,6 +128,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         webRTCLib,
         commLayer: this.commLayer,
         reconnect: false,
+        encryption,
       });
       this.emit('clients_disconnected');
     });

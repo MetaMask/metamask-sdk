@@ -2,6 +2,8 @@
 import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
+import KeyExchangeECDH from './KeyExchange_ECDH';
+import { encryptionType } from '..';
 
 export default class WebRTC extends EventEmitter2 {
   handshakeDone = false;
@@ -18,7 +20,7 @@ export default class WebRTC extends EventEmitter2 {
 
   dataChannel = null;
 
-  keyExchange: KeyExchange;
+  keyExchange: KeyExchange | KeyExchangeECDH;
 
   RTCPeerConnection: any;
 
@@ -27,7 +29,16 @@ export default class WebRTC extends EventEmitter2 {
   RTCIceCandidate: any;
   reconnect: boolean;
 
-  constructor({ otherPublicKey, webRTCLib, commLayer, reconnect, transports }) {
+  encryption: encryptionType;
+
+  constructor({
+    otherPublicKey,
+    webRTCLib,
+    commLayer,
+    reconnect,
+    transports,
+    encryption = encryptionType.ECIES,
+  }) {
     super();
     this.reconnect = reconnect;
     if (webRTCLib) {
@@ -40,13 +51,23 @@ export default class WebRTC extends EventEmitter2 {
       this.RTCIceCandidate = RTCIceCandidate;
     }
 
-    this.socket = new Socket({ otherPublicKey, commLayer, reconnect, transports });
+    this.socket = new Socket({
+      otherPublicKey,
+      commLayer,
+      reconnect,
+      transports,
+    });
 
-    this.keyExchange = new KeyExchange({
+    const keyExchangeInitParameter = {
       CommLayer: this,
       otherPublicKey: null,
       sendPublicKey: true,
-    });
+    };
+
+    this.keyExchange =
+      encryption === encryptionType.ECIES
+        ? new KeyExchange(keyExchangeInitParameter)
+        : new KeyExchangeECDH(keyExchangeInitParameter);
 
     this.keyExchange.on('keys_exchanged', () => {
       this.clientsReady = true;
