@@ -40,7 +40,7 @@ const WalletConnect = {
 
           const universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
 
-          const deeplink = `metamask://connect?${linkParams}`;
+          const deeplink = `metamask://wc?${linkParams}`;
 
           /*#if _REACTNATIVE
           const showQRCode = false
@@ -62,6 +62,7 @@ const WalletConnect = {
           this.universalLink = universalLink;
 
           this.getConnector().on('connect', () => {
+            installModal?.onClose();
             if (this.sentFirstConnect) {
               return;
             }

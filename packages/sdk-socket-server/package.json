@@ -1,18 +1,20 @@
 {
-    "name": "@metamask/sdk-socket-server",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js",
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-      "cors": "^2.8.5",
-      "express": "^4.17.3",
-      "socket.io": "^4.4.1"
-    }
+  "name": "@metamask/sdk-socket-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.3",
+    "helmet": "^5.1.1",
+    "rate-limiter-flexible": "^2.3.8",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
   }
-  
+}

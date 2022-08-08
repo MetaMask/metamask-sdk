@@ -10,6 +10,7 @@ import PortStreams from './PortStreams';
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
+import { shouldForceInjectProvider } from './utils';
 
 export enum encryptionType {
   ECDH = 'ECDH',
@@ -66,13 +67,13 @@ export default class MetaMaskSDK {
     encryption = encryptionType.ECIES,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
-
+    
     if (
-      forceInjectProvider ||
+      shouldForceInjectProvider(forceInjectProvider) ||
       platform === PlatformName.NonBrowser ||
       shouldInjectProvider()
     ) {
-      if (forceInjectProvider && forceDeleteProvider) {
+      if (shouldForceInjectProvider(forceInjectProvider) && forceDeleteProvider) {
         Ethereum.ethereum = null;
         delete window.ethereum;
       }

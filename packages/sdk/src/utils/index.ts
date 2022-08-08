@@ -4,3 +4,8 @@ export const waitPromise = (time) =>
       resolve(true);
     }, time);
   });
+
+export const shouldForceInjectProvider = (forceInjectProvider) => {
+  // @ts-ignore
+  return forceInjectProvider || window.navigator.brave
+}
