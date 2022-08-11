@@ -9,25 +9,22 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": [
-      "**/@metamask/sdk/**"
     ]
   },
   "scripts": {
-    "setup": "yarn install && yarn allow-scripts && yarn postinstall",
-    "postinstall": "patch-package",
-    "publish:all": "./scripts/publish-all.sh",
-    "link-packages": "./scripts/link-packages.sh",
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
-    "lint:changelogs": "yarn workspaces run lint:changelog",
-    "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build:tsc": "tsc --build --force tsconfig.json",
-    "build": "yarn workspaces run build:pre-tsc && yarn build:tsc && yarn workspaces run build:post-tsc",
+    "build": "yarn workspaces run build:pre-tsc && yarn workspaces run build && yarn workspaces run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
+    "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces run clean",
+    "postinstall": "patch-package",
+    "link-packages": "./scripts/link-packages.sh",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:changelogs": "yarn workspaces run lint:changelog",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+    "publish:all": "./scripts/publish-all.sh",
+    "setup": "yarn install && yarn allow-scripts && yarn postinstall",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
@@ -46,6 +43,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "patch-package": "^6.4.7",

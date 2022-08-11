@@ -131,6 +131,7 @@ export default class WebRTC extends EventEmitter2 {
             this.keyExchange.start(this.isOriginator);
           }
         }
+
         if (this.reconnect) {
           if (this.keyExchange.keysExchanged) {
             this.sendMessage({ type: 'ready' });
@@ -208,6 +209,7 @@ export default class WebRTC extends EventEmitter2 {
     if (!this.clientsConnected) {
       throw new Error('Clients not connected');
     }
+
     if (!this.keyExchange.keysExchanged) {
       if (message?.type.startsWith('key_handshake')) {
         return this.dataChannel.send(JSON.stringify(message));

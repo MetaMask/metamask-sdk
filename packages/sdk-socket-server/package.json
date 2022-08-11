@@ -2,13 +2,21 @@
   "name": "@metamask/sdk-socket-server",
   "version": "1.0.0",
   "description": "",
+  "license": "ISC",
+  "author": "",
   "main": "index.js",
   "scripts": {
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:changelog": "yarn auto-changelog validate",
+    "build": "echo 'N/A'",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.17.3",
@@ -16,5 +24,14 @@
     "rate-limiter-flexible": "^2.3.8",
     "socket.io": "^4.4.1",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.0"
   }
 }

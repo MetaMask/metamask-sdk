@@ -50,15 +50,19 @@ MobilePortStream.prototype._onMessage = function (event) {
   if (this._origin !== '*' && event.origin !== this._origin) {
     return;
   }
+
   if (!msg || typeof msg !== 'object') {
     return;
   }
+
   if (!msg.data || typeof msg.data !== 'object') {
     return;
   }
+
   if (msg.target && msg.target !== this._name) {
     return;
   }
+
   // Filter outgoing messages
   if (msg.data.data?.toNative) {
     return;
@@ -111,6 +115,7 @@ MobilePortStream.prototype._write = function (msg, _encoding, cb) {
       if (msg.data) {
         msg.data.toNative = true;
       }
+
       window.ReactNativeWebView.postMessage(
         JSON.stringify({ ...msg, origin: window.location.href }),
       );

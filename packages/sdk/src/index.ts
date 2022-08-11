@@ -1,3 +1,4 @@
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import shouldInjectProvider from './provider/shouldInject';
 import initializeProvider from './provider/initializeProvider';
 import setupProviderStreams from './provider/setupProviderStreams';
@@ -6,8 +7,7 @@ import ManageMetaMaskInstallation from './Platform/ManageMetaMaskInstallation';
 import Platform, { PlatformName } from './Platform';
 import Ethereum from './services/Ethereum';
 import PostMessageStreams from './PostMessageStreams';
-import PortStreams from './PortStreams';
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import PortStreams from './portStreams';
 import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 import { shouldForceInjectProvider } from './utils';
@@ -130,11 +130,17 @@ export default class MetaMaskSDK {
   };
 
   getUniversalLink = () => {
-    if (RemoteConnection.universalLink) return RemoteConnection.universalLink;
+    if (RemoteConnection.universalLink) {
+      return RemoteConnection.universalLink;
+    }
 
-    if(WalletConnect.universalLink) return WalletConnect.universalLink;
+    if (WalletConnect.universalLink) {
+      return WalletConnect.universalLink;
+    }
 
-    throw new Error("No Universal Link available, please call eth_requestAccounts first.")
+    throw new Error(
+      'No Universal Link available, please call eth_requestAccounts first.',
+    );
   };
 }
 

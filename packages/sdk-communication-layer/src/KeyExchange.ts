@@ -42,6 +42,7 @@ export default class KeyExchange extends EventEmitter2 {
       if (this.keysExchanged) {
         return;
       }
+
       if (message.type === KeySteps.SYN) {
         this.checkStep(KeySteps.NONE);
         this.step = KeySteps.ACK;

@@ -19,6 +19,6 @@ export const METHODS_TO_REDIRECT = {
 };
 
 export type DappMetadata = {
-  url: string,
-  name: string
-}
+  url: string;
+  name: string;
+};

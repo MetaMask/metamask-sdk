@@ -2,7 +2,7 @@
 
 ## Installation
 
-```yarn add @metamask/sdk-communication-layer```
+`yarn add @metamask/sdk-communication-layer`
 
 ## Using
 
@@ -33,6 +33,7 @@ RemoteCommunication = new RemoteCommunicationLib({
 ```
 
 ### MetaMask
+
 ```
 const url = new URL(this.state.urlToConnect);
 
