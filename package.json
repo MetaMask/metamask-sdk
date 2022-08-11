@@ -24,7 +24,7 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!**/CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
     "publish:all": "./scripts/publish-all.sh",
-    "setup": "yarn install && yarn postinstall",
+    "setup": "yarn install && yarn allow-scripts && yarn postinstall",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
@@ -52,5 +52,11 @@
   },
   "engines": {
     "node": ">=12.11.0"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@lavamoat/preinstall-always-fail": false,
+      "canvas": true
+    }
   }
 }
