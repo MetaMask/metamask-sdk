@@ -25,7 +25,7 @@ const RemoteConnection = {
       });
 
       if (this.timer) {
-        this.timer.runBackgroundTimer?.(() => {}, 5000);
+        this.timer.runBackgroundTimer?.(() => null, 5000);
       }
     }
 

@@ -69,6 +69,7 @@ MobilePortStream.prototype._onMessage = function (event) {
   }
 
   if (Buffer.isBuffer(msg)) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     delete msg._isBuffer;
     const data = Buffer.from(msg);
@@ -106,6 +107,7 @@ MobilePortStream.prototype._write = function (msg, _encoding, cb) {
   try {
     if (Buffer.isBuffer(msg)) {
       const data = msg.toJSON();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       data._isBuffer = true;
       window.ReactNativeWebView.postMessage(

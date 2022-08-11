@@ -46,6 +46,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
       let data;
       if (Buffer.isBuffer(msg)) {
         data = msg.toJSON();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         data._isBuffer = true;
       } else {
@@ -102,6 +103,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     }
 
     if (Buffer.isBuffer(message)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete msg._isBuffer;
       const data = Buffer.from(message);

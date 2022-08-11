@@ -63,17 +63,18 @@ export default class MetaMaskSDK {
     webRTCLib,
     transports,
     timer,
-    // encryption
-    encryption = encryptionType.ECIES,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
-    
+
     if (
       shouldForceInjectProvider(forceInjectProvider) ||
       platform === PlatformName.NonBrowser ||
       shouldInjectProvider()
     ) {
-      if (shouldForceInjectProvider(forceInjectProvider) && forceDeleteProvider) {
+      if (
+        shouldForceInjectProvider(forceInjectProvider) &&
+        forceDeleteProvider
+      ) {
         Ethereum.ethereum = null;
         delete window.ethereum;
       }
@@ -123,8 +124,8 @@ export default class MetaMaskSDK {
       if (checkInstallationImmediately) {
         ManageMetaMaskInstallation.start({ wait: true });
       }
-    }else{
-      this.provider = window.ethereum
+    } else {
+      this.provider = window.ethereum;
     }
   }
 
@@ -134,11 +135,11 @@ export default class MetaMaskSDK {
   };
 
   // Return the ethereum provider object
-  getProvider = () => {
+  getProvider() {
     return this.provider;
-  };
+  }
 
-  getUniversalLink = () => {
+  getUniversalLink() {
     if (RemoteConnection.universalLink) {
       return RemoteConnection.universalLink;
     }
@@ -150,10 +151,11 @@ export default class MetaMaskSDK {
     throw new Error(
       'No Universal Link available, please call eth_requestAccounts first.',
     );
-  };
+  }
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     ReactNativeWebView: any;
     ethereum: any;

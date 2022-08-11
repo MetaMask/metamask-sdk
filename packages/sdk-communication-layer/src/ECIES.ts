@@ -21,16 +21,18 @@ export default class ECIES {
    *
    * @returns - Generates ECIES instance
    */
-  generateECIES = (): void => {
+  generateECIES(): void {
     this.ecies = new PrivateKey();
-  };
+  }
 
   /**
    * Returns ECIES instance public key
    *
    * @returns - public key in base64 format
    */
-  getPublicKey = (): string => this.ecies.publicKey.toHex().toString('base64');
+  getPublicKey(): string {
+    return this.ecies.publicKey.toHex().toString('base64');
+  }
 
   /**
    * Encrypts a data message using the public key of the side to encrypt data for
@@ -39,11 +41,11 @@ export default class ECIES {
    * @param {string} otherPublicKey - public key of the side to encrypt data for
    * @returns - encrypted string in base64
    */
-  encrypt = (data: string, otherPublicKey: string): string => {
+  encrypt(data: string, otherPublicKey: string): string {
     const encryptedData = encrypt(otherPublicKey, Buffer.from(data));
 
     return encryptedData.toString('base64');
-  };
+  }
 
   /**
    * Decrypts a data message using the instance private key
@@ -51,7 +53,7 @@ export default class ECIES {
    * @param {string} encryptedData - base64 data string to be decrypted
    * @returns - decrypted data || error message
    */
-  decrypt = (encryptedData: string): string => {
+  decrypt(encryptedData: string): string {
     const payload = Buffer.from(encryptedData, 'base64');
 
     try {
@@ -61,5 +63,5 @@ export default class ECIES {
     } catch (error: any) {
       return error.message;
     }
-  };
+  }
 }

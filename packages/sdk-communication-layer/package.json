@@ -22,17 +22,18 @@
     "/dist"
   ],
   "scripts": {
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "lint:changelog": "yarn auto-changelog validate",
     "build": "rm -rf dist && rollup -c",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist/* ./node_modules/*",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:changelog": "yarn auto-changelog validate",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "prepublishOnly": "yarn build",
-    "setup": "yarn install && yarn allow-scripts"
+    "setup": "yarn install && yarn allow-scripts",
+    "test": "echo 'N/A'"
   },
   "dependencies": {
     "eciesjs": "^0.3.15",

@@ -6,16 +6,16 @@
   "author": "",
   "main": "index.js",
   "scripts": {
-    "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "lint:changelog": "yarn auto-changelog validate",
     "build": "echo 'N/A'",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:changelog": "yarn auto-changelog validate",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo 'N/A'"
   },
   "dependencies": {
     "cors": "^2.8.5",

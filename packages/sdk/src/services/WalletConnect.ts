@@ -28,7 +28,8 @@ const WalletConnect = {
     this.universalLink = null;
     return new Promise((resolve, reject) => {
       if (this.getConnector().connected) {
-        return resolve(true);
+        resolve(true);
+        return;
       }
 
       this.getConnector()

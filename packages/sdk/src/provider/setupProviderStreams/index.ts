@@ -1,7 +1,7 @@
 /* #if _WEB
-import setupProviderStreams from './setupProviderStreams.web';
+import setupProviderStreams from './setupProviderStreams-web';
 //#else */
-import setupProviderStreams from './setupProviderStreams.nonweb';
+import setupProviderStreams from './setupProviderStreams-nonweb';
 // #endif
 
 export default setupProviderStreams;

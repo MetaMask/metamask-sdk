@@ -23,6 +23,7 @@ function doctypeCheck() {
 function suffixCheck() {
   const prohibitedTypes = [/\.xml$/u, /\.pdf$/u];
   const currentUrl = window.location.pathname;
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < prohibitedTypes.length; i++) {
     if (prohibitedTypes[i].test(currentUrl)) {
       return false;
@@ -64,6 +65,7 @@ function blockedDomainCheck() {
   ];
   const currentUrl = window.location.href;
   let currentRegex;
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < blockedDomains.length; i++) {
     const blockedDomain = blockedDomains[i].replace('.', '\\.');
     currentRegex = new RegExp(

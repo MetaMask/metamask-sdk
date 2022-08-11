@@ -1,9 +1,9 @@
 import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
+import { encryptionType } from '..';
 import KeyExchange from './KeyExchange';
 import KeyExchangeECDH from './KeyExchange_ECDH';
-import { encryptionType } from '..';
 import { CommunicationLayerPreference } from '.';
 
 export default class Socket extends EventEmitter2 {
@@ -42,7 +42,7 @@ export default class Socket extends EventEmitter2 {
     const options = {};
 
     if (transports) {
-      options['transports'] = transports;
+      options.transports = transports;
     }
 
     this.socket = io('https://socket.codefi.network/', options);

@@ -33,7 +33,7 @@ const helmet = require('helmet');
 app.use(helmet());
 app.disable('x-powered-by');
 
-app.get('/', (req, res) => {
+app.get('/', (res) => {
   res.json({ success: true });
 });
 
@@ -81,13 +81,15 @@ io.on('connection', (socket) => {
     console.log('join_channel', id);
 
     if (!uuid.validate(id)) {
-      return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+      socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+      return;
     }
 
     const room = io.sockets.adapter.rooms.get(id);
     if (room && room.size > 2) {
       socket.emit(`message-${id}`, { error: 'room already full' });
-      return io.sockets.in(id).socketsLeave(id);
+      io.sockets.in(id).socketsLeave(id);
+      return;
     }
 
     socket.join(id);
@@ -105,7 +107,6 @@ io.on('connection', (socket) => {
     if (room && room.size === 2) {
       io.sockets.in(id).emit(`clients_connected-${id}`, id);
     }
-    return true;
   });
 
   socket.on('leave_channel', (id) => {

@@ -60,7 +60,8 @@ const Platform = {
   preferredOpenLink: null,
   openDeeplink(universalLink: string, deeplink: string, target?: string) {
     if (this.preferredOpenLink) {
-      return this.preferredOpenLink(universalLink, target);
+      this.preferredOpenLink(universalLink, target);
+      return;
     }
 
     if (typeof window !== 'undefined') {

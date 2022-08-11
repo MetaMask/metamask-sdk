@@ -10,7 +10,6 @@ const Ethereum = {
     // Initialize provider object (window.ethereum)
     this.ethereum = initProvider({
       shouldSetOnWindow,
-      // @ts-ignore
       connectionStream,
       shouldSendMetadata: false,
       shouldShimWeb3,

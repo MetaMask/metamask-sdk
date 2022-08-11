@@ -26,11 +26,11 @@ const initializeProvider = ({
       // Don't inject if it's non browser
       platform === PlatformName.NonBrowser
     ),
-    // @ts-ignore
     connectionStream: metamaskStream,
     shouldShimWeb3,
   });
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   metamaskStream.start?.();
 

@@ -6,6 +6,7 @@ export const waitPromise = (time) =>
   });
 
 export const shouldForceInjectProvider = (forceInjectProvider) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  return forceInjectProvider || window.navigator.brave
-}
+  return forceInjectProvider || window.navigator.brave;
+};

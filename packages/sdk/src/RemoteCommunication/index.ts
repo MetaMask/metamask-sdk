@@ -1,9 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { DappMetadata } from '../constants';
 import Platform, { PlatformName } from '../Platform';
+import { encryptionType } from '..';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
-import { encryptionType } from '../index';
+
 type RemoteCommunicationOptions = {
   commLayer: string;
   otherPublicKey?: string;
@@ -12,7 +13,7 @@ type RemoteCommunicationOptions = {
   dappMetadata?: DappMetadata;
   transports?: string[];
   encryption?: encryptionType;
-}
+};
 
 export enum CommunicationLayerPreference {
   WEBRTC = 'webrtc',

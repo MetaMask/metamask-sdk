@@ -26,6 +26,7 @@ class WalletConnectPostMessageStream extends Duplex {
       let data;
       if (Buffer.isBuffer(msg)) {
         data = msg.toJSON();
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         data._isBuffer = true;
       } else {
@@ -109,6 +110,7 @@ class WalletConnectPostMessageStream extends Duplex {
     }
 
     if (Buffer.isBuffer(msg)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       delete msg._isBuffer;
       const data = Buffer.from(msg);
@@ -188,7 +190,7 @@ class WalletConnectPostMessageStream extends Duplex {
       this.setProviderState({ accounts, chainId });
     });
 
-    WalletConnect.getConnector().on('disconnect', (error, payload) => {
+    WalletConnect.getConnector().on('disconnect', (error) => {
       if (error) {
         throw error;
       }

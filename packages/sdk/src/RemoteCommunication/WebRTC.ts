@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import { EventEmitter2 } from 'eventemitter2';
+import { encryptionType } from '..';
 import Socket from './Socket';
 import KeyExchange from './KeyExchange';
 import KeyExchangeECDH from './KeyExchange_ECDH';
-import { encryptionType } from '..';
 
 export default class WebRTC extends EventEmitter2 {
   handshakeDone = false;

@@ -32,7 +32,6 @@ export default class Socket extends EventEmitter2 {
     const options = {};
 
     if (transports) {
-      // @ts-ignore
       options.transports = transports;
     }
 
