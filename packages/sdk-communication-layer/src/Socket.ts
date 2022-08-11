@@ -29,7 +29,7 @@ export default class Socket extends EventEmitter2 {
     this.reconnect = reconnect;
     this.commLayer = commLayer;
 
-    const options = {};
+    const options: { transports?: any } = {};
 
     if (transports) {
       options.transports = transports;
