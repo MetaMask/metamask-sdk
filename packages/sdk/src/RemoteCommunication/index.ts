@@ -2,6 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 import { DappMetadata } from '../constants';
+import Platform, { PlatformName } from '../Platform';
 
 interface RemoteCommunicationOptions {
   commLayer: string;
@@ -40,7 +41,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     reconnect,
     dappMetadata,
-    transports
+    transports,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -50,8 +51,8 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.CommLayer = CommLayer;
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
-    this.dappMetadata = dappMetadata
-    this.transports = transports
+    this.dappMetadata = dappMetadata;
+    this.transports = transports;
 
     this.setupCommLayer({
       CommLayer,
@@ -74,7 +75,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
-      transports: this.transports
+      transports: this.transports,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -92,12 +93,25 @@ export default class RemoteCommunication extends EventEmitter2 {
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
 
-        if(this.dappMetadata?.url) url = this.dappMetadata.url
-        if(this.dappMetadata?.name) title = this.dappMetadata.name
+      if (this.dappMetadata?.url) url = this.dappMetadata.url;
+      if (this.dappMetadata?.name) title = this.dappMetadata.name;
+
+      let platform = 'undefined';
+      /*#if _REACTNATIVE
+        platform = 'react-native'
+        //#elif _NODEJS
+        platform = 'nodejs'
+        //#else */
+      if (Platform.getPlatform() === PlatformName.DesktopWeb) {
+        platform = 'web-desktop';
+      } else if (Platform.getPlatform() === PlatformName.MobileWeb) {
+        platform = 'web-mobile';
+      }
+      //#endif
 
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title },
+        originatorInfo: { url, title, platform },
       });
     });
 

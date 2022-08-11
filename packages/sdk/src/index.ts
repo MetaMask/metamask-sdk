@@ -114,6 +114,8 @@ export default class MetaMaskSDK {
       if (checkInstallationImmediately) {
         ManageMetaMaskInstallation.start({ wait: true });
       }
+    }else{
+      this.provider = window.ethereum
     }
   }
 
