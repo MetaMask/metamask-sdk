@@ -41,12 +41,12 @@ jobs:
           fi
       - run: yarn lint
       - run: yarn test:ci
-      - name: Validate RC changelog
-        if: ${{ startsWith(github.head_ref, 'release/') }}
-        run: yarn lint:changelogs --rc
-      - name: Validate changelog
-        if: ${{ !startsWith(github.head_ref, 'release/') }}
-        run: yarn lint:changelogs
+      #- name: Validate RC changelog
+      #  if: ${{ startsWith(github.head_ref, 'release/') }}
+      #  run: yarn lint:changelogs --rc
+      #- name: Validate changelog
+      #  if: ${{ !startsWith(github.head_ref, 'release/') }}
+      #  run: yarn lint:changelogs
 
   platform-compatibility:
     name: Platform Compatibility Tests
