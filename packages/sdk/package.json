@@ -51,6 +51,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
