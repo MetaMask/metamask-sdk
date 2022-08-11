@@ -3,6 +3,7 @@ import Socket from './Socket';
 import WebRTC from './WebRTC';
 import { DappMetadata } from '../constants';
 import { encryptionType } from '../index';
+import Platform, { PlatformName } from '../Platform';
 
 interface RemoteCommunicationOptions {
   commLayer: string;
@@ -104,9 +105,22 @@ export default class RemoteCommunication extends EventEmitter2 {
       if (this.dappMetadata?.url) url = this.dappMetadata.url;
       if (this.dappMetadata?.name) title = this.dappMetadata.name;
 
+      let platform = 'undefined';
+      /*#if _REACTNATIVE
+        platform = 'react-native'
+        //#elif _NODEJS
+        platform = 'nodejs'
+        //#else */
+      if (Platform.getPlatform() === PlatformName.DesktopWeb) {
+        platform = 'web-desktop';
+      } else if (Platform.getPlatform() === PlatformName.MobileWeb) {
+        platform = 'web-mobile';
+      }
+      //#endif
+
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title },
+        originatorInfo: { url, title, platform },
       });
     });
 
