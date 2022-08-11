@@ -12,6 +12,11 @@ import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 import { shouldForceInjectProvider } from './utils';
 
+export enum encryptionType {
+  ECDH = 'ECDH',
+  ECIES = 'ECIES',
+}
+
 type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
@@ -29,7 +34,9 @@ type MetaMaskSDKOptions = {
   transports?: string[];
   dappMetadata?: DappMetadata;
   timer?: any;
+  encryption?: encryptionType;
 };
+
 export default class MetaMaskSDK {
   provider: any;
 
@@ -56,6 +63,8 @@ export default class MetaMaskSDK {
     webRTCLib,
     transports,
     timer,
+    // encryption
+    encryption = encryptionType.ECIES,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
     

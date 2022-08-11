@@ -2,6 +2,8 @@ import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import KeyExchange from './KeyExchange';
+import KeyExchangeECDH from './KeyExchange_ECDH';
+import { encryptionType } from '..';
 import { CommunicationLayerPreference } from '.';
 
 export default class Socket extends EventEmitter2 {
@@ -15,7 +17,7 @@ export default class Socket extends EventEmitter2 {
 
   channelId = null;
 
-  keyExchange: KeyExchange;
+  keyExchange: KeyExchange | KeyExchangeECDH;
 
   manualDisconnect = false;
 
@@ -23,7 +25,15 @@ export default class Socket extends EventEmitter2 {
 
   commLayer: CommunicationLayerPreference;
 
-  constructor({ otherPublicKey, reconnect, commLayer, transports }) {
+  encryption: encryptionType;
+
+  constructor({
+    otherPublicKey,
+    reconnect,
+    commLayer,
+    transports,
+    encryption = encryptionType.ECIES,
+  }) {
     super();
 
     this.reconnect = reconnect;
@@ -32,7 +42,7 @@ export default class Socket extends EventEmitter2 {
     const options = {};
 
     if (transports) {
-      options.transports = transports;
+      options['transports'] = transports;
     }
 
     this.socket = io('https://socket.codefi.network/', options);
@@ -68,11 +78,16 @@ export default class Socket extends EventEmitter2 {
       // #endif
     });
 
-    this.keyExchange = new KeyExchange({
+    const keyExchangeInitParameter = {
       CommLayer: this,
       otherPublicKey,
       sendPublicKey: false,
-    });
+    };
+
+    this.keyExchange =
+      encryption === encryptionType.ECIES
+        ? new KeyExchange(keyExchangeInitParameter)
+        : new KeyExchangeECDH(keyExchangeInitParameter);
 
     this.keyExchange.on('keys_exchanged', () => {
       this.emit('clients_ready', {

@@ -1,9 +1,9 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { DappMetadata, DappMetadata } from '../constants';
+import { DappMetadata } from '../constants';
 import Platform, { PlatformName } from '../Platform';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
-
+import { encryptionType } from '../index';
 type RemoteCommunicationOptions = {
   commLayer: string;
   otherPublicKey?: string;
@@ -11,7 +11,8 @@ type RemoteCommunicationOptions = {
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
-};
+  encryption?: encryptionType;
+}
 
 export enum CommunicationLayerPreference {
   WEBRTC = 'webrtc',
@@ -44,6 +45,8 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   transports: string[];
 
+  encryption: encryptionType;
+
   constructor({
     commLayer = 'socket',
     otherPublicKey,
@@ -51,6 +54,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     reconnect,
     dappMetadata,
     transports,
+    encryption,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -62,6 +66,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
     this.transports = transports;
+    this.encryption = encryption;
 
     this.setupCommLayer({
       CommLayer,
@@ -69,6 +74,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
+      encryption,
     });
   }
 
@@ -78,6 +84,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     commLayer,
     reconnect,
+    encryption,
   }) {
     this.commLayer = new CommLayer({
       otherPublicKey,
@@ -85,6 +92,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       commLayer,
       reconnect,
       transports: this.transports,
+      encryption,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -149,6 +157,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         webRTCLib,
         commLayer: this.commLayer,
         reconnect: false,
+        encryption,
       });
       this.emit('clients_disconnected');
     });
