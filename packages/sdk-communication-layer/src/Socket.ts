@@ -91,6 +91,7 @@ export default class Socket extends EventEmitter2 {
           this.keyExchange.start(this.isOriginator);
         }
       }
+
       if (this.reconnect) {
         if (this.keyExchange.keysExchanged) {
           this.sendMessage({ type: 'ready' });
@@ -165,6 +166,7 @@ export default class Socket extends EventEmitter2 {
     if (!this.channelId) {
       throw new Error('Create a channel first');
     }
+
     if (!this.keyExchange.keysExchanged) {
       if (message?.type.startsWith('key_handshake')) {
         return this.socket.emit('message', { id: this.channelId, message });

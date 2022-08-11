@@ -33,19 +33,19 @@
     "tls": false
   },
   "scripts": {
-    "setup": "yarn && cd node_modules/react-native-webrtc/ && yarn postinstall && cd ../../ && yarn postinstall",
     "android": "react-native run-android",
+    "postinstall": "rn-nodeify --install 'crypto,process,stream,events' --hack",
     "ios": "react-native run-ios --simulator='iPhone 11 Pro'",
     "lint": "eslint .",
+    "setup": "yarn && cd node_modules/react-native-webrtc/ && yarn postinstall && cd ../../ && yarn postinstall",
     "start": "react-native start",
-    "test": "jest",
-    "postinstall": "rn-nodeify --install 'crypto,process,stream,events' --hack"
+    "test": "jest"
   },
   "jest": {
     "preset": "react-native"
   },
   "dependencies": {
-    "@metamask/sdk": "file:../../sdk",
+    "@metamask/sdk": "0.0.2",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/client": "^1.7.7",
     "crypto": "^1.0.1",

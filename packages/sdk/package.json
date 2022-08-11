@@ -2,12 +2,6 @@
   "name": "@metamask/sdk",
   "version": "0.0.2",
   "description": "",
-  "main": "dist/node/cjs/metamask-sdk.js",
-  "module": "dist/node/es/metamask-sdk.js",
-  "browser": "dist/browser/umd/metamask-sdk.js",
-  "react-native": "dist/react-native/es/metamask-sdk.js",
-  "unpkg": "dist/browser/umd/metamask-sdk.js",
-  "types": "dist/browser/es/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
@@ -16,29 +10,35 @@
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
   "license": "MIT",
+  "main": "dist/node/cjs/metamask-sdk.js",
+  "unpkg": "dist/browser/umd/metamask-sdk.js",
+  "module": "dist/node/es/metamask-sdk.js",
+  "browser": "dist/browser/umd/metamask-sdk.js",
+  "react-native": "dist/react-native/es/metamask-sdk.js",
+  "types": "dist/browser/es/index.d.ts",
   "files": [
     "/src",
     "/dist"
   ],
   "scripts": {
-    "setup": "yarn install",
-    "clean": "rimraf ./dist/* ./node_modules/*",
-    "prepublishOnly": "yarn build",
     "lint:eslint": "eslint . --cache --ext js,ts",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "build": "rm -rf dist && rollup -c"
+    "lint:changelog": "yarn auto-changelog validate",
+    "build": "rm -rf dist && rollup -c",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
+    "clean": "rimraf ./dist/* ./node_modules/*",
+    "prepublishOnly": "yarn build",
+    "setup": "yarn install && yarn allow-scripts"
   },
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
+    "@metamask/sdk-communication-layer": "^0.0.1",
     "bowser": "^2.9.0",
     "eciesjs": "^0.3.15",
     "extension-port-stream": "^2.0.1",
@@ -60,9 +60,11 @@
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
-    "eslint": "^7.27.0",
+    "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
@@ -75,5 +77,15 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.2",
     "typescript": "^4.3.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@lavamoat/preinstall-always-fail": false,
+      "canvas": true
+    }
   }
 }

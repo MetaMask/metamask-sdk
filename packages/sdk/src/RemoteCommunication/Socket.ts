@@ -1,10 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
-import { CommunicationLayerPreference } from '.';
 import KeyExchange from './KeyExchange';
 import KeyExchangeECDH from './KeyExchange_ECDH';
 import { encryptionType } from '..';
+import { CommunicationLayerPreference } from '.';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
@@ -20,7 +20,9 @@ export default class Socket extends EventEmitter2 {
   keyExchange: KeyExchange | KeyExchangeECDH;
 
   manualDisconnect = false;
+
   reconnect: boolean;
+
   commLayer: CommunicationLayerPreference;
 
   encryption: encryptionType;
@@ -39,7 +41,9 @@ export default class Socket extends EventEmitter2 {
 
     const options = {};
 
-    if (transports) options['transports'] = transports;
+    if (transports) {
+      options['transports'] = transports;
+    }
 
     this.socket = io('https://socket.codefi.network/', options);
 
@@ -51,7 +55,9 @@ export default class Socket extends EventEmitter2 {
     };
 
     const checkFocus = () => {
-      if (typeof window === 'undefined') return;
+      if (typeof window === 'undefined') {
+        return;
+      }
       this.socket.disconnect();
       if (document.hasFocus()) {
         connectAgain();
@@ -61,15 +67,15 @@ export default class Socket extends EventEmitter2 {
     };
 
     this.socket.on('error', () => {
-      //#if _WEB
+      // #if _WEB
       checkFocus();
-      //#endif
+      // #endif
     });
 
     this.socket.on('disconnect', () => {
-      //#if _WEB
+      // #if _WEB
       checkFocus();
-      //#endif
+      // #endif
     });
 
     const keyExchangeInitParameter = {
@@ -99,6 +105,7 @@ export default class Socket extends EventEmitter2 {
           this.keyExchange.start(this.isOriginator);
         }
       }
+
       if (this.reconnect) {
         if (this.keyExchange.keysExchanged) {
           this.sendMessage({ type: 'ready' });
@@ -173,6 +180,7 @@ export default class Socket extends EventEmitter2 {
     if (!this.channelId) {
       throw new Error('Create a channel first');
     }
+
     if (!this.keyExchange.keysExchanged) {
       if (message?.type.startsWith('key_handshake')) {
         return this.socket.emit('message', { id: this.channelId, message });

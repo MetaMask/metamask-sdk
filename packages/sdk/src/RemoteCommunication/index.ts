@@ -1,11 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { DappMetadata } from '../constants';
+import Platform, { PlatformName } from '../Platform';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
-import { DappMetadata } from '../constants';
 import { encryptionType } from '../index';
-import Platform, { PlatformName } from '../Platform';
-
-interface RemoteCommunicationOptions {
+type RemoteCommunicationOptions = {
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
@@ -27,14 +26,23 @@ export default class RemoteCommunication extends EventEmitter2 {
   channelId = null;
 
   connected = false;
+
   isOriginator: boolean;
+
   originatorInfo: any;
+
   walletInfo: any;
+
   paused: boolean;
+
   CommLayer: typeof WebRTC | typeof Socket;
+
   otherPublicKey: string;
+
   webRTCLib: any;
+
   dappMetadata: DappMetadata;
+
   transports: string[];
 
   encryption: encryptionType;
@@ -94,7 +102,9 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.commLayer.on('clients_ready', ({ isOriginator }) => {
       this.isOriginator = isOriginator;
 
-      if (!isOriginator) return;
+      if (!isOriginator) {
+        return;
+      }
 
       let url =
         (typeof document !== 'undefined' && document.URL) || 'url undefined';
@@ -102,11 +112,16 @@ export default class RemoteCommunication extends EventEmitter2 {
         (typeof document !== 'undefined' && document.title) ||
         'title undefined';
 
-      if (this.dappMetadata?.url) url = this.dappMetadata.url;
-      if (this.dappMetadata?.name) title = this.dappMetadata.name;
+      if (this.dappMetadata?.url) {
+        url = this.dappMetadata.url;
+      }
+
+      if (this.dappMetadata?.name) {
+        title = this.dappMetadata.name;
+      }
 
       let platform = 'undefined';
-      /*#if _REACTNATIVE
+      /* #if _REACTNATIVE
         platform = 'react-native'
         //#elif _NODEJS
         platform = 'nodejs'
@@ -116,7 +131,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       } else if (Platform.getPlatform() === PlatformName.MobileWeb) {
         platform = 'web-mobile';
       }
-      //#endif
+      // #endif
 
       this.commLayer.sendMessage({
         type: 'originator_info',
@@ -215,7 +230,9 @@ export default class RemoteCommunication extends EventEmitter2 {
   }
 
   generateChannelId() {
-    if (this.connected) throw new Error('Channel already created');
+    if (this.connected) {
+      throw new Error('Channel already created');
+    }
 
     this.clean();
 

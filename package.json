@@ -9,13 +9,10 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": [
-      "**/@metamask/sdk/**"
     ]
   },
   "scripts": {
-    "build": "yarn workspaces run build:pre-tsc && yarn build:tsc && yarn workspaces run build:post-tsc",
+    "build": "yarn workspaces run build:pre-tsc && yarn workspaces run build && yarn workspaces run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces run clean",
@@ -45,6 +42,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "patch-package": "^6.4.7",

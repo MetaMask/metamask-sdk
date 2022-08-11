@@ -70,6 +70,7 @@ function blockedDomainCheck() {
       `(?:https?:\\/\\/)(?:(?!${blockedDomain}).)*$`,
       'u',
     );
+
     if (!currentRegex.test(currentUrl)) {
       return true;
     }

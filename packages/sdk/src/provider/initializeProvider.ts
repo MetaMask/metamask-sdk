@@ -31,7 +31,7 @@ const initializeProvider = ({
     shouldShimWeb3,
   });
 
-  //@ts-ignore
+  // @ts-ignore
   metamaskStream.start?.();
 
   const sendRequest = async (method, args, f) => {
@@ -50,19 +50,21 @@ const initializeProvider = ({
         }
       }
 
-      throw new Error('MetaMask is not connected/installed, please call eth_requestAccounts to connect first.');
+      throw new Error(
+        'MetaMask is not connected/installed, please call eth_requestAccounts to connect first.',
+      );
     }
 
     return f(...args);
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
-  const request = ethereum.request;
+  const { request } = ethereum;
   ethereum.request = async (...args) => {
     return sendRequest(args?.[0].method, args, request);
   };
 
-  const send = ethereum.send;
+  const { send } = ethereum;
   ethereum.send = async (...args) => {
     return sendRequest(args?.[0], args, send);
   };

@@ -1,14 +1,11 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import WalletConnect from '../services/WalletConnect';
 import { waitPromise } from '../utils';
-import Platform, {
-  isMetaMaskInstalled,
-  PlatformName,
-} from '.';
 import Ethereum from '../services/Ethereum';
 import RemoteConnection from '../services/RemoteConnection';
 import PostMessageStreams from '../PostMessageStreams';
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import Platform, { isMetaMaskInstalled, PlatformName } from '.';
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
@@ -43,9 +40,11 @@ const ManageMetaMaskInstallation = {
     }
 
     // If is not installed, start remote connection
-    const Remote = PostMessageStreams.communicationLayerPreference === CommunicationLayerPreference.WALLETCONNECT
-      ? WalletConnect
-      : RemoteConnection;
+    const Remote =
+      PostMessageStreams.communicationLayerPreference ===
+      CommunicationLayerPreference.WALLETCONNECT
+        ? WalletConnect
+        : RemoteConnection;
 
     this.isInstalling = true;
     const startedRemoteConnection = Remote.startConnection();

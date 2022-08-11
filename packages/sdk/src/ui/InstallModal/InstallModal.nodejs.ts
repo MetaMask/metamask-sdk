@@ -4,4 +4,4 @@ const InstallModal = ({ link }) => {
   qrcode.generate(link, { small: true }, (qr) => console.log(qr));
 };
 
-export default InstallModal
+export default InstallModal;

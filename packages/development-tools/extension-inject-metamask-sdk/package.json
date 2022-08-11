@@ -1,28 +1,29 @@
 {
   "name": "web-extension-starter",
   "version": "2.0.0",
-  "description": "Web extension starter using react and typescript",
   "private": true,
+  "description": "Web extension starter using react and typescript",
   "repository": "https://github.com/metamask/sdk/packages/development-tools/extension-inject-metamask-sdk",
+  "license": "MIT",
   "author": {
     "name": "MetaMask"
   },
-  "license": "MIT",
-  "engines": {
-    "node": ">=10.0.0",
-    "yarn": ">= 1.0.0"
-  },
   "scripts": {
-    "getScript": "node ./getScript",
-    "dev:chrome": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=chrome webpack --watch",
-    "dev:firefox": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=firefox webpack --watch",
-    "dev:opera": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=opera webpack --watch",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../../.gitignore",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:changelog": "yarn auto-changelog validate",
+    "build": "yarn getScript && yarn run build:chrome && yarn run build:firefox && yarn run build:opera",
     "build:chrome": "yarn getScript && cross-env NODE_ENV=production cross-env TARGET_BROWSER=chrome webpack",
     "build:firefox": "yarn getScript && cross-env NODE_ENV=production cross-env TARGET_BROWSER=firefox webpack",
     "build:opera": "yarn getScript && cross-env NODE_ENV=production cross-env TARGET_BROWSER=opera webpack",
-    "build": "yarn getScript && yarn run build:chrome && yarn run build:firefox && yarn run build:opera",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix"
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
+    "dev:chrome": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=chrome webpack --watch",
+    "dev:firefox": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=firefox webpack --watch",
+    "dev:opera": "yarn getScript && cross-env NODE_ENV=development cross-env TARGET_BROWSER=opera webpack --watch",
+    "getScript": "node ./getScript"
   },
   "dependencies": {
     "@babel/runtime": "^7.14.0",
@@ -57,14 +58,13 @@
     "copy-webpack-plugin": "^6.4.1",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.5",
-    "eslint": "^7.27.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-import": "^2.23.3",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "eslint-plugin-react": "^7.23.2",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "filemanager-webpack-plugin": "^3.1.1",
     "fork-ts-checker-webpack-plugin": "^6.2.10",
     "html-webpack-plugin": "^4.5.2",
@@ -83,5 +83,9 @@
     "webpack-extension-reloader": "^1.1.4",
     "wext-manifest-loader": "^2.3.0",
     "wext-manifest-webpack-plugin": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "yarn": ">= 1.0.0"
   }
 }
