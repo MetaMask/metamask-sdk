@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import { encrypt, decrypt, PrivateKey } from 'eciesjs';
 
 /**
