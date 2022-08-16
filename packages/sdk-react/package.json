@@ -2,14 +2,13 @@
   "name": "@metamask/sdk-react",
   "version": "0.0.1-beta.0",
   "private": false,
-  "description": "A react compoenent to connect to metamask",
+  "description": "A react component and react hooks to connect and use MetaMask",
   "keywords": [
     "react",
     "typescript",
     "rollup",
     "metamask"
   ],
-  "license": "MIT",
   "author": "MetaMask",
   "module": "dist/esm/index.js",
   "types": "dist/esm/types/src/index.d.ts",

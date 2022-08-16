@@ -1,6 +1,7 @@
 {
   "name": "@metamask/sdk-communication-layer",
   "version": "0.0.1-beta.0",
+  "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
   "bugs": {
@@ -10,7 +11,6 @@
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk-communication-layer.git"
   },
-  "license": "MIT",
   "main": "dist/node/cjs/metamask-sdk-communication-layer.js",
   "unpkg": "dist/browser/umd/metamask-sdk-communication-layer.js",
   "module": "dist/node/es/metamask-sdk-communication-layer.js",

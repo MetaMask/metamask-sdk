@@ -1,6 +1,7 @@
 {
   "name": "@metamask/sdk-examples",
   "version": "0.10.0",
+  "private": true,
   "description": "Examples using MetaMask SDK.",
   "repository": {
     "type": "git",
