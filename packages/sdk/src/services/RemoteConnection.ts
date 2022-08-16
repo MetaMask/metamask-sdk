@@ -13,7 +13,22 @@ const RemoteConnection = {
   getConnector() {
     if (!this.RemoteCommunication) {
       const commLayer = PostMessageStreams.communicationLayerPreference;
+
+      let platform = 'undefined';
+      /* #if _REACTNATIVE
+        platform = 'react-native'
+        //#elif _NODEJS
+        platform = 'nodejs'
+        //#else */
+      if (Platform.getPlatform() === PlatformName.DesktopWeb) {
+        platform = 'web-desktop';
+      } else if (Platform.getPlatform() === PlatformName.MobileWeb) {
+        platform = 'web-mobile';
+      }
+      // #endif
+
       this.RemoteCommunication = new RemoteCommunication({
+        platform,
         commLayer,
         webRTCLib: this.webRTCLib,
         dappMetadata: this.dappMetadata,

@@ -1,7 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import ECIES from './ECIES';
 
-// eslint-disable-next-line no-shadow
 enum KeySteps {
   NONE = 'none',
   SYN = 'key_handshake_SYN',

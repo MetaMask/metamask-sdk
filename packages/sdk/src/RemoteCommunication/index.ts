@@ -1,11 +1,19 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { DappMetadata } from '../constants';
-import Platform, { PlatformName } from '../Platform';
-import { encryptionType } from '..';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 
+export enum encryptionType {
+  ECDH = 'ECDH',
+  ECIES = 'ECIES',
+}
+
+export type DappMetadata = {
+  url: string;
+  name: string;
+};
+
 type RemoteCommunicationOptions = {
+  platform: string;
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
@@ -48,7 +56,10 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   encryption: encryptionType;
 
+  platform: string;
+
   constructor({
+    platform,
     commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
@@ -68,6 +79,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
     this.encryption = encryption;
+    this.platform = platform;
 
     this.setupCommLayer({
       CommLayer,
@@ -121,22 +133,9 @@ export default class RemoteCommunication extends EventEmitter2 {
         title = this.dappMetadata.name;
       }
 
-      let platform = 'undefined';
-      /* #if _REACTNATIVE
-        platform = 'react-native'
-        //#elif _NODEJS
-        platform = 'nodejs'
-        //#else */
-      if (Platform.getPlatform() === PlatformName.DesktopWeb) {
-        platform = 'web-desktop';
-      } else if (Platform.getPlatform() === PlatformName.MobileWeb) {
-        platform = 'web-mobile';
-      }
-      // #endif
-
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title, platform },
+        originatorInfo: { url, title, platform: this.platform },
       });
     });
 

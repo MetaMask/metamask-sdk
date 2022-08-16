@@ -1,7 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import ECDH from './ECDH';
 
-// eslint-disable-next-line no-shadow
 enum KeySteps {
   NONE = 'none',
   SYN = 'key_handshake_SYN',
@@ -9,7 +8,7 @@ enum KeySteps {
   ACK = 'key_handshake_ACK',
 }
 
-export default class KeyExchange extends EventEmitter2 {
+export default class KeyExchangeECDH extends EventEmitter2 {
   keysExchanged = false;
 
   myECDH = null;
@@ -43,7 +42,6 @@ export default class KeyExchange extends EventEmitter2 {
       if (this.keysExchanged) {
         return;
       }
-
       if (message.type === KeySteps.SYN) {
         this.checkStep(KeySteps.NONE);
         this.step = KeySteps.ACK;

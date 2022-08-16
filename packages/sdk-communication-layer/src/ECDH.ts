@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-shadow
 import crypto from 'crypto';
 import { Buffer } from 'buffer';
 

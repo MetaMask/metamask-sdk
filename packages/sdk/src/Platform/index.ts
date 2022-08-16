@@ -38,7 +38,7 @@ export const isNotBrowser = () =>
     global?.navigator?.product === 'ReactNative') ||
   navigator?.product === 'ReactNative';
 
-export const getPlatform = () => {
+const getPlatform = () => {
   if (isNotBrowser()) {
     return PlatformName.NonBrowser;
   }

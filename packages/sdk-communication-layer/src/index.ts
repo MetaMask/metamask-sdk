@@ -2,18 +2,25 @@ import { EventEmitter2 } from 'eventemitter2';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 
+export enum encryptionType {
+  ECDH = 'ECDH',
+  ECIES = 'ECIES',
+}
+
 export type DappMetadata = {
   url: string;
   name: string;
 };
 
 type RemoteCommunicationOptions = {
+  platform: string;
   commLayer: string;
   otherPublicKey?: string;
   webRTCLib?: any;
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
+  encryption?: encryptionType;
 };
 
 export enum CommunicationLayerPreference {
@@ -47,13 +54,19 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   transports: string[];
 
+  encryption: encryptionType;
+
+  platform: string;
+
   constructor({
+    platform,
     commLayer = 'socket',
     otherPublicKey,
     webRTCLib,
     reconnect,
     dappMetadata,
     transports,
+    encryption,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -65,6 +78,8 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
     this.transports = transports;
+    this.encryption = encryption;
+    this.platform = platform;
 
     this.setupCommLayer({
       CommLayer,
@@ -72,6 +87,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       webRTCLib,
       commLayer,
       reconnect,
+      encryption,
     });
   }
 
@@ -81,6 +97,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     webRTCLib,
     commLayer,
     reconnect,
+    encryption,
   }) {
     this.commLayer = new CommLayer({
       otherPublicKey,
@@ -88,6 +105,7 @@ export default class RemoteCommunication extends EventEmitter2 {
       commLayer,
       reconnect,
       transports: this.transports,
+      encryption,
     });
 
     this.commLayer.on('message', ({ message }) => {
@@ -117,7 +135,7 @@ export default class RemoteCommunication extends EventEmitter2 {
 
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title },
+        originatorInfo: { url, title, platform: this.platform },
       });
     });
 
@@ -139,6 +157,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         webRTCLib,
         commLayer: this.commLayer,
         reconnect: false,
+        encryption,
       });
       this.emit('clients_disconnected');
     });
@@ -228,9 +247,5 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   resume() {
     this.commLayer.resume();
-  }
-
-  disconnect() {
-    this.commLayer.disconnect();
   }
 }
