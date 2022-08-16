@@ -26,9 +26,7 @@
     "test": "echo 'N/A'",
     "test:ci": "yarn test"
   },
-  "dependencies": {
-    "@metamask/sdk": "0.0.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@lavamoat/allow-scripts": "^1.0.5",
     "@metamask/auto-changelog": "^2.3.0",
