@@ -1612,36 +1612,6 @@
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
 
-"@rometools/cli-darwin-arm64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-darwin-arm64/-/cli-darwin-arm64-0.7.0-next.f6510d6.tgz#e6cce832656987f58e269f6edec7903b0e3b84cb"
-  integrity sha512-pGXWFPwsZrjcExZu3CGh3pLaM3dJAgC4az2t9MfBEhyjHK6KHCh1EMGAjre2sbFEOmxtaz+UoBDqritG0HJR1w==
-
-"@rometools/cli-darwin-x64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-darwin-x64/-/cli-darwin-x64-0.7.0-next.f6510d6.tgz#8e40f1cf8882237e32321024e3461be1b71a8276"
-  integrity sha512-MpJn9mRGZYbupr4QUaVexdhcFKyMIzS0whXpa6xLTt9Oikm0ZYQBUyhULWnLd1i1tkjlMDfIm07H00nYbfMwpA==
-
-"@rometools/cli-linux-arm64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-linux-arm64/-/cli-linux-arm64-0.7.0-next.f6510d6.tgz#bb10c86f2a5252ce2619806b7bf6d704469ee654"
-  integrity sha512-aaKOaTAYOQRbalTwKmhzOH5e08BWtuk4lNpD7TdH4kklK/+IfY3zbw6C6FTHIYGfvC5jZRMLSLO8oFW+9b0PXA==
-
-"@rometools/cli-linux-x64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-linux-x64/-/cli-linux-x64-0.7.0-next.f6510d6.tgz#0edd51196fe0417e8cd6043f71eaf40a5820b772"
-  integrity sha512-1hFyT5s/9jL0uXeHZCEg18aPj//bB29z5vgNVBJS+SIvFyfNIGbRZOts5vu8ioF+h8n57KhLb4j3NumcAL/mzg==
-
-"@rometools/cli-win32-arm64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-win32-arm64/-/cli-win32-arm64-0.7.0-next.f6510d6.tgz#74d72378794b0088d494c7d7c1442486ce75f696"
-  integrity sha512-knoxoYEpxVHlySOnDHW7RWnqW9o0APpMCr8ZGKyXHwGEQiOIjCoIVIxQ6jyj5U5sGwtMetNJgZ8lWSdMZkeHxA==
-
-"@rometools/cli-win32-x64@0.7.0-next.f6510d6":
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/@rometools/cli-win32-x64/-/cli-win32-x64-0.7.0-next.f6510d6.tgz#cbdd0acd99a59c104fdf01ba5946c58508ac7972"
-  integrity sha512-ntx0aSAZzLf82ezsCHLAoCEKJ91AiMpyVeD3ZtXExba3qiX1nW047LavAL0WTxbZ/E66uLdZEmXSfciEh7DFHQ==
-
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"
@@ -10247,18 +10217,6 @@ rollup@^2.75.0:
   integrity sha512-4+YfbQC9QEVvKTanHhIAFVUFSRsezvQF8vFOJwtGfb9Bb+r014S+qryr9PSmw8x6sMnPkmFBGAvIFVQxvJxjtg==
   optionalDependencies:
     fsevents "~2.3.2"
-
-rome@0.7.0-next.f6510d6:
-  version "0.7.0-next.f6510d6"
-  resolved "https://registry.yarnpkg.com/rome/-/rome-0.7.0-next.f6510d6.tgz#c56c36424f84e82b5950676e2764ae85a28b8bce"
-  integrity sha512-vg8juqZlOr5Xlj+aNcNdiKH6r5heyLCSqaMbh5BgV312vyYrM6Nm4KMFH1G/F+WFiAPweKc+GKG0G+/Z37NsfQ==
-  optionalDependencies:
-    "@rometools/cli-darwin-arm64" "0.7.0-next.f6510d6"
-    "@rometools/cli-darwin-x64" "0.7.0-next.f6510d6"
-    "@rometools/cli-linux-arm64" "0.7.0-next.f6510d6"
-    "@rometools/cli-linux-x64" "0.7.0-next.f6510d6"
-    "@rometools/cli-win32-arm64" "0.7.0-next.f6510d6"
-    "@rometools/cli-win32-x64" "0.7.0-next.f6510d6"
 
 rpc-websockets@^7.5.0:
   version "7.5.0"
