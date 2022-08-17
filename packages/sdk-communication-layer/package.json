@@ -18,7 +18,6 @@
   "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
   "types": "dist/browser/es/index.d.ts",
   "files": [
-    "/src",
     "/dist"
   ],
   "scripts": {
