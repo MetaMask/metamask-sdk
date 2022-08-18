@@ -1,5 +1,5 @@
+import RemoteCommunication from '@metamask/sdk-communication-layer';
 import Platform, { PlatformName } from '../Platform';
-import RemoteCommunication from '../RemoteCommunication';
 import InstallModal from '../ui/InstallModal';
 import PostMessageStreams from '../PostMessageStreams';
 
