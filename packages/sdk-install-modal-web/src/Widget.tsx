@@ -9,20 +9,20 @@ import QRCodeStyling from 'qr-code-styling';
 import styles from './styles';
 import CloseButton from './components/CloseButton';
 import InstallIcon from './components/InstallIcon';
-//import resetStyles from './helpers/Reset';
-//import styled from '@emotion/styled';
+import resetStyles from './helpers/Reset';
+import styled from '@emotion/styled';
 
 export type WidgetProps = {
   parentElement?: Element;
   link: string;
   ManageMetaMaskInstallation: any;
-  onClose: () => void
+  onClose: () => void;
 };
 
-/*const WidgetWrapper = styled.div`
+const WidgetWrapper = styled.div`
   ${resetStyles}
   font-family: Roboto,sans-serif;
-`;*/
+`;
 
 const Widget = (props: WidgetProps) => {
   const [tab, setTab] = useState<Number>(1);
@@ -51,8 +51,8 @@ const Widget = (props: WidgetProps) => {
         color: '#f66a07',
       },
       qrOptions: {
-        errorCorrectionLevel: 'M'
-      }
+        errorCorrectionLevel: 'M',
+      },
     });
     qrCode.append(qrCodeContainer.current);
   }, []);
@@ -62,101 +62,104 @@ const Widget = (props: WidgetProps) => {
   };
 
   return (
-    <div>
-      <div style={styles.backdrop} onClick={props.onClose} />
-      <div style={styles.modal}>
-        <div style={styles.closeButtonContainer}>
-          <div>
-            <span style={styles.closeButton} onClick={props.onClose}>
-              <CloseButton />
-            </span>
-          </div>
-        </div>
-
-        <div style={styles.logoContainer}>
-          <Logo />
-        </div>
-        <div>
-          <div style={styles.tabcontainer}>
-            <div style={styles.flexContainer}>
-              <div
-                onClick={() => setTabAcive(1)}
-                style={{
-                  ...styles.tab,
-                  ...(tab === 1 ? styles.tabactive : {}),
-                  ...styles.flexItem,
-                }}
-              >
-                Desktop
-              </div>
-              <div
-                onClick={() => setTabAcive(2)}
-                style={{
-                  ...styles.tab,
-                  ...(tab === 2 ? styles.tabactive : {}),
-                  ...styles.flexItem,
-                }}
-              >
-                Mobile
-              </div>
+    <WidgetWrapper>
+      {/* @ts-ignore*/}
+      <div>
+        <div style={styles.backdrop} onClick={props.onClose} />
+        <div style={styles.modal}>
+          <div style={styles.closeButtonContainer}>
+            <div style={styles.right}>
+              <span style={styles.closeButton} onClick={props.onClose}>
+                <CloseButton />
+              </span>
             </div>
           </div>
-          <div style={{ display: tab === 1 ? 'none' : 'block' }}>
-            <div style={styles.flexContainer}>
-              <div
-                style={{
-                  textAlign: 'center',
-                  marginTop: 4,
-                  ...styles.flexItem,
-                }}
-              >
-                <div ref={qrCodeContainer} />
-                <div style={styles.connectMobileText}>
-                  Scan to connect and sign with <br />
-                  <span style={styles.blue}>
-                    <b>MetaMask mobile app</b>
-                  </span>
+
+          <div style={styles.logoContainer}>
+            <Logo />
+          </div>
+          <div>
+            <div style={styles.tabcontainer}>
+              <div style={styles.flexContainer}>
+                <div
+                  onClick={() => setTabAcive(1)}
+                  style={{
+                    ...styles.tab,
+                    ...(tab === 1 ? styles.tabactive : {}),
+                    ...styles.flexItem,
+                  }}
+                >
+                  Desktop
+                </div>
+                <div
+                  onClick={() => setTabAcive(2)}
+                  style={{
+                    ...styles.tab,
+                    ...(tab === 2 ? styles.tabactive : {}),
+                    ...styles.flexItem,
+                  }}
+                >
+                  Mobile
                 </div>
               </div>
             </div>
-          </div>
-          <div style={{ display: tab === 2 ? 'none' : 'block' }}>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={HeartIcon}
-                text={`
-			  Trusted by over 30 million users to buy, store, send and swap crypto
-			  securely`}
-              />
+            <div style={{ display: tab === 1 ? 'none' : 'block' }}>
+              <div style={styles.flexContainer}>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    marginTop: 4,
+                    ...styles.flexItem,
+                  }}
+                >
+                  <div ref={qrCodeContainer} style={styles.center} />
+                  <div style={styles.connectMobileText}>
+                    Scan to connect and sign with <br />
+                    <span style={styles.blue}>
+                      <b>MetaMask mobile app</b>
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={WalletIcon}
-                text={`
-				  The leading crypto wallet & gateway to blockchain apps built
-          on Ethereum Mainnet, Polygon, Optimism, and many other
-          networks`}
-              />
-            </div>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={LockIcon}
-                text={`
-			  Puts you in control of your digital interactions by making power
-              of cryptography more accessible`}
-              />
-            </div>
+            <div style={{ display: tab === 2 ? 'none' : 'block' }}>
+              <div style={styles.item}>
+                <AdvantagesListItem
+                  Icon={HeartIcon}
+                  text={`
+      Trusted by over 30 million users to buy, store, send and swap crypto
+      securely`}
+                />
+              </div>
+              <div style={styles.item}>
+                <AdvantagesListItem
+                  Icon={WalletIcon}
+                  text={`
+        The leading crypto wallet & gateway to blockchain apps built
+        on Ethereum Mainnet, Polygon, Optimism, and many other
+        networks`}
+                />
+              </div>
+              <div style={styles.item}>
+                <AdvantagesListItem
+                  Icon={LockIcon}
+                  text={`
+      Puts1 you in control of your digital interactions by making power
+            of cryptography more accessible`}
+                />
+              </div>
 
-            <button style={styles.button} onClick={installExtension}>
-              <InstallIcon />
-              <span style={styles.installExtensionText}>
-                Install MetaMask Extension
-              </span>
-            </button>
+              <button style={styles.button} onClick={installExtension}>
+                <InstallIcon />
+                <span style={styles.installExtensionText}>
+                  Install MetaMask Extension
+                </span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </WidgetWrapper>
   );
 };
 
