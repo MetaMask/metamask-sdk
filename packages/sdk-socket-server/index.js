@@ -33,7 +33,7 @@ const helmet = require('helmet');
 app.use(helmet());
 app.disable('x-powered-by');
 
-app.get('/', (res) => {
+app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
