@@ -2,7 +2,8 @@ package main
 
 import "C"
 
-import (	
+import (
+	// "strings"	
 	ecies "github.com/ecies/go/v2"
 	b64 "encoding/base64"
 )
