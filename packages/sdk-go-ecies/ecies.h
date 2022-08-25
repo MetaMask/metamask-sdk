@@ -76,7 +76,7 @@ extern "C" {
 
 extern char* GeneratePrivateKey();
 extern char* GetPublicKey(char* privkeyB64);
-extern char* Encrypt(char* pubkeyB64, char* msg);
+extern char* Encrypt(char* pubkeyB64, char* msgB64);
 extern char* Decrypt(char* privkeyB64, char* msgB64);
 
 #ifdef __cplusplus

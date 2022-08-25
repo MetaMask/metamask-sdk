@@ -36,11 +36,13 @@ func GetPublicKey(privkeyB64 *C.char) *C.char{
 }
 
 //export Encrypt
-func Encrypt(pubkeyB64 *C.char, msg *C.char) *C.char{
+func Encrypt(pubkeyB64 *C.char, msgB64 *C.char) *C.char{
 	pubkeyHex, _ := b64.StdEncoding.DecodeString(GetString(pubkeyB64))
 	pubkey, _ := ecies.NewPublicKeyFromHex(string([]byte(pubkeyHex)))
 
-	encryptedMessage, _ := ecies.Encrypt(pubkey, []byte(GetString(msg)))
+	msg, _ := b64.StdEncoding.DecodeString(GetString(msgB64))
+
+	encryptedMessage, _ := ecies.Encrypt(pubkey, []byte(msg))
 
 	return ToString(b64.StdEncoding.EncodeToString([]byte(encryptedMessage)))
 }
