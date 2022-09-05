@@ -97,8 +97,6 @@ const styles = {
   closeButton: {
     color: '#BBC0C5',
     cursor: 'pointer',
-    padding: '2em',
-    margin: '-2em',
   },
   closeButtonContainer: {
     textAlign: 'right',
@@ -107,6 +105,9 @@ const styles = {
     textAlign: 'center',
     marginHorizontal: 24,
     marginTop: 24,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   connectMobileText: {
     fontSize: 14,
@@ -117,9 +118,20 @@ const styles = {
   },
   blue: {
     color: '#037DD6',
+    fontWeight: 700,
   },
   installExtensionText: {
     marginLeft: 10,
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  right: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'right',
   },
 };
 

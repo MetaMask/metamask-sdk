@@ -38,7 +38,9 @@ export default class Socket extends EventEmitter2 {
     this.reconnect = reconnect;
     this.commLayer = commLayer;
 
-    const options: { transports?: any } = {};
+    const options: { transports?: any; autoConnect: boolean } = {
+      autoConnect: false,
+    };
 
     if (transports) {
       options.transports = transports;
@@ -198,12 +200,14 @@ export default class Socket extends EventEmitter2 {
   }
 
   connectToChannel(id) {
+    this.socket.connect();
     this.channelId = id;
     this.receiveMessages(this.channelId);
     this.socket.emit('join_channel', id);
   }
 
   createChannel() {
+    this.socket.connect();
     this.isOriginator = true;
     const channelId = uuidv4();
     this.receiveMessages(channelId);
