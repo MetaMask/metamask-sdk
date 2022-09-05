@@ -2,8 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import io from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import KeyExchange from './KeyExchange';
-import KeyExchangeECDH from './KeyExchange_ECDH';
-import { encryptionType, CommunicationLayerPreference } from '.';
+import { CommunicationLayerPreference } from '.';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
@@ -16,7 +15,7 @@ export default class Socket extends EventEmitter2 {
 
   channelId = null;
 
-  keyExchange: KeyExchange | KeyExchangeECDH;
+  keyExchange: KeyExchange;
 
   manualDisconnect = false;
 
@@ -24,15 +23,7 @@ export default class Socket extends EventEmitter2 {
 
   commLayer: CommunicationLayerPreference;
 
-  encryption: encryptionType;
-
-  constructor({
-    otherPublicKey,
-    reconnect,
-    commLayer,
-    transports,
-    encryption = encryptionType.ECIES,
-  }) {
+  constructor({ otherPublicKey, reconnect, commLayer, transports }) {
     super();
 
     this.reconnect = reconnect;
@@ -85,10 +76,7 @@ export default class Socket extends EventEmitter2 {
       sendPublicKey: false,
     };
 
-    this.keyExchange =
-      encryption === encryptionType.ECIES
-        ? new KeyExchange(keyExchangeInitParameter)
-        : new KeyExchangeECDH(keyExchangeInitParameter);
+    this.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
     this.keyExchange.on('keys_exchanged', () => {
       this.emit('clients_ready', {

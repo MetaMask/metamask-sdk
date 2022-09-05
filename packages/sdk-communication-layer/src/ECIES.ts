@@ -32,7 +32,7 @@ export default class ECIES {
    * @returns - public key in base64 format
    */
   getPublicKey(): string {
-    return this.ecies.publicKey.toHex().toString('base64');
+    return this.ecies.publicKey.toHex();
   }
 
   /**
@@ -45,7 +45,7 @@ export default class ECIES {
   encrypt(data: string, otherPublicKey: string): string {
     const encryptedData = encrypt(otherPublicKey, Buffer.from(data));
 
-    return encryptedData.toString('base64');
+    return Buffer.from(encryptedData).toString('base64');
   }
 
   /**

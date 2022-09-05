@@ -2,51 +2,51 @@ package main
 
 import "C"
 
-import (	
+import (
 	ecies "github.com/ecies/go/v2"
 	b64 "encoding/base64"
 )
 
-func GetString(data *C.char) string{
+func FromCString(data *C.char) string{
 	return C.GoString(data)
+}
+
+func ToCString(data string) *C.char{
+	return C.CString(data)
 }
 
 //export GeneratePrivateKey
 func GeneratePrivateKey() *C.char{
 	key, _ := ecies.GenerateKey()
 
-	privkey := key.Bytes()
-	return C.CString(b64.StdEncoding.EncodeToString([]byte(privkey)))
+	return ToCString(key.Hex())
 }
 
 //export GetPublicKey
-func GetPublicKey(privkeyB64 *C.char) *C.char{
-	privkeyHex, _ := b64.StdEncoding.DecodeString(GetString(privkeyB64))
-	privkey := ecies.NewPrivateKeyFromBytes(privkeyHex)
+func GetPublicKey(privkey *C.char) *C.char{
+	privateKey, _ := ecies.NewPrivateKeyFromHex(FromCString(privkey))
+	publickey := privateKey.PublicKey.Hex(true)
 
-	publickey := privkey.PublicKey.Bytes(false)
-	return C.CString(b64.StdEncoding.EncodeToString([]byte(publickey)))
+	return ToCString(publickey)
 }
 
 //export Encrypt
-func Encrypt(pubkeyB64 *C.char, msg *C.char) *C.char{
-	pubkeyHex, _ := b64.StdEncoding.DecodeString(GetString(pubkeyB64))
-	pubkey, _ := ecies.NewPublicKeyFromBytes(pubkeyHex)
+func Encrypt(pubkey *C.char, message *C.char) *C.char{
+	publicKey, _ := ecies.NewPublicKeyFromHex(FromCString(pubkey))
 
-	encryptedMessage, _ := ecies.Encrypt(pubkey, []byte(GetString(msg)))
+	encryptedMessage, _ := ecies.Encrypt(publicKey, []byte(FromCString(message)))
 
-	return C.CString(b64.StdEncoding.EncodeToString([]byte(encryptedMessage)))
+	return ToCString(b64.StdEncoding.EncodeToString([]byte(encryptedMessage)))
 }
 
 //export Decrypt
-func Decrypt(privkeyB64 *C.char, msgB64 *C.char) *C.char{
-	privkeyHex, _ := b64.StdEncoding.DecodeString(GetString(privkeyB64))
-	privkey := ecies.NewPrivateKeyFromBytes(privkeyHex)
+func Decrypt(privkey *C.char, messageB64 *C.char) *C.char{
+	privateKey, _ := ecies.NewPrivateKeyFromHex(FromCString(privkey))
 
-	msg, _ := b64.StdEncoding.DecodeString(GetString(msgB64))
-	decryptedMessage, _ := ecies.Decrypt(privkey, msg)
+	decryptedMessageB64, _ := b64.StdEncoding.DecodeString(FromCString(messageB64))
+	decryptedMessage, _ := ecies.Decrypt(privateKey, []byte(decryptedMessageB64))
 
-	return C.CString(string(decryptedMessage))
+	return ToCString(string([]byte(decryptedMessage)))
 }
 
 func main() {}
