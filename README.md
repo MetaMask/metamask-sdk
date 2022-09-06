@@ -34,7 +34,8 @@ Import the SDK (for possible parameters check this):
 
 ```
 import MetaMaskSDK from '@metamask/sdk'
-const ethereum = new MetaMaskSDK({})
+const MMSDK = new MetaMaskSDK({})
+const ethereum = MMSDK.getProvider()
 ```
 
 Use the SDK:
