@@ -20,17 +20,20 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "npm run prebuild && rollup -c --silent",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
     "dev": "rollup -c -w",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "build:post-tsc": "echo 'N/A'",
-    "build:pre-tsc": "echo 'N/A'"
+    "test": "echo 'N/A'",
+    "test:ci": "echo 'N/A'"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
+    "@metamask/sdk": "^0.0.1-beta.3",
     "@types/jest": "^27.0.1",
     "ethers": "^5.6.9",
     "mersenne-twister": "^1.1.0",
