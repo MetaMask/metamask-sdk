@@ -5,6 +5,9 @@
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
     "build": "webpack-cli --mode production",
     "build:post-tsc": "echo 'N/A'",
@@ -19,6 +22,7 @@
     "test": "echo \"Running tests for version $npm_package_version...\"",
     "test:ci": "echo 'N/A'",
     "preversion": "yarn test",
+    "prepublishOnly": "yarn build",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
