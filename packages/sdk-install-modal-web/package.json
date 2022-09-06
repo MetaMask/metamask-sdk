@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-install-modal-web",
-  "version": "0.0.1-beta.0",
+  "version": "0.0.1-beta.3",
   "private": false,
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
