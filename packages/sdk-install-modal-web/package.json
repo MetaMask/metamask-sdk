@@ -18,11 +18,11 @@
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "prepublishOnly": "yarn build",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
     "test:ci": "echo 'N/A'",
     "preversion": "yarn test",
-    "prepublishOnly": "yarn build",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
@@ -52,5 +52,9 @@
     "webpack-cli": "3.3.12",
     "webpack-dev-server": "3.11.2",
     "webpack-modules": "1.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
