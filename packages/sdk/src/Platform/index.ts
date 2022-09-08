@@ -64,7 +64,7 @@ const getPlatform = () => {
 
 const Platform = {
   wakeLock: new WakeLock(),
-  wakeLockType: WakeLockType.UntilResponse,
+  wakeLockType: WakeLockType.Temporary,
   wakeLockTimer: null,
   wakeLockFeatureActive: false,
   enableWakeLock() {
