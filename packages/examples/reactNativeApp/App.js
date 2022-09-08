@@ -94,11 +94,11 @@ const App: () => Node = () => {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: '0x64',
-            rpcUrls: ['https://dai.poa.network'],
-            chainName: 'xDAI Chain',
-            nativeCurrency: {name: 'xDAI', decimals: 18, symbol: 'xDAI'},
-            blockExplorerUrls: ['https://blockscout.com/poa/xdai'],
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: {symbol: 'MATIC', decimals: 18},
+            rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
       });

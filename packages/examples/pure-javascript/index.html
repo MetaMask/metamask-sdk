@@ -6,29 +6,29 @@
   function connect() {
     ethereum
       .request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
         params: [],
       })
-      .then((res) => console.log("request accounts", res))
-      .catch((e) => console.log("request accounts ERR", e));
+      .then((res) => console.log('request accounts', res))
+      .catch((e) => console.log('request accounts ERR', e));
   }
 
   function addEthereumChain() {
     ethereum
       .request({
-        method: "wallet_addEthereumChain",
+        method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: "0x64",
-            chainName: "xDai",
-            blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
-            nativeCurrency: { symbol: "xDai", decimals: 18 },
-            rpcUrls: ["https://rpc.xdaichain.com/"],
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
+            rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
       })
-      .then((res) => console.log("add", res))
-      .catch((e) => console.log("ADD ERR", e));
+      .then((res) => console.log('add', res))
+      .catch((e) => console.log('ADD ERR', e));
   }
 </script>
 <button onclick="connect()">Connect</button>

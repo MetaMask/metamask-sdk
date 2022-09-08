@@ -26,7 +26,6 @@ export const isMetaMaskInstalled = () => {
 
 export const isMobile = () => {
   const browser = Bowser.parse(window.navigator.userAgent);
-  console.log(browser);
   return (
     browser?.platform?.type === 'mobile' || browser?.platform?.type === 'tablet'
   );

@@ -30,11 +30,11 @@ function App() {
         method: 'wallet_addEthereumChain',
         params: [
           {
-            chainId: '0x64',
-            chainName: 'xDai',
-            blockExplorerUrls: ['https://blockscout.com/xdai/mainnet'],
-            nativeCurrency: { symbol: 'xDai', decimals: 18 },
-            rpcUrls: ['https://rpc.xdaichain.com/'],
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
+            rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
       })
