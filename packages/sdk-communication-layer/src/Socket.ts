@@ -30,7 +30,7 @@ export default class Socket extends EventEmitter2 {
     this.commLayer = commLayer;
 
     const options: { transports?: any; autoConnect: boolean } = {
-      autoConnect: true,
+      autoConnect: false,
     };
 
     if (transports) {
