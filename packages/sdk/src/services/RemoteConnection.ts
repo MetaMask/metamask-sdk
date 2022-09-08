@@ -75,9 +75,9 @@ const RemoteConnection = {
 
     if (showQRCode) {
       installModal = InstallModal({ link: universalLink });
-      console.log('OPEN LINK QRCODE', universalLink);
+      // console.log('OPEN LINK QRCODE', universalLink);
     } else {
-      console.log('OPEN LINK', universalLink);
+      // console.log('OPEN LINK', universalLink);
       Platform.openDeeplink?.(universalLink, deeplink, '_self');
     }
 

@@ -4,7 +4,7 @@ import initializeProvider from './provider/initializeProvider';
 import setupProviderStreams from './provider/setupProviderStreams';
 import WalletConnect from './services/WalletConnect';
 import ManageMetaMaskInstallation from './Platform/ManageMetaMaskInstallation';
-import Platform, { PlatformName } from './Platform';
+import Platform, { PlatformName, WakeLockType } from './Platform';
 import Ethereum from './services/Ethereum';
 import PostMessageStreams from './PostMessageStreams';
 import PortStreams from './portStreams';
@@ -27,6 +27,7 @@ type MetaMaskSDKOptions = {
   preferDesktop?: boolean;
   openDeeplink?: (string) => void;
   useDeeplink?: boolean;
+  wakeLockType?: WakeLockType;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any;
@@ -55,6 +56,7 @@ export default class MetaMaskSDK {
     preferDesktop,
     openDeeplink,
     useDeeplink,
+    wakeLockType,
     communicationLayerPreference = CommunicationLayerPreference.SOCKET,
     // WalletConnect
     WalletConnectInstance,
@@ -90,6 +92,10 @@ export default class MetaMaskSDK {
 
       if (useDeeplink) {
         Platform.useDeeplink = useDeeplink;
+      }
+
+      if (wakeLockType) {
+        Platform.wakeLockType = wakeLockType;
       }
 
       if (dappMetadata) {
@@ -160,5 +166,6 @@ declare global {
     ReactNativeWebView: any;
     ethereum: any;
     extension: any;
+    MSStream: any;
   }
 }

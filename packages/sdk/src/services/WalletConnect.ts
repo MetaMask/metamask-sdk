@@ -55,9 +55,9 @@ const WalletConnect = {
 
           if (showQRCode) {
             installModal = InstallModal({ link: universalLink });
-            console.log('OPEN LINK QR CODE', universalLink);
+            // console.log('OPEN LINK QR CODE', universalLink);
           } else {
-            console.log('OPEN LINK', universalLink);
+            // console.log('OPEN LINK', universalLink);
             // window.location.assign(link);
             Platform.openDeeplink(universalLink, deeplink, '_self');
           }

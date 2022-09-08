@@ -22,10 +22,6 @@ class RemoteCommunicationPostMessageStream extends Duplex {
     this._onMessage = this._onMessage.bind(this);
     this.comm.on('message', this._onMessage);
 
-    this.comm.on('channel_created', (id) => {
-      console.log('channel id', id);
-    });
-
     this.comm.on('clients_ready', () => {
       Ethereum.ethereum._state.initialized = true;
       Ethereum.ethereum._initializeState();
@@ -64,7 +60,7 @@ class RemoteCommunicationPostMessageStream extends Duplex {
           'metamask://',
           '_self',
         );
-      } else if (RemoteConnection.isPaused()) {
+      } else if (RemoteConnection.isPaused() && !isDesktop) {
         Platform.openDeeplink(
           'https://metamask.app.link/connect?redirect=true',
           'metamask://connect?redirect=true',
