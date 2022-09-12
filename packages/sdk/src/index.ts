@@ -17,7 +17,7 @@ export enum encryptionType {
   ECIES = 'ECIES',
 }
 
-type MetaMaskSDKOptions = {
+export type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;

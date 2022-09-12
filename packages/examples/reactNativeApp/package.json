@@ -45,10 +45,11 @@
     "preset": "react-native"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.0.1-beta.3",
+    "@metamask/sdk": "./metamask-sdk-v0.0.1-beta.4.tgz",
     "@tradle/react-native-http": "^2.0.0",
     "@walletconnect/client": "^1.7.7",
     "crypto": "^1.0.1",
+    "ethers": "^5.7.0",
     "events": "^1.0.0",
     "process": "^0.11.10",
     "react": "17.0.2",
