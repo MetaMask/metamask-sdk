@@ -15,9 +15,9 @@ export default [
       {
         file: packageJson.module,
         format: 'esm',
-        sourceMap: true,
       },
     ],
+    sourceMap: true,
     plugins: [
       external(),
       resolve({
@@ -36,8 +36,7 @@ export default [
           insertAt: 'top',
         },
       }),
-      //terser(),
-      ,
+      terser(),
     ],
   },
 ];

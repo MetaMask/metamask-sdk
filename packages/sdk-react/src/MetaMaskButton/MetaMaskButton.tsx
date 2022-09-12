@@ -160,7 +160,7 @@ const MetaMaskButton = ({
             />
           </div>
           <div
-            style={{ fontSize: 13, lineHeight: 18 }}
+            style={{ fontSize: 13, lineHeight: '18px' }}
             className="pl-4 text-left flex flex-col"
           >
             {chain && (
