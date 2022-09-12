@@ -1,8 +1,10 @@
 import { MetaMaskConnector as DefaultMetaMaskConnector } from 'wagmi/connectors/metaMask';
+// eslint-disable-next-line import/named
+import { Chain } from 'wagmi';
 import MetaMaskSDK, {
+  // eslint-disable-next-line import/named
   MetaMaskSDKOptions as MetaMaskSDKOptionsProps,
 } from '@metamask/sdk';
-import { Chain } from 'wagmi';
 
 type Options = {
   chains?: Chain[];
