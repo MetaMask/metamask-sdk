@@ -54,7 +54,14 @@ class RemoteCommunicationPostMessageStream extends Duplex {
       const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
 
       // Check if should open app
-      if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
+      if (
+        METHODS_TO_REDIRECT[data?.data?.method] &&
+        !isDesktop &&
+        !(
+          data?.data?.method === 'eth_requestAccounts' &&
+          RemoteConnection.isConnected()
+        )
+      ) {
         Platform.openDeeplink(
           'https://metamask.app.link/',
           'metamask://',
