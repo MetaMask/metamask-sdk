@@ -12,12 +12,12 @@ import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 import { shouldForceInjectProvider } from './utils';
 
-export enum encryptionType {
+enum encryptionType {
   ECDH = 'ECDH',
   ECIES = 'ECIES',
 }
 
-export type MetaMaskSDKOptions = {
+type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
