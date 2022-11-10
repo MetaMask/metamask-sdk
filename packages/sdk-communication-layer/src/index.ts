@@ -1,7 +1,19 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
+import { AnalyticsBrowser } from '@segment/analytics-next';
+import { version } from '../package.json';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
+
+const analytics = AnalyticsBrowser.load({
+  writeKey: process.env.SEGMENT_API_KEY,
+});
+
+enum TrackingEvents {
+  REQUEST = 'sdk_connect_request_started',
+  CONNECTED = 'sdk_connection_established',
+  DISCONNECT = 'sdk_disconnected',
+}
 
 export type DappMetadata = {
   url: string;
@@ -96,6 +108,25 @@ export default class RemoteCommunication extends EventEmitter2 {
       transports: this.transports,
     });
 
+    let url =
+      (typeof document !== 'undefined' && document.URL) || 'url undefined';
+    let title =
+      (typeof document !== 'undefined' && document.title) || 'title undefined';
+
+    if (this.dappMetadata?.url) {
+      url = this.dappMetadata.url;
+    }
+
+    if (this.dappMetadata?.name) {
+      title = this.dappMetadata.name;
+    }
+
+    const originatorInfo = {
+      url,
+      title,
+      platform: this.platform,
+    };
+
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
     });
@@ -107,24 +138,12 @@ export default class RemoteCommunication extends EventEmitter2 {
         return;
       }
 
-      let url =
-        (typeof document !== 'undefined' && document.URL) || 'url undefined';
-      let title =
-        (typeof document !== 'undefined' && document.title) ||
-        'title undefined';
-
-      if (this.dappMetadata?.url) {
-        url = this.dappMetadata.url;
-      }
-
-      if (this.dappMetadata?.name) {
-        title = this.dappMetadata.name;
-      }
-
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title, platform: this.platform },
+        originatorInfo,
       });
+
+      analytics.track(TrackingEvents.CONNECTED);
     });
 
     this.commLayer.on('clients_disconnected', () => {
@@ -147,6 +166,8 @@ export default class RemoteCommunication extends EventEmitter2 {
         reconnect: false,
       });
       this.emit('clients_disconnected');
+
+      analytics.track(TrackingEvents.DISCONNECT);
     });
 
     this.commLayer.on('channel_created', (id) => {
@@ -155,6 +176,12 @@ export default class RemoteCommunication extends EventEmitter2 {
 
     this.commLayer.on('clients_waiting_to_join', (numberUsers) => {
       this.emit('clients_waiting_to_join', numberUsers);
+
+      analytics.track(TrackingEvents.REQUEST, {
+        ...originatorInfo,
+        commLayer: this.commLayer,
+        sdkVersion: version,
+      });
     });
   }
 
