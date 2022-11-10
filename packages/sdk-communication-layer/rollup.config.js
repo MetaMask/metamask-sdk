@@ -39,7 +39,11 @@ const config = [
         values: { _WEB: 1 },
       }),
       typescript(),
-      nodeResolve({ browser: true, preferBuiltins: false }),
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+        mainFields: ['main', 'module'],
+      }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
       builtins({ crypto: true }),
