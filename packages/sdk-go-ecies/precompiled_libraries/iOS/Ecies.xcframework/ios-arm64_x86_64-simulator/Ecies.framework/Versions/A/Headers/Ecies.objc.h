@@ -11,4 +11,22 @@
 #include "Universe.objc.h"
 
 
+// skipped function EciesDecrypt with unsupported parameter or return types
+
+
+// skipped function EciesEncrypt with unsupported parameter or return types
+
+
+// skipped function EciesGeneratePrivateKey with unsupported parameter or return types
+
+
+// skipped function EciesGetPublicKey with unsupported parameter or return types
+
+
+// skipped function FromCString with unsupported parameter or return types
+
+
+// skipped function ToCString with unsupported parameter or return types
+
+
 #endif

@@ -1,0 +1,8 @@
+framework module "Ecies" {
+	header "ref.h"
+    header "Ecies.objc.h"
+    header "Universe.objc.h"
+    header "Ecies.h"
+
+    export *
+}
