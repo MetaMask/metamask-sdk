@@ -1,13 +1,29 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
+
+/* #if _REACTNATIVE
+import { createClient } from '@segment/analytics-react-native';
+//#elif _NODEJS
+import Analytics from 'analytics-node';
+//#else */
 import { AnalyticsBrowser } from '@segment/analytics-next';
+// #endif
+
 import { version } from '../package.json';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 
+/* #if _REACTNATIVE
+const analytics = createClient({
+  writeKey: process.env.SEGMENT_API_KEY,
+});
+//#elif _NODEJS
+const analytics = new Analytics(process.env.SEGMENT_API_KEY);
+//#else */
 const analytics = AnalyticsBrowser.load({
   writeKey: process.env.SEGMENT_API_KEY,
 });
+// #endif
 
 enum TrackingEvents {
   REQUEST = 'sdk_connect_request_started',
