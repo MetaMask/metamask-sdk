@@ -27,6 +27,7 @@
     ]
   },
   "dependencies": {
+    "@metamask/sdk": "^0.0.1-beta.5",
     "@metamask/sdk-react": "../../sdk-react",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
