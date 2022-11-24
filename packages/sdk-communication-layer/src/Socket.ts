@@ -4,7 +4,9 @@ import { v4 as uuidv4 } from 'uuid';
 import KeyExchange from './KeyExchange';
 import { CommunicationLayerPreference } from '.';
 
-export const SOCKET_IO_SERVER = 'https://socket.codefi.network/';
+// export const SOCKET_IO_SERVER = 'https://socket.codefi.network/';
+export const SOCKET_IO_SERVER =
+  'https://metamask-sdk-socket.metafi.codefi.network/';
 
 export default class Socket extends EventEmitter2 {
   socket = null;
