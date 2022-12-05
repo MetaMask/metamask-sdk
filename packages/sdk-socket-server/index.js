@@ -47,7 +47,7 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
-app.post('/debug', (_req, res) => {
+app.get('/debug', (_req, res) => {
   const { body } = _req;
 
   if (!body.event) {

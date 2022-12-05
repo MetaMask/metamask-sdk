@@ -1,8 +1,8 @@
 import SOCKET_IO_SERVER from './Socket';
 
 const SendAnalytics = async (parameters) => {
-  const response = await fetch(`${SOCKET_IO_SERVER}/debug`, {
-    method: 'POST',
+  const response = await fetch(`${SOCKET_IO_SERVER}debug`, {
+    method: 'GET',
     headers: {
       // eslint-disable-next-line prettier/prettier
       Accept: 'application/json',
