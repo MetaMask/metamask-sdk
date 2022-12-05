@@ -1,9 +1,10 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
-import { version } from '../package.json';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
 import SendAnalytics from './Analytics';
+
+const VERSION = '0.0.1-beta.5';
 
 export type DappMetadata = {
   url: string;
@@ -177,7 +178,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         event: TrackingEvents.DISCONNECT,
         ...originatorInfo,
         commLayer: this.commLayer,
-        sdkVersion: version,
+        sdkVersion: VERSION,
       });
     });
   }

@@ -8,8 +8,7 @@
     "strict": false,
     "target": "es5",
     "lib": ["DOM", "ES2016"],
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    "skipLibCheck": true
   },
   "include": ["./**/*.ts"]
 }
