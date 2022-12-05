@@ -38,7 +38,12 @@ const helmet = require('helmet');
 const Analytics = require('analytics-node');
 
 // eslint-disable-next-line node/no-process-env
-const analytics = new Analytics(process.env.SEGMENT_API_KEY);
+const analytics = new Analytics(process.env.SEGMENT_API_KEY, {
+  errorHandler: (err) => {
+    console.error('Analytics-node flush failed.');
+    console.error(err);
+  },
+});
 
 app.use(helmet());
 app.disable('x-powered-by');
@@ -48,27 +53,28 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/debug', (_req, res) => {
-  const { body } = _req;
+  try {
+    const { body } = _req;
 
-  if (!body.event) {
-    return res.status(400).json({ error: 'event is required' });
+    if (!body.event) {
+      return res.status(400).json({ error: 'event is required' });
+    }
+    const params = {
+      anonymousId: body.url || 'anonymous_dapp',
+      event: body.event,
+      ...(body.url && { url: body.url }),
+      ...(body.title && { title: body.title }),
+      ...(body.platform && { platform: body.platform }),
+      ...(body.commLayer && { commLayer: body.commLayer }),
+      ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
+    };
+
+    analytics.track(params);
+
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ error });
   }
-
-  const params = {
-    ...(body.url && { url: body.url }),
-    ...(body.title && { title: body.title }),
-    ...(body.platform && { platform: body.platform }),
-    ...(body.commLayer && { commLayer: body.commLayer }),
-    ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
-  };
-
-  if (Object.keys(params).length > 0) {
-    analytics.track(body.event, params);
-  } else {
-    analytics.track(body.event);
-  }
-
-  return res.json({ success: true });
 });
 
 io.on('connection', (socket) => {
