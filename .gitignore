@@ -64,3 +64,6 @@ typings/
 
 # Mac files
 .DS_Store
+
+# Rollup cache
+.rollup.cache/
