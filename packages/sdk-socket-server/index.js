@@ -39,6 +39,7 @@ const Analytics = require('analytics-node');
 
 // eslint-disable-next-line node/no-process-env
 const analytics = new Analytics(process.env.SEGMENT_API_KEY, {
+  flushAt: 1,
   errorHandler: (err) => {
     console.error('Analytics-node flush failed.');
     console.error(err);
@@ -59,17 +60,23 @@ app.get('/debug', (_req, res) => {
     if (!body.event) {
       return res.status(400).json({ error: 'event is required' });
     }
-    const params = {
-      anonymousId: body.url || 'anonymous_dapp',
+
+    const trackId = body.url || 'socket.io-server';
+
+    analytics.identify({
+      anonymousId: trackId,
+      traits: {},
+    });
+
+    analytics.track({
+      anonymousId: trackId,
       event: body.event,
       ...(body.url && { url: body.url }),
       ...(body.title && { title: body.title }),
       ...(body.platform && { platform: body.platform }),
       ...(body.commLayer && { commLayer: body.commLayer }),
       ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
-    };
-
-    analytics.track(params);
+    });
 
     return res.json({ success: true });
   } catch (error) {
