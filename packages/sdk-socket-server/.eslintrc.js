@@ -7,6 +7,9 @@ module.exports = {
     {
       files: ['**/*.js'],
       extends: ['@metamask/eslint-config-nodejs'],
+      parserOptions: {
+        ecmaVersion: 9,
+      },
     },
 
     {
