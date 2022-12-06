@@ -3,6 +3,9 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 
+// eslint-disable-next-line node/no-process-env
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 const app = express();
 
 const server = http.createServer(app);
@@ -39,7 +42,7 @@ const Analytics = require('analytics-node');
 
 // eslint-disable-next-line node/no-process-env
 const analytics = new Analytics(process.env.SEGMENT_API_KEY, {
-  flushAt: 1,
+  flushAt: isDevelopment ? 1 : 20,
   errorHandler: (err) => {
     console.error('Analytics-node flush failed.');
     console.error(err);
@@ -53,6 +56,39 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
+if (!isDevelopment) {
+  // flushes all Segment events when Node process is interrupted for any reason
+  const exitGracefully = async (code) => {
+    console.log('Flushing events');
+    await analytics.flush(function (err) {
+      console.log('Flushed, and now this program can exit!');
+
+      process.exitCode(code);
+      if (err) {
+        console.log(err);
+      }
+    });
+  };
+
+  [
+    'beforeExit',
+    'uncaughtException',
+    'unhandledRejection',
+    'SIGHUP',
+    'SIGINT',
+    'SIGQUIT',
+    'SIGILL',
+    'SIGTRAP',
+    'SIGABRT',
+    'SIGBUS',
+    'SIGFPE',
+    'SIGUSR1',
+    'SIGSEGV',
+    'SIGUSR2',
+    'SIGTERM',
+  ].forEach((evt) => process.on(evt, exitGracefully));
+}
+
 app.post('/debug', (_req, res) => {
   try {
     const { body } = _req;
@@ -61,15 +97,22 @@ app.post('/debug', (_req, res) => {
       return res.status(400).json({ error: 'event is required' });
     }
 
-    analytics.track({
-      userId: body.id || 'socket.io-server',
-      event: body.event,
-      ...(body.url && { url: body.url }),
-      ...(body.title && { title: body.title }),
-      ...(body.platform && { platform: body.platform }),
-      ...(body.commLayer && { commLayer: body.commLayer }),
-      ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
-    });
+    analytics.track(
+      {
+        userId: body.id || 'socket.io-server',
+        event: body.event,
+        ...(body.url && { url: body.url }),
+        ...(body.title && { title: body.title }),
+        ...(body.platform && { platform: body.platform }),
+        ...(body.commLayer && { commLayer: body.commLayer }),
+        ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
+      },
+      function (err) {
+        if (err) {
+          console.log(err);
+        }
+      },
+    );
 
     return res.json({ success: true });
   } catch (error) {
