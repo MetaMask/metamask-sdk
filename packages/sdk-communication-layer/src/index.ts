@@ -129,6 +129,8 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_ready', ({ isOriginator }) => {
+      SendAnalytics({ event: TrackingEvents.CONNECTED });
+
       this.isOriginator = isOriginator;
 
       if (!isOriginator) {
@@ -139,8 +141,6 @@ export default class RemoteCommunication extends EventEmitter2 {
         type: 'originator_info',
         originatorInfo,
       });
-
-      SendAnalytics({ event: TrackingEvents.CONNECTED });
     });
 
     this.commLayer.on('clients_disconnected', () => {
@@ -153,6 +153,8 @@ export default class RemoteCommunication extends EventEmitter2 {
         return;
       }
 
+      SendAnalytics({ event: TrackingEvents.DISCONNECT });
+
       this.clean();
       this.commLayer.removeAllListeners();
       this.setupCommLayer({
@@ -163,8 +165,6 @@ export default class RemoteCommunication extends EventEmitter2 {
         reconnect: false,
       });
       this.emit('clients_disconnected');
-
-      SendAnalytics({ event: TrackingEvents.DISCONNECT });
     });
 
     this.commLayer.on('channel_created', (id) => {
@@ -172,14 +172,14 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_waiting_to_join', (numberUsers) => {
-      this.emit('clients_waiting_to_join', numberUsers);
-
       SendAnalytics({
         event: TrackingEvents.DISCONNECT,
         ...originatorInfo,
-        commLayer: this.commLayer,
+        commLayer: CommLayer,
         sdkVersion: VERSION,
       });
+
+      this.emit('clients_waiting_to_join', numberUsers);
     });
   }
 

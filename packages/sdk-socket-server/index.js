@@ -53,7 +53,7 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
-app.get('/debug', (_req, res) => {
+app.post('/debug', (_req, res) => {
   try {
     const { body } = _req;
 

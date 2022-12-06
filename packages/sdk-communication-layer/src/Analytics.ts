@@ -1,8 +1,10 @@
-import SOCKET_IO_SERVER from './Socket';
+import { SOCKET_IO_SERVER } from './Socket';
 
 const SendAnalytics = async (parameters) => {
-  const response = await fetch(`${SOCKET_IO_SERVER}debug`, {
-    method: 'GET',
+  const serverUrl = `${SOCKET_IO_SERVER}debug`;
+
+  const response = await fetch(serverUrl, {
+    method: 'POST',
     headers: {
       // eslint-disable-next-line prettier/prettier
       Accept: 'application/json',
@@ -10,7 +12,6 @@ const SendAnalytics = async (parameters) => {
     },
     body: JSON.stringify(parameters),
   });
-
   return JSON.stringify(response.json);
 };
 
