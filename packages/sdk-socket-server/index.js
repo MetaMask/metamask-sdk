@@ -108,7 +108,11 @@ app.post('/debug', (_req, res) => {
         ...(body.commLayer && { commLayer: body.commLayer }),
         ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
       },
-      function (err) {
+      function (err, batch) {
+        if (isDevelopment) {
+          console.log(batch);
+        }
+
         if (err) {
           console.log(err);
         }
