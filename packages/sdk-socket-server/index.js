@@ -61,15 +61,8 @@ app.post('/debug', (_req, res) => {
       return res.status(400).json({ error: 'event is required' });
     }
 
-    const trackId = body.url || 'socket.io-server';
-
-    analytics.identify({
-      anonymousId: trackId,
-      traits: {},
-    });
-
     analytics.track({
-      anonymousId: trackId,
+      userId: body.id || 'socket.io-server',
       event: body.event,
       ...(body.url && { url: body.url }),
       ...(body.title && { title: body.title }),
