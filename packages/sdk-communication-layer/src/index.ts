@@ -173,7 +173,7 @@ export default class RemoteCommunication extends EventEmitter2 {
 
     this.commLayer.on('clients_waiting_to_join', (numberUsers) => {
       SendAnalytics({
-        event: TrackingEvents.DISCONNECT,
+        event: TrackingEvents.REQUEST,
         ...originatorInfo,
         commLayer: CommLayer,
         sdkVersion: VERSION,
