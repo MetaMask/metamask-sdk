@@ -58,6 +58,7 @@ app.get('/', (_req, res) => {
 
 if (!isDevelopment) {
   // flushes all Segment events when Node process is interrupted for any reason
+  // https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
   const exitGracefully = async (code) => {
     console.log('Flushing events');
     await analytics.flush(function (err) {
