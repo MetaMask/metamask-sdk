@@ -1,4 +1,4 @@
-blank_issues_enabled: true # turn back to false if we ever decide to manage features with a features template
+blank_issues_enabled: false
 contact_links:
   - name: Ask a question
     url: https://discord.gg/waqqkMdw
