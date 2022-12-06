@@ -30,7 +30,7 @@ export enum CommunicationLayerPreference {
 enum TrackingEvents {
   REQUEST = 'sdk_connect_request_started',
   CONNECTED = 'sdk_connection_established',
-  DISCONNECT = 'sdk_disconnected',
+  DISCONNECTED = 'sdk_disconnected',
 }
 
 export default class RemoteCommunication extends EventEmitter2 {
@@ -153,7 +153,7 @@ export default class RemoteCommunication extends EventEmitter2 {
         return;
       }
 
-      SendAnalytics({ id: this.channelId, event: TrackingEvents.DISCONNECT });
+      SendAnalytics({ id: this.channelId, event: TrackingEvents.DISCONNECTED });
 
       this.clean();
       this.commLayer.removeAllListeners();
