@@ -19,6 +19,7 @@ type RemoteCommunicationOptions = {
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
+  enableDebug?: boolean;
 };
 
 export enum CommunicationLayerPreference {
@@ -60,6 +61,8 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   platform: string;
 
+  enableDebug: boolean;
+
   constructor({
     platform,
     commLayer = 'socket',
@@ -68,6 +71,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     reconnect,
     dappMetadata,
     transports,
+    enableDebug,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -80,6 +84,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
     this.platform = platform;
+    this.enableDebug = enableDebug;
 
     this.setupCommLayer({
       CommLayer,
@@ -129,7 +134,9 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_ready', ({ isOriginator }) => {
-      SendAnalytics({ id: this.channelId, event: TrackingEvents.CONNECTED });
+      if (this.enableDebug) {
+        SendAnalytics({ id: this.channelId, event: TrackingEvents.CONNECTED });
+      }
 
       this.isOriginator = isOriginator;
 
@@ -153,7 +160,12 @@ export default class RemoteCommunication extends EventEmitter2 {
         return;
       }
 
-      SendAnalytics({ id: this.channelId, event: TrackingEvents.DISCONNECTED });
+      if (this.enableDebug) {
+        SendAnalytics({
+          id: this.channelId,
+          event: TrackingEvents.DISCONNECTED,
+        });
+      }
 
       this.clean();
       this.commLayer.removeAllListeners();
@@ -172,13 +184,15 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_waiting_to_join', (numberUsers) => {
-      SendAnalytics({
-        id: this.channelId,
-        event: TrackingEvents.REQUEST,
-        ...originatorInfo,
-        commLayer: CommLayer,
-        sdkVersion: VERSION,
-      });
+      if (this.enableDebug) {
+        SendAnalytics({
+          id: this.channelId,
+          event: TrackingEvents.REQUEST,
+          ...originatorInfo,
+          commLayer: CommLayer,
+          sdkVersion: VERSION,
+        });
+      }
 
       this.emit('clients_waiting_to_join', numberUsers);
     });
