@@ -1,4 +1,5 @@
 require('dotenv').config();
+const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -98,9 +99,12 @@ app.post('/debug', (_req, res) => {
       return res.status(400).json({ error: 'event is required' });
     }
 
+    const id = body.id || 'socket.io-server';
+    const userIdHash = crypto.createHash('sha1').update(id).digest('hex');
+
     analytics.track(
       {
-        userId: body.id || 'socket.io-server',
+        userId: userIdHash,
         event: body.event,
         ...(body.url && { url: body.url }),
         ...(body.title && { title: body.title }),
