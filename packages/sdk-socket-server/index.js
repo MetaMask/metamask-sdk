@@ -1,5 +1,11 @@
+require('dotenv').config();
+const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
+const bodyParser = require('body-parser');
+
+// eslint-disable-next-line node/no-process-env
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 const app = express();
 
@@ -24,17 +30,103 @@ const io = new Server(server, {
 });
 const cors = require('cors');
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
+app.options('*', cors());
 
 const uuid = require('uuid');
 
 const helmet = require('helmet');
+
+const Analytics = require('analytics-node');
+
+// eslint-disable-next-line node/no-process-env
+const analytics = new Analytics(process.env.SEGMENT_API_KEY, {
+  flushAt: isDevelopment ? 1 : 20,
+  errorHandler: (err) => {
+    console.error('Analytics-node flush failed.');
+    console.error(err);
+  },
+});
 
 app.use(helmet());
 app.disable('x-powered-by');
 
 app.get('/', (_req, res) => {
   res.json({ success: true });
+});
+
+if (!isDevelopment) {
+  // flushes all Segment events when Node process is interrupted for any reason
+  // https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
+  const exitGracefully = async (code) => {
+    console.log('Flushing events');
+    await analytics.flush(function (err) {
+      console.log('Flushed, and now this program can exit!');
+
+      process.exitCode(code);
+      if (err) {
+        console.log(err);
+      }
+    });
+  };
+
+  [
+    'beforeExit',
+    'uncaughtException',
+    'unhandledRejection',
+    'SIGHUP',
+    'SIGINT',
+    'SIGQUIT',
+    'SIGILL',
+    'SIGTRAP',
+    'SIGABRT',
+    'SIGBUS',
+    'SIGFPE',
+    'SIGUSR1',
+    'SIGSEGV',
+    'SIGUSR2',
+    'SIGTERM',
+  ].forEach((evt) => process.on(evt, exitGracefully));
+}
+
+app.post('/debug', (_req, res) => {
+  try {
+    const { body } = _req;
+
+    if (!body.event) {
+      return res.status(400).json({ error: 'event is required' });
+    }
+
+    const id = body.id || 'socket.io-server';
+    const userIdHash = crypto.createHash('sha1').update(id).digest('hex');
+
+    analytics.track(
+      {
+        userId: userIdHash,
+        event: body.event,
+        ...(body.url && { url: body.url }),
+        ...(body.title && { title: body.title }),
+        ...(body.platform && { platform: body.platform }),
+        ...(body.commLayer && { commLayer: body.commLayer }),
+        ...(body.sdkVersion && { sdkVersion: body.sdkVersion }),
+      },
+      function (err, batch) {
+        if (isDevelopment) {
+          console.log(batch);
+        }
+
+        if (err) {
+          console.log(err);
+        }
+      },
+    );
+
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ error });
+  }
 });
 
 io.on('connection', (socket) => {

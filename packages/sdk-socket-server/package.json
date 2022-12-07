@@ -9,6 +9,7 @@
     "build": "echo 'N/A'",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "debug": "NODE_ENV=development nodemon index.js",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -19,7 +20,10 @@
     "test:ci": "echo 'N/A'"
   },
   "dependencies": {
+    "analytics-node": "^6.2.0",
+    "body-parser": "^1.20.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
     "express": "^4.17.3",
     "helmet": "^5.1.1",
     "rate-limiter-flexible": "^2.3.8",
@@ -33,6 +37,7 @@
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-jsdoc": "^36.1.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.4.0"
+    "eslint-plugin-prettier": "^3.4.0",
+    "nodemon": "^2.0.20"
   }
 }
