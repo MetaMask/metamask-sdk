@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.0.1-beta.5",
+  "version": "0.1.0",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -39,8 +39,8 @@
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^4.0.0",
     "@metamask/providers": "^8.1.1",
-    "@metamask/sdk-communication-layer": "^0.0.1-beta.4",
-    "@metamask/sdk-install-modal-web": "^0.0.1-beta.4",
+    "@metamask/sdk-communication-layer": "^0.1.0",
+    "@metamask/sdk-install-modal-web": "^0.1.0",
     "bowser": "^2.9.0",
     "eciesjs": "^0.3.15",
     "eventemitter2": "^6.4.7",
