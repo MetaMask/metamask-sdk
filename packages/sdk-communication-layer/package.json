@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.0.1-beta.5",
+  "version": "0.1.0",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
