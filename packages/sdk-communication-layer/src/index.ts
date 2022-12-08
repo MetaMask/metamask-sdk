@@ -4,7 +4,7 @@ import Socket from './Socket';
 import WebRTC from './WebRTC';
 import SendAnalytics from './Analytics';
 
-const VERSION = '0.0.1-beta.5';
+const VERSION = '0.1.0';
 
 export type DappMetadata = {
   url: string;
