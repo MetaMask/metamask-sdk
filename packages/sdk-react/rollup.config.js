@@ -5,7 +5,6 @@ import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
-import { config } from 'node:process';
 
 const packageJson = require('./package.json');
 
