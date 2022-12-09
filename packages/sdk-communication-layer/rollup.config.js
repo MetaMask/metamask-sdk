@@ -10,6 +10,9 @@ import { terser } from 'rollup-plugin-terser';
 
 const listDepForRollup = [];
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 const config = [
   {
     external: listDepForRollup,
