@@ -57,39 +57,38 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
-if (!isDevelopment) {
-  // flushes all Segment events when Node process is interrupted for any reason
-  // https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
-  const exitGracefully = async (code) => {
-    console.log('Flushing events');
-    await analytics.flush(function (err) {
-      console.log('Flushed, and now this program can exit!');
+// flushes all Segment events when Node process is interrupted for any reason
+// https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
+const exitGracefully = async (code) => {
+  console.log('Flushing events');
+  await analytics.flush(function (err) {
+    console.log('Flushed, and now this program can exit!');
 
-      process.exitCode(code);
-      if (err) {
-        console.log(err);
-      }
-    });
-  };
+    if (err) {
+      console.log(err);
+    }
+    // eslint-disable-next-line node/no-process-exit
+    process.exit(code);
+  });
+};
 
-  [
-    'beforeExit',
-    'uncaughtException',
-    'unhandledRejection',
-    'SIGHUP',
-    'SIGINT',
-    'SIGQUIT',
-    'SIGILL',
-    'SIGTRAP',
-    'SIGABRT',
-    'SIGBUS',
-    'SIGFPE',
-    'SIGUSR1',
-    'SIGSEGV',
-    'SIGUSR2',
-    'SIGTERM',
-  ].forEach((evt) => process.on(evt, exitGracefully));
-}
+[
+  'beforeExit',
+  'uncaughtException',
+  'unhandledRejection',
+  'SIGHUP',
+  'SIGINT',
+  'SIGQUIT',
+  'SIGILL',
+  'SIGTRAP',
+  'SIGABRT',
+  'SIGBUS',
+  'SIGFPE',
+  'SIGUSR1',
+  'SIGSEGV',
+  'SIGUSR2',
+  'SIGTERM',
+].forEach((evt) => process.on(evt, exitGracefully));
 
 app.post('/debug', (_req, res) => {
   try {
