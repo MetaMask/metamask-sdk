@@ -7,9 +7,13 @@ import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import { terser } from "rollup-plugin-terser";
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
 const listDepForRollup = [];
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 const config = [
   {
     external: listDepForRollup,
@@ -42,8 +46,9 @@ const config = [
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
-      builtins({ crypto: true }),
+      builtins({ crypto: false }),
       json(),
+      nodePolyfills(),
       terser()
     ],
   },
@@ -54,10 +59,12 @@ const config = [
       {
         file: 'dist/react-native/cjs/metamask-sdk.js',
         format: 'cjs',
+        sourcemap: true
       },
       {
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',
+        sourcemap: true
       },
     ],
     plugins: [
@@ -66,12 +73,13 @@ const config = [
       }),
       typescript(),
       commonjs({ transformMixedEsModules: true }),
-      nodeResolve({
-        mainFields: ['react-native', 'node', 'browser'],
-        exportConditions: ['react-native', 'node', 'browser'],
-        browser: true,
-        preferBuiltins: true,
-      }),
+      // nodeResolve({
+      //   mainFields: ['react-native', 'node', 'browser'],
+      //   exportConditions: ['react-native', 'node', 'browser'],
+      //   browser: true,
+      //   preferBuiltins: true,
+      // }),
+      nodePolyfills(),
       json(),
       terser()
     ],
@@ -104,6 +112,7 @@ const config = [
       nodeResolve({ browser: false, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
       json(),
+      nodePolyfills(),
       terser()
     ],
   },
