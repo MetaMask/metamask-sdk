@@ -22,6 +22,7 @@
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
     "test:ci": "echo 'N/A'",
+    "clean": "echo 'N/A'",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },

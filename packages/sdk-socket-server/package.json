@@ -17,6 +17,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "start": "node index.js",
     "test": "echo 'N/A'",
+    "clean": "echo 'N/A'",
     "test:ci": "echo 'N/A'"
   },
   "dependencies": {
