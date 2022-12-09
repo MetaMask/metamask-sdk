@@ -7,6 +7,7 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "workspaces": {
+    "private": true,
     "packages": [
       "packages/*"
     ]
