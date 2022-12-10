@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
@@ -24,6 +24,7 @@
     "build": "rm -rf dist && rollup -c",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "watch": "rollup -c -w",
     "clean": "rimraf ./dist/* ./node_modules/*",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
