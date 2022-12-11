@@ -104,7 +104,7 @@ const config = [
         sourcemap: true,
       }),
       typescript(),
-      nodeResolve({ browser: false, preferBuiltins: false }),
+      nodeResolve({ browser: false, preferBuiltins: true }),
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser(),
