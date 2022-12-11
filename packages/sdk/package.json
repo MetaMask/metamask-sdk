@@ -73,6 +73,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "prettier": "^2.3.0",
+    "rimraf": "^3.0.2",
     "rollup": "^2.70.0",
     "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-natives": "^0.7.5",
