@@ -1,25 +1,23 @@
 import { MetaMaskConnector as DefaultMetaMaskConnector } from 'wagmi/connectors/metaMask';
 // eslint-disable-next-line import/named
 import { Chain } from 'wagmi';
-import MetaMaskSDK, {
-  // eslint-disable-next-line import/named
-  MetaMaskSDKOptions as MetaMaskSDKOptionsProps,
-} from '@metamask/sdk';
+// eslint-disable-next-line import/named
+import MetaMaskSDK, { MetaMaskSDKOptions } from '@metamask/sdk';
 
 type Options = {
   chains?: Chain[];
-  MetaMaskSDKOptions?: MetaMaskSDKOptionsProps;
+  sdkOptions?: MetaMaskSDKOptions;
 };
 class MetaMaskConnector extends DefaultMetaMaskConnector {
   sdk: MetaMaskSDK;
 
   #provider: any;
 
-  constructor({ MetaMaskSDKOptions, chains }: Options) {
+  constructor({ chains, sdkOptions }: Options) {
     super({ chains });
     this.sdk = new MetaMaskSDK({
       injectProvider: false,
-      ...MetaMaskSDKOptions,
+      ...sdkOptions,
     });
 
     this.#provider = this.sdk.getProvider();

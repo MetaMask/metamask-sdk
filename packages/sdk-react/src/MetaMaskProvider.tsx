@@ -2,22 +2,22 @@ import React from 'react';
 import { WagmiConfig, createClient, Chain, Connector } from 'wagmi';
 import { providers } from 'ethers';
 import MetaMaskConnector from './MetaMaskConnector';
-import { MetaMaskSDKOptions as MetaMaskSDKOptionsProps } from '@metamask/sdk';
+import { MetaMaskSDKOptions } from '@metamask/sdk';
 
 const MetaMaskProvider = ({
   children,
   networks,
-  MetaMaskSDKOptions,
+  sdkOptions,
   connectors = [],
 }: {
   children: React.ReactNode;
   networks: Chain[];
-  MetaMaskSDKOptions?: MetaMaskSDKOptionsProps;
+  sdkOptions?: MetaMaskSDKOptions;
   connectors?: Connector[];
 }) => {
   const MMConnector = new MetaMaskConnector({
     chains: networks,
-    MetaMaskSDKOptions,
+    sdkOptions,
   });
 
   const client = createClient({
