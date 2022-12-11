@@ -12,7 +12,7 @@ import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 import { shouldForceInjectProvider } from './utils';
 
-type MetaMaskSDKOptions = {
+export type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;

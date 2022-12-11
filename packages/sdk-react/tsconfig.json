@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
+    "declarationMap": true,
     "declarationDir": "types",
     "emitDeclarationOnly": true,
     "composite": true
