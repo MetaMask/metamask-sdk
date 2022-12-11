@@ -3,6 +3,7 @@
     "declaration": true,
     "declarationMap": true,
     "esModuleInterop": true,
+    "incremental": true,
     "module": "ES6",
     "moduleResolution": "Node",
     "sourceMap": true,

@@ -5,6 +5,7 @@
     "esModuleInterop": true,
     "module": "ES6",
     "moduleResolution": "Node",
+    "incremental": true,
     "sourceMap": true,
     "strict": false,
     "target": "es5",
