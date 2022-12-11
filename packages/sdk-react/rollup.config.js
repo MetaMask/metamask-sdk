@@ -21,7 +21,6 @@ const config =
           format: 'esm',
         },
       ],
-      sourceMap: true,
       plugins: [
         external(),
         resolve({
