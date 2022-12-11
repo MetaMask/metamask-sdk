@@ -21,20 +21,24 @@ const config = [
       {
         file: 'dist/browser/cjs/metamask-sdk-communication-layer.js',
         format: 'cjs',
+        sourcemap: true,
       },
       {
         file: 'dist/browser/es/metamask-sdk-communication-layer.js',
         format: 'es',
+        sourcemap: true,
       },
       {
         name: 'browser',
         file: 'dist/browser/umd/metamask-sdk-communication-layer.js',
         format: 'umd',
+        sourcemap: true,
       },
       {
         file: 'dist/browser/iife/metamask-sdk-communication-layer.js',
         format: 'iife',
         name: 'MetaMaskSDK',
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -57,10 +61,12 @@ const config = [
       {
         file: 'dist/react-native/cjs/metamask-sdk-communication-layer.js',
         format: 'cjs',
+        sourcemap: true,
       },
       {
         file: 'dist/react-native/es/metamask-sdk-communication-layer.js',
         format: 'es',
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -86,10 +92,12 @@ const config = [
       {
         file: 'dist/node/cjs/metamask-sdk-communication-layer.js',
         format: 'cjs',
+        sourcemap: true,
       },
       {
         file: 'dist/node/es/metamask-sdk-communication-layer.js',
         format: 'es',
+        sourcemap: true,
       },
     ],
     plugins: [
