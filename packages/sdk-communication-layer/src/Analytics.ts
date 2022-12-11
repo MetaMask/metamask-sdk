@@ -12,7 +12,6 @@ export type AnaliticsProps = {
 const SendAnalytics = async (parameters: AnaliticsProps) => {
   const serverUrl = `${SOCKET_IO_SERVER}debug`;
 
-  console.debug(`V2 sending analytics`, parameters);
   const response = await fetch(serverUrl, {
     method: 'POST',
     headers: {
