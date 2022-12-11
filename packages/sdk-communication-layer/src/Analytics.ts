@@ -1,8 +1,10 @@
+import fetch from 'cross-fetch';
 import { SOCKET_IO_SERVER } from './Socket';
 
 const SendAnalytics = async (parameters) => {
   const serverUrl = `${SOCKET_IO_SERVER}debug`;
 
+  console.debug(`V2 sending analytics`, parameters);
   const response = await fetch(serverUrl, {
     method: 'POST',
     headers: {
@@ -12,7 +14,9 @@ const SendAnalytics = async (parameters) => {
     },
     body: JSON.stringify(parameters),
   });
-  return JSON.stringify(response.json);
+  const text = await response.text();
+  console.debug(`response:`, text);
+  return text;
 };
 
 export default SendAnalytics;
