@@ -1,7 +1,15 @@
 import fetch from 'cross-fetch';
 import { SOCKET_IO_SERVER } from './Socket';
 
-const SendAnalytics = async (parameters) => {
+export type AnaliticsProps = {
+  id: string;
+  event: unknown;
+  originationInfo?: unknown;
+  commLayer?: unknown;
+  sdkVersion?: string;
+};
+
+const SendAnalytics = async (parameters: AnaliticsProps) => {
   const serverUrl = `${SOCKET_IO_SERVER}debug`;
 
   console.debug(`V2 sending analytics`, parameters);
@@ -14,8 +22,8 @@ const SendAnalytics = async (parameters) => {
     },
     body: JSON.stringify(parameters),
   });
+  // TODO error management when request fails
   const text = await response.text();
-  console.debug(`response:`, text);
   return text;
 };
 
