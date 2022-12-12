@@ -5,10 +5,10 @@
     "esModuleInterop": true,
     "module": "ES6",
     "moduleResolution": "Node",
-    "incremental": true,
+    "incremental": false,
     "sourceMap": true,
     "strict": false,
-    "target": "es5",
+    "target": "es6",
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true
   },

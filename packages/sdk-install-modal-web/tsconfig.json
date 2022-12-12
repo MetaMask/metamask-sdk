@@ -10,7 +10,7 @@
     "noImplicitAny": true,
     "outDir": "./dist",
     "preserveConstEnums": true,
-    "target": "es5",
+    "target": "es6",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "skipLibCheck": true
