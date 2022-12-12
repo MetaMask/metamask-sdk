@@ -34,7 +34,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "prepublishOnly": "yarn build",
     "setup": "yarn install && yarn allow-scripts",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test:ci": "echo 'N/A'"
   },
   "dependencies": {
