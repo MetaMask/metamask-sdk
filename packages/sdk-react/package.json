@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "private": false,
   "description": "A react component and react hooks to connect and use MetaMask",
   "keywords": [
@@ -30,11 +30,12 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'N/A'",
     "clean": "rm -rf dist",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "test:ci": "echo 'N/A'"
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
-    "@metamask/sdk": "^0.2.0",
+    "@metamask/sdk": "^0.1.0",
     "@types/jest": "^27.0.1",
     "ethers": "^5.6.9",
     "mersenne-twister": "^1.1.0",
@@ -72,6 +73,7 @@
     "prettier": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "^3.0.2",
     "rollup": "^2.75.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
