@@ -1,10 +1,10 @@
+/* eslint-disable node/no-process-env */
 require('dotenv').config();
 const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-// eslint-disable-next-line node/no-process-env
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const app = express();
@@ -41,14 +41,20 @@ const helmet = require('helmet');
 
 const Analytics = require('analytics-node');
 
-// eslint-disable-next-line node/no-process-env
-const analytics = new Analytics(process.env.SEGMENT_API_KEY, {
-  flushAt: isDevelopment ? 1 : 20,
-  errorHandler: (err) => {
-    console.error('Analytics-node flush failed.');
-    console.error(err);
+console.log('isDevelopment?', isDevelopment);
+
+const analytics = new Analytics(
+  isDevelopment
+    ? process.env.SEGMENT_API_KEY_DEBUG
+    : process.env.SEGMENT_API_KEY_PRODUCTION,
+  {
+    flushAt: isDevelopment ? 1 : 20,
+    errorHandler: (err) => {
+      console.error('Analytics-node flush failed.');
+      console.error(err);
+    },
   },
-});
+);
 
 app.use(helmet());
 app.disable('x-powered-by');
