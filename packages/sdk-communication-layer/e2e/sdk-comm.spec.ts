@@ -1,36 +1,41 @@
 import { describe, expect, test } from '@jest/globals';
 import RemoteConnection from '../src';
 
+const waitForEvent = (
+  remoteConn: RemoteConnection,
+  event: string,
+): Promise<unknown> => {
+  return new Promise((resolve) => {
+    remoteConn.on(event, (message: unknown) => {
+      return resolve(message);
+    });
+  });
+};
+
 describe('SDK Comm Server', () => {
   test('connect to comm server', () => {
+    const commLayer = 'socket';
+    const platform = 'jest';
+
     const remote = new RemoteConnection({
-      commLayer: 'socket',
-      platform: 'jest',
+      commLayer,
+      platform,
     });
 
     const { channelId, pubKey } = remote.generateChannelId();
-    const linkParams = `channelId=${encodeURIComponent(
-      channelId,
-    )}&comm=${encodeURIComponent('socket')}&pubkey=${encodeURIComponent(
-      pubKey,
-    )}`;
 
-    console.log('Connect to', linkParams);
-
-    remote.on('message', (message) => {
-      console.log('New Message', message);
+    const mmRemote = new RemoteConnection({
+      commLayer,
+      platform,
+      otherPublicKey: pubKey,
     });
 
-    remote.on('channel_created', (message) => {
-      console.log('channel created', message);
-    });
+    mmRemote.connectToChannel(channelId);
+    const p = waitForEvent(mmRemote, 'clients_ready');
 
-    remote.on('clients_ready', (message) => {
-      console.log('Clients now connected!', message);
-    });
+    expect(p).resolves.toBeDefined();
 
-    remote.clean();
-
-    expect(1 + 2).toBe(3);
+    remote.disconnect();
+    mmRemote.disconnect();
   });
 });

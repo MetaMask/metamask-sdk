@@ -24,18 +24,18 @@
     "build": "rm -rf dist && rollup -c",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
-    "watch": "rollup -c -w",
     "clean": "rimraf ./dist",
-    "reset": "yarn clean && rimraf ./node_modules/",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "prepublishOnly": "yarn build",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "setup": "yarn install && yarn allow-scripts",
     "test": "jest --detectOpenHandles",
-    "test:ci": "echo 'N/A'"
+    "test:ci": "echo 'N/A'",
+    "watch": "rollup -c -w"
   },
   "dependencies": {
     "cross-fetch": "^3.1.5",
