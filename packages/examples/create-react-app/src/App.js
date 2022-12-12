@@ -2,7 +2,7 @@ import "./App.css";
 import MetaMaskSDK from "@metamask/sdk";
 import { useState, useEffect } from "react";
 
-const sdk = new MetaMaskSDK({
+new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: "socket",
 });
