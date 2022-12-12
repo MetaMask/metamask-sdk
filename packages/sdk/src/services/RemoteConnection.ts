@@ -10,6 +10,7 @@ const RemoteConnection = {
   webRTCLib: null,
   timer: null,
   universalLink: null,
+  enableDebug: null,
   getConnector() {
     if (!this.RemoteCommunication) {
       const commLayer = PostMessageStreams.communicationLayerPreference;
@@ -33,6 +34,7 @@ const RemoteConnection = {
         webRTCLib: this.webRTCLib,
         dappMetadata: this.dappMetadata,
         transports: this.transports,
+        enableDebug: this.enableDebug,
       });
 
       this.RemoteCommunication.on('clients_disconnected', () => {

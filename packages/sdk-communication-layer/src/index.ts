@@ -2,6 +2,9 @@ import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
 import Socket from './Socket';
 import WebRTC from './WebRTC';
+import SendAnalytics from './Analytics';
+
+const VERSION = '0.1.0';
 
 export type DappMetadata = {
   url: string;
@@ -16,12 +19,19 @@ type RemoteCommunicationOptions = {
   reconnect?: any;
   dappMetadata?: DappMetadata;
   transports?: string[];
+  enableDebug?: boolean;
 };
 
 export enum CommunicationLayerPreference {
   WEBRTC = 'webrtc',
   SOCKET = 'socket',
   WALLETCONNECT = 'wc',
+}
+
+enum TrackingEvents {
+  REQUEST = 'sdk_connect_request_started',
+  CONNECTED = 'sdk_connection_established',
+  DISCONNECTED = 'sdk_disconnected',
 }
 
 export default class RemoteCommunication extends EventEmitter2 {
@@ -51,6 +61,8 @@ export default class RemoteCommunication extends EventEmitter2 {
 
   platform: string;
 
+  enableDebug: boolean;
+
   constructor({
     platform,
     commLayer = 'socket',
@@ -59,6 +71,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     reconnect,
     dappMetadata,
     transports,
+    enableDebug,
   }: RemoteCommunicationOptions) {
     super();
 
@@ -71,6 +84,7 @@ export default class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
     this.platform = platform;
+    this.enableDebug = enableDebug;
 
     this.setupCommLayer({
       CommLayer,
@@ -96,34 +110,43 @@ export default class RemoteCommunication extends EventEmitter2 {
       transports: this.transports,
     });
 
+    let url =
+      (typeof document !== 'undefined' && document.URL) || 'url undefined';
+    let title =
+      (typeof document !== 'undefined' && document.title) || 'title undefined';
+
+    if (this.dappMetadata?.url) {
+      url = this.dappMetadata.url;
+    }
+
+    if (this.dappMetadata?.name) {
+      title = this.dappMetadata.name;
+    }
+
+    const originatorInfo = {
+      url,
+      title,
+      platform: this.platform,
+    };
+
     this.commLayer.on('message', ({ message }) => {
       this.onMessageCommLayer(message);
     });
 
     this.commLayer.on('clients_ready', ({ isOriginator }) => {
+      if (this.enableDebug) {
+        SendAnalytics({ id: this.channelId, event: TrackingEvents.CONNECTED });
+      }
+
       this.isOriginator = isOriginator;
 
       if (!isOriginator) {
         return;
       }
 
-      let url =
-        (typeof document !== 'undefined' && document.URL) || 'url undefined';
-      let title =
-        (typeof document !== 'undefined' && document.title) ||
-        'title undefined';
-
-      if (this.dappMetadata?.url) {
-        url = this.dappMetadata.url;
-      }
-
-      if (this.dappMetadata?.name) {
-        title = this.dappMetadata.name;
-      }
-
       this.commLayer.sendMessage({
         type: 'originator_info',
-        originatorInfo: { url, title, platform: this.platform },
+        originatorInfo,
       });
     });
 
@@ -135,6 +158,13 @@ export default class RemoteCommunication extends EventEmitter2 {
       if (!this.isOriginator) {
         this.paused = true;
         return;
+      }
+
+      if (this.enableDebug) {
+        SendAnalytics({
+          id: this.channelId,
+          event: TrackingEvents.DISCONNECTED,
+        });
       }
 
       this.clean();
@@ -154,6 +184,16 @@ export default class RemoteCommunication extends EventEmitter2 {
     });
 
     this.commLayer.on('clients_waiting_to_join', (numberUsers) => {
+      if (this.enableDebug) {
+        SendAnalytics({
+          id: this.channelId,
+          event: TrackingEvents.REQUEST,
+          ...originatorInfo,
+          commLayer: CommLayer,
+          sdkVersion: VERSION,
+        });
+      }
+
       this.emit('clients_waiting_to_join', numberUsers);
     });
   }

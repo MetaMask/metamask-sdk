@@ -12,11 +12,6 @@ import RemoteConnection from './services/RemoteConnection';
 import { DappMetadata } from './constants';
 import { shouldForceInjectProvider } from './utils';
 
-enum encryptionType {
-  ECDH = 'ECDH',
-  ECIES = 'ECIES',
-}
-
 type MetaMaskSDKOptions = {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
@@ -35,7 +30,7 @@ type MetaMaskSDKOptions = {
   transports?: string[];
   dappMetadata?: DappMetadata;
   timer?: any;
-  encryption?: encryptionType;
+  enableDebug?: boolean;
 };
 
 export default class MetaMaskSDK {
@@ -65,6 +60,8 @@ export default class MetaMaskSDK {
     webRTCLib,
     transports,
     timer,
+    // Debugging
+    enableDebug = true,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.getPlatform();
 
@@ -108,6 +105,10 @@ export default class MetaMaskSDK {
 
       if (timer) {
         RemoteConnection.timer = timer;
+      }
+
+      if (enableDebug) {
+        RemoteConnection.enableDebug = enableDebug;
       }
 
       WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
