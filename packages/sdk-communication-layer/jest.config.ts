@@ -3,7 +3,9 @@
  * https://jestjs.io/docs/configuration
  */
 
-const config = {
+import { JestConfigWithTsJest } from 'ts-jest';
+
+const config: JestConfigWithTsJest = {
   // All imported modules in your tests should be mocked automatically
   automock: false,
 
@@ -128,6 +130,7 @@ const config = {
   //   "<rootDir>"
   // ],
 
+  testTimeout: 5000,
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
 
