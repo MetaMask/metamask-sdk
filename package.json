@@ -25,7 +25,7 @@
     "lint:misc": "yarn workspaces run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
     "setup": "yarn install && yarn allow-scripts && yarn postinstall",
-    "reset": "yarn workspaces run reset && rimraf node_modules",
+    "reset": "yarn workspaces run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
