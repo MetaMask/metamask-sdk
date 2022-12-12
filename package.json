@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": true,
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "lint:misc": "yarn workspaces run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
     "setup": "yarn install && yarn allow-scripts && yarn postinstall",
+    "reset": "yarn workspaces run reset",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },

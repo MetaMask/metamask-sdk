@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-examples",
-  "version": "0.10.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Examples using MetaMask SDK.",
   "repository": {
@@ -16,6 +16,7 @@
     "build:clean": "echo 'N/A'",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "reset": "yarn clean && rimraf node_modules",
     "clean": "rimraf dist/*",
     "lint": "echo 'N/A'",
     "lint:changelog": "echo 'N/A'",

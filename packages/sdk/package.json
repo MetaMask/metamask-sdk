@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.2.0",
+  "version": "0.1.1",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -25,7 +25,8 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "watch": "rollup -c -w",
-    "clean": "rimraf ./dist/* ./node_modules/*",
+    "clean": "rimraf ./dist",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",

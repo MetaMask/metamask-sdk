@@ -17,6 +17,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "start": "node index.js",
     "test": "echo 'N/A'",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "clean": "echo 'N/A'",
     "test:ci": "echo 'N/A'"
   },

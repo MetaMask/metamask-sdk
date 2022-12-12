@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-install-modal-web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": false,
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
@@ -22,7 +22,8 @@
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
     "test:ci": "echo 'N/A'",
-    "clean": "echo 'N/A'",
+    "clean": "rimraf ./dist",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
