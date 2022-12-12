@@ -7,7 +7,6 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "workspaces": {
-    "private": true,
     "packages": [
       "packages/*"
     ]
@@ -26,7 +25,7 @@
     "lint:misc": "yarn workspaces run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
     "setup": "yarn install && yarn allow-scripts && yarn postinstall",
-    "reset": "yarn workspaces run reset",
+    "reset": "yarn workspaces run reset && rimraf node_modules",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
