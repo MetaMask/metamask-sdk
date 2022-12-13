@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "skipLibCheck": true
-  },
-  "references": [{ "path": "./packages/sdk" }],
-  "files": [],
-  "include": [],
-  "exclude": ["**/node_modules"]
-}

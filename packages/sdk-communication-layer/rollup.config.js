@@ -45,7 +45,7 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
-      typescript(),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
@@ -73,7 +73,7 @@ const config = [
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
-      typescript(),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
@@ -111,7 +111,7 @@ const config = [
         // Generate sourcemap
         sourcemap: true,
       }),
-      typescript(),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
       nodeResolve({ browser: false, preferBuiltins: true }),
       commonjs({ transformMixedEsModules: true }),
       json(),

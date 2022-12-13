@@ -35,6 +35,8 @@ describe('SDK Comm Server', () => {
     const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
     const platform = 'jest';
     const communicationServerUrl = 'http://localhost:4000/';
+    // const communicationServerUrl =
+    //   'https://metamask-sdk-socket.metafi.codefi.network/';
 
     const waitForReady = async (): Promise<void> => {
       return new Promise<void>((resolve) => {
@@ -72,9 +74,10 @@ describe('SDK Comm Server', () => {
     mmRemote.connectToChannel(channelId);
 
     await waitForReady();
-    expect(clientsReady).toBe(true);
 
     remote.disconnect();
     mmRemote.disconnect();
+
+    expect(clientsReady).toBe(true);
   });
 });

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "rootDir": ".",
+    "lib": [
+      "ES2017"
+    ],
+    "target": "ES6",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@metamask/sdk": ["packages/sdk/src/index.ts"],
+      "@metamask/sdk-communication-layer": [
+        "packages/sdk-communication-layer/src/index.ts"
+      ],
+      "@metamask/sdk-react": ["packages/sdk-react/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules","dist"]
+}
