@@ -13,6 +13,3 @@ export {
   MessageType,
   CommunicationLayerPreference,
 };
-
-// TODO should be removed but remaining temporarily for backward compatiblity
-export default RemoteCommunication;
