@@ -185,6 +185,8 @@ export class RemoteCommunication extends EventEmitter2 {
         type: MessageType.ORIGINATOR_INFO,
         originatorInfo,
       });
+
+      this.emit(MessageType.CLIENTS_READY);
     });
 
     this.communicationLayer.on(MessageType.CLIENTS_DISCONNECTED, () => {

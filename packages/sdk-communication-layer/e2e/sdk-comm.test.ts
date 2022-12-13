@@ -27,11 +27,25 @@ const sleep = (ms: number) => {
 };
 
 describe('SDK Comm Server', () => {
+  let clientsReady = false;
+
   it('should establish client/mobile connection through comm server', async () => {
     jest.setTimeout(100000000); // infinite....
     const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
     const platform = 'jest';
     const communicationServerUrl = 'http://localhost:4000/';
+
+    const waitForReady = async (): Promise<void> => {
+      return new Promise<void>((resolve) => {
+        const ref = setInterval(() => {
+          // console.debug(`check if ready ${clientsReady}`);
+          if (clientsReady) {
+            clearTimeout(ref);
+            resolve();
+          }
+        }, 1000);
+      });
+    };
 
     const remote = new RemoteCommunication({
       communicationLayerPreference,
@@ -41,12 +55,9 @@ describe('SDK Comm Server', () => {
     });
 
     const { channelId, pubKey } = remote.generateChannelId();
-    remote.on(MessageType.MESSAGE, (message) => {
-      console.debug(`received message`, message);
-    });
 
-    remote.on(MessageType.CLIENTS_READY, (message) => {
-      console.debug(`clients READY !`, message);
+    remote.on(MessageType.CLIENTS_READY, () => {
+      clientsReady = true;
     });
 
     const mmRemote = new RemoteCommunication({
@@ -58,9 +69,9 @@ describe('SDK Comm Server', () => {
     });
 
     mmRemote.connectToChannel(channelId);
-    const message = await waitForEvent(mmRemote, MessageType.CLIENTS_READY);
 
-    expect(message).toBeDefined();
+    await waitForReady();
+    expect(clientsReady).toBe(true);
 
     remote.disconnect();
     mmRemote.disconnect();

@@ -219,7 +219,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   connectToChannel(channelId: string): void {
-    console.debug(`[socket][${this.context}] connectToChanell`);
+    console.debug(`[socket][${this.context}] connectToChanel ${channelId}`);
 
     this.socket.connect();
     this.channelId = channelId;
