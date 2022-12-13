@@ -1,4 +1,7 @@
-import { RemoteCommunication } from '@metamask/sdk-communication-layer';
+import {
+  CommunicationLayerPreference,
+  RemoteCommunication,
+} from '@metamask/sdk-communication-layer';
 import Platform, { PlatformName } from '../Platform';
 import InstallModal from '../ui/InstallModal';
 import PostMessageStreams from '../PostMessageStreams';
@@ -13,6 +16,8 @@ const RemoteConnection = {
   enableDebug: null,
   getConnector() {
     if (!this.RemoteCommunication) {
+      // FIXME rewrite
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const commLayer = PostMessageStreams.communicationLayerPreference;
 
       let platform = 'undefined';
@@ -28,12 +33,14 @@ const RemoteConnection = {
       }
       // #endif
 
+      // FIXME make sure that still works
       this.remote = new RemoteCommunication({
         platform,
-        // communicationLayerPreference: commLayer,
+        communicationLayerPreference: CommunicationLayerPreference.SOCKET,
         webRTCLib: this.webRTCLib,
         dappMetadata: this.dappMetadata,
         enableDebug: this.enableDebug,
+        context: 'connector',
       });
 
       this.RemoteCommunication.on('clients_disconnected', () => {

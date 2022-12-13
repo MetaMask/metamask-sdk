@@ -23,7 +23,7 @@ interface RemoteCommunicationProps {
   dappMetadata?: DappMetadata;
   transports?: string[];
   enableDebug?: boolean;
-  communicationServerUrl: string;
+  communicationServerUrl?: string;
   context: string;
 }
 
@@ -54,7 +54,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   dappMetadata?: DappMetadata;
 
-  communicationServerUrl?: string;
+  communicationServerUrl: string;
 
   context: string;
 
@@ -95,7 +95,7 @@ export class RemoteCommunication extends EventEmitter2 {
     otherPublicKey,
     webRTCLib,
     reconnect,
-    communicationServerUrl,
+    communicationServerUrl = DEFAULT_SERVER_URL,
   }: Pick<
     RemoteCommunicationProps,
     | 'communicationLayerPreference'
