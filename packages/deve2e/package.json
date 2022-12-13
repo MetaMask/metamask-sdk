@@ -1,0 +1,27 @@
+{
+  "name": "deve2e",
+  "version": "1.0.0",
+  "main": "dist/node/es/deve2e.js",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "start": "ROLLUP_RUN=true yarn build",
+    "clean": "rimraf dist",
+    "reset": "rimraf node_modules && yarn clean",
+    "watch": "yarn start --watch"
+  },
+  "dependencies": {
+    "@metamask/sdk-communication-layer": "^0.1.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-run": "^3.0.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^3.7.3",
+    "rollup-plugin-serve": "^2.0.2",
+    "rollup-plugin-typescript2": "^0.34.1"
+  }
+}
