@@ -2441,6 +2441,13 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
+"@types/pump@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/pump/-/pump-1.1.1.tgz#edb3475e2bad0f4552bdaa91c6c43b82e08ff15e"
+  integrity sha512-wpRerjHDxFBQ4r8XNv3xHJZeuqrBBoeQ/fhgkooV2F7KsPIYRROb/+f9ODgZfOEyO5/w2ej4YQdpPPXipT8DAA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/qrcode-terminal@^0.12.0":
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@types/qrcode-terminal/-/qrcode-terminal-0.12.0.tgz#cee13a96db9346e3240e2128290465db56799961"
