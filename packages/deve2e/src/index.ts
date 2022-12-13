@@ -53,5 +53,5 @@ const main = async () => {
 };
 
 main().then(() => {
-  console.log(`is it really? but really?`);
+  console.log(`exiting.`);
 });
