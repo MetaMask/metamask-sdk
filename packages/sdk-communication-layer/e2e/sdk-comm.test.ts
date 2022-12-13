@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import {
-  CommunicationLayerType,
+  CommunicationLayerPreference,
   RemoteCommunication,
   MessageType,
 } from '../src';
@@ -16,17 +16,28 @@ const waitForEvent = (
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sleep = (ms: number) => {
+  return new Promise((resolve) => {
+    const ref = setTimeout(resolve, ms);
+    return () => {
+      clearTimeout(ref);
+    };
+  });
+};
+
 describe('SDK Comm Server', () => {
   it('should establish client/mobile connection through comm server', async () => {
     jest.setTimeout(100000000); // infinite....
-    const communicationLayerType = CommunicationLayerType.SOCKET;
+    const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
     const platform = 'jest';
     const communicationServerUrl = 'http://localhost:4000/';
 
     const remote = new RemoteCommunication({
-      communicationLayerType,
+      communicationLayerPreference,
       platform,
       communicationServerUrl,
+      context: 'initiator',
     });
 
     const { channelId, pubKey } = remote.generateChannelId();
@@ -39,10 +50,11 @@ describe('SDK Comm Server', () => {
     });
 
     const mmRemote = new RemoteCommunication({
-      communicationLayerType,
+      communicationLayerPreference,
       platform,
       otherPublicKey: pubKey,
       communicationServerUrl,
+      context: 'mm',
     });
 
     mmRemote.connectToChannel(channelId);

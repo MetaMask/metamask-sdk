@@ -1,34 +1,45 @@
 import { EventEmitter2 } from 'eventemitter2';
-import ECIES from './ECIES';
+import { ECIES } from './ECIES';
+import { CommunicationLayer } from './types/CommunicationLayer';
+import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { MessageType } from './types/MessageType';
 
-enum KeySteps {
-  NONE = 'none',
-  SYN = 'key_handshake_SYN',
-  SYNACK = 'key_handshake_SYNACK',
-  ACK = 'key_handshake_ACK',
+export interface KeyExchangeProps {
+  communicationLayer: CommunicationLayer;
+  otherPublicKey?: string;
+  sendPublicKey: boolean;
+  context: string;
 }
 
-export default class KeyExchange extends EventEmitter2 {
+export class KeyExchange extends EventEmitter2 {
   keysExchanged = false;
 
-  myECIES = null;
+  myECIES: ECIES;
 
   otherPublicKey = '';
 
-  CommLayer: any;
+  communicationLayer: CommunicationLayer;
 
-  myPublicKey: any;
+  myPublicKey: string;
 
-  sendPublicKey: any;
+  sendPublicKey: boolean;
 
-  step: string = KeySteps.NONE;
+  step = MessageType.KEY_HANDSHAKE_NONE;
 
-  constructor({ CommLayer, otherPublicKey, sendPublicKey }) {
+  context: string;
+
+  constructor({
+    communicationLayer,
+    otherPublicKey,
+    sendPublicKey,
+    context,
+  }: KeyExchangeProps) {
     super();
 
+    this.context = context;
     this.myECIES = new ECIES();
     this.myECIES.generateECIES();
-    this.CommLayer = CommLayer;
+    this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
 
     if (otherPublicKey) {
@@ -36,41 +47,57 @@ export default class KeyExchange extends EventEmitter2 {
     }
     this.sendPublicKey = sendPublicKey;
 
-    this.CommLayer.on('key_exchange', ({ message }) => {
-      if (this.keysExchanged) {
-        return;
-      }
+    this.communicationLayer.on(
+      MessageType.KEY_EXCHANGE,
+      this.onKeyExchangeMessage.bind(this),
+    );
+  }
 
-      if (message.type === KeySteps.SYN) {
-        this.checkStep(KeySteps.NONE);
-        this.step = KeySteps.ACK;
+  private onKeyExchangeMessage({
+    message,
+  }: {
+    message: CommunicationLayerMessage;
+  }) {
+    console.debug(
+      `[keyExchange][${this.context}] key exchange message received`,
+      message,
+    );
 
-        if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
-          this.onOtherPublicKey(message.pubkey);
-        }
+    if (this.keysExchanged) {
+      return;
+    }
 
-        this.CommLayer.sendMessage({
-          type: KeySteps.SYNACK,
-          pubkey: this.myPublicKey,
-        });
-      } else if (message.type === KeySteps.SYNACK) {
-        this.checkStep(KeySteps.SYNACK);
+    if (message.type === MessageType.KEY_HANDSHAKE_SYN) {
+      this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
+      this.step = MessageType.KEY_HANDSHAKE_ACK;
 
+      if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
         this.onOtherPublicKey(message.pubkey);
-
-        this.CommLayer.sendMessage({ type: KeySteps.ACK });
-        this.keysExchanged = true;
-        this.emit('keys_exchanged');
-      } else if (message.type === KeySteps.ACK) {
-        this.checkStep(KeySteps.ACK);
-        this.keysExchanged = true;
-        this.emit('keys_exchanged');
       }
-    });
+
+      this.communicationLayer.sendMessage({
+        type: MessageType.KEY_HANDSHAKE_SYNACK,
+        pubkey: this.myPublicKey,
+      });
+    } else if (message.type === MessageType.KEY_HANDSHAKE_SYNACK) {
+      this.checkStep(MessageType.KEY_HANDSHAKE_SYNACK);
+
+      this.onOtherPublicKey(message.pubkey ?? '');
+
+      this.communicationLayer.sendMessage({
+        type: MessageType.KEY_HANDSHAKE_ACK,
+      });
+      this.keysExchanged = true;
+      this.emit(MessageType.KEYS_EXCHANGED);
+    } else if (message.type === MessageType.KEY_HANDSHAKE_ACK) {
+      this.checkStep(MessageType.KEY_HANDSHAKE_ACK);
+      this.keysExchanged = true;
+      this.emit(MessageType.KEYS_EXCHANGED);
+    }
   }
 
   clean(): void {
-    this.step = KeySteps.NONE;
+    this.step = MessageType.KEY_HANDSHAKE_NONE;
     this.keysExchanged = false;
     this.otherPublicKey = '';
   }
@@ -79,21 +106,21 @@ export default class KeyExchange extends EventEmitter2 {
     if (isOriginator) {
       this.clean();
     }
-    this.checkStep(KeySteps.NONE);
-    this.step = KeySteps.SYNACK;
-    this.CommLayer.sendMessage({
-      type: KeySteps.SYN,
+    this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
+    this.step = MessageType.KEY_HANDSHAKE_SYNACK;
+    this.communicationLayer.sendMessage({
+      type: MessageType.KEY_HANDSHAKE_SYN,
       pubkey: this.sendPublicKey ? this.myPublicKey : undefined,
     });
   }
 
   checkStep(step: string): void {
-    if (this.step !== step) {
+    if (this.step.toString() !== step) {
       throw new Error(`Wrong Step ${this.step} ${step}`);
     }
   }
 
-  onOtherPublicKey(pubkey: string): void {
+  private onOtherPublicKey(pubkey: string): void {
     this.otherPublicKey = pubkey;
   }
 

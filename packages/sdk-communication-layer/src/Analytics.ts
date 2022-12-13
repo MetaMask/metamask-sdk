@@ -1,16 +1,20 @@
 import fetch from 'cross-fetch';
-import { SOCKET_IO_SERVER } from './Socket';
+import { DEFAULT_SERVER_URL } from './config';
+import { CommunicationLayer } from './types/CommunicationLayer';
 
-export type AnaliticsProps = {
+export interface AnaliticsProps {
   id: string;
   event: unknown;
   originationInfo?: unknown;
-  commLayer?: unknown;
+  commLayer?: CommunicationLayer;
   sdkVersion?: string;
-};
+}
 
-const SendAnalytics = async (parameters: AnaliticsProps) => {
-  const serverUrl = `${SOCKET_IO_SERVER}debug`;
+const SendAnalytics = async (
+  parameters: AnaliticsProps,
+  sockerServerUrl = DEFAULT_SERVER_URL,
+) => {
+  const serverUrl = `${sockerServerUrl}debug`;
 
   const response = await fetch(serverUrl, {
     method: 'POST',

@@ -7,7 +7,7 @@
     "module": "ES6",
     "moduleResolution": "Node",
     "sourceMap": true,
-    "strict": false,
+    "strict": true,
     "target": "es6",
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true

@@ -130,7 +130,7 @@ const config: JestConfigWithTsJest = {
   //   "<rootDir>"
   // ],
 
-  testTimeout: 5000,
+  testTimeout: 500000,
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
 

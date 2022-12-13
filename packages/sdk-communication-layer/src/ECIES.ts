@@ -9,16 +9,15 @@ import { encrypt, decrypt, PrivateKey } from 'eciesjs';
  * by the communication layer to encrypt/decrypt in/out data
  * The encryption/decryption is made using a symmetric key generated from the ECIES key exchange
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default class ECIES {
-  ecies: any;
+export class ECIES {
+  ecies: PrivateKey;
 
   constructor() {
-    this.ecies = null; // ECIES instance
+    this.ecies = new PrivateKey();
   }
 
   /**
-   * Creates ECIES instance
+   * Creates new ECIES instance
    *
    * @returns - Generates ECIES instance
    */

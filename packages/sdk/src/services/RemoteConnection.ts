@@ -1,10 +1,10 @@
-import RemoteCommunication from '@metamask/sdk-communication-layer';
+import { RemoteCommunication } from '@metamask/sdk-communication-layer';
 import Platform, { PlatformName } from '../Platform';
 import InstallModal from '../ui/InstallModal';
 import PostMessageStreams from '../PostMessageStreams';
 
 const RemoteConnection = {
-  RemoteCommunication: null,
+  remote: RemoteCommunication,
   dappMetadata: null,
   transports: null,
   webRTCLib: null,
@@ -28,12 +28,11 @@ const RemoteConnection = {
       }
       // #endif
 
-      this.RemoteCommunication = new RemoteCommunication({
+      this.remote = new RemoteCommunication({
         platform,
-        commLayer,
+        // communicationLayerPreference: commLayer,
         webRTCLib: this.webRTCLib,
         dappMetadata: this.dappMetadata,
-        transports: this.transports,
         enableDebug: this.enableDebug,
       });
 
