@@ -1,16 +1,22 @@
 {
   "name": "deve2e",
   "version": "1.0.0",
-  "main": "dist/node/es/deve2e.js",
   "license": "MIT",
+  "main": "dist/node/es/deve2e.js",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
-    "start": "ROLLUP_RUN=true yarn build",
     "clean": "rimraf dist",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "rimraf node_modules && yarn clean",
+    "setup": "yarn install && yarn allow-scripts",
+    "start": "ROLLUP_RUN=true yarn build",
+    "test": "echo 'N/A'",
+    "test:ci": "echo 'N/A'",
     "watch": "yarn start --watch"
   },
   "dependencies": {
