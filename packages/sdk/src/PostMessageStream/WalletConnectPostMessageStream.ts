@@ -1,41 +1,55 @@
-import { Duplex } from 'stream';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Buffer } from 'buffer';
-import WalletConnect from '../services/WalletConnect';
-import { METHODS_TO_REDIRECT, ProviderConstants } from '../constants';
-import Ethereum from '../services/Ethereum';
-import Platform, { PlatformName } from '../Platform';
+import { Duplex } from 'stream';
+import { METHODS_TO_REDIRECT } from '../config';
+import { ProviderConstants } from '../constants';
+import { Platform } from '../Platform/Platfform';
+import { Ethereum } from '../services/Ethereum';
+import { PlatformType } from '../types/PlatformType';
+import { PostMessageStream } from './PostMessageStream.interface';
 
-class WalletConnectPostMessageStream extends Duplex {
-  private _alreadySubscribed: any;
+class WalletConnectPostMessageStream
+  extends Duplex
+  implements PostMessageStream
+{
+  private _alreadySubscribed = false;
 
-  private _name: any;
+  private _name: string;
 
-  constructor({ name }) {
+  // TODO get type
+  wcConnector: any;
+
+  constructor({ name, wcConnector }: { name: string; wcConnector: any }) {
     super({
       objectMode: true,
     });
     this._name = name;
+    this.wcConnector = wcConnector;
   }
 
-  _write(msg, _encoding, callback) {
-    if (!WalletConnect.isConnected()) {
-      return callback();
+  _write(
+    chunk: any,
+    _encoding: BufferEncoding,
+    _cb: (error?: Error | null) => void,
+  ) {
+    if (!this.wcConnector.isConnected()) {
+      return _cb();
     }
 
     try {
-      let data;
-      if (Buffer.isBuffer(msg)) {
-        data = msg.toJSON();
+      let data: any;
+      if (Buffer.isBuffer(chunk)) {
+        data = chunk.toJSON();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         data._isBuffer = true;
       } else {
-        data = msg;
+        data = chunk;
       }
 
-      WalletConnect.getConnector()
+      this.wcConnector
         .sendCustomRequest(data?.data)
-        .then((result) => {
+        .then((result: any) => {
           const res = {
             data: {
               name: ProviderConstants.PROVIDER,
@@ -50,7 +64,7 @@ class WalletConnectPostMessageStream extends Duplex {
           // Returns request result
           this._onMessage(res);
         })
-        .catch((error) => {
+        .catch((error: Error) => {
           // Error returned when rejected
           const res = {
             data: {
@@ -68,30 +82,34 @@ class WalletConnectPostMessageStream extends Duplex {
           this._onMessage(res);
         });
 
-      const isDesktop = Platform.getPlatform() === PlatformName.DesktopWeb;
+      const platform = Platform.getInstance();
+      const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
 
+      const targetMethod = data?.data
+        ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
-      if (METHODS_TO_REDIRECT[data?.data?.method] && !isDesktop) {
-        Platform.openDeeplink(
+      if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
+        platform.openDeeplink(
           'https://metamask.app.link/',
           'metamask://',
           '_self',
         );
       }
     } catch (err) {
-      return callback(
+      return _cb(
         new Error('RemoteCommunicationPostMessageStream - disconnected'),
       );
     }
 
-    return callback();
+    return _cb();
   }
 
   _read() {
     return undefined;
   }
 
-  _onMessage(event) {
+  // TODO find correct mesage format
+  _onMessage(event: any) {
     const msg = event.data;
     // validate message
     /* if (this._origin !== '*' && event.origin !== this._origin) {
@@ -120,7 +138,13 @@ class WalletConnectPostMessageStream extends Duplex {
     }
   }
 
-  setProviderState({ chainId, accounts }) {
+  setProviderState({
+    chainId,
+    accounts,
+  }: {
+    chainId: string;
+    accounts: string[];
+  }) {
     const resChainChanged = {
       data: {
         name: ProviderConstants.PROVIDER,
@@ -151,19 +175,26 @@ class WalletConnectPostMessageStream extends Duplex {
     this._onMessage(resAccountsChanged);
 
     // No problem in checking the provider state again
-    Ethereum.ethereum._state.initialized = true;
-    Ethereum.ethereum._initializeState();
+    const provider = Ethereum.getProvider();
+    // FIXME not enough time to implement but should enver use ts-ignore
+    // instead we should extend the provider and have an accessible initialization method.
+    // @ts-ignore
+    provider._state.initialized = true;
+    // @ts-ignore
+    provider._initializeState();
   }
 
   subscribeToConnectionEvents() {
-    if (WalletConnect.forceRestart) {
-      WalletConnect.getConnector().killSession();
-      WalletConnect.forceRestart = false;
+    if (this.wcConnector.forceRestart) {
+      this.wcConnector.killSession();
+      this.wcConnector.forceRestart = false;
     }
 
-    if (WalletConnect.isConnected()) {
-      Ethereum.ethereum._state.initialized = true;
-      Ethereum.ethereum._initializeState();
+    if (this.wcConnector.isConnected()) {
+      // @ts-ignore
+      provider._state.initialized = true;
+      // @ts-ignore
+      provider._initializeState();
     }
 
     if (this._alreadySubscribed) {
@@ -171,7 +202,7 @@ class WalletConnectPostMessageStream extends Duplex {
     }
 
     // Subscribe to connection events
-    WalletConnect.getConnector().on('connect', (error, payload) => {
+    this.wcConnector.on('connect', (error: Error, payload: any) => {
       if (error) {
         throw error;
       }
@@ -181,7 +212,7 @@ class WalletConnectPostMessageStream extends Duplex {
       this.setProviderState({ chainId, accounts });
     });
 
-    WalletConnect.getConnector().on('session_update', (error, payload) => {
+    this.wcConnector.on('session_update', (error: Error, payload: any) => {
       if (error) {
         throw error;
       }
@@ -190,7 +221,7 @@ class WalletConnectPostMessageStream extends Duplex {
       this.setProviderState({ accounts, chainId });
     });
 
-    WalletConnect.getConnector().on('disconnect', (error) => {
+    this.wcConnector.on('disconnect', (error: Error) => {
       if (error) {
         throw error;
       }

@@ -1,37 +1,53 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
-import WalletConnect from '../services/WalletConnect';
-import { waitPromise } from '../utils';
-import Ethereum from '../services/Ethereum';
-import RemoteConnection from '../services/RemoteConnection';
-import PostMessageStreams from '../PostMessageStreams';
-import Platform, { isMetaMaskInstalled, PlatformName } from '.';
+import { Ethereum } from '../services/Ethereum';
+import { ProviderService } from '../services/ProviderService';
+import { PlatformType } from '../types/PlatformType';
+import { waitPromise } from '../utils/waitPromise';
+import { Platform } from './Platfform';
+
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
-const ManageMetaMaskInstallation = {
-  isInstalling: false,
-  hasInstalled: false,
-  resendRequest: null,
-  preferDesktop: false,
+interface InstallerProps {
+  preferDesktop: boolean;
+  remote: ProviderService;
+}
+
+export class MetaMaskInstaller {
+  isInstalling = false;
+
+  hasInstalled = false;
+
+  resendRequest = null;
+
+  preferDesktop = false;
+
+  remote: ProviderService;
+
+  constructor({ preferDesktop, remote }: InstallerProps) {
+    this.preferDesktop = preferDesktop;
+    this.remote = remote;
+  }
+
   startDesktopOnboarding() {
-    Ethereum.ethereum = null;
+    Ethereum.destroy();
     delete window.ethereum;
     const onboardingExtension = new MetaMaskOnboarding();
     onboardingExtension.startOnboarding();
-  },
+  }
+
   async redirectToProperInstall() {
-    const platform = Platform.getPlatform();
+    const platformType = Platform.getInstance().getPlatformType();
 
     // If it's running on our mobile in-app browser but communication is still not working
-    if (platform === PlatformName.MetaMaskMobileWebview) {
+    if (platformType === PlatformType.MetaMaskMobileWebview) {
       // eslint-disable-next-line no-alert
       alert('Please save your seedphrase and try to reinstall MetaMask Mobile');
       return false;
     }
 
     // If is not installed and is Extension, start Extension onboarding
-    if (platform === PlatformName.DesktopWeb) {
+    if (platformType === PlatformType.DesktopWeb) {
       this.isInstalling = true;
       if (this.preferDesktop) {
         this.startDesktopOnboarding();
@@ -40,30 +56,26 @@ const ManageMetaMaskInstallation = {
     }
 
     // If is not installed, start remote connection
-    const Remote =
-      PostMessageStreams.communicationLayerPreference ===
-      CommunicationLayerPreference.WALLETCONNECT
-        ? WalletConnect
-        : RemoteConnection;
-
     this.isInstalling = true;
-    const startedRemoteConnection = Remote.startConnection();
+    const startedRemoteConnection = await this.remote.startConnection();
     if (startedRemoteConnection) {
       this.isInstalling = false;
       this.hasInstalled = true;
     }
     return startedRemoteConnection;
-  },
+  }
+
   async checkInstallation() {
-    const isInstalled = isMetaMaskInstalled();
+    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
     // No need to do anything
     if (isInstalled) {
       return true;
     }
 
-    return this.redirectToProperInstall();
-  },
+    return await this.redirectToProperInstall();
+  }
+
   async start({ wait = false }) {
     // Give enough time for providers to make connection
     if (wait) {
@@ -71,7 +83,5 @@ const ManageMetaMaskInstallation = {
     }
 
     return this.checkInstallation();
-  },
-};
-
-export default ManageMetaMaskInstallation;
+  }
+}

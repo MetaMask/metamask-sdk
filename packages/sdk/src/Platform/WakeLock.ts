@@ -1,40 +1,23 @@
-import { webm, mp4 } from './media';
+import { hasNativeWakeLock } from '../utils/hasNativeWakeLockSupport';
+import { isOldIOS } from '../utils/isOldIOS';
+import { webm, mp4 } from './Media';
 
-// Detect iOS browsers < version 10
-const oldIOS = () =>
-  typeof navigator !== 'undefined' &&
-  parseFloat(
-    `${
-      // eslint-disable-next-line require-unicode-regexp
-      (/CPU.*OS ([0-9_]{3,4})[0-9_]{0,1}|(CPU like).*AppleWebKit.*Mobile/i.exec(
-        navigator.userAgent,
-      ) || [0, ''])[1]
-    }`
-      .replace('undefined', '3_2')
-      .replace('_', '.')
-      .replace('_', ''),
-  ) < 10 &&
-  !window.MSStream;
+export class WakeLock {
+  private enabled = false;
 
-// Detect native Wake Lock API support
-const nativeWakeLock = () => 'wakeLock' in navigator;
+  private _wakeLock?: WakeLockSentinel;
 
-class WakeLock {
-  enabled: boolean;
+  private noSleepTimer?: number | ReturnType<typeof setInterval>;
 
-  _wakeLock: any;
-
-  noSleepTimer: any;
-
-  noSleepVideo: HTMLVideoElement;
+  private noSleepVideo?: HTMLVideoElement;
 
   private _eventsAdded = false;
 
   start() {
     this.enabled = false;
-    if (nativeWakeLock() && !this._eventsAdded) {
+    if (hasNativeWakeLock() && !this._eventsAdded) {
       this._eventsAdded = true;
-      this._wakeLock = null;
+      this._wakeLock = undefined;
       const handleVisibilityChange = () => {
         if (this._wakeLock !== null && document.visibilityState === 'visible') {
           this.enable();
@@ -42,8 +25,8 @@ class WakeLock {
       };
       document.addEventListener('visibilitychange', handleVisibilityChange);
       document.addEventListener('fullscreenchange', handleVisibilityChange);
-    } else if (oldIOS()) {
-      this.noSleepTimer = null;
+    } else if (isOldIOS()) {
+      this.noSleepTimer = undefined;
     } else {
       // Set up no sleep video element
       this.noSleepVideo = document.createElement('video');
@@ -58,12 +41,20 @@ class WakeLock {
       this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4);
 
       this.noSleepVideo.addEventListener('loadedmetadata', () => {
+        if (!this.noSleepVideo) {
+          return;
+        }
+
         if (this.noSleepVideo.duration <= 1) {
           // webm source
           this.noSleepVideo.setAttribute('loop', '');
         } else {
           // mp4 source
           this.noSleepVideo.addEventListener('timeupdate', () => {
+            if (!this.noSleepVideo) {
+              return;
+            }
+
             if (this.noSleepVideo.currentTime > 0.5) {
               this.noSleepVideo.currentTime = Math.random();
             }
@@ -73,28 +64,34 @@ class WakeLock {
     }
   }
 
-  _addSourceToVideo(element, type, dataURI) {
+  _addSourceToVideo(element: HTMLVideoElement, type: string, dataURI: string) {
     const source = document.createElement('source');
     source.src = dataURI;
     source.type = `video/${type}`;
     element.appendChild(source);
   }
 
-  get isEnabled() {
+  isEnabled() {
     return this.enabled;
   }
 
+  // TODO convert to async function
   enable() {
     if (this.enabled) {
       this.disable();
     }
+
+    if (!this.noSleepVideo) {
+      throw new Error('invalid video status');
+    }
+
     this.start();
-    if (nativeWakeLock()) {
+    if (hasNativeWakeLock()) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return navigator.wakeLock
         .request('screen')
-        .then((wakeLock) => {
+        .then((wakeLock: WakeLockSentinel) => {
           this._wakeLock = wakeLock;
           this.enabled = true;
           // console.log('Wake Lock active.');
@@ -109,7 +106,7 @@ class WakeLock {
           this.enabled = false;
           return false;
         });
-    } else if (oldIOS()) {
+    } else if (isOldIOS()) {
       this.disable();
       /* console.warn(`
         NoSleep enabled for older iOS devices. This can interrupt
@@ -134,27 +131,32 @@ class WakeLock {
     if (!this.enabled) {
       return;
     }
-    if (nativeWakeLock()) {
+
+    if (hasNativeWakeLock()) {
       if (this._wakeLock) {
         this._wakeLock.release();
       }
-      this._wakeLock = null;
-    } else if (oldIOS()) {
+      this._wakeLock = undefined;
+    } else if (isOldIOS()) {
       if (this.noSleepTimer) {
         /* console.warn(`
           NoSleep now disabled for older iOS devices.
         `);*/
         window.clearInterval(this.noSleepTimer);
-        this.noSleepTimer = null;
+        this.noSleepTimer = undefined;
       }
     } else {
       try {
+        if (!this.noSleepVideo) {
+          return;
+        }
+
         if (this.noSleepVideo.firstChild) {
           this.noSleepVideo.removeChild(this.noSleepVideo.firstChild);
           this.noSleepVideo.load();
         }
         this.noSleepVideo.pause();
-        this.noSleepVideo.src = null;
+        this.noSleepVideo.src = '';
         this.noSleepVideo.remove();
       } catch (e) {
         console.log(e);
@@ -163,5 +165,3 @@ class WakeLock {
     this.enabled = false;
   }
 }
-
-export default WakeLock;

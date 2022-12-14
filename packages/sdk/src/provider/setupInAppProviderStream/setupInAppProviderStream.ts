@@ -1,19 +1,22 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import ObjectMultiplex from 'obj-multiplex';
 import pump from 'pump';
 import { WindowPostMessageStream } from '@metamask/post-message-stream';
 import { ProviderConstants } from '../../constants';
+import { MobilePortStream } from '../../PortStream/MobilePortStream';
 
 /**
  * Setup function called from content script after the DOM is ready.
  */
-function setupProviderStreams(PortStream) {
+export function setupInAppProviderStream() {
   // the transport-specific streams for communication between inpage and background
   const pageStream = new WindowPostMessageStream({
     name: ProviderConstants.CONTENT_SCRIPT,
     target: ProviderConstants.INPAGE,
-  });
+  }) as unknown as pump.Stream;
 
-  const appStream = new PortStream({
+  const appStream = new MobilePortStream({
     name: ProviderConstants.CONTENT_SCRIPT,
   });
 
@@ -44,7 +47,11 @@ function setupProviderStreams(PortStream) {
  * @param {ObjectMultiplex} muxA - The first mux.
  * @param {ObjectMultiplex} muxB - The second mux.
  */
-function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
+function forwardTrafficBetweenMuxes(
+  channelName: string,
+  muxA: typeof ObjectMultiplex,
+  muxB: typeof ObjectMultiplex,
+) {
   const channelA = muxA.createStream(channelName);
   const channelB = muxB.createStream(channelName);
   pump(channelA, channelB, channelA, (err) =>
@@ -61,7 +68,7 @@ function forwardTrafficBetweenMuxes(channelName, muxA, muxB) {
  * @param {string} remoteLabel - Remote stream name
  * @param {Error} err - Stream connection error
  */
-function logStreamDisconnectWarning(remoteLabel, err) {
+function logStreamDisconnectWarning(remoteLabel: string, err?: Error) {
   let warningMsg = `MetamaskContentscript - lost connection to ${remoteLabel}`;
   if (err) {
     warningMsg += `\n${err.stack}`;
@@ -91,5 +98,3 @@ function notifyProviderOfStreamFailure() {
     window.location.origin,
   );
 }
-
-export default setupProviderStreams;

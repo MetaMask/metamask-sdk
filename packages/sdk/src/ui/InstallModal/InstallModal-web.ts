@@ -1,7 +1,7 @@
 import InstallModalWeb from '@metamask/sdk-install-modal-web';
-import ManageMetaMaskInstallation from '../../Platform/ManageMetaMaskInstallation';
+import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
-const InstallModal = ({ link }) => {
+const InstallModal = ({ link }: { link: string }) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -15,7 +15,7 @@ const InstallModal = ({ link }) => {
   installModal.mount({
     parentElement: div,
     link,
-    ManageMetaMaskInstallation,
+    MetaMaskInstaller,
     onClose,
   });
 

@@ -1,71 +1,92 @@
-import Platform, { PlatformName } from '../Platform';
-import InstallModal from '../ui/InstallModal';
+import { Platform } from '../Platform/Platfform';
+import { PlatformType } from '../types/PlatformType';
+import InstallModal from '../ui/InstallModal/installModal';
+import { ProviderService } from './ProviderService';
 
-const WalletConnect = {
-  WalletConnectInstance: null,
-  connector: null,
-  universalLink: null,
+// TODO import exact type from wallet connect library
+interface WalletConnectInstance {
+  connected: boolean;
+  uri: string;
+  createSession: () => Promise<void>;
+  on: (event: string, cb: () => void) => void;
+}
+
+interface WalletConnectProps {
+  // new WCInstance({ bridge: 'https://bridge.walletconnect.org'})
+  wcConnector: WalletConnectInstance; // should provide an instance of wallet connect
+  forceRestart?: boolean;
+}
+
+export class WalletConnect implements ProviderService {
+  wcConnector: WalletConnectInstance;
+
+  universalLink: string;
+
+  deepLink: string;
+
+  sentFirstConnect = false;
+
+  forceRestart: boolean;
+
+  constructor({ wcConnector, forceRestart = false }: WalletConnectProps) {
+    this.wcConnector = wcConnector;
+    this.forceRestart = forceRestart;
+
+    const linkParams = `uri=${encodeURIComponent(this.wcConnector.uri)}`;
+
+    this.universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
+    this.deepLink = `metamask://wc?${linkParams}`;
+  }
+
   getConnector() {
-    if (!this.connector) {
-      const WCInstance = this.WalletConnectInstance;
-      if (!WCInstance) {
-        throw new Error('WalletConnectInstance must be provided');
-      }
+    // FIXME find overlaps and return correct type
+    // we should add depdency to wallet connect lib to get the types.
+    return this.wcConnector;
+  }
 
-      this.connector = new WCInstance({
-        bridge: 'https://bridge.walletconnect.org', // Required
-      });
-    }
+  getUniversalLink() {
+    return this.universalLink;
+  }
 
-    return this.connector;
-  },
-  forceRestart: false,
-  isConnected() {
-    return this.getConnector().connected;
-  },
-  sentFirstConnect: false,
   startConnection() {
-    this.universalLink = null;
-    return new Promise((resolve, reject) => {
-      if (this.getConnector().connected) {
+    return new Promise<boolean>((resolve, reject) => {
+      if (this.wcConnector.connected) {
         resolve(true);
         return;
       }
 
-      this.getConnector()
+      this.wcConnector
         .createSession()
         .then(() => {
-          let installModal = null;
-
-          const linkParams = `uri=${encodeURIComponent(
-            this.getConnector().uri,
-          )}`;
-
-          const universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
-
-          const deeplink = `metamask://wc?${linkParams}`;
+          const platform = Platform.getInstance();
+          const platformType = platform.getPlatformType();
 
           /* #if _REACTNATIVE
           const showQRCode = false
           //#else */
           const showQRCode =
-            Platform.getPlatform() === PlatformName.DesktopWeb ||
-            Platform.getPlatform() === PlatformName.NonBrowser;
+            platformType === PlatformType.DesktopWeb ||
+            platformType === PlatformType.NonBrowser;
           // #endif
 
+          let installModal: any;
           if (showQRCode) {
-            installModal = InstallModal({ link: universalLink });
+            installModal = InstallModal({ link: this.universalLink });
             // console.log('OPEN LINK QR CODE', universalLink);
           } else {
             // console.log('OPEN LINK', universalLink);
             // window.location.assign(link);
-            Platform.openDeeplink(universalLink, deeplink, '_self');
+            platform.openDeeplink(this.universalLink, this.deepLink, '_self');
           }
 
-          this.universalLink = universalLink;
+          this.wcConnector.on('connect', () => {
+            if (
+              installModal?.onClose &&
+              typeof installModal.onClose === 'function'
+            ) {
+              installModal?.onClose();
+            }
 
-          this.getConnector().on('connect', () => {
-            installModal?.onClose();
             if (this.sentFirstConnect) {
               return;
             }
@@ -75,7 +96,9 @@ const WalletConnect = {
         })
         .catch((error) => reject(error));
     });
-  },
-};
+  }
 
-export default WalletConnect;
+  isConnected() {
+    return this.wcConnector.connected;
+  }
+}

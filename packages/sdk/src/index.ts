@@ -1,18 +1,22 @@
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
-import shouldInjectProvider from './provider/shouldInject';
+import { BaseProvider } from '@metamask/providers';
+import {
+  CommunicationLayerPreference,
+  DappMetadata,
+} from '@metamask/sdk-communication-layer';
+import WebView from 'react-native-webview';
+import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
+import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
-import setupProviderStreams from './provider/setupProviderStreams';
-import WalletConnect from './services/WalletConnect';
-import ManageMetaMaskInstallation from './Platform/ManageMetaMaskInstallation';
-import Platform, { PlatformName, WakeLockType } from './Platform';
-import Ethereum from './services/Ethereum';
-import PostMessageStreams from './PostMessageStreams';
-import PortStreams from './portStreams';
-import RemoteConnection from './services/RemoteConnection';
-import { DappMetadata } from './constants';
-import { shouldForceInjectProvider } from './utils';
+import { setupInAppProviderStream } from './provider/setupInAppProviderStream/setupInAppProviderStream';
+import { Ethereum } from './services/Ethereum';
+import { RemoteConnection } from './services/RemoteConnection';
+import { WalletConnect } from './services/WalletConnect';
+import { PlatformType } from './types/PlatformType';
+import { WakeLockStatus } from './types/WakeLockStatus';
+import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
+import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
-export type MetaMaskSDKOptions = {
+export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
@@ -20,9 +24,9 @@ export type MetaMaskSDKOptions = {
   forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
-  openDeeplink?: (string) => void;
+  openDeeplink?: (arg: string) => void;
   useDeeplink?: boolean;
-  wakeLockType?: WakeLockType;
+  wakeLockType?: WakeLockStatus;
   WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any;
@@ -31,16 +35,22 @@ export type MetaMaskSDKOptions = {
   dappMetadata?: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
-};
+}
 
 export default class MetaMaskSDK {
-  provider: any;
+  provider: BaseProvider;
+
+  remoteConnection?: RemoteConnection;
+
+  walletConnect?: WalletConnect;
+
+  installer?: MetaMaskInstaller;
 
   constructor({
     dappMetadata,
     // Provider
     injectProvider = true,
-    forceInjectProvider,
+    forceInjectProvider = false,
     forceDeleteProvider,
     // Shim web3 on Provider
     shouldShimWeb3 = true,
@@ -50,7 +60,7 @@ export default class MetaMaskSDK {
     // Platform settings
     preferDesktop,
     openDeeplink,
-    useDeeplink,
+    useDeeplink = false,
     wakeLockType,
     communicationLayerPreference = CommunicationLayerPreference.SOCKET,
     // WalletConnect
@@ -63,83 +73,85 @@ export default class MetaMaskSDK {
     // Debugging
     enableDebug = true,
   }: MetaMaskSDKOptions = {}) {
-    const platform = Platform.getPlatform();
+    Platform.init({
+      preferredOpenLink: openDeeplink,
+      useDeepLink: useDeeplink,
+    });
 
-    if (
-      shouldForceInjectProvider(forceInjectProvider) ||
-      platform === PlatformName.NonBrowser ||
-      shouldInjectProvider()
-    ) {
-      if (
-        shouldForceInjectProvider(forceInjectProvider) &&
-        forceDeleteProvider
-      ) {
-        Ethereum.ethereum = null;
+    const platform = Platform.init({
+      useDeepLink: useDeeplink,
+      preferredOpenLink: openDeeplink,
+      wakeLockStatus: wakeLockType,
+    });
+    const platformType = platform.getPlatformType();
+    const isNonBrowser = platformType === PlatformType.NonBrowser;
+
+    const checkForceInject = shouldForceInjectProvider(forceInjectProvider);
+    const checkInject = shouldInjectProvider();
+
+    if (checkForceInject || checkInject || isNonBrowser) {
+      if (checkForceInject && forceDeleteProvider) {
+        Ethereum.destroy();
         delete window.ethereum;
       }
 
-      PostMessageStreams.communicationLayerPreference =
-        communicationLayerPreference;
-      WalletConnect.WalletConnectInstance = WalletConnectInstance;
-      RemoteConnection.webRTCLib = webRTCLib;
+      this.remoteConnection = new RemoteConnection({
+        communicationLayerPreference,
+        dappMetadata,
+        webRTCLib,
+        enableDebug,
+        timer,
+        transports,
+      });
 
-      if (openDeeplink) {
-        Platform.preferredOpenLink = openDeeplink;
-      }
+      this.walletConnect = new WalletConnect({
+        forceRestart: forceRestartWalletConnect ?? false,
+        wcConnector: WalletConnectInstance,
+      });
 
-      if (useDeeplink) {
-        Platform.useDeeplink = useDeeplink;
-      }
-
-      if (wakeLockType) {
-        Platform.wakeLockType = wakeLockType;
-      }
-
-      if (dappMetadata) {
-        RemoteConnection.dappMetadata = dappMetadata;
-      }
-
-      if (transports) {
-        RemoteConnection.transports = transports;
-      }
-
-      if (timer) {
-        RemoteConnection.timer = timer;
-      }
-
-      if (enableDebug) {
-        RemoteConnection.enableDebug = enableDebug;
-      }
-
-      WalletConnect.forceRestart = Boolean(forceRestartWalletConnect);
-      ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
+      // ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
+      const installer = new MetaMaskInstaller({
+        preferDesktop: preferDesktop ?? false,
+        remote: this.remoteConnection,
+      });
 
       // Inject our provider into window.ethereum
       this.provider = initializeProvider({
+        platformType,
+        communicationLayerPreference,
         checkInstallationOnAllCalls,
         injectProvider,
         shouldShimWeb3,
+        installer,
+        remoteConnection: this.remoteConnection,
+        walletConnect: this.walletConnect,
       });
 
       // Setup provider streams, only needed for our mobile in-app browser
-      const PortStream = PortStreams.getPortStreamToUse();
-      if (PortStream) {
-        setupProviderStreams(PortStream);
+      if (platformType === PlatformType.MetaMaskMobileWebview) {
+        setupInAppProviderStream();
       }
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
-        ManageMetaMaskInstallation.start({ wait: true });
+        installer.start({ wait: true });
       }
-    } else {
+    } else if (window.ethereum) {
       this.provider = window.ethereum;
+    } else {
+      console.error(`window.ethereum is not available.`);
+      throw new Error(`Invalid SDK provider status`);
     }
   }
 
   // Get the connector object from WalletConnect
-  getWalletConnectConnector = () => {
-    return WalletConnect.getConnector();
-  };
+  getWalletConnectConnector() {
+    if (!this.walletConnect) {
+      throw new Error(`invalid`);
+    }
+
+    return this.walletConnect;
+  }
 
   // Return the ethereum provider object
   getProvider() {
@@ -147,26 +159,31 @@ export default class MetaMaskSDK {
   }
 
   getUniversalLink() {
-    if (RemoteConnection.universalLink) {
-      return RemoteConnection.universalLink;
+    const remoteLink = this.remoteConnection?.getUniversalLink();
+    const wcLink = this.walletConnect?.getUniversalLink();
+
+    const universalLink = remoteLink || wcLink;
+
+    if (!universalLink) {
+      throw new Error(
+        'No Universal Link available, please call eth_requestAccounts first.',
+      );
     }
 
-    if (WalletConnect.universalLink) {
-      return WalletConnect.universalLink;
-    }
-
-    throw new Error(
-      'No Universal Link available, please call eth_requestAccounts first.',
-    );
+    return universalLink;
   }
 }
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    ReactNativeWebView: any;
-    ethereum: any;
-    extension: any;
-    MSStream: any;
+    ReactNativeWebView?: WebView;
+    ethereum?: BaseProvider;
+    extension: unknown;
+    MSStream: unknown;
+  }
+
+  interface Navigator {
+    readonly wakeLock: any;
   }
 }

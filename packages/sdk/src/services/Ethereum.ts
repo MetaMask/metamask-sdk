@@ -1,22 +1,65 @@
-import { initializeProvider as initProvider } from '@metamask/providers';
+import { Duplex } from 'stream';
+import {
+  initializeProvider,
+  MetaMaskInpageProvider,
+} from '@metamask/providers';
 
-const Ethereum = {
-  ethereum: null,
-  initializeProvider({
+export interface EthereumProps {
+  shouldSetOnWindow: boolean;
+  connectionStream: Duplex;
+  shouldSendMetadata?: boolean;
+  shouldShimWeb3: boolean;
+}
+
+export class Ethereum {
+  private static instance?: Ethereum;
+
+  private provider: MetaMaskInpageProvider;
+
+  private constructor({
     shouldSetOnWindow,
     connectionStream,
-    shouldShimWeb3 = true,
-  }) {
-    // Initialize provider object (window.ethereum)
-    this.ethereum = initProvider({
+    shouldSendMetadata = false,
+    shouldShimWeb3,
+  }: EthereumProps) {
+    this.provider = initializeProvider({
       shouldSetOnWindow,
       connectionStream,
-      shouldSendMetadata: false,
+      shouldSendMetadata,
       shouldShimWeb3,
     });
+  }
 
-    return this.ethereum;
-  },
-};
+  /**
+   * Factory method to initialize an Ethereum service.
+   *
+   * @param props
+   */
+  static init(props: EthereumProps) {
+    this.instance = new Ethereum(props);
+    return this.instance?.provider;
+  }
 
-export default Ethereum;
+  static destroy() {
+    Ethereum.instance = undefined;
+  }
+
+  static getInstance() {
+    if (!this.instance?.provider) {
+      throw new Error(
+        'Ethereum instance not intiialized - call Ethereum.factory first.',
+      );
+    }
+    return this.instance;
+  }
+
+  static getProvider() {
+    if (!this.instance?.provider) {
+      throw new Error(
+        'Ethereum instance not intiialized - call Ethereum.factory first.',
+      );
+    }
+
+    return this.instance.provider;
+  }
+}

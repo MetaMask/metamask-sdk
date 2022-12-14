@@ -5,9 +5,10 @@
     "declaration": true,
     "composite": true,
     "declarationMap": true,
+    "sourceMap": true,
     "strict": true,
-    "types": ["node"],
+    "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules","**/*.spec.ts","**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

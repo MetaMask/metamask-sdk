@@ -1,5 +1,8 @@
-const InstallModal = ({ link }) => {
+const InstallModal = ({ link }: { link: string }) => {
   console.log('INSTALL MODAL', link);
-  return null;
+  // TODO actually install the modal
+  return {
+    onClose: () => undefined,
+  };
 };
 export default InstallModal;
