@@ -19,25 +19,25 @@ export interface SocketServiceProps {
 }
 
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
-  socket: Socket;
+  private socket: Socket;
 
-  clientsConnected = false;
+  private clientsConnected = false;
 
-  clientsReady = false;
+  private clientsReady = false;
 
-  isOriginator?: boolean;
+  private isOriginator?: boolean;
 
-  channelId?: string;
+  private channelId?: string;
 
-  keyExchange: KeyExchange;
+  private keyExchange: KeyExchange;
 
-  manualDisconnect = false;
+  private manualDisconnect = false;
 
-  reconnect?: boolean;
+  private reconnect?: boolean;
 
-  communicationLayerPreference: CommunicationLayerPreference;
+  private communicationLayerPreference: CommunicationLayerPreference;
 
-  context: string;
+  private context: string;
 
   constructor({
     otherPublicKey,
@@ -125,13 +125,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.channelId = id;
       this.clientsConnected = true;
       if (this.isOriginator) {
-        if (!this.keyExchange.keysExchanged) {
+        if (!this.keyExchange.areKeysExchanged()) {
           this.keyExchange.start(this.isOriginator);
         }
       }
 
       if (this.reconnect) {
-        if (this.keyExchange.keysExchanged) {
+        if (this.keyExchange.areKeysExchanged()) {
           this.sendMessage({ type: MessageType.READY });
           if (
             this.communicationLayerPreference ===
@@ -174,13 +174,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       if (
         this.isOriginator &&
-        this.keyExchange.keysExchanged &&
+        this.keyExchange.areKeysExchanged() &&
         message?.type === MessageType.KEY_HANDSHAKE_START
       ) {
         return this.keyExchange.start(this.isOriginator);
       }
 
-      if (!this.keyExchange.keysExchanged) {
+      if (!this.keyExchange.areKeysExchanged()) {
         const messageReceived = message;
         if (messageReceived?.type.startsWith('key_handshake')) {
           return this.emit(MessageType.KEY_EXCHANGE, {
@@ -215,7 +215,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     const channelId = uuidv4();
     this.setupChannelListeners(channelId);
     this.socket.emit(MessageType.JOIN_CHANNEL, channelId);
-    return { channelId, pubKey: this.keyExchange.myPublicKey };
+    return { channelId, pubKey: this.keyExchange.getMyPublicKey() };
   }
 
   connectToChannel(channelId: string): void {
@@ -232,7 +232,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       throw new Error('Create a channel first');
     }
 
-    if (!this.keyExchange.keysExchanged) {
+    if (!this.keyExchange.areKeysExchanged()) {
       if (message?.type.startsWith('key_handshake')) {
         this.socket.emit(MessageType.MESSAGE, { id: this.channelId, message });
         return;
@@ -254,7 +254,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   pause(): void {
     this.manualDisconnect = true;
-    if (this.keyExchange.keysExchanged) {
+    if (this.keyExchange.areKeysExchanged()) {
       this.sendMessage({ type: MessageType.PAUSE });
     }
     this.socket.disconnect();
@@ -262,7 +262,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   resume(): void {
     this.manualDisconnect = false;
-    if (this.keyExchange.keysExchanged) {
+    if (this.keyExchange.areKeysExchanged()) {
       this.reconnect = true;
       this.socket.connect();
       this.socket.emit(MessageType.JOIN_CHANNEL, this.channelId);

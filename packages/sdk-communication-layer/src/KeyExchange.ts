@@ -12,21 +12,21 @@ export interface KeyExchangeProps {
 }
 
 export class KeyExchange extends EventEmitter2 {
-  keysExchanged = false;
+  private keysExchanged = false;
 
-  myECIES: ECIES;
+  private myECIES: ECIES;
 
-  otherPublicKey = '';
+  private otherPublicKey = '';
 
-  communicationLayer: CommunicationLayer;
+  private communicationLayer: CommunicationLayer;
 
-  myPublicKey: string;
+  private myPublicKey: string;
 
-  sendPublicKey: boolean;
+  private sendPublicKey: boolean;
 
-  step = MessageType.KEY_HANDSHAKE_NONE;
+  private step = MessageType.KEY_HANDSHAKE_NONE;
 
-  context: string;
+  private context: string;
 
   constructor({
     communicationLayer,
@@ -122,6 +122,14 @@ export class KeyExchange extends EventEmitter2 {
 
   private onOtherPublicKey(pubkey: string): void {
     this.otherPublicKey = pubkey;
+  }
+
+  areKeysExchanged() {
+    return this.keysExchanged;
+  }
+
+  getMyPublicKey() {
+    return this.myPublicKey;
   }
 
   encryptMessage(message: string): string {

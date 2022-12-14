@@ -28,35 +28,35 @@ interface RemoteCommunicationProps {
 }
 
 export class RemoteCommunication extends EventEmitter2 {
-  connected = false;
+  private connected = false;
 
-  isOriginator = false;
+  private isOriginator = false;
 
-  paused = false;
+  private paused = false;
 
-  otherPublicKey?: string;
+  private otherPublicKey?: string;
 
-  webRTCLib?: WebRTCLib;
+  private webRTCLib?: WebRTCLib;
 
-  transports?: string[];
+  private transports?: string[];
 
-  platform: string;
+  private platform: string;
 
-  enableDebug = false;
+  private enableDebug = false;
 
-  channelId?: string;
+  private channelId?: string;
 
-  walletInfo?: WalletInfo;
+  private walletInfo?: WalletInfo;
 
-  communicationLayer?: CommunicationLayer;
+  private communicationLayer?: CommunicationLayer;
 
-  originatorInfo?: OriginatorInfo;
+  private originatorInfo?: OriginatorInfo;
 
-  dappMetadata?: DappMetadata;
+  private dappMetadata?: DappMetadata;
 
-  communicationServerUrl: string;
+  private communicationServerUrl: string;
 
-  context: string;
+  private context: string;
 
   constructor({
     platform,
@@ -323,6 +323,14 @@ export class RemoteCommunication extends EventEmitter2 {
     const { channelId, pubKey } = this.communicationLayer.createChannel();
     this.channelId = channelId;
     return { channelId, pubKey };
+  }
+
+  isConnected() {
+    return this.connected;
+  }
+
+  isPaused() {
+    return this.paused;
   }
 
   pause() {

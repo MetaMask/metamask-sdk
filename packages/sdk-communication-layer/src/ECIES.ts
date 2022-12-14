@@ -10,7 +10,7 @@ import { encrypt, decrypt, PrivateKey } from 'eciesjs';
  * The encryption/decryption is made using a symmetric key generated from the ECIES key exchange
  */
 export class ECIES {
-  ecies: PrivateKey;
+  private ecies: PrivateKey;
 
   constructor() {
     this.ecies = new PrivateKey();

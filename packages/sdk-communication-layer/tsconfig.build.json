@@ -6,8 +6,8 @@
     "composite": true,
     "declarationMap": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["node_modules","**/*.spec.ts","**/*.test.ts"]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"]
 }
