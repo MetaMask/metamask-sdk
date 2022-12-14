@@ -171,13 +171,13 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
         this.clientsConnected = true;
 
         if (this.isOriginator) {
-          if (!this.keyExchange.keysExchanged) {
+          if (!this.keyExchange.areKeysExchanged()) {
             this.keyExchange.start(this.isOriginator);
           }
         }
 
         if (this.reconnect) {
-          if (this.keyExchange.keysExchanged) {
+          if (this.keyExchange.areKeysExchanged()) {
             this.sendMessage({ type: MessageType.READY });
             this.emit(MessageType.CLIENTS_READY, {
               isOriginator: this.isOriginator,
@@ -243,7 +243,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       throw new Error('Message not trusted');
     }*/
 
-    if (!this.keyExchange.keysExchanged) {
+    if (!this.keyExchange.areKeysExchanged()) {
       const messageReceived = JSON.parse(message.data);
       if (messageReceived?.type.startsWith('key_handshake')) {
         return this.emit(MessageType.KEY_EXCHANGE, {
@@ -267,7 +267,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       throw new Error(`Invalid webrtc status - data channel is not defined`);
     }
 
-    if (!this.keyExchange.keysExchanged) {
+    if (!this.keyExchange.areKeysExchanged()) {
       if (message?.type.startsWith('key_handshake')) {
         return this.dataChannel.send(JSON.stringify(message));
       }
@@ -285,7 +285,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
   }
 
   pause() {
-    if (this.keyExchange.keysExchanged) {
+    if (this.keyExchange.areKeysExchanged()) {
       this.sendMessage({ type: MessageType.PAUSE });
     }
     this.webrtc?.close();
