@@ -5,6 +5,7 @@
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
+  "types": "dist/src/EmbedabbleWidget.d.ts",
   "files": [
     "/dist"
   ],
