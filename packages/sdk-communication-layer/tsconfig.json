@@ -1,11 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {},
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    }
-  ],
-  "exclude": ["node_modules"]
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "incremental": false,
+    "module": "ES6",
+    "moduleResolution": "Node",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "lib": ["DOM", "ES2016"],
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"]
 }

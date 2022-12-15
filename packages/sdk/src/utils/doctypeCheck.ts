@@ -4,9 +4,8 @@
  * returns {boolean} {@code true} if the doctype is html or if none exists
  */
 export function doctypeCheck() {
-  const { doctype } = window.document;
-  if (doctype) {
-    return doctype.name === 'html';
+  if (typeof window !== 'undefined' && typeof window.document !== 'undefined') {
+    return window.document?.doctype?.name === 'html';
   }
-  return true;
+  return false;
 }

@@ -1,11 +1,12 @@
+// import { WakeLockSentinel } from '../types/WakeLockSentinel';
 import { hasNativeWakeLock } from '../utils/hasNativeWakeLockSupport';
 import { isOldIOS } from '../utils/isOldIOS';
-import { webm, mp4 } from './Media';
+import { mp4, webm } from './Media';
 
-export class WakeLock {
+export class WakeLockManager {
   private enabled = false;
 
-  private _wakeLock?: WakeLockSentinel;
+  private _wakeLock?: any;
 
   private noSleepTimer?: number | ReturnType<typeof setInterval>;
 
@@ -91,7 +92,7 @@ export class WakeLock {
       // @ts-ignore
       return navigator.wakeLock
         .request('screen')
-        .then((wakeLock: WakeLockSentinel) => {
+        .then((wakeLock: any) => {
           this._wakeLock = wakeLock;
           this.enabled = true;
           // console.log('Wake Lock active.');
@@ -142,7 +143,7 @@ export class WakeLock {
         /* console.warn(`
           NoSleep now disabled for older iOS devices.
         `);*/
-        window.clearInterval(this.noSleepTimer);
+        window.clearInterval(this.noSleepTimer as number);
         this.noSleepTimer = undefined;
       }
     } else {

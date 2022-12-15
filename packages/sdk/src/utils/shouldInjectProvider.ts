@@ -4,7 +4,8 @@ import { documentElementCheck } from './documentElementCheck';
 import { suffixCheck } from './suffixCheck';
 
 export const shouldInjectProvider = () => {
-  const isProviderAlreadyInjected = window?.ethereum !== undefined;
+  const isProviderAlreadyInjected =
+    typeof window !== 'undefined' && window?.ethereum !== undefined;
   return (
     !isProviderAlreadyInjected &&
     doctypeCheck() &&

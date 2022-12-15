@@ -7,8 +7,9 @@
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
-    "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
+    "types": ["node"],
+    // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts","../sdk-communication-layer/src/index.ts"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

@@ -11,14 +11,21 @@ const sleep = (ms: number) => {
   });
 };
 
-describe('SDK Comm Server', () => {
+describe('SDK', () => {
   it('should test correctly', async () => {
     const sdk = new MetaMaskSDK({
       shouldShimWeb3: false,
+      communicationServerUrl: 'http://localhost:4000/',
     });
 
     const ethereum = sdk.getProvider();
-    console.log(`ethereum: `, ethereum);
+
+    const accounts = await ethereum.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
+
+    console.log('request accounts', accounts);
 
     expect(true).toBe(true);
   });

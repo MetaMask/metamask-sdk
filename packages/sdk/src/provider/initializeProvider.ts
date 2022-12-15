@@ -24,8 +24,8 @@ const initializeProvider = ({
   injectProvider?: boolean;
   shouldShimWeb3: boolean;
   installer: MetaMaskInstaller;
-  remoteConnection: RemoteConnection;
-  walletConnect: WalletConnect;
+  remoteConnection?: RemoteConnection;
+  walletConnect?: WalletConnect;
 }) => {
   // Setup stream for content script communication
   const metamaskStream = getPostMessageStream({

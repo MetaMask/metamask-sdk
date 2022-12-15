@@ -1,5 +1,5 @@
 import { WindowPostMessageStream } from '@metamask/post-message-stream';
-import { PostMessageStream } from './PostMessageStream.interface';
+import { PostMessageStream } from './PostMessageStream';
 
 export class WebPostMessageStream
   extends WindowPostMessageStream

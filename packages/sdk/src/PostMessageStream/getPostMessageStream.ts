@@ -4,16 +4,16 @@ import { Platform } from '../Platform/Platfform';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
 import { PlatformType } from '../types/PlatformType';
-import { PostMessageStream } from './PostMessageStream.interface';
+import { PostMessageStream } from './PostMessageStream';
 import { RemoteCommunicationPostMessageStream } from './RemoteCommunicationPostMessageStream';
-import WalletConnectPostMessageStream from './WalletConnectPostMessageStream';
+import { WalletConnectPostMessageStream } from './WalletConnectPostMessageStream';
 import { WebPostMessageStream } from './WebPostMessageStream';
 
 export interface GetPostMessageStreamProps {
   name: ProviderConstants;
   target: ProviderConstants;
-  remoteConnection: RemoteConnection;
-  walletConnect: WalletConnect;
+  remoteConnection?: RemoteConnection;
+  walletConnect?: WalletConnect;
   communicationLayerPreference: CommunicationLayerPreference;
 }
 

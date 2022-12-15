@@ -3,7 +3,7 @@ import Bowser from 'bowser';
 import { Ethereum } from '../services/Ethereum';
 import { PlatformType } from '../types/PlatformType';
 import { WakeLockStatus } from '../types/WakeLockStatus';
-import { WakeLock } from './WakeLock';
+import { WakeLockManager } from './WakeLockManager';
 
 interface PlatformProps {
   useDeepLink: boolean;
@@ -17,7 +17,7 @@ interface PlatformProps {
 export class Platform {
   private static instance: Platform;
 
-  private wakeLock = new WakeLock();
+  private wakeLock = new WakeLockManager();
 
   private wakeLockStatus = WakeLockStatus.Temporary;
 

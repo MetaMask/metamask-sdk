@@ -32,7 +32,7 @@ export class WalletConnect implements ProviderService {
     this.wcConnector = wcConnector;
     this.forceRestart = forceRestart;
 
-    const linkParams = `uri=${encodeURIComponent(this.wcConnector.uri)}`;
+    const linkParams = `uri=${encodeURIComponent(this.wcConnector?.uri)}`;
 
     this.universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
     this.deepLink = `metamask://wc?${linkParams}`;

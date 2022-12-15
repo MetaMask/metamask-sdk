@@ -6,9 +6,9 @@ import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
 import { PlatformType } from '../types/PlatformType';
-import { PostMessageStream } from './PostMessageStream.interface';
+import { PostMessageStream } from './PostMessageStream';
 
-class WalletConnectPostMessageStream
+export class WalletConnectPostMessageStream
   extends Duplex
   implements PostMessageStream
 {
@@ -236,5 +236,3 @@ class WalletConnectPostMessageStream
     this.subscribeToConnectionEvents();
   }
 }
-
-export default WalletConnectPostMessageStream;

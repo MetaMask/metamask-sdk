@@ -10,7 +10,7 @@ import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
 import { PlatformType } from '../types/PlatformType';
-import { PostMessageStream } from './PostMessageStream.interface';
+import { PostMessageStream } from './PostMessageStream';
 
 export class RemoteCommunicationPostMessageStream
   extends Duplex

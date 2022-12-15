@@ -3,8 +3,16 @@
   "compilerOptions": {
     "outDir": "../../dist/packages/sdk-communication-layer",
     "module": "CommonJS",
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "composite": true
   },
-  "include": ["jest.config.ts", "**/*.test.ts", "**/*.spec.ts", "**/*.d.ts"],
+  "include": [
+    "jest.config.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "src",
+    "../sdk-communication-layer/src/index.ts"
+  ],
   "exclude": ["node_modules"]
 }

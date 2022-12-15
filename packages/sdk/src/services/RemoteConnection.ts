@@ -19,6 +19,7 @@ interface RemoteConnectionProps {
   enableDebug?: boolean;
   transports?: string[];
   webRTCLib?: WebRTCLib;
+  communicationServerUrl?: string;
 }
 export class RemoteConnection implements ProviderService {
   connector: RemoteCommunication;
@@ -46,6 +47,7 @@ export class RemoteConnection implements ProviderService {
     transports,
     enableDebug = false,
     timer,
+    communicationServerUrl,
   }: RemoteConnectionProps) {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
@@ -63,6 +65,7 @@ export class RemoteConnection implements ProviderService {
       webRTCLib: this.webRTCLib,
       dappMetadata: this.dappMetadata,
       enableDebug: this.enableDebug,
+      communicationServerUrl,
       context: 'initiator',
     });
 
