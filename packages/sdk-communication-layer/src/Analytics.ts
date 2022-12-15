@@ -10,7 +10,7 @@ export interface AnaliticsProps {
   sdkVersion?: string;
 }
 
-const SendAnalytics = async (
+export const SendAnalytics = async (
   parameters: AnaliticsProps,
   sockerServerUrl = DEFAULT_SERVER_URL,
 ) => {
@@ -30,4 +30,3 @@ const SendAnalytics = async (
   return text;
 };
 
-export default SendAnalytics;
