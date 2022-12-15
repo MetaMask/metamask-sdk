@@ -1,6 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
-import SendAnalytics from './Analytics';
+import { SendAnalytics } from './Analytics';
 import { DEFAULT_SERVER_URL, VERSION } from './config';
 import { SocketService } from './SocketService';
 import { CommunicationLayer } from './types/CommunicationLayer';
