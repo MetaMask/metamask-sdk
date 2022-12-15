@@ -29,4 +29,3 @@ export const SendAnalytics = async (
   const text = await response.text();
   return text;
 };
-
