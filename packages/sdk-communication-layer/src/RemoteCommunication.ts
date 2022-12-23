@@ -237,7 +237,7 @@ export class RemoteCommunication extends EventEmitter2 {
           id: this.channelId ?? '',
           event: TrackingEvents.REQUEST,
           ...originatorInfo,
-          commLayer: this.communicationLayer,
+          communicationLayerPreference,
           sdkVersion: VERSION,
         });
       }

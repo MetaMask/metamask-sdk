@@ -1,12 +1,12 @@
 import fetch from 'cross-fetch';
 import { DEFAULT_SERVER_URL } from './config';
-import { CommunicationLayer } from './types/CommunicationLayer';
+import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 
 export interface AnaliticsProps {
   id: string;
   event: unknown;
   originationInfo?: unknown;
-  commLayer?: CommunicationLayer;
+  communicationLayerPreference?: CommunicationLayerPreference;
   sdkVersion?: string;
 }
 
@@ -15,6 +15,7 @@ export const SendAnalytics = async (
   sockerServerUrl = DEFAULT_SERVER_URL,
 ) => {
   const serverUrl = `${sockerServerUrl}debug`;
+  const body = JSON.stringify(parameters);
 
   const response = await fetch(serverUrl, {
     method: 'POST',
@@ -23,7 +24,7 @@ export const SendAnalytics = async (
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(parameters),
+    body,
   });
   // TODO error management when request fails
   const text = await response.text();
