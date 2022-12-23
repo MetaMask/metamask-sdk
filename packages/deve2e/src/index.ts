@@ -1,57 +1,15 @@
-import {
-  CommunicationLayerPreference,
-  MessageType,
-  RemoteCommunication,
-} from '@metamask/sdk-communication-layer';
+import { mainCommunication } from './e2e-communication';
+import { mainSDK } from './e2e-sdk';
 
-let clientsReady = false;
+const target =
+  process.argv.length > 2 ? process.argv[2] : 'sdk-communication-layer';
 
-const waitForReady = async (): Promise<void> => {
-  return new Promise<void>((resolve) => {
-    const ref = setInterval(() => {
-      console.debug(`check if ready ${clientsReady}`);
-      if (clientsReady) {
-        clearTimeout(ref);
-        resolve();
-      }
-    }, 1000);
-  });
-};
+console.log(`TARGET: ${target}`);
+let methodToCall = mainCommunication;
+if (target === 'sdk') {
+  methodToCall = mainSDK;
+}
 
-const main = async () => {
-  const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
-  const platform = 'jest';
-  const communicationServerUrl = 'http://localhost:4000/';
-
-  const remote = new RemoteCommunication({
-    communicationLayerPreference,
-    platform,
-    communicationServerUrl,
-    context: 'initiator',
-  });
-
-  const { channelId, pubKey } = remote.generateChannelId();
-
-  remote.on(MessageType.CLIENTS_READY, () => {
-    clientsReady = true;
-  });
-
-  const mmRemote = new RemoteCommunication({
-    communicationLayerPreference,
-    platform,
-    otherPublicKey: pubKey,
-    communicationServerUrl,
-    context: 'mm',
-  });
-
-  mmRemote.connectToChannel(channelId);
-
-  await waitForReady();
-
-  remote.disconnect();
-  mmRemote.disconnect();
-};
-
-main().then(() => {
+methodToCall().then(() => {
   console.log(`exiting.`);
 });

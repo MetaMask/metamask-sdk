@@ -20,6 +20,7 @@
     "watch": "yarn start --watch"
   },
   "dependencies": {
+    "@metamask/sdk": "^0.1.0",
     "@metamask/sdk-communication-layer": "^0.1.1"
   },
   "devDependencies": {

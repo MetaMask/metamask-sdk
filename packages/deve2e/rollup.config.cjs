@@ -32,7 +32,8 @@ const config = [
       typescript({ tsconfig: './tsconfig.json' }),
       runAfter &&
         run({
-          // execArgv: ['-r', 'source-map-support/register'],
+          execArgv: ['-r', 'source-map-support/register'],
+          args: [process.env.TARGET],
         }),
     ],
   },
