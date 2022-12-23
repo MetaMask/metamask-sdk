@@ -112,7 +112,11 @@ const config = [
         sourcemap: true,
       }),
       typescript({ tsconfig: "./tsconfig.json" }),
-      nodeResolve({ browser: false, preferBuiltins: false }),
+      nodeResolve({
+        browser: false,
+        preferBuiltins: false,
+        exportConditions: ['node']
+      }),
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser()
