@@ -46,7 +46,11 @@ const config = [
         values: { _WEB: 1 },
       }),
       typescript({ tsconfig: "./tsconfig.json" }),
-      nodeResolve({ browser: true, preferBuiltins: false }),
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+        exportConditions: ['browser']
+      }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
       builtins({ crypto: true }),
@@ -112,7 +116,11 @@ const config = [
         sourcemap: true,
       }),
       typescript({ tsconfig: "./tsconfig.json" }),
-      nodeResolve({ browser: false, preferBuiltins: true }),
+      nodeResolve({
+        browser: false,
+        preferBuiltins: true,
+        exportConditions: ['node'],
+      }),
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser(),
