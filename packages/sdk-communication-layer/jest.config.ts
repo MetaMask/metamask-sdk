@@ -150,7 +150,7 @@ const config: JestConfigWithTsJest = {
   testEnvironment: 'node',
 
   // Options that will be passed to the testEnvironment
-  // testEnvironmentOptions: {},
+  testEnvironmentOptions: {},
 
   // Adds a location field to test results
   // testLocationInResults: false,
