@@ -15,7 +15,7 @@ const InstallModal = ({ link }: { link: string }) => {
   installModal.mount({
     parentElement: div,
     link,
-    MetaMaskInstaller,
+    metaMaskInstaller: MetaMaskInstaller.getInstance(),
     onClose,
   });
 

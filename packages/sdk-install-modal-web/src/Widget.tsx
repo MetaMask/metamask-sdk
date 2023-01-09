@@ -15,7 +15,9 @@ import styled from '@emotion/styled';
 export type WidgetProps = {
   parentElement?: Element;
   link: string;
-  ManageMetaMaskInstallation: any;
+  metaMaskInstaller: {
+    startDesktopOnboarding: () => void
+  };
   onClose: () => void;
 };
 
@@ -58,7 +60,7 @@ const Widget = (props: WidgetProps) => {
   }, []);
 
   const installExtension = () => {
-    props.ManageMetaMaskInstallation.startDesktopOnboarding();
+    props.metaMaskInstaller.startDesktopOnboarding();
   };
 
   return (
