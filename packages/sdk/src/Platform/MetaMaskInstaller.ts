@@ -13,7 +13,12 @@ interface InstallerProps {
   remote: ProviderService;
 }
 
+/**
+ * Singleton class instance
+ */
 export class MetaMaskInstaller {
+  private static instance: MetaMaskInstaller;
+
   isInstalling = false;
 
   hasInstalled = false;
@@ -24,9 +29,24 @@ export class MetaMaskInstaller {
 
   remote: ProviderService;
 
-  constructor({ preferDesktop, remote }: InstallerProps) {
+  private constructor({ preferDesktop, remote }: InstallerProps) {
     this.preferDesktop = preferDesktop;
     this.remote = remote;
+  }
+
+  public static init(props: InstallerProps): MetaMaskInstaller {
+    MetaMaskInstaller.instance = new MetaMaskInstaller(props);
+    return MetaMaskInstaller.instance;
+  }
+
+  public static getInstance(): MetaMaskInstaller {
+    if (!MetaMaskInstaller.instance) {
+      throw new Error(
+        'MetaMask installer not initialized - call MetaMaskInstaller.init() first.',
+      );
+    }
+
+    return MetaMaskInstaller.instance;
   }
 
   startDesktopOnboarding() {

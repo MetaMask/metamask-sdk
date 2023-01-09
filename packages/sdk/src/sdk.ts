@@ -114,8 +114,7 @@ export class MetaMaskSDK {
         });
       }
 
-      // ManageMetaMaskInstallation.preferDesktop = Boolean(preferDesktop);
-      const installer = new MetaMaskInstaller({
+      const installer = MetaMaskInstaller.init({
         preferDesktop: preferDesktop ?? false,
         remote: this.remoteConnection,
       });

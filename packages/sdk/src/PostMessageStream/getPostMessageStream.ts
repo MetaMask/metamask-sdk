@@ -36,13 +36,20 @@ export const getPostMessageStream = ({
   }
 
   if (
-    communicationLayerPreference === CommunicationLayerPreference.WALLETCONNECT
+    communicationLayerPreference ===
+      CommunicationLayerPreference.WALLETCONNECT &&
+    walletConnect
   ) {
     return new WalletConnectPostMessageStream({
       name,
       wcConnector: walletConnect.getConnector(),
     });
   }
+
+  if (!remoteConnection) {
+    throw new Error(`Missing remote conenction parameter`);
+  }
+
   return new RemoteCommunicationPostMessageStream({
     name,
     remote: remoteConnection.getConnector(),
