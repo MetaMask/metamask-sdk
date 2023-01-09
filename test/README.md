@@ -10,6 +10,8 @@
 export SRP="test test test test test test test test test test test test"
 ```
 
+(You need to replace this with your SRP)
+
 ### Running
 
 ```bash
