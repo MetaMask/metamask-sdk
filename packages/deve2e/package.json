@@ -1,6 +1,6 @@
 {
   "name": "deve2e",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "dist/node/es/deve2e.js",
   "files": [
