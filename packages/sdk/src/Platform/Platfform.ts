@@ -68,7 +68,7 @@ export class Platform {
     // At the most wake lock a maximum of time
     this.wakeLockTimer = setTimeout(() => {
       this.disableWakeLock();
-    }, maxTime);
+    }, maxTime) as unknown as NodeJS.Timeout;
 
     if (
       !this.wakeLockFeatureActive &&
@@ -85,7 +85,7 @@ export class Platform {
     }
 
     if (this.wakeLockTimer) {
-      clearTimeout(this.wakeLockTimer);
+      clearTimeout(this.wakeLockTimer as NodeJS.Timeout);
     }
 
     this.wakeLock.disable();
