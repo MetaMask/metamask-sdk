@@ -6,9 +6,11 @@ export enum androidElementTypes {
   EditText = 'android.widget.EditText',
   ViewGroup = 'android.view.ViewGroup',
   View = 'android.view.View',
+  Image = 'android.widget.ImageView',
+  ScrollView = 'android.widget.ScrollView',
 }
 
-export default class Utils {
+export default class Selectors {
   public static getAndroidLocatorByTextAndType(
     elementType: androidElementTypes,
     text: string,

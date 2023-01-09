@@ -3,8 +3,20 @@ import { IInput } from '../interfaces/IInuput';
 export class Input implements IInput<string> {
   e: WebdriverIO.Element;
 
-  constructor(selector: string) {
-    this.e = $(selector);
+  constructor({
+    androidSelector,
+    iOSSelector,
+  }: {
+    androidSelector?: string;
+    iOSSelector?: string;
+  }) {
+    const platform = driver.isAndroid ? 'android' : 'ios';
+
+    if (platform === 'android') {
+      this.e = $(`${androidSelector}`);
+    } else {
+      this.e = $(`-ios class chain:${iOSSelector}`);
+    }
   }
 
   async setValue(value: string): Promise<void> {

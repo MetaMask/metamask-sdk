@@ -1,9 +1,12 @@
-import Utils, { MetamaskElement, androidElementTypes } from '../../utils';
+import Selectors, {
+  MetamaskElement,
+  androidElementTypes,
+} from '../../utils/Selectors';
 
 class PermissionsPopup {
   private get getPermissionsPopup(): MetamaskElement | undefined {
     return $(
-      Utils.getAndroidLocatorByResourceId(
+      Selectors.getAndroidLocatorByResourceId(
         androidElementTypes.TextView,
         'com.android.permissioncontroller:id/title',
       ),
@@ -16,7 +19,7 @@ class PermissionsPopup {
 
   async tapChromePermission(): Promise<void> {
     const chromePermission = await $(
-      Utils.getAndroidLocatorByTextAndType(
+      Selectors.getAndroidLocatorByTextAndType(
         androidElementTypes.TextView,
         'Chrome',
       ),
@@ -24,7 +27,7 @@ class PermissionsPopup {
     chromePermission.click();
 
     const setAsDefault = await $(
-      Utils.getAndroidLocatorByResourceId(
+      Selectors.getAndroidLocatorByResourceId(
         androidElementTypes.Button,
         'android:id/button1',
       ),

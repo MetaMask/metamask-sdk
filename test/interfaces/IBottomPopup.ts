@@ -1,4 +1,4 @@
-import { MetamaskElement } from '../utils';
+import { MetamaskElement } from '../utils/Selectors';
 
 export type IBottomPopup = {
   cancelButton: MetamaskElement;
@@ -7,6 +7,6 @@ export type IBottomPopup = {
   tapApproveButton(): Promise<void>;
   tapCancelButton(): Promise<void>;
 
-  getRApproveButtonText(): Promise<string>;
+  getApproveButtonText(): Promise<string>;
   getCancelButtonText(): Promise<string>;
 };

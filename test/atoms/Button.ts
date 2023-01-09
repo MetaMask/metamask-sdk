@@ -1,11 +1,24 @@
 import { IButton } from '../interfaces/IButton';
-import { MetamaskElement } from '../utils';
+import { MetamaskElement } from '../utils/Selectors';
 
 export class Button implements IButton<string> {
   e: MetamaskElement;
 
-  constructor(selector: string) {
-    this.e = $(selector);
+  constructor({
+    androidSelector,
+    iOSSelector,
+  }: {
+    androidSelector?: string;
+    iOSSelector?: string;
+  }) {
+    const platform = driver.isAndroid ? 'android' : 'ios';
+    if (platform === 'android' && androidSelector) {
+      this.e = $(`${androidSelector}`);
+    } else if (platform === 'ios' && iOSSelector) {
+      this.e = $(`-ios class chain:${iOSSelector}`);
+    } else {
+      throw new Error(`No selector provided for platform ${platform}`);
+    }
   }
 
   async getText(): Promise<any> {
@@ -13,11 +26,11 @@ export class Button implements IButton<string> {
   }
 
   async waitForClickable(): Promise<void> {
-    this.e.waitForClickable();
+    this.e.waitForClickable({ timeout: 70000 });
   }
 
   async waitForDisplayed(): Promise<void> {
-    this.e.waitForDisplayed();
+    this.e.waitForDisplayed({ timeout: 70000 });
   }
 
   async isDisplayed(): Promise<boolean> {

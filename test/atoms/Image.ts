@@ -1,7 +1,6 @@
-import { ICheckbox } from '../interfaces/ICheckbox';
 import { MetamaskElement } from '../utils/Selectors';
 
-export class Checkbox implements ICheckbox {
+export class Image {
   e: MetamaskElement;
 
   constructor(selector: string) {
@@ -13,7 +12,11 @@ export class Checkbox implements ICheckbox {
     }
   }
 
-  async tap(): Promise<void> {
-    await this.e.click();
+  async isDisplayed(): Promise<boolean> {
+    return await this.e.isDisplayed();
+  }
+
+  async isVisible(): Promise<boolean> {
+    return await this.e.isDisplayedInViewport();
   }
 }

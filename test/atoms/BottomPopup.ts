@@ -1,4 +1,4 @@
-import { MetamaskElement } from '../utils';
+import { MetamaskElement } from '../utils/Selectors';
 import { IBottomPopup } from '../interfaces/IBottomPopup';
 
 export class BottomPopup implements IBottomPopup {
@@ -30,7 +30,7 @@ export class BottomPopup implements IBottomPopup {
     await this.cancelButton.click();
   }
 
-  async getRApproveButtonText(): Promise<string> {
+  async getApproveButtonText(): Promise<string> {
     return await this.approveButton.getText();
   }
 
@@ -40,5 +40,9 @@ export class BottomPopup implements IBottomPopup {
 
   async isDisplayed(): Promise<boolean> {
     return await this.e.isDisplayed();
+  }
+
+  async waitForDisplayed(): Promise<void | true> {
+    return await this.e.waitForDisplayed({ timeout: 50000 });
   }
 }

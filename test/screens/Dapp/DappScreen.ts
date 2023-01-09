@@ -1,18 +1,21 @@
-import Utils, { MetamaskElement, androidElementTypes } from '../utils';
+import Selectors, {
+  MetamaskElement,
+  androidElementTypes,
+} from '../../utils/Selectors';
 
 class DappScreen {
-  private get connectButtom(): MetamaskElement {
+  private get connectButton(): MetamaskElement {
     return $(
-      Utils.getAndroidLocatorByTextAndType(
+      Selectors.getAndroidLocatorByTextAndType(
         androidElementTypes.Button,
-        'CONNECT',
+        'Connect',
       ),
     );
   }
 
   private get addressField(): MetamaskElement {
     return $(
-      Utils.getAndroidLocatorByTextAndType(
+      Selectors.getAndroidLocatorByTextAndType(
         androidElementTypes.TextView,
         'Accounts:',
       ),
@@ -20,11 +23,11 @@ class DappScreen {
   }
 
   async tapSiteConnect(): Promise<void> {
-    await this.connectButtom.click();
+    await this.connectButton.click();
   }
 
   async isDappConnectButtonClickable(): Promise<boolean> {
-    return await this.connectButtom.isClickable();
+    return await this.connectButton.isClickable();
   }
 
   async getAddressFieldText(): Promise<string> {

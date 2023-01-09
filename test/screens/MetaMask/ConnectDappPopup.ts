@@ -1,10 +1,10 @@
 import { BottomPopup } from '../../atoms/BottomPopup';
-import Utils, { androidElementTypes } from '../../utils';
+import Selectors, { androidElementTypes } from '../../utils/Selectors';
 
 class ConnectDappPopup {
   private get getConnectPopup(): BottomPopup {
     return new BottomPopup({
-      selector: Utils.getAndroidLocatorByResourceId(
+      selector: Selectors.getAndroidLocatorByResourceId(
         androidElementTypes.ViewGroup,
         'account-approval-modal-container',
       ),
@@ -19,6 +19,11 @@ class ConnectDappPopup {
 
   async tapCancel(): Promise<void> {
     await this.getConnectPopup.tapCancelButton();
+  }
+
+  async isConnectPopupDisplayed(): Promise<boolean> {
+    await this.getConnectPopup.waitForDisplayed();
+    return await this.getConnectPopup.isDisplayed();
   }
 }
 
