@@ -114,7 +114,7 @@ const config = [
       typescript({ tsconfig: "./tsconfig.json" }),
       nodeResolve({
         browser: false,
-        preferBuiltins: false,
+        preferBuiltins: true,
         exportConditions: ['node']
       }),
       commonjs({ transformMixedEsModules: true }),

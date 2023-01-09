@@ -38,7 +38,7 @@ export interface MetaMaskSDKOptions {
   communicationServerUrl?: string;
 }
 
-export default class MetaMaskSDK {
+export class MetaMaskSDK {
   provider: BaseProvider;
 
   remoteConnection?: RemoteConnection;

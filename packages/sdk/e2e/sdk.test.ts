@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import MetaMaskSDK from '../src';
+import { MetaMaskSDK } from '../src';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const sleep = (ms: number) => {
