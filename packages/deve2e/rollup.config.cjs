@@ -10,6 +10,9 @@ const listDepForRollup = [
   'eventemitter2',
   'socket.io-client',
   'uuid',
+  'pump',
+  'obj-multiplex',
+  'stream',
 ];
 
 const runAfter = process.env.ROLLUP_RUN === 'true';

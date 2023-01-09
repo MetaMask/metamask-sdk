@@ -33,7 +33,7 @@ npm i @metamask/sdk
 Import the SDK (for possible parameters check this):
 
 ```
-import MetaMaskSDK from '@metamask/sdk'
+import { MetaMaskSDK } from '@metamask/sdk'
 const MMSDK = new MetaMaskSDK({})
 const ethereum = MMSDK.getProvider()
 ```

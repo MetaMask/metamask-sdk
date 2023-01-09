@@ -1,4 +1,4 @@
-import MetaMaskSDK from '@metamask/sdk';
+import { MetaMaskSDK } from '@metamask/sdk';
 
 export const mainSDK = async () => {
   const sdk = new MetaMaskSDK({
