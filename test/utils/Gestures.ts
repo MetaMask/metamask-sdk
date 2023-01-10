@@ -9,6 +9,11 @@ const Actions = {
   DOUBLE_TAP: 'doubleTap',
 };
 
+type BrowserSize = {
+  width: number;
+  height: number;
+};
+
 export default class Gestures {
   static async tap(element: MetamaskElement, tapType = 'tap'): Promise<void> {
     switch (tapType) {
@@ -32,30 +37,54 @@ export default class Gestures {
     }
   }
 
-  static async swipe(
+  static async swipeByPercentage(
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+  ) {
+    if (driver.isIOS) {
+      await this.swipeIOSByPercentage(from, to);
+    } else {
+      await this.swipeAndroidByPercentage(from, to);
+    }
+  }
+
+  static async swipeIOSByPercentage(
     from: { x: number; y: number },
     to: { x: number; y: number },
   ): Promise<void> {
+    const DEVICE_SIZE: BrowserSize = await driver.getWindowSize();
+    const x1 = Math.round((DEVICE_SIZE.width * from.x) / 100);
+    const y1 = Math.round((DEVICE_SIZE.height * from.y) / 100);
+    const x2 = Math.round((DEVICE_SIZE.width * to.x) / 100);
+    const y2 = Math.round((DEVICE_SIZE.height * to.y) / 100);
+    await browser.touchAction([
+      { action: 'press', x: x1, y: y1 },
+      { action: 'wait', ms: 2000 },
+      { action: 'moveTo', x: x2, y: y2 },
+      'release',
+    ]);
+  }
+
+  static async swipeAndroidByPercentage(
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+  ): Promise<void> {
+    const DEVICE_SIZE: BrowserSize = await driver.getWindowSize();
+    const x1 = Math.round((DEVICE_SIZE.width * from.x) / 100);
+    const y1 = Math.round((DEVICE_SIZE.height * from.y) / 100);
+    const x2 = Math.round((DEVICE_SIZE.width * to.x) / 100);
+    const y2 = Math.round((DEVICE_SIZE.height * to.y) / 100);
+
     await driver.performActions([
       {
-        // a. Create the event
         type: 'pointer',
         id: 'finger1',
-        parameters: { pointerType: 'touch' },
         actions: [
           { type: 'pause', duration: 1000 },
-          // b. Move finger into start position
-          { type: 'pointerMove', duration: 0, x: from.x, y: from.y },
-          // c. Finger comes down into contact with screen
+          { type: 'pointerMove', duration: 0, x: x1, y: y1 },
           { type: 'pointerDown', button: 0 },
-          // d. Pause for a little bit
           { type: 'pause', duration: 100 },
-          // e. Finger moves to end position
-          //    We move our finger from the center of the element to the
-          //    starting position of the element.
-          //    Play with the duration to make the swipe go slower / faster
-          { type: 'pointerMove', duration: 1000, x: to.x, y: to.y },
-          // f. Finger gets up, off the screen
+          { type: 'pointerMove', duration: 1000, x: x2, y: y2 },
           { type: 'pointerUp', button: 0 },
         ],
       },
