@@ -11,16 +11,21 @@ export class Input implements IInput<string> {
     iOSSelector?: string;
   }) {
     const platform = driver.isAndroid ? 'android' : 'ios';
-
-    if (platform === 'android') {
+    if (platform === 'android' && androidSelector) {
       this.e = $(`${androidSelector}`);
+    } else if (platform === 'ios' && iOSSelector) {
+      if (iOSSelector.startsWith('~')) {
+        this.e = $(`${iOSSelector}`);
+      } else {
+        this.e = $(`-ios class chain:${iOSSelector}`);
+      }
     } else {
-      this.e = $(`-ios class chain:${iOSSelector}`);
+      throw new Error(`No selector provided for platform ${platform}`);
     }
   }
 
   async setValue(value: string): Promise<void> {
-    await this.e.addValue(value);
+    await this.e.setValue(value);
   }
 
   async getValue(): Promise<string> {

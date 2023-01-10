@@ -1,7 +1,11 @@
 import { Given, When, Then } from '@wdio/cucumber-framework';
-import BootstrapScreen from '../screens/MetaMask/Bootstrap';
-import ConnectDappPopup from '../screens/MetaMask/ConnectDappPopup';
 import Gestures from '../utils/Gestures';
+import ConnectDappPopup from '../screens/MetaMask/Components/ConnectDappPopup';
+import GetStartedScreen from '../screens/MetaMask/GetStartedScreen';
+import WalletSetupScreen from '../screens/MetaMask/WalletSetupScreen';
+import OptinMetricsScreen from '../screens/MetaMask/OptinMetricsScreen';
+import ImportFromSeedScreen from '../screens/MetaMask/ImportFromSeedScreen';
+import SecurityUpdatesScreen from '../screens/MetaMask/SecurityUpdatesScreen';
 
 Given(/^The MetaMask mobile app is installed$/u, async () => {
   /** This is automatically done by the automation framework **/
@@ -16,21 +20,21 @@ When(/^I tap "([^"]*)?" on MetaMask/u, async (text) => {
   switch (text) {
     case 'Get Started':
       await driver.pause(7000);
-      await BootstrapScreen.tapGetStarted();
+      await GetStartedScreen.tapGetStarted();
       break;
     case 'Import Wallet':
       // await driver.pause(7000); // TODO: Needs a smarter set timeout
-      await BootstrapScreen.tapImportWithSRP();
+      await WalletSetupScreen.tapImportWithSRP();
       break;
     case 'Dont Share Analytics':
-      await Gestures.swipe({ x: 200, y: 1000 }, { x: 200, y: 10 });
-      await BootstrapScreen.tapNoThanksOptinMetrics();
+      await Gestures.swipeByPercentage({ x: 50, y: 80 }, { x: 50, y: 10 });
+      await OptinMetricsScreen.tapNoThanksOptinMetrics();
       break;
     case 'Import':
-      await BootstrapScreen.tapImportButton();
+      await ImportFromSeedScreen.tapImportButton();
       break;
     case 'No Security Updates':
-      await BootstrapScreen.tapNoThanksSecutityUpdates();
+      await SecurityUpdatesScreen.tapNoThanksSecutityUpdates();
       break;
     default:
       throw new Error('Condition not found');
@@ -59,13 +63,13 @@ When(/^I fill the "([^"]*)?" with "([^"]*)?"/u, async (field, value) => {
     'test test test test test test test test test test test test';
   switch (field) {
     case 'Secret Recovery Phrase':
-      await BootstrapScreen.fillSrpField(srp);
+      await ImportFromSeedScreen.fillSrpField(srp);
       break;
     case 'FirstPassword':
-      await BootstrapScreen.fillFirstPasswordInput(value);
+      await ImportFromSeedScreen.fillFirstPasswordInput(value);
       break;
     case 'SecondPassword':
-      await BootstrapScreen.fillSecondPasswordInput(value);
+      await ImportFromSeedScreen.fillSecondPasswordInput(value);
       break;
     default:
       throw new Error('Condition not found');

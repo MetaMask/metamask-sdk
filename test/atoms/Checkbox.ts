@@ -4,12 +4,24 @@ import { MetamaskElement } from '../utils/Selectors';
 export class Checkbox implements ICheckbox {
   e: MetamaskElement;
 
-  constructor(selector: string) {
+  constructor({
+    androidSelector,
+    iOSSelector,
+  }: {
+    androidSelector?: string;
+    iOSSelector?: string;
+  }) {
     const platform = driver.isAndroid ? 'android' : 'ios';
-    if (platform === 'android') {
-      this.e = $(`~${selector}`);
+    if (platform === 'android' && androidSelector) {
+      this.e = $(`${androidSelector}`);
+    } else if (platform === 'ios' && iOSSelector) {
+      if (iOSSelector.startsWith('~')) {
+        this.e = $(`${iOSSelector}`);
+      } else {
+        this.e = $(`-ios class chain:${iOSSelector}`);
+      }
     } else {
-      this.e = $(`-ios class chain:${selector}`);
+      throw new Error(`No selector provided for platform ${platform}`);
     }
   }
 

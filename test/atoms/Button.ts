@@ -15,7 +15,11 @@ export class Button implements IButton<string> {
     if (platform === 'android' && androidSelector) {
       this.e = $(`${androidSelector}`);
     } else if (platform === 'ios' && iOSSelector) {
-      this.e = $(`-ios class chain:${iOSSelector}`);
+      if (iOSSelector.startsWith('~')) {
+        this.e = $(`${iOSSelector}`);
+      } else {
+        this.e = $(`-ios class chain:${iOSSelector}`);
+      }
     } else {
       throw new Error(`No selector provided for platform ${platform}`);
     }

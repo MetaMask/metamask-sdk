@@ -1,5 +1,5 @@
-import { BottomPopup } from '../../atoms/BottomPopup';
-import Selectors, { androidElementTypes } from '../../utils/Selectors';
+import { BottomPopup } from '../../../atoms/BottomPopup';
+import Selectors, { androidElementTypes } from '../../../utils/Selectors';
 
 class ConnectDappPopup {
   private get getConnectPopup(): BottomPopup {
