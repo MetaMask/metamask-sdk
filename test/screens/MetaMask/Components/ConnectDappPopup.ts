@@ -27,4 +27,4 @@ class ConnectDappPopup {
   }
 }
 
-export default new ConnectDappPopup();
+export default ConnectDappPopup;

@@ -12,4 +12,4 @@ class SecurityUpdatesScreen {
     await this.noThanksSecutityUpdates.tap();
   }
 }
-export default new SecurityUpdatesScreen();
+export default SecurityUpdatesScreen;

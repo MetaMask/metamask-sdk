@@ -46,4 +46,4 @@ class ImportFromSeedScreen {
     await this.importButton.tap();
   }
 }
-export default new ImportFromSeedScreen();
+export default ImportFromSeedScreen;

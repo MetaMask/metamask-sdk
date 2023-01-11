@@ -12,4 +12,4 @@ class WalletSetupScreen {
     await this.importWithSRP.tap();
   }
 }
-export default new WalletSetupScreen();
+export default WalletSetupScreen;

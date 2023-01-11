@@ -25,4 +25,4 @@ class GetStartedScreen {
     return await this.MMFox.isVisible();
   }
 }
-export default new GetStartedScreen();
+export default GetStartedScreen;

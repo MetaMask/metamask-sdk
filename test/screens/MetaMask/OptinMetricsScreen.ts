@@ -12,4 +12,4 @@ class OptinMetricsScreen {
     await this.noThanksOptinMetrics.tap();
   }
 }
-export default new OptinMetricsScreen();
+export default OptinMetricsScreen;

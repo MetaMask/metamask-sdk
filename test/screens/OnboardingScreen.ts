@@ -81,4 +81,4 @@ class WelcomeToMetaMaskScreen {
   }
 }
 
-export default new WelcomeToMetaMaskScreen();
+export default WelcomeToMetaMaskScreen;

@@ -53,9 +53,7 @@ class DefaultAppsPopup {
   }
 
   async selectMetaMask(): Promise<void> {
-    if (await !this.isMetaMaskQATheFirstOption()) {
-      await this.getMetaMaskOption?.click();
-    }
+    await this.getMetaMaskOption?.click();
     await this.tapAlwaysOpenWithMetaMask();
   }
 }
