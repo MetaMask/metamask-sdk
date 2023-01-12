@@ -165,6 +165,7 @@ io.on('connection', (socket) => {
       return;
     }
 
+    console.log(`message-${id} -> `, { id, message });
     socket.to(id).emit(`message-${id}`, { id, message });
   });
 
@@ -213,7 +214,7 @@ io.on('connection', (socket) => {
 });
 
 // eslint-disable-next-line node/no-process-env
-const port = process.env.port || 4000;
+const port = process.env.port || 5400;
 server.listen(port, () => {
   console.log(`listening on *:${port}`);
 });

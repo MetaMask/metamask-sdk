@@ -75,20 +75,18 @@ export class MetaMaskSDK {
     enableDebug = true,
     communicationServerUrl,
   }: MetaMaskSDKOptions = {}) {
-    Platform.init({
-      preferredOpenLink: openDeeplink,
-      useDeepLink: useDeeplink,
-    });
-
     const platform = Platform.init({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
     });
+
     const platformType = platform.getPlatformType();
     const isNonBrowser = platformType === PlatformType.NonBrowser;
 
+    // forceInjectProvider when flag is set or brave browser.
     const checkForceInject = shouldForceInjectProvider(forceInjectProvider);
+    // check if provider was already injected (run with a window.ethereum instance)
     const checkInject = shouldInjectProvider();
 
     if (checkForceInject || checkInject || isNonBrowser) {

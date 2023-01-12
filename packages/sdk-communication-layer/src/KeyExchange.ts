@@ -9,6 +9,7 @@ export interface KeyExchangeProps {
   otherPublicKey?: string;
   sendPublicKey: boolean;
   context: string;
+  debug: boolean;
 }
 
 export class KeyExchange extends EventEmitter2 {
@@ -28,11 +29,14 @@ export class KeyExchange extends EventEmitter2 {
 
   private context: string;
 
+  private debug = false;
+
   constructor({
     communicationLayer,
     otherPublicKey,
     sendPublicKey,
     context,
+    debug = false,
   }: KeyExchangeProps) {
     super();
 
@@ -41,6 +45,7 @@ export class KeyExchange extends EventEmitter2 {
     this.myECIES.generateECIES();
     this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
+    this.debug = debug;
 
     if (otherPublicKey) {
       this.onOtherPublicKey(otherPublicKey);
@@ -58,10 +63,12 @@ export class KeyExchange extends EventEmitter2 {
   }: {
     message: CommunicationLayerMessage;
   }) {
-    console.debug(
-      `[keyExchange][${this.context}] key exchange message received`,
-      message,
-    );
+    if (this.debug) {
+      console.debug(
+        `[keyExchange][${this.context}] key exchange message received`,
+        message,
+      );
+    }
 
     if (this.keysExchanged) {
       return;

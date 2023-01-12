@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.2.0",
+  "version": "0.1.0",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
@@ -33,11 +33,13 @@
     "prepublishOnly": "yarn build",
     "reset": "yarn clean && rimraf ./node_modules/",
     "setup": "yarn install && yarn allow-scripts",
-    "test": "jest --detectOpenHandles",
+    "test": "jest ",
     "test:ci": "echo 'N/A'",
     "watch": "rollup -c -w"
   },
   "dependencies": {
+    "@babel/runtime": "^7.20.7",
+    "@rollup/plugin-babel": "^6.0.3",
     "cross-fetch": "^3.1.5",
     "eciesjs": "^0.3.15",
     "eventemitter2": "^6.4.5",

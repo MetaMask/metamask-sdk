@@ -22,11 +22,16 @@ export class Ethereum {
     shouldSendMetadata = false,
     shouldShimWeb3,
   }: EthereumProps) {
+    console.debug(`[Ethereum] intiialize base provider`);
     this.provider = initializeProvider({
       shouldSetOnWindow,
       connectionStream,
       shouldSendMetadata,
       shouldShimWeb3,
+    });
+
+    this.provider.on('_initialized', (args) => {
+      console.info(`INITIALIZEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEd`, args);
     });
   }
 

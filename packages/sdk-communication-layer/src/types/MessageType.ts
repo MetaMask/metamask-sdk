@@ -13,7 +13,7 @@ export enum MessageType {
   WALLET_INFO = 'wallet_info',
   CHANNEL_CREATED = 'channel_created',
   CLIENTS_DISCONNECTED = 'clients_disconnected',
-  CLIENTS_WAITING = 'clients_waiting_to_join',
+  CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
   MESSAGE = 'message',
   ANSWER = 'answer',

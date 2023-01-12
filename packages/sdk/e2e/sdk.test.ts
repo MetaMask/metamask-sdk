@@ -1,21 +1,15 @@
 import { describe, expect, it } from '@jest/globals';
 import { MetaMaskSDK } from '../src';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sleep = (ms: number) => {
-  return new Promise((resolve) => {
-    const ref = setTimeout(resolve, ms);
-    return () => {
-      clearTimeout(ref);
-    };
-  });
-};
-
 describe('SDK', () => {
   it('should test correctly', async () => {
     const sdk = new MetaMaskSDK({
       shouldShimWeb3: false,
-      communicationServerUrl: 'http://localhost:4000/',
+      communicationServerUrl: 'http://192.168.50.114:5400/',
+      dappMetadata: {
+        name: 'CustonName',
+        url: 'http://whateverwewant',
+      },
     });
 
     const ethereum = sdk.getProvider();
@@ -28,5 +22,5 @@ describe('SDK', () => {
     console.log('request accounts', accounts);
 
     expect(true).toBe(true);
-  });
+  }, 100000000);
 });

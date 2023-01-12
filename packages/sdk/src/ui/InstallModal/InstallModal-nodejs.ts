@@ -3,6 +3,7 @@ const qrcode = require('qrcode-terminal');
 
 const InstallModal = ({ link }: { link: string }) => {
   qrcode.generate(link, { small: true }, (qr: unknown) => console.log(qr));
+  console.log(`url for qrcode: `, link);
 };
 
 export default InstallModal;

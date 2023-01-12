@@ -114,6 +114,7 @@ export class RemoteCommunication extends EventEmitter2 {
           webRTCLib,
           communicationServerUrl,
           context: this.context,
+          debug: this.enableDebug,
         });
         break;
       case CommunicationLayerPreference.SOCKET:
@@ -124,6 +125,7 @@ export class RemoteCommunication extends EventEmitter2 {
           transports: this.transports,
           communicationServerUrl,
           context: this.context,
+          debug: this.enableDebug,
         });
         break;
       default:
@@ -152,7 +154,9 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer.on(
       MessageType.MESSAGE,
       (message: CommunicationLayerMessage) => {
-        console.debug(`[${this.context}] received 'message' `, message);
+        if (this.enableDebug) {
+          console.debug(`[${this.context}] received 'message' `, message);
+        }
         this.onCommunicationLayerMessage(message);
       },
     );
@@ -160,13 +164,17 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer.on(
       MessageType.MESSAGE,
       (message: CommunicationLayerMessage) => {
-        console.debug(`[${this.context}] received 'message' `, message);
+        if (this.enableDebug) {
+          console.debug(`[${this.context}] received 'message' `, message);
+        }
         this.onCommunicationLayerMessage(message);
       },
     );
 
     this.communicationLayer.on(MessageType.CLIENTS_READY, (message) => {
-      console.debug(`[${this.context}] received 'clients_ready' `, message);
+      if (this.enableDebug) {
+        console.debug(`[${this.context}] received 'clients_ready' `, message);
+      }
 
       if (this.enableDebug && this.channelId) {
         SendAnalytics({
@@ -190,7 +198,9 @@ export class RemoteCommunication extends EventEmitter2 {
     });
 
     this.communicationLayer.on(MessageType.CLIENTS_DISCONNECTED, () => {
-      console.debug(`[${this.context}] received 'clients_disconnected' `);
+      if (this.enableDebug) {
+        console.debug(`[${this.context}] received 'clients_disconnected' `);
+      }
 
       if (this.paused) {
         return;
@@ -222,7 +232,9 @@ export class RemoteCommunication extends EventEmitter2 {
     });
 
     this.communicationLayer.on(MessageType.CHANNEL_CREATED, (id) => {
-      console.debug(`[${this.context}] received 'channel_created' `, id);
+      if (this.enableDebug) {
+        console.debug(`[${this.context}] received 'channel_created' `, id);
+      }
       this.emit(MessageType.CHANNEL_CREATED, id);
     });
 
@@ -268,7 +280,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   onCommunicationLayerMessage(message: CommunicationLayerMessage) {
-    console.debug(`[${this.context}] received communication layer`, message);
+    if (this.enableDebug) {
+      console.debug(`[${this.context}] received communication layer`, message);
+    }
 
     if (message.type === MessageType.ORIGINATOR_INFO) {
       // TODO why these hardcoded value?

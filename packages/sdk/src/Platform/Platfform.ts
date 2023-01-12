@@ -96,6 +96,8 @@ export class Platform {
     this.enableWakeLock();
     // #endif
 
+    console.debug(`universalLink: ${universalLink}`)
+    console.debug(`deepLink: ${deeplink}`)
     if (this.preferredOpenLink) {
       this.preferredOpenLink(universalLink, target);
       return;

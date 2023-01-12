@@ -38,6 +38,8 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
 
   context: string;
 
+  debug: boolean;
+
   constructor({
     otherPublicKey,
     webRTCLib,
@@ -46,10 +48,12 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     transports,
     context,
     communicationServerUrl,
+    debug = false,
   }: WebRTCServiceProps) {
     super();
     this.reconnect = reconnect;
     this.context = context;
+    this.debug = debug;
 
     if (webRTCLib) {
       this.RTCPeerConnection = webRTCLib.RTCPeerConnection;
@@ -68,6 +72,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       transports,
       communicationServerUrl,
       context,
+      debug,
     });
 
     const keyExchangeInitParameter: KeyExchangeProps = {
@@ -75,6 +80,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       otherPublicKey: undefined,
       sendPublicKey: true,
       context: this.context,
+      debug,
     };
 
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);

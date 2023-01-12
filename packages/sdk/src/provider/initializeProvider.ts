@@ -55,15 +55,26 @@ const initializeProvider = ({
   const sendRequest = async (method: string, args: any, f: any) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
+    console.debug(
+      `[sendRequest] isInstalled=${isInstalled} method=${method}`,
+      args,
+    );
+
     if (!isInstalled && method !== 'metamask_getProviderState') {
       if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
+        console.log(`start installer`);
         // Start installation and once installed try the request again
         const isConnectedNow = await installer.start({
           wait: false,
         });
 
+        console.debug(
+          `installer finished: method=${method} isConnectedNow=${isConnectedNow}`,
+        );
+
         // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
+          console.debug(`sending  method=${method} on f(...args)`, f);
           return f(...args);
         }
       }
@@ -73,7 +84,8 @@ const initializeProvider = ({
       );
     }
 
-    return f(...args);
+    console.log(`AAAAAAAAAAAAAAA it should send '${method}'`);
+    return await f(...args);
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask

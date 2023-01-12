@@ -88,6 +88,7 @@ export class MetaMaskInstaller {
   async checkInstallation() {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
+    console.log(`checkInstallation isInstalled=${isInstalled}`);
     // No need to do anything
     if (isInstalled) {
       return true;

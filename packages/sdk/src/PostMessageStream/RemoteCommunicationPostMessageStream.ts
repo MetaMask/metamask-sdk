@@ -37,11 +37,12 @@ export class RemoteCommunicationPostMessageStream
     this.remote.on(MessageType.MESSAGE, this._onMessage);
 
     this.remote.on(MessageType.CLIENTS_READY, () => {
+      console.debug(`clients is ready! start provider initialization!`);
       const provider = Ethereum.getProvider();
-      // FIXME not enough time to implement but should enver use ts-ignore
-      // instead we should extend the provider and have an accessible initialization method.
-      // @ts-ignore
-      provider._state.initialized = true;
+      // // FIXME not enough time to implement but should enver use ts-ignore
+      // // instead we should extend the provider and have an accessible initialization method.
+      // // @ts-ignore
+      // provider._state.initialized = true;
       // @ts-ignore
       provider._initializeState();
     });
@@ -117,6 +118,7 @@ export class RemoteCommunicationPostMessageStream
   }: {
     message: { data: Record<string, unknown>; name: unknown };
   }) {
+    console.debug(`RemoteCommunicationPostMessageStream._onMessage`, message);
     // validate message
     /* if (this._origin !== '*' && event.origin !== this._origin) {
       return;

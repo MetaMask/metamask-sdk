@@ -16,6 +16,7 @@ export interface SocketServiceProps {
   otherPublicKey?: string;
   communicationServerUrl: string;
   context: string;
+  debug: boolean;
 }
 
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
@@ -39,6 +40,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private context: string;
 
+  private communicationServerUrl: string;
+
+  private debug: boolean;
+
   constructor({
     otherPublicKey,
     reconnect,
@@ -46,12 +51,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     transports,
     communicationServerUrl,
     context,
+    debug = false,
   }: SocketServiceProps) {
     super();
 
     this.reconnect = reconnect;
     this.context = context;
     this.communicationLayerPreference = communicationLayerPreference;
+    this.debug = debug;
+    this.communicationServerUrl = communicationServerUrl;
 
     const options = {
       autoConnect: false,
@@ -100,6 +108,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       otherPublicKey,
       sendPublicKey: false,
       context: this.context,
+      debug,
     };
 
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);
@@ -118,10 +127,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   private setupChannelListeners(channelId: string): void {
+    console.log(`[socket][${this.context}][setupChannelListeners] setting up channel liateners for channelId=${channelId}`);
     this.socket.on(`clients_connected-${channelId}`, (id: string) => {
-      console.debug(
-        `[socket][${this.context}] clients_connected on channelId=${channelId}`,
-      );
+      if (this.debug) {
+        console.debug(
+          `[socket][${this.context}] clients_connected on channelId=${channelId}`,
+        );
+      }
       this.channelId = id;
       this.clientsConnected = true;
       if (this.isOriginator) {
@@ -151,7 +163,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     });
 
     this.socket.on(`channel_created-${channelId}`, (id) => {
-      console.debug(`[socket][${this.context}] channel created: ${id}`);
+      if (this.debug) {
+        console.debug(`[socket][${this.context}] channel created: ${id}`);
+      }
       this.emit(MessageType.CHANNEL_CREATED, id);
     });
 
@@ -165,10 +179,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         throw new Error(error);
       }
 
-      console.debug(
-        `[socket][${this.context}] received socket 'message-${channelId}'`,
-        message,
-      );
+      if (this.debug) {
+        console.debug(
+          `[socket][${this.context}] received socket 'message-${channelId}'`,
+          message,
+        );
+      }
 
       this.checkSameId(id);
 
@@ -200,16 +216,20 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.on(
       `clients_waiting_to_join-${channelId}`,
       (numberUsers: number) => {
-        console.debug(
-          `[socket][${this.context}] received waiting events numberOfUsers=${numberUsers}`,
-        );
+        if (this.debug) {
+          console.debug(
+            `[socket][${this.context}] received waiting events numberOfUsers=${numberUsers}`,
+          );
+        }
         this.emit(MessageType.CLIENTS_WAITING, numberUsers);
       },
     );
   }
 
   createChannel(): Channel {
-    console.debug(`[socket][${this.context}] creating channel in socket`);
+    if (this.debug) {
+      console.debug(`[socket][${this.context}] creating channel in socket`);
+    }
     this.socket.connect();
     this.isOriginator = true;
     const channelId = uuidv4();
@@ -219,8 +239,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   connectToChannel(channelId: string): void {
-    console.debug(`[socket][${this.context}] connectToChanel ${channelId}`);
-
+    if (this.debug) {
+      console.debug(
+        `[socket][${this.context}][${this.communicationServerUrl}] connectToChanel ${channelId}`,
+      );
+    }
     this.socket.connect();
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
@@ -248,7 +271,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       id: this.channelId,
       message: encryptedMessage,
     };
-    console.debug(`[socket][${this.context}] sendMessage`);
+    if (this.debug) {
+      console.debug(`[socket][${this.context}] sendMessage`, message);
+      console.debug(`[socket][${this.context}] sendMessage`, messageToSend);
+    }
     this.socket.emit(MessageType.MESSAGE, messageToSend);
   }
 
@@ -271,5 +297,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   disconnect(): void {
     this.socket.disconnect();
+    this.socket.close();
   }
 }

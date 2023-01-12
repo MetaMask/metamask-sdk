@@ -1,4 +1,4 @@
-import fetch from 'cross-fetch';
+import crossFetch from 'cross-fetch';
 import { DEFAULT_SERVER_URL } from './config';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 
@@ -17,7 +17,7 @@ export const SendAnalytics = async (
   const serverUrl = `${sockerServerUrl}debug`;
   const body = JSON.stringify(parameters);
 
-  const response = await fetch(serverUrl, {
+  const response = await crossFetch(serverUrl, {
     method: 'POST',
     headers: {
       // eslint-disable-next-line prettier/prettier
