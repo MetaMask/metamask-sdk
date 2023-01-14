@@ -1,4 +1,4 @@
-import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
   DappMetadata,
@@ -39,7 +39,7 @@ export interface MetaMaskSDKOptions {
 }
 
 export class MetaMaskSDK {
-  provider: BaseProvider;
+  provider: MetaMaskInpageProvider;
 
   remoteConnection?: RemoteConnection;
 
@@ -144,6 +144,10 @@ export class MetaMaskSDK {
       console.error(`window.ethereum is not available.`);
       throw new Error(`Invalid SDK provider status`);
     }
+  }
+
+  disconnect() {
+    this.remoteConnection?.disconnect();
   }
 
   // Get the connector object from WalletConnect

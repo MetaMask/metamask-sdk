@@ -5,4 +5,5 @@ export interface ProviderService {
   isConnected(): boolean;
   getConnector(): RemoteCommunication | unknown;
   getUniversalLink(): string;
+  disconnect(): void;
 }

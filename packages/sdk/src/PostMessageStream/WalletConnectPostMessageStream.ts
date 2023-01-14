@@ -174,14 +174,14 @@ export class WalletConnectPostMessageStream
     this._onMessage(resChainChanged);
     this._onMessage(resAccountsChanged);
 
-    // No problem in checking the provider state again
-    const provider = Ethereum.getProvider();
-    // FIXME not enough time to implement but should enver use ts-ignore
-    // instead we should extend the provider and have an accessible initialization method.
-    // @ts-ignore
-    provider._state.initialized = true;
-    // @ts-ignore
-    provider._initializeState();
+    // // No problem in checking the provider state again
+    // const provider = Ethereum.getProvider();
+    // // // FIXME not enough time to implement but should enver use ts-ignore
+    // // // instead we should extend the provider and have an accessible initialization method.
+    // // // @ts-ignore
+    // // provider._state.initialized = true;
+    // // // @ts-ignore
+    // // provider._initializeState();
   }
 
   subscribeToConnectionEvents() {

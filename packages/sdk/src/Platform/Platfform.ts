@@ -96,8 +96,8 @@ export class Platform {
     this.enableWakeLock();
     // #endif
 
-    console.debug(`universalLink: ${universalLink}`)
-    console.debug(`deepLink: ${deeplink}`)
+    console.debug(`Platform::openDeepLink universalLink --> ${universalLink}`);
+    console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
     if (this.preferredOpenLink) {
       this.preferredOpenLink(universalLink, target);
       return;

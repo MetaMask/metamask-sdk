@@ -101,4 +101,8 @@ export class WalletConnect implements ProviderService {
   isConnected() {
     return this.wcConnector.connected;
   }
+
+  disconnect(): void {
+    // nothing to do here.
+  }
 }

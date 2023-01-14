@@ -66,7 +66,7 @@ export class RemoteConnection implements ProviderService {
       dappMetadata: this.dappMetadata,
       enableDebug: this.enableDebug,
       communicationServerUrl,
-      context: 'initiator',
+      context: 'dapp',
     });
 
     this.connector.on(MessageType.CLIENTS_DISCONNECTED, () => {
@@ -146,5 +146,9 @@ export class RemoteConnection implements ProviderService {
 
   isPaused() {
     return this.connector.isPaused();
+  }
+
+  disconnect(): void {
+    return this.connector.disconnect();
   }
 }

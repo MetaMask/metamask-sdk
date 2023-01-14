@@ -1,9 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
+import { Buffer } from 'buffer';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   MessageType,
   RemoteCommunication,
+  CommunicationLayerMessage,
 } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
@@ -37,14 +38,24 @@ export class RemoteCommunicationPostMessageStream
     this.remote.on(MessageType.MESSAGE, this._onMessage);
 
     this.remote.on(MessageType.CLIENTS_READY, () => {
-      console.debug(`clients is ready! start provider initialization!`);
-      const provider = Ethereum.getProvider();
-      // // FIXME not enough time to implement but should enver use ts-ignore
-      // // instead we should extend the provider and have an accessible initialization method.
-      // // @ts-ignore
-      // provider._state.initialized = true;
-      // @ts-ignore
-      provider._initializeState();
+      // try {
+      // const provider = Ethereum.getProvider();
+      //   // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
+      //   // creating our own custom Provider extending the BaseProvider.
+      //   // // instead we should extend the provider and have an accessible initialization method.
+      //   // @ts-ignore
+      //   provider._state.initialized = true;
+      //   // @ts-ignore
+      //   provider._initializeState();
+      // } catch (err) {
+      //   // Ignore error if already initialized.
+      //   console.warn(`IGNORE ERROR`, err);
+      // }
+
+      console.debug(`'[RCPMS] clients_ready' - ethereum provider initialized.`);
+      // TODO remove extra platform check
+      const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+      console.debug(`[RCPMS] check platform state: isInstalled=${isInstalled}`);
     });
 
     this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
@@ -63,6 +74,7 @@ export class RemoteCommunicationPostMessageStream
     callback: (error?: Error | null) => void,
   ) {
     if (!this.remote.isConnected()) {
+      console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
       return callback();
     }
 
@@ -81,13 +93,11 @@ export class RemoteCommunicationPostMessageStream
       const platform = Platform.getInstance();
 
       const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
-      if (isDesktop) {
-        return callback();
-      }
+
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
-      if (METHODS_TO_REDIRECT[targetMethod]) {
+      if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         platform.openDeeplink(
           'https://metamask.app.link/',
           'metamask://',
@@ -101,6 +111,7 @@ export class RemoteCommunicationPostMessageStream
         );
       }
     } catch (err) {
+      console.error(err);
       return callback(
         new Error('RemoteCommunicationPostMessageStream - disconnected'),
       );
@@ -113,33 +124,33 @@ export class RemoteCommunicationPostMessageStream
     return undefined;
   }
 
-  _onMessage({
-    message,
-  }: {
-    message: { data: Record<string, unknown>; name: unknown };
-  }) {
-    console.debug(`RemoteCommunicationPostMessageStream._onMessage`, message);
+  _onMessage(message: CommunicationLayerMessage) {
     // validate message
     /* if (this._origin !== '*' && event.origin !== this._origin) {
       return;
     }*/
+    console.log(`[RCPMS] _onMessage `, message);
+    const typeOfMsg = typeof message;
 
-    if (!message || typeof message !== 'object') {
+    if (!message || typeOfMsg !== 'object') {
       return;
     }
 
-    if (!message.data || typeof message.data !== 'object') {
+    // We only want reply from MetaMask.
+    const typeOfData = typeof message?.data;
+    if (typeOfData !== 'object') {
       return;
     }
 
-    if (message.name && message.name !== ProviderConstants.PROVIDER) {
+    if (!message?.name) {
+      return;
+    }
+
+    if (message?.name !== ProviderConstants.PROVIDER) {
       return;
     }
 
     if (Buffer.isBuffer(message)) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      delete msg._isBuffer;
       const data = Buffer.from(message);
       this.push(data);
     } else {
