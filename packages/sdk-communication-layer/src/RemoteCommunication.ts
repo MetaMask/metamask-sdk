@@ -1,7 +1,9 @@
+/* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
 import { SendAnalytics } from './Analytics';
 import { DEFAULT_SERVER_URL, VERSION } from './config';
+import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
@@ -24,6 +26,7 @@ interface RemoteCommunicationProps {
   transports?: string[];
   enableDebug?: boolean;
   communicationServerUrl?: string;
+  ecies?: ECIESProps;
   context: string;
 }
 
@@ -67,6 +70,7 @@ export class RemoteCommunication extends EventEmitter2 {
     dappMetadata,
     transports,
     context,
+    ecies,
     enableDebug = false,
     communicationServerUrl = DEFAULT_SERVER_URL,
   }: RemoteCommunicationProps) {
@@ -86,6 +90,7 @@ export class RemoteCommunication extends EventEmitter2 {
       otherPublicKey,
       webRTCLib,
       reconnect,
+      ecies,
       communicationServerUrl,
     });
   }
@@ -95,6 +100,7 @@ export class RemoteCommunication extends EventEmitter2 {
     otherPublicKey,
     webRTCLib,
     reconnect,
+    ecies,
     communicationServerUrl = DEFAULT_SERVER_URL,
   }: Pick<
     RemoteCommunicationProps,
@@ -102,6 +108,7 @@ export class RemoteCommunication extends EventEmitter2 {
     | 'otherPublicKey'
     | 'webRTCLib'
     | 'reconnect'
+    | 'ecies'
     | 'communicationServerUrl'
   >) {
     switch (communicationLayerPreference) {
@@ -113,6 +120,7 @@ export class RemoteCommunication extends EventEmitter2 {
           transports: this.transports,
           webRTCLib,
           communicationServerUrl,
+          ecies,
           context: this.context,
           debug: this.enableDebug,
         });
@@ -125,6 +133,7 @@ export class RemoteCommunication extends EventEmitter2 {
           transports: this.transports,
           communicationServerUrl,
           context: this.context,
+          ecies,
           debug: this.enableDebug,
         });
         break;
@@ -154,26 +163,16 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer.on(
       MessageType.MESSAGE,
       (message: CommunicationLayerMessage) => {
-        if (this.enableDebug) {
-          console.debug(`[${this.context}] received 'message' `, message);
-        }
-        this.onCommunicationLayerMessage(message);
-      },
-    );
-
-    this.communicationLayer.on(
-      MessageType.MESSAGE,
-      (message: CommunicationLayerMessage) => {
-        if (this.enableDebug) {
-          console.debug(`[${this.context}] received 'message' `, message);
-        }
         this.onCommunicationLayerMessage(message);
       },
     );
 
     this.communicationLayer.on(MessageType.CLIENTS_READY, (message) => {
       if (this.enableDebug) {
-        console.debug(`[${this.context}] received 'clients_ready' `, message);
+        console.debug(
+          `[communication][${this.context}] received 'clients_ready' `,
+          message,
+        );
       }
 
       if (this.enableDebug && this.channelId) {
@@ -194,46 +193,49 @@ export class RemoteCommunication extends EventEmitter2 {
         originatorInfo,
       });
 
+      this.connected = true;
       this.emit(MessageType.CLIENTS_READY);
     });
 
-    this.communicationLayer.on(MessageType.CLIENTS_DISCONNECTED, () => {
-      if (this.enableDebug) {
-        console.debug(`[${this.context}] received 'clients_disconnected' `);
-      }
+    this.communicationLayer.on(
+      MessageType.CLIENTS_DISCONNECTED,
+      (channelId: string) => {
+        if (this.enableDebug) {
+          console.debug(
+            `RemoteCommunication::${this.context}]::on 'clients_disconnected' channelId=${channelId}`,
+          );
+        }
 
-      if (this.paused) {
-        return;
-      }
+        // First bubble up the disconnect event otherwise it would be missed.
+        this.emit(MessageType.CLIENTS_DISCONNECTED, this.channelId);
 
-      if (!this.isOriginator) {
-        this.paused = true;
-        return;
-      }
+        // Then pause or cleanup the listeners.
+        if (this.paused) {
+          return;
+        }
 
-      if (this.enableDebug && this.channelId) {
-        SendAnalytics({
-          id: this.channelId,
-          event: TrackingEvents.DISCONNECTED,
-        });
-      }
+        if (!this.isOriginator) {
+          this.paused = true;
+          return;
+        }
 
-      this.clean();
-      this.communicationLayer?.removeAllListeners();
-      // FIXME why was it in previous code?
-      // this.initCommunicationLayer({
-      //   communicationLayerType,
-      //   otherPublicKey,
-      //   webRTCLib,
-      //   reconnect: false,
-      // });
+        if (this.enableDebug && this.channelId) {
+          SendAnalytics({
+            id: this.channelId,
+            event: TrackingEvents.DISCONNECTED,
+          });
+        }
 
-      this.emit(MessageType.CLIENTS_DISCONNECTED);
-    });
+        this.clean();
+        this.communicationLayer?.removeAllListeners();
+      },
+    );
 
     this.communicationLayer.on(MessageType.CHANNEL_CREATED, (id) => {
       if (this.enableDebug) {
-        console.debug(`[${this.context}] received 'channel_created' `, id);
+        console.debug(
+          `RemoteCommunication::${this.context}::on 'channel_created' channelId=${id}`,
+        );
       }
       this.emit(MessageType.CHANNEL_CREATED, id);
     });
@@ -241,8 +243,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer.on(MessageType.CLIENTS_WAITING, (numberUsers) => {
       if (this.enableDebug) {
         console.debug(
-          `[${this.context}]  received 'clients_waiting' `,
-          numberUsers,
+          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers}`,
         );
 
         SendAnalytics({
@@ -270,6 +271,10 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   sendMessage(message: CommunicationLayerMessage) {
+    if (this.enableDebug) {
+      console.log(`RemoteCommunication::${this.context}::sendMessage`, message);
+    }
+
     if (this.paused) {
       this.once(MessageType.CLIENTS_READY, () => {
         this.communicationLayer?.sendMessage(message);
@@ -281,7 +286,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   onCommunicationLayerMessage(message: CommunicationLayerMessage) {
     if (this.enableDebug) {
-      console.debug(`[${this.context}] received communication layer`, message);
+      console.debug(
+        `RemoteCommunication::${this.context}::onCommunicationLayerMessage`,
+        message,
+      );
     }
 
     if (message.type === MessageType.ORIGINATOR_INFO) {
@@ -320,7 +328,7 @@ export class RemoteCommunication extends EventEmitter2 {
       });
     }
 
-    this.emit(MessageType.MESSAGE, { message });
+    this.emit(MessageType.MESSAGE, message);
   }
 
   generateChannelId() {

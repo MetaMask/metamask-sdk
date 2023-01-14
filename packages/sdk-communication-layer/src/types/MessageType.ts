@@ -19,4 +19,5 @@ export enum MessageType {
   ANSWER = 'answer',
   OFFER = 'offer',
   CANDIDATE = 'candidate',
+  JSONRPC = 'jsonrpc',
 }

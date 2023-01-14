@@ -1,5 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { ECIES } from './ECIES';
+import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { MessageType } from './types/MessageType';
@@ -10,6 +10,7 @@ export interface KeyExchangeProps {
   sendPublicKey: boolean;
   context: string;
   debug: boolean;
+  ecies?: ECIESProps;
 }
 
 export class KeyExchange extends EventEmitter2 {
@@ -36,13 +37,13 @@ export class KeyExchange extends EventEmitter2 {
     otherPublicKey,
     sendPublicKey,
     context,
+    ecies,
     debug = false,
   }: KeyExchangeProps) {
     super();
 
     this.context = context;
-    this.myECIES = new ECIES();
-    this.myECIES.generateECIES();
+    this.myECIES = new ECIES(ecies);
     this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
     this.debug = debug;
@@ -58,18 +59,17 @@ export class KeyExchange extends EventEmitter2 {
     );
   }
 
-  private onKeyExchangeMessage({
-    message,
-  }: {
+  private onKeyExchangeMessage(keyExchangeMsg: {
     message: CommunicationLayerMessage;
   }) {
     if (this.debug) {
       console.debug(
-        `[keyExchange][${this.context}] key exchange message received`,
-        message,
+        `KeyExchange::${this.context}::onKeyExchangeMessage()`,
+        keyExchangeMsg,
       );
     }
 
+    const { message } = keyExchangeMsg;
     if (this.keysExchanged) {
       return;
     }

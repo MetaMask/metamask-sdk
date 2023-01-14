@@ -47,6 +47,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     reconnect,
     transports,
     context,
+    ecies,
     communicationServerUrl,
     debug = false,
   }: WebRTCServiceProps) {
@@ -71,6 +72,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       reconnect,
       transports,
       communicationServerUrl,
+      ecies,
       context,
       debug,
     });

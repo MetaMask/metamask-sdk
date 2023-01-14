@@ -2,6 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
 import { DEFAULT_SOCKET_TRANSPORTS } from './config';
+import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
 import { Channel } from './types/Channel';
 import { CommunicationLayer } from './types/CommunicationLayer';
@@ -16,6 +17,7 @@ export interface SocketServiceProps {
   otherPublicKey?: string;
   communicationServerUrl: string;
   context: string;
+  ecies?: ECIESProps;
   debug: boolean;
 }
 
@@ -51,6 +53,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     transports,
     communicationServerUrl,
     context,
+    ecies,
     debug = false,
   }: SocketServiceProps) {
     super();
@@ -80,7 +83,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     };
 
     const checkFocus = () => {
-      if (typeof window === 'undefined') {
+      if (typeof window === 'undefined' || typeof document === 'undefined') {
         return;
       }
       this.socket.disconnect();
@@ -108,6 +111,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       otherPublicKey,
       sendPublicKey: false,
       context: this.context,
+      ecies,
       debug,
     };
 
@@ -127,11 +131,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   private setupChannelListeners(channelId: string): void {
-    console.log(`[socket][${this.context}][setupChannelListeners] setting up channel liateners for channelId=${channelId}`);
     this.socket.on(`clients_connected-${channelId}`, (id: string) => {
       if (this.debug) {
         console.debug(
-          `[socket][${this.context}] clients_connected on channelId=${channelId}`,
+          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}'`,
+          id,
         );
       }
       this.channelId = id;
@@ -158,32 +162,37 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             type: MessageType.KEY_HANDSHAKE_START,
           });
         }
-        this.reconnect = false;
+        // FIXME why turning reconnect at false?
+        // should we have max attempts instead?
+        // this.reconnect = false;
       }
     });
 
     this.socket.on(`channel_created-${channelId}`, (id) => {
       if (this.debug) {
-        console.debug(`[socket][${this.context}] channel created: ${id}`);
+        console.debug(
+          `SocketService::${this.context}::setupChannelListener::on 'channel_created-${channelId}'`,
+          id,
+        );
       }
       this.emit(MessageType.CHANNEL_CREATED, id);
     });
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
       this.clientsConnected = false;
-      this.emit(MessageType.CLIENTS_DISCONNECTED);
+      this.emit(MessageType.CLIENTS_DISCONNECTED, channelId);
     });
 
     this.socket.on(`message-${channelId}`, ({ id, message, error }) => {
-      if (error) {
-        throw new Error(error);
-      }
-
       if (this.debug) {
         console.debug(
-          `[socket][${this.context}] received socket 'message-${channelId}'`,
+          `SocketService::${this.context}::setupChannelListener::on 'message-${channelId}' error=${error}`,
           message,
         );
+      }
+
+      if (error) {
+        throw new Error(error);
       }
 
       this.checkSameId(id);
@@ -197,10 +206,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (!this.keyExchange.areKeysExchanged()) {
-        const messageReceived = message;
-        if (messageReceived?.type.startsWith('key_handshake')) {
+        if (message?.type.startsWith('key_handshake')) {
           return this.emit(MessageType.KEY_EXCHANGE, {
-            message: messageReceived,
+            message,
           });
         }
         throw new Error('Keys not exchanged');
@@ -208,9 +216,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
-      return this.emit(MessageType.MESSAGE, {
-        message: messageReceived,
-      });
+      return this.emit(MessageType.MESSAGE, messageReceived);
     });
 
     this.socket.on(
@@ -218,7 +224,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       (numberUsers: number) => {
         if (this.debug) {
           console.debug(
-            `[socket][${this.context}] received waiting events numberOfUsers=${numberUsers}`,
+            `SocketService::${this.context}::setupChannelListener::on 'clients_waiting_to_join-${channelId}'`,
+            numberUsers,
           );
         }
         this.emit(MessageType.CLIENTS_WAITING, numberUsers);
@@ -228,7 +235,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   createChannel(): Channel {
     if (this.debug) {
-      console.debug(`[socket][${this.context}] creating channel in socket`);
+      console.debug(`SocketService::${this.context}::createChannel()`);
     }
     this.socket.connect();
     this.isOriginator = true;
@@ -241,7 +248,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   connectToChannel(channelId: string): void {
     if (this.debug) {
       console.debug(
-        `[socket][${this.context}][${this.communicationServerUrl}] connectToChanel ${channelId}`,
+        `SocketService::${this.context}::createChannel() channelId=${channelId}`,
       );
     }
     this.socket.connect();
@@ -272,8 +279,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       message: encryptedMessage,
     };
     if (this.debug) {
-      console.debug(`[socket][${this.context}] sendMessage`, message);
-      console.debug(`[socket][${this.context}] sendMessage`, messageToSend);
+      console.debug(
+        `SocketService::${this.context}::sendMessage()`,
+        messageToSend,
+      );
     }
     this.socket.emit(MessageType.MESSAGE, messageToSend);
   }

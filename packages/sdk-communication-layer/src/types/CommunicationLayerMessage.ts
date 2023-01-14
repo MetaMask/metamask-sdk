@@ -10,4 +10,11 @@ export interface CommunicationLayerMessage {
   answer?: RTCSessionDescriptionInit;
   offer?: RTCSessionDescriptionInit;
   candidate?: unknown;
+  // JSON-RPC related properties
+  method?: string;
+  params?: unknown;
+  jsonrpc?: string;
+  name?: string;
+  data?: unknown;
+  id?: string;
 }
