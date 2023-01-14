@@ -118,6 +118,11 @@ export class Platform {
 
   isMetaMaskInstalled() {
     const eth = Ethereum.getProvider() || window?.ethereum;
+    console.debug(
+      `Platform::isMetaMaskInstalled isMetaMask=${
+        eth?.isMetaMask
+      } isConnected=${eth?.isConnected()}`,
+    );
     return eth?.isMetaMask && eth?.isConnected();
   }
 

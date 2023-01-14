@@ -38,19 +38,19 @@ export class RemoteCommunicationPostMessageStream
     this.remote.on(MessageType.MESSAGE, this._onMessage);
 
     this.remote.on(MessageType.CLIENTS_READY, () => {
-      // try {
-      // const provider = Ethereum.getProvider();
-      //   // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
-      //   // creating our own custom Provider extending the BaseProvider.
-      //   // // instead we should extend the provider and have an accessible initialization method.
-      //   // @ts-ignore
-      //   provider._state.initialized = true;
-      //   // @ts-ignore
-      //   provider._initializeState();
-      // } catch (err) {
-      //   // Ignore error if already initialized.
-      //   console.warn(`IGNORE ERROR`, err);
-      // }
+      try {
+        const provider = Ethereum.getProvider();
+        // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
+        // creating our own custom Provider extending the BaseProvider.
+        // // instead we should extend the provider and have an accessible initialization method.
+        // @ts-ignore
+        provider._state.isConnected = true;
+        // @ts-ignore
+        provider._initializeState();
+      } catch (err) {
+        // Ignore error if already initialized.
+        // console.debug(`IGNORE ERROR`, err);
+      }
 
       console.debug(`'[RCPMS] clients_ready' - ethereum provider initialized.`);
       // TODO remove extra platform check
@@ -93,6 +93,14 @@ export class RemoteCommunicationPostMessageStream
       const platform = Platform.getInstance();
 
       const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
+      const isNotBrowser = platform.isNotBrowser();
+      if (isDesktop || isNotBrowser) {
+        // Redirect early if nodejs or browser...
+        console.log(
+          `RCPMS::_write isDektop=${isDesktop} isNotBrowser=${isNotBrowser}`,
+        );
+        return callback();
+      }
 
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;

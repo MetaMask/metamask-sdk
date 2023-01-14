@@ -33,7 +33,7 @@
     "prepublishOnly": "yarn build",
     "reset": "yarn clean && rimraf ./node_modules/",
     "setup": "yarn install && yarn allow-scripts",
-    "test": "jest ",
+    "test": "jest --detectOpenHandles ",
     "test:ci": "echo 'N/A'",
     "watch": "rollup -c -w"
   },

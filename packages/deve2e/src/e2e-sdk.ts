@@ -3,7 +3,7 @@ import { MetaMaskSDK } from '@metamask/sdk';
 export const mainSDK = async () => {
   const sdk = new MetaMaskSDK({
     shouldShimWeb3: false,
-    communicationServerUrl: 'http://localhost:4000/',
+    communicationServerUrl: 'http://localhost:5400/',
   });
 
   const ethereum = sdk.getProvider();
@@ -14,4 +14,6 @@ export const mainSDK = async () => {
   });
 
   console.log('request accounts', accounts);
+
+  sdk.disconnect();
 };
