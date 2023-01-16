@@ -1,26 +1,42 @@
-import { MetamaskElement } from '../../utils/Selectors';
+import { Input } from '../../atoms/Input';
+import { Button } from '../../atoms/Button';
 import PermissionsPopup from './PermissionsPopup';
 
 class MobileBrowser {
-  private get getAddressBar(): MetamaskElement {
-    return $('id=com.android.chrome:id/url_bar');
+  private get getAddressBar(): Input {
+    return new Input({
+      androidSelector: `id=com.android.chrome:id/url_bar`,
+      iOSSelector:
+        '**/XCUIElementTypeOther[`name == "CapsuleViewController"`]/XCUIElementTypeOther[3]/XCUIElementTypeOther[2]',
+    });
   }
 
-  async tapAddressBar(): Promise<void> {
-    await this.getAddressBar.click();
+  private get getKeyboardEnterButton(): Button {
+    return new Button({
+      androidSelector: '',
+      iOSSelector: '**/XCUIElementTypeButton[`label == "go"`]',
+    });
   }
 
   async fillWebsite(website: string): Promise<void> {
     await this.getAddressBar.setValue(website);
-    await driver.pressKeyCode(66);
+    if (await driver.isAndroid) {
+      await driver.pressKeyCode(66);
+    } else {
+      await this.getKeyboardEnterButton.tap();
+    }
   }
 
-  async openBrowser(): Promise<void> {
-    await browser.activateApp('com.android.chrome');
-    if (await PermissionsPopup.isPermissionsPopupDisplayed()) {
-      await PermissionsPopup.tapChromePermission();
+  async launchBrowser(): Promise<void> {
+    if (await driver.isAndroid) {
+      await browser.activateApp('com.android.chrome');
+      if (await PermissionsPopup.isPermissionsPopupDisplayed()) {
+        await PermissionsPopup.tapChromePermission();
+      }
+    } else {
+      await browser.activateApp('com.apple.mobilesafari');
     }
   }
 }
 
-export default new MobileBrowser();
+export default MobileBrowser;
