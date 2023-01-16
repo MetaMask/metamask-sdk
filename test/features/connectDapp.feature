@@ -15,7 +15,7 @@ Feature: Connect each JS Dapp to MetaMask
     When I enter the website "<WEBSITE>"
     And I tap the "Connect" button on the Dapp
     Then I am routed to MetaMask and I see the bottom prompt
-    And I tap the "Approve" buttom on the MetaMask bottom prompt
+    And I tap the "Approve" button on the MetaMask bottom prompt
 
     Examples: 
       | SDK_DAPP         | DEVICE  | WEBSITE       |
