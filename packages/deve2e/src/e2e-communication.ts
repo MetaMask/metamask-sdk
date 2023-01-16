@@ -22,7 +22,7 @@ const waitForReady = async (): Promise<void> => {
 export const mainCommunication = async () => {
   const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
   const platform = 'jest';
-  const communicationServerUrl = 'http://localhost:4000/';
+  const communicationServerUrl = 'http://localhost:5400/';
 
   const remote = new RemoteCommunication({
     communicationLayerPreference,
