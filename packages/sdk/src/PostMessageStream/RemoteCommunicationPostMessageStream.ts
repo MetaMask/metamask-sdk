@@ -94,7 +94,9 @@ export class RemoteCommunicationPostMessageStream
 
       const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
       const isNotBrowser = platform.isNotBrowser();
-      if (isDesktop || isNotBrowser) {
+      const isReactNative = platform.isReactNative();
+
+      if (!isReactNative && (isDesktop || isNotBrowser)) {
         // Redirect early if nodejs or browser...
         console.log(
           `RCPMS::_write isDektop=${isDesktop} isNotBrowser=${isNotBrowser}`,

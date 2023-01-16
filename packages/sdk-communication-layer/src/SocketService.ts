@@ -76,7 +76,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket = io(communicationServerUrl, options);
 
     const connectAgain = () => {
-      window.removeEventListener('focus', connectAgain);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('focus', connectAgain);
+      }
       this.reconnect = true;
       this.socket.connect();
       this.socket.emit(MessageType.JOIN_CHANNEL, this.channelId);

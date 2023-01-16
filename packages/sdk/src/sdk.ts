@@ -2,6 +2,7 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
   DappMetadata,
+  ECIESProps,
 } from '@metamask/sdk-communication-layer';
 import WebView from 'react-native-webview';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
@@ -36,6 +37,7 @@ export interface MetaMaskSDKOptions {
   timer?: any;
   enableDebug?: boolean;
   communicationServerUrl?: string;
+  ecies?: ECIESProps;
 }
 
 export class MetaMaskSDK {
@@ -74,6 +76,7 @@ export class MetaMaskSDK {
     // Debugging
     enableDebug = true,
     communicationServerUrl,
+    ecies,
   }: MetaMaskSDKOptions = {}) {
     const platform = Platform.init({
       useDeepLink: useDeeplink,
@@ -103,6 +106,7 @@ export class MetaMaskSDK {
         timer,
         transports,
         communicationServerUrl,
+        ecies,
       });
 
       if (WalletConnectInstance) {

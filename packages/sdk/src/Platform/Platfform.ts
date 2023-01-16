@@ -116,6 +116,14 @@ export class Platform {
     // console.log('Please setup the openDeeplink parameter');
   }
 
+  isReactNative() {
+    if (typeof navigator !== 'undefined') {
+      // for RN: userAgent === 'React Native'
+      return navigator.product === 'ReactNative';
+    }
+    return false;
+  }
+
   isMetaMaskInstalled() {
     const eth = Ethereum.getProvider() || window?.ethereum;
     console.debug(

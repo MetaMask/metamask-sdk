@@ -30,7 +30,7 @@ describe('MetaMask Simulator', () => {
       //   `Environment file not found.\nDid you run 'yarn test -t "should test correctly"' ?`,
       // );
       const url = new URL(
-        'https://metamask.app.link/connect?channelId=b7398646-1d66-43c2-b64a-1f023bc35fbc&comm=socket&pubkey=021063057d27168cfefb9fd779353b74fbe6746d302a39ba849c1f3cfd2df9f68f',
+        'https://metamask.app.link/connect?channelId=e040bc65-f025-43c8-a17f-75a414b94a2b&comm=socket&pubkey=02f53eb62f0ec65af86336f40b7060f2c99291c252de1726ffe034f722f5fa1ec7',
       );
       channelId = url.searchParams.get('channelId') ?? '';
       pubkey = url.searchParams.get('pubkey') ?? '';
@@ -61,6 +61,9 @@ describe('MetaMask Simulator', () => {
       communicationServerUrl: 'http://localhost:5400',
       context: 'mm',
       enableDebug: true,
+      ecies: {
+        enabled: true,
+      },
     });
 
     mmRemote.on('clients_disconnected', () => {
@@ -68,13 +71,12 @@ describe('MetaMask Simulator', () => {
       clientDisconnected = true;
     });
 
-    mmRemote.on('clients_ready', (readyMsg) => {
-      console.log('clients_ready', readyMsg);
-      console.log(`setting up backgroundBridge`);
+    mmRemote.on('clients_ready', (_readyMsg) => {
+      // mm now setup background bridges
     });
 
     mmRemote.on('message', (message: CommunicationLayerMessage) => {
-      console.log('mmRemote.on[message]: ', message);
+      console.log('mmRemote::on "message" ', message);
       try {
         if (message.method?.toLowerCase() === 'eth_requestaccounts') {
           // fake reply

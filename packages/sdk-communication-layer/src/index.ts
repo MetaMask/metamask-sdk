@@ -1,4 +1,4 @@
-import { ECIES } from './ECIES';
+import { ECIES, ECIESProps } from './ECIES';
 import { RemoteCommunication } from './RemoteCommunication';
 import { SocketService } from './SocketService';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
@@ -15,6 +15,7 @@ export type {
   DappMetadata,
   CommunicationLayerMessage,
   OriginatorInfo,
+  ECIESProps,
 };
 
 export {

@@ -1,6 +1,7 @@
 import {
   CommunicationLayerPreference,
   DappMetadata,
+  ECIESProps,
   MessageType,
   RemoteCommunication,
   WebRTCLib,
@@ -20,6 +21,7 @@ interface RemoteConnectionProps {
   transports?: string[];
   webRTCLib?: WebRTCLib;
   communicationServerUrl?: string;
+  ecies?: ECIESProps;
 }
 export class RemoteConnection implements ProviderService {
   connector: RemoteCommunication;
@@ -47,6 +49,7 @@ export class RemoteConnection implements ProviderService {
     transports,
     enableDebug = false,
     timer,
+    ecies,
     communicationServerUrl,
   }: RemoteConnectionProps) {
     this.dappMetadata = dappMetadata;
@@ -67,6 +70,7 @@ export class RemoteConnection implements ProviderService {
       enableDebug: this.enableDebug,
       communicationServerUrl,
       context: 'dapp',
+      ecies,
     });
 
     this.connector.on(MessageType.CLIENTS_DISCONNECTED, () => {

@@ -11,6 +11,10 @@ describe('SDK', () => {
         url: 'http://whateverwewant',
       },
       enableDebug: true,
+      ecies: {
+        enabled: true,
+        debug: true,
+      },
     });
 
     const ethereum = sdk.getProvider();

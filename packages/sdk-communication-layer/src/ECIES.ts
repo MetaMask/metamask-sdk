@@ -26,8 +26,8 @@ export class ECIES {
   private debug = false;
 
   constructor(props?: ECIESProps) {
-    if (props?.enabled) {
-      this.enabled = props.enabled;
+    if (props?.enabled === false) {
+      this.enabled = false;
     }
 
     if (props?.debug) {
