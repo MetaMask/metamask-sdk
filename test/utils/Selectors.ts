@@ -1,4 +1,5 @@
 export type MetamaskElement = WebdriverIO.Element;
+export type DappElement = WebdriverIO.Element;
 
 export enum androidElementTypes {
   Button = 'android.widget.Button',
