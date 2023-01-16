@@ -30,7 +30,7 @@ describe('MetaMask Simulator', () => {
       //   `Environment file not found.\nDid you run 'yarn test -t "should test correctly"' ?`,
       // );
       const url = new URL(
-        'https://metamask.app.link/connect?channelId=bb26400a-d317-4191-8a41-667d255f6126&comm=socket&pubkey=0374cd10be3c33b71567a5b36bd1b182c630d9b22ac2345b5014d9f39c05e6169b',
+        'https://metamask.app.link/connect?channelId=b7398646-1d66-43c2-b64a-1f023bc35fbc&comm=socket&pubkey=021063057d27168cfefb9fd779353b74fbe6746d302a39ba849c1f3cfd2df9f68f',
       );
       channelId = url.searchParams.get('channelId') ?? '';
       pubkey = url.searchParams.get('pubkey') ?? '';
@@ -58,7 +58,7 @@ describe('MetaMask Simulator', () => {
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       platform: 'test',
       otherPublicKey: pubkey,
-      communicationServerUrl: 'https://16fd-1-36-226-145.ap.ngrok.io',
+      communicationServerUrl: 'http://localhost:5400',
       context: 'mm',
       enableDebug: true,
     });
