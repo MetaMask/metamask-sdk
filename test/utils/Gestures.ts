@@ -90,4 +90,16 @@ export default class Gestures {
       },
     ]);
   }
+
+  static async tapOutside(location: { x: number; y: number }): Promise<void> {
+    const DEVICE_SIZE: BrowserSize = await driver.getWindowSize();
+    const x = Math.round((DEVICE_SIZE.width * location.x) / 100);
+    const y = Math.round((DEVICE_SIZE.height * location.y) / 100);
+
+    await browser.touchAction({
+      action: 'tap',
+      x,
+      y,
+    });
+  }
 }
