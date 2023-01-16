@@ -9,15 +9,29 @@ export class BottomPopup implements IBottomPopup {
   cancelButton: MetamaskElement;
 
   constructor({
-    selector,
+    androidSelector,
+    iOSSelector,
     cancelButtonSelector,
     approveButtonSelector,
   }: {
-    selector: string;
+    androidSelector?: string;
+    iOSSelector?: string;
     cancelButtonSelector: string;
     approveButtonSelector: string;
   }) {
-    this.e = $(selector);
+    const platform = driver.isAndroid ? 'android' : 'ios';
+    if (platform === 'android' && androidSelector) {
+      this.e = $(`${androidSelector}`);
+    } else if (platform === 'ios' && iOSSelector) {
+      if (iOSSelector.startsWith('~')) {
+        this.e = $(`${iOSSelector}`);
+      } else {
+        this.e = $(`-ios class chain:${iOSSelector}`);
+      }
+    } else {
+      throw new Error(`No selector provided for platform ${platform}`);
+    }
+
     this.approveButton = $(approveButtonSelector);
     this.cancelButton = $(cancelButtonSelector);
   }
