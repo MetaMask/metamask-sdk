@@ -31,6 +31,7 @@ When(/^I tap "([^"]*)?" on MetaMask/u, async (text) => {
       await new OptinMetricsScreen().tapNoThanksOptinMetrics();
       break;
     case 'Import':
+      await Gestures.tapOutside({ x: 1, y: 40 });
       await new ImportFromSeedScreen().tapImportButton();
       break;
     case 'No Security Updates':
@@ -42,7 +43,7 @@ When(/^I tap "([^"]*)?" on MetaMask/u, async (text) => {
 });
 
 When(
-  /^I tap the "([^"]*)?" buttom on the MetaMask bottom prompt/u,
+  /^I tap the "([^"]*)?" button on the MetaMask bottom prompt/u,
   async (button) => {
     switch (button) {
       case 'Approve':

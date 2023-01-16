@@ -1,13 +1,10 @@
 import { BottomPopup } from '../../../atoms/BottomPopup';
-import Selectors, { androidElementTypes } from '../../../utils/Selectors';
 
 class ConnectDappPopup {
   private get getConnectPopup(): BottomPopup {
     return new BottomPopup({
-      selector: Selectors.getAndroidLocatorByResourceId(
-        androidElementTypes.ViewGroup,
-        'account-approval-modal-container',
-      ),
+      androidSelector: `//android.view.ViewGroup[@resource-id='account-approval-modal-container']`,
+      iOSSelector: '~account-approval-modal-container',
       cancelButtonSelector: '~connect-cancel-button',
       approveButtonSelector: '~connect-approve-button',
     });
