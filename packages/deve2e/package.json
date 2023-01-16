@@ -8,6 +8,8 @@
   ],
   "scripts": {
     "build": "rollup -c --bundleConfigAsCjs",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
