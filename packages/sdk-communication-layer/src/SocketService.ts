@@ -151,19 +151,23 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         }
       }
 
-      console.debug(
-        `SocketService::${this.context}::setupChannelListener reconnect=${
-          this.reconnect
-        } keysExchanged=${this.keyExchange.areKeysExchanged()} isOriginator=${
-          this.isOriginator
-        }`,
-      );
+      if (this.debug) {
+        console.debug(
+          `SocketService::${this.context}::setupChannelListener reconnect=${
+            this.reconnect
+          } keysExchanged=${this.keyExchange.areKeysExchanged()} isOriginator=${
+            this.isOriginator
+          }`,
+        );
+      }
 
       if (this.reconnect) {
         if (this.keyExchange.areKeysExchanged()) {
-          console.debug(
-            `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
-          );
+          if (this.debug) {
+            console.debug(
+              `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
+            );
+          }
           this.sendMessage({ type: MessageType.READY });
           if (
             this.communicationLayerPreference ===
@@ -174,9 +178,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
-          console.debug(
-            `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
-          );
+          if (this.debug) {
+            console.debug(
+              `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
+            );
+          }
 
           this.sendMessage({
             type: MessageType.KEY_HANDSHAKE_START,
