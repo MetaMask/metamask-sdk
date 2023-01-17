@@ -1,3 +1,4 @@
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
 
-export { MetaMaskSDKOptions, MetaMaskSDK };
+export type { MetaMaskSDKOptions };
+export { MetaMaskSDK };
