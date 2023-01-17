@@ -4,7 +4,6 @@ import { Duplex } from 'stream';
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
-import { Ethereum } from '../services/Ethereum';
 import { PlatformType } from '../types/PlatformType';
 import { PostMessageStream } from './PostMessageStream';
 

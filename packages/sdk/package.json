@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -41,7 +41,7 @@
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^6.1.0",
     "@metamask/providers": "^10.2.1",
-    "@metamask/sdk-communication-layer": "^0.1.0",
+    "@metamask/sdk-communication-layer": "^0.2.0",
     "@metamask/sdk-install-modal-web": "^0.1.0",
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",

@@ -1,11 +1,11 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "",
-  "homepage": "https://github.com/MetaMask/metamask-sdk-communication-layer#readme",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
-    "url": "https://github.com/MetaMask/metamask-sdk-communication-layer/issues"
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
   },
   "repository": {
     "type": "git",
