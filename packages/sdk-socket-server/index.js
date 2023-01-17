@@ -140,7 +140,9 @@ io.on('connection', (socket) => {
   socket.on('create_channel', async (id) => {
     await rateLimiter.consume(socket.handshake.address);
 
-    console.log('create channel', id);
+    if (isDevelopment) {
+      console.log('create channel', id);
+    }
 
     if (!uuid.validate(id)) {
       return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
@@ -165,7 +167,9 @@ io.on('connection', (socket) => {
       return;
     }
 
-    console.log(`message-${id} -> `, { id, message });
+    if (isDevelopment) {
+      console.log(`message-${id} -> `, { id, message });
+    }
     socket.to(id).emit(`message-${id}`, { id, message });
   });
 
@@ -176,7 +180,9 @@ io.on('connection', (socket) => {
       return;
     }
 
-    console.log('join_channel', id);
+    if (isDevelopment) {
+      console.log('join_channel', id);
+    }
 
     if (!uuid.validate(id)) {
       socket.emit(`message-${id}`, { error: 'must specify a valid id' });
@@ -197,7 +203,9 @@ io.on('connection', (socket) => {
     }
 
     socket.on('disconnect', function (error) {
-      console.log('disconnected', error);
+      if (isDevelopment) {
+        console.log('disconnected', error);
+      }
       io.sockets.in(id).emit(`clients_disconnected-${id}`, error);
       // io.sockets.in(id).socketsLeave(id);
     });
