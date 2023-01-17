@@ -14,6 +14,12 @@ module.exports = {
         '@typescript-eslint/no-shadow': ['error'],
       },
     },
+    {
+      files: ['**/*.d.ts'],
+      rules: {
+        'import/unambiguous': 'off',
+      },
+    },
   ],
 
   ignorePatterns: [
