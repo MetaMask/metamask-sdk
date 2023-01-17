@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "npm run prebuild && rollup -c --silent",
+    "build": "yarn prebuild && rollup -c --silent",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rm -rf dist",
