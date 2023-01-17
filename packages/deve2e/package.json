@@ -8,10 +8,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "echo 'N/A'",
+    "build": "rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
-    "build:start": "rollup -c --bundleConfigAsCjs",
     "clean": "rimraf dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -19,7 +18,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "rimraf node_modules && yarn clean",
     "setup": "yarn install && yarn allow-scripts",
-    "start": "ROLLUP_RUN=true yarn build:start",
+    "start": "ROLLUP_RUN=true yarn build",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
     "watch": "yarn start --watch"
