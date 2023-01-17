@@ -64,13 +64,18 @@ export class KeyExchange extends EventEmitter2 {
   }) {
     if (this.debug) {
       console.debug(
-        `KeyExchange::${this.context}::onKeyExchangeMessage()`,
+        `KeyExchange::${this.context}::onKeyExchangeMessage() keysExchanged=${this.keysExchanged}`,
         keyExchangeMsg,
       );
     }
 
     const { message } = keyExchangeMsg;
     if (this.keysExchanged) {
+      if (this.debug) {
+        console.log(
+          `KeyExchange::${this.context}::onKeyExchangeMessage STOP handshake already exchanged`,
+        );
+      }
       return;
     }
 
@@ -104,12 +109,23 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   clean(): void {
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::clean reset handshake state`,
+      );
+    }
     this.step = MessageType.KEY_HANDSHAKE_NONE;
     this.keysExchanged = false;
     this.otherPublicKey = '';
   }
 
   start(isOriginator: boolean): void {
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::start isOriginator=${isOriginator}`,
+      );
+    }
+
     if (isOriginator) {
       this.clean();
     }
@@ -123,6 +139,7 @@ export class KeyExchange extends EventEmitter2 {
 
   checkStep(step: string): void {
     if (this.step.toString() !== step) {
+      console.log(`Invalid step ${this.step} vs ${step}`);
       throw new Error(`Wrong Step ${this.step} ${step}`);
     }
   }

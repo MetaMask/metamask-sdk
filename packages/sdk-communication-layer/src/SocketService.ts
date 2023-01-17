@@ -128,6 +128,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private checkSameId(id: string) {
     if (id !== this.channelId) {
+      if (this.debug) {
+        console.error(`Wrong id ${id} - should be ${this.channelId}`);
+      }
       throw new Error('Wrong id');
     }
   }
@@ -136,7 +139,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.on(`clients_connected-${channelId}`, (id: string) => {
       if (this.debug) {
         console.debug(
-          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}'`,
+          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}' isOriginator=${this.isOriginator}`,
           id,
         );
       }
@@ -148,8 +151,19 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         }
       }
 
+      console.debug(
+        `SocketService::${this.context}::setupChannelListener reconnect=${
+          this.reconnect
+        } keysExchanged=${this.keyExchange.areKeysExchanged()} isOriginator=${
+          this.isOriginator
+        }`,
+      );
+
       if (this.reconnect) {
         if (this.keyExchange.areKeysExchanged()) {
+          console.debug(
+            `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
+          );
           this.sendMessage({ type: MessageType.READY });
           if (
             this.communicationLayerPreference ===
@@ -160,6 +174,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
+          console.debug(
+            `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
+          );
+
           this.sendMessage({
             type: MessageType.KEY_HANDSHAKE_START,
           });
@@ -188,7 +206,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.on(`message-${channelId}`, ({ id, message, error }) => {
       if (this.debug) {
         console.debug(
-          `SocketService::${this.context}::setupChannelListener::on 'message-${channelId}' error=${error}`,
+          `SocketService::${
+            this.context
+          }::setupChannelListener::on 'message-${channelId}' error=${error} keysExchanged=${this.keyExchange.areKeysExchanged()}`,
           message,
         );
       }
@@ -204,11 +224,24 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.keyExchange.areKeysExchanged() &&
         message?.type === MessageType.KEY_HANDSHAKE_START
       ) {
+        if (this.debug) {
+          console.debug(
+            `SocketService::${this.context}::setupChannelListener received HANDSHAKE_START isOriginator=${this.isOriginator}`,
+            message,
+          );
+        }
+
         return this.keyExchange.start(this.isOriginator);
       }
 
       if (!this.keyExchange.areKeysExchanged()) {
         if (message?.type.startsWith('key_handshake')) {
+          if (this.debug) {
+            console.debug(
+              `SocketService::${this.context}::setupChannelListener emit KEY_EXCHANGE`,
+              message,
+            );
+          }
           return this.emit(MessageType.KEY_EXCHANGE, {
             message,
           });
@@ -266,8 +299,21 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     if (!this.keyExchange.areKeysExchanged()) {
       if (message?.type.startsWith('key_handshake')) {
+        if (this.debug) {
+          console.debug(
+            `SocketService::${this.context}::sendMessage()`,
+            message,
+          );
+        }
         this.socket.emit(MessageType.MESSAGE, { id: this.channelId, message });
         return;
+      }
+
+      if (this.debug) {
+        console.debug(
+          `SocketService::${this.context}::sendMessage() ERROR keys not exchanged`,
+          message,
+        );
       }
       throw new Error('Keys not exchanged');
     }
@@ -290,6 +336,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   pause(): void {
+    if (this.debug) {
+      console.debug(`SocketService::${this.context}::pause()`);
+    }
     this.manualDisconnect = true;
     if (this.keyExchange.areKeysExchanged()) {
       this.sendMessage({ type: MessageType.PAUSE });
@@ -298,6 +347,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   resume(): void {
+    if (this.debug) {
+      console.debug(`SocketService::${this.context}::resume()`);
+    }
     this.manualDisconnect = false;
     if (this.keyExchange.areKeysExchanged()) {
       this.reconnect = true;
@@ -307,6 +359,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   disconnect(): void {
+    if (this.debug) {
+      console.debug(`SocketService::${this.context}::disconnect()`);
+    }
     this.socket.disconnect();
     this.socket.close();
   }
