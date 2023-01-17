@@ -18,8 +18,7 @@ const config =
       output: [
         {
           file: packageJson.module,
-          format: 'esm',
-          sourceMap: true
+          format: 'esm'
         },
       ],
       plugins: [
