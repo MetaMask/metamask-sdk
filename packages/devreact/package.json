@@ -19,7 +19,13 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
+    "lint": "echo 'N/A'",
+    "clean": "rimraf dist",
+    "test": "echo 'N/A'",
+    "test:ci": "echo 'N/A'",
+    "test:react": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
