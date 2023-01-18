@@ -17,6 +17,7 @@ const initializeProvider = ({
   installer,
   remoteConnection,
   walletConnect,
+  debug,
 }: {
   communicationLayerPreference: CommunicationLayerPreference;
   checkInstallationOnAllCalls?: boolean;
@@ -26,6 +27,7 @@ const initializeProvider = ({
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
   walletConnect?: WalletConnect;
+  debug: boolean;
 }) => {
   // Setup stream for content script communication
   const metamaskStream = getPostMessageStream({
@@ -34,6 +36,7 @@ const initializeProvider = ({
     communicationLayerPreference,
     remoteConnection,
     walletConnect,
+    debug,
   });
 
   // Initialize provider object (window.ethereum)

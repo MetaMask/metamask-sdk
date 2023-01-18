@@ -15,6 +15,7 @@ export interface GetPostMessageStreamProps {
   remoteConnection?: RemoteConnection;
   walletConnect?: WalletConnect;
   communicationLayerPreference: CommunicationLayerPreference;
+  debug: boolean;
 }
 
 export const getPostMessageStream = ({
@@ -23,6 +24,7 @@ export const getPostMessageStream = ({
   communicationLayerPreference,
   remoteConnection,
   walletConnect,
+  debug,
 }: GetPostMessageStreamProps): PostMessageStream => {
   const platformType = Platform.getInstance().getPlatformType();
 
@@ -54,5 +56,6 @@ export const getPostMessageStream = ({
   return new RemoteCommunicationPostMessageStream({
     name,
     remote: remoteConnection.getConnector(),
+    debug,
   });
 };

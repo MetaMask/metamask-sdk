@@ -131,6 +131,7 @@ export class MetaMaskSDK {
         installer,
         remoteConnection: this.remoteConnection,
         walletConnect: this.walletConnect,
+        debug: enableDebug,
       });
 
       // Setup provider streams, only needed for our mobile in-app browser

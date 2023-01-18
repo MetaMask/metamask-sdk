@@ -21,18 +21,23 @@ export class RemoteCommunicationPostMessageStream
 
   remote: RemoteCommunication;
 
+  private debug;
+
   constructor({
     name,
     remote,
+    debug,
   }: {
     name: ProviderConstants;
     remote: RemoteCommunication;
+    debug: boolean;
   }) {
     super({
       objectMode: true,
     });
     this._name = name;
     this.remote = remote;
+    this.debug = debug;
 
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(MessageType.MESSAGE, this._onMessage);
@@ -108,12 +113,21 @@ export class RemoteCommunicationPostMessageStream
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
+        console.debug(
+          `RCPMS::_write redirect link for '${targetMethod}'`,
+          'metamasl://',
+        );
+
         platform.openDeeplink(
           'https://metamask.app.link/',
           'metamask://',
           '_self',
         );
       } else if (this.remote.isPaused() && !isDesktop) {
+        if (this.debug) {
+          console.debug(`RCPMS::_write MM is PAUSED! deeplink with connect!`);
+        }
+
         platform.openDeeplink(
           'https://metamask.app.link/connect?redirect=true',
           'metamask://connect?redirect=true',
