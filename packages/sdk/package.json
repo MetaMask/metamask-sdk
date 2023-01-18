@@ -34,8 +34,8 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "setup": "yarn install && yarn allow-scripts",
     "test": "echo 'N/A'",
-    "test:dev": "jest --detectOpenHandles",
     "test:ci": "echo 'N/A'",
+    "test:dev": "jest --detectOpenHandles",
     "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
