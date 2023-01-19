@@ -160,7 +160,7 @@ io.on('connection', (socket) => {
     return socket.emit(`channel_created-${id}`, id);
   });
 
-  socket.on('message', async ({ id, message }) => {
+  socket.on('message', async ({ id, message, context }) => {
     try {
       await rateLimiterMesssage.consume(socket.handshake.address);
     } catch (e) {
@@ -168,7 +168,7 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log(`message-${id} -> `, { id, message });
+      console.log(`message-${id} -> `, { id, context, message });
     }
     socket.to(id).emit(`message-${id}`, { id, message });
   });
