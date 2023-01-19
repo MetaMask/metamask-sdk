@@ -68,3 +68,4 @@ typings/
 # Rollup cache
 .rollup.cache/
 .vscode/settings.json
+packages/deve2e/sdk-comm

@@ -27,7 +27,7 @@ export const mainCommunication = async () => {
     communicationLayerPreference,
     platform,
     communicationServerUrl,
-    context: 'initiator',
+    context: 'dapp',
     enableDebug: true,
   });
 
@@ -42,7 +42,8 @@ export const mainCommunication = async () => {
     platform,
     otherPublicKey: pubKey,
     communicationServerUrl,
-    context: 'mm',
+    context: 'metamask',
+    enableDebug: true,
   });
 
   mmRemote.connectToChannel(channelId);
