@@ -28,6 +28,19 @@
   color: #61dafb;
 }
 
+.row {
+  display:flex;
+}
+.rowLabel {
+  width: 400px;
+  text-align: right;
+  padding-right: 10px;
+}
+.rowValue {
+  padding-left: 10px;
+}
+.even { color: cadetblue; }
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
