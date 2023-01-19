@@ -15,6 +15,7 @@ export enum MessageType {
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
+  CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
   ANSWER = 'answer',
   OFFER = 'offer',

@@ -3,3 +3,7 @@ export enum ProviderConstants {
   CONTENT_SCRIPT = 'metamask-contentscript',
   PROVIDER = 'metamask-provider',
 }
+
+export const ErrorMessages = {
+  MANUAL_DISCONNECT:"manual-disconnect"
+}

@@ -35,7 +35,7 @@ export class Ethereum {
     this.provider.on('_initialized', () => {
       const info = {
         chainId: this.provider.chainId,
-        isConnected: this.provider.isConnected,
+        isConnected: this.provider.isConnected(),
         isMetaNask: this.provider.isMetaMask,
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,

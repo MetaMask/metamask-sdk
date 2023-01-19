@@ -2,6 +2,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 
 export interface KeyExchangeProps {
@@ -49,7 +50,7 @@ export class KeyExchange extends EventEmitter2 {
     this.debug = debug;
 
     if (otherPublicKey) {
-      this.onOtherPublicKey(otherPublicKey);
+      this.setOtherPublicKey(otherPublicKey);
     }
     this.sendPublicKey = sendPublicKey;
 
@@ -83,8 +84,12 @@ export class KeyExchange extends EventEmitter2 {
       this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
       this.step = MessageType.KEY_HANDSHAKE_ACK;
 
+      if (this.debug) {
+        console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`);
+      }
+
       if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
-        this.onOtherPublicKey(message.pubkey);
+        this.setOtherPublicKey(message.pubkey);
       }
 
       this.communicationLayer.sendMessage({
@@ -94,7 +99,11 @@ export class KeyExchange extends EventEmitter2 {
     } else if (message.type === MessageType.KEY_HANDSHAKE_SYNACK) {
       this.checkStep(MessageType.KEY_HANDSHAKE_SYNACK);
 
-      this.onOtherPublicKey(message.pubkey ?? '');
+      if (this.debug) {
+        console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
+      }
+
+      this.setOtherPublicKey(message.pubkey ?? '');
 
       this.communicationLayer.sendMessage({
         type: MessageType.KEY_HANDSHAKE_ACK,
@@ -102,13 +111,26 @@ export class KeyExchange extends EventEmitter2 {
       this.keysExchanged = true;
       this.emit(MessageType.KEYS_EXCHANGED);
     } else if (message.type === MessageType.KEY_HANDSHAKE_ACK) {
+      if (this.debug) {
+        console.debug(
+          `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
+        );
+      }
       this.checkStep(MessageType.KEY_HANDSHAKE_ACK);
       this.keysExchanged = true;
       this.emit(MessageType.KEYS_EXCHANGED);
     }
   }
 
-  clean(): void {
+  setSendPublicKey(sendPublicKey: boolean) {
+    this.sendPublicKey = sendPublicKey;
+  }
+
+  clean(
+    { keepOtherPublicKey }: { keepOtherPublicKey?: boolean } = {
+      keepOtherPublicKey: false,
+    },
+  ): void {
     if (this.debug) {
       console.debug(
         `KeyExchange::${this.context}::clean reset handshake state`,
@@ -116,7 +138,9 @@ export class KeyExchange extends EventEmitter2 {
     }
     this.step = MessageType.KEY_HANDSHAKE_NONE;
     this.keysExchanged = false;
-    this.otherPublicKey = '';
+    if (!keepOtherPublicKey) {
+      this.otherPublicKey = '';
+    }
   }
 
   start(isOriginator: boolean): void {
@@ -144,10 +168,6 @@ export class KeyExchange extends EventEmitter2 {
     }
   }
 
-  private onOtherPublicKey(pubkey: string): void {
-    this.otherPublicKey = pubkey;
-  }
-
   areKeysExchanged() {
     return this.keysExchanged;
   }
@@ -156,17 +176,44 @@ export class KeyExchange extends EventEmitter2 {
     return this.myPublicKey;
   }
 
+  setOtherPublicKey(otherPubKey: string) {
+    if (this.debug) {
+      console.debug(`KeyExchange::setOtherPubKey()`, otherPubKey);
+    }
+    this.otherPublicKey = otherPubKey;
+  }
+
   encryptMessage(message: string): string {
     if (!this.otherPublicKey) {
-      throw new Error('Keys not exchanged');
+      throw new Error(
+        'encryptMessage: Keys not exchanged - missing otherPubKey',
+      );
     }
     return this.myECIES.encrypt(message, this.otherPublicKey);
   }
 
   decryptMessage(message: string): string {
     if (!this.otherPublicKey) {
-      throw new Error('Keys not exchanged');
+      throw new Error(
+        'decryptMessage: Keys not exchanged - missing otherPubKey',
+      );
     }
     return this.myECIES.decrypt(message);
+  }
+
+  getKeyInfo(): KeyInfo {
+    return {
+      ...this.myECIES.getKeyInfo(),
+      otherPubKey: this.otherPublicKey,
+    };
+  }
+
+  toString() {
+    const buf = {
+      keyInfo: this.getKeyInfo(),
+      keysExchanged: this.keysExchanged,
+      step: this.step,
+    };
+    console.debug(`KeyExchange::toString()`, buf);
   }
 }

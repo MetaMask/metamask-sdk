@@ -1,3 +1,4 @@
+import { ChannelConfig } from '@metamask/sdk-communication-layer';
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
@@ -36,6 +37,10 @@ export class WalletConnect implements ProviderService {
 
     this.universalLink = `${'https://metamask.app.link/wc?'}${linkParams}`;
     this.deepLink = `metamask://wc?${linkParams}`;
+  }
+
+  getChannelConfig(): ChannelConfig | undefined {
+    throw new Error('Method not implemented.');
   }
 
   getConnector() {

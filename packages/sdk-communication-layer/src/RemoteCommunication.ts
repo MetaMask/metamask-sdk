@@ -2,18 +2,25 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
 import { SendAnalytics } from './Analytics';
-import { DEFAULT_SERVER_URL, VERSION } from './config';
+import {
+  DEFAULT_SERVER_URL,
+  DEFAULT_SESSION_TIMEOUT_MS,
+  VERSION,
+} from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
+import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { ConnectionStatus } from './types/ConnectionStatus';
 import { DappMetadata } from './types/DappMetadata';
 import { MessageType } from './types/MessageType';
 import { OriginatorInfo } from './types/OriginatorInfo';
 import { TrackingEvents } from './types/TrackingEvent';
 import { WalletInfo } from './types/WalletInfo';
 import { WebRTCLib } from './types/WebRTCLib';
+import { StorageManager } from './utils/StorageManager';
 import { WebRTCService } from './WebRTCService';
 
 interface RemoteCommunicationProps {
@@ -49,6 +56,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private channelId?: string;
 
+  private channelConfig?: ChannelConfig;
+
   private walletInfo?: WalletInfo;
 
   private communicationLayer?: CommunicationLayer;
@@ -60,6 +69,12 @@ export class RemoteCommunication extends EventEmitter2 {
   private communicationServerUrl: string;
 
   private context: string;
+
+  // Status of the other side of the connection
+  // 1) if I am MetaMask then other is Dapp
+  // 2) If I am Dapp (isOriginator==true) then other side is MetaMask
+  // Should not be set directly, use this.setConnectionStatus() instead to always emit events.
+  private _connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 
   constructor({
     platform,
@@ -84,6 +99,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.enableDebug = enableDebug;
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
+    this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 
     this.initCommunicationLayer({
       communicationLayerPreference,
@@ -160,20 +176,22 @@ export class RemoteCommunication extends EventEmitter2 {
       platform: this.platform,
     };
 
-    this.communicationLayer.on(
+    this.communicationLayer?.on(
       MessageType.MESSAGE,
       (message: CommunicationLayerMessage) => {
         this.onCommunicationLayerMessage(message);
       },
     );
 
-    this.communicationLayer.on(MessageType.CLIENTS_READY, (message) => {
+    this.communicationLayer?.on(MessageType.CLIENTS_READY, (message) => {
       if (this.enableDebug) {
         console.debug(
           `[communication][${this.context}] received 'clients_ready' `,
           message,
         );
       }
+
+      this.setConnectionStatus(ConnectionStatus.LINKED);
 
       if (this.enableDebug && this.channelId) {
         SendAnalytics({
@@ -197,7 +215,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.emit(MessageType.CLIENTS_READY);
     });
 
-    this.communicationLayer.on(
+    this.communicationLayer?.on(
       MessageType.CLIENTS_DISCONNECTED,
       (channelId: string) => {
         if (this.enableDebug) {
@@ -214,7 +232,11 @@ export class RemoteCommunication extends EventEmitter2 {
           return;
         }
 
+        // if MM disconnected without pause -- an error occured and we need to re-initialize the state
+        // if Dapp disconnected without pause -- ok
         if (!this.isOriginator) {
+          // if I am on metamask -- force pause it
+          // reset encryption status to re-initialize key exchange
           this.paused = true;
           return;
         }
@@ -231,7 +253,7 @@ export class RemoteCommunication extends EventEmitter2 {
       },
     );
 
-    this.communicationLayer.on(MessageType.CHANNEL_CREATED, (id) => {
+    this.communicationLayer?.on(MessageType.CHANNEL_CREATED, (id) => {
       if (this.enableDebug) {
         console.debug(
           `RemoteCommunication::${this.context}::on 'channel_created' channelId=${id}`,
@@ -240,12 +262,13 @@ export class RemoteCommunication extends EventEmitter2 {
       this.emit(MessageType.CHANNEL_CREATED, id);
     });
 
-    this.communicationLayer.on(MessageType.CLIENTS_WAITING, (numberUsers) => {
+    this.communicationLayer?.on(MessageType.CLIENTS_WAITING, (numberUsers) => {
       if (this.enableDebug) {
         console.debug(
           `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers}`,
         );
 
+        this.setConnectionStatus(ConnectionStatus.WAITING);
         SendAnalytics({
           id: this.channelId ?? '',
           event: TrackingEvents.REQUEST,
@@ -259,6 +282,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   clean() {
+    if (this.enableDebug) {
+      console.debug(`RemoteCommunication::${this.context}::clean()`);
+    }
     this.channelId = undefined;
     this.connected = false;
   }
@@ -331,6 +357,34 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(MessageType.MESSAGE, message);
   }
 
+  startAutoConnect() {
+    const channelConfig = StorageManager.getPersistedChannelConfig();
+    console.debug(
+      `RemoteCommunication::autoConnect channelConfig`,
+      channelConfig,
+    );
+
+    if (channelConfig) {
+      const validSession = channelConfig.validUntil > new Date();
+      console.debug(
+        `validUntil=${channelConfig.validUntil} vs new Date()=${new Date()}`,
+        validSession,
+      );
+
+      if (validSession) {
+        this.channelConfig = channelConfig;
+        this.communicationLayer?.connectToChannel(
+          channelConfig.channelId,
+          true,
+        );
+      } else {
+        console.log(`RemoteCommunication::autoConnect Session has expired`);
+      }
+    } else {
+      console.debug(`RemoteCommunication::autoConnect not available`);
+    }
+  }
+
   generateChannelId() {
     if (!this.communicationLayer) {
       throw new Error('communication layer not initialized');
@@ -341,10 +395,23 @@ export class RemoteCommunication extends EventEmitter2 {
     }
 
     this.clean();
+    const channel = this.communicationLayer.createChannel();
 
-    const { channelId, pubKey } = this.communicationLayer.createChannel();
-    this.channelId = channelId;
-    return { channelId, pubKey };
+    const channelConfig = {
+      channelId: channel.channelId,
+      validUntil: new Date(Date.now() + DEFAULT_SESSION_TIMEOUT_MS),
+    };
+    this.channelConfig = channelConfig;
+    // save current channel config
+    StorageManager.persistChannelConfig(channelConfig);
+
+    this.channelId = channel.channelId;
+
+    return { channelId: this.channelId, pubKey: channel.pubKey };
+  }
+
+  getChannelConfig() {
+    return this.channelConfig;
   }
 
   isConnected() {
@@ -355,15 +422,52 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.paused;
   }
 
+  resetKeys() {
+    // Reset key exchange
+    console.debug(`RemoteCommunication::resetKeys()`);
+    this.communicationLayer?.resetKeys();
+  }
+
+  private setConnectionStatus(connectionStatus: ConnectionStatus) {
+    if (this.enableDebug) {
+      console.debug(
+        `RemoteCommunication::setConenctionStatus `,
+        connectionStatus,
+      );
+    }
+    this._connectionStatus = connectionStatus;
+    this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
+  }
+
+  getConnectionStatus() {
+    return this._connectionStatus;
+  }
+
+  getKeyInfo() {
+    return this.communicationLayer?.getKeyInfo();
+  }
+
   pause() {
+    if (this.enableDebug) {
+      console.debug(`RemoteCommunication::pause() `);
+    }
     this.communicationLayer?.pause();
+    this.setConnectionStatus(ConnectionStatus.PAUSED);
   }
 
   resume() {
+    if (this.enableDebug) {
+      console.debug(`RemoteCommunication::resume() `);
+    }
     this.communicationLayer?.resume();
+    this.setConnectionStatus(ConnectionStatus.LINKED);
   }
 
   disconnect() {
+    if (this.enableDebug) {
+      console.debug(`RemoteCommunication::disconnect() `);
+    }
     this.communicationLayer?.disconnect();
+    this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
   }
 }

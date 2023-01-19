@@ -49,7 +49,8 @@ export class RemoteCommunicationPostMessageStream
         // creating our own custom Provider extending the BaseProvider.
         // // instead we should extend the provider and have an accessible initialization method.
         // @ts-ignore
-        provider._state.isConnected = true;
+        // provider._state.isConnected = true;
+        provider._handleConnect(provider.chainId);
         // @ts-ignore
         provider._initializeState();
       } catch (err) {

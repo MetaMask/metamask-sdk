@@ -5,6 +5,7 @@ import {
   ECIESProps,
 } from '@metamask/sdk-communication-layer';
 import WebView from 'react-native-webview';
+import { ErrorMessages } from './constants';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
@@ -41,13 +42,13 @@ export interface MetaMaskSDKOptions {
 }
 
 export class MetaMaskSDK {
-  provider: MetaMaskInpageProvider;
+  private provider: MetaMaskInpageProvider;
 
-  remoteConnection?: RemoteConnection;
+  private remoteConnection?: RemoteConnection;
 
-  walletConnect?: WalletConnect;
+  private walletConnect?: WalletConnect;
 
-  installer?: MetaMaskInstaller;
+  private installer?: MetaMaskInstaller;
 
   constructor({
     dappMetadata,
@@ -152,7 +153,12 @@ export class MetaMaskSDK {
   }
 
   disconnect() {
+    console.debug(`initiate disconnection on SDK`);
     this.remoteConnection?.disconnect();
+    // TODO extend MetamaskProvider to avoid calling protected methods
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.provider._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
   }
 
   // Get the connector object from WalletConnect
@@ -162,6 +168,19 @@ export class MetaMaskSDK {
     }
 
     return this.walletConnect;
+  }
+
+  getChannelConfig() {
+    return this.remoteConnection?.getChannelConfig();
+  }
+
+  getKeyInfo() {
+    return this.remoteConnection?.getKeyInfo();
+  }
+
+  resetKeys() {
+    console.debug(`SDK::resetKeys()`);
+    this.remoteConnection?.resetKeys();
   }
 
   // Return the ethereum provider object

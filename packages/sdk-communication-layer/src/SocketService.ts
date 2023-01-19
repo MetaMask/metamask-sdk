@@ -1,3 +1,4 @@
+/* eslint-disable padding-line-between-statements */
 import { EventEmitter2 } from 'eventemitter2';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +9,7 @@ import { Channel } from './types/Channel';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 
 export interface SocketServiceProps {
@@ -79,16 +81,24 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (typeof window !== 'undefined') {
         window.removeEventListener('focus', connectAgain);
       }
+
+      if (this.debug) {
+        console.debug(
+          `SocketService::connectAgain trying to reconnect after socketio disconnection`,
+        );
+      }
       this.reconnect = true;
       this.socket.connect();
       this.socket.emit(MessageType.JOIN_CHANNEL, this.channelId);
     };
 
     const checkFocus = () => {
+      console.debug(`SocketService::checkFocus`);
       if (typeof window === 'undefined' || typeof document === 'undefined') {
         return;
       }
-      this.socket.disconnect();
+
+      this.disconnect();
       if (document.hasFocus()) {
         connectAgain();
       } else {
@@ -96,16 +106,18 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
     };
 
-    this.socket.on('error', () => {
-      // #if _WEB
+    this.socket.on('error', (error) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'error' `, error);
+      }
       checkFocus();
-      // #endif
     });
 
-    this.socket.on('disconnect', () => {
-      // #if _WEB
+    this.socket.on('disconnect', (reason) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'disconnect' `, reason);
+      }
       checkFocus();
-      // #endif
     });
 
     const keyExchangeInitParameter = {
@@ -126,6 +138,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     });
   }
 
+  resetKeys(): void {
+    // this.disconnect();
+    if (this.debug) {
+      console.debug(`SocketService::resetKeys()`);
+    }
+    this.keyExchange.clean();
+    this.keyExchange.start(this.isOriginator ?? false);
+  }
+
   private checkSameId(id: string) {
     if (id !== this.channelId) {
       if (this.debug) {
@@ -139,18 +160,22 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.on(`clients_connected-${channelId}`, (id: string) => {
       if (this.debug) {
         console.debug(
-          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}' isOriginator=${this.isOriginator}`,
+          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}' reconnect=${this.reconnect} isOriginator=${this.isOriginator}`,
           id,
         );
       }
-      this.channelId = id;
+      this.channelId = channelId;
       this.clientsConnected = true;
       if (this.isOriginator) {
+        console.log(
+          `AAAAAAAAAAAAAAAAAA areKeysExchanged=${this.keyExchange.areKeysExchanged()}`,
+        );
         if (!this.keyExchange.areKeysExchanged()) {
+          console.log(`BBBBBBBBBBBBBBBBBBBBBB`);
           this.keyExchange.start(this.isOriginator);
         }
       }
-
+      console.log(`CCCCCCCCCCCCCCCC this.reconnect=${this.reconnect}`);
       if (this.debug) {
         console.debug(
           `SocketService::${this.context}::setupChannelListener reconnect=${
@@ -161,6 +186,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         );
       }
 
+      // Is it a reconnection?
       if (this.reconnect) {
         if (this.keyExchange.areKeysExchanged()) {
           if (this.debug) {
@@ -168,6 +194,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
             );
           }
+          // here is when we resume from MM mobile
           this.sendMessage({ type: MessageType.READY });
           if (
             this.communicationLayerPreference ===
@@ -175,6 +202,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           ) {
             this.emit(MessageType.CLIENTS_READY, {
               isOriginator: this.isOriginator,
+              context: this.context,
             });
           }
         } else if (!this.isOriginator) {
@@ -188,9 +216,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             type: MessageType.KEY_HANDSHAKE_START,
           });
         }
-        // FIXME why turning reconnect at false?
-        // should we have max attempts instead?
-        // this.reconnect = false;
+        // reconnect switched when connection resume.
+        this.reconnect = false;
       }
     });
 
@@ -206,6 +233,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
       this.clientsConnected = false;
+      // FIXME reset key exchange after each disconnection, is it correct?
+      if (!this.isOriginator) {
+        this.keyExchange.clean({ keepOtherPublicKey: true });
+      }
       this.emit(MessageType.CLIENTS_DISCONNECTED, channelId);
     });
 
@@ -240,6 +271,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return this.keyExchange.start(this.isOriginator);
       }
 
+      // if(!this.isOriginator && message?.type.startsWith('key_handshake') && this.keyExchange.areKeysExchanged()) {
+      //   // dapp it trying to reconnect
+      //   return this.emit(MessageType.KEY_EXCHANGE, {
+      //     message,
+      //     context: this.context,
+      //   });
+      // }
       if (!this.keyExchange.areKeysExchanged()) {
         if (message?.type.startsWith('key_handshake')) {
           if (this.debug) {
@@ -250,6 +288,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           }
           return this.emit(MessageType.KEY_EXCHANGE, {
             message,
+            context: this.context,
           });
         }
         throw new Error('Keys not exchanged');
@@ -286,16 +325,27 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     return { channelId, pubKey: this.keyExchange.getMyPublicKey() };
   }
 
-  connectToChannel(channelId: string): void {
+  connectToChannel(channelId: string, isOriginator = false): void {
     if (this.debug) {
       console.debug(
-        `SocketService::${this.context}::createChannel() channelId=${channelId}`,
+        `SocketService::${this.context}::connectToChannel() channelId=${channelId} isOriginator=${isOriginator}`,
+        this.keyExchange.toString(),
       );
     }
     this.socket.connect();
+    this.isOriginator = isOriginator;
+    // if (isOriginator) {
+    //   // The following is to enable session persistence, public key needs to be resent
+    //   // this.keyExchange.clean();
+    //   // this.keyExchange.setSendPublicKey(true);
+    // }
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
     this.socket.emit(MessageType.JOIN_CHANNEL, channelId);
+  }
+
+  getKeyInfo(): KeyInfo {
+    return this.keyExchange.getKeyInfo();
   }
 
   sendMessage(message: CommunicationLayerMessage): void {
@@ -303,6 +353,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       throw new Error('Create a channel first');
     }
 
+    if (this.debug) {
+      console.debug(
+        `SocketService::${
+          this.context
+        }::sendMessage() areKeysExchanged=${this.keyExchange.areKeysExchanged()}`,
+        message,
+      );
+    }
     if (!this.keyExchange.areKeysExchanged()) {
       if (message?.type.startsWith('key_handshake')) {
         if (this.debug) {
@@ -311,7 +369,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             message,
           );
         }
-        this.socket.emit(MessageType.MESSAGE, { id: this.channelId, message });
+        this.socket.emit(MessageType.MESSAGE, {
+          id: this.channelId,
+          context: this.context,
+          message,
+        });
         return;
       }
 
@@ -330,6 +392,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     const messageToSend = {
       id: this.channelId,
+      context: this.context,
       message: encryptedMessage,
     };
     if (this.debug) {

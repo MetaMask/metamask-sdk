@@ -4,6 +4,7 @@ import { KeyExchange, KeyExchangeProps } from './KeyExchange';
 import { SocketService, SocketServiceProps } from './SocketService';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 import { WebRTCLib } from './types/WebRTCLib';
 
@@ -246,6 +247,10 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     this.socketService.connectToChannel(channelId);
   }
 
+  resetKeys(): void {
+    throw new Error('Method not implemented.');
+  }
+
   onMessage(message: { data: string }) {
     /* if (!message.isTrusted) {
       throw new Error('Message not trusted');
@@ -290,6 +295,10 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
 
   createChannel() {
     return this.socketService.createChannel();
+  }
+
+  getKeyInfo(): KeyInfo {
+    return this.socketService.getKeyInfo();
   }
 
   pause() {

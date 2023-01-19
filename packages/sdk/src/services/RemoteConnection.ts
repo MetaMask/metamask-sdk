@@ -2,10 +2,12 @@ import {
   CommunicationLayerPreference,
   DappMetadata,
   ECIESProps,
+  KeyInfo,
   MessageType,
   RemoteCommunication,
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
+import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
@@ -60,7 +62,6 @@ export class RemoteConnection implements ProviderService {
 
     const platform = Platform.getInstance();
 
-    // FIXME make sure that still works
     this.connector = new RemoteCommunication({
       platform: platform.getPlatformType(),
       communicationLayerPreference,
@@ -72,6 +73,7 @@ export class RemoteConnection implements ProviderService {
       context: 'dapp',
       ecies,
     });
+    this.connector.startAutoConnect();
 
     this.connector.on(MessageType.CLIENTS_DISCONNECTED, () => {
       this.sentFirstConnect = false;
@@ -90,6 +92,16 @@ export class RemoteConnection implements ProviderService {
   }
 
   startConnection() {
+    if (this.enableDebug) {
+      console.debug(`RemoteConnection::startConnection()`);
+    }
+
+    if (this.connector.isConnected()) {
+      console.debug(`RemoteConnection::startConnection() Already connected.`);
+      // Nothing to do, already connected.
+      return Promise.resolve(true);
+    }
+
     const { channelId, pubKey } = this.connector.generateChannelId();
     const linkParams = `channelId=${encodeURIComponent(
       channelId,
@@ -138,6 +150,19 @@ export class RemoteConnection implements ProviderService {
         this.sentFirstConnect = true;
       });
     });
+  }
+
+  getChannelConfig(): ChannelConfig | undefined {
+    return this.connector.getChannelConfig();
+  }
+
+  getKeyInfo(): KeyInfo | undefined {
+    return this.connector.getKeyInfo();
+  }
+
+  resetKeys() {
+    console.debug(`RemoteConnection::resetKeys()`);
+    this.connector.resetKeys();
   }
 
   getConnector() {
