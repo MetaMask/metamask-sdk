@@ -15,6 +15,8 @@ export enum MessageType {
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
+  // TERMINATE: used to inform the other side that connection is terminating and channel id needs to be changed.
+  TERMINATE = 'terminate',
   CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
   ANSWER = 'answer',

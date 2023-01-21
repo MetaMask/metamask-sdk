@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import { STORAGE_PATH } from '../config';
 import { ChannelConfig } from '../types/ChannelConfig';
 
@@ -12,7 +11,9 @@ export class StorageManager {
     if (this.hasLocalStorage()) {
       localStorage.setItem(STORAGE_PATH, payload);
     } else {
-      fs.writeFileSync(STORAGE_PATH, payload);
+      // const fs = await import('fs');
+      // console.log(`StorageManager::fs `, fs);
+      // fs.writeFileSync(STORAGE_PATH, payload);
     }
     console.debug(`StorageManager::persistChannel `, payload);
   }
@@ -22,7 +23,8 @@ export class StorageManager {
     if (this.hasLocalStorage()) {
       payload = localStorage.getItem(STORAGE_PATH);
     } else {
-      payload = fs.readFileSync(STORAGE_PATH).toString('utf-8');
+      // const fs = await import('fs');
+      // payload = fs.readFileSync(STORAGE_PATH).toString('utf-8');
     }
 
     console.debug(`StorageManager::getPersistedChannel payload`, payload);
@@ -39,6 +41,15 @@ export class StorageManager {
       channelConfig,
     );
     return channelConfig;
+  }
+
+  public static terminate(): void {
+    console.debug(`StorageManager::terminate()`);
+    if (this.hasLocalStorage()) {
+      localStorage.removeItem(STORAGE_PATH);
+    } else {
+      // handle system without localStorage
+    }
   }
 
   private static hasLocalStorage() {

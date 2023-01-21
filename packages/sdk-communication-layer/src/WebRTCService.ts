@@ -4,6 +4,7 @@ import { KeyExchange, KeyExchangeProps } from './KeyExchange';
 import { SocketService, SocketServiceProps } from './SocketService';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 import { WebRTCLib } from './types/WebRTCLib';
@@ -316,8 +317,8 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     this.socketService.resume();
   }
 
-  disconnect() {
-    this.socketService.disconnect();
+  disconnect(options?: DisconnectOptions) {
+    this.socketService.disconnect(options);
     this.webrtc?.close();
   }
 }

@@ -4,6 +4,10 @@ export const mainSDK = async () => {
   const sdk = new MetaMaskSDK({
     shouldShimWeb3: false,
     communicationServerUrl: 'http://localhost:5400/',
+    dappMetadata: {
+      name: 'NodeJS Console',
+      url: 'N/A',
+    },
   });
 
   const ethereum = sdk.getProvider();

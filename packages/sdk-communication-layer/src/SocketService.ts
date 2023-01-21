@@ -9,6 +9,7 @@ import { Channel } from './types/Channel';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 
@@ -117,7 +118,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         console.debug(`SocketService::on 'disconnect' `, reason);
       }
-      checkFocus();
+
+      if (!this.manualDisconnect) {
+        checkFocus();
+      }
     });
 
     const keyExchangeInitParameter = {
@@ -143,8 +147,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.debug) {
       console.debug(`SocketService::resetKeys()`);
     }
-    this.keyExchange.clean();
-    this.keyExchange.start(this.isOriginator ?? false);
+    this.keyExchange.resetKeys();
   }
 
   private checkSameId(id: string) {
@@ -235,7 +238,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.clientsConnected = false;
       // FIXME reset key exchange after each disconnection, is it correct?
       if (!this.isOriginator) {
-        this.keyExchange.clean({ keepOtherPublicKey: true });
+        this.keyExchange.clean();
       }
       this.emit(MessageType.CLIENTS_DISCONNECTED, channelId);
     });
@@ -271,13 +274,41 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return this.keyExchange.start(this.isOriginator);
       }
 
-      // if(!this.isOriginator && message?.type.startsWith('key_handshake') && this.keyExchange.areKeysExchanged()) {
-      //   // dapp it trying to reconnect
-      //   return this.emit(MessageType.KEY_EXCHANGE, {
-      //     message,
-      //     context: this.context,
-      //   });
-      // }
+      console.debug(
+        `XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX typeof message=${typeof message}`,
+      );
+      // Special case to manage resetting key exchange when keys are already exchanged
+      console.debug(
+        `originator=${this.isOriginator}, type=${
+          message?.type
+        }, keysExchanged=${this.keyExchange.areKeysExchanged()}, ${
+          message?.type === MessageType.KEY_HANDSHAKE_SYN
+        }, ${message?.type === MessageType.KEY_HANDSHAKE_SYN.toString()}`,
+      );
+      if (
+        !this.isOriginator &&
+        message?.type === MessageType.KEY_HANDSHAKE_SYN
+      ) {
+        console.debug(`BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB`);
+        if (this.debug) {
+          console.debug(
+            `SocketService::${this.context}::setupChannelListener received HANDSHAKE_SYN isOriginator=${this.isOriginator} --> emit KEY_EXCHANGE`,
+          );
+        }
+        // dapp is sending SYN trying to re-initialize the key exchange, respond with KEY_EXCHANGE
+        // update dapp public key
+        if (message?.pubkey) {
+          this.keyExchange.setOtherPublicKey(message.pubkey);
+        }
+
+        console.debug(`MMMMMMMMMMMMMMMMMMMMMMMM`);
+        return this.emit(MessageType.KEY_EXCHANGE, {
+          message,
+          context: this.context,
+        });
+      }
+
+      console.debug(`LLLLLLLLLLLLLLLLLLLLLLLLLLLL`);
       if (!this.keyExchange.areKeysExchanged()) {
         if (message?.type.startsWith('key_handshake')) {
           if (this.debug) {
@@ -296,6 +327,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
+      console.debug(
+        `SocketService::setupChannelLister decrypted message`,
+        messageReceived,
+      );
       return this.emit(MessageType.MESSAGE, messageReceived);
     });
 
@@ -317,6 +352,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::createChannel()`);
     }
+    this.manualDisconnect = false;
     this.socket.connect();
     this.isOriginator = true;
     const channelId = uuidv4();
@@ -332,13 +368,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.keyExchange.toString(),
       );
     }
+    this.manualDisconnect = false;
     this.socket.connect();
     this.isOriginator = isOriginator;
-    // if (isOriginator) {
-    //   // The following is to enable session persistence, public key needs to be resent
-    //   // this.keyExchange.clean();
-    //   // this.keyExchange.setSendPublicKey(true);
-    // }
+    if (isOriginator) {
+      // The following is to enable session persistence, public key needs to be resent
+      // this.keyExchange.clean();
+      this.keyExchange.setSendPublicKey(true);
+    }
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
     this.socket.emit(MessageType.JOIN_CHANNEL, channelId);
@@ -401,6 +438,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         messageToSend,
       );
     }
+
+    // special case handling for manual disconnect (TERMINATE message)
+    if (message.type === MessageType.TERMINATE) {
+      this.manualDisconnect = true;
+    }
     this.socket.emit(MessageType.MESSAGE, messageToSend);
   }
 
@@ -427,9 +469,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
   }
 
-  disconnect(): void {
+  disconnect(options?: DisconnectOptions): void {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::disconnect()`);
+    }
+    if (options?.terminate && this.keyExchange.areKeysExchanged()) {
+      this.manualDisconnect = true;
+      this.sendMessage({ type: MessageType.TERMINATE });
     }
     this.socket.disconnect();
     this.socket.close();

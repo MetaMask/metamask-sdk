@@ -1,9 +1,12 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
+  ConnectionStatus,
   DappMetadata,
   ECIESProps,
+  MessageType,
 } from '@metamask/sdk-communication-layer';
+import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
 import { ErrorMessages } from './constants';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
@@ -41,7 +44,7 @@ export interface MetaMaskSDKOptions {
   ecies?: ECIESProps;
 }
 
-export class MetaMaskSDK {
+export class MetaMaskSDK extends EventEmitter2 {
   private provider: MetaMaskInpageProvider;
 
   private remoteConnection?: RemoteConnection;
@@ -79,6 +82,8 @@ export class MetaMaskSDK {
     communicationServerUrl,
     ecies,
   }: MetaMaskSDKOptions = {}) {
+    super();
+
     const platform = Platform.init({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
@@ -122,6 +127,16 @@ export class MetaMaskSDK {
         remote: this.remoteConnection,
       });
 
+      // Bubble up the connection status event.
+      this.remoteConnection
+        .getConnector()
+        ?.on(
+          MessageType.CONNECTION_STATUS,
+          (connectionStatus: ConnectionStatus) => {
+            this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
+          },
+        );
+
       // Inject our provider into window.ethereum
       this.provider = initializeProvider({
         platformType,
@@ -154,11 +169,13 @@ export class MetaMaskSDK {
 
   disconnect() {
     console.debug(`initiate disconnection on SDK`);
-    this.remoteConnection?.disconnect();
+    this.remoteConnection?.disconnect({ terminate: true });
     // TODO extend MetamaskProvider to avoid calling protected methods
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    this.provider._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
+    this.provider._state.isConnected = false;
+    this.provider.emit('disconnect', '');
+    // this.provider._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
   }
 
   // Get the connector object from WalletConnect

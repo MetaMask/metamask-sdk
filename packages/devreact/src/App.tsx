@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
-import { ChannelConfig, CommunicationLayerPreference, ConnectionStatus, KeyInfo } from '@metamask/sdk-communication-layer';
+import { ChannelConfig, CommunicationLayerPreference, ConnectionStatus, KeyInfo, MessageType } from '@metamask/sdk-communication-layer';
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
@@ -72,16 +72,30 @@ export const App = () => {
       console.log(accounts);
       setAccount((accounts as string[])?.[0]);
     });
-    window.ethereum?.on('connect', (connectInfo) => {
+    window.ethereum?.on('connect', (_connectInfo) => {
+      const connectInfo = _connectInfo as {chainId: string};
       console.log(`connected`, connectInfo);
       setConnected(true);
+      setChain(connectInfo.chainId);
       setChannelConfig(sdk.getChannelConfig());
       setKeyInfo(sdk.getKeyInfo());
     })
     window.ethereum?.on("disconnect", (error) => {
       console.log('disconnected', error);
       setConnected(false);
+      setChannelConfig(undefined);
+      setKeyInfo(undefined);
     });
+    window.ethereum?.on("disconnected", (error) => {
+      console.log('disconnected', error);
+      setConnected(false);
+      // setChannelConfig(undefined);
+      // setKeyInfo(undefined);
+    });
+
+    sdk.on(MessageType.CONNECTION_STATUS, (connectionStatus) => {
+      setConnectionStatus(connectionStatus);
+    })
   }, []);
 
   const sendTransaction = async () => {
@@ -182,6 +196,7 @@ export const App = () => {
     var method = "eth_signTypedData_v4";
 
     try {
+      console.debug(`params`, params);
       const resp = await window.ethereum?.request({ method, params });
       setResponse(resp);
     } catch (e) {
@@ -202,19 +217,22 @@ export const App = () => {
     <div className="App">
       <div className="sdkConfig">
         <>
+          <p>
+            Connection Status: <strong>{connectionStatus}</strong>
+          </p>
           <p>ChannelId: {channelConfig?.channelId}</p>
           <p>{`Expiration: ${channelConfig?.validUntil ?? ''}`}</p>
           <div>
             <div className='row'>
               <div className='rowLabel'>DAPP Private Key:</div>
-              <div className='rowValue even'>{keyInfo?.encryptionKey}</div>
+              <div className='rowValue even'>{keyInfo?.private}</div>
             </div>
             <div className='row'>
               <div className='rowLabel'>DAPP Public Key:</div>
-              <div className='rowValue odd'>{keyInfo?.decryptionKey}</div>
+              <div className='rowValue odd'>{keyInfo?.public}</div>
             </div>
             <div className='row'>
-              <div className='rowLabel'>MM Private Key:</div>
+              <div className='rowLabel'>MM Public Key:</div>
               <div className='rowValue even'>{keyInfo?.otherPubKey}</div>
             </div>
           </div>
@@ -249,15 +267,13 @@ export const App = () => {
         }
 
         <div>
-          {connected ?
+          {connected &&
             <>
               {chain && `Connected chain: ${chain}`}
               <p></p>
               {account && `Connected account: ${account}`}
               <p></p>
               {response && `Last request response: ${response}`}
-            </> : <>
-              __DISCONNECTED__
             </>
           }
         </div>

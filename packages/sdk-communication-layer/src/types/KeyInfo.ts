@@ -1,5 +1,5 @@
 export interface KeyInfo {
-  encryptionKey: string;
-  decryptionKey: string;
+  public: string;
+  private: string;
   otherPubKey?: string;
 }

@@ -1,6 +1,7 @@
 import {
   CommunicationLayerPreference,
   DappMetadata,
+  DisconnectProps,
   ECIESProps,
   KeyInfo,
   MessageType,
@@ -73,8 +74,8 @@ export class RemoteConnection implements ProviderService {
       context: 'dapp',
       ecies,
     });
-    this.connector.startAutoConnect();
 
+    this.connector.startAutoConnect();
     this.connector.on(MessageType.CLIENTS_DISCONNECTED, () => {
       this.sentFirstConnect = false;
     });
@@ -177,7 +178,7 @@ export class RemoteConnection implements ProviderService {
     return this.connector.isPaused();
   }
 
-  disconnect(): void {
-    return this.connector.disconnect();
+  disconnect(options?: DisconnectProps): void {
+    return this.connector.disconnect(options);
   }
 }

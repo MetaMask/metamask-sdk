@@ -126,11 +126,12 @@ export class KeyExchange extends EventEmitter2 {
     this.sendPublicKey = sendPublicKey;
   }
 
-  clean(
-    { keepOtherPublicKey }: { keepOtherPublicKey?: boolean } = {
-      keepOtherPublicKey: false,
-    },
-  ): void {
+  resetKeys(ecies?: ECIESProps) {
+    this.clean();
+    this.myECIES = new ECIES(ecies);
+  }
+
+  clean(): void {
     if (this.debug) {
       console.debug(
         `KeyExchange::${this.context}::clean reset handshake state`,
@@ -138,9 +139,7 @@ export class KeyExchange extends EventEmitter2 {
     }
     this.step = MessageType.KEY_HANDSHAKE_NONE;
     this.keysExchanged = false;
-    if (!keepOtherPublicKey) {
-      this.otherPublicKey = '';
-    }
+    this.otherPublicKey = '';
   }
 
   start(isOriginator: boolean): void {

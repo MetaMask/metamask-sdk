@@ -42,7 +42,7 @@ export class RemoteCommunicationPostMessageStream
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(MessageType.MESSAGE, this._onMessage);
 
-    this.remote.on(MessageType.CLIENTS_READY, () => {
+    this.remote.on(MessageType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
@@ -50,9 +50,17 @@ export class RemoteCommunicationPostMessageStream
         // // instead we should extend the provider and have an accessible initialization method.
         // @ts-ignore
         // provider._state.isConnected = true;
-        provider._handleConnect(provider.chainId);
+        // provider._handleConnect(provider.chainId);
+        // re-initialize chainId
+        // const chainId = await provider.request({ method: 'eth_chainId' });
         // @ts-ignore
-        provider._initializeState();
+        provider._state.initialized = false;
+        // @ts-ignore
+        await provider._initializeStateAsync();
+        // @ts-ignore
+        console.debug(`provider.state`, provider._state);
+        // const accounts = await provider.request({ method: 'eth_requestAccounts' });
+        // console.debug(`LLLKKKKKKK chainId=${chainId}`, chainId);
       } catch (err) {
         // Ignore error if already initialized.
         // console.debug(`IGNORE ERROR`, err);
@@ -65,12 +73,12 @@ export class RemoteCommunicationPostMessageStream
     });
 
     this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
+      console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
       // FIXME same issue as stated above
       const provider = Ethereum.getProvider();
       // @ts-ignore
-      provider._handleAccountsChanged([]);
-      // @ts-ignore
-      provider._handleDisconnect(true);
+      provider._state.isConnected = false;
+      provider.emit('disconnect', '');
     });
   }
 

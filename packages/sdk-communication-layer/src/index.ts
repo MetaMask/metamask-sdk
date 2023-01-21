@@ -11,6 +11,7 @@ import { WalletInfo } from './types/WalletInfo';
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { ChannelConfig } from './types/ChannelConfig';
 import { KeyInfo } from './types/KeyInfo';
+import { DisconnectOptions } from './types/DisconnectOptions';
 
 export type {
   WebRTCLib,
@@ -21,6 +22,7 @@ export type {
   CommunicationLayerMessage,
   OriginatorInfo,
   ECIESProps,
+  DisconnectOptions as DisconnectProps,
 };
 
 export {

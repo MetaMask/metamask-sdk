@@ -1,6 +1,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { Channel } from './Channel';
 import { CommunicationLayerMessage } from './CommunicationLayerMessage';
+import { DisconnectOptions } from './DisconnectOptions';
 import { KeyInfo } from './KeyInfo';
 
 export interface CommunicationLayer extends EventEmitter2 {
@@ -11,5 +12,5 @@ export interface CommunicationLayer extends EventEmitter2 {
   pause(): void;
   resetKeys(): void;
   resume(): void;
-  disconnect(): void;
+  disconnect(options?: DisconnectOptions): void;
 }

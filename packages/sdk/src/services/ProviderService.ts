@@ -1,6 +1,6 @@
 import {
-  RemoteCommunication,
   ChannelConfig,
+  DisconnectProps, RemoteCommunication
 } from '@metamask/sdk-communication-layer';
 
 export interface ProviderService {
@@ -9,5 +9,5 @@ export interface ProviderService {
   getConnector(): RemoteCommunication | unknown;
   getUniversalLink(): string;
   getChannelConfig(): ChannelConfig | undefined;
-  disconnect(): void;
+  disconnect(options?: DisconnectProps): void;
 }

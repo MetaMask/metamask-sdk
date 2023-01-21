@@ -15,6 +15,7 @@ import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { DappMetadata } from './types/DappMetadata';
+import { DisconnectOptions } from './types/DisconnectOptions';
 import { MessageType } from './types/MessageType';
 import { OriginatorInfo } from './types/OriginatorInfo';
 import { TrackingEvents } from './types/TrackingEvent';
@@ -226,6 +227,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
         // First bubble up the disconnect event otherwise it would be missed.
         this.emit(MessageType.CLIENTS_DISCONNECTED, this.channelId);
+        this.setConnectionStatus(ConnectionStatus.WAITING);
 
         // Then pause or cleanup the listeners.
         if (this.paused) {
@@ -344,9 +346,22 @@ export class RemoteCommunication extends EventEmitter2 {
       });
       this.paused = false;
       return;
+    } else if (message.type === MessageType.TERMINATE) {
+      // Needs to manually emit CLIENTS_DISCONNECTED because it won't receive it after the socket is closed.
+      this.emit(MessageType.CLIENTS_DISCONNECTED);
+      // remove channel config from persistence layer and close ative connections.
+      StorageManager.terminate();
+      this.disconnect();
+      this.setConnectionStatus(ConnectionStatus.TERMINATED);
+      // Reset keyexchange
+      this.communicationLayer?.resetKeys();
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
     } else if (message.type === MessageType.READY) {
+      if (this.paused) {
+        // restarting from pause
+        this.setConnectionStatus(ConnectionStatus.LINKED);
+      }
       this.paused = false;
       this.emit(MessageType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
@@ -357,7 +372,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(MessageType.MESSAGE, message);
   }
 
-  startAutoConnect() {
+  async startAutoConnect(): Promise<void> {
     const channelConfig = StorageManager.getPersistedChannelConfig();
     console.debug(
       `RemoteCommunication::autoConnect channelConfig`,
@@ -463,11 +478,16 @@ export class RemoteCommunication extends EventEmitter2 {
     this.setConnectionStatus(ConnectionStatus.LINKED);
   }
 
-  disconnect() {
+  disconnect(options?: DisconnectOptions) {
     if (this.enableDebug) {
       console.debug(`RemoteCommunication::disconnect() `);
     }
-    this.communicationLayer?.disconnect();
-    this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+    this.connected = false;
+    this.communicationLayer?.disconnect(options);
+    if (options?.terminate) {
+      this.setConnectionStatus(ConnectionStatus.TERMINATED);
+    } else {
+      this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+    }
   }
 }
