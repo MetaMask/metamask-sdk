@@ -208,9 +208,8 @@ export const App = () => {
     sdk.disconnect();
   }
 
-  const reset = () => {
-    console.debug(`init reset`);
-    sdk.resetKeys();
+  const terminate = () => {
+    sdk.terminate();
   }
 
   return (
@@ -260,8 +259,8 @@ export const App = () => {
             <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect}  disabled={!connected}>
               Disconnect
             </button>
-            <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={reset}  disabled={!connected}>
-              Reset
+            <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate}  disabled={!connected}>
+              Terminate
             </button>
           </>
         }

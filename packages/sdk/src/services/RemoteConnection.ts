@@ -12,6 +12,7 @@ import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/Channe
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
+import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
 interface RemoteConnectionProps {
@@ -126,7 +127,10 @@ export class RemoteConnection implements ProviderService {
     let installModal: any;
 
     if (showQRCode) {
-      installModal = InstallModal({ link: universalLink });
+      installModal = InstallModal({
+        link: universalLink,
+        debug: this.enableDebug,
+      });
       // console.log('OPEN LINK QRCODE', universalLink);
     } else {
       // console.log('OPEN LINK', universalLink);
@@ -179,6 +183,13 @@ export class RemoteConnection implements ProviderService {
   }
 
   disconnect(options?: DisconnectProps): void {
+    const provider = Ethereum.getProvider();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    provider._state.isConnected = false;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    provider._handleDisconnect(false);
     return this.connector.disconnect(options);
   }
 }

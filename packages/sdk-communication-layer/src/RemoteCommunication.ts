@@ -409,6 +409,9 @@ export class RemoteCommunication extends EventEmitter2 {
       throw new Error('Channel already created');
     }
 
+    // try to re-use existing channel id.
+    this.startAutoConnect();
+
     this.clean();
     const channel = this.communicationLayer.createChannel();
 

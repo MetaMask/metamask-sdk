@@ -167,15 +167,20 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
   }
 
-  disconnect() {
+  terminate() {
     console.debug(`initiate disconnection on SDK`);
     this.remoteConnection?.disconnect({ terminate: true });
     // TODO extend MetamaskProvider to avoid calling protected methods
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.provider._state.isConnected = false;
-    this.provider.emit('disconnect', '');
+    this.provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
     // this.provider._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
+  }
+
+  disconnect() {
+    console.debug(`initiate disconnection on SDK`);
+    this.remoteConnection?.disconnect();
   }
 
   // Get the connector object from WalletConnect
