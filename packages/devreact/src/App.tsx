@@ -89,12 +89,11 @@ export const App = () => {
     window.ethereum?.on("disconnected", (error) => {
       console.log('disconnected', error);
       setConnected(false);
-      // setChannelConfig(undefined);
-      // setKeyInfo(undefined);
     });
 
     sdk.on(MessageType.CONNECTION_STATUS, (connectionStatus) => {
       setConnectionStatus(connectionStatus);
+      setChannelConfig(sdk.getChannelConfig());
     })
   }, []);
 

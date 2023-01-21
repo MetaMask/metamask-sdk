@@ -93,53 +93,53 @@ export class RemoteConnection implements ProviderService {
     return this.universalLink;
   }
 
-  startConnection() {
-    if (this.enableDebug) {
-      console.debug(`RemoteConnection::startConnection()`);
-    }
-
-    if (this.connector.isConnected()) {
-      console.debug(`RemoteConnection::startConnection() Already connected.`);
-      // Nothing to do, already connected.
-      return Promise.resolve(true);
-    }
-
-    const { channelId, pubKey } = this.connector.generateChannelId();
-    const linkParams = `channelId=${encodeURIComponent(
-      channelId,
-    )}&comm=${encodeURIComponent(
-      this.communicationLayerPreference,
-    )}&pubkey=${encodeURIComponent(pubKey)}`;
-
-    const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-    const deeplink = `metamask://connect?${linkParams}`;
-
-    const platformType = Platform.getInstance().getPlatformType();
-
-    /* #if _REACTNATIVE
-    const showQRCode = false
-    //#else */
-    const showQRCode =
-      platformType === PlatformType.DesktopWeb ||
-      platformType === PlatformType.NonBrowser;
-    // #endif
-
-    let installModal: any;
-
-    if (showQRCode) {
-      installModal = InstallModal({
-        link: universalLink,
-        debug: this.enableDebug,
-      });
-      // console.log('OPEN LINK QRCODE', universalLink);
-    } else {
-      // console.log('OPEN LINK', universalLink);
-      Platform.getInstance().openDeeplink?.(universalLink, deeplink, '_self');
-    }
-
-    this.universalLink = universalLink;
-
+  startConnection(): Promise<boolean> {
     return new Promise<boolean>((resolve) => {
+      if (this.enableDebug) {
+        console.debug(`RemoteConnection::startConnection()`);
+      }
+
+      if (this.connector.isConnected()) {
+        console.debug(`RemoteConnection::startConnection() Already connected.`);
+        // Nothing to do, already connected.
+        return resolve(true);
+      }
+
+      const { channelId, pubKey } = this.connector.generateChannelId();
+      const linkParams = `channelId=${encodeURIComponent(
+        channelId,
+      )}&comm=${encodeURIComponent(
+        this.communicationLayerPreference,
+      )}&pubkey=${encodeURIComponent(pubKey)}`;
+
+      const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+      const deeplink = `metamask://connect?${linkParams}`;
+
+      const platformType = Platform.getInstance().getPlatformType();
+
+      /* #if _REACTNATIVE
+      const showQRCode = false
+      //#else */
+      const showQRCode =
+        platformType === PlatformType.DesktopWeb ||
+        platformType === PlatformType.NonBrowser;
+      // #endif
+
+      let installModal: any;
+
+      if (showQRCode) {
+        installModal = InstallModal({
+          link: universalLink,
+          debug: this.enableDebug,
+        });
+        // console.log('OPEN LINK QRCODE', universalLink);
+      } else {
+        // console.log('OPEN LINK', universalLink);
+        Platform.getInstance().openDeeplink?.(universalLink, deeplink, '_self');
+      }
+
+      this.universalLink = universalLink;
+
       this.connector.once(MessageType.CLIENTS_READY, () => {
         if (
           installModal?.onClose &&
@@ -151,9 +151,12 @@ export class RemoteConnection implements ProviderService {
         if (this.sentFirstConnect) {
           return;
         }
-        resolve(true);
         this.sentFirstConnect = true;
+
+        resolve(true);
       });
+
+      return true;
     });
   }
 

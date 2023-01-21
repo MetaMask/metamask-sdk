@@ -53,6 +53,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private installer?: MetaMaskInstaller;
 
+  private dappMetadata?: DappMetadata;
+
   constructor({
     dappMetadata,
     // Provider
@@ -90,6 +92,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       wakeLockStatus: wakeLockType,
     });
 
+    this.dappMetadata = dappMetadata;
     const platformType = platform.getPlatformType();
     const isNonBrowser = platformType === PlatformType.NonBrowser;
 
@@ -200,9 +203,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.remoteConnection?.getKeyInfo();
   }
 
-  resetKeys() {
-    console.debug(`SDK::resetKeys()`);
-    this.remoteConnection?.resetKeys();
+  getDappMetadata(): DappMetadata | undefined {
+    return this.dappMetadata;
   }
 
   // Return the ethereum provider object

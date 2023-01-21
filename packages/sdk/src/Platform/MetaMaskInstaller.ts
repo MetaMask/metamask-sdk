@@ -77,12 +77,17 @@ export class MetaMaskInstaller {
 
     // If is not installed, start remote connection
     this.isInstalling = true;
-    const startedRemoteConnection = await this.remote.startConnection();
-    if (startedRemoteConnection) {
-      this.isInstalling = false;
-      this.hasInstalled = true;
+    try {
+      const startedRemoteConnection = await this.remote.startConnection();
+      if (startedRemoteConnection) {
+        this.isInstalling = false;
+        this.hasInstalled = true;
+      }
+      return startedRemoteConnection;
+    } catch (err) {
+      console.error(`An error occured`, err);
     }
-    return startedRemoteConnection;
+    return false;
   }
 
   async checkInstallation() {
