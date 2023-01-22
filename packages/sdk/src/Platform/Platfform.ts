@@ -9,6 +9,7 @@ interface PlatformProps {
   useDeepLink: boolean;
   preferredOpenLink?: (link: string, target?: string) => void;
   wakeLockStatus?: WakeLockStatus;
+  debug?: boolean;
 }
 
 /**
@@ -31,15 +32,19 @@ export class Platform {
 
   private preferredOpenLink?;
 
+  private debug = false;
+
   private constructor({
     useDeepLink,
     preferredOpenLink,
     wakeLockStatus = WakeLockStatus.Temporary,
+    debug = false,
   }: PlatformProps) {
     this.platformType = this.getPlatformType();
     this.useDeeplink = useDeepLink;
     this.preferredOpenLink = preferredOpenLink;
     this.wakeLockStatus = wakeLockStatus;
+    this.debug = debug;
   }
 
   public static init(props: PlatformProps): Platform {
@@ -96,8 +101,13 @@ export class Platform {
     this.enableWakeLock();
     // #endif
 
-    console.debug(`Platform::openDeepLink universalLink --> ${universalLink}`);
-    console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
+    if (this.debug) {
+      console.debug(
+        `Platform::openDeepLink universalLink --> ${universalLink}`,
+      );
+      console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
+    }
+
     if (this.preferredOpenLink) {
       this.preferredOpenLink(universalLink, target);
       return;
@@ -126,11 +136,13 @@ export class Platform {
 
   isMetaMaskInstalled() {
     const eth = Ethereum.getProvider() || window?.ethereum;
-    console.debug(
-      `Platform::isMetaMaskInstalled isMetaMask=${
-        eth?.isMetaMask
-      } isConnected=${eth?.isConnected()}`,
-    );
+    if (this.debug) {
+      console.debug(
+        `Platform::isMetaMaskInstalled isMetaMask=${
+          eth?.isMetaMask
+        } isConnected=${eth?.isConnected()}`,
+      );
+    }
     return eth?.isMetaMask && eth?.isConnected();
   }
 

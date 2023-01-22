@@ -8,10 +8,10 @@ const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   communicationServerUrl: 'http://localhost:5400',
-  enableDebug: true,
+  enableDebug: false,
   ecies: {
     enabled:true,
-    debug:true,
+    debug:false,
   }
 });
 
@@ -62,7 +62,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    console.debug(`useEffect`, window.ethereum);
+    console.debug(`App::useEffect`, window.ethereum);
 
     window.ethereum?.on("chainChanged", (chain) => {
       console.log(chain);

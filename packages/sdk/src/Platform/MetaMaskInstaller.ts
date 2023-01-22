@@ -11,6 +11,7 @@ import { Platform } from './Platfform';
 interface InstallerProps {
   preferDesktop: boolean;
   remote: ProviderService;
+  debug?: boolean;
 }
 
 /**
@@ -19,19 +20,26 @@ interface InstallerProps {
 export class MetaMaskInstaller {
   private static instance: MetaMaskInstaller;
 
-  isInstalling = false;
+  private isInstalling = false;
 
-  hasInstalled = false;
+  private hasInstalled = false;
 
-  resendRequest = null;
+  private resendRequest = null;
 
-  preferDesktop = false;
+  private preferDesktop = false;
 
-  remote: ProviderService;
+  private remote: ProviderService;
 
-  private constructor({ preferDesktop, remote }: InstallerProps) {
+  private debug = false;
+
+  private constructor({
+    preferDesktop,
+    remote,
+    debug = false,
+  }: InstallerProps) {
     this.preferDesktop = preferDesktop;
     this.remote = remote;
+    this.debug = debug;
   }
 
   public static init(props: InstallerProps): MetaMaskInstaller {
@@ -93,7 +101,12 @@ export class MetaMaskInstaller {
   async checkInstallation() {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
-    console.log(`checkInstallation isInstalled=${isInstalled}`);
+    if (this.debug) {
+      console.log(
+        `MetamaskInstaller::checkInstallation() isInstalled=${isInstalled}`,
+      );
+    }
+
     // No need to do anything
     if (isInstalled) {
       return true;

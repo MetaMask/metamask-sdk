@@ -58,9 +58,11 @@ const initializeProvider = ({
   const sendRequest = async (method: string, args: any, f: any) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
-    console.debug(
-      `initialiaeProvider::sendRequest method=${method} isInstalled=${isInstalled}`,
-    );
+    if (debug) {
+      console.debug(
+        `initializeProvider::sendRequest() method=${method} isInstalled=${isInstalled}`,
+      );
+    }
 
     if (!isInstalled && method !== 'metamask_getProviderState') {
       if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {

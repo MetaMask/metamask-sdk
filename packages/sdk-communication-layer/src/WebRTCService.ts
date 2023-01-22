@@ -249,7 +249,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
   }
 
   resetKeys(): void {
-    throw new Error('Method not implemented.');
+    this.socketService.resetKeys();
   }
 
   onMessage(message: { data: string }) {

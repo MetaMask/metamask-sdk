@@ -6,7 +6,7 @@ import {
   KeyInfo,
   MessageType,
   RemoteCommunication,
-  WebRTCLib,
+  WebRTCLib
 } from '@metamask/sdk-communication-layer';
 import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
 import { Platform } from '../Platform/Platfform';
@@ -28,23 +28,23 @@ interface RemoteConnectionProps {
   ecies?: ECIESProps;
 }
 export class RemoteConnection implements ProviderService {
-  connector: RemoteCommunication;
+  private connector: RemoteCommunication;
 
-  dappMetadata?: DappMetadata;
+  private dappMetadata?: DappMetadata;
 
-  transports?: string[];
+  private transports?: string[];
 
-  webRTCLib?: WebRTCLib;
+  private webRTCLib?: WebRTCLib;
 
-  universalLink?: string;
+  private universalLink?: string;
 
-  enableDebug: boolean;
+  private enableDebug: boolean;
 
-  forceRestart = false;
+  private forceRestart = false;
 
-  sentFirstConnect = false;
+  private sentFirstConnect = false;
 
-  communicationLayerPreference: CommunicationLayerPreference;
+  private communicationLayerPreference: CommunicationLayerPreference;
 
   constructor({
     dappMetadata,
@@ -166,11 +166,6 @@ export class RemoteConnection implements ProviderService {
 
   getKeyInfo(): KeyInfo | undefined {
     return this.connector.getKeyInfo();
-  }
-
-  resetKeys() {
-    console.debug(`RemoteConnection::resetKeys()`);
-    this.connector.resetKeys();
   }
 
   getConnector() {

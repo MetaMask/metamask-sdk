@@ -19,7 +19,7 @@ export class RemoteCommunicationPostMessageStream
 {
   private _name: any;
 
-  remote: RemoteCommunication;
+  private remote: RemoteCommunication;
 
   private debug;
 
@@ -47,33 +47,36 @@ export class RemoteCommunicationPostMessageStream
         const provider = Ethereum.getProvider();
         // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
         // creating our own custom Provider extending the BaseProvider.
-        // // instead we should extend the provider and have an accessible initialization method.
-        // @ts-ignore
-        // provider._state.isConnected = true;
-        // provider._handleConnect(provider.chainId);
-        // re-initialize chainId
-        // const chainId = await provider.request({ method: 'eth_chainId' });
+        // instead we should extend the provider and have an accessible initialization method.
+
         // @ts-ignore
         provider._state.initialized = false;
         // @ts-ignore
         await provider._initializeStateAsync();
-        // @ts-ignore
-        console.debug(`provider.state`, provider._state);
-        // const accounts = await provider.request({ method: 'eth_requestAccounts' });
-        // console.debug(`LLLKKKKKKK chainId=${chainId}`, chainId);
+        if (debug) {
+          console.debug(
+            `RCPMS::on 'clients_ready' provider.state`, // @ts-ignore
+            provider._state,
+          );
+        }
       } catch (err) {
         // Ignore error if already initialized.
         // console.debug(`IGNORE ERROR`, err);
       }
 
-      console.debug(`'[RCPMS] clients_ready' - ethereum provider initialized.`);
-      // TODO remove extra platform check
       const isInstalled = Platform.getInstance().isMetaMaskInstalled();
-      console.debug(`[RCPMS] check platform state: isInstalled=${isInstalled}`);
+      if (this.debug) {
+        console.debug(
+          `'[RCPMS] clients_ready' - ethereum provider initialized,  isInstalled=${isInstalled}`,
+        );
+      }
     });
 
     this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
-      console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
+      if (this.debug) {
+        console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
+      }
+
       // FIXME same issue as stated above
       const provider = Ethereum.getProvider();
       // @ts-ignore
@@ -88,7 +91,10 @@ export class RemoteCommunicationPostMessageStream
     callback: (error?: Error | null) => void,
   ) {
     if (!this.remote.isConnected()) {
-      console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
+      if (this.debug) {
+        console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
+      }
+
       return callback();
     }
 
@@ -112,9 +118,11 @@ export class RemoteCommunicationPostMessageStream
 
       if (!isReactNative && (isDesktop || isNotBrowser)) {
         // Redirect early if nodejs or browser...
-        console.log(
-          `RCPMS::_write isDektop=${isDesktop} isNotBrowser=${isNotBrowser}`,
-        );
+        if (this.debug) {
+          console.log(
+            `RCPMS::_write isDektop=${isDesktop} isNotBrowser=${isNotBrowser}`,
+          );
+        }
         return callback();
       }
 
@@ -122,10 +130,12 @@ export class RemoteCommunicationPostMessageStream
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
-        console.debug(
-          `RCPMS::_write redirect link for '${targetMethod}'`,
-          'metamasl://',
-        );
+        if (this.debug) {
+          console.debug(
+            `RCPMS::_write redirect link for '${targetMethod}'`,
+            'metamasl://',
+          );
+        }
 
         platform.openDeeplink(
           'https://metamask.app.link/',
@@ -162,7 +172,10 @@ export class RemoteCommunicationPostMessageStream
     /* if (this._origin !== '*' && event.origin !== this._origin) {
       return;
     }*/
-    console.log(`[RCPMS] _onMessage `, message);
+    if (this.debug) {
+      console.debug(`[RCPMS] _onMessage `, message);
+    }
+
     const typeOfMsg = typeof message;
 
     if (!message || typeOfMsg !== 'object') {

@@ -52,7 +52,6 @@ export const getPostMessageStream = ({
     throw new Error(`Missing remote conenction parameter`);
   }
 
-  console.log(`using RemoteCommunicationPostMessageStream`);
   return new RemoteCommunicationPostMessageStream({
     name,
     remote: remoteConnection.getConnector(),

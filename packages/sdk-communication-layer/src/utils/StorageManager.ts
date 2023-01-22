@@ -15,7 +15,7 @@ export class StorageManager {
       // console.log(`StorageManager::fs `, fs);
       // fs.writeFileSync(STORAGE_PATH, payload);
     }
-    console.debug(`StorageManager::persistChannel `, payload);
+    // console.debug(`StorageManager::persistChannel `, payload);
   }
 
   public static getPersistedChannelConfig(): ChannelConfig | undefined {
@@ -27,7 +27,7 @@ export class StorageManager {
       // payload = fs.readFileSync(STORAGE_PATH).toString('utf-8');
     }
 
-    console.debug(`StorageManager::getPersistedChannel payload`, payload);
+    // console.debug(`StorageManager::getPersistedChannel payload`, payload);
 
     if (!payload) {
       return undefined;

@@ -374,17 +374,15 @@ export class RemoteCommunication extends EventEmitter2 {
 
   async startAutoConnect(): Promise<void> {
     const channelConfig = StorageManager.getPersistedChannelConfig();
-    console.debug(
-      `RemoteCommunication::autoConnect channelConfig`,
-      channelConfig,
-    );
+    if (this.enableDebug) {
+      console.debug(
+        `RemoteCommunication::autoConnect channelConfig`,
+        channelConfig,
+      );
+    }
 
     if (channelConfig) {
       const validSession = channelConfig.validUntil > new Date();
-      console.debug(
-        `validUntil=${channelConfig.validUntil} vs new Date()=${new Date()}`,
-        validSession,
-      );
 
       if (validSession) {
         this.channelConfig = channelConfig;
@@ -392,10 +390,10 @@ export class RemoteCommunication extends EventEmitter2 {
           channelConfig.channelId,
           true,
         );
-      } else {
+      } else if (this.enableDebug) {
         console.log(`RemoteCommunication::autoConnect Session has expired`);
       }
-    } else {
+    } else if (this.enableDebug) {
       console.debug(`RemoteCommunication::autoConnect not available`);
     }
   }
@@ -438,12 +436,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   isPaused() {
     return this.paused;
-  }
-
-  resetKeys() {
-    // Reset key exchange
-    console.debug(`RemoteCommunication::resetKeys()`);
-    this.communicationLayer?.resetKeys();
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {

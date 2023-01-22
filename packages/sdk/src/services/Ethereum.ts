@@ -22,7 +22,6 @@ export class Ethereum {
     shouldSendMetadata = false,
     shouldShimWeb3,
   }: EthereumProps) {
-    console.debug(`[Ethereum] intiialize base provider`);
     // TODO don't use initializeProvider, instead create a custom class extending MetamaskInPageProvider
     // This will prevent errors in RemoteConnectionPostMessageStream when forcing provider._initializeState();
     this.provider = initializeProvider({
@@ -40,7 +39,7 @@ export class Ethereum {
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,
       };
-      console.log(`provider initialized`, info);
+      console.log(`Ethereum provider initialized`, info);
     });
   }
 

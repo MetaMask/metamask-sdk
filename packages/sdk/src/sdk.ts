@@ -90,6 +90,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
+      debug: enableDebug,
     });
 
     this.dappMetadata = dappMetadata;

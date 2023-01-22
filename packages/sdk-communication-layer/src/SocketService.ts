@@ -170,15 +170,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.channelId = channelId;
       this.clientsConnected = true;
       if (this.isOriginator) {
-        console.log(
-          `AAAAAAAAAAAAAAAAAA areKeysExchanged=${this.keyExchange.areKeysExchanged()}`,
-        );
         if (!this.keyExchange.areKeysExchanged()) {
-          console.log(`BBBBBBBBBBBBBBBBBBBBBB`);
           this.keyExchange.start(this.isOriginator);
         }
       }
-      console.log(`CCCCCCCCCCCCCCCC this.reconnect=${this.reconnect}`);
       if (this.debug) {
         console.debug(
           `SocketService::${this.context}::setupChannelListener reconnect=${
@@ -274,22 +269,20 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return this.keyExchange.start(this.isOriginator);
       }
 
-      console.debug(
-        `XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX typeof message=${typeof message}`,
-      );
-      // Special case to manage resetting key exchange when keys are already exchanged
-      console.debug(
-        `originator=${this.isOriginator}, type=${
-          message?.type
-        }, keysExchanged=${this.keyExchange.areKeysExchanged()}, ${
-          message?.type === MessageType.KEY_HANDSHAKE_SYN
-        }, ${message?.type === MessageType.KEY_HANDSHAKE_SYN.toString()}`,
-      );
+      if (this.debug) {
+        // Special case to manage resetting key exchange when keys are already exchanged
+        console.debug(
+          `originator=${this.isOriginator}, type=${
+            message?.type
+          }, keysExchanged=${this.keyExchange.areKeysExchanged()}, ${
+            message?.type === MessageType.KEY_HANDSHAKE_SYN
+          }, ${message?.type === MessageType.KEY_HANDSHAKE_SYN.toString()}`,
+        );
+      }
       if (
         !this.isOriginator &&
         message?.type === MessageType.KEY_HANDSHAKE_SYN
       ) {
-        console.debug(`BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB`);
         if (this.debug) {
           console.debug(
             `SocketService::${this.context}::setupChannelListener received HANDSHAKE_SYN isOriginator=${this.isOriginator} --> emit KEY_EXCHANGE`,
@@ -301,14 +294,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.keyExchange.setOtherPublicKey(message.pubkey);
         }
 
-        console.debug(`MMMMMMMMMMMMMMMMMMMMMMMM`);
         return this.emit(MessageType.KEY_EXCHANGE, {
           message,
           context: this.context,
         });
       }
 
-      console.debug(`LLLLLLLLLLLLLLLLLLLLLLLLLLLL`);
       if (!this.keyExchange.areKeysExchanged()) {
         if (message?.type.startsWith('key_handshake')) {
           if (this.debug) {
@@ -327,10 +318,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
-      console.debug(
-        `SocketService::setupChannelLister decrypted message`,
-        messageReceived,
-      );
       return this.emit(MessageType.MESSAGE, messageReceived);
     });
 
