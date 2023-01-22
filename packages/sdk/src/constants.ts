@@ -5,5 +5,5 @@ export enum ProviderConstants {
 }
 
 export const ErrorMessages = {
-  MANUAL_DISCONNECT:"manual-disconnect"
-}
+  MANUAL_DISCONNECT: 'manual-disconnect',
+};

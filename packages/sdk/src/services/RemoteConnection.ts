@@ -6,7 +6,7 @@ import {
   KeyInfo,
   MessageType,
   RemoteCommunication,
-  WebRTCLib
+  WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
 import { Platform } from '../Platform/Platfform';
