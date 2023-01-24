@@ -239,12 +239,6 @@ export const App = () => {
         </>
       </div>
       <>
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          sdk?.testStorage();
-        }}>
-          Test Storage
-        </button>
-
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
           {connected ? "Connected" : "New Connection"}
         </button>

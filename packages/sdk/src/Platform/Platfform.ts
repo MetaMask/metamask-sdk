@@ -101,26 +101,30 @@ export class Platform {
     this.enableWakeLock();
     // #endif
 
-    if (this.debug) {
-      console.debug(
-        `Platform::openDeepLink universalLink --> ${universalLink}`,
-      );
-      console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
-    }
-
-    if (this.preferredOpenLink) {
-      this.preferredOpenLink(universalLink, target);
-      return;
-    }
-
-    if (typeof window !== 'undefined') {
-      let win: Window | null;
-      if (this.useDeeplink) {
-        win = window.open(deeplink, '_blank');
-      } else {
-        win = window.open(universalLink, '_blank');
+    try {
+      if (this.debug) {
+        console.debug(
+          `Platform::openDeepLink universalLink --> ${universalLink}`,
+        );
+        console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
       }
-      setTimeout(() => win?.close?.(), 500);
+
+      if (this.preferredOpenLink) {
+        this.preferredOpenLink(universalLink, target);
+        return;
+      }
+
+      if (typeof window !== 'undefined') {
+        let win: Window | null;
+        if (this.useDeeplink) {
+          win = window.open(deeplink, '_blank');
+        } else {
+          win = window.open(universalLink, '_blank');
+        }
+        setTimeout(() => win?.close?.(), 500);
+      }
+    } catch (err) {
+      console.log(`Platform::openDeepLink() can't open link`, err);
     }
 
     // console.log('Please setup the openDeeplink parameter');

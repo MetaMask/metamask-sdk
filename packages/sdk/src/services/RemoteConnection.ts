@@ -99,7 +99,7 @@ export class RemoteConnection implements ProviderService {
   }
 
   startConnection(): Promise<boolean> {
-    return new Promise<boolean>((resolve) => {
+    return new Promise<boolean>((resolve, reject) => {
       if (this.enableDebug) {
         console.debug(`RemoteConnection::startConnection()`);
       }
@@ -110,56 +110,65 @@ export class RemoteConnection implements ProviderService {
         return resolve(true);
       }
 
-      const { channelId, pubKey } = this.connector.generateChannelId();
-      const linkParams = `channelId=${encodeURIComponent(
-        channelId,
-      )}&comm=${encodeURIComponent(
-        this.communicationLayerPreference,
-      )}&pubkey=${encodeURIComponent(pubKey)}`;
+      try {
+        const { channelId, pubKey } = this.connector.generateChannelId();
+        const linkParams = `channelId=${encodeURIComponent(
+          channelId,
+        )}&comm=${encodeURIComponent(
+          this.communicationLayerPreference,
+        )}&pubkey=${encodeURIComponent(pubKey)}`;
 
-      const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-      const deeplink = `metamask://connect?${linkParams}`;
+        const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+        const deeplink = `metamask://connect?${linkParams}`;
 
-      const platformType = Platform.getInstance().getPlatformType();
+        const platformType = Platform.getInstance().getPlatformType();
 
-      /* #if _REACTNATIVE
-      const showQRCode = false
-      //#else */
-      const showQRCode =
-        platformType === PlatformType.DesktopWeb ||
-        platformType === PlatformType.NonBrowser;
-      // #endif
+        /* #if _REACTNATIVE
+        const showQRCode = false
+        //#else */
+        const showQRCode =
+          platformType === PlatformType.DesktopWeb ||
+          platformType === PlatformType.NonBrowser;
+        // #endif
 
-      let installModal: any;
+        let installModal: any;
 
-      if (showQRCode) {
-        installModal = InstallModal({
-          link: universalLink,
-          debug: this.enableDebug,
+        if (showQRCode) {
+          installModal = InstallModal({
+            link: universalLink,
+            debug: this.enableDebug,
+          });
+          // console.log('OPEN LINK QRCODE', universalLink);
+        } else {
+          // console.log('OPEN LINK', universalLink);
+          Platform.getInstance().openDeeplink?.(
+            universalLink,
+            deeplink,
+            '_self',
+          );
+        }
+
+        this.universalLink = universalLink;
+
+        this.connector.once(MessageType.CLIENTS_READY, () => {
+          if (
+            installModal?.onClose &&
+            typeof installModal.onClose === 'function'
+          ) {
+            installModal?.onClose();
+          }
+
+          if (this.sentFirstConnect) {
+            return;
+          }
+          this.sentFirstConnect = true;
+
+          resolve(true);
         });
-        // console.log('OPEN LINK QRCODE', universalLink);
-      } else {
-        // console.log('OPEN LINK', universalLink);
-        Platform.getInstance().openDeeplink?.(universalLink, deeplink, '_self');
+      } catch (err) {
+        console.debug(`RemoteConnection error`, err);
+        reject(err);
       }
-
-      this.universalLink = universalLink;
-
-      this.connector.once(MessageType.CLIENTS_READY, () => {
-        if (
-          installModal?.onClose &&
-          typeof installModal.onClose === 'function'
-        ) {
-          installModal?.onClose();
-        }
-
-        if (this.sentFirstConnect) {
-          return;
-        }
-        this.sentFirstConnect = true;
-
-        resolve(true);
-      });
 
       return true;
     });

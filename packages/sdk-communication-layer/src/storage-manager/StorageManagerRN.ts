@@ -20,14 +20,7 @@ export class StorageManagerRN implements StorageManager {
       console.debug(`StorageManagerRN::persistChannelConfig()`, channelConfig);
     }
 
-    await AsyncStorage.setItem(STORAGE_PATH, payload, async () => {
-      if (this.debug) {
-        console.debug(
-          `StorageManagerRN::persisChannelConfig() saved to storage.`,
-          AsyncStorage,
-        );
-      }
-    });
+    await AsyncStorage.setItem(STORAGE_PATH, payload);
   }
 
   public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {

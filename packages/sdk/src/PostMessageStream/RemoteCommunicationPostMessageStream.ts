@@ -59,16 +59,16 @@ export class RemoteCommunicationPostMessageStream
             provider._state,
           );
         }
+
+        const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+        if (this.debug) {
+          console.debug(
+            `'[RCPMS] clients_ready' - ethereum provider initialized,  isInstalled=${isInstalled}`,
+          );
+        }
       } catch (err) {
         // Ignore error if already initialized.
         // console.debug(`IGNORE ERROR`, err);
-      }
-
-      const isInstalled = Platform.getInstance().isMetaMaskInstalled();
-      if (this.debug) {
-        console.debug(
-          `'[RCPMS] clients_ready' - ethereum provider initialized,  isInstalled=${isInstalled}`,
-        );
       }
     });
 
@@ -168,39 +168,43 @@ export class RemoteCommunicationPostMessageStream
   }
 
   _onMessage(message: CommunicationLayerMessage) {
-    // validate message
-    /* if (this._origin !== '*' && event.origin !== this._origin) {
+    try {
+      // validate message
+      /* if (this._origin !== '*' && event.origin !== this._origin) {
       return;
     }*/
-    if (this.debug) {
-      console.debug(`[RCPMS] _onMessage `, message);
-    }
+      if (this.debug) {
+        console.debug(`[RCPMS] _onMessage `, message);
+      }
 
-    const typeOfMsg = typeof message;
+      const typeOfMsg = typeof message;
 
-    if (!message || typeOfMsg !== 'object') {
-      return;
-    }
+      if (!message || typeOfMsg !== 'object') {
+        return;
+      }
 
-    // We only want reply from MetaMask.
-    const typeOfData = typeof message?.data;
-    if (typeOfData !== 'object') {
-      return;
-    }
+      // We only want reply from MetaMask.
+      const typeOfData = typeof message?.data;
+      if (typeOfData !== 'object') {
+        return;
+      }
 
-    if (!message?.name) {
-      return;
-    }
+      if (!message?.name) {
+        return;
+      }
 
-    if (message?.name !== ProviderConstants.PROVIDER) {
-      return;
-    }
+      if (message?.name !== ProviderConstants.PROVIDER) {
+        return;
+      }
 
-    if (Buffer.isBuffer(message)) {
-      const data = Buffer.from(message);
-      this.push(data);
-    } else {
-      this.push(message);
+      if (Buffer.isBuffer(message)) {
+        const data = Buffer.from(message);
+        this.push(data);
+      } else {
+        this.push(message);
+      }
+    } catch (err) {
+      console.debug(`RCPMS ignore message error`, err);
     }
   }
 

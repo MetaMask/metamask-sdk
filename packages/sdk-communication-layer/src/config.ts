@@ -9,3 +9,6 @@ export const MIN_IN_MS = 1000 * 60;
 export const HOUR_IN_MS = MIN_IN_MS * 60;
 export const DAY_IN_MS = HOUR_IN_MS * 24;
 export const DEFAULT_SESSION_TIMEOUT_MS = 5 * DAY_IN_MS;
+
+// time upon which we wait for a metamask reocnnection before creating a new channel
+export const CHANNEL_MAX_WAITING_TIME = 3 * 1000; // 3 seconds
