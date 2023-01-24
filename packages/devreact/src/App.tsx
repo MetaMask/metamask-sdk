@@ -8,10 +8,10 @@ const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   communicationServerUrl: 'http://localhost:5400',
-  enableDebug: false,
+  enableDebug: true,
   ecies: {
     enabled:true,
-    debug:false,
+    debug:true,
   }
 });
 
@@ -81,7 +81,7 @@ export const App = () => {
       setKeyInfo(sdk.getKeyInfo());
     })
     window.ethereum?.on("disconnect", (error) => {
-      console.log('disconnected', error);
+      console.log('disconnect', error);
       setConnected(false);
       setChannelConfig(undefined);
       setKeyInfo(undefined);
@@ -92,6 +92,7 @@ export const App = () => {
     });
 
     sdk.on(MessageType.CONNECTION_STATUS, (connectionStatus) => {
+      console.debug(`sdk connection_status`, connectionStatus);
       setConnectionStatus(connectionStatus);
       setChannelConfig(sdk.getChannelConfig());
     })
@@ -209,6 +210,7 @@ export const App = () => {
 
   const terminate = () => {
     sdk.terminate();
+    // sdk.debugPersistence({terminate: true, disconnect: false})
   }
 
   return (
@@ -237,8 +239,14 @@ export const App = () => {
         </>
       </div>
       <>
+        <button style={{ padding: 10, margin: 10 }} onClick={() => {
+          sdk?.testStorage();
+        }}>
+          Test Storage
+        </button>
+
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-          {connected ? "Connected" : "Connect"}
+          {connected ? "Connected" : "New Connection"}
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={sign} disabled={!connected}>

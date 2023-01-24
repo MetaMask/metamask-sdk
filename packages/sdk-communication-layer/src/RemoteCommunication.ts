@@ -9,6 +9,11 @@ import {
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
+import { getStorageManager } from './storage-manager/getStorageManager';
+import {
+  StorageManager,
+  StorageManagerProps,
+} from './storage-manager/StorageManager';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
@@ -21,7 +26,6 @@ import { OriginatorInfo } from './types/OriginatorInfo';
 import { TrackingEvents } from './types/TrackingEvent';
 import { WalletInfo } from './types/WalletInfo';
 import { WebRTCLib } from './types/WebRTCLib';
-import { StorageManager } from './utils/StorageManager';
 import { WebRTCService } from './WebRTCService';
 
 interface RemoteCommunicationProps {
@@ -35,6 +39,7 @@ interface RemoteCommunicationProps {
   enableDebug?: boolean;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
+  storage?: StorageManagerProps;
   context: string;
 }
 
@@ -71,6 +76,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private context: string;
 
+  private storageManager: StorageManager;
+
+  private storageOptions?: StorageManagerProps;
+
   // Status of the other side of the connection
   // 1) if I am MetaMask then other is Dapp
   // 2) If I am Dapp (isOriginator==true) then other side is MetaMask
@@ -88,6 +97,7 @@ export class RemoteCommunication extends EventEmitter2 {
     context,
     ecies,
     enableDebug = false,
+    storage,
     communicationServerUrl = DEFAULT_SERVER_URL,
   }: RemoteCommunicationProps) {
     super();
@@ -101,6 +111,12 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+    this.storageOptions = storage;
+    if (storage?.storageManager) {
+      this.storageManager = storage.storageManager;
+    } else {
+      this.storageManager = getStorageManager({ debug: storage?.debug });
+    }
 
     this.initCommunicationLayer({
       communicationLayerPreference,
@@ -312,6 +328,17 @@ export class RemoteCommunication extends EventEmitter2 {
     }
   }
 
+  async testStorage() {
+    await this.storageManager?.persistChannelConfig(
+      this.channelConfig ?? {
+        channelId: 'temp',
+        validUntil: new Date(),
+      },
+    );
+    const res = await this.storageManager?.getPersistedChannelConfig();
+    console.debug(`RemoteCommunication.testStorage() res`, res);
+  }
+
   onCommunicationLayerMessage(message: CommunicationLayerMessage) {
     if (this.enableDebug) {
       console.debug(
@@ -349,8 +376,8 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.TERMINATE) {
       // Needs to manually emit CLIENTS_DISCONNECTED because it won't receive it after the socket is closed.
       this.emit(MessageType.CLIENTS_DISCONNECTED);
-      // remove channel config from persistence layer and close ative connections.
-      StorageManager.terminate();
+      // remove channel config from persistence layer and close active connections.
+      this.storageManager.terminate();
       this.disconnect();
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
       // Reset keyexchange
@@ -373,7 +400,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   async startAutoConnect(): Promise<void> {
-    const channelConfig = StorageManager.getPersistedChannelConfig();
+    const channelConfig = await this.storageManager.getPersistedChannelConfig();
     if (this.enableDebug) {
       console.debug(
         `RemoteCommunication::autoConnect channelConfig`,
@@ -419,7 +446,7 @@ export class RemoteCommunication extends EventEmitter2 {
     };
     this.channelConfig = channelConfig;
     // save current channel config
-    StorageManager.persistChannelConfig(channelConfig);
+    this.storageManager.persistChannelConfig(channelConfig);
 
     this.channelId = channel.channelId;
 
@@ -463,6 +490,10 @@ export class RemoteCommunication extends EventEmitter2 {
     }
     this.communicationLayer?.pause();
     this.setConnectionStatus(ConnectionStatus.PAUSED);
+  }
+
+  sendTerminate() {
+    this.communicationLayer?.sendMessage({ type: MessageType.TERMINATE });
   }
 
   resume() {

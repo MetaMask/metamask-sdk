@@ -175,6 +175,10 @@ export class Platform {
     );
   }
 
+  isBrowser() {
+    return !this.isNotBrowser();
+  }
+
   isUseDeepLink() {
     return this.useDeeplink;
   }

@@ -458,7 +458,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   disconnect(options?: DisconnectOptions): void {
     if (this.debug) {
-      console.debug(`SocketService::${this.context}::disconnect()`);
+      console.debug(`SocketService::${this.context}::disconnect()`, options);
     }
     if (options?.terminate && this.keyExchange.areKeysExchanged()) {
       this.manualDisconnect = true;

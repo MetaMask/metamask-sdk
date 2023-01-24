@@ -1,14 +1,16 @@
 import {
   CommunicationLayerPreference,
   DappMetadata,
-  DisconnectProps,
+  DisconnectOptions,
   ECIESProps,
   KeyInfo,
   MessageType,
   RemoteCommunication,
+  StorageManagerProps,
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
+import { ErrorMessages } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
@@ -26,6 +28,7 @@ interface RemoteConnectionProps {
   webRTCLib?: WebRTCLib;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
+  storage?: StorageManagerProps;
 }
 export class RemoteConnection implements ProviderService {
   private connector: RemoteCommunication;
@@ -54,6 +57,7 @@ export class RemoteConnection implements ProviderService {
     enableDebug = false,
     timer,
     ecies,
+    storage,
     communicationServerUrl,
   }: RemoteConnectionProps) {
     this.dappMetadata = dappMetadata;
@@ -74,6 +78,7 @@ export class RemoteConnection implements ProviderService {
       communicationServerUrl,
       context: 'dapp',
       ecies,
+      storage,
     });
 
     this.connector.startAutoConnect();
@@ -180,14 +185,15 @@ export class RemoteConnection implements ProviderService {
     return this.connector.isPaused();
   }
 
-  disconnect(options?: DisconnectProps): void {
-    const provider = Ethereum.getProvider();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    provider._state.isConnected = false;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    provider._handleDisconnect(false);
-    return this.connector.disconnect(options);
+  disconnect(options?: DisconnectOptions): void {
+    this.connector.disconnect(options);
+
+    if (Platform.getInstance().isBrowser()) {
+      const provider = Ethereum.getProvider();
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      provider._state.isConnected = false;
+      provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
+    }
   }
 }

@@ -12,6 +12,7 @@ import { ConnectionStatus } from './types/ConnectionStatus';
 import { ChannelConfig } from './types/ChannelConfig';
 import { KeyInfo } from './types/KeyInfo';
 import { DisconnectOptions } from './types/DisconnectOptions';
+import { StorageManagerProps } from './storage-manager/StorageManager';
 
 export type {
   WebRTCLib,
@@ -22,7 +23,8 @@ export type {
   CommunicationLayerMessage,
   OriginatorInfo,
   ECIESProps,
-  DisconnectOptions as DisconnectProps,
+  DisconnectOptions,
+  StorageManagerProps,
 };
 
 export {

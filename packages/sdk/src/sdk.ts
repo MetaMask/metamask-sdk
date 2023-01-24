@@ -5,6 +5,7 @@ import {
   DappMetadata,
   ECIESProps,
   MessageType,
+  StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -41,6 +42,7 @@ export interface MetaMaskSDKOptions {
   timer?: any;
   enableDebug?: boolean;
   communicationServerUrl?: string;
+  storage?: StorageManagerProps;
   ecies?: ECIESProps;
 }
 
@@ -83,6 +85,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     enableDebug = true,
     communicationServerUrl,
     ecies,
+    storage,
   }: MetaMaskSDKOptions = {}) {
     super();
 
@@ -117,6 +120,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         transports,
         communicationServerUrl,
         ecies,
+        storage,
       });
 
       if (WalletConnectInstance) {
@@ -171,15 +175,25 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
   }
 
+  debugPersistence({
+    terminate,
+    disconnect,
+  }: {
+    terminate: boolean;
+    disconnect: boolean;
+  }) {
+    if (terminate) {
+      this.remoteConnection?.getConnector().sendTerminate();
+    }
+
+    if (disconnect) {
+      this.disconnect();
+    }
+  }
+
   terminate() {
     console.debug(`initiate disconnection on SDK`);
     this.remoteConnection?.disconnect({ terminate: true });
-    // TODO extend MetamaskProvider to avoid calling protected methods
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.provider._state.isConnected = false;
-    this.provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
-    // this.provider._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
   }
 
   disconnect() {
@@ -194,6 +208,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     return this.walletConnect;
+  }
+
+  testStorage() {
+    return this.remoteConnection?.getConnector().testStorage();
   }
 
   getChannelConfig() {

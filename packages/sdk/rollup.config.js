@@ -8,7 +8,7 @@ import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import { terser } from "rollup-plugin-terser";
 
-const listDepForRollup = [];
+const listDepForRollup = ['@react-native-async-storage/async-storage'];
 
 /**
  * @type {import('rollup').RollupOptions}
