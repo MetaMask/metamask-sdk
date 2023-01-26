@@ -512,6 +512,8 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.disconnect(options);
     if (options?.terminate) {
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
+      // remove channel config from persistence layer and close active connections.
+      this.storageManager.terminate();
     } else {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
