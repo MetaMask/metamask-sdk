@@ -9,6 +9,7 @@ import { Channel } from './types/Channel';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
@@ -301,7 +302,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (!this.keyExchange.areKeysExchanged()) {
-        if (message?.type.startsWith('key_handshake')) {
+        if (message?.type?.startsWith('key_handshake')) {
           if (this.debug) {
             console.debug(
               `SocketService::${this.context}::setupChannelListener emit KEY_EXCHANGE`,
@@ -348,7 +349,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     return { channelId, pubKey: this.keyExchange.getMyPublicKey() };
   }
 
-  connectToChannel(channelId: string, isOriginator = false): void {
+  connectToChannel({
+    channelId,
+    isOriginator = false,
+  }: ConnectToChannelOptions): void {
     if (this.debug) {
       console.debug(
         `SocketService::${this.context}::connectToChannel() channelId=${channelId} isOriginator=${isOriginator}`,

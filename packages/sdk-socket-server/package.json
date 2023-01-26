@@ -10,7 +10,7 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "echo 'N/A'",
-    "debug": "NODE_ENV=development nodemon index.js",
+    "debug": "NODE_ENV=development nodemon index.js --trace-warnings",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",

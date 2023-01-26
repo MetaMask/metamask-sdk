@@ -1,5 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
+  AutoConnectOptions,
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
@@ -9,7 +10,6 @@ import {
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
-import { ErrorMessages } from './constants';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
@@ -44,6 +44,7 @@ export interface MetaMaskSDKOptions {
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   ecies?: ECIESProps;
+  autoConnect?: AutoConnectOptions;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -86,6 +87,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     communicationServerUrl,
     ecies,
     storage,
+    autoConnect,
   }: MetaMaskSDKOptions = {}) {
     super();
 
@@ -121,6 +123,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         communicationServerUrl,
         ecies,
         storage,
+        autoConnect,
       });
 
       if (WalletConnectInstance) {

@@ -1,4 +1,5 @@
 import {
+  AutoConnectOptions,
   CommunicationLayerPreference,
   DappMetadata,
   DisconnectOptions,
@@ -29,6 +30,7 @@ interface RemoteConnectionProps {
   communicationServerUrl?: string;
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
+  autoConnect?: AutoConnectOptions;
 }
 export class RemoteConnection implements ProviderService {
   private connector: RemoteCommunication;
@@ -59,6 +61,7 @@ export class RemoteConnection implements ProviderService {
     ecies,
     storage,
     communicationServerUrl,
+    autoConnect,
   }: RemoteConnectionProps) {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
@@ -79,6 +82,7 @@ export class RemoteConnection implements ProviderService {
       context: 'dapp',
       ecies,
       storage,
+      autoConnect,
     });
 
     this.connector.startAutoConnect();

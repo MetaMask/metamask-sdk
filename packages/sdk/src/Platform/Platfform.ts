@@ -97,18 +97,18 @@ export class Platform {
   }
 
   openDeeplink(universalLink: string, deeplink: string, target?: string) {
+    if (this.debug) {
+      console.debug(
+        `Platform::openDeepLink universalLink --> ${universalLink}`,
+      );
+      console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
+    }
+
     // #if _WEB
     this.enableWakeLock();
     // #endif
 
     try {
-      if (this.debug) {
-        console.debug(
-          `Platform::openDeepLink universalLink --> ${universalLink}`,
-        );
-        console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
-      }
-
       if (this.preferredOpenLink) {
         this.preferredOpenLink(universalLink, target);
         return;

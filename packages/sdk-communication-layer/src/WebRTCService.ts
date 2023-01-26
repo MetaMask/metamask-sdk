@@ -4,6 +4,7 @@ import { KeyExchange, KeyExchangeProps } from './KeyExchange';
 import { SocketService, SocketServiceProps } from './SocketService';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
@@ -244,8 +245,8 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     };
   }
 
-  connectToChannel(channelId: string) {
-    this.socketService.connectToChannel(channelId);
+  connectToChannel({ channelId }: ConnectToChannelOptions) {
+    this.socketService.connectToChannel({ channelId });
   }
 
   resetKeys(): void {

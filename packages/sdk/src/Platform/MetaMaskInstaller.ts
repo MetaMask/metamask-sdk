@@ -58,6 +58,9 @@ export class MetaMaskInstaller {
   }
 
   startDesktopOnboarding() {
+    if (this.debug) {
+      console.debug(`MetamaskInstaller::startDesktopOnboarding()`);
+    }
     Ethereum.destroy();
     delete window.ethereum;
     const onboardingExtension = new MetaMaskOnboarding();
@@ -65,6 +68,9 @@ export class MetaMaskInstaller {
   }
 
   async redirectToProperInstall() {
+    if (this.debug) {
+      console.debug(`MetamaskInstaller::redirectToProperInstall() `);
+    }
     const platformType = Platform.getInstance().getPlatformType();
 
     // If it's running on our mobile in-app browser but communication is still not working

@@ -3,6 +3,7 @@ import { EventEmitter2 } from 'eventemitter2';
 import { validate } from 'uuid';
 import { SendAnalytics } from './Analytics';
 import {
+  CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
   VERSION,
@@ -14,6 +15,7 @@ import {
   StorageManager,
   StorageManagerProps,
 } from './storage-manager/StorageManager';
+import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
@@ -28,7 +30,7 @@ import { WalletInfo } from './types/WalletInfo';
 import { WebRTCLib } from './types/WebRTCLib';
 import { WebRTCService } from './WebRTCService';
 
-interface RemoteCommunicationProps {
+export interface RemoteCommunicationProps {
   platform: string;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
@@ -41,6 +43,7 @@ interface RemoteCommunicationProps {
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
   context: string;
+  autoConnect?: AutoConnectOptions;
 }
 
 export class RemoteCommunication extends EventEmitter2 {
@@ -80,6 +83,11 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private storageOptions?: StorageManagerProps;
 
+  private autoConnectOptions;
+
+  // this flag is switched on when the connection is automatically initialized after finding existing channel configuration.
+  private autoStarted = false;
+
   // Status of the other side of the connection
   // 1) if I am MetaMask then other is Dapp
   // 2) If I am Dapp (isOriginator==true) then other side is MetaMask
@@ -99,6 +107,9 @@ export class RemoteCommunication extends EventEmitter2 {
     enableDebug = false,
     storage,
     communicationServerUrl = DEFAULT_SERVER_URL,
+    autoConnect = {
+      timeout: CHANNEL_MAX_WAITING_TIME,
+    },
   }: RemoteCommunicationProps) {
     super();
 
@@ -112,6 +123,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.context = context;
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     this.storageOptions = storage;
+    this.autoConnectOptions = autoConnect;
     if (storage?.storageManager) {
       this.storageManager = storage.storageManager;
     } else {
@@ -241,12 +253,13 @@ export class RemoteCommunication extends EventEmitter2 {
           );
         }
 
-        // First bubble up the disconnect event otherwise it would be missed.
-        this.emit(MessageType.CLIENTS_DISCONNECTED, this.channelId);
-        this.setConnectionStatus(ConnectionStatus.WAITING);
-
         // Then pause or cleanup the listeners.
         if (this.paused) {
+          if (this.enableDebug) {
+            console.debug(
+              `RemoteCommunication::${this.context}]::on 'clients_disconnected' connection paused - do nothing`,
+            );
+          }
           return;
         }
 
@@ -268,6 +281,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
         this.clean();
         this.communicationLayer?.removeAllListeners();
+
+        // Bubble up the disconnect event otherwise it would be missed.
+        this.emit(MessageType.CLIENTS_DISCONNECTED, this.channelId);
+        this.setConnectionStatus(ConnectionStatus.WAITING);
       },
     );
 
@@ -294,6 +311,32 @@ export class RemoteCommunication extends EventEmitter2 {
           communicationLayerPreference,
           sdkVersion: VERSION,
         });
+
+        // TODO re-create
+        if (this.autoStarted) {
+          if (this.enableDebug) {
+            console.debug(
+              `RemoteCommunication::on 'clients_waiting' watch autoStarted=${this.autoStarted} timeout`,
+              this.autoConnectOptions,
+            );
+          }
+          const timeoutId = setTimeout(() => {
+            if (this.enableDebug) {
+              console.debug(
+                `RemoteCommunication::on setTimeout(${this.autoConnectOptions.timeout}) terminate channelConfig`,
+                this.autoConnectOptions,
+              );
+            }
+            // Cleanup previous channelId
+            this.storageManager.terminate();
+            this.autoStarted = false;
+            console.debug(
+              `RemoteCommunication::on update connectionStatus to timeout`,
+            );
+            this.setConnectionStatus(ConnectionStatus.TIMEOUT);
+            clearTimeout(timeoutId);
+          }, this.autoConnectOptions.timeout);
+        }
       }
       this.emit(MessageType.CLIENTS_WAITING, numberUsers);
     });
@@ -305,13 +348,14 @@ export class RemoteCommunication extends EventEmitter2 {
     }
     this.channelId = undefined;
     this.connected = false;
+    this.autoStarted = false;
   }
 
   connectToChannel(channelId: string) {
     if (!validate(channelId)) {
       throw new Error('Invalid channel');
     }
-    this.communicationLayer?.connectToChannel(channelId);
+    this.communicationLayer?.connectToChannel({ channelId });
   }
 
   sendMessage(message: CommunicationLayerMessage) {
@@ -329,12 +373,6 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   async testStorage() {
-    await this.storageManager?.persistChannelConfig(
-      this.channelConfig ?? {
-        channelId: 'temp',
-        validUntil: new Date(),
-      },
-    );
     const res = await this.storageManager?.getPersistedChannelConfig();
     console.debug(`RemoteCommunication.testStorage() res`, res);
   }
@@ -384,6 +422,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.communicationLayer?.resetKeys();
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
+      this.setConnectionStatus(ConnectionStatus.PAUSED);
     } else if (message.type === MessageType.READY) {
       if (this.paused) {
         // restarting from pause
@@ -399,13 +438,23 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(MessageType.MESSAGE, message);
   }
 
-  async startAutoConnect(): Promise<void> {
+  async startAutoConnect(): Promise<boolean> {
     const channelConfig = await this.storageManager.getPersistedChannelConfig();
     if (this.enableDebug) {
       console.debug(
-        `RemoteCommunication::autoConnect channelConfig`,
+        `RemoteCommunication::startAutoConnect() autoStarted=${this.autoStarted} channelConfig`,
         channelConfig,
       );
+    }
+
+    if (this.autoStarted) {
+      // Prevent infinite loop by checking if it was already autoStarted.
+      if (this.enableDebug) {
+        console.debug(
+          `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
+        );
+      }
+      return Promise.resolve(false);
     }
 
     if (channelConfig) {
@@ -413,16 +462,20 @@ export class RemoteCommunication extends EventEmitter2 {
 
       if (validSession) {
         this.channelConfig = channelConfig;
-        this.communicationLayer?.connectToChannel(
-          channelConfig.channelId,
-          true,
-        );
+        this.autoStarted = true;
+        this.communicationLayer?.connectToChannel({
+          channelId: channelConfig.channelId,
+          isOriginator: true,
+        });
+        return Promise.resolve(true);
       } else if (this.enableDebug) {
         console.log(`RemoteCommunication::autoConnect Session has expired`);
       }
     } else if (this.enableDebug) {
       console.debug(`RemoteCommunication::autoConnect not available`);
     }
+    this.autoStarted = false;
+    return Promise.resolve(false);
   }
 
   generateChannelId() {
@@ -432,6 +485,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
     if (this.connected) {
       throw new Error('Channel already created');
+    }
+
+    if (this.enableDebug) {
+      console.debug(`RemoteCommunication::generateChannelId()`);
     }
 
     // try to re-use existing channel id.

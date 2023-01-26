@@ -59,19 +59,17 @@ export class RemoteCommunicationPostMessageStream
             provider._state,
           );
         }
-
-        const isInstalled = Platform.getInstance().isMetaMaskInstalled();
-        if (this.debug) {
-          console.debug(
-            `'[RCPMS] clients_ready' - ethereum provider initialized,  isInstalled=${isInstalled}`,
-          );
-        }
       } catch (err) {
         // Ignore error if already initialized.
         // console.debug(`IGNORE ERROR`, err);
       }
     });
 
+    // previous code for reference
+    // this.comm.on('clients_disconnected', () => {
+    //   Ethereum.ethereum._handleAccountsChanged([]);
+    //   Ethereum.ethereum._handleDisconnect(true);
+    // });
     this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
       if (this.debug) {
         console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
@@ -80,8 +78,12 @@ export class RemoteCommunicationPostMessageStream
       // FIXME same issue as stated above
       const provider = Ethereum.getProvider();
       // @ts-ignore
-      provider._state.isConnected = false;
-      provider.emit('disconnect', '');
+      provider._handleAccountsChanged([]);
+      // @ts-ignore
+      provider._handleDisconnect(true);
+      // @ts-ignore
+      // provider._state.isConnected = false;
+      // provider.emit('disconnect', '');
     });
   }
 
@@ -96,6 +98,13 @@ export class RemoteCommunicationPostMessageStream
       }
 
       return callback();
+    }
+
+    if (this.debug) {
+      console.debug(
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()}`,
+        chunk,
+      );
     }
 
     try {

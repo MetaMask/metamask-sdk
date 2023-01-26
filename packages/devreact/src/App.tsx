@@ -9,6 +9,12 @@ const sdk = new MetaMaskSDK({
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   communicationServerUrl: 'http://localhost:5400',
   enableDebug: true,
+  autoConnect: {
+    timeout: 3000
+  },
+  storage: {
+    debug: true
+  },
   ecies: {
     enabled:true,
     debug:true,
@@ -62,7 +68,7 @@ export const App = () => {
   };
 
   useEffect(() => {
-    console.debug(`App::useEffect`, window.ethereum);
+    console.debug(`App::useEffect window.ethereum listeners`);
 
     window.ethereum?.on("chainChanged", (chain) => {
       console.log(chain);
@@ -90,11 +96,19 @@ export const App = () => {
       console.log('disconnected', error);
       setConnected(false);
     });
+  }, []);
 
+  useEffect( () => {
+    console.debug(`App::useEffect sdk listeners`);
     sdk.on(MessageType.CONNECTION_STATUS, (connectionStatus) => {
       console.debug(`sdk connection_status`, connectionStatus);
       setConnectionStatus(connectionStatus);
       setChannelConfig(sdk.getChannelConfig());
+
+      // if(connectionStatus === ConnectionStatus.TIMEOUT) {
+      //   console.warn(`timeout detected - re-initialize connection`);
+      //   connect();
+      // }
     })
   }, []);
 
@@ -220,6 +234,11 @@ export const App = () => {
           <p>
             Connection Status: <strong>{connectionStatus}</strong>
           </p>
+          {connectionStatus===ConnectionStatus.WAITING &&
+            <div>
+              Waiting for Metamask to link the connection...
+            </div>
+          }
           <p>ChannelId: {channelConfig?.channelId}</p>
           <p>{`Expiration: ${channelConfig?.validUntil ?? ''}`}</p>
           <div>

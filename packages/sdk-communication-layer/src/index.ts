@@ -1,5 +1,8 @@
 import { ECIES, ECIESProps } from './ECIES';
-import { RemoteCommunication } from './RemoteCommunication';
+import {
+  RemoteCommunication,
+  RemoteCommunicationProps,
+} from './RemoteCommunication';
 import { SocketService } from './SocketService';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { MessageType } from './types/MessageType';
@@ -13,10 +16,14 @@ import { ChannelConfig } from './types/ChannelConfig';
 import { KeyInfo } from './types/KeyInfo';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { StorageManagerProps } from './storage-manager/StorageManager';
+import { AutoConnectType } from './types/AutoConnectType';
+import { AutoConnectOptions } from './types/AutoConnectOptions';
 
 export type {
   WebRTCLib,
   KeyInfo,
+  AutoConnectOptions,
+  RemoteCommunicationProps,
   WalletInfo,
   DappMetadata,
   ChannelConfig,
@@ -30,6 +37,7 @@ export type {
 export {
   RemoteCommunication,
   ConnectionStatus,
+  AutoConnectType,
   SocketService,
   ECIES,
   MessageType,
