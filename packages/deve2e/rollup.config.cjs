@@ -11,6 +11,7 @@ const listDepForRollup = [
   'socket.io-client',
   'uuid',
   'bowser',
+  '@react-native-async-storage/async-storage',
   '@metamask/onboarding',
   '@metamask/providers',
   '@metamask/post-message-stream',
