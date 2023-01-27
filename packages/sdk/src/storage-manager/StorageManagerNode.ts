@@ -1,7 +1,10 @@
 import fs from 'fs';
+import {
+  ChannelConfig,
+  StorageManager,
+  StorageManagerProps,
+} from '@metamask/sdk-communication-layer';
 import { STORAGE_PATH } from '../config';
-import { ChannelConfig } from '../types/ChannelConfig';
-import { StorageManager, StorageManagerProps } from './StorageManager';
 
 export class StorageManagerNode implements StorageManager {
   private debug = false;

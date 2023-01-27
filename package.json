@@ -61,5 +61,6 @@
       "@lavamoat/preinstall-always-fail": false,
       "canvas": true
     }
-  }
+  },
+  "dependencies": {}
 }

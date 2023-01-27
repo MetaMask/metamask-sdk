@@ -29,8 +29,10 @@
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
+    "@babel/core": "^7.20.12",
     "@emotion/styled": "10.0.27",
-    "qr-code-styling": "^1.6.0-rc.1"
+    "qr-code-styling": "^1.6.0-rc.1",
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@emotion/core": "10.1.1",
@@ -52,7 +54,7 @@
     "typescript": "^4.3.2",
     "uglifyjs-webpack-plugin": "2.2.0",
     "webpack": "5.38.1",
-    "webpack-cli": "3.3.12",
+    "webpack-cli": "5.0.1",
     "webpack-dev-server": "4.11.1",
     "webpack-modules": "1.0.0"
   },

@@ -10,11 +10,7 @@ import {
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
-import { getStorageManager } from './storage-manager/getStorageManager';
-import {
-  StorageManager,
-  StorageManagerProps,
-} from './storage-manager/StorageManager';
+import { StorageManager, StorageManagerProps } from './types/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
@@ -79,7 +75,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private context: string;
 
-  private storageManager: StorageManager;
+  private storageManager?: StorageManager;
 
   private storageOptions?: StorageManagerProps;
 
@@ -126,8 +122,6 @@ export class RemoteCommunication extends EventEmitter2 {
     this.autoConnectOptions = autoConnect;
     if (storage?.storageManager) {
       this.storageManager = storage.storageManager;
-    } else {
-      this.storageManager = getStorageManager({ debug: storage?.debug });
     }
 
     this.initCommunicationLayer({
@@ -328,7 +322,7 @@ export class RemoteCommunication extends EventEmitter2 {
               );
             }
             // Cleanup previous channelId
-            this.storageManager.terminate();
+            this.storageManager?.terminate();
             this.autoStarted = false;
             console.debug(
               `RemoteCommunication::on update connectionStatus to timeout`,
@@ -415,7 +409,7 @@ export class RemoteCommunication extends EventEmitter2 {
       // Needs to manually emit CLIENTS_DISCONNECTED because it won't receive it after the socket is closed.
       this.emit(MessageType.CLIENTS_DISCONNECTED);
       // remove channel config from persistence layer and close active connections.
-      this.storageManager.terminate();
+      this.storageManager?.terminate();
       this.disconnect();
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
       // Reset keyexchange
@@ -439,6 +433,15 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   async startAutoConnect(): Promise<boolean> {
+    if (!this.storageManager) {
+      if (this.enableDebug) {
+        console.debug(
+          `RemoteCommunication::startAutoConnect() no storage manager defined - skip`,
+        );
+      }
+      return false;
+    }
+
     const channelConfig = await this.storageManager.getPersistedChannelConfig();
     if (this.enableDebug) {
       console.debug(
@@ -503,7 +506,7 @@ export class RemoteCommunication extends EventEmitter2 {
     };
     this.channelConfig = channelConfig;
     // save current channel config
-    this.storageManager.persistChannelConfig(channelConfig);
+    this.storageManager?.persistChannelConfig(channelConfig);
 
     this.channelId = channel.channelId;
 
@@ -570,7 +573,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (options?.terminate) {
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
       // remove channel config from persistence layer and close active connections.
-      this.storageManager.terminate();
+      this.storageManager?.terminate();
     } else {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }

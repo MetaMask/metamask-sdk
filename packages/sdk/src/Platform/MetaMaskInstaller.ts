@@ -122,11 +122,15 @@ export class MetaMaskInstaller {
   }
 
   async start({ wait = false }) {
+    if (this.debug) {
+      console.debug(`MetamaskInstaller::start() wait=${wait}`);
+    }
+
     // Give enough time for providers to make connection
     if (wait) {
       await waitPromise(1000);
     }
 
-    return this.checkInstallation();
+    return await this.checkInstallation();
   }
 }

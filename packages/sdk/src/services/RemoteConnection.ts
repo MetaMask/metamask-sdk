@@ -125,15 +125,13 @@ export class RemoteConnection implements ProviderService {
         const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
         const deeplink = `metamask://connect?${linkParams}`;
 
-        const platformType = Platform.getInstance().getPlatformType();
+        const platform = Platform.getInstance();
+        const platformType = platform.getPlatformType();
 
-        /* #if _REACTNATIVE
-        const showQRCode = false
-        //#else */
         const showQRCode =
           platformType === PlatformType.DesktopWeb ||
-          platformType === PlatformType.NonBrowser;
-        // #endif
+          (platformType === PlatformType.NonBrowser &&
+            !platform.isReactNative());
 
         let installModal: any;
 

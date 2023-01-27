@@ -1,4 +1,4 @@
-import { ChannelConfig } from '../types/ChannelConfig';
+import { ChannelConfig } from './ChannelConfig';
 
 export interface StorageManagerProps {
   debug?: boolean;

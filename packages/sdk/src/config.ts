@@ -11,3 +11,4 @@ export const METHODS_TO_REDIRECT = {
   wallet_addEthereumChain: true,
   wallet_switchEthereumChain: true,
 };
+export const STORAGE_PATH = '.sdk-comm';

@@ -17,6 +17,7 @@ import { setupInAppProviderStream } from './provider/setupInAppProviderStream/se
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
+import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
@@ -113,6 +114,10 @@ export class MetaMaskSDK extends EventEmitter2 {
         delete window.ethereum;
       }
 
+      if (storage && !storage.storageManager) {
+        storage.storageManager = getStorageManager(storage);
+      }
+
       this.remoteConnection = new RemoteConnection({
         communicationLayerPreference,
         dappMetadata,
@@ -136,6 +141,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       const installer = MetaMaskInstaller.init({
         preferDesktop: preferDesktop ?? false,
         remote: this.remoteConnection,
+        debug: enableDebug,
       });
 
       // Bubble up the connection status event.

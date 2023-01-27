@@ -1,14 +1,21 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
+    // "outDir": "dist",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
+    "target": "es6",
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "incremental": false,
+    "lib": ["DOM", "ES2016"],
+    "skipLibCheck": true,
     "types": ["node"]
     // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
-  "include": ["**/*.ts"],
+  "include": ["./src"],
   "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

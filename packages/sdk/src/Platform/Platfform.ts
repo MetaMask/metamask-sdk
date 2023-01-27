@@ -104,9 +104,9 @@ export class Platform {
       console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
     }
 
-    // #if _WEB
-    this.enableWakeLock();
-    // #endif
+    if (this.isBrowser()) {
+      this.enableWakeLock();
+    }
 
     try {
       if (this.preferredOpenLink) {
