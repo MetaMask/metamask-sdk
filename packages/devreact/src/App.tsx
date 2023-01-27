@@ -21,7 +21,6 @@ const sdk = new MetaMaskSDK({
   }
 });
 
-
 export const App = () => {
   const [channelConfig, setChannelConfig] = useState<ChannelConfig>();
   const [keyInfo, setKeyInfo] = useState<KeyInfo>();

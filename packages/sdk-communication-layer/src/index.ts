@@ -22,6 +22,7 @@ import { AutoConnectOptions } from './types/AutoConnectOptions';
 export type {
   WebRTCLib,
   KeyInfo,
+  StorageManager,
   AutoConnectOptions,
   RemoteCommunicationProps,
   WalletInfo,
@@ -36,7 +37,6 @@ export type {
 
 export {
   RemoteCommunication,
-  StorageManager,
   ConnectionStatus,
   AutoConnectType,
   SocketService,

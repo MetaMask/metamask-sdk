@@ -7,7 +7,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import { STORAGE_PATH } from '../config';
 
-export class StorageManagerRN implements StorageManager {
+export class StorageManagerAS implements StorageManager {
   private debug = false;
 
   constructor({ debug }: StorageManagerProps | undefined = { debug: false }) {

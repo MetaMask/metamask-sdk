@@ -3,13 +3,10 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 
-/* #if _REACTNATIVE
-import { StorageManagerRN as SMDyn } from './StorageManagerRN';
-//#elif _NODEJS
+/* #if _NODEJS
 import { StorageManagerNode as SMDyn } from './StorageManagerNode';
 //#else */
-// import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
-import { StorageManagerRN as SMDyn } from './StorageManagerRN';
+import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 // #endif
 
 export const getStorageManager = (
