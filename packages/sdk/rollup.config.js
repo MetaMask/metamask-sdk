@@ -19,11 +19,6 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/browser/cjs/metamask-sdk.js',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
         file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
         sourcemap: true,
@@ -58,11 +53,6 @@ const config = [
     external: listDepForRollup,
     input: 'src/index.ts',
     output: [
-      {
-        file: 'dist/react-native/cjs/metamask-sdk.js',
-        format: 'cjs',
-        sourcemap: true,
-      },
       {
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',

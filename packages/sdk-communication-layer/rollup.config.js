@@ -19,11 +19,6 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/browser/cjs/metamask-sdk-communication-layer.js',
-        format: 'cjs',
-        sourcemap: true,
-      },
-      {
         file: 'dist/browser/es/metamask-sdk-communication-layer.js',
         format: 'es',
         sourcemap: true,
@@ -62,11 +57,6 @@ const config = [
     external: listDepForRollup,
     input: 'src/index.ts',
     output: [
-      {
-        file: 'dist/react-native/cjs/metamask-sdk-communication-layer.js',
-        format: 'cjs',
-        sourcemap: true,
-      },
       {
         file: 'dist/react-native/es/metamask-sdk-communication-layer.js',
         format: 'es',
