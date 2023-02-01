@@ -9,16 +9,7 @@ const sdk = new MetaMaskSDK({
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   communicationServerUrl: 'http://localhost:5400',
   enableDebug: true,
-  autoConnect: {
-    timeout: 3000
-  },
-  storage: {
-    debug: true
-  },
-  ecies: {
-    enabled:true,
-    debug:true,
-  }
+  developerMode: true,
 });
 
 export const App = () => {
@@ -81,6 +72,7 @@ export const App = () => {
       const connectInfo = _connectInfo as {chainId: string};
       console.log(`connected`, connectInfo);
       setConnected(true);
+      // setConnectionStatus(ConnectionStatus.LINKED)
       setChain(connectInfo.chainId);
       setChannelConfig(sdk.getChannelConfig());
       setKeyInfo(sdk.getKeyInfo());

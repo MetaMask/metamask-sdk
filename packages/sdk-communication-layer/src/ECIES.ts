@@ -6,7 +6,6 @@ import { KeyInfo } from './types/KeyInfo';
  * These properties are optional and should only be used during development for debugging purposes.
  */
 export interface ECIESProps {
-  enabled?: boolean;
   debug?: boolean;
   pkey?: string;
 }
@@ -27,10 +26,6 @@ export class ECIES {
   private debug = false;
 
   constructor(props?: ECIESProps) {
-    if (props?.enabled === false) {
-      this.enabled = false;
-    }
-
     if (props?.debug) {
       this.debug = props.debug;
     }

@@ -283,7 +283,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     }
 
     if (!this.keyExchange.areKeysExchanged()) {
-      if (message?.type.startsWith('key_handshake')) {
+      if (message?.type?.startsWith('key_handshake')) {
         return this.dataChannel.send(JSON.stringify(message));
       }
       throw new Error('Keys not exchanged');

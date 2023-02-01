@@ -28,10 +28,11 @@ export const mainCommunication = async () => {
     platform,
     communicationServerUrl,
     context: 'dapp',
-    enableDebug: true,
+    developerMode: true,
+    analytics: true,
   });
 
-  const { channelId, pubKey } = remote.generateChannelId();
+  const { channelId, pubKey } = await remote.generateChannelId();
 
   remote.on(MessageType.CLIENTS_READY, () => {
     clientsReady = true;
@@ -43,7 +44,8 @@ export const mainCommunication = async () => {
     otherPublicKey: pubKey,
     communicationServerUrl,
     context: 'metamask',
-    enableDebug: true,
+    analytics: true,
+    developerMode: true,
   });
 
   mmRemote.connectToChannel(channelId);

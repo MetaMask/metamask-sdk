@@ -1,12 +1,9 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
-  AutoConnectOptions,
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
-  ECIESProps,
   MessageType,
-  StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -17,7 +14,6 @@ import { setupInAppProviderStream } from './provider/setupInAppProviderStream/se
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
-import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
@@ -42,10 +38,9 @@ export interface MetaMaskSDKOptions {
   dappMetadata?: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
+  developerMode?: boolean;
   communicationServerUrl?: string;
-  storage?: StorageManagerProps;
-  ecies?: ECIESProps;
-  autoConnect?: AutoConnectOptions;
+  // storage?: StorageManagerProps;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -58,6 +53,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   private installer?: MetaMaskInstaller;
 
   private dappMetadata?: DappMetadata;
+
+  private developerMode = false;
 
   constructor({
     dappMetadata,
@@ -85,18 +82,18 @@ export class MetaMaskSDK extends EventEmitter2 {
     timer,
     // Debugging
     enableDebug = true,
+    developerMode = false,
     communicationServerUrl,
-    ecies,
-    storage,
-    autoConnect,
   }: MetaMaskSDKOptions = {}) {
     super();
+
+    this.developerMode = developerMode;
 
     const platform = Platform.init({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
-      debug: enableDebug,
+      debug: this.developerMode,
     });
 
     this.dappMetadata = dappMetadata;
@@ -114,9 +111,10 @@ export class MetaMaskSDK extends EventEmitter2 {
         delete window.ethereum;
       }
 
-      if (storage && !storage.storageManager) {
-        storage.storageManager = getStorageManager(storage);
-      }
+      // TODO re-enable once session persistence is activated
+      // if (storage && !storage.storageManager) {
+      //   storage.storageManager = getStorageManager(storage);
+      // }
 
       this.remoteConnection = new RemoteConnection({
         communicationLayerPreference,
@@ -126,9 +124,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         timer,
         transports,
         communicationServerUrl,
-        ecies,
-        storage,
-        autoConnect,
+        developerMode: this.developerMode,
       });
 
       if (WalletConnectInstance) {
@@ -141,7 +137,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       const installer = MetaMaskInstaller.init({
         preferDesktop: preferDesktop ?? false,
         remote: this.remoteConnection,
-        debug: enableDebug,
+        debug: this.developerMode,
       });
 
       // Bubble up the connection status event.
@@ -164,7 +160,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         installer,
         remoteConnection: this.remoteConnection,
         walletConnect: this.walletConnect,
-        debug: enableDebug,
+        debug: this.developerMode,
       });
 
       // Setup provider streams, only needed for our mobile in-app browser
@@ -184,30 +180,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
   }
 
-  debugPersistence({
-    terminate,
-    disconnect,
-  }: {
-    terminate: boolean;
-    disconnect: boolean;
-  }) {
-    if (terminate) {
-      this.remoteConnection?.getConnector().sendTerminate();
-    }
-
-    if (disconnect) {
-      this.disconnect();
-    }
+  disconnect() {
+    this.remoteConnection?.disconnect();
   }
 
   terminate() {
-    console.debug(`initiate disconnection on SDK`);
     this.remoteConnection?.disconnect({ terminate: true });
-  }
-
-  disconnect() {
-    console.debug(`initiate disconnection on SDK`);
-    this.remoteConnection?.disconnect();
   }
 
   // Get the connector object from WalletConnect
@@ -227,12 +205,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.remoteConnection?.getChannelConfig();
   }
 
-  getKeyInfo() {
-    return this.remoteConnection?.getKeyInfo();
-  }
-
   getDappMetadata(): DappMetadata | undefined {
     return this.dappMetadata;
+  }
+
+  getKeyInfo() {
+    return this.remoteConnection?.getKeyInfo();
   }
 
   // Return the ethereum provider object

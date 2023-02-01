@@ -137,6 +137,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
     this.keyExchange.on(MessageType.KEYS_EXCHANGED, () => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'keys_exchanged'`);
+      }
       this.emit(MessageType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
       });
@@ -319,7 +322,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
-      return this.emit(MessageType.MESSAGE, messageReceived);
+      return this.emit(MessageType.MESSAGE, { message: messageReceived });
     });
 
     this.socket.on(
@@ -390,7 +393,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       );
     }
     if (!this.keyExchange.areKeysExchanged()) {
-      if (message?.type.startsWith('key_handshake')) {
+      if (message?.type?.startsWith('key_handshake')) {
         if (this.debug) {
           console.debug(
             `SocketService::${this.context}::sendMessage()`,
@@ -465,9 +468,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       console.debug(`SocketService::${this.context}::disconnect()`, options);
     }
     if (options?.terminate && this.keyExchange.areKeysExchanged()) {
-      this.manualDisconnect = true;
       this.sendMessage({ type: MessageType.TERMINATE });
     }
+    this.manualDisconnect = true;
     this.socket.disconnect();
     this.socket.close();
   }

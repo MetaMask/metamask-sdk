@@ -33,9 +33,9 @@ describe('SDK Comm Server', () => {
   it('should establish client/mobile connection through comm server', async () => {
     const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
     const platform = 'jest';
-    const communicationServerUrl = 'http://localhost:5400/';
-    // const communicationServerUrl =
-    //   'https://metamask-sdk-socket.metafi.codefi.network/';
+    // const communicationServerUrl = 'http://localhost:5400/';
+    const communicationServerUrl =
+      'https://metamask-sdk-socket.metafi.codefi.network/';
 
     const waitForReady = async (): Promise<void> => {
       return new Promise<void>((resolve) => {
@@ -58,13 +58,11 @@ describe('SDK Comm Server', () => {
         url: 'http://somehwere.com',
       },
       context: 'initiator',
-      enableDebug: false,
-      ecies: {
-        enabled: true,
-      },
+      analytics: true,
+      developerMode: true,
     });
 
-    const { channelId, pubKey } = remote.generateChannelId();
+    const { channelId, pubKey } = await remote.generateChannelId();
 
     // TODO allow for fixed roomid / pubkey setup during testing
     // fs.writeFileSync(
@@ -81,6 +79,8 @@ describe('SDK Comm Server', () => {
       platform,
       otherPublicKey: pubKey,
       communicationServerUrl,
+      analytics: true,
+      developerMode: true,
       dappMetadata: {
         name: 'SDK-COMM_TEST',
         url: 'http://somewhere.com',

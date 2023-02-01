@@ -58,7 +58,7 @@ export class StorageManagerAS implements StorageManager {
     } catch (e) {
       console.debug(`Can't find existing channel config`, e);
       // Ignore errors
-      return Promise.resolve(undefined);
+      return undefined;
     }
   }
 

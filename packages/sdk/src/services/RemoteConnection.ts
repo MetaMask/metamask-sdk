@@ -11,6 +11,7 @@ import {
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
+import { BooleanLiteral } from 'typescript';
 import { ErrorMessages } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
@@ -25,6 +26,7 @@ interface RemoteConnectionProps {
   communicationLayerPreference: CommunicationLayerPreference;
   dappMetadata?: DappMetadata;
   enableDebug?: boolean;
+  developerMode: boolean;
   transports?: string[];
   webRTCLib?: WebRTCLib;
   communicationServerUrl?: string;
@@ -45,6 +47,8 @@ export class RemoteConnection implements ProviderService {
 
   private enableDebug: boolean;
 
+  private developerMode: boolean;
+
   private forceRestart = false;
 
   private sentFirstConnect = false;
@@ -60,12 +64,14 @@ export class RemoteConnection implements ProviderService {
     timer,
     ecies,
     storage,
+    developerMode = false,
     communicationServerUrl,
     autoConnect,
   }: RemoteConnectionProps) {
     this.dappMetadata = dappMetadata;
     this.transports = transports;
     this.enableDebug = enableDebug;
+    this.developerMode = developerMode;
     this.communicationLayerPreference = communicationLayerPreference;
     this.webRTCLib = webRTCLib;
 
@@ -77,7 +83,8 @@ export class RemoteConnection implements ProviderService {
       transports: this.transports,
       webRTCLib: this.webRTCLib,
       dappMetadata: this.dappMetadata,
-      enableDebug: this.enableDebug,
+      analytics: this.enableDebug,
+      developerMode: this.developerMode,
       communicationServerUrl,
       context: 'dapp',
       ecies,
@@ -114,64 +121,65 @@ export class RemoteConnection implements ProviderService {
         return resolve(true);
       }
 
-      try {
-        const { channelId, pubKey } = this.connector.generateChannelId();
-        const linkParams = `channelId=${encodeURIComponent(
-          channelId,
-        )}&comm=${encodeURIComponent(
-          this.communicationLayerPreference,
-        )}&pubkey=${encodeURIComponent(pubKey)}`;
+      this.connector
+        .generateChannelId()
+        .then(({ channelId, pubKey }) => {
+          const linkParams = `channelId=${encodeURIComponent(
+            channelId,
+          )}&comm=${encodeURIComponent(
+            this.communicationLayerPreference,
+          )}&pubkey=${encodeURIComponent(pubKey)}`;
 
-        const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-        const deeplink = `metamask://connect?${linkParams}`;
+          const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+          const deeplink = `metamask://connect?${linkParams}`;
 
-        const platform = Platform.getInstance();
-        const platformType = platform.getPlatformType();
+          const platform = Platform.getInstance();
+          const platformType = platform.getPlatformType();
 
-        const showQRCode =
-          platformType === PlatformType.DesktopWeb ||
-          (platformType === PlatformType.NonBrowser &&
-            !platform.isReactNative());
+          const showQRCode =
+            platformType === PlatformType.DesktopWeb ||
+            (platformType === PlatformType.NonBrowser &&
+              !platform.isReactNative());
 
-        let installModal: any;
+          let installModal: any;
 
-        if (showQRCode) {
-          installModal = InstallModal({
-            link: universalLink,
-            debug: this.enableDebug,
+          if (showQRCode) {
+            installModal = InstallModal({
+              link: universalLink,
+              debug: this.enableDebug,
+            });
+            // console.log('OPEN LINK QRCODE', universalLink);
+          } else {
+            // console.log('OPEN LINK', universalLink);
+            Platform.getInstance().openDeeplink?.(
+              universalLink,
+              deeplink,
+              '_self',
+            );
+          }
+
+          this.universalLink = universalLink;
+
+          this.connector.once(MessageType.CLIENTS_READY, () => {
+            if (
+              installModal?.onClose &&
+              typeof installModal.onClose === 'function'
+            ) {
+              installModal?.onClose();
+            }
+
+            if (this.sentFirstConnect) {
+              return;
+            }
+            this.sentFirstConnect = true;
+
+            resolve(true);
           });
-          // console.log('OPEN LINK QRCODE', universalLink);
-        } else {
-          // console.log('OPEN LINK', universalLink);
-          Platform.getInstance().openDeeplink?.(
-            universalLink,
-            deeplink,
-            '_self',
-          );
-        }
-
-        this.universalLink = universalLink;
-
-        this.connector.once(MessageType.CLIENTS_READY, () => {
-          if (
-            installModal?.onClose &&
-            typeof installModal.onClose === 'function'
-          ) {
-            installModal?.onClose();
-          }
-
-          if (this.sentFirstConnect) {
-            return;
-          }
-          this.sentFirstConnect = true;
-
-          resolve(true);
+        })
+        .catch((err) => {
+          console.debug(`RemoteConnection error`, err);
+          reject(err);
         });
-      } catch (err) {
-        console.debug(`RemoteConnection error`, err);
-        reject(err);
-      }
-
       return true;
     });
   }

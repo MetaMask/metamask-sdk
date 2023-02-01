@@ -35,7 +35,7 @@
     "setup": "yarn install && yarn allow-scripts",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
-    "test:dev": "jest --detectOpenHandles",
+    "test:dev": "jest -c ./jest.config.ts --detectOpenHandles",
     "watch": "rollup -c -w"
   },
   "dependencies": {
@@ -58,6 +58,10 @@
     "socket.io-client": "^4.5.1",
     "util": "^0.12.4",
     "uuid": "^8.3.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-native": "^0.71.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",

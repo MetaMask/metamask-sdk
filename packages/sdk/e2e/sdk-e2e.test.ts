@@ -5,16 +5,13 @@ describe('SDK', () => {
   it('should communicate as a DAPP', async () => {
     const sdk = new MetaMaskSDK({
       shouldShimWeb3: false,
-      communicationServerUrl: 'http://localhost:5400',
+      // communicationServerUrl: 'http://localhost:5400',
       dappMetadata: {
         name: 'CustonName',
         url: 'http://whateverwewant',
       },
-      enableDebug: true,
-      ecies: {
-        enabled: true,
-        debug: true,
-      },
+      enableDebug: false,
+      developerMode: true,
     });
 
     const ethereum = sdk.getProvider();
@@ -67,7 +64,7 @@ describe('SDK', () => {
     };
 
     const from = accounts[0];
-
+    console.debug(`from: ${from}`);
     const signResponse = await ethereum.request({
       method: 'eth_signTypedData_v3',
       params: [from, JSON.stringify(msgParams)],

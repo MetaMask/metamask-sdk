@@ -65,11 +65,6 @@ export class RemoteCommunicationPostMessageStream
       }
     });
 
-    // previous code for reference
-    // this.comm.on('clients_disconnected', () => {
-    //   Ethereum.ethereum._handleAccountsChanged([]);
-    //   Ethereum.ethereum._handleDisconnect(true);
-    // });
     this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
       if (this.debug) {
         console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
@@ -213,7 +208,9 @@ export class RemoteCommunicationPostMessageStream
         this.push(message);
       }
     } catch (err) {
-      console.debug(`RCPMS ignore message error`, err);
+      if (this.debug) {
+        console.debug(`RCPMS ignore message error`, err);
+      }
     }
   }
 
