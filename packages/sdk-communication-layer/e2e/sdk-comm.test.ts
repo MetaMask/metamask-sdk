@@ -33,7 +33,7 @@ describe('SDK Comm Server', () => {
   it('should establish client/mobile connection through comm server', async () => {
     const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
     const platform = 'jest';
-    // const communicationServerUrl = 'http://localhost:5400/';
+    // const communicationServerUrl = 'http://localhost:4000/';
     const communicationServerUrl =
       'https://metamask-sdk-socket.metafi.codefi.network/';
 

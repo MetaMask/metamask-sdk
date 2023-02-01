@@ -7,7 +7,7 @@ import { ChannelConfig, CommunicationLayerPreference, ConnectionStatus, KeyInfo,
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  communicationServerUrl: 'http://localhost:5400',
+  communicationServerUrl: 'http://localhost:4000',
   enableDebug: true,
   developerMode: true,
 });

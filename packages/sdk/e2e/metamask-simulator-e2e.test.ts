@@ -47,7 +47,7 @@ describe('MetaMask Simulator', () => {
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       platform: 'test',
       otherPublicKey: pubkey,
-      // communicationServerUrl: 'http://localhost:5400',
+      // communicationServerUrl: 'http://localhost:4000',
       context: 'mm',
       developerMode: true,
       analytics: true,

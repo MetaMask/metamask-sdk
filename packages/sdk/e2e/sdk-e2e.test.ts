@@ -5,7 +5,7 @@ describe('SDK', () => {
   it('should communicate as a DAPP', async () => {
     const sdk = new MetaMaskSDK({
       shouldShimWeb3: false,
-      // communicationServerUrl: 'http://localhost:5400',
+      // communicationServerUrl: 'http://localhost:4000',
       dappMetadata: {
         name: 'CustonName',
         url: 'http://whateverwewant',

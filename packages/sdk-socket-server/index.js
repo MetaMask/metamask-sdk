@@ -222,7 +222,7 @@ io.on('connection', (socket) => {
 });
 
 // eslint-disable-next-line node/no-process-env
-const port = process.env.port || 5400;
+const port = process.env.port || 4000;
 server.listen(port, () => {
   console.log(`listening on *:${port}`);
 });
