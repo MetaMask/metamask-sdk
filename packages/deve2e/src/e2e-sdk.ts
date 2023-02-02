@@ -3,7 +3,7 @@ import { MetaMaskSDK } from '@metamask/sdk';
 export const mainSDK = async () => {
   const sdk = new MetaMaskSDK({
     shouldShimWeb3: false,
-    communicationServerUrl: 'http://localhost:4000/',
+    // communicationServerUrl: 'http://localhost:4000/',
     dappMetadata: {
       name: 'NodeJS Console',
       url: 'N/A',
