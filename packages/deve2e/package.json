@@ -1,0 +1,41 @@
+{
+  "name": "@metamask/sdk-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "",
+  "main": "dist/node/es/deve2e.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c --bundleConfigAsCjs",
+    "build:post-tsc": "echo 'N/A'",
+    "build:pre-tsc": "echo 'N/A'",
+    "clean": "rimraf dist",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "reset": "rimraf node_modules && yarn clean",
+    "setup": "yarn install && yarn allow-scripts",
+    "start": "ROLLUP_RUN=true yarn build",
+    "test": "echo 'N/A'",
+    "test:ci": "echo 'N/A'",
+    "watch": "yarn start --watch"
+  },
+  "dependencies": {
+    "@metamask/providers": "^10.2.1",
+    "@metamask/sdk": "^0.2.0",
+    "@metamask/sdk-communication-layer": "^0.2.0",
+    "bowser": "^2.11.0",
+    "pump": "^3.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-run": "^3.0.1",
+    "rimraf": "^3.0.2",
+    "rollup": "^3.7.3",
+    "rollup-plugin-serve": "^2.0.2",
+    "rollup-plugin-typescript2": "^0.34.1"
+  }
+}

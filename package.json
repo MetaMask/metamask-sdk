@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "private": true,
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "lint:misc": "yarn workspaces run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
     "setup": "yarn install && yarn allow-scripts && yarn postinstall",
+    "reset": "yarn workspaces run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
@@ -49,6 +50,7 @@
     "patch-package": "^6.4.7",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.3",
     "typescript": "^4.3.5"
   },
   "engines": {
@@ -59,5 +61,6 @@
       "@lavamoat/preinstall-always-fail": false,
       "canvas": true
     }
-  }
+  },
+  "dependencies": {}
 }

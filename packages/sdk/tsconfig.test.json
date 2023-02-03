@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/packages/sdk-communication-layer",
+    "module": "CommonJS",
+    "types": ["node", "jest"],
+    "strict": true
+  },
+  "include": [
+    "jest.config.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts",
+    "src/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

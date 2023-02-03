@@ -1,10 +1,11 @@
 {
   "name": "@metamask/sdk-install-modal-web",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
+  "types": "dist/src/EmbeddableWidget.d.ts",
   "files": [
     "/dist"
   ],
@@ -13,12 +14,14 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "build:release": "yarn version && webpack-cli --mode production",
+    "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "prepublishOnly": "yarn build",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
     "test:ci": "echo 'N/A'",
@@ -26,8 +29,10 @@
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
+    "@babel/core": "^7.20.12",
     "@emotion/styled": "10.0.27",
-    "qr-code-styling": "^1.6.0-rc.1"
+    "qr-code-styling": "^1.6.0-rc.1",
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@emotion/core": "10.1.1",
@@ -44,13 +49,13 @@
     "eslint-plugin-prettier": "^3.4.0",
     "preact": "10.5.13",
     "preact-render-to-string": "5.1.19",
-    "source-map-loader": "0.2.4",
-    "ts-loader": "6.2.2",
-    "typescript": "3.9.9",
+    "source-map-loader": "4.0.1",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.3.2",
     "uglifyjs-webpack-plugin": "2.2.0",
     "webpack": "5.38.1",
-    "webpack-cli": "3.3.12",
-    "webpack-dev-server": "3.11.2",
+    "webpack-cli": "5.0.1",
+    "webpack-dev-server": "4.11.1",
     "webpack-modules": "1.0.0"
   },
   "publishConfig": {

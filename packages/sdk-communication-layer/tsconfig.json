@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "esModuleInterop": true,
-    "module": "ES6",
-    "moduleResolution": "Node",
+    "declarationMap": true,
     "sourceMap": true,
-    "strict": false,
-    "target": "es5",
+    "strict": true,
+    "target": "es6",
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "incremental": true,
     "lib": ["DOM", "ES2016"],
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
-  "include": ["./**/*.ts"]
+  "include": ["./src"]
 }

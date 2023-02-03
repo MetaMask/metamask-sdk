@@ -1,46 +1,73 @@
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { ProviderConstants } from '../constants';
-import Platform, { isMetaMaskInstalled, PlatformName } from '../Platform';
-import ManageMetaMaskInstallation from '../Platform/ManageMetaMaskInstallation';
-import PostMessageStreams from '../PostMessageStreams';
-import Ethereum from '../services/Ethereum';
+import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
+import { Platform } from '../Platform/Platfform';
+import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
+import { Ethereum } from '../services/Ethereum';
+import { RemoteConnection } from '../services/RemoteConnection';
+import { WalletConnect } from '../services/WalletConnect';
+import { PlatformType } from '../types/PlatformType';
 
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
+  communicationLayerPreference,
+  platformType,
   injectProvider,
   shouldShimWeb3,
+  installer,
+  remoteConnection,
+  walletConnect,
+  debug,
+}: {
+  communicationLayerPreference: CommunicationLayerPreference;
+  checkInstallationOnAllCalls?: boolean;
+  platformType: PlatformType;
+  injectProvider?: boolean;
+  shouldShimWeb3: boolean;
+  installer: MetaMaskInstaller;
+  remoteConnection?: RemoteConnection;
+  walletConnect?: WalletConnect;
+  debug: boolean;
 }) => {
-  const PostMessageStream = PostMessageStreams.getPostMessageStreamToUse();
-
-  const platform = Platform.getPlatform();
-
   // Setup stream for content script communication
-  const metamaskStream = new PostMessageStream({
+  const metamaskStream = getPostMessageStream({
     name: ProviderConstants.INPAGE,
     target: ProviderConstants.CONTENT_SCRIPT,
+    communicationLayerPreference,
+    remoteConnection,
+    walletConnect,
+    debug,
   });
 
   // Initialize provider object (window.ethereum)
-  const ethereum = Ethereum.initializeProvider({
-    shouldSetOnWindow: !(
-      !injectProvider ||
-      // Don't inject if it's non browser
-      platform === PlatformName.NonBrowser
-    ),
+  const shouldSetOnWindow = !(
+    !injectProvider ||
+    // Don't inject if it's non browser
+    platformType === PlatformType.NonBrowser
+  );
+
+  metamaskStream.start();
+
+  const ethereum = Ethereum.init({
+    shouldSetOnWindow,
     connectionStream: metamaskStream,
     shouldShimWeb3,
   });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  metamaskStream.start?.();
+  // TODO don't use any!!!!
+  const sendRequest = async (method: string, args: any, f: any) => {
+    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
-  const sendRequest = async (method, args, f) => {
-    const isInstalled = isMetaMaskInstalled();
+    if (debug) {
+      console.debug(
+        `initializeProvider::sendRequest() method=${method} isInstalled=${isInstalled}`,
+      );
+    }
 
     if (!isInstalled && method !== 'metamask_getProviderState') {
       if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
         // Start installation and once installed try the request again
-        const isConnectedNow = await ManageMetaMaskInstallation.start({
+        const isConnectedNow = await installer.start({
           wait: false,
         });
 
@@ -55,7 +82,7 @@ const initializeProvider = ({
       );
     }
 
-    return f(...args);
+    return await f(...args);
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
@@ -65,8 +92,10 @@ const initializeProvider = ({
   };
 
   const { send } = ethereum;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore // FIXME remove support for deprecated method
   ethereum.send = async (...args) => {
-    return sendRequest(args?.[0], args, send);
+    return sendRequest(args?.[0] as string, args, send);
   };
 
   return ethereum;

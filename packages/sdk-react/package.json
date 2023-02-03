@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": false,
   "description": "A react component and react hooks to connect and use MetaMask",
   "keywords": [
@@ -19,15 +19,17 @@
   ],
   "scripts": {
     "prebuild": "rm -rf dist",
-    "build": "npm run prebuild && rollup -c --silent",
+    "build": "yarn prebuild && rollup -c --silent",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "clean": "rm -rf dist",
     "dev": "rollup -c -w",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'"
   },
@@ -37,7 +39,9 @@
     "@types/jest": "^27.0.1",
     "ethers": "^5.6.9",
     "mersenne-twister": "^1.1.0",
+    "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
+    "react-dom": "^18.2.0",
     "react-jazzicon": "^1.0.4",
     "wagmi": "^0.6.0"
   },
@@ -71,6 +75,7 @@
     "prettier": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rimraf": "^3.0.2",
     "rollup": "^2.75.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",

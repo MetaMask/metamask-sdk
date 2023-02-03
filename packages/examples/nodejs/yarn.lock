@@ -153,34 +153,34 @@
   resolved "https://registry.yarnpkg.com/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
   integrity sha512-/kSXhY692qiV1MXu6EeOZvg5nECLclxNXcKCxJ3cXQgYuRymRHpdx/t7JXfsK+JLjwA1e1c1/SBrlQYpusC29Q==
 
-"@metamask/sdk-communication-layer@^0.0.1-beta.4":
-  version "0.0.1-beta.4"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-communication-layer/-/sdk-communication-layer-0.0.1-beta.4.tgz#0cf7e54902bdabf0a370a18e85ad5e77477ff2c9"
-  integrity sha512-IaTgnZOhtm9EavVvAiCOwqpU40YmiP5q/dU00IQSry/Tpl+PmtW86ZaaYzXsWm7ozt59t24IL4qPPLVnN3cGzw==
+"@metamask/sdk-communication-layer@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk-communication-layer/-/sdk-communication-layer-0.1.0.tgz#ca4db624eb7eec6cc1f0b03de6385a43a1a3f11e"
+  integrity sha512-y9iWBOc3HKXn1dnkeN31nH1aUP/OKsSThUg8s+37skhgIw7EpUQM+AAc2pfGht/3O4gLb9iQ5BVr9kQfSCHSGw==
   dependencies:
     eciesjs "^0.3.15"
     eventemitter2 "^6.4.5"
     socket.io-client "^4.5.1"
     uuid "^8.3.2"
 
-"@metamask/sdk-install-modal-web@^0.0.1-beta.4":
-  version "0.0.1-beta.4"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-install-modal-web/-/sdk-install-modal-web-0.0.1-beta.4.tgz#94c36e4b1354165d465237104e50d60988b30044"
-  integrity sha512-UxylqyhKkPSl7f/H9ck0kVNH4si/tepiBZHIXM/Q3F5qxzTCMCR2rURIBEBv5oNOlap3OXzjbxq/TzUqWPNH3Q==
+"@metamask/sdk-install-modal-web@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk-install-modal-web/-/sdk-install-modal-web-0.1.0.tgz#00c3e704368b417f7448f8c129131b1303d2e86b"
+  integrity sha512-uft2bW1G3ZlM+MESbVWf5ubwqCuGDTp07cv5I9h/XdMNN6srVjuhlDPP95oD9PaAxv8IME8ZFWWdePE38CXycw==
   dependencies:
     "@emotion/styled" "10.0.27"
     qr-code-styling "^1.6.0-rc.1"
 
-"@metamask/sdk@^0.0.1-beta.5":
-  version "0.0.1-beta.5"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.0.1-beta.5.tgz#045cd20f5588a1b95d78e18c92533b0bfdce698e"
-  integrity sha512-DvBGBaITAXNibuAbUyj3N/YtV40JsOcY/pq3/MvruZtleSHwLCEAVjHSXJWK8DhKlq89Dfy0COu3KtSHA6bNwA==
+"@metamask/sdk@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.1.0.tgz#19753efade20ec2060ddb7c74848b34499a08d09"
+  integrity sha512-kx6T0bzqaI3SINy7W+MOtgGjPfGUKSyJbNt1vucLf/OpYQ3BMv2Q4EpDQV4/IS01h9vSc6WI2nGESj9Q7PXQYg==
   dependencies:
     "@metamask/onboarding" "^1.0.1"
     "@metamask/post-message-stream" "^4.0.0"
     "@metamask/providers" "^8.1.1"
-    "@metamask/sdk-communication-layer" "^0.0.1-beta.4"
-    "@metamask/sdk-install-modal-web" "^0.0.1-beta.4"
+    "@metamask/sdk-communication-layer" "^0.1.0"
+    "@metamask/sdk-install-modal-web" "^0.1.0"
     bowser "^2.9.0"
     eciesjs "^0.3.15"
     eventemitter2 "^6.4.7"

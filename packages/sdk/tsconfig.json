@@ -1,14 +1,13 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    "esModuleInterop": true,
-    "module": "ES6",
-    "moduleResolution": "Node",
-    "sourceMap": true,
-    "strict": false,
-    "target": "es5",
-    "lib": ["DOM", "ES2016"],
-    "skipLibCheck": true
-  },
-  "include": ["./**/*.ts"]
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ]
 }

@@ -1,113 +1,218 @@
 import { EventEmitter2 } from 'eventemitter2';
-import ECIES from './ECIES';
+import { ECIES, ECIESProps } from './ECIES';
+import { CommunicationLayer } from './types/CommunicationLayer';
+import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { KeyInfo } from './types/KeyInfo';
+import { MessageType } from './types/MessageType';
 
-enum KeySteps {
-  NONE = 'none',
-  SYN = 'key_handshake_SYN',
-  SYNACK = 'key_handshake_SYNACK',
-  ACK = 'key_handshake_ACK',
+export interface KeyExchangeProps {
+  communicationLayer: CommunicationLayer;
+  otherPublicKey?: string;
+  sendPublicKey: boolean;
+  context: string;
+  debug: boolean;
+  ecies?: ECIESProps;
 }
 
-export default class KeyExchange extends EventEmitter2 {
-  keysExchanged = false;
+export class KeyExchange extends EventEmitter2 {
+  private keysExchanged = false;
 
-  myECIES = null;
+  private myECIES: ECIES;
 
-  otherPublicKey = '';
+  private otherPublicKey = '';
 
-  CommLayer: any;
+  private communicationLayer: CommunicationLayer;
 
-  myPublicKey: any;
+  private myPublicKey: string;
 
-  sendPublicKey: any;
+  private sendPublicKey: boolean;
 
-  step: string = KeySteps.NONE;
+  private step = MessageType.KEY_HANDSHAKE_NONE;
 
-  constructor({ CommLayer, otherPublicKey, sendPublicKey }) {
+  private context: string;
+
+  private debug = false;
+
+  constructor({
+    communicationLayer,
+    otherPublicKey,
+    sendPublicKey,
+    context,
+    ecies,
+    debug = false,
+  }: KeyExchangeProps) {
     super();
 
-    this.myECIES = new ECIES();
-    this.myECIES.generateECIES();
-    this.CommLayer = CommLayer;
+    this.context = context;
+    this.myECIES = new ECIES(ecies);
+    this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
+    this.debug = debug;
 
     if (otherPublicKey) {
-      this.onOtherPublicKey(otherPublicKey);
+      this.setOtherPublicKey(otherPublicKey);
     }
     this.sendPublicKey = sendPublicKey;
 
-    this.CommLayer.on('key_exchange', ({ message }) => {
-      if (this.keysExchanged) {
-        return;
+    this.communicationLayer.on(
+      MessageType.KEY_EXCHANGE,
+      this.onKeyExchangeMessage.bind(this),
+    );
+  }
+
+  private onKeyExchangeMessage(keyExchangeMsg: {
+    message: CommunicationLayerMessage;
+  }) {
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::onKeyExchangeMessage() keysExchanged=${this.keysExchanged}`,
+        keyExchangeMsg,
+      );
+    }
+
+    const { message } = keyExchangeMsg;
+    if (this.keysExchanged) {
+      if (this.debug) {
+        console.log(
+          `KeyExchange::${this.context}::onKeyExchangeMessage STOP handshake already exchanged`,
+        );
+      }
+      return;
+    }
+
+    if (message.type === MessageType.KEY_HANDSHAKE_SYN) {
+      this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
+      this.step = MessageType.KEY_HANDSHAKE_ACK;
+
+      if (this.debug) {
+        console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`);
       }
 
-      if (message.type === KeySteps.SYN) {
-        this.checkStep(KeySteps.NONE);
-        this.step = KeySteps.ACK;
-
-        if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
-          this.onOtherPublicKey(message.pubkey);
-        }
-
-        this.CommLayer.sendMessage({
-          type: KeySteps.SYNACK,
-          pubkey: this.myPublicKey,
-        });
-      } else if (message.type === KeySteps.SYNACK) {
-        this.checkStep(KeySteps.SYNACK);
-
-        this.onOtherPublicKey(message.pubkey);
-
-        this.CommLayer.sendMessage({ type: KeySteps.ACK });
-        this.keysExchanged = true;
-        this.emit('keys_exchanged');
-      } else if (message.type === KeySteps.ACK) {
-        this.checkStep(KeySteps.ACK);
-        this.keysExchanged = true;
-        this.emit('keys_exchanged');
+      if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
+        this.setOtherPublicKey(message.pubkey);
       }
-    });
+
+      this.communicationLayer.sendMessage({
+        type: MessageType.KEY_HANDSHAKE_SYNACK,
+        pubkey: this.myPublicKey,
+      });
+    } else if (message.type === MessageType.KEY_HANDSHAKE_SYNACK) {
+      this.checkStep(MessageType.KEY_HANDSHAKE_SYNACK);
+
+      if (this.debug) {
+        console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
+      }
+
+      this.setOtherPublicKey(message.pubkey ?? '');
+
+      this.communicationLayer.sendMessage({
+        type: MessageType.KEY_HANDSHAKE_ACK,
+      });
+      this.keysExchanged = true;
+      this.emit(MessageType.KEYS_EXCHANGED);
+    } else if (message.type === MessageType.KEY_HANDSHAKE_ACK) {
+      if (this.debug) {
+        console.debug(
+          `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
+        );
+      }
+      this.checkStep(MessageType.KEY_HANDSHAKE_ACK);
+      this.keysExchanged = true;
+      this.emit(MessageType.KEYS_EXCHANGED);
+    }
+  }
+
+  setSendPublicKey(sendPublicKey: boolean) {
+    this.sendPublicKey = sendPublicKey;
+  }
+
+  resetKeys(ecies?: ECIESProps) {
+    this.clean();
+    this.myECIES = new ECIES(ecies);
   }
 
   clean(): void {
-    this.step = KeySteps.NONE;
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::clean reset handshake state`,
+      );
+    }
+    this.step = MessageType.KEY_HANDSHAKE_NONE;
     this.keysExchanged = false;
     this.otherPublicKey = '';
   }
 
   start(isOriginator: boolean): void {
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::start isOriginator=${isOriginator}`,
+      );
+    }
+
     if (isOriginator) {
       this.clean();
     }
-    this.checkStep(KeySteps.NONE);
-    this.step = KeySteps.SYNACK;
-    this.CommLayer.sendMessage({
-      type: KeySteps.SYN,
+    this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
+    this.step = MessageType.KEY_HANDSHAKE_SYNACK;
+    this.communicationLayer.sendMessage({
+      type: MessageType.KEY_HANDSHAKE_SYN,
       pubkey: this.sendPublicKey ? this.myPublicKey : undefined,
     });
   }
 
   checkStep(step: string): void {
-    if (this.step !== step) {
+    if (this.step.toString() !== step) {
+      console.log(`Invalid step ${this.step} vs ${step}`);
       throw new Error(`Wrong Step ${this.step} ${step}`);
     }
   }
 
-  onOtherPublicKey(pubkey: string): void {
-    this.otherPublicKey = pubkey;
+  areKeysExchanged() {
+    return this.keysExchanged;
+  }
+
+  getMyPublicKey() {
+    return this.myPublicKey;
+  }
+
+  setOtherPublicKey(otherPubKey: string) {
+    if (this.debug) {
+      console.debug(`KeyExchange::setOtherPubKey()`, otherPubKey);
+    }
+    this.otherPublicKey = otherPubKey;
   }
 
   encryptMessage(message: string): string {
     if (!this.otherPublicKey) {
-      throw new Error('Keys not exchanged');
+      throw new Error(
+        'encryptMessage: Keys not exchanged - missing otherPubKey',
+      );
     }
     return this.myECIES.encrypt(message, this.otherPublicKey);
   }
 
   decryptMessage(message: string): string {
     if (!this.otherPublicKey) {
-      throw new Error('Keys not exchanged');
+      throw new Error(
+        'decryptMessage: Keys not exchanged - missing otherPubKey',
+      );
     }
     return this.myECIES.decrypt(message);
+  }
+
+  getKeyInfo(): KeyInfo {
+    return {
+      ...this.myECIES.getKeyInfo(),
+      otherPubKey: this.otherPublicKey,
+    };
+  }
+
+  toString() {
+    const buf = {
+      keyInfo: this.getKeyInfo(),
+      keysExchanged: this.keysExchanged,
+      step: this.step,
+    };
+    console.debug(`KeyExchange::toString()`, buf);
   }
 }

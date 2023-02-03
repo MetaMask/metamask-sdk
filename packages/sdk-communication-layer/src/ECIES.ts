@@ -1,5 +1,14 @@
 import { Buffer } from 'buffer';
-import { encrypt, decrypt, PrivateKey } from 'eciesjs';
+import { decrypt, encrypt, PrivateKey } from 'eciesjs';
+import { KeyInfo } from './types/KeyInfo';
+
+/**
+ * These properties are optional and should only be used during development for debugging purposes.
+ */
+export interface ECIESProps {
+  debug?: boolean;
+  pkey?: string;
+}
 
 /**
  * Class that exposes methods to generate and compute
@@ -9,16 +18,36 @@ import { encrypt, decrypt, PrivateKey } from 'eciesjs';
  * by the communication layer to encrypt/decrypt in/out data
  * The encryption/decryption is made using a symmetric key generated from the ECIES key exchange
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default class ECIES {
-  ecies: any;
+export class ECIES {
+  private ecies: PrivateKey;
 
-  constructor() {
-    this.ecies = null; // ECIES instance
+  private enabled = true;
+
+  private debug = false;
+
+  constructor(props?: ECIESProps) {
+    if (props?.debug) {
+      this.debug = props.debug;
+    }
+
+    if (props?.pkey) {
+      this.ecies = PrivateKey.fromHex(props.pkey);
+    } else {
+      this.ecies = new PrivateKey();
+    }
+
+    if (this.debug) {
+      console.info(`[ECIES] initialized secret: `, this.ecies.toHex());
+      console.info(
+        `[ECIES] initialized public: `,
+        this.ecies.publicKey.toHex(),
+      );
+      console.info(`[ECIES] init with`, this);
+    }
   }
 
   /**
-   * Creates ECIES instance
+   * Creates new ECIES instance
    *
    * @returns - Generates ECIES instance
    */
@@ -43,9 +72,23 @@ export default class ECIES {
    * @returns - encrypted string in base64
    */
   encrypt(data: string, otherPublicKey: string): string {
-    const encryptedData = encrypt(otherPublicKey, Buffer.from(data));
-
-    return Buffer.from(encryptedData).toString('base64');
+    let encryptedString = data;
+    if (this.enabled) {
+      try {
+        const payload = Buffer.from(data);
+        const encryptedData = encrypt(otherPublicKey, payload);
+        encryptedString = Buffer.from(encryptedData).toString('base64');
+      } catch (err) {
+        if (this.debug) {
+          console.error(`error encrypt:`, err);
+          console.error(`private: `, this.ecies.toHex());
+          console.error('data: ', data);
+          console.error(`otherkey: `, otherPublicKey);
+        }
+        throw err;
+      }
+    }
+    return encryptedString;
   }
 
   /**
@@ -55,14 +98,34 @@ export default class ECIES {
    * @returns - decrypted data || error message
    */
   decrypt(encryptedData: string): string {
-    const payload = Buffer.from(encryptedData, 'base64');
+    let decryptedString = encryptedData;
+    if (this.enabled) {
+      try {
+        const payload = Buffer.from(encryptedData.toString(), 'base64');
+        const decrypted = decrypt(this.ecies.toHex(), payload);
 
-    try {
-      const decrypted = decrypt(this.ecies.toHex(), payload);
-
-      return decrypted.toString();
-    } catch (error: any) {
-      return error.message;
+        decryptedString = decrypted.toString();
+      } catch (error) {
+        if (this.debug) {
+          console.error(`error decrypt`, error);
+          console.error(`private: `, this.ecies.toHex());
+          console.error(`encryptedData: `, encryptedData);
+        }
+        throw error;
+      }
     }
+
+    return decryptedString;
+  }
+
+  getKeyInfo(): KeyInfo {
+    return {
+      private: this.ecies.toHex(),
+      public: this.ecies.publicKey.toHex(),
+    };
+  }
+
+  toString() {
+    console.debug(`ECIES::toString()`, this.getKeyInfo());
   }
 }

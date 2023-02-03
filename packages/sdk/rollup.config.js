@@ -8,37 +8,39 @@ import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import { terser } from "rollup-plugin-terser";
 
-const listDepForRollup = [];
+const listDepForRollup = ['@react-native-async-storage/async-storage'];
 
+/**
+ * @type {import('rollup').RollupOptions}
+ */
 const config = [
   {
     external: listDepForRollup,
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/browser/cjs/metamask-sdk.js',
-        format: 'cjs',
-      },
-      {
         file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
+        sourcemap: true,
       },
       {
         name: 'browser',
         file: 'dist/browser/umd/metamask-sdk.js',
         format: 'umd',
+        sourcemap: true,
       },
       {
         file: 'dist/browser/iife/metamask-sdk.js',
         format: 'iife',
         name: 'MetaMaskSDK',
+        sourcemap: true,
       },
     ],
     plugins: [
       jscc({
         values: { _WEB: 1 },
       }),
-      typescript(),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
       nodeResolve({ browser: true, preferBuiltins: false }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
@@ -52,19 +54,16 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/react-native/cjs/metamask-sdk.js',
-        format: 'cjs',
-      },
-      {
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',
+        sourcemap: true,
       },
     ],
     plugins: [
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
-      typescript(),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
@@ -83,10 +82,12 @@ const config = [
       {
         file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
+        sourcemap: true,
       },
       {
         file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -100,8 +101,12 @@ const config = [
         // Generate sourcemap
         sourcemap: true,
       }),
-      typescript(),
-      nodeResolve({ browser: false, preferBuiltins: false }),
+      typescript({ tsconfig: "./tsconfig.build.json" }),
+      nodeResolve({
+        browser: false,
+        preferBuiltins: true,
+        exportConditions: ['node']
+      }),
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser()
