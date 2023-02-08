@@ -448,7 +448,7 @@ export class RemoteCommunication extends EventEmitter2 {
           `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
         );
       }
-      return undefined;
+      return channelConfig;
     }
 
     // is socket already connected?
@@ -459,7 +459,7 @@ export class RemoteCommunication extends EventEmitter2 {
           `RemoteCommunication::startAutoConnect() socket already connected - exit autoConnect()`,
         );
       }
-      return undefined;
+      return channelConfig;
     }
 
     if (channelConfig) {
@@ -532,6 +532,15 @@ export class RemoteCommunication extends EventEmitter2 {
         `RemoteCommunication::${this.context}::connectToChannel() channelId=${channelId}`,
       );
     }
+
+    if (this.communicationLayer?.isConnected()) {
+      // Adding a check on previous connection to prevent reconnecting during dev when HMR is enabled
+      console.debug(
+        `RemoteCommunication::${this.context}::connectToChannel() already connected - interrup connection.`,
+      );
+      return;
+    }
+
     this.channelId = channelId;
     this.communicationLayer?.connectToChannel({ channelId });
   }

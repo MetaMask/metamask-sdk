@@ -255,6 +255,9 @@ export class RemoteConnection implements ProviderService {
   }
 
   disconnect(options?: DisconnectOptions): void {
+    if (this.enableDebug) {
+      console.debug(`RemoteConnection::disconnect()`, options);
+    }
     this.connector.disconnect(options);
     const platform = Platform.getInstance();
 
