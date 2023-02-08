@@ -162,6 +162,10 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     });
   }
 
+  isConnected(): boolean {
+    return this.socketService.isConnected();
+  }
+
   setupWebrtc() {
     const configuration = {
       // FIXME WHAT is this hardcoded value?

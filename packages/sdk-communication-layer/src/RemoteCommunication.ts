@@ -25,6 +25,7 @@ import { TrackingEvents } from './types/TrackingEvent';
 import { WalletInfo } from './types/WalletInfo';
 import { WebRTCLib } from './types/WebRTCLib';
 import { WebRTCService } from './WebRTCService';
+import { ServiceStatus } from './types/ServiceStatus';
 
 export interface RemoteCommunicationProps {
   platform: string;
@@ -137,9 +138,11 @@ export class RemoteCommunication extends EventEmitter2 {
       ecies,
       communicationServerUrl,
     });
+
+    this.emitServiceStatusEvent();
   }
 
-  initCommunicationLayer({
+  private initCommunicationLayer({
     communicationLayerPreference,
     otherPublicKey,
     webRTCLib,
@@ -215,6 +218,16 @@ export class RemoteCommunication extends EventEmitter2 {
         this.onCommunicationLayerMessage(message);
       },
     );
+
+    this.communicationLayer?.on(MessageType.KEY_INFO, (keyInfo) => {
+      if (this.developerMode) {
+        console.debug(
+          `[communication][${this.context}] received 'KEY_INFO' `,
+          keyInfo,
+        );
+      }
+      this.emitServiceStatusEvent();
+    });
 
     this.communicationLayer?.on(MessageType.CLIENTS_READY, (message) => {
       if (this.developerMode) {
@@ -335,7 +348,7 @@ export class RemoteCommunication extends EventEmitter2 {
             );
           }
           // Cleanup previous channelId
-          this.storageManager?.terminate();
+          // this.storageManager?.terminate();
           this.autoStarted = false;
           this.setConnectionStatus(ConnectionStatus.TIMEOUT);
           clearTimeout(timeoutId);
@@ -346,7 +359,7 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  onCommunicationLayerMessage(message: CommunicationLayerMessage) {
+  private onCommunicationLayerMessage(message: CommunicationLayerMessage) {
     if (this.developerMode) {
       console.debug(
         `RemoteCommunication::${
@@ -410,14 +423,14 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(MessageType.MESSAGE, message);
   }
 
-  async startAutoConnect(): Promise<boolean> {
+  async startAutoConnect(): Promise<ChannelConfig | undefined> {
     if (!this.storageManager) {
       if (this.developerMode) {
         console.debug(
           `RemoteCommunication::startAutoConnect() no storage manager defined - skip`,
         );
       }
-      return false;
+      return undefined;
     }
 
     const channelConfig = await this.storageManager.getPersistedChannelConfig();
@@ -435,11 +448,22 @@ export class RemoteCommunication extends EventEmitter2 {
           `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
         );
       }
-      return false;
+      return undefined;
+    }
+
+    // is socket already connected?
+    const connected = this.communicationLayer?.isConnected();
+    if (connected) {
+      if (this.developerMode) {
+        console.debug(
+          `RemoteCommunication::startAutoConnect() socket already connected - exit autoConnect()`,
+        );
+      }
+      return undefined;
     }
 
     if (channelConfig) {
-      const validSession = channelConfig.validUntil > new Date();
+      const validSession = channelConfig.validUntil > Date.now();
 
       if (validSession) {
         this.channelConfig = channelConfig;
@@ -448,7 +472,7 @@ export class RemoteCommunication extends EventEmitter2 {
           channelId: channelConfig.channelId,
           isOriginator: true,
         });
-        return Promise.resolve(true);
+        return Promise.resolve(channelConfig);
       } else if (this.developerMode) {
         console.log(`RemoteCommunication::autoConnect Session has expired`);
       }
@@ -456,7 +480,7 @@ export class RemoteCommunication extends EventEmitter2 {
       console.debug(`RemoteCommunication::autoConnect not available`);
     }
     this.autoStarted = false;
-    return false;
+    return undefined;
   }
 
   async generateChannelId() {
@@ -465,22 +489,19 @@ export class RemoteCommunication extends EventEmitter2 {
     }
 
     if (this.connected) {
-      throw new Error('Channel already created');
+      throw new Error('Channel already connected');
     }
 
     if (this.developerMode) {
       console.debug(`RemoteCommunication::generateChannelId()`);
     }
 
-    // try to re-use existing channel id.
-    await this.startAutoConnect();
-
     this.clean();
     const channel = this.communicationLayer.createChannel();
 
     const channelConfig = {
       channelId: channel.channelId,
-      validUntil: new Date(Date.now() + DEFAULT_SESSION_TIMEOUT_MS),
+      validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
     };
     this.channelConfig = channelConfig;
     // save current channel config
@@ -495,6 +516,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (this.developerMode) {
       console.debug(`RemoteCommunication::${this.context}::clean()`);
     }
+
     this.channelId = undefined;
     this.connected = false;
     this.autoStarted = false;
@@ -502,8 +524,15 @@ export class RemoteCommunication extends EventEmitter2 {
 
   connectToChannel(channelId: string) {
     if (!validate(channelId)) {
-      throw new Error('Invalid channel');
+      throw new Error(`Invalid channel ${channelId}`);
     }
+
+    if (this.developerMode) {
+      console.debug(
+        `RemoteCommunication::${this.context}::connectToChannel() channelId=${channelId}`,
+      );
+    }
+    this.channelId = channelId;
     this.communicationLayer?.connectToChannel({ channelId });
   }
 
@@ -547,10 +576,25 @@ export class RemoteCommunication extends EventEmitter2 {
     }
     this._connectionStatus = connectionStatus;
     this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
+    this.emitServiceStatusEvent();
+  }
+
+  private emitServiceStatusEvent() {
+    this.emit(MessageType.SERVICE_STATUS, this.getServiceStatus());
   }
 
   getConnectionStatus() {
     return this._connectionStatus;
+  }
+
+  getServiceStatus(): ServiceStatus {
+    return {
+      originatorInfo: this.originatorInfo,
+      keyInfo: this.getKeyInfo(),
+      connectionStatus: this._connectionStatus,
+      channelConfig: this.channelConfig,
+      channelId: this.channelId,
+    };
   }
 
   getKeyInfo() {
@@ -563,10 +607,6 @@ export class RemoteCommunication extends EventEmitter2 {
     }
     this.communicationLayer?.pause();
     this.setConnectionStatus(ConnectionStatus.PAUSED);
-  }
-
-  sendTerminate() {
-    this.communicationLayer?.sendMessage({ type: MessageType.TERMINATE });
   }
 
   resume() {

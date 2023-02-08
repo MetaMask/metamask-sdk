@@ -12,6 +12,7 @@ export interface CommunicationLayer extends EventEmitter2 {
   getKeyInfo(): KeyInfo;
   pause(): void;
   resetKeys(): void;
+  isConnected(): boolean;
   resume(): void;
   disconnect(options?: DisconnectOptions): void;
 }

@@ -13,6 +13,7 @@ import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
+import { ServiceStatus } from './types/ServiceStatus';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -100,7 +101,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return;
       }
 
-      this.disconnect();
       if (document.hasFocus()) {
         connectAgain();
       } else {
@@ -112,7 +112,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         console.debug(`SocketService::on 'error' `, error);
       }
-      checkFocus();
+      connectAgain();
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -136,6 +136,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
+    this.keyExchange.on(MessageType.KEY_INFO, (event) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'KEY_INFO'`, event);
+      }
+      this.emit(MessageType.KEY_INFO, event);
+    });
+
     this.keyExchange.on(MessageType.KEYS_EXCHANGED, () => {
       if (this.debug) {
         console.debug(`SocketService::on 'keys_exchanged'`);
@@ -143,6 +150,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.emit(MessageType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
       });
+      const serviceStatus: ServiceStatus = {
+        keyInfo: this.getKeyInfo(),
+      };
+      this.emit(MessageType.SERVICE_STATUS, serviceStatus);
     });
   }
 
@@ -449,6 +460,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.sendMessage({ type: MessageType.PAUSE });
     }
     this.socket.disconnect();
+  }
+
+  isConnected() {
+    return this.socket.connected;
   }
 
   resume(): void {

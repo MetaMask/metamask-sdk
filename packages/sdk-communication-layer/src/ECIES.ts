@@ -118,7 +118,7 @@ export class ECIES {
     return decryptedString;
   }
 
-  getKeyInfo(): KeyInfo {
+  getKeyInfo(): { private: string; public: string } {
     return {
       private: this.ecies.toHex(),
       public: this.ecies.publicKey.toHex(),
