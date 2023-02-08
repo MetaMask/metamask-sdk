@@ -29,8 +29,7 @@ export const getPostMessageStream = ({
   const platformType = Platform.getInstance().getPlatformType();
 
   if (platformType === PlatformType.MetaMaskMobileWebview) {
-    // FIXME incompatible Duplex types?
-    // WindowPostMessageStream should extend Duplex indirectly, why do we need to cast...
+    // WindowPostMessageStream should extend Duplex indirectly, why do we need to cast?
     return new WebPostMessageStream({
       name,
       target,

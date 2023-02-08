@@ -4,6 +4,8 @@ import {
   ConnectionStatus,
   DappMetadata,
   MessageType,
+  ServiceStatus,
+  StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -14,6 +16,7 @@ import { setupInAppProviderStream } from './provider/setupInAppProviderStream/se
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
+import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
@@ -40,7 +43,7 @@ export interface MetaMaskSDKOptions {
   enableDebug?: boolean;
   developerMode?: boolean;
   communicationServerUrl?: string;
-  // storage?: StorageManagerProps;
+  storage?: StorageManagerProps;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -84,6 +87,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     enableDebug = true,
     developerMode = false,
     communicationServerUrl,
+    // persistence settings
+    storage,
   }: MetaMaskSDKOptions = {}) {
     super();
 
@@ -112,9 +117,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
 
       // TODO re-enable once session persistence is activated
-      // if (storage && !storage.storageManager) {
-      //   storage.storageManager = getStorageManager(storage);
-      // }
+      if (storage && !storage.storageManager) {
+        storage.storageManager = getStorageManager(storage);
+      }
 
       this.remoteConnection = new RemoteConnection({
         communicationLayerPreference,
@@ -125,6 +130,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         transports,
         communicationServerUrl,
         developerMode: this.developerMode,
+        storage,
       });
 
       if (WalletConnectInstance) {
@@ -149,6 +155,12 @@ export class MetaMaskSDK extends EventEmitter2 {
             this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
           },
         );
+
+      this.remoteConnection
+        .getConnector()
+        ?.on(MessageType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+          this.emit(MessageType.SERVICE_STATUS, serviceStatus);
+        });
 
       // Inject our provider into window.ethereum
       this.provider = initializeProvider({
@@ -203,6 +215,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getChannelConfig() {
     return this.remoteConnection?.getChannelConfig();
+  }
+
+  getServiceStatus() {
+    return this.remoteConnection?.getConnector().getServiceStatus();
   }
 
   getDappMetadata(): DappMetadata | undefined {

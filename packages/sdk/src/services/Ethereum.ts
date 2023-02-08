@@ -1,35 +1,50 @@
 import { Duplex } from 'stream';
-import {
-  initializeProvider,
-  MetaMaskInpageProvider,
-} from '@metamask/providers';
+import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
+import { SDKProvider } from '../provider/SDKProvider';
 
 export interface EthereumProps {
   shouldSetOnWindow: boolean;
   connectionStream: Duplex;
   shouldSendMetadata?: boolean;
   shouldShimWeb3: boolean;
+  debug: boolean;
 }
 
 export class Ethereum {
   private static instance?: Ethereum;
 
-  private provider: MetaMaskInpageProvider;
+  private provider: SDKProvider;
+
+  private debug = false;
 
   private constructor({
     shouldSetOnWindow,
     connectionStream,
     shouldSendMetadata = false,
     shouldShimWeb3,
+    debug = false,
   }: EthereumProps) {
-    // TODO don't use initializeProvider, instead create a custom class extending MetamaskInPageProvider
-    // This will prevent errors in RemoteConnectionPostMessageStream when forcing provider._initializeState();
-    this.provider = initializeProvider({
-      shouldSetOnWindow,
+    const provider = new SDKProvider({
       connectionStream,
       shouldSendMetadata,
+      shouldSetOnWindow,
       shouldShimWeb3,
+      debug,
     });
+
+    const proxiedProvieer = new Proxy(provider, {
+      // some common libraries, e.g. web3@1.x, mess with our API
+      deleteProperty: () => true,
+    });
+    this.provider = proxiedProvieer;
+
+    if (shouldSetOnWindow) {
+      setGlobalProvider(this.provider);
+    }
+
+    if (shouldShimWeb3) {
+      shimWeb3(this.provider);
+    }
 
     this.provider.on('_initialized', () => {
       const info = {
@@ -49,6 +64,9 @@ export class Ethereum {
    * @param props
    */
   static init(props: EthereumProps) {
+    if (props.debug) {
+      console.debug(`Ethereum::init()`);
+    }
     this.instance = new Ethereum(props);
     return this.instance?.provider;
   }

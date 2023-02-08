@@ -48,13 +48,14 @@ const initializeProvider = ({
 
   metamaskStream.start();
 
+  console.debug(`INITIALIZE PROVIDER debug=${debug}`);
   const ethereum = Ethereum.init({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
     shouldShimWeb3,
+    debug,
   });
 
-  // TODO don't use any!!!!
   const sendRequest = async (method: string, args: any, f: any) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
 
@@ -93,7 +94,7 @@ const initializeProvider = ({
 
   const { send } = ethereum;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore // FIXME remove support for deprecated method
+  // @ts-ignore // TODO remove support for deprecated method
   ethereum.send = async (...args) => {
     return sendRequest(args?.[0] as string, args, send);
   };

@@ -1,6 +1,5 @@
 import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
   MessageType,
   RemoteCommunication,
@@ -45,18 +44,12 @@ export class RemoteCommunicationPostMessageStream
     this.remote.on(MessageType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
-        // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
-        // creating our own custom Provider extending the BaseProvider.
-        // instead we should extend the provider and have an accessible initialization method.
+        await provider.forceInitializeState();
 
-        // @ts-ignore
-        provider._state.initialized = false;
-        // @ts-ignore
-        await provider._initializeStateAsync();
         if (debug) {
           console.debug(
-            `RCPMS::on 'clients_ready' provider.state`, // @ts-ignore
-            provider._state,
+            `RCPMS::on 'clients_ready' provider.state`,
+            provider.getState(),
           );
         }
       } catch (err) {
@@ -70,15 +63,8 @@ export class RemoteCommunicationPostMessageStream
         console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
       }
 
-      // FIXME same issue as stated above
       const provider = Ethereum.getProvider();
-      // @ts-ignore
-      provider._handleAccountsChanged([]);
-      // @ts-ignore
-      provider._handleDisconnect(true);
-      // @ts-ignore
-      // provider._state.isConnected = false;
-      // provider.emit('disconnect', '');
+      provider.handleDisconnect();
     });
   }
 
@@ -137,7 +123,7 @@ export class RemoteCommunicationPostMessageStream
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            'metamasl://',
+            'metamask://',
           );
         }
 
@@ -148,7 +134,9 @@ export class RemoteCommunicationPostMessageStream
         );
       } else if (this.remote.isPaused() && !isDesktop) {
         if (this.debug) {
-          console.debug(`RCPMS::_write MM is PAUSED! deeplink with connect!`);
+          console.debug(
+            `RCPMS::_write MM is PAUSED! deeplink with connect! targetMethod=${targetMethod}`,
+          );
         }
 
         platform.openDeeplink(
@@ -158,7 +146,9 @@ export class RemoteCommunicationPostMessageStream
         );
       }
     } catch (err) {
-      console.error(err);
+      if (this.debug) {
+        console.error('RCPMS::_write error', err);
+      }
       return callback(
         new Error('RemoteCommunicationPostMessageStream - disconnected'),
       );

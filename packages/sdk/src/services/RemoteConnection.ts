@@ -1,6 +1,7 @@
 import {
   AutoConnectOptions,
   CommunicationLayerPreference,
+  ConnectionStatus,
   DappMetadata,
   DisconnectOptions,
   ECIESProps,
@@ -108,7 +109,7 @@ export class RemoteConnection implements ProviderService {
     return this.universalLink;
   }
 
-  startConnection(): Promise<boolean> {
+  async startConnection(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (this.enableDebug) {
         console.debug(`RemoteConnection::startConnection()`);
@@ -117,68 +118,118 @@ export class RemoteConnection implements ProviderService {
       if (this.connector.isConnected()) {
         console.debug(`RemoteConnection::startConnection() Already connected.`);
         // Nothing to do, already connected.
-        return resolve(true);
+        return false;
       }
 
-      this.connector
-        .generateChannelId()
-        .then(({ channelId, pubKey }) => {
-          const linkParams = `channelId=${encodeURIComponent(
-            channelId,
-          )}&comm=${encodeURIComponent(
-            this.communicationLayerPreference,
-          )}&pubkey=${encodeURIComponent(pubKey)}`;
+      let installModal: any;
+      const platform = Platform.getInstance();
+      const platformType = platform.getPlatformType();
 
-          const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-          const deeplink = `metamask://connect?${linkParams}`;
+      const showQRCode =
+        platformType === PlatformType.DesktopWeb ||
+        (platformType === PlatformType.NonBrowser && !platform.isReactNative());
 
-          const platform = Platform.getInstance();
-          const platformType = platform.getPlatformType();
+      this.connector.once(MessageType.CLIENTS_READY, () => {
+        if (
+          installModal?.onClose &&
+          typeof installModal.onClose === 'function'
+        ) {
+          installModal?.onClose();
+        }
 
-          const showQRCode =
-            platformType === PlatformType.DesktopWeb ||
-            (platformType === PlatformType.NonBrowser &&
-              !platform.isReactNative());
+        if (this.sentFirstConnect) {
+          return;
+        }
+        this.sentFirstConnect = true;
 
-          let installModal: any;
+        resolve(true);
+      });
 
+      // Check for existing channelConfig?
+      this.connector.startAutoConnect().then((channelConfig) => {
+        console.debug(
+          `RemoteConnection::startConnection after startAutoConnect`,
+          channelConfig,
+        );
+
+        if (channelConfig) {
+          // Avoid generating extra channel information
+          console.debug(`Already connected through autoConnect`);
           if (showQRCode) {
-            installModal = InstallModal({
-              link: universalLink,
-              debug: this.enableDebug,
-            });
-            // console.log('OPEN LINK QRCODE', universalLink);
+            // TODO handle web case to show a popup asking for reconnection
+            console.info(`PLEASE Open Metamask to re-establish connection`);
           } else {
-            // console.log('OPEN LINK', universalLink);
+            const linkParams = `redirect=true&otp=${channelConfig.channelId}`;
+            const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+            const deeplink = `metamask://connect?${linkParams}`;
+
             Platform.getInstance().openDeeplink?.(
               universalLink,
               deeplink,
               '_self',
             );
           }
+        } else {
+          // generate new channel id
+          this.connector
+            .generateChannelId()
+            .then(({ channelId, pubKey }) => {
+              const linkParams = `channelId=${encodeURIComponent(
+                channelId,
+              )}&comm=${encodeURIComponent(
+                this.communicationLayerPreference,
+              )}&pubkey=${encodeURIComponent(pubKey)}`;
 
-          this.universalLink = universalLink;
+              const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+              const deeplink = `metamask://connect?${linkParams}`;
 
-          this.connector.once(MessageType.CLIENTS_READY, () => {
-            if (
-              installModal?.onClose &&
-              typeof installModal.onClose === 'function'
-            ) {
-              installModal?.onClose();
-            }
+              if (showQRCode) {
+                installModal = InstallModal({
+                  link: universalLink,
+                  debug: this.enableDebug,
+                });
+                // console.log('OPEN LINK QRCODE', universalLink);
+              } else {
+                console.log('OPEN LINK', universalLink);
+                Platform.getInstance().openDeeplink?.(
+                  universalLink,
+                  deeplink,
+                  '_self',
+                );
+              }
+              this.universalLink = universalLink;
+            })
+            .catch((err) => {
+              console.debug(`RemoteConnection error`, err);
+              reject(err);
+            });
+        }
+      });
 
-            if (this.sentFirstConnect) {
-              return;
-            }
-            this.sentFirstConnect = true;
+      // const status = this.connector.getConnectionStatus();
+      // console.debug(`@############# status=${status} #################`);
+      // if (status === ConnectionStatus.WAITING) {
+      //   // Keep waiting until connection?
+      //   if (this.enableDebug) {
+      //     console.debug(
+      //       `RemoteConnection::startConnection() connection waiting - prevent generating new channel`,
+      //     );
+      //   }
+      //   const channelConfig = this.connector.getChannelConfig();
 
-            resolve(true);
-          });
-        })
-        .catch((err) => {
-          console.debug(`RemoteConnection error`, err);
-          reject(err);
-        });
+      //   // TODO start VALIDATION OTP PROCESS
+      //   if (showQRCode) {
+      //     console.warn(`TODO start validation`);
+      //   } else {
+      //     platform.openDeeplink(
+      //       `https://metamask.app.link/connect?otp=${channelConfig?.channelId}`,
+      //       `metamask://connect?otp=${channelConfig?.channelId}`,
+      //       '_self',
+      //     );
+      //   }
+      //   return false;
+      // }
+
       return true;
     });
   }
@@ -205,13 +256,11 @@ export class RemoteConnection implements ProviderService {
 
   disconnect(options?: DisconnectOptions): void {
     this.connector.disconnect(options);
+    const platform = Platform.getInstance();
 
-    if (Platform.getInstance().isBrowser()) {
+    if (platform.isBrowser() || platform.isReactNative()) {
       const provider = Ethereum.getProvider();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      provider._state.isConnected = false;
-      provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
+      provider.handleDisconnect();
     }
   }
 }
