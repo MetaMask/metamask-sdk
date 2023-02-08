@@ -45,8 +45,6 @@ export class StorageManagerAS implements StorageManager {
       }
 
       const channelConfig = JSON.parse(payload) as ChannelConfig;
-      // Make sure the date is parsed correctly
-      channelConfig.validUntil = new Date(channelConfig.validUntil);
       if (this.debug) {
         console.debug(
           `StorageManagerRN::getPersisChannel channelConfig`,
