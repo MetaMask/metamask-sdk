@@ -1,5 +1,11 @@
+import { MessageType } from './MessageType';
+
 export interface KeyInfo {
-  public: string;
-  private: string;
-  otherPubKey?: string;
+  step: MessageType;
+  ecies: {
+    public: string;
+    private: string;
+    otherPubKey?: string;
+  };
+  keysExchanged: boolean;
 }

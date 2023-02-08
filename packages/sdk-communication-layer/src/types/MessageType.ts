@@ -6,6 +6,9 @@ export enum MessageType {
   KEY_HANDSHAKE_SYNACK = 'key_handshake_SYNACK',
   KEY_HANDSHAKE_ACK = 'key_handshake_ACK',
   KEY_HANDSHAKE_NONE = 'none',
+  // emitted everytime the current step is updated
+  KEY_INFO = 'key_info',
+  SERVICE_STATUS = 'service_status',
   READY = 'ready',
   PAUSE = 'pause',
   JOIN_CHANNEL = 'join_channel',
