@@ -2,7 +2,10 @@ import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
-import { ChannelConfig, CommunicationLayerPreference, ConnectionStatus, KeyInfo, MessageType } from '@metamask/sdk-communication-layer';
+import { CommunicationLayerPreference, ConnectionStatus, MessageType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { ethers } from 'ethers';
+import Web from 'web3';
+import { AbiItem } from 'web3-utils';
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
@@ -10,16 +13,61 @@ const sdk = new MetaMaskSDK({
   communicationServerUrl: 'http://localhost:4000',
   enableDebug: true,
   developerMode: true,
+  storage: {
+    debug: true
+  }
 });
 
+const _abi = [
+  {
+    inputs: [],
+    name: "text",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "_text",
+        type: "string",
+      },
+    ],
+    name: "set",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "ping",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+    constant: true,
+  },
+];
+
 export const App = () => {
-  const [channelConfig, setChannelConfig] = useState<ChannelConfig>();
-  const [keyInfo, setKeyInfo] = useState<KeyInfo>();
   const [chain, setChain] = useState("");
   const [account, setAccount] = useState("");
   const [response, setResponse] = useState<unknown>("");
   const [connected, setConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
 
   const connect = () => {
     if(!window.ethereum) {
@@ -34,6 +82,33 @@ export const App = () => {
       .catch((e) => console.log("request accounts ERR", e));
   };
 
+
+  const ping2 = async () => {
+    try {
+      const provider = window.ethereum
+      if(!provider) {
+        console.debug(`no provider defined`);
+        return
+      }
+
+      const simple = new ethers.Contract(
+        '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df',
+        _abi,
+        provider as any
+      )
+      // const simple = Simple__factory.connect(
+      //   '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df',
+      //   provider.getSigner()
+      // )
+      const ping = simple.ping().catch((err: unknown) => {
+        console.warn(`error`, err)
+      })
+      console.debug(`ping: `, ping)
+    } catch (err) {
+      // ignore
+      console.debug(`should not happen`, err)
+    }
+  }
 
   const addEthereumChain = () => {
     if(!window.ethereum) {
@@ -74,14 +149,10 @@ export const App = () => {
       setConnected(true);
       // setConnectionStatus(ConnectionStatus.LINKED)
       setChain(connectInfo.chainId);
-      setChannelConfig(sdk.getChannelConfig());
-      setKeyInfo(sdk.getKeyInfo());
     })
     window.ethereum?.on("disconnect", (error) => {
       console.log('disconnect', error);
       setConnected(false);
-      setChannelConfig(undefined);
-      setKeyInfo(undefined);
     });
     window.ethereum?.on("disconnected", (error) => {
       console.log('disconnected', error);
@@ -91,11 +162,9 @@ export const App = () => {
 
   useEffect( () => {
     console.debug(`App::useEffect sdk listeners`);
-    sdk.on(MessageType.CONNECTION_STATUS, (connectionStatus) => {
-      console.debug(`sdk connection_status`, connectionStatus);
-      setConnectionStatus(connectionStatus);
-      setChannelConfig(sdk.getChannelConfig());
-
+    sdk.on(MessageType.SERVICE_STATUS, (_serviceStatus:ServiceStatus) => {
+      console.debug(`sdk connection_status`, _serviceStatus);
+      setServiceStatus(_serviceStatus)
       // if(connectionStatus === ConnectionStatus.TIMEOUT) {
       //   console.warn(`timeout detected - re-initialize connection`);
       //   connect();
@@ -209,6 +278,34 @@ export const App = () => {
     }
   };
 
+  const ping = async () => {
+    console.debug(`ping`)
+    const web3 = new Web(window.ethereum as any)
+    // const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    const simple = new web3.eth.Contract(
+      _abi  as AbiItem[],
+      '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
+    )
+
+    const pong = await simple.methods.ping().call()
+    console.debug(`result`, pong)
+
+  }
+
+  const setText = async () => {
+    console.debug(`setText`)
+    const web3 = new Web(window.ethereum as any)
+    const simple = new web3.eth.Contract(
+      _abi  as AbiItem[],
+      '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
+    )
+
+    const ret = await simple.methods.set('new value').send({
+      from: window.ethereum?.selectedAddress
+    })
+    console.debug(`result`, ret)
+  }
   const disconnect = () => {
     sdk.disconnect();
   }
@@ -218,32 +315,58 @@ export const App = () => {
     // sdk.debugPersistence({terminate: true, disconnect: false})
   }
 
+  const changeNetwork = async (hexChainId:string) => {
+    console.debug(`switching to network chainId=${hexChainId}`)
+    try {
+      const response = await window.ethereum?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
+      })
+      console.debug(`response`, response)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
+  const getInfos = async () => {
+    console.debug(`gettting infos...`)
+    try {
+      const response = await window.ethereum?.request({
+        method: 'metamask_getProviderState',
+        params: [] // chainId must be in hexadecimal numbers
+      })
+      console.debug(`response`, response)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className="App">
       <div className="sdkConfig">
         <>
           <p>
-            Connection Status: <strong>{connectionStatus}</strong>
+            Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
           </p>
-          {connectionStatus===ConnectionStatus.WAITING &&
+          {serviceStatus?.connectionStatus===ConnectionStatus.WAITING &&
             <div>
               Waiting for Metamask to link the connection...
             </div>
           }
-          <p>ChannelId: {channelConfig?.channelId}</p>
-          <p>{`Expiration: ${channelConfig?.validUntil ?? ''}`}</p>
+          <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
+          <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
           <div>
             <div className='row'>
               <div className='rowLabel'>DAPP Private Key:</div>
-              <div className='rowValue even'>{keyInfo?.private}</div>
+              <div className='rowValue even'>{serviceStatus?.keyInfo?.ecies.private}</div>
             </div>
             <div className='row'>
               <div className='rowLabel'>DAPP Public Key:</div>
-              <div className='rowValue odd'>{keyInfo?.public}</div>
+              <div className='rowValue odd'>{serviceStatus?.keyInfo?.ecies.public}</div>
             </div>
             <div className='row'>
               <div className='rowLabel'>MM Public Key:</div>
-              <div className='rowValue even'>{keyInfo?.otherPubKey}</div>
+              <div className='rowValue even'>{serviceStatus?.keyInfo?.ecies.otherPubKey}</div>
             </div>
           </div>
         </>
@@ -259,6 +382,26 @@ export const App = () => {
 
         <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}  disabled={!connected}>
           Send transaction
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={ping}  disabled={!connected}>
+          Ping
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={setText}  disabled={!connected}>
+          Set Text
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={getInfos}  disabled={!connected}>
+          Get Provider State
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')}  disabled={!connected}>
+          Switch Ethereum
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')}  disabled={!connected}>
+          Switch Polygon
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain}  disabled={!connected}>
