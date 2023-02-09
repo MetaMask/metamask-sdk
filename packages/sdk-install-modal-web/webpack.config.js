@@ -16,7 +16,7 @@ const pkg = require('./package.json');
 const defaultConfig = {
   mode:'production',
   devServer: {
-    contentBase: publicDir,
+    static: publicDir,
     port: 9000
   },
   plugins: [
@@ -77,4 +77,3 @@ const widgetFilename = widgetConfig.semanticReleases
       }
     }
   ];
-  
