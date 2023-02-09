@@ -135,7 +135,12 @@ app.post('/debug', (_req, res) => {
 });
 
 io.on('connection', (socket) => {
+  const socketId = socket.id;
+  const clientIp = socket.request.socket.remoteAddress;
   console.log('a user connected');
+  if (isDevelopment) {
+    console.log(`socketId=${socketId} clientIp=${clientIp}`);
+  }
 
   socket.on('create_channel', async (id) => {
     await rateLimiter.consume(socket.handshake.address);
@@ -191,6 +196,9 @@ io.on('connection', (socket) => {
 
     const room = io.sockets.adapter.rooms.get(id);
     if (room && room.size > 2) {
+      if (isDevelopment) {
+        console.log(`join_channel ${id} room already full`);
+      }
       socket.emit(`message-${id}`, { error: 'room already full' });
       io.sockets.in(id).socketsLeave(id);
       return;
