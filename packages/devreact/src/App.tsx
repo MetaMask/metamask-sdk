@@ -6,6 +6,7 @@ import { CommunicationLayerPreference, ConnectionStatus, MessageType, ServiceSta
 import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
+import InstallModalWeb from '@metamask/sdk-install-modal-web';
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
@@ -407,6 +408,14 @@ export const App = () => {
         <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain}  disabled={!connected}>
           Add ethereum chain
         </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={() => {
+          console.debug(`test ui`);
+          sdk.testUI('pending');
+        }}>
+          TEST UI
+        </button>
+
 
         {connected &&
           <>

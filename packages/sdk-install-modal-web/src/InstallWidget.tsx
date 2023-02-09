@@ -12,7 +12,7 @@ import InstallIcon from './components/InstallIcon';
 import resetStyles from './helpers/Reset';
 import styled from '@emotion/styled';
 
-export type WidgetProps = {
+export type InstallWidgetProps = {
   parentElement?: Element;
   link: string;
   metaMaskInstaller: {
@@ -26,7 +26,7 @@ const WidgetWrapper = styled.div`
   font-family: Roboto,sans-serif;
 `;
 
-const Widget = (props: WidgetProps) => {
+const InstallWidget = (props: InstallWidgetProps) => {
   const [tab, setTab] = useState<Number>(1);
   const qrCodeContainer = useRef(null);
 
@@ -165,4 +165,4 @@ const Widget = (props: WidgetProps) => {
   );
 };
 
-export default Widget;
+export default InstallWidget;

@@ -19,6 +19,9 @@ import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import { SDKUIOptions } from './types/SDKUIOptions';
+import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
+import sdkWebPendingModal from './ui/InstallModal/pendinglModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
@@ -42,6 +45,7 @@ export interface MetaMaskSDKOptions {
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
+  ui?: SDKUIOptions;
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
 }
@@ -145,6 +149,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         remote: this.remoteConnection,
         debug: this.developerMode,
       });
+      this.installer = installer;
 
       // Bubble up the connection status event.
       this.remoteConnection
@@ -211,6 +216,14 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   testStorage() {
     return this.remoteConnection?.getConnector().testStorage();
+  }
+
+  testUI(type: 'pending' | 'install') {
+    if (type === 'pending') {
+      sdkWebPendingModal();
+    } else {
+      sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });
+    }
   }
 
   getChannelConfig() {

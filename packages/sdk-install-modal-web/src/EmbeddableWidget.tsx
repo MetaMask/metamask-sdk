@@ -1,6 +1,7 @@
 import preact, { h, render } from 'preact';
-import WidgetApp, { WidgetProps } from './Widget';
+import InstallWidgetApp, { InstallWidgetProps } from './InstallWidget';
 import widgetConfig from '../widget.config.json';
+import PendingWidget, { PendingWidgetProps } from './PendingWidget';
 
 export type Renderable = preact.AnyComponent | JSX.Element | preact.JSX.Element;
 
@@ -28,8 +29,8 @@ export default class EmbeddableWidget {
     render(this.component, element);
   };
 
-  mount = (props: WidgetProps) => {
-    this.component = <WidgetApp {...props} />;
+  mount = (props: InstallWidgetProps) => {
+    this.component = <InstallWidgetApp {...props} />;
     const { parentElement } = props;
     if (document.readyState === 'complete') {
       this.render(parentElement);
@@ -39,6 +40,18 @@ export default class EmbeddableWidget {
       });
     }
   };
+
+  mountPending = (props: PendingWidgetProps) => {
+    this.component = <PendingWidget {...props} />;
+    const { parentElement } = props;
+    if (document.readyState === 'complete') {
+      this.render(parentElement);
+    } else {
+      window.addEventListener('load', () => {
+        this.render(parentElement);
+      });
+    }
+  }
 
   unmount = () => {
     if (!this.el) {

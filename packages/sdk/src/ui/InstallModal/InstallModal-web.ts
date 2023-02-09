@@ -1,7 +1,13 @@
 import InstallModalWeb from '@metamask/sdk-install-modal-web';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
-const InstallModal = ({ link, debug }: { link: string; debug?: boolean }) => {
+export const sdkWebInstallModal = ({
+  link,
+  debug,
+}: {
+  link: string;
+  debug?: boolean;
+}) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -32,4 +38,4 @@ const InstallModal = ({ link, debug }: { link: string; debug?: boolean }) => {
   return { installModal, onClose };
 };
 
-export default InstallModal;
+export default sdkWebInstallModal;
