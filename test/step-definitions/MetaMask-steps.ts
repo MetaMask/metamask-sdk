@@ -19,7 +19,7 @@ When(/^I open the MetaMask mobile app$/u, async () => {
 When(/^I tap "([^"]*)?" on MetaMask/u, async (text) => {
   switch (text) {
     case 'Get Started':
-      await driver.pause(7000);
+      await driver.pause(17000);
       await new GetStartedScreen().tapGetStarted();
       break;
     case 'Import Wallet':

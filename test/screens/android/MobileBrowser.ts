@@ -19,6 +19,7 @@ class MobileBrowser {
   }
 
   async fillWebsite(website: string): Promise<void> {
+    await this.getAddressBar.tap();
     await this.getAddressBar.setValue(website);
     if (await driver.isAndroid) {
       await driver.pressKeyCode(66);

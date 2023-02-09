@@ -48,4 +48,8 @@ export class Input implements IInput<string> {
   async isDisplayed(): Promise<boolean> {
     return this.e.isDisplayed();
   }
+
+  async tap(): Promise<void> {
+    await this.e.click();
+  }
 }

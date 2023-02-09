@@ -23,12 +23,12 @@ config.capabilities = [
     'appium:platformVersion': '11.0',
     'appium:automationName': 'UiAutomator2',
     // The path to the app -> needs to be adapted for CICD
-    'appium:app': path.join(process.cwd(), 'app/android/app-qa-release.apk'),
+    'appium:app': path.join(process.cwd(), 'app/android/app-prod-release.apk'),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     'appium:appActivity': 'io.metamask.MainActivity',
     'appium:newCommandTimeout': 240,
-    'appium:appPackage': 'io.metamask.qa',
+    'appium:appPackage': 'io.metamask',
   },
 ];
 
