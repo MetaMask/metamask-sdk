@@ -2,10 +2,6 @@ export enum EventType {
   // emitted everytime the current step is updated
   KEY_INFO = 'key_info',
   SERVICE_STATUS = 'service_status',
-  READY = 'ready',
-  PAUSE = 'pause',
-  // otp type is sent when a channel needs approval
-  OTP = 'OTP',
   KEYS_EXCHANGED = 'keys_exchanged',
   JOIN_CHANNEL = 'join_channel',
   CHANNEL_CREATED = 'channel_created',
