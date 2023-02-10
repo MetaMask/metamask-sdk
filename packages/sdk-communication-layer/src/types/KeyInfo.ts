@@ -1,7 +1,5 @@
-import { MessageType } from './MessageType';
-
 export interface KeyInfo {
-  step: MessageType;
+  step: string;
   ecies: {
     public: string;
     private: string;

@@ -11,7 +11,11 @@ import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
+import { EventType } from './types/EventType';
+import { InternalEventType } from './types/InternalEventType';
+import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
+import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
 import { MessageType } from './types/MessageType';
 import { ServiceStatus } from './types/ServiceStatus';
 
@@ -23,7 +27,7 @@ export interface SocketServiceProps {
   communicationServerUrl: string;
   context: string;
   ecies?: ECIESProps;
-  debug: boolean;
+  logging?: CommunicationLayerLoggingOptions;
 }
 
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
@@ -59,14 +63,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl,
     context,
     ecies,
-    debug = false,
+    logging,
   }: SocketServiceProps) {
     super();
 
     this.reconnect = reconnect;
     this.context = context;
     this.communicationLayerPreference = communicationLayerPreference;
-    this.debug = debug;
+    this.debug = logging?.serviceLayer === true;
     this.communicationServerUrl = communicationServerUrl;
 
     const options = {
@@ -92,7 +96,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
       this.reconnect = true;
       this.socket.connect();
-      this.socket.emit(MessageType.JOIN_CHANNEL, this.channelId);
+      this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
     };
 
     const checkFocus = () => {
@@ -131,29 +135,29 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       sendPublicKey: false,
       context: this.context,
       ecies,
-      debug,
+      logging,
     };
 
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
-    this.keyExchange.on(MessageType.KEY_INFO, (event) => {
+    this.keyExchange.on(EventType.KEY_INFO, (event) => {
       if (this.debug) {
         console.debug(`SocketService::on 'KEY_INFO'`, event);
       }
-      this.emit(MessageType.KEY_INFO, event);
+      this.emit(EventType.KEY_INFO, event);
     });
 
-    this.keyExchange.on(MessageType.KEYS_EXCHANGED, () => {
+    this.keyExchange.on(EventType.KEYS_EXCHANGED, () => {
       if (this.debug) {
         console.debug(`SocketService::on 'keys_exchanged'`);
       }
-      this.emit(MessageType.CLIENTS_READY, {
+      this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
       });
       const serviceStatus: ServiceStatus = {
         keyInfo: this.getKeyInfo(),
       };
-      this.emit(MessageType.SERVICE_STATUS, serviceStatus);
+      this.emit(EventType.SERVICE_STATUS, serviceStatus);
     });
   }
 
@@ -213,7 +217,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             this.communicationLayerPreference ===
             CommunicationLayerPreference.WEBRTC
           ) {
-            this.emit(MessageType.CLIENTS_READY, {
+            this.emit(EventType.CLIENTS_READY, {
               isOriginator: this.isOriginator,
               context: this.context,
             });
@@ -226,7 +230,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           }
 
           this.sendMessage({
-            type: MessageType.KEY_HANDSHAKE_START,
+            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
           });
         }
         // reconnect switched when connection resume.
@@ -241,7 +245,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           id,
         );
       }
-      this.emit(MessageType.CHANNEL_CREATED, id);
+      this.emit(EventType.CHANNEL_CREATED, id);
     });
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
@@ -250,7 +254,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (!this.isOriginator) {
         this.keyExchange.clean();
       }
-      this.emit(MessageType.CLIENTS_DISCONNECTED, channelId);
+      this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
     });
 
     this.socket.on(`message-${channelId}`, ({ id, message, error }) => {
@@ -272,7 +276,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (
         this.isOriginator &&
         this.keyExchange.areKeysExchanged() &&
-        message?.type === MessageType.KEY_HANDSHAKE_START
+        message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_START
       ) {
         if (this.debug) {
           console.debug(
@@ -290,13 +294,16 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           `originator=${this.isOriginator}, type=${
             message?.type
           }, keysExchanged=${this.keyExchange.areKeysExchanged()}, ${
-            message?.type === MessageType.KEY_HANDSHAKE_SYN
-          }, ${message?.type === MessageType.KEY_HANDSHAKE_SYN.toString()}`,
+            message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN
+          }, ${
+            message?.type ===
+            KeyExchangeMessageType.KEY_HANDSHAKE_SYN.toString()
+          }`,
         );
       }
       if (
         !this.isOriginator &&
-        message?.type === MessageType.KEY_HANDSHAKE_SYN
+        message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN
       ) {
         if (this.debug) {
           console.debug(
@@ -309,7 +316,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.keyExchange.setOtherPublicKey(message.pubkey);
         }
 
-        return this.emit(MessageType.KEY_EXCHANGE, {
+        return this.emit(InternalEventType.KEY_EXCHANGE, {
           message,
           context: this.context,
         });
@@ -323,17 +330,18 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               message,
             );
           }
-          return this.emit(MessageType.KEY_EXCHANGE, {
+          return this.emit(InternalEventType.KEY_EXCHANGE, {
             message,
             context: this.context,
           });
         }
+        console.warn(`Keys not exchanged for ${message?.type}`, message);
         throw new Error('Keys not exchanged');
       }
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
-      return this.emit(MessageType.MESSAGE, { message: messageReceived });
+      return this.emit(EventType.MESSAGE, { message: messageReceived });
     });
 
     this.socket.on(
@@ -345,7 +353,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             numberUsers,
           );
         }
-        this.emit(MessageType.CLIENTS_WAITING, numberUsers);
+        this.emit(EventType.CLIENTS_WAITING, numberUsers);
       },
     );
   }
@@ -359,7 +367,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.isOriginator = true;
     const channelId = uuidv4();
     this.setupChannelListeners(channelId);
-    this.socket.emit(MessageType.JOIN_CHANNEL, channelId);
+    this.socket.emit(EventType.JOIN_CHANNEL, channelId);
     return { channelId, pubKey: this.keyExchange.getMyPublicKey() };
   }
 
@@ -383,7 +391,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
-    this.socket.emit(MessageType.JOIN_CHANNEL, channelId);
+    this.socket.emit(EventType.JOIN_CHANNEL, channelId);
   }
 
   getKeyInfo(): KeyInfo {
@@ -411,7 +419,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             message,
           );
         }
-        this.socket.emit(MessageType.MESSAGE, {
+        this.socket.emit(EventType.MESSAGE, {
           id: this.channelId,
           context: this.context,
           message,
@@ -448,7 +456,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (message.type === MessageType.TERMINATE) {
       this.manualDisconnect = true;
     }
-    this.socket.emit(MessageType.MESSAGE, messageToSend);
+    this.socket.emit(EventType.MESSAGE, messageToSend);
   }
 
   pause(): void {
@@ -474,7 +482,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.keyExchange.areKeysExchanged()) {
       this.reconnect = true;
       this.socket.connect();
-      this.socket.emit(MessageType.JOIN_CHANNEL, this.channelId);
+      this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
     }
   }
 

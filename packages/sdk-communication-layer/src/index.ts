@@ -19,6 +19,8 @@ import { StorageManagerProps, StorageManager } from './types/StorageManager';
 import { AutoConnectType } from './types/AutoConnectType';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ServiceStatus } from './types/ServiceStatus';
+import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
+import { EventType } from './types/EventType';
 
 export type {
   WebRTCLib,
@@ -33,6 +35,7 @@ export type {
   OriginatorInfo,
   ECIESProps,
   ServiceStatus,
+  CommunicationLayerLoggingOptions,
   DisconnectOptions,
   StorageManagerProps,
 };
@@ -40,6 +43,7 @@ export type {
 export {
   RemoteCommunication,
   ConnectionStatus,
+  EventType,
   AutoConnectType,
   SocketService,
   ECIES,

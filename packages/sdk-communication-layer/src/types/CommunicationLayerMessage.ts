@@ -1,9 +1,10 @@
+import { KeyExchangeMessageType } from './KeyExchangeMessageType';
 import { MessageType } from './MessageType';
 import { OriginatorInfo } from './OriginatorInfo';
 import { WalletInfo } from './WalletInfo';
 
 export interface CommunicationLayerMessage {
-  type?: MessageType;
+  type?: MessageType | KeyExchangeMessageType;
   walletInfo?: WalletInfo;
   originatorInfo?: OriginatorInfo;
   pubkey?: string;

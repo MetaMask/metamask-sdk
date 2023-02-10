@@ -6,6 +6,9 @@ import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
+import { EventType } from './types/EventType';
+import { InternalEventType } from './types/InternalEventType';
+import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 import { WebRTCLib } from './types/WebRTCLib';
@@ -52,12 +55,12 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     context,
     ecies,
     communicationServerUrl,
-    debug = false,
+    logging,
   }: WebRTCServiceProps) {
     super();
     this.reconnect = reconnect;
     this.context = context;
-    this.debug = debug;
+    this.debug = logging?.serviceLayer === true;
 
     if (webRTCLib) {
       this.RTCPeerConnection = webRTCLib.RTCPeerConnection;
@@ -77,7 +80,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       communicationServerUrl,
       ecies,
       context,
-      debug,
+      logging,
     });
 
     const keyExchangeInitParameter: KeyExchangeProps = {
@@ -85,27 +88,27 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       otherPublicKey: undefined,
       sendPublicKey: true,
       context: this.context,
-      debug,
+      logging,
     };
 
     this.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
-    this.keyExchange.on(MessageType.KEYS_EXCHANGED, () => {
+    this.keyExchange.on(EventType.KEYS_EXCHANGED, () => {
       this.clientsReady = true;
-      this.emit(MessageType.CLIENTS_READY, {
+      this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
       });
     });
 
-    this.socketService.on(MessageType.CLIENTS_DISCONNECTED, () => {
+    this.socketService.on(EventType.CLIENTS_DISCONNECTED, () => {
       if (!this.clientsConnected) {
         this.socketService.removeAllListeners();
-        return this.emit(MessageType.CLIENTS_DISCONNECTED);
+        return this.emit(EventType.CLIENTS_DISCONNECTED);
       }
       return this.clientsConnected;
     });
 
-    this.socketService.on(MessageType.MESSAGE, async ({ message }) => {
+    this.socketService.on(EventType.MESSAGE, async ({ message }) => {
       // TODO message should be typed and protocol documented
       const { offer, answer, candidate, type } = message;
       if (type === MessageType.OFFER) {
@@ -131,34 +134,30 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       }
     });
 
-    this.socketService.on(
-      MessageType.CLIENTS_READY,
-      async ({ isOriginator }) => {
-        this.setupWebrtc();
-        if (!isOriginator) {
-          return;
-        }
+    this.socketService.on(EventType.CLIENTS_READY, async ({ isOriginator }) => {
+      this.setupWebrtc();
+      if (!isOriginator) {
+        return;
+      }
 
-        if (!this.webrtc) {
-          throw new Error(`invalid webrtc configuration`);
-        }
+      if (!this.webrtc) {
+        throw new Error(`invalid webrtc configuration`);
+      }
 
-        const offer: RTCSessionDescriptionInit =
-          await this.webrtc.createOffer();
+      const offer: RTCSessionDescriptionInit = await this.webrtc.createOffer();
 
-        await this.webrtc.setLocalDescription(offer);
+      await this.webrtc.setLocalDescription(offer);
 
-        this.isOriginator = isOriginator;
-        this.socketService.sendMessage({ type: MessageType.OFFER, offer });
-      },
-    );
-
-    this.socketService.on(MessageType.CHANNEL_CREATED, (id) => {
-      this.emit(MessageType.CHANNEL_CREATED, id);
+      this.isOriginator = isOriginator;
+      this.socketService.sendMessage({ type: MessageType.OFFER, offer });
     });
 
-    this.socketService.on(MessageType.CLIENTS_WAITING, (numberUsers) => {
-      this.emit(MessageType.CLIENTS_WAITING, numberUsers);
+    this.socketService.on(EventType.CHANNEL_CREATED, (id) => {
+      this.emit(EventType.CHANNEL_CREATED, id);
+    });
+
+    this.socketService.on(EventType.CLIENTS_WAITING, (numberUsers) => {
+      this.emit(EventType.CLIENTS_WAITING, numberUsers);
     });
   }
 
@@ -194,11 +193,13 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
         if (this.reconnect) {
           if (this.keyExchange.areKeysExchanged()) {
             this.sendMessage({ type: MessageType.READY });
-            this.emit(MessageType.CLIENTS_READY, {
+            this.emit(EventType.CLIENTS_READY, {
               isOriginator: this.isOriginator,
             });
           } else if (!this.isOriginator) {
-            this.sendMessage({ type: MessageType.KEY_HANDSHAKE_START });
+            this.sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+            });
           }
           this.reconnect = false;
         }
@@ -213,7 +214,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       const connectionStatus = this.webrtc?.connectionState ?? 'closed';
       console.log('connectionStatus', connectionStatus);
       if (['disconnected', 'failed', 'closed'].includes(connectionStatus)) {
-        return this.emit(MessageType.CLIENTS_DISCONNECTED);
+        return this.emit(EventType.CLIENTS_DISCONNECTED);
       }
 
       return connectionStatus;
@@ -242,7 +243,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
       };
 
       if (fixme.error.code === 0) {
-        return this.emit(MessageType.CLIENTS_DISCONNECTED);
+        return this.emit(EventType.CLIENTS_DISCONNECTED);
       }
       console.log('ERROR: datachannel', error);
       return error;
@@ -265,7 +266,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     if (!this.keyExchange.areKeysExchanged()) {
       const messageReceived = JSON.parse(message.data);
       if (messageReceived?.type.startsWith('key_handshake')) {
-        return this.emit(MessageType.KEY_EXCHANGE, {
+        return this.emit(InternalEventType.KEY_EXCHANGE, {
           message: messageReceived,
         });
       }
@@ -274,7 +275,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
 
     const decryptedMessage = this.keyExchange.decryptMessage(message.data);
     const messageReceived = JSON.parse(decryptedMessage);
-    return this.emit(MessageType.MESSAGE, { message: messageReceived });
+    return this.emit(EventType.MESSAGE, { message: messageReceived });
   }
 
   sendMessage(message: CommunicationLayerMessage) {

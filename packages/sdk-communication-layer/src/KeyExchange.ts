@@ -2,15 +2,18 @@ import { EventEmitter2 } from 'eventemitter2';
 import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { EventType } from './types/EventType';
+import { InternalEventType } from './types/InternalEventType';
+import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
-import { MessageType } from './types/MessageType';
+import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
 
 export interface KeyExchangeProps {
   communicationLayer: CommunicationLayer;
   otherPublicKey?: string;
   sendPublicKey: boolean;
   context: string;
-  debug: boolean;
+  logging?: CommunicationLayerLoggingOptions;
   ecies?: ECIESProps;
 }
 
@@ -27,7 +30,7 @@ export class KeyExchange extends EventEmitter2 {
 
   private sendPublicKey: boolean;
 
-  private step = MessageType.KEY_HANDSHAKE_NONE;
+  private step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
 
   private context: string;
 
@@ -39,7 +42,7 @@ export class KeyExchange extends EventEmitter2 {
     sendPublicKey,
     context,
     ecies,
-    debug = false,
+    logging,
   }: KeyExchangeProps) {
     super();
 
@@ -47,7 +50,7 @@ export class KeyExchange extends EventEmitter2 {
     this.myECIES = new ECIES(ecies);
     this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
-    this.debug = debug;
+    this.debug = logging?.keyExchangeLayer === true;
 
     if (otherPublicKey) {
       this.setOtherPublicKey(otherPublicKey);
@@ -55,7 +58,7 @@ export class KeyExchange extends EventEmitter2 {
     this.sendPublicKey = sendPublicKey;
 
     this.communicationLayer.on(
-      MessageType.KEY_EXCHANGE,
+      InternalEventType.KEY_EXCHANGE,
       this.onKeyExchangeMessage.bind(this),
     );
   }
@@ -80,10 +83,10 @@ export class KeyExchange extends EventEmitter2 {
       return;
     }
 
-    if (message.type === MessageType.KEY_HANDSHAKE_SYN) {
-      this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
-      this.step = MessageType.KEY_HANDSHAKE_ACK;
-      this.emit(MessageType.KEY_INFO, this.step);
+    if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
+      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_ACK;
+      this.emit(EventType.KEY_INFO, this.step);
 
       if (this.debug) {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`);
@@ -94,11 +97,11 @@ export class KeyExchange extends EventEmitter2 {
       }
 
       this.communicationLayer.sendMessage({
-        type: MessageType.KEY_HANDSHAKE_SYNACK,
+        type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
         pubkey: this.myPublicKey,
       });
-    } else if (message.type === MessageType.KEY_HANDSHAKE_SYNACK) {
-      this.checkStep(MessageType.KEY_HANDSHAKE_SYNACK);
+    } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
+      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
 
       if (this.debug) {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
@@ -107,19 +110,19 @@ export class KeyExchange extends EventEmitter2 {
       this.setOtherPublicKey(message.pubkey ?? '');
 
       this.communicationLayer.sendMessage({
-        type: MessageType.KEY_HANDSHAKE_ACK,
+        type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
       });
       this.keysExchanged = true;
-      this.emit(MessageType.KEYS_EXCHANGED);
-    } else if (message.type === MessageType.KEY_HANDSHAKE_ACK) {
+      this.emit(EventType.KEYS_EXCHANGED);
+    } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
       if (this.debug) {
         console.debug(
           `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
         );
       }
-      this.checkStep(MessageType.KEY_HANDSHAKE_ACK);
+      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.keysExchanged = true;
-      this.emit(MessageType.KEYS_EXCHANGED);
+      this.emit(EventType.KEYS_EXCHANGED);
     }
   }
 
@@ -138,8 +141,8 @@ export class KeyExchange extends EventEmitter2 {
         `KeyExchange::${this.context}::clean reset handshake state`,
       );
     }
-    this.step = MessageType.KEY_HANDSHAKE_NONE;
-    this.emit(MessageType.KEY_INFO, this.step);
+    this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
+    this.emit(EventType.KEY_INFO, this.step);
     this.keysExchanged = false;
     this.otherPublicKey = '';
   }
@@ -154,11 +157,11 @@ export class KeyExchange extends EventEmitter2 {
     if (isOriginator) {
       this.clean();
     }
-    this.checkStep(MessageType.KEY_HANDSHAKE_NONE);
-    this.step = MessageType.KEY_HANDSHAKE_SYNACK;
-    this.emit(MessageType.KEY_INFO, this.step);
+    this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+    this.step = KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK;
+    this.emit(EventType.KEY_INFO, this.step);
     this.communicationLayer.sendMessage({
-      type: MessageType.KEY_HANDSHAKE_SYN,
+      type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
       pubkey: this.sendPublicKey ? this.myPublicKey : undefined,
     });
   }
