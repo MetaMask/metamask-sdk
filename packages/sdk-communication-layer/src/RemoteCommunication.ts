@@ -244,6 +244,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       this.setConnectionStatus(ConnectionStatus.LINKED);
+      this.setLastActiveDate(new Date());
 
       if (this.analytics && this.channelId) {
         SendAnalytics({
@@ -571,7 +572,20 @@ export class RemoteCommunication extends EventEmitter2 {
     console.debug(`RemoteCommunication.testStorage() res`, res);
   }
 
+  private setLastActiveDate(lastActiveDate: Date) {
+    if (this.debug) {
+      console.debug(`RemoteCommunication::setLastActiveDate()`, lastActiveDate);
+    }
+    const newChannelConfig: ChannelConfig = {
+      channelId: this.channelConfig?.channelId ?? '',
+      validUntil: this.channelConfig?.validUntil ?? 0,
+      lastActive: lastActiveDate.getTime(),
+    };
+    this.storageManager?.persistChannelConfig(newChannelConfig);
+  }
+
   getChannelConfig() {
+    console.debug(`MMMMMMMMMMMMMMM getChannelConfig`, this.getChannelConfig());
     return this.channelConfig;
   }
 

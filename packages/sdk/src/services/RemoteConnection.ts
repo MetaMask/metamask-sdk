@@ -95,7 +95,7 @@ export class RemoteConnection implements ProviderService {
     });
 
     this.connector.startAutoConnect().then((channelConfig?: ChannelConfig) => {
-      if (channelConfig) {
+      if (channelConfig?.lastActive) {
         this.handleSecureReconnection({ channelConfig, deeplink: false });
       }
     });
@@ -212,7 +212,7 @@ export class RemoteConnection implements ProviderService {
           channelConfig,
         );
 
-        if (channelConfig) {
+        if (channelConfig?.lastActive) {
           // Already connected through auto connect
           this.handleSecureReconnection({ channelConfig, deeplink: true });
         } else {
