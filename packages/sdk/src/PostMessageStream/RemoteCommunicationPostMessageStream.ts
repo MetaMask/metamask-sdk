@@ -124,21 +124,19 @@ export class RemoteCommunicationPostMessageStream
       if (channelId) {
         urlParams += `otp=${channelId}`;
       }
-      // FIXME disable
-      urlParams = '';
 
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            `metamask://${urlParams}`,
+            `exec${urlParams}`,
           );
         }
 
         // Use otp to re-enable host approval
         platform.openDeeplink(
-          `https://metamask.app.link/${urlParams}`,
-          `metamask://${urlParams}`,
+          `https://metamask.app.link/exec${urlParams}`,
+          `metamask://exec${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused() && !isDesktop) {
