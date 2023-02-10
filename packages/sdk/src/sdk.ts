@@ -3,7 +3,7 @@ import {
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
-  MessageType,
+  EventType,
   ServiceStatus,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
@@ -24,6 +24,7 @@ import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
 import sdkWebPendingModal from './ui/InstallModal/pendinglModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
+import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 
 export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
@@ -48,6 +49,7 @@ export interface MetaMaskSDKOptions {
   ui?: SDKUIOptions;
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
+  logging?: SDKLoggingOptions;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -61,7 +63,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private dappMetadata?: DappMetadata;
 
-  private developerMode = false;
+  private debug = false;
 
   constructor({
     dappMetadata,
@@ -89,20 +91,31 @@ export class MetaMaskSDK extends EventEmitter2 {
     timer,
     // Debugging
     enableDebug = true,
-    developerMode = false,
     communicationServerUrl,
     // persistence settings
     storage,
+    logging,
   }: MetaMaskSDKOptions = {}) {
     super();
 
-    this.developerMode = developerMode;
+    const developerMode = logging?.developerMode === true;
+    this.debug = logging?.sdk || developerMode;
+
+    // Make sure to enable all logs if developer mode is on
+    const runtimeLogging = { ...logging };
+
+    if (developerMode) {
+      runtimeLogging.eciesLayer = true;
+      runtimeLogging.keyExchangeLayer = true;
+      runtimeLogging.remoteLayer = true;
+      runtimeLogging.serviceLayer = true;
+    }
 
     const platform = Platform.init({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
-      debug: this.developerMode,
+      debug: this.debug,
     });
 
     this.dappMetadata = dappMetadata;
@@ -133,8 +146,8 @@ export class MetaMaskSDK extends EventEmitter2 {
         timer,
         transports,
         communicationServerUrl,
-        developerMode: this.developerMode,
         storage,
+        logging: runtimeLogging,
       });
 
       if (WalletConnectInstance) {
@@ -147,24 +160,24 @@ export class MetaMaskSDK extends EventEmitter2 {
       const installer = MetaMaskInstaller.init({
         preferDesktop: preferDesktop ?? false,
         remote: this.remoteConnection,
-        debug: this.developerMode,
+        debug: this.debug,
       });
       this.installer = installer;
 
-      // Bubble up the connection status event.
+      // Propagate up the sdk-communication events
       this.remoteConnection
         .getConnector()
         ?.on(
-          MessageType.CONNECTION_STATUS,
+          EventType.CONNECTION_STATUS,
           (connectionStatus: ConnectionStatus) => {
-            this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
+            this.emit(EventType.CONNECTION_STATUS, connectionStatus);
           },
         );
 
       this.remoteConnection
         .getConnector()
-        ?.on(MessageType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
-          this.emit(MessageType.SERVICE_STATUS, serviceStatus);
+        ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+          this.emit(EventType.SERVICE_STATUS, serviceStatus);
         });
 
       // Inject our provider into window.ethereum
@@ -177,7 +190,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         installer,
         remoteConnection: this.remoteConnection,
         walletConnect: this.walletConnect,
-        debug: this.developerMode,
+        debug: this.debug,
       });
 
       // Setup provider streams, only needed for our mobile in-app browser
@@ -240,6 +253,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getKeyInfo() {
     return this.remoteConnection?.getKeyInfo();
+  }
+
+  resetKeys() {
+    this.remoteConnection?.getConnector().resetKeys();
   }
 
   // Return the ethereum provider object

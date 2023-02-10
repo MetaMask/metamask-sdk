@@ -1,9 +1,9 @@
-import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
+import { Duplex } from 'stream';
 import {
-  MessageType,
-  RemoteCommunication,
   CommunicationLayerMessage,
+  EventType,
+  RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
@@ -39,9 +39,9 @@ export class RemoteCommunicationPostMessageStream
     this.debug = debug;
 
     this._onMessage = this._onMessage.bind(this);
-    this.remote.on(MessageType.MESSAGE, this._onMessage);
+    this.remote.on(EventType.MESSAGE, this._onMessage);
 
-    this.remote.on(MessageType.CLIENTS_READY, async () => {
+    this.remote.on(EventType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         await provider.forceInitializeState();
@@ -58,9 +58,9 @@ export class RemoteCommunicationPostMessageStream
       }
     });
 
-    this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
+    this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
       if (this.debug) {
-        console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
+        console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
       }
 
       const provider = Ethereum.getProvider();
@@ -119,17 +119,26 @@ export class RemoteCommunicationPostMessageStream
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
+      let urlParams = `?`;
+      const channelId = this.remote.getChannelConfig()?.channelId;
+      if (channelId) {
+        urlParams += `otp=${channelId}`;
+      }
+      // FIXME disable
+      urlParams = '';
+
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            'metamask://',
+            `metamask://${urlParams}`,
           );
         }
 
+        // Use otp to re-enable host approval
         platform.openDeeplink(
-          'https://metamask.app.link/',
-          'metamask://',
+          `https://metamask.app.link/${urlParams}`,
+          `metamask://${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused() && !isDesktop) {
@@ -140,8 +149,8 @@ export class RemoteCommunicationPostMessageStream
         }
 
         platform.openDeeplink(
-          'https://metamask.app.link/connect?redirect=true',
-          'metamask://connect?redirect=true',
+          `https://metamask.app.link/connect?redirect=true`,
+          `metamask://connect?redirect=true`,
           '_self',
         );
       }

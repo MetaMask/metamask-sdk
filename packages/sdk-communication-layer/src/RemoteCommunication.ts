@@ -228,7 +228,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.KEY_INFO, (keyInfo) => {
       if (this.debug) {
         console.debug(
-          `[communication][${this.context}] received 'KEY_INFO' `,
+          `RemoteCommunication::${this.context}::on 'KEY_INFO' `,
           keyInfo,
         );
       }
@@ -238,7 +238,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.CLIENTS_READY, (message) => {
       if (this.debug) {
         console.debug(
-          `[communication][${this.context}] received 'clients_ready' `,
+          `RemoteCommunication::${this.context}::on 'clients_ready' `,
           message,
         );
       }
@@ -252,10 +252,11 @@ export class RemoteCommunication extends EventEmitter2 {
         });
       }
 
-      this.connected = true;
-      this.emit(EventType.CLIENTS_READY);
+      // this.connected = true;
+      // this.emit(EventType.CLIENTS_READY);
 
       if (!message.isOriginator) {
+        // Don't send originator message from mobile.
         return;
       }
 
@@ -370,7 +371,7 @@ export class RemoteCommunication extends EventEmitter2 {
       console.debug(
         `RemoteCommunication::${
           this.context
-        }::onCommunicationLayerMessage typeof=${typeof message}`,
+        }::on 'message' typeof=${typeof message}`,
         message,
       );
     }
@@ -557,6 +558,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
     if (this.paused) {
       this.once(EventType.CLIENTS_READY, () => {
+        // only send the message after the clients has awaken.
         this.communicationLayer?.sendMessage(message);
       });
     } else {
@@ -617,13 +619,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   resetKeys() {
     this.communicationLayer?.resetKeys();
-  }
-
-  sendOTP() {
-    if (this.debug) {
-      console.debug(`RemoteCommunication::sendOTP`);
-    }
-    this.communicationLayer?.sendMessage({ type: MessageType.OTP });
   }
 
   pause() {
