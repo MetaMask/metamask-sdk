@@ -407,7 +407,7 @@ export class RemoteCommunication extends EventEmitter2 {
       // Needs to manually emit CLIENTS_DISCONNECTED because it won't receive it after the socket is closed.
       this.emit(EventType.CLIENTS_DISCONNECTED);
       // remove channel config from persistence layer and close active connections.
-      this.storageManager?.terminate();
+      this.storageManager?.terminate(this.channelId ?? '');
       this.disconnect();
       this.resetKeys();
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
@@ -440,7 +440,9 @@ export class RemoteCommunication extends EventEmitter2 {
       return undefined;
     }
 
-    const channelConfig = await this.storageManager.getPersistedChannelConfig();
+    const channelConfig = await this.storageManager.getPersistedChannelConfig(
+      this.channelId ?? '',
+    );
     if (this.debug) {
       console.debug(
         `RemoteCommunication::startAutoConnect() autoStarted=${this.autoStarted} channelConfig`,
@@ -568,7 +570,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   async testStorage() {
-    const res = await this.storageManager?.getPersistedChannelConfig();
+    const res = await this.storageManager?.getPersistedChannelConfig(
+      this.channelId ?? '',
+    );
     console.debug(`RemoteCommunication.testStorage() res`, res);
   }
 
@@ -659,7 +663,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (options?.terminate) {
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
       // remove channel config from persistence layer and close active connections.
-      this.storageManager?.terminate();
+      this.storageManager?.terminate(this.channelId ?? '');
     } else {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
