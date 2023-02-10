@@ -477,6 +477,7 @@ export class RemoteCommunication extends EventEmitter2 {
       if (validSession) {
         this.channelConfig = channelConfig;
         this.autoStarted = true;
+        this.channelId = channelConfig?.channelId;
         this.communicationLayer?.connectToChannel({
           channelId: channelConfig.channelId,
           isOriginator: true,
@@ -508,15 +509,15 @@ export class RemoteCommunication extends EventEmitter2 {
     this.clean();
     const channel = this.communicationLayer.createChannel();
 
+    console.debug(`RemoteCommunication::generateChannelId() `, channel);
     const channelConfig = {
       channelId: channel.channelId,
       validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
     };
+    this.channelId = channel.channelId;
     this.channelConfig = channelConfig;
     // save current channel config
     this.storageManager?.persistChannelConfig(channelConfig);
-
-    this.channelId = channel.channelId;
 
     return { channelId: this.channelId, pubKey: channel.pubKey };
   }
@@ -552,6 +553,11 @@ export class RemoteCommunication extends EventEmitter2 {
 
     this.channelId = channelId;
     this.communicationLayer?.connectToChannel({ channelId });
+    const newChannelConfig: ChannelConfig = {
+      channelId,
+      validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
+    };
+    this.storageManager?.persistChannelConfig(newChannelConfig);
   }
 
   sendMessage(message: CommunicationLayerMessage) {
@@ -581,7 +587,7 @@ export class RemoteCommunication extends EventEmitter2 {
       console.debug(`RemoteCommunication::setLastActiveDate()`, lastActiveDate);
     }
     const newChannelConfig: ChannelConfig = {
-      channelId: this.channelConfig?.channelId ?? '',
+      channelId: this.channelId ?? '',
       validUntil: this.channelConfig?.validUntil ?? 0,
       lastActive: lastActiveDate.getTime(),
     };
