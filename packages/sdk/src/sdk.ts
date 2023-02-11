@@ -1,5 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
+  AutoConnectOptions,
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
@@ -47,6 +48,7 @@ export interface MetaMaskSDKOptions {
   enableDebug?: boolean;
   developerMode?: boolean;
   ui?: SDKUIOptions;
+  autoConnect?: AutoConnectOptions;
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
@@ -92,6 +94,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Debugging
     enableDebug = true,
     communicationServerUrl,
+    autoConnect,
     // persistence settings
     storage,
     logging,
@@ -147,6 +150,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         transports,
         communicationServerUrl,
         storage,
+        autoConnect,
         logging: runtimeLogging,
       });
 

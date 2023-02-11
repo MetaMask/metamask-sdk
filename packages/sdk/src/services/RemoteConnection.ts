@@ -94,11 +94,15 @@ export class RemoteConnection implements ProviderService {
       logging,
     });
 
-    this.connector.startAutoConnect().then((channelConfig?: ChannelConfig) => {
-      if (channelConfig?.lastActive) {
-        this.handleSecureReconnection({ channelConfig, deeplink: false });
-      }
-    });
+    if (autoConnect?.enable) {
+      this.connector
+        .startAutoConnect()
+        .then((channelConfig?: ChannelConfig) => {
+          if (channelConfig?.lastActive) {
+            this.handleSecureReconnection({ channelConfig, deeplink: false });
+          }
+        });
+    }
 
     this.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
       this.sentFirstConnect = false;
@@ -119,8 +123,11 @@ export class RemoteConnection implements ProviderService {
   /**
    * Called after a connection is re-established on an existing channel in order to prevent session hijacking.
    *
-   * On trusted device (same device as metamask): launch deeplink to authorize the channel
-   * On untrusted device (webapp): ask user to reconnect.
+   * On trusted device (same device as metamask):
+   *   - launch deeplink to authorize the channel
+   *
+   * On untrusted device (webapp):
+   *  - ask user to reconnect.
    */
   async handleSecureReconnection({
     channelConfig,
@@ -138,7 +145,7 @@ export class RemoteConnection implements ProviderService {
 
     if (this.developerMode) {
       console.debug(
-        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice}`,
+        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink}`,
         channelConfig,
       );
     }
@@ -172,6 +179,7 @@ export class RemoteConnection implements ProviderService {
   }
 
   async startConnection(): Promise<boolean> {
+    // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
       if (this.enableDebug) {
         console.debug(`RemoteConnection::startConnection()`);
@@ -180,7 +188,7 @@ export class RemoteConnection implements ProviderService {
       if (this.connector.isConnected()) {
         console.debug(`RemoteConnection::startConnection() Already connected.`);
         // Nothing to do, already connected.
-        return false;
+        return resolve(true);
       }
 
       const platform = Platform.getInstance();
@@ -189,21 +197,6 @@ export class RemoteConnection implements ProviderService {
       const showQRCode =
         platformType === PlatformType.DesktopWeb ||
         (platformType === PlatformType.NonBrowser && !platform.isReactNative());
-
-      this.connector.once(EventType.CLIENTS_READY, () => {
-        if (this.developerMode) {
-          console.debug(
-            `RemoteConnection::startConnection::on 'clients_ready'`,
-          );
-        }
-        this.displayedModal?.onClose();
-        if (this.sentFirstConnect) {
-          return;
-        }
-        this.sentFirstConnect = true;
-
-        resolve(true);
-      });
 
       // Check for existing channelConfig?
       this.connector.startAutoConnect().then((channelConfig) => {
@@ -250,9 +243,23 @@ export class RemoteConnection implements ProviderService {
               reject(err);
             });
         }
-      });
 
-      return true;
+        this.connector.once(EventType.CLIENTS_READY, () => {
+          if (this.developerMode) {
+            console.debug(
+              `RemoteConnection::startConnection::on 'clients_ready' sentFirstConnect=${this.sentFirstConnect}`,
+            );
+          }
+          this.displayedModal?.onClose();
+          if (this.sentFirstConnect) {
+            resolve(true);
+            return;
+          }
+          this.sentFirstConnect = true;
+
+          resolve(true);
+        });
+      });
     });
   }
 
