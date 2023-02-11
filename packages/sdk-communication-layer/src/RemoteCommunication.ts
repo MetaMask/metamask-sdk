@@ -85,6 +85,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private autoConnectOptions;
 
+  private sessionDuration: number = DEFAULT_SESSION_TIMEOUT_MS;
+
   // this flag is switched on when the connection is automatically initialized after finding existing channel configuration.
   private autoStarted = false;
 
@@ -127,6 +129,9 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+    if (storage?.duration) {
+      this.sessionDuration = DEFAULT_SESSION_TIMEOUT_MS;
+    }
     this.storageOptions = storage;
     this.autoConnectOptions = autoConnect;
     this.debug = logging?.remoteLayer === true;
@@ -512,7 +517,7 @@ export class RemoteCommunication extends EventEmitter2 {
     console.debug(`RemoteCommunication::generateChannelId() `, channel);
     const channelConfig = {
       channelId: channel.channelId,
-      validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
+      validUntil: Date.now() + this.sessionDuration,
     };
     this.channelId = channel.channelId;
     this.channelConfig = channelConfig;
@@ -555,8 +560,9 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.connectToChannel({ channelId });
     const newChannelConfig: ChannelConfig = {
       channelId,
-      validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
+      validUntil: Date.now() + this.sessionDuration,
     };
+    this.channelConfig = newChannelConfig;
     this.storageManager?.persistChannelConfig(newChannelConfig);
   }
 
