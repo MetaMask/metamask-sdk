@@ -154,10 +154,8 @@ export class KeyExchange extends EventEmitter2 {
       );
     }
 
-    if (isOriginator) {
-      this.clean();
-    }
-    this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+    this.clean();
+    // this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
     this.step = KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK;
     this.emit(EventType.KEY_INFO, this.step);
     this.communicationLayer.sendMessage({
@@ -168,7 +166,7 @@ export class KeyExchange extends EventEmitter2 {
 
   checkStep(step: string): void {
     if (this.step.toString() !== step) {
-      console.log(`Invalid step ${this.step} vs ${step}`);
+      console.log(`Invalid step this.step=${this.step} vs ${step}`);
       throw new Error(`Wrong Step ${this.step} ${step}`);
     }
   }

@@ -262,12 +262,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(
           `SocketService::${
             this.context
-          }::setupChannelListener::on 'message-${channelId}' error=${error} keysExchanged=${this.keyExchange.areKeysExchanged()}`,
+          }::setupChannelListener::on 'message-${channelId}' keysExchanged=${this.keyExchange.areKeysExchanged()}`,
           message,
         );
       }
 
       if (error) {
+        console.debug(`
+        SocketService::${this.context}::setupChannelListener::on message error=${error}`);
         throw new Error(error);
       }
 
@@ -291,16 +293,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         // Special case to manage resetting key exchange when keys are already exchanged
         console.debug(
-          `originator=${this.isOriginator}, type=${
+          `SocketService::${this.context}::setupChannelListener originator=${
+            this.isOriginator
+          }, type=${
             message?.type
-          }, keysExchanged=${this.keyExchange.areKeysExchanged()}, ${
-            message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN
-          }, ${
-            message?.type ===
-            KeyExchangeMessageType.KEY_HANDSHAKE_SYN.toString()
-          }`,
+          }, keysExchanged=${this.keyExchange.areKeysExchanged()}`,
         );
       }
+
       if (
         !this.isOriginator &&
         message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN
@@ -476,13 +476,32 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   resume(): void {
     if (this.debug) {
-      console.debug(`SocketService::${this.context}::resume()`);
+      console.debug(
+        `SocketService::${
+          this.context
+        }::resume() connected=${this.isConnected()} manualDisconnect=${
+          this.manualDisconnect
+        } reconnect=${
+          this.reconnect
+        } keysExchanged=${this.keyExchange.areKeysExchanged()}`,
+      );
     }
+
+    if (this.isConnected()) {
+      if (this.debug) {
+        console.debug(`SocketService::resume() already connected.`);
+      }
+      return;
+    }
+
     this.manualDisconnect = false;
-    if (this.keyExchange.areKeysExchanged()) {
-      this.reconnect = true;
-      this.socket.connect();
-      this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
+    this.reconnect = true;
+    this.socket.connect();
+    this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
+
+    if (!this.keyExchange.areKeysExchanged()) {
+      // Restart key exchange process
+      this.keyExchange.start(Boolean(this.isOriginator));
     }
   }
 
@@ -491,6 +510,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       console.debug(`SocketService::${this.context}::disconnect()`, options);
     }
     if (options?.terminate && this.keyExchange.areKeysExchanged()) {
+      // Try to inform other party of the termination
+      // In most case, it may be missed if we dont have an active linked connection.
       this.sendMessage({ type: MessageType.TERMINATE });
     }
     this.manualDisconnect = true;

@@ -601,7 +601,6 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   getChannelConfig() {
-    console.debug(`MMMMMMMMMMMMMMM getChannelConfig`, this.getChannelConfig());
     return this.channelConfig;
   }
 

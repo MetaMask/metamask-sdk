@@ -8,6 +8,11 @@ export interface SDKProviderProps {
   connectionStream: Duplex;
 
   /**
+   * Automatically call eth_requestAccounts on initialization.
+   */
+  autoRequestAccounts?: boolean;
+
+  /**
    * Whether the provider should be set as window.ethereum.
    */
   shouldSetOnWindow?: boolean;
@@ -21,25 +26,36 @@ export interface SDKProviderProps {
 
 export class SDKProvider extends MetaMaskInpageProvider {
   private debug = false;
+  private autoRequestAccounts = false;
 
   constructor({
     connectionStream,
     shouldSendMetadata,
     debug = false,
+    autoRequestAccounts = false,
   }: SDKProviderProps) {
     super(connectionStream, {
       logger: console,
       maxEventListeners: 100,
       shouldSendMetadata,
     });
+    this.autoRequestAccounts = autoRequestAccounts;
     this.debug = debug;
   }
 
-  forceInitializeState() {
+  async forceInitializeState() {
     if (this.debug) {
-      console.debug(`SDKProvider::forceInitializeState()`);
+      console.debug(
+        `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
+      );
     }
-    return this._initializeStateAsync();
+    this._initializeStateAsync();
+    if (this.autoRequestAccounts) {
+      await this.request({
+        method: 'eth_requestAccounts',
+        params: [],
+      });
+    }
   }
 
   getState() {
