@@ -8,6 +8,10 @@ export enum MessageType {
   WALLET_INFO = 'wallet_info',
   ORIGINATOR_INFO = 'originator_info',
   PAUSE = 'pause',
+  /**
+   * Used for debugging purpose and check channel validity.
+   */
+  PING = 'ping',
   // READY is sent when the connection is linked
   READY = 'ready',
 }

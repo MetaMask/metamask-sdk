@@ -308,6 +308,10 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     return this.socketService.getKeyInfo();
   }
 
+  ping() {
+    this.socketService.ping();
+  }
+
   pause() {
     if (this.keyExchange.areKeysExchanged()) {
       this.sendMessage({ type: MessageType.PAUSE });

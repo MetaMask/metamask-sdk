@@ -612,6 +612,11 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.paused;
   }
 
+  ping() {
+    console.debug(`RemoteCommunication::ping()`);
+    this.communicationLayer?.ping();
+  }
+
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
     if (this.debug) {
       console.debug(

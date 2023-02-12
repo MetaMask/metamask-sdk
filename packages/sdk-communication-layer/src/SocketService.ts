@@ -125,6 +125,16 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (!this.manualDisconnect) {
+        /**
+         * Used for web in case of socket io disconnection.
+         * Always try to recover the connection.
+         *
+         * 'disconnect' event also happens on RN after app is in background for ~30seconds.
+         * The reason is will be 'transport error'.
+         * This creates an issue that the user needs to reply a provider query within 30 seconds.
+         *
+         * TODO: is there a way to address a slow (>30s) provider query reply.
+         */
         checkFocus();
       }
     });
@@ -457,6 +467,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.manualDisconnect = true;
     }
     this.socket.emit(EventType.MESSAGE, messageToSend);
+  }
+
+  ping() {
+    if (this.debug) {
+      console.debug(`SocketService::${this.context}::ping()`);
+    }
+    this.socket.emit(MessageType.PING, 'ping');
   }
 
   pause(): void {
