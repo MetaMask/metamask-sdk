@@ -41,7 +41,7 @@ export class RemoteCommunicationPostMessageStream
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
 
-    this.remote.on(EventType.CLIENTS_READY, async () => {
+    this.remote.once(EventType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         await provider.forceInitializeState();
@@ -68,6 +68,9 @@ export class RemoteCommunicationPostMessageStream
     });
   }
 
+  /**
+   * Called when querying the sdk provider with ethereum.request
+   */
   _write(
     chunk: any,
     _encoding: BufferEncoding,
@@ -100,12 +103,15 @@ export class RemoteCommunicationPostMessageStream
       }
 
       this.remote.sendMessage(data?.data);
+
+      console.log(`RCPMS::_write debug1`);
       const platform = Platform.getInstance();
 
       const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
       const isNotBrowser = platform.isNotBrowser();
       const isReactNative = platform.isReactNative();
 
+      console.log(`RCPMS::_write debug2`);
       if (!isReactNative && (isDesktop || isNotBrowser)) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
@@ -115,28 +121,29 @@ export class RemoteCommunicationPostMessageStream
         }
         return callback();
       }
-
+      console.log(`RCPMS::_write debug3`);
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
-      let urlParams = `?`;
+      let urlParams = ``;
       const channelId = this.remote.getChannelConfig()?.channelId;
       if (channelId) {
         urlParams += `otp=${channelId}`;
       }
 
+      console.log(`RCPMS::_write debug4`, urlParams);
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            `exec${urlParams}`,
+            `connect?${urlParams}`,
           );
         }
 
         // Use otp to re-enable host approval
         platform.openDeeplink(
-          `https://metamask.app.link/exec${urlParams}`,
-          `metamask://exec${urlParams}`,
+          `https://metamask.app.link/connect?${urlParams}`,
+          `metamask://connect?${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused() && !isDesktop) {

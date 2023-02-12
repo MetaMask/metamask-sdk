@@ -29,7 +29,6 @@ export interface SocketServiceProps {
   ecies?: ECIESProps;
   logging?: CommunicationLayerLoggingOptions;
 }
-
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
   private socket: Socket;
 
@@ -233,12 +232,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
-          if (this.debug) {
-            console.debug(
-              `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
-            );
-          }
-
+          // if (this.debug) {
+          //   console.debug(
+          //     `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
+          //   );
+          // }
+          console.debug(`DANGER:: should we initiate something here?`);
+          // FIXME danger zone should - we begin handshake?
           this.sendMessage({
             type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
           });
@@ -394,11 +394,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.manualDisconnect = false;
     this.socket.connect();
     this.isOriginator = isOriginator;
-    if (isOriginator) {
-      // The following is to enable session persistence, public key needs to be resent
-      // this.keyExchange.clean();
-      this.keyExchange.setSendPublicKey(true);
-    }
+
+    // With session persistence we should always re-send the pubkey that changes on each reload.
+    // The following is to enable session persistence, public key needs to be resent
+    // this.keyExchange.clean();
+    this.keyExchange.setSendPublicKey(true);
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
     this.socket.emit(EventType.JOIN_CHANNEL, channelId);

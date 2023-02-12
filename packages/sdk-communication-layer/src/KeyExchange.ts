@@ -84,7 +84,9 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
-      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+      // When receiving SYN, we can be in either NONE or SYNACK.
+      // TODO re-enable step check matching session persistence.
+      // this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
       this.step = KeyExchangeMessageType.KEY_HANDSHAKE_ACK;
       this.emit(EventType.KEY_INFO, this.step);
 
@@ -107,7 +109,9 @@ export class KeyExchange extends EventEmitter2 {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
       }
 
-      this.setOtherPublicKey(message.pubkey ?? '');
+      if (message.pubkey) {
+        this.setOtherPublicKey(message.pubkey);
+      }
 
       this.communicationLayer.sendMessage({
         type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
