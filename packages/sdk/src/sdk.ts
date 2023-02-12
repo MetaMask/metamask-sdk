@@ -214,6 +214,15 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
   }
 
+  resume() {
+    if (!this.remoteConnection?.getConnector().isConnected()) {
+      if (this.debug) {
+        console.debug(`SDK::resume channel`);
+      }
+      this.remoteConnection?.startConnection();
+    }
+  }
+
   disconnect() {
     this.remoteConnection?.disconnect();
   }
