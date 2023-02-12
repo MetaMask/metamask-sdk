@@ -539,6 +539,9 @@ export class RemoteCommunication extends EventEmitter2 {
 
   connectToChannel(channelId: string) {
     if (!validate(channelId)) {
+      console.debug(
+        `RemoteCommunication::${this.context}::connectToChannel() invalid channel channelId=${channelId}`,
+      );
       throw new Error(`Invalid channel ${channelId}`);
     }
 

@@ -178,6 +178,19 @@ io.on('connection', (socket) => {
     socket.to(id).emit(`message-${id}`, { id, message });
   });
 
+  socket.on('ping', async ({ id, message, context }) => {
+    try {
+      await rateLimiterMesssage.consume(socket.handshake.address);
+    } catch (e) {
+      return;
+    }
+
+    if (isDevelopment) {
+      console.log(`ping-${id} -> `, { id, context, message });
+    }
+    socket.to(id).emit(`ping-${id}`, { id, message });
+  });
+
   socket.on('join_channel', async (id) => {
     try {
       await rateLimiter.consume(socket.handshake.address);

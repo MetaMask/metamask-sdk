@@ -473,7 +473,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::ping()`);
     }
-    this.socket.emit(MessageType.PING, 'ping');
+    this.socket.emit(MessageType.PING, {
+      id: this.channelId,
+      context: this.context,
+      message: 'ping',
+    });
   }
 
   pause(): void {
