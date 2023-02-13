@@ -2,18 +2,26 @@ import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
-import { CommunicationLayerPreference, ConnectionStatus, MessageType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { CommunicationLayerPreference, ConnectionStatus, EventType, MessageType, ServiceStatus } from '@metamask/sdk-communication-layer';
 import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
-import InstallModalWeb from '@metamask/sdk-install-modal-web';
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   communicationServerUrl: 'http://localhost:4000',
   enableDebug: true,
-  developerMode: true,
+  autoConnect: {
+    enable: true
+  },
+  logging: {
+    sdk: true,
+    eciesLayer: true,
+    remoteLayer: true,
+    keyExchangeLayer: true,
+    serviceLayer: true,
+  },
   storage: {
     debug: true
   }
@@ -163,7 +171,7 @@ export const App = () => {
 
   useEffect( () => {
     console.debug(`App::useEffect sdk listeners`);
-    sdk.on(MessageType.SERVICE_STATUS, (_serviceStatus:ServiceStatus) => {
+    sdk.on(EventType.SERVICE_STATUS, (_serviceStatus:ServiceStatus) => {
       console.debug(`sdk connection_status`, _serviceStatus);
       setServiceStatus(_serviceStatus)
       // if(connectionStatus === ConnectionStatus.TIMEOUT) {
@@ -377,7 +385,7 @@ export const App = () => {
           {connected ? "Connected" : "New Connection"}
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={sign} disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={sign}>
           Sign
         </button>
 
@@ -407,6 +415,13 @@ export const App = () => {
 
         <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain}  disabled={!connected}>
           Add ethereum chain
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={() => {
+          console.debug(`start resetting keys`);
+          sdk.resetKeys();
+        }}  disabled={!connected}>
+          Reset Keys
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={() => {

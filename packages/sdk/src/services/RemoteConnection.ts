@@ -142,23 +142,35 @@ export class RemoteConnection implements ProviderService {
       platformType === PlatformType.DesktopWeb ||
       (platformType === PlatformType.NonBrowser && !platform.isReactNative())
     );
+    const provider = Ethereum.getProvider();
 
     if (this.developerMode) {
       console.debug(
-        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink}`,
+        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink} providerConnected=${provider.isConnected()}`,
         channelConfig,
       );
     }
 
     if (trustedDevice && deeplink) {
-      const linkParams = `redirect=true&otp=${channelConfig.channelId}`;
+      const pubKey = this.connector.getKeyInfo()?.ecies.public ?? '';
+      let linkParams = `otp=${encodeURIComponent(
+        channelConfig.channelId,
+      )}&channelId=${encodeURIComponent(
+        channelConfig.channelId,
+      )}&comm=${encodeURIComponent(
+        this.communicationLayerPreference,
+      )}&pubkey=${encodeURIComponent(pubKey)}`;
+
+      if (provider.isConnected()) {
+        linkParams += `&redirect=true`;
+      }
+
       const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
       const link = `metamask://connect?${linkParams}`;
 
       Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
     } else if (!trustedDevice) {
       this.displayedModal = sdkWebPendingModal();
-      const provider = Ethereum.getProvider();
 
       provider.once('connect', async (connectInfo) => {
         if (this.developerMode) {
@@ -185,7 +197,7 @@ export class RemoteConnection implements ProviderService {
         console.debug(`RemoteConnection::startConnection()`);
       }
 
-      if (this.connector.isConnected()) {
+      if (this.connector.isReady()) {
         console.debug(`RemoteConnection::startConnection() Already connected.`);
         // Nothing to do, already connected.
         return resolve(true);
@@ -276,7 +288,7 @@ export class RemoteConnection implements ProviderService {
   }
 
   isConnected() {
-    return this.connector.isConnected();
+    return this.connector.isReady();
   }
 
   isPaused() {

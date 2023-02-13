@@ -22,7 +22,7 @@ export class KeyExchange extends EventEmitter2 {
 
   private myECIES: ECIES;
 
-  private otherPublicKey = '';
+  private otherPublicKey?: string;
 
   private communicationLayer: CommunicationLayer;
 
@@ -57,15 +57,16 @@ export class KeyExchange extends EventEmitter2 {
     }
     this.sendPublicKey = sendPublicKey;
 
-    this.communicationLayer.on(
-      InternalEventType.KEY_EXCHANGE,
-      this.onKeyExchangeMessage.bind(this),
-    );
+    // this.communicationLayer.on(
+    //   InternalEventType.KEY_EXCHANGE,
+    //   this.onKeyExchangeMessage.bind(this),
+    // );
   }
 
-  private onKeyExchangeMessage(keyExchangeMsg: {
+  public onKeyExchangeMessage(keyExchangeMsg: {
     message: CommunicationLayerMessage;
   }) {
+    console.debug(`LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL`);
     if (this.debug) {
       console.debug(
         `KeyExchange::${this.context}::onKeyExchangeMessage() keysExchanged=${this.keysExchanged}`,
@@ -77,10 +78,11 @@ export class KeyExchange extends EventEmitter2 {
     if (this.keysExchanged) {
       if (this.debug) {
         console.log(
-          `KeyExchange::${this.context}::onKeyExchangeMessage STOP handshake already exchanged`,
+          `KeyExchange::${this.context}::onKeyExchangeMessage received handshake while already exchanged.`,
         );
       }
-      return;
+      // FIXME check if correct way / when is it really happening?
+      // return;
     }
 
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
@@ -103,6 +105,7 @@ export class KeyExchange extends EventEmitter2 {
         pubkey: this.myPublicKey,
       });
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
+      // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
       this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
 
       if (this.debug) {
@@ -124,6 +127,7 @@ export class KeyExchange extends EventEmitter2 {
           `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
         );
       }
+      // TODO require multiple step because key exchange can be done both way
       this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.keysExchanged = true;
       this.emit(EventType.KEYS_EXCHANGED);
@@ -148,14 +152,12 @@ export class KeyExchange extends EventEmitter2 {
     this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
     this.emit(EventType.KEY_INFO, this.step);
     this.keysExchanged = false;
-    this.otherPublicKey = '';
+    this.otherPublicKey = undefined;
   }
 
-  start(isOriginator: boolean): void {
+  start(): void {
     if (this.debug) {
-      console.debug(
-        `KeyExchange::${this.context}::start isOriginator=${isOriginator}`,
-      );
+      console.debug(`KeyExchange::${this.context}::start `);
     }
 
     this.clean();

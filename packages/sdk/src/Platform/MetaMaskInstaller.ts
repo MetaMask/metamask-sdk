@@ -121,7 +121,7 @@ export class MetaMaskInstaller {
     return await this.redirectToProperInstall();
   }
 
-  async start({ wait = false }) {
+  async start({ wait = false }: { wait: boolean }) {
     if (this.debug) {
       console.debug(`MetamaskInstaller::start() wait=${wait}`);
     }

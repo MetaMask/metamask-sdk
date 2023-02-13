@@ -186,7 +186,7 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
 
         if (this.isOriginator) {
           if (!this.keyExchange.areKeysExchanged()) {
-            this.keyExchange.start(this.isOriginator);
+            this.keyExchange.start();
           }
         }
 

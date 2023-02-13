@@ -26,6 +26,7 @@ export interface SDKProviderProps {
 
 export class SDKProvider extends MetaMaskInpageProvider {
   private debug = false;
+
   private autoRequestAccounts = false;
 
   constructor({
@@ -49,12 +50,19 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
       );
     }
-    this._initializeStateAsync();
-    if (this.autoRequestAccounts) {
-      await this.request({
-        method: 'eth_requestAccounts',
-        params: [],
-      });
+
+    try {
+      // Force re-initialize
+      this._initializeStateAsync();
+      if (this.autoRequestAccounts) {
+        await this.request({
+          method: 'eth_requestAccounts',
+          params: [],
+        });
+      }
+    } catch (err) {
+      // Ignore - Provider already initialized message.
+      console.warn(`error`, err);
     }
   }
 
@@ -72,6 +80,34 @@ export class SDKProvider extends MetaMaskInpageProvider {
     this._handleDisconnect(true);
     // provider._state.isConnected = false;
     // provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
+  }
+
+  protected async _initializeStateAsync(): Promise<void> {
+    if (this.debug) {
+      console.debug(`SDKProvider::_initializeStateAsync()`);
+    }
+    // Prevent throwing error
+    await super._initializeStateAsync();
+  }
+
+  protected _initializeState(
+    initialState?:
+      | {
+          accounts: string[];
+          chainId: string;
+          isUnlocked: boolean;
+          networkVersion?: string | undefined;
+        }
+      | undefined,
+  ): void {
+    if (this.debug) {
+      console.debug(
+        `SDKProvider::_initializeState() set state._initialized to false`,
+      );
+    }
+    // Force re-initialize without error.
+    this._state.initialized = false;
+    return super._initializeState(initialState);
   }
 
   protected _handleChainChanged({

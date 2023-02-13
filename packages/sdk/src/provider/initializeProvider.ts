@@ -76,6 +76,9 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
+      } else if (Platform.getInstance().isReactNative()) {
+        // send it anyway on native because of the deeplink
+        return f(...args);
       }
 
       throw new Error(

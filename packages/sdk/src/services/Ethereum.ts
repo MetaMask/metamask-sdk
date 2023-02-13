@@ -29,6 +29,7 @@ export class Ethereum {
       shouldSendMetadata,
       shouldSetOnWindow,
       shouldShimWeb3,
+      autoRequestAccounts: false,
       debug,
     });
 

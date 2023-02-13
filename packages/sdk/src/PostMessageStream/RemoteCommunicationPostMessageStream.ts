@@ -41,7 +41,7 @@ export class RemoteCommunicationPostMessageStream
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
 
-    this.remote.once(EventType.CLIENTS_READY, async () => {
+    this.remote.on(EventType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         await provider.forceInitializeState();
@@ -76,7 +76,11 @@ export class RemoteCommunicationPostMessageStream
     _encoding: BufferEncoding,
     callback: (error?: Error | null) => void,
   ) {
-    if (!this.remote.isConnected()) {
+    const platform = Platform.getInstance();
+    const isReactNative = platform.isReactNative();
+    // Special Case if RN, we still create deeplink to wake up the connection.
+
+    if (!this.remote.isReady() && !isReactNative) {
       if (this.debug) {
         console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
       }
@@ -84,9 +88,10 @@ export class RemoteCommunicationPostMessageStream
       return callback();
     }
 
+    const socketConnected = this.remote.isConnected();
     if (this.debug) {
       console.debug(
-        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()}`,
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} socketConnected=${socketConnected}`,
         chunk,
       );
     }
@@ -104,14 +109,9 @@ export class RemoteCommunicationPostMessageStream
 
       this.remote.sendMessage(data?.data);
 
-      console.log(`RCPMS::_write debug1`);
-      const platform = Platform.getInstance();
-
       const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
       const isNotBrowser = platform.isNotBrowser();
-      const isReactNative = platform.isReactNative();
 
-      console.log(`RCPMS::_write debug2`);
       if (!isReactNative && (isDesktop || isNotBrowser)) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
@@ -121,17 +121,19 @@ export class RemoteCommunicationPostMessageStream
         }
         return callback();
       }
-      console.log(`RCPMS::_write debug3`);
+
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
-      let urlParams = ``;
-      const channelId = this.remote.getChannelConfig()?.channelId;
+      const pubKey = this.remote.getKeyInfo()?.ecies.public ?? '';
+      const channelId = this.remote.getChannelConfig()?.channelId ?? '';
+      let urlParams = `channelId=${encodeURIComponent(
+        channelId,
+      )}&pubkey=${encodeURIComponent(pubKey)}`;
       if (channelId) {
-        urlParams += `otp=${channelId}`;
+        urlParams += `otp=${encodeURIComponent(channelId)}`;
       }
 
-      console.log(`RCPMS::_write debug4`, urlParams);
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
           console.debug(
@@ -158,6 +160,9 @@ export class RemoteCommunicationPostMessageStream
           `metamask://connect?redirect=true`,
           '_self',
         );
+      } else {
+        // Already connected with custom rpc method (don't need redirect) - send message without opening metamask mobile.
+        // This only happens when metamask was opened in last 30seconds.
       }
     } catch (err) {
       if (this.debug) {

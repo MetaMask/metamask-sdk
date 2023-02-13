@@ -47,7 +47,8 @@ export interface RemoteCommunicationProps {
 }
 
 export class RemoteCommunication extends EventEmitter2 {
-  private connected = false;
+  // ready flag is turned on after we receive 'clients_ready' message, meaning key exchange is complete.
+  private ready = false;
 
   private isOriginator = false;
 
@@ -58,6 +59,12 @@ export class RemoteCommunication extends EventEmitter2 {
   private webRTCLib?: WebRTCLib;
 
   private transports?: string[];
+
+  /**
+   * TODO Flag showing metamask has been properly initialized.
+   * Watch for the result of metamask_getProviderState which is automatically called by the SDK.
+   */
+  private rpcProviderReady = false;
 
   private platform: string;
 
@@ -248,6 +255,7 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
+      this.ready = true;
       this.setConnectionStatus(ConnectionStatus.LINKED);
       this.setLastActiveDate(new Date());
 
@@ -257,9 +265,6 @@ export class RemoteCommunication extends EventEmitter2 {
           event: TrackingEvents.CONNECTED,
         });
       }
-
-      // this.connected = true;
-      // this.emit(EventType.CLIENTS_READY);
 
       if (!message.isOriginator) {
         // Don't send originator message from mobile.
@@ -309,12 +314,13 @@ export class RemoteCommunication extends EventEmitter2 {
           });
         }
 
-        this.clean();
-        this.communicationLayer?.removeAllListeners();
+        // this.clean();
+        this.ready = false;
+        // this.communicationLayer?.removeAllListeners();
 
         // Bubble up the disconnect event otherwise it would be missed.
         this.emit(EventType.CLIENTS_DISCONNECTED, this.channelId);
-        this.setConnectionStatus(ConnectionStatus.WAITING);
+        this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
       },
     );
 
@@ -330,7 +336,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.CLIENTS_WAITING, (numberUsers) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers}`,
+          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${this.ready} autoStarted=${this.autoStarted}`,
         );
       }
 
@@ -346,6 +352,7 @@ export class RemoteCommunication extends EventEmitter2 {
         });
       }
 
+      this.emit(EventType.CLIENTS_WAITING, numberUsers);
       if (this.autoStarted) {
         if (this.debug) {
           console.debug(
@@ -363,12 +370,12 @@ export class RemoteCommunication extends EventEmitter2 {
           // Cleanup previous channelId
           // this.storageManager?.terminate();
           this.autoStarted = false;
-          this.setConnectionStatus(ConnectionStatus.TIMEOUT);
+          if (!this.ready) {
+            this.setConnectionStatus(ConnectionStatus.TIMEOUT);
+          }
           clearTimeout(timeoutId);
         }, this.autoConnectOptions.timeout);
       }
-
-      this.emit(EventType.CLIENTS_WAITING, numberUsers);
     });
   }
 
@@ -392,7 +399,7 @@ export class RemoteCommunication extends EventEmitter2 {
         },
       });
       this.originatorInfo = message.originatorInfo;
-      this.connected = true;
+      this.ready = true;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         originatorInfo: message.originatorInfo,
@@ -401,7 +408,7 @@ export class RemoteCommunication extends EventEmitter2 {
       return;
     } else if (message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
-      this.connected = true;
+      this.ready = true;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,
@@ -409,12 +416,10 @@ export class RemoteCommunication extends EventEmitter2 {
       this.paused = false;
       return;
     } else if (message.type === MessageType.TERMINATE) {
-      // Needs to manually emit CLIENTS_DISCONNECTED because it won't receive it after the socket is closed.
-      this.emit(EventType.CLIENTS_DISCONNECTED);
       // remove channel config from persistence layer and close active connections.
       this.storageManager?.terminate(this.channelId ?? '');
-      this.disconnect();
-      this.resetKeys();
+      // this.disconnect();
+      // this.resetKeys();
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
@@ -431,7 +436,7 @@ export class RemoteCommunication extends EventEmitter2 {
       });
     }
 
-    // FIXME should it only emit JSON-RPC message?
+    // TODO should it check if only emiting JSON-RPC message?
     this.emit(EventType.MESSAGE, message);
   }
 
@@ -503,7 +508,7 @@ export class RemoteCommunication extends EventEmitter2 {
       throw new Error('communication layer not initialized');
     }
 
-    if (this.connected) {
+    if (this.ready) {
       throw new Error('Channel already connected');
     }
 
@@ -533,7 +538,7 @@ export class RemoteCommunication extends EventEmitter2 {
     }
 
     this.channelId = undefined;
-    this.connected = false;
+    this.ready = false;
     this.autoStarted = false;
   }
 
@@ -569,12 +574,26 @@ export class RemoteCommunication extends EventEmitter2 {
     this.storageManager?.persistChannelConfig(newChannelConfig);
   }
 
+  setProviderState(providerReady: boolean) {
+    this.rpcProviderReady = providerReady;
+  }
+
   sendMessage(message: CommunicationLayerMessage) {
     if (this.debug) {
-      console.log(`RemoteCommunication::${this.context}::sendMessage`, message);
+      console.log(
+        `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready}`,
+        message,
+      );
     }
 
-    if (this.paused) {
+    // if paused on waiting
+    if (this.paused || !this.ready) {
+      if (this.debug) {
+        console.log(
+          `RemoteCommunication::${this.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
+        );
+      }
+
       this.once(EventType.CLIENTS_READY, () => {
         // only send the message after the clients has awaken.
         this.communicationLayer?.sendMessage(message);
@@ -607,8 +626,22 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.channelConfig;
   }
 
+  /**
+   * Check if the connection is ready to handle secure communication.
+   *
+   * @returns boolean
+   */
+  isReady() {
+    return this.ready;
+  }
+
+  /**
+   * Check the value of the socket io client.
+   *
+   * @returns boolean
+   */
   isConnected() {
-    return this.connected;
+    return this.communicationLayer?.isConnected();
   }
 
   isPaused() {
@@ -687,7 +720,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
 
-    this.connected = false;
+    this.ready = false;
     this.communicationLayer?.disconnect(options);
   }
 }

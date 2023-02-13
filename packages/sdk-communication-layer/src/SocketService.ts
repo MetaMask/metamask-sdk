@@ -36,6 +36,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private clientsReady = false;
 
+  /**
+   * Special flag used to session persistence in case MetaMask disconnects without Pause,
+   * it means we need to re-create a new key handshake.
+   */
+  private clientsPaused = false;
+
   private isOriginator?: boolean;
 
   private channelId?: string;
@@ -166,12 +172,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       const serviceStatus: ServiceStatus = {
         keyInfo: this.getKeyInfo(),
       };
+      console.debug(`KEYS_ECHANGED update status`);
       this.emit(EventType.SERVICE_STATUS, serviceStatus);
     });
   }
 
   resetKeys(): void {
-    // this.disconnect();
     if (this.debug) {
       console.debug(`SocketService::resetKeys()`);
     }
@@ -199,7 +205,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.clientsConnected = true;
       if (this.isOriginator) {
         if (!this.keyExchange.areKeysExchanged()) {
-          this.keyExchange.start(this.isOriginator);
+          this.keyExchange.start();
         }
       }
       if (this.debug) {
@@ -212,6 +218,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         );
       }
 
+      // SOLUTION 1: there was no reconnection
       // Is it a reconnection?
       if (this.reconnect) {
         if (this.keyExchange.areKeysExchanged()) {
@@ -231,20 +238,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               context: this.context,
             });
           }
-        } else if (!this.isOriginator) {
-          // if (this.debug) {
-          //   console.debug(
-          //     `SocketService::${this.context}::setupChannelListener sendMessage({type: KEY_HANDSHAKE_START})`,
-          //   );
-          // }
-          console.debug(`DANGER:: should we initiate something here?`);
-          // FIXME danger zone should - we begin handshake?
-          this.sendMessage({
-            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
-          });
         }
         // reconnect switched when connection resume.
         this.reconnect = false;
+      } else if (!this.isOriginator) {
+        console.debug(`DANGER:: should we initiate something here?`);
+        // Reset key exchange
+        this.sendMessage({
+          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+        });
       }
     });
 
@@ -260,10 +262,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
       this.clientsConnected = false;
-      // FIXME reset key exchange after each disconnection, is it correct?
-      if (!this.isOriginator) {
+      // If it wasn't paused - need to reset keys.
+      if (!this.clientsPaused) {
+        if (this.isOriginator) {
+          // On a DAPP, always re-initialize connection.
+          this.reconnect = true;
+        }
         this.keyExchange.clean();
       }
+
       this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
     });
 
@@ -297,7 +304,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           );
         }
 
-        return this.keyExchange.start(this.isOriginator);
+        return this.keyExchange.start();
       }
 
       if (this.debug) {
@@ -326,6 +333,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.keyExchange.setOtherPublicKey(message.pubkey);
         }
 
+        this.keyExchange.onKeyExchangeMessage({ message });
         return this.emit(InternalEventType.KEY_EXCHANGE, {
           message,
           context: this.context,
@@ -340,6 +348,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               message,
             );
           }
+          console.debug(`STRAAAAAAAAAAAAAAAAANNNNGGGGE`);
+          this.keyExchange.onKeyExchangeMessage({ message });
           return this.emit(InternalEventType.KEY_EXCHANGE, {
             message,
             context: this.context,
@@ -351,6 +361,18 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
       const messageReceived = JSON.parse(decryptedMessage);
+
+      if (messageReceived?.type === MessageType.PAUSE) {
+        /**
+         * CommunicationLayer shouldn't be aware of the protocol details but we make an exception to manager session persistence.
+         * Receiving pause is the correct way to quit MetaMask app,
+         * but in case it is killed we won't receive a PAUSE signal and thus need to re-create the handshake.
+         */
+        console.log(`FFFFFFFFFFFFFFFFFFFFFFFF set clientsPaused=true`);
+        this.clientsPaused = true;
+      } else {
+        this.clientsPaused = false;
+      }
       return this.emit(EventType.MESSAGE, { message: messageReceived });
     });
 
@@ -521,8 +543,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
 
     if (!this.keyExchange.areKeysExchanged()) {
+      console.debug(`GGGGGGGGGGGGGGG keystate`, this.getKeyInfo());
       // Restart key exchange process
-      this.keyExchange.start(Boolean(this.isOriginator));
+      // this.keyExchange.start(Boolean(this.isOriginator));
     }
   }
 
@@ -534,6 +557,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       // Try to inform other party of the termination
       // In most case, it may be missed if we dont have an active linked connection.
       this.sendMessage({ type: MessageType.TERMINATE });
+      this.keyExchange.resetKeys();
     }
     this.manualDisconnect = true;
     this.socket.disconnect();
