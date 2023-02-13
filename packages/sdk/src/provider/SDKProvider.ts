@@ -114,13 +114,16 @@ export class SDKProvider extends MetaMaskInpageProvider {
     chainId,
     networkVersion,
   }: { chainId?: string; networkVersion?: string } = {}) {
-    console.debug(
-      `SDKProvider::_handleChainChanged chainId=${chainId} networkVersion=${networkVersion}`,
-    );
+    if (this.debug) {
+      console.debug(
+        `SDKProvider::_handleChainChanged chainId=${chainId} networkVersion=${networkVersion}`,
+      );
+    }
+
     // FIXME on RN IOS networkVersion is sometime missing? why?
     let forcedNetworkVersion = networkVersion;
     if (!networkVersion) {
-      console.info(`WARNING: forced network version to prevent provider error`);
+      console.warn(`WARNING: forced network version to prevent provider error`);
       forcedNetworkVersion = '1';
     }
 

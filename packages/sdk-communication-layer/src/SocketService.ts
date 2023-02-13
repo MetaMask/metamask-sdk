@@ -172,7 +172,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       const serviceStatus: ServiceStatus = {
         keyInfo: this.getKeyInfo(),
       };
-      console.debug(`KEYS_ECHANGED update status`);
       this.emit(EventType.SERVICE_STATUS, serviceStatus);
     });
   }
@@ -242,8 +241,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         // reconnect switched when connection resume.
         this.reconnect = false;
       } else if (!this.isOriginator) {
-        console.debug(`DANGER:: should we initiate something here?`);
-        // Reset key exchange
+        // Ask to restart key exchange
         this.sendMessage({
           type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
         });
@@ -348,7 +346,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               message,
             );
           }
-          console.debug(`STRAAAAAAAAAAAAAAAAANNNNGGGGE`);
           this.keyExchange.onKeyExchangeMessage({ message });
           return this.emit(InternalEventType.KEY_EXCHANGE, {
             message,
@@ -368,7 +365,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
          * Receiving pause is the correct way to quit MetaMask app,
          * but in case it is killed we won't receive a PAUSE signal and thus need to re-create the handshake.
          */
-        console.log(`FFFFFFFFFFFFFFFFFFFFFFFF set clientsPaused=true`);
         this.clientsPaused = true;
       } else {
         this.clientsPaused = false;
@@ -541,12 +537,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.reconnect = true;
     this.socket.connect();
     this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
-
-    if (!this.keyExchange.areKeysExchanged()) {
-      console.debug(`GGGGGGGGGGGGGGG keystate`, this.getKeyInfo());
-      // Restart key exchange process
-      // this.keyExchange.start(Boolean(this.isOriginator));
-    }
   }
 
   disconnect(options?: DisconnectOptions): void {

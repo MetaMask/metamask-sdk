@@ -193,12 +193,17 @@ export class RemoteConnection implements ProviderService {
   async startConnection(): Promise<boolean> {
     // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
-      if (this.enableDebug) {
+      if (this.developerMode) {
         console.debug(`RemoteConnection::startConnection()`);
       }
 
       if (this.connector.isReady()) {
-        console.debug(`RemoteConnection::startConnection() Already connected.`);
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::startConnection() Already connected.`,
+          );
+        }
+
         // Nothing to do, already connected.
         return resolve(true);
       }
@@ -212,10 +217,12 @@ export class RemoteConnection implements ProviderService {
 
       // Check for existing channelConfig?
       this.connector.startAutoConnect().then((channelConfig) => {
-        console.debug(
-          `RemoteConnection::startConnection after startAutoConnect`,
-          channelConfig,
-        );
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::startConnection after startAutoConnect`,
+            channelConfig,
+          );
+        }
 
         if (channelConfig?.lastActive) {
           // Already connected through auto connect
@@ -237,7 +244,7 @@ export class RemoteConnection implements ProviderService {
               if (showQRCode) {
                 this.displayedModal = InstallModal({
                   link: universalLink,
-                  debug: this.enableDebug,
+                  debug: this.developerMode,
                 });
                 // console.log('OPEN LINK QRCODE', universalLink);
               } else {

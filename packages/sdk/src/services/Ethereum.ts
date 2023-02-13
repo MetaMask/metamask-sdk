@@ -55,7 +55,7 @@ export class Ethereum {
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,
       };
-      console.log(`Ethereum provider initialized`, info);
+      console.info(`Ethereum provider initialized`, info);
     });
   }
 

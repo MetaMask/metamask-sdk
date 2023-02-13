@@ -3,7 +3,6 @@ import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { EventType } from './types/EventType';
-import { InternalEventType } from './types/InternalEventType';
 import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
@@ -66,7 +65,6 @@ export class KeyExchange extends EventEmitter2 {
   public onKeyExchangeMessage(keyExchangeMsg: {
     message: CommunicationLayerMessage;
   }) {
-    console.debug(`LOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOL`);
     if (this.debug) {
       console.debug(
         `KeyExchange::${this.context}::onKeyExchangeMessage() keysExchanged=${this.keysExchanged}`,
@@ -172,7 +170,6 @@ export class KeyExchange extends EventEmitter2 {
 
   checkStep(step: string): void {
     if (this.step.toString() !== step) {
-      console.log(`Invalid step this.step=${this.step} vs ${step}`);
       throw new Error(`Wrong Step ${this.step} ${step}`);
     }
   }

@@ -519,7 +519,13 @@ export class RemoteCommunication extends EventEmitter2 {
     this.clean();
     const channel = this.communicationLayer.createChannel();
 
-    console.debug(`RemoteCommunication::generateChannelId() `, channel);
+    if (this.debug) {
+      console.debug(
+        `RemoteCommunication::generateChannelId() channel created`,
+        channel,
+      );
+    }
+
     const channelConfig = {
       channelId: channel.channelId,
       validUntil: Date.now() + this.sessionDuration,
