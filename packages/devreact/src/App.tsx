@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
-import { CommunicationLayerPreference, ConnectionStatus, EventType, MessageType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
 import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
@@ -16,14 +16,15 @@ const sdk = new MetaMaskSDK({
     enable: true
   },
   logging: {
-    sdk: true,
-    eciesLayer: true,
-    remoteLayer: true,
-    keyExchangeLayer: true,
-    serviceLayer: true,
+    sdk: false,
+    developerMode: true,
+    eciesLayer: false,
+    remoteLayer: false,
+    keyExchangeLayer: false,
+    serviceLayer: false,
   },
   storage: {
-    debug: true
+    debug: false,
   }
 });
 
