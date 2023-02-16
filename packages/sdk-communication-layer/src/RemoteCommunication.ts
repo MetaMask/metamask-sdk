@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
-import { validate } from 'uuid';
+import { validate, v4 as uuidv4 } from 'uuid';
 import { SendAnalytics } from './Analytics';
 import {
   CHANNEL_MAX_WAITING_TIME,
@@ -250,12 +250,19 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.CLIENTS_READY, (message) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${this.context}::on 'clients_ready' `,
+          `RemoteCommunication::${
+            this.context
+          }::on 'clients_ready' keysExchanged=${
+            this.getKeyInfo()?.keysExchanged
+          } `,
           message,
         );
       }
 
       this.ready = true;
+      this.paused = false;
+
+      console.debug(`RemoteCommunication::clients_ready set ready to true`);
       this.setConnectionStatus(ConnectionStatus.LINKED);
       this.setLastActiveDate(new Date());
 
@@ -288,23 +295,25 @@ export class RemoteCommunication extends EventEmitter2 {
           );
         }
 
-        // Then pause or cleanup the listeners.
-        if (this.paused) {
-          if (this.debug) {
-            console.debug(
-              `RemoteCommunication::${this.context}]::on 'clients_disconnected' connection paused - do nothing`,
-            );
-          }
-          return;
-        }
+        // // Then pause or cleanup the listeners.
+        // if (this.paused) {
+        //   if (this.debug) {
+        //     console.debug(
+        //       `RemoteCommunication::${this.context}]::on 'clients_disconnected' connection paused - do nothing`,
+        //     );
+        //   }
+        //   return;
+        // }
 
-        // if MM disconnected without pause -- an error occured and we need to re-initialize the state
-        // if Dapp disconnected without pause -- ok
         if (!this.isOriginator) {
           // if I am on metamask -- force pause it
           // reset encryption status to re-initialize key exchange
           this.paused = true;
           return;
+        }
+
+        if (!this.paused) {
+          this.ready = false;
         }
 
         if (this.analytics && this.channelId) {
@@ -315,7 +324,9 @@ export class RemoteCommunication extends EventEmitter2 {
         }
 
         // this.clean();
-        this.ready = false;
+        console.debug(
+          `RemoteCommunication::${this.context}]::on 'clients_disconnected' set ready to false`,
+        );
         // this.communicationLayer?.removeAllListeners();
 
         // Bubble up the disconnect event otherwise it would be missed.
@@ -548,7 +559,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.autoStarted = false;
   }
 
-  connectToChannel(channelId: string) {
+  connectToChannel(channelId: string, withKeyExchange: boolean) {
     if (!validate(channelId)) {
       console.debug(
         `RemoteCommunication::${this.context}::connectToChannel() invalid channel channelId=${channelId}`,
@@ -571,7 +582,7 @@ export class RemoteCommunication extends EventEmitter2 {
     }
 
     this.channelId = channelId;
-    this.communicationLayer?.connectToChannel({ channelId });
+    this.communicationLayer?.connectToChannel({ channelId, withKeyExchange });
     const newChannelConfig: ChannelConfig = {
       channelId,
       validUntil: Date.now() + this.sessionDuration,
@@ -587,7 +598,7 @@ export class RemoteCommunication extends EventEmitter2 {
   sendMessage(message: CommunicationLayerMessage) {
     if (this.debug) {
       console.log(
-        `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready}`,
+        `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready} status=${this._connectionStatus}`,
         message,
       );
     }
@@ -654,9 +665,18 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.paused;
   }
 
+  getCommunicationLayer() {
+    return this.communicationLayer;
+  }
+
   ping() {
     console.debug(`RemoteCommunication::ping()`);
     this.communicationLayer?.ping();
+  }
+
+  keyCheck() {
+    console.debug(`RemoteCommunication::keyCheck()`);
+    this.communicationLayer?.keyCheck();
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
@@ -713,6 +733,10 @@ export class RemoteCommunication extends EventEmitter2 {
     this.setConnectionStatus(ConnectionStatus.LINKED);
   }
 
+  getChannelId() {
+    return this.channelId;
+  }
+
   disconnect(options?: DisconnectOptions) {
     if (this.debug) {
       console.debug(`RemoteCommunication::disconnect() `);
@@ -722,11 +746,14 @@ export class RemoteCommunication extends EventEmitter2 {
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
       // remove channel config from persistence layer and close active connections.
       this.storageManager?.terminate(this.channelId ?? '');
+      this.resetKeys();
+      this.channelId = uuidv4();
+      options.channelId = this.channelId;
     } else {
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     }
-
-    this.ready = false;
     this.communicationLayer?.disconnect(options);
+    console.debug(`RemoteCommunication::disconnect() set ready to false`);
+    this.ready = false;
   }
 }

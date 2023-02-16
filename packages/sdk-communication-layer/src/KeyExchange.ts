@@ -3,6 +3,7 @@ import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { EventType } from './types/EventType';
+import { InternalEventType } from './types/InternalEventType';
 import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
@@ -56,10 +57,10 @@ export class KeyExchange extends EventEmitter2 {
     }
     this.sendPublicKey = sendPublicKey;
 
-    // this.communicationLayer.on(
-    //   InternalEventType.KEY_EXCHANGE,
-    //   this.onKeyExchangeMessage.bind(this),
-    // );
+    this.communicationLayer.on(
+      InternalEventType.KEY_EXCHANGE,
+      this.onKeyExchangeMessage.bind(this),
+    );
   }
 
   public onKeyExchangeMessage(keyExchangeMsg: {
@@ -77,6 +78,7 @@ export class KeyExchange extends EventEmitter2 {
       if (this.debug) {
         console.log(
           `KeyExchange::${this.context}::onKeyExchangeMessage received handshake while already exchanged.`,
+          this.step,
         );
       }
       // FIXME check if correct way / when is it really happening?
@@ -125,9 +127,10 @@ export class KeyExchange extends EventEmitter2 {
           `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
         );
       }
-      // TODO require multiple step because key exchange can be done both way
       this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.keysExchanged = true;
+      // Reset step value for next exchange.
+      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
       this.emit(EventType.KEYS_EXCHANGED);
     }
   }
@@ -156,6 +159,18 @@ export class KeyExchange extends EventEmitter2 {
   start(): void {
     if (this.debug) {
       console.debug(`KeyExchange::${this.context}::start `);
+    }
+
+    // Only if we are not already in progress
+    if (
+      this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK &&
+      this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE
+    ) {
+      console.debug(
+        `KeyExchange::${this.context}::start -- interrupted because key exchange in progress step=${this.step}`,
+        this.step,
+      );
+      return;
     }
 
     this.clean();
@@ -204,6 +219,7 @@ export class KeyExchange extends EventEmitter2 {
         'decryptMessage: Keys not exchanged - missing otherPubKey',
       );
     }
+    console.debug(`decrypt using ${this.otherPublicKey}`);
     return this.myECIES.decrypt(message);
   }
 

@@ -22,6 +22,7 @@ import { ProviderService } from './ProviderService';
 interface RemoteConnectionProps {
   timer?: {
     runBackgroundTimer?: (cb: () => void, ms: number) => number;
+    stopBackgroundTimer?: () => void;
   };
   communicationLayerPreference: CommunicationLayerPreference;
   dappMetadata?: DappMetadata;
@@ -37,19 +38,9 @@ interface RemoteConnectionProps {
 export class RemoteConnection implements ProviderService {
   private connector: RemoteCommunication;
 
-  private dappMetadata?: DappMetadata;
-
-  private transports?: string[];
-
-  private webRTCLib?: WebRTCLib;
-
   private universalLink?: string;
 
-  private enableDebug: boolean;
-
   private developerMode: boolean;
-
-  private forceRestart = false;
 
   private sentFirstConnect = false;
 
@@ -57,35 +48,55 @@ export class RemoteConnection implements ProviderService {
 
   private displayedModal?: { onClose: () => void };
 
-  constructor({
-    dappMetadata,
-    webRTCLib,
-    communicationLayerPreference,
-    transports,
-    enableDebug = false,
-    timer,
-    ecies,
-    storage,
-    communicationServerUrl,
-    autoConnect,
-    logging,
-  }: RemoteConnectionProps) {
-    this.dappMetadata = dappMetadata;
-    this.transports = transports;
-    this.enableDebug = enableDebug;
-    this.developerMode = logging?.developerMode === true;
-    this.communicationLayerPreference = communicationLayerPreference;
-    this.webRTCLib = webRTCLib;
+  private options: RemoteConnectionProps;
+
+  constructor(options: RemoteConnectionProps) {
+    this.options = options;
+    const developerMode = options.logging?.developerMode === true;
+    this.developerMode = developerMode;
+    this.communicationLayerPreference = options.communicationLayerPreference;
+    this.connector = this.initializeConnector();
+  }
+
+  initializeConnector() {
+    const {
+      dappMetadata,
+      webRTCLib,
+      communicationLayerPreference,
+      transports,
+      enableDebug = false,
+      timer,
+      ecies,
+      storage,
+      communicationServerUrl,
+      autoConnect,
+      logging,
+    } = this.options;
+
+    this.sentFirstConnect = false;
+
+    if (this.developerMode) {
+      console.debug(
+        `RemoteConnection::initializeConnector() re-intialize connector`,
+      );
+    }
+
+    // Cleanup previous handles
+    if (this.connector) {
+      if (timer?.stopBackgroundTimer) {
+        timer.stopBackgroundTimer();
+      }
+      // this.connector.removeAllListeners();
+    }
 
     const platform = Platform.getInstance();
-
     this.connector = new RemoteCommunication({
       platform: platform.getPlatformType(),
       communicationLayerPreference,
-      transports: this.transports,
-      webRTCLib: this.webRTCLib,
-      dappMetadata: this.dappMetadata,
-      analytics: this.enableDebug,
+      transports,
+      webRTCLib,
+      dappMetadata,
+      analytics: enableDebug,
       communicationServerUrl,
       context: 'dapp',
       ecies,
@@ -111,6 +122,8 @@ export class RemoteConnection implements ProviderService {
     if (timer) {
       timer.runBackgroundTimer?.(() => null, 5000);
     }
+
+    return this.connector;
   }
 
   getUniversalLink() {
@@ -153,13 +166,9 @@ export class RemoteConnection implements ProviderService {
 
     if (trustedDevice && deeplink) {
       const pubKey = this.connector.getKeyInfo()?.ecies.public ?? '';
-      let linkParams = `otp=${encodeURIComponent(
-        channelConfig.channelId,
-      )}&channelId=${encodeURIComponent(
-        channelConfig.channelId,
-      )}&comm=${encodeURIComponent(
-        this.communicationLayerPreference,
-      )}&pubkey=${encodeURIComponent(pubKey)}`;
+      let linkParams = encodeURI(
+        `channelId=${channelConfig.channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+      );
 
       if (provider.isConnected()) {
         linkParams += `&redirect=true`;
@@ -303,15 +312,19 @@ export class RemoteConnection implements ProviderService {
   }
 
   disconnect(options?: DisconnectOptions): void {
-    if (this.enableDebug) {
+    if (this.developerMode) {
       console.debug(`RemoteConnection::disconnect()`, options);
     }
     this.connector.disconnect(options);
     const platform = Platform.getInstance();
 
     if (platform.isBrowser() || platform.isReactNative()) {
-      const provider = Ethereum.getProvider();
-      provider.handleDisconnect();
+      // const provider = Ethereum.getProvider();
+      // provider.handleDisconnect();
+    }
+
+    if (options?.terminate === true) {
+      this.initializeConnector();
     }
   }
 }

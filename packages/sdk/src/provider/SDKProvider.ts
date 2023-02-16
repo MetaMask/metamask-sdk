@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
-import { MetaMaskInpageProvider } from '@metamask/providers';
+import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
+import { ErrorMessages } from '../constants';
 
 export interface SDKProviderProps {
   /**
@@ -50,20 +51,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
       );
     }
-
-    try {
-      // Force re-initialize
-      this._initializeStateAsync();
-      if (this.autoRequestAccounts) {
-        await this.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        });
-      }
-    } catch (err) {
-      // Ignore - Provider already initialized message.
-      console.warn(`error`, err);
-    }
+    this._initializeStateAsync();
   }
 
   getState() {
@@ -76,18 +64,35 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::handleDisconnect() cleaning up provider state`,
       );
     }
-    this._handleAccountsChanged([]);
-    this._handleDisconnect(true);
-    // provider._state.isConnected = false;
-    // provider.emit('disconnect', ErrorMessages.MANUAL_DISCONNECT);
+    this._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
   }
 
   protected async _initializeStateAsync(): Promise<void> {
     if (this.debug) {
       console.debug(`SDKProvider::_initializeStateAsync()`);
     }
-    // Prevent throwing error
-    await super._initializeStateAsync();
+    // Replace super.initialState logic to automatically request account if not found in providerstate.
+    let initialState: Parameters<BaseProvider['_initializeState']>[0];
+    try {
+      initialState = (await this.request({
+        method: 'metamask_getProviderState',
+      })) as Parameters<BaseProvider['_initializeState']>[0];
+    } catch (error) {
+      this._log.error(
+        'MetaMask: Failed to get initial state. Please report this bug.',
+        error,
+      );
+    }
+    // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
+    // if (initialState?.accounts?.length === 0) {
+    //   console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
+    //   const accounts = (await this.request({
+    //     method: 'eth_requestAccounts',
+    //     params: [],
+    //   })) as string[];
+    //   initialState.accounts = accounts;
+    // }
+    this._initializeState(initialState);
   }
 
   protected _initializeState(
@@ -123,7 +128,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
     // FIXME on RN IOS networkVersion is sometime missing? why?
     let forcedNetworkVersion = networkVersion;
     if (!networkVersion) {
-      console.warn(`WARNING: forced network version to prevent provider error`);
+      console.info(`forced network version to prevent provider error`);
       forcedNetworkVersion = '1';
     }
 

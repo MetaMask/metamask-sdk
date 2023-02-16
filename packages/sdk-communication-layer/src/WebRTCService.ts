@@ -258,6 +258,10 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
     this.socketService.resetKeys();
   }
 
+  keyCheck(): void {
+    this.socketService.keyCheck();
+  }
+
   onMessage(message: { data: string }) {
     /* if (!message.isTrusted) {
       throw new Error('Message not trusted');

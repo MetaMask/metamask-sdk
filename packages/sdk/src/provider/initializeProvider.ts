@@ -61,7 +61,7 @@ const initializeProvider = ({
 
     if (debug) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} isInstalled=${isInstalled}`,
+        `initializeProvider::sendRequest() method=${method} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
       );
     }
 
@@ -78,6 +78,9 @@ const initializeProvider = ({
         }
       } else if (Platform.getInstance().isReactNative()) {
         // send it anyway on native because of the deeplink
+        console.debug(
+          `initializeProvider::sendRequest() FORCE SEND request on react native`,
+        );
         return f(...args);
       }
 

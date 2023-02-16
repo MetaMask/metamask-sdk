@@ -89,9 +89,10 @@ export class RemoteCommunicationPostMessageStream
     }
 
     const socketConnected = this.remote.isConnected();
+    const ready = this.remote.isReady();
     if (this.debug) {
       console.debug(
-        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} socketConnected=${socketConnected}`,
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} ready=${ready} socketConnected=${socketConnected}`,
         chunk,
       );
     }
@@ -126,26 +127,26 @@ export class RemoteCommunicationPostMessageStream
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
       const pubKey = this.remote.getKeyInfo()?.ecies.public ?? '';
-      const channelId = this.remote.getChannelConfig()?.channelId ?? '';
-      let urlParams = `channelId=${encodeURIComponent(
-        channelId,
-      )}&pubkey=${encodeURIComponent(pubKey)}`;
-      if (channelId) {
-        urlParams += `otp=${encodeURIComponent(channelId)}`;
-      }
+      const channelId = this.remote.getChannelId();
+
+      console.debug(`AAAAAAAAAAAAAAAA channelId=${channelId}`);
+
+      const urlParams = encodeURI(
+        `channelId=${channelId}&pubkey=${pubKey}&comm=socket`,
+      );
 
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            `connect?${urlParams}`,
+            `otp?${urlParams}`,
           );
         }
 
         // Use otp to re-enable host approval
         platform.openDeeplink(
-          `https://metamask.app.link/connect?${urlParams}`,
-          `metamask://connect?${urlParams}`,
+          `https://metamask.app.link/otp?${urlParams}`,
+          `metamask://otp?${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused() && !isDesktop) {
@@ -156,8 +157,8 @@ export class RemoteCommunicationPostMessageStream
         }
 
         platform.openDeeplink(
-          `https://metamask.app.link/connect?redirect=true`,
-          `metamask://connect?redirect=true`,
+          `https://metamask.app.link/connect?redirect=true&${urlParams}`,
+          `metamask://connect?redirect=true&${urlParams}`,
           '_self',
         );
       } else {

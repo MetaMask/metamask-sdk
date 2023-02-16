@@ -56,6 +56,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private context: string;
 
+  private withKeyExchange?: boolean;
+
   private communicationServerUrl: string;
 
   private debug: boolean;
@@ -101,7 +103,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
       this.reconnect = true;
       this.socket.connect();
-      this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
+      this.socket.emit(
+        EventType.JOIN_CHANNEL,
+        this.channelId,
+        `${this.context}connect_again`,
+      );
     };
 
     const checkFocus = () => {
@@ -164,9 +170,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.keyExchange.on(EventType.KEYS_EXCHANGED, () => {
       if (this.debug) {
-        console.debug(`SocketService::on 'keys_exchanged'`);
+        console.debug(
+          `SocketService::on 'keys_exchanged' keyschanged=${this.keyExchange.areKeysExchanged()}`,
+        );
       }
       this.emit(EventType.CLIENTS_READY, {
+        keysExchanged: this.keyExchange.areKeysExchanged(),
         isOriginator: this.isOriginator,
       });
       const serviceStatus: ServiceStatus = {
@@ -193,28 +202,35 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   private setupChannelListeners(channelId: string): void {
-    this.socket.on(`clients_connected-${channelId}`, (id: string) => {
+    // Cleanup previous state if necessary.
+    // this.socket.removeAllListeners();
+
+    if (this.debug) {
+      console.debug(
+        `SocketService::${this.context}::setupChannelListener setting socket listeners for channel ${channelId}...`,
+      );
+    }
+
+    this.socket.on(`clients_connected-${channelId}`, (_id: string) => {
       if (this.debug) {
         console.debug(
-          `SocketService::${this.context}::setupChannelListener::on 'clients_connected-${channelId}' reconnect=${this.reconnect} isOriginator=${this.isOriginator}`,
-          id,
-        );
-      }
-      this.channelId = channelId;
-      this.clientsConnected = true;
-      if (this.isOriginator) {
-        if (!this.keyExchange.areKeysExchanged()) {
-          this.keyExchange.start();
-        }
-      }
-      if (this.debug) {
-        console.debug(
-          `SocketService::${this.context}::setupChannelListener reconnect=${
+          `SocketService::${
+            this.context
+          }::setupChannelListener::on 'clients_connected-${channelId}'  reconnect=${
             this.reconnect
+          }  clientsPaused=${
+            this.clientsPaused
           } keysExchanged=${this.keyExchange.areKeysExchanged()} isOriginator=${
             this.isOriginator
           }`,
         );
+      }
+
+      if (this.isOriginator) {
+        // if it wasn't paused, we should always re-initiate key exchange even if keys were previously exchanged.
+        if (!this.clientsPaused) {
+          this.keyExchange.start();
+        }
       }
 
       // SOLUTION 1: there was no reconnection
@@ -234,18 +250,26 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           ) {
             this.emit(EventType.CLIENTS_READY, {
               isOriginator: this.isOriginator,
+              keysExchanged: this.keyExchange.areKeysExchanged(),
               context: this.context,
             });
           }
+        } else if (!this.isOriginator) {
+          // Wait to receive message if needs to re-initialize key exchange.
         }
         // reconnect switched when connection resume.
         this.reconnect = false;
-      } else if (!this.isOriginator) {
-        // Ask to restart key exchange
-        this.sendMessage({
-          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+      } else if (this.clientsPaused) {
+        // always inform that clients have reconnected
+        this.emit(EventType.CLIENTS_READY, {
+          isOriginator: this.isOriginator,
+          keysExchanged: this.keyExchange.areKeysExchanged(),
+          context: this.context,
         });
       }
+
+      this.clientsConnected = true;
+      this.clientsPaused = false;
     });
 
     this.socket.on(`channel_created-${channelId}`, (id) => {
@@ -292,7 +316,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
       if (
         this.isOriginator &&
-        this.keyExchange.areKeysExchanged() &&
         message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_START
       ) {
         if (this.debug) {
@@ -303,6 +326,41 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         }
 
         return this.keyExchange.start();
+      }
+
+      if (message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_CHECK) {
+        const daooKeyOnRemote = message.pubkey;
+        const metamaskPublicKey = this.getKeyInfo().ecies.otherPubKey;
+        const myPubKey = this.keyExchange.getMyPublicKey();
+        const keysVerified = daooKeyOnRemote === myPubKey;
+        console.log(
+          `exchanged=${
+            this.getKeyInfo().keysExchanged
+          } keysVerifiedk=${keysVerified}\n${JSON.stringify(
+            {
+              remote: daooKeyOnRemote,
+              local: myPubKey,
+              mmpublic: metamaskPublicKey,
+            },
+            null,
+            4,
+          )}`,
+        );
+
+        if (!keysVerified) {
+          this.keyExchange.start();
+        }
+
+        return this.emit(EventType.MESSAGE, {
+          message: { type: KeyExchangeMessageType.KEY_HANDSHAKE_CHECK },
+        });
+      }
+
+      if (message?.type === MessageType.PING) {
+        console.debug(
+          `SocketService::${this.context}::setupChannelListener::on message ping `,
+        );
+        return this.emit(EventType.MESSAGE, { message: { type: 'ping' } });
       }
 
       if (this.debug) {
@@ -331,7 +389,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.keyExchange.setOtherPublicKey(message.pubkey);
         }
 
-        this.keyExchange.onKeyExchangeMessage({ message });
         return this.emit(InternalEventType.KEY_EXCHANGE, {
           message,
           context: this.context,
@@ -346,14 +403,30 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               message,
             );
           }
-          this.keyExchange.onKeyExchangeMessage({ message });
           return this.emit(InternalEventType.KEY_EXCHANGE, {
             message,
             context: this.context,
           });
         }
-        console.warn(`Keys not exchanged for ${message?.type}`, message);
-        throw new Error('Keys not exchanged');
+
+        // received encrypted message before keys were exchanged.
+        if (this.isOriginator) {
+          this.keyExchange.start();
+        } else {
+          // Request new key exchange
+          this.sendMessage({
+            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+          });
+        }
+        //  ignore message and wait for completion.
+        console.warn(`Message ignored because invalid key exchange status`);
+        return false;
+      } else if (message.toString().indexOf('type') !== -1) {
+        // Even if keys were exchanged, if the message is not encrypted, emit it.
+        console.warn(
+          `SocketService::on message received non encrypted unkwown message`,
+        );
+        return this.emit(EventType.MESSAGE, message);
       }
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
@@ -394,14 +467,20 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.connect();
     this.isOriginator = true;
     const channelId = uuidv4();
+    this.channelId = channelId;
     this.setupChannelListeners(channelId);
-    this.socket.emit(EventType.JOIN_CHANNEL, channelId);
+    this.socket.emit(
+      EventType.JOIN_CHANNEL,
+      channelId,
+      `${this.context}createChannel`,
+    );
     return { channelId, pubKey: this.keyExchange.getMyPublicKey() };
   }
 
   connectToChannel({
     channelId,
     isOriginator = false,
+    withKeyExchange = false,
   }: ConnectToChannelOptions): void {
     if (this.debug) {
       console.debug(
@@ -411,6 +490,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
     this.manualDisconnect = false;
     this.socket.connect();
+    this.withKeyExchange = withKeyExchange;
     this.isOriginator = isOriginator;
 
     // With session persistence we should always re-send the pubkey that changes on each reload.
@@ -419,11 +499,26 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.keyExchange.setSendPublicKey(true);
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
-    this.socket.emit(EventType.JOIN_CHANNEL, channelId);
+    this.socket.emit(
+      EventType.JOIN_CHANNEL,
+      channelId,
+      `${this.context}_connectToChannel`,
+    );
   }
 
   getKeyInfo(): KeyInfo {
     return this.keyExchange.getKeyInfo();
+  }
+
+  keyCheck() {
+    this.socket.emit(EventType.MESSAGE, {
+      id: this.channelId,
+      context: this.context,
+      message: {
+        type: KeyExchangeMessageType.KEY_HANDSHAKE_CHECK,
+        pubkey: this.getKeyInfo().ecies.otherPubKey,
+      },
+    });
   }
 
   sendMessage(message: CommunicationLayerMessage): void {
@@ -461,7 +556,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           message,
         );
       }
-      throw new Error('Keys not exchanged');
+      throw new Error('Keys not exchanged BBB');
     }
 
     const encryptedMessage = this.keyExchange.encryptMessage(
@@ -491,10 +586,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::ping()`);
     }
-    this.socket.emit(MessageType.PING, {
+    this.socket.emit(EventType.MESSAGE, {
       id: this.channelId,
       context: this.context,
-      message: 'ping',
+      message: {
+        type: MessageType.PING,
+      },
     });
   }
 
@@ -526,28 +623,44 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       );
     }
 
-    if (this.isConnected()) {
-      if (this.debug) {
-        console.debug(`SocketService::resume() already connected.`);
-      }
-      return;
-    }
+    // if (this.isConnected()) {
+    //   if (this.debug) {
+    //     console.debug(`SocketService::resume() already connected.`);
+    //   }
+    //   // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
+    //   this.socket.emit(
+    //     EventType.JOIN_CHANNEL,
+    //     this.channelId,
+    //     `${this.context}_resume`,
+    //   );
+    //   return;
+    // }
 
-    this.manualDisconnect = false;
-    this.reconnect = true;
-    this.socket.connect();
-    this.socket.emit(EventType.JOIN_CHANNEL, this.channelId);
+    if (this.keyExchange.areKeysExchanged()) {
+      // ASK to START key exchange
+      this.manualDisconnect = false;
+      this.reconnect = true;
+      this.socket.connect();
+      this.socket.emit(
+        EventType.JOIN_CHANNEL,
+        this.channelId,
+        `${this.context}_resume`,
+      );
+    }
   }
 
   disconnect(options?: DisconnectOptions): void {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::disconnect()`, options);
     }
-    if (options?.terminate && this.keyExchange.areKeysExchanged()) {
-      // Try to inform other party of the termination
-      // In most case, it may be missed if we dont have an active linked connection.
-      this.sendMessage({ type: MessageType.TERMINATE });
-      this.keyExchange.resetKeys();
+    if (options?.terminate) {
+      if (this.keyExchange.areKeysExchanged()) {
+        // Try to inform other party of the termination
+        // In most case, it may be missed if we dont have an active linked connection.
+        this.sendMessage({ type: MessageType.TERMINATE });
+      }
+      this.keyExchange.resetKeys({ debug: true });
+      this.channelId = options.channelId;
     }
     this.manualDisconnect = true;
     this.socket.disconnect();
