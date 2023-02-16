@@ -191,7 +191,7 @@ io.on('connection', (socket) => {
     socket.to(id).emit(`ping-${id}`, { id, message });
   });
 
-  socket.on('join_channel', async (id) => {
+  socket.on('join_channel', async (id, test) => {
     try {
       await rateLimiter.consume(socket.handshake.address);
     } catch (e) {
@@ -199,7 +199,7 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log('join_channel', id);
+      console.log(`join_channel ${id} ${test}`);
     }
 
     if (!uuid.validate(id)) {
