@@ -235,6 +235,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.remoteConnection?.getConnector().ping();
   }
 
+  keyCheck() {
+    this.remoteConnection?.getConnector().keyCheck();
+  }
+
   // Get the connector object from WalletConnect
   getWalletConnectConnector() {
     if (!this.walletConnect) {
