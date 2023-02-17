@@ -1,7 +1,7 @@
 import InstallModalWeb from '@metamask/sdk-install-modal-web';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
-export const sdkWebInstallModal = ({
+const sdkWebInstallModal = ({
   link,
   debug,
 }: {

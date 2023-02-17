@@ -1,6 +1,6 @@
 import SDKModalWeb from '@metamask/sdk-install-modal-web';
 
-export const sdkWebPendingModal = () => {
+const sdkWebPendingModal = () => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 

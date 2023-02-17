@@ -15,7 +15,7 @@ import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
-import sdkWebPendingModal from '../ui/InstallModal/pendinglModal-web';
+import sdkWebPendingModal from '../ui/InstallModal/pendingModal';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
