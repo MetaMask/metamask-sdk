@@ -202,8 +202,15 @@ export class RemoteConnection implements ProviderService {
   async startConnection(): Promise<boolean> {
     // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
+      const provider = Ethereum.getProvider();
+      const isRemoteReady = this.connector.isReady();
+      const isConnected = this.connector.isConnected();
+      const isPaused = this.connector.isPaused();
+
       if (this.developerMode) {
-        console.debug(`RemoteConnection::startConnection()`);
+        console.debug(
+          `RemoteConnection::startConnection() isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        );
       }
 
       if (this.connector.isReady()) {
@@ -241,11 +248,9 @@ export class RemoteConnection implements ProviderService {
           this.connector
             .generateChannelId()
             .then(({ channelId, pubKey }) => {
-              const linkParams = `channelId=${encodeURIComponent(
-                channelId,
-              )}&comm=${encodeURIComponent(
-                this.communicationLayerPreference,
-              )}&pubkey=${encodeURIComponent(pubKey)}`;
+              const linkParams = encodeURI(
+                `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+              );
 
               const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
               const deeplink = `metamask://connect?${linkParams}`;
@@ -272,18 +277,27 @@ export class RemoteConnection implements ProviderService {
             });
         }
 
-        this.connector.once(EventType.CLIENTS_READY, () => {
+        this.connector.on(EventType.CLIENTS_READY, async () => {
           if (this.developerMode) {
             console.debug(
               `RemoteConnection::startConnection::on 'clients_ready' sentFirstConnect=${this.sentFirstConnect}`,
             );
           }
-          this.displayedModal?.onClose();
+
           if (this.sentFirstConnect) {
             resolve(true);
             return;
           }
+
+          // Always make sure to requestAccounts
+          await provider.request({
+            method: 'eth_requestAccounts',
+            params: [],
+          });
           this.sentFirstConnect = true;
+
+          // try to close displayedModal
+          this.displayedModal?.onClose();
 
           resolve(true);
         });

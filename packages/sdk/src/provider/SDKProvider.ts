@@ -1,6 +1,5 @@
 import { Duplex } from 'stream';
 import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
-import { ErrorMessages } from '../constants';
 
 export interface SDKProviderProps {
   /**
@@ -58,13 +57,24 @@ export class SDKProvider extends MetaMaskInpageProvider {
     return this._state;
   }
 
-  handleDisconnect() {
+  handleDisconnect({ terminate = false }: { terminate: boolean }) {
     if (this.debug) {
       console.debug(
         `SDKProvider::handleDisconnect() cleaning up provider state`,
       );
     }
-    this._handleDisconnect(true, ErrorMessages.MANUAL_DISCONNECT);
+
+    if (terminate) {
+      // this.chainId = null;
+      // this._state.accounts = null;
+      // this.selectedAddress = null;
+      // this._state.isUnlocked = false;
+      // this._state.isPermanentlyDisconnected = true;
+      // this._state.initialized = false;
+      this._state.isConnected = false;
+    } else {
+      this._state.isConnected = false;
+    }
   }
 
   protected async _initializeStateAsync(): Promise<void> {
@@ -83,8 +93,12 @@ export class SDKProvider extends MetaMaskInpageProvider {
         error,
       );
     }
+
     // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
-    // if (initialState?.accounts?.length === 0) {
+    // if (
+    //   Platform.getInstance().isBrowser() &&
+    //   initialState?.accounts?.length === 0
+    // ) {
     //   console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
     //   const accounts = (await this.request({
     //     method: 'eth_requestAccounts',

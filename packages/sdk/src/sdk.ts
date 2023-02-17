@@ -55,7 +55,9 @@ export interface MetaMaskSDKOptions {
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
-  private provider: MetaMaskInpageProvider;
+  private options: MetaMaskSDKOptions;
+
+  private provider?: MetaMaskInpageProvider;
 
   private remoteConnection?: RemoteConnection;
 
@@ -67,39 +69,46 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private debug = false;
 
-  constructor({
-    dappMetadata,
-    // Provider
-    injectProvider = true,
-    forceInjectProvider = false,
-    forceDeleteProvider,
-    // Shim web3 on Provider
-    shouldShimWeb3 = true,
-    // Installation
-    checkInstallationImmediately,
-    checkInstallationOnAllCalls,
-    // Platform settings
-    preferDesktop,
-    openDeeplink,
-    useDeeplink = false,
-    wakeLockType,
-    communicationLayerPreference = CommunicationLayerPreference.SOCKET,
-    // WalletConnect
-    WalletConnectInstance,
-    forceRestartWalletConnect,
-    // WebRTC
-    webRTCLib,
-    transports,
-    timer,
-    // Debugging
-    enableDebug = true,
-    communicationServerUrl,
-    autoConnect,
-    // persistence settings
-    storage,
-    logging,
-  }: MetaMaskSDKOptions = {}) {
+  constructor(options: MetaMaskSDKOptions = {}) {
     super();
+
+    this.options = options;
+    this.initialize(options);
+  }
+
+  private initialize(options: MetaMaskSDKOptions = {}) {
+    const {
+      dappMetadata,
+      // Provider
+      injectProvider = true,
+      forceInjectProvider = false,
+      forceDeleteProvider,
+      // Shim web3 on Provider
+      shouldShimWeb3 = true,
+      // Installation
+      checkInstallationImmediately,
+      checkInstallationOnAllCalls,
+      // Platform settings
+      preferDesktop,
+      openDeeplink,
+      useDeeplink = false,
+      wakeLockType,
+      communicationLayerPreference = CommunicationLayerPreference.SOCKET,
+      // WalletConnect
+      WalletConnectInstance,
+      forceRestartWalletConnect,
+      // WebRTC
+      webRTCLib,
+      transports,
+      timer,
+      // Debugging
+      enableDebug = true,
+      communicationServerUrl,
+      autoConnect,
+      // persistence settings
+      storage,
+      logging,
+    } = options;
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
@@ -229,6 +238,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   terminate() {
     this.remoteConnection?.disconnect({ terminate: true });
+    this.initialize(this.options);
   }
 
   ping() {

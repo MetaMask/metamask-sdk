@@ -2,6 +2,7 @@ import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
 import {
   CommunicationLayerMessage,
+  ConnectionStatus,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
@@ -58,14 +59,27 @@ export class RemoteCommunicationPostMessageStream
       }
     });
 
-    this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
-      if (this.debug) {
-        console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
-      }
+    this.remote.on(
+      EventType.CONNECTION_STATUS,
+      (connectionStatus: ConnectionStatus) => {
+        if (connectionStatus === ConnectionStatus.TERMINATED) {
+          const provider = Ethereum.getProvider();
+          provider.handleDisconnect({ terminate: true });
+        } else if (connectionStatus === ConnectionStatus.DISCONNECTED) {
+          const provider = Ethereum.getProvider();
+          provider.handleDisconnect({ terminate: false });
+        }
+      },
+    );
 
-      const provider = Ethereum.getProvider();
-      provider.handleDisconnect();
-    });
+    // this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
+    //   if (this.debug) {
+    //     console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
+    //   }
+
+    //   const provider = Ethereum.getProvider();
+    //   provider.handleDisconnect({ terminate: false });
+    // });
   }
 
   /**
@@ -79,6 +93,15 @@ export class RemoteCommunicationPostMessageStream
     const platform = Platform.getInstance();
     const isReactNative = platform.isReactNative();
     // Special Case if RN, we still create deeplink to wake up the connection.
+    const isRemoteReady = this.remote.isReady();
+    const isConnected = this.remote.isConnected();
+    const isPaused = this.remote.isPaused();
+    const provider = Ethereum.getProvider();
+
+    // FIXME invalid state -- isReady is false after terminate.
+    console.debug(
+      `RPCMS::_write isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+    );
 
     if (!this.remote.isReady() && !isReactNative) {
       if (this.debug) {
