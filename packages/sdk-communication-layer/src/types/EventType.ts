@@ -5,6 +5,7 @@ export enum EventType {
   KEYS_EXCHANGED = 'keys_exchanged',
   JOIN_CHANNEL = 'join_channel',
   CHANNEL_CREATED = 'channel_created',
+  CLIENTS_CONNECTED = 'clients_connected',
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',

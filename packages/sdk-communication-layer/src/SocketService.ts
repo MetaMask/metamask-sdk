@@ -89,6 +89,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       options.transports = transports;
     }
 
+    if (this.debug) {
+      console.debug(
+        `SocketService::constructor() Socket IO url: ${this.communicationServerUrl}`,
+      );
+    }
+
     this.socket = io(communicationServerUrl, options);
 
     const connectAgain = () => {
@@ -225,6 +231,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           }`,
         );
       }
+
+      // Inform other layer of clients reconnection
+      this.emit(EventType.CLIENTS_CONNECTED, {
+        isOriginator: this.isOriginator,
+        keysExchanged: this.keyExchange.areKeysExchanged(),
+        context: this.context,
+      });
 
       if (this.isOriginator) {
         // if it wasn't paused, we should always re-initiate key exchange even if keys were previously exchanged.
@@ -495,7 +508,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     // With session persistence we should always re-send the pubkey that changes on each reload.
     // The following is to enable session persistence, public key needs to be resent
-    // this.keyExchange.clean();
     this.keyExchange.setSendPublicKey(true);
     this.channelId = channelId;
     this.setupChannelListeners(channelId);
@@ -654,16 +666,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       console.debug(`SocketService::${this.context}::disconnect()`, options);
     }
     if (options?.terminate) {
-      if (this.keyExchange.areKeysExchanged()) {
-        // Try to inform other party of the termination
-        // In most case, it may be missed if we dont have an active linked connection.
-        this.sendMessage({ type: MessageType.TERMINATE });
-      }
-      this.keyExchange.resetKeys({ debug: true });
       this.channelId = options.channelId;
     }
     this.manualDisconnect = true;
     this.socket.disconnect();
-    this.socket.close();
   }
 }
