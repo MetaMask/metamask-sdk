@@ -35,7 +35,7 @@
     "setup": "yarn install && yarn allow-scripts",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
-    "test:dev": "jest --detectOpenHandles ",
+    "test:dev": "jest  ",
     "watch": "rollup -c -w"
   },
   "dependencies": {
