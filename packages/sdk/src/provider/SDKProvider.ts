@@ -75,6 +75,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
     } else {
       this._state.isConnected = false;
     }
+    // TODO might not need to call _handleDisconnect and manage state directly.
+    this._handleDisconnect(true);
   }
 
   protected async _initializeStateAsync(): Promise<void> {
