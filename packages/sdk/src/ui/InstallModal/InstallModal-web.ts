@@ -11,7 +11,7 @@ export const sdkWebInstallModal = ({
   const div = document.createElement('div');
   document.body.appendChild(div);
 
-  const installModal = new InstallModalWeb();
+  let installModal = new InstallModalWeb();
 
   if (debug) {
     console.debug(`################## Installing Modal #################`);
@@ -24,8 +24,11 @@ export const sdkWebInstallModal = ({
   }
 
   const onClose = () => {
-    installModal.unmount();
-    document.body.removeChild(div);
+    if (installModal) {
+      installModal.unmount();
+      document.body.removeChild(div);
+      installModal = undefined;
+    }
   };
 
   installModal.mount({

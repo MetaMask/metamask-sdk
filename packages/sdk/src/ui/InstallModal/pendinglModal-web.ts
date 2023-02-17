@@ -4,13 +4,17 @@ export const sdkWebPendingModal = () => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
-  const modalWeb = new SDKModalWeb();
+  let modalWeb = new SDKModalWeb();
 
   const onClose = () => {
-    modalWeb.unmount();
-    document.body.removeChild(div);
+    if (modalWeb) {
+      modalWeb.unmount();
+      document.body.removeChild(div);
+    }
+    modalWeb = undefined;
   };
 
+  console.debug(`mounting pending modal`);
   modalWeb.mountPending({
     parentElement: div,
     onClose,
