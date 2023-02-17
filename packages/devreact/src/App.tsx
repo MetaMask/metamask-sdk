@@ -274,13 +274,21 @@ export const App = () => {
       },
     });
 
-    var from = window.ethereum?.selectedAddress;
+    let from = window.ethereum?.selectedAddress;
 
-    var params = [from, msgParams];
-    var method = "eth_signTypedData_v4";
-
+    console.debug(`sign from: ${from}`);
     try {
-      console.debug(`params`, params);
+      if (!from || from===null) {
+        // request accounts first.
+        const accounts = await window.ethereum?.request({method: 'eth_requestAccounts', params: []}) as string[];
+        from = accounts[0];
+        console.debug(`after request from=${from}`);
+      }
+
+      const params = [from, msgParams];
+      const method = "eth_signTypedData_v4";
+      console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
+      console.debug(`sign params`, params);
       const resp = await window.ethereum?.request({ method, params });
       setResponse(resp);
     } catch (e) {
@@ -390,38 +398,38 @@ export const App = () => {
           Sign
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction} >
           Send transaction
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={ping}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={ping} >
           Ping
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={setText}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={setText} >
           Set Text
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={getInfos}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={getInfos} >
           Get Provider State
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')} >
           Switch Ethereum
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')} >
           Switch Polygon
         </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain}  disabled={!connected}>
+        <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain} >
           Add ethereum chain
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={() => {
           console.debug(`start resetting keys`);
           sdk.resetKeys();
-        }}  disabled={!connected}>
+        }} >
           Reset Keys
         </button>
 
@@ -435,7 +443,7 @@ export const App = () => {
 
         {connected &&
           <>
-            <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect}  disabled={!connected}>
+            <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
               Disconnect
             </button>
           </>
