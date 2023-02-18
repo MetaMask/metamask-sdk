@@ -476,6 +476,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.debug) {
       console.debug(`SocketService::${this.context}::createChannel()`);
     }
+
+    if (this.socket.connected) {
+      throw new Error(`socket already connected`);
+    }
+
     this.manualDisconnect = false;
     this.socket.connect();
     this.isOriginator = true;
@@ -501,6 +506,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.keyExchange.toString(),
       );
     }
+
+    if (this.socket.connected) {
+      throw new Error(`socket already connected`);
+    }
+
     this.manualDisconnect = false;
     this.socket.connect();
     this.withKeyExchange = withKeyExchange;
@@ -546,22 +556,22 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         message,
       );
     }
-    if (!this.keyExchange.areKeysExchanged()) {
-      if (message?.type?.startsWith('key_handshake')) {
-        if (this.debug) {
-          console.debug(
-            `SocketService::${this.context}::sendMessage()`,
-            message,
-          );
-        }
-        this.socket.emit(EventType.MESSAGE, {
-          id: this.channelId,
-          context: this.context,
-          message,
-        });
-        return;
-      }
 
+    if (message?.type?.startsWith('key_handshake')) {
+      // Don't encrypt key_handshake message even if keys were previously exchanged.
+      // The state on the other party may be inconsistent so we need to re-do the key exhange in clear text.
+      if (this.debug) {
+        console.debug(`SocketService::${this.context}::sendMessage()`, message);
+      }
+      this.socket.emit(EventType.MESSAGE, {
+        id: this.channelId,
+        context: this.context,
+        message,
+      });
+      return;
+    }
+
+    if (!this.keyExchange.areKeysExchanged()) {
       if (this.debug) {
         console.debug(
           `SocketService::${this.context}::sendMessage() ERROR keys not exchanged`,
@@ -579,6 +589,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       id: this.channelId,
       context: this.context,
       message: encryptedMessage,
+      plaintext: JSON.stringify(message),
     };
     if (this.debug) {
       console.debug(
