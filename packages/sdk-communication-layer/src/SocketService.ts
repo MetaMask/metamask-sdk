@@ -74,6 +74,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }: SocketServiceProps) {
     super();
 
+    console.debug(`SocketService::constructor()`);
     this.reconnect = reconnect;
     this.context = context;
     this.communicationLayerPreference = communicationLayerPreference;
@@ -96,6 +97,45 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
 
     this.socket = io(communicationServerUrl, options);
+
+    const keyExchangeInitParameter = {
+      communicationLayer: this,
+      otherPublicKey,
+      sendPublicKey: false,
+      context: this.context,
+      ecies,
+      logging,
+    };
+
+    this.keyExchange = new KeyExchange(keyExchangeInitParameter);
+  }
+
+  resetKeys(): void {
+    if (this.debug) {
+      console.debug(`SocketService::resetKeys()`);
+    }
+    this.keyExchange.resetKeys();
+  }
+
+  private checkSameId(id: string) {
+    if (id !== this.channelId) {
+      if (this.debug) {
+        console.error(`Wrong id ${id} - should be ${this.channelId}`);
+      }
+      throw new Error('Wrong id');
+    }
+  }
+
+  private setupChannelListeners(channelId: string): void {
+    // Cleanup previous state if necessary.
+    // this.socket.removeAllListeners();
+    // this.keyExchange.removeAllListeners();
+
+    if (this.debug) {
+      console.debug(
+        `SocketService::${this.context}::setupChannelListener setting socket listeners for channel ${channelId}...`,
+      );
+    }
 
     const connectAgain = () => {
       if (typeof window !== 'undefined') {
@@ -155,67 +195,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         checkFocus();
       }
     });
-
-    const keyExchangeInitParameter = {
-      communicationLayer: this,
-      otherPublicKey,
-      sendPublicKey: false,
-      context: this.context,
-      ecies,
-      logging,
-    };
-
-    this.keyExchange = new KeyExchange(keyExchangeInitParameter);
-
-    this.keyExchange.on(EventType.KEY_INFO, (event) => {
-      if (this.debug) {
-        console.debug(`SocketService::on 'KEY_INFO'`, event);
-      }
-      this.emit(EventType.KEY_INFO, event);
-    });
-
-    this.keyExchange.on(EventType.KEYS_EXCHANGED, () => {
-      if (this.debug) {
-        console.debug(
-          `SocketService::on 'keys_exchanged' keyschanged=${this.keyExchange.areKeysExchanged()}`,
-        );
-      }
-      this.emit(EventType.CLIENTS_READY, {
-        keysExchanged: this.keyExchange.areKeysExchanged(),
-        isOriginator: this.isOriginator,
-      });
-      const serviceStatus: ServiceStatus = {
-        keyInfo: this.getKeyInfo(),
-      };
-      this.emit(EventType.SERVICE_STATUS, serviceStatus);
-    });
-  }
-
-  resetKeys(): void {
-    if (this.debug) {
-      console.debug(`SocketService::resetKeys()`);
-    }
-    this.keyExchange.resetKeys();
-  }
-
-  private checkSameId(id: string) {
-    if (id !== this.channelId) {
-      if (this.debug) {
-        console.error(`Wrong id ${id} - should be ${this.channelId}`);
-      }
-      throw new Error('Wrong id');
-    }
-  }
-
-  private setupChannelListeners(channelId: string): void {
-    // Cleanup previous state if necessary.
-    // this.socket.removeAllListeners();
-
-    if (this.debug) {
-      console.debug(
-        `SocketService::${this.context}::setupChannelListener setting socket listeners for channel ${channelId}...`,
-      );
-    }
 
     this.socket.on(`clients_connected-${channelId}`, (_id: string) => {
       if (this.debug) {
@@ -450,6 +429,29 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.emit(EventType.CLIENTS_WAITING, numberUsers);
       },
     );
+
+    this.keyExchange.on(EventType.KEY_INFO, (event) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'KEY_INFO'`, event);
+      }
+      this.emit(EventType.KEY_INFO, event);
+    });
+
+    this.keyExchange.on(EventType.KEYS_EXCHANGED, () => {
+      if (this.debug) {
+        console.debug(
+          `SocketService::on 'keys_exchanged' keyschanged=${this.keyExchange.areKeysExchanged()}`,
+        );
+      }
+      this.emit(EventType.CLIENTS_READY, {
+        keysExchanged: this.keyExchange.areKeysExchanged(),
+        isOriginator: this.isOriginator,
+      });
+      const serviceStatus: ServiceStatus = {
+        keyInfo: this.getKeyInfo(),
+      };
+      this.emit(EventType.SERVICE_STATUS, serviceStatus);
+    });
   }
 
   createChannel(): Channel {
@@ -457,12 +459,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       console.debug(`SocketService::${this.context}::createChannel()`);
     }
 
-    if (this.socket.connected) {
-      throw new Error(`socket already connected`);
+    if (!this.socket.connected) {
+      this.socket.connect();
     }
 
     this.manualDisconnect = false;
-    this.socket.connect();
     this.isOriginator = true;
     const channelId = uuidv4();
     this.channelId = channelId;
@@ -658,6 +659,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
     if (options?.terminate) {
       this.channelId = options.channelId;
+      // this.removeAllListeners();
+      // this.socket.removeAllListeners();
+      // this.keyExchange.removeAllListeners();
     }
     this.manualDisconnect = true;
     this.socket.disconnect();

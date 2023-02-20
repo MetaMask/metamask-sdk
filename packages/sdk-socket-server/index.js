@@ -165,7 +165,7 @@ io.on('connection', (socket) => {
     return socket.emit(`channel_created-${id}`, id);
   });
 
-  socket.on('message', async ({ id, message, context }) => {
+  socket.on('message', async ({ id, message, context, plaintext }) => {
     try {
       await rateLimiterMesssage.consume(socket.handshake.address);
     } catch (e) {
@@ -173,7 +173,27 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log(`message-${id} -> `, { id, context, message });
+      // Minify encrypted message for easier readibility
+      let displayMessage = message;
+      if (plaintext) {
+        displayMessage = 'AAAAAA_ENCRYPTED_AAAAAA';
+      }
+
+      if (context === 'mm-mobile') {
+        console.log(`\x1b[33m message-${id} -> \x1b[0m`, {
+          id,
+          context,
+          displayMessage,
+          plaintext,
+        });
+      } else {
+        console.log(`message-${id} -> `, {
+          id,
+          context,
+          displayMessage,
+          plaintext,
+        });
+      }
     }
     socket.to(id).emit(`message-${id}`, { id, message });
   });

@@ -127,6 +127,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }: RemoteCommunicationProps) {
     super();
 
+    console.debug(`RemoteCommunication::constructor()`);
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
@@ -176,6 +177,9 @@ export class RemoteCommunication extends EventEmitter2 {
     | 'ecies'
     | 'communicationServerUrl'
   >) {
+    console.debug(`RemoteCommunication::initCommunicationLayer()`);
+    // this.communicationLayer?.removeAllListeners();
+
     switch (communicationLayerPreference) {
       case CommunicationLayerPreference.WEBRTC:
         this.communicationLayer = new WebRTCService({
@@ -222,6 +226,7 @@ export class RemoteCommunication extends EventEmitter2 {
     const originatorInfo: OriginatorInfo = {
       url,
       title,
+      icon: this.dappMetadata?.base64Icon,
       platform: this.platform,
     };
 
@@ -360,10 +365,12 @@ export class RemoteCommunication extends EventEmitter2 {
             this.autoConnectOptions,
           );
         }
+
+        const timeout = this.autoConnectOptions.timeout || 3000;
         const timeoutId = setTimeout(() => {
           if (this.debug) {
             console.debug(
-              `RemoteCommunication::on setTimeout(${this.autoConnectOptions.timeout}) terminate channelConfig`,
+              `RemoteCommunication::on setTimeout(${timeout}) terminate channelConfig`,
               this.autoConnectOptions,
             );
           }
@@ -374,7 +381,7 @@ export class RemoteCommunication extends EventEmitter2 {
             this.setConnectionStatus(ConnectionStatus.TIMEOUT);
           }
           clearTimeout(timeoutId);
-        }, this.autoConnectOptions.timeout);
+        }, timeout);
       }
     });
   }
@@ -543,6 +550,7 @@ export class RemoteCommunication extends EventEmitter2 {
     }
 
     this.channelId = undefined;
+    this.channelConfig = undefined;
     this.ready = false;
     this.autoStarted = false;
   }
@@ -751,6 +759,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.autoStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
+      // this.removeAllListeners();
     } else {
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);

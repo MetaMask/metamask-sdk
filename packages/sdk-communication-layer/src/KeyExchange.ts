@@ -46,6 +46,7 @@ export class KeyExchange extends EventEmitter2 {
   }: KeyExchangeProps) {
     super();
 
+    console.debug(`KeyExchange::constructor()`);
     this.context = context;
     this.myECIES = new ECIES(ecies);
     this.communicationLayer = communicationLayer;

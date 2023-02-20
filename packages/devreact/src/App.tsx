@@ -7,13 +7,43 @@ import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
 
+const getFavicon = () => {
+  let favicon = undefined;
+  const nodeList = document.getElementsByTagName("link");
+  for (let i = 0; i < nodeList.length; i++)
+  {
+      if((nodeList[i].getAttribute("rel") === "icon")||(nodeList[i].getAttribute("rel") === "shortcut icon"))
+      {
+          favicon = nodeList[i].getAttribute("href");
+      }
+  }
+  return favicon;
+}
+
+const getBase64FromUrl = async (url:string) => {
+  const data = await fetch(url);
+  const blob = await data.blob();
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onloadend = () => {
+      const base64data = reader.result;
+      resolve(base64data);
+    }
+  });
+}
+
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  communicationServerUrl: 'http://localhost:4000',
+  communicationServerUrl: 'http://192.168.50.114:4000',
   enableDebug: true,
   autoConnect: {
-    enable: true
+    enable: false
+  },
+  dappMetadata: {
+    name: "",
+    url: "",
   },
   logging: {
     sdk: false,
@@ -427,10 +457,9 @@ export const App = () => {
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`start resetting keys`);
-          sdk.resetKeys();
+          console.debug(`App::keyinfo`, sdk.getKeyInfo());
         }} >
-          Reset Keys
+          Print Key Info
         </button>
 
         <button style={{ padding: 10, margin: 10 }} onClick={() => {
@@ -438,6 +467,18 @@ export const App = () => {
           sdk.testUI('pending');
         }}>
           TEST UI
+        </button>
+
+        <button style={{ padding: 10, margin: 10 }} onClick={async () => {
+          const iconUrl = getFavicon();
+          console.debug(`icon url`, iconUrl);
+          if(iconUrl) {
+            const base64icon = await getBase64FromUrl(iconUrl);
+            console.debug(`base icon`, base64icon);
+          }
+
+        }}>
+          Check Favicon
         </button>
 
 

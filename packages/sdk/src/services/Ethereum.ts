@@ -24,6 +24,7 @@ export class Ethereum {
     shouldShimWeb3,
     debug = false,
   }: EthereumProps) {
+    this.debug = debug;
     const provider = new SDKProvider({
       connectionStream,
       shouldSendMetadata,

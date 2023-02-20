@@ -21,6 +21,8 @@ export class RemoteCommunicationPostMessageStream
 
   private remote: RemoteCommunication;
 
+  private debugReady = false;
+
   private debug;
 
   constructor({
@@ -42,11 +44,12 @@ export class RemoteCommunicationPostMessageStream
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
 
-    this.remote.on(EventType.CLIENTS_READY, async () => {
+    this.remote.once(EventType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         await provider.forceInitializeState();
 
+        this.debugReady = true;
         if (debug) {
           console.debug(
             `RCPMS::on 'clients_ready' provider.state`,
@@ -64,9 +67,11 @@ export class RemoteCommunicationPostMessageStream
       (connectionStatus: ConnectionStatus) => {
         if (connectionStatus === ConnectionStatus.TERMINATED) {
           const provider = Ethereum.getProvider();
+          this.debugReady = false;
           provider.handleDisconnect({ terminate: true });
         } else if (connectionStatus === ConnectionStatus.DISCONNECTED) {
           const provider = Ethereum.getProvider();
+          this.debugReady = false;
           provider.handleDisconnect({ terminate: false });
         }
       },
@@ -100,7 +105,9 @@ export class RemoteCommunicationPostMessageStream
 
     // FIXME invalid state -- isReady is false after terminate.
     console.debug(
-      `RPCMS::_write isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+      `RPCMS::_write isRemoteReady=${isRemoteReady} debugReady=${
+        this.debugReady
+      } isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
     );
 
     if (!this.remote.isReady() && !isReactNative) {
@@ -151,8 +158,6 @@ export class RemoteCommunicationPostMessageStream
       // Check if should open app
       const pubKey = this.remote.getKeyInfo()?.ecies.public ?? '';
       const channelId = this.remote.getChannelId();
-
-      console.debug(`AAAAAAAAAAAAAAAA channelId=${channelId}`);
 
       const urlParams = encodeURI(
         `channelId=${channelId}&pubkey=${pubKey}&comm=socket`,

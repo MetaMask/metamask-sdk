@@ -239,7 +239,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   terminate() {
     this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
-    // this.initialize(this.options);
+    this.initialize(this.options);
   }
 
   ping() {
