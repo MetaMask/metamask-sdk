@@ -169,6 +169,10 @@ export class Platform {
     );
   }
 
+  isMobileWeb() {
+    return this.platformType === PlatformType.MobileWeb;
+  }
+
   isNotBrowser() {
     return (
       typeof window === 'undefined' ||

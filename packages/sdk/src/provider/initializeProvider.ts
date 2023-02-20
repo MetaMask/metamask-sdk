@@ -65,6 +65,8 @@ const initializeProvider = ({
       );
     }
 
+    const platform = Platform.getInstance();
+
     if (!isInstalled && method !== 'metamask_getProviderState') {
       if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
         // Start installation and once installed try the request again
@@ -76,10 +78,10 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
-      } else if (Platform.getInstance().isReactNative()) {
+      } else if (platform.isReactNative() || platform.isMobileWeb()) {
         // send it anyway on native because of the deeplink
         console.debug(
-          `initializeProvider::sendRequest() FORCE SEND request on react native`,
+          `initializeProvider::sendRequest() FORCE SEND request on mobile`,
         );
         return f(...args);
       }

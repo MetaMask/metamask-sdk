@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
 import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
+import { Platform } from '../Platform/Platfform';
 
 export interface SDKProviderProps {
   /**
@@ -98,7 +99,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
     // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
     if (
-      //   Platform.getInstance().isBrowser() &&
+      Platform.getInstance().isBrowser() &&
       initialState?.accounts?.length === 0
     ) {
       console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
