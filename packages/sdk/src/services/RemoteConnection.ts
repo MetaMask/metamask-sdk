@@ -1,6 +1,7 @@
 import {
   AutoConnectOptions,
   CommunicationLayerPreference,
+  ConnectionStatus,
   DappMetadata,
   DisconnectOptions,
   ECIESProps,
@@ -16,6 +17,8 @@ import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import sdkWebPendingModal from '../ui/InstallModal/pendingModal';
+import { extractFavicon } from '../utils/extractFavicon';
+import { getBase64FromUrl } from '../utils/getBase64FromUrl';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -55,10 +58,12 @@ export class RemoteConnection implements ProviderService {
     const developerMode = options.logging?.developerMode === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
-    this.connector = this.initializeConnector();
+    this.initializeConnector().then((connector) => {
+      this.connector = connector;
+    });
   }
 
-  initializeConnector() {
+  async initializeConnector() {
     const {
       dappMetadata,
       webRTCLib,
@@ -90,6 +95,22 @@ export class RemoteConnection implements ProviderService {
     }
 
     const platform = Platform.getInstance();
+
+    if (dappMetadata && !dappMetadata.base64Icon) {
+      // Try to extract default icon
+      if (platform.isBrowser()) {
+        const favicon = extractFavicon();
+        if (favicon) {
+          try {
+            const faviconUri = await getBase64FromUrl(favicon);
+            dappMetadata.base64Icon = faviconUri;
+          } catch (err) {
+            // Ignore favicon error.
+          }
+        }
+      }
+    }
+
     this.connector = new RemoteCommunication({
       platform: platform.getPlatformType(),
       communicationLayerPreference,
@@ -123,13 +144,17 @@ export class RemoteConnection implements ProviderService {
       `RemoteConnection::initializeConnector() setup event listeners`,
     );
 
-    this.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
-      this.sentFirstConnect = false;
-    });
-
     if (timer) {
       timer.runBackgroundTimer?.(() => null, 5000);
     }
+
+    this.connector.on(EventType.CONNECTION_STATUS, (status) => {
+      if (status === ConnectionStatus.TERMINATED) {
+        this.displayedModal?.onClose();
+      } else if (status === ConnectionStatus.DISCONNECTED) {
+        this.sentFirstConnect = false;
+      }
+    });
 
     return this.connector;
   }
@@ -197,12 +222,17 @@ export class RemoteConnection implements ProviderService {
           );
         }
 
-        // Always make sure to requestAccounts first, otherwise queries will fail.
-        await provider.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        });
-        this.displayedModal?.onClose();
+        try {
+          // Always make sure to requestAccounts first, otherwise queries will fail.
+          await provider.request({
+            method: 'eth_requestAccounts',
+            params: [],
+          });
+        } catch (err) {
+          console.warn(`an error occured`, err);
+        } finally {
+          this.displayedModal?.onClose();
+        }
       });
     }
   }
@@ -281,6 +311,7 @@ export class RemoteConnection implements ProviderService {
             })
             .catch((err) => {
               console.debug(`RemoteConnection error`, err);
+              this.displayedModal?.onClose();
               reject(err);
             });
         }
@@ -345,10 +376,6 @@ export class RemoteConnection implements ProviderService {
     if (platform.isBrowser() || platform.isReactNative()) {
       // const provider = Ethereum.getProvider();
       // provider.handleDisconnect();
-    }
-
-    if (options?.terminate === true) {
-      this.initializeConnector();
     }
   }
 }
