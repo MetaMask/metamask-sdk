@@ -106,6 +106,10 @@ export class RemoteConnection implements ProviderService {
     });
 
     if (autoConnect?.enable) {
+      console.debug(
+        `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
+      );
+
       this.connector
         .startAutoConnect()
         .then((channelConfig?: ChannelConfig) => {
@@ -114,6 +118,10 @@ export class RemoteConnection implements ProviderService {
           }
         });
     }
+
+    console.debug(
+      `RemoteConnection::initializeConnector() setup event listeners`,
+    );
 
     this.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
       this.sentFirstConnect = false;
@@ -289,11 +297,13 @@ export class RemoteConnection implements ProviderService {
             return;
           }
 
-          // Always make sure to requestAccounts
-          await provider.request({
-            method: 'eth_requestAccounts',
-            params: [],
-          });
+          if (!provider.selectedAddress) {
+            // Always make sure to requestAccounts
+            await provider.request({
+              method: 'eth_requestAccounts',
+              params: [],
+            });
+          }
           this.sentFirstConnect = true;
 
           // try to close displayedModal

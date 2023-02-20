@@ -65,12 +65,12 @@ export class SDKProvider extends MetaMaskInpageProvider {
     }
 
     if (terminate) {
-      // this.chainId = null;
-      // this._state.accounts = null;
-      // this.selectedAddress = null;
-      // this._state.isUnlocked = false;
-      // this._state.isPermanentlyDisconnected = true;
-      // this._state.initialized = false;
+      this.chainId = null;
+      this._state.accounts = null;
+      this.selectedAddress = null;
+      this._state.isUnlocked = false;
+      this._state.isPermanentlyDisconnected = true;
+      this._state.initialized = false;
       this._state.isConnected = false;
     } else {
       this._state.isConnected = false;
@@ -97,17 +97,17 @@ export class SDKProvider extends MetaMaskInpageProvider {
     }
 
     // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
-    // if (
-    //   Platform.getInstance().isBrowser() &&
-    //   initialState?.accounts?.length === 0
-    // ) {
-    //   console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
-    //   const accounts = (await this.request({
-    //     method: 'eth_requestAccounts',
-    //     params: [],
-    //   })) as string[];
-    //   initialState.accounts = accounts;
-    // }
+    if (
+      //   Platform.getInstance().isBrowser() &&
+      initialState?.accounts?.length === 0
+    ) {
+      console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
+      const accounts = (await this.request({
+        method: 'eth_requestAccounts',
+        params: [],
+      })) as string[];
+      initialState.accounts = accounts;
+    }
     this._initializeState(initialState);
   }
 

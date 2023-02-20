@@ -389,6 +389,8 @@ export class RemoteCommunication extends EventEmitter2 {
       );
     }
 
+    this.ready = true;
+
     if (message.type === MessageType.ORIGINATOR_INFO) {
       // TODO why these hardcoded value?
       this.communicationLayer?.sendMessage({
@@ -399,7 +401,6 @@ export class RemoteCommunication extends EventEmitter2 {
         },
       });
       this.originatorInfo = message.originatorInfo;
-      this.ready = true;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         originatorInfo: message.originatorInfo,
@@ -408,7 +409,6 @@ export class RemoteCommunication extends EventEmitter2 {
       return;
     } else if (message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
-      this.ready = true;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: message.walletInfo,
@@ -417,8 +417,9 @@ export class RemoteCommunication extends EventEmitter2 {
       return;
     } else if (message.type === MessageType.TERMINATE) {
       // remove channel config from persistence layer and close active connections.
-      this.storageManager?.terminate(this.channelId ?? '');
-      this.setConnectionStatus(ConnectionStatus.TERMINATED);
+      if (this.isOriginator) {
+        this.disconnect({ terminate: true, sendMessage: false });
+      }
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
       this.setConnectionStatus(ConnectionStatus.PAUSED);
@@ -736,13 +737,18 @@ export class RemoteCommunication extends EventEmitter2 {
       // remove channel config from persistence layer and close active connections.
       this.storageManager?.terminate(this.channelId ?? '');
 
-      if (this.communicationLayer?.getKeyInfo().keysExchanged) {
+      if (
+        this.communicationLayer?.getKeyInfo().keysExchanged &&
+        options?.sendMessage
+      ) {
         this.communicationLayer?.sendMessage({ type: MessageType.TERMINATE });
       }
 
-      this.resetKeys();
+      // this.resetKeys();
       this.channelId = uuidv4();
       options.channelId = this.channelId;
+      this.channelConfig = undefined;
+      this.autoStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
     } else {

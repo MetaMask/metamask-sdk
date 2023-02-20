@@ -387,19 +387,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         );
       }
 
-      if (
-        !this.isOriginator &&
-        message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN
-      ) {
+      if (message?.type?.startsWith('key_handshake')) {
         if (this.debug) {
           console.debug(
-            `SocketService::${this.context}::setupChannelListener received HANDSHAKE_SYN isOriginator=${this.isOriginator} --> emit KEY_EXCHANGE`,
+            `SocketService::${this.context}::setupChannelListener emit KEY_EXCHANGE`,
+            message,
           );
-        }
-        // dapp is sending SYN trying to re-initialize the key exchange, respond with KEY_EXCHANGE
-        // update dapp public key
-        if (message?.pubkey) {
-          this.keyExchange.setOtherPublicKey(message.pubkey);
         }
 
         return this.emit(InternalEventType.KEY_EXCHANGE, {
@@ -409,19 +402,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (!this.keyExchange.areKeysExchanged()) {
-        if (message?.type?.startsWith('key_handshake')) {
-          if (this.debug) {
-            console.debug(
-              `SocketService::${this.context}::setupChannelListener emit KEY_EXCHANGE`,
-              message,
-            );
-          }
-          return this.emit(InternalEventType.KEY_EXCHANGE, {
-            message,
-            context: this.context,
-          });
-        }
-
         // received encrypted message before keys were exchanged.
         if (this.isOriginator) {
           this.keyExchange.start();

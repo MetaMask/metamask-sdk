@@ -77,8 +77,7 @@ export class KeyExchange extends EventEmitter2 {
     if (this.keysExchanged) {
       if (this.debug) {
         console.log(
-          `KeyExchange::${this.context}::onKeyExchangeMessage received handshake while already exchanged.`,
-          this.step,
+          `KeyExchange::${this.context}::onKeyExchangeMessage received handshake while already exchanged. step=${this.step} otherPubKey=${this.otherPublicKey}`,
         );
       }
       // FIXME check if correct way / when is it really happening?
@@ -86,17 +85,13 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
-      // When receiving SYN, we can be in either NONE or SYNACK.
-      // TODO re-enable step check matching session persistence.
-      // this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
-      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_ACK;
-      this.emit(EventType.KEY_INFO, this.step);
+      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
 
       if (this.debug) {
-        console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`);
+        console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`, message);
       }
 
-      if (this.sendPublicKey && message.pubkey && !this.otherPublicKey) {
+      if (message.pubkey) {
         this.setOtherPublicKey(message.pubkey);
       }
 
@@ -104,6 +99,9 @@ export class KeyExchange extends EventEmitter2 {
         type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
         pubkey: this.myPublicKey,
       });
+
+      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_ACK;
+      this.emit(EventType.KEY_INFO, this.step);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
       // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
       this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
@@ -120,6 +118,8 @@ export class KeyExchange extends EventEmitter2 {
         type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
       });
       this.keysExchanged = true;
+      // Reset step value for next exchange.
+      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
       this.emit(EventType.KEYS_EXCHANGED);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
       if (this.debug) {
@@ -162,11 +162,8 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     // Only if we are not already in progress
-    if (
-      this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK &&
-      this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE
-    ) {
-      console.debug(
+    if (this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) {
+      console.warn(
         `KeyExchange::${this.context}::start -- interrupted because key exchange in progress step=${this.step}`,
         this.step,
       );

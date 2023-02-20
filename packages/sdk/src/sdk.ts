@@ -112,6 +112,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
+    console.log(`sdk::initialize() now`);
 
     // Make sure to enable all logs if developer mode is on
     const runtimeLogging = { ...logging };
@@ -237,8 +238,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
-    this.remoteConnection?.disconnect({ terminate: true });
-    this.initialize(this.options);
+    this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+    // this.initialize(this.options);
   }
 
   ping() {
