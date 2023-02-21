@@ -15,6 +15,7 @@ import styled from '@emotion/styled';
 export type PendingWidgetProps = {
   parentElement?: Element;
   onClose: () => void;
+  onDisconnect: () => void;
 };
 
 const WidgetWrapper = styled.div`
@@ -53,8 +54,16 @@ const PendingWidget = (props: PendingWidgetProps) => {
                   }}
                 >
                  Please open the MetaMask wallet app and confirm the connection. Thank you!
+                </div>
               </div>
-            </div>
+              <div>
+                <button style={{
+                  ...styles.button,
+                  ...styles.blue,
+                  marginTop: '5px',
+                  color: 'white',
+                }} onClick={props.onDisconnect}>Disconnect</button>
+              </div>
           </div>
         </div>
       </div>

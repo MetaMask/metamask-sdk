@@ -6,6 +6,17 @@ import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatu
 import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
+import React from 'react';
+import { MetaMaskInpageProvider } from "@metamask/providers";
+
+
+declare global {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface Window {
+    ethereum?: MetaMaskInpageProvider;
+  }
+}
+
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
@@ -13,11 +24,11 @@ const sdk = new MetaMaskSDK({
   communicationServerUrl: 'http://192.168.50.114:4000',
   enableDebug: true,
   autoConnect: {
-    enable: false
+    enable: true
   },
   dappMetadata: {
-    name: "",
-    url: "",
+    name: "Demo React App",
+    url: window.location.host,
   },
   logging: {
     sdk: false,
@@ -95,34 +106,6 @@ export const App = () => {
       .then((res) => console.log("request accounts", res))
       .catch((e) => console.log("request accounts ERR", e));
   };
-
-
-  const ping2 = async () => {
-    try {
-      const provider = window.ethereum
-      if(!provider) {
-        console.debug(`no provider defined`);
-        return
-      }
-
-      const simple = new ethers.Contract(
-        '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df',
-        _abi,
-        provider as any
-      )
-      // const simple = Simple__factory.connect(
-      //   '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df',
-      //   provider.getSigner()
-      // )
-      const ping = simple.ping().catch((err: unknown) => {
-        console.warn(`error`, err)
-      })
-      console.debug(`ping: `, ping)
-    } catch (err) {
-      // ignore
-      console.debug(`should not happen`, err)
-    }
-  }
 
   const addEthereumChain = () => {
     if(!window.ethereum) {
@@ -442,19 +425,6 @@ export const App = () => {
         }}>
           TEST UI
         </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={async () => {
-          const iconUrl = getFavicon();
-          console.debug(`icon url`, iconUrl);
-          if(iconUrl) {
-            const base64icon = await getBase64FromUrl(iconUrl);
-            console.debug(`base icon`, base64icon);
-          }
-
-        }}>
-          Check Favicon
-        </button>
-
 
         {connected &&
           <>

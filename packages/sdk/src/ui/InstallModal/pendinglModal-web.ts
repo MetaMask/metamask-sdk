@@ -1,6 +1,6 @@
 import SDKModalWeb from '@metamask/sdk-install-modal-web';
 
-const sdkWebPendingModal = () => {
+const sdkWebPendingModal = (onDisconnect: () => void) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
 
@@ -18,6 +18,7 @@ const sdkWebPendingModal = () => {
   modalWeb.mountPending({
     parentElement: div,
     onClose,
+    onDisconnect,
   });
 
   return { installModal: modalWeb, onClose };

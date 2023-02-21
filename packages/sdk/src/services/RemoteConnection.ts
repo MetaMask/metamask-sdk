@@ -16,7 +16,7 @@ import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
-import sdkWebPendingModal from '../ui/InstallModal/pendingModal';
+import sdkPendingModal from '../ui/InstallModal/pendingModal';
 import { extractFavicon } from '../utils/extractFavicon';
 import { getBase64FromUrl } from '../utils/getBase64FromUrl';
 import { Ethereum } from './Ethereum';
@@ -37,6 +37,9 @@ interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
+  modals: {
+    onPendingModalDisconnect?: () => void;
+  };
 }
 export class RemoteConnection implements ProviderService {
   private connector: RemoteCommunication;
@@ -58,12 +61,10 @@ export class RemoteConnection implements ProviderService {
     const developerMode = options.logging?.developerMode === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
-    this.initializeConnector().then((connector) => {
-      this.connector = connector;
-    });
+    this.connector = this.initializeConnector();
   }
 
-  async initializeConnector() {
+  initializeConnector() {
     const {
       dappMetadata,
       webRTCLib,
@@ -95,21 +96,6 @@ export class RemoteConnection implements ProviderService {
     }
 
     const platform = Platform.getInstance();
-
-    if (dappMetadata && !dappMetadata.base64Icon) {
-      // Try to extract default icon
-      if (platform.isBrowser()) {
-        const favicon = extractFavicon();
-        if (favicon) {
-          try {
-            const faviconUri = await getBase64FromUrl(favicon);
-            dappMetadata.base64Icon = faviconUri;
-          } catch (err) {
-            // Ignore favicon error.
-          }
-        }
-      }
-    }
 
     this.connector = new RemoteCommunication({
       platform: platform.getPlatformType(),
@@ -198,7 +184,7 @@ export class RemoteConnection implements ProviderService {
     }
 
     if (trustedDevice && deeplink) {
-      const pubKey = this.connector.getKeyInfo()?.ecies.public ?? '';
+      const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
       let linkParams = encodeURI(
         `channelId=${channelConfig.channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
       );
@@ -212,7 +198,11 @@ export class RemoteConnection implements ProviderService {
 
       Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
     } else if (!trustedDevice) {
-      this.displayedModal = sdkWebPendingModal();
+      const onDisconnect = () => {
+        this.options.modals.onPendingModalDisconnect?.();
+        this.displayedModal?.onClose();
+      };
+      this.displayedModal = sdkPendingModal(onDisconnect);
 
       provider.once('connect', async (connectInfo) => {
         if (this.developerMode) {
@@ -240,6 +230,10 @@ export class RemoteConnection implements ProviderService {
   async startConnection(): Promise<boolean> {
     // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
+      if (!this.connector) {
+        return reject('no connector defined');
+      }
+
       const provider = Ethereum.getProvider();
       const isRemoteReady = this.connector.isReady();
       const isConnected = this.connector.isConnected();
@@ -270,7 +264,7 @@ export class RemoteConnection implements ProviderService {
         (platformType === PlatformType.NonBrowser && !platform.isReactNative());
 
       // Check for existing channelConfig?
-      this.connector.startAutoConnect().then((channelConfig) => {
+      this.connector?.startAutoConnect().then((channelConfig) => {
         if (this.developerMode) {
           console.debug(
             `RemoteConnection::startConnection after startAutoConnect`,
@@ -281,7 +275,7 @@ export class RemoteConnection implements ProviderService {
         if (channelConfig?.lastActive) {
           // Already connected through auto connect
           this.handleSecureReconnection({ channelConfig, deeplink: true });
-        } else {
+        } else if (this.connector) {
           // generate new channel id
           this.connector
             .generateChannelId()
@@ -314,63 +308,66 @@ export class RemoteConnection implements ProviderService {
               this.displayedModal?.onClose();
               reject(err);
             });
-        }
 
-        this.connector.on(EventType.CLIENTS_READY, async () => {
-          if (this.developerMode) {
-            console.debug(
-              `RemoteConnection::startConnection::on 'clients_ready' sentFirstConnect=${this.sentFirstConnect}`,
-            );
-          }
+          this.connector.on(EventType.CLIENTS_READY, async () => {
+            if (this.developerMode) {
+              console.debug(
+                `RemoteConnection::startConnection::on 'clients_ready' sentFirstConnect=${this.sentFirstConnect}`,
+              );
+            }
 
-          if (this.sentFirstConnect) {
+            if (this.sentFirstConnect) {
+              resolve(true);
+              return;
+            }
+
+            if (!provider.selectedAddress) {
+              // Always make sure to requestAccounts
+              await provider.request({
+                method: 'eth_requestAccounts',
+                params: [],
+              });
+            }
+            this.sentFirstConnect = true;
+
+            // try to close displayedModal
+            this.displayedModal?.onClose();
+
             resolve(true);
-            return;
-          }
-
-          if (!provider.selectedAddress) {
-            // Always make sure to requestAccounts
-            await provider.request({
-              method: 'eth_requestAccounts',
-              params: [],
-            });
-          }
-          this.sentFirstConnect = true;
-
-          // try to close displayedModal
-          this.displayedModal?.onClose();
-
-          resolve(true);
-        });
+          });
+        }
       });
     });
   }
 
   getChannelConfig(): ChannelConfig | undefined {
-    return this.connector.getChannelConfig();
+    return this.connector?.getChannelConfig();
   }
 
   getKeyInfo(): KeyInfo | undefined {
-    return this.connector.getKeyInfo();
+    return this.connector?.getKeyInfo();
   }
 
   getConnector() {
+    if (!this.connector) {
+      throw new Error(`invalid remote connector`);
+    }
     return this.connector;
   }
 
   isConnected() {
-    return this.connector.isReady();
+    return this.connector?.isReady() || false;
   }
 
   isPaused() {
-    return this.connector.isPaused();
+    return this.connector?.isPaused();
   }
 
   disconnect(options?: DisconnectOptions): void {
     if (this.developerMode) {
       console.debug(`RemoteConnection::disconnect()`, options);
     }
-    this.connector.disconnect(options);
+    this.connector?.disconnect(options);
     const platform = Platform.getInstance();
 
     if (platform.isBrowser() || platform.isReactNative()) {

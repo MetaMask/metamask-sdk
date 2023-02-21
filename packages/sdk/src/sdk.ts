@@ -26,6 +26,8 @@ import sdkWebPendingModal from './ui/InstallModal/pendinglModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
+import { extractFavicon } from './utils/extractFavicon';
+import { getBase64FromUrl } from './utils/getBase64FromUrl';
 
 export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
@@ -49,6 +51,9 @@ export interface MetaMaskSDKOptions {
   developerMode?: boolean;
   ui?: SDKUIOptions;
   autoConnect?: AutoConnectOptions;
+  modals?: {
+    // TODO
+  },
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
@@ -73,10 +78,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     super();
 
     this.options = options;
-    this.initialize(options);
+    this.initialize(options).then(() => {
+      console.debug(`sdk initialized`, this.dappMetadata);
+    });
   }
 
-  private initialize(options: MetaMaskSDKOptions = {}) {
+  private async initialize(options: MetaMaskSDKOptions = {}) {
     const {
       dappMetadata,
       // Provider
@@ -131,7 +138,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       debug: this.debug,
     });
 
-    this.dappMetadata = dappMetadata;
     const platformType = platform.getPlatformType();
     const isNonBrowser = platformType === PlatformType.NonBrowser;
 
@@ -151,6 +157,23 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage.storageManager = getStorageManager(storage);
       }
 
+      if (dappMetadata && !dappMetadata.base64Icon) {
+        // Try to extract default icon
+        if (platform.isBrowser()) {
+          const favicon = extractFavicon();
+          if (favicon) {
+            try {
+              const faviconUri = await getBase64FromUrl(favicon);
+              dappMetadata.base64Icon = faviconUri;
+            } catch (err) {
+              // Ignore favicon error.
+            }
+          }
+        }
+      }
+      console.debug(`dappMetadagta`, dappMetadata);
+      this.dappMetadata = dappMetadata;
+
       this.remoteConnection = new RemoteConnection({
         communicationLayerPreference,
         dappMetadata,
@@ -162,6 +185,9 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage,
         autoConnect,
         logging: runtimeLogging,
+        modals: {
+          onPendingModalDisconnect: this.terminate.bind(this)
+        }
       });
 
       if (WalletConnectInstance) {
@@ -225,7 +251,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   resume() {
-    if (!this.remoteConnection?.getConnector().isReady()) {
+    if (!this.remoteConnection?.getConnector()?.isReady()) {
       if (this.debug) {
         console.debug(`SDK::resume channel`);
       }
@@ -243,11 +269,11 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   ping() {
-    this.remoteConnection?.getConnector().ping();
+    this.remoteConnection?.getConnector()?.ping();
   }
 
   keyCheck() {
-    this.remoteConnection?.getConnector().keyCheck();
+    this.remoteConnection?.getConnector()?.keyCheck();
   }
 
   // Get the connector object from WalletConnect
@@ -260,12 +286,12 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   testStorage() {
-    return this.remoteConnection?.getConnector().testStorage();
+    return this.remoteConnection?.getConnector()?.testStorage();
   }
 
   testUI(type: 'pending' | 'install') {
     if (type === 'pending') {
-      sdkWebPendingModal();
+      sdkWebPendingModal(()=>{});
     } else {
       sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });
     }
@@ -276,7 +302,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   getServiceStatus() {
-    return this.remoteConnection?.getConnector().getServiceStatus();
+    return this.remoteConnection?.getConnector()?.getServiceStatus();
   }
 
   getDappMetadata(): DappMetadata | undefined {
@@ -288,7 +314,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   resetKeys() {
-    this.remoteConnection?.getConnector().resetKeys();
+    this.remoteConnection?.getConnector()?.resetKeys();
   }
 
   // Return the ethereum provider object

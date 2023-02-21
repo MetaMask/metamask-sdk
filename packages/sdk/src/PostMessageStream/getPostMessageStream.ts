@@ -47,13 +47,13 @@ export const getPostMessageStream = ({
     });
   }
 
-  if (!remoteConnection) {
+  if (!remoteConnection || !remoteConnection?.getConnector()) {
     throw new Error(`Missing remote conenction parameter`);
   }
 
   return new RemoteCommunicationPostMessageStream({
     name,
-    remote: remoteConnection.getConnector(),
+    remote: remoteConnection?.getConnector(),
     debug,
   });
 };
