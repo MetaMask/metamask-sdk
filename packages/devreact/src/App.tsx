@@ -7,32 +7,6 @@ import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
 
-const getFavicon = () => {
-  let favicon = undefined;
-  const nodeList = document.getElementsByTagName("link");
-  for (let i = 0; i < nodeList.length; i++)
-  {
-      if((nodeList[i].getAttribute("rel") === "icon")||(nodeList[i].getAttribute("rel") === "shortcut icon"))
-      {
-          favicon = nodeList[i].getAttribute("href");
-      }
-  }
-  return favicon;
-}
-
-const getBase64FromUrl = async (url:string) => {
-  const data = await fetch(url);
-  const blob = await data.blob();
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onloadend = () => {
-      const base64data = reader.result;
-      resolve(base64data);
-    }
-  });
-}
-
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
