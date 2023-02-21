@@ -1,6 +1,6 @@
 import "./App.css";
-import MetaMaskSDK from '@metamask/sdk';
-import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { MetaMaskSDK } from '@metamask/sdk';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 
 import { useState, useEffect } from "react";
 
@@ -10,14 +10,13 @@ const sdk = new MetaMaskSDK({
   // communicationLayerPreference: "socket",
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  communicationServerUrl: 'http://localhost:4000',
   enableDebug: true,
   autoConnect: {
     enable: true
   },
   logging: {
     sdk: false,
-    developerMode: true,
+    developerMode: false,
     eciesLayer: false,
     remoteLayer: false,
     keyExchangeLayer: false,

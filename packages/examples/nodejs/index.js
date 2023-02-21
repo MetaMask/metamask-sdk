@@ -1,7 +1,7 @@
-const MetaMaskSDK = require('@metamask/sdk');
+const {MetaMaskSDK} = require('@metamask/sdk');
 
 const sdk = new MetaMaskSDK({
-  shouldShimWeb3: false
+  shouldShimWeb3: false,
 });
 
 const ethereum = sdk.getProvider();
