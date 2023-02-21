@@ -127,7 +127,6 @@ export class RemoteCommunication extends EventEmitter2 {
   }: RemoteCommunicationProps) {
     super();
 
-    console.debug(`RemoteCommunication::constructor()`);
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
@@ -177,7 +176,6 @@ export class RemoteCommunication extends EventEmitter2 {
     | 'ecies'
     | 'communicationServerUrl'
   >) {
-    console.debug(`RemoteCommunication::initCommunicationLayer()`);
     // this.communicationLayer?.removeAllListeners();
 
     switch (communicationLayerPreference) {

@@ -79,7 +79,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
     this.initialize(options).then(() => {
-      console.debug(`sdk initialized`, this.dappMetadata);
+      if(this.debug) {
+        console.debug(`sdk initialized`, this.dappMetadata);
+      }
     });
   }
 

@@ -36,11 +36,14 @@ export class ECIES {
       this.ecies = new PrivateKey();
     }
 
-    // if (this.debug) {
-    console.info(`[ECIES] initialized secret: `, this.ecies.toHex());
-    console.info(`[ECIES] initialized public: `, this.ecies.publicKey.toHex());
-    console.info(`[ECIES] init with`, this);
-    // }
+    if (this.debug) {
+      console.info(`[ECIES] initialized secret: `, this.ecies.toHex());
+      console.info(
+        `[ECIES] initialized public: `,
+        this.ecies.publicKey.toHex(),
+      );
+      console.info(`[ECIES] init with`, this);
+    }
   }
 
   /**

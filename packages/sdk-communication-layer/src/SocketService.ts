@@ -74,7 +74,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }: SocketServiceProps) {
     super();
 
-    console.debug(`SocketService::constructor()`);
     this.reconnect = reconnect;
     this.context = context;
     this.communicationLayerPreference = communicationLayerPreference;

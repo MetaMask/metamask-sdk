@@ -103,12 +103,14 @@ export class RemoteCommunicationPostMessageStream
     const isPaused = this.remote.isPaused();
     const provider = Ethereum.getProvider();
 
-    // FIXME invalid state -- isReady is false after terminate.
-    console.debug(
-      `RPCMS::_write isRemoteReady=${isRemoteReady} debugReady=${
-        this.debugReady
-      } isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
-    );
+    if (this.debug) {
+      // FIXME invalid state -- isReady is false after terminate.
+      console.debug(
+        `RPCMS::_write isRemoteReady=${isRemoteReady} debugReady=${
+          this.debugReady
+        } isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+      );
+    }
 
     if (!this.remote.isReady() && !isReactNative) {
       if (this.debug) {

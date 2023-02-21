@@ -126,10 +126,6 @@ export class RemoteConnection implements ProviderService {
         });
     }
 
-    console.debug(
-      `RemoteConnection::initializeConnector() setup event listeners`,
-    );
-
     if (timer) {
       timer.runBackgroundTimer?.(() => null, 5000);
     }
