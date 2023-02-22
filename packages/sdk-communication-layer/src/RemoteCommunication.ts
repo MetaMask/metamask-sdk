@@ -405,10 +405,10 @@ export class RemoteCommunication extends EventEmitter2 {
           version: 'MetaMask/Mobile',
         },
       });
-      this.originatorInfo = message.originatorInfo;
+      this.originatorInfo = message.originatorInfo || message.originator;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
-        originatorInfo: message.originatorInfo,
+        originatorInfo: this.originatorInfo,
       });
       this.paused = false;
       return;
