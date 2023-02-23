@@ -43,7 +43,7 @@ const PendingWidget = (props: PendingWidgetProps) => {
             <Logo />
           </div>
           <div>
-              <div style={styles.flexContainer}>
+              <div style={{...styles.flexContainer, flexDirection: 'column'}}>
                 <div
                   style={{
                     textAlign: 'center',
@@ -55,8 +55,7 @@ const PendingWidget = (props: PendingWidgetProps) => {
                 >
                  Please open the MetaMask wallet app and confirm the number to re-enable the connection. Thank you!
                 </div>
-                <div id='sdk-mm-otp-value' style={{padding: 10, fontSize: 25, border: '1px solid'}}>
-                  ...
+                <div id='sdk-mm-otp-value' style={{padding: 10, fontSize: 25, border: '1px solid', display:'none'}}>
                 </div>
               </div>
               <div style={{marginTop:'20px'}}>

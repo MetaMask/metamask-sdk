@@ -57,6 +57,7 @@ export default class EmbeddableWidget {
     const otpNode = document.getElementById('sdk-mm-otp-value');
     if(otpNode) {
       otpNode.textContent = otpValue + '';
+      otpNode.style.display = 'block';
     }
   }
 
