@@ -53,6 +53,13 @@ export default class EmbeddableWidget {
     }
   }
 
+  updateOTPValue = (otpValue: number) => {
+    const otpNode = document.getElementById('sdk-mm-otp-value');
+    if(otpNode) {
+      otpNode.textContent = otpValue + '';
+    }
+  }
+
   unmount = () => {
     if (!this.el) {
       throw new Error(

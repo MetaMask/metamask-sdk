@@ -17,8 +17,6 @@ import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import sdkPendingModal from '../ui/InstallModal/pendingModal';
-import { extractFavicon } from '../utils/extractFavicon';
-import { getBase64FromUrl } from '../utils/getBase64FromUrl';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -52,9 +50,17 @@ export class RemoteConnection implements ProviderService {
 
   private communicationLayerPreference: CommunicationLayerPreference;
 
-  private displayedModal?: { onClose: () => void };
+  private displayedModal?: {
+    onClose: () => void;
+    updateOTPValue?: (otpAnswer: number) => void;
+  };
 
   private options: RemoteConnectionProps;
+
+  /**
+   * Wait for value from metamask mobile
+   */
+  private otpAnswer?: number;
 
   constructor(options: RemoteConnectionProps) {
     this.options = options;
@@ -130,6 +136,11 @@ export class RemoteConnection implements ProviderService {
       timer.runBackgroundTimer?.(() => null, 5000);
     }
 
+    this.connector.on(EventType.OTP, (otpAnswer) => {
+      console.debug(`RECEIVED EVENT OTP`, otpAnswer);
+      this.otpAnswer = otpAnswer;
+    });
+
     this.connector.on(EventType.CONNECTION_STATUS, (status) => {
       if (status === ConnectionStatus.TERMINATED) {
         this.displayedModal?.onClose();
@@ -198,7 +209,23 @@ export class RemoteConnection implements ProviderService {
         this.options.modals.onPendingModalDisconnect?.();
         this.displayedModal?.onClose();
       };
+
+      const waitForOTP = async (): Promise<number> => {
+        let checkOTPTrial = 0;
+        while (checkOTPTrial < 100) {
+          if (this.otpAnswer) {
+            return this.otpAnswer;
+          }
+          await new Promise<void>((res) => setTimeout(() => res(), 1000));
+          checkOTPTrial += 1;
+        }
+        return -1;
+      };
+
       this.displayedModal = sdkPendingModal(onDisconnect);
+      waitForOTP().then((otpAnswer) => {
+        this.displayedModal?.updateOTPValue?.(otpAnswer);
+      });
 
       provider.once('connect', async (connectInfo) => {
         if (this.developerMode) {
@@ -227,7 +254,7 @@ export class RemoteConnection implements ProviderService {
     // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
       if (!this.connector) {
-        return reject('no connector defined');
+        return reject(new Error('no connector defined'));
       }
 
       const provider = Ethereum.getProvider();

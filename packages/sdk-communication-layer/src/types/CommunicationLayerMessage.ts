@@ -12,6 +12,7 @@ export interface CommunicationLayerMessage {
   pubkey?: string;
   answer?: RTCSessionDescriptionInit;
   offer?: RTCSessionDescriptionInit;
+  otpAnswer?: number;
   candidate?: unknown;
   // need to add a message field for backward compatibility on protocol < v0.2.0
   message?: unknown;

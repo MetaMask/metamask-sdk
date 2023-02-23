@@ -8,6 +8,7 @@ export enum MessageType {
   WALLET_INFO = 'wallet_info',
   ORIGINATOR_INFO = 'originator_info',
   PAUSE = 'pause',
+  OTP = 'otp',
   /**
    * Used for debugging purpose and check channel validity.
    */

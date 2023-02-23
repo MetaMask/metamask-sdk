@@ -14,14 +14,21 @@ const sdkWebPendingModal = (onDisconnect: () => void) => {
     modalWeb = undefined;
   };
 
+  const updateOTPValue = (otpValue: number) => {
+    if (modalWeb) {
+      modalWeb.updateOTPValue(otpValue);
+    }
+  };
+
   console.debug(`mounting pending modal`);
   modalWeb.mountPending({
     parentElement: div,
     onClose,
     onDisconnect,
+    updateOTPValue,
   });
 
-  return { installModal: modalWeb, onClose };
+  return { installModal: modalWeb, onClose, updateOTPValue };
 };
 
 export default sdkWebPendingModal;

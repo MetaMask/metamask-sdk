@@ -9,6 +9,7 @@ export enum EventType {
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
+  OTP = 'otp',
   CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
 }
