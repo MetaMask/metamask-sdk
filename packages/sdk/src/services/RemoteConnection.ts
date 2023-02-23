@@ -118,7 +118,7 @@ export class RemoteConnection implements ProviderService {
       logging,
     });
 
-    if (autoConnect?.enable) {
+    if (autoConnect?.enable === true) {
       console.debug(
         `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
       );

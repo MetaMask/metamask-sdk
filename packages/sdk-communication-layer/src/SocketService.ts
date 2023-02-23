@@ -233,8 +233,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
             );
           }
-          // here is when we resume from MM mobile
-          this.sendMessage({ type: MessageType.READY });
           if (
             this.communicationLayerPreference ===
             CommunicationLayerPreference.WEBRTC

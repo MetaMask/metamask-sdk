@@ -36,6 +36,13 @@ export class SDKProvider extends MetaMaskInpageProvider {
     debug = false,
     autoRequestAccounts = false,
   }: SDKProviderProps) {
+    /**
+     * super() will call _initializeStateAsync which will call metamask_getProviderState
+     */
+    console.debug(
+      `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
+    );
+
     super(connectionStream, {
       logger: console,
       maxEventListeners: 100,
@@ -99,7 +106,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
     // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
     if (
-      Platform.getInstance().isBrowser() &&
+      // Platform.getInstance().isBrowser() &&
       initialState?.accounts?.length === 0
     ) {
       console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);

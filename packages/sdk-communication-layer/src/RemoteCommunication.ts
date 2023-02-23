@@ -269,6 +269,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
       this.ready = true;
       this.paused = false;
+      this.emit(EventType.CLIENTS_READY);
 
       console.debug(`RemoteCommunication::clients_ready set ready to true`);
       this.setConnectionStatus(ConnectionStatus.LINKED);
@@ -283,6 +284,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
       if (!message.isOriginator) {
         // Don't send originator message from mobile.
+        // Always Tell the DAPP metamask is ready
+        this.communicationLayer?.sendMessage({ type: MessageType.READY });
         return;
       }
 
@@ -440,7 +443,6 @@ export class RemoteCommunication extends EventEmitter2 {
       });
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
-      console.debug(`EMITTING OTP ANSWER`, message);
       this.emit(EventType.OTP, message.otpAnswer);
       return;
     }
@@ -459,6 +461,9 @@ export class RemoteCommunication extends EventEmitter2 {
       return undefined;
     }
 
+    console.debug(
+      `RemoteCommunication::startAutoConnect() DEBUG channelId=${this.channelId}`,
+    );
     const channelConfig = await this.storageManager.getPersistedChannelConfig(
       this.channelId ?? '',
     );
@@ -611,7 +616,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       this.once(EventType.CLIENTS_READY, () => {
-        // only send the message after the clients has awaken.
+        // only send the message after the clients have awaken.
         this.communicationLayer?.sendMessage(message);
       });
     } else {

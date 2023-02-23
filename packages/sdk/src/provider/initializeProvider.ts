@@ -83,6 +83,7 @@ const initializeProvider = ({
         console.debug(
           `initializeProvider::sendRequest() FORCE SEND request on mobile`,
         );
+        // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
 

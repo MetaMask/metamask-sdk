@@ -69,7 +69,7 @@ const sdk = new MetaMaskSDK({
     // storageManager: new StorageManagerRN({debug: true}),
   },
   autoConnect: {
-    enable: true,
+    enable: false,
   },
   logging: {
     developerMode: true,
@@ -81,7 +81,6 @@ const sdk = new MetaMaskSDK({
 });
 
 function App(): JSX.Element {
-  const [sdkList, setSDKList] = useState<MetaMaskSDK[]>([]);
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {

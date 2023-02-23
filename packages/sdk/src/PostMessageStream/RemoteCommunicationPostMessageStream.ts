@@ -102,17 +102,18 @@ export class RemoteCommunicationPostMessageStream
     const isConnected = this.remote.isConnected();
     const isPaused = this.remote.isPaused();
     const provider = Ethereum.getProvider();
+    const channelId = this.remote.getChannelId();
 
     if (this.debug) {
       // FIXME invalid state -- isReady is false after terminate.
       console.debug(
         `RPCMS::_write isRemoteReady=${isRemoteReady} debugReady=${
           this.debugReady
-        } isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        } channelId=${channelId} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
       );
     }
 
-    if (!this.remote.isReady() && !isReactNative) {
+    if ((!this.remote.isReady() && !isReactNative) || !channelId) {
       if (this.debug) {
         console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
       }
@@ -159,11 +160,14 @@ export class RemoteCommunicationPostMessageStream
         ?.method as keyof typeof METHODS_TO_REDIRECT;
       // Check if should open app
       const pubKey = this.remote.getKeyInfo()?.ecies.public ?? '';
-      const channelId = this.remote.getChannelId();
 
       const urlParams = encodeURI(
         `channelId=${channelId}&pubkey=${pubKey}&comm=socket`,
       );
+
+      if (!channelId) {
+        return false;
+      }
 
       if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
         if (this.debug) {
