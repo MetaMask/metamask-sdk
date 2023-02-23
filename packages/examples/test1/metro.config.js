@@ -19,6 +19,7 @@ module.exports = {
   watchFolders: [sdkRootPath],
   resolver: {
     nodeModulesPaths: [
+      `./node_modules/`,
       `${sdkRootPath}packages/sdk-communication-layer/node_modules`,
       `${sdkRootPath}packages/sdk/node_modules`,
       `${sdkRootPath}node_modules`,
