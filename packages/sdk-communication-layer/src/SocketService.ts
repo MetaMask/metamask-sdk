@@ -647,6 +647,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.channelId,
         `${this.context}_resume`,
       );
+      this.sendMessage({ type: MessageType.READY });
     }
   }
 
