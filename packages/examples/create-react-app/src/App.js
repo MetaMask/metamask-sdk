@@ -6,8 +6,7 @@ import { useState, useEffect } from "react";
 
 const sdk = new MetaMaskSDK({
   // useDeeplink: false,
-  // communicationServerUrl: 'http://localhost:4000',
-  // communicationLayerPreference: "socket",
+  communicationServerUrl: 'http://localhost:4000',
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   enableDebug: true,
@@ -16,7 +15,7 @@ const sdk = new MetaMaskSDK({
   },
   logging: {
     sdk: false,
-    developerMode: false,
+    developerMode: true,
     eciesLayer: false,
     remoteLayer: false,
     keyExchangeLayer: false,

@@ -53,7 +53,7 @@ export interface MetaMaskSDKOptions {
   autoConnect?: AutoConnectOptions;
   modals?: {
     // TODO
-  },
+  };
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
@@ -72,6 +72,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private dappMetadata?: DappMetadata;
 
+  private _initialized = false;
+
   private debug = false;
 
   constructor(options: MetaMaskSDKOptions = {}) {
@@ -79,7 +81,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
     this.initialize(options).then(() => {
-      if(this.debug) {
+      if (this.debug) {
         console.debug(`sdk initialized`, this.dappMetadata);
       }
     });
@@ -118,6 +120,11 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage,
       logging,
     } = options;
+
+    if (this._initialized) {
+      console.debug(`ALREADY initialized`);
+      return;
+    }
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
@@ -188,8 +195,8 @@ export class MetaMaskSDK extends EventEmitter2 {
         autoConnect,
         logging: runtimeLogging,
         modals: {
-          onPendingModalDisconnect: this.terminate.bind(this)
-        }
+          onPendingModalDisconnect: this.terminate.bind(this),
+        },
       });
 
       if (WalletConnectInstance) {
@@ -242,6 +249,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
+        console.debug(`SDK checkInstallationImmediately`);
         installer.start({ wait: true });
       }
     } else if (window.ethereum) {
@@ -250,6 +258,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       console.error(`window.ethereum is not available.`);
       throw new Error(`Invalid SDK provider status`);
     }
+    this._initialized = true;
   }
 
   resume() {
@@ -267,7 +276,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   terminate() {
     this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
-    this.initialize(this.options);
   }
 
   ping() {
@@ -293,7 +301,12 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   testUI(type: 'pending' | 'install') {
     if (type === 'pending') {
-      sdkWebPendingModal(()=>{});
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      const { updateOTPValue } = sdkWebPendingModal(() => {});
+      setTimeout(() => {
+        console.debug(`try to update otp value`);
+        updateOTPValue(233);
+      }, 2000);
     } else {
       sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });
     }

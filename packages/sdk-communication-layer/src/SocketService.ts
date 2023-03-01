@@ -29,6 +29,17 @@ export interface SocketServiceProps {
   ecies?: ECIESProps;
   logging?: CommunicationLayerLoggingOptions;
 }
+
+interface RPCMethodCache {
+  [method: string]: {
+    timestamp?: number; // timestamp of last request
+    result?: unknown;
+  };
+  cache: {
+    [id: string]: string;
+  };
+}
+
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
   private socket: Socket;
 
@@ -61,6 +72,18 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   private communicationServerUrl: string;
 
   private debug: boolean;
+
+  private rpcMethodTracker: RPCMethodCache = {
+    eth_requestAccounts: {
+      timestamp: undefined,
+      result: undefined,
+    },
+    metamask_getProviderState: {
+      timestamp: undefined,
+      result: undefined,
+    },
+    cache: {},
+  };
 
   constructor({
     otherPublicKey,
@@ -217,15 +240,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         context: this.context,
       });
 
-      if (this.isOriginator) {
-        // if it wasn't paused, we should always re-initiate key exchange even if keys were previously exchanged.
-        if (!this.clientsPaused) {
-          this.keyExchange.start();
-        }
-      }
-
-      // SOLUTION 1: there was no reconnection
-      // Is it a reconnection?
       if (this.reconnect) {
         if (this.keyExchange.areKeysExchanged()) {
           if (this.debug) {
@@ -244,7 +258,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
-          // Wait to receive message if needs to re-initialize key exchange.
+          // should ask to redo a key exchange because it wasn't paused.
+          this.sendMessage({
+            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+          });
         }
         // reconnect switched when connection resume.
         this.reconnect = false;
@@ -254,6 +271,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           isOriginator: this.isOriginator,
           keysExchanged: this.keyExchange.areKeysExchanged(),
           context: this.context,
+        });
+      } else if (!this.isOriginator) {
+        // Always request key exchange from wallet since it looks like a reconnection.
+        this.sendMessage({
+          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
         });
       }
 
@@ -411,6 +433,23 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       } else {
         this.clientsPaused = false;
       }
+
+      if (this.isOriginator && messageReceived.data) {
+        // inform cache from result
+        const rpcMessage = messageReceived.data as {
+          id: string;
+          result: unknown;
+        };
+        const initialRPCMethod = this.rpcMethodTracker.cache[rpcMessage.id];
+        console.debug(
+          `received answer for id=${rpcMessage.id} method=${initialRPCMethod}`,
+          messageReceived.data.result,
+        );
+        if (['eth_requestAccounts'].indexOf(initialRPCMethod) !== -1) {
+          this.emit(initialRPCMethod, messageReceived.data.result);
+        }
+      }
+
       return this.emit(EventType.MESSAGE, { message: messageReceived });
     });
 
@@ -558,6 +597,53 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
       throw new Error('Keys not exchanged BBB');
     }
+
+    // TODO Prevent sending same method multiple time which can sometime happen during initialization
+    // const method = message?.method ?? '';
+    // const rpcId = message?.id;
+    // if (
+    //   this.isOriginator &&
+    //   rpcId &&
+    //   ['eth_requestAccounts'].indexOf(method) !== -1
+    // ) {
+    //   // Check if there was an active result from cache
+    //   if (this.rpcMethodTracker[method]?.timestamp) {
+    //     const cachedResult: { id: string; jsonrpc: string; result?: unknown } =
+    //       {
+    //         id: rpcId,
+    //         jsonrpc: '2.0',
+    //       };
+    //     if (this.rpcMethodTracker[method]?.result) {
+    //       // Use last result
+    //       cachedResult.result = this.rpcMethodTracker[method]?.result;
+    //       console.debug(
+    //         `SocketService::${this.context}::sendMessage() method=${method} received event from cache`,
+    //         cachedResult,
+    //       );
+    //       this.emit(EventType.MESSAGE, { message: cachedResult });
+    //     } else {
+    //       // Wait for response from pending query.
+    //       this.once(method, (result: unknown) => {
+    //         cachedResult.result = result;
+    //         console.debug(
+    //           `SocketService::${this.context}::sendMessage() method=${method} received event from cache`,
+    //           cachedResult,
+    //         );
+    //         this.emit(EventType.MESSAGE, { message: cachedResult });
+    //       });
+    //     }
+
+    //     console.debug(
+    //       `SocketService::${this.context}::sendMessage() -- method=${method} STOP to use cache value.`,
+    //       JSON.stringify(this.rpcMethodTracker, null, 4),
+    //     );
+    //     return;
+    //   }
+    //   // use cache if method is re-sent within 10sec.
+    //   this.rpcMethodTracker.eth_requestAccounts = {
+    //     timestamp: Date.now(),
+    //   };
+    // }
 
     const encryptedMessage = this.keyExchange.encryptMessage(
       JSON.stringify(message),

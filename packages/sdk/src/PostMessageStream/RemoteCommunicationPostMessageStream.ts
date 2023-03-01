@@ -44,7 +44,7 @@ export class RemoteCommunicationPostMessageStream
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
 
-    this.remote.once(EventType.CLIENTS_READY, async () => {
+    this.remote.on(EventType.CLIENTS_READY, async () => {
       try {
         const provider = Ethereum.getProvider();
         await provider.forceInitializeState();

@@ -227,6 +227,7 @@ export class RemoteCommunication extends EventEmitter2 {
       icon: this.dappMetadata?.base64Icon,
       platform: this.platform,
     };
+    this.originatorInfo = originatorInfo;
 
     this.communicationLayer?.on(
       EventType.MESSAGE,
@@ -267,10 +268,6 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
-      this.ready = true;
-      this.paused = false;
-      this.emit(EventType.CLIENTS_READY);
-
       console.debug(`RemoteCommunication::clients_ready set ready to true`);
       this.setConnectionStatus(ConnectionStatus.LINKED);
       this.setLastActiveDate(new Date());
@@ -282,19 +279,17 @@ export class RemoteCommunication extends EventEmitter2 {
         });
       }
 
-      if (!message.isOriginator) {
-        // Don't send originator message from mobile.
-        // Always Tell the DAPP metamask is ready
-        this.communicationLayer?.sendMessage({ type: MessageType.READY });
-        return;
-      }
-
       this.isOriginator = message.isOriginator;
 
-      this.communicationLayer?.sendMessage({
-        type: MessageType.ORIGINATOR_INFO,
-        originatorInfo,
-      });
+      if (!message.isOriginator) {
+        // Don't send originator message from wallet.
+        // Always Tell the DAPP metamask is ready
+        this.communicationLayer?.sendMessage({ type: MessageType.READY });
+        this.ready = true;
+        this.paused = false;
+        // When originator, wait for receiving READY message.
+        this.emit(EventType.CLIENTS_READY);
+      }
     });
 
     this.communicationLayer?.on(
@@ -436,6 +431,12 @@ export class RemoteCommunication extends EventEmitter2 {
         // restarting from pause
         this.setConnectionStatus(ConnectionStatus.LINKED);
       }
+
+      this.communicationLayer?.sendMessage({
+        type: MessageType.ORIGINATOR_INFO,
+        originatorInfo: this.originatorInfo,
+      });
+
       this.paused = false;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,

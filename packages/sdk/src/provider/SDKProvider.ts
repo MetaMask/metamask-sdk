@@ -30,6 +30,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
   private autoRequestAccounts = false;
 
+  private providerStateRequested = false;
+
   constructor({
     connectionStream,
     shouldSendMetadata,
@@ -85,38 +87,47 @@ export class SDKProvider extends MetaMaskInpageProvider {
     }
     // TODO might not need to call _handleDisconnect and manage state directly.
     this._handleDisconnect(true);
+    this.providerStateRequested = false;
   }
 
   protected async _initializeStateAsync(): Promise<void> {
     if (this.debug) {
       console.debug(`SDKProvider::_initializeStateAsync()`);
     }
-    // Replace super.initialState logic to automatically request account if not found in providerstate.
-    let initialState: Parameters<BaseProvider['_initializeState']>[0];
-    try {
-      initialState = (await this.request({
-        method: 'metamask_getProviderState',
-      })) as Parameters<BaseProvider['_initializeState']>[0];
-    } catch (error) {
-      this._log.error(
-        'MetaMask: Failed to get initial state. Please report this bug.',
-        error,
-      );
-    }
 
-    // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
-    if (
-      // Platform.getInstance().isBrowser() &&
-      initialState?.accounts?.length === 0
-    ) {
-      console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
-      const accounts = (await this.request({
-        method: 'eth_requestAccounts',
-        params: [],
-      })) as string[];
-      initialState.accounts = accounts;
+    if (this.providerStateRequested) {
+      console.debug(
+        `SDKProvider::_initializeStateAsync() initialization already in progress`,
+      );
+    } else {
+      this.providerStateRequested = true;
+      // Replace super.initialState logic to automatically request account if not found in providerstate.
+      let initialState: Parameters<BaseProvider['_initializeState']>[0];
+      try {
+        initialState = (await this.request({
+          method: 'metamask_getProviderState',
+        })) as Parameters<BaseProvider['_initializeState']>[0];
+      } catch (error) {
+        this._log.error(
+          'MetaMask: Failed to get initial state. Please report this bug.',
+          error,
+        );
+      }
+
+      // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
+      if (
+        // Platform.getInstance().isBrowser() &&
+        initialState?.accounts?.length === 0
+      ) {
+        console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
+        const accounts = (await this.request({
+          method: 'eth_requestAccounts',
+          params: [],
+        })) as string[];
+        initialState.accounts = accounts;
+      }
+      this._initializeState(initialState);
     }
-    this._initializeState(initialState);
   }
 
   protected _initializeState(

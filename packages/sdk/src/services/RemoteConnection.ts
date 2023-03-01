@@ -230,7 +230,7 @@ export class RemoteConnection implements ProviderService {
       provider.once('connect', async (connectInfo) => {
         if (this.developerMode) {
           console.debug(
-            `RemoteConnection::handleSecureReconnection()  connected`,
+            `RemoteConnection::handleSecureReconnection()  connected provider.selectedAddress=${provider.selectedAddress}`,
             connectInfo,
           );
         }
