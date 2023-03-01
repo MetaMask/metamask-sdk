@@ -53,9 +53,9 @@ const PendingWidget = (props: PendingWidgetProps) => {
                     fontSize: 16,
                   }}
                 >
-                 Please open the MetaMask wallet app and confirm the number to re-enable the connection. Thank you!
+                 Please open the MetaMask wallet app and select the code on the screen OR disconnect
                 </div>
-                <div id='sdk-mm-otp-value' style={{padding: 10, fontSize: 25, border: '1px solid', display:'none'}}>
+                <div id='sdk-mm-otp-value' style={{padding: 10, fontSize: 32, display:'none'}}>
                 </div>
               </div>
               <div style={{marginTop:'20px'}}>
