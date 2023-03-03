@@ -7,6 +7,7 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
+  MessageType,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
@@ -139,6 +140,16 @@ export class RemoteConnection implements ProviderService {
     this.connector.on(EventType.OTP, (otpAnswer) => {
       console.debug(`RECEIVED EVENT OTP`, otpAnswer);
       this.otpAnswer = otpAnswer;
+    });
+
+    this.connector.on(EventType.TERMINATE, () => {
+      if (typeof window === 'undefined') {
+        console.debug(`TODO alert user from wallet termination.`);
+      } else {
+        // TODO use a modal window instead
+        // eslint-disable-next-line no-alert
+        alert(`SDK Connection has been terminated from MetaMask.`);
+      }
     });
 
     this.connector.on(EventType.CONNECTION_STATUS, (status) => {

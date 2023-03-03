@@ -58,11 +58,12 @@ const sdk = new MetaMaskSDK({
     }
   },
   communicationServerUrl: remotServerUrl,
+  checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,
   dappMetadata: {
-    url: '',
-    name: '',
+    url: 'Test1',
+    name: 'Test1',
   },
   storage: {
     debug: true,

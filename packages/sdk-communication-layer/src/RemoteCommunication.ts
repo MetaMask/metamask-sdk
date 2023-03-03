@@ -394,7 +394,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
     this.ready = true;
 
-    if (message.type === MessageType.ORIGINATOR_INFO) {
+    if (!this.isOriginator && message.type === MessageType.ORIGINATOR_INFO) {
       // TODO why these hardcoded value?
       this.communicationLayer?.sendMessage({
         type: MessageType.WALLET_INFO,
@@ -422,22 +422,27 @@ export class RemoteCommunication extends EventEmitter2 {
       // remove channel config from persistence layer and close active connections.
       if (this.isOriginator) {
         this.disconnect({ terminate: true, sendMessage: false });
+        console.debug();
+        this.emit(EventType.TERMINATE);
       }
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
       this.setConnectionStatus(ConnectionStatus.PAUSED);
     } else if (message.type === MessageType.READY) {
+      console.debug(`RECEIVING 'READY' from wallet`, this.originatorInfo);
       if (this.paused) {
         // restarting from pause
         this.setConnectionStatus(ConnectionStatus.LINKED);
       }
 
+      // Always re-send originator info in case the session was deleted on the wallet
       this.communicationLayer?.sendMessage({
         type: MessageType.ORIGINATOR_INFO,
         originatorInfo: this.originatorInfo,
       });
 
       this.paused = false;
+      console.debug(`emitting CLIENTS_READY to send pending messages`);
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: this.walletInfo,
@@ -475,18 +480,9 @@ export class RemoteCommunication extends EventEmitter2 {
       );
     }
 
-    if (this.autoStarted) {
-      // Prevent infinite loop by checking if it was already autoStarted.
-      if (this.debug) {
-        console.debug(
-          `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
-        );
-      }
-      return channelConfig;
-    }
-
     // is socket already connected?
     const connected = this.communicationLayer?.isConnected();
+
     if (connected) {
       if (this.debug) {
         console.debug(
@@ -495,6 +491,16 @@ export class RemoteCommunication extends EventEmitter2 {
       }
       return channelConfig;
     }
+
+    // if (this.autoStarted) {
+    //   // Prevent infinite loop by checking if it was already autoStarted.
+    //   if (this.debug) {
+    //     console.debug(
+    //       `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
+    //     );
+    //   }
+    //   return channelConfig;
+    // }
 
     if (channelConfig) {
       const validSession = channelConfig.validUntil > Date.now();

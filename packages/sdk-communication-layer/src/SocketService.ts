@@ -31,12 +31,10 @@ export interface SocketServiceProps {
 }
 
 interface RPCMethodCache {
-  [method: string]: {
-    timestamp?: number; // timestamp of last request
+  [id: string]: {
+    timestamp: number; // timestamp of last request
+    method: string;
     result?: unknown;
-  };
-  cache: {
-    [id: string]: string;
   };
 }
 
@@ -73,17 +71,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private debug: boolean;
 
-  private rpcMethodTracker: RPCMethodCache = {
-    eth_requestAccounts: {
-      timestamp: undefined,
-      result: undefined,
-    },
-    metamask_getProviderState: {
-      timestamp: undefined,
-      result: undefined,
-    },
-    cache: {},
-  };
+  private rpcMethodTracker: RPCMethodCache = {};
 
   constructor({
     otherPublicKey,
@@ -161,21 +149,25 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     const connectAgain = () => {
       if (typeof window !== 'undefined') {
-        window.removeEventListener('focus', connectAgain);
+        window.removeEventListener('focus', connectAgain.bind(this));
       }
 
       if (this.debug) {
         console.debug(
-          `SocketService::connectAgain trying to reconnect after socketio disconnection`,
+          `SocketService::connectAgain this.socket.connected=${this.socket.connected} trying to reconnect after socketio disconnection`,
+          this,
         );
       }
-      this.reconnect = true;
-      this.socket.connect();
-      this.socket.emit(
-        EventType.JOIN_CHANNEL,
-        this.channelId,
-        `${this.context}connect_again`,
-      );
+
+      if (!this.socket.connected) {
+        this.reconnect = true;
+        this.socket.connect();
+        this.socket.emit(
+          EventType.JOIN_CHANNEL,
+          this.channelId,
+          `${this.context}connect_again`,
+        );
+      }
     };
 
     const checkFocus = () => {
@@ -187,7 +179,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (document.hasFocus()) {
         connectAgain();
       } else {
-        window.addEventListener('focus', connectAgain);
+        window.addEventListener('focus', connectAgain.bind(this));
       }
     };
 
@@ -195,7 +187,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         console.debug(`SocketService::on 'error' `, error);
       }
-      connectAgain();
+      checkFocus();
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -440,13 +432,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           id: string;
           result: unknown;
         };
-        const initialRPCMethod = this.rpcMethodTracker.cache[rpcMessage.id];
-        console.debug(
-          `received answer for id=${rpcMessage.id} method=${initialRPCMethod}`,
-          messageReceived.data.result,
-        );
-        if (['eth_requestAccounts'].indexOf(initialRPCMethod) !== -1) {
-          this.emit(initialRPCMethod, messageReceived.data.result);
+        const initialRPCMethod = this.rpcMethodTracker[rpcMessage.id];
+        if (initialRPCMethod) {
+          const responseTime = Date.now() - initialRPCMethod.timestamp;
+          console.debug(
+            `received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${responseTime}`,
+            messageReceived,
+          );
         }
       }
 
@@ -599,51 +591,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
 
     // TODO Prevent sending same method multiple time which can sometime happen during initialization
-    // const method = message?.method ?? '';
-    // const rpcId = message?.id;
-    // if (
-    //   this.isOriginator &&
-    //   rpcId &&
-    //   ['eth_requestAccounts'].indexOf(method) !== -1
-    // ) {
-    //   // Check if there was an active result from cache
-    //   if (this.rpcMethodTracker[method]?.timestamp) {
-    //     const cachedResult: { id: string; jsonrpc: string; result?: unknown } =
-    //       {
-    //         id: rpcId,
-    //         jsonrpc: '2.0',
-    //       };
-    //     if (this.rpcMethodTracker[method]?.result) {
-    //       // Use last result
-    //       cachedResult.result = this.rpcMethodTracker[method]?.result;
-    //       console.debug(
-    //         `SocketService::${this.context}::sendMessage() method=${method} received event from cache`,
-    //         cachedResult,
-    //       );
-    //       this.emit(EventType.MESSAGE, { message: cachedResult });
-    //     } else {
-    //       // Wait for response from pending query.
-    //       this.once(method, (result: unknown) => {
-    //         cachedResult.result = result;
-    //         console.debug(
-    //           `SocketService::${this.context}::sendMessage() method=${method} received event from cache`,
-    //           cachedResult,
-    //         );
-    //         this.emit(EventType.MESSAGE, { message: cachedResult });
-    //       });
-    //     }
-
-    //     console.debug(
-    //       `SocketService::${this.context}::sendMessage() -- method=${method} STOP to use cache value.`,
-    //       JSON.stringify(this.rpcMethodTracker, null, 4),
-    //     );
-    //     return;
-    //   }
-    //   // use cache if method is re-sent within 10sec.
-    //   this.rpcMethodTracker.eth_requestAccounts = {
-    //     timestamp: Date.now(),
-    //   };
-    // }
+    const method = message?.method ?? '';
+    const rpcId = message?.id;
+    if (this.isOriginator && rpcId) {
+      // use cache if method is re-sent within 10sec.
+      this.rpcMethodTracker[rpcId] = {
+        timestamp: Date.now(),
+        method,
+      };
+    }
 
     const encryptedMessage = this.keyExchange.encryptMessage(
       JSON.stringify(message),
@@ -733,7 +689,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         this.channelId,
         `${this.context}_resume`,
       );
-      this.sendMessage({ type: MessageType.READY });
+      if (!this.isOriginator) {
+        this.sendMessage({ type: MessageType.READY });
+      }
     }
   }
 

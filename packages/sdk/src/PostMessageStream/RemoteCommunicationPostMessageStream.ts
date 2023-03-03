@@ -90,13 +90,14 @@ export class RemoteCommunicationPostMessageStream
   /**
    * Called when querying the sdk provider with ethereum.request
    */
-  _write(
+  async _write(
     chunk: any,
     _encoding: BufferEncoding,
     callback: (error?: Error | null) => void,
   ) {
     const platform = Platform.getInstance();
     const isReactNative = platform.isReactNative();
+    const isMobileWeb = platform.isMobileWeb();
     // Special Case if RN, we still create deeplink to wake up the connection.
     const isRemoteReady = this.remote.isReady();
     const isConnected = this.remote.isConnected();
@@ -113,7 +114,10 @@ export class RemoteCommunicationPostMessageStream
       );
     }
 
-    if ((!this.remote.isReady() && !isReactNative) || !channelId) {
+    if (
+      (!this.remote.isReady() && !isReactNative && !isMobileWeb) ||
+      !channelId
+    ) {
       if (this.debug) {
         console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
       }
@@ -127,6 +131,17 @@ export class RemoteCommunicationPostMessageStream
       console.debug(
         `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} ready=${ready} socketConnected=${socketConnected}`,
         chunk,
+      );
+    }
+
+    if (!socketConnected) {
+      console.warn(
+        `RPCMS::_write TODO socket should be connected -- try to resume`,
+      );
+      const channelConfig = await this.remote.startAutoConnect();
+      console.warn(
+        `RPCMS::_write after resume: socketConnected=${this.remote.isConnected()}`,
+        channelConfig,
       );
     }
 

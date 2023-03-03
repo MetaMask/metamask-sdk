@@ -12,4 +12,5 @@ export enum EventType {
   OTP = 'otp',
   CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
+  TERMINATE = 'terminate',
 }
