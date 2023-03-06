@@ -7,7 +7,6 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
-  MessageType,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
@@ -155,6 +154,7 @@ export class RemoteConnection implements ProviderService {
     this.connector.on(EventType.CONNECTION_STATUS, (status) => {
       if (status === ConnectionStatus.TERMINATED) {
         this.displayedModal?.onClose();
+        this.otpAnswer = undefined;
       } else if (status === ConnectionStatus.DISCONNECTED) {
         this.sentFirstConnect = false;
       }
@@ -196,10 +196,15 @@ export class RemoteConnection implements ProviderService {
 
     if (this.developerMode) {
       console.debug(
-        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink} providerConnected=${provider.isConnected()}`,
+        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink} providerConnected=${provider.isConnected()} connector.connected=${this.connector.isConnected()}`,
         channelConfig,
       );
     }
+
+    // // make sure to reconnect locally if connection was lost
+    // if (!this.connector.isConnected()) {
+    //   //
+    // }
 
     if (trustedDevice && deeplink) {
       const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
@@ -286,6 +291,11 @@ export class RemoteConnection implements ProviderService {
           );
         }
 
+        const channelConfig = this.connector.getChannelConfig();
+        if (channelConfig) {
+          this.handleSecureReconnection({ channelConfig, deeplink: true });
+        }
+
         // Nothing to do, already connected.
         return resolve(true);
       }
@@ -298,7 +308,7 @@ export class RemoteConnection implements ProviderService {
         (platformType === PlatformType.NonBrowser && !platform.isReactNative());
 
       // Check for existing channelConfig?
-      this.connector?.startAutoConnect().then((channelConfig) => {
+      this.connector?.startAutoConnect().then(async (channelConfig) => {
         if (this.developerMode) {
           console.debug(
             `RemoteConnection::startConnection after startAutoConnect`,
@@ -308,7 +318,12 @@ export class RemoteConnection implements ProviderService {
 
         if (channelConfig?.lastActive) {
           // Already connected through auto connect
-          this.handleSecureReconnection({ channelConfig, deeplink: true });
+          await this.handleSecureReconnection({
+            channelConfig,
+            deeplink: true,
+          });
+
+          return resolve(true);
         } else if (this.connector) {
           // generate new channel id
           this.connector
@@ -340,6 +355,7 @@ export class RemoteConnection implements ProviderService {
             .catch((err) => {
               console.debug(`RemoteConnection error`, err);
               this.displayedModal?.onClose();
+              this.otpAnswer = undefined;
               reject(err);
             });
 
@@ -366,10 +382,13 @@ export class RemoteConnection implements ProviderService {
 
             // try to close displayedModal
             this.displayedModal?.onClose();
+            this.otpAnswer = undefined;
 
             resolve(true);
           });
         }
+
+        return true;
       });
     });
   }

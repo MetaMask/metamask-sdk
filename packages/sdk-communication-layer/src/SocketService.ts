@@ -171,11 +171,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     };
 
     const checkFocus = () => {
-      console.debug(`SocketService::checkFocus`);
       if (typeof window === 'undefined' || typeof document === 'undefined') {
         return;
       }
 
+      console.debug(
+        `SocketService::checkFocus hasFocus=${document.hasFocus()}`,
+      );
       if (document.hasFocus()) {
         connectAgain();
       } else {
@@ -402,7 +404,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           });
         }
         //  ignore message and wait for completion.
-        console.warn(`Message ignored because invalid key exchange status`);
+        console.warn(
+          `Message ignored because invalid key exchange status`,
+          message,
+        );
         return false;
       } else if (message.toString().indexOf('type') !== -1) {
         // Even if keys were exchanged, if the message is not encrypted, emit it.
