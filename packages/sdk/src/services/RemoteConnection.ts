@@ -243,25 +243,8 @@ export class RemoteConnection implements ProviderService {
         this.displayedModal?.updateOTPValue?.(otpAnswer);
       });
 
-      provider.once('connect', async (connectInfo) => {
-        if (this.developerMode) {
-          console.debug(
-            `RemoteConnection::handleSecureReconnection()  connected provider.selectedAddress=${provider.selectedAddress}`,
-            connectInfo,
-          );
-        }
-
-        try {
-          // Always make sure to requestAccounts first, otherwise queries will fail.
-          await provider.request({
-            method: 'eth_requestAccounts',
-            params: [],
-          });
-        } catch (err) {
-          console.warn(`an error occured`, err);
-        } finally {
-          this.displayedModal?.onClose();
-        }
+      provider.once('_initialized', async () => {
+        this.displayedModal?.onClose();
       });
     }
   }
