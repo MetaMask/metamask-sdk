@@ -5,6 +5,7 @@
   "scripts": {
     "android": "react-native run-android --port=9092",
     "ios": "react-native run-ios --port=9092 --simulator 'iPhone 11 Pro'",
+    "ios:device": "react-native run-ios --port=9092 --device \"Arthur’s iPhone\"",
     "lint": "eslint .",
     "start": "react-native start --port=9092",
     "test": "jest"
