@@ -135,14 +135,12 @@ export class RemoteCommunicationPostMessageStream
     }
 
     if (!socketConnected) {
-      console.warn(
-        `RPCMS::_write TODO socket should be connected -- try to resume`,
-      );
-      const channelConfig = await this.remote.startAutoConnect();
-      console.warn(
-        `RPCMS::_write after resume: socketConnected=${this.remote.isConnected()}`,
-        channelConfig,
-      );
+      console.warn(`RPCMS::_write TODO socket should be connected`, chunk);
+      // const channelConfig = await this.remote.startAutoConnect();
+      // console.warn(
+      //   `RPCMS::_write after resume: socketConnected=${this.remote.isConnected()}`,
+      //   channelConfig,
+      // );
     }
 
     try {

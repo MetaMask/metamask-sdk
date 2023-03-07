@@ -68,7 +68,11 @@ const initializeProvider = ({
     const platform = Platform.getInstance();
 
     if (!isInstalled && method !== 'metamask_getProviderState') {
-      if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
+      if (
+        method === 'eth_requestAccounts' ||
+        checkInstallationOnAllCalls ||
+        platform.getPlatformType() === PlatformType.DesktopWeb
+      ) {
         // Start installation and once installed try the request again
         const isConnectedNow = await installer.start({
           wait: false,
@@ -78,10 +82,10 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
-      } else if (platform.isReactNative() || platform.isMobileWeb()) {
+      } else if (platform.isSecure()) {
         // send it anyway on native because of the deeplink
         console.debug(
-          `initializeProvider::sendRequest() FORCE SEND request on mobile`,
+          `initializeProvider::sendRequest() FORCE SEND request on secure platform`,
         );
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);

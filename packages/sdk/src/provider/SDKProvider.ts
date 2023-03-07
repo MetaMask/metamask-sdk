@@ -1,6 +1,5 @@
 import { Duplex } from 'stream';
 import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
-import { Platform } from '../Platform/Platfform';
 
 export interface SDKProviderProps {
   /**
@@ -114,19 +113,35 @@ export class SDKProvider extends MetaMaskInpageProvider {
         );
       }
 
-      // console.debug(`SDKProvider::_initializeStateAsync state `, initialState);
-      if (
-        // Platform.getInstance().isBrowser() &&
-        initialState?.accounts?.length === 0
-      ) {
-        console.debug(`SDKProvider::_initializeStateAsync fetch accounts`);
-        const accounts = (await this.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        })) as string[];
-        initialState.accounts = accounts;
+      console.debug(
+        `SDKProvider::_initializeStateAsync state selectedAddress=${this.selectedAddress} `,
+        initialState,
+      );
+
+      if (initialState?.accounts?.length === 0) {
+        console.debug(
+          `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
+        );
+
+        if (this.selectedAddress) {
+          console.debug(
+            `SDKProvider::_initializeStateAsync using this.selectedAddress instead`,
+          );
+          initialState.accounts = [this.selectedAddress];
+        } else {
+          console.debug(
+            `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
+          );
+          const accounts = (await this.request({
+            method: 'eth_requestAccounts',
+            params: [],
+          })) as string[];
+          initialState.accounts = accounts;
+        }
       }
+
       this._initializeState(initialState);
+      this.providerStateRequested = false;
     }
   }
 
@@ -167,6 +182,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
       forcedNetworkVersion = '1';
     }
 
+    this._state.isConnected = true;
+    this.emit('connect', { chainId });
     super._handleChainChanged({
       chainId,
       networkVersion: forcedNetworkVersion,

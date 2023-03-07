@@ -52,7 +52,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [account, _setAccount] = useState<string>();
   const [chain, _setChain] = useState<number>();
   const [balance, _setBalance] = useState<string>();
-  const [connected, _setConnected] = useState<boolean>(false);
+  const [connected, setConnected] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
   const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
   const styles = createStyles(status);
@@ -74,6 +74,10 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
 
       setEthereum(_ethereum);
       setProvider(_provider);
+
+      _ethereum.on('connect', () => {
+        setConnected(true);
+      });
 
       sdk.on(
         EventType.CONNECTION_STATUS,
@@ -230,7 +234,10 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
 
   return (
     <View style={{borderWidth: 2, padding: 5}}>
-      <Text style={styles.title}>{sdk.getDappMetadata()?.name}</Text>
+      <Text style={styles.title}>
+        {sdk.getDappMetadata()?.name} (
+        {connected ? 'connected' : 'disconnected'})
+      </Text>
       <ServiceStatusView serviceStatus={serviceStatus} />
       <Button
         title={'Test Storage'}
@@ -238,7 +245,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
           sdk.testStorage();
         }}
       />
-      <Button title={connected ? 'Connected' : 'Connect'} onPress={connect} />
+      <Button title={'Request Accounts'} onPress={connect} />
       <>
         <Button title="Sign" onPress={sign} />
         <Button title="Send transaction" onPress={sendTransaction} />
