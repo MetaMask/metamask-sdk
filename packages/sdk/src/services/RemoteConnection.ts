@@ -238,7 +238,10 @@ export class RemoteConnection implements ProviderService {
         return -1;
       };
 
-      this.displayedModal = sdkPendingModal(onDisconnect);
+      if (!this.displayedModal) {
+        this.displayedModal = sdkPendingModal(onDisconnect);
+      }
+
       waitForOTP().then((otpAnswer) => {
         this.displayedModal?.updateOTPValue?.(otpAnswer);
       });

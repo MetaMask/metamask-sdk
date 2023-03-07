@@ -158,6 +158,10 @@ export class Platform {
     );
   }
 
+  isSecure() {
+    return this.isReactNative() || this.isMobileWeb();
+  }
+
   isMetaMaskMobileWebView() {
     if (typeof window === 'undefined') {
       return false;
