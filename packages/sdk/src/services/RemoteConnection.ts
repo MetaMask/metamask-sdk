@@ -139,6 +139,7 @@ export class RemoteConnection implements ProviderService {
     this.connector.on(EventType.OTP, (otpAnswer) => {
       console.debug(`RECEIVED EVENT OTP`, otpAnswer);
       this.otpAnswer = otpAnswer;
+      this.displayedModal?.updateOTPValue?.(otpAnswer);
     });
 
     this.connector.on(EventType.TERMINATE, () => {
