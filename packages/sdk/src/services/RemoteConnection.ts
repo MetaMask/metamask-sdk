@@ -90,16 +90,8 @@ export class RemoteConnection implements ProviderService {
 
     if (this.developerMode) {
       console.debug(
-        `RemoteConnection::initializeConnector() re-intialize connector`,
+        `RemoteConnection::initializeConnector() intialize connector`,
       );
-    }
-
-    // Cleanup previous handles
-    if (this.connector) {
-      if (timer?.stopBackgroundTimer) {
-        timer.stopBackgroundTimer();
-      }
-      // this.connector.removeAllListeners();
     }
 
     const platform = Platform.getInstance();
@@ -119,6 +111,19 @@ export class RemoteConnection implements ProviderService {
       logging,
     });
 
+    if (timer) {
+      if (this.developerMode) {
+        console.debug(`RemoteConnection::setup reset background timer`, timer);
+      }
+
+      timer?.stopBackgroundTimer?.();
+      timer?.runBackgroundTimer?.(() => {
+        // Used to maintain the connection when the app is backgrounded.
+        // console.debug(`Running background timer`);
+        return false;
+      }, 5000);
+    }
+
     if (autoConnect?.enable === true) {
       console.debug(
         `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
@@ -131,10 +136,6 @@ export class RemoteConnection implements ProviderService {
             this.handleSecureReconnection({ channelConfig, deeplink: false });
           }
         });
-    }
-
-    if (timer) {
-      timer.runBackgroundTimer?.(() => null, 5000);
     }
 
     this.connector.on(EventType.OTP, (otpAnswer) => {
