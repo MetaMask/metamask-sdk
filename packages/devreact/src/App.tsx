@@ -89,7 +89,7 @@ const _abi = [
 
 export const App = () => {
   const [chain, setChain] = useState("");
-  const [account, setAccount] = useState("");
+  const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
   const [connected, setConnected] = useState(false);
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
@@ -103,7 +103,11 @@ export const App = () => {
         method: "eth_requestAccounts",
         params: [],
       })
-      .then((res) => console.log("request accounts", res))
+      .then((accounts) => {
+        if(accounts) {
+          setAccount((accounts as string[])[0]);
+        }
+      })
       .catch((e) => console.log("request accounts ERR", e));
   };
 
@@ -132,6 +136,10 @@ export const App = () => {
   useEffect(() => {
     console.debug(`App::useEffect window.ethereum listeners`);
 
+    if(window.ethereum?.selectedAddress) {
+      setAccount(window.ethereum?.selectedAddress);
+    }
+
     window.ethereum?.on("chainChanged", (chain) => {
       console.log(chain);
       setChain(chain as string);
@@ -149,10 +157,6 @@ export const App = () => {
     })
     window.ethereum?.on("disconnect", (error) => {
       console.log('disconnect', error);
-      setConnected(false);
-    });
-    window.ethereum?.on("disconnected", (error) => {
-      console.log('disconnected', error);
       setConnected(false);
     });
   }, []);
@@ -269,6 +273,7 @@ export const App = () => {
         // request accounts first.
         const accounts = await window.ethereum?.request({method: 'eth_requestAccounts', params: []}) as string[];
         from = accounts[0];
+        setAccount(from);
         console.debug(`after request from=${from}`);
       }
 

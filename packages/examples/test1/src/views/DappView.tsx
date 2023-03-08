@@ -47,12 +47,13 @@ const createStyles = (connectionStatus: ConnectionStatus) => {
 
 export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
-  const [ethereum, setEthereum] = useState<MetaMaskInpageProvider>();
-  const [response, _setResponse] = useState<unknown>('');
-  const [account, _setAccount] = useState<string>();
-  const [chain, _setChain] = useState<number>();
-  const [balance, _setBalance] = useState<string>();
+  const [ethereum] = useState(sdk.getProvider());
+  const [response, setResponse] = useState<unknown>('');
+  const [account, setAccount] = useState<string>();
+  const [chain, setChain] = useState<string>();
+  const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
+  const [processing, setProcessing] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
   const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
   const styles = createStyles(status);
@@ -64,19 +65,36 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     const bal =
       (await provider?.getBalance(ethereum?.selectedAddress)) ??
       ethers.BigNumber.from(0);
-    _setBalance(ethers.utils.formatEther(bal));
+    setBalance(ethers.utils.formatEther(bal));
   };
 
   useEffect(() => {
     try {
-      const _ethereum = sdk.getProvider();
-      const _provider = new ethers.providers.Web3Provider(_ethereum);
+      setProvider(new ethers.providers.Web3Provider(ethereum));
 
-      setEthereum(_ethereum);
-      setProvider(_provider);
-
-      _ethereum.on('connect', () => {
+      console.debug(
+        `useffect ethereum.selectedAddress=${ethereum.selectedAddress}`,
+      );
+      if (ethereum.selectedAddress) {
         setConnected(true);
+        setAccount(ethereum.selectedAddress);
+      }
+
+      ethereum.on('connect', () => {
+        setConnected(true);
+      });
+
+      ethereum.on('chainChanged', (newChain: string) => {
+        console.log(newChain);
+        setChain(newChain);
+      });
+
+      ethereum.on('accountsChanged', (accounts: string[]) => {
+        console.log('useEffect::ethereum on "accountsChanged"', accounts);
+        if (accounts.length > 0 && accounts[0] !== account) {
+          setAccount(accounts?.[0]);
+          getBalance();
+        }
       });
 
       sdk.on(
@@ -86,21 +104,24 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         },
       );
     } catch (err) {
-      console.log('strange errror', err);
+      console.log('errror', err);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const connect = async () => {
     try {
+      setProcessing(true);
       const result = (await ethereum?.request({
         method: 'eth_requestAccounts',
       })) as string[];
       console.log('RESULT', result?.[0]);
-      _setAccount(result?.[0]);
-      // getBalance();
+      setAccount(result?.[0]);
+      getBalance();
     } catch (e) {
       console.log('ERROR', e);
+    } finally {
+      setProcessing(false);
     }
   };
 
@@ -119,7 +140,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         ],
       });
       console.log('RESULT', result);
-      _setResponse(result);
+      setResponse(result);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -201,7 +222,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     var method = 'eth_signTypedData_v4';
 
     const resp = await ethereum?.request({method, params});
-    _setResponse(resp);
+    setResponse(resp);
   };
 
   const sendTransaction = async () => {
@@ -220,7 +241,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         params: [transactionParameters],
       });
 
-      _setResponse(txHash);
+      setResponse(txHash);
     } catch (e) {
       console.log(e);
     }
@@ -239,30 +260,44 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         {connected ? 'connected' : 'disconnected'})
       </Text>
       <ServiceStatusView serviceStatus={serviceStatus} />
+
+      {connected ? (
+        <>
+          <Button title={'Request Accounts'} onPress={connect} />
+          <Button title="Sign" onPress={sign} />
+          <Button title="Send transaction" onPress={sendTransaction} />
+          <Button title="Add chain" onPress={exampleRequest} />
+          <Text style={textStyle}>{processing && 'Processing request...'}</Text>
+          <Text style={textStyle}>
+            {chain && `Connected chain: ${chain}\n`}
+            {account && `Connected account: ${account}\n\n`}
+            {account && balance && `Balance: ${balance} ETH`}
+          </Text>
+          <Text style={textStyle}>
+            {response ? `Last request response: ${response}` : ''}
+          </Text>
+        </>
+      ) : (
+        <Button title={'Connect'} onPress={connect} />
+      )}
+
       <Button
         title={'Test Storage'}
         onPress={() => {
           sdk.testStorage();
         }}
       />
-      <Button title={'Request Accounts'} onPress={connect} />
-      <>
-        <Button title="Sign" onPress={sign} />
-        <Button title="Send transaction" onPress={sendTransaction} />
-        <Button title="Add chain" onPress={exampleRequest} />
-        <Text style={textStyle}>
-          {chain && `Connected chain: ${chain}\n`}
-          {account && `Connected account: ${account}\n\n`}
-          {account && balance && `Balance: ${balance} ETH`}
-        </Text>
-        <Text style={textStyle}>
-          {response ? `Last request response: ${response}` : ''}
-        </Text>
-      </>
 
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}
-        onPress={() => sdk.terminate()}>
+        onPress={() => {
+          sdk.terminate();
+          setConnected(false);
+          setAccount(undefined);
+          setBalance(undefined);
+          setChain(undefined);
+          setResponse('');
+        }}>
         <Text style={styles.buttonText}>Terminate</Text>
       </TouchableOpacity>
     </View>
