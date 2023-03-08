@@ -83,6 +83,7 @@ const sdk = new MetaMaskSDK({
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [encryptionTime, setEncryptionTime] = useState<number>();
 
   useEffect(() => {
     console.debug('use effect now');
@@ -98,11 +99,6 @@ function App(): JSX.Element {
   const handleAppState = (appState: AppStateStatus) => {
     console.debug(`AppState change: ${appState}`);
     canOpenLink = appState === 'active';
-    if (appState === 'active') {
-      // Make sure the connection is always reconnecting.
-      // sdk.resume()
-      console.debug('TRY TO RESUME SDK');
-    }
   };
 
   const backgroundStyle = {
@@ -113,6 +109,8 @@ function App(): JSX.Element {
     // const privateKey =
     //   '0x131ded88ca58162376374eecc9f74349eb90a8fc9457466321dd9ce925beca1a';
     console.debug('begin encryptiion test');
+    const startTime = Date.now();
+
     const data =
       '{"type":"originator_info","originatorInfo":{"url":"example.com","title":"React Native Test Dapp","platform":"NonBrowser"}}';
     const other =
@@ -121,6 +119,9 @@ function App(): JSX.Element {
     const encryptedData = encrypt(other, payload);
     const encryptedString = Buffer.from(encryptedData).toString('base64');
     console.debug('encrypted: ', encryptedString);
+    const timeSpent = Date.now() - startTime;
+    setEncryptionTime(timeSpent);
+    console.debug(`encryption time: ${timeSpent} ms`);
   };
 
   return (
@@ -142,6 +143,9 @@ function App(): JSX.Element {
             TEST1 Mobile Dapp Test (RN v0.71.1)
           </Text>
           <Button title="TestEncrypt" onPress={testEncrypt} />
+          <Text style={{color: Colors.black}}>
+            {encryptionTime && `Encryption time: ${encryptionTime} ms`}
+          </Text>
           <DAPPView sdk={sdk} />
         </View>
       </ScrollView>
