@@ -11,6 +11,9 @@ const PendingModal = (onDisconnect = () => {}) => {
     updateOTPValue: () => {
       return false;
     },
+    mount: () => {
+      return false;
+    },
   };
 };
 

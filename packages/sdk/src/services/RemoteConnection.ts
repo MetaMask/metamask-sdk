@@ -52,6 +52,7 @@ export class RemoteConnection implements ProviderService {
 
   private displayedModal?: {
     onClose: () => void;
+    mount?: () => void;
     updateOTPValue?: (otpAnswer: number) => void;
   };
 
@@ -239,7 +240,10 @@ export class RemoteConnection implements ProviderService {
         return -1;
       };
 
-      if (!this.displayedModal) {
+      if (this.displayedModal) {
+        // Make sure modal is visible
+        this.displayedModal.mount?.();
+      } else {
         this.displayedModal = sdkPendingModal(onDisconnect);
       }
 
