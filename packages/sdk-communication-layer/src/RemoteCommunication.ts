@@ -606,29 +606,33 @@ export class RemoteCommunication extends EventEmitter2 {
     this.rpcProviderReady = providerReady;
   }
 
-  sendMessage(message: CommunicationLayerMessage) {
-    if (this.debug) {
-      console.log(
-        `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready} status=${this._connectionStatus}`,
-        message,
-      );
-    }
-
-    // if paused on waiting
-    if (this.paused || !this.ready) {
+  sendMessage(message: CommunicationLayerMessage): Promise<void> {
+    return new Promise((resolve) => {
       if (this.debug) {
         console.log(
-          `RemoteCommunication::${this.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
+          `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready} status=${this._connectionStatus}`,
+          message,
         );
       }
 
-      this.once(EventType.CLIENTS_READY, () => {
-        // only send the message after the clients have awaken.
+      // if paused on waiting
+      if (this.paused || !this.ready) {
+        if (this.debug) {
+          console.log(
+            `RemoteCommunication::${this.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
+          );
+        }
+
+        this.once(EventType.CLIENTS_READY, () => {
+          // only send the message after the clients have awaken.
+          this.communicationLayer?.sendMessage(message);
+          resolve();
+        });
+      } else {
         this.communicationLayer?.sendMessage(message);
-      });
-    } else {
-      this.communicationLayer?.sendMessage(message);
-    }
+        resolve();
+      }
+    });
   }
 
   async testStorage() {
