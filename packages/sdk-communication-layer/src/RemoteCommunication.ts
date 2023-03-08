@@ -61,12 +61,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private transports?: string[];
 
-  /**
-   * TODO Flag showing metamask has been properly initialized.
-   * Watch for the result of metamask_getProviderState which is automatically called by the SDK.
-   */
-  private rpcProviderReady = false;
-
   private platform: string;
 
   private analytics = false;
@@ -289,8 +283,6 @@ export class RemoteCommunication extends EventEmitter2 {
         this.communicationLayer?.sendMessage({ type: MessageType.READY });
         this.ready = true;
         this.paused = false;
-        // When originator, wait for receiving READY message.
-        this.emit(EventType.CLIENTS_READY);
       }
     });
 
@@ -602,10 +594,6 @@ export class RemoteCommunication extends EventEmitter2 {
     };
     this.channelConfig = newChannelConfig;
     this.storageManager?.persistChannelConfig(newChannelConfig);
-  }
-
-  setProviderState(providerReady: boolean) {
-    this.rpcProviderReady = providerReady;
   }
 
   sendMessage(message: CommunicationLayerMessage): Promise<void> {
