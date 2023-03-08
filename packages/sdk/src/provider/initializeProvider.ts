@@ -61,7 +61,9 @@ const initializeProvider = ({
 
     if (debug) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
+        `initializeProvider::sendRequest() method=${method} selectedAddress=${
+          Ethereum.getProvider().selectedAddress
+        } isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
       );
     }
 
@@ -83,7 +85,7 @@ const initializeProvider = ({
           return f(...args);
         }
       } else if (platform.isSecure()) {
-        // send it anyway on native because of the deeplink
+        // send it anyway on local device because of the deeplink
         console.debug(
           `initializeProvider::sendRequest() FORCE SEND request on secure platform`,
         );
