@@ -53,7 +53,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [chain, setChain] = useState<string>();
   const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
-  const [processing, setProcessing] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
   const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
   const styles = createStyles(status);
@@ -89,6 +88,16 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         setChain(newChain);
       });
 
+      ethereum.on('_initialized', () => {
+        if (ethereum.selectedAddress) {
+          setAccount(ethereum?.selectedAddress);
+          getBalance();
+        }
+        if (ethereum.chainId) {
+          setChain(ethereum.chainId);
+        }
+      });
+
       ethereum.on('accountsChanged', (accounts: string[]) => {
         console.log('useEffect::ethereum on "accountsChanged"', accounts);
         if (accounts.length > 0 && accounts[0] !== account) {
@@ -111,17 +120,13 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
 
   const connect = async () => {
     try {
-      setProcessing(true);
       const result = (await ethereum?.request({
         method: 'eth_requestAccounts',
       })) as string[];
       console.log('RESULT', result?.[0]);
       setAccount(result?.[0]);
-      getBalance();
     } catch (e) {
       console.log('ERROR', e);
-    } finally {
-      setProcessing(false);
     }
   };
 
@@ -267,7 +272,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
           <Button title="Sign" onPress={sign} />
           <Button title="Send transaction" onPress={sendTransaction} />
           <Button title="Add chain" onPress={exampleRequest} />
-          <Text style={textStyle}>{processing && 'Processing request...'}</Text>
           <Text style={textStyle}>
             {chain && `Connected chain: ${chain}\n`}
             {account && `Connected account: ${account}\n\n`}

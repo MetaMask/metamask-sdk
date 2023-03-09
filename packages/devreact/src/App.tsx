@@ -105,7 +105,9 @@ export const App = () => {
       })
       .then((accounts) => {
         if(accounts) {
+          console.debug(`connect:: accounts result`);
           setAccount((accounts as string[])[0]);
+          setConnected(true);
         }
       })
       .catch((e) => console.log("request accounts ERR", e));
@@ -134,31 +136,50 @@ export const App = () => {
   };
 
   useEffect(() => {
-    console.debug(`App::useEffect window.ethereum listeners`);
+    console.debug(`App::useEffect window.ethereum listeners sdk.isInitialized=${sdk.isInitialized()}`);
 
     if(window.ethereum?.selectedAddress) {
+      console.debug(`App::useEffect setting account from window.ethereum `);
       setAccount(window.ethereum?.selectedAddress);
+      setConnected(true);
+    } else {
+      setConnected(false);
     }
 
-    window.ethereum?.on("chainChanged", (chain) => {
-      console.log(chain);
-      setChain(chain as string);
-    });
-    window.ethereum?.on("accountsChanged", (accounts) => {
-      console.log(accounts);
-      setAccount((accounts as string[])?.[0]);
-    });
-    window.ethereum?.on('connect', (_connectInfo) => {
-      const connectInfo = _connectInfo as {chainId: string};
-      console.log(`connected`, connectInfo);
-      setConnected(true);
-      // setConnectionStatus(ConnectionStatus.LINKED)
-      setChain(connectInfo.chainId);
-    })
-    window.ethereum?.on("disconnect", (error) => {
-      console.log('disconnect', error);
-      setConnected(false);
-    });
+    if(sdk.isInitialized()) {
+      window.ethereum?.on("chainChanged", (chain) => {
+        console.log(`App::useEfect on 'chainChanged'`, chain);
+        setChain(chain as string);
+        setConnected(true);
+      });
+      window.ethereum?.on('_initialized', () => {
+        console.debug(`App::useEffect on _initialized`);
+        setConnected(true);
+        if(window.ethereum?.selectedAddress) {
+          setAccount(window.ethereum?.selectedAddress);
+        }
+        if(window.ethereum?.chainId) {
+          setChain(window.ethereum.chainId);
+        }
+      })
+      window.ethereum?.on("accountsChanged", (accounts) => {
+        console.log(`App::useEfect on 'accountsChanged'`, accounts);
+        setAccount((accounts as string[])?.[0]);
+        setConnected(true);
+      });
+      window.ethereum?.on('connect', (_connectInfo) => {
+        console.log(`App::useEfect on 'connect'`, _connectInfo);
+        const connectInfo = _connectInfo as {chainId: string};
+        setConnected(true);
+        // setConnectionStatus(ConnectionStatus.LINKED)
+        setChain(connectInfo.chainId);
+      })
+      window.ethereum?.on("disconnect", (error) => {
+        console.log(`App::useEfect on 'disconnect'`, error);
+        setConnected(false);
+      });
+    }
+
   }, []);
 
   useEffect( () => {
@@ -270,11 +291,8 @@ export const App = () => {
     console.debug(`sign from: ${from}`);
     try {
       if (!from || from===null) {
-        // request accounts first.
-        const accounts = await window.ethereum?.request({method: 'eth_requestAccounts', params: []}) as string[];
-        from = accounts[0];
-        setAccount(from);
-        console.debug(`after request from=${from}`);
+        alert(`Invalid account -- please connect using eth_requestAccounts first`);
+        return;
       }
 
       const params = [from, msgParams];
@@ -354,7 +372,6 @@ export const App = () => {
   return (
     <div className="App">
       <div className="sdkConfig">
-        <>
           <p>
             Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
           </p>
@@ -365,96 +382,80 @@ export const App = () => {
           }
           <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
           <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
-          <div>
-            <div className='row'>
-              <div className='rowLabel'>DAPP Private Key:</div>
-              <div className='rowValue even'>{serviceStatus?.keyInfo?.ecies.private}</div>
-            </div>
-            <div className='row'>
-              <div className='rowLabel'>DAPP Public Key:</div>
-              <div className='rowValue odd'>{serviceStatus?.keyInfo?.ecies.public}</div>
-            </div>
-            <div className='row'>
-              <div className='rowLabel'>MM Public Key:</div>
-              <div className='rowValue even'>{serviceStatus?.keyInfo?.ecies.otherPubKey}</div>
-            </div>
-          </div>
+      </div>
+
+      {connected ? <div>
+          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+            Request Accounts
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={sign}>
+            Sign
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction} >
+            Send transaction
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={ping} >
+            Ping
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={setText} >
+            Set Text
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={getInfos} >
+            Get Provider State
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')} >
+            Switch Ethereum
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')} >
+            Switch Polygon
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain} >
+            Add ethereum chain
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => {
+            console.debug(`App::keyinfo`, sdk.getKeyInfo());
+          }} >
+            Print Key Info
+          </button>
+
+          <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
+            Disconnect
+          </button>
+        </div> :
+        <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+          Connect
+        </button>
+      }
+
+      <button style={{ padding: 10, margin: 10 }} onClick={() => {
+        console.debug(`test ui`);
+        sdk.testUI('pending');
+      }}>
+        TEST UI
+      </button>
+
+      <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
+        Terminate
+      </button>
+
+      <div>
+        <>
+          {chain && `Connected chain: ${chain}`}
+          <p></p>
+          {account && `Connected account: ${account}`}
+          <p></p>
+          {response && `Last request response: ${response}`}
         </>
       </div>
-      <>
-        <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-          {connected ? "Connected" : "New Connection"}
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={sign}>
-          Sign
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction} >
-          Send transaction
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={ping} >
-          Ping
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={setText} >
-          Set Text
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={getInfos} >
-          Get Provider State
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')} >
-          Switch Ethereum
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')} >
-          Switch Polygon
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain} >
-          Add ethereum chain
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`App::keyinfo`, sdk.getKeyInfo());
-        }} >
-          Print Key Info
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`test ui`);
-          sdk.testUI('pending');
-        }}>
-          TEST UI
-        </button>
-
-        {connected &&
-          <>
-            <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
-              Disconnect
-            </button>
-          </>
-        }
-        <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
-          Terminate
-        </button>
-
-        <div>
-          {connected &&
-            <>
-              {chain && `Connected chain: ${chain}`}
-              <p></p>
-              {account && `Connected account: ${account}`}
-              <p></p>
-              {response && `Last request response: ${response}`}
-            </>
-          }
-        </div>
-
-        </>
     </div>
   );
 }
