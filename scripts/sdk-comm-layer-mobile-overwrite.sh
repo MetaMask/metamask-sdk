@@ -3,7 +3,7 @@
 ##############################
 ### EDIT THESE VALUES PATH ###
 ##############################
-MM_MOBILE_PATH="/Users/arthurbreton/Projects/metamask/metamask-mobile"
+MM_MOBILE_PATH="~/Projects/metamask/metamask-mobile"
 ##############################
 ### STOP EDITING FROM HERE ###
 ##############################
