@@ -257,15 +257,17 @@ export class RemoteCommunication extends EventEmitter2 {
         console.debug(
           `RemoteCommunication::${
             this.context
-          }::on 'clients_ready' keysExchanged=${
+          }::on commLayer.'clients_ready' keysExchanged=${
             this.getKeyInfo()?.keysExchanged
           } `,
           message,
         );
       }
 
-      console.debug(`RemoteCommunication::clients_ready set ready to true`);
-      this.setConnectionStatus(ConnectionStatus.LINKED);
+      if (this.getKeyInfo()?.keysExchanged) {
+        this.setConnectionStatus(ConnectionStatus.LINKED);
+      }
+
       this.setLastActiveDate(new Date());
 
       if (this.analytics && this.channelId) {
@@ -280,6 +282,7 @@ export class RemoteCommunication extends EventEmitter2 {
       if (!message.isOriginator) {
         // Don't send originator message from wallet.
         // Always Tell the DAPP metamask is ready
+        // the dapp will send originator message when receiving ready.
         this.communicationLayer?.sendMessage({ type: MessageType.READY });
         this.ready = true;
         this.paused = false;
@@ -306,9 +309,7 @@ export class RemoteCommunication extends EventEmitter2 {
           return;
         }
 
-        if (!this.paused) {
-          this.ready = false;
-        }
+        this.ready = false;
 
         if (this.analytics && this.channelId) {
           SendAnalytics({
@@ -422,12 +423,9 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.PAUSE) {
       this.paused = true;
       this.setConnectionStatus(ConnectionStatus.PAUSED);
-    } else if (message.type === MessageType.READY) {
+    } else if (message.type === MessageType.READY && this.isOriginator) {
       console.debug(`RECEIVING 'READY' from wallet`, this.originatorInfo);
-      if (this.paused) {
-        // restarting from pause
-        this.setConnectionStatus(ConnectionStatus.LINKED);
-      }
+      this.setConnectionStatus(ConnectionStatus.LINKED);
 
       // Always re-send originator info in case the session was deleted on the wallet
       this.communicationLayer?.sendMessage({
@@ -619,6 +617,13 @@ export class RemoteCommunication extends EventEmitter2 {
           resolve();
         });
       } else {
+        if (!this.communicationLayer?.isConnected()) {
+          // Make sure socket is connected before sending the message.
+          console.warn(
+            `RemoteCommunication::${this.context}::sendMessage  invalid socket status -- disconnected -- try to resume`,
+          );
+          this.communicationLayer?.resume();
+        }
         this.communicationLayer?.sendMessage(message);
         resolve();
       }

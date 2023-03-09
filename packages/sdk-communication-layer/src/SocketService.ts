@@ -162,6 +162,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (!this.socket.connected) {
         this.reconnect = true;
         this.socket.connect();
+        console.debug(
+          `SocketService::connectAgain after reconnect connected=${this.socket.connected} -- emit JOIN_CHANNEL`,
+        );
         this.socket.emit(
           EventType.JOIN_CHANNEL,
           this.channelId,
@@ -671,33 +674,34 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       );
     }
 
-    // if (this.isConnected()) {
-    //   if (this.debug) {
-    //     console.debug(`SocketService::resume() already connected.`);
-    //   }
-    //   // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
-    //   this.socket.emit(
-    //     EventType.JOIN_CHANNEL,
-    //     this.channelId,
-    //     `${this.context}_resume`,
-    //   );
-    //   return;
-    // }
-
-    if (this.keyExchange.areKeysExchanged()) {
-      // ASK to START key exchange
-      this.manualDisconnect = false;
-      this.reconnect = true;
+    if (this.isConnected()) {
+      if (this.debug) {
+        console.debug(`SocketService::resume() already connected.`);
+      }
+    } else {
+      if (this.debug) {
+        console.debug(`SocketService::resume() connecting socket.`);
+      }
       this.socket.connect();
+      // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
       this.socket.emit(
         EventType.JOIN_CHANNEL,
         this.channelId,
         `${this.context}_resume`,
       );
+    }
+
+    if (this.keyExchange.areKeysExchanged()) {
       if (!this.isOriginator) {
         this.sendMessage({ type: MessageType.READY });
       }
+    } else if (!this.isOriginator) {
+      // Ask to start key exchange
+      this.sendMessage({ type: KeyExchangeMessageType.KEY_HANDSHAKE_START });
     }
+
+    this.manualDisconnect = false;
+    this.reconnect = true;
   }
 
   disconnect(options?: DisconnectOptions): void {
