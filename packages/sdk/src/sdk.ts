@@ -19,15 +19,13 @@ import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
-import { WakeLockStatus } from './types/WakeLockStatus';
+import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
+import { WakeLockStatus } from './types/WakeLockStatus';
 import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
 import sdkWebPendingModal from './ui/InstallModal/pendinglModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
-import { SDKLoggingOptions } from './types/SDKLoggingOptions';
-import { extractFavicon } from './utils/extractFavicon';
-import { getBase64FromUrl } from './utils/getBase64FromUrl';
 
 export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
@@ -45,7 +43,7 @@ export interface MetaMaskSDKOptions {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  dappMetadata?: DappMetadata;
+  dappMetadata: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
@@ -76,18 +74,23 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private debug = false;
 
-  constructor(options: MetaMaskSDKOptions = {}) {
+  constructor(options: MetaMaskSDKOptions) {
     super();
 
     this.options = options;
-    this.initialize(options).then(() => {
-      if (this.debug) {
-        console.debug(`sdk initialized`, this.dappMetadata);
-      }
-    });
+    // Currently disabled otherwise it breaks compability with older sdk version.
+    // this.initialize(options).then(() => {
+    //   if (this.debug) {
+    //     console.debug(`sdk initialized`, this.dappMetadata);
+    //   }
+    // });
+    this.initialize(options);
+    if (this.debug) {
+      console.debug(`sdk initialized`, this.dappMetadata);
+    }
   }
 
-  private async initialize(options: MetaMaskSDKOptions = {}) {
+  private initialize(options: MetaMaskSDKOptions) {
     const {
       dappMetadata,
       // Provider
@@ -166,21 +169,35 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage.storageManager = getStorageManager(storage);
       }
 
-      if (dappMetadata && !dappMetadata.base64Icon) {
-        // Try to extract default icon
-        if (platform.isBrowser()) {
-          const favicon = extractFavicon();
-          if (favicon) {
-            try {
-              const faviconUri = await getBase64FromUrl(favicon);
-              dappMetadata.base64Icon = faviconUri;
-            } catch (err) {
-              // Ignore favicon error.
-            }
-          }
+      // Try to fill potentially missing field in dapp metadata.
+
+      if (platform.isBrowser()) {
+        if (!dappMetadata.url) {
+          dappMetadata.url = window.location.href;
         }
+
+        // if (!dappMetadata.name) {
+        //   dappMetadata.name = document.title;
+        // }
+
+        // TODO can be re-enabled once init can be async but would break backward compatibility
+        // if (!dappMetadata.base64Icon) {
+        //   // Try to extract default icon
+        //   if (platform.isBrowser()) {
+        //     const favicon = extractFavicon();
+        //     if (favicon) {
+        //       try {
+        //         const faviconUri = await getBase64FromUrl(favicon);
+        //         dappMetadata.base64Icon = faviconUri;
+        //       } catch (err) {
+        //         // Ignore favicon error.
+        //       }
+        //     }
+        //   }
+        // }
       }
-      console.debug(`dappMetadagta`, dappMetadata);
+
+      console.debug(`dappMetadata`, dappMetadata);
       this.dappMetadata = dappMetadata;
 
       this.remoteConnection = new RemoteConnection({
@@ -276,6 +293,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   terminate() {
     this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+  }
+
+  isInitialized() {
+    return this._initialized;
   }
 
   ping() {
