@@ -57,7 +57,7 @@ const sdk = new MetaMaskSDK({
       );
     }
   },
-  communicationServerUrl: remotServerUrl,
+  // communicationServerUrl: remotServerUrl,
   checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,
