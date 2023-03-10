@@ -241,36 +241,19 @@ export class RemoteConnection implements ProviderService {
       const link = `metamask://connect?${linkParams}`;
 
       Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
+    } else if (!trustedDevice) {
+      const onDisconnect = () => {
+        this.options.modals.onPendingModalDisconnect?.();
+        this.displayedModal?.onClose();
+      };
+
+      if (this.displayedModal) {
+        // Make sure modal is visible
+        this.displayedModal.mount?.();
+      } else {
+        this.displayedModal = sdkPendingModal(onDisconnect);
+      }
     }
-    // else if (!trustedDevice) {
-    //   const onDisconnect = () => {
-    //     this.options.modals.onPendingModalDisconnect?.();
-    //     this.displayedModal?.onClose();
-    //   };
-
-    //   const waitForOTP = async (): Promise<number> => {
-    //     let checkOTPTrial = 0;
-    //     while (checkOTPTrial < 100) {
-    //       if (this.otpAnswer) {
-    //         return this.otpAnswer;
-    //       }
-    //       await new Promise<void>((res) => setTimeout(() => res(), 1000));
-    //       checkOTPTrial += 1;
-    //     }
-    //     return -1;
-    //   };
-
-    //   if (this.displayedModal) {
-    //     // Make sure modal is visible
-    //     this.displayedModal.mount?.();
-    //   } else {
-    //     this.displayedModal = sdkPendingModal(onDisconnect);
-    //   }
-
-    //   waitForOTP().then((otpAnswer) => {
-    //     this.displayedModal?.updateOTPValue?.(otpAnswer);
-    //   });
-    // }
   }
 
   async startConnection(): Promise<boolean> {
