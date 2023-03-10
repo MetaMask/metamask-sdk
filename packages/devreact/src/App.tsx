@@ -177,6 +177,7 @@ export const App = () => {
       window.ethereum?.on("disconnect", (error) => {
         console.log(`App::useEfect on 'disconnect'`, error);
         setConnected(false);
+        setChain("");
       });
     }
 

@@ -89,14 +89,16 @@ export class RemoteCommunicationPostMessageStream
       },
     );
 
-    // this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
-    //   if (this.debug) {
-    //     console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
-    //   }
+    this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
+      if (this.debug) {
+        console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
+      }
 
-    //   const provider = Ethereum.getProvider();
-    //   provider.handleDisconnect({ terminate: false });
-    // });
+      if (!platform.isSecure()) {
+        const provider = Ethereum.getProvider();
+        provider.handleDisconnect({ terminate: false });
+      }
+    });
   }
 
   /**

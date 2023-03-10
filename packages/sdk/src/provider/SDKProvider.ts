@@ -80,11 +80,11 @@ export class SDKProvider extends MetaMaskInpageProvider {
       this._state.isUnlocked = false;
       this._state.isPermanentlyDisconnected = true;
       this._state.initialized = false;
-      this._state.isConnected = false;
-    } else {
-      this._state.isConnected = false;
     }
-    // TODO might not need to call _handleDisconnect and manage state directly.
+    this._state.isConnected = false;
+
+    this.emit('disconnect');
+    this._handleAccountsChanged([]);
     this._handleDisconnect(true);
     this.providerStateRequested = false;
   }
