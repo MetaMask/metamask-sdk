@@ -138,11 +138,29 @@ export class RemoteConnection implements ProviderService {
         });
     }
 
-    this.connector.on(EventType.OTP, (otpAnswer) => {
-      console.debug(`RECEIVED EVENT OTP`, otpAnswer);
-      this.otpAnswer = otpAnswer;
-      this.displayedModal?.updateOTPValue?.(otpAnswer);
-    });
+    if (!platform.isSecure()) {
+      this.connector.on(EventType.OTP, (otpAnswer) => {
+        console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
+        this.otpAnswer = otpAnswer;
+        if (this.displayedModal) {
+          console.debug(`RemoteConnection::on 'OTP' MOUNT PENDING MODAL`);
+          this.displayedModal.mount?.();
+        } else {
+          console.debug(`RemoteConnection::on 'OTP' init pending modal`);
+          const onDisconnect = () => {
+            this.options.modals.onPendingModalDisconnect?.();
+            this.displayedModal?.onClose();
+          };
+          this.displayedModal = sdkPendingModal(onDisconnect);
+        }
+        this.displayedModal?.updateOTPValue?.(otpAnswer);
+
+        const provider = Ethereum.getProvider();
+        provider.once('_initialized', async () => {
+          this.displayedModal?.onClose();
+        });
+      });
+    }
 
     this.connector.on(EventType.TERMINATE, () => {
       if (typeof window === 'undefined') {
@@ -223,39 +241,36 @@ export class RemoteConnection implements ProviderService {
       const link = `metamask://connect?${linkParams}`;
 
       Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
-    } else if (!trustedDevice) {
-      const onDisconnect = () => {
-        this.options.modals.onPendingModalDisconnect?.();
-        this.displayedModal?.onClose();
-      };
-
-      const waitForOTP = async (): Promise<number> => {
-        let checkOTPTrial = 0;
-        while (checkOTPTrial < 100) {
-          if (this.otpAnswer) {
-            return this.otpAnswer;
-          }
-          await new Promise<void>((res) => setTimeout(() => res(), 1000));
-          checkOTPTrial += 1;
-        }
-        return -1;
-      };
-
-      if (this.displayedModal) {
-        // Make sure modal is visible
-        this.displayedModal.mount?.();
-      } else {
-        this.displayedModal = sdkPendingModal(onDisconnect);
-      }
-
-      waitForOTP().then((otpAnswer) => {
-        this.displayedModal?.updateOTPValue?.(otpAnswer);
-      });
-
-      provider.once('_initialized', async () => {
-        this.displayedModal?.onClose();
-      });
     }
+    // else if (!trustedDevice) {
+    //   const onDisconnect = () => {
+    //     this.options.modals.onPendingModalDisconnect?.();
+    //     this.displayedModal?.onClose();
+    //   };
+
+    //   const waitForOTP = async (): Promise<number> => {
+    //     let checkOTPTrial = 0;
+    //     while (checkOTPTrial < 100) {
+    //       if (this.otpAnswer) {
+    //         return this.otpAnswer;
+    //       }
+    //       await new Promise<void>((res) => setTimeout(() => res(), 1000));
+    //       checkOTPTrial += 1;
+    //     }
+    //     return -1;
+    //   };
+
+    //   if (this.displayedModal) {
+    //     // Make sure modal is visible
+    //     this.displayedModal.mount?.();
+    //   } else {
+    //     this.displayedModal = sdkPendingModal(onDisconnect);
+    //   }
+
+    //   waitForOTP().then((otpAnswer) => {
+    //     this.displayedModal?.updateOTPValue?.(otpAnswer);
+    //   });
+    // }
   }
 
   async startConnection(): Promise<boolean> {
