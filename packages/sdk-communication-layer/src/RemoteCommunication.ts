@@ -287,6 +287,15 @@ export class RemoteCommunication extends EventEmitter2 {
         this.ready = true;
         this.paused = false;
       }
+
+      // Keep sending originator info from this location for backward compatibility
+      if (message.isOriginator) {
+        // Always re-send originator info in case the session was deleted on the wallet
+        this.communicationLayer?.sendMessage({
+          type: MessageType.ORIGINATOR_INFO,
+          originatorInfo: this.originatorInfo,
+        });
+      }
     });
 
     this.communicationLayer?.on(
@@ -426,12 +435,6 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.READY && this.isOriginator) {
       console.debug(`RECEIVING 'READY' from wallet`, this.originatorInfo);
       this.setConnectionStatus(ConnectionStatus.LINKED);
-
-      // Always re-send originator info in case the session was deleted on the wallet
-      this.communicationLayer?.sendMessage({
-        type: MessageType.ORIGINATOR_INFO,
-        originatorInfo: this.originatorInfo,
-      });
 
       this.paused = false;
       console.debug(`emitting CLIENTS_READY to send pending messages`);
