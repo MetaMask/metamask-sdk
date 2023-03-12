@@ -158,9 +158,6 @@ export class RemoteCommunicationPostMessageStream
 
       this.remote.sendMessage(data?.data);
 
-      // const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
-      // const isNotBrowser = platform.isNotBrowser();
-
       if (!platform.isSecure()) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
@@ -171,9 +168,6 @@ export class RemoteCommunicationPostMessageStream
         return callback();
       }
 
-      // Wait for promise to avoid multiple redirection.
-      // await p;
-      // Cannot wait for sendMessage in case metamask was killed.
       if (!channelId) {
         console.warn(`Invalid channel id -- undefined`);
         return callback(
@@ -181,8 +175,15 @@ export class RemoteCommunicationPostMessageStream
         );
       }
 
-      if (!ready) {
-        // Needs to redirect when not ready so the connection gets re-initialized.
+      if (!socketConnected && !ready) {
+        // Invalid connection status
+        if (this.debug) {
+          console.debug(
+            `RCPMS::_write invalid connection status -- socketConnected=${socketConnected} ready=${ready}`,
+          );
+        }
+
+        return callback();
       }
 
       // Check if should open app
@@ -234,7 +235,6 @@ export class RemoteCommunicationPostMessageStream
       );
     }
 
-    console.debug(`RCPMS::_write end of method returning callback()`);
     return callback();
   }
 
