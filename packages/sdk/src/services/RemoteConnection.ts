@@ -159,10 +159,10 @@ export class RemoteConnection implements ProviderService {
 
         const provider = Ethereum.getProvider();
         provider.once('_initialized', async () => {
+          console.debug(`connection _initialized -- reset OTP value`);
           this.displayedModal?.onClose();
           this.displayedModal?.updateOTPValue?.('');
           this.otpAnswer = undefined;
-          this.displayedModal = undefined;
         });
       });
     }
@@ -383,15 +383,7 @@ export class RemoteConnection implements ProviderService {
               return;
             }
 
-            if (!provider.selectedAddress) {
-              // Always make sure to requestAccounts
-              await provider.request({
-                method: 'eth_requestAccounts',
-                params: [],
-              });
-            }
             this.sentFirstConnect = true;
-
             // try to close displayedModal
             this.displayedModal?.onClose();
             this.displayedModal = undefined;
