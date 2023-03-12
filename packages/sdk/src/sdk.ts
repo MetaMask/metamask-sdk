@@ -326,7 +326,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       const { updateOTPValue } = sdkWebPendingModal(() => {});
       setTimeout(() => {
         console.debug(`try to update otp value`);
-        updateOTPValue(233);
+        updateOTPValue('233');
       }, 2000);
     } else {
       sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });

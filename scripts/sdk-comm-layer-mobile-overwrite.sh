@@ -3,7 +3,7 @@
 ##############################
 ### EDIT THESE VALUES PATH ###
 ##############################
-MM_MOBILE_PATH="~/Projects/metamask/metamask-mobile"
+MM_MOBILE_PATH="$HOME/Projects/metamask/metamask-mobile"
 ##############################
 ### STOP EDITING FROM HERE ###
 ##############################
@@ -21,8 +21,8 @@ echo "COMM_LAYER_DIR: $COMM_LAYER_DIR"
 echo "########### START REPLACING SDK_COMMUNICATION_LAYER #########"
 
 cd $COMM_LAYER_DIR
-echo "building sdk-communication-layer..."
-yarn build
+# echo "building sdk-communication-layer..."
+# yarn build
 
 echo "Hack Metamask Mobile with sdk-communication-layer package..."
 cd $MM_MOBILE_PATH

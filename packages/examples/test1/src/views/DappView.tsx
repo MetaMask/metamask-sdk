@@ -84,11 +84,14 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       });
 
       ethereum.on('chainChanged', (newChain: string) => {
-        console.log(newChain);
+        console.log('useEffect::ethereum on "chainChanged"', newChain);
         setChain(newChain);
       });
 
       ethereum.on('_initialized', () => {
+        console.log(
+          `useEffect::ethereum on "_initialized" ethereum.selectedAddress=${ethereum.selectedAddress} ethereum.chainId=${ethereum.chainId}`,
+        );
         if (ethereum.selectedAddress) {
           setAccount(ethereum?.selectedAddress);
           getBalance();
