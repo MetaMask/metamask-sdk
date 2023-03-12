@@ -18,6 +18,7 @@ import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
 import { MessageType } from './types/MessageType';
 import { ServiceStatus } from './types/ServiceStatus';
+import { wait } from './utils/wait';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -215,7 +216,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
     });
 
-    this.socket.on(`clients_connected-${channelId}`, (_id: string) => {
+    this.socket.on(`clients_connected-${channelId}`, async (_id: string) => {
       if (this.debug) {
         console.debug(
           `SocketService::${
@@ -242,7 +243,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.isOriginator) {
         // Problem is that key exchange is started from both side
         if (!this.keyExchange.areKeysExchanged()) {
-          this.keyExchange.start();
+          this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
         }
       }
 
@@ -250,7 +251,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         if (this.keyExchange.areKeysExchanged()) {
           if (this.debug) {
             console.debug(
-              `SocketService::${this.context}::setupChannelListener sendMessage({type: READY})`,
+              `SocketService::${this.context}::on 'clients_connected' reconnect=true keysExchanged=false`,
             );
           }
           if (
@@ -264,9 +265,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
+          await wait(2000);
+          // Add delay in case exchange was already initiated by dapp.
           // should ask to redo a key exchange because it wasn't paused.
-          this.sendMessage({
-            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+          console.debug(
+            `AAAAAAAAAAAAAAAAAAA FGHJ add delay before starting keyexchange`,
+          );
+          this.keyExchange.start({
+            isOriginator: this.isOriginator ?? false,
           });
         }
         // reconnect switched when connection resume.
@@ -279,9 +285,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           context: this.context,
         });
       } else if (!this.isOriginator) {
+        await wait(2000);
+        console.debug(
+          `BBBBBBBBBBBBBBBBBBBB 'clients_connected' FGHJ add delay before starting keyexchange`,
+        );
+        // Add delay in case exchange was already initiated by dapp.
         // Always request key exchange from wallet since it looks like a reconnection.
-        this.sendMessage({
-          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+        this.keyExchange.start({
+          isOriginator: this.isOriginator ?? false,
+          force: true,
         });
       }
 
@@ -302,14 +314,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.socket.on(`clients_disconnected-${channelId}`, () => {
       this.clientsConnected = false;
       // If it wasn't paused - need to reset keys.
-      if (!this.clientsPaused) {
-        if (this.isOriginator) {
-          // On a DAPP, always re-initialize connection.
-          this.reconnect = true;
-        }
-        this.keyExchange.clean();
-      }
-
       this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
     });
 
@@ -318,14 +322,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(
           `SocketService::${
             this.context
-          }::setupChannelListener::on 'message-${channelId}' keysExchanged=${this.keyExchange.areKeysExchanged()}`,
+          }::on 'message' ${channelId} keysExchanged=${this.keyExchange.areKeysExchanged()}`,
           message,
         );
       }
 
       if (error) {
         console.debug(`
-        SocketService::${this.context}::setupChannelListener::on message error=${error}`);
+        SocketService::${this.context}::on 'message' error=${error}`);
         throw new Error(error);
       }
 
@@ -337,12 +341,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       ) {
         if (this.debug) {
           console.debug(
-            `SocketService::${this.context}::setupChannelListener received HANDSHAKE_START isOriginator=${this.isOriginator}`,
+            `SocketService::${this.context}::on 'message' received HANDSHAKE_START isOriginator=${this.isOriginator}`,
             message,
           );
         }
 
-        return this.keyExchange.start();
+        return this.keyExchange.start({
+          isOriginator: this.isOriginator ?? false,
+        });
       }
 
       if (message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_CHECK) {
@@ -365,7 +371,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         );
 
         if (!keysVerified) {
-          this.keyExchange.start();
+          this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
         }
 
         return this.emit(EventType.MESSAGE, {
@@ -374,16 +380,17 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (message?.type === MessageType.PING) {
-        console.debug(
-          `SocketService::${this.context}::setupChannelListener::on message ping `,
-        );
+        if (this.debug) {
+          console.debug(`SocketService::${this.context}::on 'message' ping `);
+        }
+
         return this.emit(EventType.MESSAGE, { message: { type: 'ping' } });
       }
 
       if (this.debug) {
         // Special case to manage resetting key exchange when keys are already exchanged
         console.debug(
-          `SocketService::${this.context}::setupChannelListener originator=${
+          `SocketService::${this.context}::on 'message' originator=${
             this.isOriginator
           }, type=${
             message?.type
@@ -394,7 +401,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (message?.type?.startsWith('key_handshake')) {
         if (this.debug) {
           console.debug(
-            `SocketService::${this.context}::setupChannelListener emit KEY_EXCHANGE`,
+            `SocketService::${this.context}::on 'message' emit KEY_EXCHANGE`,
             message,
           );
         }
@@ -408,7 +415,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (!this.keyExchange.areKeysExchanged()) {
         // received encrypted message before keys were exchanged.
         if (this.isOriginator) {
-          this.keyExchange.start();
+          this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
         } else {
           // Request new key exchange
           this.sendMessage({
@@ -424,7 +431,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       } else if (message.toString().indexOf('type') !== -1) {
         // Even if keys were exchanged, if the message is not encrypted, emit it.
         console.warn(
-          `SocketService::on message received non encrypted unkwown message`,
+          `SocketService::on 'message' received non encrypted unkwown message`,
         );
         return this.emit(EventType.MESSAGE, message);
       }
@@ -644,8 +651,19 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   ping() {
     if (this.debug) {
-      console.debug(`SocketService::${this.context}::ping()`);
+      console.debug(
+        `SocketService::${
+          this.context
+        }::ping() keysExchanged=${this.keyExchange.areKeysExchanged()}`,
+      );
     }
+
+    if (this.keyExchange.areKeysExchanged()) {
+      this.sendMessage({ type: MessageType.READY });
+    } else {
+      this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
+    }
+
     this.socket.emit(EventType.MESSAGE, {
       id: this.channelId,
       context: this.context,
@@ -673,17 +691,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   resume(): void {
     if (this.debug) {
       console.debug(
-        `SocketService::${
-          this.context
-        }::resume() connected=${this.isConnected()} manualDisconnect=${
-          this.manualDisconnect
-        } reconnect=${
+        `SocketService::${this.context}::resume() connected=${
+          this.socket.connected
+        } manualDisconnect=${this.manualDisconnect} reconnect=${
           this.reconnect
         } keysExchanged=${this.keyExchange.areKeysExchanged()}`,
       );
     }
 
-    if (this.isConnected()) {
+    if (this.socket.connected) {
       if (this.debug) {
         console.debug(`SocketService::resume() already connected.`);
       }
@@ -692,6 +708,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(`SocketService::resume() connecting socket.`);
       }
       this.socket.connect();
+      console.debug(
+        `SocketService::resume() after connecting socket --> connected=${this.socket.connected}`,
+      );
       // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
       this.socket.emit(
         EventType.JOIN_CHANNEL,
@@ -706,7 +725,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
     } else if (!this.isOriginator) {
       // Ask to start key exchange
-      this.sendMessage({ type: KeyExchangeMessageType.KEY_HANDSHAKE_START });
+      this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
     }
 
     this.manualDisconnect = false;

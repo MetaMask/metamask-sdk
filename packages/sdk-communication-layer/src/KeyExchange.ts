@@ -156,27 +156,51 @@ export class KeyExchange extends EventEmitter2 {
     this.otherPublicKey = undefined;
   }
 
-  start(): void {
+  start({
+    isOriginator,
+    force,
+  }: {
+    isOriginator: boolean;
+    force?: boolean;
+  }): void {
     if (this.debug) {
-      console.debug(`KeyExchange::${this.context}::start `);
+      console.debug(
+        `KeyExchange::${this.context}::start isOriginator=${isOriginator} step=${this.step} keysExchanged=${this.keysExchanged}`,
+      );
+    }
+
+    if (!isOriginator) {
+      if (!this.keysExchanged && force !== true) {
+        // Ask to start exchange only if not already in progress
+        this.communicationLayer.sendMessage({
+          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+        });
+        this.clean();
+      } else if (this.debug) {
+        console.debug(
+          `KeyExchange::start don't send KEY_HANDSHAKE_START -- exchange already done.`,
+        );
+      }
+
+      return;
     }
 
     // Only if we are not already in progress
     if (this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) {
       console.warn(
-        `KeyExchange::${this.context}::start -- interrupted because key exchange in progress step=${this.step}`,
+        `KeyExchange::${this.context}::start -- restart key exchange -- step=${this.step}`,
         this.step,
       );
-      return;
+      // Key exchange can be restarted if the wallet ask for a new key.
     }
 
     this.clean();
-    // this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
     this.step = KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK;
     this.emit(EventType.KEY_INFO, this.step);
+    // From v0.2.0, we Always send the public key because exchange can be restarted at any time.
     this.communicationLayer.sendMessage({
       type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
-      pubkey: this.sendPublicKey ? this.myPublicKey : undefined,
+      pubkey: this.myPublicKey,
     });
   }
 

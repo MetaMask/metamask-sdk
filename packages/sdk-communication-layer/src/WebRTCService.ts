@@ -8,7 +8,6 @@ import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { EventType } from './types/EventType';
 import { InternalEventType } from './types/InternalEventType';
-import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { MessageType } from './types/MessageType';
 import { WebRTCLib } from './types/WebRTCLib';
@@ -186,7 +185,9 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
 
         if (this.isOriginator) {
           if (!this.keyExchange.areKeysExchanged()) {
-            this.keyExchange.start();
+            this.keyExchange.start({
+              isOriginator: this.isOriginator ?? false,
+            });
           }
         }
 
@@ -197,8 +198,8 @@ export class WebRTCService extends EventEmitter2 implements CommunicationLayer {
               isOriginator: this.isOriginator,
             });
           } else if (!this.isOriginator) {
-            this.sendMessage({
-              type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+            this.keyExchange.start({
+              isOriginator: this.isOriginator ?? false,
             });
           }
           this.reconnect = false;
