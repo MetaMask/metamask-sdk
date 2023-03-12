@@ -53,7 +53,7 @@ export class RemoteConnection implements ProviderService {
   private displayedModal?: {
     onClose: () => void;
     mount?: () => void;
-    updateOTPValue?: (otpAnswer: number) => void;
+    updateOTPValue?: (otpAnswer: string) => void;
   };
 
   private options: RemoteConnectionProps;
@@ -61,7 +61,7 @@ export class RemoteConnection implements ProviderService {
   /**
    * Wait for value from metamask mobile
    */
-  private otpAnswer?: number;
+  private otpAnswer?: string;
 
   constructor(options: RemoteConnectionProps) {
     this.options = options;
@@ -150,6 +150,8 @@ export class RemoteConnection implements ProviderService {
           const onDisconnect = () => {
             this.options.modals.onPendingModalDisconnect?.();
             this.displayedModal?.onClose();
+            this.displayedModal?.updateOTPValue?.('');
+            this.displayedModal = undefined;
           };
           this.displayedModal = sdkPendingModal(onDisconnect);
         }
@@ -158,6 +160,9 @@ export class RemoteConnection implements ProviderService {
         const provider = Ethereum.getProvider();
         provider.once('_initialized', async () => {
           this.displayedModal?.onClose();
+          this.displayedModal?.updateOTPValue?.('');
+          this.otpAnswer = undefined;
+          this.displayedModal = undefined;
         });
       });
     }
@@ -178,6 +183,7 @@ export class RemoteConnection implements ProviderService {
         this.otpAnswer = undefined;
       } else if (status === ConnectionStatus.DISCONNECTED) {
         this.sentFirstConnect = false;
+        this.displayedModal?.updateOTPValue?.('');
       }
     });
 
@@ -222,11 +228,6 @@ export class RemoteConnection implements ProviderService {
       );
     }
 
-    // // make sure to reconnect locally if connection was lost
-    // if (!this.connector.isConnected()) {
-    //   //
-    // }
-
     if (trustedDevice && deeplink) {
       const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
       let linkParams = encodeURI(
@@ -245,6 +246,19 @@ export class RemoteConnection implements ProviderService {
       const onDisconnect = () => {
         this.options.modals.onPendingModalDisconnect?.();
         this.displayedModal?.onClose();
+        this.displayedModal = undefined;
+      };
+
+      const waitForOTP = async (): Promise<string> => {
+        let checkOTPTrial = 0;
+        while (checkOTPTrial < 100) {
+          if (this.otpAnswer) {
+            return this.otpAnswer;
+          }
+          await new Promise<void>((res) => setTimeout(() => res(), 1000));
+          checkOTPTrial += 1;
+        }
+        return '';
       };
 
       if (this.displayedModal) {
@@ -253,6 +267,13 @@ export class RemoteConnection implements ProviderService {
       } else {
         this.displayedModal = sdkPendingModal(onDisconnect);
       }
+
+      waitForOTP().then((otp) => {
+        console.debug(
+          `RemoteConnection::handleSecureReconnection() waitForOTP DONE! otp=${otp}`,
+        );
+        this.displayedModal?.updateOTPValue?.(otp);
+      });
     }
   }
 
@@ -346,6 +367,7 @@ export class RemoteConnection implements ProviderService {
               console.debug(`RemoteConnection error`, err);
               this.displayedModal?.onClose();
               this.otpAnswer = undefined;
+              this.displayedModal?.updateOTPValue?.('');
               reject(err);
             });
 
@@ -372,6 +394,7 @@ export class RemoteConnection implements ProviderService {
 
             // try to close displayedModal
             this.displayedModal?.onClose();
+            this.displayedModal = undefined;
             this.otpAnswer = undefined;
 
             resolve(true);

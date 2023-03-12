@@ -17,7 +17,8 @@ const sdkWebPendingModal = (onDisconnect: () => void) => {
     div.style.display = 'none';
   };
 
-  const updateOTPValue = (otpValue: number) => {
+  const updateOTPValue = (otpValue: string) => {
+    console.debug(`updateOTPValue ${otpValue}`, modalWeb);
     if (modalWeb) {
       modalWeb.updateOTPValue(otpValue);
     }
