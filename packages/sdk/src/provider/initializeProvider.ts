@@ -58,12 +58,11 @@ const initializeProvider = ({
 
   const sendRequest = async (method: string, args: any, f: any) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    const { selectedAddress } = Ethereum.getProvider();
 
     if (debug) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} selectedAddress=${
-          Ethereum.getProvider().selectedAddress
-        } isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
+        `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
       );
     }
 
