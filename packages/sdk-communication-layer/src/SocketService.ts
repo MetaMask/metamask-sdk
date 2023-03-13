@@ -60,7 +60,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private manualDisconnect = false;
 
-  private reconnect?: boolean;
+  private resumed?: boolean;
 
   private communicationLayerPreference: CommunicationLayerPreference;
 
@@ -86,7 +86,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }: SocketServiceProps) {
     super();
 
-    this.reconnect = reconnect;
+    this.resumed = reconnect;
     this.context = context;
     this.communicationLayerPreference = communicationLayerPreference;
     this.debug = logging?.serviceLayer === true;
@@ -138,30 +138,27 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   }
 
   private setupChannelListeners(channelId: string): void {
-    // Cleanup previous state if necessary.
-    // this.socket.removeAllListeners();
-    // this.keyExchange.removeAllListeners();
-
     if (this.debug) {
       console.debug(
         `SocketService::${this.context}::setupChannelListener setting socket listeners for channel ${channelId}...`,
       );
     }
 
-    const connectAgain = () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('focus', connectAgain.bind(this));
-      }
-
+    const connectAgain = async () => {
       if (this.debug) {
         console.debug(
           `SocketService::connectAgain this.socket.connected=${this.socket.connected} trying to reconnect after socketio disconnection`,
-          this,
         );
       }
 
-      if (!this.socket.connected) {
-        this.reconnect = true;
+      // Add delay to prevent IOS error
+      // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
+      await wait(200);
+
+      if (this.socket.connected) {
+        console.debug(`SocketService::connectAgain --- already connected`);
+      } else {
+        this.resumed = true;
         this.socket.connect();
         console.debug(
           `SocketService::connectAgain after reconnect connected=${this.socket.connected} -- emit JOIN_CHANNEL`,
@@ -170,6 +167,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           EventType.JOIN_CHANNEL,
           this.channelId,
           `${this.context}connect_again`,
+        );
+        console.debug(
+          `SocketService::connectAgain after emit connected=${this.socket.connected}`,
         );
       }
     };
@@ -185,7 +185,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (document.hasFocus()) {
         connectAgain();
       } else {
-        window.addEventListener('focus', connectAgain.bind(this));
+        window.addEventListener('focus', connectAgain.bind(this), {
+          once: true,
+        });
       }
     };
 
@@ -198,7 +200,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.socket.on('disconnect', (reason) => {
       if (this.debug) {
-        console.debug(`SocketService::on 'disconnect' `, reason);
+        console.debug(
+          `SocketService::on 'disconnect' manualDisconnect=${this.manualDisconnect}`,
+          reason,
+        );
       }
 
       if (!this.manualDisconnect) {
@@ -212,6 +217,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
          *
          * TODO: is there a way to address a slow (>30s) provider query reply.
          */
+        this.emit(EventType.SOCKET_DISCONNECTED);
         checkFocus();
       }
     });
@@ -221,8 +227,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(
           `SocketService::${
             this.context
-          }::setupChannelListener::on 'clients_connected-${channelId}'  reconnect=${
-            this.reconnect
+          }::setupChannelListener::on 'clients_connected-${channelId}'  resumed=${
+            this.resumed
           }  clientsPaused=${
             this.clientsPaused
           } keysExchanged=${this.keyExchange.areKeysExchanged()} isOriginator=${
@@ -247,7 +253,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         }
       }
 
-      if (this.reconnect) {
+      if (this.resumed) {
         if (this.keyExchange.areKeysExchanged()) {
           if (this.debug) {
             console.debug(
@@ -275,8 +281,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             isOriginator: this.isOriginator ?? false,
           });
         }
-        // reconnect switched when connection resume.
-        this.reconnect = false;
+        // resumed switched when connection resume.
+        this.resumed = false;
       } else if (this.clientsPaused) {
         // always inform that clients have reconnected
         this.emit(EventType.CLIENTS_READY, {
@@ -658,10 +664,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       );
     }
 
-    if (this.keyExchange.areKeysExchanged()) {
-      this.sendMessage({ type: MessageType.READY });
-    } else {
-      this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
+    if (!this.isOriginator) {
+      if (this.keyExchange.areKeysExchanged()) {
+        this.sendMessage({ type: MessageType.READY });
+      } else {
+        this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
+      }
     }
 
     this.socket.emit(EventType.MESSAGE, {
@@ -693,8 +701,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       console.debug(
         `SocketService::${this.context}::resume() connected=${
           this.socket.connected
-        } manualDisconnect=${this.manualDisconnect} reconnect=${
-          this.reconnect
+        } manualDisconnect=${this.manualDisconnect} resumed=${
+          this.resumed
         } keysExchanged=${this.keyExchange.areKeysExchanged()}`,
       );
     }
@@ -719,6 +727,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       );
     }
 
+    // Always try to recover key exchange from both side (wallet / dapp)
     if (this.keyExchange.areKeysExchanged()) {
       if (!this.isOriginator) {
         this.sendMessage({ type: MessageType.READY });
@@ -729,7 +738,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
 
     this.manualDisconnect = false;
-    this.reconnect = true;
+    this.resumed = true;
   }
 
   disconnect(options?: DisconnectOptions): void {
@@ -738,9 +747,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     }
     if (options?.terminate) {
       this.channelId = options.channelId;
-      // this.removeAllListeners();
-      // this.socket.removeAllListeners();
-      // this.keyExchange.removeAllListeners();
     }
     this.manualDisconnect = true;
     this.socket.disconnect();

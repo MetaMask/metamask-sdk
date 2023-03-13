@@ -87,6 +87,9 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private autoConnectOptions;
 
+  // Keep track if the other side is connected to the socket
+  private clientsConnected = false;
+
   private sessionDuration: number = DEFAULT_SESSION_TIMEOUT_MS;
 
   // this flag is switched on when the connection is automatically initialized after finding existing channel configuration.
@@ -249,6 +252,12 @@ export class RemoteCommunication extends EventEmitter2 {
 
     this.communicationLayer?.on(EventType.CLIENTS_CONNECTED, () => {
       // Propagate the event to manage different loading states on the ui.
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication::on 'clients_connected' channel=${this.channelId}`,
+        );
+      }
+      this.clientsConnected = true;
       this.emit(EventType.CLIENTS_CONNECTED);
     });
 
@@ -257,9 +266,9 @@ export class RemoteCommunication extends EventEmitter2 {
         console.debug(
           `RemoteCommunication::${
             this.context
-          }::on commLayer.'clients_ready' keysExchanged=${
-            this.getKeyInfo()?.keysExchanged
-          } `,
+          }::on commLayer.'clients_ready' channel=${
+            this.channelId
+          } keysExchanged=${this.getKeyInfo()?.keysExchanged} `,
           message,
         );
       }
@@ -298,6 +307,15 @@ export class RemoteCommunication extends EventEmitter2 {
       }
     });
 
+    this.communicationLayer?.on(EventType.SOCKET_DISCONNECTED, () => {
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication::on 'socket_Disconnected' set ready to false`,
+        );
+      }
+      this.ready = false;
+    });
+
     this.communicationLayer?.on(
       EventType.CLIENTS_DISCONNECTED,
       (channelId: string) => {
@@ -307,16 +325,18 @@ export class RemoteCommunication extends EventEmitter2 {
           );
         }
 
+        this.clientsConnected = false;
+
         // Propagate the disconnect event to clients.
         this.emit(EventType.CLIENTS_DISCONNECTED, this.channelId);
         this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 
-        if (!this.isOriginator) {
-          // if I am on metamask -- force pause it
-          // reset encryption status to re-initialize key exchange
-          this.paused = true;
-          return;
-        }
+        // if (!this.isOriginator) {
+        //   // if I am on metamask -- force pause it
+        //   // reset encryption status to re-initialize key exchange
+        //   // this.paused = true;
+        //   return;
+        // }
 
         this.ready = false;
 
@@ -601,13 +621,23 @@ export class RemoteCommunication extends EventEmitter2 {
     return new Promise((resolve) => {
       if (this.debug) {
         console.log(
-          `RemoteCommunication::${this.context}::sendMessage paused=${this.paused} ready=${this.ready} status=${this._connectionStatus}`,
+          `RemoteCommunication::${this.context}::sendMessage paused=${
+            this.paused
+          } ready=${
+            this.ready
+          } socker=${this.communicationLayer?.isConnected()} clientsConnected=${
+            this.clientsConnected
+          } status=${this._connectionStatus}`,
           message,
         );
       }
 
-      // if paused on waiting
-      if (this.paused || !this.ready) {
+      if (
+        this.paused ||
+        !this.ready ||
+        !this.communicationLayer?.isConnected() ||
+        !this.clientsConnected
+      ) {
         if (this.debug) {
           console.log(
             `RemoteCommunication::${this.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
@@ -620,13 +650,6 @@ export class RemoteCommunication extends EventEmitter2 {
           resolve();
         });
       } else {
-        if (!this.communicationLayer?.isConnected()) {
-          // Make sure socket is connected before sending the message.
-          console.warn(
-            `RemoteCommunication::${this.context}::sendMessage  invalid socket status -- disconnected -- try to resume`,
-          );
-          this.communicationLayer?.resume();
-        }
         this.communicationLayer?.sendMessage(message);
         resolve();
       }
