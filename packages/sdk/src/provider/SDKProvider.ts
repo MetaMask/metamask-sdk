@@ -69,7 +69,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
   handleDisconnect({ terminate = false }: { terminate: boolean }) {
     if (this.debug) {
       console.debug(
-        `SDKProvider::handleDisconnect() cleaning up provider state`,
+        `SDKProvider::handleDisconnect() cleaning up provider state -- terminate=${terminate}`,
       );
     }
 

@@ -2,7 +2,6 @@ import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
 import {
   CommunicationLayerMessage,
-  ConnectionStatus,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
@@ -19,8 +18,6 @@ export class RemoteCommunicationPostMessageStream
   private _name: any;
 
   private remote: RemoteCommunication;
-
-  private debugReady = false;
 
   private debug;
 
@@ -42,63 +39,6 @@ export class RemoteCommunicationPostMessageStream
 
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
-
-    // Special handling on RN to prevent handling links when window out of scope
-    const platform = Platform.getInstance();
-
-    this.remote.on(EventType.CLIENTS_READY, async () => {
-      try {
-        const provider = Ethereum.getProvider();
-        await provider.forceInitializeState();
-
-        this.debugReady = true;
-        if (debug) {
-          console.debug(
-            `RCPMS::on 'clients_ready' provider.state`,
-            provider.getState(),
-          );
-        }
-      } catch (err) {
-        // Ignore error if already initialized.
-        // console.debug(`IGNORE ERROR`, err);
-      }
-    });
-
-    this.remote.on(
-      EventType.CONNECTION_STATUS,
-      (connectionStatus: ConnectionStatus) => {
-        if (connectionStatus === ConnectionStatus.TERMINATED) {
-          const provider = Ethereum.getProvider();
-          this.debugReady = false;
-          provider.handleDisconnect({ terminate: true });
-        } else if (connectionStatus === ConnectionStatus.DISCONNECTED) {
-          const provider = Ethereum.getProvider();
-          this.debugReady = false;
-
-          // Ignore socket disconnection on same device aka secured platfrom
-          if (platform.isSecure()) {
-            if (debug) {
-              console.debug(
-                `RCPMS::on 'disconnected' -- ignore disconnection event on secure platfrom`,
-              );
-            }
-          } else {
-            provider.handleDisconnect({ terminate: false });
-          }
-        }
-      },
-    );
-
-    this.remote.on(EventType.CLIENTS_DISCONNECTED, () => {
-      if (this.debug) {
-        console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
-      }
-
-      if (!platform.isSecure()) {
-        const provider = Ethereum.getProvider();
-        provider.handleDisconnect({ terminate: false });
-      }
-    });
   }
 
   /**
@@ -120,8 +60,7 @@ export class RemoteCommunicationPostMessageStream
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write isRemoteReady=${isRemoteReady} debugReady=${
-          this.debugReady
+        `RPCMS::_write isRemoteReady=${isRemoteReady}
         } channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
       );
     }
@@ -143,7 +82,7 @@ export class RemoteCommunicationPostMessageStream
     }
 
     try {
-      let data;
+      let data: any;
       if (Buffer.isBuffer(chunk)) {
         data = chunk.toJSON();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -156,9 +95,9 @@ export class RemoteCommunicationPostMessageStream
       const targetMethod = data?.data
         ?.method as keyof typeof METHODS_TO_REDIRECT;
 
-      this.remote.sendMessage(data?.data);
-
       if (!platform.isSecure()) {
+        this.remote.sendMessage(data?.data);
+
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
@@ -167,6 +106,11 @@ export class RemoteCommunicationPostMessageStream
         }
         return callback();
       }
+
+      if (this.debug) {
+        console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
+      }
+      this.remote.sendMessage(data?.data);
 
       if (!channelId) {
         console.warn(`Invalid channel id -- undefined`);
@@ -178,11 +122,17 @@ export class RemoteCommunicationPostMessageStream
       if (!socketConnected && !ready) {
         // Invalid connection status
         if (this.debug) {
-          console.debug(
-            `RCPMS::_write invalid connection status -- socketConnected=${socketConnected} ready=${ready}`,
+          console.warn(
+            `RCPMS::_write invalid connection status -- socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}`,
           );
         }
 
+        return callback();
+      }
+
+      if (!socketConnected && ready) {
+        // Shouldn't happen -- needs to refresh
+        console.warn(`RCPMS::_write invalid socket status -- shouln't happen`);
         return callback();
       }
 

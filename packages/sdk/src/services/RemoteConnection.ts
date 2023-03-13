@@ -125,9 +125,11 @@ export class RemoteConnection implements ProviderService {
     }
 
     if (autoConnect?.enable === true) {
-      console.debug(
-        `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
-      );
+      if (this.developerMode) {
+        console.debug(
+          `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
+        );
+      }
 
       this.connector
         .startAutoConnect()
@@ -167,24 +169,51 @@ export class RemoteConnection implements ProviderService {
       });
     }
 
+    this.connector.on(EventType.CLIENTS_READY, async () => {
+      try {
+        const provider = Ethereum.getProvider();
+        await provider.forceInitializeState();
+
+        if (this.developerMode) {
+          console.debug(
+            `RCPMS::on 'clients_ready' provider.state`,
+            provider.getState(),
+          );
+        }
+      } catch (err) {
+        // Ignore error if already initialized.
+        // console.debug(`IGNORE ERROR`, err);
+      }
+    });
+
+    this.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
+      if (this.developerMode) {
+        console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
+      }
+
+      this.sentFirstConnect = false;
+      if (!platform.isSecure()) {
+        const provider = Ethereum.getProvider();
+        provider.handleDisconnect({ terminate: false });
+        this.displayedModal?.updateOTPValue?.('');
+      }
+    });
+
     this.connector.on(EventType.TERMINATE, () => {
-      if (typeof window === 'undefined') {
-        console.debug(`TODO alert user from wallet termination.`);
+      if (typeof window === undefined) {
+        if (this.developerMode) {
+          console.debug(`TODO alert user from wallet termination.`);
+        }
       } else {
         // TODO use a modal window instead
         // eslint-disable-next-line no-alert
         alert(`SDK Connection has been terminated from MetaMask.`);
       }
-    });
+      this.displayedModal?.onClose();
+      this.otpAnswer = undefined;
 
-    this.connector.on(EventType.CONNECTION_STATUS, (status) => {
-      if (status === ConnectionStatus.TERMINATED) {
-        this.displayedModal?.onClose();
-        this.otpAnswer = undefined;
-      } else if (status === ConnectionStatus.DISCONNECTED) {
-        this.sentFirstConnect = false;
-        this.displayedModal?.updateOTPValue?.('');
-      }
+      const provider = Ethereum.getProvider();
+      provider.handleDisconnect({ terminate: true });
     });
 
     return this.connector;
@@ -269,9 +298,6 @@ export class RemoteConnection implements ProviderService {
       }
 
       waitForOTP().then((otp) => {
-        console.debug(
-          `RemoteConnection::handleSecureReconnection() waitForOTP DONE! otp=${otp}`,
-        );
         this.displayedModal?.updateOTPValue?.(otp);
       });
     }
@@ -426,11 +452,5 @@ export class RemoteConnection implements ProviderService {
       console.debug(`RemoteConnection::disconnect()`, options);
     }
     this.connector?.disconnect(options);
-    const platform = Platform.getInstance();
-
-    if (platform.isBrowser() || platform.isReactNative()) {
-      // const provider = Ethereum.getProvider();
-      // provider.handleDisconnect();
-    }
   }
 }

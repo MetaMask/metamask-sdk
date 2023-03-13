@@ -58,17 +58,22 @@ const initializeProvider = ({
 
   const sendRequest = async (method: string, args: any, f: any) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    // Also check that socket is connected -- otherwise it would be in inconherant state.
+    const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
 
     if (debug) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
+        `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
 
     const platform = Platform.getInstance();
 
-    if (!isInstalled && method !== 'metamask_getProviderState') {
+    if (
+      (!isInstalled || (isInstalled && !socketConnected)) &&
+      method !== 'metamask_getProviderState'
+    ) {
       if (
         method === 'eth_requestAccounts' ||
         checkInstallationOnAllCalls ||
@@ -84,10 +89,6 @@ const initializeProvider = ({
           return f(...args);
         }
       } else if (platform.isSecure()) {
-        // send it anyway on local device because of the deeplink
-        console.debug(
-          `initializeProvider::sendRequest() FORCE SEND request on secure platform`,
-        );
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
