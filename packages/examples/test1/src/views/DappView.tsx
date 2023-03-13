@@ -109,6 +109,11 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         }
       });
 
+      ethereum.on('disconnect', () => {
+        console.log('useEffect::ethereum on "disconnect"');
+        setConnected(false);
+      });
+
       sdk.on(
         EventType.CONNECTION_STATUS,
         (_connectionStatus: ConnectionStatus) => {
