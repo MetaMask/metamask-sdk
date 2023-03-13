@@ -495,9 +495,7 @@ export class RemoteCommunication extends EventEmitter2 {
       );
     }
 
-    // is socket already connected?
     const connected = this.communicationLayer?.isConnected();
-
     if (connected) {
       if (this.debug) {
         console.debug(
@@ -506,16 +504,6 @@ export class RemoteCommunication extends EventEmitter2 {
       }
       return channelConfig;
     }
-
-    // if (this.autoStarted) {
-    //   // Prevent infinite loop by checking if it was already autoStarted.
-    //   if (this.debug) {
-    //     console.debug(
-    //       `RemoteCommunication::startAutoConnect() already autoStarted - exit autoConnect()`,
-    //     );
-    //   }
-    //   return channelConfig;
-    // }
 
     if (channelConfig) {
       const validSession = channelConfig.validUntil > Date.now();
@@ -706,12 +694,18 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   ping() {
-    console.debug(`RemoteCommunication::ping()`);
+    if (this.debug) {
+      console.debug(`RemoteCommunication::ping()`);
+    }
+
     this.communicationLayer?.ping();
   }
 
   keyCheck() {
-    console.debug(`RemoteCommunication::keyCheck()`);
+    if (this.debug) {
+      console.debug(`RemoteCommunication::keyCheck()`);
+    }
+
     this.communicationLayer?.keyCheck();
   }
 
@@ -792,14 +786,12 @@ export class RemoteCommunication extends EventEmitter2 {
         this.communicationLayer?.sendMessage({ type: MessageType.TERMINATE });
       }
 
-      // this.resetKeys();
       this.channelId = uuidv4();
       options.channelId = this.channelId;
       this.channelConfig = undefined;
       this.autoStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
-      // this.removeAllListeners();
     } else {
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);

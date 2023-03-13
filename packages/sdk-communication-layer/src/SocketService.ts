@@ -155,21 +155,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
       await wait(200);
 
-      if (this.socket.connected) {
-        console.debug(`SocketService::connectAgain --- already connected`);
-      } else {
+      if (!this.socket.connected) {
         this.resumed = true;
         this.socket.connect();
-        console.debug(
-          `SocketService::connectAgain after reconnect connected=${this.socket.connected} -- emit JOIN_CHANNEL`,
-        );
         this.socket.emit(
           EventType.JOIN_CHANNEL,
           this.channelId,
           `${this.context}connect_again`,
-        );
-        console.debug(
-          `SocketService::connectAgain after emit connected=${this.socket.connected}`,
         );
       }
     };
@@ -179,9 +171,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return;
       }
 
-      console.debug(
-        `SocketService::checkFocus hasFocus=${document.hasFocus()}`,
-      );
+      if (this.debug) {
+        console.debug(
+          `SocketService::checkFocus hasFocus=${document.hasFocus()}`,
+        );
+      }
+
       if (document.hasFocus()) {
         connectAgain();
       } else {
@@ -274,9 +269,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           await wait(2000);
           // Add delay in case exchange was already initiated by dapp.
           // should ask to redo a key exchange because it wasn't paused.
-          console.debug(
-            `AAAAAAAAAAAAAAAAAAA FGHJ add delay before starting keyexchange`,
-          );
+          if (this.debug) {
+            console.debug(
+              `SocketService::${this.context}::on 'clients_connected' add delay before starting keyexchange for backward compatibility`,
+            );
+          }
+
           this.keyExchange.start({
             isOriginator: this.isOriginator ?? false,
           });
@@ -292,9 +290,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         });
       } else if (!this.isOriginator) {
         await wait(2000);
-        console.debug(
-          `BBBBBBBBBBBBBBBBBBBB 'clients_connected' FGHJ add delay before starting keyexchange`,
-        );
+        if (this.debug) {
+          console.debug(
+            `SocketService::${this.context}::on 'clients_connected' --- add delay before starting keyexchange -- backward compatibility`,
+          );
+        }
+
         // Add delay in case exchange was already initiated by dapp.
         // Always request key exchange from wallet since it looks like a reconnection.
         this.keyExchange.start({
@@ -334,8 +335,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (error) {
-        console.debug(`
-        SocketService::${this.context}::on 'message' error=${error}`);
+        if (this.debug) {
+          console.debug(`
+          SocketService::${this.context}::on 'message' error=${error}`);
+        }
+
         throw new Error(error);
       }
 
@@ -357,11 +361,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         });
       }
 
+      // TODO can be removed once session persistence fully vetted.
       if (message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_CHECK) {
         const daooKeyOnRemote = message.pubkey;
         const metamaskPublicKey = this.getKeyInfo().ecies.otherPubKey;
         const myPubKey = this.keyExchange.getMyPublicKey();
         const keysVerified = daooKeyOnRemote === myPubKey;
+
         console.log(
           `exchanged=${
             this.getKeyInfo().keysExchanged
@@ -385,6 +391,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         });
       }
 
+      // TODO can be removed once session persistence fully vetted.
       if (message?.type === MessageType.PING) {
         if (this.debug) {
           console.debug(`SocketService::${this.context}::on 'message' ping `);
@@ -465,10 +472,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         const initialRPCMethod = this.rpcMethodTracker[rpcMessage.id];
         if (initialRPCMethod) {
           const responseTime = Date.now() - initialRPCMethod.timestamp;
-          console.debug(
-            `received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${responseTime}`,
-            messageReceived,
-          );
+          if (this.debug) {
+            console.debug(
+              `received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${responseTime}`,
+              messageReceived,
+            );
+          }
         }
       }
 
@@ -712,13 +721,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(`SocketService::resume() already connected.`);
       }
     } else {
-      if (this.debug) {
-        console.debug(`SocketService::resume() connecting socket.`);
-      }
       this.socket.connect();
-      console.debug(
-        `SocketService::resume() after connecting socket --> connected=${this.socket.connected}`,
-      );
+      if (this.debug) {
+        console.debug(
+          `SocketService::resume() after connecting socket --> connected=${this.socket.connected}`,
+        );
+      }
       // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
       this.socket.emit(
         EventType.JOIN_CHANNEL,

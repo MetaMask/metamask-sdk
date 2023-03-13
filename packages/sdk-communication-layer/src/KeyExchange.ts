@@ -240,7 +240,7 @@ export class KeyExchange extends EventEmitter2 {
         'decryptMessage: Keys not exchanged - missing otherPubKey',
       );
     }
-    console.debug(`decrypt using ${this.otherPublicKey}`);
+
     return this.myECIES.decrypt(message);
   }
 
@@ -258,6 +258,6 @@ export class KeyExchange extends EventEmitter2 {
       keysExchanged: this.keysExchanged,
       step: this.step,
     };
-    console.debug(`KeyExchange::toString()`, buf);
+    return buf;
   }
 }

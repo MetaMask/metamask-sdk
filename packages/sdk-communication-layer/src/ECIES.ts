@@ -28,7 +28,6 @@ export class ECIES {
     if (props?.debug) {
       this.debug = props.debug;
     }
-    this.debug = true;
 
     if (props?.pkey) {
       this.ecies = PrivateKey.fromHex(props.pkey);
