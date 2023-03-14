@@ -8,7 +8,10 @@ const PendingModal = (onDisconnect = () => {}) => {
     onClose: () => {
       return false;
     },
-    updateOTPValue: () => {
+    updateOTPValue: (otpValue: string) => {
+      console.debug(
+        `Choose the following value on your metamask mobile wallet: ${otpValue}`,
+      );
       return false;
     },
     mount: () => {
