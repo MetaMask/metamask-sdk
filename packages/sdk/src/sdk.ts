@@ -23,7 +23,7 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
-import sdkWebPendingModal from './ui/InstallModal/pendinglModal-web';
+import sdkWebPendingModal from './ui/InstallModal/pendingModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
@@ -43,7 +43,7 @@ export interface MetaMaskSDKOptions {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  dappMetadata: DappMetadata;
+  dappMetadata?: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
@@ -76,6 +76,16 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   constructor(options: MetaMaskSDKOptions) {
     super();
+
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      // Try to fill potentially missing field in dapp metadata.
+      if (!options.dappMetadata) {
+        options.dappMetadata = {
+          url: window.location.href,
+          name: document.title,
+        };
+      }
+    }
 
     this.options = options;
     // Currently disabled otherwise it breaks compability with older sdk version.
@@ -169,17 +179,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage.storageManager = getStorageManager(storage);
       }
 
-      // Try to fill potentially missing field in dapp metadata.
-
       if (platform.isBrowser()) {
-        if (!dappMetadata.url) {
-          dappMetadata.url = window.location.href;
-        }
-
-        // if (!dappMetadata.name) {
-        //   dappMetadata.name = document.title;
-        // }
-
         // TODO can be re-enabled once init can be async but would break backward compatibility
         // if (!dappMetadata.base64Icon) {
         //   // Try to extract default icon
