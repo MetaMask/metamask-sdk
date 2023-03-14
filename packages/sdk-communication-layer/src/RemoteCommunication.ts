@@ -27,7 +27,7 @@ import { WalletInfo } from './types/WalletInfo';
 import { WebRTCLib } from './types/WebRTCLib';
 import { WebRTCService } from './WebRTCService';
 import { ServiceStatus } from './types/ServiceStatus';
-import { CommunicationLayerLoggingOptions } from './types/LogggingOptions';
+import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
 
 export interface RemoteCommunicationProps {

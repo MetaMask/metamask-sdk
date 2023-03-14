@@ -3,5 +3,5 @@ export interface CommunicationLayerLoggingOptions {
   keyExchangeLayer?: boolean;
   serviceLayer?: boolean;
   remoteLayer?: boolean;
-  // logger?: (_msg: string) => void;
+  logger?: (_msg: string, ...args: unknown[]) => void;
 }
