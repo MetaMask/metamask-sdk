@@ -1,5 +1,5 @@
 /* #if _WEB
-import PendingModal from './pendinglModal-web';
+import PendingModal from './pendingModal-web';
 //#else */
 import PendingModal from './pendingModal-nodejs';
 // #endif
