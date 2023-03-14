@@ -1,7 +1,6 @@
 import {
   AutoConnectOptions,
   CommunicationLayerPreference,
-  ConnectionStatus,
   DappMetadata,
   DisconnectOptions,
   ECIESProps,
