@@ -31,6 +31,7 @@
     "pump": "^3.0.0"
   },
   "devDependencies": {
+    "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-run": "^3.0.1",
     "rimraf": "^3.0.2",
