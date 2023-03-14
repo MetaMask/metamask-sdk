@@ -451,6 +451,10 @@ export class RemoteConnection implements ProviderService {
     if (this.developerMode) {
       console.debug(`RemoteConnection::disconnect()`, options);
     }
+
+    if (options?.terminate) {
+      Ethereum.getProvider().handleDisconnect({ terminate: true });
+    }
     this.connector?.disconnect(options);
   }
 }
