@@ -84,6 +84,7 @@
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "prettier": "^2.3.0",
+    "rimraf": "^4.4.0",
     "rollup": "^2.70.0",
     "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-natives": "^0.7.5",

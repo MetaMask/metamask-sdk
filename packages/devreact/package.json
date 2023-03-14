@@ -76,6 +76,7 @@
     "lint:fix": "echo 'N/A'",
     "lint:misc": "echo 'N/A'",
     "clean": "rimraf dist",
+    "reset": "yarn clean && rimraf ./node_modules/",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
     "test:react": "node scripts/test.js"
