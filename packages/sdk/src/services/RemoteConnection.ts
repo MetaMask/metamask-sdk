@@ -159,7 +159,7 @@ export class RemoteConnection implements ProviderService {
         this.displayedModal?.updateOTPValue?.(otpAnswer);
 
         const provider = Ethereum.getProvider();
-        provider.once('_initialized', async () => {
+        provider.on('_initialized', async () => {
           console.debug(`connection _initialized -- reset OTP value`);
           this.displayedModal?.onClose();
           this.displayedModal?.updateOTPValue?.('');
@@ -209,6 +209,7 @@ export class RemoteConnection implements ProviderService {
         alert(`SDK Connection has been terminated from MetaMask.`);
       }
       this.displayedModal?.onClose();
+      this.displayedModal = undefined;
       this.otpAnswer = undefined;
 
       const provider = Ethereum.getProvider();
@@ -453,6 +454,8 @@ export class RemoteConnection implements ProviderService {
 
     if (options?.terminate) {
       Ethereum.getProvider().handleDisconnect({ terminate: true });
+      this.displayedModal?.onClose();
+      this.displayedModal = undefined;
     }
     this.connector?.disconnect(options);
   }
