@@ -147,14 +147,14 @@ export class RemoteCommunicationPostMessageStream
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            `otp?${urlParams}`,
+            `connect?${urlParams}`,
           );
         }
 
         // Use otp to re-enable host approval
         platform.openDeeplink(
-          `https://metamask.app.link/otp?${urlParams}`,
-          `metamask://otp?${urlParams}`,
+          `https://metamask.app.link/connect?${urlParams}`,
+          `metamask://connect?${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused()) {
