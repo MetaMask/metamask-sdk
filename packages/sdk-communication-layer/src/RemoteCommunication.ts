@@ -37,6 +37,7 @@ export interface RemoteCommunicationProps {
   webRTCLib?: WebRTCLib;
   reconnect?: boolean;
   dappMetadata?: DappMetadata;
+  walletInfo?: WalletInfo;
   transports?: string[];
   analytics?: boolean;
   communicationServerUrl?: string;
@@ -111,6 +112,7 @@ export class RemoteCommunication extends EventEmitter2 {
     otherPublicKey,
     webRTCLib,
     reconnect,
+    walletInfo,
     dappMetadata,
     transports,
     context,
@@ -128,6 +130,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.otherPublicKey = otherPublicKey;
     this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
+    this.walletInfo = walletInfo;
     this.transports = transports;
     this.platform = platform;
     this.analytics = analytics;
@@ -423,10 +426,7 @@ export class RemoteCommunication extends EventEmitter2 {
       // TODO why these hardcoded value?
       this.communicationLayer?.sendMessage({
         type: MessageType.WALLET_INFO,
-        walletInfo: {
-          type: 'MetaMask',
-          version: 'MetaMask/Mobile',
-        },
+        walletInfo: this.walletInfo,
       });
       this.originatorInfo = message.originatorInfo || message.originator;
       this.emit(EventType.CLIENTS_READY, {
