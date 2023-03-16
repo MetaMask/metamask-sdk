@@ -303,6 +303,7 @@ export class RemoteCommunication extends EventEmitter2 {
         this.communicationLayer?.sendMessage({
           type: MessageType.ORIGINATOR_INFO,
           originatorInfo: this.originatorInfo,
+          originator: this.originatorInfo,
         });
       }
     });
