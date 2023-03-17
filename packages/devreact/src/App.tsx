@@ -21,7 +21,7 @@ declare global {
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  // communicationServerUrl: 'http://192.168.50.114:4000',
+  communicationServerUrl: 'http://192.168.50.114:4000',
   enableDebug: true,
   autoConnect: {
     enable: true
@@ -105,7 +105,7 @@ export const App = () => {
       })
       .then((accounts) => {
         if(accounts) {
-          console.debug(`connect:: accounts result`);
+          console.debug(`connect:: accounts result`, accounts);
           setAccount((accounts as string[])[0]);
           setConnected(true);
         }

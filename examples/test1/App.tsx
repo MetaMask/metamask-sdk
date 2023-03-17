@@ -57,7 +57,7 @@ const sdk = new MetaMaskSDK({
       );
     }
   },
-  // communicationServerUrl: remotServerUrl,
+  communicationServerUrl: remotServerUrl,
   checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,
@@ -99,6 +99,13 @@ function App(): JSX.Element {
   const handleAppState = (appState: AppStateStatus) => {
     console.debug(`AppState change: ${appState}`);
     canOpenLink = appState === 'active';
+    if (canOpenLink) {
+      try {
+        sdk.ping();
+      } catch (err) {
+        console.debug('ignore ping error', err);
+      }
+    }
   };
 
   const backgroundStyle = {
