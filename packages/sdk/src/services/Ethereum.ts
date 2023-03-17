@@ -35,7 +35,7 @@ export class Ethereum {
     });
 
     const proxiedProvieer = new Proxy(provider, {
-      // some common libraries, e.g. web3@1.x, mess with our API
+      // some common libraries, e.g. web3@1.x, can confict with our API.
       deleteProperty: () => true,
     });
     this.provider = proxiedProvieer;
