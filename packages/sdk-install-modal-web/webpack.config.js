@@ -10,7 +10,7 @@ const WebpackModules = require('webpack-modules');
 const CompressionPlugin = require('compression-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-const widgetConfig = require('./widget.config.json');
+const widgetConfig = require('./src/widget.config.json');
 const pkg = require('./package.json');
 
 const defaultConfig = {

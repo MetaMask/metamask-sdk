@@ -27,10 +27,10 @@ const WidgetWrapper = styled.div`
 `;
 
 const InstallWidget = (props: InstallWidgetProps) => {
-  const [tab, setTab] = useState<Number>(1);
-  const qrCodeContainer = useRef(null);
+  const [tab, setTab] = useState<number>(1);
+  const qrCodeContainer = useRef<HTMLDivElement>(null);
 
-  const setTabAcive = (tab: Number) => {
+  const setTabAcive = (tab: number) => {
     setTab(tab);
   };
 
@@ -56,7 +56,9 @@ const InstallWidget = (props: InstallWidgetProps) => {
         errorCorrectionLevel: 'M',
       },
     });
+
     qrCode.append(qrCodeContainer.current);
+
   }, []);
 
   const installExtension = () => {
@@ -64,8 +66,8 @@ const InstallWidget = (props: InstallWidgetProps) => {
   };
 
   return (
+    // @ts-ignore
     <WidgetWrapper>
-      {/* @ts-ignore*/}
       <div>
         <div style={styles.backdrop} onClick={props.onClose} />
         <div style={styles.modal}>

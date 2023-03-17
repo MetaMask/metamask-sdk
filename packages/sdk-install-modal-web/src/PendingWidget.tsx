@@ -26,8 +26,8 @@ const WidgetWrapper = styled.div`
 const PendingWidget = (props: PendingWidgetProps) => {
 
   return (
+    // @ts-ignore
     <WidgetWrapper>
-      {/* @ts-ignore*/}
       <div>
         <div style={styles.backdrop} onClick={props.onClose}></div>
         <div style={styles.modal}>

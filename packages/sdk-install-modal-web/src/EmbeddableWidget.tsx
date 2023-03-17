@@ -1,19 +1,19 @@
 import preact, { h, render } from 'preact';
 import InstallWidgetApp, { InstallWidgetProps } from './InstallWidget';
-import widgetConfig from '../widget.config.json';
+import widgetConfig from './widget.config.json';
 import PendingWidget, { PendingWidgetProps } from './PendingWidget';
 
-export type Renderable = preact.AnyComponent | JSX.Element | preact.JSX.Element;
+export type Renderable = preact.AnyComponent | preact.JSX.Element;
 
 /**
   Wrapper around Widget, responsible for passing config and other options during widget usage on the
   host page
  */
 export default class EmbeddableWidget {
-  el: Element;
-  component: Renderable;
+  el?: Element;
+  component?: Renderable;
 
-  render = (parentElement: Element = null) => {
+  render = (parentElement: Element) => {
     if (this.el) {
       throw new Error(
         `${widgetConfig.widgetName} is already mounted, call unmount() first`
@@ -32,6 +32,10 @@ export default class EmbeddableWidget {
   mount = (props: InstallWidgetProps) => {
     this.component = <InstallWidgetApp {...props} />;
     const { parentElement } = props;
+    if(!parentElement) {
+      throw new Error(`Invalid parent`);
+    }
+
     if (document.readyState === 'complete') {
       this.render(parentElement);
     } else {
@@ -44,6 +48,10 @@ export default class EmbeddableWidget {
   mountPending = (props: PendingWidgetProps) => {
     this.component = <PendingWidget {...props} />;
     const { parentElement } = props;
+    if(!parentElement) {
+      throw new Error(`Invalid parent`);
+    }
+
     if (document.readyState === 'complete') {
       this.render(parentElement);
     } else {
@@ -68,7 +76,7 @@ export default class EmbeddableWidget {
       );
     }
     render(null, this.el);
-    this.el.parentNode.removeChild(this.el);
-    this.el = null;
+    this.el?.parentNode?.removeChild(this.el);
+    this.el = undefined;
   };
 }
