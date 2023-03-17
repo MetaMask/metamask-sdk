@@ -16,6 +16,6 @@
     "declarationMap": true,
     "declarationDir": "types",
     "emitDeclarationOnly": true,
-    "composite": false
+    "composite": true
   }
 }

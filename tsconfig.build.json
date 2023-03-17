@@ -1,0 +1,18 @@
+{
+  "references": [
+    // {
+    //   "path": "./packages/sdk/tsconfig.build.json"
+    // },
+    {
+      "path": "./packages/sdk-communication-layer/tsconfig.build.json"
+    },
+    // {
+    //   "path": "./packages/sdk-react/tsconfig.build.json"
+    // },
+    {
+      "path": "./packages/sdk-install-modal-web/tsconfig.build.json"
+    }
+  ],
+  "files": [],
+  "include": []
+}

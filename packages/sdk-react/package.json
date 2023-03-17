@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-react",
   "version": "0.2.0",
-  "private": false,
   "description": "A react component and react hooks to connect and use MetaMask",
   "keywords": [
     "react",

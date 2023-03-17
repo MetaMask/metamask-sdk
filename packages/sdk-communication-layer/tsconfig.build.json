@@ -1,14 +1,11 @@
 {
-  "extends": "../../tsconfig.packages.json",
+  "extends": "../../tsconfig.packages.build.json",
   "compilerOptions": {
     "baseUrl": "./src",
-    "outDir": "./dist-rollup",
+    "outDir": "./dist",
     "rootDir": "./",
-    "strict": true,
-    "target": "es6",
-    "module": "ES2020",
-    "incremental": true,
     "lib": ["DOM", "ES2016"],
+    "incremental": true,
     "skipLibCheck": true,
   },
   "include": ["../../types", "./package.json", "./src"]

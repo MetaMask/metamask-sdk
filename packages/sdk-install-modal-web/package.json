@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-install-modal-web",
   "version": "0.2.0",
-  "private": false,
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
@@ -31,13 +30,12 @@
   },
   "dependencies": {
     "@babel/core": "^7.20.12",
+    "@emotion/core": "10.1.1",
     "@emotion/styled": "10.0.27",
     "qr-code-styling": "^1.6.0-rc.1",
     "react": "^18.2.0"
   },
   "devDependencies": {
-    "@emotion/core": "10.1.1",
-    "@types/react": "16.9.32",
     "clean-webpack-plugin": "3.0.0",
     "compression-webpack-plugin": "3.1.0",
     "copy-webpack-plugin": "5.1.2",

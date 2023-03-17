@@ -1,13 +1,13 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../tsconfig.packages.json",
   "files": [],
   "include": [],
   "references": [
     {
-      "path": "./tsconfig.build.json"
+      "path": "../sdk-communication-layer"
     },
     {
-      "path": "./tsconfig.test.json"
-    }
+      "path": "../sdk-install-modal-web"
+    },
   ]
 }

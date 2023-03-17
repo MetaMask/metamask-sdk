@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
   "version": "0.2.0",
-  "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -24,6 +23,7 @@
     "build": "rm -rf dist && rollup -c",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "build:tsc": "",
     "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
@@ -48,7 +48,6 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
-    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
@@ -85,11 +84,5 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
-    }
   }
 }

@@ -1,10 +1,9 @@
 {
-  "extends": "../../tsconfig.packages.json",
+  "extends": "../../tsconfig.packages.build.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "outDir": "./dist-webpack",
+    "outDir": "./dist",
     "rootDir": "./",
-    "resolveJsonModule": true,
     "jsx": "react",
     "jsxFactory": "h",
     "target": "es6",
@@ -12,6 +11,6 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true
   },
-  "include": ["../../types","./src"],
-  "files": ["./src/widget.config.json"],
+  "include": ["../../types", "./src"],
+  "files": ["./src/widget.config.json"]
 }

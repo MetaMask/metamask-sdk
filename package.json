@@ -1,5 +1,5 @@
 {
-  "name": "root",
+  "name": "metamask-sdk-monorepo",
   "version": "0.1.1",
   "private": true,
   "repository": {
@@ -8,12 +8,14 @@
   },
   "workspaces": {
     "packages": [
-      "packages/sdk-install-modal-web",
-      "packages/*"
+      "packages/sdk-communication-layer",
+      "packages/sdk-install-modal-web"
     ]
   },
   "scripts": {
-    "build": "yarn workspaces run build:pre-tsc && yarn workspaces run build && yarn workspaces run build:post-tsc",
+    "build": "tsc --build tsconfig.build.json --verbose",
+    "build:watch": "tsc --build tsconfig.build.json --verbose",
+    "old:build": "yarn workspaces run build:pre-tsc && yarn workspaces run build && yarn workspaces run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces run clean",
@@ -31,14 +33,13 @@
     "test:ci": "yarn workspaces run test:ci"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
     "@metamask/auto-changelog": "^2.5.0",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",
     "@metamask/eslint-config-nodejs": "^8.0.0",
     "@metamask/eslint-config-typescript": "^8.0.0",
     "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.25",
+    "@types/node": "^18.15.3",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
     "eslint": "^7.30.0",
@@ -52,16 +53,14 @@
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
     "typescript": "^4.3.5"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "lavamoat": {
-    "allowScripts": {
-      "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
-    }
-  },
-  "dependencies": {}
+  "packageManager": "yarn@3.5.0",
+  "dependencies": {
+    "jest": "^29.5.0"
+  }
 }

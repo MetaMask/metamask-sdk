@@ -1,4 +1,6 @@
 **/dist
+**/dist-webpack
+**/dist-rollup
 **/*__GENERATED*
 
 .yarn/*

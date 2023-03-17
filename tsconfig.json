@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "noEmit": true
+  },
+  "references": [
+    // {
+    //   "path": "./packages/sdk"
+    // },
+    {
+      "path": "./packages/sdk-communication-layer"
+    },
+    // {
+    //   "path": "./packages/sdk-react"
+    // },
+    {
+      "path": "./packages/sdk-install-modal-web"
+    }
+  ],
+  "files": [],
+  "include": ["./types"]
+}
