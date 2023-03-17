@@ -1,6 +1,14 @@
 **/dist
 **/*__GENERATED*
 
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # sed backup files
 *.*-e
 
