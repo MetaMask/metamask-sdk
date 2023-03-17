@@ -1,6 +1,6 @@
 **/dist
 **/*__GENERATED*
-
+.vscode
 # sed backup files
 *.*-e
 

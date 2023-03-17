@@ -5,8 +5,7 @@ import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer'
 import { useState, useEffect } from "react";
 
 const sdk = new MetaMaskSDK({
-  // useDeeplink: false,
-  communicationServerUrl: 'http://localhost:4000',
+  // communicationServerUrl: 'http://localhost:4000',
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
   enableDebug: true,
