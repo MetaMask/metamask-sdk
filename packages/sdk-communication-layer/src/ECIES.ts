@@ -1,6 +1,5 @@
 import { Buffer } from 'buffer';
 import { decrypt, encrypt, PrivateKey } from 'eciesjs';
-import { KeyInfo } from './types/KeyInfo';
 
 /**
  * These properties are optional and should only be used during development for debugging purposes.
@@ -118,7 +117,7 @@ export class ECIES {
     return decryptedString;
   }
 
-  getKeyInfo(): KeyInfo {
+  getKeyInfo(): { private: string; public: string } {
     return {
       private: this.ecies.toHex(),
       public: this.ecies.publicKey.toHex(),

@@ -68,10 +68,13 @@ export class MetaMaskInstaller {
   }
 
   async redirectToProperInstall() {
-    if (this.debug) {
-      console.debug(`MetamaskInstaller::redirectToProperInstall() `);
-    }
     const platformType = Platform.getInstance().getPlatformType();
+
+    if (this.debug) {
+      console.debug(
+        `MetamaskInstaller::redirectToProperInstall() platform=${platformType} this.preferDesktop=${this.preferDesktop}`,
+      );
+    }
 
     // If it's running on our mobile in-app browser but communication is still not working
     if (platformType === PlatformType.MetaMaskMobileWebview) {
@@ -121,7 +124,7 @@ export class MetaMaskInstaller {
     return await this.redirectToProperInstall();
   }
 
-  async start({ wait = false }) {
+  async start({ wait = false }: { wait: boolean }) {
     if (this.debug) {
       console.debug(`MetamaskInstaller::start() wait=${wait}`);
     }

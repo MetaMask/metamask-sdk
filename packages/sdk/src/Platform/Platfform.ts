@@ -158,6 +158,10 @@ export class Platform {
     );
   }
 
+  isSecure() {
+    return this.isReactNative() || this.isMobileWeb();
+  }
+
   isMetaMaskMobileWebView() {
     if (typeof window === 'undefined') {
       return false;
@@ -167,6 +171,10 @@ export class Platform {
       Boolean(window.ReactNativeWebView) &&
       Boolean(navigator.userAgent.endsWith('MetaMaskMobile'))
     );
+  }
+
+  isMobileWeb() {
+    return this.platformType === PlatformType.MobileWeb;
   }
 
   isNotBrowser() {

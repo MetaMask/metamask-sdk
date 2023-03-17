@@ -1,9 +1,12 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
+  AutoConnectOptions,
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
-  MessageType,
+  EventType,
+  ServiceStatus,
+  StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -14,8 +17,13 @@ import { setupInAppProviderStream } from './provider/setupInAppProviderStream/se
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
+import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
+import { SDKLoggingOptions } from './types/SDKLoggingOptions';
+import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
+import sdkWebPendingModal from './ui/InstallModal/pendingModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
@@ -39,12 +47,20 @@ export interface MetaMaskSDKOptions {
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
+  ui?: SDKUIOptions;
+  autoConnect?: AutoConnectOptions;
+  modals?: {
+    // TODO
+  };
   communicationServerUrl?: string;
-  // storage?: StorageManagerProps;
+  storage?: StorageManagerProps;
+  logging?: SDKLoggingOptions;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
-  private provider: MetaMaskInpageProvider;
+  private options: MetaMaskSDKOptions;
+
+  private provider?: MetaMaskInpageProvider;
 
   private remoteConnection?: RemoteConnection;
 
@@ -54,49 +70,96 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private dappMetadata?: DappMetadata;
 
-  private developerMode = false;
+  private _initialized = false;
 
-  constructor({
-    dappMetadata,
-    // Provider
-    injectProvider = true,
-    forceInjectProvider = false,
-    forceDeleteProvider,
-    // Shim web3 on Provider
-    shouldShimWeb3 = true,
-    // Installation
-    checkInstallationImmediately,
-    checkInstallationOnAllCalls,
-    // Platform settings
-    preferDesktop,
-    openDeeplink,
-    useDeeplink = false,
-    wakeLockType,
-    communicationLayerPreference = CommunicationLayerPreference.SOCKET,
-    // WalletConnect
-    WalletConnectInstance,
-    forceRestartWalletConnect,
-    // WebRTC
-    webRTCLib,
-    transports,
-    timer,
-    // Debugging
-    enableDebug = true,
-    developerMode = false,
-    communicationServerUrl,
-  }: MetaMaskSDKOptions = {}) {
+  private debug = false;
+
+  constructor(options: MetaMaskSDKOptions) {
     super();
 
-    this.developerMode = developerMode;
+    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+      // Try to fill potentially missing field in dapp metadata.
+      if (!options.dappMetadata) {
+        options.dappMetadata = {
+          url: window.location.href,
+          name: document.title,
+        };
+      }
+    }
+
+    this.options = options;
+    // Currently disabled otherwise it breaks compability with older sdk version.
+    // this.initialize(options).then(() => {
+    //   if (this.debug) {
+    //     console.debug(`sdk initialized`, this.dappMetadata);
+    //   }
+    // });
+    this.initialize(options);
+    if (this.debug) {
+      console.debug(`sdk initialized`, this.dappMetadata);
+    }
+  }
+
+  private initialize(options: MetaMaskSDKOptions) {
+    const {
+      dappMetadata,
+      // Provider
+      injectProvider = true,
+      forceInjectProvider = false,
+      forceDeleteProvider,
+      // Shim web3 on Provider
+      shouldShimWeb3 = true,
+      // Installation
+      checkInstallationImmediately,
+      checkInstallationOnAllCalls,
+      // Platform settings
+      preferDesktop,
+      openDeeplink,
+      useDeeplink = false,
+      wakeLockType,
+      communicationLayerPreference = CommunicationLayerPreference.SOCKET,
+      // WalletConnect
+      WalletConnectInstance,
+      forceRestartWalletConnect,
+      // WebRTC
+      webRTCLib,
+      transports,
+      timer,
+      // Debugging
+      enableDebug = true,
+      communicationServerUrl,
+      autoConnect,
+      // persistence settings
+      storage,
+      logging,
+    } = options;
+
+    if (this._initialized) {
+      console.debug(`ALREADY initialized`);
+      return;
+    }
+
+    const developerMode = logging?.developerMode === true;
+    this.debug = logging?.sdk || developerMode;
+    console.log(`sdk::initialize() now`);
+
+    // Make sure to enable all logs if developer mode is on
+    const runtimeLogging = { ...logging };
+
+    if (developerMode) {
+      runtimeLogging.eciesLayer = true;
+      runtimeLogging.keyExchangeLayer = true;
+      runtimeLogging.remoteLayer = true;
+      runtimeLogging.serviceLayer = true;
+    }
 
     const platform = Platform.init({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
-      debug: this.developerMode,
+      debug: this.debug,
     });
 
-    this.dappMetadata = dappMetadata;
     const platformType = platform.getPlatformType();
     const isNonBrowser = platformType === PlatformType.NonBrowser;
 
@@ -112,9 +175,30 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
 
       // TODO re-enable once session persistence is activated
-      // if (storage && !storage.storageManager) {
-      //   storage.storageManager = getStorageManager(storage);
-      // }
+      if (storage && !storage.storageManager) {
+        storage.storageManager = getStorageManager(storage);
+      }
+
+      if (platform.isBrowser()) {
+        // TODO can be re-enabled once init can be async but would break backward compatibility
+        // if (!dappMetadata.base64Icon) {
+        //   // Try to extract default icon
+        //   if (platform.isBrowser()) {
+        //     const favicon = extractFavicon();
+        //     if (favicon) {
+        //       try {
+        //         const faviconUri = await getBase64FromUrl(favicon);
+        //         dappMetadata.base64Icon = faviconUri;
+        //       } catch (err) {
+        //         // Ignore favicon error.
+        //       }
+        //     }
+        //   }
+        // }
+      }
+
+      console.debug(`dappMetadata`, dappMetadata);
+      this.dappMetadata = dappMetadata;
 
       this.remoteConnection = new RemoteConnection({
         communicationLayerPreference,
@@ -124,7 +208,12 @@ export class MetaMaskSDK extends EventEmitter2 {
         timer,
         transports,
         communicationServerUrl,
-        developerMode: this.developerMode,
+        storage,
+        autoConnect,
+        logging: runtimeLogging,
+        modals: {
+          onPendingModalDisconnect: this.terminate.bind(this),
+        },
       });
 
       if (WalletConnectInstance) {
@@ -137,18 +226,25 @@ export class MetaMaskSDK extends EventEmitter2 {
       const installer = MetaMaskInstaller.init({
         preferDesktop: preferDesktop ?? false,
         remote: this.remoteConnection,
-        debug: this.developerMode,
+        debug: this.debug,
       });
+      this.installer = installer;
 
-      // Bubble up the connection status event.
+      // Propagate up the sdk-communication events
       this.remoteConnection
         .getConnector()
         ?.on(
-          MessageType.CONNECTION_STATUS,
+          EventType.CONNECTION_STATUS,
           (connectionStatus: ConnectionStatus) => {
-            this.emit(MessageType.CONNECTION_STATUS, connectionStatus);
+            this.emit(EventType.CONNECTION_STATUS, connectionStatus);
           },
         );
+
+      this.remoteConnection
+        .getConnector()
+        ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+          this.emit(EventType.SERVICE_STATUS, serviceStatus);
+        });
 
       // Inject our provider into window.ethereum
       this.provider = initializeProvider({
@@ -160,7 +256,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         installer,
         remoteConnection: this.remoteConnection,
         walletConnect: this.walletConnect,
-        debug: this.developerMode,
+        debug: this.debug,
       });
 
       // Setup provider streams, only needed for our mobile in-app browser
@@ -170,6 +266,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
+        console.debug(`SDK checkInstallationImmediately`);
         installer.start({ wait: true });
       }
     } else if (window.ethereum) {
@@ -178,6 +275,16 @@ export class MetaMaskSDK extends EventEmitter2 {
       console.error(`window.ethereum is not available.`);
       throw new Error(`Invalid SDK provider status`);
     }
+    this._initialized = true;
+  }
+
+  resume() {
+    if (!this.remoteConnection?.getConnector()?.isReady()) {
+      if (this.debug) {
+        console.debug(`SDK::resume channel`);
+      }
+      this.remoteConnection?.startConnection();
+    }
   }
 
   disconnect() {
@@ -185,7 +292,19 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
-    this.remoteConnection?.disconnect({ terminate: true });
+    this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+  }
+
+  isInitialized() {
+    return this._initialized;
+  }
+
+  ping() {
+    this.remoteConnection?.getConnector()?.ping();
+  }
+
+  keyCheck() {
+    this.remoteConnection?.getConnector()?.keyCheck();
   }
 
   // Get the connector object from WalletConnect
@@ -198,11 +317,28 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   testStorage() {
-    return this.remoteConnection?.getConnector().testStorage();
+    return this.remoteConnection?.getConnector()?.testStorage();
+  }
+
+  testUI(type: 'pending' | 'install') {
+    if (type === 'pending') {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      const { updateOTPValue } = sdkWebPendingModal(() => {});
+      setTimeout(() => {
+        console.debug(`try to update otp value`);
+        updateOTPValue('233');
+      }, 2000);
+    } else {
+      sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });
+    }
   }
 
   getChannelConfig() {
     return this.remoteConnection?.getChannelConfig();
+  }
+
+  getServiceStatus() {
+    return this.remoteConnection?.getConnector()?.getServiceStatus();
   }
 
   getDappMetadata(): DappMetadata | undefined {
@@ -211,6 +347,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getKeyInfo() {
     return this.remoteConnection?.getKeyInfo();
+  }
+
+  resetKeys() {
+    this.remoteConnection?.getConnector()?.resetKeys();
   }
 
   // Return the ethereum provider object

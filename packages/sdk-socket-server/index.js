@@ -135,7 +135,12 @@ app.post('/debug', (_req, res) => {
 });
 
 io.on('connection', (socket) => {
+  const socketId = socket.id;
+  const clientIp = socket.request.socket.remoteAddress;
   console.log('a user connected');
+  if (isDevelopment) {
+    console.log(`socketId=${socketId} clientIp=${clientIp}`);
+  }
 
   socket.on('create_channel', async (id) => {
     await rateLimiter.consume(socket.handshake.address);
@@ -160,7 +165,7 @@ io.on('connection', (socket) => {
     return socket.emit(`channel_created-${id}`, id);
   });
 
-  socket.on('message', async ({ id, message, context }) => {
+  socket.on('message', async ({ id, message, context, plaintext }) => {
     try {
       await rateLimiterMesssage.consume(socket.handshake.address);
     } catch (e) {
@@ -168,12 +173,45 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log(`message-${id} -> `, { id, context, message });
+      // Minify encrypted message for easier readibility
+      let displayMessage = message;
+      if (plaintext) {
+        displayMessage = 'AAAAAA_ENCRYPTED_AAAAAA';
+      }
+
+      if (context === 'mm-mobile') {
+        console.log(`\x1b[33m message-${id} -> \x1b[0m`, {
+          id,
+          context,
+          displayMessage,
+          plaintext,
+        });
+      } else {
+        console.log(`message-${id} -> `, {
+          id,
+          context,
+          displayMessage,
+          plaintext,
+        });
+      }
     }
     socket.to(id).emit(`message-${id}`, { id, message });
   });
 
-  socket.on('join_channel', async (id) => {
+  socket.on('ping', async ({ id, message, context }) => {
+    try {
+      await rateLimiterMesssage.consume(socket.handshake.address);
+    } catch (e) {
+      return;
+    }
+
+    if (isDevelopment) {
+      console.log(`ping-${id} -> `, { id, context, message });
+    }
+    socket.to(id).emit(`ping-${id}`, { id, message });
+  });
+
+  socket.on('join_channel', async (id, test) => {
     try {
       await rateLimiter.consume(socket.handshake.address);
     } catch (e) {
@@ -181,7 +219,7 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log('join_channel', id);
+      console.log(`join_channel ${id} ${test}`);
     }
 
     if (!uuid.validate(id)) {
@@ -190,7 +228,14 @@ io.on('connection', (socket) => {
     }
 
     const room = io.sockets.adapter.rooms.get(id);
+    if (isDevelopment) {
+      console.log(`join_channel ${id} room.size=${room && room.size}`);
+    }
+
     if (room && room.size > 2) {
+      if (isDevelopment) {
+        console.log(`join_channel ${id} room already full`);
+      }
       socket.emit(`message-${id}`, { error: 'room already full' });
       io.sockets.in(id).socketsLeave(id);
       return;
@@ -204,7 +249,7 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', function (error) {
       if (isDevelopment) {
-        console.log('disconnected', error);
+        console.log(`disconnect event channel=${id}: `, error);
       }
       io.sockets.in(id).emit(`clients_disconnected-${id}`, error);
       // io.sockets.in(id).socketsLeave(id);
@@ -216,6 +261,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('leave_channel', (id) => {
+    if (isDevelopment) {
+      console.log(`leave_channel id=${id}`);
+    }
+
     socket.leave(id);
     io.sockets.in(id).emit(`clients_disconnected-${id}`);
   });

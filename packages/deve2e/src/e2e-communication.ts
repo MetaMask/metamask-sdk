@@ -1,6 +1,6 @@
 import {
   CommunicationLayerPreference,
-  MessageType,
+  EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
 
@@ -28,13 +28,18 @@ export const mainCommunication = async () => {
     platform,
     communicationServerUrl,
     context: 'dapp',
-    developerMode: true,
+    logging: {
+      eciesLayer: false,
+      keyExchangeLayer: false,
+      remoteLayer: false,
+      serviceLayer: false,
+    },
     analytics: true,
   });
 
   const { channelId, pubKey } = await remote.generateChannelId();
 
-  remote.on(MessageType.CLIENTS_READY, () => {
+  remote.on(EventType.CLIENTS_READY, () => {
     clientsReady = true;
   });
 
@@ -45,7 +50,12 @@ export const mainCommunication = async () => {
     communicationServerUrl,
     context: 'metamask',
     analytics: true,
-    developerMode: true,
+    logging: {
+      eciesLayer: false,
+      keyExchangeLayer: false,
+      remoteLayer: false,
+      serviceLayer: false,
+    },
   });
 
   mmRemote.connectToChannel(channelId);

@@ -49,7 +49,12 @@ describe('MetaMask Simulator', () => {
       otherPublicKey: pubkey,
       // communicationServerUrl: 'http://localhost:4000',
       context: 'mm',
-      developerMode: true,
+      logging: {
+        eciesLayer: true,
+        keyExchangeLayer: true,
+        remoteLayer: true,
+        serviceLayer: true,
+      },
       analytics: true,
     });
 

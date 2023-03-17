@@ -6,6 +6,7 @@ export enum ConnectionStatus {
   // TIMEOUT: means auto connect didn't establish link within given timeout
   TIMEOUT = 'timeout',
   // LINKED: is connected after handshake, using a different verb to avoid confusion to just being connected to the websocket and waiting for counterpart.
+  // LINKED is set when receiving 'READY' message from counterpart.
   LINKED = 'linked',
   // PAUSED:
   PAUSED = 'paused',

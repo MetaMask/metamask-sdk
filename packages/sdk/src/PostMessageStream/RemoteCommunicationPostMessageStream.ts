@@ -1,16 +1,14 @@
-import { Duplex } from 'stream';
 import { Buffer } from 'buffer';
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Duplex } from 'stream';
 import {
-  MessageType,
-  RemoteCommunication,
   CommunicationLayerMessage,
+  EventType,
+  RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
-import { PlatformType } from '../types/PlatformType';
 import { PostMessageStream } from './PostMessageStream';
 
 export class RemoteCommunicationPostMessageStream
@@ -40,54 +38,35 @@ export class RemoteCommunicationPostMessageStream
     this.debug = debug;
 
     this._onMessage = this._onMessage.bind(this);
-    this.remote.on(MessageType.MESSAGE, this._onMessage);
-
-    this.remote.on(MessageType.CLIENTS_READY, async () => {
-      try {
-        const provider = Ethereum.getProvider();
-        // FIXME should never use ts-ignore, but currently have to because we are using @metamask/providers -> initializeProvider which prevent
-        // creating our own custom Provider extending the BaseProvider.
-        // instead we should extend the provider and have an accessible initialization method.
-
-        // @ts-ignore
-        provider._state.initialized = false;
-        // @ts-ignore
-        await provider._initializeStateAsync();
-        if (debug) {
-          console.debug(
-            `RCPMS::on 'clients_ready' provider.state`, // @ts-ignore
-            provider._state,
-          );
-        }
-      } catch (err) {
-        // Ignore error if already initialized.
-        // console.debug(`IGNORE ERROR`, err);
-      }
-    });
-
-    this.remote.on(MessageType.CLIENTS_DISCONNECTED, () => {
-      if (this.debug) {
-        console.debug(`[RCPMS] received '${MessageType.CLIENTS_DISCONNECTED}'`);
-      }
-
-      // FIXME same issue as stated above
-      const provider = Ethereum.getProvider();
-      // @ts-ignore
-      provider._handleAccountsChanged([]);
-      // @ts-ignore
-      provider._handleDisconnect(true);
-      // @ts-ignore
-      // provider._state.isConnected = false;
-      // provider.emit('disconnect', '');
-    });
+    this.remote.on(EventType.MESSAGE, this._onMessage);
   }
 
-  _write(
+  /**
+   * Called when querying the sdk provider with ethereum.request
+   */
+  async _write(
     chunk: any,
     _encoding: BufferEncoding,
     callback: (error?: Error | null) => void,
   ) {
-    if (!this.remote.isConnected()) {
+    const platform = Platform.getInstance();
+    // Special Case if trusted device (RN or mobile web), we still create deeplink to wake up the connection.
+    const isRemoteReady = this.remote.isReady();
+    const socketConnected = this.remote.isConnected();
+    const isPaused = this.remote.isPaused();
+    const ready = this.remote.isReady();
+    const provider = Ethereum.getProvider();
+    const channelId = this.remote.getChannelId();
+
+    if (this.debug) {
+      console.debug(
+        `RPCMS::_write isRemoteReady=${isRemoteReady}
+        } channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+      );
+    }
+
+    // On trusted device, socket may not be connected on initial request.
+    if ((!ready && !platform.isSecure()) || !channelId) {
       if (this.debug) {
         console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
       }
@@ -97,13 +76,13 @@ export class RemoteCommunicationPostMessageStream
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()}`,
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} ready=${ready} socketConnected=${socketConnected}`,
         chunk,
       );
     }
 
     try {
-      let data;
+      let data: any;
       if (Buffer.isBuffer(chunk)) {
         data = chunk.toJSON();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -113,52 +92,94 @@ export class RemoteCommunicationPostMessageStream
         data = chunk;
       }
 
-      this.remote.sendMessage(data?.data);
-      const platform = Platform.getInstance();
+      const targetMethod = data?.data
+        ?.method as keyof typeof METHODS_TO_REDIRECT;
 
-      const isDesktop = platform.getPlatformType() === PlatformType.DesktopWeb;
-      const isNotBrowser = platform.isNotBrowser();
-      const isReactNative = platform.isReactNative();
+      if (!platform.isSecure()) {
+        this.remote.sendMessage(data?.data);
 
-      if (!isReactNative && (isDesktop || isNotBrowser)) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
-            `RCPMS::_write isDektop=${isDesktop} isNotBrowser=${isNotBrowser}`,
+            `RCPMS::_write unsecure platform for method ${targetMethod} -- return callback`,
           );
         }
         return callback();
       }
 
-      const targetMethod = data?.data
-        ?.method as keyof typeof METHODS_TO_REDIRECT;
+      if (this.debug) {
+        console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
+      }
+      this.remote.sendMessage(data?.data);
+
+      if (!channelId) {
+        console.warn(`Invalid channel id -- undefined`);
+        return callback(
+          new Error('RemoteCommunicationPostMessageStream - invalid channelId'),
+        );
+      }
+
+      if (!socketConnected && !ready) {
+        // Invalid connection status
+        if (this.debug) {
+          console.warn(
+            `RCPMS::_write invalid connection status -- socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}`,
+          );
+        }
+
+        return callback();
+      }
+
+      if (!socketConnected && ready) {
+        // Shouldn't happen -- needs to refresh
+        console.warn(`RCPMS::_write invalid socket status -- shouln't happen`);
+        return callback();
+      }
+
       // Check if should open app
-      if (METHODS_TO_REDIRECT[targetMethod] && !isDesktop) {
+      const pubKey = this.remote.getKeyInfo()?.ecies.public ?? '';
+
+      const urlParams = encodeURI(
+        `channelId=${channelId}&pubkey=${pubKey}&comm=socket`,
+      );
+
+      if (METHODS_TO_REDIRECT[targetMethod]) {
         if (this.debug) {
           console.debug(
             `RCPMS::_write redirect link for '${targetMethod}'`,
-            'metamasl://',
+            `connect?${urlParams}`,
+          );
+        }
+
+        // Use otp to re-enable host approval
+        platform.openDeeplink(
+          `https://metamask.app.link/connect?${urlParams}`,
+          `metamask://connect?${urlParams}`,
+          '_self',
+        );
+      } else if (this.remote.isPaused()) {
+        if (this.debug) {
+          console.debug(
+            `RCPMS::_write MM is PAUSED! deeplink with connect! targetMethod=${targetMethod}`,
           );
         }
 
         platform.openDeeplink(
-          'https://metamask.app.link/',
-          'metamask://',
+          `https://metamask.app.link/connect?redirect=true&${urlParams}`,
+          `metamask://connect?redirect=true&${urlParams}`,
           '_self',
         );
-      } else if (this.remote.isPaused() && !isDesktop) {
-        if (this.debug) {
-          console.debug(`RCPMS::_write MM is PAUSED! deeplink with connect!`);
-        }
-
-        platform.openDeeplink(
-          'https://metamask.app.link/connect?redirect=true',
-          'metamask://connect?redirect=true',
-          '_self',
+      } else {
+        // Already connected with custom rpc method (don't need redirect) - send message without opening metamask mobile.
+        // This only happens when metamask was opened in last 30seconds.
+        console.debug(
+          `RCPMS::_write method ${targetMethod} doesn't need redirect.`,
         );
       }
     } catch (err) {
-      console.error(err);
+      if (this.debug) {
+        console.error('RCPMS::_write error', err);
+      }
       return callback(
         new Error('RemoteCommunicationPostMessageStream - disconnected'),
       );

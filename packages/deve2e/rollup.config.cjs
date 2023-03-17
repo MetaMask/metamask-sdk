@@ -2,6 +2,7 @@ import process from 'process';
 import typescript from 'rollup-plugin-typescript2';
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 import run from '@rollup/plugin-run';
+import json from "@rollup/plugin-json";
 
 const listDepForRollup = [
   'buffer',
@@ -38,6 +39,7 @@ const config = [
     ],
     plugins: [
       typescript({ tsconfig: './tsconfig.json' }),
+      json(),
       runAfter &&
         run({
           execArgv: ['-r', 'source-map-support/register'],

@@ -16,7 +16,7 @@ describe('SDK', () => {
 
     const ethereum = sdk.getProvider();
 
-    const accounts = (await ethereum.request({
+    const accounts = (await ethereum?.request({
       method: 'eth_requestAccounts',
       params: [],
     })) as string[];
@@ -65,7 +65,7 @@ describe('SDK', () => {
 
     const from = accounts[0];
     console.debug(`from: ${from}`);
-    const signResponse = await ethereum.request({
+    const signResponse = await ethereum?.request({
       method: 'eth_signTypedData_v3',
       params: [from, JSON.stringify(msgParams)],
     });

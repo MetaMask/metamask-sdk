@@ -16,14 +16,14 @@ const pkg = require('./package.json');
 const defaultConfig = {
   mode:'production',
   devServer: {
-    contentBase: publicDir,
+    static: distDir,
     port: 9000
   },
   plugins: [
     new webpack.ProgressPlugin(),
     new WebpackModules(),
     new CleanWebpackPlugin({ protectWebpackAssets: false }),
-    new CopyPlugin([{ from: 'public', to: './example' }]),
+    new CopyPlugin([{ from: 'public', to: '.' }]),
     new CompressionPlugin()
   ],
   module: {
@@ -77,4 +77,3 @@ const widgetFilename = widgetConfig.semanticReleases
       }
     }
   ];
-  

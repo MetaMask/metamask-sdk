@@ -5,6 +5,8 @@ import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
+import json from '@rollup/plugin-json';
+
 
 const packageJson = require('./package.json');
 
@@ -18,7 +20,8 @@ const config =
       output: [
         {
           file: packageJson.module,
-          format: 'esm'
+          format: 'esm',
+          sourcemap: true,
         },
       ],
       plugins: [
@@ -39,6 +42,7 @@ const config =
             insertAt: 'top',
           },
         }),
+        json(),
         terser(),
       ],
     },

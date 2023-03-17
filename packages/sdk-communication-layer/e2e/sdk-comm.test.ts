@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import {
   CommunicationLayerPreference,
-  MessageType,
+  EventType,
   RemoteCommunication,
 } from '../src';
 
@@ -59,7 +59,12 @@ describe('SDK Comm Server', () => {
       },
       context: 'initiator',
       analytics: true,
-      developerMode: true,
+      logging: {
+        eciesLayer: true,
+        keyExchangeLayer: true,
+        remoteLayer: true,
+        serviceLayer: true,
+      },
     });
 
     const { channelId, pubKey } = await remote.generateChannelId();
@@ -70,7 +75,7 @@ describe('SDK Comm Server', () => {
     //   JSON.stringify({ channelId, pubKey }),
     // );
 
-    remote.on(MessageType.CLIENTS_READY, () => {
+    remote.on(EventType.CLIENTS_READY, () => {
       clientsReady = true;
     });
 
@@ -80,10 +85,15 @@ describe('SDK Comm Server', () => {
       otherPublicKey: pubKey,
       communicationServerUrl,
       analytics: true,
-      developerMode: true,
       dappMetadata: {
         name: 'SDK-COMM_TEST',
         url: 'http://somewhere.com',
+      },
+      logging: {
+        eciesLayer: true,
+        keyExchangeLayer: true,
+        remoteLayer: true,
+        serviceLayer: true,
       },
       context: 'mm',
     });

@@ -16,6 +16,10 @@ export class WakeLockManager {
 
   start() {
     this.enabled = false;
+    console.debug(
+      `WakeLockManager::start() hasNativeWakeLock=${hasNativeWakeLock()}`,
+    );
+
     if (hasNativeWakeLock() && !this._eventsAdded) {
       this._eventsAdded = true;
       this._wakeLock = undefined;
@@ -82,10 +86,6 @@ export class WakeLockManager {
       this.disable();
     }
 
-    if (!this.noSleepVideo) {
-      throw new Error('invalid video status');
-    }
-
     this.start();
     if (hasNativeWakeLock()) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -123,9 +123,14 @@ export class WakeLockManager {
       this.enabled = true;
       return Promise.resolve();
     }
-    const playPromise = this.noSleepVideo.play();
+
+    if (this.noSleepVideo) {
+      const playPromise = this.noSleepVideo?.play();
+      this.enabled = true;
+      return playPromise.then(() => true).catch(() => false);
+    }
     this.enabled = true;
-    return playPromise.then(() => true).catch(() => false);
+    return Promise.resolve();
   }
 
   disable() {

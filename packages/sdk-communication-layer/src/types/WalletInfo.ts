@@ -1,4 +1,4 @@
 export interface WalletInfo {
-  type: 'MetaMask';
-  version: 'MetaMask/Mobile';
+  type: string;
+  version: string;
 }

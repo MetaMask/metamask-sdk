@@ -4,7 +4,7 @@ import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
 import { ProviderService } from './ProviderService';
 
-// TODO import exact type from wallet connect library
+// TODO extract exact type from wallet connect library
 interface WalletConnectInstance {
   connected: boolean;
   uri: string;
@@ -44,7 +44,7 @@ export class WalletConnect implements ProviderService {
   }
 
   getConnector() {
-    // FIXME find overlaps and return correct type
+    // TODO find overlaps and return correct type
     // we should add depdency to wallet connect lib to get the types.
     return this.wcConnector;
   }
