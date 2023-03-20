@@ -16,7 +16,7 @@
   "module": "dist/node/es/metamask-sdk.js",
   "browser": "dist/browser/umd/metamask-sdk.js",
   "react-native": "dist/react-native/es/metamask-sdk.js",
-  "types": "dist/browser/es/index.d.ts",
+  "types": "dist/browser/es/packages/sdk/src/index.d.ts",
   "files": [
     "/dist"
   ],
