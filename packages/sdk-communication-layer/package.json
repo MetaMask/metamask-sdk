@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -16,7 +16,7 @@
   "module": "dist/node/es/metamask-sdk-communication-layer.js",
   "browser": "dist/browser/es/metamask-sdk-communication-layer.js",
   "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
-  "types": "dist/browser/es/index.d.ts",
+  "types": "dist/browser/es/src/index.d.ts",
   "files": [
     "/dist"
   ],
