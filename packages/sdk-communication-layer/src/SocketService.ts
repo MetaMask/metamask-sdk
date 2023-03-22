@@ -645,7 +645,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       context: this.context,
       message: encryptedMessage,
       // Can be re-emabled during dev to debug protocol.
-      // plaintext: JSON.stringify(message),
+      plaintext: JSON.stringify(message),
     };
     if (this.debug) {
       console.debug(

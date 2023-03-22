@@ -141,13 +141,20 @@ export class RemoteConnection implements ProviderService {
 
     if (!platform.isSecure()) {
       this.connector.on(EventType.OTP, (otpAnswer) => {
-        console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
+        if (this.developerMode) {
+          console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
+        }
         this.otpAnswer = otpAnswer;
         if (this.displayedModal) {
-          console.debug(`RemoteConnection::on 'OTP' MOUNT PENDING MODAL`);
+          if (this.developerMode) {
+            console.debug(`RemoteConnection::on 'OTP' MOUNT PENDING MODAL`);
+          }
           this.displayedModal.mount?.();
         } else {
-          console.debug(`RemoteConnection::on 'OTP' init pending modal`);
+          if (this.developerMode) {
+            console.debug(`RemoteConnection::on 'OTP' init pending modal`);
+          }
+
           const onDisconnect = () => {
             this.options.modals.onPendingModalDisconnect?.();
             this.displayedModal?.onClose();
@@ -160,7 +167,9 @@ export class RemoteConnection implements ProviderService {
 
         const provider = Ethereum.getProvider();
         provider.on('_initialized', async () => {
-          console.debug(`connection _initialized -- reset OTP value`);
+          if (this.developerMode) {
+            console.debug(`connection _initialized -- reset OTP value`);
+          }
           this.displayedModal?.onClose();
           this.displayedModal?.updateOTPValue?.('');
           this.otpAnswer = undefined;
