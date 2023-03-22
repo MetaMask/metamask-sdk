@@ -9,7 +9,8 @@
   "workspaces": {
     "packages": [
       "packages/sdk-install-modal-web",
-      "packages/*"
+      "packages/sdk-communication-layer",
+      "packages/sdk"
     ]
   },
   "scripts": {
