@@ -163,9 +163,13 @@ export const App = () => {
         }
       })
       window.ethereum?.on("accountsChanged", (accounts) => {
-        console.log(`App::useEfect on 'accountsChanged'`, accounts);
-        setAccount((accounts as string[])?.[0]);
-        setConnected(true);
+        const tsAccounts = (accounts as string[]);
+        console.log(`App::useEfect on 'accountsChanged'`, tsAccounts);
+        if(tsAccounts.length > 0) {
+          setAccount(accounts?.[0]);
+        } else {
+          setAccount(undefined);
+        }
       });
       window.ethereum?.on('connect', (_connectInfo) => {
         console.log(`App::useEfect on 'connect'`, _connectInfo);

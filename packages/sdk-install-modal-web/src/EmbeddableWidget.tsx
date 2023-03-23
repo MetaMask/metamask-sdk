@@ -55,7 +55,6 @@ export default class EmbeddableWidget {
 
   updateOTPValue = (otpValue: string) => {
     const otpNode = document.getElementById('sdk-mm-otp-value');
-    console.debug(`Embed updateOtpValue: ${otpValue}`, otpNode);
     if(otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
