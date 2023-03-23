@@ -8,17 +8,10 @@ const sdkWebPendingModal = (onDisconnect: () => void) => {
   const modalWeb = new SDKModalWeb();
 
   const onClose = () => {
-    // if (modalWeb) {
-    // modalWeb.unmount();
-    // document.body.removeChild(div);
-    // }
-    // modalWeb = undefined;
-    // mounted = false;
     div.style.display = 'none';
   };
 
   const updateOTPValue = (otpValue: string) => {
-    console.debug(`updateOTPValue ${otpValue}`, modalWeb);
     if (modalWeb) {
       modalWeb.updateOTPValue(otpValue);
     }
