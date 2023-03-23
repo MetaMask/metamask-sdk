@@ -118,9 +118,9 @@ export class RemoteConnection implements ProviderService {
       timer?.stopBackgroundTimer?.();
       timer?.runBackgroundTimer?.(() => {
         // Used to maintain the connection when the app is backgrounded.
-        // console.debug(`Running background timer`);
+        console.debug(`Running background timer`);
         return false;
-      }, 5000);
+      }, 10000);
     }
 
     if (autoConnect?.enable === true) {
@@ -421,8 +421,10 @@ export class RemoteConnection implements ProviderService {
             this.sentFirstConnect = true;
             // try to close displayedModal
             this.displayedModal?.onClose();
-            this.displayedModal = undefined;
-            this.otpAnswer = undefined;
+            if (!this.otpAnswer) {
+              this.displayedModal = undefined;
+              this.otpAnswer = undefined;
+            }
 
             resolve(true);
           });
@@ -465,6 +467,7 @@ export class RemoteConnection implements ProviderService {
       Ethereum.getProvider().handleDisconnect({ terminate: true });
       this.displayedModal?.onClose();
       this.displayedModal = undefined;
+      this.otpAnswer = undefined;
     }
     this.connector?.disconnect(options);
   }
