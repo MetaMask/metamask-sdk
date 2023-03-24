@@ -62,8 +62,8 @@ const sdk = new MetaMaskSDK({
   timer: BackgroundTimer,
   enableDebug: true,
   dappMetadata: {
-    url: 'Test1',
-    name: 'Test1',
+    url: 'ReactNativeTS',
+    name: 'ReactNativeTS',
   },
   storage: {
     debug: true,
