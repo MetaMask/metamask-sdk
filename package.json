@@ -9,7 +9,9 @@
   "workspaces": {
     "packages": [
       "packages/sdk-install-modal-web",
-      "packages/*"
+      "packages/sdk-communication-layer",
+      "packages/sdk",
+      "packages/devreact"
     ]
   },
   "scripts": {
@@ -63,5 +65,5 @@
       "canvas": true
     }
   },
-  "dependencies": {}
+  "packageManager": "yarn@1.22.19"
 }

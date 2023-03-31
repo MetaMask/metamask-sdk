@@ -57,6 +57,9 @@ const PendingWidget = (props: PendingWidgetProps) => {
                 </div>
                 <div id='sdk-mm-otp-value' style={{padding: 10, fontSize: 32, display:'none'}}>
                 </div>
+                <div style={{...styles.notice}}>
+                  * If a number doesn't appear after opening MetaMask, please click disconnect and re-scan the QRCode.
+                </div>
               </div>
               <div style={{marginTop:'20px'}}>
                 <button style={{

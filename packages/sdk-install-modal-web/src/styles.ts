@@ -50,6 +50,12 @@ const styles = {
     border: '2px #F2F4F6 solid',
     color: '#24292E',
   },
+  notice: {
+    fontSize: 12,
+    marginLeft: 10,
+    marginRight: 10,
+    color: 'grey',
+  },
   button: {
     marginTop: '41.5px',
     marginBottom: '20px',
