@@ -1,6 +1,8 @@
 <script src="http://localhost:3000/node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"></script>
 <script>
-  new MetaMaskSDK.MetaMaskSDK();
+  const sdk = new MetaMaskSDK.MetaMaskSDK({
+    forceInjectProvider: true
+  });
 </script>
 <script>
   function connect() {
