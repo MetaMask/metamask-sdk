@@ -74,12 +74,12 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private debug = false;
 
-  constructor(options: MetaMaskSDKOptions) {
+  constructor(options: MetaMaskSDKOptions = {}) {
     super();
 
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       // Try to fill potentially missing field in dapp metadata.
-      if (!options.dappMetadata) {
+      if (!options?.dappMetadata) {
         options.dappMetadata = {
           url: window.location.href,
           name: document.title,
@@ -89,12 +89,12 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
     // Currently disabled otherwise it breaks compability with older sdk version.
-    // this.initialize(options).then(() => {
+    // this.initialize(this.options).then(() => {
     //   if (this.debug) {
     //     console.debug(`sdk initialized`, this.dappMetadata);
     //   }
     // });
-    this.initialize(options);
+    this.initialize(this.options);
     if (this.debug) {
       console.debug(`sdk initialized`, this.dappMetadata);
     }
