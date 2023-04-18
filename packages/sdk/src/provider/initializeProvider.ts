@@ -74,11 +74,7 @@ const initializeProvider = ({
       (!isInstalled || (isInstalled && !socketConnected)) &&
       method !== 'metamask_getProviderState'
     ) {
-      if (
-        method === 'eth_requestAccounts' ||
-        checkInstallationOnAllCalls ||
-        platform.getPlatformType() === PlatformType.DesktopWeb
-      ) {
+      if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
         // Start installation and once installed try the request again
         const isConnectedNow = await installer.start({
           wait: false,
