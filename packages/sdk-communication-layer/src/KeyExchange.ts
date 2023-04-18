@@ -162,7 +162,8 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     if (!isOriginator) {
-      if (!this.keysExchanged && force !== true) {
+      // force is used to redo keyexchange even if already exchanged.
+      if (!this.keysExchanged || force === true) {
         // Ask to start exchange only if not already in progress
         this.communicationLayer.sendMessage({
           type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
