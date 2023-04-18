@@ -2,7 +2,7 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { io, Socket } from 'socket.io-client';
 import { v4 as uuidv4 } from 'uuid';
-import { DEFAULT_SOCKET_TRANSPORTS } from './config';
+import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
 import { Channel } from './types/Channel';
@@ -74,6 +74,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private rpcMethodTracker: RPCMethodCache = {};
 
+  private hasPlaintext = false;
+
   constructor({
     otherPublicKey,
     reconnect,
@@ -91,6 +93,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.communicationLayerPreference = communicationLayerPreference;
     this.debug = logging?.serviceLayer === true;
     this.communicationServerUrl = communicationServerUrl;
+    this.hasPlaintext =
+      this.communicationServerUrl !== DEFAULT_SERVER_URL &&
+      logging?.plaintext === true;
 
     const options = {
       autoConnect: false,
@@ -644,8 +649,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       id: this.channelId,
       context: this.context,
       message: encryptedMessage,
-      // Can be re-emabled during dev to debug protocol.
-      // plaintext: JSON.stringify(message),
+      // plaintext is only enabled when using custom socket server in dev.
+      plaintext: this.hasPlaintext ? JSON.stringify(message) : undefined,
     };
     if (this.debug) {
       console.debug(
