@@ -40,9 +40,11 @@ export class SDKProvider extends MetaMaskInpageProvider {
     /**
      * super() will call _initializeStateAsync which will call metamask_getProviderState
      */
-    console.debug(
-      `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
-    );
+    if (debug) {
+      console.debug(
+        `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
+      );
+    }
 
     super(connectionStream, {
       logger: console,

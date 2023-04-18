@@ -141,7 +141,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
-    console.log(`sdk::initialize() now`);
+    if (this.debug) {
+      console.debug(`SDK::initialize() now`);
+    }
 
     // Make sure to enable all logs if developer mode is on
     const runtimeLogging = { ...logging };
@@ -197,7 +199,6 @@ export class MetaMaskSDK extends EventEmitter2 {
         // }
       }
 
-      console.debug(`dappMetadata`, dappMetadata);
       this.dappMetadata = dappMetadata;
 
       this.remoteConnection = new RemoteConnection({
@@ -266,7 +267,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
-        console.debug(`SDK checkInstallationImmediately`);
         installer.start({ wait: true });
       }
     } else if (window.ethereum) {

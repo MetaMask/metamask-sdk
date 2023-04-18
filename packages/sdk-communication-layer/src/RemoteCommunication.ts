@@ -454,11 +454,9 @@ export class RemoteCommunication extends EventEmitter2 {
       this.paused = true;
       this.setConnectionStatus(ConnectionStatus.PAUSED);
     } else if (message.type === MessageType.READY && this.isOriginator) {
-      console.debug(`RECEIVING 'READY' from wallet`, this.originatorInfo);
       this.setConnectionStatus(ConnectionStatus.LINKED);
 
       this.paused = false;
-      console.debug(`emitting CLIENTS_READY to send pending messages`);
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: this.walletInfo,
@@ -483,9 +481,6 @@ export class RemoteCommunication extends EventEmitter2 {
       return undefined;
     }
 
-    console.debug(
-      `RemoteCommunication::startAutoConnect() DEBUG channelId=${this.channelId}`,
-    );
     const channelConfig = await this.storageManager.getPersistedChannelConfig(
       this.channelId ?? '',
     );

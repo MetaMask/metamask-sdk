@@ -32,11 +32,12 @@ const sdk = new MetaMaskSDK({
   },
   logging: {
     sdk: false,
-    developerMode: true,
+    developerMode: false,
     eciesLayer: false,
     remoteLayer: false,
     keyExchangeLayer: false,
     serviceLayer: false,
+    plaintext: true,
   },
   storage: {
     debug: false,
