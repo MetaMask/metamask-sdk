@@ -1,28 +1,10 @@
 import "./App.css";
-import { MetaMaskSDK } from '@metamask/sdk';
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
-
+import MetaMaskSDK from "@metamask/sdk";
 import { useState, useEffect } from "react";
 
 const sdk = new MetaMaskSDK({
-  // communicationServerUrl: 'http://localhost:4000',
   useDeeplink: false,
-  communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  enableDebug: true,
-  autoConnect: {
-    enable: true
-  },
-  logging: {
-    sdk: false,
-    developerMode: true,
-    eciesLayer: false,
-    remoteLayer: false,
-    keyExchangeLayer: false,
-    serviceLayer: false,
-  },
-  storage: {
-    debug: false,
-  }
+  communicationLayerPreference: "socket",
 });
 
 function App() {

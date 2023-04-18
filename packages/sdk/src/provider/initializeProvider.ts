@@ -48,7 +48,6 @@ const initializeProvider = ({
 
   metamaskStream.start();
 
-  console.debug(`INITIALIZE PROVIDER debug=${debug}`);
   const ethereum = Ethereum.init({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
