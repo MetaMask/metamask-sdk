@@ -8,7 +8,7 @@ const AdvantagesListItem = ({ Icon, text }: {Icon: any, text: String}) => (
       <Icon />
     </div>
     <div style={styles.flexItem11}>
-      <span style={{ lineHeight: "2" }}>{text}</span>
+      <span style={{ lineHeight: "2", color: 'black' }}>{text}</span>
     </div>
   </div>
 );

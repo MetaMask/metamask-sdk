@@ -145,7 +145,8 @@ export class KeyExchange extends EventEmitter2 {
     this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
     this.emit(EventType.KEY_INFO, this.step);
     this.keysExchanged = false;
-    this.otherPublicKey = undefined;
+    // Do not uncomment next line otherwise it breaks old sdk compatibility.
+    // this.otherPublicKey = undefined;
   }
 
   start({
