@@ -1,0 +1,36 @@
+{
+  "name": "MetaMask SDK Chrome Extension",
+  "description": "MetaMask SDK injector. Allows to use MetaMask SDK on any web page [Manifest V3].",
+  "homepage_url": "https://github.com/llagerlof/fresh-chrome-extension",
+  "version": "2.0.0",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "MetaMask SDK injector. Allows to use MetaMask SDK on any web page.",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "assets/icon-16.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["metamask-sdk-injector.js", "sdk-init-injector.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "permissions": ["activeTab", "scripting"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';",
+    "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self';"
+  },
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "web_accessible_resources": [
+    {
+      "resources": ["metamask-sdk.js", "sdk-init.js"],
+      "matches": ["https://*/*", "http://*/*"]
+    }
+  ]
+}
