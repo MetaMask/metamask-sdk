@@ -649,7 +649,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private setLastActiveDate(lastActiveDate: Date) {
     if (this.debug) {
-      console.debug(`RemoteCommunication::setLastActiveDate()`, lastActiveDate);
+      console.debug(
+        `RemoteCommunication::setLastActiveDate() channel=${this.channelId}`,
+        lastActiveDate,
+      );
     }
     const newChannelConfig: ChannelConfig = {
       channelId: this.channelId ?? '',
@@ -691,7 +694,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   ping() {
     if (this.debug) {
-      console.debug(`RemoteCommunication::ping()`);
+      console.debug(`RemoteCommunication::ping() channel=${this.channelId}`);
     }
 
     this.communicationLayer?.ping();
@@ -699,7 +702,9 @@ export class RemoteCommunication extends EventEmitter2 {
 
   keyCheck() {
     if (this.debug) {
-      console.debug(`RemoteCommunication::keyCheck()`);
+      console.debug(
+        `RemoteCommunication::keyCheck() channel=${this.channelId}`,
+      );
     }
 
     this.communicationLayer?.keyCheck();
@@ -739,7 +744,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   pause() {
     if (this.debug) {
-      console.debug(`RemoteCommunication::pause() `);
+      console.debug(`RemoteCommunication::pause() channel=${this.channelId}`);
     }
     this.communicationLayer?.pause();
     this.setConnectionStatus(ConnectionStatus.PAUSED);
@@ -759,7 +764,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   disconnect(options?: DisconnectOptions) {
     if (this.debug) {
-      console.debug(`RemoteCommunication::disconnect() `, options);
+      console.debug(
+        `RemoteCommunication::disconnect() channel=${this.channelId}`,
+        options,
+      );
     }
 
     this.ready = false;
