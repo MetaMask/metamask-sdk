@@ -276,7 +276,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             console.debug(
               `SocketService::${
                 this.context
-              }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- add delay before starting keyexchange for backward compatibility`,
+              }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- backward compatibility`,
             );
           }
 
@@ -299,7 +299,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           console.debug(
             `SocketService::${
               this.context
-            }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- add delay before starting keyexchange -- backward compatibility`,
+            }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- backward compatibility`,
           );
         }
 
