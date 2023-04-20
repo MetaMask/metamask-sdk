@@ -113,6 +113,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
           'MetaMask: Failed to get initial state. Please report this bug.',
           error,
         );
+        this.providerStateRequested = false;
+        return;
       }
 
       console.debug(

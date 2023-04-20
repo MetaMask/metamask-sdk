@@ -271,12 +271,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             });
           }
         } else if (!this.isOriginator) {
-          await wait(2000);
-          // Add delay in case exchange was already initiated by dapp.
           // should ask to redo a key exchange because it wasn't paused.
           if (this.debug) {
             console.debug(
-              `SocketService::${this.context}::on 'clients_connected' add delay before starting keyexchange for backward compatibility`,
+              `SocketService::${
+                this.context
+              }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- backward compatibility`,
             );
           }
 
@@ -294,10 +294,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           context: this.context,
         });
       } else if (!this.isOriginator) {
-        await wait(2000);
+        // Reconnect scenario --- maybe web dapp got refreshed
         if (this.debug) {
           console.debug(
-            `SocketService::${this.context}::on 'clients_connected' --- add delay before starting keyexchange -- backward compatibility`,
+            `SocketService::${
+              this.context
+            }::on 'clients_connected' / keysExchanged=${this.keyExchange.areKeysExchanged()} -- backward compatibility`,
           );
         }
 
