@@ -706,12 +706,6 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
-    if (this.debug) {
-      console.debug(
-        `RemoteCommunication::setConnectionStatus `,
-        connectionStatus,
-      );
-    }
     this._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
     this.emitServiceStatusEvent();
@@ -753,7 +747,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   resume() {
     if (this.debug) {
-      console.debug(`RemoteCommunication::resume() `);
+      console.debug(`RemoteCommunication::resume() channel=${this.channelId}`);
     }
     this.communicationLayer?.resume();
     this.setConnectionStatus(ConnectionStatus.LINKED);
