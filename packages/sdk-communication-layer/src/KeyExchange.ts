@@ -203,7 +203,7 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   checkStep(stepList: string[]): void {
-    if (stepList.length > 0 && stepList.indexOf(this.step.toString()) !== -1) {
+    if (stepList.length > 0 && stepList.indexOf(this.step.toString()) === -1) {
       throw new Error(`Wrong Step "${this.step}" not within ${stepList}`);
     }
   }
