@@ -81,7 +81,11 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
-      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+      // TODO check for either NONE or ACK
+      this.checkStep([
+        KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
+        KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+      ]);
 
       if (this.debug) {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`, message);
@@ -100,7 +104,7 @@ export class KeyExchange extends EventEmitter2 {
       this.emit(EventType.KEY_INFO, this.step);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
       // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
-      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
+      this.checkStep([KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK]);
 
       if (this.debug) {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
@@ -123,7 +127,7 @@ export class KeyExchange extends EventEmitter2 {
           `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
         );
       }
-      this.checkStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
+      this.checkStep([KeyExchangeMessageType.KEY_HANDSHAKE_ACK]);
       this.keysExchanged = true;
       // Reset step value for next exchange.
       this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
@@ -198,9 +202,9 @@ export class KeyExchange extends EventEmitter2 {
     });
   }
 
-  checkStep(step: string): void {
-    if (this.step.toString() !== step) {
-      throw new Error(`Wrong Step ${this.step} ${step}`);
+  checkStep(stepList: string[]): void {
+    if (stepList.length > 0 && stepList.indexOf(this.step.toString()) !== -1) {
+      throw new Error(`Wrong Step "${this.step}" not within ${stepList}`);
     }
   }
 
