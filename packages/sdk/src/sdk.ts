@@ -74,7 +74,11 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private debug = false;
 
-  constructor(options: MetaMaskSDKOptions = {}) {
+  constructor(
+    options: MetaMaskSDKOptions = {
+      storage: {},
+    },
+  ) {
     super();
 
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -130,8 +134,8 @@ export class MetaMaskSDK extends EventEmitter2 {
       communicationServerUrl,
       autoConnect,
       // persistence settings
-      storage,
-      logging,
+      storage = {},
+      logging = {},
     } = options;
 
     if (this._initialized) {
