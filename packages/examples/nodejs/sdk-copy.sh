@@ -6,13 +6,11 @@ cd "$reldir/../../..";
 SDK_WORKSPACE_DIR="$( pwd; )";
 COMM_LAYER_DIR="$SDK_WORKSPACE_DIR/packages/sdk-communication-layer"
 SDK_DIR="$SDK_WORKSPACE_DIR/packages/sdk"
-RN_DIR="$SDK_WORKSPACE_DIR/packages/examples/reactNativeTSApp"
+RN_DIR="$SDK_WORKSPACE_DIR/packages/examples/nodejs"
 
 echo "SDK_DIR: $SDK_DIR"
 echo "COMM_LAYER_DIR: $COMM_LAYER_DIR"
-echo "RN_DIR: $RN_DIR"
-
-echo "########### START REPLACING SDK_COMMUNICATION_LAYER #########"
+echo "NODEJS_EXAMPLE_DIR: $RN_DIR"
 
 cd $RN_DIR
 echo "Hack Metamask sdk && sdk-communication-layer packages..."
