@@ -71,3 +71,4 @@ typings/
 .vscode/settings.json
 packages/deve2e/sdk-comm
 packages/examples/test1/ios/test1.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+packages/examples/nodejs/.sdk-comm
