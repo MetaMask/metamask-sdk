@@ -244,15 +244,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         context: this.context,
       });
 
-      // TODO remove next block
-      // only here for protocol backward compatibility, otherwise wallet wouldn't ask for key exchange.
-      if (this.isOriginator) {
-        // Problem is that key exchange is started from both side
-        if (!this.keyExchange.areKeysExchanged()) {
-          this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
-        }
-      }
-
       if (this.resumed) {
         if (this.keyExchange.areKeysExchanged()) {
           if (this.debug) {
