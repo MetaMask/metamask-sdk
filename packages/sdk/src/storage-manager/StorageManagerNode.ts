@@ -25,7 +25,6 @@ export class StorageManagerNode implements StorageManager {
       );
     }
 
-    console.log(`StorageManagerNode::fs `, fs);
     fs.writeFileSync(STORAGE_PATH, payload);
   }
 
