@@ -8,14 +8,12 @@ import { AbiItem } from 'web3-utils';
 import React from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
 
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     ethereum?: MetaMaskInpageProvider;
   }
 }
-
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
