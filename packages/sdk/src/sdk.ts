@@ -13,7 +13,6 @@ import WebView from 'react-native-webview';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
-import { setupInAppProviderStream } from './provider/setupInAppProviderStream/setupInAppProviderStream';
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
@@ -263,11 +262,6 @@ export class MetaMaskSDK extends EventEmitter2 {
         walletConnect: this.walletConnect,
         debug: this.debug,
       });
-
-      // Setup provider streams, only needed for our mobile in-app browser
-      if (platformType === PlatformType.MetaMaskMobileWebview) {
-        setupInAppProviderStream();
-      }
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
