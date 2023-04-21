@@ -19,7 +19,7 @@
     "start": "serve ."
   },
   "dependencies": {
-    "@metamask/sdk": "^0.1.0",
+    "@metamask/sdk": "^0.2.0",
     "serve": "13.0.2"
   }
 }
