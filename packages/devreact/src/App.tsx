@@ -3,7 +3,6 @@ import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
 import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
-import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
 import React from 'react';
@@ -40,7 +39,7 @@ const sdk = new MetaMaskSDK({
     plaintext: true,
   },
   storage: {
-    debug: false,
+    enabled: true,
   }
 });
 
