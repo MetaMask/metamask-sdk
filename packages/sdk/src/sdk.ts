@@ -75,7 +75,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   constructor(
     options: MetaMaskSDKOptions = {
-      storage: {},
+      storage: {
+        enabled: false,
+      },
     },
   ) {
     super();
@@ -133,7 +135,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       communicationServerUrl,
       autoConnect,
       // persistence settings
-      storage = {},
+      storage,
       logging = {},
     } = options;
 
@@ -180,7 +182,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
 
       // TODO re-enable once session persistence is activated
-      if (storage && !storage.storageManager) {
+      if (storage?.enabled === true && !storage.storageManager) {
         storage.storageManager = getStorageManager(storage);
       }
 
