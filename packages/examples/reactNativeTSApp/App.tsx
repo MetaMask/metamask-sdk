@@ -67,6 +67,7 @@ const sdk = new MetaMaskSDK({
   },
   storage: {
     debug: true,
+    enabled: true,
     // storageManager: new StorageManagerRN({debug: true}),
   },
   autoConnect: {
@@ -74,10 +75,6 @@ const sdk = new MetaMaskSDK({
   },
   logging: {
     developerMode: true,
-  },
-  ecies: {
-    enabled: true,
-    debug: true,
   },
 });
 

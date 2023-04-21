@@ -1,6 +1,7 @@
 import { ChannelConfig } from './ChannelConfig';
 
 export interface StorageManagerProps {
+  enabled: boolean;
   debug?: boolean;
   duration?: number;
   storageManager?: StorageManager;
