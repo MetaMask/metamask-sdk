@@ -12,8 +12,7 @@
   },
   "dependencies": {
     "@metamask/providers": "^10.2.1",
-    "@metamask/sdk": "^0.1.0",
-    "@metamask/sdk-communication-layer": "^0.2.0",
+    "@metamask/sdk": "^0.2.1",
     "@react-native-async-storage/async-storage": "^1.17.12",
     "eciesjs": "^0.3.16",
     "ethers": "5.7.2",
