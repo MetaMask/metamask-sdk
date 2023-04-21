@@ -34,7 +34,6 @@ import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DAPPView} from './src/views/DappView';
-const remotServerUrl = 'http://192.168.50.114:4000';
 
 LogBox.ignoreLogs([
   //'Possible Unhandled Promise Rejection'
