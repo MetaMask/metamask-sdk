@@ -96,7 +96,9 @@ export class RemoteCommunicationPostMessageStream
         ?.method as keyof typeof METHODS_TO_REDIRECT;
 
       if (!platform.isSecure()) {
-        this.remote.sendMessage(data?.data);
+        this.remote.sendMessage(data?.data).catch((err) => {
+          console.warn(`RCPMS::_write cannot send message`, err);
+        });
 
         // Redirect early if nodejs or browser...
         if (this.debug) {
@@ -110,7 +112,10 @@ export class RemoteCommunicationPostMessageStream
       if (this.debug) {
         console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
       }
-      this.remote.sendMessage(data?.data);
+
+      this.remote.sendMessage(data?.data).catch((err) => {
+        console.warn(`RCPMS::_write cannot send message`, err);
+      });
 
       if (!channelId) {
         console.warn(`Invalid channel id -- undefined`);
@@ -122,8 +127,8 @@ export class RemoteCommunicationPostMessageStream
       if (!socketConnected && !ready) {
         // Invalid connection status
         if (this.debug) {
-          console.warn(
-            `RCPMS::_write invalid connection status -- socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}`,
+          console.debug(
+            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n\n`,
           );
         }
 
