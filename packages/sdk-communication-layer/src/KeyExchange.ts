@@ -104,7 +104,10 @@ export class KeyExchange extends EventEmitter2 {
       this.emit(EventType.KEY_INFO, this.step);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
       // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
-      this.checkStep([KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK]);
+      this.checkStep([
+        KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
+        KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
+      ]);
 
       if (this.debug) {
         console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
@@ -185,10 +188,12 @@ export class KeyExchange extends EventEmitter2 {
 
     // Only if we are not already in progress
     if (this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) {
-      console.warn(
-        `KeyExchange::${this.context}::start -- restart key exchange -- step=${this.step}`,
-        this.step,
-      );
+      if (this.debug) {
+        console.debug(
+          `KeyExchange::${this.context}::start -- restart key exchange -- step=${this.step}`,
+          this.step,
+        );
+      }
       // Key exchange can be restarted if the wallet ask for a new key.
     }
 
