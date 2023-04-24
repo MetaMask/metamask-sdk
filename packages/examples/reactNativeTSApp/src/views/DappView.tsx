@@ -272,7 +272,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         {sdk.getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
-      <ServiceStatusView serviceStatus={serviceStatus} />
 
       {connected ? (
         <>
@@ -292,13 +291,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       ) : (
         <Button title={'Connect'} onPress={connect} />
       )}
-
-      <Button
-        title={'Test Storage'}
-        onPress={() => {
-          sdk.testStorage();
-        }}
-      />
 
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}
