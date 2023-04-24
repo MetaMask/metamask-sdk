@@ -24,7 +24,7 @@ const sdk = new MetaMaskSDK({
     enable: true
   },
   dappMetadata: {
-    name: "Demo React App",
+    name: "DEV React App",
     url: window.location.host,
   },
   logging: {

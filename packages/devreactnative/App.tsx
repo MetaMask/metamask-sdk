@@ -56,24 +56,23 @@ const sdk = new MetaMaskSDK({
       );
     }
   },
-  // communicationServerUrl: remotServerUrl,
+  // Replace with local socket server for dev debug
+  // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
+  // communicationServerUrl: 'http://192.168.50.114:4000',
   checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,
   dappMetadata: {
-    url: 'ReactNativeTS',
-    name: 'ReactNativeTS',
+    url: 'devreactnative',
+    name: 'devreactnative',
   },
   storage: {
-    debug: true,
     enabled: true,
     // storageManager: new StorageManagerRN({debug: true}),
   },
-  autoConnect: {
-    enable: false,
-  },
   logging: {
     developerMode: true,
+    plaintext: true,
   },
 });
 
@@ -82,12 +81,9 @@ function App(): JSX.Element {
   const [encryptionTime, setEncryptionTime] = useState<number>();
 
   useEffect(() => {
-    console.debug('use effect now');
-
     const subscription = AppState.addEventListener('change', handleAppState);
 
     return () => {
-      console.debug('useEffect() unmount');
       subscription.remove();
     };
   }, []);
