@@ -8,17 +8,29 @@ import { STORAGE_PATH } from '../config';
 export class StorageManagerWeb implements StorageManager {
   private debug = false;
 
-  constructor({ debug }: StorageManagerProps | undefined = { debug: false }) {
+  private enabled = false;
+
+  constructor(
+    { debug, enabled }: StorageManagerProps | undefined = {
+      debug: false,
+      enabled: false,
+    },
+  ) {
     if (debug) {
       this.debug = debug;
     }
+
+    this.enabled = enabled;
   }
 
   public async persistChannelConfig(channelConfig: ChannelConfig) {
     const payload = JSON.stringify(channelConfig);
 
     if (this.debug) {
-      console.debug(`StorageManagerWeb::persistChannelConfig()`, channelConfig);
+      console.debug(
+        `StorageManagerWeb::persistChannelConfig() enabled=${this.enabled}`,
+        channelConfig,
+      );
     }
 
     localStorage.setItem(STORAGE_PATH, payload);
@@ -29,7 +41,9 @@ export class StorageManagerWeb implements StorageManager {
 
     try {
       if (this.debug) {
-        console.debug(`StorageManagerWeb::getPersistedChannelConfig()`);
+        console.debug(
+          `StorageManagerWeb::getPersistedChannelConfig() enabled=${this.enabled}`,
+        );
       }
 
       payload = localStorage.getItem(STORAGE_PATH);
@@ -63,7 +77,7 @@ export class StorageManagerWeb implements StorageManager {
 
   public async terminate(): Promise<void> {
     if (this.debug) {
-      console.debug(`StorageManagerWeb::terminate()`);
+      console.debug(`StorageManagerWeb::terminate() enabled=${this.enabled}`);
     }
 
     localStorage.removeItem(STORAGE_PATH);

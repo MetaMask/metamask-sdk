@@ -10,17 +10,29 @@ import { STORAGE_PATH } from '../config';
 export class StorageManagerAS implements StorageManager {
   private debug = false;
 
-  constructor({ debug }: StorageManagerProps | undefined = { debug: false }) {
+  private enabled = false;
+
+  constructor(
+    { debug, enabled }: StorageManagerProps | undefined = {
+      debug: false,
+      enabled: false,
+    },
+  ) {
     if (debug) {
       this.debug = debug;
     }
+
+    this.enabled = enabled;
   }
 
   public async persistChannelConfig(channelConfig: ChannelConfig) {
     const payload = JSON.stringify(channelConfig);
 
     if (this.debug) {
-      console.debug(`StorageManagerRN::persistChannelConfig()`, channelConfig);
+      console.debug(
+        `StorageManagerRN::persistChannelConfig() enabled=${this.enabled}`,
+        channelConfig,
+      );
     }
 
     await AsyncStorage.setItem(STORAGE_PATH, payload);
@@ -31,7 +43,9 @@ export class StorageManagerAS implements StorageManager {
 
     try {
       if (this.debug) {
-        console.debug(`StorageManagerRN::getPersistedChannelConfig()`);
+        console.debug(
+          `StorageManagerRN::getPersistedChannelConfig() enabled=${this.enabled}`,
+        );
       }
 
       payload = await AsyncStorage.getItem(STORAGE_PATH);
@@ -62,7 +76,7 @@ export class StorageManagerAS implements StorageManager {
 
   public async terminate(): Promise<void> {
     if (this.debug) {
-      console.debug(`StorageManagerRN::terminate()`);
+      console.debug(`StorageManagerRN::terminate() enabled=${this.enabled}`);
     }
 
     await AsyncStorage.removeItem(STORAGE_PATH);
