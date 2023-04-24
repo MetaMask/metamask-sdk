@@ -278,12 +278,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         // resumed switched when connection resume.
         this.resumed = false;
       } else if (this.clientsPaused) {
-        // always inform that clients have reconnected
-        this.emit(EventType.CLIENTS_READY, {
-          isOriginator: this.isOriginator,
-          keysExchanged: this.keyExchange.areKeysExchanged(),
-          context: this.context,
-        });
+        console.debug(
+          `SocketService::on 'clients_connected' skip sending originatorInfo on pause`,
+        );
       } else if (!this.isOriginator) {
         // Reconnect scenario --- maybe web dapp got refreshed
         if (this.debug) {
