@@ -5,9 +5,12 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  AppState,
+  AppStateStatus,
+  Button,
+  Linking,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,49 +20,63 @@ import {
   View,
 } from 'react-native';
 
+import {MetaMaskSDK} from '@metamask/sdk';
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  CommunicationLayerMessage,
+  CommunicationLayerPreference,
+  DappMetadata,
+  MessageType,
+  RemoteCommunication,
+} from '@metamask/sdk-communication-layer';
+import crypto from 'crypto';
+import {encrypt} from 'eciesjs';
+import {LogBox} from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {DAPPView} from './src/views/DappView';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+LogBox.ignoreLogs([]); // Ignore log notification by message
 
-function Section({children, title}: SectionProps): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+// TODO how to properly make sure we only try to open link when the app is active?
+// current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
+// hence usage of a global variable.
+let canOpenLink = true;
+
+const sdk = new MetaMaskSDK({
+  openDeeplink: (link: string) => {
+    if (canOpenLink) {
+      Linking.openURL(link);
+    }
+  },
+  timer: BackgroundTimer,
+  enableDebug: true,
+  dappMetadata: {
+    url: 'ReactNativeTS',
+    name: 'ReactNativeTS',
+  },
+  storage: {
+    enabled: true,
+  },
+});
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', handleAppState);
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const handleAppState = (appState: AppStateStatus) => {
+    console.debug(`AppState change: ${appState}`);
+    canOpenLink = appState === 'active';
+  };
+
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: Colors.lighter,
   };
 
   return (
@@ -71,31 +88,23 @@ function App(): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        <Header />
         <View
+          // eslint-disable-next-line react-native/no-inline-styles
           style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            marginTop: 30,
+            backgroundColor: Colors.white,
           }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+          <Text style={{color: Colors.black, fontSize: 24}}>
+            reactNativeDemo (RN v0.71.7)
+          </Text>
+          <DAPPView sdk={sdk} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,

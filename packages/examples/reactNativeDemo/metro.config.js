@@ -14,4 +14,10 @@ module.exports = {
       },
     }),
   },
+  resolver: {
+    extraNodeModules: {
+      ...require('node-libs-react-native'),
+      // url: require.resolve('whatwg-url'),
+    },
+  },
 };
