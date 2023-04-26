@@ -3,12 +3,10 @@ import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK } from '@metamask/sdk';
 import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
-import { ethers } from 'ethers';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
 import React from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
-
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
@@ -16,7 +14,6 @@ declare global {
     ethereum?: MetaMaskInpageProvider;
   }
 }
-
 
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
@@ -27,7 +24,7 @@ const sdk = new MetaMaskSDK({
     enable: true
   },
   dappMetadata: {
-    name: "Demo React App",
+    name: "DEV React App",
     url: window.location.host,
   },
   logging: {
@@ -40,7 +37,7 @@ const sdk = new MetaMaskSDK({
     plaintext: true,
   },
   storage: {
-    debug: false,
+    enabled: true,
   }
 });
 

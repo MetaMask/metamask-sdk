@@ -13,7 +13,6 @@ import WebView from 'react-native-webview';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
-import { setupInAppProviderStream } from './provider/setupInAppProviderStream/setupInAppProviderStream';
 import { Ethereum } from './services/Ethereum';
 import { RemoteConnection } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
@@ -74,7 +73,13 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private debug = false;
 
-  constructor(options: MetaMaskSDKOptions = {}) {
+  constructor(
+    options: MetaMaskSDKOptions = {
+      storage: {
+        enabled: false,
+      },
+    },
+  ) {
     super();
 
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
@@ -131,7 +136,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       autoConnect,
       // persistence settings
       storage,
-      logging,
+      logging = {},
     } = options;
 
     if (this._initialized) {
@@ -177,7 +182,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
 
       // TODO re-enable once session persistence is activated
-      if (storage && !storage.storageManager) {
+      if (storage?.enabled === true && !storage.storageManager) {
         storage.storageManager = getStorageManager(storage);
       }
 
@@ -259,11 +264,6 @@ export class MetaMaskSDK extends EventEmitter2 {
         walletConnect: this.walletConnect,
         debug: this.debug,
       });
-
-      // Setup provider streams, only needed for our mobile in-app browser
-      if (platformType === PlatformType.MetaMaskMobileWebview) {
-        setupInAppProviderStream();
-      }
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {

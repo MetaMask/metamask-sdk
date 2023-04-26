@@ -9,10 +9,19 @@ import { STORAGE_PATH } from '../config';
 export class StorageManagerNode implements StorageManager {
   private debug = false;
 
-  constructor({ debug }: StorageManagerProps | undefined = { debug: false }) {
+  private enabled = false;
+
+  constructor(
+    { debug, enabled }: StorageManagerProps | undefined = {
+      debug: false,
+      enabled: false,
+    },
+  ) {
     if (debug) {
       this.debug = debug;
     }
+
+    this.enabled = enabled;
   }
 
   public async persistChannelConfig(channelConfig: ChannelConfig) {
@@ -20,12 +29,11 @@ export class StorageManagerNode implements StorageManager {
 
     if (this.debug) {
       console.debug(
-        `StorageManagerNode::persistChannelConfig()`,
+        `StorageManagerNode::persistChannelConfig() enabled=${this.enabled}`,
         channelConfig,
       );
     }
 
-    console.log(`StorageManagerNode::fs `, fs);
     fs.writeFileSync(STORAGE_PATH, payload);
   }
 
@@ -36,7 +44,10 @@ export class StorageManagerNode implements StorageManager {
 
     const payload = fs.readFileSync(STORAGE_PATH).toString('utf-8');
     if (this.debug) {
-      console.debug(`StorageManagerNode::getPersistedChannelConfig()`, payload);
+      console.debug(
+        `StorageManagerNode::getPersistedChannelConfig() enabled=${this.enabled}`,
+        payload,
+      );
     }
 
     if (!payload) {
@@ -57,7 +68,7 @@ export class StorageManagerNode implements StorageManager {
 
   public async terminate(): Promise<void> {
     if (this.debug) {
-      console.debug(`StorageManagerNode::terminate()`);
+      console.debug(`StorageManagerNode::terminate() enabled=${this.enabled}`);
     }
 
     if (fs.existsSync(STORAGE_PATH)) {
