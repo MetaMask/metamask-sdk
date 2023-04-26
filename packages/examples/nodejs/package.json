@@ -9,6 +9,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.2.1"
+    "@metamask/sdk": "^0.2.2"
   }
 }
