@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -42,8 +42,8 @@
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^6.1.0",
     "@metamask/providers": "^10.2.1",
-    "@metamask/sdk-communication-layer": "^0.2.0",
-    "@metamask/sdk-install-modal-web": "^0.2.0",
+    "@metamask/sdk-communication-layer": "^0.2.3",
+    "@metamask/sdk-install-modal-web": "^0.2.1",
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
