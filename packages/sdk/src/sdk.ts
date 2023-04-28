@@ -21,8 +21,6 @@ import { PlatformType } from './types/PlatformType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import sdkWebInstallModal from './ui/InstallModal/InstallModal-web';
-import sdkWebPendingModal from './ui/InstallModal/pendingModal-web';
 import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
 import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
@@ -318,19 +316,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   testStorage() {
     return this.remoteConnection?.getConnector()?.testStorage();
-  }
-
-  testUI(type: 'pending' | 'install') {
-    if (type === 'pending') {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      const { updateOTPValue } = sdkWebPendingModal(() => {});
-      setTimeout(() => {
-        console.debug(`try to update otp value`);
-        updateOTPValue('233');
-      }, 2000);
-    } else {
-      sdkWebInstallModal({ link: 'http://myprojectearn.com', debug: true });
-    }
   }
 
   getChannelConfig() {

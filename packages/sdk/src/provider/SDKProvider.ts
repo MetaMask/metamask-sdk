@@ -97,9 +97,11 @@ export class SDKProvider extends MetaMaskInpageProvider {
     }
 
     if (this.providerStateRequested) {
-      console.debug(
-        `SDKProvider::_initializeStateAsync() initialization already in progress`,
-      );
+      if (this.debug) {
+        console.debug(
+          `SDKProvider::_initializeStateAsync() initialization already in progress`,
+        );
+      }
     } else {
       this.providerStateRequested = true;
       // Replace super.initialState logic to automatically request account if not found in providerstate.
@@ -117,25 +119,35 @@ export class SDKProvider extends MetaMaskInpageProvider {
         return;
       }
 
-      console.debug(
-        `SDKProvider::_initializeStateAsync state selectedAddress=${this.selectedAddress} `,
-        initialState,
-      );
+      if (this.debug) {
+        console.debug(
+          `SDKProvider::_initializeStateAsync state selectedAddress=${this.selectedAddress} `,
+          initialState,
+        );
+      }
 
       if (initialState?.accounts?.length === 0) {
-        console.debug(
-          `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
-        );
+        if (this.debug) {
+          console.debug(
+            `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
+          );
+        }
 
         if (this.selectedAddress) {
-          console.debug(
-            `SDKProvider::_initializeStateAsync using this.selectedAddress instead`,
-          );
+          if (this.debug) {
+            console.debug(
+              `SDKProvider::_initializeStateAsync using this.selectedAddress instead`,
+            );
+          }
+
           initialState.accounts = [this.selectedAddress];
         } else {
-          console.debug(
-            `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
-          );
+          if (this.debug) {
+            console.debug(
+              `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
+            );
+          }
+
           const accounts = (await this.request({
             method: 'eth_requestAccounts',
             params: [],

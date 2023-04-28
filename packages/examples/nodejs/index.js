@@ -1,12 +1,16 @@
-const {MetaMaskSDK} = require('@metamask/sdk');
+const { MetaMaskSDK } = require('@metamask/sdk');
 
 const sdk = new MetaMaskSDK({
   shouldShimWeb3: false,
+  storage: {
+    enabled: true,
+  },
 });
 
 const ethereum = sdk.getProvider();
 
 const start = async () => {
+  console.debug(`start dapp example`);
   const accounts = await ethereum.request({
     method: 'eth_requestAccounts',
     params: [],
@@ -62,4 +66,11 @@ const start = async () => {
   console.log('sign response', signResponse);
 };
 
-start();
+ethereum.on('_initialized', () => {
+  start();
+})
+
+ethereum.request({
+  method: 'eth_requestAccounts',
+  params: [],
+});
