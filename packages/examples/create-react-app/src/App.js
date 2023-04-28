@@ -11,7 +11,7 @@ const sdk = new MetaMaskSDK({
     developerMode: true
   },
   storage: {
-    debug: false,
+    enabled: true,
   }
 });
 
