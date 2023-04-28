@@ -186,15 +186,28 @@ export class KeyExchange extends EventEmitter2 {
       return;
     }
 
-    // Only if we are not already in progress
-    if (this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) {
+    if (
+      (this.keysExchanged ||
+        this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) &&
+      !force
+    ) {
+      // Key exchange can be restarted if the wallet ask for a new key.
       if (this.debug) {
         console.debug(
-          `KeyExchange::${this.context}::start -- restart key exchange -- step=${this.step}`,
+          `KeyExchange::${this.context}::start -- key exchange already ${
+            this.keysExchanged ? 'done' : 'in progress'
+          } -- aborted.`,
           this.step,
         );
       }
-      // Key exchange can be restarted if the wallet ask for a new key.
+      return;
+    }
+
+    if (this.debug) {
+      console.debug(
+        `KeyExchange::${this.context}::start -- start key exchange (force=${force}) -- step=${this.step}`,
+        this.step,
+      );
     }
 
     this.clean();
