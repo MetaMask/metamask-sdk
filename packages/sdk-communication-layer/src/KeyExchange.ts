@@ -186,7 +186,6 @@ export class KeyExchange extends EventEmitter2 {
       return;
     }
 
-    // Only if we are not already in progress
     if (
       (this.keysExchanged ||
         this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) &&
