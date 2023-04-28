@@ -439,13 +439,6 @@ export const App = () => {
         </button>
       }
 
-      <button style={{ padding: 10, margin: 10 }} onClick={() => {
-        console.debug(`test ui`);
-        sdk.testUI('pending');
-      }}>
-        TEST UI
-      </button>
-
       <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
         Terminate
       </button>
