@@ -98,9 +98,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     //   }
     // });
     this.initialize(this.options);
-    if (this.debug) {
-      console.debug(`sdk initialized`, this.dappMetadata);
-    }
   }
 
   private initialize(options: MetaMaskSDKOptions) {
@@ -138,7 +135,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     } = options;
 
     if (this._initialized) {
-      console.debug(`ALREADY initialized`);
+      console.debug(`SDK::initialize() already initialized.`);
       return;
     }
 
