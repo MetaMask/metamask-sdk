@@ -217,14 +217,12 @@ export class RemoteConnection implements ProviderService {
     });
 
     this.connector.on(EventType.TERMINATE, () => {
-      if (typeof window === undefined) {
-        if (this.developerMode) {
-          console.debug(`TODO alert user from wallet termination.`);
-        }
-      } else {
-        // TODO use a modal window instead
+      if (platform.isBrowser()) {
+        // TODO use a modal or let user customize messsage instead
         // eslint-disable-next-line no-alert
         alert(`SDK Connection has been terminated from MetaMask.`);
+      } else {
+        console.info(`SDK Connection has been terminated`);
       }
       this.pendingModal?.onClose();
       this.pendingModal = undefined;
