@@ -5,13 +5,12 @@
   "scripts": {
     "android": "react-native run-android --port=9095",
     "ios": "react-native run-ios --port=9095 --simulator 'iPhone 12 Pro'",
-    "ios:device": "react-native run-ios --port=9095 --device \"NAME’s iPhone\"",
+    "ios:device": "react-native run-ios --port=9095 --device \"Arthur’s iPhone\"",
     "lint": "eslint .",
     "start": "react-native start --port=9095",
     "test": "jest"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.2.0",
     "@react-native-async-storage/async-storage": "^1.18.1",
     "ethers": "5.7.2",
     "node-libs-react-native": "^1.2.1",
