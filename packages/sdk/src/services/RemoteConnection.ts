@@ -146,6 +146,11 @@ export class RemoteConnection implements ProviderService {
 
     if (!platform.isSecure()) {
       this.connector.on(EventType.OTP, (otpAnswer) => {
+        // Prevent double handling OTP message
+        if (this.otpAnswer === otpAnswer) {
+          return;
+        }
+
         if (this.developerMode) {
           console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
         }
@@ -311,7 +316,10 @@ export class RemoteConnection implements ProviderService {
       }
 
       waitForOTP().then((otp) => {
-        this.pendingModal?.updateOTPValue?.(otp);
+        if (this.otpAnswer !== otp) {
+          this.otpAnswer = otp;
+          this.pendingModal?.updateOTPValue?.(otp);
+        }
       });
     }
   }
