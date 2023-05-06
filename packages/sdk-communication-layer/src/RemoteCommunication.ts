@@ -629,6 +629,11 @@ export class RemoteCommunication extends EventEmitter2 {
         }
 
         this.once(EventType.CLIENTS_READY, () => {
+          if (this.debug) {
+            console.log(
+              `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
+            );
+          }
           // only send the message after the clients have awaken.
           this.communicationLayer?.sendMessage(message);
           resolve();
