@@ -14,7 +14,10 @@ import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
 import { Ethereum } from './services/Ethereum';
-import { RemoteConnection } from './services/RemoteConnection';
+import {
+  RemoteConnection,
+  RemoteConnectionProps,
+} from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
 import { PlatformType } from './types/PlatformType';
@@ -46,9 +49,7 @@ export interface MetaMaskSDKOptions {
   developerMode?: boolean;
   ui?: SDKUIOptions;
   autoConnect?: AutoConnectOptions;
-  modals?: {
-    // TODO
-  };
+  modals?: Pick<RemoteConnectionProps, 'modals'>;
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
@@ -129,6 +130,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       enableDebug = true,
       communicationServerUrl,
       autoConnect,
+      modals,
       // persistence settings
       storage,
       logging = {},
@@ -213,6 +215,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         autoConnect,
         logging: runtimeLogging,
         modals: {
+          ...modals,
           onPendingModalDisconnect: this.terminate.bind(this),
         },
       });

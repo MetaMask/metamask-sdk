@@ -14,8 +14,6 @@ const PendingModal = (onDisconnect = () => {}) => {
           `Choose the following value on your metamask mobile wallet: ${otpValue}`,
         );
       }
-
-      return false;
     },
     mount: () => {
       return false;
