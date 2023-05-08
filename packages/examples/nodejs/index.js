@@ -1,9 +1,27 @@
 const { MetaMaskSDK } = require('@metamask/sdk');
+const qrcode = require('qrcode-terminal');
 
 const sdk = new MetaMaskSDK({
   shouldShimWeb3: false,
   storage: {
     enabled: true,
+  },
+  modals: {
+    install: ({ link }) => {
+      // console.debug(`open link ${link}`);
+      qrcode.generate(link, { small: true }, (qr) => console.log(qr));
+    },
+    otp: () => {
+      return {
+        updateOTPValue: (otpValue) => {
+          if (otpValue !== '') {
+            console.debug(
+              `[CUSTOMIZE TEXT] Choose the following value on your metamask mobile wallet: ${otpValue}`,
+            );
+          }
+        },
+      }
+    }
   },
 });
 
@@ -68,7 +86,7 @@ const start = async () => {
 
 ethereum.on('_initialized', () => {
   start();
-})
+});
 
 ethereum.request({
   method: 'eth_requestAccounts',

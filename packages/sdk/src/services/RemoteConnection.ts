@@ -15,11 +15,11 @@ import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
-import sdkPendingModal from '../ui/InstallModal/pendingModal';
+import PendingModal from '../ui/InstallModal/pendingModal';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
-interface RemoteConnectionProps {
+export interface RemoteConnectionProps {
   timer?: {
     runBackgroundTimer?: (cb: () => void, ms: number) => number;
     stopBackgroundTimer?: () => void;
@@ -36,6 +36,13 @@ interface RemoteConnectionProps {
   logging?: SDKLoggingOptions;
   modals: {
     onPendingModalDisconnect?: () => void;
+    install?: (params: { link: string; debug?: boolean }) => {
+      onClose?: () => void;
+    };
+    otp?: (onDisconnect?: () => void) => {
+      onClose?: () => void;
+      updateOTPValue: (otpValue: string) => void;
+    };
   };
 }
 export class RemoteConnection implements ProviderService {
@@ -50,13 +57,13 @@ export class RemoteConnection implements ProviderService {
   private communicationLayerPreference: CommunicationLayerPreference;
 
   private pendingModal?: {
-    onClose: () => void;
+    onClose?: () => void;
     mount?: () => void;
     updateOTPValue?: (otpAnswer: string) => void;
   };
 
   private installModal?: {
-    onClose: () => void;
+    onClose?: () => void;
     mount?: () => void;
   };
 
@@ -72,6 +79,15 @@ export class RemoteConnection implements ProviderService {
     const developerMode = options.logging?.developerMode === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
+
+    // Set default modals implementation
+    if (!options.modals.install) {
+      options.modals.install = InstallModal;
+    }
+
+    if (!options.modals.otp) {
+      options.modals.otp = PendingModal;
+    }
     this.connector = this.initializeConnector();
   }
 
@@ -167,10 +183,10 @@ export class RemoteConnection implements ProviderService {
 
           const onDisconnect = () => {
             this.options.modals.onPendingModalDisconnect?.();
-            this.pendingModal?.onClose();
+            this.pendingModal?.onClose?.();
             this.pendingModal?.updateOTPValue?.('');
           };
-          this.pendingModal = sdkPendingModal(onDisconnect);
+          this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
 
@@ -179,7 +195,7 @@ export class RemoteConnection implements ProviderService {
           if (this.developerMode) {
             console.debug(`connection _initialized -- reset OTP value`);
           }
-          this.pendingModal?.onClose();
+          this.pendingModal?.onClose?.();
           this.pendingModal?.updateOTPValue?.('');
           this.otpAnswer = undefined;
         });
@@ -224,7 +240,7 @@ export class RemoteConnection implements ProviderService {
       } else {
         console.info(`SDK Connection has been terminated`);
       }
-      this.pendingModal?.onClose();
+      this.pendingModal?.onClose?.();
       this.pendingModal = undefined;
       this.otpAnswer = undefined;
 
@@ -290,7 +306,7 @@ export class RemoteConnection implements ProviderService {
     } else if (!trustedDevice) {
       const onDisconnect = () => {
         this.options.modals.onPendingModalDisconnect?.();
-        this.pendingModal?.onClose();
+        this.pendingModal?.onClose?.();
         this.pendingModal = undefined;
       };
 
@@ -310,7 +326,7 @@ export class RemoteConnection implements ProviderService {
         // Make sure modal is visible
         this.pendingModal.mount?.();
       } else {
-        this.pendingModal = sdkPendingModal(onDisconnect);
+        this.pendingModal = this.options.modals.otp?.(onDisconnect);
       }
 
       waitForOTP().then((otp) => {
@@ -393,7 +409,7 @@ export class RemoteConnection implements ProviderService {
               const deeplink = `metamask://connect?${linkParams}`;
 
               if (showQRCode) {
-                this.installModal = InstallModal({
+                this.installModal = this.options.modals.install?.({
                   link: universalLink,
                   debug: this.developerMode,
                 });
@@ -409,8 +425,8 @@ export class RemoteConnection implements ProviderService {
               this.universalLink = universalLink;
             })
             .catch((err) => {
-              this.pendingModal?.onClose();
-              this.installModal?.onClose();
+              this.pendingModal?.onClose?.();
+              this.installModal?.onClose?.();
               this.otpAnswer = undefined;
               this.pendingModal?.updateOTPValue?.('');
               reject(err);
@@ -430,8 +446,8 @@ export class RemoteConnection implements ProviderService {
 
             this.sentFirstConnect = true;
             // try to close displayedModal
-            this.pendingModal?.onClose();
-            this.installModal?.onClose();
+            this.pendingModal?.onClose?.();
+            this.installModal?.onClose?.();
             if (!this.otpAnswer) {
               this.otpAnswer = undefined;
               this.pendingModal?.updateOTPValue?.('');
@@ -476,7 +492,7 @@ export class RemoteConnection implements ProviderService {
 
     if (options?.terminate) {
       Ethereum.getProvider().handleDisconnect({ terminate: true });
-      this.pendingModal?.onClose();
+      this.pendingModal?.onClose?.();
       this.otpAnswer = undefined;
     }
     this.connector?.disconnect(options);
