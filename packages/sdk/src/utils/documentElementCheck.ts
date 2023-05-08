@@ -4,7 +4,10 @@
  * @returns {boolean} {@code true} if the documentElement is an html node or if none exists
  */
 export function documentElementCheck() {
-  const documentElement = document.documentElement.nodeName;
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  const documentElement = document?.documentElement?.nodeName;
   if (documentElement) {
     return documentElement.toLowerCase() === 'html';
   }
