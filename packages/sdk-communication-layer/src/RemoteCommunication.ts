@@ -209,10 +209,8 @@ export class RemoteCommunication extends EventEmitter2 {
         throw new Error('Invalid communication protocol');
     }
 
-    let url =
-      (typeof document !== 'undefined' && document.URL) || 'url undefined';
-    let title =
-      (typeof document !== 'undefined' && document.title) || 'title undefined';
+    let url = (typeof document !== 'undefined' && document.URL) || '';
+    let title = (typeof document !== 'undefined' && document.title) || '';
 
     if (this.dappMetadata?.url) {
       url = this.dappMetadata.url;
