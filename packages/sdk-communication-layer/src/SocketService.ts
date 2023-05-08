@@ -323,6 +323,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.socket.on(`clients_disconnected-${channelId}`, () => {
       this.clientsConnected = false;
+      if (this.isOriginator && !this.clientsPaused) {
+        this.keyExchange.clean();
+      }
       // If it wasn't paused - need to reset keys.
       this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
     });

@@ -209,10 +209,8 @@ export class RemoteCommunication extends EventEmitter2 {
         throw new Error('Invalid communication protocol');
     }
 
-    let url =
-      (typeof document !== 'undefined' && document.URL) || 'url undefined';
-    let title =
-      (typeof document !== 'undefined' && document.title) || 'title undefined';
+    let url = (typeof document !== 'undefined' && document.URL) || '';
+    let title = (typeof document !== 'undefined' && document.title) || '';
 
     if (this.dappMetadata?.url) {
       url = this.dappMetadata.url;
@@ -629,6 +627,11 @@ export class RemoteCommunication extends EventEmitter2 {
         }
 
         this.once(EventType.CLIENTS_READY, () => {
+          if (this.debug) {
+            console.log(
+              `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
+            );
+          }
           // only send the message after the clients have awaken.
           this.communicationLayer?.sendMessage(message);
           resolve();
