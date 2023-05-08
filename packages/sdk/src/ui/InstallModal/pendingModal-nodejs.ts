@@ -10,7 +10,7 @@ const PendingModal = (onDisconnect = () => {}) => {
     },
     updateOTPValue: (otpValue: string) => {
       if (otpValue !== '') {
-        console.debug(
+        console.info(
           `Choose the following value on your metamask mobile wallet: ${otpValue}`,
         );
       }
