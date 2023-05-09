@@ -329,9 +329,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         );
       }
       if (this.isOriginator) {
+        // If it wasn't paused - need to reset keys.
         this.keyExchange.clean();
       }
-      // If it wasn't paused - need to reset keys.
+
       this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
     });
 
