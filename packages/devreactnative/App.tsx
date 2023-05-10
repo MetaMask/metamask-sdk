@@ -89,8 +89,8 @@ function App(): JSX.Element {
   }, []);
 
   const handleAppState = (appState: AppStateStatus) => {
-    console.debug(`AppState change: ${appState}`);
     canOpenLink = appState === 'active';
+    console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
   };
 
   const backgroundStyle = {

@@ -151,7 +151,7 @@ export class RemoteCommunicationPostMessageStream
       if (METHODS_TO_REDIRECT[targetMethod]) {
         if (this.debug) {
           console.debug(
-            `RCPMS::_write redirect link for '${targetMethod}'`,
+            `RCPMS::_write redirect link for '${targetMethod}' socketConnected=${socketConnected}`,
             `connect?${urlParams}`,
           );
         }

@@ -255,7 +255,9 @@ export class RemoteCommunication extends EventEmitter2 {
       // Propagate the event to manage different loading states on the ui.
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::on 'clients_connected' channel=${this.channelId}`,
+          `RemoteCommunication::on 'clients_connected' channel=${
+            this.channelId
+          } keysExchanged=${this.getKeyInfo()?.keysExchanged}`,
         );
       }
       this.clientsConnected = true;
@@ -316,6 +318,16 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
       this.ready = false;
+    });
+
+    this.communicationLayer?.on(EventType.SOCKET_RECONNECT, () => {
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication::on 'socket_reconnect' -- reset key exchange status / set ready to false`,
+        );
+      }
+      this.ready = false;
+      this.clean();
     });
 
     this.communicationLayer?.on(

@@ -10,6 +10,8 @@ export enum EventType {
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
   SOCKET_DISCONNECTED = 'socket_disconnected',
+  // socket reconnect should only happen on ios mobile
+  SOCKET_RECONNECT = 'socket_reconnect',
   OTP = 'otp',
   CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
