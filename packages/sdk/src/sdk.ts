@@ -43,7 +43,7 @@ export interface MetaMaskSDKOptions {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  dappMetadata?: DappMetadata;
+  dappMetadata: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
@@ -76,6 +76,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     options: MetaMaskSDKOptions = {
       storage: {
         enabled: false,
+      },
+      dappMetadata: {
+        name: '',
+        url: '',
       },
     },
   ) {
