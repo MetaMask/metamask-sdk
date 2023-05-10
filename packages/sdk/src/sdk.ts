@@ -43,7 +43,7 @@ export interface MetaMaskSDKOptions {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  dappMetadata: DappMetadata;
+  dappMetadata?: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
