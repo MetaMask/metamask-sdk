@@ -44,8 +44,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   private clientsConnected = false;
 
-  private clientsReady = false;
-
   /**
    * Special flag used to session persistence in case MetaMask disconnects without Pause,
    * it means we need to re-create a new key handshake.
@@ -163,6 +161,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (!this.socket.connected) {
         this.resumed = true;
         this.socket.connect();
+
+        this.emit(EventType.SOCKET_RECONNECT);
         this.socket.emit(
           EventType.JOIN_CHANNEL,
           this.channelId,
@@ -355,7 +355,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         throw new Error(error);
       }
 
-      this.checkSameId(id);
+      try {
+        this.checkSameId(id);
+      } catch (err) {
+        console.error(`ignore message --- wrong id `, message);
+        return;
+      }
 
       if (
         this.isOriginator &&
@@ -368,9 +373,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           );
         }
 
-        return this.keyExchange.start({
+        this.keyExchange.start({
           isOriginator: this.isOriginator ?? false,
         });
+        return;
       }
 
       // TODO can be removed once session persistence fully vetted.
@@ -398,9 +404,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
         }
 
-        return this.emit(EventType.MESSAGE, {
+        this.emit(EventType.MESSAGE, {
           message: { type: KeyExchangeMessageType.KEY_HANDSHAKE_CHECK },
         });
+        return;
       }
 
       // TODO can be removed once session persistence fully vetted.
@@ -409,7 +416,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           console.debug(`SocketService::${this.context}::on 'message' ping `);
         }
 
-        return this.emit(EventType.MESSAGE, { message: { type: 'ping' } });
+        this.emit(EventType.MESSAGE, { message: { type: 'ping' } });
+        return;
       }
 
       if (this.debug) {
@@ -431,10 +439,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           );
         }
 
-        return this.emit(InternalEventType.KEY_EXCHANGE, {
+        this.emit(InternalEventType.KEY_EXCHANGE, {
           message,
           context: this.context,
         });
+        return;
       }
 
       if (!this.keyExchange.areKeysExchanged()) {
@@ -452,13 +461,14 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           `Message ignored because invalid key exchange status`,
           message,
         );
-        return false;
+        return;
       } else if (message.toString().indexOf('type') !== -1) {
         // Even if keys were exchanged, if the message is not encrypted, emit it.
         console.warn(
           `SocketService::on 'message' received non encrypted unkwown message`,
         );
-        return this.emit(EventType.MESSAGE, message);
+        this.emit(EventType.MESSAGE, message);
+        return;
       }
 
       const decryptedMessage = this.keyExchange.decryptMessage(message);
@@ -493,7 +503,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         }
       }
 
-      return this.emit(EventType.MESSAGE, { message: messageReceived });
+      this.emit(EventType.MESSAGE, { message: messageReceived });
     });
 
     this.socket.on(
