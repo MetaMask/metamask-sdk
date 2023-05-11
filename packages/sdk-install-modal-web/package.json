@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-install-modal-web",
   "version": "0.2.1",
-  "private": false,
   "description": "MetaMask SDK Install Modal for Web",
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
@@ -21,7 +20,7 @@
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "prepublishOnly": "yarn build",
+    "prepack": "yarn build",
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",

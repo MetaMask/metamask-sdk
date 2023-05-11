@@ -27,13 +27,12 @@
     "lint:fix": "yarn workspaces run lint:fix",
     "lint:misc": "yarn workspaces run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
-    "setup": "yarn install && yarn allow-scripts && yarn postinstall",
     "reset": "yarn workspaces run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces run test",
     "test:ci": "yarn workspaces run test:ci"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^1.0.6",
+    "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "^2.5.0",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",
@@ -65,5 +64,5 @@
       "canvas": true
     }
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@3.5.1"
 }
