@@ -34,6 +34,7 @@
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "^2.5.0",
+    "@metamask/create-release-branch": "^1.0.1",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",
     "@metamask/eslint-config-nodejs": "^8.0.0",
