@@ -71,6 +71,7 @@
   },
   "packageManager": "yarn@3.5.1",
   "dependencies": {
-    "execa": "^7.1.1"
+    "execa": "^7.1.1",
+    "ts-node": "^10.9.1"
   }
 }

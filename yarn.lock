@@ -16439,6 +16439,7 @@ run-queue@^1.0.0, run-queue@^1.0.3:
     prettier: ^2.3.2
     rimraf: ^3.0.2
     ts-jest: ^29.0.3
+    ts-node: ^10.9.1
     typescript: ^4.3.5
   languageName: unknown
   linkType: soft
