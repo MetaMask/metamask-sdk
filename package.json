@@ -24,7 +24,7 @@
     "postinstall": "patch-package",
     "link-packages": "./scripts/link-packages.sh",
     "lint": "yarn workspaces foreach run lint",
-    "lint:changelogs": "yarn workspaces foreach run lint:changelog",
+    "lint:changelogs": "yarn workspaces foreach --no-private run lint:changelog",
     "lint:eslint": "yarn workspaces foreach run lint:eslint",
     "lint:fix": "yarn workspaces foreach run lint:fix",
     "lint:misc": "yarn workspaces foreach run lint:mix",
