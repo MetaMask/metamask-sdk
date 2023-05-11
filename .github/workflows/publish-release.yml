@@ -5,8 +5,6 @@ on:
     secrets:
       NPM_TOKEN:
         required: true
-      SLACK_WEBHOOK_URL:
-        required: true
 
 jobs:
   publish-release:
@@ -50,9 +48,6 @@ jobs:
       - name: Dry Run Publish
         # omit npm-token token to perform dry run publish
         uses: MetaMask/action-npm-publish@v3
-        # Temporarily disabled
-        # with:
-        #   slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
         env:
           SKIP_PREPACK: true
 
