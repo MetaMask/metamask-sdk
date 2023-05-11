@@ -2,6 +2,14 @@
   "name": "@metamask/sdk-install-modal-web",
   "version": "0.2.1",
   "description": "MetaMask SDK Install Modal for Web",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/metamask-sdk.git"
+  },
   "author": "MetaMask",
   "main": "dist/InstallModalWeb",
   "types": "dist/src/EmbeddableWidget.d.ts",
