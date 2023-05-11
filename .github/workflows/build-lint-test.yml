@@ -71,7 +71,6 @@ jobs:
           path: ${{ steps.yarn-cache-dir.outputs.YARN_CACHE_DIR }}
           key: yarn-cache-${{ runner.os }}-${{ steps.yarn-version.outputs.YARN_VERSION }}-${{ hashFiles('yarn.lock') }}
       - run: yarn --immutable
-      - run: yarn allow-scripts
       - run: yarn build
       - name: Require clean working directory
         shell: bash
