@@ -11,7 +11,12 @@ main().catch((error) => {
  * The entrypoint to this script.
  */
 async function main() {
-  const { stdout } = await execa('yarn', ['workspaces', 'list', '--json']);
+  const { stdout } = await execa('yarn', [
+    'workspaces',
+    'list',
+    '--json',
+    '--no-private',
+  ]);
   const workspaces = stdout.split('\n').map((line) => JSON.parse(line));
   const childWorkspaceNames = workspaces
     .filter((workspace) => workspace.location !== '.')
