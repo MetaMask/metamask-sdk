@@ -29,7 +29,7 @@
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "prepack": "yarn build",
+    "prepack": "../../scripts/prepack.sh",
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
