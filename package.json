@@ -15,21 +15,21 @@
     ]
   },
   "scripts": {
-    "build": "yarn workspaces run build:pre-tsc && yarn workspaces run build && yarn workspaces run build:post-tsc",
+    "build": "yarn workspaces foreach run build:pre-tsc && yarn workspaces foreach run build && yarn workspaces foreach run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
     "build:tsc": "tsc --build --force tsconfig.json",
-    "clean": "yarn workspaces run clean",
+    "clean": "yarn workspaces foreach run clean",
     "postinstall": "patch-package",
     "link-packages": "./scripts/link-packages.sh",
-    "lint": "yarn workspaces run lint",
-    "lint:changelogs": "yarn workspaces run lint:changelog",
-    "lint:eslint": "yarn workspaces run lint:eslint",
-    "lint:fix": "yarn workspaces run lint:fix",
-    "lint:misc": "yarn workspaces run lint:mix",
+    "lint": "yarn workspaces foreach run lint",
+    "lint:changelogs": "yarn workspaces foreach run lint:changelog",
+    "lint:eslint": "yarn workspaces foreach run lint:eslint",
+    "lint:fix": "yarn workspaces foreach run lint:fix",
+    "lint:misc": "yarn workspaces foreach run lint:mix",
     "publish:all": "./scripts/publish-all.sh",
-    "reset": "yarn workspaces run reset && rimraf node_modules && yarn setup",
-    "test": "yarn workspaces run test",
-    "test:ci": "yarn workspaces run test:ci"
+    "reset": "yarn workspaces foreach run reset && rimraf node_modules && yarn setup",
+    "test": "yarn workspaces foreach run test",
+    "test:ci": "yarn workspaces foreach run test:ci"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",

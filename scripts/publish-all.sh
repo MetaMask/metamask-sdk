@@ -26,4 +26,4 @@ if [[ -z $OTP ]]; then
   exit 1
 fi
 
-yarn workspaces run publish "$OTP"
+yarn workspaces foreach run publish "$OTP"
