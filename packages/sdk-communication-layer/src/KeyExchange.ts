@@ -130,7 +130,11 @@ export class KeyExchange extends EventEmitter2 {
           `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
         );
       }
-      this.checkStep([KeyExchangeMessageType.KEY_HANDSHAKE_ACK]);
+
+      this.checkStep([
+        KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+        KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
+      ]);
       this.keysExchanged = true;
       // Reset step value for next exchange.
       this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
