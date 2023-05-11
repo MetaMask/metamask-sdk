@@ -69,5 +69,8 @@
       "$root$": false
     }
   },
-  "packageManager": "yarn@3.5.1"
+  "packageManager": "yarn@3.5.1",
+  "dependencies": {
+    "execa": "^7.1.1"
+  }
 }
