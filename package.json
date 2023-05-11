@@ -61,7 +61,8 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
+      "canvas": true,
+      "$root$": false
     }
   },
   "packageManager": "yarn@3.5.1"
