@@ -25,6 +25,7 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
+    "@lavamoat/allow-scripts": "^2.3.1",
     "@react-native-community/eslint-config": "^3.2.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^29.2.1",
@@ -41,5 +42,12 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "ethers>@ethersproject/providers>ws>bufferutil": false,
+      "ethers>@ethersproject/providers>ws>utf-8-validate": false
+    }
   }
 }
