@@ -24,12 +24,13 @@
   },
   "dependencies": {
     "@metamask/providers": "^10.2.1",
-    "@metamask/sdk": "^0.2.0",
-    "@metamask/sdk-communication-layer": "^0.2.0",
+    "@metamask/sdk": "workspace:^",
+    "@metamask/sdk-communication-layer": "workspace:^",
     "bowser": "^2.11.0",
     "pump": "^3.0.0"
   },
   "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-run": "^3.0.1",
@@ -37,5 +38,12 @@
     "rollup": "^3.7.3",
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-typescript2": "^0.34.1"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "@metamask/sdk>react-native>react-devtools-core>ws>bufferutil": false,
+      "@metamask/sdk>react-native>react-devtools-core>ws>utf-8-validate": false
+    }
   }
 }

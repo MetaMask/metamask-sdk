@@ -58,7 +58,7 @@ const sdk = new MetaMaskSDK({
   },
   // Replace with local socket server for dev debug
   // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
-  // communicationServerUrl: 'http://192.168.50.114:4000',
+  communicationServerUrl: 'http://192.168.50.114:4000',
   checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,

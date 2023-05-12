@@ -8,10 +8,12 @@
   },
   "workspaces": {
     "packages": [
+      "packages/sdk-socket-server",
       "packages/sdk-install-modal-web",
       "packages/sdk-communication-layer",
       "packages/sdk",
-      "packages/devreact"
+      "packages/devreact",
+      "packages/deve2e"
     ]
   },
   "scripts": {
@@ -32,7 +34,6 @@
     "test:ci": "yarn workspaces foreach run test:ci"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "^2.5.0",
     "@metamask/create-release-branch": "^1.0.1",
     "@metamask/eslint-config": "^8.0.0",
