@@ -18,7 +18,7 @@ declare global {
 const sdk = new MetaMaskSDK({
   useDeeplink: false,
   communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  communicationServerUrl: 'http://192.168.50.114:4000', // avoid localhost while testing deeplink
+  // communicationServerUrl: 'http://192.168.50.114:4000', // avoid localhost while testing deeplink
   enableDebug: true,
   autoConnect: {
     enable: true
