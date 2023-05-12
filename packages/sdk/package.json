@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.2.4",
+  "version": "0.2.3",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -25,7 +25,7 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk",
+    "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
@@ -62,7 +62,7 @@
   "devDependencies": {
     "@jest/globals": "^29.3.1",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "3.1.0",
+    "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
