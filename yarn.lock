@@ -2951,21 +2951,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/auto-changelog@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@metamask/auto-changelog@npm:3.1.0"
-  dependencies:
-    diff: ^5.0.0
-    execa: ^5.1.1
-    semver: ^7.3.5
-    yargs: ^17.0.1
-  bin:
-    auto-changelog: dist/cli.js
-  checksum: cd3c833100c19a80e0b7ae8c174fbbe225700eef5fbabd9b0d6c4b439c8af839792111a17d9ddf2e1939839736413afd7402d2cc08ece373622b5a410da5e9fe
-  languageName: node
-  linkType: hard
-
-"@metamask/auto-changelog@npm:^2.3.0":
+"@metamask/auto-changelog@npm:^2.3.0, @metamask/auto-changelog@npm:^2.5.0":
   version: 2.6.1
   resolution: "@metamask/auto-changelog@npm:2.6.1"
   dependencies:
@@ -3166,7 +3152,7 @@ __metadata:
   dependencies:
     "@jest/globals": ^29.3.1
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
+    "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -3215,8 +3201,7 @@ __metadata:
     "@babel/core": ^7.20.12
     "@emotion/core": 10.1.1
     "@emotion/styled": 10.0.27
-    "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
+    "@metamask/auto-changelog": ^2.3.0
     "@types/react": 16.9.32
     clean-webpack-plugin: 3.0.0
     compression-webpack-plugin: 3.1.0
@@ -3278,7 +3263,7 @@ __metadata:
   dependencies:
     "@jest/globals": ^29.3.1
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
+    "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -17618,7 +17603,7 @@ __metadata:
   resolution: "root@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
+    "@metamask/auto-changelog": ^2.5.0
     "@metamask/create-release-branch": ^1.0.1
     "@metamask/eslint-config": ^8.0.0
     "@metamask/eslint-config-jest": ^8.0.0

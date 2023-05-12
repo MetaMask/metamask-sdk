@@ -6,9 +6,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.2.5]
-### Added
-- [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
-
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.2.5...HEAD
-[0.2.5]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-communication-layer@0.2.5
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/
