@@ -6,16 +6,14 @@
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
-  "workspaces": {
-    "packages": [
-      "packages/sdk-socket-server",
-      "packages/sdk-install-modal-web",
-      "packages/sdk-communication-layer",
-      "packages/sdk",
-      "packages/devreact",
-      "packages/deve2e"
-    ]
-  },
+  "workspaces": [
+    "packages/sdk-socket-server",
+    "packages/sdk-install-modal-web",
+    "packages/sdk-communication-layer",
+    "packages/sdk",
+    "packages/devreact",
+    "packages/deve2e"
+  ],
   "scripts": {
     "build": "yarn workspaces foreach run build:pre-tsc && yarn workspaces foreach run build && yarn workspaces foreach run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
