@@ -35,5 +35,17 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "react-scripts>@pmmmwh/react-refresh-webpack-plugin>core-js-pure": false,
+      "react-scripts>react-app-polyfill>core-js": false,
+      "react-scripts>webpack-dev-server>ws>bufferutil": false,
+      "react-scripts>webpack-dev-server>ws>utf-8-validate": false
+    }
   }
 }

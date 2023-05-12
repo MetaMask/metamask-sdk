@@ -3,6 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "description": "",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/metamask-sdk.git"
+  },
   "author": "",
   "main": "index.js",
   "scripts": {
@@ -34,6 +42,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
@@ -41,6 +50,13 @@
     "eslint-plugin-jsdoc": "^40.1.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.8"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "socket.io>engine.io>ws>bufferutil": false,
+      "socket.io>engine.io>ws>utf-8-validate": false
+    }
   }
 }

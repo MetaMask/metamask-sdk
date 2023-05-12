@@ -36,7 +36,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
-          yarn install --immutable
+          yarn --immutable
           yarn build
       - uses: actions/cache@v3
         id: restore-build

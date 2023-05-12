@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.2.5",
-  "private": false,
+  "version": "0.2.4",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -30,9 +29,8 @@
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "prepublishOnly": "yarn build",
+    "prepack": "yarn build",
     "reset": "yarn clean && rimraf ./node_modules/",
-    "setup": "yarn install && yarn allow-scripts",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
     "test:dev": "jest  ",
@@ -48,7 +46,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
-    "@lavamoat/allow-scripts": "^1.0.6",
+    "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "^2.3.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
@@ -57,6 +55,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@types/jest": "^29.2.4",
+    "@types/node": "^20.1.3",
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
@@ -89,7 +88,10 @@
   "lavamoat": {
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
-      "canvas": true
+      "canvas": true,
+      "eciesjs>secp256k1": false,
+      "socket.io-client>engine.io-client>ws>bufferutil": false,
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false
     }
   }
 }
