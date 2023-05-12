@@ -7,10 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.2.5]
-### Uncategorized
-- chore: update auto-changelog deps
-- Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
-- [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
+### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
 [Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.2.5...HEAD
