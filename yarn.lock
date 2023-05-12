@@ -3050,7 +3050,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@^0.2.4, @metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer":
+"@metamask/sdk-communication-layer@workspace:*, @metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer"
   dependencies:
@@ -3097,7 +3097,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-install-modal-web@^0.2.1, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
@@ -3143,8 +3143,8 @@ __metadata:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": ^0.2.4
-    "@metamask/sdk-install-modal-web": ^0.2.1
+    "@metamask/sdk-communication-layer": "workspace:*"
+    "@metamask/sdk-install-modal-web": "workspace:*"
     "@react-native-async-storage/async-storage": ^1.17.11
     "@rollup/plugin-commonjs": ^22.0.0-13
     "@rollup/plugin-json": ^4.1.0

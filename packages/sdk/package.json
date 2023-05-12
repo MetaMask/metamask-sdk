@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk",
   "version": "0.2.3",
-  "private": false,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -41,8 +40,8 @@
     "@metamask/onboarding": "^1.0.1",
     "@metamask/post-message-stream": "^6.1.0",
     "@metamask/providers": "^10.2.1",
-    "@metamask/sdk-communication-layer": "^0.2.5",
-    "@metamask/sdk-install-modal-web": "^0.2.1",
+    "@metamask/sdk-communication-layer": "workspace:*",
+    "@metamask/sdk-install-modal-web": "workspace:*",
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
@@ -103,5 +102,12 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "eciesjs>secp256k1": false,
+      "socket.io-client>engine.io-client>ws>bufferutil": false,
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false
+    }
   }
 }
