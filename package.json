@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "version": "0.2.3",
+  "version": "1.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "^2.5.0",
+    "@metamask/auto-changelog": "3.1.0",
     "@metamask/create-release-branch": "^1.0.1",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",

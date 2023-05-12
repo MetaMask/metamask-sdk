@@ -46,7 +46,8 @@
   },
   "devDependencies": {
     "@emotion/core": "10.1.1",
-    "@metamask/auto-changelog": "^2.3.0",
+    "@lavamoat/allow-scripts": "^2.3.1",
+    "@metamask/auto-changelog": "3.1.0",
     "@types/react": "16.9.32",
     "clean-webpack-plugin": "3.0.0",
     "compression-webpack-plugin": "3.1.0",
@@ -73,5 +74,11 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "webpack-dev-server>ws>bufferutil": false,
+      "webpack-dev-server>ws>utf-8-validate": false
+    }
   }
 }
