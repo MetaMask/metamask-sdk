@@ -12,7 +12,6 @@
     "incremental": true,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
-    "composite": true,
     "types": ["node"]
   },
   "include": ["./src"]
