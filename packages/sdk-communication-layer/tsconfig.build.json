@@ -3,5 +3,5 @@
   "compilerOptions": {
     "composite": true,
   },
-  "references": []
+  "include": ["./src","package.json"],
 }
