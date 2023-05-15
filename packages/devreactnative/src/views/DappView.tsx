@@ -1,4 +1,3 @@
-import {MetaMaskInpageProvider} from '@metamask/providers';
 import {ConnectionStatus, EventType, MetaMaskSDK} from '@metamask/sdk';
 import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
@@ -74,7 +73,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     }
 
     try {
-      // const t = new ethers.providers.JsonRpcProvider(ethereum);
       setProvider(
         new ethers.providers.Web3Provider(
           ethereum as unknown as ethers.providers.ExternalProvider,
