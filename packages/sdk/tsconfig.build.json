@@ -10,8 +10,8 @@
     "esModuleInterop": true,
     "module": "ES2020",
     "moduleResolution": "Node",
-    "incremental": false,
     "lib": ["DOM", "ES2016"],
+    "composite": true,
     "skipLibCheck": true,
     "types": ["node"]
     // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
