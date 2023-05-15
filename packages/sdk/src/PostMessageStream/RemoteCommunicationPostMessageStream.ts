@@ -95,8 +95,12 @@ export class RemoteCommunicationPostMessageStream
         data = chunk;
       }
 
-      const targetMethod = data?.data
-        ?.method as keyof typeof METHODS_TO_REDIRECT;
+      const targetMethod = data?.data?.method as string;
+
+      if (!ready && targetMethod === 'metamask_getProviderState') {
+        // Only do the first redirect from eth_requestAccounts
+        return callback();
+      }
 
       if (!platform.isSecure()) {
         this.remote.sendMessage(data?.data).catch((err) => {
