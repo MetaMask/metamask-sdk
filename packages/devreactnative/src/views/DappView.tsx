@@ -73,7 +73,11 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     }
 
     try {
-      setProvider(new ethers.providers.Web3Provider(ethereum));
+      setProvider(
+        new ethers.providers.Web3Provider(
+          ethereum as unknown as ethers.providers.ExternalProvider,
+        ),
+      );
 
       console.debug(
         `useffect ethereum.selectedAddress=${ethereum.selectedAddress}`,
