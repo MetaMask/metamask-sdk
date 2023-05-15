@@ -1,0 +1,38 @@
+{
+  // "extends": "../../tsconfig.packages.build.json",
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "paths": {
+      "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
+      // "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
+      // "@metamask/sdk-components": ["../sdk-components/src"],
+      "@metamask/sdk": ["../sdk/src"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"],
+  "references": [
+    {
+      "path": "../sdk/tsconfig.build.json"
+    },
+    {
+      "path": "../sdk-communication-layer"
+    },
+    // {
+    //   "path": "../sdk-install-modal-web"
+    // },
+  ]
+}
