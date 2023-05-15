@@ -573,7 +573,6 @@ export class RemoteCommunication extends EventEmitter2 {
       console.debug(`RemoteCommunication::${this.context}::clean()`);
     }
 
-    this.channelId = undefined;
     this.channelConfig = undefined;
     this.ready = false;
     this.autoStarted = false;

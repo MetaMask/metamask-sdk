@@ -151,6 +151,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         console.debug(
           `SocketService::connectAgain this.socket.connected=${this.socket.connected} trying to reconnect after socketio disconnection`,
+          this,
         );
       }
 
@@ -179,11 +180,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       if (this.debug) {
         console.debug(
           `SocketService::checkFocus hasFocus=${document.hasFocus()}`,
+          this,
         );
       }
 
       if (document.hasFocus()) {
-        connectAgain();
+        connectAgain.call(this);
       } else {
         window.addEventListener('focus', connectAgain.bind(this), {
           once: true,
@@ -196,6 +198,30 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         console.debug(`SocketService::on 'error' `, error);
       }
       checkFocus();
+    });
+
+    this.socket.on('ping', () => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'ping'`);
+      }
+    });
+
+    this.socket.on('reconnect', (attempt) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'reconnect' attempt=${attempt}`);
+      }
+    });
+
+    this.socket.on('reconnect_error', (error) => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'reconnect_error'`, error);
+      }
+    });
+
+    this.socket.on('reconnect_failed', () => {
+      if (this.debug) {
+        console.debug(`SocketService::on 'reconnect_failed'`);
+      }
     });
 
     this.socket.on('disconnect', (reason) => {
@@ -215,10 +241,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
          * The reason is will be 'transport error'.
          * This creates an issue that the user needs to reply a provider query within 30 seconds.
          *
-         * TODO: is there a way to address a slow (>30s) provider query reply.
+         * FIXME: is there a way to address a slow (>30s) provider query reply.
          */
         this.emit(EventType.SOCKET_DISCONNECTED);
-        checkFocus();
+        checkFocus.call(this);
       }
     });
 
@@ -375,6 +401,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
         this.keyExchange.start({
           isOriginator: this.isOriginator ?? false,
+          force: true,
         });
         return;
       }
