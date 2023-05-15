@@ -68,8 +68,18 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   };
 
   useEffect(() => {
+    if (!ethereum) {
+      console.warn('invalid provider state');
+      return;
+    }
+
     try {
-      setProvider(new ethers.providers.Web3Provider(ethereum));
+      // const t = new ethers.providers.JsonRpcProvider(ethereum);
+      setProvider(
+        new ethers.providers.Web3Provider(
+          ethereum as unknown as ethers.providers.ExternalProvider,
+        ),
+      );
 
       console.debug(
         `useffect ethereum.selectedAddress=${ethereum.selectedAddress}`,
@@ -124,7 +134,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       console.log('errror', err);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ethereum]);
 
   const connect = async () => {
     try {
@@ -132,6 +142,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         method: 'eth_requestAccounts',
       })) as string[];
       console.log('RESULT', result?.[0]);
+      setConnected(true);
       setAccount(result?.[0]);
     } catch (e) {
       console.log('ERROR', e);
@@ -152,7 +163,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
           },
         ],
       });
-      console.log('RESULT', result);
+      console.log('exampleRequest', result);
       setResponse(result);
     } catch (e) {
       console.log('ERROR', e);
@@ -235,6 +246,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     var method = 'eth_signTypedData_v4';
 
     const resp = await ethereum?.request({method, params});
+    console.debug('sign response', resp);
     setResponse(resp);
   };
 
@@ -296,7 +308,8 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       <Button
         title={'Test Storage'}
         onPress={() => {
-          sdk.testStorage();
+          // sdk.testStorage();
+          console.debug(sdk.getServiceStatus());
         }}
       />
 
