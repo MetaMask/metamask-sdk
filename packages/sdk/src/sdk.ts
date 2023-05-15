@@ -89,18 +89,18 @@ export class MetaMaskSDK extends EventEmitter2 {
   ) {
     super();
 
-    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-      // Try to fill potentially missing field in dapp metadata.
-      if (!options?.dappMetadata) {
+    if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
+      // Automatically set dappMetadata on web env.
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         options.dappMetadata = {
           url: window.location.href,
           name: document.title,
         };
+      } else {
+        throw new Error(
+          `You must provide dAppMetadata option (name and/or url)`,
+        );
       }
-    }
-
-    if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
-      throw new Error(`You must provide dApp metadata (name and/or url)`);
     }
 
     this.options = options;

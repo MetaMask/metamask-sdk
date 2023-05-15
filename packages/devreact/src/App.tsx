@@ -383,7 +383,7 @@ export const App = () => {
               Waiting for Metamask to link the connection...
             </div>
           }
-          <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
+          <p>ChannelId: {serviceStatus?.channelId}</p>
           <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
       </div>
 
