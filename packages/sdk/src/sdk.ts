@@ -95,7 +95,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
     }
 
-    if (!options.dappMetadata.name && !options.dappMetadata.url) {
+    if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
       throw new Error(`You must provide dApp metadata (name and/or url)`);
     }
 
