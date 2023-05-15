@@ -1,4 +1,4 @@
-export const METHODS_TO_REDIRECT = {
+export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   eth_requestAccounts: true,
   eth_sendTransaction: true,
   eth_signTransaction: true,
