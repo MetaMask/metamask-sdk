@@ -3,12 +3,11 @@ const fs = require('fs')
 
 const qrcode = require('qrcode-terminal');
 
-const options = {
-  shouldShimWeb3: false,
+const sdk = new MetaMaskSDK({
   storage: {
     enabled: true,
   },
-  metadata: {
+  dappMetadata: {
     name: 'NodeJS example',
   },
   modals: {
