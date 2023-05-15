@@ -29,7 +29,7 @@
       "path": "../sdk/tsconfig.build.json"
     },
     {
-      "path": "../sdk-communication-layer"
+      "path": "../sdk-communication-layer/tsconfig.build.json"
     },
     // {
     //   "path": "../sdk-install-modal-web"
