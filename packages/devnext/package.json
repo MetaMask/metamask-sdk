@@ -1,0 +1,41 @@
+{
+  "name": "devnext",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3333",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@metamask/providers": "^10.2.1",
+    "@metamask/sdk": "workspace:^",
+    "@metamask/sdk-communication-layer": "workspace:^",
+    "@metamask/sdk-install-modal-web": "workspace:^",
+    "@types/node": "18.15.3",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "bufferutil": "^4.0.7",
+    "encoding": "^0.1.13",
+    "eslint": "8.36.0",
+    "eslint-config-next": "13.2.4",
+    "next": "13.2.4",
+    "preact": "^10.13.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "typescript": "5.0.2",
+    "utf-8-validate": "^6.0.3"
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1",
+    "@types/eslint": "^8"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "bufferutil": false,
+      "utf-8-validate": false
+    }
+  }
+}

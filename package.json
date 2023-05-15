@@ -12,6 +12,7 @@
     "packages/sdk-communication-layer",
     "packages/sdk",
     "packages/devreact",
+    "packages/devnext",
     "packages/deve2e"
   ],
   "scripts": {
