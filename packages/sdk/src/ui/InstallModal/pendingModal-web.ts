@@ -1,19 +1,19 @@
-import SDKModalWeb from '@metamask/sdk-install-modal-web';
+import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
 const sdkWebPendingModal = (onDisconnect: () => void) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
   let mounted = false;
 
-  const modalWeb = new SDKModalWeb();
+  const modalLoader = new ModalLoader();
 
   const onClose = () => {
     div.style.display = 'none';
   };
 
   const updateOTPValue = (otpValue: string) => {
-    if (modalWeb) {
-      modalWeb.updateOTPValue(otpValue);
+    if (modalLoader) {
+      modalLoader.updateOTPValue(otpValue);
     }
   };
 
@@ -21,7 +21,7 @@ const sdkWebPendingModal = (onDisconnect: () => void) => {
     if (mounted) {
       div.style.display = 'block';
     } else {
-      modalWeb.mountPending({
+      modalLoader.renderPendingModal({
         parentElement: div,
         onClose,
         onDisconnect,
@@ -34,7 +34,7 @@ const sdkWebPendingModal = (onDisconnect: () => void) => {
   // Auto mount on initialization
   mount();
 
-  return { installModal: modalWeb, onClose, mount, updateOTPValue };
+  return { installModal: modalLoader, onClose, mount, updateOTPValue };
 };
 
 export default sdkWebPendingModal;

@@ -4,6 +4,7 @@ import styles from 'src/styles/Home.module.css';
 import { MetaMaskSDK } from '@metamask/sdk';
 import { useEffect, useState } from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
 declare global {
   interface Window {
@@ -43,7 +44,7 @@ export default function Home() {
     const clientSDK = new MetaMaskSDK({
       useDeeplink: false,
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      // communicationServerUrl: 'http://192.168.50.114:4000',
+      communicationServerUrl: 'http://192.168.50.114:4000',
       enableDebug: true,
       autoConnect: {
         enable: true
@@ -259,6 +260,17 @@ export default function Home() {
 
         <button style={{ padding: 10, margin: 10 }} onClick={() => {
           console.debug(`test ui`);
+        //   const div = document.createElement('div');
+        //   document.body.appendChild(div);
+        //   const modalLoader = new ModalLoader();
+
+        //   // modalLoader.mount({
+        //   //   parentElement: div,
+        //   //   link,
+        //   //   metaMaskInstaller: MetaMaskInstaller.getInstance(),
+        //   //   onClose: () => {},
+        //   // });
+        //   modalLoader.ren
         }}>
           Install Modal
         </button>

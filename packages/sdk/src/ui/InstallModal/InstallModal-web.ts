@@ -1,4 +1,5 @@
-import InstallModalWeb from '@metamask/sdk-install-modal-web';
+import { ModalLoader } from '@metamask/sdk-install-modal-web';
+
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
 const sdkWebInstallModal = ({
@@ -11,7 +12,7 @@ const sdkWebInstallModal = ({
   const div = document.createElement('div');
   document.body.appendChild(div);
 
-  let installModal = new InstallModalWeb();
+  const modalLoader = new ModalLoader();
 
   if (debug) {
     console.debug(`################## Installing Modal #################`);
@@ -24,21 +25,19 @@ const sdkWebInstallModal = ({
   }
 
   const onClose = () => {
-    if (installModal) {
-      installModal.unmount();
-      document.body.removeChild(div);
-      installModal = undefined;
+    if (modalLoader) {
+      modalLoader.unmount();
     }
   };
 
-  installModal.mount({
+  modalLoader.renderInstallModal({
     parentElement: div,
     link,
     metaMaskInstaller: MetaMaskInstaller.getInstance(),
     onClose,
   });
 
-  return { installModal, onClose };
+  return { installModal: modalLoader, onClose };
 };
 
 export default sdkWebInstallModal;
