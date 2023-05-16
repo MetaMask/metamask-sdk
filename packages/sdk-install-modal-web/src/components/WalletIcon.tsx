@@ -1,7 +1,5 @@
-import {h} from "preact"
-
 const LockIcon = () => (
-    <svg
+  <svg
     width="20"
     height="18"
     viewBox="0 0 20 18"
@@ -17,6 +15,6 @@ const LockIcon = () => (
       fill="#037DD6"
     />
   </svg>
-)
+);
 
-export default LockIcon
+export default LockIcon;
