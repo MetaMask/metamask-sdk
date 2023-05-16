@@ -12,13 +12,15 @@
   },
   "author": "MetaMask",
   "packageManager": "yarn@3.5.0",
-  "main": "dist/src/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
   "types": "dist/src/index.d.ts",
   "files": [
     "/dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc --build tsconfig.json --verbose",
     "build:watch": "webpack-cli --watch",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
@@ -50,6 +52,9 @@
     "@emotion/core": "10.1.1",
     "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "3.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-terser": "^0.4.1",
+    "@rollup/plugin-typescript": "^11.1.1",
     "@types/prettier": "^2",
     "@types/react": "^18.0.26",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
@@ -63,6 +68,10 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.32.2",
     "prettier": "^2.8.8",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.21.7",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-typescript2": "^0.34.1",
     "typescript": "^5.0.2"
   },
   "publishConfig": {

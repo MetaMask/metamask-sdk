@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, CSSProperties } from "react";
+import React, { useEffect, useRef, useState, CSSProperties } from "react";
 import AdvantagesListItem from "./components/AdvantagesListItem";
 import CloseButton from "./components/CloseButton";
 import HeartIcon from "./components/HeartIcon";
@@ -114,6 +114,7 @@ export const InstallModal = (props: InstallModalProps) => {
                 <AdvantagesListItem
                   Icon={HeartIcon}
                   text={`
+                  AAAAAAAAAAAAAAAAA
       Trusted by over 30 million users to buy, store, send and swap crypto
       securely`}
                 />

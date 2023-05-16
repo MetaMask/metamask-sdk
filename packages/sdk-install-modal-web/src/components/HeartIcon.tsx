@@ -1,3 +1,4 @@
+import React from 'react';
 const HeartIcon = () => (
   <svg
     width="20"

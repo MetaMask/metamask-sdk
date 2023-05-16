@@ -7,7 +7,7 @@ module.exports = {
 
   parser: '@typescript-eslint/parser',
 
-  ignorePatterns: ['.eslintrc.js','dist'],
+  ignorePatterns: ['.eslintrc.js', 'dist', 'rollup.config.js'],
 
   parserOptions: {
     project: true,
@@ -47,5 +47,5 @@ module.exports = {
         'import/no-named-as-default': 0,
       },
     },
-  ]
+  ],
 };
