@@ -19,6 +19,7 @@
       "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
       "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
       // "@metamask/sdk-components": ["../sdk-components/src"],
+      "@metamask/sdk-react": ["../sdk-react/src"],
       "@metamask/sdk": ["../sdk/src"]
     }
   },
@@ -27,6 +28,9 @@
   "references": [
     {
       "path": "../sdk/tsconfig.build.json"
+    },
+    {
+      "path": "../sdk-react/tsconfig.json"
     },
     {
       "path": "../sdk-communication-layer/tsconfig.build.json"
