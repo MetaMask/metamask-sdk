@@ -5,7 +5,7 @@ import { WidgetWrapper } from "./WidgetWrapper";
 
 export interface PendingModalProps {
   onClose: () => void;
-  onDisconnect: () => void;
+  onDisconnect?: () => void;
   updateOTPValue: (otpValue: string) => void;
 }
 
