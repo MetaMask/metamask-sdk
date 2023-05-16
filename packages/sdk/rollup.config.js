@@ -2,11 +2,13 @@ import typescript from 'rollup-plugin-typescript2';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
-import { terser } from "rollup-plugin-terser";
+import terser from '@rollup/plugin-terser';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
+
+const packageJson = require('./package.json');
 
 const listDepForRollup = ['@react-native-async-storage/async-storage'];
 
@@ -25,7 +27,8 @@ const config = [
       },
       {
         name: 'browser',
-        file: 'dist/browser/umd/metamask-sdk.js',
+        // file: 'dist/browser/umd/metamask-sdk.js',
+        file: packageJson.unpkg,
         format: 'umd',
         sourcemap: true,
       },
@@ -40,13 +43,16 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
-      typescript({ tsconfig: "./tsconfig.build.json" }),
-      nodeResolve({ browser: true, preferBuiltins: false }),
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+      }),
       commonjs({ transformMixedEsModules: true }),
+      typescript({ tsconfig: './tsconfig.build.json' }),
       globals(),
       builtins({ crypto: true }),
       json(),
-      terser()
+      terser(),
     ],
   },
   {
