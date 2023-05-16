@@ -2,9 +2,11 @@
 import PendingModal from './pendingModal-web';
 //#elif _NODEJS
 import PendingModal from './pendingModal-nodejs';
-//#else */
+//#elif _REACTNATIVE
 import PendingModal from './pendingModal-nodejs';
-// import PendingModal from './pendingModal-web';
+//#else */
+// import PendingModal from './pendingModal-nodejs';
+import PendingModal from './pendingModal-web';
 // #endif
 
 export default PendingModal;
