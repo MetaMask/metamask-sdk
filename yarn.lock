@@ -3649,7 +3649,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^22.0.1
     "@rollup/plugin-node-resolve": ^13.3.0
     "@rollup/plugin-typescript": ^8.3.3
-    "@types/jest": ^27.0.1
+    "@types/jest": ^29.5.1
     "@types/mersenne-twister": ^1.1.2
     "@types/react": 18.0.14
     "@types/react-copy-to-clipboard": ^5.0.4
@@ -3674,8 +3674,8 @@ __metadata:
     react-copy-to-clipboard: ^5.1.0
     react-dom: ^18.2.0
     react-jazzicon: ^1.0.4
-    rimraf: ^3.0.2
-    rollup: ^2.75.0
+    rimraf: ^5.0.0
+    rollup: ^3.21.8
     rollup-plugin-dts: ^4.2.2
     rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-postcss: ^4.0.2
@@ -5207,7 +5207,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:*, @types/jest@npm:^29.2.4":
+"@types/jest@npm:*, @types/jest@npm:^29.2.4, @types/jest@npm:^29.5.1":
   version: 29.5.1
   resolution: "@types/jest@npm:29.5.1"
   dependencies:
@@ -5227,7 +5227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:^27.0.1, @types/jest@npm:^27.5.2":
+"@types/jest@npm:^27.5.2":
   version: 27.5.2
   resolution: "@types/jest@npm:27.5.2"
   dependencies:
@@ -19290,7 +19290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.43.1, rollup@npm:^2.75.0":
+"rollup@npm:^2.43.1":
   version: 2.79.1
   resolution: "rollup@npm:2.79.1"
   dependencies:
@@ -19315,6 +19315,20 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 44372a1e6fbd1941d6cb230b2a3de6d86861ca7523792757c9fe1d254ae4cd645f5dae27d93c7b1e02c60945d2eadd8c74a99033bd8328eda84949086330d804
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^3.21.8":
+  version: 3.21.8
+  resolution: "rollup@npm:3.21.8"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: f749443af3560aba26f5d45dab98f5657bb29d6698f5a8665932b93e8963ba0d9d54283a25cc2b48b4f47d3dc042acfaae1d2947f02c767d28b87aa11f9e148f
   languageName: node
   linkType: hard
 
