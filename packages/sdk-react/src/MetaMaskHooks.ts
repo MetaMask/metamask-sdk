@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   // eslint-disable-next-line import/named
   Chain,
@@ -6,6 +6,7 @@ import {
   useConnect as useConnectWagmi,
   useNetwork,
 } from 'wagmi';
+import { SDKContext } from './MetaMaskProvider';
 
 // eslint-disable-next-line import/export
 export * from 'wagmi';
@@ -29,6 +30,16 @@ type AddEthereumChainParameter = {
   rpcUrls?: string[];
   blockExplorerUrls?: string[];
   iconUrls?: string[]; // Currently ignored.
+};
+
+export const useSDK = () => {
+  const context = useContext(SDKContext);
+  // console.log(`[useMetamaskFlask] context is `, context)
+
+  if (context === undefined) {
+    throw new Error('SDK context is missing, must be within provide');
+  }
+  return context;
 };
 
 export const useSwitchOrAddNetwork = () => {

@@ -19,6 +19,7 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "yarn prebuild && rollup -c --silent",
+    "build:tsc": "tsc",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rm -rf dist",

@@ -1,25 +1,30 @@
-import React from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { WagmiConfig, createClient, Chain, Connector } from 'wagmi';
 import { providers } from 'ethers';
 import MetaMaskConnector from './MetaMaskConnector';
-import { MetaMaskSDKOptions } from '@metamask/sdk';
+import { EventType, MetaMaskSDK, MetaMaskSDKOptions, ServiceStatus } from '@metamask/sdk';
+import { useSDK } from './MetaMaskHooks';
 
-const MetaMaskProvider = ({
+const initProps: {
+  sdk?: MetaMaskSDK,
+  connected: boolean
+} = {
+  connected: false,
+}
+export const SDKContext = createContext(initProps);
+
+const WagmiWrapper = ({
   children,
   networks,
-  sdkOptions,
+  sdk,
   connectors = [],
 }: {
   children: React.ReactNode;
-  networks: Chain[];
-  sdkOptions?: MetaMaskSDKOptions;
+  networks?: Chain[];
+  sdk: MetaMaskSDK;
   connectors?: Connector[];
 }) => {
-  const MMConnector = new MetaMaskConnector({
-    chains: networks,
-    sdkOptions,
-  });
-
+  const MMConnector = new MetaMaskConnector({ chains: networks, sdk })
   const client = createClient({
     autoConnect: true,
     connectors: [MMConnector, ...connectors],
@@ -33,6 +38,29 @@ const MetaMaskProvider = ({
   });
 
   return <WagmiConfig client={client}>{children}</WagmiConfig>;
+};
+
+export const MetaMaskProvider = ({
+  children,
+  sdkOptions,
+}: {
+  children: React.ReactNode;
+  sdkOptions?: MetaMaskSDKOptions;
+}) => {
+  const sdk = new MetaMaskSDK({
+    injectProvider: false,
+    ...sdkOptions,
+  });
+
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    sdk.on(EventType.SERVICE_STATUS, (_serviceStatus: ServiceStatus) => {
+      console.debug(`sdk connection_status`, _serviceStatus);
+    })
+  }, [sdk]);
+
+  return <SDKContext.Provider value={{ sdk, connected }}><WagmiWrapper sdk={sdk}>{children}</WagmiWrapper></SDKContext.Provider>;
 };
 
 export default MetaMaskProvider;

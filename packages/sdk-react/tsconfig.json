@@ -14,8 +14,8 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "types",
-    "emitDeclarationOnly": true,
-    "composite": false
+    "emitDeclarationOnly": false,
+    "declarationDir": "dist/types",
+    "composite": true
   }
 }
