@@ -61,7 +61,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
       );
     }
-    this._initializeStateAsync();
+    return this._initializeStateAsync();
   }
 
   getState() {
