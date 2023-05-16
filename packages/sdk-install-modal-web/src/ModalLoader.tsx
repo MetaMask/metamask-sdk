@@ -16,7 +16,6 @@ export class ModalLoader {
   private el?: Element;
 
   renderInstallModal(props: InstallWidgetProps) {
-    console.debug(`TestWidget render `, props);
     this.el = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
@@ -30,7 +29,6 @@ export class ModalLoader {
   }
 
   renderPendingModal(props: PendingWidgetProps) {
-    console.debug(`TestWidget render `, props);
     this.el = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
