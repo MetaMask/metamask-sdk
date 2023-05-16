@@ -1,3 +1,4 @@
+import React from 'react';
 const InstallIcon = () => (
   <svg
     width="20"

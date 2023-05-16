@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from '../styles';
 
 const AdvantagesListItem = ({ Icon, text }: { Icon: any; text: string }) => (

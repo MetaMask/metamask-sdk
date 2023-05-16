@@ -1,3 +1,4 @@
+import React from 'react';
 import CloseButton from "./components/CloseButton";
 import Logo from "./components/Logo";
 import styles from "./styles";
