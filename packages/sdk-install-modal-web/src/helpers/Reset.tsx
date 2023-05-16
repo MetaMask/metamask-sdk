@@ -1,4 +1,4 @@
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 
 /**
  * Resets all stylings to not interfere with the widget
