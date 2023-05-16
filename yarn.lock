@@ -3290,9 +3290,10 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
-    "@rollup/plugin-commonjs": ^22.0.0-13
-    "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.1.3
+    "@rollup/plugin-commonjs": ^25.0.0
+    "@rollup/plugin-json": ^6.0.0
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.1
     "@types/jest": ^29.2.4
     "@types/node": ^20.1.3
     "@types/uuid": ^9.0.0
@@ -3312,13 +3313,11 @@ __metadata:
     jest: ^29.3.1
     prettier: ^2.3.0
     rimraf: ^3.0.2
-    rollup: ^2.70.0
+    rollup: ^3.21.7
     rollup-plugin-jscc: ^2.0.0
     rollup-plugin-natives: ^0.7.5
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
-    rollup-plugin-polyfill-node: ^0.8.0
-    rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.31.2
     socket.io-client: ^4.5.1
     ts-jest: ^29.0.3
@@ -3401,9 +3400,10 @@ __metadata:
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
     "@react-native-async-storage/async-storage": ^1.17.11
-    "@rollup/plugin-commonjs": ^22.0.0-13
-    "@rollup/plugin-json": ^4.1.0
-    "@rollup/plugin-node-resolve": ^13.1.3
+    "@rollup/plugin-commonjs": ^25.0.0
+    "@rollup/plugin-json": ^6.0.0
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.1
     "@types/dom-screen-wake-lock": ^1.0.0
     "@types/node": ^20.1.3
     "@types/pump": ^1.1.1
@@ -3430,13 +3430,12 @@ __metadata:
     react-native-webview: ^11.26.0
     readable-stream: ^2.3.7
     rimraf: ^4.4.0
-    rollup: ^2.70.0
+    rollup: ^3.21.7
     rollup-plugin-jscc: ^2.0.0
     rollup-plugin-natives: ^0.7.5
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
     rollup-plugin-polyfill-node: ^0.11.0
-    rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.31.2
     socket.io-client: ^4.5.1
     ts-jest: ^29.0.3
@@ -3778,33 +3777,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-commonjs@npm:^22.0.0-13":
-  version: 22.0.2
-  resolution: "@rollup/plugin-commonjs@npm:22.0.2"
+"@rollup/plugin-commonjs@npm:^25.0.0":
+  version: 25.0.0
+  resolution: "@rollup/plugin-commonjs@npm:25.0.0"
   dependencies:
-    "@rollup/pluginutils": ^3.1.0
+    "@rollup/pluginutils": ^5.0.1
     commondir: ^1.0.1
-    estree-walker: ^2.0.1
-    glob: ^7.1.6
-    is-reference: ^1.2.1
-    magic-string: ^0.25.7
-    resolve: ^1.17.0
+    estree-walker: ^2.0.2
+    glob: ^8.0.3
+    is-reference: 1.2.1
+    magic-string: ^0.27.0
   peerDependencies:
-    rollup: ^2.68.0
-  checksum: 70098a4b91afe3f164f5d27cba65edf148c5ed146ee0e07a964b66940681553ac77391083114cdcf9427e7f2706bf0d61eab310b3a2caeab83b7452c0292fcae
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-inject@npm:^4.0.0":
-  version: 4.0.4
-  resolution: "@rollup/plugin-inject@npm:4.0.4"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    estree-walker: ^2.0.1
-    magic-string: ^0.25.7
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: 22a1847372a96296a5b176af3d5b23ac7b48143a32c77ec4efed38daf4b0d1399a3cd144496d65731299984c5f98c9e00dc6a7f53d0fe87bd4aab2d4bd7b8289
+    rollup: ^2.68.0||^3.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: f014f98f161ba4573e5101cf262c152bdcd8cfebf9cf4872f8bb657d20e20d8e2dc51af5339fe10772d19007e63044bd79881af0db4fe9babe9e96d0c0eeb328
   languageName: node
   linkType: hard
 
@@ -3821,17 +3809,6 @@ __metadata:
     rollup:
       optional: true
   checksum: d8458b11af3447710ce200fe2886faff07bb054e1269a4f06f5f3c1a1b83019b6ce7761badfa116ca96fbb9c49f16b94ad02d1a72c2fb64dc68cb7dd81331cb7
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-json@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@rollup/plugin-json@npm:4.1.0"
-  dependencies:
-    "@rollup/pluginutils": ^3.0.8
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: 867bc9339b4ccf0b9ff3b2617a95b3b8920115163f86c8e3b1f068a14ca25949472d3c05b09a5ac38ca0fe2185756e34617eaeb219d4a2b6e2307c501c7d4552
   languageName: node
   linkType: hard
 
@@ -3865,23 +3842,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^13.1.3":
-  version: 13.3.0
-  resolution: "@rollup/plugin-node-resolve@npm:13.3.0"
-  dependencies:
-    "@rollup/pluginutils": ^3.1.0
-    "@types/resolve": 1.17.1
-    deepmerge: ^4.2.2
-    is-builtin-module: ^3.1.0
-    is-module: ^1.0.0
-    resolve: ^1.19.0
-  peerDependencies:
-    rollup: ^2.42.0
-  checksum: ec5418e6b3c23a9e30683056b3010e9d325316dcfae93fbc673ae64dad8e56a2ce761c15c48f5e2dcfe0c822fdc4a4905ee6346e3dcf90603ba2260afef5a5e6
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-node-resolve@npm:^15.0.1":
+"@rollup/plugin-node-resolve@npm:^15.0.1, @rollup/plugin-node-resolve@npm:^15.0.2":
   version: 15.0.2
   resolution: "@rollup/plugin-node-resolve@npm:15.0.2"
   dependencies:
@@ -3926,7 +3887,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/pluginutils@npm:^3.0.8, @rollup/pluginutils@npm:^3.1.0":
+"@rollup/plugin-terser@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@rollup/plugin-terser@npm:0.4.1"
+  dependencies:
+    serialize-javascript: ^6.0.0
+    smob: ^0.0.6
+    terser: ^5.15.1
+  peerDependencies:
+    rollup: ^2.x || ^3.x
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 684244206df147fbeba66e7327f45cf2134513a89b5e576570cacf67cc517b679eea99cf739a4f13542249d4aba774866c8d406f040ad6a7f4f9b691077da039
+  languageName: node
+  linkType: hard
+
+"@rollup/pluginutils@npm:^3.1.0":
   version: 3.1.0
   resolution: "@rollup/pluginutils@npm:3.1.0"
   dependencies:
@@ -11662,7 +11639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-builtin-module@npm:^3.1.0, is-builtin-module@npm:^3.2.1":
+"is-builtin-module@npm:^3.2.1":
   version: 3.2.1
   resolution: "is-builtin-module@npm:3.2.1"
   dependencies:
@@ -11875,7 +11852,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-reference@npm:^1.2.1":
+"is-reference@npm:1.2.1":
   version: 1.2.1
   resolution: "is-reference@npm:1.2.1"
   dependencies:
@@ -17268,7 +17245,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.1.7, resolve@npm:^1.10.1, resolve@npm:^1.12.0, resolve@npm:^1.14.2, resolve@npm:^1.17.0, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.2":
+"resolve@npm:^1.1.7, resolve@npm:^1.10.1, resolve@npm:^1.12.0, resolve@npm:^1.14.2, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.2":
   version: 1.22.3
   resolution: "resolve@npm:1.22.3"
   dependencies:
@@ -17294,7 +17271,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.17.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.2#~builtin<compat/resolve>":
+"resolve@patch:resolve@^1.1.7#~builtin<compat/resolve>, resolve@patch:resolve@^1.10.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.12.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.14.2#~builtin<compat/resolve>, resolve@patch:resolve@^1.19.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.20.0#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.1#~builtin<compat/resolve>, resolve@patch:resolve@^1.22.2#~builtin<compat/resolve>":
   version: 1.22.3
   resolution: "resolve@patch:resolve@npm%3A1.22.3#~builtin<compat/resolve>::version=1.22.3&hash=c3c19d"
   dependencies:
@@ -17466,17 +17443,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-polyfill-node@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "rollup-plugin-polyfill-node@npm:0.8.0"
-  dependencies:
-    "@rollup/plugin-inject": ^4.0.0
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: ad6e451b1ae91f7b4370ab7b5dd03f578a67ebd42bcd3eec198ae6d4cd7caa1c454bd020ff8e80f3dcb02cdd9357da2b752c0aac3f84c56a28c23a6c0ffeffd5
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-serve@npm:^2.0.2":
   version: 2.0.2
   resolution: "rollup-plugin-serve@npm:2.0.2"
@@ -17487,7 +17453,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-terser@npm:^7.0.0, rollup-plugin-terser@npm:^7.0.2":
+"rollup-plugin-terser@npm:^7.0.0":
   version: 7.0.2
   resolution: "rollup-plugin-terser@npm:7.0.2"
   dependencies:
@@ -17543,7 +17509,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.43.1, rollup@npm:^2.70.0":
+"rollup@npm:^2.43.1":
   version: 2.79.1
   resolution: "rollup@npm:2.79.1"
   dependencies:
@@ -17554,6 +17520,20 @@ __metadata:
   bin:
     rollup: dist/bin/rollup
   checksum: 6a2bf167b3587d4df709b37d149ad0300692cc5deb510f89ac7bdc77c8738c9546ae3de9322b0968e1ed2b0e984571f5f55aae28fa7de4cfcb1bc5402a4e2be6
+  languageName: node
+  linkType: hard
+
+"rollup@npm:^3.21.7":
+  version: 3.21.7
+  resolution: "rollup@npm:3.21.7"
+  dependencies:
+    fsevents: ~2.3.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  bin:
+    rollup: dist/bin/rollup
+  checksum: 44372a1e6fbd1941d6cb230b2a3de6d86861ca7523792757c9fe1d254ae4cd645f5dae27d93c7b1e02c60945d2eadd8c74a99033bd8328eda84949086330d804
   languageName: node
   linkType: hard
 
@@ -18133,6 +18113,13 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: b5167a7142c1da704c0e3af85c402002b597081dd9575031a90b4f229ca5678e9a36e8a374f1814c8156a725d17008ae3bde63b92f9cfd132526379e580bec8b
+  languageName: node
+  linkType: hard
+
+"smob@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "smob@npm:0.0.6"
+  checksum: 360b8b72896974411ec6ca9a352b306bd4233aea44309dbebaeb41fc822cf770b094589e42a8a025ae291f043cbfc4199fc01dd909e45c7bd3c23d287c7e5bac
   languageName: node
   linkType: hard
 
@@ -18992,7 +18979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"terser@npm:^5.0.0, terser@npm:^5.10.0, terser@npm:^5.16.8":
+"terser@npm:^5.0.0, terser@npm:^5.10.0, terser@npm:^5.15.1, terser@npm:^5.16.8":
   version: 5.17.3
   resolution: "terser@npm:5.17.3"
   dependencies:
