@@ -11,6 +11,7 @@
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
     "packages/sdk",
+    "packages/sdk-react",
     "packages/devreact",
     "packages/devnext",
     "packages/deve2e"
