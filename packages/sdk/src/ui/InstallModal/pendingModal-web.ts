@@ -1,6 +1,6 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
-const sdkWebPendingModal = (onDisconnect: () => void) => {
+const sdkWebPendingModal = (onDisconnect?: () => void) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
   let mounted = false;
