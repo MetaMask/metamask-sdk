@@ -8,6 +8,7 @@ import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
 import { PlatformType } from '../types/PlatformType';
 
+// TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
