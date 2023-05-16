@@ -2424,6 +2424,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@isaacs/cliui@npm:^8.0.2":
+  version: 8.0.2
+  resolution: "@isaacs/cliui@npm:8.0.2"
+  dependencies:
+    string-width: ^5.1.2
+    string-width-cjs: "npm:string-width@^4.2.0"
+    strip-ansi: ^7.0.1
+    strip-ansi-cjs: "npm:strip-ansi@^6.0.1"
+    wrap-ansi: ^8.1.0
+    wrap-ansi-cjs: "npm:wrap-ansi@^7.0.0"
+  checksum: 4a473b9b32a7d4d3cfb7a614226e555091ff0c5a29a1734c28c72a182c2f6699b26fc6b5c2131dfd841e86b185aea714c72201d7c98c2fba5f17709333a67aeb
+  languageName: node
+  linkType: hard
+
 "@istanbuljs/load-nyc-config@npm:^1.0.0":
   version: 1.1.0
   resolution: "@istanbuljs/load-nyc-config@npm:1.1.0"
@@ -3336,6 +3350,9 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.1
+    "@rollup/plugin-typescript": ^11.1.1
     "@types/prettier": ^2
     "@types/react": ^18.0.26
     "@typescript-eslint/eslint-plugin": ^5.56.0
@@ -3352,6 +3369,10 @@ __metadata:
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
+    rimraf: ^5.0.0
+    rollup: ^3.21.7
+    rollup-plugin-peer-deps-external: ^2.2.4
+    rollup-plugin-typescript2: ^0.34.1
     typescript: ^5.0.2
   languageName: unknown
   linkType: soft
@@ -3696,6 +3717,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pkgjs/parseargs@npm:^0.11.0":
+  version: 0.11.0
+  resolution: "@pkgjs/parseargs@npm:0.11.0"
+  checksum: 6ad6a00fc4f2f2cfc6bff76fb1d88b8ee20bc0601e18ebb01b6d4be583733a860239a521a7fbca73b612e66705078809483549d2b18f370eb346c5155c8e4a0f
+  languageName: node
+  linkType: hard
+
 "@pkgr/utils@npm:^2.3.1":
   version: 2.4.0
   resolution: "@pkgr/utils@npm:2.4.0"
@@ -3900,6 +3928,25 @@ __metadata:
     rollup:
       optional: true
   checksum: 684244206df147fbeba66e7327f45cf2134513a89b5e576570cacf67cc517b679eea99cf739a4f13542249d4aba774866c8d406f040ad6a7f4f9b691077da039
+  languageName: node
+  linkType: hard
+
+"@rollup/plugin-typescript@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "@rollup/plugin-typescript@npm:11.1.1"
+  dependencies:
+    "@rollup/pluginutils": ^5.0.1
+    resolve: ^1.22.1
+  peerDependencies:
+    rollup: ^2.14.0||^3.0.0
+    tslib: "*"
+    typescript: ">=3.7.0"
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+    tslib:
+      optional: true
+  checksum: 0e82ef17ded026060bbc237ed2552e227d5b514cd58c1f624afeb65704a24048e38918e6242bcf29960612dc9925fbf1bb0625475ec691330cd144e4a84e3065
   languageName: node
   linkType: hard
 
@@ -5869,6 +5916,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ansi-styles@npm:^6.1.0":
+  version: 6.2.1
+  resolution: "ansi-styles@npm:6.2.1"
+  checksum: ef940f2f0ced1a6347398da88a91da7930c33ecac3c77b72c5905f8b8fe402c52e6fde304ff5347f616e27a742da3f1dc76de98f6866c69251ad0b07a66776d9
+  languageName: node
+  linkType: hard
+
 "any-promise@npm:^1.0.0":
   version: 1.3.0
   resolution: "any-promise@npm:1.3.0"
@@ -7708,7 +7762,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
+"cross-spawn@npm:^7.0.0, cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
   dependencies:
@@ -8700,6 +8754,13 @@ __metadata:
   version: 0.1.2
   resolution: "duplexer@npm:0.1.2"
   checksum: 62ba61a830c56801db28ff6305c7d289b6dc9f859054e8c982abd8ee0b0a14d2e9a8e7d086ffee12e868d43e2bbe8a964be55ddbd8c8957714c87373c7a4f9b0
+  languageName: node
+  linkType: hard
+
+"eastasianwidth@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "eastasianwidth@npm:0.2.0"
+  checksum: 7d00d7cd8e49b9afa762a813faac332dee781932d6f2c848dc348939c4253f1d4564341b7af1d041853bc3f32c2ef141b58e0a4d9862c17a7f08f68df1e0f1ed
   languageName: node
   linkType: hard
 
@@ -10364,6 +10425,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"foreground-child@npm:^3.1.0":
+  version: 3.1.1
+  resolution: "foreground-child@npm:3.1.1"
+  dependencies:
+    cross-spawn: ^7.0.0
+    signal-exit: ^4.0.1
+  checksum: 139d270bc82dc9e6f8bc045fe2aae4001dc2472157044fdfad376d0a3457f77857fa883c1c8b21b491c6caade9a926a4bed3d3d2e8d3c9202b151a4cbbd0bcd5
+  languageName: node
+  linkType: hard
+
 "forever-agent@npm:~0.6.1":
   version: 0.6.1
   resolution: "forever-agent@npm:0.6.1"
@@ -10744,6 +10815,21 @@ __metadata:
     once: ^1.3.0
     path-is-absolute: ^1.0.0
   checksum: b61f48973bbdcf5159997b0874a2165db572b368b931135832599875919c237fc05c12984e38fe828e69aa8a921eb0e8a4997266211c517c9cfaae8a93988bb8
+  languageName: node
+  linkType: hard
+
+"glob@npm:^10.0.0":
+  version: 10.2.4
+  resolution: "glob@npm:10.2.4"
+  dependencies:
+    foreground-child: ^3.1.0
+    jackspeak: ^2.0.3
+    minimatch: ^9.0.0
+    minipass: ^5.0.0 || ^6.0.0
+    path-scurry: ^1.7.0
+  bin:
+    glob: dist/cjs/src/bin.js
+  checksum: 29845faaa1a8bd2d1f2f26e0c4e5040898c7b4ccfb42e0a558319f6229d124dbc7ccf0ff214402505c5b62c1a39d9d2a1de9c582a74ad415591b96fa53cef466
   languageName: node
   linkType: hard
 
@@ -12093,6 +12179,19 @@ __metadata:
     html-escaper: ^2.0.0
     istanbul-lib-report: ^3.0.0
   checksum: 7867228f83ed39477b188ea07e7ccb9b4f5320b6f73d1db93a0981b7414fa4ef72d3f80c4692c442f90fc250d9406e71d8d7ab65bb615cb334e6292b73192b89
+  languageName: node
+  linkType: hard
+
+"jackspeak@npm:^2.0.3":
+  version: 2.2.0
+  resolution: "jackspeak@npm:2.2.0"
+  dependencies:
+    "@isaacs/cliui": ^8.0.2
+    "@pkgjs/parseargs": ^0.11.0
+  dependenciesMeta:
+    "@pkgjs/parseargs":
+      optional: true
+  checksum: d8cd5be4f0e89cef04add5b0b068162a086bdb1ca68113ed729e99489b7865ca3edcc6430d6fd20c430e15382929ef5f3c7ec36e6aa7c17be23cac116f92dcff
   languageName: node
   linkType: hard
 
@@ -14253,6 +14352,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"minimatch@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "minimatch@npm:9.0.0"
+  dependencies:
+    brace-expansion: ^2.0.1
+  checksum: 7bd57899edd1d1b0560f50b5b2d1ea4ad2a366c5a2c8e0a943372cf2f200b64c256bae45a87a80915adbce27fa36526264296ace0da57b600481fe5ea3e372e5
+  languageName: node
+  linkType: hard
+
 "minimist@npm:^1.2.0, minimist@npm:^1.2.6":
   version: 1.2.8
   resolution: "minimist@npm:1.2.8"
@@ -14341,6 +14449,13 @@ __metadata:
   version: 5.0.0
   resolution: "minipass@npm:5.0.0"
   checksum: 425dab288738853fded43da3314a0b5c035844d6f3097a8e3b5b29b328da8f3c1af6fc70618b32c29ff906284cf6406b6841376f21caaadd0793c1d5a6a620ea
+  languageName: node
+  linkType: hard
+
+"minipass@npm:^5.0.0 || ^6.0.0":
+  version: 6.0.1
+  resolution: "minipass@npm:6.0.1"
+  checksum: 1df70bb5653251ad7bb0c979e07c18bbc64af1a92472a1d598f4311646da0c192d6ad92850cdfb9f0cd3ada8a9da369dd361c9f2e38a9f64b6a368ae2ac27fac
   languageName: node
   linkType: hard
 
@@ -15394,6 +15509,16 @@ __metadata:
     lru-cache: ^9.1.1
     minipass: ^5.0.0
   checksum: 53974a328e379aa3e22b18bbc97f135522d329597faa924bc99bc95959a21ae07c1aa7747a00c21c3579a5d25af4596ea1ed7f135cafd12ec949e35969a39e3e
+  languageName: node
+  linkType: hard
+
+"path-scurry@npm:^1.7.0":
+  version: 1.9.1
+  resolution: "path-scurry@npm:1.9.1"
+  dependencies:
+    lru-cache: ^9.1.1
+    minipass: ^5.0.0 || ^6.0.0
+  checksum: 28caa788f17cc48e1a16b552bc08ba4ec57345bd18df7b9d58589bd83271e5bf932929467353f53ff66eb3bf056eb28d8f9b379525ee37e3f603169257542694
   languageName: node
   linkType: hard
 
@@ -17360,6 +17485,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rimraf@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "rimraf@npm:5.0.0"
+  dependencies:
+    glob: ^10.0.0
+  bin:
+    rimraf: dist/cjs/src/bin.js
+  checksum: 60c5a7f152014d4f6bbf23f48e6badd145960a9be1115b719a07ba688c760b1bb8270abd6650bbd184ae2011843d8e9c775409652c89ff97550418aa5d581b27
+  languageName: node
+  linkType: hard
+
 "ripemd160@npm:^2.0.0, ripemd160@npm:^2.0.1":
   version: 2.0.2
   resolution: "ripemd160@npm:2.0.2"
@@ -17429,6 +17565,15 @@ __metadata:
     process-es6: ^0.11.6
     rollup-pluginutils: ^2.3.1
   checksum: da3cd85ad2f3824a767dd242e484d5cd530eae9fa809c87aba1ff66d64b7a08c84ed76592694c91ee39cf7d5efe487b62e60d402d579001560f6e6de99105576
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-peer-deps-external@npm:^2.2.4":
+  version: 2.2.4
+  resolution: "rollup-plugin-peer-deps-external@npm:2.2.4"
+  peerDependencies:
+    rollup: "*"
+  checksum: 597bc7631f4e3cfc066a7da4e09e507258aba932008148328c1a4b48e7ffa755592ef4bcf0165320bbd5019afbdd326f569cd0c68406d820da9ab52e971c009b
   languageName: node
   linkType: hard
 
@@ -18459,7 +18604,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
+"string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
@@ -18467,6 +18612,17 @@ __metadata:
     is-fullwidth-code-point: ^3.0.0
     strip-ansi: ^6.0.1
   checksum: e52c10dc3fbfcd6c3a15f159f54a90024241d0f149cf8aed2982a2d801d2e64df0bf1dc351cf8e95c3319323f9f220c16e740b06faecd53e2462df1d2b5443fb
+  languageName: node
+  linkType: hard
+
+"string-width@npm:^5.0.1, string-width@npm:^5.1.2":
+  version: 5.1.2
+  resolution: "string-width@npm:5.1.2"
+  dependencies:
+    eastasianwidth: ^0.2.0
+    emoji-regex: ^9.2.2
+    strip-ansi: ^7.0.1
+  checksum: 7369deaa29f21dda9a438686154b62c2c5f661f8dda60449088f9f980196f7908fc39fdd1803e3e01541970287cf5deae336798337e9319a7055af89dafa7193
   languageName: node
   linkType: hard
 
@@ -18564,7 +18720,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^6.0.0, strip-ansi@npm:^6.0.1":
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1, strip-ansi@npm:^6.0.0, strip-ansi@npm:^6.0.1":
   version: 6.0.1
   resolution: "strip-ansi@npm:6.0.1"
   dependencies:
@@ -20769,7 +20925,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrap-ansi@npm:^7.0.0":
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0, wrap-ansi@npm:^7.0.0":
   version: 7.0.0
   resolution: "wrap-ansi@npm:7.0.0"
   dependencies:
@@ -20777,6 +20933,17 @@ __metadata:
     string-width: ^4.1.0
     strip-ansi: ^6.0.0
   checksum: a790b846fd4505de962ba728a21aaeda189b8ee1c7568ca5e817d85930e06ef8d1689d49dbf0e881e8ef84436af3a88bc49115c2e2788d841ff1b8b5b51a608b
+  languageName: node
+  linkType: hard
+
+"wrap-ansi@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "wrap-ansi@npm:8.1.0"
+  dependencies:
+    ansi-styles: ^6.1.0
+    string-width: ^5.0.1
+    strip-ansi: ^7.0.1
+  checksum: 371733296dc2d616900ce15a0049dca0ef67597d6394c57347ba334393599e800bab03c41d4d45221b6bc967b8c453ec3ae4749eff3894202d16800fdfe0e238
   languageName: node
   linkType: hard
 
