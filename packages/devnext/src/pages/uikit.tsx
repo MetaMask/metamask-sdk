@@ -24,7 +24,7 @@ const types = {
   ],
 }
 
-const value = {
+const message = {
   from: {
     name: 'Cow',
     wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
@@ -51,7 +51,8 @@ export default function UIKitPage() {
     useSignTypedData({
       domain,
       types,
-      value,
+      primaryType: 'Mail',
+      message,
     });
 
   const {

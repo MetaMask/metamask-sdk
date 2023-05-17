@@ -40,7 +40,8 @@
     "mersenne-twister": "^1.1.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-jazzicon": "^1.0.4",
-    "wagmi": "^0.6.0"
+    "viem": "latest",
+    "wagmi": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
@@ -93,7 +94,9 @@
       "ethers>@ethersproject/providers>ws>utf-8-validate": false,
       "wagmi>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
       "wagmi>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
-      "wagmi>@coinbase/wallet-sdk>keccak": false
+      "wagmi>@coinbase/wallet-sdk>keccak": false,
+      "viem>ws>bufferutil": false,
+      "viem>ws>utf-8-validate": false
     }
   }
 }

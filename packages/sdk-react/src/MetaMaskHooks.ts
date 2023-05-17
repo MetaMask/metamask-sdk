@@ -2,8 +2,8 @@ import { useContext, useState } from 'react';
 import {
   // eslint-disable-next-line import/named
   Chain,
-  useClient,
   useConnect as useConnectWagmi,
+  useConfig,
   useNetwork,
 } from 'wagmi';
 import { SDKContext } from './MetaMaskProvider';
@@ -13,8 +13,8 @@ export * from 'wagmi';
 
 // eslint-disable-next-line import/export
 export const useConnect = () => {
-  const client = useClient();
-  const connector = client.connectors[0];
+  const config = useConfig();
+  const connector = config.connectors[0];
 
   return useConnectWagmi({ connector });
 };
@@ -46,8 +46,8 @@ export const useSwitchOrAddNetwork = () => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [pendingChainId, setPendingChainId] = useState<number>();
-  const client = useClient();
-  const connector = client.connectors[0];
+  const config = useConfig();
+  const connector = config.connectors[0];
   const { chains } = useNetwork();
   const switchOrAddNetwork = async (chain: Chain) => {
     let response;

@@ -1,10 +1,9 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { WagmiConfig, createClient, Chain, Connector } from 'wagmi';
-import { providers } from 'ethers';
+import { MetaMaskSDK, MetaMaskSDKOptions } from '@metamask/sdk';
+import { publicProvider } from '@wagmi/core/providers/public';
+import React, { createContext } from 'react';
+import { Chain, configureChains, Connector, createConfig, mainnet, WagmiConfig } from 'wagmi';
 import MetaMaskConnector from './MetaMaskConnector';
-import { EventType, MetaMaskSDK, MetaMaskSDKOptions, ServiceStatus } from '@metamask/sdk';
-import { useSDK } from './MetaMaskHooks';
 
 const initProps: {
   sdk?: MetaMaskSDK
@@ -23,21 +22,31 @@ const WagmiWrapper = ({
   sdk: MetaMaskSDK;
   connectors?: Connector[];
 }) => {
-  const MMConnector = new MetaMaskConnector({ chains: networks, sdk })
-  const client = createClient({
-    autoConnect: false,
-    connectors: [MMConnector, ...connectors],
-    provider: (config) => {
-      if (!config.chainId) return providers.getDefaultProvider();
-      const sdkProv = MMConnector.getProviderSync();
-      return new providers.Web3Provider(
-        sdkProv,
-        config.chainId,
-      );
-    },
-  });
 
-  return <WagmiConfig client={client}>{children}</WagmiConfig>;
+  const { chains, publicClient, webSocketPublicClient } = configureChains(
+    [mainnet],
+    [publicProvider()],
+  )
+  const MMConnector = new MetaMaskConnector({ chains: networks, sdk })
+  // const client = createClient({
+  //   autoConnect: false,
+  //   connectors: [MMConnector, ...connectors],
+  //   provider: (config) => {
+  //     if (!config.chainId) return providers.getDefaultProvider();
+  //     const sdkProv = MMConnector.getProviderSync();
+  //     return new providers.Web3Provider(
+  //       sdkProv,
+  //       config.chainId,
+  //     );
+  //   },
+  // });
+  const config = createConfig({
+    autoConnect: true,
+    connectors: [MMConnector, ...connectors],
+    publicClient,
+  })
+
+  return <WagmiConfig config={config}>{children}</WagmiConfig>;
 };
 
 export const MetaMaskProvider = ({
