@@ -7,8 +7,9 @@ const sdk = new MetaMaskSDK({
   autoConnect: {
     enable: true
   },
-  logging: {
-    developerMode: true
+  dappMetadata: {
+    url: window.location.href,
+    name: document.title,
   },
   storage: {
     enabled: true,

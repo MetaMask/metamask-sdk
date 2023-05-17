@@ -5,7 +5,7 @@ import {
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
-import { METHODS_TO_REDIRECT } from '../config';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
@@ -93,8 +93,12 @@ export class RemoteCommunicationPostMessageStream
         data = chunk;
       }
 
-      const targetMethod = data?.data
-        ?.method as keyof typeof METHODS_TO_REDIRECT;
+      const targetMethod = data?.data?.method as string;
+
+      if (!ready && targetMethod === RPC_METHODS.METAMASK_GETPROVIDERSTATE) {
+        // Only do the first redirect from eth_requestAccounts
+        return callback();
+      }
 
       if (!platform.isSecure()) {
         this.remote.sendMessage(data?.data).catch((err) => {

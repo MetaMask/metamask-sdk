@@ -8,6 +8,9 @@ const options = {
   storage: {
     enabled: true,
   },
+  dappMetadata: {
+    name: 'NodeJS example',
+  },
   modals: {
     install: ({ link }) => {
       // console.debug(`open link ${link}`);

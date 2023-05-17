@@ -8,6 +8,7 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
+  ChannelConfig,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
@@ -148,7 +149,8 @@ export class RemoteConnection implements ProviderService {
     if (autoConnect?.enable === true) {
       if (this.developerMode) {
         console.debug(
-          `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
+          `RemoteConnection::initializeConnector() autoconnect`,
+          autoConnect,
         );
       }
 
