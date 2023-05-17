@@ -37,6 +37,9 @@
     "test:ci": "yarn workspaces foreach run test:ci"
   },
   "devDependencies": {
+    "@babel/core": "^7.21.8",
+    "@babel/plugin-syntax-flow": "^7.21.4",
+    "@babel/plugin-transform-react-jsx": "^7.21.5",
     "@lavamoat/allow-scripts": "^2.3.1",
     "@metamask/auto-changelog": "3.1.0",
     "@metamask/create-release-branch": "^1.0.1",

@@ -4,6 +4,7 @@ import styles from 'src/styles/Home.module.css';
 import { MetaMaskSDK } from '@metamask/sdk';
 import { useEffect, useState } from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
 declare global {
   interface Window {
@@ -256,19 +257,6 @@ export default function Home() {
         </div> : <button style={{ padding: 10, margin: 10 }} onClick={connect}>
           Connect
         </button>}
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`test ui`);
-        }}>
-          Install Modal
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`test ui`);
-        }}>
-          Pending Modal
-        </button>
-
 
         <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
           Terminate

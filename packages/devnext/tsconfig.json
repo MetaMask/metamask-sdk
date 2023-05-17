@@ -17,8 +17,7 @@
     "incremental": true,
     "paths": {
       "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
-      // "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
-      // "@metamask/sdk-components": ["../sdk-components/src"],
+      "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
       "@metamask/sdk": ["../sdk/src"]
     }
   },
@@ -31,8 +30,8 @@
     {
       "path": "../sdk-communication-layer/tsconfig.build.json"
     },
-    // {
-    //   "path": "../sdk-install-modal-web"
-    // },
+    {
+      "path": "../sdk-install-modal-web"
+    },
   ]
 }
