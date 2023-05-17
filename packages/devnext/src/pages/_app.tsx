@@ -16,7 +16,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const [clientSide, setClientSide] = useState(false);
 
   useEffect(() => {
-    console.debug(`INIT NOW`);
     setSDKOptions({
       communicationServerUrl: 'http://192.168.50.114:4000',
       logging: {
@@ -26,7 +25,7 @@ export default function App({ Component, pageProps }: AppProps) {
       },
       autoInit: true,
       autoConnect: {
-        enable: true,
+        enable: false,
       },
       storage: {
         enabled: true,
