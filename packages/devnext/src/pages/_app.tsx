@@ -12,18 +12,17 @@ const serverClient = createClient({
 })
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [sdkOptions, setSDKOptions] = useState<MetaMaskSDKOptions>({ autoInit: false });
+  const [sdkOptions, setSDKOptions] = useState<MetaMaskSDKOptions>();
   const [clientSide, setClientSide] = useState(false);
 
   useEffect(() => {
     setSDKOptions({
-      communicationServerUrl: 'http://192.168.50.114:4000',
+      // communicationServerUrl: 'http://192.168.50.114:4000',
       logging: {
-        developerMode: false,
+        developerMode: true,
         sdk: true,
         plaintext: true,
       },
-      autoInit: true,
       autoConnect: {
         enable: false,
       },

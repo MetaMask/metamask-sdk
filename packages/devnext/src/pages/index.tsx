@@ -5,16 +5,12 @@ import { MetaMaskSDK } from '@metamask/sdk';
 import { useEffect, useState } from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
-
-declare global {
-  interface Window {
-    ethereum?: MetaMaskInpageProvider;
-  }
-}
+import Link from 'next/link';
+import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
 
 let _initialized = false;
 export default function Home() {
-  const [sdk, setSDK] = useState<MetaMaskSDK>();
+  const {sdk} = useSDK();
   const [chain, setChain] = useState("");
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
@@ -41,34 +37,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const clientSDK = new MetaMaskSDK({
-      useDeeplink: false,
-      communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      communicationServerUrl: 'http://192.168.50.114:4000',
-      enableDebug: true,
-      autoConnect: {
-        enable: true
-      },
-      dappMetadata: {
-        name: "Demo NextJS App",
-        url: window.location.host,
-      },
-      logging: {
-        sdk: true,
-        developerMode: true,
-        eciesLayer: false,
-        remoteLayer: false,
-        keyExchangeLayer: false,
-        serviceLayer: false,
-      },
-      storage: {
-        enabled: true,
-      }
-    });
-    setSDK(clientSDK);
-  }, [])
-
-  useEffect(() => {
     console.debug(`App::useEffect window.ethereum listeners`);
 
     if (window.ethereum?.selectedAddress) {
@@ -81,12 +49,12 @@ export default function Home() {
 
     if (sdk?.isInitialized() && !_initialized) {
       console.debug(`SDK initialized!`);
-      window.ethereum?.on("chainChanged", (chain) => {
+      window.ethereum?.on?.("chainChanged", (chain) => {
         console.log(`App::useEfect on 'chainChanged'`, chain);
         setChain(chain as string);
         setConnected(true);
       });
-      window.ethereum?.on('_initialized', () => {
+      window.ethereum?.on?.('_initialized', () => {
         console.debug(`App::useEffect on _initialized`);
         setConnected(true);
         if (window.ethereum?.selectedAddress) {
@@ -96,19 +64,19 @@ export default function Home() {
           setChain(window.ethereum.chainId);
         }
       })
-      window.ethereum?.on("accountsChanged", (accounts) => {
+      window.ethereum?.on?.("accountsChanged", (accounts) => {
         console.log(`App::useEfect on 'accountsChanged'`, accounts);
         setAccount((accounts as string[])?.[0]);
         setConnected(true);
       });
-      window.ethereum?.on('connect', (_connectInfo) => {
+      window.ethereum?.on?.('connect', (_connectInfo) => {
         console.log(`App::useEfect on 'connect'`, _connectInfo);
         const connectInfo = _connectInfo as { chainId: string };
         setConnected(true);
         // setConnectionStatus(ConnectionStatus.LINKED)
         setChain(connectInfo.chainId);
       })
-      window.ethereum?.on("disconnect", (error) => {
+      window.ethereum?.on?.("disconnect", (error) => {
         console.log(`App::useEfect on 'disconnect'`, error);
         setConnected(false);
         setChain("");
@@ -233,6 +201,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <header>
+        <Link href={'uikit'}>UI Kit demo</Link>
+      </header>
       <main className={styles.main}>
         <p>
           Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
