@@ -466,7 +466,17 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
       this.emit(EventType.OTP, message.otpAnswer);
+
+      // backward compatibility for wallet <6.6
+      if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        this.emit(EventType.SDK_RPC_CALL, {
+          method: 'eth_requestAccounts',
+          params: [],
+        });
+      }
       return;
+    } else if (message.type === MessageType.AUTHORIZED && this.isOriginator) {
+      this.emit(EventType.AUTHORIZED);
     }
 
     // TODO should it check if only emiting JSON-RPC message?
