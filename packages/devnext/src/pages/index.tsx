@@ -258,30 +258,6 @@ export default function Home() {
           Connect
         </button>}
 
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`test ui`);
-        //   const div = document.createElement('div');
-        //   document.body.appendChild(div);
-        //   const modalLoader = new ModalLoader();
-
-        //   // modalLoader.mount({
-        //   //   parentElement: div,
-        //   //   link,
-        //   //   metaMaskInstaller: MetaMaskInstaller.getInstance(),
-        //   //   onClose: () => {},
-        //   // });
-        //   modalLoader.ren
-        }}>
-          Install Modal
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={() => {
-          console.debug(`test ui`);
-        }}>
-          Pending Modal
-        </button>
-
-
         <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
           Terminate
         </button>
