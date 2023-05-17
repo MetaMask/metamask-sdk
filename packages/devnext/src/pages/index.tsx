@@ -44,7 +44,7 @@ export default function Home() {
     const clientSDK = new MetaMaskSDK({
       useDeeplink: false,
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      communicationServerUrl: 'http://192.168.50.114:4000',
+      // communicationServerUrl: 'http://192.168.50.114:4000',
       enableDebug: true,
       autoConnect: {
         enable: true
