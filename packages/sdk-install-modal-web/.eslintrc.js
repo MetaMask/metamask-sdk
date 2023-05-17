@@ -3,6 +3,7 @@ module.exports = {
   root: true,
 
   // extends: ['@metamask/eslint-config'],
+  // TODO check if we can integrate to @metamask/eslint-config
   extends: ['eslint:recommended'],
 
   parser: '@typescript-eslint/parser',
