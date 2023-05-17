@@ -28,7 +28,7 @@ export default function Modal({
   const { chain, chains } = useNetwork();
 
   const { data, isError, isLoading } = useBalance({
-    addressOrName: address,
+    address: address,
     chainId: chain?.id,
     enabled: isConnected,
   });
