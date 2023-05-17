@@ -138,7 +138,7 @@ export const InstallModal = (props: InstallModalProps) => {
               <AdvantagesListItem
                 Icon={LockIcon}
                 text={`
-      Puts1 you in control of your digital interactions by making power
+      Puts you in control of your digital interactions by making power
             of cryptography more accessible`}
               />
             </div>
