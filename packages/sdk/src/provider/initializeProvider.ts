@@ -56,13 +56,18 @@ const initializeProvider = ({
     debug,
   });
 
-  const sendRequest = async (method: string, args: any, f: any) => {
+  const sendRequest = async (
+    method: string,
+    args: any,
+    f: any,
+    debugRequest: boolean,
+  ) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
 
-    if (debug) {
+    if (debugRequest) {
       console.debug(
         `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
@@ -100,14 +105,14 @@ const initializeProvider = ({
   // Wrap ethereum.request call to check if the user needs to install MetaMask
   const { request } = ethereum;
   ethereum.request = async (...args) => {
-    return sendRequest(args?.[0].method, args, request);
+    return sendRequest(args?.[0].method, args, request, debug);
   };
 
   const { send } = ethereum;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore // TODO remove support for deprecated method
   ethereum.send = async (...args) => {
-    return sendRequest(args?.[0] as string, args, send);
+    return sendRequest(args?.[0] as string, args, send, debug);
   };
 
   return ethereum;
