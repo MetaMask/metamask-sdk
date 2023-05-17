@@ -1,3 +1,4 @@
+'use client'
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { WagmiConfig, createClient, Chain, Connector } from 'wagmi';
 import { providers } from 'ethers';
@@ -6,10 +7,8 @@ import { EventType, MetaMaskSDK, MetaMaskSDKOptions, ServiceStatus } from '@meta
 import { useSDK } from './MetaMaskHooks';
 
 const initProps: {
-  sdk?: MetaMaskSDK,
-  connected: boolean
+  sdk?: MetaMaskSDK
 } = {
-  connected: false,
 }
 export const SDKContext = createContext(initProps);
 
@@ -30,6 +29,7 @@ const WagmiWrapper = ({
     connectors: [MMConnector, ...connectors],
     provider: (config) => {
       if (!config.chainId) return providers.getDefaultProvider();
+      const sdkProv = MMConnector.getProviderSync();
       return new providers.Web3Provider(
         MMConnector.getProviderSync(),
         config.chainId,
@@ -52,15 +52,7 @@ export const MetaMaskProvider = ({
     ...sdkOptions,
   });
 
-  const [connected, setConnected] = useState(false);
-
-  useEffect(() => {
-    sdk.on(EventType.SERVICE_STATUS, (_serviceStatus: ServiceStatus) => {
-      console.debug(`sdk connection_status`, _serviceStatus);
-    })
-  }, [sdk]);
-
-  return <SDKContext.Provider value={{ sdk, connected }}><WagmiWrapper sdk={sdk}>{children}</WagmiWrapper></SDKContext.Provider>;
+  return <SDKContext.Provider value={{ sdk }}><WagmiWrapper sdk={sdk}>{children}</WagmiWrapper></SDKContext.Provider>;
 };
 
 export default MetaMaskProvider;

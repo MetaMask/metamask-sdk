@@ -1,8 +1,7 @@
 import {
-  MetaMaskButton, useSDK
+  MetaMaskButton, useAccount, useSDK, useSignMessage, useSignTypedData
 } from '@metamask/sdk-react';
 import Head from 'next/head';
-import styles from 'src/styles/Home.module.css';
 
 // All properties on a domain are optional
 const domain = {
@@ -10,7 +9,7 @@ const domain = {
   version: '1',
   chainId: 1,
   verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-};
+} as const
 
 // The named list of all type definitions
 const types = {
@@ -23,7 +22,7 @@ const types = {
     { name: 'to', type: 'Person' },
     { name: 'contents', type: 'string' },
   ],
-};
+}
 
 const value = {
   from: {
@@ -35,11 +34,35 @@ const value = {
     wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
   },
   contents: 'Hello, Bob!',
-};
+} as const
 
-let _initialized = false;
-export default function UIKit() {
-  const { connected, sdk } = useSDK();
+const buttonClass = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
+export default function UIKitPage() {
+  const { isConnected } = useAccount({
+    onConnect({ address, connector, isReconnected, }) {
+      console.debug(`connected address=${address} isReconnected=${isReconnected}`, connector);
+    },
+    onDisconnect() {
+      console.warn(`disconnected`);
+    },
+  });
+
+  const { data, isError, isLoading, isSuccess, signTypedData } =
+    useSignTypedData({
+      domain,
+      types,
+      value,
+    });
+
+  const {
+    data: signData,
+    isError: isSignError,
+    isLoading: isSignLoading,
+    isSuccess: isSignSuccess,
+    signMessage,
+  } = useSignMessage({
+    message: 'gm wagmi frens',
+  });
 
   return (
     <>
@@ -49,22 +72,27 @@ export default function UIKit() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
+      <header className="App-header">
         <h1 className="text-3xl font-bold underline">Testing UI Kits</h1>
         <div>
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
-        <button onClick={async () => {
-          const accounts = await sdk?.getProvider()?.request({
-            method: "eth_requestAccounts",
-            params: []
-          });
-          console.debug(`result account`, accounts);
-        }}>Request Accounts</button>
-        <div>
-          Connected: {JSON.stringify(connected)}
-        </div>
-      </main>
+        {isConnected && (
+          <div style={{ marginTop: 20 }} className={'w-full'}>
+            <button className={buttonClass} disabled={isLoading} onClick={() => signTypedData()}>
+              signTypedData
+            </button>
+            {isSuccess && <div className='text-ellipsis overflow-hidden'>Signature: {data}</div>}
+            {isError && <div>Error signing message</div>}
+            <p></p>
+            <button className={buttonClass} disabled={isSignLoading} onClick={() => signMessage()}>
+              sign
+            </button>
+            {isSignSuccess && <div className='text-ellipsis overflow-hidden'>Signature: {signData}</div>}
+            {isSignError && <div>Error signing message</div>}
+          </div>
+        )}
+      </header>
     </>
   );
 }

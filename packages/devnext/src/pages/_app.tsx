@@ -20,7 +20,8 @@ export default function App({ Component, pageProps }: AppProps) {
     setSDKOptions({
       communicationServerUrl: 'http://192.168.50.114:4000',
       logging: {
-        developerMode: true,
+        developerMode: false,
+        sdk: true,
         plaintext: true,
       },
       autoInit: true,

@@ -3,6 +3,7 @@ import { MetaMaskConnector as DefaultMetaMaskConnector } from 'wagmi/connectors/
 import { Chain } from 'wagmi';
 // eslint-disable-next-line import/named
 import { MetaMaskSDK } from '@metamask/sdk';
+import { Ethereum } from '@wagmi/core/dist/declarations/src/types/index';
 
 type Options = {
   chains?: Chain[];
@@ -14,7 +15,7 @@ class MetaMaskConnector extends DefaultMetaMaskConnector {
   #provider: any;
 
   constructor({ chains, sdk }: Options) {
-    super({ chains });
+    super({ chains, options: { shimDisconnect: false } });
     this.sdk = sdk;
 
     this.#provider = this.sdk.getProvider();
@@ -25,6 +26,15 @@ class MetaMaskConnector extends DefaultMetaMaskConnector {
       this.#provider = this.sdk.getProvider();
     }
     return this.#provider;
+  }
+
+  async connect({ chainId }: { chainId?: number }): Promise<{
+    account: string;
+    chain: { id: number; unsupported: boolean };
+    provider: Ethereum;
+  }> {
+    const result = await super.connect({ chainId });
+    return result;
   }
 
   getSDK() {
