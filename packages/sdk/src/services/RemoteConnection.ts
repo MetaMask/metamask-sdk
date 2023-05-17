@@ -499,13 +499,20 @@ export class RemoteConnection implements ProviderService {
     return this.connector?.isPaused();
   }
 
-  disconnect(options?: DisconnectOptions): void {
+  disconnect(
+    options?: DisconnectOptions & {
+      emitDisconnect?: boolean;
+    },
+  ): void {
     if (this.developerMode) {
       console.debug(`RemoteConnection::disconnect()`, options);
     }
 
     if (options?.terminate) {
-      Ethereum.getProvider().handleDisconnect({ terminate: true });
+      Ethereum.getProvider().handleDisconnect({
+        terminate: true,
+        emitDisconnect: options.emitDisconnect,
+      });
       this.pendingModal?.onClose?.();
       this.otpAnswer = undefined;
     }

@@ -1,14 +1,20 @@
 // eslint-disable-next-line import/no-unassigned-import
 import '../styles/globals.css';
 import type { AppProps } from 'next/app';
-import { createClient, MetaMaskProvider, WagmiConfig } from '@metamask/sdk-react';
+import { configureChains, createConfig, mainnet, MetaMaskProvider, WagmiConfig } from '@metamask/sdk-react';
 import { useEffect, useState } from 'react';
 import { MetaMaskSDKOptions } from '@metamask/sdk';
 import { getDefaultProvider } from 'ethers'
+import { publicProvider } from '@wagmi/core/providers/public';
 
-const serverClient = createClient({
+const { chains, publicClient, webSocketPublicClient } = configureChains(
+  [mainnet],
+  [publicProvider()],
+)
+
+const serverConfig = createConfig({
   autoConnect: true,
-  provider: getDefaultProvider(),
+  publicClient,
 })
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -19,12 +25,12 @@ export default function App({ Component, pageProps }: AppProps) {
     setSDKOptions({
       // communicationServerUrl: 'http://192.168.50.114:4000',
       logging: {
-        developerMode: true,
-        sdk: true,
+        developerMode: false,
+        sdk: false,
         plaintext: true,
       },
       autoConnect: {
-        enable: false,
+        enable: true,
       },
       storage: {
         enabled: true,
@@ -43,7 +49,7 @@ export default function App({ Component, pageProps }: AppProps) {
         clientSide ?
           <MetaMaskProvider sdkOptions={sdkOptions}><Component {...pageProps} /></MetaMaskProvider> :
           (
-            <WagmiConfig client={serverClient}><Component {...pageProps} /></WagmiConfig>
+            <WagmiConfig config={serverConfig}><Component {...pageProps} /></WagmiConfig>
           )
       }
     </>);

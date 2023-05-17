@@ -28,18 +28,6 @@ const WagmiWrapper = ({
     [publicProvider()],
   )
   const MMConnector = new MetaMaskConnector({ chains: networks, sdk })
-  // const client = createClient({
-  //   autoConnect: false,
-  //   connectors: [MMConnector, ...connectors],
-  //   provider: (config) => {
-  //     if (!config.chainId) return providers.getDefaultProvider();
-  //     const sdkProv = MMConnector.getProviderSync();
-  //     return new providers.Web3Provider(
-  //       sdkProv,
-  //       config.chainId,
-  //     );
-  //   },
-  // });
   const config = createConfig({
     autoConnect: true,
     connectors: [MMConnector, ...connectors],

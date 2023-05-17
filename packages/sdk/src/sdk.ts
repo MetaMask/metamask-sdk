@@ -292,8 +292,21 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.remoteConnection?.disconnect();
   }
 
-  terminate() {
-    this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+  terminate(
+    { emitDisconnect }: { emitDisconnect: boolean } = { emitDisconnect: true },
+  ) {
+    if (this.debug) {
+      console.debug(
+        `SDK::terminate() emitDisconnect: ${emitDisconnect}`,
+        this.remoteConnection,
+      );
+    }
+
+    this.remoteConnection?.disconnect({
+      terminate: true,
+      sendMessage: true,
+      emitDisconnect,
+    });
   }
 
   isInitialized() {

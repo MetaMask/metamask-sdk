@@ -11,6 +11,7 @@ import {
   useSwitchOrAddNetwork,
   useAccount,
   useBalance,
+  useSDK,
 } from '../MetaMaskHooks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Chain } from 'wagmi';
@@ -24,6 +25,7 @@ export default function Modal({
 }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { sdk } = useSDK();
   const { switchOrAddNetwork } = useSwitchOrAddNetwork();
   const { chain, chains } = useNetwork();
 
@@ -56,15 +58,13 @@ export default function Modal({
         onClick={() => changeNetwork(chainToRender)}
       >
         <div
-          className={`text-sm p-2 ${
-            chainToRender.id === chain?.id && 'bg-blue-50'
-          } flex rounded`}
+          className={`text-sm p-2 ${chainToRender.id === chain?.id && 'bg-blue-50'
+            } flex rounded`}
         >
           <div
             style={{ width: 4, height: 48 }}
-            className={`${
-              chainToRender.id === chain?.id && 'bg-blue-500'
-            } rounded mr-2`}
+            className={`${chainToRender.id === chain?.id && 'bg-blue-500'
+              } rounded mr-2`}
           ></div>
           <div className="grid content-center justify-center text-lg font-semibold">
             <div className="flex">

@@ -27,14 +27,9 @@ class MetaMaskConnector extends DefaultMetaMaskConnector {
     return this.#provider;
   }
 
-  // async connect({ chainId }: { chainId?: number }): Promise<{
-  //   account: string;
-  //   chain: { id: number; unsupported: boolean };
-  //   provider: Ethereum;
-  // }> {
-  //   const result = await super.connect({ chainId });
-  //   return result;
-  // }
+  async disconnect() {
+    this.sdk.terminate({ emitDisconnect: false });
+  }
 
   getSDK() {
     return this.sdk;
