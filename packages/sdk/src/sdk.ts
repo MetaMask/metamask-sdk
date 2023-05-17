@@ -48,6 +48,7 @@ export interface MetaMaskSDKOptions {
   enableDebug?: boolean;
   developerMode?: boolean;
   ui?: SDKUIOptions;
+  autoInit?: boolean;
   autoConnect?: AutoConnectOptions;
   modals?: Pick<RemoteConnectionProps, 'modals'>;
   communicationServerUrl?: string;
@@ -77,6 +78,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage: {
         enabled: false,
       },
+      autoInit: true,
     },
   ) {
     super();
@@ -98,10 +100,15 @@ export class MetaMaskSDK extends EventEmitter2 {
     //     console.debug(`sdk initialized`, this.dappMetadata);
     //   }
     // });
-    this.initialize(this.options);
+
+    if (this.options.autoInit) {
+      this.initialize(this.options).catch((err) => {
+        console.error(`MetaMaskSDK error during initialization`, err);
+      });
+    }
   }
 
-  private initialize(options: MetaMaskSDKOptions) {
+  private async initialize(options: MetaMaskSDKOptions) {
     const {
       dappMetadata,
       // Provider
@@ -144,7 +151,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
     if (this.debug) {
-      console.debug(`SDK::initialize() now`);
+      console.debug(`SDK::initialize() now`, options);
     }
 
     // Make sure to enable all logs if developer mode is on
