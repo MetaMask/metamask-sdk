@@ -31,7 +31,7 @@ const WagmiWrapper = ({
       if (!config.chainId) return providers.getDefaultProvider();
       const sdkProv = MMConnector.getProviderSync();
       return new providers.Web3Provider(
-        MMConnector.getProviderSync(),
+        sdkProv,
         config.chainId,
       );
     },
@@ -48,7 +48,6 @@ export const MetaMaskProvider = ({
   sdkOptions?: MetaMaskSDKOptions;
 }) => {
   const sdk = new MetaMaskSDK({
-    injectProvider: false,
     ...sdkOptions,
   });
 
