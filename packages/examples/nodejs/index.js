@@ -8,7 +8,7 @@ const options = {
   storage: {
     enabled: true,
   },
-  metadata: {
+  dappMetadata: {
     name: 'NodeJS example',
   },
   modals: {
