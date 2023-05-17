@@ -13,10 +13,16 @@ export interface PendingWidgetProps extends PendingModalProps {
 }
 
 export class ModalLoader {
-  private el?: Element;
+  private installContainer?: Element;
+  private pendingContainer?: Element;
 
   renderInstallModal(props: InstallWidgetProps) {
-    this.el = props.parentElement;
+    if (this.installContainer) {
+      // Already rendered
+      return;
+    }
+
+    this.installContainer = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
     reactRoot.render(
@@ -29,7 +35,11 @@ export class ModalLoader {
   }
 
   renderPendingModal(props: PendingWidgetProps) {
-    this.el = props.parentElement;
+    if (this.pendingContainer) {
+      // Already rendered
+      return;
+    }
+    this.pendingContainer = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
     reactRoot.render(
@@ -43,7 +53,6 @@ export class ModalLoader {
 
   updateOTPValue = (otpValue: string) => {
     const otpNode = document.getElementById('sdk-mm-otp-value');
-    console.debug(`updateOTP ${otpValue}`, otpNode);
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -51,10 +60,13 @@ export class ModalLoader {
   };
 
   unmount() {
-    if (!this.el) {
-      throw new Error(`not mounted, call mount() first`);
+    if (this.pendingContainer) {
+      this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
+      this.pendingContainer = undefined;
     }
-    this.el?.parentNode?.removeChild(this.el);
-    this.el = undefined;
+    if (this.installContainer) {
+      this.installContainer?.parentNode?.removeChild(this.installContainer);
+      this.installContainer = undefined;
+    }
   }
 }
