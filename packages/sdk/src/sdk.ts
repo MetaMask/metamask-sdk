@@ -48,7 +48,6 @@ export interface MetaMaskSDKOptions {
   enableDebug?: boolean;
   developerMode?: boolean;
   ui?: SDKUIOptions;
-  autoInit?: boolean;
   autoConnect?: AutoConnectOptions;
   modals?: Pick<RemoteConnectionProps, 'modals'>;
   communicationServerUrl?: string;
@@ -78,7 +77,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage: {
         enabled: false,
       },
-      autoInit: true,
     },
   ) {
     super();
@@ -101,11 +99,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     //   }
     // });
 
-    if (this.options.autoInit) {
-      this.initialize(this.options).catch((err) => {
-        console.error(`MetaMaskSDK error during initialization`, err);
-      });
-    }
+    this.initialize(this.options).catch((err) => {
+      console.error(`MetaMaskSDK error during initialization`, err);
+    });
   }
 
   private async initialize(options: MetaMaskSDKOptions) {
@@ -144,7 +140,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     } = options;
 
     if (this._initialized) {
-      console.debug(`SDK::initialize() already initialized.`);
+      console.info(`SDK::initialize() already initialized.`);
       return;
     }
 
