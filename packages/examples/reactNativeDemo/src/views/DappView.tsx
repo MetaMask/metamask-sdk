@@ -1,10 +1,8 @@
-import {MetaMaskInpageProvider} from '@metamask/providers';
 import {ConnectionStatus, EventType, MetaMaskSDK} from '@metamask/sdk';
 import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from './colors';
-import {ServiceStatusView} from './service-status-view';
 
 export interface DAPPViewProps {
   sdk: MetaMaskSDK;
@@ -54,7 +52,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
-  const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
   const styles = createStyles(status);
 
   const getBalance = async () => {
@@ -68,8 +65,17 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   };
 
   useEffect(() => {
+    if (!ethereum) {
+      console.warn('invalid provider state');
+      return;
+    }
+
     try {
-      setProvider(new ethers.providers.Web3Provider(ethereum));
+      setProvider(
+        new ethers.providers.Web3Provider(
+          ethereum as unknown as ethers.providers.ExternalProvider,
+        ),
+      );
 
       console.debug(
         `useffect ethereum.selectedAddress=${ethereum.selectedAddress}`,
@@ -132,6 +138,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         method: 'eth_requestAccounts',
       })) as string[];
       console.log('RESULT', result?.[0]);
+      setConnected(true);
       setAccount(result?.[0]);
     } catch (e) {
       console.log('ERROR', e);

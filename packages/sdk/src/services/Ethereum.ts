@@ -40,11 +40,11 @@ export class Ethereum {
     });
     this.provider = proxiedProvieer;
 
-    if (shouldSetOnWindow) {
+    if (shouldSetOnWindow && typeof window !== 'undefined') {
       setGlobalProvider(this.provider);
     }
 
-    if (shouldShimWeb3) {
+    if (shouldShimWeb3 && typeof window !== 'undefined') {
       shimWeb3(this.provider);
     }
 
