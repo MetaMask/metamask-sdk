@@ -532,7 +532,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           `SocketService::on 'keys_exchanged' keyschanged=${this.keyExchange.areKeysExchanged()}`,
         );
       }
-      this.emit(EventType.CLIENTS_READY, {
+      // Propagate key exchange event
+      this.emit(EventType.KEYS_EXCHANGED, {
         keysExchanged: this.keyExchange.areKeysExchanged(),
         isOriginator: this.isOriginator,
       });

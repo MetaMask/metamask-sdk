@@ -264,14 +264,10 @@ export class RemoteCommunication extends EventEmitter2 {
       this.emit(EventType.CLIENTS_CONNECTED);
     });
 
-    this.communicationLayer?.on(EventType.CLIENTS_READY, (message) => {
+    this.communicationLayer?.on(EventType.KEYS_EXCHANGED, (message) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${
-            this.context
-          }::on commLayer.'clients_ready' channel=${
-            this.channelId
-          } keysExchanged=${this.getKeyInfo()?.keysExchanged} `,
+          `RemoteCommunication::${this.context}::on commLayer.'keys_exchanged' channel=${this.channelId}`,
           message,
         );
       }
@@ -445,12 +441,8 @@ export class RemoteCommunication extends EventEmitter2 {
       });
       this.paused = false;
       return;
-    } else if (message.type === MessageType.WALLET_INFO) {
+    } else if (this.isOriginator && message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
-      this.emit(EventType.CLIENTS_READY, {
-        isOriginator: this.isOriginator,
-        walletInfo: message.walletInfo,
-      });
       this.paused = false;
       return;
     } else if (message.type === MessageType.TERMINATE) {
@@ -726,6 +718,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
+    if (this._connectionStatus === connectionStatus) {
+      return; // Don't handle existing status.
+    }
     this._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
     this.emitServiceStatusEvent();
