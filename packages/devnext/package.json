@@ -6,7 +6,14 @@
     "dev": "next dev -p 3333",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "echo 'N/A'",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "test": "echo 'N/A'",
+    "prepack": "../../scripts/prepack.sh",
+    "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh"
   },
   "dependencies": {
     "@metamask/providers": "^10.2.1",
