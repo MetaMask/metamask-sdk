@@ -6,11 +6,11 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
+  ChannelConfig,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
-import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
 import { Platform } from '../Platform/Platfform';
 import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
