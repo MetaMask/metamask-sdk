@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
 import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
+import { ethErrors } from 'eth-rpc-errors';
 
 export interface SDKProviderProps {
   /**
@@ -68,16 +69,10 @@ export class SDKProvider extends MetaMaskInpageProvider {
     return this._state;
   }
 
-  handleDisconnect({
-    terminate = false,
-    emitDisconnect = true,
-  }: {
-    terminate: boolean;
-    emitDisconnect?: boolean;
-  }) {
+  handleDisconnect({ terminate = false }: { terminate: boolean }) {
     if (this.debug) {
       console.debug(
-        `SDKProvider::handleDisconnect() cleaning up provider state -- emitDisconnect=${emitDisconnect} terminate=${terminate}`,
+        `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
         this,
       );
     }
@@ -90,14 +85,10 @@ export class SDKProvider extends MetaMaskInpageProvider {
       this._state.isPermanentlyDisconnected = true;
       this._state.initialized = false;
     }
-    this._state.isConnected = false;
-
     this._handleAccountsChanged([]);
-    this._handleDisconnect(true);
+    this._state.isConnected = false;
+    this.emit('disconnect', ethErrors.provider.disconnected());
 
-    if (emitDisconnect !== false) {
-      this.emit('disconnect');
-    }
     this.providerStateRequested = false;
   }
 

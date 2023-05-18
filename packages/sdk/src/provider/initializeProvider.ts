@@ -1,4 +1,5 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import { RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { Platform } from '../Platform/Platfform';
@@ -77,9 +78,12 @@ const initializeProvider = ({
 
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
-      method !== 'metamask_getProviderState'
+      method !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
     ) {
-      if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
+      if (
+        method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
+        checkInstallationOnAllCalls
+      ) {
         // Start installation and once installed try the request again
         const isConnectedNow = await installer.start({
           wait: false,
@@ -104,10 +108,12 @@ const initializeProvider = ({
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
   const { request } = ethereum;
+  // request<T>(args: RequestArguments): Promise<Maybe<T>>;
   ethereum.request = async (...args) => {
     return sendRequest(args?.[0].method, args, request, debug);
   };
 
+  // send<T>(payload: SendSyncJsonRpcRequest): JsonRpcResponse<T>;
   const { send } = ethereum;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore // TODO remove support for deprecated method
