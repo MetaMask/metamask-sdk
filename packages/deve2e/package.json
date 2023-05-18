@@ -44,7 +44,9 @@
     "allowScripts": {
       "@metamask/sdk>eciesjs>secp256k1": false,
       "@metamask/sdk>react-native>react-devtools-core>ws>bufferutil": false,
-      "@metamask/sdk>react-native>react-devtools-core>ws>utf-8-validate": false
+      "@metamask/sdk>react-native>react-devtools-core>ws>utf-8-validate": false,
+      "@metamask/sdk>socket.io-client>engine.io-client>ws>bufferutil": false,
+      "@metamask/sdk>socket.io-client>engine.io-client>ws>utf-8-validate": false
     }
   }
 }
