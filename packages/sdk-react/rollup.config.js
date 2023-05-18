@@ -19,6 +19,7 @@ const config =
       output: [
         {
           file: packageJson.module,
+          inlineDynamicImports: true,
           format: 'esm',
           sourcemap: true,
         },
@@ -27,7 +28,6 @@ const config =
         external(),
         nodeResolve({
           browser: true,
-          // rootDir: path.join(process.cwd(), '../..'),
         }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),
