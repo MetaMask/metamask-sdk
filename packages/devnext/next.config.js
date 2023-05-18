@@ -5,6 +5,7 @@ const nextConfig = {
     '@metamask/sdk-communication-layer',
     '@metamask/sdk',
     '@metamask/sdk-install-modal-web',
+    '@metamask/sdk-react',
   ],
 };
 

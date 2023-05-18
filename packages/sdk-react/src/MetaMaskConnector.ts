@@ -2,23 +2,27 @@ import { MetaMaskConnector as DefaultMetaMaskConnector } from 'wagmi/connectors/
 // eslint-disable-next-line import/named
 import { Chain } from 'wagmi';
 // eslint-disable-next-line import/named
-import MetaMaskSDK, { MetaMaskSDKOptions } from '@metamask/sdk';
+import { MetaMaskSDK } from '@metamask/sdk';
+import { W } from '@wagmi/connectors/dist/base-5cce2182';
 
 type Options = {
   chains?: Chain[];
-  sdkOptions?: MetaMaskSDKOptions;
+  sdk: MetaMaskSDK;
 };
 class MetaMaskConnector extends DefaultMetaMaskConnector {
   sdk: MetaMaskSDK;
 
   #provider: any;
 
-  constructor({ chains, sdkOptions }: Options) {
-    super({ chains });
-    this.sdk = new MetaMaskSDK({
-      injectProvider: false,
-      ...sdkOptions,
-    });
+  #connectRequest?: Promise<{
+    account: `0x${string}`;
+    chain: { id: number; unsupported: boolean };
+    provider: W;
+  }>;
+
+  constructor({ chains, sdk }: Options) {
+    super({ chains, options: { shimDisconnect: false } });
+    this.sdk = sdk;
 
     this.#provider = this.sdk.getProvider();
   }
@@ -28,6 +32,50 @@ class MetaMaskConnector extends DefaultMetaMaskConnector {
       this.#provider = this.sdk.getProvider();
     }
     return this.#provider;
+  }
+
+  async disconnect() {
+    this.#connectRequest = undefined;
+    this.sdk.terminate();
+  }
+
+  async connect(
+    _params?: { chainId?: number | undefined } | undefined,
+  ): Promise<{
+    account: `0x${string}`;
+    chain: { id: number; unsupported: boolean };
+    provider: W;
+  }> {
+    // return super.connect(_params);
+    // // Replace previous implementation that was calling super.connect(_params)
+    if (this.#connectRequest) {
+      return this.#connectRequest;
+    }
+
+    this.#connectRequest = new Promise((resolve, reject) => {
+      this.#provider
+        .request({
+          method: 'eth_requestAccounts',
+          params: [],
+        })
+        .then((accounts: `0x${string}`[]) => {
+          const selectedAccount = accounts?.[0] || '';
+          resolve({
+            account: selectedAccount,
+            chain: {
+              id: parseInt(this.#provider.chainId, 16),
+              unsupported: false,
+            },
+            provider: this.#provider,
+          });
+        })
+        .catch(reject);
+    });
+    return this.#connectRequest;
+  }
+
+  getSDK() {
+    return this.sdk;
   }
 
   getProviderSync() {

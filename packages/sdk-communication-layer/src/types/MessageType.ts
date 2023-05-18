@@ -10,6 +10,10 @@ export enum MessageType {
   PAUSE = 'pause',
   OTP = 'otp',
   /**
+   * Sent from the wallet when the user has approved the connection.
+   */
+  AUTHORIZED = 'authorized',
+  /**
    * Used for debugging purpose and check channel validity.
    */
   PING = 'ping',

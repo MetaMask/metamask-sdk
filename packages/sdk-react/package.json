@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-react",
   "version": "0.2.0",
-  "private": false,
   "description": "A react component and react hooks to connect and use MetaMask",
   "keywords": [
     "react",
@@ -11,18 +10,19 @@
   ],
   "author": "MetaMask",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/types/src/index.d.ts",
+  "types": "dist/esm/src/index.d.ts",
   "files": [
     "dist",
     "package.json",
     "README.md"
   ],
   "scripts": {
-    "prebuild": "rm -rf dist",
-    "build": "yarn prebuild && rollup -c --silent",
+    "prebuild": "rimraf dist",
+    "build": "yarn prebuild && rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
-    "clean": "rm -rf dist",
+    "clean": "rimraf dist",
     "dev": "rollup -c -w",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
@@ -35,15 +35,13 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
-    "@metamask/sdk": "^0.2.0",
-    "@types/jest": "^27.0.1",
+    "@metamask/sdk": "workspace:^",
     "ethers": "^5.6.9",
     "mersenne-twister": "^1.1.0",
-    "react": "^18.2.0",
     "react-copy-to-clipboard": "^5.1.0",
-    "react-dom": "^18.2.0",
     "react-jazzicon": "^1.0.4",
-    "wagmi": "^0.6.0"
+    "viem": "latest",
+    "wagmi": "^1.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",
@@ -55,6 +53,7 @@
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.3",
+    "@types/jest": "^29.5.1",
     "@types/mersenne-twister": "^1.1.2",
     "@types/react": "18.0.14",
     "@types/react-copy-to-clipboard": "^5.0.4",
@@ -75,8 +74,8 @@
     "prettier": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.75.0",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.21.8",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
@@ -87,5 +86,17 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "ethers>@ethersproject/providers>ws>bufferutil": false,
+      "ethers>@ethersproject/providers>ws>utf-8-validate": false,
+      "wagmi>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
+      "wagmi>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
+      "wagmi>@coinbase/wallet-sdk>keccak": false,
+      "viem>ws>bufferutil": false,
+      "viem>ws>utf-8-validate": false
+    }
   }
 }

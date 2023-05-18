@@ -1,6 +1,5 @@
-import resolve from '@rollup/plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import path from 'node:path';
 import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
@@ -20,15 +19,15 @@ const config =
       output: [
         {
           file: packageJson.module,
+          inlineDynamicImports: true,
           format: 'esm',
           sourcemap: true,
         },
       ],
       plugins: [
         external(),
-        resolve({
+        nodeResolve({
           browser: true,
-          rootDir: path.join(process.cwd(), '../..'),
         }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),

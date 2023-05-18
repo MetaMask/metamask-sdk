@@ -76,6 +76,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private originatorInfo?: OriginatorInfo;
 
+  private originatorInfoSent = false;
+
   private dappMetadata?: DappMetadata;
 
   private communicationServerUrl: string;
@@ -241,16 +243,6 @@ export class RemoteCommunication extends EventEmitter2 {
       },
     );
 
-    this.communicationLayer?.on(EventType.KEY_INFO, (keyInfo) => {
-      if (this.debug) {
-        console.debug(
-          `RemoteCommunication::${this.context}::on 'KEY_INFO' `,
-          keyInfo,
-        );
-      }
-      this.emitServiceStatusEvent();
-    });
-
     this.communicationLayer?.on(EventType.CLIENTS_CONNECTED, () => {
       // Propagate the event to manage different loading states on the ui.
       if (this.debug) {
@@ -261,17 +253,14 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
       this.clientsConnected = true;
+      this.originatorInfoSent = false; // Always re-send originator info.
       this.emit(EventType.CLIENTS_CONNECTED);
     });
 
-    this.communicationLayer?.on(EventType.CLIENTS_READY, (message) => {
+    this.communicationLayer?.on(EventType.KEYS_EXCHANGED, (message) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${
-            this.context
-          }::on commLayer.'clients_ready' channel=${
-            this.channelId
-          } keysExchanged=${this.getKeyInfo()?.keysExchanged} `,
+          `RemoteCommunication::${this.context}::on commLayer.'keys_exchanged' channel=${this.channelId}`,
           message,
         );
       }
@@ -301,13 +290,14 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       // Keep sending originator info from this location for backward compatibility
-      if (message.isOriginator) {
+      if (message.isOriginator && !this.originatorInfoSent) {
         // Always re-send originator info in case the session was deleted on the wallet
         this.communicationLayer?.sendMessage({
           type: MessageType.ORIGINATOR_INFO,
           originatorInfo: this.originatorInfo,
           originator: this.originatorInfo,
         });
+        this.originatorInfoSent = true;
       }
     });
 
@@ -445,12 +435,8 @@ export class RemoteCommunication extends EventEmitter2 {
       });
       this.paused = false;
       return;
-    } else if (message.type === MessageType.WALLET_INFO) {
+    } else if (this.isOriginator && message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
-      this.emit(EventType.CLIENTS_READY, {
-        isOriginator: this.isOriginator,
-        walletInfo: message.walletInfo,
-      });
       this.paused = false;
       return;
     } else if (message.type === MessageType.TERMINATE) {
@@ -474,7 +460,17 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
       this.emit(EventType.OTP, message.otpAnswer);
+
+      // backward compatibility for wallet <6.6
+      if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        this.emit(EventType.SDK_RPC_CALL, {
+          method: 'eth_requestAccounts',
+          params: [],
+        });
+      }
       return;
+    } else if (message.type === MessageType.AUTHORIZED && this.isOriginator) {
+      this.emit(EventType.AUTHORIZED);
     }
 
     // TODO should it check if only emiting JSON-RPC message?
@@ -540,6 +536,24 @@ export class RemoteCommunication extends EventEmitter2 {
 
     if (this.ready) {
       throw new Error('Channel already connected');
+    }
+
+    if (this.channelId && this.isConnected()) {
+      console.warn(
+        `Channel already exists -- interrupt generateChannelId`,
+        this.channelConfig,
+      );
+
+      this.channelConfig = {
+        channelId: this.channelId,
+        validUntil: Date.now() + this.sessionDuration,
+      };
+      this.storageManager?.persistChannelConfig(this.channelConfig);
+
+      return {
+        channelId: this.channelId,
+        pubKey: this.getKeyInfo()?.ecies.public,
+      };
     }
 
     if (this.debug) {
@@ -725,6 +739,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
+    if (this._connectionStatus === connectionStatus) {
+      return; // Don't re-emit current status.
+    }
     this._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
     this.emitServiceStatusEvent();

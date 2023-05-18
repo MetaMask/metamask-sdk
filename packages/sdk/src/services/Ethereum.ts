@@ -34,6 +34,7 @@ export class Ethereum {
       debug,
     });
 
+    this.debug = debug;
     const proxiedProvieer = new Proxy(provider, {
       // some common libraries, e.g. web3@1.x, can confict with our API.
       deleteProperty: () => true,
@@ -56,7 +57,9 @@ export class Ethereum {
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,
       };
-      console.info(`Ethereum provider initialized`, info);
+      if (this.debug) {
+        console.info(`Ethereum provider initialized`, info);
+      }
     });
   }
 

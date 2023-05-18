@@ -15,7 +15,7 @@
   "module": "dist/node/es/metamask-sdk.js",
   "browser": "dist/browser/umd/metamask-sdk.js",
   "react-native": "dist/react-native/es/metamask-sdk.js",
-  "types": "dist/browser/es/packages/sdk/src/index.d.ts",
+  "types": "dist/browser/es/index.d.ts",
   "files": [
     "/dist"
   ],
@@ -48,6 +48,7 @@
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
     "eciesjs": "^0.3.15",
+    "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",
     "extension-port-stream": "^2.0.1",
     "obj-multiplex": "^1.0.0",

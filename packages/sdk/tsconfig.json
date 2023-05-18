@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "outDir": "dist",
-    // "declaration": false,
-    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
     "strict": true,
     "target": "es6",
     "esModuleInterop": true,

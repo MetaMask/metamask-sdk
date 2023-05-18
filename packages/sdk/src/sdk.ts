@@ -110,10 +110,13 @@ export class MetaMaskSDK extends EventEmitter2 {
     //     console.debug(`sdk initialized`, this.dappMetadata);
     //   }
     // });
-    this.initialize(this.options);
+
+    this.initialize(this.options).catch((err) => {
+      console.error(`MetaMaskSDK error during initialization`, err);
+    });
   }
 
-  private initialize(options: MetaMaskSDKOptions) {
+  private async initialize(options: MetaMaskSDKOptions) {
     const {
       dappMetadata,
       // Provider
@@ -149,20 +152,21 @@ export class MetaMaskSDK extends EventEmitter2 {
     } = options;
 
     if (this._initialized) {
-      console.debug(`SDK::initialize() already initialized.`);
+      console.info(`SDK::initialize() already initialized.`);
       return;
     }
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
     if (this.debug) {
-      console.debug(`SDK::initialize() now`);
+      console.debug(`SDK::initialize() now`, options);
     }
 
     // Make sure to enable all logs if developer mode is on
     const runtimeLogging = { ...logging };
 
     if (developerMode) {
+      runtimeLogging.sdk = true;
       runtimeLogging.eciesLayer = true;
       runtimeLogging.keyExchangeLayer = true;
       runtimeLogging.remoteLayer = true;
@@ -302,7 +306,14 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
-    this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+    if (this.debug) {
+      console.debug(`SDK::terminate()`, this.remoteConnection);
+    }
+
+    this.remoteConnection?.disconnect({
+      terminate: true,
+      sendMessage: true,
+    });
   }
 
   isInitialized() {
@@ -353,6 +364,13 @@ export class MetaMaskSDK extends EventEmitter2 {
   // Return the ethereum provider object
   getProvider() {
     return this.provider;
+  }
+
+  async connect() {
+    return await this.provider?.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
   }
 
   getUniversalLink() {

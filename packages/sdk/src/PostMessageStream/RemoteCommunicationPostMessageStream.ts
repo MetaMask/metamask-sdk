@@ -65,14 +65,12 @@ export class RemoteCommunicationPostMessageStream
       );
     }
 
-    // On trusted device, socket may not be connected on initial request.
+    // On trusted/secure device, socket may not be connected on initial request.
     if ((!ready && !platform.isSecure()) || !channelId) {
-      if (this.debug) {
-        console.log(
-          `[RCPMS] NOT CONNECTED - EXIT - channelId=${channelId}`,
-          chunk,
-        );
-      }
+      console.warn(
+        `[RCPMS] NOT CONNECTED - EXIT - channelId=${channelId}`,
+        chunk,
+      );
 
       return callback();
     }
