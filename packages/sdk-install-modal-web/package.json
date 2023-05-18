@@ -14,7 +14,7 @@
   "packageManager": "yarn@3.5.0",
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
-  "types": "dist/src/index.d.ts",
+  "types": "dist/es/src/index.d.ts",
   "files": [
     "/dist"
   ],
