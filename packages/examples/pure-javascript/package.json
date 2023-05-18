@@ -30,5 +30,6 @@
       "@metamask/sdk>socket.io-client>engine.io-client>ws>bufferutil": false,
       "@metamask/sdk>socket.io-client>engine.io-client>ws>utf-8-validate": false
     }
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }
