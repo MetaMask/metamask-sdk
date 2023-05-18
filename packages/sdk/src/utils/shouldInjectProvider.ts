@@ -4,7 +4,11 @@ import { suffixCheck } from './suffixCheck';
 import { doctypeCheck } from './doctypeCheck';
 
 export const shouldInjectProvider = () => {
-  if (typeof window === 'undefined') {
+  if (
+    typeof window === 'undefined' ||
+    (typeof window !== 'undefined' &&
+      typeof (window as any).ethereum === 'undefined')
+  ) {
     return true;
   }
 
