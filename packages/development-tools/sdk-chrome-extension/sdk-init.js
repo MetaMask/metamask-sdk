@@ -1,20 +1,7 @@
 const sdk = new MetaMaskSDK.MetaMaskSDK({
-  forceInjectProvider: true,
+  forceInjectProvider: typeof window.ethereum === 'undefined',
   dappMetadata: {
-    url: window.location.href,
-    name: `${document.title} (MMSDK Ext)`,
+    name: 'Pure JS example',
+    url: window.location.host,
   },
-  // enableDebug: true,
-  // logging: {
-  //   sdk: true,
-  //   developerMode: true,
-  //   eciesLayer: true,
-  //   remoteLayer: true,
-  //   keyExchangeLayer: true,
-  //   serviceLayer: true,
-  // },
-  // checkInstallationImmediately: false,
-  // checkInstallationOnAllCalls: false,
-  // preferDesktop: true,
-  // autoConnect: false,
 });
