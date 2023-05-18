@@ -553,13 +553,17 @@ export class RemoteCommunication extends EventEmitter2 {
         `Channel already exists -- interrupt generateChannelId`,
         this.channelConfig,
       );
-      const channelConfig = {
+
+      this.channelConfig = {
         channelId: this.channelId,
         validUntil: Date.now() + this.sessionDuration,
       };
-      this.storageManager?.persistChannelConfig(channelConfig);
+      this.storageManager?.persistChannelConfig(this.channelConfig);
 
-      return channelConfig;
+      return {
+        channelId: this.channelId,
+        pubKey: this.getKeyInfo()?.ecies.public,
+      };
     }
 
     if (this.debug) {
