@@ -28,7 +28,6 @@ export const InstallModal = (props: InstallModalProps) => {
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const QRCodeStyling = require('qr-code-styling');
-      console.debug(`qrCode`, qrCodeContainer.current);
       const qrCode = new QRCodeStyling({
         width: 270,
         height: 270,
@@ -49,7 +48,6 @@ export const InstallModal = (props: InstallModalProps) => {
           errorCorrectionLevel: 'M',
         },
       });
-      console.debug(`qrCode`, qrCode);
       qrCode.append(qrCodeContainer.current);
     }
   }, [qrCodeContainer]);
