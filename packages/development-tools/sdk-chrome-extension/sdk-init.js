@@ -1,10 +1,9 @@
-console.log("before initialise", window.ethereum);
-
-let sdk;
-console.log("initialise", window.ethereum);
-
-sdk = new MetaMaskSDK.MetaMaskSDK({
+const sdk = new MetaMaskSDK.MetaMaskSDK({
   forceInjectProvider: true,
+  dappMetadata: {
+    url: window.location.href,
+    name: `${document.title} (MMSDK Ext)`,
+  },
   // enableDebug: true,
   // logging: {
   //   sdk: true,
@@ -14,8 +13,8 @@ sdk = new MetaMaskSDK.MetaMaskSDK({
   //   keyExchangeLayer: true,
   //   serviceLayer: true,
   // },
-  // // checkInstallationImmediately: false,
-  // // checkInstallationOnAllCalls: false,
-  // // preferDesktop: true,
-  // // autoConnect: false,
+  // checkInstallationImmediately: false,
+  // checkInstallationOnAllCalls: false,
+  // preferDesktop: true,
+  // autoConnect: false,
 });
