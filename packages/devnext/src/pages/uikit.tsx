@@ -1,69 +1,11 @@
 import {
-  MetaMaskButton, useAccount, useSDK, useSignMessage, useSignTypedData
+  MetaMaskButton, useAccount
 } from '@metamask/sdk-react';
 import Head from 'next/head';
+import { WalletActions } from '../components/WalletActions';
 
-// All properties on a domain are optional
-const domain = {
-  name: 'Ether Mail',
-  version: '1',
-  chainId: 1,
-  verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-} as const
-
-// The named list of all type definitions
-const types = {
-  Person: [
-    { name: 'name', type: 'string' },
-    { name: 'wallet', type: 'address' },
-  ],
-  Mail: [
-    { name: 'from', type: 'Person' },
-    { name: 'to', type: 'Person' },
-    { name: 'contents', type: 'string' },
-  ],
-}
-
-const message = {
-  from: {
-    name: 'Cow',
-    wallet: '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-  },
-  to: {
-    name: 'Bob',
-    wallet: '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-  },
-  contents: 'Hello, Bob!',
-} as const
-
-const buttonClass = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
 export default function UIKitPage() {
-  const { isConnected } = useAccount({
-    onConnect({ address, connector, isReconnected, }) {
-      console.debug(`connected address=${address} isReconnected=${isReconnected}`, connector);
-    },
-    onDisconnect() {
-      console.warn(`disconnected`);
-    },
-  });
-
-  const { data, isError, isLoading, isSuccess, signTypedData } =
-    useSignTypedData({
-      domain,
-      types,
-      primaryType: 'Mail',
-      message,
-    });
-
-  const {
-    data: signData,
-    isError: isSignError,
-    isLoading: isSignLoading,
-    isSuccess: isSignSuccess,
-    signMessage,
-  } = useSignMessage({
-    message: 'gm wagmi frens',
-  });
+  const { isConnected } = useAccount();
 
   return (
     <>
@@ -79,19 +21,7 @@ export default function UIKitPage() {
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
         {isConnected && (
-          <div style={{ marginTop: 20 }} className={'w-full'}>
-            <button className={buttonClass} disabled={isLoading} onClick={() => signTypedData()}>
-              signTypedData
-            </button>
-            {isSuccess && <div className='text-ellipsis overflow-hidden'>Signature: {data}</div>}
-            {isError && <div>Error signing message</div>}
-            <p></p>
-            <button className={buttonClass} disabled={isSignLoading} onClick={() => signMessage()}>
-              sign
-            </button>
-            {isSignSuccess && <div className='text-ellipsis overflow-hidden'>Signature: {signData}</div>}
-            {isSignError && <div>Error signing message</div>}
-          </div>
+          <WalletActions />
         )}
       </header>
     </>

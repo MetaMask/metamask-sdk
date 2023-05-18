@@ -166,6 +166,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     const runtimeLogging = { ...logging };
 
     if (developerMode) {
+      runtimeLogging.sdk = true;
       runtimeLogging.eciesLayer = true;
       runtimeLogging.keyExchangeLayer = true;
       runtimeLogging.remoteLayer = true;
@@ -304,20 +305,14 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.remoteConnection?.disconnect();
   }
 
-  terminate(
-    { emitDisconnect }: { emitDisconnect: boolean } = { emitDisconnect: true },
-  ) {
+  terminate() {
     if (this.debug) {
-      console.debug(
-        `SDK::terminate() emitDisconnect: ${emitDisconnect}`,
-        this.remoteConnection,
-      );
+      console.debug(`SDK::terminate()`, this.remoteConnection);
     }
 
     this.remoteConnection?.disconnect({
       terminate: true,
       sendMessage: true,
-      emitDisconnect,
     });
   }
 
@@ -369,6 +364,13 @@ export class MetaMaskSDK extends EventEmitter2 {
   // Return the ethereum provider object
   getProvider() {
     return this.provider;
+  }
+
+  async connect() {
+    return await this.provider?.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
   }
 
   getUniversalLink() {
