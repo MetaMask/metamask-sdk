@@ -740,7 +740,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
     if (this._connectionStatus === connectionStatus) {
-      return; // Don't handle existing status.
+      return; // Don't re-emit current status.
     }
     this._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
