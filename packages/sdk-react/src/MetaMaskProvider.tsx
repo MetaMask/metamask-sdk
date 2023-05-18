@@ -113,49 +113,56 @@ const MetaMaskProviderClient = ({
       setConnecting(true);
       setError(undefined);
     })
+
     provider?.on('_initialized', () => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
       }
       setConnecting(false);
+      setAccount(provider.selectedAddress || undefined);
       setConnected(true);
       setError(undefined);
     })
-    provider?.on('connect', (connectParam: { chainId: string }) => {
+
+    provider?.on('connect', (connectParam: unknown) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'connect' event.`, connectParam);
       }
       setConnecting(false);
       setConnected(true);
+      setChainId((connectParam as { chainId: string })?.chainId);
       setError(undefined);
       if (chainId) {
         setChainId(chainId);
       }
     })
-    provider?.on('disconnect', (error: EthereumRpcError<unknown>) => {
+
+    provider?.on('disconnect', (error) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'disconnect' event.`, error);
       }
       setConnecting(false);
       setConnected(false);
-      setError(error);
+      setError(error as EthereumRpcError<unknown>);
     })
-    provider?.on('accountsChanged', (newAccounts: string[]) => {
+
+    provider?.on('accountsChanged', (newAccounts) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'accountsChanged' event.`, newAccounts);
       }
-      setAccount(newAccounts?.[0]);
+      setAccount((newAccounts as string[])?.[0]);
       setConnected(true);
       setError(undefined);
     })
-    provider?.on('chainChanged', (networkVersion: {
-      chainId?: string,
-      networkVersion?: string,
-    }) => {
+
+    provider?.on('chainChanged', (networkVersion) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'chainChanged' event.`, networkVersion);
       }
-      setChainId(networkVersion?.chainId);
+      setChainId((networkVersion as {
+        chainId?: string,
+        networkVersion?: string,
+      })?.chainId);
       setConnected(true);
       setError(undefined);
     })
@@ -168,7 +175,7 @@ const MetaMaskProviderClient = ({
 
   const onSDKStatusEvent = useCallback((_serviceStatus: ServiceStatus) => {
     if (debug) {
-      console.debug(`MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}' event.`, _serviceStatus);
+      console.debug(`MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`, _serviceStatus);
     }
     setStatus(_serviceStatus)
   }, []);

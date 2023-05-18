@@ -10,7 +10,7 @@ import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
 
 let _initialized = false;
 export default function Home() {
-  const { sdk, connected, connecting, status: serviceStatus, account, chainId: chain, error } = useSDK();
+  const { sdk, connected, connecting, status: serviceStatus, account, chainId, error } = useSDK();
   const [response, setResponse] = useState<unknown>("");
 
   const connect = () => {
@@ -155,6 +155,15 @@ export default function Home() {
           {`Connected: ${connected}`}
         </div>
         {connected ? <div>
+
+          <div>
+            {`Connected chain: ${chainId}`}
+            <p></p>
+            {`Connected account: ${account}`}
+            <p></p>
+            {`Last request response: ${response}`}
+          </div>
+
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
             Request Accounts
           </button>
@@ -170,16 +179,6 @@ export default function Home() {
         <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
           Terminate
         </button>
-
-        <div>
-          <>
-            {chain && `Connected chain: ${chain}`}
-            <p></p>
-            {account && `Connected account: ${account}`}
-            <p></p>
-            {response && `Last request response: ${response}`}
-          </>
-        </div>
       </main>
     </>
   );
