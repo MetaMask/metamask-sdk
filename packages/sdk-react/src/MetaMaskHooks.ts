@@ -94,7 +94,8 @@ export const useSwitchOrAddNetwork = () => {
           params.blockExplorerUrls = [chain.blockExplorers?.default?.url];
         }
 
-        params.rpcUrls = rpcUrls;
+        // TODO handle rpcUrls
+        // params.rpcUrls = rpcUrls;
 
         try {
           response = await provider.request({
