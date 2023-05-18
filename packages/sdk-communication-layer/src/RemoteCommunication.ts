@@ -76,6 +76,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private originatorInfo?: OriginatorInfo;
 
+  private originatorInfoSent = false;
+
   private dappMetadata?: DappMetadata;
 
   private communicationServerUrl: string;
@@ -261,6 +263,7 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
       this.clientsConnected = true;
+      this.originatorInfoSent = false; // Always re-send originator info.
       this.emit(EventType.CLIENTS_CONNECTED);
     });
 
@@ -297,13 +300,14 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       // Keep sending originator info from this location for backward compatibility
-      if (message.isOriginator) {
+      if (message.isOriginator && !this.originatorInfoSent) {
         // Always re-send originator info in case the session was deleted on the wallet
         this.communicationLayer?.sendMessage({
           type: MessageType.ORIGINATOR_INFO,
           originatorInfo: this.originatorInfo,
           originator: this.originatorInfo,
         });
+        this.originatorInfoSent = true;
       }
     });
 
@@ -542,6 +546,20 @@ export class RemoteCommunication extends EventEmitter2 {
 
     if (this.ready) {
       throw new Error('Channel already connected');
+    }
+
+    if (this.channelId && this.isConnected()) {
+      console.warn(
+        `Channel already exists -- interrupt generateChannelId`,
+        this.channelConfig,
+      );
+      const channelConfig = {
+        channelId: this.channelId,
+        validUntil: Date.now() + this.sessionDuration,
+      };
+      this.storageManager?.persistChannelConfig(channelConfig);
+
+      return channelConfig;
     }
 
     if (this.debug) {
