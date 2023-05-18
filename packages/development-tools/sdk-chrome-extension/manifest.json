@@ -1,8 +1,8 @@
 {
-  "name": "MetaMask SDK Chrome Extension",
+  "name": "MetaMask SDK Injector",
   "description": "MetaMask SDK injector. Allows to use MetaMask SDK on any web page [Manifest V3].",
-  "homepage_url": "https://github.com/llagerlof/fresh-chrome-extension",
-  "version": "2.0.0",
+  "homepage_url": "https://github.com/MetaMask/metamask-sdk",
+  "version": "0.1.0",
   "manifest_version": 3,
   "action": {
     "default_title": "MetaMask SDK injector. Allows to use MetaMask SDK on any web page.",
