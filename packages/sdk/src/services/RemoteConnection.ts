@@ -400,86 +400,84 @@ export class RemoteConnection implements ProviderService {
 
       provider.emit('connecting');
       // Check for existing channelConfig?
-      this.connector
-        ?.startAutoConnect()
-        .then(async (channelConfig: ChannelConfig) => {
-          if (this.developerMode) {
-            console.debug(
-              `RemoteConnection::startConnection after startAutoConnect`,
-              channelConfig,
-            );
-          }
+      this.connector?.startAutoConnect().then(async (channelConfig) => {
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::startConnection after startAutoConnect`,
+            channelConfig,
+          );
+        }
 
-          if (channelConfig?.lastActive) {
-            // Already connected through auto connect
-            await this.handleSecureReconnection({
-              channelConfig,
-              deeplink: true,
-            });
+        if (channelConfig?.lastActive) {
+          // Already connected through auto connect
+          await this.handleSecureReconnection({
+            channelConfig,
+            deeplink: true,
+          });
 
-            return resolve(true);
-          } else if (this.connector) {
-            // generate new channel id
-            this.connector
-              .generateChannelId()
-              .then(({ channelId, pubKey }) => {
-                const linkParams = encodeURI(
-                  `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
-                );
+          return resolve(true);
+        } else if (this.connector) {
+          // generate new channel id
+          this.connector
+            .generateChannelId()
+            .then(({ channelId, pubKey }) => {
+              const linkParams = encodeURI(
+                `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+              );
 
-                const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-                const deeplink = `metamask://connect?${linkParams}`;
+              const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+              const deeplink = `metamask://connect?${linkParams}`;
 
-                if (showQRCode) {
-                  this.installModal = this.options.modals.install?.({
-                    link: universalLink,
-                    debug: this.developerMode,
-                  });
-                  // console.log('OPEN LINK QRCODE', universalLink);
-                } else {
-                  console.log('OPEN LINK', universalLink);
-                  Platform.getInstance().openDeeplink?.(
-                    universalLink,
-                    deeplink,
-                    '_self',
-                  );
-                }
-                this.universalLink = universalLink;
-              })
-              .catch((err: unknown) => {
-                this.otpAnswer = undefined;
-                this.pendingModal?.onClose?.();
-                this.installModal?.onClose?.();
-                reject(err);
-              });
-
-            this.connector.on(EventType.CLIENTS_READY, async () => {
-              if (this.developerMode) {
-                console.debug(
-                  `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
+              if (showQRCode) {
+                this.installModal = this.options.modals.install?.({
+                  link: universalLink,
+                  debug: this.developerMode,
+                });
+                // console.log('OPEN LINK QRCODE', universalLink);
+              } else {
+                console.log('OPEN LINK', universalLink);
+                Platform.getInstance().openDeeplink?.(
+                  universalLink,
+                  deeplink,
+                  '_self',
                 );
               }
-
-              if (this.sentFirstConnect) {
-                resolve(true);
-                return;
-              }
-
-              this.sentFirstConnect = true;
-              if (!this.otpAnswer) {
-                this.otpAnswer = undefined;
-                this.pendingModal?.updateOTPValue?.('');
-              }
-              // close modals
+              this.universalLink = universalLink;
+            })
+            .catch((err: unknown) => {
+              this.otpAnswer = undefined;
               this.pendingModal?.onClose?.();
               this.installModal?.onClose?.();
-
-              resolve(true);
+              reject(err);
             });
-          }
 
-          return true;
-        });
+          this.connector.on(EventType.CLIENTS_READY, async () => {
+            if (this.developerMode) {
+              console.debug(
+                `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
+              );
+            }
+
+            if (this.sentFirstConnect) {
+              resolve(true);
+              return;
+            }
+
+            this.sentFirstConnect = true;
+            if (!this.otpAnswer) {
+              this.otpAnswer = undefined;
+              this.pendingModal?.updateOTPValue?.('');
+            }
+            // close modals
+            this.pendingModal?.onClose?.();
+            this.installModal?.onClose?.();
+
+            resolve(true);
+          });
+        }
+
+        return true;
+      });
     });
   }
 
