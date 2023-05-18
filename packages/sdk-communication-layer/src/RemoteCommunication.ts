@@ -243,16 +243,6 @@ export class RemoteCommunication extends EventEmitter2 {
       },
     );
 
-    this.communicationLayer?.on(EventType.KEY_INFO, (keyInfo) => {
-      if (this.debug) {
-        console.debug(
-          `RemoteCommunication::${this.context}::on 'KEY_INFO' `,
-          keyInfo,
-        );
-      }
-      this.emitServiceStatusEvent();
-    });
-
     this.communicationLayer?.on(EventType.CLIENTS_CONNECTED, () => {
       // Propagate the event to manage different loading states on the ui.
       if (this.debug) {
