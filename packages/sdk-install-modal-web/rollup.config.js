@@ -18,6 +18,12 @@ const config = [
         sourcemap: true,
       },
       {
+        name: 'browser',
+        file: packageJson.unpkg,
+        format: 'umd',
+        sourcemap: true,
+      },
+      {
         file: packageJson.main,
         format: 'cjs',
         sourcemap: true,
