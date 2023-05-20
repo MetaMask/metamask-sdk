@@ -1,9 +1,9 @@
 "use client"; // This is a client component 👈🏽
-import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
-import Head from 'next/head';
-import { MetaMaskSDK } from '@metamask/sdk';
-import { useEffect, useState } from 'react';
 import { MetaMaskInpageProvider } from "@metamask/providers";
+import { MetaMaskSDK } from '@metamask/sdk';
+import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
 
 declare global {
   interface Window {
