@@ -13,9 +13,11 @@ export interface AnaliticsProps {
 
 export const SendAnalytics = async (
   parameters: AnaliticsProps,
-  sockerServerUrl: string,
+  socketServerUrl: string,
 ) => {
-  const serverUrl = `${sockerServerUrl}debug`;
+  const serverUrl = socketServerUrl.endsWith('/')
+    ? `${socketServerUrl}debug`
+    : `${socketServerUrl}/debug`;
   const body = JSON.stringify(parameters);
 
   const response = await crossFetch(serverUrl, {
