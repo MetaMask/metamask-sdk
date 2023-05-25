@@ -7,7 +7,6 @@ import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
-  VERSION,
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
@@ -42,6 +41,7 @@ export interface RemoteCommunicationProps {
   analytics?: boolean;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
+  sdkVersion?: string;
   storage?: StorageManagerProps;
   context: string;
   autoConnect?: AutoConnectOptions;
@@ -88,6 +88,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private storageOptions?: StorageManagerProps;
 
+  private sdkVersion?: string;
+
   private autoConnectOptions;
 
   // Keep track if the other side is connected to the socket
@@ -121,6 +123,7 @@ export class RemoteCommunication extends EventEmitter2 {
     ecies,
     analytics = false,
     storage,
+    sdkVersion,
     communicationServerUrl = DEFAULT_SERVER_URL,
     logging,
     autoConnect = {
@@ -138,6 +141,8 @@ export class RemoteCommunication extends EventEmitter2 {
     this.analytics = analytics;
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
+    this.sdkVersion = sdkVersion;
+
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     if (storage?.duration) {
       this.sessionDuration = DEFAULT_SESSION_TIMEOUT_MS;
@@ -252,6 +257,22 @@ export class RemoteCommunication extends EventEmitter2 {
           } keysExchanged=${this.getKeyInfo()?.keysExchanged}`,
         );
       }
+
+      if (this.analytics) {
+        SendAnalytics(
+          {
+            id: this.channelId ?? '',
+            event: TrackingEvents.REQUEST,
+            ...originatorInfo,
+            commLayer: communicationLayerPreference,
+            sdkVersion: this.sdkVersion,
+            walletVersion: this.walletInfo?.version,
+            commLayerVersion: version,
+          },
+          this.communicationServerUrl,
+        );
+      }
+
       this.clientsConnected = true;
       this.originatorInfoSent = false; // Always re-send originator info.
       this.emit(EventType.CLIENTS_CONNECTED);
@@ -272,10 +293,17 @@ export class RemoteCommunication extends EventEmitter2 {
       this.setLastActiveDate(new Date());
 
       if (this.analytics && this.channelId) {
-        SendAnalytics({
-          id: this.channelId,
-          event: TrackingEvents.CONNECTED,
-        });
+        SendAnalytics(
+          {
+            id: this.channelId,
+            event: TrackingEvents.CONNECTED,
+            sdkVersion: this.sdkVersion,
+            commLayer: communicationLayerPreference,
+            commLayerVersion: version,
+            walletVersion: this.walletInfo?.version,
+          },
+          this.communicationServerUrl,
+        );
       }
 
       this.isOriginator = message.isOriginator;
@@ -345,10 +373,17 @@ export class RemoteCommunication extends EventEmitter2 {
         this.ready = false;
 
         if (this.analytics && this.channelId) {
-          SendAnalytics({
-            id: this.channelId,
-            event: TrackingEvents.DISCONNECTED,
-          });
+          SendAnalytics(
+            {
+              id: this.channelId,
+              event: TrackingEvents.DISCONNECTED,
+              sdkVersion: this.sdkVersion,
+              commLayer: communicationLayerPreference,
+              commLayerVersion: version,
+              walletVersion: this.walletInfo?.version,
+            },
+            this.communicationServerUrl,
+          );
         }
       },
     );
@@ -370,16 +405,6 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       this.setConnectionStatus(ConnectionStatus.WAITING);
-
-      if (this.analytics) {
-        SendAnalytics({
-          id: this.channelId ?? '',
-          event: TrackingEvents.REQUEST,
-          ...originatorInfo,
-          communicationLayerPreference,
-          sdkVersion: VERSION,
-        });
-      }
 
       this.emit(EventType.CLIENTS_WAITING, numberUsers);
       if (this.autoStarted) {
