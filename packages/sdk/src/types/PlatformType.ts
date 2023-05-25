@@ -1,12 +1,12 @@
 export enum PlatformType {
   // React Native or Nodejs
-  NonBrowser = 'nodejs',
+  NonBrowser = 'NonBrowser',
   // MetaMask Mobile in-app browser
-  MetaMaskMobileWebview = 'in-app-browser',
+  MetaMaskMobileWebview = 'MetaMaskMobileWebview',
   // Desktop Browser
-  DesktopWeb = 'web-desktop',
+  DesktopWeb = 'DesktopWeb',
   // Mobile Browser
-  MobileWeb = 'web-modbile',
+  MobileWeb = 'MobileWeb',
   // ReactNative
-  ReactNative = 'react-native',
+  ReactNative = 'RN',
 }
