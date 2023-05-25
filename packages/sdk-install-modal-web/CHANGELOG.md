@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.3.0]
-### Uncategorized
+### Added
 - feat(sdk-install-modal): add umd support ([#122](https://github.com/MetaMask/metamask-sdk/pull/122))
 - fix: invalid types for sdk-install-modal-web ([#117](https://github.com/MetaMask/metamask-sdk/pull/117))
 - [FEAT] sdk react toolkits (Part1) ([#116](https://github.com/MetaMask/metamask-sdk/pull/116))
