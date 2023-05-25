@@ -8,6 +8,7 @@
  * returns {boolean} whether or not the extension of the current document is prohibited
  */
 export function suffixCheck() {
+  if (!window.location) return true;
   const prohibitedTypes = [/\.xml$/u, /\.pdf$/u];
   const currentUrl = window.location.pathname;
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
