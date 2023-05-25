@@ -42,7 +42,6 @@ export interface RemoteCommunicationProps {
   communicationServerUrl?: string;
   ecies?: ECIESProps;
   sdkVersion?: string;
-  walletVersion?: string;
   storage?: StorageManagerProps;
   context: string;
   autoConnect?: AutoConnectOptions;
@@ -91,8 +90,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private sdkVersion?: string;
 
-  private walletVersion?: string;
-
   private autoConnectOptions;
 
   // Keep track if the other side is connected to the socket
@@ -127,7 +124,6 @@ export class RemoteCommunication extends EventEmitter2 {
     analytics = false,
     storage,
     sdkVersion,
-    walletVersion,
     communicationServerUrl = DEFAULT_SERVER_URL,
     logging,
     autoConnect = {
@@ -146,7 +142,6 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
     this.sdkVersion = sdkVersion;
-    this.walletVersion = walletVersion;
 
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     if (storage?.duration) {
@@ -271,6 +266,7 @@ export class RemoteCommunication extends EventEmitter2 {
             ...originatorInfo,
             commLayer: communicationLayerPreference,
             sdkVersion: this.sdkVersion,
+            walletVersion: this.walletInfo?.version,
             commLayerVersion: version,
           },
           this.communicationServerUrl,
@@ -304,7 +300,7 @@ export class RemoteCommunication extends EventEmitter2 {
             sdkVersion: this.sdkVersion,
             commLayer: communicationLayerPreference,
             commLayerVersion: version,
-            walletVersion: this.walletVersion,
+            walletVersion: this.walletInfo?.version,
           },
           this.communicationServerUrl,
         );
@@ -384,7 +380,7 @@ export class RemoteCommunication extends EventEmitter2 {
               sdkVersion: this.sdkVersion,
               commLayer: communicationLayerPreference,
               commLayerVersion: version,
-              walletVersion: this.walletVersion,
+              walletVersion: this.walletInfo?.version,
             },
             this.communicationServerUrl,
           );
