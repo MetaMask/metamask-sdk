@@ -1,20 +1,23 @@
 import crossFetch from 'cross-fetch';
-import { DEFAULT_SERVER_URL } from './config';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 
 export interface AnaliticsProps {
   id: string;
   event: unknown;
   originationInfo?: unknown;
-  communicationLayerPreference?: CommunicationLayerPreference;
+  commLayer?: CommunicationLayerPreference;
   sdkVersion?: string;
+  commLayerVersion: string;
+  walletVersion?: string;
 }
 
 export const SendAnalytics = async (
   parameters: AnaliticsProps,
-  sockerServerUrl = DEFAULT_SERVER_URL,
+  socketServerUrl: string,
 ) => {
-  const serverUrl = `${sockerServerUrl}debug`;
+  const serverUrl = socketServerUrl.endsWith('/')
+    ? `${socketServerUrl}debug`
+    : `${socketServerUrl}/debug`;
   const body = JSON.stringify(parameters);
 
   const response = await crossFetch(serverUrl, {
@@ -26,6 +29,7 @@ export const SendAnalytics = async (
     },
     body,
   });
+
   // TODO error management when request fails
   const text = await response.text();
   return text;
