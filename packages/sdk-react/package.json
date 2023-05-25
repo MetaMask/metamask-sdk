@@ -1,7 +1,15 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A react component and react hooks to connect and use MetaMask",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/metamask-sdk.git"
+  },
   "keywords": [
     "react",
     "typescript",
