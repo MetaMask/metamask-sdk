@@ -3765,6 +3765,9 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     fastify: ^4.17.0
+    fastify-cors: ^6.1.0
+    fastify-formbody: ^5.3.0
+    fastify-helmet: ^7.1.0
     helmet: ^5.1.1
     lru-cache: ^9.1.1
     nodemon: ^2.0.20
@@ -12136,6 +12139,72 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fastify-cors-deprecated@npm:fastify-cors@6.0.3":
+  version: 6.0.3
+  resolution: "fastify-cors@npm:6.0.3"
+  dependencies:
+    fastify-plugin: ^3.0.0
+    vary: ^1.1.2
+  checksum: 054cf4e1cf0b20778ac24d9995a99f44e9b026ca9a028db0cbb6093922bcc931dff5f5bb185d19e881014392bb5886a8b5f9da6af3d3ab5e62b7a68f4eca33c4
+  languageName: node
+  linkType: hard
+
+"fastify-cors@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "fastify-cors@npm:6.1.0"
+  dependencies:
+    fastify-cors-deprecated: "npm:fastify-cors@6.0.3"
+    process-warning: ^1.0.0
+  checksum: dca7c39b4e515ea896aa07ad5c05c70100f427e4c92e3e0fae7cab7d8ccfc824c946723a7e90b4859a5802244932d0af5ee70d753f686092e8c47fca6700e370
+  languageName: node
+  linkType: hard
+
+"fastify-formbody-deprecated@npm:fastify-formbody@5.2.0":
+  version: 5.2.0
+  resolution: "fastify-formbody@npm:5.2.0"
+  dependencies:
+    fastify-plugin: ^3.0.0
+  checksum: 9cbbba1f60fd1d62fbd09ef1f47d933a31cb61bb638488e839cdadca85fa9bad5f3dff22147bc67e11df67257a3001d17a7cebfa08bb6d79d591a79dfa178c1e
+  languageName: node
+  linkType: hard
+
+"fastify-formbody@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "fastify-formbody@npm:5.3.0"
+  dependencies:
+    fastify-formbody-deprecated: "npm:fastify-formbody@5.2.0"
+    process-warning: ^1.0.0
+  checksum: 92963a5e0135f807549721b794bf9571f3b2ab699cf58ac03c1370459380ff86d8b13aa6b667d98fdecf26c4870ad9f3cd246c7b6449c5ef2ba94ce48de47963
+  languageName: node
+  linkType: hard
+
+"fastify-helmet-deprecated@npm:fastify-helmet@7.0.1":
+  version: 7.0.1
+  resolution: "fastify-helmet@npm:7.0.1"
+  dependencies:
+    fastify-plugin: ^3.0.0
+    helmet: ^5.0.1
+  checksum: 80cdb855ea23981767d79cf9fe27e36cf655eae065f0e4caf8aac071922bf566cc3e268ca5d3911d3a587ed8ff1e55bf29d63979a6e3a2ae8bfa01e8433dc83e
+  languageName: node
+  linkType: hard
+
+"fastify-helmet@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "fastify-helmet@npm:7.1.0"
+  dependencies:
+    fastify-helmet-deprecated: "npm:fastify-helmet@7.0.1"
+    process-warning: ^1.0.0
+  checksum: 6cfaf95e0fa7582cd46289371da3ef9de942b50dcadc4f27c79731c4064a220d1cc42726df3fe35337bd1f0914188790be61961cb45518dbe35677296ae8501b
+  languageName: node
+  linkType: hard
+
+"fastify-plugin@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "fastify-plugin@npm:3.0.1"
+  checksum: 131ba0a388f777829c3fb0fd5b75cf057688ce6d0ca354fb1ebf829767a8c853b0825762b9185b5200097454df0ede2f3095da2efe1aa1b3736d07f194e6d374
+  languageName: node
+  linkType: hard
+
 "fastify@npm:^4.17.0":
   version: 4.17.0
   resolution: "fastify@npm:4.17.0"
@@ -13112,7 +13181,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helmet@npm:^5.1.1":
+"helmet@npm:^5.0.1, helmet@npm:^5.1.1":
   version: 5.1.1
   resolution: "helmet@npm:5.1.1"
   checksum: b72ba26cc431804ad3b8ecdc18db95409a492cbb7a7e825efc27fc502b9433fec39fc083f2aad4fe7ed1a89a4287560b59f4435f9689eebbae6a2b61a1ec1b7d
@@ -22795,7 +22864,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vary@npm:^1, vary@npm:~1.1.2":
+"vary@npm:^1, vary@npm:^1.1.2, vary@npm:~1.1.2":
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
   checksum: ae0123222c6df65b437669d63dfa8c36cee20a504101b2fcd97b8bf76f91259c17f9f2b4d70a1e3c6bbcee7f51b28392833adb6b2770b23b01abec84e369660b

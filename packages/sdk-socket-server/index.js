@@ -31,7 +31,6 @@ const io = new Server(server, {
     origin: '*',
   },
 });
-const cors = require('cors');
 
 fastify.register(require('fastify-cors'), {
   origin: '*',
@@ -192,7 +191,7 @@ io.on('connection', (socket) => {
     try {
       await rateLimiter.consume(socket.handshake.address);
     } catch (e) {
-      return;
+      return null;
     }
 
     if (isDevelopment) {
