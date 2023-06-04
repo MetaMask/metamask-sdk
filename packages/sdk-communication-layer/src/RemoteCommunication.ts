@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
 import { validate, v4 as uuidv4 } from 'uuid';
-import { version } from '../package.json';
+import packageJson from '../package.json';
 import { SendAnalytics } from './Analytics';
 import {
   CHANNEL_MAX_WAITING_TIME,
@@ -232,7 +232,7 @@ export class RemoteCommunication extends EventEmitter2 {
       title,
       icon: this.dappMetadata?.base64Icon,
       platform: this.platform,
-      apiVersion: version,
+      apiVersion: packageJson.version,
     };
     this.originatorInfo = originatorInfo;
 
