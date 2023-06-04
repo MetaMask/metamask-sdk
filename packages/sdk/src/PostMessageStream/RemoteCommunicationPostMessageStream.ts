@@ -1,10 +1,12 @@
+import { Buffer } from 'buffer';
+import { Duplex } from 'stream';
+
 import {
   CommunicationLayerMessage,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
-import { Buffer } from 'buffer';
-import { Duplex } from 'stream';
+
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
