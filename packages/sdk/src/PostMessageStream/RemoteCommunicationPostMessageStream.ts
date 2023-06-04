@@ -1,7 +1,7 @@
 import {
   CommunicationLayerMessage,
   EventType,
-  RemoteCommunication
+  RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
 import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
@@ -66,8 +66,11 @@ export class RemoteCommunicationPostMessageStream
     }
 
     if (!channelId) {
-      console.warn(`Invalid channel id -- undefined`);
-      return callback(new Error('RCPMS - invalid channelId -- undefined'));
+      if (this.debug) {
+        console.warn(`Invalid channel id -- undefined`);
+      }
+
+      return callback();
     }
 
     if (this.debug) {
@@ -112,7 +115,7 @@ export class RemoteCommunicationPostMessageStream
         // Invalid connection status
         if (this.debug) {
           console.debug(
-            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n\n`,
+            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n`,
           );
         }
 
