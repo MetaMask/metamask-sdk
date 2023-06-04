@@ -17,7 +17,7 @@ import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
-import { version } from '../../package.json';
+import packageJson from '../../package.json';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -127,7 +127,7 @@ export class RemoteConnection implements ProviderService {
       dappMetadata,
       analytics: enableDebug,
       communicationServerUrl,
-      sdkVersion: version,
+      sdkVersion: packageJson.version,
       context: 'dapp',
       ecies,
       storage,
