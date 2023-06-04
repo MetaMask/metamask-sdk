@@ -1,11 +1,11 @@
-import { Buffer } from 'buffer';
-import { Duplex } from 'stream';
 import {
   CommunicationLayerMessage,
   EventType,
-  RemoteCommunication,
+  RemoteCommunication
 } from '@metamask/sdk-communication-layer';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import { Buffer } from 'buffer';
+import { Duplex } from 'stream';
+import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
