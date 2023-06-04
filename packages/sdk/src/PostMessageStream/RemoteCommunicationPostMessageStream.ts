@@ -66,12 +66,8 @@ export class RemoteCommunicationPostMessageStream
     }
 
     if (!channelId) {
-      console.warn(
-        `[RCPMS] NOT CONNECTED - EXIT - channelId=${channelId}`,
-        chunk,
-      );
-
-      return callback();
+      console.warn(`Invalid channel id -- undefined`);
+      return callback(new Error('RCPMS - invalid channelId -- undefined'));
     }
 
     if (this.debug) {
@@ -94,21 +90,11 @@ export class RemoteCommunicationPostMessageStream
 
       const targetMethod = data?.data?.method as string;
 
-      // if (!ready && targetMethod !== RPC_METHODS.ETH_REQUESTACCOUNTS) {
-      //   if (this.debug) {
-      //     console.warn(
-      //       `RCPMS::_write not ready and not eth_requestAccounts -- return callback`,
-      //     );
-      //   }
-      //   // Only do the first redirect from eth_requestAccounts
-      //   return callback();
-      // }
+      this.remote.sendMessage(data?.data).catch((err: Error) => {
+        console.warn(`RCPMS::_write cannot send message`, err);
+      });
 
       if (!platform.isSecure()) {
-        this.remote.sendMessage(data?.data).catch((err: Error) => {
-          console.warn(`RCPMS::_write cannot send message`, err);
-        });
-
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
@@ -120,17 +106,6 @@ export class RemoteCommunicationPostMessageStream
 
       if (this.debug) {
         console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
-      }
-
-      this.remote.sendMessage(data?.data).catch((err: Error) => {
-        console.warn(`RCPMS::_write cannot send message`, err);
-      });
-
-      if (!channelId) {
-        console.warn(`Invalid channel id -- undefined`);
-        return callback(
-          new Error('RemoteCommunicationPostMessageStream - invalid channelId'),
-        );
       }
 
       if (!socketConnected && !ready) {
