@@ -65,8 +65,7 @@ export class RemoteCommunicationPostMessageStream
       );
     }
 
-    // On trusted/secure device, socket may not be connected on initial request.
-    if ((!ready && !platform.isSecure()) || !channelId) {
+    if (!channelId) {
       console.warn(
         `[RCPMS] NOT CONNECTED - EXIT - channelId=${channelId}`,
         chunk,
@@ -95,13 +94,18 @@ export class RemoteCommunicationPostMessageStream
 
       const targetMethod = data?.data?.method as string;
 
-      if (!ready && targetMethod === RPC_METHODS.METAMASK_GETPROVIDERSTATE) {
-        // Only do the first redirect from eth_requestAccounts
-        return callback();
-      }
+      // if (!ready && targetMethod !== RPC_METHODS.ETH_REQUESTACCOUNTS) {
+      //   if (this.debug) {
+      //     console.warn(
+      //       `RCPMS::_write not ready and not eth_requestAccounts -- return callback`,
+      //     );
+      //   }
+      //   // Only do the first redirect from eth_requestAccounts
+      //   return callback();
+      // }
 
       if (!platform.isSecure()) {
-        this.remote.sendMessage(data?.data).catch((err) => {
+        this.remote.sendMessage(data?.data).catch((err: Error) => {
           console.warn(`RCPMS::_write cannot send message`, err);
         });
 
@@ -118,7 +122,7 @@ export class RemoteCommunicationPostMessageStream
         console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
       }
 
-      this.remote.sendMessage(data?.data).catch((err) => {
+      this.remote.sendMessage(data?.data).catch((err: Error) => {
         console.warn(`RCPMS::_write cannot send message`, err);
       });
 
