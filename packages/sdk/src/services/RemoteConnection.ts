@@ -189,16 +189,6 @@ export class RemoteConnection implements ProviderService {
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
-
-        const provider = Ethereum.getProvider();
-        provider.on('_initialized', async () => {
-          if (this.developerMode) {
-            console.debug(`connection _initialized -- reset OTP value`);
-          }
-          this.pendingModal?.updateOTPValue?.('');
-          this.pendingModal?.onClose?.();
-          this.otpAnswer = undefined;
-        });
       });
     }
 
