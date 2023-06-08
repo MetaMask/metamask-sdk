@@ -1,11 +1,13 @@
 import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
+
 import {
   CommunicationLayerMessage,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+
+import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
@@ -65,12 +67,10 @@ export class RemoteCommunicationPostMessageStream
       );
     }
 
-    // On trusted/secure device, socket may not be connected on initial request.
-    if ((!ready && !platform.isSecure()) || !channelId) {
-      console.warn(
-        `[RCPMS] NOT CONNECTED - EXIT - channelId=${channelId}`,
-        chunk,
-      );
+    if (!channelId) {
+      if (this.debug) {
+        console.warn(`Invalid channel id -- undefined`);
+      }
 
       return callback();
     }
@@ -95,16 +95,11 @@ export class RemoteCommunicationPostMessageStream
 
       const targetMethod = data?.data?.method as string;
 
-      if (!ready && targetMethod === RPC_METHODS.METAMASK_GETPROVIDERSTATE) {
-        // Only do the first redirect from eth_requestAccounts
-        return callback();
-      }
+      this.remote.sendMessage(data?.data).catch((err: Error) => {
+        console.warn(`RCPMS::_write cannot send message`, err);
+      });
 
       if (!platform.isSecure()) {
-        this.remote.sendMessage(data?.data).catch((err) => {
-          console.warn(`RCPMS::_write cannot send message`, err);
-        });
-
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
@@ -118,22 +113,11 @@ export class RemoteCommunicationPostMessageStream
         console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
       }
 
-      this.remote.sendMessage(data?.data).catch((err) => {
-        console.warn(`RCPMS::_write cannot send message`, err);
-      });
-
-      if (!channelId) {
-        console.warn(`Invalid channel id -- undefined`);
-        return callback(
-          new Error('RemoteCommunicationPostMessageStream - invalid channelId'),
-        );
-      }
-
       if (!socketConnected && !ready) {
         // Invalid connection status
         if (this.debug) {
           console.debug(
-            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n\n`,
+            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n`,
           );
         }
 
