@@ -17,7 +17,7 @@ import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
-import { version } from '../../package.json';
+import packageJson from '../../package.json';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -127,7 +127,7 @@ export class RemoteConnection implements ProviderService {
       dappMetadata,
       analytics: enableDebug,
       communicationServerUrl,
-      sdkVersion: version,
+      sdkVersion: packageJson.version,
       context: 'dapp',
       ecies,
       storage,
@@ -189,16 +189,6 @@ export class RemoteConnection implements ProviderService {
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
-
-        const provider = Ethereum.getProvider();
-        provider.on('_initialized', async () => {
-          if (this.developerMode) {
-            console.debug(`connection _initialized -- reset OTP value`);
-          }
-          this.pendingModal?.updateOTPValue?.('');
-          this.pendingModal?.onClose?.();
-          this.otpAnswer = undefined;
-        });
       });
     }
 
