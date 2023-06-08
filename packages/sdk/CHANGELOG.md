@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.2]
 ### Added
-- [FIX] initial eth_requestAccounts ignored when refreshing session ([#139](https://github.com/MetaMask/metamask-sdk/pull/139))
+- [fix] initial eth_requestAccounts ignored when refreshing session ([#139](https://github.com/MetaMask/metamask-sdk/pull/139))
 
 ## [0.3.1]
 ### Added
@@ -24,8 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.2...HEAD
-[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...v0.3.2
-[0.3.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.0...v0.3.1
-[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.2.4...v0.3.0
-[0.2.4]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.2.4
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.20.3.2...HEAD
+[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.20.3.1...@metamask/sdk@0.3.20.3.2
+[0.3.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.20.3.0...@metamask/sdk@0.3.20.3.1
+[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.20.2.4...@metamask/sdk@0.3.20.3.0
+[0.2.4]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk@0.3.20.2.4
