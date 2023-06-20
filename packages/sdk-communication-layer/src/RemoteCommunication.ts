@@ -52,6 +52,9 @@ export class RemoteCommunication extends EventEmitter2 {
   // ready flag is turned on after we receive 'clients_ready' message, meaning key exchange is complete.
   private ready = false;
 
+  // flag turned on once the connection has been authorized on the wallet.
+  private authorized = false;
+
   private isOriginator = false;
 
   private paused = false;
@@ -371,6 +374,7 @@ export class RemoteCommunication extends EventEmitter2 {
         // }
 
         this.ready = false;
+        this.authorized = false;
 
         if (this.analytics && this.channelId) {
           SendAnalytics(
@@ -495,6 +499,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
       return;
     } else if (message.type === MessageType.AUTHORIZED && this.isOriginator) {
+      this.authorized = true;
       this.emit(EventType.AUTHORIZED);
     }
 
@@ -649,14 +654,45 @@ export class RemoteCommunication extends EventEmitter2 {
     this.storageManager?.persistChannelConfig(newChannelConfig);
   }
 
+  private async handleAuthorization(
+    message: CommunicationLayerMessage,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.debug) {
+        console.log(
+          `RemoteCommunication::${this.context}::sendMessage::handleAuthorization ready=${this.ready} authorized=${this.authorized} method=${message.method}`,
+        );
+      }
+
+      // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
+      if (message.method === 'eth_requestAccounts') {
+        this.communicationLayer?.sendMessage(message);
+        resolve();
+      } else {
+        this.once(EventType.AUTHORIZED, () => {
+          if (this.debug) {
+            console.log(
+              `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / AUTHORIZED -- sending pending message`,
+            );
+          }
+          // only send the message after the clients have awaken.
+          this.communicationLayer?.sendMessage(message);
+          resolve();
+        });
+      }
+
+      resolve();
+    });
+  }
+
   sendMessage(message: CommunicationLayerMessage): Promise<void> {
     return new Promise((resolve) => {
       if (this.debug) {
         console.log(
           `RemoteCommunication::${this.context}::sendMessage paused=${
             this.paused
-          } ready=${
-            this.ready
+          } ready=${this.ready} authorized=${
+            this.authorized
           } socker=${this.communicationLayer?.isConnected()} clientsConnected=${
             this.clientsConnected
           } status=${this._connectionStatus}`,
@@ -676,19 +712,18 @@ export class RemoteCommunication extends EventEmitter2 {
           );
         }
 
-        this.once(EventType.CLIENTS_READY, () => {
+        this.once(EventType.CLIENTS_READY, async () => {
           if (this.debug) {
             console.log(
               `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
             );
           }
-          // only send the message after the clients have awaken.
-          this.communicationLayer?.sendMessage(message);
+          await this.handleAuthorization(message);
           resolve();
         });
       } else {
-        this.communicationLayer?.sendMessage(message);
-        resolve();
+        // Send the message or wait for authorization
+        this.handleAuthorization(message);
       }
     });
   }
