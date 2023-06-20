@@ -665,7 +665,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
-      if (message.method === 'eth_requestAccounts') {
+      if (message.method === 'eth_requestAccounts' || !this.isOriginator) {
         this.communicationLayer?.sendMessage(message);
         resolve();
       } else {
