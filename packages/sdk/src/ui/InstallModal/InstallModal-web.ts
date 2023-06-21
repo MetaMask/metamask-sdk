@@ -5,9 +5,11 @@ import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 const sdkWebInstallModal = ({
   link,
   debug,
+  connectWithExtension,
 }: {
   link: string;
   debug?: boolean;
+  connectWithExtension?: () => void;
 }) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
@@ -30,12 +32,25 @@ const sdkWebInstallModal = ({
     }
   };
 
-  modalLoader.renderInstallModal({
-    parentElement: div,
-    link,
-    metaMaskInstaller: MetaMaskInstaller.getInstance(),
-    onClose,
-  });
+  if (window.extension) {
+    // When extension is available, we allow switching between extension and mobile
+    modalLoader.renderSelectModal({
+      parentElement: div,
+      connectWithExtension: () => {
+        onClose();
+        connectWithExtension?.();
+      },
+      onClose,
+      link,
+    });
+  } else {
+    modalLoader.renderInstallModal({
+      parentElement: div,
+      link,
+      metaMaskInstaller: MetaMaskInstaller.getInstance(),
+      onClose,
+    });
+  }
 
   return { installModal: modalLoader, onClose };
 };

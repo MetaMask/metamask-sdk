@@ -34,7 +34,6 @@ type AddEthereumChainParameter = {
 
 export const useSDK = () => {
   const context = useContext(SDKContext);
-  // console.log(`[useMetamaskFlask] context is `, context)
 
   if (context === undefined) {
     throw new Error('SDK context is missing, must be within provide');

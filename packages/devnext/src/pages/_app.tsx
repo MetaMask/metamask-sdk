@@ -5,17 +5,19 @@ import '../styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <MetaMaskProvider debug={false} sdkOptions={{
+    <MetaMaskProvider debug={true} sdkOptions={{
       // communicationServerUrl: 'http://192.168.50.114:4000',
+      forceDeleteProvider: true,
+      forceInjectProvider: true,
       logging: {
         developerMode: false,
-        sdk: false,
+        sdk: true,
         remoteLayer: false,
         serviceLayer: false,
         plaintext: true,
       },
       autoConnect: {
-        enable: true,
+        enable: false,
       },
       storage: {
         enabled: true,

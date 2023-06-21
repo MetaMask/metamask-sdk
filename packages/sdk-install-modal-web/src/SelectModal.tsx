@@ -1,24 +1,19 @@
-import React, { useEffect, useRef, useState, CSSProperties } from 'react';
-import AdvantagesListItem from './components/AdvantagesListItem';
+import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import CloseButton from './components/CloseButton';
-import HeartIcon from './components/HeartIcon';
-import InstallIcon from './components/InstallIcon';
-import WalletIcon from './components/LockIcon';
+import ConnectIcon from './components/ConnectIcon';
 import Logo from './components/Logo';
-import LockIcon from './components/WalletIcon';
+import { MetamaskExtensionImage } from './components/MetamaskExtensionImage';
 import { FOX_IMAGE } from './constants';
 import styles from './styles';
 import { WidgetWrapper } from './WidgetWrapper';
 
-export interface InstallModalProps {
+export interface SelectModalProps {
   onClose: () => void;
   link: string;
-  metaMaskInstaller: {
-    startDesktopOnboarding: () => void;
-  };
+  connectWithExtension: () => void;
 }
 
-export const InstallModal = (props: InstallModalProps) => {
+export const SelectModal = (props: SelectModalProps) => {
   const [tab, setTab] = useState<number>(1);
   const qrCodeContainer = useRef<HTMLDivElement>(null);
 
@@ -114,39 +109,20 @@ export const InstallModal = (props: InstallModalProps) => {
             </div>
           </div>
           <div style={{ display: tab === 2 ? 'none' : 'block' }}>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={HeartIcon}
-                text={`
-      Trusted by over 30 million users to buy, store, send and swap crypto
-      securely`}
-              />
+            <div style={{display: 'flex', justifyContent: 'center', height: 300, marginTop: -20}}>
+              <MetamaskExtensionImage/>
             </div>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={WalletIcon}
-                text={`
-        The leading crypto wallet & gateway to blockchain apps built
-        on Ethereum Mainnet, Polygon, Optimism, and many other
-        networks`}
-              />
-            </div>
-            <div style={styles.item}>
-              <AdvantagesListItem
-                Icon={LockIcon}
-                text={`
-      Puts you in control of your digital interactions by making power
-            of cryptography more accessible`}
-              />
+            <div style={styles.extensionLabel}>
+              Take control of your crypto and explore the blockchain with the wallet trusted by over 30 million people worldwide
             </div>
 
             <button
               style={styles.button}
-              onClick={props.metaMaskInstaller.startDesktopOnboarding}
+              onClick={props.connectWithExtension}
             >
-              <InstallIcon />
+              <ConnectIcon />
               <span style={styles.installExtensionText}>
-                Install MetaMask Extension
+                Connect With MetaMask Extension
               </span>
             </button>
           </div>

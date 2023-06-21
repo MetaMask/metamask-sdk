@@ -50,6 +50,13 @@ const styles = {
     border: '2px #F2F4F6 solid',
     color: '#24292E',
   },
+  extensionLabel: {
+    fontsStyle: 'normal',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center' as 'center',
+    color: '#24272A',
+  },
   notice: {
     fontSize: 12,
     marginLeft: 10,

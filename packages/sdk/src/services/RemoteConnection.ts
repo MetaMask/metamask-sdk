@@ -36,9 +36,14 @@ export interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
+  connectWithExtensionProvider: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
-    install?: (params: { link: string; debug?: boolean }) => {
+    install?: (params: {
+      link: string;
+      debug?: boolean;
+      connectWithExtension?: () => void;
+    }) => {
       onClose?: () => void;
     };
     otp?: (onDisconnect?: () => void) => {
@@ -424,6 +429,10 @@ export class RemoteConnection implements ProviderService {
                 this.installModal = this.options.modals.install?.({
                   link: universalLink,
                   debug: this.developerMode,
+                  connectWithExtension: () => {
+                    this.options.connectWithExtensionProvider();
+                    return false;
+                  },
                 });
                 // console.log('OPEN LINK QRCODE', universalLink);
               } else {
