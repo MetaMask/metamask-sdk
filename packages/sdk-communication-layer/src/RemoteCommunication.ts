@@ -7,6 +7,7 @@ import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
+  RPC_METHODS,
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
@@ -493,7 +494,7 @@ export class RemoteCommunication extends EventEmitter2 {
       // backward compatibility for wallet <6.6
       if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
         this.emit(EventType.SDK_RPC_CALL, {
-          method: 'eth_requestAccounts',
+          method: RPC_METHODS.ETH_REQUESTACCOUNTS,
           params: [],
         });
       }
