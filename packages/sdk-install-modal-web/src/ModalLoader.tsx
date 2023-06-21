@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { InstallModal, InstallModalProps } from './InstallModal';
 import { PendingModal, PendingModalProps } from './PendingModal';
+import { SelectModal, SelectModalProps } from './SelectModal';
 
 export interface InstallWidgetProps extends InstallModalProps {
   parentElement: Element;
@@ -12,9 +13,14 @@ export interface PendingWidgetProps extends PendingModalProps {
   parentElement: Element;
 }
 
+export interface SelectWidgetProps extends SelectModalProps {
+  parentElement: Element;
+}
+
 export class ModalLoader {
   private installContainer?: Element;
   private pendingContainer?: Element;
+  private selectContainer?: Element;
 
   renderInstallModal(props: InstallWidgetProps) {
     if (this.installContainer) {
@@ -24,12 +30,29 @@ export class ModalLoader {
 
     this.installContainer = props.parentElement;
 
+    console.debug(`render install modal`, (window as any).extension);
     const reactRoot = createRoot(props.parentElement);
     reactRoot.render(
       <InstallModal
         link={props.link}
         onClose={props.onClose}
         metaMaskInstaller={props.metaMaskInstaller}
+      />,
+    );
+  }
+
+  renderSelectModal(props: SelectWidgetProps) {
+    if(this.selectContainer) {
+      return;
+    }
+    this.selectContainer = props.parentElement;
+
+    const reactRoot = createRoot(props.parentElement);
+    reactRoot.render(
+      <SelectModal
+        link={props.link}
+        onClose={props.onClose}
+        connectWithExtension={props.connectWithExtension}
       />,
     );
   }
@@ -67,6 +90,10 @@ export class ModalLoader {
     if (this.installContainer) {
       this.installContainer?.parentNode?.removeChild(this.installContainer);
       this.installContainer = undefined;
+    }
+    if(this.selectContainer) {
+      this.selectContainer?.parentNode?.removeChild(this.selectContainer);
+      this.selectContainer = undefined;
     }
   }
 }
