@@ -5,6 +5,7 @@ import { EthereumRpcError } from 'eth-rpc-errors';
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { Chain, configureChains, Connector, createConfig, mainnet, WagmiConfig } from 'wagmi';
 import MetaMaskConnector from './MetaMaskConnector';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 
 const initProps: {
   sdk?: MetaMaskSDK,
@@ -93,9 +94,14 @@ const MetaMaskProviderClient = ({
   sdkOptions: MetaMaskSDKOptions;
   debug?: boolean,
 }) => {
-  const sdk = useMemo(() => new MetaMaskSDK({
-    ...sdkOptions,
-  }), []);
+  console.debug(`MetaMaskProviderClient rendering debug=${debug}`);
+  const [trigger, setTrigger] = useState<number>(0);
+  const sdk = useMemo(() => {
+    const sdk = new MetaMaskSDK({
+      ...sdkOptions,
+    })
+    return sdk;
+  }, [sdkOptions]);
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
   const [chainId, setChainId] = useState<string>();
@@ -104,6 +110,8 @@ const MetaMaskProviderClient = ({
   const [status, setStatus] = useState<ServiceStatus>();
 
   useEffect(() => {
+    console.debug(`[MetamaskProvider] init SDK Provider trigger=${trigger}`);
+
     const provider = sdk.getProvider();
     provider?.on('connecting', () => {
       if (debug) {
@@ -124,7 +132,7 @@ const MetaMaskProviderClient = ({
       setError(undefined);
     })
 
-    provider?.on('connect', (connectParam: unknown) => {
+    const onConnect = (connectParam: unknown) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'connect' event.`, connectParam);
       }
@@ -135,27 +143,27 @@ const MetaMaskProviderClient = ({
       if (chainId) {
         setChainId(chainId);
       }
-    })
+    }
 
-    provider?.on('disconnect', (error) => {
+    const onDisconnect = (error: unknown) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'disconnect' event.`, error);
       }
       setConnecting(false);
       setConnected(false);
       setError(error as EthereumRpcError<unknown>);
-    })
+    }
 
-    provider?.on('accountsChanged', (newAccounts) => {
+    const onAccountsChanged = (newAccounts: any) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'accountsChanged' event.`, newAccounts);
       }
       setAccount((newAccounts as string[])?.[0]);
       setConnected(true);
       setError(undefined);
-    })
+    }
 
-    provider?.on('chainChanged', (networkVersion) => {
+    const onChainChanged = (networkVersion: any) => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'chainChanged' event.`, networkVersion);
       }
@@ -165,13 +173,35 @@ const MetaMaskProviderClient = ({
       })?.chainId);
       setConnected(true);
       setError(undefined);
-    })
+    }
+    provider?.on('connect', onConnect)
+    provider?.on('disconnect', onDisconnect)
+    provider?.on('accountsChanged', onAccountsChanged);
+    provider?.on('chainChanged', onChainChanged)
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent)
 
     return () => {
+      console.debug(`MetaMaskProvider::useEffect cleaning up sdk listeners`);
       provider?.removeAllListeners();
+      sdk.removeAllListeners();
+      sdk.disconnect();
     }
-  }, [])
+  }, [trigger, sdk])
+
+  useEffect( () => {
+    const onProviderEvent = (accounts?: string[]) => {
+      if(accounts?.[0]?.startsWith('0x')) {
+        setConnected(true);
+        setAccount(accounts?.[0]);
+        setConnecting(false);
+      }
+      setTrigger( (trigger) => trigger + 1);
+    }
+    sdk.on(EventType.PROVIDER_UPDATE, onProviderEvent);
+    return () => {
+      sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);
+    }
+  }, [sdk])
 
   const onSDKStatusEvent = useCallback((_serviceStatus: ServiceStatus) => {
     if (debug) {

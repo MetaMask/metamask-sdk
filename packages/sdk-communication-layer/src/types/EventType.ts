@@ -2,6 +2,7 @@ export enum EventType {
   // emitted everytime the current step is updated
   KEY_INFO = 'key_info',
   SERVICE_STATUS = 'service_status',
+  PROVIDER_UPDATE = 'provider_update',
   KEYS_EXCHANGED = 'keys_exchanged',
   JOIN_CHANNEL = 'join_channel',
   CHANNEL_CREATED = 'channel_created',

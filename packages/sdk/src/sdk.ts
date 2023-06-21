@@ -191,6 +191,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (checkForceInject || checkInject || isNonBrowser) {
       if (checkForceInject && forceDeleteProvider) {
         Ethereum.destroy();
+        // Backup the browser extension provider
+        window.extension = window.ethereum;
         delete window.ethereum;
       }
 
@@ -230,6 +232,15 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage,
         autoConnect,
         logging: runtimeLogging,
+        connectWithExtensionProvider: async () => {
+          delete window.ethereum;
+          this.provider = window.extension as any;
+          window.ethereum = window.extension as any;
+          const accounts = await window.ethereum?.request({
+            method: 'eth_requestAccounts',
+          });
+          this.emit(EventType.PROVIDER_UPDATE, accounts);
+        },
         modals: {
           ...modals,
           onPendingModalDisconnect: this.terminate.bind(this),
@@ -290,6 +301,10 @@ export class MetaMaskSDK extends EventEmitter2 {
       throw new Error(`Invalid SDK provider status`);
     }
     this._initialized = true;
+  }
+
+  private changeProvider() {
+    return false;
   }
 
   resume() {
