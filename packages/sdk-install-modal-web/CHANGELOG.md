@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.3.3]
-### Uncategorized
-- [FEAT] choose between extesnion and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
+### Added
+- [FEAT] choose between extension and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
 - [fix] #145 missing css color ([#149](https://github.com/MetaMask/metamask-sdk/pull/149))
 
 ## [0.3.2]

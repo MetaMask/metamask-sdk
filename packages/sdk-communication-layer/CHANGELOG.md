@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.3.3]
-### Uncategorized
+### Added
 - [FEAT] wait for authorized event ([#147](https://github.com/MetaMask/metamask-sdk/pull/147))
-- [FEAT] choose between extesnion and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
+- [FEAT] choose between extennsion and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
 
 ## [0.3.2]
 ### Added
