@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3]
+### Uncategorized
+- [FEAT] choose between extesnion and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
+- [fix] #145 missing css color ([#149](https://github.com/MetaMask/metamask-sdk/pull/149))
+- [feat] skip suffix check if location does not exist ([#128](https://github.com/MetaMask/metamask-sdk/pull/128))
+
 ## [0.3.2]
 ### Added
 - [fix] initial eth_requestAccounts ignored when refreshing session ([#139](https://github.com/MetaMask/metamask-sdk/pull/139))
@@ -24,7 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.3...HEAD
+[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.2...@metamask/sdk@0.3.3
 [0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.1...@metamask/sdk@0.3.2
 [0.3.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.0...@metamask/sdk@0.3.1
 [0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.2.4...@metamask/sdk@0.3.0
