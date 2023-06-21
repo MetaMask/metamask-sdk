@@ -44,7 +44,7 @@ export default function SDKContainer() {
       useDeeplink: false,
       communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
       autoConnect: {
-        enable: true
+        enable: false
       },
       dappMetadata: {
         name: "NEXTJS demo",
