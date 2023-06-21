@@ -26,7 +26,7 @@ export const PendingModal = (props: PendingModalProps) => {
             <Logo />
           </div>
           <div>
-            <div style={{...styles.flexContainer, flexDirection: 'column'}}>
+            <div style={{...styles.flexContainer, flexDirection: 'column', color: 'black'}}>
               <div
                 style={{
                   textAlign: 'center',

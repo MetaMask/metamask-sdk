@@ -5,6 +5,10 @@ import { PlatformType } from '../types/PlatformType';
 import { WakeLockStatus } from '../types/WakeLockStatus';
 import { WakeLockManager } from './WakeLockManager';
 
+const TEMPORARY_WAKE_LOCK_TIME = 2000;
+const UNTIL_RESPONSE_WAKE_LOCK_TIME = 20000;
+const LINK_OPEN_DELAY = 500;
+
 interface PlatformProps {
   useDeepLink: boolean;
   preferredOpenLink?: (link: string, target?: string) => void;
@@ -68,7 +72,9 @@ export class Platform {
     this.wakeLock.enable();
 
     const maxTime =
-      this.wakeLockStatus === WakeLockStatus.Temporary ? 2000 : 20000;
+      this.wakeLockStatus === WakeLockStatus.Temporary
+        ? TEMPORARY_WAKE_LOCK_TIME
+        : UNTIL_RESPONSE_WAKE_LOCK_TIME;
 
     // At the most wake lock a maximum of time
     this.wakeLockTimer = setTimeout(() => {
@@ -121,7 +127,7 @@ export class Platform {
         } else {
           win = window.open(universalLink, '_blank');
         }
-        setTimeout(() => win?.close?.(), 500);
+        setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
       }
     } catch (err) {
       console.log(`Platform::openDeepLink() can't open link`, err);
