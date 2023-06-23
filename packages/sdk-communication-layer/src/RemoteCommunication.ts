@@ -665,12 +665,27 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
+      // FIXME remove hack as soon as ios release 7.x is out
+      // Backward compatibility HACK
+      let skipAuthorized = false;
+      if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        skipAuthorized = true;
+      }
+
+      if (this.debug) {
+        // Check for backward compatibility
+        console.debug(
+          `wallet version ${this.walletInfo?.version} skipAuthorized=${skipAuthorized}`,
+        );
+      }
+
       // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
       // ignore authorization for wallet.
       if (
         message.method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         !this.isOriginator ||
-        this.authorized
+        this.authorized ||
+        skipAuthorized
       ) {
         this.communicationLayer?.sendMessage(message);
         resolve();
