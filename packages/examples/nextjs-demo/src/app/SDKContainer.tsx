@@ -43,6 +43,8 @@ export default function SDKContainer() {
     const clientSDK = new MetaMaskSDK({
       useDeeplink: false,
       communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
+      forceInjectProvider: true,
+      forceDeleteProvider: true,
       autoConnect: {
         enable: false
       },
@@ -62,6 +64,11 @@ export default function SDKContainer() {
 
   useEffect(() => {
     console.debug(`App::useEffect window.ethereum listeners`);
+
+    if(_initialized) {
+      console.debug(`App::useEffect window.ethereum listeners already initialized`);
+      return;
+    }
 
     if (window.ethereum?.selectedAddress) {
       console.debug(`App::useEffect setting account from window.ethereum `);
