@@ -469,21 +469,21 @@ export class RemoteCommunication extends EventEmitter2 {
       this.walletInfo = message.walletInfo;
       this.paused = false;
 
-      // backward compatibility for wallet <6.6
-      if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
-        // SIMULATE AUTHORIZED EVENT
-        // FIXME remove hack as soon as ios release 7.x is out
-        this.authorized = true;
-        this.emit(EventType.AUTHORIZED);
+      // FIXME Remove comment --- but keep temporarily for reference in case of quick rollback
+      // if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+      //   // SIMULATE AUTHORIZED EVENT
+      //   // FIXME remove hack as soon as ios release 7.x is out
+      //   this.authorized = true;
+      //   this.emit(EventType.AUTHORIZED);
 
-        if (this.debug) {
-          // Check for backward compatibility
-          console.debug(
-            `wallet version ${this.walletInfo?.version} -- Force simulate AUTHORIZED event`,
-            this.walletInfo,
-          );
-        }
-      }
+      //   if (this.debug) {
+      //     // Check for backward compatibility
+      //     console.debug(
+      //       `wallet version ${this.walletInfo?.version} -- Force simulate AUTHORIZED event`,
+      //       this.walletInfo,
+      //     );
+      //   }
+      // }
 
       return;
     } else if (message.type === MessageType.TERMINATE) {
