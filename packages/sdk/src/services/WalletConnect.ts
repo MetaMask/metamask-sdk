@@ -107,6 +107,10 @@ export class WalletConnect implements ProviderService {
     return this.wcConnector.connected;
   }
 
+  isAuthorized(): boolean {
+    throw new Error('Method not implemented.');
+  }
+
   disconnect(): void {
     // nothing to do here.
   }
