@@ -191,8 +191,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (checkForceInject || checkInject || isNonBrowser) {
       if (checkForceInject && forceDeleteProvider) {
         Ethereum.destroy();
+        // TODO re-enable once we have consolidated proxyfication of multiple providers
         // Backup the browser extension provider
-        window.extension = window.ethereum;
+        // window.extension = window.ethereum;
         delete window.ethereum;
       }
 
