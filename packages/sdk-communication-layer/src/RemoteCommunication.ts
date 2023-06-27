@@ -240,6 +240,17 @@ export class RemoteCommunication extends EventEmitter2 {
     };
     this.originatorInfo = originatorInfo;
 
+    this.communicationLayer?.on(EventType.AUTHORIZED, () => {
+      // FIXME remove this hack pending wallet release 7.3
+      if (this.authorized) {
+        // Ignore duplicate event or already authorized
+        return;
+      }
+      // Propagate authorized event.
+      this.authorized = true;
+      this.emit(EventType.AUTHORIZED);
+    });
+
     this.communicationLayer?.on(
       EventType.MESSAGE,
       (_message: CommunicationLayerMessage) => {
@@ -793,6 +804,10 @@ export class RemoteCommunication extends EventEmitter2 {
    */
   isConnected() {
     return this.communicationLayer?.isConnected();
+  }
+
+  isAuthorized() {
+    return this.authorized;
   }
 
   isPaused() {

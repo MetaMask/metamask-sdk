@@ -501,6 +501,10 @@ export class RemoteConnection implements ProviderService {
     return this.connector?.isReady() || false;
   }
 
+  isAuthorized() {
+    return this.connector?.isAuthorized() || false;
+  }
+
   isPaused() {
     return this.connector?.isPaused();
   }
