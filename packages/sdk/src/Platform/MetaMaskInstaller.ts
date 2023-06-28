@@ -58,7 +58,7 @@ export class MetaMaskInstaller {
   }
 
   startDesktopOnboarding() {
-    if (this.debug) {
+    if (this?.debug) {
       console.debug(`MetamaskInstaller::startDesktopOnboarding()`);
     }
     Ethereum.destroy();
@@ -70,7 +70,7 @@ export class MetaMaskInstaller {
   async redirectToProperInstall() {
     const platformType = Platform.getInstance().getPlatformType();
 
-    if (this.debug) {
+    if (this?.debug) {
       console.debug(
         `MetamaskInstaller::redirectToProperInstall() platform=${platformType} this.preferDesktop=${this.preferDesktop}`,
       );
