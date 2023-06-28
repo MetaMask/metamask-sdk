@@ -147,6 +147,8 @@ export class RemoteCommunication extends EventEmitter2 {
     this.context = context;
     this.sdkVersion = sdkVersion;
 
+    this.setMaxListeners(50);
+
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     if (storage?.duration) {
       this.sessionDuration = DEFAULT_SESSION_TIMEOUT_MS;
@@ -247,8 +249,13 @@ export class RemoteCommunication extends EventEmitter2 {
         return;
       }
 
+      console.debug(
+        `RemoteCommunication::on 'authorized' channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+        '7.3'.localeCompare(this.walletInfo?.version || ''),
+      );
+
       // bacward compatibility for wallet <7.3
-      if ('7.3'.localeCompare(this.walletInfo?.version || '') === -1) {
+      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
         // Propagate authorized event.
         this.authorized = true;
         this.emit(EventType.AUTHORIZED);
