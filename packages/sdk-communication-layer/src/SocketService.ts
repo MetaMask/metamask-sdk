@@ -35,7 +35,7 @@ export interface RPCMethodResult {
   timestamp: number; // timestamp of last request
   method: string;
   result?: unknown;
-  elspaedTime?: number; // elapsed time between request and response
+  elapsedTime?: number; // elapsed time between request and response
 }
 export interface RPCMethodCache {
   [id: string]: RPCMethodResult;
@@ -499,7 +499,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
               messageReceived,
             );
           }
-          this.rpcMethodTracker[rpcMessage.id].elspaedTime = elapsedTime;
+          const rpcResult = {
+            ...initialRPCMethod,
+            result: rpcMessage.result,
+            elapsedTime,
+          };
+          this.rpcMethodTracker[rpcMessage.id] = rpcResult;
+          // console.debug(`AAAAAA update rpcMethodTracker`, rpcResult);
           // FIXME hack while waiting for mobile release 7.3
           this.emit(EventType.AUTHORIZED);
         }
@@ -690,10 +696,15 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     if (this.isOriginator && rpcId) {
       waitForRpc(rpcId, this.rpcMethodTracker, 200)
         .then((result) => {
-          console.debug(`YEEAAAAAH ${method} ==> `, result);
+          if (this.debug) {
+            console.debug(
+              `SocketService::waitForRpc id=${rpcId} ${method} ( ${result.elapsedTime} ms)`,
+              result.result,
+            );
+          }
         })
         .catch((err) => {
-          console.warn(`ooopsie ${method}`, err);
+          console.warn(`Error rpcId=${rpcId} ${method}`, err);
         });
     }
   }
