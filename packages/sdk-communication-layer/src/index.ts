@@ -14,6 +14,7 @@ import { WalletInfo } from './types/WalletInfo';
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { ChannelConfig } from './types/ChannelConfig';
 import { KeyInfo } from './types/KeyInfo';
+import { PlatformType } from './types/PlatformType';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { StorageManagerProps, StorageManager } from './types/StorageManager';
 import { AutoConnectType } from './types/AutoConnectType';
@@ -42,6 +43,7 @@ export type {
 
 export {
   RemoteCommunication,
+  PlatformType,
   ConnectionStatus,
   EventType,
   AutoConnectType,

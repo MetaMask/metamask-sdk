@@ -1,6 +1,5 @@
-import { ChannelConfig } from '@metamask/sdk-communication-layer';
+import { ChannelConfig, PlatformType } from '@metamask/sdk-communication-layer';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import InstallModal from '../ui/InstallModal/installModal';
 import { ProviderService } from './ProviderService';
 

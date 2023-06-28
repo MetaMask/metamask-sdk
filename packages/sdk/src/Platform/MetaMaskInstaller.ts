@@ -1,7 +1,7 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
+import { PlatformType } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../services/Ethereum';
 import { ProviderService } from '../services/ProviderService';
-import { PlatformType } from '../types/PlatformType';
 import { waitPromise } from '../utils/waitPromise';
 import { Platform } from './Platfform';
 

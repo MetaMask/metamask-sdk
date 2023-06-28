@@ -1,7 +1,7 @@
+import { PlatformType } from '@metamask/sdk-communication-layer';
 import Bowser from 'bowser';
 
 import { Ethereum } from '../services/Ethereum';
-import { PlatformType } from '../types/PlatformType';
 import { WakeLockStatus } from '../types/WakeLockStatus';
 import { WakeLockManager } from './WakeLockManager';
 

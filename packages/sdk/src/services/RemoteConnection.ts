@@ -11,9 +11,9 @@ import {
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
+  PlatformType,
 } from '@metamask/sdk-communication-layer';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
@@ -125,7 +125,7 @@ export class RemoteConnection implements ProviderService {
     const platform = Platform.getInstance();
 
     this.connector = new RemoteCommunication({
-      platform: platform.getPlatformType(),
+      platformType: platform.getPlatformType(),
       communicationLayerPreference,
       transports,
       webRTCLib,

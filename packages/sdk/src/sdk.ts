@@ -5,6 +5,7 @@ import {
   ConnectionStatus,
   DappMetadata,
   EventType,
+  PlatformType,
   ServiceStatus,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
@@ -20,7 +21,6 @@ import {
 } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
-import { PlatformType } from './types/PlatformType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';

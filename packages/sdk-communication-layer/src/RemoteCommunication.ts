@@ -29,9 +29,10 @@ import { WebRTCService } from './WebRTCService';
 import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
+import { PlatformType } from './types/PlatformType';
 
 export interface RemoteCommunicationProps {
-  platform: string;
+  platformType: PlatformType;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
   webRTCLib?: WebRTCLib;
@@ -66,7 +67,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private transports?: string[];
 
-  private platform: string;
+  private platformType: PlatformType;
 
   private analytics = false;
 
@@ -115,7 +116,7 @@ export class RemoteCommunication extends EventEmitter2 {
   private _connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 
   constructor({
-    platform,
+    platformType,
     communicationLayerPreference,
     otherPublicKey,
     webRTCLib,
@@ -141,7 +142,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.walletInfo = walletInfo;
     this.transports = transports;
-    this.platform = platform;
+    this.platformType = platformType;
     this.analytics = analytics;
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
@@ -237,30 +238,36 @@ export class RemoteCommunication extends EventEmitter2 {
       url,
       title,
       icon: this.dappMetadata?.base64Icon,
-      platform: this.platform,
+      platform: this.platformType,
       apiVersion: packageJson.version,
     };
     this.originatorInfo = originatorInfo;
 
-    this.communicationLayer?.on(EventType.AUTHORIZED, () => {
-      // FIXME remove this hack pending wallet release 7.3
-      if (this.authorized) {
-        // Ignore duplicate event or already authorized
-        return;
-      }
+    // FIXME remove this hack pending wallet release 7.3+
+    if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+      this.communicationLayer?.on(EventType.AUTHORIZED, () => {
+        if (this.authorized) {
+          // Ignore duplicate event or already authorized
+          return;
+        }
 
-      console.debug(
-        `RemoteCommunication::on 'authorized' channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
-        '7.3'.localeCompare(this.walletInfo?.version || ''),
-      );
+        const isSecurePlatform =
+          this.platformType === PlatformType.MobileWeb ||
+          this.platformType === PlatformType.ReactNative ||
+          this.platformType === PlatformType.MetaMaskMobileWebview;
 
-      // bacward compatibility for wallet <7.3
-      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
-        // Propagate authorized event.
-        this.authorized = true;
-        this.emit(EventType.AUTHORIZED);
-      }
-    });
+        console.debug(
+          `RemoteCommunication::on 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+        );
+
+        // bacward compatibility for wallet <7.3
+        if (isSecurePlatform) {
+          // Propagate authorized event.
+          this.authorized = true;
+          this.emit(EventType.AUTHORIZED);
+        }
+      });
+    }
 
     this.communicationLayer?.on(
       EventType.MESSAGE,

@@ -6,7 +6,7 @@ export enum PlatformType {
   // Desktop Browser
   DesktopWeb = 'web-desktop',
   // Mobile Browser
-  MobileWeb = 'web-modbile',
+  MobileWeb = 'web-mobile',
   // ReactNative
   ReactNative = 'react-native',
 }

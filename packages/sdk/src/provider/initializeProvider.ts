@@ -1,4 +1,7 @@
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import {
+  CommunicationLayerPreference,
+  PlatformType,
+} from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
@@ -7,7 +10,6 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
-import { PlatformType } from '../types/PlatformType';
 import { waitPromise } from '../utils/waitPromise';
 
 // TODO refactor to be part of Ethereum class.
