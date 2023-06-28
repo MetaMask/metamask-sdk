@@ -29,9 +29,10 @@ import { WebRTCService } from './WebRTCService';
 import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
+import { PlatformType } from './types/PlatformType';
 
 export interface RemoteCommunicationProps {
-  platform: string;
+  platformType: PlatformType;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
   webRTCLib?: WebRTCLib;
@@ -66,7 +67,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private transports?: string[];
 
-  private platform: string;
+  private platformType: PlatformType;
 
   private analytics = false;
 
@@ -115,7 +116,7 @@ export class RemoteCommunication extends EventEmitter2 {
   private _connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 
   constructor({
-    platform,
+    platformType,
     communicationLayerPreference,
     otherPublicKey,
     webRTCLib,
@@ -141,11 +142,13 @@ export class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.walletInfo = walletInfo;
     this.transports = transports;
-    this.platform = platform;
+    this.platformType = platformType;
     this.analytics = analytics;
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
     this.sdkVersion = sdkVersion;
+
+    this.setMaxListeners(50);
 
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     if (storage?.duration) {
@@ -235,10 +238,39 @@ export class RemoteCommunication extends EventEmitter2 {
       url,
       title,
       icon: this.dappMetadata?.base64Icon,
-      platform: this.platform,
+      platform: this.platformType,
       apiVersion: packageJson.version,
     };
     this.originatorInfo = originatorInfo;
+
+    // FIXME remove this hack pending wallet release 7.3+
+    if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+      this.communicationLayer?.on(EventType.AUTHORIZED, () => {
+        if (this.authorized) {
+          console.debug(`RemoteCommunication HACK 'authorized' already set`);
+          // Ignore duplicate event or already authorized
+          return;
+        }
+
+        const isSecurePlatform =
+          this.platformType === PlatformType.MobileWeb ||
+          this.platformType === PlatformType.ReactNative ||
+          this.platformType === PlatformType.MetaMaskMobileWebview;
+
+        if (this.debug) {
+          console.debug(
+            `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+          );
+        }
+
+        // bacward compatibility for wallet <7.3
+        if (isSecurePlatform) {
+          // Propagate authorized event.
+          this.authorized = true;
+          this.emit(EventType.AUTHORIZED);
+        }
+      });
+    }
 
     this.communicationLayer?.on(
       EventType.MESSAGE,
@@ -468,6 +500,23 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (this.isOriginator && message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
       this.paused = false;
+
+      // FIXME Remove comment --- but keep temporarily for reference in case of quick rollback
+      // if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+      //   // SIMULATE AUTHORIZED EVENT
+      //   // FIXME remove hack as soon as ios release 7.x is out
+      //   this.authorized = true;
+      //   this.emit(EventType.AUTHORIZED);
+
+      //   if (this.debug) {
+      //     // Check for backward compatibility
+      //     console.debug(
+      //       `wallet version ${this.walletInfo?.version} -- Force simulate AUTHORIZED event`,
+      //       this.walletInfo,
+      //     );
+      //   }
+      // }
+
       return;
     } else if (message.type === MessageType.TERMINATE) {
       // remove channel config from persistence layer and close active connections.
@@ -493,6 +542,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
       // backward compatibility for wallet <6.6
       if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        console.warn(
+          `RemoteCommunication::on 'otp' -- backward compatibility <6.6 -- triger eth_requestAccounts`,
+        );
+
         this.emit(EventType.SDK_RPC_CALL, {
           method: RPC_METHODS.ETH_REQUESTACCOUNTS,
           params: [],
@@ -665,11 +718,22 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
+      // FIXME remove after backward compatibility
+      // backward compatibility for wallet <6.6
+      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+        if (this.debug) {
+          console.debug(`HACK wallet version ${this.walletInfo?.version}`);
+        }
+        this.communicationLayer?.sendMessage(message);
+        return resolve();
+      }
+
       // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
       // ignore authorization for wallet.
       if (
         message.method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
-        !this.isOriginator
+        !this.isOriginator ||
+        this.authorized
       ) {
         this.communicationLayer?.sendMessage(message);
         resolve();
@@ -687,6 +751,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       resolve();
+      return undefined;
     });
   }
 
@@ -775,6 +840,10 @@ export class RemoteCommunication extends EventEmitter2 {
    */
   isConnected() {
     return this.communicationLayer?.isConnected();
+  }
+
+  isAuthorized() {
+    return this.authorized;
   }
 
   isPaused() {

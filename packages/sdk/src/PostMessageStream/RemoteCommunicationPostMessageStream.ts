@@ -7,11 +7,25 @@ import {
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
 
-import { METHODS_TO_REDIRECT } from '../config';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
 import { PostMessageStream } from './PostMessageStream';
+
+// TODO refactor to have proper types on data
+const extractMethod = (chunk: any): { method: string; data: any } => {
+  let data: any;
+  if (Buffer.isBuffer(chunk)) {
+    data = chunk.toJSON();
+    data._isBuffer = true;
+  } else {
+    data = chunk;
+  }
+
+  const targetMethod = data?.data?.method as string;
+  return { method: targetMethod, data };
+};
 
 export class RemoteCommunicationPostMessageStream
   extends Duplex
@@ -59,17 +73,23 @@ export class RemoteCommunicationPostMessageStream
     const ready = this.remote.isReady();
     const provider = Ethereum.getProvider();
     const channelId = this.remote.getChannelId();
+    const authorized = this.remote.isAuthorized();
+    const { method: targetMethod, data } = extractMethod(chunk);
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write isRemoteReady=${isRemoteReady}
-        } channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        `RPCMS::_write method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        chunk,
       );
     }
 
     if (!channelId) {
-      if (this.debug) {
-        console.warn(`Invalid channel id -- undefined`);
+      // ignore initial metamask_getProviderState() call from ethereum.init()
+      if (
+        this.debug &&
+        targetMethod !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
+      ) {
+        console.warn(`RPCMS::_write Invalid channel id -- undefined`);
       }
 
       return callback();
@@ -77,27 +97,22 @@ export class RemoteCommunicationPostMessageStream
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} ready=${ready} socketConnected=${socketConnected}`,
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} authorized=${authorized} ready=${ready} socketConnected=${socketConnected}`,
         chunk,
       );
     }
 
     try {
-      let data: any;
-      if (Buffer.isBuffer(chunk)) {
-        data = chunk.toJSON();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        data._isBuffer = true;
-      } else {
-        data = chunk;
-      }
-
-      const targetMethod = data?.data?.method as string;
-
-      this.remote.sendMessage(data?.data).catch((err: Error) => {
-        console.warn(`RCPMS::_write cannot send message`, err);
-      });
+      this.remote
+        .sendMessage(data?.data)
+        .then(() => {
+          if (this.debug) {
+            console.debug(`RCPMS::_write ${targetMethod} sent successfully`);
+          }
+        })
+        .catch((err) => {
+          console.error('RCPMS::_write error sending message', err);
+        });
 
       if (!platform.isSecure()) {
         // Redirect early if nodejs or browser...
@@ -107,10 +122,6 @@ export class RemoteCommunicationPostMessageStream
           );
         }
         return callback();
-      }
-
-      if (this.debug) {
-        console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
       }
 
       if (!socketConnected && !ready) {

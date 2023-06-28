@@ -5,6 +5,7 @@ import {
   ConnectionStatus,
   DappMetadata,
   EventType,
+  PlatformType,
   ServiceStatus,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
@@ -20,7 +21,6 @@ import {
 } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
-import { PlatformType } from './types/PlatformType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
@@ -191,8 +191,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (checkForceInject || checkInject || isNonBrowser) {
       if (checkForceInject && forceDeleteProvider) {
         Ethereum.destroy();
+        // TODO re-enable once we have consolidated proxyfication of multiple providers
         // Backup the browser extension provider
-        window.extension = window.ethereum;
+        // window.extension = window.ethereum;
         delete window.ethereum;
       }
 

@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
+import { PlatformType } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import { PostMessageStream } from './PostMessageStream';
 
 export class WalletConnectPostMessageStream

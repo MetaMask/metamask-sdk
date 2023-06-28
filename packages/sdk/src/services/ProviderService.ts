@@ -7,6 +7,7 @@ import {
 export interface ProviderService {
   startConnection(): Promise<boolean>;
   isConnected(): boolean;
+  isAuthorized(): boolean;
   getConnector(): RemoteCommunication | unknown;
   getUniversalLink(): string;
   getChannelConfig(): ChannelConfig | undefined;

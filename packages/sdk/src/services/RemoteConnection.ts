@@ -11,9 +11,9 @@ import {
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
+  PlatformType,
 } from '@metamask/sdk-communication-layer';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
@@ -125,7 +125,7 @@ export class RemoteConnection implements ProviderService {
     const platform = Platform.getInstance();
 
     this.connector = new RemoteCommunication({
-      platform: platform.getPlatformType(),
+      platformType: platform.getPlatformType(),
       communicationLayerPreference,
       transports,
       webRTCLib,
@@ -194,6 +194,7 @@ export class RemoteConnection implements ProviderService {
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
+        this.pendingModal?.mount?.();
       });
     }
 
@@ -455,12 +456,22 @@ export class RemoteConnection implements ProviderService {
           this.connector.on(EventType.CLIENTS_READY, async () => {
             if (this.developerMode) {
               console.debug(
+                `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
+              );
+            }
+
+            // Allow initializeProvider to complete and send the eth_requestAccounts
+            resolve(true);
+          });
+
+          this.connector.on(EventType.AUTHORIZED, async () => {
+            if (this.developerMode) {
+              console.debug(
                 `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
               );
             }
 
             if (this.sentFirstConnect) {
-              resolve(true);
               return;
             }
 
@@ -472,8 +483,6 @@ export class RemoteConnection implements ProviderService {
             // close modals
             this.pendingModal?.onClose?.();
             this.installModal?.onClose?.();
-
-            resolve(true);
           });
         }
 
@@ -499,6 +508,10 @@ export class RemoteConnection implements ProviderService {
 
   isConnected() {
     return this.connector?.isReady() || false;
+  }
+
+  isAuthorized() {
+    return this.connector?.isAuthorized() || false;
   }
 
   isPaused() {

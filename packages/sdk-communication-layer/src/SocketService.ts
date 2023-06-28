@@ -18,7 +18,7 @@ import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { MessageType } from './types/MessageType';
 import { ServiceStatus } from './types/ServiceStatus';
-import { wait } from './utils/wait';
+import { wait, waitForRpc } from './utils/wait';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -31,12 +31,14 @@ export interface SocketServiceProps {
   logging?: CommunicationLayerLoggingOptions;
 }
 
-interface RPCMethodCache {
-  [id: string]: {
-    timestamp: number; // timestamp of last request
-    method: string;
-    result?: unknown;
-  };
+export interface RPCMethodResult {
+  timestamp: number; // timestamp of last request
+  method: string;
+  result?: unknown;
+  elapsedTime?: number; // elapsed time between request and response
+}
+export interface RPCMethodCache {
+  [id: string]: RPCMethodResult;
 }
 
 export class SocketService extends EventEmitter2 implements CommunicationLayer {
@@ -323,14 +325,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           isOriginator: this.isOriginator ?? false,
           force: true,
         });
-      } else if (this.isOriginator) {
-        await wait(3000);
-        // Backward compatibility for MetaMask Wallet < v6.5
-        // if key exchange wasn't started -- initialize it.
-        this.keyExchange.start({
-          isOriginator: this.isOriginator,
-          force: false,
-        });
       }
 
       this.clientsConnected = true;
@@ -407,37 +401,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       // TODO can be removed once session persistence fully vetted.
-      if (message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_CHECK) {
-        const daooKeyOnRemote = message.pubkey;
-        const metamaskPublicKey = this.getKeyInfo().ecies.otherPubKey;
-        const myPubKey = this.keyExchange.getMyPublicKey();
-        const keysVerified = daooKeyOnRemote === myPubKey;
-
-        console.log(
-          `exchanged=${
-            this.getKeyInfo().keysExchanged
-          } keysVerifiedk=${keysVerified}\n${JSON.stringify(
-            {
-              remote: daooKeyOnRemote,
-              local: myPubKey,
-              mmpublic: metamaskPublicKey,
-            },
-            null,
-            4,
-          )}`,
-        );
-
-        if (!keysVerified) {
-          this.keyExchange.start({ isOriginator: this.isOriginator ?? false });
-        }
-
-        this.emit(EventType.MESSAGE, {
-          message: { type: KeyExchangeMessageType.KEY_HANDSHAKE_CHECK },
-        });
-        return;
-      }
-
-      // TODO can be removed once session persistence fully vetted.
       if (message?.type === MessageType.PING) {
         if (this.debug) {
           console.debug(`SocketService::${this.context}::on 'message' ping `);
@@ -491,6 +454,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         return;
       } else if (message.toString().indexOf('type') !== -1) {
         // Even if keys were exchanged, if the message is not encrypted, emit it.
+        // *** This is not supposed to happen ***
         console.warn(
           `SocketService::on 'message' received non encrypted unkwown message`,
         );
@@ -520,13 +484,25 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
         };
         const initialRPCMethod = this.rpcMethodTracker[rpcMessage.id];
         if (initialRPCMethod) {
-          const responseTime = Date.now() - initialRPCMethod.timestamp;
+          const elapsedTime = Date.now() - initialRPCMethod.timestamp;
           if (this.debug) {
             console.debug(
-              `received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${responseTime}`,
+              `SocketService::${this.context}::on 'message' received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${elapsedTime}`,
               messageReceived,
             );
           }
+          const rpcResult = {
+            ...initialRPCMethod,
+            result: rpcMessage.result,
+            elapsedTime,
+          };
+          this.rpcMethodTracker[rpcMessage.id] = rpcResult;
+
+          if (this.debug) {
+            console.debug(`HACK update rpcMethodTracker`, rpcResult);
+          }
+          // FIXME hack while waiting for mobile release 7.3
+          this.emit(EventType.AUTHORIZED);
         }
       }
 
@@ -709,6 +685,23 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.manualDisconnect = true;
     }
     this.socket.emit(EventType.MESSAGE, messageToSend);
+
+    // Only makes sense on originator side.
+    // wait for reply when eth_requestAccounts is sent.
+    if (this.isOriginator && rpcId) {
+      waitForRpc(rpcId, this.rpcMethodTracker, 200)
+        .then((result) => {
+          if (this.debug) {
+            console.debug(
+              `SocketService::waitForRpc id=${rpcId} ${method} ( ${result.elapsedTime} ms)`,
+              result.result,
+            );
+          }
+        })
+        .catch((err) => {
+          console.warn(`Error rpcId=${rpcId} ${method}`, err);
+        });
+    }
   }
 
   ping() {

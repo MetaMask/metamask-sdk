@@ -30,7 +30,6 @@ export class ModalLoader {
 
     this.installContainer = props.parentElement;
 
-    console.debug(`render install modal`, (window as any).extension);
     const reactRoot = createRoot(props.parentElement);
     reactRoot.render(
       <InstallModal

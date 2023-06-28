@@ -1,5 +1,8 @@
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
-import { RPC_METHODS } from '../config';
+import {
+  CommunicationLayerPreference,
+  PlatformType,
+} from '@metamask/sdk-communication-layer';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { Platform } from '../Platform/Platfform';
@@ -7,7 +10,6 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
-import { PlatformType } from '../types/PlatformType';
 
 // TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
@@ -48,8 +50,7 @@ const initializeProvider = ({
     platformType === PlatformType.NonBrowser
   );
 
-  metamaskStream.start();
-
+  // ethereum.init will automatically call metamask_getProviderState
   const ethereum = Ethereum.init({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
@@ -93,11 +94,16 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
-      } else if (platform.isSecure()) {
+      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
 
+      if (debug) {
+        console.debug(
+          `initializeProvider::sendRequest() method=${method} --- skip --- not connected/installed`,
+        );
+      }
       throw new Error(
         'MetaMask is not connected/installed, please call eth_requestAccounts to connect first.',
       );
@@ -121,6 +127,10 @@ const initializeProvider = ({
     return sendRequest(args?.[0] as string, args, send, debug);
   };
 
+  if (debug) {
+    console.debug(`initializeProvider metamaskStream.start()`);
+  }
+  metamaskStream.start();
   return ethereum;
 };
 

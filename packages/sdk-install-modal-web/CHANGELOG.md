@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3]
+### Added
+- [FEAT] choose between extension and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
+- [fix] #145 missing css color ([#149](https://github.com/MetaMask/metamask-sdk/pull/149))
+
 ## [0.3.2]
 ### Added
 - [FEAT] add nextjs demo project in examples/ ([#123](https://github.com/MetaMask/metamask-sdk/pull/123))
@@ -22,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.3...HEAD
+[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.2...@metamask/sdk-install-modal-web@0.3.3
 [0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.0...@metamask/sdk-install-modal-web@0.3.2
 [0.3.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-install-modal-web@0.3.0
