@@ -452,7 +452,7 @@ export class RemoteConnection implements ProviderService {
               reject(err);
             });
 
-          this.connector.on(EventType.CLIENTS_READY, async () => {
+          this.connector.on(EventType.AUTHORIZED, async () => {
             if (this.developerMode) {
               console.debug(
                 `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
