@@ -245,7 +245,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
     // FIXME remove this hack pending wallet release 7.3+
     if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
-      console.debug(`RemoteCommunication HACK`);
       this.communicationLayer?.on(EventType.AUTHORIZED, () => {
         if (this.authorized) {
           console.debug(`RemoteCommunication HACK 'authorized' already set`);
@@ -258,9 +257,11 @@ export class RemoteCommunication extends EventEmitter2 {
           this.platformType === PlatformType.ReactNative ||
           this.platformType === PlatformType.MetaMaskMobileWebview;
 
-        console.debug(
-          `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
-        );
+        if (this.debug) {
+          console.debug(
+            `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+          );
+        }
 
         // bacward compatibility for wallet <7.3
         if (isSecurePlatform) {
@@ -720,7 +721,9 @@ export class RemoteCommunication extends EventEmitter2 {
       // FIXME remove after backward compatibility
       // backward compatibility for wallet <6.6
       if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
-        console.debug(`HACK wallet version ${this.walletInfo?.version}`);
+        if (this.debug) {
+          console.debug(`HACK wallet version ${this.walletInfo?.version}`);
+        }
         this.communicationLayer?.sendMessage(message);
         return resolve();
       }
@@ -748,6 +751,7 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       resolve();
+      return undefined;
     });
   }
 
