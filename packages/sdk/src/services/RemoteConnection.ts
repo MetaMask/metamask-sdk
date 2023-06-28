@@ -194,6 +194,7 @@ export class RemoteConnection implements ProviderService {
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
+        this.pendingModal?.mount?.();
       });
     }
 
