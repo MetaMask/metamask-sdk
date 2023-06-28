@@ -246,9 +246,13 @@ export class RemoteCommunication extends EventEmitter2 {
         // Ignore duplicate event or already authorized
         return;
       }
-      // Propagate authorized event.
-      this.authorized = true;
-      this.emit(EventType.AUTHORIZED);
+
+      // bacward compatibility for wallet <7.3
+      if ('7.3'.localeCompare(this.walletInfo?.version || '') === -1) {
+        // Propagate authorized event.
+        this.authorized = true;
+        this.emit(EventType.AUTHORIZED);
+      }
     });
 
     this.communicationLayer?.on(
