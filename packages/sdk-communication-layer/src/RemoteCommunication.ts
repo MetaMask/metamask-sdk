@@ -245,8 +245,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
     // FIXME remove this hack pending wallet release 7.3+
     if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+      console.debug(`RemoteCommunication HACK`);
       this.communicationLayer?.on(EventType.AUTHORIZED, () => {
         if (this.authorized) {
+          console.debug(`RemoteCommunication HACK 'authorized' already set`);
           // Ignore duplicate event or already authorized
           return;
         }
@@ -257,7 +259,7 @@ export class RemoteCommunication extends EventEmitter2 {
           this.platformType === PlatformType.MetaMaskMobileWebview;
 
         console.debug(
-          `RemoteCommunication::on 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+          `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
         );
 
         // bacward compatibility for wallet <7.3
@@ -539,6 +541,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
       // backward compatibility for wallet <6.6
       if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        console.warn(
+          `RemoteCommunication::on 'otp' -- backward compatibility <6.6 -- triger eth_requestAccounts`,
+        );
+
         this.emit(EventType.SDK_RPC_CALL, {
           method: RPC_METHODS.ETH_REQUESTACCOUNTS,
           params: [],
