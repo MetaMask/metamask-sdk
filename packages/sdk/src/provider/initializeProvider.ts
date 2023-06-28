@@ -95,14 +95,7 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
-      } else if (platform.isReactNative() && METHODS_TO_REDIRECT[method]) {
-        // TODO should be removed once wallet 7.3 is published.
-        // First force call to eth_requestAccounts to connect
-        await f({ method: RPC_METHODS.ETH_REQUESTACCOUNTS });
-
-        // Add delay
-        await waitPromise(200);
-
+      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }

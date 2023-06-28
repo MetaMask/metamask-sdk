@@ -453,6 +453,11 @@ export class RemoteConnection implements ProviderService {
               reject(err);
             });
 
+          this.connector.on(EventType.CLIENTS_READY, async () => {
+            // Allow initializeProvider to complete and send the eth_requestAccounts
+            resolve(true);
+          });
+
           this.connector.on(EventType.AUTHORIZED, async () => {
             if (this.developerMode) {
               console.debug(
@@ -461,7 +466,6 @@ export class RemoteConnection implements ProviderService {
             }
 
             if (this.sentFirstConnect) {
-              resolve(true);
               return;
             }
 
@@ -473,8 +477,6 @@ export class RemoteConnection implements ProviderService {
             // close modals
             this.pendingModal?.onClose?.();
             this.installModal?.onClose?.();
-
-            resolve(true);
           });
         }
 
