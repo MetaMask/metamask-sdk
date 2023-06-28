@@ -454,6 +454,12 @@ export class RemoteConnection implements ProviderService {
             });
 
           this.connector.on(EventType.CLIENTS_READY, async () => {
+            if (this.developerMode) {
+              console.debug(
+                `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
+              );
+            }
+
             // Allow initializeProvider to complete and send the eth_requestAccounts
             resolve(true);
           });

@@ -169,7 +169,7 @@ export class KeyExchange extends EventEmitter2 {
   }): void {
     if (this.debug) {
       console.debug(
-        `KeyExchange::${this.context}::start isOriginator=${isOriginator} step=${this.step} keysExchanged=${this.keysExchanged}`,
+        `KeyExchange::${this.context}::start isOriginator=${isOriginator} step=${this.step} force=${force} keysExchanged=${this.keysExchanged}`,
       );
     }
 

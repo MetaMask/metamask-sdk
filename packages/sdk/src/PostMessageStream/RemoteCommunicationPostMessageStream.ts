@@ -103,7 +103,17 @@ export class RemoteCommunicationPostMessageStream
     }
 
     try {
-      this.remote.sendMessage(data?.data);
+      this.remote
+        .sendMessage(data?.data)
+        .then(() => {
+          if (this.debug) {
+            console.debug(`RCPMS::_write ${targetMethod} sent successfully`);
+          }
+        })
+        .catch((err) => {
+          console.error('RCPMS::_write error sending message', err);
+        });
+
       if (!platform.isSecure()) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
@@ -112,10 +122,6 @@ export class RemoteCommunicationPostMessageStream
           );
         }
         return callback();
-      }
-
-      if (this.debug) {
-        console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
       }
 
       if (!socketConnected && !ready) {
