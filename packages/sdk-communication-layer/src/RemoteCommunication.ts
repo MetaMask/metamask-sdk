@@ -717,6 +717,14 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
+      // FIXME remove after backward compatibility
+      // backward compatibility for wallet <6.6
+      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+        console.debug(`HACK wallet version ${this.walletInfo?.version}`);
+        this.communicationLayer?.sendMessage(message);
+        return resolve();
+      }
+
       // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
       // ignore authorization for wallet.
       if (

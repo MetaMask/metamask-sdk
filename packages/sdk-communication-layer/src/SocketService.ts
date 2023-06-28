@@ -497,7 +497,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
             elapsedTime,
           };
           this.rpcMethodTracker[rpcMessage.id] = rpcResult;
-          // console.debug(`AAAAAA update rpcMethodTracker`, rpcResult);
+
+          console.debug(`HACK update rpcMethodTracker`, rpcResult);
           // FIXME hack while waiting for mobile release 7.3
           this.emit(EventType.AUTHORIZED);
         }
