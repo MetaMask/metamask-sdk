@@ -10,7 +10,6 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
-import { waitPromise } from '../utils/waitPromise';
 
 // TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
