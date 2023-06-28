@@ -14,7 +14,7 @@ export const waitForRpc = async (
   let result;
   while (!result) {
     result = rpc[rpcId];
-    if (result) {
+    if (result.elapsedTime !== undefined) {
       return result;
     }
     await wait(timeout);
