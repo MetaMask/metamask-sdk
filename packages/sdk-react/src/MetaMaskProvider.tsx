@@ -94,7 +94,6 @@ const MetaMaskProviderClient = ({
   sdkOptions: MetaMaskSDKOptions;
   debug?: boolean,
 }) => {
-  console.debug(`MetaMaskProviderClient rendering debug=${debug}`);
   const [trigger, setTrigger] = useState<number>(0);
   const sdk = useMemo(() => {
     const sdk = new MetaMaskSDK({
@@ -110,7 +109,10 @@ const MetaMaskProviderClient = ({
   const [status, setStatus] = useState<ServiceStatus>();
 
   useEffect(() => {
-    console.debug(`[MetamaskProvider] init SDK Provider trigger=${trigger}`);
+    if(debug) {
+      console.debug(`[MetamaskProvider] init SDK Provider trigger=${trigger}`);
+    }
+
 
     const provider = sdk.getProvider();
     provider?.on('connecting', () => {
@@ -186,7 +188,7 @@ const MetaMaskProviderClient = ({
       sdk.removeAllListeners();
       sdk.disconnect();
     }
-  }, [trigger, sdk])
+  }, [trigger, sdk, debug])
 
   useEffect( () => {
     const onProviderEvent = (accounts?: string[]) => {
