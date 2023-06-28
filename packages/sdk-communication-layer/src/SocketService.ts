@@ -325,14 +325,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           isOriginator: this.isOriginator ?? false,
           force: true,
         });
-      } else if (this.isOriginator) {
-        await wait(3000);
-        // Backward compatibility for MetaMask Wallet < v6.5
-        // if key exchange wasn't started -- initialize it.
-        this.keyExchange.start({
-          isOriginator: this.isOriginator,
-          force: false,
-        });
       }
 
       this.clientsConnected = true;
