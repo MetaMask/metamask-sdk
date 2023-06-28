@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
       forceDeleteProvider: true,
       forceInjectProvider: true,
       logging: {
-        developerMode: true,
+        developerMode: false,
         sdk: true,
         remoteLayer: false,
         serviceLayer: false,
