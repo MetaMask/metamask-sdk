@@ -16,7 +16,7 @@ export default function SDKContainer() {
   const [sdk, setSDK] = useState<MetaMaskSDK>();
   const [chain, setChain] = useState("");
   const [account, setAccount] = useState<string>();
-  const [response, setResponse] = useState<unknown>("");
+  const [response, setResponse] = useState<any>("");
   const [connected, setConnected] = useState(false);
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
 
@@ -209,7 +209,7 @@ export default function SDKContainer() {
       const method = "eth_signTypedData_v4";
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await window.ethereum?.request({ method, params }) as string;
       setResponse(resp);
     } catch (e) {
       console.log(e);
@@ -259,8 +259,9 @@ export default function SDKContainer() {
           {chain && `Connected chain: ${chain}`}
           <p></p>
           {account && `Connected account: ${account}`}
-          <p></p>
-          {response && `Last request response: ${response}`}
+          <p style={{width: '300px', overflow: 'auto', border:'1px solid red'}}>
+            {response && `Last request response: ${response}`}
+          </p>
         </>
       </div>
       </main>
