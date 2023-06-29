@@ -1,27 +1,41 @@
 {
   "name": "@metamask/sdk-install-modal-web",
-  "version": "0.2.1",
-  "private": false,
+  "version": "0.3.3",
   "description": "MetaMask SDK Install Modal for Web",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/metamask-sdk.git"
+  },
   "author": "MetaMask",
-  "main": "dist/InstallModalWeb",
-  "types": "dist/src/EmbeddableWidget.d.ts",
+  "packageManager": "yarn@3.5.0",
+  "main": "dist/cjs/index.js",
+  "module": "dist/es/index.js",
+  "unpkg": "dist/umd/index.js",
+  "browser": "dist/umd/index.js",
+  "types": "dist/es/src/index.d.ts",
   "files": [
     "/dist"
   ],
   "scripts": {
-    "build": "webpack-cli --mode production",
+    "build": "rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc --build tsconfig.json --verbose",
     "build:watch": "webpack-cli --watch",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "build:release": "yarn version && webpack-cli --mode production",
     "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "yarn auto-changelog validate",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
-    "prepublishOnly": "yarn build",
+    "prepack": "../../scripts/prepack.sh",
+    "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh",
+    "publish:preview": "yarn npm publish --tag preview",
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
@@ -30,37 +44,46 @@
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
-    "@babel/core": "^7.20.12",
-    "@emotion/styled": "10.0.27",
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
     "qr-code-styling": "^1.6.0-rc.1",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@emotion/core": "10.1.1",
-    "@types/react": "16.9.32",
-    "clean-webpack-plugin": "3.0.0",
-    "compression-webpack-plugin": "3.1.0",
-    "copy-webpack-plugin": "5.1.2",
-    "eslint": "^7.30.0",
+    "@lavamoat/allow-scripts": "^2.3.1",
+    "@metamask/auto-changelog": "3.1.0",
+    "@rollup/plugin-node-resolve": "^15.0.2",
+    "@rollup/plugin-terser": "^0.4.1",
+    "@rollup/plugin-typescript": "^11.1.1",
+    "@types/prettier": "^2",
+    "@types/react": "^18.0.26",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.4.0",
-    "eslint-plugin-jsdoc": "^36.1.0",
+    "eslint-plugin-jsdoc": "^44.2.4",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "preact": "10.5.13",
-    "preact-render-to-string": "5.1.19",
-    "source-map-loader": "4.0.1",
-    "ts-loader": "^9.4.2",
-    "typescript": "^4.3.2",
-    "uglifyjs-webpack-plugin": "2.2.0",
-    "webpack": "5.38.1",
-    "webpack-cli": "5.0.1",
-    "webpack-dev-server": "4.11.1",
-    "webpack-modules": "1.0.0"
+    "eslint-plugin-react": "^7.32.2",
+    "prettier": "^2.8.8",
+    "rimraf": "^5.0.0",
+    "rollup": "^3.21.7",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-typescript2": "^0.34.1",
+    "typescript": "^5.0.2"
   },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "webpack-dev-server>ws>bufferutil": false,
+      "webpack-dev-server>ws>utf-8-validate": false
+    }
   }
 }

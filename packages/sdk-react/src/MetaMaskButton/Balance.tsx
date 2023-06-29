@@ -6,7 +6,7 @@ const Balance = ({ theme }: { theme: string }) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
   const { data, isError, isLoading } = useBalance({
-    addressOrName: address,
+    address: address,
     chainId: chain?.id,
     enabled: isConnected,
   });

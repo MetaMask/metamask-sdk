@@ -27,7 +27,7 @@
     ]
   },
   "dependencies": {
-    "@metamask/sdk": "0.2.2",
+    "@metamask/sdk": "^0.2.4",
     "@metamask/sdk-react": "../../sdk-react",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
@@ -36,5 +36,6 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

@@ -1,7 +1,6 @@
-import {h} from "preact"
-
+import React from 'react';
 const WalletIcon = () => (
-    <svg
+  <svg
     width="20"
     height="20"
     viewBox="0 0 20 20"
@@ -13,6 +12,6 @@ const WalletIcon = () => (
       fill="#037DD6"
     />
   </svg>
-)
+);
 
-export default WalletIcon
+export default WalletIcon;

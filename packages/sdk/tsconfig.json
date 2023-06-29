@@ -1,13 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.build.json"
-    },
-    {
-      "path": "./tsconfig.test.json"
-    }
-  ]
+  "compilerOptions": {
+    "outDir": "dist",
+    "declaration": true,
+    "declarationMap": true,
+    "strict": true,
+    "target": "es6",
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "lib": ["DOM", "ES2016"],
+    "skipLibCheck": true,
+    "types": ["node"]
+    // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
+  },
+  "include": ["./src", "../sdk-communication-layer/src/types/PlatformType.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
 }

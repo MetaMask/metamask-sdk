@@ -6,7 +6,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 
 const listDepForRollup = ['@react-native-async-storage/async-storage'];
 

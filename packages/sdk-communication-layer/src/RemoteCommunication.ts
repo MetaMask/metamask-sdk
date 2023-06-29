@@ -1,13 +1,13 @@
 /* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
 import { validate, v4 as uuidv4 } from 'uuid';
-import { version } from '../package.json';
+import packageJson from '../package.json';
 import { SendAnalytics } from './Analytics';
 import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
-  VERSION,
+  RPC_METHODS,
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
@@ -29,9 +29,10 @@ import { WebRTCService } from './WebRTCService';
 import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
+import { PlatformType } from './types/PlatformType';
 
 export interface RemoteCommunicationProps {
-  platform: string;
+  platformType: PlatformType;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
   webRTCLib?: WebRTCLib;
@@ -42,6 +43,7 @@ export interface RemoteCommunicationProps {
   analytics?: boolean;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
+  sdkVersion?: string;
   storage?: StorageManagerProps;
   context: string;
   autoConnect?: AutoConnectOptions;
@@ -51,6 +53,9 @@ export interface RemoteCommunicationProps {
 export class RemoteCommunication extends EventEmitter2 {
   // ready flag is turned on after we receive 'clients_ready' message, meaning key exchange is complete.
   private ready = false;
+
+  // flag turned on once the connection has been authorized on the wallet.
+  private authorized = false;
 
   private isOriginator = false;
 
@@ -62,7 +67,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private transports?: string[];
 
-  private platform: string;
+  private platformType: PlatformType;
 
   private analytics = false;
 
@@ -76,6 +81,8 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private originatorInfo?: OriginatorInfo;
 
+  private originatorInfoSent = false;
+
   private dappMetadata?: DappMetadata;
 
   private communicationServerUrl: string;
@@ -85,6 +92,8 @@ export class RemoteCommunication extends EventEmitter2 {
   private storageManager?: StorageManager;
 
   private storageOptions?: StorageManagerProps;
+
+  private sdkVersion?: string;
 
   private autoConnectOptions;
 
@@ -107,7 +116,7 @@ export class RemoteCommunication extends EventEmitter2 {
   private _connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
 
   constructor({
-    platform,
+    platformType,
     communicationLayerPreference,
     otherPublicKey,
     webRTCLib,
@@ -119,6 +128,7 @@ export class RemoteCommunication extends EventEmitter2 {
     ecies,
     analytics = false,
     storage,
+    sdkVersion,
     communicationServerUrl = DEFAULT_SERVER_URL,
     logging,
     autoConnect = {
@@ -132,10 +142,14 @@ export class RemoteCommunication extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
     this.walletInfo = walletInfo;
     this.transports = transports;
-    this.platform = platform;
+    this.platformType = platformType;
     this.analytics = analytics;
     this.communicationServerUrl = communicationServerUrl;
     this.context = context;
+    this.sdkVersion = sdkVersion;
+
+    this.setMaxListeners(50);
+
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
     if (storage?.duration) {
       this.sessionDuration = DEFAULT_SESSION_TIMEOUT_MS;
@@ -224,10 +238,38 @@ export class RemoteCommunication extends EventEmitter2 {
       url,
       title,
       icon: this.dappMetadata?.base64Icon,
-      platform: this.platform,
-      apiVersion: version,
+      platform: this.platformType,
+      apiVersion: packageJson.version,
     };
     this.originatorInfo = originatorInfo;
+
+    // FIXME remove this hack pending wallet release 7.3+
+    if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+      this.communicationLayer?.on(EventType.AUTHORIZED, () => {
+        if (this.authorized) {
+          // Ignore duplicate event or already authorized
+          return;
+        }
+
+        const isSecurePlatform =
+          this.platformType === PlatformType.MobileWeb ||
+          this.platformType === PlatformType.ReactNative ||
+          this.platformType === PlatformType.MetaMaskMobileWebview;
+
+        if (this.debug) {
+          console.debug(
+            `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+          );
+        }
+
+        // bacward compatibility for wallet <7.3
+        if (isSecurePlatform) {
+          // Propagate authorized event.
+          this.authorized = true;
+          this.emit(EventType.AUTHORIZED);
+        }
+      });
+    }
 
     this.communicationLayer?.on(
       EventType.MESSAGE,
@@ -241,35 +283,40 @@ export class RemoteCommunication extends EventEmitter2 {
       },
     );
 
-    this.communicationLayer?.on(EventType.KEY_INFO, (keyInfo) => {
-      if (this.debug) {
-        console.debug(
-          `RemoteCommunication::${this.context}::on 'KEY_INFO' `,
-          keyInfo,
-        );
-      }
-      this.emitServiceStatusEvent();
-    });
-
     this.communicationLayer?.on(EventType.CLIENTS_CONNECTED, () => {
       // Propagate the event to manage different loading states on the ui.
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::on 'clients_connected' channel=${this.channelId}`,
+          `RemoteCommunication::on 'clients_connected' channel=${
+            this.channelId
+          } keysExchanged=${this.getKeyInfo()?.keysExchanged}`,
         );
       }
+
+      if (this.analytics) {
+        SendAnalytics(
+          {
+            id: this.channelId ?? '',
+            event: TrackingEvents.REQUEST,
+            ...originatorInfo,
+            commLayer: communicationLayerPreference,
+            sdkVersion: this.sdkVersion,
+            walletVersion: this.walletInfo?.version,
+            commLayerVersion: packageJson.version,
+          },
+          this.communicationServerUrl,
+        );
+      }
+
       this.clientsConnected = true;
+      this.originatorInfoSent = false; // Always re-send originator info.
       this.emit(EventType.CLIENTS_CONNECTED);
     });
 
-    this.communicationLayer?.on(EventType.CLIENTS_READY, (message) => {
+    this.communicationLayer?.on(EventType.KEYS_EXCHANGED, (message) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${
-            this.context
-          }::on commLayer.'clients_ready' channel=${
-            this.channelId
-          } keysExchanged=${this.getKeyInfo()?.keysExchanged} `,
+          `RemoteCommunication::${this.context}::on commLayer.'keys_exchanged' channel=${this.channelId}`,
           message,
         );
       }
@@ -281,10 +328,17 @@ export class RemoteCommunication extends EventEmitter2 {
       this.setLastActiveDate(new Date());
 
       if (this.analytics && this.channelId) {
-        SendAnalytics({
-          id: this.channelId,
-          event: TrackingEvents.CONNECTED,
-        });
+        SendAnalytics(
+          {
+            id: this.channelId,
+            event: TrackingEvents.CONNECTED,
+            sdkVersion: this.sdkVersion,
+            commLayer: communicationLayerPreference,
+            commLayerVersion: packageJson.version,
+            walletVersion: this.walletInfo?.version,
+          },
+          this.communicationServerUrl,
+        );
       }
 
       this.isOriginator = message.isOriginator;
@@ -299,13 +353,14 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       // Keep sending originator info from this location for backward compatibility
-      if (message.isOriginator) {
+      if (message.isOriginator && !this.originatorInfoSent) {
         // Always re-send originator info in case the session was deleted on the wallet
         this.communicationLayer?.sendMessage({
           type: MessageType.ORIGINATOR_INFO,
           originatorInfo: this.originatorInfo,
           originator: this.originatorInfo,
         });
+        this.originatorInfoSent = true;
       }
     });
 
@@ -316,6 +371,16 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
       this.ready = false;
+    });
+
+    this.communicationLayer?.on(EventType.SOCKET_RECONNECT, () => {
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication::on 'socket_reconnect' -- reset key exchange status / set ready to false`,
+        );
+      }
+      this.ready = false;
+      this.clean();
     });
 
     this.communicationLayer?.on(
@@ -341,12 +406,20 @@ export class RemoteCommunication extends EventEmitter2 {
         // }
 
         this.ready = false;
+        this.authorized = false;
 
         if (this.analytics && this.channelId) {
-          SendAnalytics({
-            id: this.channelId,
-            event: TrackingEvents.DISCONNECTED,
-          });
+          SendAnalytics(
+            {
+              id: this.channelId,
+              event: TrackingEvents.DISCONNECTED,
+              sdkVersion: this.sdkVersion,
+              commLayer: communicationLayerPreference,
+              commLayerVersion: packageJson.version,
+              walletVersion: this.walletInfo?.version,
+            },
+            this.communicationServerUrl,
+          );
         }
       },
     );
@@ -368,16 +441,6 @@ export class RemoteCommunication extends EventEmitter2 {
       }
 
       this.setConnectionStatus(ConnectionStatus.WAITING);
-
-      if (this.analytics) {
-        SendAnalytics({
-          id: this.channelId ?? '',
-          event: TrackingEvents.REQUEST,
-          ...originatorInfo,
-          communicationLayerPreference,
-          sdkVersion: VERSION,
-        });
-      }
 
       this.emit(EventType.CLIENTS_WAITING, numberUsers);
       if (this.autoStarted) {
@@ -433,13 +496,26 @@ export class RemoteCommunication extends EventEmitter2 {
       });
       this.paused = false;
       return;
-    } else if (message.type === MessageType.WALLET_INFO) {
+    } else if (this.isOriginator && message.type === MessageType.WALLET_INFO) {
       this.walletInfo = message.walletInfo;
-      this.emit(EventType.CLIENTS_READY, {
-        isOriginator: this.isOriginator,
-        walletInfo: message.walletInfo,
-      });
       this.paused = false;
+
+      // FIXME Remove comment --- but keep temporarily for reference in case of quick rollback
+      // if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+      //   // SIMULATE AUTHORIZED EVENT
+      //   // FIXME remove hack as soon as ios release 7.x is out
+      //   this.authorized = true;
+      //   this.emit(EventType.AUTHORIZED);
+
+      //   if (this.debug) {
+      //     // Check for backward compatibility
+      //     console.debug(
+      //       `wallet version ${this.walletInfo?.version} -- Force simulate AUTHORIZED event`,
+      //       this.walletInfo,
+      //     );
+      //   }
+      // }
+
       return;
     } else if (message.type === MessageType.TERMINATE) {
       // remove channel config from persistence layer and close active connections.
@@ -462,7 +538,22 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
       this.emit(EventType.OTP, message.otpAnswer);
+
+      // backward compatibility for wallet <6.6
+      if ('6.6'.localeCompare(this.walletInfo?.version || '') === 1) {
+        console.warn(
+          `RemoteCommunication::on 'otp' -- backward compatibility <6.6 -- triger eth_requestAccounts`,
+        );
+
+        this.emit(EventType.SDK_RPC_CALL, {
+          method: RPC_METHODS.ETH_REQUESTACCOUNTS,
+          params: [],
+        });
+      }
       return;
+    } else if (message.type === MessageType.AUTHORIZED && this.isOriginator) {
+      this.authorized = true;
+      this.emit(EventType.AUTHORIZED);
     }
 
     // TODO should it check if only emiting JSON-RPC message?
@@ -530,6 +621,24 @@ export class RemoteCommunication extends EventEmitter2 {
       throw new Error('Channel already connected');
     }
 
+    if (this.channelId && this.isConnected()) {
+      console.warn(
+        `Channel already exists -- interrupt generateChannelId`,
+        this.channelConfig,
+      );
+
+      this.channelConfig = {
+        channelId: this.channelId,
+        validUntil: Date.now() + this.sessionDuration,
+      };
+      this.storageManager?.persistChannelConfig(this.channelConfig);
+
+      return {
+        channelId: this.channelId,
+        pubKey: this.getKeyInfo()?.ecies.public,
+      };
+    }
+
     if (this.debug) {
       console.debug(`RemoteCommunication::generateChannelId()`);
     }
@@ -561,7 +670,6 @@ export class RemoteCommunication extends EventEmitter2 {
       console.debug(`RemoteCommunication::${this.context}::clean()`);
     }
 
-    this.channelId = undefined;
     this.channelConfig = undefined;
     this.ready = false;
     this.autoStarted = false;
@@ -599,14 +707,52 @@ export class RemoteCommunication extends EventEmitter2 {
     this.storageManager?.persistChannelConfig(newChannelConfig);
   }
 
+  private async handleAuthorization(
+    message: CommunicationLayerMessage,
+  ): Promise<void> {
+    return new Promise((resolve) => {
+      if (this.debug) {
+        console.log(
+          `RemoteCommunication::${this.context}::sendMessage::handleAuthorization ready=${this.ready} authorized=${this.authorized} method=${message.method}`,
+        );
+      }
+
+      // TODO remove after wallet 7.3+ is deployed
+      // backward compatibility for wallet <7.3
+      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+        if (this.debug) {
+          console.debug(`HACK wallet version ${this.walletInfo?.version}`);
+        }
+        this.communicationLayer?.sendMessage(message);
+        resolve();
+      }
+
+      if (!this.isOriginator || this.authorized) {
+        this.communicationLayer?.sendMessage(message);
+        resolve();
+      } else {
+        this.once(EventType.AUTHORIZED, () => {
+          if (this.debug) {
+            console.log(
+              `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / AUTHORIZED -- sending pending message`,
+            );
+          }
+          // only send the message after the clients have awaken.
+          this.communicationLayer?.sendMessage(message);
+          resolve();
+        });
+      }
+    });
+  }
+
   sendMessage(message: CommunicationLayerMessage): Promise<void> {
     return new Promise((resolve) => {
       if (this.debug) {
         console.log(
           `RemoteCommunication::${this.context}::sendMessage paused=${
             this.paused
-          } ready=${
-            this.ready
+          } ready=${this.ready} authorized=${
+            this.authorized
           } socker=${this.communicationLayer?.isConnected()} clientsConnected=${
             this.clientsConnected
           } status=${this._connectionStatus}`,
@@ -626,19 +772,18 @@ export class RemoteCommunication extends EventEmitter2 {
           );
         }
 
-        this.once(EventType.CLIENTS_READY, () => {
+        this.once(EventType.CLIENTS_READY, async () => {
           if (this.debug) {
             console.log(
               `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
             );
           }
-          // only send the message after the clients have awaken.
-          this.communicationLayer?.sendMessage(message);
+          await this.handleAuthorization(message);
           resolve();
         });
       } else {
-        this.communicationLayer?.sendMessage(message);
-        resolve();
+        // Send the message or wait for authorization
+        this.handleAuthorization(message);
       }
     });
   }
@@ -687,6 +832,10 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.communicationLayer?.isConnected();
   }
 
+  isAuthorized() {
+    return this.authorized;
+  }
+
   isPaused() {
     return this.paused;
   }
@@ -714,6 +863,9 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   private setConnectionStatus(connectionStatus: ConnectionStatus) {
+    if (this._connectionStatus === connectionStatus) {
+      return; // Don't re-emit current status.
+    }
     this._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
     this.emitServiceStatusEvent();

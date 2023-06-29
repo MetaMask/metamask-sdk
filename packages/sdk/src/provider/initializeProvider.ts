@@ -1,4 +1,8 @@
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import {
+  CommunicationLayerPreference,
+  PlatformType,
+} from '@metamask/sdk-communication-layer';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { Platform } from '../Platform/Platfform';
@@ -6,8 +10,8 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
-import { PlatformType } from '../types/PlatformType';
 
+// TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
@@ -46,8 +50,7 @@ const initializeProvider = ({
     platformType === PlatformType.NonBrowser
   );
 
-  metamaskStream.start();
-
+  // ethereum.init will automatically call metamask_getProviderState
   const ethereum = Ethereum.init({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
@@ -55,13 +58,18 @@ const initializeProvider = ({
     debug,
   });
 
-  const sendRequest = async (method: string, args: any, f: any) => {
+  const sendRequest = async (
+    method: string,
+    args: any,
+    f: any,
+    debugRequest: boolean,
+  ) => {
     const isInstalled = Platform.getInstance().isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
 
-    if (debug) {
+    if (debugRequest) {
       console.debug(
         `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
@@ -71,9 +79,12 @@ const initializeProvider = ({
 
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
-      method !== 'metamask_getProviderState'
+      method !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
     ) {
-      if (method === 'eth_requestAccounts' || checkInstallationOnAllCalls) {
+      if (
+        method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
+        checkInstallationOnAllCalls
+      ) {
         // Start installation and once installed try the request again
         const isConnectedNow = await installer.start({
           wait: false,
@@ -83,11 +94,16 @@ const initializeProvider = ({
         if (isConnectedNow) {
           return f(...args);
         }
-      } else if (platform.isSecure()) {
+      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
 
+      if (debug) {
+        console.debug(
+          `initializeProvider::sendRequest() method=${method} --- skip --- not connected/installed`,
+        );
+      }
       throw new Error(
         'MetaMask is not connected/installed, please call eth_requestAccounts to connect first.',
       );
@@ -98,17 +114,23 @@ const initializeProvider = ({
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
   const { request } = ethereum;
+  // request<T>(args: RequestArguments): Promise<Maybe<T>>;
   ethereum.request = async (...args) => {
-    return sendRequest(args?.[0].method, args, request);
+    return sendRequest(args?.[0].method, args, request, debug);
   };
 
+  // send<T>(payload: SendSyncJsonRpcRequest): JsonRpcResponse<T>;
   const { send } = ethereum;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore // TODO remove support for deprecated method
   ethereum.send = async (...args) => {
-    return sendRequest(args?.[0] as string, args, send);
+    return sendRequest(args?.[0] as string, args, send, debug);
   };
 
+  if (debug) {
+    console.debug(`initializeProvider metamaskStream.start()`);
+  }
+  metamaskStream.start();
   return ethereum;
 };
 

@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/default-param-last, @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
-const PendingModal = (onDisconnect = () => {}) => {
+const PendingModal = () => {
   console.log(
     `Please open the MetaMask wallet app and confirm the connection. Thank you!`,
   );

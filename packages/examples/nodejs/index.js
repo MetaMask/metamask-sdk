@@ -1,10 +1,15 @@
 const { MetaMaskSDK } = require('@metamask/sdk');
+const fs = require('fs')
+
 const qrcode = require('qrcode-terminal');
 
-const sdk = new MetaMaskSDK({
+const options = {
   shouldShimWeb3: false,
   storage: {
     enabled: true,
+  },
+  dappMetadata: {
+    name: 'NodeJS example',
   },
   modals: {
     install: ({ link }) => {
@@ -20,10 +25,18 @@ const sdk = new MetaMaskSDK({
             );
           }
         },
-      }
-    }
+      };
+    },
   },
-});
+};
+
+const sdk = new MetaMaskSDK(options);
+
+const persistenceFileName = '.sdk-comm';
+
+if(options.storage?.enabled && fs.existsSync(persistenceFileName)) {
+  console.debug(`Please open linked MetaMask mobile wallet for OTP or delete file '${persistenceFileName}' and scan QRCode.`);
+}
 
 const ethereum = sdk.getProvider();
 

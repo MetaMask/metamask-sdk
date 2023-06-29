@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
 import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
+import { ethErrors } from 'eth-rpc-errors';
 
 export interface SDKProviderProps {
   /**
@@ -37,20 +38,17 @@ export class SDKProvider extends MetaMaskInpageProvider {
     debug = false,
     autoRequestAccounts = false,
   }: SDKProviderProps) {
-    /**
-     * super() will call _initializeStateAsync which will call metamask_getProviderState
-     */
-    if (debug) {
-      console.debug(
-        `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
-      );
-    }
-
     super(connectionStream, {
       logger: console,
       maxEventListeners: 100,
       shouldSendMetadata,
     });
+
+    if (debug) {
+      console.debug(
+        `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
+      );
+    }
     this.autoRequestAccounts = autoRequestAccounts;
     this.debug = debug;
   }
@@ -61,7 +59,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
       );
     }
-    this._initializeStateAsync();
+    return this._initializeStateAsync();
   }
 
   getState() {
@@ -71,7 +69,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
   handleDisconnect({ terminate = false }: { terminate: boolean }) {
     if (this.debug) {
       console.debug(
-        `SDKProvider::handleDisconnect() cleaning up provider state -- terminate=${terminate}`,
+        `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
+        this,
       );
     }
 
@@ -83,11 +82,10 @@ export class SDKProvider extends MetaMaskInpageProvider {
       this._state.isPermanentlyDisconnected = true;
       this._state.initialized = false;
     }
-    this._state.isConnected = false;
-
-    this.emit('disconnect');
     this._handleAccountsChanged([]);
-    this._handleDisconnect(true);
+    this._state.isConnected = false;
+    this.emit('disconnect', ethErrors.provider.disconnected());
+
     this.providerStateRequested = false;
   }
 

@@ -1,45 +1,52 @@
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   root: true,
 
-  extends: ['@metamask/eslint-config'],
+  // extends: ['@metamask/eslint-config'],
+  // TODO check if we can integrate to @metamask/eslint-config
+  extends: ['eslint:recommended'],
+
+  parser: '@typescript-eslint/parser',
+
+  ignorePatterns: ['.eslintrc.js', 'dist', 'rollup.config.js'],
+
+  parserOptions: {
+    project: true,
+    // sourceType: 'module',
+    ecmaFeatures: {
+      jsx: true,
+    },
+    // ecmaVersion: 2018,
+    tsconfigRootDir: __dirname,
+  },
+
+  plugins: ['@typescript-eslint', 'react'],
+
+  env: {
+    browser: true,
+    node: true,
+    'shared-node-browser': true,
+  },
 
   overrides: [
     {
-      files: ['**/*.js'],
-      extends: ['@metamask/eslint-config-nodejs'],
-    },
-
-    {
-      files: ['**/*.ts'],
-      extends: ['@metamask/eslint-config-typescript'],
+      files: ['**/*.ts', '**/*.tsx'],
       rules: {
-        '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
-      },
-    },
-
-    {
-      files: ['**/*.test.ts', '**/*.test.js'],
-      extends: ['@metamask/eslint-config-jest'],
-      rules: {
-        '@typescript-eslint/no-shadow': [
+        'no-restricted-syntax': 'off',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error'],
+        '@typescript-eslint/consistent-type-exports': [
           'error',
-          { allow: ['describe', 'expect', 'it'] },
+          {
+            fixMixedExportsWithInlineTypeSpecifier: true,
+          },
         ],
+        '@typescript-eslint/consistent-type-definitions': [
+          'error',
+          'interface',
+        ],
+        'import/no-named-as-default': 0,
       },
     },
-  ],
-
-  rules: {
-    'import/no-named-as-default': 0,
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': ['error'],
-  },
-
-  ignorePatterns: [
-    '!.prettierrc.js',
-    '**/!.eslintrc.js',
-    '**/dist*/',
-    'rollup.config.js',
-    'webpack.config.js',
   ],
 };

@@ -3,7 +3,7 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
+    flexDirection: 'row' as 'row',
   },
   flexItem: {
     flex: 1,
@@ -50,6 +50,13 @@ const styles = {
     border: '2px #F2F4F6 solid',
     color: '#24292E',
   },
+  extensionLabel: {
+    fontsStyle: 'normal',
+    fontWeight: 'bold',
+    fontSize: 14,
+    textAlign: 'center' as 'center',
+    color: '#24272A',
+  },
   notice: {
     fontSize: 12,
     marginLeft: 10,
@@ -61,7 +68,7 @@ const styles = {
     marginBottom: '20px',
     width: '100%',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'row' as 'row',
     justifyContent: 'center',
     alignItems: 'center',
     padding: '12px 20px',
@@ -73,8 +80,8 @@ const styles = {
     cursor: 'pointer',
   },
   backdrop: {
-    visibility: 'visible',
-    position: 'fixed',
+    visibility: 'visible' as 'visible',
+    position: 'fixed' as 'fixed',
     top: '0',
     left: '0',
     right: '0',
@@ -85,8 +92,8 @@ const styles = {
     opacity: 0.3,
   },
   modal: {
-    visibility: 'visible',
-    position: 'fixed',
+    visibility: 'visible' as 'visible',
+    position: 'fixed' as 'fixed',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     zIndex: 99999,
@@ -99,17 +106,14 @@ const styles = {
     minWidth: 300,
     boxShadow:
       'rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px',
-    '-webkit-font-smoothing': 'antialiased',
+    WebkitFontSmoothing: 'antialiased',
   },
   closeButton: {
     color: '#BBC0C5',
     cursor: 'pointer',
   },
-  closeButtonContainer: {
-    textAlign: 'right',
-  },
+  closeButtonContainer: {},
   logoContainer: {
-    textAlign: 'center',
     marginHorizontal: 24,
     marginTop: 24,
     display: 'flex',

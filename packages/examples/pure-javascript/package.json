@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-pure-javascript-example",
   "version": "1.0.0",
-  "private": false,
   "description": "An example use of the MetaMask SDK on pure-javascript",
   "repository": {
     "type": "git",
@@ -19,7 +18,18 @@
     "start": "serve ."
   },
   "dependencies": {
-    "@metamask/sdk": "^0.2.2",
+    "@metamask/sdk": "0.3.3",
     "serve": "13.0.2"
-  }
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "@metamask/sdk>socket.io-client>engine.io-client>ws>bufferutil": false,
+      "@metamask/sdk>socket.io-client>engine.io-client>ws>utf-8-validate": false
+    }
+  },
+  "packageManager": "yarn@1.22.19"
 }

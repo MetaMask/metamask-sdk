@@ -1,5 +1,5 @@
+import { PlatformType } from '@metamask/sdk-communication-layer';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import { MobilePortStream } from './MobilePortStream';
 
 export const getPortStream = () => {

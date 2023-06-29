@@ -1,19 +1,20 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   // eslint-disable-next-line import/named
   Chain,
-  useClient,
   useConnect as useConnectWagmi,
+  useConfig,
   useNetwork,
 } from 'wagmi';
+import { SDKContext } from './MetaMaskProvider';
 
 // eslint-disable-next-line import/export
 export * from 'wagmi';
 
 // eslint-disable-next-line import/export
 export const useConnect = () => {
-  const client = useClient();
-  const connector = client.connectors[0];
+  const config = useConfig();
+  const connector = config.connectors[0];
 
   return useConnectWagmi({ connector });
 };
@@ -31,12 +32,21 @@ type AddEthereumChainParameter = {
   iconUrls?: string[]; // Currently ignored.
 };
 
+export const useSDK = () => {
+  const context = useContext(SDKContext);
+
+  if (context === undefined) {
+    throw new Error('SDK context is missing, must be within provide');
+  }
+  return context;
+};
+
 export const useSwitchOrAddNetwork = () => {
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [pendingChainId, setPendingChainId] = useState<number>();
-  const client = useClient();
-  const connector = client.connectors[0];
+  const config = useConfig();
+  const connector = config.connectors[0];
   const { chains } = useNetwork();
   const switchOrAddNetwork = async (chain: Chain) => {
     let response;
@@ -83,7 +93,8 @@ export const useSwitchOrAddNetwork = () => {
           params.blockExplorerUrls = [chain.blockExplorers?.default?.url];
         }
 
-        params.rpcUrls = rpcUrls;
+        // TODO handle rpcUrls
+        // params.rpcUrls = rpcUrls;
 
         try {
           response = await provider.request({

@@ -5,6 +5,7 @@ import {
   ConnectionStatus,
   DappMetadata,
   EventType,
+  PlatformType,
   ServiceStatus,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
@@ -20,7 +21,6 @@ import {
 } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
-import { PlatformType } from './types/PlatformType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
@@ -43,7 +43,7 @@ export interface MetaMaskSDKOptions {
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
-  dappMetadata?: DappMetadata;
+  dappMetadata: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
   developerMode?: boolean;
@@ -77,17 +77,29 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage: {
         enabled: false,
       },
+      injectProvider: true,
+      forceInjectProvider: false,
+      enableDebug: true,
+      shouldShimWeb3: true,
+      dappMetadata: {
+        name: '',
+        url: '',
+      },
     },
   ) {
     super();
 
-    if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-      // Try to fill potentially missing field in dapp metadata.
-      if (!options?.dappMetadata) {
+    if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
+      // Automatically set dappMetadata on web env.
+      if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         options.dappMetadata = {
           url: window.location.href,
           name: document.title,
         };
+      } else {
+        throw new Error(
+          `You must provide dAppMetadata option (name and/or url)`,
+        );
       }
     }
 
@@ -98,10 +110,13 @@ export class MetaMaskSDK extends EventEmitter2 {
     //     console.debug(`sdk initialized`, this.dappMetadata);
     //   }
     // });
-    this.initialize(this.options);
+
+    this.initialize(this.options).catch((err) => {
+      console.error(`MetaMaskSDK error during initialization`, err);
+    });
   }
 
-  private initialize(options: MetaMaskSDKOptions) {
+  private async initialize(options: MetaMaskSDKOptions) {
     const {
       dappMetadata,
       // Provider
@@ -137,20 +152,21 @@ export class MetaMaskSDK extends EventEmitter2 {
     } = options;
 
     if (this._initialized) {
-      console.debug(`SDK::initialize() already initialized.`);
+      console.info(`SDK::initialize() already initialized.`);
       return;
     }
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
     if (this.debug) {
-      console.debug(`SDK::initialize() now`);
+      console.debug(`SDK::initialize() now`, options);
     }
 
     // Make sure to enable all logs if developer mode is on
     const runtimeLogging = { ...logging };
 
     if (developerMode) {
+      runtimeLogging.sdk = true;
       runtimeLogging.eciesLayer = true;
       runtimeLogging.keyExchangeLayer = true;
       runtimeLogging.remoteLayer = true;
@@ -175,6 +191,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (checkForceInject || checkInject || isNonBrowser) {
       if (checkForceInject && forceDeleteProvider) {
         Ethereum.destroy();
+        // TODO re-enable once we have consolidated proxyfication of multiple providers
+        // Backup the browser extension provider
+        // window.extension = window.ethereum;
         delete window.ethereum;
       }
 
@@ -214,6 +233,15 @@ export class MetaMaskSDK extends EventEmitter2 {
         storage,
         autoConnect,
         logging: runtimeLogging,
+        connectWithExtensionProvider: async () => {
+          delete window.ethereum;
+          this.provider = window.extension as any;
+          window.ethereum = window.extension as any;
+          const accounts = await window.ethereum?.request({
+            method: 'eth_requestAccounts',
+          });
+          this.emit(EventType.PROVIDER_UPDATE, accounts);
+        },
         modals: {
           ...modals,
           onPendingModalDisconnect: this.terminate.bind(this),
@@ -276,6 +304,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     this._initialized = true;
   }
 
+  private changeProvider() {
+    return false;
+  }
+
   resume() {
     if (!this.remoteConnection?.getConnector()?.isReady()) {
       if (this.debug) {
@@ -290,7 +322,14 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
-    this.remoteConnection?.disconnect({ terminate: true, sendMessage: true });
+    if (this.debug) {
+      console.debug(`SDK::terminate()`, this.remoteConnection);
+    }
+
+    this.remoteConnection?.disconnect({
+      terminate: true,
+      sendMessage: true,
+    });
   }
 
   isInitialized() {
@@ -341,6 +380,13 @@ export class MetaMaskSDK extends EventEmitter2 {
   // Return the ethereum provider object
   getProvider() {
     return this.provider;
+  }
+
+  async connect() {
+    return await this.provider?.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
   }
 
   getUniversalLink() {

@@ -1,3 +1,4 @@
+import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import {
   AutoConnectOptions,
   CommunicationLayerPreference,
@@ -6,16 +7,17 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
+  ChannelConfig,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
+  PlatformType,
 } from '@metamask/sdk-communication-layer';
-import { ChannelConfig } from 'packages/sdk-communication-layer/src/types/ChannelConfig';
 import { Platform } from '../Platform/Platfform';
-import { PlatformType } from '../types/PlatformType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
+import packageJson from '../../package.json';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -34,9 +36,14 @@ export interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
+  connectWithExtensionProvider: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
-    install?: (params: { link: string; debug?: boolean }) => {
+    install?: (params: {
+      link: string;
+      debug?: boolean;
+      connectWithExtension?: () => void;
+    }) => {
       onClose?: () => void;
     };
     otp?: (onDisconnect?: () => void) => {
@@ -76,7 +83,8 @@ export class RemoteConnection implements ProviderService {
 
   constructor(options: RemoteConnectionProps) {
     this.options = options;
-    const developerMode = options.logging?.developerMode === true;
+    const developerMode =
+      options.logging?.developerMode === true || options.logging?.sdk === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
 
@@ -117,13 +125,14 @@ export class RemoteConnection implements ProviderService {
     const platform = Platform.getInstance();
 
     this.connector = new RemoteCommunication({
-      platform: platform.getPlatformType(),
+      platformType: platform.getPlatformType(),
       communicationLayerPreference,
       transports,
       webRTCLib,
       dappMetadata,
       analytics: enableDebug,
       communicationServerUrl,
+      sdkVersion: packageJson.version,
       context: 'dapp',
       ecies,
       storage,
@@ -147,7 +156,8 @@ export class RemoteConnection implements ProviderService {
     if (autoConnect?.enable === true) {
       if (this.developerMode) {
         console.debug(
-          `RemoteConnection::initializeConnector() autoconnect=${autoConnect}`,
+          `RemoteConnection::initializeConnector() autoconnect`,
+          autoConnect,
         );
       }
 
@@ -161,7 +171,7 @@ export class RemoteConnection implements ProviderService {
     }
 
     if (!platform.isSecure()) {
-      this.connector.on(EventType.OTP, (otpAnswer) => {
+      this.connector.on(EventType.OTP, (otpAnswer: string) => {
         // Prevent double handling OTP message
         if (this.otpAnswer === otpAnswer) {
           return;
@@ -171,12 +181,7 @@ export class RemoteConnection implements ProviderService {
           console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
         }
         this.otpAnswer = otpAnswer;
-        if (this.pendingModal) {
-          if (this.developerMode) {
-            console.debug(`RemoteConnection::on 'OTP' MOUNT PENDING MODAL`);
-          }
-          this.pendingModal.mount?.();
-        } else {
+        if (!this.pendingModal) {
           if (this.developerMode) {
             console.debug(`RemoteConnection::on 'OTP' init pending modal`);
           }
@@ -189,30 +194,43 @@ export class RemoteConnection implements ProviderService {
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
         }
         this.pendingModal?.updateOTPValue?.(otpAnswer);
-
-        const provider = Ethereum.getProvider();
-        provider.on('_initialized', async () => {
-          if (this.developerMode) {
-            console.debug(`connection _initialized -- reset OTP value`);
-          }
-          this.pendingModal?.onClose?.();
-          this.pendingModal?.updateOTPValue?.('');
-          this.otpAnswer = undefined;
-        });
+        this.pendingModal?.mount?.();
       });
     }
 
-    this.connector.on(EventType.CLIENTS_READY, async () => {
-      try {
-        const provider = Ethereum.getProvider();
-        await provider.forceInitializeState();
-
+    this.connector.on(
+      EventType.SDK_RPC_CALL,
+      async (requestParams: RequestArguments) => {
         if (this.developerMode) {
           console.debug(
-            `RCPMS::on 'clients_ready' provider.state`,
+            `RemoteConnection::on 'sdk_rpc_call' requestParam`,
+            requestParams,
+          );
+        }
+        const provider = Ethereum.getProvider();
+        const result = await provider.request(requestParams);
+        if (this.developerMode) {
+          console.debug(`RemoteConnection::on 'sdk_rpc_call' result`, result);
+        }
+        // Close opened modals
+        this.pendingModal?.onClose?.();
+      },
+    );
+
+    this.connector.on(EventType.AUTHORIZED, async () => {
+      try {
+        // close modals
+        this.pendingModal?.onClose?.();
+        this.installModal?.onClose?.();
+
+        const provider = Ethereum.getProvider();
+        if (this.developerMode) {
+          console.debug(
+            `RCPMS::on 'authorized' provider.state`,
             provider.getState(),
           );
         }
+        await provider.forceInitializeState();
       } catch (err) {
         // Ignore error if already initialized.
         // console.debug(`IGNORE ERROR`, err);
@@ -289,6 +307,7 @@ export class RemoteConnection implements ProviderService {
       );
     }
 
+    provider.emit('connecting');
     if (trustedDevice && deeplink) {
       const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
       let linkParams = encodeURI(
@@ -307,7 +326,6 @@ export class RemoteConnection implements ProviderService {
       const onDisconnect = () => {
         this.options.modals.onPendingModalDisconnect?.();
         this.pendingModal?.onClose?.();
-        this.pendingModal = undefined;
       };
 
       const waitForOTP = async (): Promise<string> => {
@@ -323,8 +341,7 @@ export class RemoteConnection implements ProviderService {
       };
 
       if (this.pendingModal) {
-        // Make sure modal is visible
-        this.pendingModal.mount?.();
+        this.pendingModal?.mount?.();
       } else {
         this.pendingModal = this.options.modals.otp?.(onDisconnect);
       }
@@ -349,6 +366,12 @@ export class RemoteConnection implements ProviderService {
       const isRemoteReady = this.connector.isReady();
       const isConnected = this.connector.isConnected();
       const isPaused = this.connector.isPaused();
+      const platform = Platform.getInstance();
+      const platformType = platform.getPlatformType();
+
+      const showQRCode =
+        platformType === PlatformType.DesktopWeb ||
+        (platformType === PlatformType.NonBrowser && !platform.isReactNative());
 
       if (this.developerMode) {
         console.debug(
@@ -356,7 +379,8 @@ export class RemoteConnection implements ProviderService {
         );
       }
 
-      if (this.connector.isReady()) {
+      if (isRemoteReady) {
+        // should either display pending modal for OTP or deeplink into metamask.
         if (this.developerMode) {
           console.debug(
             `RemoteConnection::startConnection() Already connected.`,
@@ -372,13 +396,7 @@ export class RemoteConnection implements ProviderService {
         return resolve(true);
       }
 
-      const platform = Platform.getInstance();
-      const platformType = platform.getPlatformType();
-
-      const showQRCode =
-        platformType === PlatformType.DesktopWeb ||
-        (platformType === PlatformType.NonBrowser && !platform.isReactNative());
-
+      provider.emit('connecting');
       // Check for existing channelConfig?
       this.connector?.startAutoConnect().then(async (channelConfig) => {
         if (this.developerMode) {
@@ -412,6 +430,10 @@ export class RemoteConnection implements ProviderService {
                 this.installModal = this.options.modals.install?.({
                   link: universalLink,
                   debug: this.developerMode,
+                  connectWithExtension: () => {
+                    this.options.connectWithExtensionProvider();
+                    return false;
+                  },
                 });
                 // console.log('OPEN LINK QRCODE', universalLink);
               } else {
@@ -424,36 +446,43 @@ export class RemoteConnection implements ProviderService {
               }
               this.universalLink = universalLink;
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
+              this.otpAnswer = undefined;
               this.pendingModal?.onClose?.();
               this.installModal?.onClose?.();
-              this.otpAnswer = undefined;
-              this.pendingModal?.updateOTPValue?.('');
               reject(err);
             });
 
           this.connector.on(EventType.CLIENTS_READY, async () => {
             if (this.developerMode) {
               console.debug(
-                `RemoteConnection::startConnection::on 'clients_ready' sentFirstConnect=${this.sentFirstConnect}`,
+                `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
+              );
+            }
+
+            // Allow initializeProvider to complete and send the eth_requestAccounts
+            resolve(true);
+          });
+
+          this.connector.on(EventType.AUTHORIZED, async () => {
+            if (this.developerMode) {
+              console.debug(
+                `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
               );
             }
 
             if (this.sentFirstConnect) {
-              resolve(true);
               return;
             }
 
             this.sentFirstConnect = true;
-            // try to close displayedModal
-            this.pendingModal?.onClose?.();
-            this.installModal?.onClose?.();
             if (!this.otpAnswer) {
               this.otpAnswer = undefined;
               this.pendingModal?.updateOTPValue?.('');
             }
-
-            resolve(true);
+            // close modals
+            this.pendingModal?.onClose?.();
+            this.installModal?.onClose?.();
           });
         }
 
@@ -481,6 +510,10 @@ export class RemoteConnection implements ProviderService {
     return this.connector?.isReady() || false;
   }
 
+  isAuthorized() {
+    return this.connector?.isAuthorized() || false;
+  }
+
   isPaused() {
     return this.connector?.isPaused();
   }
@@ -491,7 +524,9 @@ export class RemoteConnection implements ProviderService {
     }
 
     if (options?.terminate) {
-      Ethereum.getProvider().handleDisconnect({ terminate: true });
+      Ethereum.getProvider().handleDisconnect({
+        terminate: true,
+      });
       this.pendingModal?.onClose?.();
       this.otpAnswer = undefined;
     }

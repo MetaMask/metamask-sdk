@@ -1,7 +1,16 @@
-<script src="http://localhost:3000/node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"></script>
+<script src="/node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"></script>
 <script>
   const sdk = new MetaMaskSDK.MetaMaskSDK({
-    forceInjectProvider: true
+    dappMetadata: {
+      name: "Pure JS example",
+      url: window.location.host,
+    },
+    storage: {
+      enabled: true,
+    },
+    logging: {
+      sdk: false,
+    }
   });
 </script>
 <script>

@@ -100,6 +100,7 @@
     ]
   },
   "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1",
     "eslint-config-react-app": "^7.0.1",
     "webpack-node-externals": "^3.0.0"
   },
@@ -158,5 +159,20 @@
     "presets": [
       "react-app"
     ]
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@pmmmwh/react-refresh-webpack-plugin>core-js-pure": false,
+      "ethers>ws>bufferutil": false,
+      "ethers>ws>utf-8-validate": false,
+      "react-app-polyfill>core-js": false,
+      "web3": false,
+      "web3>web3-bzz": false,
+      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>es5-ext": false,
+      "web3>web3-shh": false,
+      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>keccak": false,
+      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>secp256k1": false,
+      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>utf-8-validate": false
+    }
   }
 }

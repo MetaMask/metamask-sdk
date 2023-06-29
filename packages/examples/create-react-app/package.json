@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@metamask/sdk": "^0.2.2",
+    "@metamask/sdk": "^0.3.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "start": "react-scripts start",
+    "start": "HOST=0.0.0.0 react-scripts start",
     "test": "react-scripts test"
   },
   "browserslist": {
@@ -35,5 +35,18 @@
       "react-app",
       "react-app/jest"
     ]
-  }
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.3.1"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@metamask/sdk>eciesjs>secp256k1": false,
+      "react-scripts>@pmmmwh/react-refresh-webpack-plugin>core-js-pure": false,
+      "react-scripts>react-app-polyfill>core-js": false,
+      "react-scripts>webpack-dev-server>ws>bufferutil": false,
+      "react-scripts>webpack-dev-server>ws>utf-8-validate": false
+    }
+  },
+  "packageManager": "yarn@1.22.19"
 }

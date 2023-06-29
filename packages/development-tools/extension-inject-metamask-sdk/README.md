@@ -78,7 +78,7 @@ curl -fsSL https://github.com/abhijithvijayan/web-extension-starter/archive/reac
 Ensure you have
 
 - [Node.js](https://nodejs.org) 10 or later installed
-- [Yarn](https://yarnpkg.com) v1 or v2 installed
+- [Yarn](https://yarnpkg.com) v3 installed
 
 Then run the following:
 

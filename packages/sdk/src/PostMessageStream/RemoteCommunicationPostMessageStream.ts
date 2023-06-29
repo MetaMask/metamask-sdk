@@ -1,15 +1,31 @@
 import { Buffer } from 'buffer';
 import { Duplex } from 'stream';
+
 import {
   CommunicationLayerMessage,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
-import { METHODS_TO_REDIRECT } from '../config';
+
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { Platform } from '../Platform/Platfform';
 import { Ethereum } from '../services/Ethereum';
 import { PostMessageStream } from './PostMessageStream';
+
+// TODO refactor to have proper types on data
+const extractMethod = (chunk: any): { method: string; data: any } => {
+  let data: any;
+  if (Buffer.isBuffer(chunk)) {
+    data = chunk.toJSON();
+    data._isBuffer = true;
+  } else {
+    data = chunk;
+  }
+
+  const targetMethod = data?.data?.method as string;
+  return { method: targetMethod, data };
+};
 
 export class RemoteCommunicationPostMessageStream
   extends Duplex
@@ -57,18 +73,23 @@ export class RemoteCommunicationPostMessageStream
     const ready = this.remote.isReady();
     const provider = Ethereum.getProvider();
     const channelId = this.remote.getChannelId();
+    const authorized = this.remote.isAuthorized();
+    const { method: targetMethod, data } = extractMethod(chunk);
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write isRemoteReady=${isRemoteReady}
-        } channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        `RPCMS::_write method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+        chunk,
       );
     }
 
-    // On trusted device, socket may not be connected on initial request.
-    if ((!ready && !platform.isSecure()) || !channelId) {
-      if (this.debug) {
-        console.log(`[RCPMS] NOT CONNECTED - EXIT`, chunk);
+    if (!channelId) {
+      // ignore initial metamask_getProviderState() call from ethereum.init()
+      if (
+        this.debug &&
+        targetMethod !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
+      ) {
+        console.warn(`RPCMS::_write Invalid channel id -- undefined`);
       }
 
       return callback();
@@ -76,30 +97,24 @@ export class RemoteCommunicationPostMessageStream
 
     if (this.debug) {
       console.debug(
-        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} ready=${ready} socketConnected=${socketConnected}`,
+        `RPCMS::_write remote.isPaused()=${this.remote.isPaused()} authorized=${authorized} ready=${ready} socketConnected=${socketConnected}`,
         chunk,
       );
     }
 
     try {
-      let data: any;
-      if (Buffer.isBuffer(chunk)) {
-        data = chunk.toJSON();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        data._isBuffer = true;
-      } else {
-        data = chunk;
-      }
-
-      const targetMethod = data?.data
-        ?.method as keyof typeof METHODS_TO_REDIRECT;
-
-      if (!platform.isSecure()) {
-        this.remote.sendMessage(data?.data).catch((err) => {
-          console.warn(`RCPMS::_write cannot send message`, err);
+      this.remote
+        .sendMessage(data?.data)
+        .then(() => {
+          if (this.debug) {
+            console.debug(`RCPMS::_write ${targetMethod} sent successfully`);
+          }
+        })
+        .catch((err: unknown) => {
+          console.error('RCPMS::_write error sending message', err);
         });
 
+      if (!platform.isSecure()) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
@@ -109,26 +124,11 @@ export class RemoteCommunicationPostMessageStream
         return callback();
       }
 
-      if (this.debug) {
-        console.log(`RCPMS::_write sending delayed method ${targetMethod}`);
-      }
-
-      this.remote.sendMessage(data?.data).catch((err) => {
-        console.warn(`RCPMS::_write cannot send message`, err);
-      });
-
-      if (!channelId) {
-        console.warn(`Invalid channel id -- undefined`);
-        return callback(
-          new Error('RemoteCommunicationPostMessageStream - invalid channelId'),
-        );
-      }
-
       if (!socketConnected && !ready) {
         // Invalid connection status
         if (this.debug) {
           console.debug(
-            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n\n`,
+            `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n`,
           );
         }
 
@@ -151,7 +151,7 @@ export class RemoteCommunicationPostMessageStream
       if (METHODS_TO_REDIRECT[targetMethod]) {
         if (this.debug) {
           console.debug(
-            `RCPMS::_write redirect link for '${targetMethod}'`,
+            `RCPMS::_write redirect link for '${targetMethod}' socketConnected=${socketConnected}`,
             `connect?${urlParams}`,
           );
         }

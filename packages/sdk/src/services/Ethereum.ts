@@ -34,17 +34,18 @@ export class Ethereum {
       debug,
     });
 
+    this.debug = debug;
     const proxiedProvieer = new Proxy(provider, {
       // some common libraries, e.g. web3@1.x, can confict with our API.
       deleteProperty: () => true,
     });
     this.provider = proxiedProvieer;
 
-    if (shouldSetOnWindow) {
+    if (shouldSetOnWindow && typeof window !== 'undefined') {
       setGlobalProvider(this.provider);
     }
 
-    if (shouldShimWeb3) {
+    if (shouldShimWeb3 && typeof window !== 'undefined') {
       shimWeb3(this.provider);
     }
 
@@ -56,7 +57,9 @@ export class Ethereum {
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,
       };
-      console.info(`Ethereum provider initialized`, info);
+      if (this.debug) {
+        console.info(`Ethereum provider initialized`, info);
+      }
     });
   }
 
