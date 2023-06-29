@@ -110,7 +110,7 @@ export class RemoteCommunicationPostMessageStream
             console.debug(`RCPMS::_write ${targetMethod} sent successfully`);
           }
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           console.error('RCPMS::_write error sending message', err);
         });
 

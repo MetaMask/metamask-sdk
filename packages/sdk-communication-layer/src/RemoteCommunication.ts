@@ -247,7 +247,6 @@ export class RemoteCommunication extends EventEmitter2 {
     if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
       this.communicationLayer?.on(EventType.AUTHORIZED, () => {
         if (this.authorized) {
-          console.debug(`RemoteCommunication HACK 'authorized' already set`);
           // Ignore duplicate event or already authorized
           return;
         }
@@ -718,23 +717,17 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
-      // FIXME remove after backward compatibility
-      // backward compatibility for wallet <6.6
+      // TODO remove after wallet 7.3+ is deployed
+      // backward compatibility for wallet <7.3
       if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
         if (this.debug) {
           console.debug(`HACK wallet version ${this.walletInfo?.version}`);
         }
         this.communicationLayer?.sendMessage(message);
-        return resolve();
+        resolve();
       }
 
-      // Only let eth_requestAccounts through to the wallet so the connection can be authorized.
-      // ignore authorization for wallet.
-      if (
-        message.method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
-        !this.isOriginator ||
-        this.authorized
-      ) {
+      if (!this.isOriginator || this.authorized) {
         this.communicationLayer?.sendMessage(message);
         resolve();
       } else {
@@ -749,9 +742,6 @@ export class RemoteCommunication extends EventEmitter2 {
           resolve();
         });
       }
-
-      resolve();
-      return undefined;
     });
   }
 
