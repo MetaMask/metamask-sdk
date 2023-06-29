@@ -717,7 +717,7 @@ export class RemoteCommunication extends EventEmitter2 {
         );
       }
 
-      // TODO remove after wallwr 7.3 is deployed
+      // TODO remove after wallet 7.3+ is deployed
       // backward compatibility for wallet <7.3
       if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
         if (this.debug) {
