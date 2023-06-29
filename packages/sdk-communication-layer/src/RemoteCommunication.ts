@@ -725,6 +725,7 @@ export class RemoteCommunication extends EventEmitter2 {
         }
         this.communicationLayer?.sendMessage(message);
         resolve();
+        return;
       }
 
       if (!this.isOriginator || this.authorized) {
