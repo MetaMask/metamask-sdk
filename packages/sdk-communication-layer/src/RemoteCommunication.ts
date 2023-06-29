@@ -247,7 +247,6 @@ export class RemoteCommunication extends EventEmitter2 {
     if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
       this.communicationLayer?.on(EventType.AUTHORIZED, () => {
         if (this.authorized) {
-          console.debug(`RemoteCommunication HACK 'authorized' already set`);
           // Ignore duplicate event or already authorized
           return;
         }
