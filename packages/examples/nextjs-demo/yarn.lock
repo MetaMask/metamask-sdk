@@ -435,9 +435,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.3.2":
-  version: 0.3.2
-  resolution: "@metamask/sdk-communication-layer@npm:0.3.2"
+"@metamask/sdk-communication-layer@npm:0.3.3":
+  version: 0.3.3
+  resolution: "@metamask/sdk-communication-layer@npm:0.3.3"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -445,32 +445,32 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: b12a51e6eea9881c344e26be65ff4090188eccfadf40f12f6ad53c6be6a7d1d485d5ee899b366112adb4c1a2fcf31e47f6f98245ee0a95feb42e447e94760df1
+  checksum: e1ea17efaf6136e91f5aaea22d947fa9349d3962ff522e8aae6d4f445fd2cd97e9db373870ddd0405a3d5a012050cfdd3886349ae37a2522dabf8e82a70f2d9a
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.3.2":
-  version: 0.3.2
-  resolution: "@metamask/sdk-install-modal-web@npm:0.3.2"
+"@metamask/sdk-install-modal-web@npm:0.3.3":
+  version: 0.3.3
+  resolution: "@metamask/sdk-install-modal-web@npm:0.3.3"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: fd28b2e036513d44a835563f3148d41c4136084fa50d1ed06f4ea43ae4be946d2808d72641ef12778f9a5be52f056f37f2cad8d8d83ed89522a008b0097ed79d
+  checksum: 340129c1c80c2edca2118e37260a621252459503d7529893e4b37960b710ed9802bcbc2706aee1e149cf81bd0bc9960c4c1fd9ae0db8570bf37b554a804b470b
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "@metamask/sdk@npm:0.3.2"
+"@metamask/sdk@npm:0.3.3":
+  version: 0.3.3
+  resolution: "@metamask/sdk@npm:0.3.3"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.3.2
-    "@metamask/sdk-install-modal-web": 0.3.2
+    "@metamask/sdk-communication-layer": 0.3.3
+    "@metamask/sdk-install-modal-web": 0.3.3
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -489,7 +489,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: dbcd7ea62cc73951cc380cf569e8d7d1759c9733f54a583fdd975b396d308175d41ed805b76c4b4abaa67ad749e4d3ef63a0650ece72777ad1d0fa1a0917072d
+  checksum: 686b49bc3582e967e0884bb12caae4fee359eac53c6fc28db1c6240fb4b24ab5bbb8f72873d6b3a8d9d0d02720b5eddca5be5800c2bd2ce45e1621ff0f015e66
   languageName: node
   linkType: hard
 
@@ -3533,7 +3533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-demo@workspace:."
   dependencies:
-    "@metamask/sdk": ^0.3.2
+    "@metamask/sdk": 0.3.3
     "@types/node": 20.2.1
     "@types/react": 18.2.6
     "@types/react-dom": 18.2.4
@@ -3543,7 +3543,6 @@ __metadata:
     react: 18.2.0
     react-dom: 18.2.0
     typescript: 5.0.4
-    yarn: 1.22.1
   languageName: unknown
   linkType: soft
 
@@ -5007,16 +5006,6 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
-  languageName: node
-  linkType: hard
-
-"yarn@npm:1.22.1":
-  version: 1.22.1
-  resolution: "yarn@npm:1.22.1"
-  bin:
-    yarn: bin/yarn.js
-    yarnpkg: bin/yarn.js
-  checksum: 734e9bc60d1393ff6da4555929469b76d9633123a04be1dacc6d2376ce1b04a2396c16f1bd4fc6343ddfbe5a69b25ae2afd5159991b37de30d1e708da92083ad
   languageName: node
   linkType: hard
 
