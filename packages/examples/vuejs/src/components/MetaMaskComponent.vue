@@ -21,6 +21,10 @@ export default {
   },
   created() {
     this.sdk = new MetaMaskSDK({
+      dappMetadata: {
+        url: window.location.href,
+        name: 'MetaMask VueJS Example Dapp',
+      },
       enableDebug: true,
       autoConnect: {
         enable: true,
