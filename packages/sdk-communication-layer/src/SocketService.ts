@@ -187,7 +187,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (document.hasFocus()) {
-        connectAgain.call(this);
+        connectAgain.call(this).catch((err) => {
+          console.error(
+            `SocketService::checkFocus Error reconnecting socket`,
+            err,
+          );
+        });
       } else {
         window.addEventListener('focus', connectAgain.bind(this), {
           once: true,
@@ -345,12 +350,18 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.clientsConnected = false;
       if (this.debug) {
         console.debug(
-          `SocketService::${this.context}::setupChannelListener::on 'clients_disconnected-${channelId}'`,
+          `SocketService::${this.context}::setupChannelListener::on 'clients_disconnected-${channelId}' paused=${this.clientsPaused}`,
         );
       }
       if (this.isOriginator) {
-        // If it wasn't paused - need to reset keys.
-        this.keyExchange.clean();
+        if (!this.clientsPaused) {
+          // If it wasn't paused - need to reset keys.
+          this.keyExchange.clean();
+        } else if (this.debug) {
+          console.debug(
+            `SocketService::${this.context}::on 'clients_disconnected' skip clean on pause`,
+          );
+        }
       }
 
       this.emit(EventType.CLIENTS_DISCONNECTED, channelId);
