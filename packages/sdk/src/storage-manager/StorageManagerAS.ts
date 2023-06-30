@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {
   ChannelConfig,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
