@@ -11,6 +11,7 @@ import {
 } from './config';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
+// eslint-disable-next-line @typescript-eslint/no-shadow
 import { StorageManager, StorageManagerProps } from './types/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
@@ -305,7 +306,9 @@ export class RemoteCommunication extends EventEmitter2 {
             commLayerVersion: packageJson.version,
           },
           this.communicationServerUrl,
-        );
+        ).catch((err) => {
+          console.error(`Cannot send analytics`, err);
+        });
       }
 
       this.clientsConnected = true;
@@ -338,7 +341,9 @@ export class RemoteCommunication extends EventEmitter2 {
             walletVersion: this.walletInfo?.version,
           },
           this.communicationServerUrl,
-        );
+        ).catch((err) => {
+          console.error(`Cannot send analytics`, err);
+        });
       }
 
       this.isOriginator = message.isOriginator;
@@ -419,7 +424,9 @@ export class RemoteCommunication extends EventEmitter2 {
               walletVersion: this.walletInfo?.version,
             },
             this.communicationServerUrl,
-          );
+          ).catch((err) => {
+            console.error(`Cannot send analytics`, err);
+          });
         }
       },
     );
@@ -784,7 +791,12 @@ export class RemoteCommunication extends EventEmitter2 {
         });
       } else {
         // Send the message or wait for authorization
-        this.handleAuthorization(message);
+        this.handleAuthorization(message).catch((err) => {
+          console.error(
+            `RemoteCommunication::${this.context}::sendMessage  ERROR`,
+            err,
+          );
+        });
       }
     });
   }
