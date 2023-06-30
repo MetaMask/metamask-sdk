@@ -16,6 +16,7 @@ import { ChannelConfig } from './types/ChannelConfig';
 import { KeyInfo } from './types/KeyInfo';
 import { PlatformType } from './types/PlatformType';
 import { DisconnectOptions } from './types/DisconnectOptions';
+// eslint-disable-next-line @typescript-eslint/no-shadow
 import { StorageManagerProps, StorageManager } from './types/StorageManager';
 import { AutoConnectType } from './types/AutoConnectType';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
