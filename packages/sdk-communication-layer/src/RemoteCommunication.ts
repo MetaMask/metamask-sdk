@@ -537,6 +537,18 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.READY && this.isOriginator) {
       this.setConnectionStatus(ConnectionStatus.LINKED);
 
+      // if it was paused --- automatically restore authorized
+      if (this.paused) {
+        if (this.debug) {
+          console.debug(
+            `RemoteCommunication::${this.context}::on 'ready' -- restore authorized`,
+          );
+        }
+        this.authorized = true;
+        this.emit(EventType.AUTHORIZED);
+      }
+
+      // reset paused flag
       this.paused = false;
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
