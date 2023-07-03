@@ -137,11 +137,13 @@ export class Platform {
   }
 
   isReactNative() {
-    if (typeof navigator !== 'undefined') {
-      // for RN: userAgent === 'React Native'
-      return navigator.product === 'ReactNative';
-    }
-    return false;
+    // Avoid grouping in single condition for readibility
+    return (
+      this.isNotBrowser() &&
+      typeof window !== 'undefined' &&
+      window?.navigator &&
+      window.navigator?.product === 'ReactNative'
+    );
   }
 
   isMetaMaskInstalled() {
@@ -204,6 +206,10 @@ export class Platform {
   getPlatformType() {
     if (this.platformType) {
       return this.platformType;
+    }
+
+    if (this.isReactNative()) {
+      return PlatformType.ReactNative;
     }
 
     if (this.isNotBrowser()) {
