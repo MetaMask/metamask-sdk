@@ -1,6 +1,7 @@
 import fs from 'fs';
 import {
   ChannelConfig,
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';

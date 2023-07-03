@@ -10,6 +10,16 @@ module.exports = {
   parserOptions: {
     project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
   },
+
+  ignorePatterns: [
+    '.prettierrc.js',
+    '**/.eslintrc.js',
+    '**/jest.config.ts',
+    '**/dist*/',
+    'e2e/',
+    'rollup.config.js',
+  ],
+
   overrides: [
     {
       files: ['**/*.ts'],
@@ -25,14 +35,5 @@ module.exports = {
         '@typescript-eslint/no-shadow': ['error'],
       },
     },
-  ],
-
-  ignorePatterns: [
-    '.prettierrc.js',
-    '**/.eslintrc.js',
-    '**/jest.config.ts',
-    '**/dist*/',
-    'e2e/',
-    'rollup.config.js',
   ],
 };
