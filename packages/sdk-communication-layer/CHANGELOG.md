@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.4.0]
 ### Uncategorized
-- feat: linter improvements ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
-- [FEAT] authorized improvements + typings ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
+- feat: linter improvements and remove dangling promises ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
+- [FEAT] authorized improvements ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
 
 ## [0.3.3]
 ### Added

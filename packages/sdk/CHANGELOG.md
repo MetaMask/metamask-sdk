@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.4.0]
-### Uncategorized
+### Added
 - fix: invalid types path ([#173](https://github.com/MetaMask/metamask-sdk/pull/173))
 - fix(sdk): react native detection ([#174](https://github.com/MetaMask/metamask-sdk/pull/174))
-- feat: linter improvements ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
-- [FEAT] authorized improvements + typings ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
+- feat: linter improvements and remove dangling promises ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
+- [FEAT] authorized improvements + missing types ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
 
 ## [0.3.3]
 ### Added
