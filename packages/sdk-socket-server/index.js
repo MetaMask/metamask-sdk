@@ -81,6 +81,9 @@ fastify.post('/debug', async (request, reply) => {
     const event = {
       userId: userIdHash,
       event: body.event,
+      properties: {
+        userId: userIdHash,
+      },
     };
 
     const properties = [
@@ -95,7 +98,7 @@ fastify.post('/debug', async (request, reply) => {
 
     for (const property of properties) {
       if (body[property]) {
-        event[property] = body[property];
+        event.properties[property] = body[property];
       }
     }
 
