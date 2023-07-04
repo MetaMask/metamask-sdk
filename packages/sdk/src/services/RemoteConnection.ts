@@ -165,8 +165,17 @@ export class RemoteConnection implements ProviderService {
         .startAutoConnect()
         .then((channelConfig?: ChannelConfig) => {
           if (channelConfig?.lastActive) {
-            this.handleSecureReconnection({ channelConfig, deeplink: false });
+            this.handleSecureReconnection({
+              channelConfig,
+              deeplink: false,
+            }).catch((err) => {
+              console.warn(`RemoteConnection::initializeConnector()`, err);
+            });
           }
+        })
+        .catch((err: unknown) => {
+          console.warn(`RemoteConnection::initializeConnector()`, err);
+          throw err;
         });
     }
 
@@ -346,12 +355,19 @@ export class RemoteConnection implements ProviderService {
         this.pendingModal = this.options.modals.otp?.(onDisconnect);
       }
 
-      waitForOTP().then((otp) => {
-        if (this.otpAnswer !== otp) {
-          this.otpAnswer = otp;
-          this.pendingModal?.updateOTPValue?.(otp);
-        }
-      });
+      waitForOTP()
+        .then((otp) => {
+          if (this.otpAnswer !== otp) {
+            this.otpAnswer = otp;
+            this.pendingModal?.updateOTPValue?.(otp);
+          }
+        })
+        .catch((err) => {
+          console.warn(
+            `RemoteConnection::handleSecureConnection() waitForOTP`,
+            err,
+          );
+        });
     }
   }
 
@@ -389,7 +405,15 @@ export class RemoteConnection implements ProviderService {
 
         const channelConfig = this.connector.getChannelConfig();
         if (channelConfig) {
-          this.handleSecureReconnection({ channelConfig, deeplink: true });
+          this.handleSecureReconnection({
+            channelConfig,
+            deeplink: true,
+          }).catch((err) => {
+            console.warn(
+              `RemoteConnection::startConnection() handleSecureReconnection`,
+              err,
+            );
+          });
         }
 
         // Nothing to do, already connected.

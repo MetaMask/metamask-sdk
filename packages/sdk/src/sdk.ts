@@ -293,7 +293,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       if (checkInstallationImmediately) {
-        installer.start({ wait: true });
+        await installer.start({ wait: true });
       }
     } else if (window.ethereum) {
       this.provider = window.ethereum;

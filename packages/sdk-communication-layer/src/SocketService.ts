@@ -187,7 +187,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       }
 
       if (document.hasFocus()) {
-        connectAgain.call(this);
+        connectAgain.call(this).catch((err) => {
+          console.error(
+            `SocketService::checkFocus Error reconnecting socket`,
+            err,
+          );
+        });
       } else {
         window.addEventListener('focus', connectAgain.bind(this), {
           once: true,
