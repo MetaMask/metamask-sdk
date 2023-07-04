@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.4.0]
-### Uncategorized
+### Added
 - feat: linter improvements and remove dangling promises ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
 - [FEAT] authorized improvements ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
 
