@@ -726,12 +726,16 @@ export class RemoteCommunication extends EventEmitter2 {
 
       // TODO remove after wallet 7.3+ is deployed
       // backward compatibility for wallet <7.3
-      if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
+      if (
+        '7.3'.localeCompare(this.walletInfo?.version || '') === 1 &&
+        this.isOriginator
+      ) {
         if (this.debug) {
           console.debug(`HACK wallet version ${this.walletInfo?.version}`);
         }
         this.communicationLayer?.sendMessage(message);
         resolve();
+        return;
       }
 
       if (!this.isOriginator || this.authorized) {
