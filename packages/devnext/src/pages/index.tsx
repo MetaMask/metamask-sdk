@@ -30,6 +30,28 @@ export default function Home() {
       .catch((e) => console.log("request accounts ERR", e));
   };
 
+  const sendTransaction = async () => {
+    const to = "0x0000000000000000000000000000000000000000";
+    const transactionParameters = {
+      to, // Required except during contract publications.
+      from: window.ethereum?.selectedAddress, // must match user's active address.
+      value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
+    };
+
+    try {
+      // txHash is a hex string
+      // As with any RPC call, it may throw an error
+      const txHash = await window.ethereum?.request({
+        method: "eth_sendTransaction",
+        params: [transactionParameters],
+      }) as string;
+
+      setResponse(txHash);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const eth_signTypedData_v4 = async () => {
     const msgParams = JSON.stringify({
       domain: {
@@ -170,6 +192,10 @@ export default function Home() {
 
           <button style={{ padding: 10, margin: 10 }} onClick={eth_signTypedData_v4}>
             eth_signTypedData_v4
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}>
+            sendTransaction
           </button>
 
         </div> : <button style={{ padding: 10, margin: 10 }} onClick={connect}>
