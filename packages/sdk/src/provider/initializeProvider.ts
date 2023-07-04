@@ -46,8 +46,9 @@ const initializeProvider = ({
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
     !injectProvider ||
-    // Don't inject if it's non browser
-    platformType === PlatformType.NonBrowser
+    // Don't inject if it's non browser or RN
+    platformType === PlatformType.NonBrowser ||
+    platformType === PlatformType.ReactNative
   );
 
   // ethereum.init will automatically call metamask_getProviderState
