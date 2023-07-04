@@ -5,11 +5,30 @@
     <button class="action-button" @click="addEthereumChain">
       ADD POLYGON CHAIN
     </button>
+    <button class="action-button" @click="terminate">TERMINATE</button>
+    <div class="spacer">
+      {{connected ? 'CONNECTED' : 'NOT CONNECTED'}}
+    </div>
+    <div class="spacer">
+      Accounts:
+      <ul>
+        <li v-for='account in accounts' :key='account'>
+          {{account}}
+        </li>
+      </ul>
+    </div>
+    <div class="spacer">
+      ChainId: {{chainId}}
+    </div>
+    <div class="spacer">
+      Last response: {{lastResponse}}
+    </div>
   </div>
 </template>
 
 <script>
 import { MetaMaskSDK } from '@metamask/sdk';
+const { Buffer } = require('buffer');
 
 export default {
   name: 'MetaMaskComponent',
@@ -17,6 +36,9 @@ export default {
     return {
       sdk: null,
       accounts: null,
+      chainId: null,
+      connected: false,
+      lastResponse: null,
     };
   },
   created() {
@@ -37,6 +59,44 @@ export default {
       },
     });
   },
+  mounted() {
+    if (this.sdk?.isInitialized()) {
+      // Chain changed
+      window.ethereum?.on("chainChanged", (chain) => {
+        console.log(`App::Chain changed:'`, chain);
+        this.chainId = chain;
+      });
+
+      // Accounts changed
+      window.ethereum?.on("accountsChanged", (accounts) => {
+        console.log(`App::Accounts changed:'`, accounts);
+        this.accounts = accounts;
+      });
+
+      // Initialized event
+      window.ethereum?.on('_initialized', () => {
+        console.debug(`App::useEffect on _initialized`);
+        // Getting the accounts again to display in the UI
+        this.onConnect();
+        if (window.ethereum?.chainId) {
+          this.chainId = window.ethereum.chainId;
+        }
+      });
+
+      // Connected event
+      window.ethereum?.on('connect', (_connectInfo) => {
+        console.log(`App::connect`, _connectInfo);
+        this.connected = true;
+      });
+
+      // Disconnect event
+      window.ethereum?.on('disconnect', (error) => {
+        console.log(`App::disconnect`, error);
+        this.connected = false;
+      });
+    }
+
+  },
   methods: {
     async onConnect() {
       try {
@@ -46,6 +106,8 @@ export default {
         });
         this.accounts = res;
         console.log('request accounts', res);
+        this.lastResponse = "";
+        this.chainId = window.ethereum.chainId;
       } catch (e) {
         console.log('request accounts ERR', e);
       }
@@ -65,28 +127,33 @@ export default {
           ],
         });
         console.log('add', res);
+        this.lastResponse = res;
       } catch (e) {
         console.log('ADD ERR', e);
       }
     },
     async onSign() {
       try {
-        const from = this.accounts[0];
-        const message = 'Hello, World!';
-        // Convert the message to hexadecimal
-        const hexMessage =
-          '0x' + new Buffer.from(message, 'utf8').toString('hex');
+        const from = window.ethereum?.selectedAddress;
+        const message = 'Hello World from the Vue Example dapp!';
+        const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
         const sign = await window.ethereum.request({
           method: 'personal_sign',
           params: [hexMessage, from, 'Example password'],
         });
-
         console.log(sign);
+        this.lastResponse = sign;
       } catch (err) {
         console.error(err);
       }
     },
+    terminate() {
+      this.sdk?.terminate();
+      this.accounts = null;
+      this.lastResponse = "Terminated!";
+      this.chainId = null;
+    }
   },
 };
 </script>
@@ -119,6 +186,7 @@ export default {
 
 .spacer {
   height: 16px;
+  margin: 20px;
 }
 
 .deep-link {
