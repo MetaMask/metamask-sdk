@@ -5,11 +5,10 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {
   AppState,
   AppStateStatus,
-  Button,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -21,15 +20,6 @@ import {
 } from 'react-native';
 
 import {MetaMaskSDK} from '@metamask/sdk';
-import {
-  CommunicationLayerMessage,
-  CommunicationLayerPreference,
-  DappMetadata,
-  MessageType,
-  RemoteCommunication,
-} from '@metamask/sdk-communication-layer';
-import crypto from 'crypto';
-import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';

@@ -1787,10 +1787,10 @@
   resolved "https://registry.yarnpkg.com/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
   integrity sha512-/kSXhY692qiV1MXu6EeOZvg5nECLclxNXcKCxJ3cXQgYuRymRHpdx/t7JXfsK+JLjwA1e1c1/SBrlQYpusC29Q==
 
-"@metamask/sdk-communication-layer@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-communication-layer/-/sdk-communication-layer-0.3.3.tgz#1c173204f17ce47b9051efefdc4eabf5578d77a6"
-  integrity sha512-Z57SgDhv30CDAFbcsaBYqIf0R3MUMOumj6xZe1KSPoBO/JCTvA78EbSxvO/YhbTOK5bz/CNwykJxbbDCUpf9yg==
+"@metamask/sdk-communication-layer@0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk-communication-layer/-/sdk-communication-layer-0.4.0.tgz#f9ecd6ad1a6c8e62b15adeb22a814175ea169f76"
+  integrity sha512-2g+vYvlxVE0NQHgwtcH2BWX8vbb2IZaAQ6JOC0Yu7d8rdwrGaf1ZHB3xgxUfmOHMp9KVQeG1rXH03iR3QLEOEA==
   dependencies:
     cross-fetch "^3.1.5"
     date-fns "^2.29.3"
@@ -1810,15 +1810,15 @@
     react "^18.2.0"
     react-dom "^18.2.0"
 
-"@metamask/sdk@^0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.3.3.tgz#efec5c22f22b20255c43c3a26a0749b8396ee6b0"
-  integrity sha512-kePMAOQ9/a14jInQwRqek4l2yKLxVCuC04S9gfhzc7/UNaHdBB38b5wYkMqhKlvrATId6vfqk4fUcvRUpyoUXw==
+"@metamask/sdk@^0.4.1":
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.4.1.tgz#1f95955e06e41bc4ea90984d2bc21252ebdcf031"
+  integrity sha512-Hntb9N4frkXIQjcUIdrlOwZDpGsgF/KQqy4wRzN9zLo5POsVifiZyaBBPWy/5SH0XZGLhS9zyAGHYO4sM2gutQ==
   dependencies:
     "@metamask/onboarding" "^1.0.1"
     "@metamask/post-message-stream" "^6.1.0"
     "@metamask/providers" "^10.2.1"
-    "@metamask/sdk-communication-layer" "0.3.3"
+    "@metamask/sdk-communication-layer" "0.4.0"
     "@metamask/sdk-install-modal-web" "0.3.3"
     "@react-native-async-storage/async-storage" "^1.17.11"
     "@types/dom-screen-wake-lock" "^1.0.0"

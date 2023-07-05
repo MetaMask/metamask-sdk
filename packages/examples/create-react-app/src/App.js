@@ -11,6 +11,9 @@ const sdk = new MetaMaskSDK({
     url: window.location.href,
     name: document.title,
   },
+  logging: {
+    developerMode: true,
+  },
   storage: {
     enabled: true,
   }

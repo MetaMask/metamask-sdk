@@ -435,9 +435,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.3.3":
-  version: 0.3.3
-  resolution: "@metamask/sdk-communication-layer@npm:0.3.3"
+"@metamask/sdk-communication-layer@npm:0.4.0":
+  version: 0.4.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.4.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -445,7 +445,7 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: e1ea17efaf6136e91f5aaea22d947fa9349d3962ff522e8aae6d4f445fd2cd97e9db373870ddd0405a3d5a012050cfdd3886349ae37a2522dabf8e82a70f2d9a
+  checksum: c744421cb08876830f89424c959bb74a426161f26d2ac48e0c7ebe4c7ec410df341cc01acf8f053744553575e499893d57939281d9dab8c195369547ec8b4b6b
   languageName: node
   linkType: hard
 
@@ -462,14 +462,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:0.3.3":
-  version: 0.3.3
-  resolution: "@metamask/sdk@npm:0.3.3"
+"@metamask/sdk@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@metamask/sdk@npm:0.4.1"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.3.3
+    "@metamask/sdk-communication-layer": 0.4.0
     "@metamask/sdk-install-modal-web": 0.3.3
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -489,7 +489,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: 686b49bc3582e967e0884bb12caae4fee359eac53c6fc28db1c6240fb4b24ab5bbb8f72873d6b3a8d9d0d02720b5eddca5be5800c2bd2ce45e1621ff0f015e66
+  checksum: e1eadedac189958ccd7cafe03db7eb61b89fa156b6a27aabeab0e9ef39d3d74e216c714853538804d31b353385ffa08c26a63cc5a2c50aedfa0206b5acebd052
   languageName: node
   linkType: hard
 
@@ -3533,7 +3533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-demo@workspace:."
   dependencies:
-    "@metamask/sdk": 0.3.3
+    "@metamask/sdk": ^0.4.1
     "@types/node": 20.2.1
     "@types/react": 18.2.6
     "@types/react-dom": 18.2.4
