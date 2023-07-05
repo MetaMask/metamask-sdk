@@ -146,6 +146,16 @@ export default function Home() {
 
   }
 
+  const switchNetwork = async (chainId: '0x5' | '0x1') => {
+    if (!window.ethereum) {
+      throw new Error(`invalid ethereum provider`);
+    }
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId }] // chainId must be in hexadecimal numbers
+    })
+  }
+
   const terminate = () => {
     sdk?.terminate();
   }
@@ -196,6 +206,14 @@ export default function Home() {
 
           <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}>
             sendTransaction
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => switchNetwork('0x5')}>
+            switch Goerli
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => switchNetwork('0x1')}>
+            switch Mainnet
           </button>
 
         </div> : <button style={{ padding: 10, margin: 10 }} onClick={connect}>
