@@ -802,6 +802,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.channelId = options.channelId;
       this.keyExchange.clean();
     }
+    // Reset rpcMethodTracker
+    this.rpcMethodTracker = {};
     this.manualDisconnect = true;
     this.socket.disconnect();
   }
