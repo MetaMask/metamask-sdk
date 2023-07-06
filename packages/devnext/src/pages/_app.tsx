@@ -7,8 +7,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <MetaMaskProvider debug={true} sdkOptions={{
       // communicationServerUrl: 'http://192.168.50.114:4000',
-      forceDeleteProvider: true,
-      forceInjectProvider: true,
       logging: {
         developerMode: false,
         sdk: true,

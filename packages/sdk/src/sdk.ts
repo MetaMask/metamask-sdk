@@ -23,8 +23,6 @@ import { getStorageManager } from './storage-manager/getStorageManager';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { shouldForceInjectProvider } from './utils/shouldForceInjectProvider';
-import { shouldInjectProvider } from './utils/shouldInjectProvider';
 
 export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
@@ -124,8 +122,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       dappMetadata,
       // Provider
       injectProvider = true,
-      forceInjectProvider = false,
-      forceDeleteProvider,
       // Shim web3 on Provider
       shouldShimWeb3 = true,
       // Installation
@@ -184,132 +180,124 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
 
     const platformType = platform.getPlatformType();
-    const isNonBrowser = platform.isNotBrowser();
 
-    // forceInjectProvider when flag is set or brave browser.
-    const checkForceInject = shouldForceInjectProvider(forceInjectProvider);
-    // check if provider was already injected (run with a window.ethereum instance)
-    const checkInject = shouldInjectProvider();
-
-    if (checkForceInject || checkInject || isNonBrowser) {
-      if (checkForceInject && forceDeleteProvider) {
-        Ethereum.destroy();
+    // Check if window contain an existing provider extension.
+    // Replace it and keep track of metamask extension.
+    if (window.ethereum) {
+      // backup Metamask extension provider
+      if (window.ethereum.isMetaMask) {
         // Backup the browser extension provider
         window.extension = window.ethereum;
-        delete window.ethereum;
       }
-
-      // TODO re-enable once session persistence is activated
-      if (storage?.enabled === true && !storage.storageManager) {
-        storage.storageManager = getStorageManager(storage);
-      }
-
-      if (platform.isBrowser()) {
-        // TODO can be re-enabled once init can be async but would break backward compatibility
-        // if (!dappMetadata.base64Icon) {
-        //   // Try to extract default icon
-        //   if (platform.isBrowser()) {
-        //     const favicon = extractFavicon();
-        //     if (favicon) {
-        //       try {
-        //         const faviconUri = await getBase64FromUrl(favicon);
-        //         dappMetadata.base64Icon = faviconUri;
-        //       } catch (err) {
-        //         // Ignore favicon error.
-        //       }
-        //     }
-        //   }
-        // }
-      }
-
-      this.dappMetadata = dappMetadata;
-
-      this.remoteConnection = new RemoteConnection({
-        communicationLayerPreference,
-        dappMetadata,
-        webRTCLib,
-        enableDebug,
-        timer,
-        transports,
-        communicationServerUrl,
-        storage,
-        autoConnect,
-        logging: runtimeLogging,
-        connectWithExtensionProvider: async () => {
-          if (this.debug) {
-            console.debug(`SDK::connectWithExtensionProvider()`);
-          }
-          delete window.ethereum;
-          // save a copy of the instance before it gets overwritten
-          this.sdkProvider = this.activeProvider;
-          this.activeProvider = window.extension as any;
-          // Set extension provider as default on window
-          window.ethereum = window.extension as any;
-          const accounts = await window.ethereum?.request({
-            method: 'eth_requestAccounts',
-          });
-          this.extensionActive = true;
-          this.emit(EventType.PROVIDER_UPDATE, accounts);
-        },
-        modals: {
-          ...modals,
-          onPendingModalDisconnect: this.terminate.bind(this),
-        },
-      });
-
-      if (WalletConnectInstance) {
-        this.walletConnect = new WalletConnect({
-          forceRestart: forceRestartWalletConnect ?? false,
-          wcConnector: WalletConnectInstance,
-        });
-      }
-
-      const installer = MetaMaskInstaller.init({
-        preferDesktop: preferDesktop ?? false,
-        remote: this.remoteConnection,
-        debug: this.debug,
-      });
-      this.installer = installer;
-
-      // Propagate up the sdk-communication events
-      this.remoteConnection
-        .getConnector()
-        ?.on(
-          EventType.CONNECTION_STATUS,
-          (connectionStatus: ConnectionStatus) => {
-            this.emit(EventType.CONNECTION_STATUS, connectionStatus);
-          },
-        );
-
-      this.remoteConnection
-        .getConnector()
-        ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
-          this.emit(EventType.SERVICE_STATUS, serviceStatus);
-        });
-
-      // Inject our provider into window.ethereum
-      this.activeProvider = initializeProvider({
-        platformType,
-        communicationLayerPreference,
-        checkInstallationOnAllCalls,
-        injectProvider,
-        shouldShimWeb3,
-        installer,
-        remoteConnection: this.remoteConnection,
-        walletConnect: this.walletConnect,
-        debug: this.debug,
-      });
-
-      // This will check if the connection was correctly done or if the user needs to install MetaMask
-      if (checkInstallationImmediately) {
-        await installer.start({ wait: true });
-      }
-    } else if (window.ethereum) {
-      this.activeProvider = window.ethereum;
-    } else {
-      console.error(`window.ethereum is not available.`);
-      throw new Error(`Invalid SDK provider status`);
+      Ethereum.destroy();
+      delete window.ethereum;
     }
+
+    if (storage?.enabled === true && !storage.storageManager) {
+      storage.storageManager = getStorageManager(storage);
+    }
+
+    if (platform.isBrowser()) {
+      // TODO can be re-enabled once init can be async but would break backward compatibility
+      // if (!dappMetadata.base64Icon) {
+      //   // Try to extract default icon
+      //   if (platform.isBrowser()) {
+      //     const favicon = extractFavicon();
+      //     if (favicon) {
+      //       try {
+      //         const faviconUri = await getBase64FromUrl(favicon);
+      //         dappMetadata.base64Icon = faviconUri;
+      //       } catch (err) {
+      //         // Ignore favicon error.
+      //       }
+      //     }
+      //   }
+      // }
+    }
+
+    this.dappMetadata = dappMetadata;
+
+    this.remoteConnection = new RemoteConnection({
+      communicationLayerPreference,
+      dappMetadata,
+      webRTCLib,
+      enableDebug,
+      timer,
+      transports,
+      communicationServerUrl,
+      storage,
+      autoConnect,
+      logging: runtimeLogging,
+      connectWithExtensionProvider: async () => {
+        if (this.debug) {
+          console.debug(`SDK::connectWithExtensionProvider()`);
+        }
+        delete window.ethereum;
+        // save a copy of the instance before it gets overwritten
+        this.sdkProvider = this.activeProvider;
+        this.activeProvider = window.extension as any;
+        // Set extension provider as default on window
+        window.ethereum = window.extension as any;
+        const accounts = await window.ethereum?.request({
+          method: 'eth_requestAccounts',
+        });
+        this.extensionActive = true;
+        this.emit(EventType.PROVIDER_UPDATE, accounts);
+      },
+      modals: {
+        ...modals,
+        onPendingModalDisconnect: this.terminate.bind(this),
+      },
+    });
+
+    if (WalletConnectInstance) {
+      this.walletConnect = new WalletConnect({
+        forceRestart: forceRestartWalletConnect ?? false,
+        wcConnector: WalletConnectInstance,
+      });
+    }
+
+    const installer = MetaMaskInstaller.init({
+      preferDesktop: preferDesktop ?? false,
+      remote: this.remoteConnection,
+      debug: this.debug,
+    });
+    this.installer = installer;
+
+    // Propagate up the sdk-communication events
+    this.remoteConnection
+      .getConnector()
+      ?.on(
+        EventType.CONNECTION_STATUS,
+        (connectionStatus: ConnectionStatus) => {
+          this.emit(EventType.CONNECTION_STATUS, connectionStatus);
+        },
+      );
+
+    this.remoteConnection
+      .getConnector()
+      ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+        this.emit(EventType.SERVICE_STATUS, serviceStatus);
+      });
+
+    // Inject our provider into window.ethereum
+    this.activeProvider = initializeProvider({
+      platformType,
+      communicationLayerPreference,
+      checkInstallationOnAllCalls,
+      injectProvider,
+      shouldShimWeb3,
+      installer,
+      remoteConnection: this.remoteConnection,
+      walletConnect: this.walletConnect,
+      debug: this.debug,
+    });
+
+    // This will check if the connection was correctly done or if the user needs to install MetaMask
+    if (checkInstallationImmediately) {
+      await installer.start({ wait: true });
+    }
+
     this._initialized = true;
   }
 
@@ -345,7 +333,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       this.activeProvider = this.sdkProvider;
       window.ethereum = this.activeProvider;
       this.extensionActive = false;
-      return;
     }
 
     if (this.debug) {
