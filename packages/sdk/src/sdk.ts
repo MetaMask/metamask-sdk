@@ -116,7 +116,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
   }
 
-  private async initialize(options: MetaMaskSDKOptions) {
+  public async initialize(options: MetaMaskSDKOptions) {
     const {
       dappMetadata,
       // Provider
@@ -304,8 +304,11 @@ export class MetaMaskSDK extends EventEmitter2 {
     this._initialized = true;
   }
 
-  private changeProvider() {
-    return false;
+  async connect() {
+    return await this.provider?.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
   }
 
   resume() {
@@ -336,14 +339,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this._initialized;
   }
 
-  ping() {
-    this.remoteConnection?.getConnector()?.ping();
-  }
-
-  keyCheck() {
-    this.remoteConnection?.getConnector()?.keyCheck();
-  }
-
   // Get the connector object from WalletConnect
   getWalletConnectConnector() {
     if (!this.walletConnect) {
@@ -353,40 +348,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.walletConnect;
   }
 
-  testStorage() {
-    return this.remoteConnection?.getConnector()?.testStorage();
-  }
-
-  getChannelConfig() {
-    return this.remoteConnection?.getChannelConfig();
-  }
-
-  getServiceStatus() {
-    return this.remoteConnection?.getConnector()?.getServiceStatus();
-  }
-
-  getDappMetadata(): DappMetadata | undefined {
-    return this.dappMetadata;
-  }
-
-  getKeyInfo() {
-    return this.remoteConnection?.getKeyInfo();
-  }
-
-  resetKeys() {
-    this.remoteConnection?.getConnector()?.resetKeys();
-  }
-
   // Return the ethereum provider object
   getProvider() {
     return this.provider;
-  }
-
-  async connect() {
-    return await this.provider?.request({
-      method: 'eth_requestAccounts',
-      params: [],
-    });
   }
 
   getUniversalLink() {
@@ -402,6 +366,48 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     return universalLink;
+  }
+
+  // TODO: remove once reaching sdk 1.0
+  // Not exposed. Should only be used during dev.
+  _testStorage() {
+    return this.remoteConnection?.getConnector()?.testStorage();
+  }
+
+  _getChannelConfig() {
+    return this.remoteConnection?.getChannelConfig();
+  }
+
+  _ping() {
+    this.remoteConnection?.getConnector()?.ping();
+  }
+
+  _keyCheck() {
+    this.remoteConnection?.getConnector()?.keyCheck();
+  }
+
+  _getServiceStatus() {
+    return this.remoteConnection?.getConnector()?.getServiceStatus();
+  }
+
+  _getRemoteConnection() {
+    return this.remoteConnection;
+  }
+
+  _getDappMetadata(): DappMetadata | undefined {
+    return this.dappMetadata;
+  }
+
+  _getKeyInfo() {
+    return this.remoteConnection?.getKeyInfo();
+  }
+
+  _resetKeys() {
+    this.remoteConnection?.getConnector()?.resetKeys();
+  }
+
+  _getConnection() {
+    return this.remoteConnection;
   }
 }
 
