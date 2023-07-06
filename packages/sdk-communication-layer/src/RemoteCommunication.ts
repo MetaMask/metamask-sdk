@@ -32,8 +32,10 @@ import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
 import { PlatformType } from './types/PlatformType';
 
+type MetaMaskMobile = 'metamask-mobile';
+
 export interface RemoteCommunicationProps {
-  platformType: PlatformType;
+  platformType: PlatformType | MetaMaskMobile;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
   webRTCLib?: WebRTCLib;
@@ -68,7 +70,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private transports?: string[];
 
-  private platformType: PlatformType;
+  private platformType: PlatformType | MetaMaskMobile;
 
   private analytics = false;
 
