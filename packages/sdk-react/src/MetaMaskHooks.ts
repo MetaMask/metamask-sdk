@@ -1,6 +1,5 @@
 import { useContext, useState } from 'react';
 import {
-  // eslint-disable-next-line import/named
   Chain,
   useConnect as useConnectWagmi,
   useConfig,
@@ -8,10 +7,8 @@ import {
 } from 'wagmi';
 import { SDKContext } from './MetaMaskProvider';
 
-// eslint-disable-next-line import/export
 export * from 'wagmi';
 
-// eslint-disable-next-line import/export
 export const useConnect = () => {
   const config = useConfig();
   const connector = config.connectors[0];
@@ -19,7 +16,7 @@ export const useConnect = () => {
   return useConnectWagmi({ connector });
 };
 
-type AddEthereumChainParameter = {
+interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
   chainName: string;
   nativeCurrency?: {
