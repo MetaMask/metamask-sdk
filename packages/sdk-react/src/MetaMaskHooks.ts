@@ -39,7 +39,7 @@ export const useSDK = () => {
 };
 
 export const useSwitchOrAddNetwork = () => {
-  const [error, setError] = useState();
+  const [error, setError] = useState<unknown>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [pendingChainId, setPendingChainId] = useState<number>();
   const config = useConfig();
@@ -58,6 +58,7 @@ export const useSwitchOrAddNetwork = () => {
       });
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
+      // FIXME remove ALL ts-ignore below
       if (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -99,13 +100,9 @@ export const useSwitchOrAddNetwork = () => {
             params: [params],
           });
         } catch (addError) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           setError(addError);
         }
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         setError(switchError);
       }
     }
