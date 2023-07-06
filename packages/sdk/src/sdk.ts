@@ -57,7 +57,9 @@ export interface MetaMaskSDKOptions {
 export class MetaMaskSDK extends EventEmitter2 {
   private options: MetaMaskSDKOptions;
 
-  private provider?: SDKProvider;
+  public activeProvider?: SDKProvider;
+
+  private sdkProvider?: SDKProvider;
 
   private remoteConnection?: RemoteConnection;
 
@@ -66,6 +68,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   private installer?: MetaMaskInstaller;
 
   private dappMetadata?: DappMetadata;
+
+  private extensionActive = false;
 
   private _initialized = false;
 
@@ -190,9 +194,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (checkForceInject || checkInject || isNonBrowser) {
       if (checkForceInject && forceDeleteProvider) {
         Ethereum.destroy();
-        // TODO re-enable once we have consolidated proxyfication of multiple providers
         // Backup the browser extension provider
-        // window.extension = window.ethereum;
+        window.extension = window.ethereum;
         delete window.ethereum;
       }
 
@@ -233,12 +236,19 @@ export class MetaMaskSDK extends EventEmitter2 {
         autoConnect,
         logging: runtimeLogging,
         connectWithExtensionProvider: async () => {
+          if (this.debug) {
+            console.debug(`SDK::connectWithExtensionProvider()`);
+          }
           delete window.ethereum;
-          this.provider = window.extension as any;
+          // save a copy of the instance before it gets overwritten
+          this.sdkProvider = this.activeProvider;
+          this.activeProvider = window.extension as any;
+          // Set extension provider as default on window
           window.ethereum = window.extension as any;
           const accounts = await window.ethereum?.request({
             method: 'eth_requestAccounts',
           });
+          this.extensionActive = true;
           this.emit(EventType.PROVIDER_UPDATE, accounts);
         },
         modals: {
@@ -278,7 +288,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         });
 
       // Inject our provider into window.ethereum
-      this.provider = initializeProvider({
+      this.activeProvider = initializeProvider({
         platformType,
         communicationLayerPreference,
         checkInstallationOnAllCalls,
@@ -295,7 +305,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         await installer.start({ wait: true });
       }
     } else if (window.ethereum) {
-      this.provider = window.ethereum;
+      this.activeProvider = window.ethereum;
     } else {
       console.error(`window.ethereum is not available.`);
       throw new Error(`Invalid SDK provider status`);
@@ -304,7 +314,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   async connect() {
-    return await this.provider?.request({
+    return await this.activeProvider?.request({
       method: 'eth_requestAccounts',
       params: [],
     });
@@ -324,6 +334,20 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
+    this.emit(EventType.PROVIDER_UPDATE, []);
+
+    // check if connected with extension provider
+    // if it is, disconnect from it and switch back to injected provider
+    if (this.extensionActive) {
+      // It means connected from extension provider
+      this.activeProvider?.emit('disconnect');
+      // Re-use default extension provider as default
+      this.activeProvider = this.sdkProvider;
+      window.ethereum = this.activeProvider;
+      this.extensionActive = false;
+      return;
+    }
+
     if (this.debug) {
       console.debug(`SDK::terminate()`, this.remoteConnection);
     }
@@ -349,7 +373,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   // Return the ethereum provider object
   getProvider() {
-    return this.provider;
+    return this.activeProvider;
   }
 
   getUniversalLink() {
@@ -414,6 +438,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     ReactNativeWebView?: WebView;
+    sdkProvider: SDKProvider;
     ethereum?: SDKProvider;
     extension: unknown;
     MSStream: unknown;
