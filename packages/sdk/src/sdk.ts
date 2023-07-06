@@ -183,6 +183,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     // Check if window contain an existing provider extension.
     // Replace it and keep track of metamask extension.
+
     if (window.ethereum) {
       // backup Metamask extension provider
       if (window.ethereum.isMetaMask) {
@@ -322,19 +323,6 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
-    this.emit(EventType.PROVIDER_UPDATE, []);
-
-    // check if connected with extension provider
-    // if it is, disconnect from it and switch back to injected provider
-    if (this.extensionActive) {
-      // It means connected from extension provider
-      this.activeProvider?.emit('disconnect');
-      // Re-use default extension provider as default
-      this.activeProvider = this.sdkProvider;
-      window.ethereum = this.activeProvider;
-      this.extensionActive = false;
-    }
-
     if (this.debug) {
       console.debug(`SDK::terminate()`, this.remoteConnection);
     }
