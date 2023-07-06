@@ -1,7 +1,15 @@
-module.exports = {
-  root: true,
+const path = require('path');
 
-  extends: ['@metamask/eslint-config'],
+/**
+ * @type {import('eslint').Linter.Config}
+ */
+module.exports = {
+  extends: ['@metamask/eslint-config-typescript'],
+  root: true,
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: [path.resolve(__dirname, 'tsconfig.json')],
+  },
 
   overrides: [
     {
@@ -13,7 +21,15 @@ module.exports = {
       files: ['**/*.ts'],
       extends: ['@metamask/eslint-config-typescript'],
       rules: {
-        '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+        '@typescript-eslint/consistent-type-definitions': [
+          'error',
+          'interface',
+        ],
+        '@typescript-eslint/no-floating-promises': 'error',
+        'no-async-promise-executor': 'error',
+        'import/no-named-as-default': 0,
+        'no-shadow': 'off',
+        '@typescript-eslint/no-shadow': ['error'],
       },
     },
 
@@ -37,7 +53,7 @@ module.exports = {
 
   ignorePatterns: [
     '!.prettierrc.js',
-    '**/!.eslintrc.js',
+    '**/.eslintrc.js',
     '**/dist*/',
     'rollup.config.js',
     'webpack.config.js',
