@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.4.2]
-### Uncategorized
+### Added
 - feat: expose sdk provider ([#186](https://github.com/MetaMask/metamask-sdk/pull/186))
 
 ## [0.4.1]

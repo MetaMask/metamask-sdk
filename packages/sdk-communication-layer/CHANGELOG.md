@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.4.2]
-### Uncategorized
+### Added
 - feat: add metamask-mobile platform-type for wallet compatibility ([#187](https://github.com/MetaMask/metamask-sdk/pull/187))
 
 ## [0.4.0]
-### Uncategorized
+### Added
 - feat: linter improvements ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
 - [FEAT] authorized improvements + typings ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
 
