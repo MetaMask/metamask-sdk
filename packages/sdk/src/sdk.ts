@@ -5,7 +5,7 @@ import {
   DappMetadata,
   EventType,
   ServiceStatus,
-  StorageManagerProps
+  StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -16,7 +16,7 @@ import { SDKProvider } from './provider/SDKProvider';
 import { Ethereum } from './services/Ethereum';
 import {
   RemoteConnection,
-  RemoteConnectionProps
+  RemoteConnectionProps,
 } from './services/RemoteConnection';
 import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
