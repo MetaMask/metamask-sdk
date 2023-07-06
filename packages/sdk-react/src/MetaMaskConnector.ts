@@ -1,14 +1,12 @@
 import { MetaMaskConnector as DefaultMetaMaskConnector } from 'wagmi/connectors/metaMask';
-// eslint-disable-next-line import/named
 import { Chain } from 'wagmi';
-// eslint-disable-next-line import/named
 import { MetaMaskSDK } from '@metamask/sdk';
 import { W } from '@wagmi/connectors/dist/base-5cce2182';
 
-type Options = {
+interface Options {
   chains?: Chain[];
   sdk: MetaMaskSDK;
-};
+}
 class MetaMaskConnector extends DefaultMetaMaskConnector {
   sdk: MetaMaskSDK;
 
