@@ -13,6 +13,7 @@ import WebView from 'react-native-webview';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
+import { SDKProvider } from './provider/SDKProvider';
 import { Ethereum } from './services/Ethereum';
 import {
   RemoteConnection,
@@ -57,7 +58,7 @@ export interface MetaMaskSDKOptions {
 export class MetaMaskSDK extends EventEmitter2 {
   private options: MetaMaskSDKOptions;
 
-  private provider?: MetaMaskInpageProvider;
+  private provider?: SDKProvider;
 
   private remoteConnection?: RemoteConnection;
 
@@ -408,7 +409,7 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     ReactNativeWebView?: WebView;
-    ethereum?: MetaMaskInpageProvider;
+    ethereum?: SDKProvider;
     extension: unknown;
     MSStream: unknown;
   }
