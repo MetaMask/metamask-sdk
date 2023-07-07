@@ -307,6 +307,7 @@ export class RemoteConnection implements ProviderService {
       platformType === PlatformType.DesktopWeb ||
       (platformType === PlatformType.NonBrowser && !platform.isReactNative())
     );
+    const isRemoteReady = this.connector.isReady();
     const provider = Ethereum.getProvider();
 
     if (this.developerMode) {
@@ -316,7 +317,10 @@ export class RemoteConnection implements ProviderService {
       );
     }
 
-    provider.emit('connecting');
+    if (!isRemoteReady) {
+      provider.emit('connecting');
+    }
+
     if (trustedDevice && deeplink) {
       const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
       let linkParams = encodeURI(
@@ -372,57 +376,60 @@ export class RemoteConnection implements ProviderService {
   }
 
   async startConnection(): Promise<boolean> {
-    // eslint-disable-next-line consistent-return
     return new Promise<boolean>((resolve, reject) => {
       if (!this.connector) {
-        return reject(new Error('no connector defined'));
+        reject(new Error('no connector defined'));
+        return;
       }
 
-      const provider = Ethereum.getProvider();
-      const isRemoteReady = this.connector.isReady();
-      const isConnected = this.connector.isConnected();
-      const isPaused = this.connector.isPaused();
-      const platform = Platform.getInstance();
-      const platformType = platform.getPlatformType();
+      const execAsync = async () => {
+        const provider = Ethereum.getProvider();
+        const isRemoteReady = this.connector.isReady();
+        const isConnected = this.connector.isConnected();
+        const isPaused = this.connector.isPaused();
+        const platform = Platform.getInstance();
+        const platformType = platform.getPlatformType();
 
-      const showQRCode =
-        platformType === PlatformType.DesktopWeb ||
-        (platformType === PlatformType.NonBrowser && !platform.isReactNative());
+        const showQRCode =
+          platformType === PlatformType.DesktopWeb ||
+          (platformType === PlatformType.NonBrowser &&
+            !platform.isReactNative());
 
-      if (this.developerMode) {
-        console.debug(
-          `RemoteConnection::startConnection() isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
-        );
-      }
-
-      if (isRemoteReady) {
-        // should either display pending modal for OTP or deeplink into metamask.
         if (this.developerMode) {
           console.debug(
-            `RemoteConnection::startConnection() Already connected.`,
+            `RemoteConnection::startConnection() isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
           );
         }
 
-        const channelConfig = this.connector.getChannelConfig();
-        if (channelConfig) {
-          this.handleSecureReconnection({
-            channelConfig,
-            deeplink: true,
-          }).catch((err) => {
-            console.warn(
-              `RemoteConnection::startConnection() handleSecureReconnection`,
-              err,
+        if (isRemoteReady) {
+          // should either display pending modal for OTP or deeplink into metamask.
+          if (this.developerMode) {
+            console.debug(
+              `RemoteConnection::startConnection() Already connected.`,
             );
-          });
+          }
+
+          const channelConfig = this.connector.getChannelConfig();
+          if (channelConfig) {
+            this.handleSecureReconnection({
+              channelConfig,
+              deeplink: true,
+            }).catch((err) => {
+              console.warn(
+                `RemoteConnection::startConnection() handleSecureReconnection`,
+                err,
+              );
+            });
+          }
+
+          // Nothing to do, already connected.
+          resolve(true);
+          return;
         }
 
-        // Nothing to do, already connected.
-        return resolve(true);
-      }
+        provider.emit('connecting');
 
-      provider.emit('connecting');
-      // Check for existing channelConfig?
-      this.connector?.startAutoConnect().then(async (channelConfig) => {
+        const channelConfig = await this.connector?.startAutoConnect();
         if (this.developerMode) {
           console.debug(
             `RemoteConnection::startConnection after startAutoConnect`,
@@ -437,47 +444,47 @@ export class RemoteConnection implements ProviderService {
             deeplink: true,
           });
 
-          return resolve(true);
+          resolve(true);
         } else if (this.connector) {
           // generate new channel id
-          this.connector
-            .generateChannelId()
-            .then(({ channelId, pubKey }) => {
-              const linkParams = encodeURI(
-                `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+          try {
+            const { channelId, pubKey } =
+              await this.connector.generateChannelId();
+            const linkParams = encodeURI(
+              `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+            );
+
+            const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+            const deeplink = `metamask://connect?${linkParams}`;
+
+            if (showQRCode) {
+              this.installModal = this.options.modals.install?.({
+                link: universalLink,
+                debug: this.developerMode,
+                connectWithExtension: () => {
+                  this.options.connectWithExtensionProvider();
+                  return false;
+                },
+              });
+              // console.log('OPEN LINK QRCODE', universalLink);
+            } else {
+              console.log('OPEN LINK', universalLink);
+              Platform.getInstance().openDeeplink?.(
+                universalLink,
+                deeplink,
+                '_self',
               );
+            }
+            this.universalLink = universalLink;
+          } catch (err) {
+            this.otpAnswer = undefined;
+            this.pendingModal?.onClose?.();
+            this.installModal?.onClose?.();
+            reject(err);
+          }
 
-              const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-              const deeplink = `metamask://connect?${linkParams}`;
-
-              if (showQRCode) {
-                this.installModal = this.options.modals.install?.({
-                  link: universalLink,
-                  debug: this.developerMode,
-                  connectWithExtension: () => {
-                    this.options.connectWithExtensionProvider();
-                    return false;
-                  },
-                });
-                // console.log('OPEN LINK QRCODE', universalLink);
-              } else {
-                console.log('OPEN LINK', universalLink);
-                Platform.getInstance().openDeeplink?.(
-                  universalLink,
-                  deeplink,
-                  '_self',
-                );
-              }
-              this.universalLink = universalLink;
-            })
-            .catch((err: unknown) => {
-              this.otpAnswer = undefined;
-              this.pendingModal?.onClose?.();
-              this.installModal?.onClose?.();
-              reject(err);
-            });
-
-          this.connector.on(EventType.CLIENTS_READY, async () => {
+          // TODO can migrate to waitFor instead?
+          this.connector.once(EventType.CLIENTS_READY, async () => {
             if (this.developerMode) {
               console.debug(
                 `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
@@ -488,7 +495,8 @@ export class RemoteConnection implements ProviderService {
             resolve(true);
           });
 
-          this.connector.on(EventType.AUTHORIZED, async () => {
+          // TODO can migrate to waitFor instead?
+          this.connector.once(EventType.AUTHORIZED, async () => {
             if (this.developerMode) {
               console.debug(
                 `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
@@ -509,8 +517,10 @@ export class RemoteConnection implements ProviderService {
             this.installModal?.onClose?.();
           });
         }
+      };
 
-        return true;
+      execAsync().catch((err) => {
+        reject(err);
       });
     });
   }

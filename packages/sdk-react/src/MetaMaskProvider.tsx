@@ -113,26 +113,26 @@ const MetaMaskProviderClient = ({
       console.debug(`[MetamaskProvider] init SDK Provider trigger=${trigger}`);
     }
 
-
     const provider = sdk.getProvider();
-    provider?.on('connecting', () => {
+
+    const onConnecting = () => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on 'connecting' event.`);
       }
       setConnected(false);
       setConnecting(true);
       setError(undefined);
-    })
+    }
 
-    provider?.on('_initialized', () => {
+    const onInitialized = () => {
       if (debug) {
         console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
       }
       setConnecting(false);
-      setAccount(provider.selectedAddress || undefined);
+      setAccount(provider?.selectedAddress || undefined);
       setConnected(true);
       setError(undefined);
-    })
+    }
 
     const onConnect = (connectParam: unknown) => {
       if (debug) {
@@ -176,6 +176,9 @@ const MetaMaskProviderClient = ({
       setConnected(true);
       setError(undefined);
     }
+
+    provider?.on('_initialized', onInitialized);
+    provider?.on('connecting', onConnecting);
     provider?.on('connect', onConnect)
     provider?.on('disconnect', onDisconnect)
     provider?.on('accountsChanged', onAccountsChanged);
@@ -183,15 +186,19 @@ const MetaMaskProviderClient = ({
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent)
 
     return () => {
-      console.debug(`MetaMaskProvider::useEffect cleaning up sdk listeners`);
-      provider?.removeAllListeners();
-      sdk.removeAllListeners();
-      sdk.disconnect();
+      provider?.removeListener('_initialized', onInitialized);
+      provider?.removeListener('connecting', onConnecting);
+      provider?.removeListener('connect', onConnect)
+      provider?.removeListener('disconnect', onDisconnect)
+      provider?.removeListener('accountsChanged', onAccountsChanged);
+      provider?.removeListener('chainChanged', onChainChanged)
+      sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent)
     }
   }, [trigger, sdk, debug])
 
   useEffect( () => {
     const onProviderEvent = (accounts?: string[]) => {
+      console.info(`MetaMaskProvider::sdk on '${EventType.PROVIDER_UPDATE}' event.`, accounts)
       if(accounts?.[0]?.startsWith('0x')) {
         setConnected(true);
         setAccount(accounts?.[0]);
@@ -203,7 +210,7 @@ const MetaMaskProviderClient = ({
     return () => {
       sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);
     }
-  }, [sdk])
+  }, [sdk.provider])
 
   const onSDKStatusEvent = useCallback((_serviceStatus: ServiceStatus) => {
     if (debug) {
