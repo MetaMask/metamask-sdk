@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>MetaMask Electron</title>
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap" rel="stylesheet">
+</head>
+<style>
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+  .container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  #accountContainer {
+    margin-top: 20px;
+  }
+  #buttonContainers {
+    margin-top: 20px;
+  }
+  .button {
+    min-width: 100px;
+    height: 50px;
+    border-radius: 5px;
+    border-color: transparent;
+
+  }
+  .button.primary {
+    background-color: teal;
+    color: white
+  }
+  .button.action {
+    background-color: coral;
+    color: white;
+  }
+  .button.danger {
+    background-color: red;
+    color: white
+  }
+  #response {
+    max-width: 80%;
+    overflow: auto;
+  }
+  #otpContainer {
+    position: fixed;
+    bottom: 30px;
+    width: 100%;
+  }
+</style>
+<body>
+<div class="container">
+  <h1>MetaMask Electron Test Dapp</h1>
+
+  <div id="buttonContainers">
+    <button class="button primary" id="connectButton">Connect</button>
+    <button class="button action" id="signButton">personal_sign</button>
+    <button class="button danger" id="terminateButton">Terminate</button>
+  </div>
+
+  <div id="accountContainer">
+    <b>Account:</b><div id="account"></div>
+  </div>
+
+  <div id="chainContainer">
+    <b>Chain:</b><div id="chain"></div>
+  </div>
+
+  <div id="responseContainer">
+    <b>Response:</b><div id="response"></div>
+  </div>
+  <canvas id="qrCode"></canvas>
+  <div id="otpContainer">
+    <h1>OTP:</h1>
+    <h1 id="otp"></h1>
+  </div>
+</div>
+
+</body>
+<script src="./sdk.js"></script>
+</html>

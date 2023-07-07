@@ -1,0 +1,15 @@
+{
+  "name": "electronjs",
+  "packageManager": "yarn@3.5.1",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^25.2.0"
+  },
+  "scripts": {
+    "start": "electron .",
+    "allow-scripts": ""
+  },
+  "dependencies": {
+    "@metamask/sdk": "0.4.2"
+  }
+}
