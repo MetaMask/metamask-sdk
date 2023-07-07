@@ -2,6 +2,7 @@ import {
   MetaMaskButton, useAccount
 } from '@metamask/sdk-react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { WalletActions } from '../components/WalletActions';
 
 export default function UIKitPage() {
@@ -17,6 +18,7 @@ export default function UIKitPage() {
       </Head>
       <header className="App-header">
         <h1 className="text-3xl font-bold underline">Testing UI Kits</h1>
+        <Link href={'/'}>Index Page</Link>
         <div>
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
