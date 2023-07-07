@@ -428,7 +428,9 @@ export class RemoteConnection implements ProviderService {
           resolve(true);
           return;
         } else if (isConnected) {
-          this.showInstallModal({ link: this.getUniversalLink() });
+          if (!platform.isSecure()) {
+            this.showInstallModal({ link: this.getUniversalLink() });
+          }
           resolve(true);
           return;
         }
