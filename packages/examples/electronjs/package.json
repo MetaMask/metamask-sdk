@@ -10,6 +10,7 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "0.4.2"
+    "@metamask/sdk": "0.4.2",
+    "qrcode": "^1.5.3"
   }
 }
