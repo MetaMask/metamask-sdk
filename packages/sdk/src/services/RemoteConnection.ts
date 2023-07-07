@@ -1,23 +1,23 @@
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import {
   AutoConnectOptions,
+  ChannelConfig,
   CommunicationLayerPreference,
   DappMetadata,
   DisconnectOptions,
   ECIESProps,
   EventType,
   KeyInfo,
-  ChannelConfig,
+  PlatformType,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
-  PlatformType,
 } from '@metamask/sdk-communication-layer';
+import packageJson from '../../package.json';
 import { Platform } from '../Platform/Platfform';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
-import packageJson from '../../package.json';
 import { Ethereum } from './Ethereum';
 import { ProviderService } from './ProviderService';
 
@@ -259,7 +259,7 @@ export class RemoteConnection implements ProviderService {
       }
     });
 
-    this.connector.on(EventType.TERMINATE, () => {
+    this.connector.once(EventType.TERMINATE, () => {
       if (platform.isBrowser()) {
         // TODO use a modal or let user customize messsage instead
         // eslint-disable-next-line no-alert
@@ -409,6 +409,8 @@ export class RemoteConnection implements ProviderService {
             );
           }
 
+          // Necessary on secure device because ready doesn't mean the wallet is actually live.
+          // handlesecure reconnection will deeplink into it to make sure to wake it up.
           const channelConfig = this.connector.getChannelConfig();
           if (channelConfig) {
             this.handleSecureReconnection({
@@ -423,6 +425,10 @@ export class RemoteConnection implements ProviderService {
           }
 
           // Nothing to do, already connected.
+          resolve(true);
+          return;
+        } else if (isConnected) {
+          this.showInstallModal({ link: this.getUniversalLink() });
           resolve(true);
           return;
         }
@@ -458,14 +464,7 @@ export class RemoteConnection implements ProviderService {
             const deeplink = `metamask://connect?${linkParams}`;
 
             if (showQRCode) {
-              this.installModal = this.options.modals.install?.({
-                link: universalLink,
-                debug: this.developerMode,
-                connectWithExtension: () => {
-                  this.options.connectWithExtensionProvider();
-                  return false;
-                },
-              });
+              this.showInstallModal({ link: universalLink });
               // console.log('OPEN LINK QRCODE', universalLink);
             } else {
               console.log('OPEN LINK', universalLink);
@@ -516,12 +515,32 @@ export class RemoteConnection implements ProviderService {
             this.pendingModal?.onClose?.();
             this.installModal?.onClose?.();
           });
+
+          this.connector.once(EventType.TERMINATE_DAPP, () => {
+            // check for terminateed status
+            // close modals
+            this.pendingModal?.onClose?.();
+            this.installModal?.onClose?.();
+
+            reject(new Error('connection terminated'));
+          });
         }
       };
 
       execAsync().catch((err) => {
         reject(err);
       });
+    });
+  }
+
+  showInstallModal({ link }: { link: string }) {
+    this.installModal = this.options.modals.install?.({
+      link,
+      debug: this.developerMode,
+      connectWithExtension: () => {
+        this.options.connectWithExtensionProvider();
+        return false;
+      },
     });
   }
 
