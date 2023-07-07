@@ -3,11 +3,11 @@ require('dotenv').config();
 const crypto = require('crypto');
 const http = require('http');
 const fastify = require('fastify')({ logger: true });
-const LRU = require('lru-cache');
+const { LRUCache } = require('lru-cache');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const userIdHashCache = new LRU({
+const userIdHashCache = new LRUCache({
   max: 5000,
   maxAge: 1000 * 60 * 60 * 24,
 });
@@ -32,12 +32,11 @@ const io = new Server(server, {
   },
 });
 
-fastify.register(require('fastify-cors'), {
+fastify.register(require('@fastify/cors'), {
   origin: '*',
 });
-
-fastify.register(require('fastify-helmet'));
-fastify.register(require('fastify-formbody'));
+fastify.register(require('@fastify/helmet'));
+fastify.register(require('@fastify/formbody'));
 
 const uuid = require('uuid');
 
@@ -86,29 +85,26 @@ fastify.post('/debug', async (request, reply) => {
       },
     };
 
-    const properties = [
-      'url',
-      'title',
-      'platform',
-      'commLayer',
-      'commLayerVersion',
-      'sdkVersion',
-      'walletVersion',
-    ];
-
-    for (const property of properties) {
-      if (body[property]) {
+    for (const property in body) {
+      if (
+        Object.prototype.hasOwnProperty.call(body, property) &&
+        body[property]
+      ) {
         event.properties[property] = body[property];
       }
     }
 
+    if (isDevelopment) {
+      console.log('EVENT object:', event);
+    }
+
     analytics.track(event, function (err, batch) {
       if (isDevelopment) {
-        console.log(batch);
+        console.log('SEGMENT BATCH', batch);
       }
 
       if (err) {
-        console.log(err);
+        console.log('SEGMENT ERROR:', err);
       }
     });
 
@@ -286,7 +282,7 @@ process.on('SIGTERM', cleanupAndExit);
 
 const start = async () => {
   try {
-    await fastify.listen(port);
+    await fastify.listen({ port });
     console.log(`server listening on ${fastify.server.address().port}`);
   } catch (err) {
     console.error('Error starting the server:', err);
