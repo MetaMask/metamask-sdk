@@ -346,6 +346,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.remoteConnection?.disconnect();
   }
 
+  isAuthorized() {
+    this.remoteConnection?.isAuthorized();
+  }
+
   terminate() {
     this.emit(EventType.PROVIDER_UPDATE, []);
 
@@ -363,12 +367,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     // Only disconnect if the connection is active
-    if (this.remoteConnection?.isConnected()) {
-      this.remoteConnection?.disconnect({
-        terminate: true,
-        sendMessage: true,
-      });
-    }
+    this.remoteConnection?.disconnect({
+      terminate: true,
+      sendMessage: true,
+    });
   }
 
   isInitialized() {
@@ -385,7 +387,11 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   // Return the ethereum provider object
-  getProvider() {
+  getProvider(): SDKProvider {
+    if (!this.activeProvider) {
+      throw new Error(`SDK state invalid -- undefined provider`);
+    }
+
     return this.activeProvider;
   }
 
