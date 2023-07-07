@@ -71,6 +71,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private _initialized = false;
 
+  private sdkInitPromise?: Promise<void>;
+
   private debug = false;
 
   constructor(
@@ -105,19 +107,44 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this.options = options;
-    // Currently disabled otherwise it breaks compability with older sdk version.
-    // this.initialize(this.options).then(() => {
-    //   if (this.debug) {
-    //     console.debug(`sdk initialized`, this.dappMetadata);
-    //   }
-    // });
 
-    this.initialize(this.options).catch((err) => {
+    console.info(`MetaMaskSDK::constructor()`, this.options);
+
+    this.init().catch((err) => {
       console.error(`MetaMaskSDK error during initialization`, err);
     });
   }
 
-  public async initialize(options: MetaMaskSDKOptions) {
+  public async init() {
+    if (this._initialized) {
+      if (this.debug) {
+        console.info(`SDK::init() already initialized`);
+      }
+      return Promise.resolve();
+    } else if (this.sdkInitPromise) {
+      if (this.debug) {
+        console.info(`SDK::init() already initializing`);
+      }
+      return this.sdkInitPromise;
+    }
+
+    console.debug(`SDK::init()`, this.sdkInitPromise);
+
+    // Prevent multiple instances of the SDK to be initialized at the same time
+    this.sdkInitPromise = new Promise((resolve, reject) => {
+      this._doInit()
+        .then(() => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+
+    return this.sdkInitPromise;
+  }
+
+  private async _doInit() {
     const {
       dappMetadata,
       // Provider
@@ -148,17 +175,12 @@ export class MetaMaskSDK extends EventEmitter2 {
       // persistence settings
       storage,
       logging = {},
-    } = options;
-
-    if (this._initialized) {
-      console.info(`SDK::initialize() already initialized.`);
-      return;
-    }
+    } = this.options;
 
     const developerMode = logging?.developerMode === true;
     this.debug = logging?.sdk || developerMode;
     if (this.debug) {
-      console.debug(`SDK::initialize() now`, options);
+      console.debug(`SDK::_doInit() now`, this.options);
     }
 
     // Make sure to enable all logs if developer mode is on
@@ -229,22 +251,8 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage,
       autoConnect,
       logging: runtimeLogging,
-      connectWithExtensionProvider: async () => {
-        if (this.debug) {
-          console.debug(`SDK::connectWithExtensionProvider()`);
-        }
-        delete window.ethereum;
-        // save a copy of the instance before it gets overwritten
-        this.sdkProvider = this.activeProvider;
-        this.activeProvider = window.extension as any;
-        // Set extension provider as default on window
-        window.ethereum = window.extension as any;
-        const accounts = await window.ethereum?.request({
-          method: 'eth_requestAccounts',
-        });
-        this.extensionActive = true;
-        this.emit(EventType.PROVIDER_UPDATE, accounts);
-      },
+      connectWithExtensionProvider:
+        this.connectWithExtensionProvider.bind(this),
       modals: {
         ...modals,
         onPendingModalDisconnect: this.terminate.bind(this),
@@ -309,6 +317,23 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
   }
 
+  private async connectWithExtensionProvider() {
+    if (this.debug) {
+      console.debug(`SDK::connectWithExtensionProvider()`);
+    }
+    delete window.ethereum;
+    // save a copy of the instance before it gets overwritten
+    this.sdkProvider = this.activeProvider;
+    this.activeProvider = window.extension as any;
+    // Set extension provider as default on window
+    window.ethereum = window.extension as any;
+    const accounts = await window.ethereum?.request({
+      method: 'eth_requestAccounts',
+    });
+    this.extensionActive = true;
+    this.emit(EventType.PROVIDER_UPDATE, accounts);
+  }
+
   resume() {
     if (!this.remoteConnection?.getConnector()?.isReady()) {
       if (this.debug) {
@@ -323,14 +348,30 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
+    this.emit(EventType.PROVIDER_UPDATE, []);
+
+    // check if connected with extension provider
+    // if it is, disconnect from it and switch back to injected provider
+    if (this.extensionActive) {
+      // It means connected from extension provider
+      this.activeProvider?.emit('disconnect');
+      // Re-use default extension provider as default
+      this.activeProvider = this.sdkProvider;
+      window.ethereum = this.activeProvider;
+      this.extensionActive = false;
+    }
+
     if (this.debug) {
       console.debug(`SDK::terminate()`, this.remoteConnection);
     }
 
-    this.remoteConnection?.disconnect({
-      terminate: true,
-      sendMessage: true,
-    });
+    // Only disconnect if the connection is active
+    if (this.remoteConnection?.isConnected()) {
+      this.remoteConnection?.disconnect({
+        terminate: true,
+        sendMessage: true,
+      });
+    }
   }
 
   isInitialized() {
@@ -410,7 +451,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 }
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
     ReactNativeWebView?: WebView;
     sdkProvider: SDKProvider;
