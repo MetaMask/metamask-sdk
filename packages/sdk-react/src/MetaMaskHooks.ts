@@ -1,19 +1,29 @@
 import { useContext, useState } from 'react';
 import {
   Chain,
-  useConnect as useConnectWagmi,
   useConfig,
   useNetwork,
+  useAccount as useAccountWagmi,
+  useConnect as useConnectWagmi,
 } from 'wagmi';
 import { SDKContext } from './MetaMaskProvider';
 
 export * from 'wagmi';
 
+export const useAccount = () => {
+  const wagmiRes = useAccountWagmi();
+  console.debug(`useAccount wagmi`, wagmiRes);
+  return wagmiRes;
+}
+
 export const useConnect = () => {
   const config = useConfig();
+  console.debug(`initialize useConnect`, config.connectors)
   const connector = config.connectors[0];
 
-  return useConnectWagmi({ connector });
+  const wagmiRes = useConnectWagmi({ connector });
+  console.debug(`useConnect wagmi`, wagmiRes)
+  return wagmiRes;
 };
 
 interface AddEthereumChainParameter {
