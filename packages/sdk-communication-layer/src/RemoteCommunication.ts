@@ -758,7 +758,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   sendMessage(message: CommunicationLayerMessage): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.debug) {
         console.log(
           `RemoteCommunication::${this.context}::sendMessage paused=${
@@ -790,17 +790,27 @@ export class RemoteCommunication extends EventEmitter2 {
               `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
             );
           }
-          await this.handleAuthorization(message);
-          resolve();
+
+          try {
+            await this.handleAuthorization(message);
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
         });
       } else {
         // Send the message or wait for authorization
-        this.handleAuthorization(message).catch((err) => {
-          console.error(
-            `RemoteCommunication::${this.context}::sendMessage  ERROR`,
-            err,
-          );
-        });
+        this.handleAuthorization(message)
+          .then(() => {
+            resolve();
+          })
+          .catch((err) => {
+            console.error(
+              `RemoteCommunication::${this.context}::sendMessage  ERROR`,
+              err,
+            );
+            reject(err);
+          });
       }
     });
   }
