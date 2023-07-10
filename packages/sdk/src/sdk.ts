@@ -216,19 +216,15 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage.storageManager = getStorageManager(storage);
     }
 
-    if (platform.isBrowser()) {
-      if (!dappMetadata.base64Icon) {
-        // Try to extract default icon
-        if (platform.isBrowser()) {
-          const favicon = extractFavicon();
-          if (favicon) {
-            try {
-              const faviconUri = await getBase64FromUrl(favicon);
-              dappMetadata.base64Icon = faviconUri;
-            } catch (err) {
-              // Ignore favicon error.
-            }
-          }
+    if (platform.isBrowser() && !dappMetadata.base64Icon) {
+      // Try to extract default icon
+      const favicon = extractFavicon();
+      if (favicon) {
+        try {
+          const faviconUri = await getBase64FromUrl(favicon);
+          dappMetadata.base64Icon = faviconUri;
+        } catch (err) {
+          // Ignore favicon error.
         }
       }
     }
