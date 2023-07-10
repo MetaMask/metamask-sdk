@@ -379,6 +379,11 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   terminate() {
+    // nothing to do on inapp browser.
+    if (Platform.getInstance().isMetaMaskMobileWebView()) {
+      return;
+    }
+
     this.emit(EventType.PROVIDER_UPDATE, []);
 
     // check if connected with extension provider
