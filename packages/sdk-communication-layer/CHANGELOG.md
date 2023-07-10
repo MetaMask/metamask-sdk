@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.5.0]
-### Uncategorized
+### Added
 - feat: improved event tracking for extension and inappbrowser ([#200](https://github.com/MetaMask/metamask-sdk/pull/200))
 - feat: export sendanalytics from comm layer ([#198](https://github.com/MetaMask/metamask-sdk/pull/198))
 - fix: possible dangling promise on sendMessage (wallet side) ([#194](https://github.com/MetaMask/metamask-sdk/pull/194))
