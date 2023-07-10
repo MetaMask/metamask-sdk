@@ -12,17 +12,14 @@ export * from 'wagmi';
 
 export const useAccount = () => {
   const wagmiRes = useAccountWagmi();
-  console.debug(`useAccount wagmi`, wagmiRes);
   return wagmiRes;
 }
 
 export const useConnect = () => {
   const config = useConfig();
-  console.debug(`initialize useConnect`, config.connectors)
   const connector = config.connectors[0];
 
   const wagmiRes = useConnectWagmi({ connector });
-  console.debug(`useConnect wagmi`, wagmiRes)
   return wagmiRes;
 };
 
