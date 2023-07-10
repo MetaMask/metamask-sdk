@@ -240,9 +240,6 @@ Props) => {
     setModalOpen(true);
   };
 
-  console.debug(
-    `render metamaskbutton isConnected=${isConnected} wrongNetwork=${wrongNetwork}}`,
-  );
   const connectedAndRightNetwork = isConnected && !wrongNetwork;
 
   return (
