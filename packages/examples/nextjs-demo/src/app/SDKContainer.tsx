@@ -1,13 +1,12 @@
 "use client"; // This is a client component 👈🏽
-import { MetaMaskInpageProvider } from "@metamask/providers";
-import { MetaMaskSDK } from '@metamask/sdk';
+import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
 import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
 declare global {
   interface Window {
-    ethereum?: MetaMaskInpageProvider;
+    ethereum?: SDKProvider;
   }
 }
 
@@ -40,26 +39,30 @@ export default function SDKContainer() {
   };
 
   useEffect(() => {
-    const clientSDK = new MetaMaskSDK({
-      useDeeplink: false,
-      communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
-      forceInjectProvider: true,
-      forceDeleteProvider: true,
-      autoConnect: {
-        enable: false
-      },
-      dappMetadata: {
-        name: "NEXTJS demo",
-        url: window.location.host,
-      },
-      logging: {
-        developerMode: false,
-      },
-      storage: {
-        enabled: true,
-      }
-    });
-    setSDK(clientSDK);
+    const doAsync = async () => {
+      const clientSDK = new MetaMaskSDK({
+        useDeeplink: false,
+        communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
+        forceInjectProvider: true,
+        forceDeleteProvider: true,
+        autoConnect: {
+          enable: false
+        },
+        dappMetadata: {
+          name: "NEXTJS demo",
+          url: window.location.host,
+        },
+        logging: {
+          developerMode: false,
+        },
+        storage: {
+          enabled: true,
+        }
+      });
+      await clientSDK.init();
+      setSDK(clientSDK);
+    }
+    doAsync();
   }, [])
 
   useEffect(() => {
