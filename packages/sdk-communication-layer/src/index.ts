@@ -23,6 +23,7 @@ import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
+import { SendAnalytics } from './Analytics';
 
 export type {
   WebRTCLib,
@@ -45,6 +46,7 @@ export type {
 export {
   RemoteCommunication,
   PlatformType,
+  SendAnalytics,
   ConnectionStatus,
   EventType,
   AutoConnectType,
