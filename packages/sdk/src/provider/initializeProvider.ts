@@ -110,7 +110,14 @@ const initializeProvider = ({
       );
     }
 
-    return await f(...args);
+    const rpcResponse = await f(...args);
+    if (debug) {
+      console.debug(
+        `initializeProvider::sendRequest() method=${method} rpcResponse:`,
+        rpcResponse,
+      );
+    }
+    return rpcResponse;
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask

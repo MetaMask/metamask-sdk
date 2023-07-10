@@ -21,4 +21,6 @@ export enum EventType {
   CONNECTION_STATUS = 'connection_status',
   MESSAGE = 'message',
   TERMINATE = 'terminate',
+  // Fired when the dapp client terminates the connection
+  TERMINATE_DAPP = 'terminate_dapp',
 }
