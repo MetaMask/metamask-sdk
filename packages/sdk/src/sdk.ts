@@ -6,9 +6,13 @@ import {
   EventType,
   ServiceStatus,
   StorageManagerProps,
+  SendAnalytics,
+  TrackingEvents,
+  DEFAULT_SERVER_URL,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
+import { Analytics } from './constants';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
@@ -52,6 +56,8 @@ export interface MetaMaskSDKOptions {
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
+  // _source to track external integrations (eg: wagmi)
+  _source?: string;
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -162,6 +168,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       // WebRTC
       webRTCLib,
       transports,
+      _source,
       timer,
       // Debugging
       enableDebug = true,
@@ -237,6 +244,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       communicationLayerPreference,
       dappMetadata,
       webRTCLib,
+      _source,
       enableDebug,
       timer,
       transports,
@@ -325,6 +333,20 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
     this.extensionActive = true;
     this.emit(EventType.PROVIDER_UPDATE, accounts);
+    SendAnalytics(
+      {
+        id: Analytics.DEFAULT_ID,
+        event: TrackingEvents.SDK_USE_EXTENSION,
+        commLayerVersion: Analytics.NO_VERSION,
+        originationInfo: {
+          url: this.dappMetadata?.url ?? '',
+          title: this.dappMetadata?.name ?? '',
+          platform: Platform.getInstance().getPlatformType(),
+          source: this.options._source,
+        },
+      },
+      this.options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+    );
   }
 
   resume() {
@@ -350,8 +372,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     // check if connected with extension provider
     // if it is, disconnect from it and switch back to injected provider
     if (this.extensionActive) {
-      // It means connected from extension provider
-      this.activeProvider?.emit('disconnect');
       // Re-use default extension provider as default
       this.activeProvider = this.sdkProvider;
       window.ethereum = this.activeProvider;

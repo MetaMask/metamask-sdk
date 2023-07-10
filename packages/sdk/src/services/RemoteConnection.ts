@@ -28,6 +28,7 @@ export interface RemoteConnectionProps {
   };
   communicationLayerPreference: CommunicationLayerPreference;
   dappMetadata?: DappMetadata;
+  _source?: string;
   enableDebug?: boolean;
   transports?: string[];
   webRTCLib?: WebRTCLib;
@@ -105,6 +106,7 @@ export class RemoteConnection implements ProviderService {
       webRTCLib,
       communicationLayerPreference,
       transports,
+      _source,
       enableDebug = false,
       timer,
       ecies,
@@ -129,7 +131,7 @@ export class RemoteConnection implements ProviderService {
       communicationLayerPreference,
       transports,
       webRTCLib,
-      dappMetadata,
+      dappMetadata: { ...dappMetadata, source: _source },
       analytics: enableDebug,
       communicationServerUrl,
       sdkVersion: packageJson.version,

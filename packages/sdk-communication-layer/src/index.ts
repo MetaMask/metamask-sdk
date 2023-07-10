@@ -24,6 +24,8 @@ import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
 import { SendAnalytics } from './Analytics';
+import { TrackingEvents } from './types/TrackingEvent';
+import { DEFAULT_SERVER_URL } from './config';
 
 export type {
   WebRTCLib,
@@ -45,9 +47,11 @@ export type {
 
 export {
   RemoteCommunication,
+  DEFAULT_SERVER_URL,
   PlatformType,
   SendAnalytics,
   ConnectionStatus,
+  TrackingEvents,
   EventType,
   AutoConnectType,
   SocketService,

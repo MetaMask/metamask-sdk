@@ -19,7 +19,7 @@ import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
-import { DappMetadata } from './types/DappMetadata';
+import { DappMetadataWithSource } from './types/DappMetadata';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { MessageType } from './types/MessageType';
 import { OriginatorInfo } from './types/OriginatorInfo';
@@ -40,7 +40,7 @@ export interface RemoteCommunicationProps {
   otherPublicKey?: string;
   webRTCLib?: WebRTCLib;
   reconnect?: boolean;
-  dappMetadata?: DappMetadata;
+  dappMetadata?: DappMetadataWithSource;
   walletInfo?: WalletInfo;
   transports?: string[];
   analytics?: boolean;
@@ -86,7 +86,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private originatorInfoSent = false;
 
-  private dappMetadata?: DappMetadata;
+  private dappMetadata?: DappMetadataWithSource;
 
   private communicationServerUrl: string;
 
@@ -240,6 +240,7 @@ export class RemoteCommunication extends EventEmitter2 {
     const originatorInfo: OriginatorInfo = {
       url,
       title,
+      source: this.dappMetadata?.source,
       icon: this.dappMetadata?.base64Icon,
       platform: this.platformType,
       apiVersion: packageJson.version,
