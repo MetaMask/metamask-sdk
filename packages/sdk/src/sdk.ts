@@ -23,6 +23,8 @@ import { getStorageManager } from './storage-manager/getStorageManager';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import { extractFavicon } from './utils/extractFavicon';
+import { getBase64FromUrl } from './utils/getBase64FromUrl';
 
 export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
@@ -216,22 +218,17 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage.storageManager = getStorageManager(storage);
     }
 
-    if (platform.isBrowser()) {
-      // TODO can be re-enabled once init can be async but would break backward compatibility
-      // if (!dappMetadata.base64Icon) {
-      //   // Try to extract default icon
-      //   if (platform.isBrowser()) {
-      //     const favicon = extractFavicon();
-      //     if (favicon) {
-      //       try {
-      //         const faviconUri = await getBase64FromUrl(favicon);
-      //         dappMetadata.base64Icon = faviconUri;
-      //       } catch (err) {
-      //         // Ignore favicon error.
-      //       }
-      //     }
-      //   }
-      // }
+    if (platform.isBrowser() && !dappMetadata.base64Icon) {
+      // Try to extract default icon
+      const favicon = extractFavicon();
+      if (favicon) {
+        try {
+          const faviconUri = await getBase64FromUrl(favicon);
+          dappMetadata.base64Icon = faviconUri;
+        } catch (err) {
+          // Ignore favicon error.
+        }
+      }
     }
 
     this.dappMetadata = dappMetadata;
