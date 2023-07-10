@@ -108,8 +108,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
 
-    console.info(`MetaMaskSDK::constructor()`, this.options);
-
     this.init().catch((err) => {
       console.error(`MetaMaskSDK error during initialization`, err);
     });
