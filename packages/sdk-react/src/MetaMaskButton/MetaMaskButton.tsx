@@ -256,7 +256,7 @@ Props) => {
           isConnected
             ? openModal
             :  () => {
-                connect({chainId: 1});
+                connect(); // TODO manage multichain.
               }
         }
       >
