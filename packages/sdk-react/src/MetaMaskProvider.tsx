@@ -47,11 +47,13 @@ const WagmiWrapper = ({
   children,
   networks,
   sdk,
+  debug,
   connectors = [],
 }: {
   children: React.ReactNode;
   networks?: Chain[];
   sdk?: MetaMaskSDK;
+  debug?: boolean;
   connectors?: Connector[];
 }) => {
   if (!sdk) {
@@ -62,7 +64,7 @@ const WagmiWrapper = ({
   const validConnectors: Connector[] = [
     new MetaMaskConnector({
       chains: networks,
-      options: { sdk },
+      options: { sdk, debug },
     }),
     ...connectors,
   ];
@@ -262,8 +264,7 @@ const MetaMaskProviderClient = ({
     <SDKContext.Provider
       value={{ sdk, connected, connecting, account, chainId, error, status }}
     >
-      <div>trigger: {trigger}</div>
-      <WagmiWrapper sdk={sdk}>{children}</WagmiWrapper>
+      <WagmiWrapper sdk={sdk} debug={debug}>{children}</WagmiWrapper>
     </SDKContext.Provider>
   );
 };
