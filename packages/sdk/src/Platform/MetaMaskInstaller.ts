@@ -78,8 +78,6 @@ export class MetaMaskInstaller {
 
     // If it's running on our mobile in-app browser but communication is still not working
     if (platformType === PlatformType.MetaMaskMobileWebview) {
-      // eslint-disable-next-line no-alert
-      alert('Please save your seedphrase and try to reinstall MetaMask Mobile');
       return false;
     }
 

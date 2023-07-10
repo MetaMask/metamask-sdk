@@ -208,21 +208,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     const platformType = platform.getPlatformType();
 
-    // Check if window contain an existing provider extension.
-    // Replace it and keep track of metamask extension.
-
-    if (window.ethereum && !platform.isMetaMaskMobileWebView()) {
-      // backup Metamask extension provider
-      if (window.ethereum.isMetaMask) {
-        // Backup the browser extension provider
-        window.extension = window.ethereum;
-      }
-      Ethereum.destroy();
-      delete window.ethereum;
-    } else if (platform.isMetaMaskMobileWebView()) {
-      this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
-    }
-
     if (storage?.enabled === true && !storage.storageManager) {
       storage.storageManager = getStorageManager(storage);
     }
@@ -241,6 +226,22 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this.dappMetadata = dappMetadata;
+
+    if (window.ethereum && !platform.isMetaMaskMobileWebView()) {
+      // Check if window contain an existing provider extension.
+      // Replace it and keep track of metamask extension.
+      if (window.ethereum.isMetaMask) {
+        // Backup the browser extension provider
+        window.extension = window.ethereum;
+      }
+      Ethereum.destroy();
+      delete window.ethereum;
+    } else if (platform.isMetaMaskMobileWebView()) {
+      this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
+      this.activeProvider = window.ethereum;
+      this._initialized = true;
+      return;
+    }
 
     this.remoteConnection = new RemoteConnection({
       communicationLayerPreference,
@@ -440,7 +441,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   // TODO: remove once reaching sdk 1.0
   // Not exposed. Should only be used during dev.
   _testStorage() {
-    return this.remoteConnection?.getConnector()?.testStorage();
+    // return this.remoteConnection?.getConnector()?.testStorage();
+    return Platform.getInstance().getPlatformType();
   }
 
   _getChannelConfig() {
