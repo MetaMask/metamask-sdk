@@ -932,6 +932,10 @@ export class RemoteCommunication extends EventEmitter2 {
     this.setConnectionStatus(ConnectionStatus.PAUSED);
   }
 
+  getVersion() {
+    return packageJson.version;
+  }
+
   resume() {
     if (this.debug) {
       console.debug(`RemoteCommunication::resume() channel=${this.channelId}`);
