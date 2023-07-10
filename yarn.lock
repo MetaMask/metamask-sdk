@@ -3641,7 +3641,6 @@ __metadata:
     "@rollup/plugin-commonjs": ^22.0.1
     "@rollup/plugin-node-resolve": ^13.3.0
     "@rollup/plugin-typescript": ^8.3.3
-    "@tanstack/react-query-devtools": ^4.29.19
     "@types/jest": ^29.5.1
     "@types/mersenne-twister": ^1.1.2
     "@types/react": 18.0.14
@@ -5019,15 +5018,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/match-sorter-utils@npm:^8.7.0":
-  version: 8.8.4
-  resolution: "@tanstack/match-sorter-utils@npm:8.8.4"
-  dependencies:
-    remove-accents: 0.4.2
-  checksum: d005f500754f52ef94966cbbe4217f26e7e3c07291faa2578b06bca9a5abe01689569994c37a1d01c6e783addf5ffbb28fa82eba7961d36eabf43ec43d1e496b
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:4.29.7":
   version: 4.29.7
   resolution: "@tanstack/query-core@npm:4.29.7"
@@ -5050,21 +5040,6 @@ __metadata:
   dependencies:
     "@tanstack/query-persist-client-core": 4.29.7
   checksum: 135d50e4afc43e3a362a4dfaaeb3abf4b39102af9e4b6077f523d6722b94948f3791397618a9c6a0175dbd8ec2e60edf6a008e9541f1e0f792b518ce1ae4b423
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-devtools@npm:^4.29.19":
-  version: 4.29.19
-  resolution: "@tanstack/react-query-devtools@npm:4.29.19"
-  dependencies:
-    "@tanstack/match-sorter-utils": ^8.7.0
-    superjson: ^1.10.0
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    "@tanstack/react-query": 4.29.19
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: f077028c109da225b8e8e907a8fb4ad47d3049f6f5d16e5613adb135c531abf62c8975384edbb4d502bb064c98c3c513ee4f3df7c686198e644808311145e79c
   languageName: node
   linkType: hard
 
@@ -9256,15 +9231,6 @@ __metadata:
   version: 0.4.2
   resolution: "cookie@npm:0.4.2"
   checksum: a00833c998bedf8e787b4c342defe5fa419abd96b32f4464f718b91022586b8f1bafbddd499288e75c037642493c83083da426c6a9080d309e3bd90fd11baa9b
-  languageName: node
-  linkType: hard
-
-"copy-anything@npm:^3.0.2":
-  version: 3.0.5
-  resolution: "copy-anything@npm:3.0.5"
-  dependencies:
-    is-what: ^4.1.8
-  checksum: d39f6601c16b7cbd81cdb1c1f40f2bf0f2ca0297601cf7bfbb4ef1d85374a6a89c559502329f5bada36604464df17623e111fe19a9bb0c3f6b1c92fe2cbe972f
   languageName: node
   linkType: hard
 
@@ -13939,13 +13905,6 @@ __metadata:
     call-bind: ^1.0.2
     get-intrinsic: ^1.1.1
   checksum: 5d8698d1fa599a0635d7ca85be9c26d547b317ed8fd83fc75f03efbe75d50001b5eececb1e9971de85fcde84f69ae6f8346bc92d20d55d46201d328e4c74a367
-  languageName: node
-  linkType: hard
-
-"is-what@npm:^4.1.8":
-  version: 4.1.15
-  resolution: "is-what@npm:4.1.15"
-  checksum: fe27f6cd4af41be59a60caf46ec09e3071bcc69b9b12a7c871c90f54360edb6d0bc7240cb944a251fb0afa3d35635d1cecea9e70709876b368a8285128d70a89
   languageName: node
   linkType: hard
 
@@ -19609,13 +19568,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"remove-accents@npm:0.4.2":
-  version: 0.4.2
-  resolution: "remove-accents@npm:0.4.2"
-  checksum: 84a6988555dea24115e2d1954db99509588d43fe55a1590f0b5894802776f7b488b3151c37ceb9e4f4b646f26b80b7325dcea2fae58bc3865df146e1fa606711
-  languageName: node
-  linkType: hard
-
 "remove-trailing-slash@npm:^0.1.0":
   version: 0.1.1
   resolution: "remove-trailing-slash@npm:0.1.1"
@@ -21378,15 +21330,6 @@ __metadata:
     sucrase: bin/sucrase
     sucrase-node: bin/sucrase-node
   checksum: 79f760aef513adcf22b882d43100296a8afa7f307acef3e8803304b763484cf138a3e2cebc498a6791110ab20c7b8deba097f6ce82f812ca8f1723e3440e5c95
-  languageName: node
-  linkType: hard
-
-"superjson@npm:^1.10.0":
-  version: 1.12.4
-  resolution: "superjson@npm:1.12.4"
-  dependencies:
-    copy-anything: ^3.0.2
-  checksum: fcf37714f734cd51af018b78fd7f630952a0682fc3cb060d00b824e5d0cd49f0206b8e23829469c99972fd7fcd6e468b9492abb1c4e258ea5ec7f45c345a56f2
   languageName: node
   linkType: hard
 
