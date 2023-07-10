@@ -59,7 +59,7 @@ const MetaMaskButton = ({
   wrongNetworkComponent,
   wrongNetworkText = 'Switch network',
   connectedComponent,
-}: // connectedType = 'network-account-balance',
+}: // connectedType = 'network-account-balance', // keep for reference and future implementation
 Props) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
