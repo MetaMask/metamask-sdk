@@ -211,7 +211,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Check if window contain an existing provider extension.
     // Replace it and keep track of metamask extension.
 
-    if (window.ethereum) {
+    if (window.ethereum && !platform.isMetaMaskMobileWebView()) {
       // backup Metamask extension provider
       if (window.ethereum.isMetaMask) {
         // Backup the browser extension provider
@@ -219,6 +219,8 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
       Ethereum.destroy();
       delete window.ethereum;
+    } else if (platform.isMetaMaskMobileWebView()) {
+      this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
     }
 
     if (storage?.enabled === true && !storage.storageManager) {
@@ -333,10 +335,19 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
     this.extensionActive = true;
     this.emit(EventType.PROVIDER_UPDATE, accounts);
+    this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
+  }
+
+  private sendSDKAnalytics(event: TrackingEvents) {
+    if (!this.options.enableDebug) {
+      return;
+    }
+
+    const url = this.options.communicationServerUrl ?? DEFAULT_SERVER_URL;
     SendAnalytics(
       {
         id: Analytics.DEFAULT_ID,
-        event: TrackingEvents.SDK_USE_EXTENSION,
+        event,
         commLayerVersion: Analytics.NO_VERSION,
         originationInfo: {
           url: this.dappMetadata?.url ?? '',
@@ -345,7 +356,7 @@ export class MetaMaskSDK extends EventEmitter2 {
           source: this.options._source,
         },
       },
-      this.options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+      url,
     );
   }
 
