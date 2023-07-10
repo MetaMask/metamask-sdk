@@ -118,7 +118,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       if (this.debug) {
         console.info(`SDK::init() already initialized`);
       }
-      return Promise.resolve();
+      return this.sdkInitPromise;
     } else if (this.sdkInitPromise) {
       if (this.debug) {
         console.info(`SDK::init() already initializing`);
@@ -126,18 +126,14 @@ export class MetaMaskSDK extends EventEmitter2 {
       return this.sdkInitPromise;
     }
 
-    console.debug(`SDK::init()`, this.sdkInitPromise);
-
     // Prevent multiple instances of the SDK to be initialized at the same time
-    this.sdkInitPromise = new Promise((resolve, reject) => {
-      this._doInit()
-        .then(() => {
-          resolve();
-        })
-        .catch((err) => {
-          reject(err);
-        });
-    });
+    try {
+      this.sdkInitPromise = this._doInit();
+      await this.sdkInitPromise;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
 
     return this.sdkInitPromise;
   }
