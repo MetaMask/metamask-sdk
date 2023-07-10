@@ -78,7 +78,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   constructor(
     options: MetaMaskSDKOptions = {
       storage: {
-        enabled: false,
+        enabled: true,
       },
       injectProvider: true,
       forceInjectProvider: false,
@@ -167,7 +167,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       autoConnect,
       modals,
       // persistence settings
-      storage,
+      storage = {
+        enabled: true,
+      },
       logging = {},
     } = this.options;
 
