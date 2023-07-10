@@ -972,6 +972,9 @@ export class RemoteCommunication extends EventEmitter2 {
       this.autoStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
+      if (this.isOriginator) {
+        this.emit(EventType.TERMINATE_DAPP);
+      }
     } else {
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.DISCONNECTED);

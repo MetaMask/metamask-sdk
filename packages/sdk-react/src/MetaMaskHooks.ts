@@ -1,25 +1,29 @@
 import { useContext, useState } from 'react';
 import {
-  // eslint-disable-next-line import/named
   Chain,
-  useConnect as useConnectWagmi,
   useConfig,
   useNetwork,
+  useAccount as useAccountWagmi,
+  useConnect as useConnectWagmi,
 } from 'wagmi';
 import { SDKContext } from './MetaMaskProvider';
 
-// eslint-disable-next-line import/export
 export * from 'wagmi';
 
-// eslint-disable-next-line import/export
+export const useAccount = () => {
+  const wagmiRes = useAccountWagmi();
+  return wagmiRes;
+}
+
 export const useConnect = () => {
   const config = useConfig();
   const connector = config.connectors[0];
 
-  return useConnectWagmi({ connector });
+  const wagmiRes = useConnectWagmi({ connector });
+  return wagmiRes;
 };
 
-type AddEthereumChainParameter = {
+interface AddEthereumChainParameter {
   chainId: string; // A 0x-prefixed hexadecimal string
   chainName: string;
   nativeCurrency?: {
@@ -42,7 +46,7 @@ export const useSDK = () => {
 };
 
 export const useSwitchOrAddNetwork = () => {
-  const [error, setError] = useState();
+  const [error, setError] = useState<unknown>();
   const [isLoading, setIsLoading] = useState<boolean>();
   const [pendingChainId, setPendingChainId] = useState<number>();
   const config = useConfig();
@@ -61,6 +65,7 @@ export const useSwitchOrAddNetwork = () => {
       });
     } catch (switchError) {
       // This error code indicates that the chain has not been added to MetaMask.
+      // FIXME remove ALL ts-ignore below
       if (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -102,13 +107,9 @@ export const useSwitchOrAddNetwork = () => {
             params: [params],
           });
         } catch (addError) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
           setError(addError);
         }
       } else {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         setError(switchError);
       }
     }

@@ -1,19 +1,10 @@
-import {
-  CommunicationLayerPreference,
-  ConnectionStatus,
-  EventType,
-  ServiceStatus,
-} from '@metamask/sdk-communication-layer';
+import { ConnectionStatus } from '@metamask/sdk-communication-layer';
 import Head from 'next/head';
-import styles from 'src/styles/Home.module.css';
-import { MetaMaskSDK } from '@metamask/sdk';
-import { useEffect, useState } from 'react';
-import { MetaMaskInpageProvider } from '@metamask/providers';
-import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import Link from 'next/link';
+import { useState } from 'react';
+import styles from 'src/styles/Home.module.css';
 import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
 
-let _initialized = false;
 export default function Home() {
   const {
     sdk,

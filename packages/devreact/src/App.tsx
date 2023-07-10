@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MetaMaskSDK } from '@metamask/sdk';
+import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
 import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import React from 'react';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
-import React from 'react';
-import { MetaMaskInpageProvider } from "@metamask/providers";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    ethereum?: MetaMaskInpageProvider;
+    ethereum?: SDKProvider;
   }
 }
 
@@ -425,7 +424,7 @@ export const App = () => {
           </button>
 
           <button style={{ padding: 10, margin: 10 }} onClick={() => {
-            console.debug(`App::keyinfo`, sdk.getKeyInfo());
+            console.debug(`App::keyinfo`, sdk._getKeyInfo());
           }} >
             Print Key Info
           </button>
