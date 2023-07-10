@@ -1,5 +1,5 @@
 import {
-  MetaMaskButton, useAccount
+  MetaMaskButton, useAccount, useSDK
 } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -7,6 +7,7 @@ import { WalletActions } from '../components/WalletActions';
 
 export default function UIKitPage() {
   const { isConnected } = useAccount();
+  const { connected } = useSDK();
 
   return (
     <>
@@ -22,7 +23,7 @@ export default function UIKitPage() {
         <div>
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
-        {isConnected && (
+        {connected && (
           <WalletActions />
         )}
       </header>
