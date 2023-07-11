@@ -69,6 +69,10 @@ fastify.post('/debug', async (request, reply) => {
       return reply.status(400).send({ error: 'event is required' });
     }
 
+    if (!body.event.startsWith('sdk_')) {
+      return reply.status(400).send({ error: 'wrong event name' });
+    }
+
     const id = body.id || 'socket.io-server';
     let userIdHash = userIdHashCache.get(id);
 
@@ -122,6 +126,7 @@ io.on('connection', (socket) => {
     console.log(`socketId=${socketId} clientIp=${clientIp}`);
   }
 
+  // eslint-disable-next-line consistent-return
   socket.on('create_channel', async (id) => {
     if (!uuid.validate(id)) {
       return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
@@ -182,6 +187,7 @@ io.on('connection', (socket) => {
     socket.to(id).emit(`ping-${id}`, { id, message });
   });
 
+  // eslint-disable-next-line consistent-return
   socket.on('join_channel', async (id, test) => {
     if (!uuid.validate(id)) {
       return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
