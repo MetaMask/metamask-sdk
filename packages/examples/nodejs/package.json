@@ -6,14 +6,19 @@
   "author": "",
   "main": "index.js",
   "scripts": {
+    "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.4.1",
+    "@metamask/sdk": "0.5.0-preview.38c0f4e",
     "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^2.3.1"
+    "@lavamoat/allow-scripts": "^2.3.1",
+    "@types/node": "^20.4.1",
+    "ts-node": "^10.9.1",
+    "tsc": "^2.0.4",
+    "typescript": "^5.1.6"
   },
   "lavamoat": {
     "allowScripts": {
