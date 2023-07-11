@@ -52,7 +52,7 @@ export interface MetaMaskSDKOptions {
   developerMode?: boolean;
   ui?: SDKUIOptions;
   autoConnect?: AutoConnectOptions;
-  modals?: Pick<RemoteConnectionProps, 'modals'>;
+  modals?: RemoteConnectionProps['modals'];
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
@@ -227,7 +227,11 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.dappMetadata = dappMetadata;
 
-    if (window.ethereum && !platform.isMetaMaskMobileWebView()) {
+    if (
+      typeof window !== 'undefined' &&
+      window.ethereum &&
+      !platform.isMetaMaskMobileWebView()
+    ) {
       // Check if window contain an existing provider extension.
       // Replace it and keep track of metamask extension.
       if (window.ethereum.isMetaMask) {
