@@ -1,9 +1,16 @@
+import { SDKProvider } from '@metamask/sdk';
 import { ConnectionStatus } from '@metamask/sdk-communication-layer';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from 'src/styles/Home.module.css';
 import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
+
+declare global {
+  interface Window {
+    ethereum?: SDKProvider;
+  }
+}
 
 export default function Home() {
   const {

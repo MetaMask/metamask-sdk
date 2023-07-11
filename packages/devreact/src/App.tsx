@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
-import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
 import React from 'react';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
@@ -13,32 +13,6 @@ declare global {
     ethereum?: SDKProvider;
   }
 }
-
-const sdk = new MetaMaskSDK({
-  useDeeplink: false,
-  communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  // communicationServerUrl: 'http://192.168.50.114:4000', // avoid localhost while testing deeplink
-  enableDebug: true,
-  autoConnect: {
-    enable: true
-  },
-  dappMetadata: {
-    name: "DEV React App",
-    url: window.location.host,
-  },
-  logging: {
-    sdk: false,
-    developerMode: true,
-    eciesLayer: false,
-    remoteLayer: false,
-    keyExchangeLayer: false,
-    serviceLayer: false,
-    plaintext: true,
-  },
-  storage: {
-    enabled: true,
-  }
-});
 
 const _abi = [
   {
@@ -90,6 +64,80 @@ export const App = () => {
   const [response, setResponse] = useState<unknown>("");
   const [connected, setConnected] = useState(false);
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
+  const [sdk, setSDK] = useState<MetaMaskSDK>();
+  const [activeProvider, setActiveProvider] = useState<SDKProvider>();
+
+  useEffect(() => {
+    if(!activeProvider) return;
+
+    const onChainChanged = (chain) => {
+      console.log(chain);
+      setChain(chain);
+    }
+
+    const onAccountsChanged = (accounts) => {
+      console.log(accounts);
+      setAccount(accounts?.[0]);
+    }
+
+    window.ethereum?.on("chainChanged", onChainChanged);
+    window.ethereum?.on("accountsChanged", onAccountsChanged);
+
+    return () => {
+      window.ethereum?.removeListener("chainChanged", onChainChanged);
+      window.ethereum?.removeListener("accountsChanged", onAccountsChanged);
+    }
+  }, [activeProvider]);
+
+
+  useEffect( () => {
+    if(sdk?.isInitialized()) {
+      return;
+    }
+
+    const onProviderEvent = (accounts) => {
+      console.debug(`onProviderEvent`, accounts);
+      if (accounts?.[0]?.startsWith('0x')) {
+        setAccount(accounts?.[0]);
+        setConnected(true);
+      } else {
+        setAccount(undefined);
+        setConnected(false);
+      }
+    }
+
+    const doAsync = async () => {
+      const clientSDK = new MetaMaskSDK({
+        communicationServerUrl: 'http://192.168.50.114:4000',
+        enableDebug: true,
+        autoConnect: {
+          enable: false
+        },
+        logging:{
+          developerMode: true,
+        },
+        dappMetadata: {
+          name: "DEV React App",
+          url: window.location.host,
+        }
+      });
+      await clientSDK.init();
+
+      // listen for provider change events
+      clientSDK.on(EventType.PROVIDER_UPDATE, onProviderEvent);
+
+      setSDK(clientSDK);
+      setActiveProvider(clientSDK.getProvider());
+    };
+
+    doAsync();
+
+    return () => {
+      if(sdk) {
+        sdk.removeListener(EventType.SERVICE_STATUS, onProviderEvent);
+      }
+    }
+  });
 
   const connect = () => {
     if(!window.ethereum) {
@@ -131,70 +179,6 @@ export const App = () => {
       .then((res) => console.log("add", res))
       .catch((e) => console.log("ADD ERR", e));
   };
-
-  useEffect(() => {
-    console.debug(`App::useEffect window.ethereum listeners sdk.isInitialized=${sdk.isInitialized()}`);
-
-    if(window.ethereum?.selectedAddress) {
-      console.debug(`App::useEffect setting account from window.ethereum `);
-      setAccount(window.ethereum?.selectedAddress);
-      setConnected(true);
-    } else {
-      setConnected(false);
-    }
-
-    if(sdk.isInitialized()) {
-      window.ethereum?.on("chainChanged", (chain) => {
-        console.log(`App::useEfect on 'chainChanged'`, chain);
-        setChain(chain as string);
-        setConnected(true);
-      });
-      window.ethereum?.on('_initialized', () => {
-        console.debug(`App::useEffect on _initialized`);
-        setConnected(true);
-        if(window.ethereum?.selectedAddress) {
-          setAccount(window.ethereum?.selectedAddress);
-        }
-        if(window.ethereum?.chainId) {
-          setChain(window.ethereum.chainId);
-        }
-      })
-      window.ethereum?.on("accountsChanged", (accounts) => {
-        const tsAccounts = (accounts as string[]);
-        console.log(`App::useEfect on 'accountsChanged'`, tsAccounts);
-        if(tsAccounts.length > 0) {
-          setAccount(accounts?.[0]);
-        } else {
-          setAccount(undefined);
-        }
-      });
-      window.ethereum?.on('connect', (_connectInfo) => {
-        console.log(`App::useEfect on 'connect'`, _connectInfo);
-        const connectInfo = _connectInfo as {chainId: string};
-        setConnected(true);
-        // setConnectionStatus(ConnectionStatus.LINKED)
-        setChain(connectInfo.chainId);
-      })
-      window.ethereum?.on("disconnect", (error) => {
-        console.log(`App::useEfect on 'disconnect'`, error);
-        setConnected(false);
-        setChain("");
-      });
-    }
-
-  }, []);
-
-  useEffect( () => {
-    console.debug(`App::useEffect sdk listeners`);
-    sdk.on(EventType.SERVICE_STATUS, (_serviceStatus:ServiceStatus) => {
-      console.debug(`sdk connection_status`, _serviceStatus);
-      setServiceStatus(_serviceStatus)
-      // if(connectionStatus === ConnectionStatus.TIMEOUT) {
-      //   console.warn(`timeout detected - re-initialize connection`);
-      //   connect();
-      // }
-    })
-  }, []);
 
   const sendTransaction = async () => {
     const to = "0x0000000000000000000000000000000000000000";
@@ -337,11 +321,11 @@ export const App = () => {
     console.debug(`result`, ret)
   }
   const disconnect = () => {
-    sdk.disconnect();
+    sdk?.disconnect();
   }
 
   const terminate = () => {
-    sdk.terminate();
+    sdk?.terminate();
     // sdk.debugPersistence({terminate: true, disconnect: false})
   }
 
@@ -424,7 +408,7 @@ export const App = () => {
           </button>
 
           <button style={{ padding: 10, margin: 10 }} onClick={() => {
-            console.debug(`App::keyinfo`, sdk._getKeyInfo());
+            console.debug(`App::keyinfo`, sdk?._getKeyInfo());
           }} >
             Print Key Info
           </button>
