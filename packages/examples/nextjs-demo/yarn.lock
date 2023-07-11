@@ -435,9 +435,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.5.0-preview.38c0f4e":
-  version: 0.5.0-preview.38c0f4e
-  resolution: "@metamask/sdk-communication-layer@npm:0.5.0-preview.38c0f4e::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40metamask%2Fsdk-communication-layer%2F0.5.0-preview.38c0f4e%2Fc545c840e2f588d325a5f249f133c3bca69c705f"
+"@metamask/sdk-communication-layer@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.5.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -445,32 +445,32 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 695f5d9d2e11d5cb42a23d07d1a53a7704005cff08483e96fac9e5fb02ddf41be163181e70ed8872b6f32e81318b68882dd7233564dcbafed113857050316040
+  checksum: e491a07fac57d1deaafcfaa413567b44a9e0ad5810af0270e3d42999e279f409f12420e127b5f2c0f17e9bab800d4714e0d47a889fb18ec165f0cb6edf1ab815
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.3.3-preview.38c0f4e":
-  version: 0.3.3-preview.38c0f4e
-  resolution: "@metamask/sdk-install-modal-web@npm:0.3.3-preview.38c0f4e::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40metamask%2Fsdk-install-modal-web%2F0.3.3-preview.38c0f4e%2F96e0982c84f230f57487c458c926201adf277e11"
+"@metamask/sdk-install-modal-web@npm:0.3.3":
+  version: 0.3.3
+  resolution: "@metamask/sdk-install-modal-web@npm:0.3.3"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 7122115f0742a9d697203f5776430268e897c73a7485fe132c5671298c676ee42db94a8afec108cb4b28b8a2c6390e2df8fccf4029485c46a1354f806135e4a4
+  checksum: 340129c1c80c2edca2118e37260a621252459503d7529893e4b37960b710ed9802bcbc2706aee1e149cf81bd0bc9960c4c1fd9ae0db8570bf37b554a804b470b
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:0.5.0-preview.38c0f4e":
-  version: 0.5.0-preview.38c0f4e
-  resolution: "@metamask/sdk@npm:0.5.0-preview.38c0f4e::__archiveUrl=https%3A%2F%2Fnpm.pkg.github.com%2Fdownload%2F%40metamask%2Fsdk%2F0.5.0-preview.38c0f4e%2F164343f24a6c9991926d481a3b5d9f33f89d96db"
+"@metamask/sdk@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk@npm:0.5.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.5.0-preview.38c0f4e
-    "@metamask/sdk-install-modal-web": 0.3.3-preview.38c0f4e
+    "@metamask/sdk-communication-layer": 0.5.0
+    "@metamask/sdk-install-modal-web": 0.3.3
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -489,7 +489,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: 801f33f6f32afbda5453146b6f4796390ef79d1364b4f25fcbe5ce82bfc1e4d26b0b73365692b1968a87ef1ac81eb49a0d7306d724962aff9220311bfd170d26
+  checksum: 35fa0f72505fa8ba8b9e1d3c4091ec2e784b4642ced79c2cc17ff8550e36bdd7f3327d49ff2b1e6d95a16d98395ed92baaef0f94f7b49bfd7b4cd54c0f7ef697
   languageName: node
   linkType: hard
 
@@ -3533,7 +3533,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-demo@workspace:."
   dependencies:
-    "@metamask/sdk": 0.5.0-preview.38c0f4e
+    "@metamask/sdk": ^0.5.0
     "@types/node": 20.2.1
     "@types/react": 18.2.6
     "@types/react-dom": 18.2.4
