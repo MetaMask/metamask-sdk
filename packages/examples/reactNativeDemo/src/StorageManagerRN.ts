@@ -10,7 +10,9 @@ export const STORAGE_PATH = 'temp';
 export class StorageManagerRN implements StorageManager {
   private debug = false;
 
-  constructor({debug}: StorageManagerProps | undefined = {debug: false}) {
+  constructor(
+    {debug}: StorageManagerProps | undefined = {debug: false, enabled: true},
+  ) {
     if (debug) {
       this.debug = debug;
     }
@@ -20,19 +22,19 @@ export class StorageManagerRN implements StorageManager {
     const payload = JSON.stringify(channelConfig);
 
     if (this.debug) {
-      console.debug('AAAAAAAAAAAAAAAAA::persistChannelConfig()', channelConfig);
+      console.debug('StorageManagerRN::persistChannelConfig()', channelConfig);
     }
 
     await AsyncStorage.setItem(STORAGE_PATH, payload, () => {
       if (this.debug) {
         console.debug(
-          'AAAAAAAAAAAAAAAAA::persisChannelConfig() saved to storage.',
+          'StorageManagerRN::persisChannelConfig() saved to storage.',
           AsyncStorage,
         );
       }
     });
     const temp = await this.getPersistedChannelConfig();
-    console.debug('AAAAAAAAAAAAAAAAA::peristChannelConfig() temp find', temp);
+    console.debug('StorageManagerRN::peristChannelConfig() temp find', temp);
   }
 
   public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {
@@ -40,7 +42,7 @@ export class StorageManagerRN implements StorageManager {
 
     if (this.debug) {
       console.debug(
-        'AAAAAAAAAAAAAAAAA::getPersistedChannelConfig()',
+        'StorageManagerRN::getPersistedChannelConfig()',
         AsyncStorage,
       );
     }
@@ -52,7 +54,7 @@ export class StorageManagerRN implements StorageManager {
     }
 
     if (this.debug) {
-      console.debug('AAAAAAAAAAAAAAAAA::getPersistedChannelConfig()', payload);
+      console.debug('StorageManagerRN::getPersistedChannelConfig()', payload);
     }
 
     if (!payload) {
@@ -64,7 +66,7 @@ export class StorageManagerRN implements StorageManager {
     channelConfig.validUntil = channelConfig.validUntil;
     if (this.debug) {
       console.debug(
-        'AAAAAAAAAAAAAAAAA::getPersisChannel channelConfig',
+        'StorageManagerRN::getPersisChannel channelConfig',
         channelConfig,
       );
     }
@@ -74,7 +76,7 @@ export class StorageManagerRN implements StorageManager {
 
   public async terminate(): Promise<void> {
     if (this.debug) {
-      console.debug('AAAAAAAAAAAAAAAAA::terminate()');
+      console.debug('StorageManagerRN::terminate()');
     }
 
     await AsyncStorage.removeItem(STORAGE_PATH);

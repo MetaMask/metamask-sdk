@@ -1787,10 +1787,10 @@
   resolved "https://registry.yarnpkg.com/@metamask/safe-event-emitter/-/safe-event-emitter-2.0.0.tgz#af577b477c683fad17c619a78208cede06f9605c"
   integrity sha512-/kSXhY692qiV1MXu6EeOZvg5nECLclxNXcKCxJ3cXQgYuRymRHpdx/t7JXfsK+JLjwA1e1c1/SBrlQYpusC29Q==
 
-"@metamask/sdk-communication-layer@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-communication-layer/-/sdk-communication-layer-0.4.0.tgz#f9ecd6ad1a6c8e62b15adeb22a814175ea169f76"
-  integrity sha512-2g+vYvlxVE0NQHgwtcH2BWX8vbb2IZaAQ6JOC0Yu7d8rdwrGaf1ZHB3xgxUfmOHMp9KVQeG1rXH03iR3QLEOEA==
+"@metamask/sdk-communication-layer@0.5.0-preview.38c0f4e":
+  version "0.5.0-preview.38c0f4e"
+  resolved "https://npm.pkg.github.com/download/@metamask/sdk-communication-layer/0.5.0-preview.38c0f4e/c545c840e2f588d325a5f249f133c3bca69c705f#c545c840e2f588d325a5f249f133c3bca69c705f"
+  integrity sha512-nVfad+dWaO27oResWWXQeff4c6vTi2dBMkYJoXpnEp9cCYHFbxJlsIpyzmE6b5D+/aRWh7ng9N7enOwhOHVWUw==
   dependencies:
     cross-fetch "^3.1.5"
     date-fns "^2.29.3"
@@ -1799,10 +1799,10 @@
     socket.io-client "^4.5.1"
     uuid "^8.3.2"
 
-"@metamask/sdk-install-modal-web@0.3.3":
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk-install-modal-web/-/sdk-install-modal-web-0.3.3.tgz#2d37342995de446e7f378db1305029d4cdc7ed05"
-  integrity sha512-YxSDtvR6jMjpu5oyqGI6omk9Y2dvIsa0tNyTP7k1dKPRzcpP7ekj1xJ6c5vZS4FlxJ908QfEMPohy2pzE8UBpQ==
+"@metamask/sdk-install-modal-web@0.3.3-preview.38c0f4e":
+  version "0.3.3-preview.38c0f4e"
+  resolved "https://npm.pkg.github.com/download/@metamask/sdk-install-modal-web/0.3.3-preview.38c0f4e/96e0982c84f230f57487c458c926201adf277e11#96e0982c84f230f57487c458c926201adf277e11"
+  integrity sha512-RgLV4BylGRA4Sky8EWGB+PLENKhEvZNN0tBXQaKiYh/FQ8gCIhygKGHr4cwLDwxyPiGkMOIzuloF1Bm7AeaipA==
   dependencies:
     "@emotion/react" "^11.10.6"
     "@emotion/styled" "^11.10.6"
@@ -1810,16 +1810,16 @@
     react "^18.2.0"
     react-dom "^18.2.0"
 
-"@metamask/sdk@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@metamask/sdk/-/sdk-0.4.1.tgz#1f95955e06e41bc4ea90984d2bc21252ebdcf031"
-  integrity sha512-Hntb9N4frkXIQjcUIdrlOwZDpGsgF/KQqy4wRzN9zLo5POsVifiZyaBBPWy/5SH0XZGLhS9zyAGHYO4sM2gutQ==
+"@metamask/sdk@0.5.0-preview.38c0f4e":
+  version "0.5.0-preview.38c0f4e"
+  resolved "https://npm.pkg.github.com/download/@metamask/sdk/0.5.0-preview.38c0f4e/164343f24a6c9991926d481a3b5d9f33f89d96db#164343f24a6c9991926d481a3b5d9f33f89d96db"
+  integrity sha512-pCJQul01m51TpwybMlfGysE4UUy/SRWp4cFOt3Bc247qk6COWsSdadPaWneS87s7Rc8uOAnrKFet9YwZZ7eCDg==
   dependencies:
     "@metamask/onboarding" "^1.0.1"
     "@metamask/post-message-stream" "^6.1.0"
     "@metamask/providers" "^10.2.1"
-    "@metamask/sdk-communication-layer" "0.4.0"
-    "@metamask/sdk-install-modal-web" "0.3.3"
+    "@metamask/sdk-communication-layer" "0.5.0-preview.38c0f4e"
+    "@metamask/sdk-install-modal-web" "0.3.3-preview.38c0f4e"
     "@react-native-async-storage/async-storage" "^1.17.11"
     "@types/dom-screen-wake-lock" "^1.0.0"
     bowser "^2.9.0"
@@ -2441,6 +2441,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.1.4.tgz#83f148d2d1f5fe6add4c53358ba00d97fc4cdb71"
   integrity sha512-At4pvmIOki8yuwLtd7BNHl3CiWNbtclUbNtScGx4OHfBd4/oWoJC8KRCIxXwkdndzhxOsPXihrsOoydxBjlE9Q==
 
+"@types/node@^20.4.1":
+  version "20.4.1"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.1.tgz#a6033a8718653c50ac4962977e14d0f984d9527d"
+  integrity sha512-JIzsAvJeA/5iY6Y/OxZbv1lUcc8dNSE77lb2gnBH+/PJ3lFR1Ccvgwl5JWnHAkNHcRsT0TbpVOsiMKZ1F/yyJg==
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -2478,10 +2483,26 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-dom@^18.2.6":
+  version "18.2.6"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-18.2.6.tgz#ad621fa71a8db29af7c31b41b2ea3d8a6f4144d1"
+  integrity sha512-2et4PDvg6PVCyS7fuTc4gPoksV58bW0RwSxWKcPRcHZf0PRUGq03TKcD/rUHe3azfV6/5/biUBJw+HhCQjaP0A==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react@*":
   version "18.2.6"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.6.tgz#5cd53ee0d30ffc193b159d3516c8c8ad2f19d571"
   integrity sha512-wRZClXn//zxCFW+ye/D2qY65UsYP1Fpex2YXorHc8awoNamkMZSvBxwxdYVInsHOZZd2Ppq8isnSzJL5Mpf8OA==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^18.2.14":
+  version "18.2.14"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.14.tgz#fa7a6fecf1ce35ca94e74874f70c56ce88f7a127"
+  integrity sha512-A0zjq+QN/O0Kpe30hA1GidzyFjatVvrpIvWLxD+xv67Vt91TWWgco9IvrJBkeyHm1trGaFS/FSGqPlhyeZRm0g==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -9883,6 +9904,11 @@ typedarray-to-buffer@^3.1.5:
   integrity sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==
   dependencies:
     is-typedarray "^1.0.0"
+
+typescript@^5.1.6:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
+  integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
 
 unbox-primitive@^1.0.2:
   version "1.0.2"

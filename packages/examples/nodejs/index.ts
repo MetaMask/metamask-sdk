@@ -1,20 +1,23 @@
-const { MetaMaskSDK } = require('@metamask/sdk');
-const fs = require('fs')
+import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
+import * as fs from 'fs';
 
 const qrcode = require('qrcode-terminal');
 
-const options = {
+const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
-  storage: {
-    enabled: true,
-  },
   dappMetadata: {
     name: 'NodeJS example',
+    base64Icon: '000'
   },
+  // Optional: customize modal text
   modals: {
     install: ({ link }) => {
-      // console.debug(`open link ${link}`);
       qrcode.generate(link, { small: true }, (qr) => console.log(qr));
+      return {
+        onClose() {
+          // nothing to do.
+        },
+      };
     },
     otp: () => {
       return {
@@ -32,16 +35,9 @@ const options = {
 
 const sdk = new MetaMaskSDK(options);
 
-const persistenceFileName = '.sdk-comm';
-
-if(options.storage?.enabled && fs.existsSync(persistenceFileName)) {
-  console.debug(`Please open linked MetaMask mobile wallet for OTP or delete file '${persistenceFileName}' and scan QRCode.`);
-}
-
-const ethereum = sdk.getProvider();
-
-const start = async () => {
+const start = async (ethereum: SDKProvider) => {
   console.debug(`start dapp example`);
+
   const accounts = await ethereum.request({
     method: 'eth_requestAccounts',
     params: [],
@@ -97,11 +93,28 @@ const start = async () => {
   console.log('sign response', signResponse);
 };
 
-ethereum.on('_initialized', () => {
-  start();
-});
+sdk
+  .init()
+  .then(() => {
+    const ethereum = sdk.getProvider();
 
-ethereum.request({
-  method: 'eth_requestAccounts',
-  params: [],
-});
+    const persistenceFileName = '.sdk-comm';
+
+    if (options.storage?.enabled && fs.existsSync(persistenceFileName)) {
+      console.debug(
+        `Please open linked MetaMask mobile wallet for OTP or delete file '${persistenceFileName}' and scan QRCode.`,
+      );
+    }
+
+    ethereum.on('_initialized', () => {
+      start(ethereum);
+    });
+
+    ethereum.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
+  })
+  .catch((error) => {
+    console.error(`sdk init error`, error);
+  });

@@ -3,65 +3,13 @@ import './App.css';
 import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
 import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
 import React from 'react';
-import Web from 'web3';
-import { AbiItem } from 'web3-utils';
-
-declare global {
-  interface Window {
-    ethereum?: SDKProvider;
-  }
-}
-
-const _abi = [
-  {
-    inputs: [],
-    name: "text",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-    constant: true,
-  },
-  {
-    inputs: [
-      {
-        internalType: "string",
-        name: "_text",
-        type: "string",
-      },
-    ],
-    name: "set",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "ping",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-    constant: true,
-  },
-];
 
 export const App = () => {
   const [chain, setChain] = useState("");
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
   const [connected, setConnected] = useState(false);
-  const [serviceStatus] = useState<ServiceStatus>();
+  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
   const [sdk, setSDK] = useState<MetaMaskSDK>();
   const [activeProvider, setActiveProvider] = useState<SDKProvider>();
   const hasInit = useRef(false);
@@ -109,8 +57,6 @@ export const App = () => {
 
     const doAsync = async () => {
       const clientSDK = new MetaMaskSDK({
-        communicationServerUrl: 'http://192.168.50.114:4000',
-        enableDebug: true,
         autoConnect: {
           enable: false
         },
@@ -118,7 +64,7 @@ export const App = () => {
           developerMode: true,
         },
         dappMetadata: {
-          name: "DEV React App",
+          name: "Demo React App",
           url: window.location.host,
         }
       });
@@ -293,41 +239,8 @@ export const App = () => {
     }
   };
 
-  const ping = async () => {
-    console.debug(`ping`)
-    const web3 = new Web(window.ethereum as any)
-    // const provider = new ethers.providers.Web3Provider(window.ethereum)
-
-    const simple = new web3.eth.Contract(
-      _abi  as AbiItem[],
-      '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
-    )
-
-    const pong = await simple.methods.ping().call()
-    console.debug(`result`, pong)
-
-  }
-
-  const setText = async () => {
-    console.debug(`setText`)
-    const web3 = new Web(window.ethereum as any)
-    const simple = new web3.eth.Contract(
-      _abi  as AbiItem[],
-      '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
-    )
-
-    const ret = await simple.methods.set('new value').send({
-      from: window.ethereum?.selectedAddress
-    })
-    console.debug(`result`, ret)
-  }
-  const disconnect = () => {
-    sdk?.disconnect();
-  }
-
   const terminate = () => {
     sdk?.terminate();
-    // sdk.debugPersistence({terminate: true, disconnect: false})
   }
 
   const changeNetwork = async (hexChainId:string) => {
@@ -343,32 +256,14 @@ export const App = () => {
     }
   }
 
-  const getInfos = async () => {
-    console.debug(`gettting infos...`)
-    try {
-      const response = await window.ethereum?.request({
-        method: 'metamask_getProviderState',
-        params: [] // chainId must be in hexadecimal numbers
-      })
-      console.debug(`response`, response)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   return (
     <div className="App">
       <div className="sdkConfig">
-          <p>
-            Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
-          </p>
           {serviceStatus?.connectionStatus===ConnectionStatus.WAITING &&
             <div>
               Waiting for Metamask to link the connection...
             </div>
           }
-          <p>ChannelId: {serviceStatus?.channelId}</p>
-          <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
       </div>
 
       {connected ? <div>
@@ -384,18 +279,6 @@ export const App = () => {
             Send transaction
           </button>
 
-          <button style={{ padding: 10, margin: 10 }} onClick={ping} >
-            Ping
-          </button>
-
-          <button style={{ padding: 10, margin: 10 }} onClick={setText} >
-            Set Text
-          </button>
-
-          <button style={{ padding: 10, margin: 10 }} onClick={getInfos} >
-            Get Provider State
-          </button>
-
           <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')} >
             Switch Ethereum
           </button>
@@ -406,16 +289,6 @@ export const App = () => {
 
           <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain} >
             Add ethereum chain
-          </button>
-
-          <button style={{ padding: 10, margin: 10 }} onClick={() => {
-            console.debug(`App::keyinfo`, sdk?._getKeyInfo());
-          }} >
-            Print Key Info
-          </button>
-
-          <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
-            Disconnect
           </button>
         </div> :
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
@@ -439,3 +312,5 @@ export const App = () => {
     </div>
   );
 }
+
+export default App;
