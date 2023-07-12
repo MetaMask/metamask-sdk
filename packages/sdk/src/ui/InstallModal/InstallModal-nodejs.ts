@@ -5,7 +5,7 @@ const InstallModal = ({ link }: { link: string; debug?: boolean }) => {
   qrcode.generate(link, { small: true }, (qr: unknown) => console.log(qr));
   console.log(`qrcode url: `, link);
   return {
-    onClose: () => undefined,
+    unmount: () => undefined,
   };
 };
 

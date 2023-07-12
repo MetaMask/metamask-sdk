@@ -13,6 +13,7 @@ const sdkWebInstallModal = ({
 }) => {
   const div = document.createElement('div');
   document.body.appendChild(div);
+  let mounted = false;
 
   const modalLoader = new ModalLoader();
 
@@ -26,33 +27,42 @@ const sdkWebInstallModal = ({
     );
   }
 
-  const onClose = () => {
-    if (modalLoader) {
-      modalLoader.unmount();
+  const unmount = () => {
+    if (div) {
+      div.style.display = 'none';
     }
   };
 
-  if (window.extension) {
-    // When extension is available, we allow switching between extension and mobile
-    modalLoader.renderSelectModal({
-      parentElement: div,
-      connectWithExtension: () => {
-        onClose();
-        connectWithExtension?.();
-      },
-      onClose,
-      link,
-    });
-  } else {
-    modalLoader.renderInstallModal({
-      parentElement: div,
-      link,
-      metaMaskInstaller: MetaMaskInstaller.getInstance(),
-      onClose,
-    });
-  }
+  const mount = (qrcodeLink: string) => {
+    if (mounted) {
+      div.style.display = 'block';
+      modalLoader.updateQRCode(qrcodeLink);
+      return;
+    }
 
-  return { installModal: modalLoader, onClose };
+    if (window.extension) {
+      // When extension is available, we allow switching between extension and mobile
+      modalLoader.renderSelectModal({
+        parentElement: div,
+        connectWithExtension: () => {
+          unmount();
+          connectWithExtension?.();
+        },
+        onClose: unmount,
+        link,
+      });
+    } else {
+      modalLoader.renderInstallModal({
+        parentElement: div,
+        link,
+        metaMaskInstaller: MetaMaskInstaller.getInstance(),
+        onClose: unmount,
+      });
+    }
+    mounted = true;
+  };
+
+  return { mount, unmount };
 };
 
 export default sdkWebInstallModal;
