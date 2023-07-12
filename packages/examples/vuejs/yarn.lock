@@ -1814,9 +1814,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.4.2":
-  version: 0.4.2
-  resolution: "@metamask/sdk-communication-layer@npm:0.4.2"
+"@metamask/sdk-communication-layer@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.5.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -1824,7 +1824,7 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 8049dbcf8ef886d2b54c5fb93adfcca659ed668973fd18e944a9093bf0ce08d59cae94469cc033fe85f0e3581919a1a983ea2cccd0327c7b85fbd0a82cc11742
+  checksum: e491a07fac57d1deaafcfaa413567b44a9e0ad5810af0270e3d42999e279f409f12420e127b5f2c0f17e9bab800d4714e0d47a889fb18ec165f0cb6edf1ab815
   languageName: node
   linkType: hard
 
@@ -1841,14 +1841,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.4.2":
-  version: 0.4.2
-  resolution: "@metamask/sdk@npm:0.4.2"
+"@metamask/sdk@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk@npm:0.5.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.4.2
+    "@metamask/sdk-communication-layer": 0.5.0
     "@metamask/sdk-install-modal-web": 0.3.3
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -1868,7 +1868,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: c533ff45b3e1a79c6fe93d70d85015979c9136ca9c7a34fefaa24158b403292f2f611bbfde45712fea754b2f596fc0b0a8d7e26bbea0c89829a2125342e5214c
+  checksum: 35fa0f72505fa8ba8b9e1d3c4091ec2e784b4642ced79c2cc17ff8550e36bdd7f3327d49ff2b1e6d95a16d98395ed92baaef0f94f7b49bfd7b4cd54c0f7ef697
   languageName: node
   linkType: hard
 
@@ -6833,7 +6833,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.12.16
     "@babel/eslint-parser": ^7.12.16
-    "@metamask/sdk": ^0.4.2
+    "@metamask/sdk": ^0.5.0
     "@vue/cli-plugin-babel": ~5.0.0
     "@vue/cli-plugin-eslint": ~5.0.0
     "@vue/cli-service": ~5.0.0

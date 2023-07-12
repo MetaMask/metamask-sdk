@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.4.2",
+    "@metamask/sdk": "^0.5.0",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"
   },
