@@ -83,7 +83,7 @@ const start = async (ethereum: SDKProvider) => {
     },
   };
 
-  const from = accounts[0];
+  const from = accounts?.[0];
 
   const signResponse = await ethereum.request({
     method: 'eth_signTypedData_v3',
