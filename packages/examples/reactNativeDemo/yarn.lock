@@ -2697,9 +2697,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.4.0":
-  version: 0.4.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.4.0"
+"@metamask/sdk-communication-layer@npm:0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.5.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -2707,7 +2707,7 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: c744421cb08876830f89424c959bb74a426161f26d2ac48e0c7ebe4c7ec410df341cc01acf8f053744553575e499893d57939281d9dab8c195369547ec8b4b6b
+  checksum: e491a07fac57d1deaafcfaa413567b44a9e0ad5810af0270e3d42999e279f409f12420e127b5f2c0f17e9bab800d4714e0d47a889fb18ec165f0cb6edf1ab815
   languageName: node
   linkType: hard
 
@@ -2724,14 +2724,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.4.1":
-  version: 0.4.1
-  resolution: "@metamask/sdk@npm:0.4.1"
+"@metamask/sdk@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@metamask/sdk@npm:0.5.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.4.0
+    "@metamask/sdk-communication-layer": 0.5.0
     "@metamask/sdk-install-modal-web": 0.3.3
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -2751,7 +2751,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: e1eadedac189958ccd7cafe03db7eb61b89fa156b6a27aabeab0e9ef39d3d74e216c714853538804d31b353385ffa08c26a63cc5a2c50aedfa0206b5acebd052
+  checksum: 35fa0f72505fa8ba8b9e1d3c4091ec2e784b4642ced79c2cc17ff8550e36bdd7f3327d49ff2b1e6d95a16d98395ed92baaef0f94f7b49bfd7b4cd54c0f7ef697
   languageName: node
   linkType: hard
 
@@ -10145,7 +10145,7 @@ __metadata:
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.4.1
+    "@metamask/sdk": ^0.5.0
     "@react-native-async-storage/async-storage": ^1.18.1
     "@react-native-community/eslint-config": ^3.2.0
     "@tsconfig/react-native": ^2.0.2
