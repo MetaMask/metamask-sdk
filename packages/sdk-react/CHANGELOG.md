@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.5.1]
-### Uncategorized
+### Added
 - feat: optimize modal rendering and re-use existing node ([#206](https://github.com/MetaMask/metamask-sdk/pull/206))
 - feat: sdk async init ([#191](https://github.com/MetaMask/metamask-sdk/pull/191))
 - feat: switch between extension and mobile provider ([#189](https://github.com/MetaMask/metamask-sdk/pull/189))
