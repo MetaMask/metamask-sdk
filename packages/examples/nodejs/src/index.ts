@@ -13,14 +13,12 @@ const options: MetaMaskSDKOptions = {
   modals: {
     install: ({ link }) => {
       qrcode.generate(link, { small: true }, (qr) => console.log(qr));
-      return {
-        onClose() {
-          // nothing to do.
-        },
-      };
+      return {};
     },
     otp: () => {
       return {
+        mount() {
+        },
         updateOTPValue: (otpValue) => {
           if (otpValue !== '') {
             console.debug(
