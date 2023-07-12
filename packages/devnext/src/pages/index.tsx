@@ -6,12 +6,6 @@ import { useState } from 'react';
 import styles from 'src/styles/Home.module.css';
 import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
 
-declare global {
-  interface Window {
-    ethereum?: SDKProvider;
-  }
-}
-
 export default function Home() {
   const {
     sdk,

@@ -11,7 +11,7 @@ export interface PendingModalProps {
 }
 
 export const PendingModal = (props: PendingModalProps) => {
-  return <WidgetWrapper>
+  return <WidgetWrapper className='pending-modal'>
     <div style={styles.backdrop} onClick={props.onClose}>
       </div>
       <div style={styles.modal}>

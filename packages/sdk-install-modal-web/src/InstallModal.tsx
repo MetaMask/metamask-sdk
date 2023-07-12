@@ -52,7 +52,7 @@ export const InstallModal = (props: InstallModalProps) => {
   }, [qrCodeContainer]);
 
   return (
-    <WidgetWrapper>
+    <WidgetWrapper className='install-model'>
       <div style={styles.backdrop} onClick={props.onClose}></div>
       <div style={styles.modal}>
         <div style={styles.closeButtonContainer}>

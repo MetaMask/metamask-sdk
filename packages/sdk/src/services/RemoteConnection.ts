@@ -45,11 +45,12 @@ export interface RemoteConnectionProps {
       debug?: boolean;
       connectWithExtension?: () => void;
     }) => {
-      onClose?: () => void;
+      unmount?: () => void;
+      mount?: (link: string) => void;
     };
     otp?: (onDisconnect?: () => void) => {
-      onClose?: () => void;
-      updateOTPValue: (otpValue: string) => void;
+      mount?: () => void;
+      unmount?: (otpValue: string) => void;
     };
   };
 }
@@ -64,16 +65,9 @@ export class RemoteConnection implements ProviderService {
 
   private communicationLayerPreference: CommunicationLayerPreference;
 
-  private pendingModal?: {
-    onClose?: () => void;
-    mount?: () => void;
-    updateOTPValue?: (otpAnswer: string) => void;
-  };
+  private pendingModal?: any;
 
-  private installModal?: {
-    onClose?: () => void;
-    mount?: () => void;
-  };
+  private installModal?: any;
 
   private options: RemoteConnectionProps;
 
@@ -199,7 +193,7 @@ export class RemoteConnection implements ProviderService {
 
           const onDisconnect = () => {
             this.options.modals.onPendingModalDisconnect?.();
-            this.pendingModal?.onClose?.();
+            this.pendingModal?.unmount?.();
             this.pendingModal?.updateOTPValue?.('');
           };
           this.pendingModal = this.options.modals.otp?.(onDisconnect);
@@ -224,15 +218,15 @@ export class RemoteConnection implements ProviderService {
           console.debug(`RemoteConnection::on 'sdk_rpc_call' result`, result);
         }
         // Close opened modals
-        this.pendingModal?.onClose?.();
+        this.pendingModal?.unmount?.();
       },
     );
 
     this.connector.on(EventType.AUTHORIZED, async () => {
       try {
         // close modals
-        this.pendingModal?.onClose?.();
-        this.installModal?.onClose?.();
+        this.pendingModal?.unmount?.();
+        this.installModal?.unmount?.();
 
         const provider = Ethereum.getProvider();
         if (this.developerMode) {
@@ -261,7 +255,7 @@ export class RemoteConnection implements ProviderService {
       }
     });
 
-    this.connector.once(EventType.TERMINATE, () => {
+    this.connector.on(EventType.TERMINATE, () => {
       if (platform.isBrowser()) {
         // TODO use a modal or let user customize messsage instead
         // eslint-disable-next-line no-alert
@@ -269,7 +263,7 @@ export class RemoteConnection implements ProviderService {
       } else {
         console.info(`SDK Connection has been terminated`);
       }
-      this.pendingModal?.onClose?.();
+      this.pendingModal?.unmount?.();
       this.pendingModal = undefined;
       this.otpAnswer = undefined;
 
@@ -340,7 +334,7 @@ export class RemoteConnection implements ProviderService {
     } else if (!trustedDevice) {
       const onDisconnect = () => {
         this.options.modals.onPendingModalDisconnect?.();
-        this.pendingModal?.onClose?.();
+        this.pendingModal?.unmount?.();
       };
 
       const waitForOTP = async (): Promise<string> => {
@@ -538,6 +532,20 @@ export class RemoteConnection implements ProviderService {
   }
 
   showInstallModal({ link }: { link: string }) {
+    // prevent double initialization
+    if (this.installModal) {
+      if (this.developerMode) {
+        console.debug(
+          `RemoteConnection::showInstallModal() install modal already initialized`,
+          this.installModal,
+        );
+      }
+      console.debug(`mount install modal`, link);
+      this.installModal.mount?.(link);
+      return;
+    }
+
+    console.debug(`start install modal`, this.options.modals.install);
     this.installModal = this.options.modals.install?.({
       link,
       debug: this.developerMode,
@@ -546,6 +554,8 @@ export class RemoteConnection implements ProviderService {
         return false;
       },
     });
+    console.debug(`install modal`, this.installModal);
+    this.installModal.mount?.(link);
   }
 
   getChannelConfig(): ChannelConfig | undefined {
@@ -584,7 +594,7 @@ export class RemoteConnection implements ProviderService {
       Ethereum.getProvider().handleDisconnect({
         terminate: true,
       });
-      this.pendingModal?.onClose?.();
+      this.pendingModal?.unmount?.();
       this.otpAnswer = undefined;
     }
     this.connector?.disconnect(options);

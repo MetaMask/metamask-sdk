@@ -362,7 +362,9 @@ export class MetaMaskSDK extends EventEmitter2 {
         },
       },
       url,
-    );
+    ).catch((err) => {
+      console.error(`SDK::sendSDKAnalytics() error`, err);
+    });
   }
 
   resume() {
