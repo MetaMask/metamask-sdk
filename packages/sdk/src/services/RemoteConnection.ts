@@ -540,10 +540,12 @@ export class RemoteConnection implements ProviderService {
           this.installModal,
         );
       }
+      console.debug(`mount install modal`, link);
       this.installModal.mount?.(link);
       return;
     }
 
+    console.debug(`start install modal`, this.options.modals.install);
     this.installModal = this.options.modals.install?.({
       link,
       debug: this.developerMode,
@@ -552,6 +554,7 @@ export class RemoteConnection implements ProviderService {
         return false;
       },
     });
+    console.debug(`install modal`, this.installModal);
     this.installModal.mount?.(link);
   }
 
