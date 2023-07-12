@@ -206,10 +206,6 @@ class MetaMaskConnector extends InjectedConnector {
       throw error;
     }
   }
-
-  getSDK() {
-    return this.#sdk;
-  }
 }
 
 export default MetaMaskConnector;
