@@ -87,16 +87,15 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-
         let isConnectedNow = false;
         try {
           // Start installation and once installed try the request again
           isConnectedNow = await installer.start({
             wait: false,
           });
-        } catch(error: unknown) {
+        } catch (error: unknown) {
           // Special case to handle when response is interrupted because users chose browser provider
-          if(error===EventType.PROVIDER_UPDATE) {
+          if (error === EventType.PROVIDER_UPDATE) {
             // Re-create the query on the active provider
             return await window.ethereum?.request({
               method,

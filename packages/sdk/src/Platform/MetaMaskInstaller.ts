@@ -100,6 +100,7 @@ export class MetaMaskInstaller {
       }
       return startedRemoteConnection;
     } catch (err) {
+      this.isInstalling = false;
       throw err;
     }
     return false;
