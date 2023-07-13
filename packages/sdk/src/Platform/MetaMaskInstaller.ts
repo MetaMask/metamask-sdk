@@ -100,7 +100,7 @@ export class MetaMaskInstaller {
       }
       return startedRemoteConnection;
     } catch (err) {
-      console.error(`An error occured`, err);
+      throw err;
     }
     return false;
   }

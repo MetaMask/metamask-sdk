@@ -340,6 +340,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
     this.extensionActive = true;
     this.emit(EventType.PROVIDER_UPDATE, accounts);
+    // TODO should we instead keep track of sdk within remoteConnection and avoid simulation events from connector?
+    this.remoteConnection?.getConnector().emit(EventType.PROVIDER_UPDATE, accounts);
     this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
   }
 
