@@ -495,6 +495,11 @@ export class RemoteConnection implements ProviderService {
             reject(err);
           }
 
+          // Event means browser extension is selected, interrupt gracefully.
+          this.connector.once(EventType.PROVIDER_UPDATE, async () => {
+            reject(EventType.PROVIDER_UPDATE);
+          });
+
           // TODO can migrate to waitFor instead?
           this.connector.once(EventType.CLIENTS_READY, async () => {
             if (this.developerMode) {

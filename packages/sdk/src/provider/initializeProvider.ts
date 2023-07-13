@@ -1,5 +1,6 @@
 import {
   CommunicationLayerPreference,
+  EventType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
@@ -86,14 +87,28 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-        // Start installation and once installed try the request again
-        const isConnectedNow = await installer.start({
-          wait: false,
-        });
+        let isConnectedNow = false;
+        try {
+          // Start installation and once installed try the request again
+          isConnectedNow = await installer.start({
+            wait: false,
+          });
+        } catch (error: unknown) {
+          // Special case to handle when response is interrupted because users chose browser provider
+          if (error === EventType.PROVIDER_UPDATE) {
+            // Re-create the query on the active provider
+            return await window.ethereum?.request({
+              method,
+              params: args,
+            });
+          }
+          throw error;
+        }
 
         // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
-          return f(...args);
+          const response = f(...args);
+          return response;
         }
       } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
