@@ -264,9 +264,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       autoConnect,
       logging: runtimeLogging,
       connectWithExtensionProvider:
-        metamaskBrowserExtension !== undefined
-          ? this.connectWithExtensionProvider.bind(this)
-          : undefined,
+        metamaskBrowserExtension === undefined
+          ? undefined
+          : this.connectWithExtensionProvider.bind(this),
       modals: {
         ...modals,
         onPendingModalDisconnect: this.terminate.bind(this),

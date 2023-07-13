@@ -3,7 +3,9 @@ export function getBrowserExtension({
 }: {
   mustBeMetaMask: boolean;
 }) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === 'undefined') {
+    throw new Error(`window not available`);
+  }
 
   const { ethereum } = window as { ethereum: any };
 
