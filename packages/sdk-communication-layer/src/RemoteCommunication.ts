@@ -31,6 +31,7 @@ import { ServiceStatus } from './types/ServiceStatus';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { EventType } from './types/EventType';
 import { PlatformType } from './types/PlatformType';
+import { wait } from './utils/wait';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -247,33 +248,54 @@ export class RemoteCommunication extends EventEmitter2 {
     };
     this.originatorInfo = originatorInfo;
 
-    // FIXME remove this hack pending wallet release 7.3+
-    if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
-      this.communicationLayer?.on(EventType.AUTHORIZED, () => {
-        if (this.authorized) {
-          // Ignore duplicate event or already authorized
-          return;
-        }
+    // TODO below listeners is only added for backward compatibility with wallet < 7.3
+    this.communicationLayer?.on(EventType.AUTHORIZED, async () => {
+      if (this.authorized) {
+        // Ignore duplicate event or already authorized
+        return;
+      }
 
-        const isSecurePlatform =
-          this.platformType === PlatformType.MobileWeb ||
-          this.platformType === PlatformType.ReactNative ||
-          this.platformType === PlatformType.MetaMaskMobileWebview;
-
-        if (this.debug) {
-          console.debug(
-            `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
-          );
+      // Sometime the wallet version is not yet received upon authorized message
+      const waitForWalletVersion = async () => {
+        while (!this.walletInfo) {
+          await wait(500);
         }
+      };
+      await waitForWalletVersion();
 
-        // bacward compatibility for wallet <7.3
-        if (isSecurePlatform) {
-          // Propagate authorized event.
-          this.authorized = true;
-          this.emit(EventType.AUTHORIZED);
-        }
-      });
-    }
+      // The event might be received twice because of a backward compatibility hack in SocketService.
+      // bacward compatibility for wallet <7.3
+      const compareValue = '7.3'.localeCompare(this.walletInfo?.version || '');
+
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication HACK 'authorized' version=${this.walletInfo?.version} compareValue=${compareValue}`,
+        );
+      }
+
+      // FIXME remove this hack pending wallet release 7.3+
+      if (compareValue !== 1) {
+        // ignore for version 7.3+
+        return;
+      }
+
+      const isSecurePlatform =
+        this.platformType === PlatformType.MobileWeb ||
+        this.platformType === PlatformType.ReactNative ||
+        this.platformType === PlatformType.MetaMaskMobileWebview;
+
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+        );
+      }
+
+      if (isSecurePlatform) {
+        // Propagate authorized event.
+        this.authorized = true;
+        this.emit(EventType.AUTHORIZED);
+      }
+    });
 
     this.communicationLayer?.on(
       EventType.MESSAGE,
@@ -406,13 +428,6 @@ export class RemoteCommunication extends EventEmitter2 {
         this.emit(EventType.CLIENTS_DISCONNECTED, this.channelId);
         this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 
-        // if (!this.isOriginator) {
-        //   // if I am on metamask -- force pause it
-        //   // reset encryption status to re-initialize key exchange
-        //   // this.paused = true;
-        //   return;
-        // }
-
         this.ready = false;
         this.authorized = false;
 
@@ -540,11 +555,22 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.READY && this.isOriginator) {
       this.setConnectionStatus(ConnectionStatus.LINKED);
 
+      // keep track of resumed state before resetting it and emitting messages
+      // Better to reset the paused status before emitting as otherwise it may interfer.
+      const resumed = this.paused;
+      // Reset paused status
       this.paused = false;
+
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: this.walletInfo,
       });
+
+      if (resumed) {
+        this.authorized = true;
+        // If connection is resumed, automatically assume authorized.
+        this.emit(EventType.AUTHORIZED);
+      }
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
       this.emit(EventType.OTP, message.otpAnswer);
