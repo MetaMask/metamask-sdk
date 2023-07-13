@@ -50,7 +50,8 @@ export interface RemoteConnectionProps {
     };
     otp?: (onDisconnect?: () => void) => {
       mount?: () => void;
-      unmount?: (otpValue: string) => void;
+      updateOTPValue?: (otpValue: string) => void;
+      unmount?: () => void;
     };
   };
 }
@@ -65,9 +66,16 @@ export class RemoteConnection implements ProviderService {
 
   private communicationLayerPreference: CommunicationLayerPreference;
 
-  private pendingModal?: any;
+  private pendingModal?: {
+    mount?: () => void;
+    updateOTPValue?: (otpValue: string) => void;
+    unmount?: () => void;
+  };
 
-  private installModal?: any;
+  private installModal?: {
+    unmount?: () => void;
+    mount?: (link: string) => void;
+  };
 
   private options: RemoteConnectionProps;
 
@@ -224,6 +232,13 @@ export class RemoteConnection implements ProviderService {
 
     this.connector.on(EventType.AUTHORIZED, async () => {
       try {
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::on 'authorized' closing modals`,
+            this.pendingModal,
+            this.installModal,
+          );
+        }
         // close modals
         this.pendingModal?.unmount?.();
         this.installModal?.unmount?.();
@@ -465,7 +480,7 @@ export class RemoteConnection implements ProviderService {
               this.showInstallModal({ link: universalLink });
               // console.log('OPEN LINK QRCODE', universalLink);
             } else {
-              console.log('OPEN LINK', universalLink);
+              // console.log('OPEN LINK', universalLink);
               Platform.getInstance().openDeeplink?.(
                 universalLink,
                 deeplink,
@@ -475,8 +490,8 @@ export class RemoteConnection implements ProviderService {
             this.universalLink = universalLink;
           } catch (err) {
             this.otpAnswer = undefined;
-            this.pendingModal?.onClose?.();
-            this.installModal?.onClose?.();
+            this.pendingModal?.unmount?.();
+            this.installModal?.unmount?.();
             reject(err);
           }
 
@@ -492,33 +507,11 @@ export class RemoteConnection implements ProviderService {
             resolve(true);
           });
 
-          // TODO can migrate to waitFor instead?
-          this.connector.once(EventType.AUTHORIZED, async () => {
-            if (this.developerMode) {
-              console.debug(
-                `RemoteConnection::startConnection::on 'authorized' sentFirstConnect=${this.sentFirstConnect}`,
-              );
-            }
-
-            if (this.sentFirstConnect) {
-              return;
-            }
-
-            this.sentFirstConnect = true;
-            if (!this.otpAnswer) {
-              this.otpAnswer = undefined;
-              this.pendingModal?.updateOTPValue?.('');
-            }
-            // close modals
-            this.pendingModal?.onClose?.();
-            this.installModal?.onClose?.();
-          });
-
           this.connector.once(EventType.TERMINATE_DAPP, () => {
             // check for terminateed status
             // close modals
-            this.pendingModal?.onClose?.();
-            this.installModal?.onClose?.();
+            this.pendingModal?.unmount?.();
+            this.installModal?.unmount?.();
 
             reject(new Error('connection terminated'));
           });
@@ -540,12 +533,10 @@ export class RemoteConnection implements ProviderService {
           this.installModal,
         );
       }
-      console.debug(`mount install modal`, link);
       this.installModal.mount?.(link);
       return;
     }
 
-    console.debug(`start install modal`, this.options.modals.install);
     this.installModal = this.options.modals.install?.({
       link,
       debug: this.developerMode,
@@ -554,8 +545,7 @@ export class RemoteConnection implements ProviderService {
         return false;
       },
     });
-    console.debug(`install modal`, this.installModal);
-    this.installModal.mount?.(link);
+    this.installModal?.mount?.(link);
   }
 
   getChannelConfig(): ChannelConfig | undefined {
