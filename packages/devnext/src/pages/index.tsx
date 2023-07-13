@@ -18,21 +18,14 @@ export default function Home() {
   } = useSDK();
   const [response, setResponse] = useState<unknown>('');
 
-  const connect = () => {
-    if (!window.ethereum) {
-      throw new Error(`invalid ethereum provider`);
+  const connect = async () => {
+    try {
+      const accounts = sdk?.connect();
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connect:: accounts result`, accounts);
+    } catch(err) {
+      console.log('request accounts ERR', err)
     }
-    window.ethereum
-      .request({
-        method: 'eth_requestAccounts',
-        params: [],
-      })
-      .then((accounts) => {
-        if (accounts) {
-          console.debug(`connect:: accounts result`, accounts);
-        }
-      })
-      .catch((e) => console.log('request accounts ERR', e));
   };
 
   const sendTransaction = async () => {

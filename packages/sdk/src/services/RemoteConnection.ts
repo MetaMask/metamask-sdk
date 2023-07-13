@@ -37,7 +37,7 @@ export interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
-  connectWithExtensionProvider: () => void;
+  connectWithExtensionProvider?: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
@@ -546,7 +546,7 @@ export class RemoteConnection implements ProviderService {
       link,
       debug: this.developerMode,
       connectWithExtension: () => {
-        this.options.connectWithExtensionProvider();
+        this.options.connectWithExtensionProvider?.();
         return false;
       },
     });
