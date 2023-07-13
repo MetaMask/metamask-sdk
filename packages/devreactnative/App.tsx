@@ -21,14 +21,6 @@ import {
 } from 'react-native';
 
 import {MetaMaskSDK} from '@metamask/sdk';
-import {
-  CommunicationLayerMessage,
-  CommunicationLayerPreference,
-  DappMetadata,
-  MessageType,
-  RemoteCommunication,
-} from '@metamask/sdk-communication-layer';
-import crypto from 'crypto';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';

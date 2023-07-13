@@ -496,7 +496,7 @@ export class RemoteConnection implements ProviderService {
           }
 
           // Event means browser extension is selected, interrupt gracefully.
-          this.connector.once(EventType.PROVIDER_UPDATE, async (accounts) => {
+          this.connector.once(EventType.PROVIDER_UPDATE, async () => {
             reject(EventType.PROVIDER_UPDATE);
           });
 
