@@ -108,12 +108,12 @@ const initializeProvider = ({
 
         // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
-          const response = await f(...args);
+          const response = f(...args);
           return response;
         }
       } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
-        return await f(...args);
+        return f(...args);
       }
 
       if (debug) {
