@@ -353,7 +353,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           `SocketService::${this.context}::setupChannelListener::on 'clients_disconnected-${channelId}'`,
         );
       }
-      if (this.isOriginator) {
+      if (this.isOriginator && !this.clientsPaused) {
         // If it wasn't paused - need to reset keys.
         this.keyExchange.clean();
       }
