@@ -28,6 +28,7 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { extractFavicon } from './utils/extractFavicon';
+import { getBrowserExtension } from './utils/get-browser-extension';
 import { getBase64FromUrl } from './utils/getBase64FromUrl';
 
 export interface MetaMaskSDKOptions {
@@ -227,19 +228,22 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.dappMetadata = dappMetadata;
 
+    let metamaskBrowserExtension;
     if (
       typeof window !== 'undefined' &&
       window.ethereum &&
       !platform.isMetaMaskMobileWebView()
     ) {
-      // Check if window contain an existing provider extension.
-      // Replace it and keep track of metamask extension.
-      if (window.ethereum.isMetaMask) {
-        // Backup the browser extension provider
-        window.extension = window.ethereum;
+      try {
+        metamaskBrowserExtension = getBrowserExtension({
+          mustBeMetaMask: true,
+        });
+        window.extension = metamaskBrowserExtension;
+      } catch (err) {
+        // Ignore error if metamask extension not found
+        delete window.extension;
       }
       Ethereum.destroy();
-      delete window.ethereum;
     } else if (platform.isMetaMaskMobileWebView()) {
       this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
       this.activeProvider = window.ethereum;
@@ -260,7 +264,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       autoConnect,
       logging: runtimeLogging,
       connectWithExtensionProvider:
-        this.connectWithExtensionProvider.bind(this),
+        metamaskBrowserExtension === undefined
+          ? undefined
+          : this.connectWithExtensionProvider.bind(this),
       modals: {
         ...modals,
         onPendingModalDisconnect: this.terminate.bind(this),
@@ -309,6 +315,8 @@ export class MetaMaskSDK extends EventEmitter2 {
       walletConnect: this.walletConnect,
       debug: this.debug,
     });
+
+    window.ethereum = this.activeProvider;
 
     // This will check if the connection was correctly done or if the user needs to install MetaMask
     if (checkInstallationImmediately) {
