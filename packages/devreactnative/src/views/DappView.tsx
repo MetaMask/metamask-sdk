@@ -53,7 +53,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
-  const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
+  const [serviceStatus, _setServiceStatus] = useState(sdk._getServiceStatus());
   const styles = createStyles(status);
 
   const getBalance = async () => {
@@ -279,7 +279,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   return (
     <View style={{borderWidth: 2, padding: 5}}>
       <Text style={styles.title}>
-        {sdk.getDappMetadata()?.name} (
+        {sdk._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
       <ServiceStatusView serviceStatus={serviceStatus} />
