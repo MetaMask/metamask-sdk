@@ -81,6 +81,7 @@ export class ModalLoader {
 
   updateOTPValue = (otpValue: string) => {
     const otpNode = this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
+    console.info(`ModalLoader::updateOTPValue: ${otpValue}`);
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -121,6 +122,7 @@ export class ModalLoader {
   }
 
   unmount() {
+    console.info(`ModalLoader::unmount`)
     if (this.pendingContainer) {
       this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
       this.pendingContainer = undefined;
