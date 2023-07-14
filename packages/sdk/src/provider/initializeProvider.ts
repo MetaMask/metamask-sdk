@@ -90,23 +90,34 @@ const initializeProvider = ({
         checkInstallationOnAllCalls
       ) {
         if (initializationOngoing) {
+          // make sure the modal are displayed
+          const link = remoteConnection?.getUniversalLink();
+          if (debug) {
+            console.debug(
+              `initializeProvider::sendRequest() refresh modals link=${link}`,
+              remoteConnection,
+            );
+          }
+          remoteConnection?.showInstallModal({
+            link: remoteConnection?.getUniversalLink(),
+          });
           while (initializationOngoing) {
             // Wait for already ongoing method that triggered installation to complete
             await waitPromise(1000);
           }
-          if(debug) {
-            console.debug(`initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`)
+          if (debug) {
+            console.debug(
+              `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
+            );
           }
           // Previous init has completed, meaning we can safely interrup and call the provider.
           return f(...args);
         }
 
         initializationOngoing = true;
-        // is connected only means the modal has opened
-        let isConnectedNow = false;
         try {
           // Start installation and once installed try the request again
-          isConnectedNow = await installer.start({
+          await installer.start({
             wait: false,
           });
         } catch (error: unknown) {
@@ -121,19 +132,20 @@ const initializeProvider = ({
           throw error;
         }
 
+        // Initialize the request (otherwise the rpc call is not sent)
+        const response = f(...args);
+
         // Wait for the provider to be initialized so we can process requests
         await new Promise((resolve) => {
-          ethereum.once('_initialized', () => {
+          remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+            console.debug(`received authorized event`);
             resolve(true);
           });
         });
 
         initializationOngoing = false;
-        // Installation/connection is now completed so we are re-sending the request
-        if (isConnectedNow) {
-          const response = f(...args);
-          return response;
-        }
+
+        return response;
       } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
