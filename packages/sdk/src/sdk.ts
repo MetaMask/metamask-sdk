@@ -61,6 +61,10 @@ export interface MetaMaskSDKOptions {
   _source?: string;
 }
 
+export enum PROVIDER_UPDATE_TYPE {
+  TERMINATE = 'terminate',
+  EXTENSION = 'extension'
+}
 export class MetaMaskSDK extends EventEmitter2 {
   private options: MetaMaskSDKOptions;
 
@@ -100,6 +104,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     },
   ) {
     super();
+
+    this.setMaxListeners(50);
 
     if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
       // Automatically set dappMetadata on web env.
@@ -258,6 +264,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       _source,
       enableDebug,
       timer,
+      sdk: this,
       transports,
       communicationServerUrl,
       storage,
@@ -338,7 +345,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (this.debug) {
       console.debug(`SDK::connectWithExtensionProvider()`);
     }
-    delete window.ethereum;
     // save a copy of the instance before it gets overwritten
     this.sdkProvider = this.activeProvider;
     this.activeProvider = window.extension as any;
@@ -349,7 +355,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       method: 'eth_requestAccounts',
     });
     this.extensionActive = true;
-    this.emit(EventType.PROVIDER_UPDATE);
+    this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
     this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
   }
 
@@ -400,7 +406,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       return;
     }
 
-    this.emit(EventType.PROVIDER_UPDATE, []);
+    this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
 
     // check if connected with extension provider
     // if it is, disconnect from it and switch back to injected provider
