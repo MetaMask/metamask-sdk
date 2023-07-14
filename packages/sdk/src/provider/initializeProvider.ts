@@ -115,33 +115,42 @@ const initializeProvider = ({
         }
 
         initializationOngoing = true;
+
+        await installer.start({
+          wait: false,
+        });
+
+        // Initialize the request (otherwise the rpc call is not sent)
+        const response = f(...args);
+
+        // Wait for the provider to be initialized so we can process requests
         try {
-          // Start installation and once installed try the request again
-          await installer.start({
-            wait: false,
+          await new Promise((resolve, reject) => {
+            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+              resolve(true);
+            });
+
+            // Also detect changes of provider
+            remoteConnection
+              ?.getConnector()
+              .once(EventType.PROVIDER_UPDATE, (accounts: string[]) => {
+                if(debug) {
+                  console.debug(`initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`);
+                }
+                reject(EventType.PROVIDER_UPDATE);
+              });
           });
-        } catch (error: unknown) {
-          // Special case to handle when response is interrupted because users chose browser provider
-          if (error === EventType.PROVIDER_UPDATE) {
+        } catch (err: unknown) {
+          if (err === EventType.PROVIDER_UPDATE) {
+            initializationOngoing = false;
             // Re-create the query on the active provider
             return await window.ethereum?.request({
               method,
               params: args,
             });
           }
-          throw error;
+          throw err;
         }
-
-        // Initialize the request (otherwise the rpc call is not sent)
-        const response = f(...args);
-
-        // Wait for the provider to be initialized so we can process requests
-        await new Promise((resolve) => {
-          remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
-            console.debug(`received authorized event`);
-            resolve(true);
-          });
-        });
 
         initializationOngoing = false;
 

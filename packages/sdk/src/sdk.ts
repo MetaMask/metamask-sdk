@@ -411,6 +411,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       this.activeProvider = this.sdkProvider;
       window.ethereum = this.activeProvider;
       this.extensionActive = false;
+      return;
     }
 
     if (this.debug) {
