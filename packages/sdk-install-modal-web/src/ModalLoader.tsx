@@ -122,7 +122,6 @@ export class ModalLoader {
   }
 
   unmount() {
-    console.info(`ModalLoader::unmount`)
     if (this.pendingContainer) {
       this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
       this.pendingContainer = undefined;

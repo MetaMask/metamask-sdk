@@ -386,6 +386,10 @@ export class RemoteConnection implements ProviderService {
     }
   }
 
+  /**
+   * This will start the installer or pending modal and resolve once it is displayed.
+   * It doesn't wait for the actual connection to be authorized.
+   */
   async startConnection(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.connector) {
