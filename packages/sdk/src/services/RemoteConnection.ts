@@ -503,7 +503,6 @@ export class RemoteConnection implements ProviderService {
 
           // Event means browser extension is selected, interrupt gracefully.
           this.options.sdk.once(EventType.PROVIDER_UPDATE, async (type: PROVIDER_UPDATE_TYPE) => {
-            console.warn(`REMOTECONN received prov update`, type)
             // handle the provider change in initializeProvider
             reject(type)
           });
