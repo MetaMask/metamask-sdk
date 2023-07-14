@@ -63,7 +63,7 @@ export interface MetaMaskSDKOptions {
 
 export enum PROVIDER_UPDATE_TYPE {
   TERMINATE = 'terminate',
-  EXTENSION = 'extension'
+  EXTENSION = 'extension',
 }
 export class MetaMaskSDK extends EventEmitter2 {
   private options: MetaMaskSDKOptions;
