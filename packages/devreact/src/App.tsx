@@ -69,6 +69,12 @@ export const App = () => {
   useEffect(() => {
     if(!activeProvider) return;
 
+    if(activeProvider.selectedAddress) {
+      setAccount(activeProvider.selectedAddress);
+    }
+
+    setConnected(activeProvider.isConnected());
+
     const onChainChanged = (chain) => {
       console.log(chain);
       setChain(chain);
@@ -79,12 +85,12 @@ export const App = () => {
       setAccount(accounts?.[0]);
     }
 
-    window.ethereum?.on("chainChanged", onChainChanged);
-    window.ethereum?.on("accountsChanged", onAccountsChanged);
+    activeProvider.on("chainChanged", onChainChanged);
+    activeProvider.on("accountsChanged", onAccountsChanged);
 
     return () => {
-      window.ethereum?.removeListener("chainChanged", onChainChanged);
-      window.ethereum?.removeListener("accountsChanged", onAccountsChanged);
+      activeProvider.removeListener("chainChanged", onChainChanged);
+      activeProvider.removeListener("accountsChanged", onAccountsChanged);
     }
   }, [activeProvider]);
 
@@ -95,17 +101,6 @@ export const App = () => {
     }
 
     hasInit.current = true;
-
-    const onProviderEvent = (accounts) => {
-      console.debug(`onProviderEvent`, accounts);
-      if (accounts?.[0]?.startsWith('0x')) {
-        setAccount(accounts?.[0]);
-        setConnected(true);
-      } else {
-        setAccount(undefined);
-        setConnected(false);
-      }
-    }
 
     const doAsync = async () => {
       const clientSDK = new MetaMaskSDK({
@@ -124,6 +119,10 @@ export const App = () => {
       });
       await clientSDK.init();
 
+      const onProviderEvent = () => {
+        setActiveProvider(clientSDK?.getProvider())
+      }
+
       // listen for provider change events
       clientSDK.on(EventType.PROVIDER_UPDATE, onProviderEvent);
 
@@ -141,11 +140,10 @@ export const App = () => {
   });
 
   const connect = () => {
-    if(!window.ethereum) {
+    if(!activeProvider) {
       throw new Error(`invalid ethereum provider`);
     }
-    window.ethereum
-      .request({
+    activeProvider.request({
         method: "eth_requestAccounts",
         params: [],
       })
@@ -160,12 +158,10 @@ export const App = () => {
   };
 
   const addEthereumChain = () => {
-    if(!window.ethereum) {
+    if(!activeProvider) {
       throw new Error(`invalid ethereum provider`);
     }
-
-    window.ethereum
-      .request({
+    activeProvider.request({
         method: "wallet_addEthereumChain",
         params: [
           {
@@ -185,14 +181,14 @@ export const App = () => {
     const to = "0x0000000000000000000000000000000000000000";
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: window.ethereum?.selectedAddress, // must match user's active address.
+      from: activeProvider?.selectedAddress, // must match user's active address.
       value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await window.ethereum?.request({
+      const txHash = await activeProvider?.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
       }) as string;
@@ -207,7 +203,7 @@ export const App = () => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum?.chainId ?? "", 16),
+        chainId: parseInt(activeProvider?.chainId ?? "", 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: "Ether Mail",
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -273,7 +269,7 @@ export const App = () => {
       },
     });
 
-    let from = window.ethereum?.selectedAddress;
+    let from = account;
 
     console.debug(`sign from: ${from}`);
     try {
@@ -286,7 +282,7 @@ export const App = () => {
       const method = "eth_signTypedData_v4";
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await activeProvider?.request({ method, params });
       setResponse(resp);
     } catch (e) {
       console.log(e);
@@ -295,7 +291,7 @@ export const App = () => {
 
   const ping = async () => {
     console.debug(`ping`)
-    const web3 = new Web(window.ethereum as any)
+    const web3 = new Web(activeProvider as any)
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     const simple = new web3.eth.Contract(
@@ -310,17 +306,18 @@ export const App = () => {
 
   const setText = async () => {
     console.debug(`setText`)
-    const web3 = new Web(window.ethereum as any)
+    const web3 = new Web(activeProvider as any)
     const simple = new web3.eth.Contract(
       _abi  as AbiItem[],
       '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
     )
 
     const ret = await simple.methods.set('new value').send({
-      from: window.ethereum?.selectedAddress
+      from: activeProvider?.selectedAddress
     })
     console.debug(`result`, ret)
   }
+
   const disconnect = () => {
     sdk?.disconnect();
   }
@@ -333,7 +330,7 @@ export const App = () => {
   const changeNetwork = async (hexChainId:string) => {
     console.debug(`switching to network chainId=${hexChainId}`)
     try {
-      const response = await window.ethereum?.request({
+      const response = await activeProvider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
       })
