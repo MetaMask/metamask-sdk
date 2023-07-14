@@ -15,6 +15,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
 import { Platform } from '../Platform/Platfform';
+import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
@@ -30,6 +31,7 @@ export interface RemoteConnectionProps {
   dappMetadata?: DappMetadata;
   _source?: string;
   enableDebug?: boolean;
+  sdk: MetaMaskSDK;
   transports?: string[];
   webRTCLib?: WebRTCLib;
   communicationServerUrl?: string;
@@ -386,6 +388,10 @@ export class RemoteConnection implements ProviderService {
     }
   }
 
+  /**
+   * This will start the installer or pending modal and resolve once it is displayed.
+   * It doesn't wait for the actual connection to be authorized.
+   */
   async startConnection(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       if (!this.connector) {
@@ -496,9 +502,13 @@ export class RemoteConnection implements ProviderService {
           }
 
           // Event means browser extension is selected, interrupt gracefully.
-          this.connector.once(EventType.PROVIDER_UPDATE, async () => {
-            reject(EventType.PROVIDER_UPDATE);
-          });
+          this.options.sdk.once(
+            EventType.PROVIDER_UPDATE,
+            async (type: PROVIDER_UPDATE_TYPE) => {
+              // handle the provider change in initializeProvider
+              reject(type);
+            },
+          );
 
           // TODO can migrate to waitFor instead?
           this.connector.once(EventType.CLIENTS_READY, async () => {
@@ -510,15 +520,6 @@ export class RemoteConnection implements ProviderService {
 
             // Allow initializeProvider to complete and send the eth_requestAccounts
             resolve(true);
-          });
-
-          this.connector.once(EventType.TERMINATE_DAPP, () => {
-            // check for terminateed status
-            // close modals
-            this.pendingModal?.unmount?.();
-            this.installModal?.unmount?.();
-
-            reject(new Error('connection terminated'));
           });
         }
       };

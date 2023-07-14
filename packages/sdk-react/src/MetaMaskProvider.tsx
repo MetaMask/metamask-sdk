@@ -3,22 +3,20 @@ import {
   EventType,
   MetaMaskSDK,
   MetaMaskSDKOptions,
-  ServiceStatus
+  PROVIDER_UPDATE_TYPE,
+  SDKProvider,
+  ServiceStatus,
 } from '@metamask/sdk';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, {
-  createContext,
-  useCallback,
-  useEffect, useState
-} from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 import {
   Chain,
   configureChains,
   Connector,
   createConfig,
   mainnet,
-  WagmiConfig
+  WagmiConfig,
 } from 'wagmi';
 import MetaMaskConnector from './MetaMaskConnector';
 
@@ -26,6 +24,7 @@ const initProps: {
   sdk?: MetaMaskSDK;
   connected: boolean;
   connecting: boolean;
+  provider?: SDKProvider;
   error?: EthereumRpcError<unknown>;
   chainId?: string;
   account?: string;
@@ -72,11 +71,7 @@ const WagmiWrapper = ({
     createConfig({ publicClient, connectors: validConnectors }),
   );
 
-  return (
-    <WagmiConfig config={config}>
-      {children}
-    </WagmiConfig>
-  );
+  return <WagmiConfig config={config}>{children}</WagmiConfig>;
 };
 
 const MetaMaskProviderClient = ({
@@ -88,26 +83,16 @@ const MetaMaskProviderClient = ({
   sdkOptions: MetaMaskSDKOptions;
   debug?: boolean;
 }) => {
-  const [trigger, setTrigger] = useState<number>(0);
-
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
+  const [trigger, setTrigger] = useState<number>(1);
   const [chainId, setChainId] = useState<string>();
   const [account, setAccount] = useState<string>();
   const [error, setError] = useState<EthereumRpcError<unknown>>();
+  const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
-
-  const onSDKStatusEvent = useCallback((_serviceStatus: ServiceStatus) => {
-    if (debug) {
-      console.debug(
-        `MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`,
-        _serviceStatus,
-      );
-    }
-    setStatus(_serviceStatus);
-  }, []);
 
   useEffect(() => {
     // Prevent sdk re-rendering
@@ -129,9 +114,13 @@ const MetaMaskProviderClient = ({
     }
 
     if (debug) {
-      console.debug(`[MetamaskProvider] init SDK Provider trigger=${trigger}`);
+      console.debug(`[MetamaskProvider] init SDK Provider listeners`);
     }
-    const provider = sdk.getProvider();
+
+    const activeProvider = sdk.getProvider();
+    setConnected(activeProvider.isConnected());
+    setAccount(activeProvider.selectedAddress || undefined);
+    setProvider(activeProvider);
 
     const onConnecting = () => {
       if (debug) {
@@ -147,7 +136,7 @@ const MetaMaskProviderClient = ({
         console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
       }
       setConnecting(false);
-      setAccount(provider?.selectedAddress || undefined);
+      setAccount(activeProvider?.selectedAddress || undefined);
       setConnected(true);
       setError(undefined);
     };
@@ -211,46 +200,46 @@ const MetaMaskProviderClient = ({
       setError(undefined);
     };
 
-    provider?.on('_initialized', onInitialized);
-    provider?.on('connecting', onConnecting);
-    provider?.on('connect', onConnect);
-    provider?.on('disconnect', onDisconnect);
-    provider?.on('accountsChanged', onAccountsChanged);
-    provider?.on('chainChanged', onChainChanged);
+    const onSDKStatusEvent = (_serviceStatus: ServiceStatus) => {
+      if (debug) {
+        console.debug(
+          `MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`,
+          _serviceStatus,
+        );
+      }
+      setStatus(_serviceStatus);
+    };
+
+    activeProvider.on('_initialized', onInitialized);
+    activeProvider.on('connecting', onConnecting);
+    activeProvider.on('connect', onConnect);
+    activeProvider.on('disconnect', onDisconnect);
+    activeProvider.on('accountsChanged', onAccountsChanged);
+    activeProvider.on('chainChanged', onChainChanged);
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
     return () => {
-      provider?.removeListener('_initialized', onInitialized);
-      provider?.removeListener('connecting', onConnecting);
-      provider?.removeListener('connect', onConnect);
-      provider?.removeListener('disconnect', onDisconnect);
-      provider?.removeListener('accountsChanged', onAccountsChanged);
-      provider?.removeListener('chainChanged', onChainChanged);
+      activeProvider.removeListener('_initialized', onInitialized);
+      activeProvider.removeListener('connecting', onConnecting);
+      activeProvider.removeListener('connect', onConnect);
+      activeProvider.removeListener('disconnect', onDisconnect);
+      activeProvider.removeListener('accountsChanged', onAccountsChanged);
+      activeProvider.removeListener('chainChanged', onChainChanged);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
-  }, [trigger, sdk, debug]);
+  }, [trigger, sdk]);
 
   useEffect(() => {
     if (!sdk) {
       return;
     }
 
-    const onProviderEvent = (accounts?: string[]) => {
+    const onProviderEvent = (type: PROVIDER_UPDATE_TYPE) => {
       if (debug) {
         console.debug(
           `MetaMaskProvider::sdk on '${EventType.PROVIDER_UPDATE}' event.`,
-          accounts,
+          type,
         );
-      }
-
-      if (accounts?.[0]?.startsWith('0x')) {
-        setConnected(true);
-        setAccount(accounts?.[0]);
-        setConnecting(false);
-      } else {
-        setConnected(false);
-        setAccount(undefined);
-        setConnecting(false);
       }
       setTrigger((_trigger) => _trigger + 1);
     };
@@ -262,9 +251,20 @@ const MetaMaskProviderClient = ({
 
   return (
     <SDKContext.Provider
-      value={{ sdk, connected, connecting, account, chainId, error, status }}
+      value={{
+        sdk,
+        connected,
+        provider,
+        connecting,
+        account,
+        chainId,
+        error,
+        status,
+      }}
     >
-      <WagmiWrapper sdk={sdk} debug={debug}>{children}</WagmiWrapper>
+      <WagmiWrapper sdk={sdk} debug={debug}>
+        {children}
+      </WagmiWrapper>
     </SDKContext.Provider>
   );
 };

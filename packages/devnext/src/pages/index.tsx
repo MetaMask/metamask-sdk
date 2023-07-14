@@ -20,7 +20,7 @@ export default function Home() {
 
   const connect = async () => {
     try {
-      const accounts = sdk?.connect();
+      const accounts = await sdk?.connect();
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
     } catch(err) {
