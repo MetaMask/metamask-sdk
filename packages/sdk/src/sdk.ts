@@ -267,7 +267,6 @@ export class MetaMaskSDK extends EventEmitter2 {
         console.warn(`EXTENSION ONLY --- prevent sdk initialization`);
       }
       this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
-      this.sdkProvider = this.activeProvider;
       this.activeProvider = metamaskBrowserExtension;
       this.extensionActive = true;
       this._initialized = true;
