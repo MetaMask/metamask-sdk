@@ -65,6 +65,14 @@ const initializeProvider = ({
   });
 
   let initializationOngoing = false;
+  const setInitializing = (ongoing: boolean) => {
+    initializationOngoing = ongoing;
+  };
+
+  const getInitializing = () => {
+    return initializationOngoing;
+  };
+
   const sendRequest = async (
     method: string,
     args: any,
@@ -92,7 +100,7 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-        if (initializationOngoing) {
+        if (getInitializing()) {
           // make sure the install modal is displayed
           const link = remoteConnection?.getUniversalLink();
           if (debug) {
@@ -101,13 +109,18 @@ const initializeProvider = ({
               remoteConnection,
             );
           }
+
           remoteConnection?.showInstallModal({
             link: remoteConnection?.getUniversalLink(),
           });
-          while (initializationOngoing) {
+
+          let loop = getInitializing();
+          while (loop) {
             // Wait for already ongoing method that triggered installation to complete
             await waitPromise(1000);
+            loop = getInitializing();
           }
+
           if (debug) {
             console.debug(
               `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
@@ -117,22 +130,22 @@ const initializeProvider = ({
           return f(...args);
         }
 
-        initializationOngoing = true;
+        setInitializing(true);
 
-        let hasInstalled = false;
         try {
           // installer modal display but doesn't mean connection is auhtorized
-          hasInstalled = await installer.start({
+          await installer.start({
             wait: false,
           });
         } catch (installError) {
-          initializationOngoing = false;
+          setInitializing(false);
           if (debug) {
             console.debug(
               `initializeProvider failed to start installer`,
               installError,
             );
           }
+
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
@@ -173,7 +186,7 @@ const initializeProvider = ({
             );
           });
         } catch (err: unknown) {
-          initializationOngoing = false;
+          setInitializing(false);
           if (err === EventType.PROVIDER_UPDATE) {
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
@@ -184,7 +197,7 @@ const initializeProvider = ({
           throw err;
         }
 
-        initializationOngoing = false;
+        setInitializing(false);
 
         return response;
       } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
