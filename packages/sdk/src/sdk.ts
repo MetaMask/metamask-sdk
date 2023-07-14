@@ -307,6 +307,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.activeProvider = initializeProvider({
       platformType,
       communicationLayerPreference,
+      sdk: this,
       checkInstallationOnAllCalls,
       injectProvider,
       shouldShimWeb3,
@@ -343,15 +344,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.activeProvider = window.extension as any;
     // Set extension provider as default on window
     window.ethereum = window.extension as any;
-    const accounts = await window.ethereum?.request({
+    // always create initial query to connect the account
+    await this.activeProvider?.request({
       method: 'eth_requestAccounts',
     });
     this.extensionActive = true;
-    this.emit(EventType.PROVIDER_UPDATE, accounts);
-    // TODO should we instead keep track of sdk within remoteConnection and avoid simulation events from connector?
-    this.remoteConnection
-      ?.getConnector()
-      .emit(EventType.PROVIDER_UPDATE, accounts);
+    this.emit(EventType.PROVIDER_UPDATE);
     this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
   }
 

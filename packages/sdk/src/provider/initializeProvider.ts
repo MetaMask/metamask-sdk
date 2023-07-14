@@ -8,6 +8,7 @@ import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { Platform } from '../Platform/Platfform';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
+import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
@@ -21,6 +22,7 @@ const initializeProvider = ({
   injectProvider,
   shouldShimWeb3,
   installer,
+  sdk,
   remoteConnection,
   walletConnect,
   debug,
@@ -30,6 +32,7 @@ const initializeProvider = ({
   platformType: PlatformType;
   injectProvider?: boolean;
   shouldShimWeb3: boolean;
+  sdk: MetaMaskSDK;
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
   walletConnect?: WalletConnect;
@@ -126,7 +129,7 @@ const initializeProvider = ({
         // Wait for the provider to be initialized so we can process requests
         try {
           await new Promise((resolve, reject) => {
-            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+            sdk.once(EventType.AUTHORIZED, () => {
               resolve(true);
             });
 
@@ -144,7 +147,7 @@ const initializeProvider = ({
           if (err === EventType.PROVIDER_UPDATE) {
             initializationOngoing = false;
             // Re-create the query on the active provider
-            return await window.ethereum?.request({
+            return await sdk.getProvider()?.request({
               method,
               params: args,
             });
