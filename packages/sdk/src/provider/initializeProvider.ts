@@ -93,7 +93,7 @@ const initializeProvider = ({
         checkInstallationOnAllCalls
       ) {
         if (initializationOngoing) {
-          // make sure the modal are displayed
+          // make sure the install modal is displayed
           const link = remoteConnection?.getUniversalLink();
           if (debug) {
             console.debug(
