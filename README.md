@@ -33,20 +33,19 @@ npm i @metamask/sdk
 Import the SDK (for possible parameters check this):
 
 ```ts
-import { MetaMaskSDK } from '@metamask/sdk'
-const MMSDK = new MetaMaskSDK({})
-MMSDK.init().then(() => {
-  console.log('MetaMask SDK is ready')
-  const ethereum = MMSDK.getProvider()
-  ethereum.request({method: 'eth_requestAccounts', params: []})
-}).catch((error) => {
-  console.error(error)
-})
+import { MetaMaskSDK } from '@metamask/sdk';
+const MMSDK = new MetaMaskSDK({});
+MMSDK.init()
+  .then(() => {
+    console.log('MetaMask SDK is ready');
+    const ethereum = MMSDK.getProvider();
+    ethereum.request({ method: 'eth_requestAccounts', params: [] });
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 ```
-
-```
-
 
 # Follow the full documentation
 
-[Please access this to read the MetaMask SDK full documentation](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-intro.html)
+[Please access this to read the MetaMask SDK full documentation](https://docs.metamask.io/wallet/how-to/use-sdk/)
