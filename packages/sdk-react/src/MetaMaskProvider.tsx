@@ -1,9 +1,9 @@
 'use client';
-import { PROVIDER_UPDATE_TYPE } from '@metamask/sdk';
 import {
   EventType,
   MetaMaskSDK,
   MetaMaskSDKOptions,
+  PROVIDER_UPDATE_TYPE,
   SDKProvider,
   ServiceStatus,
 } from '@metamask/sdk';

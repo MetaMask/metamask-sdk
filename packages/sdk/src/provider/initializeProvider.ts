@@ -126,10 +126,17 @@ const initializeProvider = ({
             wait: false,
           });
         } catch (installError) {
-          if(debug) {
-            console.warn(`initializeProvider failed to start installer`, installError)
-          }
           initializationOngoing = false;
+          if(debug) {
+            console.debug(`initializeProvider failed to start installer`, installError)
+          }
+          if(PROVIDER_UPDATE_TYPE.EXTENSION===installError) {
+            // Re-create the query on the active provider
+            return await sdk.getProvider()?.request({
+              method,
+              params: args,
+            });
+          }
           throw installError;
         }
 

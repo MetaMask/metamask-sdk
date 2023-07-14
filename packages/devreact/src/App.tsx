@@ -102,6 +102,10 @@ export const App = () => {
 
     hasInit.current = true;
 
+    const onProviderEvent = (clientSDK: MetaMaskSDK) => {
+      setActiveProvider(clientSDK?.getProvider())
+    }
+
     const doAsync = async () => {
       const clientSDK = new MetaMaskSDK({
         communicationServerUrl: 'http://192.168.50.114:4000',
@@ -119,12 +123,8 @@ export const App = () => {
       });
       await clientSDK.init();
 
-      const onProviderEvent = () => {
-        setActiveProvider(clientSDK?.getProvider())
-      }
-
       // listen for provider change events
-      clientSDK.on(EventType.PROVIDER_UPDATE, onProviderEvent);
+      clientSDK.on(EventType.PROVIDER_UPDATE, () => onProviderEvent(clientSDK));
 
       setSDK(clientSDK);
       setActiveProvider(clientSDK.getProvider());
