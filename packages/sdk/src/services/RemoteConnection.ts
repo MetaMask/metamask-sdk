@@ -15,6 +15,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
 import { Platform } from '../Platform/Platfform';
+import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
@@ -30,6 +31,7 @@ export interface RemoteConnectionProps {
   dappMetadata?: DappMetadata;
   _source?: string;
   enableDebug?: boolean;
+  sdk: MetaMaskSDK;
   transports?: string[];
   webRTCLib?: WebRTCLib;
   communicationServerUrl?: string;
@@ -499,6 +501,13 @@ export class RemoteConnection implements ProviderService {
             reject(err);
           }
 
+          // Event means browser extension is selected, interrupt gracefully.
+          this.options.sdk.once(EventType.PROVIDER_UPDATE, async (type: PROVIDER_UPDATE_TYPE) => {
+            console.warn(`REMOTECONN received prov update`, type)
+            // handle the provider change in initializeProvider
+            reject(type)
+          });
+
           // TODO can migrate to waitFor instead?
           this.connector.once(EventType.CLIENTS_READY, async () => {
             if (this.developerMode) {
@@ -509,15 +518,6 @@ export class RemoteConnection implements ProviderService {
 
             // Allow initializeProvider to complete and send the eth_requestAccounts
             resolve(true);
-          });
-
-          this.connector.once(EventType.TERMINATE_DAPP, () => {
-            // check for terminateed status
-            // close modals
-            this.pendingModal?.unmount?.();
-            this.installModal?.unmount?.();
-
-            reject(new Error('connection terminated'));
           });
         }
       };
