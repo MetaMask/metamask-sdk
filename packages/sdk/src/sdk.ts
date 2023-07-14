@@ -424,7 +424,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     // if it is, disconnect from it and switch back to injected provider
     if (this.extensionActive) {
       if (this.options.extensionOnly) {
-        console.warn(`prevent switching providers`);
+        if (this.debug) {
+          console.warn(
+            `SDK::terminate() extensionOnly --- prevent switching providers`,
+          );
+        }
+
         return;
       }
 
