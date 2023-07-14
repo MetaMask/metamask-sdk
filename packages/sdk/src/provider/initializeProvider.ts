@@ -11,6 +11,7 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
+import { waitPromise } from '../utils/waitPromise';
 
 // TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
@@ -60,6 +61,7 @@ const initializeProvider = ({
     debug,
   });
 
+  let initializationOngoing = false;
   const sendRequest = async (
     method: string,
     args: any,
@@ -87,6 +89,20 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
+        if (initializationOngoing) {
+          while (initializationOngoing) {
+            // Wait for already ongoing method that triggered installation to complete
+            await waitPromise(1000);
+          }
+          if(debug) {
+            console.debug(`initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`)
+          }
+          // Previous init has completed, meaning we can safely interrup and call the provider.
+          return f(...args);
+        }
+
+        initializationOngoing = true;
+        // is connected only means the modal has opened
         let isConnectedNow = false;
         try {
           // Start installation and once installed try the request again
@@ -105,6 +121,14 @@ const initializeProvider = ({
           throw error;
         }
 
+        // Wait for the provider to be initialized so we can process requests
+        await new Promise((resolve) => {
+          ethereum.once('_initialized', () => {
+            resolve(true);
+          });
+        });
+
+        initializationOngoing = false;
         // Installation/connection is now completed so we are re-sending the request
         if (isConnectedNow) {
           const response = f(...args);
