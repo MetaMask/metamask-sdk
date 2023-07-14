@@ -14,6 +14,7 @@ export default function App({ Component, pageProps }: AppProps) {
         serviceLayer: false,
         plaintext: true,
       },
+      extensionOnly: true,
       autoConnect: {
         enable: false,
       },

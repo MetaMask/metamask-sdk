@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3]
+### Uncategorized
+- fix: initial connection promise potentially dangling with browser extension ([#218](https://github.com/MetaMask/metamask-sdk/pull/218))
+
 ## [0.5.2]
 ### Added
 - feat: optimize paused/resume flow ([#212](https://github.com/MetaMask/metamask-sdk/pull/212))
@@ -43,7 +47,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.3...HEAD
+[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.2...@metamask/sdk-communication-layer@0.5.3
 [0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.0...@metamask/sdk-communication-layer@0.5.2
 [0.5.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.4.2...@metamask/sdk-communication-layer@0.5.0
 [0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.4.0...@metamask/sdk-communication-layer@0.4.2
