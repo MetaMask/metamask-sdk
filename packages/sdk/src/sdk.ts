@@ -50,6 +50,10 @@ export interface MetaMaskSDKOptions {
   dappMetadata: DappMetadata;
   timer?: any;
   enableDebug?: boolean;
+  /**
+   * If MetaMask browser extension is detected, directly use it.
+   */
+  extensionOnly?: boolean;
   developerMode?: boolean;
   ui?: SDKUIOptions;
   autoConnect?: AutoConnectOptions;
@@ -171,6 +175,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       communicationLayerPreference = CommunicationLayerPreference.SOCKET,
       // WalletConnect
       WalletConnectInstance,
+      extensionOnly,
       forceRestartWalletConnect,
       // WebRTC
       webRTCLib,
@@ -253,6 +258,17 @@ export class MetaMaskSDK extends EventEmitter2 {
     } else if (platform.isMetaMaskMobileWebView()) {
       this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
       this.activeProvider = window.ethereum;
+      this._initialized = true;
+      return;
+    }
+
+    if (metamaskBrowserExtension && extensionOnly) {
+      if (developerMode) {
+        console.warn(`EXTENSION ONLY --- prevent sdk initialization`);
+      }
+      this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
+      this.activeProvider = metamaskBrowserExtension;
+      this.extensionActive = true;
       this._initialized = true;
       return;
     }
@@ -406,11 +422,20 @@ export class MetaMaskSDK extends EventEmitter2 {
       return;
     }
 
-    this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
-
     // check if connected with extension provider
     // if it is, disconnect from it and switch back to injected provider
     if (this.extensionActive) {
+      if (this.options.extensionOnly) {
+        if (this.debug) {
+          console.warn(
+            `SDK::terminate() extensionOnly --- prevent switching providers`,
+          );
+        }
+
+        return;
+      }
+
+      this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
       // Re-use default extension provider as default
       this.activeProvider = this.sdkProvider;
       window.ethereum = this.activeProvider;
@@ -418,6 +443,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       return;
     }
 
+    this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
     if (this.debug) {
       console.debug(`SDK::terminate()`, this.remoteConnection);
     }
