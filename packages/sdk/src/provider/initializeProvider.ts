@@ -8,7 +8,7 @@ import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { Platform } from '../Platform/Platfform';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import { MetaMaskSDK } from '../sdk';
+import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { WalletConnect } from '../services/WalletConnect';
@@ -78,7 +78,7 @@ const initializeProvider = ({
 
     if (debugRequest) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
+        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
 
@@ -119,9 +119,19 @@ const initializeProvider = ({
 
         initializationOngoing = true;
 
-        await installer.start({
-          wait: false,
-        });
+        let hasInstalled = false;
+        try {
+          // installer modal display but doesn't mean connection is auhtorized
+          hasInstalled = await installer.start({
+            wait: false,
+          });
+        } catch (installError) {
+          if(debug) {
+            console.warn(`initializeProvider failed to start installer`, installError)
+          }
+          initializationOngoing = false;
+          throw installError;
+        }
 
         // Initialize the request (otherwise the rpc call is not sent)
         const response = f(...args);
@@ -129,23 +139,32 @@ const initializeProvider = ({
         // Wait for the provider to be initialized so we can process requests
         try {
           await new Promise((resolve, reject) => {
-            sdk.once(EventType.AUTHORIZED, () => {
+            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
               resolve(true);
             });
 
             // Also detect changes of provider
-            remoteConnection
-              ?.getConnector()
-              .once(EventType.PROVIDER_UPDATE, (accounts: string[]) => {
-                if(debug) {
-                  console.debug(`initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`);
+            sdk.once(
+              EventType.PROVIDER_UPDATE,
+              (type: PROVIDER_UPDATE_TYPE) => {
+                if (debug) {
+                  console.debug(
+                    `initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`,
+                    type,
+                  );
                 }
-                reject(EventType.PROVIDER_UPDATE);
-              });
+
+                if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
+                  reject(EventType.PROVIDER_UPDATE);
+                } else {
+                  reject(new Error('Connection Terminated'));
+                }
+              },
+            );
           });
         } catch (err: unknown) {
+          initializationOngoing = false;
           if (err === EventType.PROVIDER_UPDATE) {
-            initializationOngoing = false;
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
               method,
