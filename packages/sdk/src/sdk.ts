@@ -270,80 +270,82 @@ export class MetaMaskSDK extends EventEmitter2 {
       this.sdkProvider = this.activeProvider;
       this.activeProvider = metamaskBrowserExtension;
       this.extensionActive = true;
-    } else {
-      this.remoteConnection = new RemoteConnection({
-        communicationLayerPreference,
-        dappMetadata,
-        webRTCLib,
-        _source,
-        enableDebug,
-        timer,
-        sdk: this,
-        transports,
-        communicationServerUrl,
-        storage,
-        autoConnect,
-        logging: runtimeLogging,
-        connectWithExtensionProvider:
-          metamaskBrowserExtension === undefined
-            ? undefined
-            : this.connectWithExtensionProvider.bind(this),
-        modals: {
-          ...modals,
-          onPendingModalDisconnect: this.terminate.bind(this),
+      this._initialized = true;
+      return;
+    }
+
+    this.remoteConnection = new RemoteConnection({
+      communicationLayerPreference,
+      dappMetadata,
+      webRTCLib,
+      _source,
+      enableDebug,
+      timer,
+      sdk: this,
+      transports,
+      communicationServerUrl,
+      storage,
+      autoConnect,
+      logging: runtimeLogging,
+      connectWithExtensionProvider:
+        metamaskBrowserExtension === undefined
+          ? undefined
+          : this.connectWithExtensionProvider.bind(this),
+      modals: {
+        ...modals,
+        onPendingModalDisconnect: this.terminate.bind(this),
+      },
+    });
+
+    if (WalletConnectInstance) {
+      this.walletConnect = new WalletConnect({
+        forceRestart: forceRestartWalletConnect ?? false,
+        wcConnector: WalletConnectInstance,
+      });
+    }
+
+    const installer = MetaMaskInstaller.init({
+      preferDesktop: preferDesktop ?? false,
+      remote: this.remoteConnection,
+      debug: this.debug,
+    });
+    this.installer = installer;
+
+    // Propagate up the sdk-communication events
+    this.remoteConnection
+      .getConnector()
+      ?.on(
+        EventType.CONNECTION_STATUS,
+        (connectionStatus: ConnectionStatus) => {
+          this.emit(EventType.CONNECTION_STATUS, connectionStatus);
         },
+      );
+
+    this.remoteConnection
+      .getConnector()
+      ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+        this.emit(EventType.SERVICE_STATUS, serviceStatus);
       });
 
-      if (WalletConnectInstance) {
-        this.walletConnect = new WalletConnect({
-          forceRestart: forceRestartWalletConnect ?? false,
-          wcConnector: WalletConnectInstance,
-        });
-      }
+    // Inject our provider into window.ethereum
+    this.activeProvider = initializeProvider({
+      platformType,
+      communicationLayerPreference,
+      sdk: this,
+      checkInstallationOnAllCalls,
+      injectProvider,
+      shouldShimWeb3,
+      installer,
+      remoteConnection: this.remoteConnection,
+      walletConnect: this.walletConnect,
+      debug: this.debug,
+    });
 
-      const installer = MetaMaskInstaller.init({
-        preferDesktop: preferDesktop ?? false,
-        remote: this.remoteConnection,
-        debug: this.debug,
-      });
-      this.installer = installer;
+    window.ethereum = this.activeProvider;
 
-      // Propagate up the sdk-communication events
-      this.remoteConnection
-        .getConnector()
-        ?.on(
-          EventType.CONNECTION_STATUS,
-          (connectionStatus: ConnectionStatus) => {
-            this.emit(EventType.CONNECTION_STATUS, connectionStatus);
-          },
-        );
-
-      this.remoteConnection
-        .getConnector()
-        ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
-          this.emit(EventType.SERVICE_STATUS, serviceStatus);
-        });
-
-      // Inject our provider into window.ethereum
-      this.activeProvider = initializeProvider({
-        platformType,
-        communicationLayerPreference,
-        sdk: this,
-        checkInstallationOnAllCalls,
-        injectProvider,
-        shouldShimWeb3,
-        installer,
-        remoteConnection: this.remoteConnection,
-        walletConnect: this.walletConnect,
-        debug: this.debug,
-      });
-
-      window.ethereum = this.activeProvider;
-
-      // This will check if the connection was correctly done or if the user needs to install MetaMask
-      if (checkInstallationImmediately) {
-        await installer.start({ wait: true });
-      }
+    // This will check if the connection was correctly done or if the user needs to install MetaMask
+    if (checkInstallationImmediately) {
+      await installer.start({ wait: true });
     }
 
     this._initialized = true;
