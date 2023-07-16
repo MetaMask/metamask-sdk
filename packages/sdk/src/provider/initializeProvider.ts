@@ -11,7 +11,6 @@ import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream'
 import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
-import { WalletConnect } from '../services/WalletConnect';
 import { waitPromise } from '../utils/waitPromise';
 
 // TODO refactor to be part of Ethereum class.
@@ -24,7 +23,6 @@ const initializeProvider = ({
   installer,
   sdk,
   remoteConnection,
-  walletConnect,
   debug,
 }: {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -35,7 +33,6 @@ const initializeProvider = ({
   sdk: MetaMaskSDK;
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
-  walletConnect?: WalletConnect;
   debug: boolean;
 }) => {
   // Setup stream for content script communication
@@ -44,7 +41,6 @@ const initializeProvider = ({
     target: ProviderConstants.CONTENT_SCRIPT,
     communicationLayerPreference,
     remoteConnection,
-    walletConnect,
     debug,
   });
 
