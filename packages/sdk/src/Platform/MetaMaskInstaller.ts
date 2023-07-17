@@ -2,8 +2,8 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../services/Ethereum';
 import { ProviderService } from '../services/ProviderService';
-import { waitPromise } from '../utils/waitPromise';
-import { Platform } from './Platfform';
+import { wait as waitPromise } from '../utils/wait';
+import { PlatformManager } from './PlatfformManager';
 
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
@@ -11,6 +11,7 @@ import { Platform } from './Platfform';
 interface InstallerProps {
   preferDesktop: boolean;
   remote: ProviderService;
+  platformManager: PlatformManager;
   debug?: boolean;
 }
 
@@ -28,33 +29,22 @@ export class MetaMaskInstaller {
 
   private preferDesktop = false;
 
+  private platformManager: PlatformManager;
+
   private remote: ProviderService;
 
   private debug = false;
 
-  private constructor({
+  public constructor({
     preferDesktop,
     remote,
+    platformManager,
     debug = false,
   }: InstallerProps) {
     this.preferDesktop = preferDesktop;
     this.remote = remote;
+    this.platformManager = platformManager;
     this.debug = debug;
-  }
-
-  public static init(props: InstallerProps): MetaMaskInstaller {
-    MetaMaskInstaller.instance = new MetaMaskInstaller(props);
-    return MetaMaskInstaller.instance;
-  }
-
-  public static getInstance(): MetaMaskInstaller {
-    if (!MetaMaskInstaller.instance) {
-      throw new Error(
-        'MetaMask installer not initialized - call MetaMaskInstaller.init() first.',
-      );
-    }
-
-    return MetaMaskInstaller.instance;
   }
 
   startDesktopOnboarding() {
@@ -68,7 +58,7 @@ export class MetaMaskInstaller {
   }
 
   async redirectToProperInstall() {
-    const platformType = Platform.getInstance().getPlatformType();
+    const platformType = this.platformManager.getPlatformType();
 
     if (this?.debug) {
       console.debug(
@@ -93,21 +83,19 @@ export class MetaMaskInstaller {
     // If is not installed, start remote connection
     this.isInstalling = true;
     try {
-      const startedRemoteConnection = await this.remote.startConnection();
-      if (startedRemoteConnection) {
-        this.isInstalling = false;
-        this.hasInstalled = true;
-      }
-      return startedRemoteConnection;
+      await this.remote.startConnection();
+      this.isInstalling = false;
+      this.hasInstalled = true;
     } catch (err) {
       this.isInstalling = false;
       throw err;
     }
-    return false;
+
+    return true;
   }
 
   async checkInstallation() {
-    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    const isInstalled = this.platformManager.isMetaMaskInstalled();
 
     if (this.debug) {
       console.log(

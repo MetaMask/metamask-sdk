@@ -6,20 +6,20 @@ import {
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
-import { Platform } from '../Platform/Platfform';
+import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
+import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
-import { waitPromise } from '../utils/waitPromise';
+import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
+import { wait } from '../utils/wait';
 
-// TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
-  platformType,
   injectProvider,
   shouldShimWeb3,
+  platformManager,
   installer,
   sdk,
   remoteConnection,
@@ -27,10 +27,10 @@ const initializeProvider = ({
 }: {
   communicationLayerPreference: CommunicationLayerPreference;
   checkInstallationOnAllCalls?: boolean;
-  platformType: PlatformType;
   injectProvider?: boolean;
   shouldShimWeb3: boolean;
   sdk: MetaMaskSDK;
+  platformManager: PlatformManager;
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
   debug: boolean;
@@ -39,10 +39,13 @@ const initializeProvider = ({
   const metamaskStream = getPostMessageStream({
     name: ProviderConstants.INPAGE,
     target: ProviderConstants.CONTENT_SCRIPT,
+    platformManager,
     communicationLayerPreference,
     remoteConnection,
     debug,
   });
+
+  const platformType = platformManager.getPlatformType();
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -75,7 +78,7 @@ const initializeProvider = ({
     f: any,
     debugRequest: boolean,
   ) => {
-    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
@@ -86,7 +89,25 @@ const initializeProvider = ({
       );
     }
 
-    const platform = Platform.getInstance();
+    if (initializationOngoing) {
+      // make sure the active modal is displayed
+      remoteConnection?.showActiveModal();
+
+      let loop = getInitializing();
+      while (loop) {
+        // Wait for already ongoing method that triggered installation to complete
+        await wait(1000);
+        loop = getInitializing();
+      }
+
+      if (debug) {
+        console.debug(
+          `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
+        );
+      }
+      // Previous init has completed, meaning we can safely interrup and call the provider.
+      return f(...args);
+    }
 
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
@@ -96,36 +117,6 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-        if (getInitializing()) {
-          // make sure the install modal is displayed
-          const link = remoteConnection?.getUniversalLink();
-          if (debug) {
-            console.debug(
-              `initializeProvider::sendRequest() refresh modals link=${link}`,
-              remoteConnection,
-            );
-          }
-
-          remoteConnection?.showInstallModal({
-            link: remoteConnection?.getUniversalLink(),
-          });
-
-          let loop = getInitializing();
-          while (loop) {
-            // Wait for already ongoing method that triggered installation to complete
-            await waitPromise(1000);
-            loop = getInitializing();
-          }
-
-          if (debug) {
-            console.debug(
-              `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
-            );
-          }
-          // Previous init has completed, meaning we can safely interrup and call the provider.
-          return f(...args);
-        }
-
         setInitializing(true);
 
         try {
@@ -196,7 +187,7 @@ const initializeProvider = ({
         setInitializing(false);
 
         return response;
-      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
+      } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }

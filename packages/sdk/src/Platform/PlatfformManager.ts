@@ -16,12 +16,7 @@ interface PlatformProps {
   debug?: boolean;
 }
 
-/**
- * Singleton class instance
- */
-export class Platform {
-  private static instance: Platform;
-
+export class PlatformManager {
   private wakeLock = new WakeLockManager();
 
   private wakeLockStatus = WakeLockStatus.Temporary;
@@ -38,7 +33,7 @@ export class Platform {
 
   private debug = false;
 
-  private constructor({
+  constructor({
     useDeepLink,
     preferredOpenLink,
     wakeLockStatus = WakeLockStatus.Temporary,
@@ -49,19 +44,6 @@ export class Platform {
     this.preferredOpenLink = preferredOpenLink;
     this.wakeLockStatus = wakeLockStatus;
     this.debug = debug;
-  }
-
-  public static init(props: PlatformProps): Platform {
-    Platform.instance = new Platform(props);
-    return Platform.instance;
-  }
-
-  public static getInstance(): Platform {
-    if (!Platform.instance) {
-      throw new Error('Platform not initialied - call Platform.init() first.');
-    }
-
-    return Platform.instance;
   }
 
   enableWakeLock() {

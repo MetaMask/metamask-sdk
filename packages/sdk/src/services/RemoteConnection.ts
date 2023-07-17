@@ -1,6 +1,5 @@
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import {
-  AutoConnectOptions,
   ChannelConfig,
   CommunicationLayerPreference,
   DappMetadata,
@@ -8,14 +7,15 @@ import {
   ECIESProps,
   EventType,
   KeyInfo,
-  PlatformType,
   RemoteCommunication,
   StorageManagerProps,
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
-import { Platform } from '../Platform/Platfform';
-import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
+import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
+import { PlatformManager } from '../Platform/PlatfformManager';
+import { MetaMaskSDK } from '../sdk';
+import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
 import PendingModal from '../ui/InstallModal/pendingModal';
@@ -34,20 +34,24 @@ export interface RemoteConnectionProps {
   sdk: MetaMaskSDK;
   transports?: string[];
   webRTCLib?: WebRTCLib;
+  platformManager: PlatformManager;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
-  autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
+  // Prevent circular dependencies
+  getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
       link: string;
       debug?: boolean;
+      installer: MetaMaskInstaller;
+      terminate?: () => void;
       connectWithExtension?: () => void;
     }) => {
-      unmount?: () => void;
+      unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;
     };
     otp?: (onDisconnect?: () => void) => {
@@ -57,6 +61,7 @@ export interface RemoteConnectionProps {
     };
   };
 }
+
 export class RemoteConnection implements ProviderService {
   private connector: RemoteCommunication;
 
@@ -64,9 +69,11 @@ export class RemoteConnection implements ProviderService {
 
   private developerMode: boolean;
 
-  private sentFirstConnect = false;
+  private authorized = false;
 
   private communicationLayerPreference: CommunicationLayerPreference;
+
+  private platformManager: PlatformManager;
 
   private pendingModal?: {
     mount?: () => void;
@@ -75,7 +82,7 @@ export class RemoteConnection implements ProviderService {
   };
 
   private installModal?: {
-    unmount?: () => void;
+    unmount?: (shouldTerminate: boolean) => void;
     mount?: (link: string) => void;
   };
 
@@ -92,6 +99,7 @@ export class RemoteConnection implements ProviderService {
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
+    this.platformManager = options.platformManager;
 
     // Set default modals implementation
     if (!options.modals.install) {
@@ -104,7 +112,7 @@ export class RemoteConnection implements ProviderService {
     this.connector = this.initializeConnector();
   }
 
-  initializeConnector() {
+  private initializeConnector() {
     const {
       dappMetadata,
       webRTCLib,
@@ -112,15 +120,13 @@ export class RemoteConnection implements ProviderService {
       transports,
       _source,
       enableDebug = false,
+      platformManager,
       timer,
       ecies,
       storage,
       communicationServerUrl,
-      autoConnect,
       logging,
     } = this.options;
-
-    this.sentFirstConnect = false;
 
     if (this.developerMode) {
       console.debug(
@@ -128,10 +134,8 @@ export class RemoteConnection implements ProviderService {
       );
     }
 
-    const platform = Platform.getInstance();
-
     this.connector = new RemoteCommunication({
-      platformType: platform.getPlatformType(),
+      platformType: platformManager.getPlatformType(),
       communicationLayerPreference,
       transports,
       webRTCLib,
@@ -142,7 +146,6 @@ export class RemoteConnection implements ProviderService {
       context: 'dapp',
       ecies,
       storage,
-      autoConnect,
       logging,
     });
 
@@ -159,33 +162,7 @@ export class RemoteConnection implements ProviderService {
       }, 10000);
     }
 
-    if (autoConnect?.enable === true) {
-      if (this.developerMode) {
-        console.debug(
-          `RemoteConnection::initializeConnector() autoconnect`,
-          autoConnect,
-        );
-      }
-
-      this.connector
-        .startAutoConnect()
-        .then((channelConfig?: ChannelConfig) => {
-          if (channelConfig?.lastActive) {
-            this.handleSecureReconnection({
-              channelConfig,
-              deeplink: false,
-            }).catch((err) => {
-              console.warn(`RemoteConnection::initializeConnector()`, err);
-            });
-          }
-        })
-        .catch((err: unknown) => {
-          console.warn(`RemoteConnection::initializeConnector()`, err);
-          throw err;
-        });
-    }
-
-    if (!platform.isSecure()) {
+    if (!platformManager.isSecure()) {
       this.connector.on(EventType.OTP, (otpAnswer: string) => {
         // Prevent double handling OTP message
         if (this.otpAnswer === otpAnswer) {
@@ -213,6 +190,13 @@ export class RemoteConnection implements ProviderService {
       });
     }
 
+    this.setupListeners();
+
+    return this.connector;
+  }
+
+  private setupListeners() {
+    // TODO this event can probably be removed in future version as it was created to maintain backward compatibility with older wallet (< 7.0.0).
     this.connector.on(
       EventType.SDK_RPC_CALL,
       async (requestParams: RequestArguments) => {
@@ -243,9 +227,13 @@ export class RemoteConnection implements ProviderService {
         }
         // close modals
         this.pendingModal?.unmount?.();
-        this.installModal?.unmount?.();
+        this.installModal?.unmount?.(false);
+        this.otpAnswer = undefined;
+        this.authorized = true;
 
         const provider = Ethereum.getProvider();
+        provider.emit('connect');
+
         if (this.developerMode) {
           console.debug(
             `RCPMS::on 'authorized' provider.state`,
@@ -264,8 +252,7 @@ export class RemoteConnection implements ProviderService {
         console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
       }
 
-      this.sentFirstConnect = false;
-      if (!platform.isSecure()) {
+      if (!this.platformManager.isSecure()) {
         const provider = Ethereum.getProvider();
         provider.handleDisconnect({ terminate: false });
         this.pendingModal?.updateOTPValue?.('');
@@ -273,7 +260,7 @@ export class RemoteConnection implements ProviderService {
     });
 
     this.connector.on(EventType.TERMINATE, () => {
-      if (platform.isBrowser()) {
+      if (this.platformManager.isBrowser()) {
         // TODO use a modal or let user customize messsage instead
         // eslint-disable-next-line no-alert
         alert(`SDK Connection has been terminated from MetaMask.`);
@@ -283,254 +270,20 @@ export class RemoteConnection implements ProviderService {
       this.pendingModal?.unmount?.();
       this.pendingModal = undefined;
       this.otpAnswer = undefined;
+      this.authorized = false;
 
       const provider = Ethereum.getProvider();
       provider.handleDisconnect({ terminate: true });
     });
-
-    return this.connector;
-  }
-
-  getUniversalLink() {
-    if (!this.universalLink) {
-      throw new Error('connection not started. run startConnection() first.');
-    }
-    return this.universalLink;
   }
 
   /**
-   * Called after a connection is re-established on an existing channel in order to prevent session hijacking.
+   * Display the installation modal
    *
-   * On trusted device (same device as metamask):
-   *   - launch deeplink to authorize the channel
-   *
-   * On untrusted device (webapp):
-   *  - ask user to reconnect.
+   * @param param.link link of the qrcode
+   * @returns
    */
-  async handleSecureReconnection({
-    channelConfig,
-    deeplink,
-  }: {
-    channelConfig: ChannelConfig;
-    deeplink?: boolean;
-  }) {
-    const platform = Platform.getInstance();
-    const platformType = platform.getPlatformType();
-    const trustedDevice = !(
-      platformType === PlatformType.DesktopWeb ||
-      (platformType === PlatformType.NonBrowser && !platform.isReactNative())
-    );
-    const isRemoteReady = this.connector.isReady();
-    const provider = Ethereum.getProvider();
-
-    if (this.developerMode) {
-      console.debug(
-        `RemoteConnection::handleSecureReconnection() trustedDevice=${trustedDevice} deepLink=${deeplink} providerConnected=${provider.isConnected()} connector.connected=${this.connector.isConnected()}`,
-        channelConfig,
-      );
-    }
-
-    if (!isRemoteReady) {
-      provider.emit('connecting');
-    }
-
-    if (trustedDevice && deeplink) {
-      const pubKey = this.connector?.getKeyInfo()?.ecies.public ?? '';
-      let linkParams = encodeURI(
-        `channelId=${channelConfig.channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
-      );
-
-      if (provider.isConnected()) {
-        linkParams += `&redirect=true`;
-      }
-
-      const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-      const link = `metamask://connect?${linkParams}`;
-
-      Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
-    } else if (!trustedDevice) {
-      const onDisconnect = () => {
-        this.options.modals.onPendingModalDisconnect?.();
-        this.pendingModal?.unmount?.();
-      };
-
-      const waitForOTP = async (): Promise<string> => {
-        let checkOTPTrial = 0;
-        while (checkOTPTrial < 100) {
-          if (this.otpAnswer) {
-            return this.otpAnswer;
-          }
-          await new Promise<void>((res) => setTimeout(() => res(), 1000));
-          checkOTPTrial += 1;
-        }
-        return '';
-      };
-
-      if (this.pendingModal) {
-        this.pendingModal?.mount?.();
-      } else {
-        this.pendingModal = this.options.modals.otp?.(onDisconnect);
-      }
-
-      waitForOTP()
-        .then((otp) => {
-          if (this.otpAnswer !== otp) {
-            this.otpAnswer = otp;
-            this.pendingModal?.updateOTPValue?.(otp);
-          }
-        })
-        .catch((err) => {
-          console.warn(
-            `RemoteConnection::handleSecureConnection() waitForOTP`,
-            err,
-          );
-        });
-    }
-  }
-
-  /**
-   * This will start the installer or pending modal and resolve once it is displayed.
-   * It doesn't wait for the actual connection to be authorized.
-   */
-  async startConnection(): Promise<boolean> {
-    return new Promise<boolean>((resolve, reject) => {
-      if (!this.connector) {
-        reject(new Error('no connector defined'));
-        return;
-      }
-
-      const execAsync = async () => {
-        const provider = Ethereum.getProvider();
-        const isRemoteReady = this.connector.isReady();
-        const isConnected = this.connector.isConnected();
-        const isPaused = this.connector.isPaused();
-        const platform = Platform.getInstance();
-        const platformType = platform.getPlatformType();
-
-        const showQRCode =
-          platformType === PlatformType.DesktopWeb ||
-          (platformType === PlatformType.NonBrowser &&
-            !platform.isReactNative());
-
-        if (this.developerMode) {
-          console.debug(
-            `RemoteConnection::startConnection() isRemoteReady=${isRemoteReady} isRemoteConnected=${isConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
-          );
-        }
-
-        if (isRemoteReady) {
-          // should either display pending modal for OTP or deeplink into metamask.
-          if (this.developerMode) {
-            console.debug(
-              `RemoteConnection::startConnection() Already connected.`,
-            );
-          }
-
-          // Necessary on secure device because ready doesn't mean the wallet is actually live.
-          // handlesecure reconnection will deeplink into it to make sure to wake it up.
-          const channelConfig = this.connector.getChannelConfig();
-          if (channelConfig) {
-            this.handleSecureReconnection({
-              channelConfig,
-              deeplink: true,
-            }).catch((err) => {
-              console.warn(
-                `RemoteConnection::startConnection() handleSecureReconnection`,
-                err,
-              );
-            });
-          }
-
-          // Nothing to do, already connected.
-          resolve(true);
-          return;
-        } else if (isConnected) {
-          if (!platform.isSecure()) {
-            this.showInstallModal({ link: this.getUniversalLink() });
-          }
-          resolve(true);
-          return;
-        }
-
-        provider.emit('connecting');
-
-        const channelConfig = await this.connector?.startAutoConnect();
-        if (this.developerMode) {
-          console.debug(
-            `RemoteConnection::startConnection after startAutoConnect`,
-            channelConfig,
-          );
-        }
-
-        if (channelConfig?.lastActive) {
-          // Already connected through auto connect
-          await this.handleSecureReconnection({
-            channelConfig,
-            deeplink: true,
-          });
-
-          resolve(true);
-        } else if (this.connector) {
-          // generate new channel id
-          try {
-            const { channelId, pubKey } =
-              await this.connector.generateChannelId();
-            const linkParams = encodeURI(
-              `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
-            );
-
-            const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
-            const deeplink = `metamask://connect?${linkParams}`;
-
-            if (showQRCode) {
-              this.showInstallModal({ link: universalLink });
-              // console.log('OPEN LINK QRCODE', universalLink);
-            } else {
-              // console.log('OPEN LINK', universalLink);
-              Platform.getInstance().openDeeplink?.(
-                universalLink,
-                deeplink,
-                '_self',
-              );
-            }
-            this.universalLink = universalLink;
-          } catch (err) {
-            this.otpAnswer = undefined;
-            this.pendingModal?.unmount?.();
-            this.installModal?.unmount?.();
-            reject(err);
-          }
-
-          // Event means browser extension is selected, interrupt gracefully.
-          this.options.sdk.once(
-            EventType.PROVIDER_UPDATE,
-            async (type: PROVIDER_UPDATE_TYPE) => {
-              // handle the provider change in initializeProvider
-              reject(type);
-            },
-          );
-
-          // TODO can migrate to waitFor instead?
-          this.connector.once(EventType.CLIENTS_READY, async () => {
-            if (this.developerMode) {
-              console.debug(
-                `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
-              );
-            }
-
-            // Allow initializeProvider to complete and send the eth_requestAccounts
-            resolve(true);
-          });
-        }
-      };
-
-      execAsync().catch((err) => {
-        reject(err);
-      });
-    });
-  }
-
-  showInstallModal({ link }: { link: string }) {
+  private showInstallModal({ link }: { link: string }) {
     // prevent double initialization
     if (this.installModal) {
       if (this.developerMode) {
@@ -545,6 +298,10 @@ export class RemoteConnection implements ProviderService {
 
     this.installModal = this.options.modals.install?.({
       link,
+      installer: this.options.getMetaMaskInstaller(),
+      terminate: () => {
+        this.options.sdk.terminate();
+      },
       debug: this.developerMode,
       connectWithExtension: () => {
         this.options.connectWithExtensionProvider?.();
@@ -552,6 +309,147 @@ export class RemoteConnection implements ProviderService {
       },
     });
     this.installModal?.mount?.(link);
+  }
+
+  /**
+   * This will start the installer or pending modal and resolve once it is displayed.
+   * It doesn't wait for the actual connection to be authorized.
+   */
+  async startConnection(): Promise<void> {
+    if (!this.connector) {
+      throw new Error('no connector defined');
+    }
+
+    const provider = Ethereum.getProvider();
+
+    // reset authorization state
+    this.authorized = false;
+
+    // Establish socket connection
+    provider.emit('connecting');
+
+    const channelConfig = await this.connector?.originatorSessionConnect();
+    if (this.developerMode) {
+      console.debug(
+        `RemoteConnection::startConnection after startAutoConnect`,
+        channelConfig,
+      );
+    }
+
+    let channelId = channelConfig?.channelId ?? '';
+    let pubKey = this.getKeyInfo()?.ecies.public ?? '';
+
+    if (!channelConfig) {
+      const newChannel = await this.connector.generateChannelIdConnect();
+      channelId = newChannel.channelId ?? '';
+      pubKey = this.getKeyInfo()?.ecies.public ?? '';
+    }
+
+    const linkParams = encodeURI(
+      `channelId=${channelId}&comm=${this.communicationLayerPreference}&pubkey=${pubKey}`,
+    );
+    const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+    this.universalLink = universalLink;
+
+    // first handle secure connection
+    if (this.platformManager.isSecure()) {
+      // FIXME do we also need to wait for event on secure platform? ready / authorized
+      return this.connectWithDeeplink({ linkParams });
+    }
+
+    if (channelConfig?.lastActive) {
+      return this.reconnectWithModalOTP();
+    }
+
+    return this.connectWithModalInstaller({ linkParams });
+  }
+
+  private async reconnectWithModalOTP() {
+    const onDisconnect = () => {
+      this.options.modals.onPendingModalDisconnect?.();
+      this.pendingModal?.unmount?.();
+    };
+
+    const waitForOTP = async (): Promise<string> => {
+      while (this.otpAnswer === undefined) {
+        await new Promise<void>((res) => setTimeout(() => res(), 1000));
+      }
+      return this.otpAnswer;
+    };
+
+    if (this.pendingModal) {
+      this.pendingModal?.mount?.();
+    } else {
+      this.pendingModal = this.options.modals.otp?.(onDisconnect);
+    }
+
+    const otp = await waitForOTP();
+    if (this.otpAnswer !== otp) {
+      this.otpAnswer = otp;
+      this.pendingModal?.updateOTPValue?.(otp);
+    }
+  }
+
+  private async connectWithDeeplink({ linkParams }: { linkParams: string }) {
+    const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+    const deeplink = `metamask://connect?${linkParams}`;
+
+    // console.log('OPEN LINK', universalLink);
+    this.platformManager.openDeeplink?.(universalLink, deeplink, '_self');
+  }
+
+  private async connectWithModalInstaller({
+    linkParams,
+  }: {
+    linkParams: string;
+  }) {
+    return new Promise<void>((resolve, reject) => {
+      const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+      this.showInstallModal({ link: universalLink });
+      // Event means browser extension is selected, interrupt gracefully.
+      this.options.sdk.once(
+        EventType.PROVIDER_UPDATE,
+        async (type: PROVIDER_UPDATE_TYPE) => {
+          // handle the provider change in initializeProvider
+          reject(type);
+        },
+      );
+
+      // TODO shouldn't it make more sense to actually wait for full connection and 'authorized' event?
+      this.connector.once(EventType.CLIENTS_READY, async () => {
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
+          );
+        }
+
+        // Allow initializeProvider to complete and send the eth_requestAccounts
+        resolve();
+      });
+    });
+  }
+
+  getUniversalLink() {
+    if (!this.universalLink) {
+      throw new Error('connection not started. run startConnection() first.');
+    }
+    return this.universalLink;
+  }
+
+  showActiveModal() {
+    if (this.authorized) {
+      if (this.developerMode) {
+        console.debug(`RemoteConnection::showActiveModal() already authorized`);
+      }
+      return;
+    }
+
+    if (this.pendingModal) {
+      // only display the modal if the connection is not authorized
+      this.pendingModal.mount?.();
+    } else if (this.installModal) {
+      this.installModal.mount?.(this.getUniversalLink());
+    }
   }
 
   getChannelConfig(): ChannelConfig | undefined {
@@ -567,6 +465,10 @@ export class RemoteConnection implements ProviderService {
       throw new Error(`invalid remote connector`);
     }
     return this.connector;
+  }
+
+  getPlatformManager() {
+    return this.platformManager;
   }
 
   isConnected() {

@@ -504,7 +504,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.rpcMethodTracker[rpcMessage.id] = rpcResult;
 
           if (this.debug) {
-            console.debug(`HACK update rpcMethodTracker`, rpcResult);
+            console.debug(
+              `HACK (wallet <7.3) update rpcMethodTracker`,
+              rpcResult,
+            );
           }
           // FIXME hack while waiting for mobile release 7.3
           this.emit(EventType.AUTHORIZED);

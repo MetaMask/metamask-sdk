@@ -9,7 +9,7 @@ import {
 
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
-import { Platform } from '../Platform/Platfform';
+import { PlatformManager } from '../Platform/PlatfformManager';
 import { Ethereum } from '../services/Ethereum';
 import { PostMessageStream } from './PostMessageStream';
 
@@ -35,15 +35,19 @@ export class RemoteCommunicationPostMessageStream
 
   private remote: RemoteCommunication;
 
+  private platformManager: PlatformManager;
+
   private debug;
 
   constructor({
     name,
     remote,
+    platformManager,
     debug,
   }: {
     name: ProviderConstants;
     remote: RemoteCommunication;
+    platformManager: PlatformManager;
     debug: boolean;
   }) {
     super({
@@ -52,6 +56,7 @@ export class RemoteCommunicationPostMessageStream
     this._name = name;
     this.remote = remote;
     this.debug = debug;
+    this.platformManager = platformManager;
 
     this._onMessage = this._onMessage.bind(this);
     this.remote.on(EventType.MESSAGE, this._onMessage);
@@ -65,7 +70,6 @@ export class RemoteCommunicationPostMessageStream
     _encoding: BufferEncoding,
     callback: (error?: Error | null) => void,
   ) {
-    const platform = Platform.getInstance();
     // Special Case if trusted device (RN or mobile web), we still create deeplink to wake up the connection.
     const isRemoteReady = this.remote.isReady();
     const socketConnected = this.remote.isConnected();
@@ -114,7 +118,7 @@ export class RemoteCommunicationPostMessageStream
           console.error('RCPMS::_write error sending message', err);
         });
 
-      if (!platform.isSecure()) {
+      if (!this.platformManager.isSecure()) {
         // Redirect early if nodejs or browser...
         if (this.debug) {
           console.log(
@@ -157,7 +161,7 @@ export class RemoteCommunicationPostMessageStream
         }
 
         // Use otp to re-enable host approval
-        platform.openDeeplink(
+        this.platformManager.openDeeplink(
           `https://metamask.app.link/connect?${urlParams}`,
           `metamask://connect?${urlParams}`,
           '_self',
@@ -169,7 +173,7 @@ export class RemoteCommunicationPostMessageStream
           );
         }
 
-        platform.openDeeplink(
+        this.platformManager.openDeeplink(
           `https://metamask.app.link/connect?redirect=true&${urlParams}`,
           `metamask://connect?redirect=true&${urlParams}`,
           '_self',
