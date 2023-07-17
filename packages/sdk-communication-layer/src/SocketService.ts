@@ -278,23 +278,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       });
 
       if (this.resumed) {
-        if (this.keyExchange.areKeysExchanged()) {
-          if (this.debug) {
-            console.debug(
-              `SocketService::${this.context}::on 'clients_connected' reconnect=true keysExchanged=false`,
-            );
-          }
-          if (
-            this.communicationLayerPreference ===
-            CommunicationLayerPreference.WEBRTC
-          ) {
-            this.emit(EventType.CLIENTS_READY, {
-              isOriginator: this.isOriginator,
-              keysExchanged: this.keyExchange.areKeysExchanged(),
-              context: this.context,
-            });
-          }
-        } else if (!this.isOriginator) {
+        if (!this.isOriginator) {
           // should ask to redo a key exchange because it wasn't paused.
           if (this.debug) {
             console.debug(

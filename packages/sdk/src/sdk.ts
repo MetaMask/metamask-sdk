@@ -40,7 +40,6 @@ export interface MetaMaskSDKOptions {
   useDeeplink?: boolean;
   wakeLockType?: WakeLockStatus;
   shouldShimWeb3?: boolean;
-  webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
   transports?: string[];
   dappMetadata: DappMetadata;
@@ -168,8 +167,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       wakeLockType,
       communicationLayerPreference = CommunicationLayerPreference.SOCKET,
       extensionOnly,
-      // WebRTC
-      webRTCLib,
       transports,
       _source,
       timer,
@@ -277,7 +274,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.remoteConnection = new RemoteConnection({
       communicationLayerPreference,
       dappMetadata,
-      webRTCLib,
       _source,
       enableDebug,
       timer,
