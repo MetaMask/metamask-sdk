@@ -89,6 +89,26 @@ const initializeProvider = ({
       );
     }
 
+    if (initializationOngoing) {
+      // make sure the active modal is displayed
+      remoteConnection?.showActiveModal();
+
+      let loop = getInitializing();
+      while (loop) {
+        // Wait for already ongoing method that triggered installation to complete
+        await wait(1000);
+        loop = getInitializing();
+      }
+
+      if (debug) {
+        console.debug(
+          `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
+        );
+      }
+      // Previous init has completed, meaning we can safely interrup and call the provider.
+      return f(...args);
+    }
+
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
       method !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
@@ -97,36 +117,6 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-        if (getInitializing()) {
-          // make sure the install modal is displayed
-          const link = remoteConnection?.getUniversalLink();
-          if (debug) {
-            console.debug(
-              `initializeProvider::sendRequest() refresh modals link=${link}`,
-              remoteConnection,
-            );
-          }
-
-          remoteConnection?.showInstallModal({
-            link: remoteConnection?.getUniversalLink(),
-          });
-
-          let loop = getInitializing();
-          while (loop) {
-            // Wait for already ongoing method that triggered installation to complete
-            await wait(1000);
-            loop = getInitializing();
-          }
-
-          if (debug) {
-            console.debug(
-              `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
-            );
-          }
-          // Previous init has completed, meaning we can safely interrup and call the provider.
-          return f(...args);
-        }
-
         setInitializing(true);
 
         try {

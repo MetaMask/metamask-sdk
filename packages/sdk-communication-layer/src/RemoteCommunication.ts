@@ -596,7 +596,10 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(EventType.MESSAGE, message);
   }
 
-  async originatorConnect(): Promise<ChannelConfig | undefined> {
+  /**
+   * Connect from the dapp using session persistence.
+   */
+  async originatorSessionConnect(): Promise<ChannelConfig | undefined> {
     if (!this.storageManager) {
       if (this.debug) {
         console.debug(
@@ -646,7 +649,7 @@ export class RemoteCommunication extends EventEmitter2 {
     return undefined;
   }
 
-  async generateChannelId() {
+  async generateChannelIdConnect() {
     if (!this.communicationLayer) {
       throw new Error('communication layer not initialized');
     }
