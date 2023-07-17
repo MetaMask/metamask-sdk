@@ -107,7 +107,7 @@ export class RemoteCommunication extends EventEmitter2 {
   private sessionDuration: number = DEFAULT_SESSION_TIMEOUT_MS;
 
   // this flag is switched on when the connection is automatically initialized after finding existing channel configuration.
-  private autoStarted = false;
+  private originatorConnectStarted = false;
 
   private debug = false;
 
@@ -461,17 +461,17 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.CLIENTS_WAITING, (numberUsers) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${this.ready} autoStarted=${this.autoStarted}`,
+          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${this.ready} autoStarted=${this.originatorConnectStarted}`,
         );
       }
 
       this.setConnectionStatus(ConnectionStatus.WAITING);
 
       this.emit(EventType.CLIENTS_WAITING, numberUsers);
-      if (this.autoStarted) {
+      if (this.originatorConnectStarted) {
         if (this.debug) {
           console.debug(
-            `RemoteCommunication::on 'clients_waiting' watch autoStarted=${this.autoStarted} timeout`,
+            `RemoteCommunication::on 'clients_waiting' watch autoStarted=${this.originatorConnectStarted} timeout`,
             this.autoConnectOptions,
           );
         }
@@ -486,7 +486,7 @@ export class RemoteCommunication extends EventEmitter2 {
           }
           // Cleanup previous channelId
           // this.storageManager?.terminate();
-          this.autoStarted = false;
+          this.originatorConnectStarted = false;
           if (!this.ready) {
             this.setConnectionStatus(ConnectionStatus.TIMEOUT);
           }
@@ -596,11 +596,11 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(EventType.MESSAGE, message);
   }
 
-  async startAutoConnect(): Promise<ChannelConfig | undefined> {
+  async originatorConnect(): Promise<ChannelConfig | undefined> {
     if (!this.storageManager) {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::startAutoConnect() no storage manager defined - skip`,
+          `RemoteCommunication::connect() no storage manager defined - skip`,
         );
       }
       return undefined;
@@ -611,7 +611,7 @@ export class RemoteCommunication extends EventEmitter2 {
     );
     if (this.debug) {
       console.debug(
-        `RemoteCommunication::startAutoConnect() autoStarted=${this.autoStarted} channelConfig`,
+        `RemoteCommunication::connect() autoStarted=${this.originatorConnectStarted} channelConfig`,
         channelConfig,
       );
     }
@@ -620,7 +620,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (connected) {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::startAutoConnect() socket already connected - exit autoConnect()`,
+          `RemoteCommunication::connect() socket already connected - skip`,
         );
       }
       return channelConfig;
@@ -631,20 +631,18 @@ export class RemoteCommunication extends EventEmitter2 {
 
       if (validSession) {
         this.channelConfig = channelConfig;
-        this.autoStarted = true;
+        this.originatorConnectStarted = true;
         this.channelId = channelConfig?.channelId;
         this.communicationLayer?.connectToChannel({
           channelId: channelConfig.channelId,
           isOriginator: true,
         });
-        return Promise.resolve(channelConfig);
+        return channelConfig;
       } else if (this.debug) {
         console.log(`RemoteCommunication::autoConnect Session has expired`);
       }
-    } else if (this.debug) {
-      console.debug(`RemoteCommunication::autoConnect not available`);
     }
-    this.autoStarted = false;
+    this.originatorConnectStarted = false;
     return undefined;
   }
 
@@ -708,7 +706,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
     this.channelConfig = undefined;
     this.ready = false;
-    this.autoStarted = false;
+    this.originatorConnectStarted = false;
   }
 
   connectToChannel(channelId: string, withKeyExchange?: boolean) {
@@ -1000,7 +998,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.channelId = uuidv4();
       options.channelId = this.channelId;
       this.channelConfig = undefined;
-      this.autoStarted = false;
+      this.originatorConnectStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
     } else {

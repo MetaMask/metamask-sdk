@@ -286,6 +286,13 @@ export class MetaMaskSDK extends EventEmitter2 {
       transports,
       communicationServerUrl,
       storage,
+      getMetaMaskInstaller: () => {
+        // used to prevent circular dependencies
+        if (!this.installer) {
+          throw new Error(`Invalid SDK status -- installer not initialized`);
+        }
+        return this.installer;
+      },
       logging: runtimeLogging,
       connectWithExtensionProvider:
         metamaskBrowserExtension === undefined
@@ -304,22 +311,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       debug: this.debug,
     });
 
-    // Propagate up the sdk-communication events
-    this.remoteConnection
-      .getConnector()
-      ?.on(
-        EventType.CONNECTION_STATUS,
-        (connectionStatus: ConnectionStatus) => {
-          this.emit(EventType.CONNECTION_STATUS, connectionStatus);
-        },
-      );
-
-    this.remoteConnection
-      .getConnector()
-      ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
-        this.emit(EventType.SERVICE_STATUS, serviceStatus);
-      });
-
     // Inject our provider into window.ethereum
     this.activeProvider = initializeProvider({
       communicationLayerPreference,
@@ -335,6 +326,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     window.ethereum = this.activeProvider;
 
+    this.initEventListeners();
+
     // This will check if the connection was correctly done or if the user needs to install MetaMask
     if (checkInstallationImmediately) {
       await this.installer.start({ wait: true });
@@ -348,6 +341,26 @@ export class MetaMaskSDK extends EventEmitter2 {
       method: 'eth_requestAccounts',
       params: [],
     });
+  }
+
+  /**
+   * Setup event listeners on the remote connection and propagate appriopriate events
+   */
+  private initEventListeners() {
+    this.remoteConnection
+      ?.getConnector()
+      ?.on(
+        EventType.CONNECTION_STATUS,
+        (connectionStatus: ConnectionStatus) => {
+          this.emit(EventType.CONNECTION_STATUS, connectionStatus);
+        },
+      );
+
+    this.remoteConnection
+      ?.getConnector()
+      ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
+        this.emit(EventType.SERVICE_STATUS, serviceStatus);
+      });
   }
 
   private async connectWithExtensionProvider() {

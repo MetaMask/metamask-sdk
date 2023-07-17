@@ -5,10 +5,14 @@ import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 const sdkWebInstallModal = ({
   link,
   debug,
+  installer,
+  terminate,
   connectWithExtension,
 }: {
   link: string;
   debug?: boolean;
+  installer: MetaMaskInstaller;
+  terminate?: () => void;
   connectWithExtension?: () => void;
 }) => {
   const div = document.createElement('div');
@@ -27,9 +31,13 @@ const sdkWebInstallModal = ({
     );
   }
 
-  const unmount = () => {
+  const unmount = (shouldTerminate = true) => {
     if (div) {
       div.style.display = 'none';
+    }
+
+    if (shouldTerminate) {
+      terminate?.();
     }
   };
 
@@ -55,7 +63,7 @@ const sdkWebInstallModal = ({
       modalLoader.renderInstallModal({
         parentElement: div,
         link,
-        metaMaskInstaller: MetaMaskInstaller.getInstance(),
+        metaMaskInstaller: installer,
         onClose: unmount,
       });
     }

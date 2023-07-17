@@ -8,9 +8,10 @@ import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
+import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
+import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { wait } from '../utils/wait';
 
 const initializeProvider = ({
