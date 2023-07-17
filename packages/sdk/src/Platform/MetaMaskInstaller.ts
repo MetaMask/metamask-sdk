@@ -35,7 +35,7 @@ export class MetaMaskInstaller {
 
   private debug = false;
 
-  private constructor({
+  public constructor({
     preferDesktop,
     remote,
     platformManager,
@@ -45,21 +45,6 @@ export class MetaMaskInstaller {
     this.remote = remote;
     this.platformManager = platformManager;
     this.debug = debug;
-  }
-
-  public static init(props: InstallerProps): MetaMaskInstaller {
-    MetaMaskInstaller.instance = new MetaMaskInstaller(props);
-    return MetaMaskInstaller.instance;
-  }
-
-  public static getInstance(): MetaMaskInstaller {
-    if (!MetaMaskInstaller.instance) {
-      throw new Error(
-        'MetaMask installer not initialized - call MetaMaskInstaller.init() first.',
-      );
-    }
-
-    return MetaMaskInstaller.instance;
   }
 
   startDesktopOnboarding() {

@@ -300,13 +300,12 @@ export class MetaMaskSDK extends EventEmitter2 {
       },
     });
 
-    const installer = MetaMaskInstaller.init({
+    this.installer = new MetaMaskInstaller({
       preferDesktop: preferDesktop ?? false,
       remote: this.remoteConnection,
       platformManager: this.platformManager,
       debug: this.debug,
     });
-    this.installer = installer;
 
     // Propagate up the sdk-communication events
     this.remoteConnection
@@ -332,7 +331,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       checkInstallationOnAllCalls,
       injectProvider,
       shouldShimWeb3,
-      installer,
+      installer: this.installer,
       remoteConnection: this.remoteConnection,
       debug: this.debug,
     });
@@ -341,7 +340,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     // This will check if the connection was correctly done or if the user needs to install MetaMask
     if (checkInstallationImmediately) {
-      await installer.start({ wait: true });
+      await this.installer.start({ wait: true });
     }
 
     this._initialized = true;

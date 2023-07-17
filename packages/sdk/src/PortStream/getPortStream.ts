@@ -1,10 +1,7 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
-import { PlatformManager } from '../Platform/PlatfformManager';
 import { MobilePortStream } from './MobilePortStream';
 
-export const getPortStream = () => {
-  const platformType = PlatformManager.getInstance().getPlatformType();
-
+export const getPortStream = (platformType: PlatformType) => {
   if (platformType === PlatformType.MetaMaskMobileWebview) {
     return MobilePortStream;
   }
