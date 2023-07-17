@@ -282,11 +282,38 @@ export class RemoteConnection implements ProviderService {
     });
   }
 
-  getUniversalLink() {
-    if (!this.universalLink) {
-      throw new Error('connection not started. run startConnection() first.');
+  /**
+   * Display the installation modal
+   *
+   * @param param.link link of the qrcode
+   * @returns
+   */
+  private showInstallModal({ link }: { link: string }) {
+    // prevent double initialization
+    if (this.installModal) {
+      if (this.developerMode) {
+        console.debug(
+          `RemoteConnection::showInstallModal() install modal already initialized`,
+          this.installModal,
+        );
+      }
+      this.installModal.mount?.(link);
+      return;
     }
-    return this.universalLink;
+
+    this.installModal = this.options.modals.install?.({
+      link,
+      installer: this.options.getMetaMaskInstaller(),
+      terminate: () => {
+        this.options.sdk.terminate();
+      },
+      debug: this.developerMode,
+      connectWithExtension: () => {
+        this.options.connectWithExtensionProvider?.();
+        return false;
+      },
+    });
+    this.installModal?.mount?.(link);
   }
 
   /**
@@ -393,7 +420,7 @@ export class RemoteConnection implements ProviderService {
         },
       );
 
-      // FIXME shouldn't it make more sense to actually wait for full connection and 'authorized' event?
+      // TODO shouldn't it make more sense to actually wait for full connection and 'authorized' event?
       this.connector.once(EventType.CLIENTS_READY, async () => {
         if (this.developerMode) {
           console.debug(
@@ -405,6 +432,13 @@ export class RemoteConnection implements ProviderService {
         resolve();
       });
     });
+  }
+
+  getUniversalLink() {
+    if (!this.universalLink) {
+      throw new Error('connection not started. run startConnection() first.');
+    }
+    return this.universalLink;
   }
 
   showActiveModal() {
@@ -421,40 +455,6 @@ export class RemoteConnection implements ProviderService {
     } else if (this.installModal) {
       this.installModal.mount?.(this.getUniversalLink());
     }
-  }
-
-  /**
-   * Display the installation modal
-   *
-   * @param param.link link of the qrcode
-   * @returns
-   */
-  private showInstallModal({ link }: { link: string }) {
-    // prevent double initialization
-    if (this.installModal) {
-      if (this.developerMode) {
-        console.debug(
-          `RemoteConnection::showInstallModal() install modal already initialized`,
-          this.installModal,
-        );
-      }
-      this.installModal.mount?.(link);
-      return;
-    }
-
-    this.installModal = this.options.modals.install?.({
-      link,
-      installer: this.options.getMetaMaskInstaller(),
-      terminate: () => {
-        this.options.sdk.terminate();
-      },
-      debug: this.developerMode,
-      connectWithExtension: () => {
-        this.options.connectWithExtensionProvider?.();
-        return false;
-      },
-    });
-    this.installModal?.mount?.(link);
   }
 
   getChannelConfig(): ChannelConfig | undefined {
