@@ -6,20 +6,19 @@ import {
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
-import { Platform } from '../Platform/Platfform';
+import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
 import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
-import { waitPromise } from '../utils/waitPromise';
+import { wait } from '../utils/wait';
 
-// TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
-  platformType,
   injectProvider,
   shouldShimWeb3,
+  platformManager,
   installer,
   sdk,
   remoteConnection,
@@ -27,10 +26,10 @@ const initializeProvider = ({
 }: {
   communicationLayerPreference: CommunicationLayerPreference;
   checkInstallationOnAllCalls?: boolean;
-  platformType: PlatformType;
   injectProvider?: boolean;
   shouldShimWeb3: boolean;
   sdk: MetaMaskSDK;
+  platformManager: PlatformManager;
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
   debug: boolean;
@@ -39,10 +38,13 @@ const initializeProvider = ({
   const metamaskStream = getPostMessageStream({
     name: ProviderConstants.INPAGE,
     target: ProviderConstants.CONTENT_SCRIPT,
+    platformManager,
     communicationLayerPreference,
     remoteConnection,
     debug,
   });
+
+  const platformType = platformManager.getPlatformType();
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -75,7 +77,7 @@ const initializeProvider = ({
     f: any,
     debugRequest: boolean,
   ) => {
-    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
@@ -85,8 +87,6 @@ const initializeProvider = ({
         `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
-
-    const platform = Platform.getInstance();
 
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
@@ -113,7 +113,7 @@ const initializeProvider = ({
           let loop = getInitializing();
           while (loop) {
             // Wait for already ongoing method that triggered installation to complete
-            await waitPromise(1000);
+            await wait(1000);
             loop = getInitializing();
           }
 
@@ -196,7 +196,7 @@ const initializeProvider = ({
         setInitializing(false);
 
         return response;
-      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
+      } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }

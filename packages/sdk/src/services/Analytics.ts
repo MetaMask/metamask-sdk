@@ -7,6 +7,7 @@ import {
 export interface AnalyticsProps {
   serverURL: string;
   debug: boolean;
+  enabled?: boolean;
   metadata?: {
     url: string;
     title: string;
@@ -25,7 +26,7 @@ export class Analytics {
 
   #serverURL: string = DEFAULT_SERVER_URL;
 
-  #enabled = true;
+  #enabled: boolean;
 
   #metadata: Readonly<AnalyticsProps['metadata']>;
 
@@ -33,6 +34,7 @@ export class Analytics {
     this.#debug = props.debug;
     this.#serverURL = props.serverURL;
     this.#metadata = props.metadata || undefined;
+    this.#enabled = props.enabled ?? true;
   }
 
   send({ event }: { event: TrackingEvents }) {

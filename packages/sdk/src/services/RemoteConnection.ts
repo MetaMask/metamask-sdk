@@ -13,7 +13,7 @@ import {
   WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
-import { Platform } from '../Platform/Platfform';
+import { PlatformManager } from '../Platform/PlatfformManager';
 import { MetaMaskSDK, PROVIDER_UPDATE_TYPE } from '../sdk';
 import { SDKLoggingOptions } from '../types/SDKLoggingOptions';
 import InstallModal from '../ui/InstallModal/installModal';
@@ -33,6 +33,7 @@ export interface RemoteConnectionProps {
   sdk: MetaMaskSDK;
   transports?: string[];
   webRTCLib?: WebRTCLib;
+  platformManager: PlatformManager;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
@@ -66,6 +67,8 @@ export class RemoteConnection implements ProviderService {
 
   private communicationLayerPreference: CommunicationLayerPreference;
 
+  private platformManager: PlatformManager;
+
   private pendingModal?: {
     mount?: () => void;
     updateOTPValue?: (otpValue: string) => void;
@@ -90,6 +93,7 @@ export class RemoteConnection implements ProviderService {
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.developerMode = developerMode;
     this.communicationLayerPreference = options.communicationLayerPreference;
+    this.platformManager = options.platformManager;
 
     // Set default modals implementation
     if (!options.modals.install) {
@@ -110,6 +114,7 @@ export class RemoteConnection implements ProviderService {
       transports,
       _source,
       enableDebug = false,
+      platformManager,
       timer,
       ecies,
       storage,
@@ -125,10 +130,8 @@ export class RemoteConnection implements ProviderService {
       );
     }
 
-    const platform = Platform.getInstance();
-
     this.connector = new RemoteCommunication({
-      platformType: platform.getPlatformType(),
+      platformType: platformManager.getPlatformType(),
       communicationLayerPreference,
       transports,
       webRTCLib,
@@ -155,7 +158,7 @@ export class RemoteConnection implements ProviderService {
       }, 10000);
     }
 
-    if (!platform.isSecure()) {
+    if (!platformManager.isSecure()) {
       this.connector.on(EventType.OTP, (otpAnswer: string) => {
         // Prevent double handling OTP message
         if (this.otpAnswer === otpAnswer) {
@@ -235,7 +238,7 @@ export class RemoteConnection implements ProviderService {
       }
 
       this.sentFirstConnect = false;
-      if (!platform.isSecure()) {
+      if (!platformManager.isSecure()) {
         const provider = Ethereum.getProvider();
         provider.handleDisconnect({ terminate: false });
         this.pendingModal?.updateOTPValue?.('');
@@ -243,7 +246,7 @@ export class RemoteConnection implements ProviderService {
     });
 
     this.connector.on(EventType.TERMINATE, () => {
-      if (platform.isBrowser()) {
+      if (platformManager.isBrowser()) {
         // TODO use a modal or let user customize messsage instead
         // eslint-disable-next-line no-alert
         alert(`SDK Connection has been terminated from MetaMask.`);
@@ -284,11 +287,11 @@ export class RemoteConnection implements ProviderService {
     channelConfig: ChannelConfig;
     deeplink?: boolean;
   }) {
-    const platform = Platform.getInstance();
-    const platformType = platform.getPlatformType();
+    const platformType = this.platformManager.getPlatformType();
     const trustedDevice = !(
       platformType === PlatformType.DesktopWeb ||
-      (platformType === PlatformType.NonBrowser && !platform.isReactNative())
+      (platformType === PlatformType.NonBrowser &&
+        !this.platformManager.isReactNative())
     );
     const isRemoteReady = this.connector.isReady();
     const provider = Ethereum.getProvider();
@@ -317,7 +320,7 @@ export class RemoteConnection implements ProviderService {
       const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
       const link = `metamask://connect?${linkParams}`;
 
-      Platform.getInstance().openDeeplink?.(universalLink, link, '_self');
+      this.platformManager.openDeeplink?.(universalLink, link, '_self');
     } else if (!trustedDevice) {
       const onDisconnect = () => {
         this.options.modals.onPendingModalDisconnect?.();
@@ -374,13 +377,12 @@ export class RemoteConnection implements ProviderService {
         const isRemoteReady = this.connector.isReady();
         const isConnected = this.connector.isConnected();
         const isPaused = this.connector.isPaused();
-        const platform = Platform.getInstance();
-        const platformType = platform.getPlatformType();
+        const platformType = this.platformManager.getPlatformType();
 
         const showQRCode =
           platformType === PlatformType.DesktopWeb ||
           (platformType === PlatformType.NonBrowser &&
-            !platform.isReactNative());
+            !this.platformManager.isReactNative());
 
         if (this.developerMode) {
           console.debug(
@@ -415,7 +417,7 @@ export class RemoteConnection implements ProviderService {
           resolve(true);
           return;
         } else if (isConnected) {
-          if (!platform.isSecure()) {
+          if (!this.platformManager.isSecure()) {
             this.showInstallModal({ link: this.getUniversalLink() });
           }
           resolve(true);
@@ -457,7 +459,7 @@ export class RemoteConnection implements ProviderService {
               // console.log('OPEN LINK QRCODE', universalLink);
             } else {
               // console.log('OPEN LINK', universalLink);
-              Platform.getInstance().openDeeplink?.(
+              this.platformManager.openDeeplink?.(
                 universalLink,
                 deeplink,
                 '_self',
@@ -537,6 +539,10 @@ export class RemoteConnection implements ProviderService {
       throw new Error(`invalid remote connector`);
     }
     return this.connector;
+  }
+
+  getPlatformManager() {
+    return this.platformManager;
   }
 
   isConnected() {

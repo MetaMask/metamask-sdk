@@ -10,7 +10,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
-import { Platform } from './Platform/Platfform';
+import { PlatformManager } from './Platform/PlatfformManager';
 import initializeProvider from './provider/initializeProvider';
 import { SDKProvider } from './provider/SDKProvider';
 import { Analytics } from './services/Analytics';
@@ -74,7 +74,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private installer?: MetaMaskInstaller;
 
-  private platformManager?: Platform;
+  private platformManager?: PlatformManager;
 
   private dappMetadata?: DappMetadata;
 
@@ -123,6 +123,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
 
+    // Automatically initialize the SDK to keep the same behavior as before
     this.init().catch((err) => {
       console.error(`MetaMaskSDK error during initialization`, err);
     });
@@ -203,14 +204,14 @@ export class MetaMaskSDK extends EventEmitter2 {
       runtimeLogging.serviceLayer = true;
     }
 
-    const platform = Platform.init({
+    this.platformManager = new PlatformManager({
       useDeepLink: useDeeplink,
       preferredOpenLink: openDeeplink,
       wakeLockStatus: wakeLockType,
       debug: this.debug,
     });
 
-    const platformType = platform.getPlatformType();
+    const platformType = this.platformManager.getPlatformType();
 
     this.analytics = new Analytics({
       serverURL: communicationServerUrl ?? DEFAULT_SERVER_URL,
@@ -227,7 +228,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       storage.storageManager = getStorageManager(storage);
     }
 
-    if (platform.isBrowser() && !dappMetadata.base64Icon) {
+    if (this.platformManager.isBrowser() && !dappMetadata.base64Icon) {
       // Try to extract default icon
       const favicon = extractFavicon();
       if (favicon) {
@@ -246,7 +247,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     if (
       typeof window !== 'undefined' &&
       window.ethereum &&
-      !platform.isMetaMaskMobileWebView()
+      !this.platformManager.isMetaMaskMobileWebView()
     ) {
       try {
         metamaskBrowserExtension = getBrowserExtension({
@@ -258,7 +259,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         delete window.extension;
       }
       Ethereum.destroy();
-    } else if (platform.isMetaMaskMobileWebView()) {
+    } else if (this.platformManager.isMetaMaskMobileWebView()) {
       this.analytics.send({ event: TrackingEvents.SDK_USE_INAPP_BROWSER });
       this.activeProvider = window.ethereum;
       this._initialized = true;
@@ -284,6 +285,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       enableDebug,
       timer,
       sdk: this,
+      platformManager: this.platformManager,
       transports,
       communicationServerUrl,
       storage,
@@ -301,6 +303,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     const installer = MetaMaskInstaller.init({
       preferDesktop: preferDesktop ?? false,
       remote: this.remoteConnection,
+      platformManager: this.platformManager,
       debug: this.debug,
     });
     this.installer = installer;
@@ -323,8 +326,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     // Inject our provider into window.ethereum
     this.activeProvider = initializeProvider({
-      platformType,
       communicationLayerPreference,
+      platformManager: this.platformManager,
       sdk: this,
       checkInstallationOnAllCalls,
       injectProvider,
@@ -388,7 +391,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   terminate() {
     // nothing to do on inapp browser.
-    if (Platform.getInstance().isMetaMaskMobileWebView()) {
+    if (this.platformManager?.isMetaMaskMobileWebView()) {
       return;
     }
 
@@ -452,11 +455,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   // TODO: remove once reaching sdk 1.0
   // Not exposed. Should only be used during dev.
-  _testStorage() {
-    // return this.remoteConnection?.getConnector()?.testStorage();
-    return Platform.getInstance().getPlatformType();
-  }
-
   _getChannelConfig() {
     return this.remoteConnection?.getChannelConfig();
   }

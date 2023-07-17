@@ -2,8 +2,8 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../services/Ethereum';
 import { ProviderService } from '../services/ProviderService';
-import { waitPromise } from '../utils/waitPromise';
-import { Platform } from './Platfform';
+import { wait as waitPromise } from '../utils/wait';
+import { PlatformManager } from './PlatfformManager';
 
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
@@ -11,6 +11,7 @@ import { Platform } from './Platfform';
 interface InstallerProps {
   preferDesktop: boolean;
   remote: ProviderService;
+  platformManager: PlatformManager;
   debug?: boolean;
 }
 
@@ -28,6 +29,8 @@ export class MetaMaskInstaller {
 
   private preferDesktop = false;
 
+  private platformManager: PlatformManager;
+
   private remote: ProviderService;
 
   private debug = false;
@@ -35,10 +38,12 @@ export class MetaMaskInstaller {
   private constructor({
     preferDesktop,
     remote,
+    platformManager,
     debug = false,
   }: InstallerProps) {
     this.preferDesktop = preferDesktop;
     this.remote = remote;
+    this.platformManager = platformManager;
     this.debug = debug;
   }
 
@@ -68,7 +73,7 @@ export class MetaMaskInstaller {
   }
 
   async redirectToProperInstall() {
-    const platformType = Platform.getInstance().getPlatformType();
+    const platformType = this.platformManager.getPlatformType();
 
     if (this?.debug) {
       console.debug(
@@ -107,7 +112,7 @@ export class MetaMaskInstaller {
   }
 
   async checkInstallation() {
-    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    const isInstalled = this.platformManager.isMetaMaskInstalled();
 
     if (this.debug) {
       console.log(
