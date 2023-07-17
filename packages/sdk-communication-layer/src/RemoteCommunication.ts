@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
-import { validate, v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import packageJson from '../package.json';
 import { SendAnalytics } from './Analytics';
 import {
@@ -12,7 +12,6 @@ import {
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { StorageManager, StorageManagerProps } from './types/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
@@ -21,16 +20,18 @@ import { CommunicationLayerPreference } from './types/CommunicationLayerPreferen
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { DappMetadataWithSource } from './types/DappMetadata';
 import { DisconnectOptions } from './types/DisconnectOptions';
+import { EventType } from './types/EventType';
+import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { MessageType } from './types/MessageType';
 import { OriginatorInfo } from './types/OriginatorInfo';
+import { PlatformType } from './types/PlatformType';
+import { ServiceStatus } from './types/ServiceStatus';
+import {
+  StorageManager as SessionStorageManager,
+  StorageManagerProps,
+} from './types/StorageManager';
 import { TrackingEvents } from './types/TrackingEvent';
 import { WalletInfo } from './types/WalletInfo';
-import { WebRTCLib } from './types/WebRTCLib';
-import { WebRTCService } from './WebRTCService';
-import { ServiceStatus } from './types/ServiceStatus';
-import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { EventType } from './types/EventType';
-import { PlatformType } from './types/PlatformType';
 import { wait } from './utils/wait';
 
 type MetaMaskMobile = 'metamask-mobile';
@@ -39,7 +40,6 @@ export interface RemoteCommunicationProps {
   platformType: PlatformType | MetaMaskMobile;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
-  webRTCLib?: WebRTCLib;
   reconnect?: boolean;
   dappMetadata?: DappMetadataWithSource;
   walletInfo?: WalletInfo;
@@ -67,8 +67,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private otherPublicKey?: string;
 
-  private webRTCLib?: WebRTCLib;
-
   private transports?: string[];
 
   private platformType: PlatformType | MetaMaskMobile;
@@ -93,7 +91,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private context: string;
 
-  private storageManager?: StorageManager;
+  private storageManager?: SessionStorageManager;
 
   private storageOptions?: StorageManagerProps;
 
@@ -123,7 +121,6 @@ export class RemoteCommunication extends EventEmitter2 {
     platformType,
     communicationLayerPreference,
     otherPublicKey,
-    webRTCLib,
     reconnect,
     walletInfo,
     dappMetadata,
@@ -142,7 +139,6 @@ export class RemoteCommunication extends EventEmitter2 {
     super();
 
     this.otherPublicKey = otherPublicKey;
-    this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
     this.walletInfo = walletInfo;
     this.transports = transports;
@@ -170,7 +166,6 @@ export class RemoteCommunication extends EventEmitter2 {
     this.initCommunicationLayer({
       communicationLayerPreference,
       otherPublicKey,
-      webRTCLib,
       reconnect,
       ecies,
       communicationServerUrl,
@@ -182,7 +177,6 @@ export class RemoteCommunication extends EventEmitter2 {
   private initCommunicationLayer({
     communicationLayerPreference,
     otherPublicKey,
-    webRTCLib,
     reconnect,
     ecies,
     communicationServerUrl = DEFAULT_SERVER_URL,
@@ -190,7 +184,6 @@ export class RemoteCommunication extends EventEmitter2 {
     RemoteCommunicationProps,
     | 'communicationLayerPreference'
     | 'otherPublicKey'
-    | 'webRTCLib'
     | 'reconnect'
     | 'ecies'
     | 'communicationServerUrl'
@@ -198,19 +191,6 @@ export class RemoteCommunication extends EventEmitter2 {
     // this.communicationLayer?.removeAllListeners();
 
     switch (communicationLayerPreference) {
-      case CommunicationLayerPreference.WEBRTC:
-        this.communicationLayer = new WebRTCService({
-          communicationLayerPreference,
-          otherPublicKey,
-          reconnect,
-          transports: this.transports,
-          webRTCLib,
-          communicationServerUrl,
-          ecies,
-          context: this.context,
-          logging: this.logging,
-        });
-        break;
       case CommunicationLayerPreference.SOCKET:
         this.communicationLayer = new SocketService({
           communicationLayerPreference,

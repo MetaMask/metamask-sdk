@@ -9,7 +9,6 @@ import {
   KeyInfo,
   RemoteCommunication,
   StorageManagerProps,
-  WebRTCLib,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
@@ -33,7 +32,6 @@ export interface RemoteConnectionProps {
   enableDebug?: boolean;
   sdk: MetaMaskSDK;
   transports?: string[];
-  webRTCLib?: WebRTCLib;
   platformManager: PlatformManager;
   communicationServerUrl?: string;
   ecies?: ECIESProps;
@@ -115,7 +113,6 @@ export class RemoteConnection implements ProviderService {
   private initializeConnector() {
     const {
       dappMetadata,
-      webRTCLib,
       communicationLayerPreference,
       transports,
       _source,
@@ -138,7 +135,6 @@ export class RemoteConnection implements ProviderService {
       platformType: platformManager.getPlatformType(),
       communicationLayerPreference,
       transports,
-      webRTCLib,
       dappMetadata: { ...dappMetadata, source: _source },
       analytics: enableDebug,
       communicationServerUrl,
