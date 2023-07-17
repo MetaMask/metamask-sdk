@@ -1,7 +1,8 @@
 import WebView from 'react-native-webview';
-import { MetaMaskSDK, MetaMaskSDKOptions, PROVIDER_UPDATE_TYPE } from './sdk';
+import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKProvider } from './provider/SDKProvider';
+import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 
 declare global {
   interface Window {

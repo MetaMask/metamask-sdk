@@ -20,6 +20,7 @@ import {
   RemoteConnectionProps,
 } from './services/RemoteConnection';
 import { getStorageManager } from './storage-manager/getStorageManager';
+import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
@@ -59,10 +60,6 @@ export interface MetaMaskSDKOptions {
   _source?: string;
 }
 
-export enum PROVIDER_UPDATE_TYPE {
-  TERMINATE = 'terminate',
-  EXTENSION = 'extension',
-}
 export class MetaMaskSDK extends EventEmitter2 {
   private options: MetaMaskSDKOptions;
 
