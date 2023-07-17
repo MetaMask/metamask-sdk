@@ -9,6 +9,7 @@ import {
   TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
+import { STORAGE_PROVIDER_TYPE } from './config';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import initializeProvider from './provider/initializeProvider';
@@ -238,11 +239,16 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.dappMetadata = dappMetadata;
 
     let metamaskBrowserExtension;
+    let preferExtension = false;
+
     if (
       typeof window !== 'undefined' &&
       window.ethereum &&
       !this.platformManager.isMetaMaskMobileWebView()
     ) {
+      preferExtension =
+        localStorage.getItem(STORAGE_PROVIDER_TYPE) === 'extension';
+
       try {
         metamaskBrowserExtension = getBrowserExtension({
           mustBeMetaMask: true,
@@ -324,8 +330,12 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.initEventListeners();
 
-    // This will check if the connection was correctly done or if the user needs to install MetaMask
-    if (checkInstallationImmediately) {
+    if (preferExtension) {
+      this.connectWithExtensionProvider().catch((_err) => {
+        console.warn(`Can't connect with MetaMask extension...`);
+      });
+    } else if (checkInstallationImmediately) {
+      // This will check if the connection was correctly done or if the user needs to install MetaMask
       await this.installer.start({ wait: true });
     }
 
@@ -372,6 +382,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     await this.activeProvider?.request({
       method: 'eth_requestAccounts',
     });
+
+    // remember setting for next time (until terminated)
+    localStorage.setItem(STORAGE_PROVIDER_TYPE, 'extension');
     this.extensionActive = true;
     this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
     this.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
@@ -403,6 +416,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     // check if connected with extension provider
     // if it is, disconnect from it and switch back to injected provider
     if (this.extensionActive) {
+      localStorage.removeItem(STORAGE_PROVIDER_TYPE);
       if (this.options.extensionOnly) {
         if (this.debug) {
           console.warn(
@@ -412,12 +426,11 @@ export class MetaMaskSDK extends EventEmitter2 {
 
         return;
       }
-
-      this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
       // Re-use default extension provider as default
       this.activeProvider = this.sdkProvider;
       window.ethereum = this.activeProvider;
       this.extensionActive = false;
+      this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
       return;
     }
 

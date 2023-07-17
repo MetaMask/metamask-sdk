@@ -12,6 +12,7 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   wallet_switchEthereumChain: true,
 };
 export const STORAGE_PATH = '.sdk-comm';
+export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const RPC_METHODS = {
   METAMASK_GETPROVIDERSTATE: 'metamask_getProviderState',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',
