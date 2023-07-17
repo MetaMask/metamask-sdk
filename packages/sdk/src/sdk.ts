@@ -3,12 +3,12 @@ import {
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
+  DEFAULT_SERVER_URL,
   EventType,
+  SendAnalytics,
   ServiceStatus,
   StorageManagerProps,
-  SendAnalytics,
   TrackingEvents,
-  DEFAULT_SERVER_URL,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import WebView from 'react-native-webview';
@@ -22,7 +22,6 @@ import {
   RemoteConnection,
   RemoteConnectionProps,
 } from './services/RemoteConnection';
-import { WalletConnect } from './services/WalletConnect';
 import { getStorageManager } from './storage-manager/getStorageManager';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
@@ -36,13 +35,11 @@ export interface MetaMaskSDKOptions {
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
   checkInstallationImmediately?: boolean;
-  forceRestartWalletConnect?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
   openDeeplink?: (arg: string) => void;
   useDeeplink?: boolean;
   wakeLockType?: WakeLockStatus;
-  WalletConnectInstance?: any;
   shouldShimWeb3?: boolean;
   webRTCLib?: any;
   communicationLayerPreference?: CommunicationLayerPreference;
@@ -77,8 +74,6 @@ export class MetaMaskSDK extends EventEmitter2 {
   private sdkProvider?: SDKProvider;
 
   private remoteConnection?: RemoteConnection;
-
-  private walletConnect?: WalletConnect;
 
   private installer?: MetaMaskInstaller;
 
@@ -173,10 +168,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       useDeeplink = false,
       wakeLockType,
       communicationLayerPreference = CommunicationLayerPreference.SOCKET,
-      // WalletConnect
-      WalletConnectInstance,
       extensionOnly,
-      forceRestartWalletConnect,
       // WebRTC
       webRTCLib,
       transports,
@@ -296,13 +288,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       },
     });
 
-    if (WalletConnectInstance) {
-      this.walletConnect = new WalletConnect({
-        forceRestart: forceRestartWalletConnect ?? false,
-        wcConnector: WalletConnectInstance,
-      });
-    }
-
     const installer = MetaMaskInstaller.init({
       preferDesktop: preferDesktop ?? false,
       remote: this.remoteConnection,
@@ -336,7 +321,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       shouldShimWeb3,
       installer,
       remoteConnection: this.remoteConnection,
-      walletConnect: this.walletConnect,
       debug: this.debug,
     });
 
@@ -459,15 +443,6 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this._initialized;
   }
 
-  // Get the connector object from WalletConnect
-  getWalletConnectConnector() {
-    if (!this.walletConnect) {
-      throw new Error(`invalid`);
-    }
-
-    return this.walletConnect;
-  }
-
   // Return the ethereum provider object
   getProvider(): SDKProvider {
     if (!this.activeProvider) {
@@ -478,10 +453,7 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   getUniversalLink() {
-    const remoteLink = this.remoteConnection?.getUniversalLink();
-    const wcLink = this.walletConnect?.getUniversalLink();
-
-    const universalLink = remoteLink || wcLink;
+    const universalLink = this.remoteConnection?.getUniversalLink();
 
     if (!universalLink) {
       throw new Error(
