@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.5.3]
-### Uncategorized
+### Added
 - feat: persist extension provider preferences
 - feat: remove webrtc references ([#227](https://github.com/MetaMask/metamask-sdk/pull/227))
 - refactor: simplify connection flow ([#226](https://github.com/MetaMask/metamask-sdk/pull/226))
