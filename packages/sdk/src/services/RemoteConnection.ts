@@ -69,8 +69,6 @@ export class RemoteConnection implements ProviderService {
 
   private developerMode: boolean;
 
-  private sentFirstConnect = false;
-
   private authorized = false;
 
   private communicationLayerPreference: CommunicationLayerPreference;
@@ -129,8 +127,6 @@ export class RemoteConnection implements ProviderService {
       communicationServerUrl,
       logging,
     } = this.options;
-
-    this.sentFirstConnect = false;
 
     if (this.developerMode) {
       console.debug(
@@ -256,7 +252,6 @@ export class RemoteConnection implements ProviderService {
         console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
       }
 
-      this.sentFirstConnect = false;
       if (!this.platformManager.isSecure()) {
         const provider = Ethereum.getProvider();
         provider.handleDisconnect({ terminate: false });
