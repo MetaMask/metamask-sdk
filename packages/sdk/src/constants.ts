@@ -4,11 +4,6 @@ export enum ProviderConstants {
   PROVIDER = 'metamask-provider',
 }
 
-export const Analytics = {
-  DEFAULT_ID: 'sdk',
-  NO_VERSION: 'NONE',
-};
-
 export const ErrorMessages = {
   MANUAL_DISCONNECT: 'manual-disconnect',
 };

@@ -1,6 +1,5 @@
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import {
-  AutoConnectOptions,
   ChannelConfig,
   CommunicationLayerPreference,
   DappMetadata,
@@ -37,7 +36,6 @@ export interface RemoteConnectionProps {
   communicationServerUrl?: string;
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
-  autoConnect?: AutoConnectOptions;
   logging?: SDKLoggingOptions;
   connectWithExtensionProvider?: () => void;
   modals: {
@@ -104,7 +102,7 @@ export class RemoteConnection implements ProviderService {
     this.connector = this.initializeConnector();
   }
 
-  initializeConnector() {
+  private initializeConnector() {
     const {
       dappMetadata,
       webRTCLib,
@@ -116,7 +114,6 @@ export class RemoteConnection implements ProviderService {
       ecies,
       storage,
       communicationServerUrl,
-      autoConnect,
       logging,
     } = this.options;
 
@@ -142,7 +139,6 @@ export class RemoteConnection implements ProviderService {
       context: 'dapp',
       ecies,
       storage,
-      autoConnect,
       logging,
     });
 
@@ -157,32 +153,6 @@ export class RemoteConnection implements ProviderService {
         // console.debug(`Running background timer`);
         return false;
       }, 10000);
-    }
-
-    if (autoConnect?.enable === true) {
-      if (this.developerMode) {
-        console.debug(
-          `RemoteConnection::initializeConnector() autoconnect`,
-          autoConnect,
-        );
-      }
-
-      this.connector
-        .startAutoConnect()
-        .then((channelConfig?: ChannelConfig) => {
-          if (channelConfig?.lastActive) {
-            this.handleSecureReconnection({
-              channelConfig,
-              deeplink: false,
-            }).catch((err) => {
-              console.warn(`RemoteConnection::initializeConnector()`, err);
-            });
-          }
-        })
-        .catch((err: unknown) => {
-          console.warn(`RemoteConnection::initializeConnector()`, err);
-          throw err;
-        });
     }
 
     if (!platform.isSecure()) {

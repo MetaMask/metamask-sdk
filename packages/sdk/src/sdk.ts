@@ -1,22 +1,19 @@
 import {
-  AutoConnectOptions,
   CommunicationLayerPreference,
   ConnectionStatus,
   DappMetadata,
   DEFAULT_SERVER_URL,
   EventType,
-  SendAnalytics,
   ServiceStatus,
   StorageManagerProps,
   TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
-import WebView from 'react-native-webview';
-import { Analytics } from './constants';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { Platform } from './Platform/Platfform';
 import initializeProvider from './provider/initializeProvider';
 import { SDKProvider } from './provider/SDKProvider';
+import { Analytics } from './services/Analytics';
 import { Ethereum } from './services/Ethereum';
 import {
   RemoteConnection,
@@ -34,6 +31,7 @@ export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
+  // Tries to autoconnect on startup
   checkInstallationImmediately?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
@@ -53,7 +51,6 @@ export interface MetaMaskSDKOptions {
   extensionOnly?: boolean;
   developerMode?: boolean;
   ui?: SDKUIOptions;
-  autoConnect?: AutoConnectOptions;
   modals?: RemoteConnectionProps['modals'];
   communicationServerUrl?: string;
   storage?: StorageManagerProps;
@@ -77,6 +74,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private installer?: MetaMaskInstaller;
 
+  private platformManager?: Platform;
+
   private dappMetadata?: DappMetadata;
 
   private extensionActive = false;
@@ -86,6 +85,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   private sdkInitPromise?: Promise<void>;
 
   private debug = false;
+
+  private analytics?: Analytics;
 
   constructor(
     options: MetaMaskSDKOptions = {
@@ -177,7 +178,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       // Debugging
       enableDebug = true,
       communicationServerUrl,
-      autoConnect,
       modals,
       // persistence settings
       storage = {
@@ -211,6 +211,17 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
 
     const platformType = platform.getPlatformType();
+
+    this.analytics = new Analytics({
+      serverURL: communicationServerUrl ?? DEFAULT_SERVER_URL,
+      debug: this.debug,
+      metadata: {
+        url: dappMetadata.url ?? '',
+        title: dappMetadata.name ?? '',
+        platform: platformType,
+        source: _source ?? '',
+      },
+    });
 
     if (storage?.enabled === true && !storage.storageManager) {
       storage.storageManager = getStorageManager(storage);
@@ -248,7 +259,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       }
       Ethereum.destroy();
     } else if (platform.isMetaMaskMobileWebView()) {
-      this.sendSDKAnalytics(TrackingEvents.SDK_USE_INAPP_BROWSER);
+      this.analytics.send({ event: TrackingEvents.SDK_USE_INAPP_BROWSER });
       this.activeProvider = window.ethereum;
       this._initialized = true;
       return;
@@ -258,7 +269,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       if (developerMode) {
         console.warn(`EXTENSION ONLY --- prevent sdk initialization`);
       }
-      this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
+      this.analytics.send({ event: TrackingEvents.SDK_USE_EXTENSION });
       this.activeProvider = metamaskBrowserExtension;
       this.extensionActive = true;
       this._initialized = true;
@@ -276,7 +287,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       transports,
       communicationServerUrl,
       storage,
-      autoConnect,
       logging: runtimeLogging,
       connectWithExtensionProvider:
         metamaskBrowserExtension === undefined
@@ -356,31 +366,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
     this.extensionActive = true;
     this.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
-    this.sendSDKAnalytics(TrackingEvents.SDK_USE_EXTENSION);
-  }
-
-  private sendSDKAnalytics(event: TrackingEvents) {
-    if (!this.options.enableDebug) {
-      return;
-    }
-
-    const url = this.options.communicationServerUrl ?? DEFAULT_SERVER_URL;
-    SendAnalytics(
-      {
-        id: Analytics.DEFAULT_ID,
-        event,
-        commLayerVersion: Analytics.NO_VERSION,
-        originationInfo: {
-          url: this.dappMetadata?.url ?? '',
-          title: this.dappMetadata?.name ?? '',
-          platform: Platform.getInstance().getPlatformType(),
-          source: this.options._source,
-        },
-      },
-      url,
-    ).catch((err) => {
-      console.error(`SDK::sendSDKAnalytics() error`, err);
-    });
+    this.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
   }
 
   resume() {
@@ -443,7 +429,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this._initialized;
   }
 
-  // Return the ethereum provider object
+  // Return the active ethereum provider object
   getProvider(): SDKProvider {
     if (!this.activeProvider) {
       throw new Error(`SDK state invalid -- undefined provider`);
@@ -505,15 +491,5 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
-  }
-}
-
-declare global {
-  interface Window {
-    ReactNativeWebView?: WebView;
-    sdkProvider: SDKProvider;
-    ethereum?: SDKProvider;
-    extension: unknown;
-    MSStream: unknown;
   }
 }
