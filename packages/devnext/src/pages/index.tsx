@@ -198,7 +198,9 @@ export default function Home() {
               sendTransaction
             </button>
           </div>
-        ) : (
+        ) : connecting ? <>
+          <div>Connecting...</div>
+        </> : (
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
             Connect
           </button>
