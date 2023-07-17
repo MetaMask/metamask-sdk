@@ -50,10 +50,10 @@ export interface RemoteConnectionProps {
       link: string;
       debug?: boolean;
       installer: MetaMaskInstaller;
-      onModalClose?: () => void;
+      terminate?: () => void;
       connectWithExtension?: () => void;
     }) => {
-      unmount?: () => void;
+      unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;
     };
     otp?: (onDisconnect?: () => void) => {
@@ -565,8 +565,7 @@ export class RemoteConnection implements ProviderService {
     this.installModal = this.options.modals.install?.({
       link,
       installer: this.options.getMetaMaskInstaller(),
-      onModalClose: () => {
-        // terminate connection
+      terminate: () => {
         this.options.sdk.terminate();
       },
       debug: this.developerMode,

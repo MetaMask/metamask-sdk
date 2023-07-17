@@ -36,7 +36,7 @@ const sdkWebInstallModal = ({
       div.style.display = 'none';
     }
 
-    if (shouldTerminate) {
+    if (shouldTerminate !== false) {
       terminate?.();
     }
   };
