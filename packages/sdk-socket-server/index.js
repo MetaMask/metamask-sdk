@@ -2,7 +2,8 @@
 require('dotenv').config();
 const crypto = require('crypto');
 const http = require('http');
-const fastify = require('fastify')({ logger: true });
+const express = require('express');
+const bodyParser = require('body-parser');
 const { LRUCache } = require('lru-cache');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -12,17 +13,19 @@ const userIdHashCache = new LRUCache({
   maxAge: 1000 * 60 * 60 * 24,
 });
 
-const server = http.createServer(fastify);
+const app = express();
+
+const server = http.createServer(app);
 const { Server } = require('socket.io');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 const rateLimiter = new RateLimiterMemory({
-  points: 5,
+  points: 20,
   duration: 1,
 });
 
 const rateLimiterMesssage = new RateLimiterMemory({
-  points: 50,
+  points: 200,
   duration: 1,
 });
 
@@ -32,13 +35,16 @@ const io = new Server(server, {
   },
 });
 
-fastify.register(require('@fastify/cors'), {
-  origin: '*',
-});
-fastify.register(require('@fastify/helmet'));
-fastify.register(require('@fastify/formbody'));
+const cors = require('cors');
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cors());
+app.options('*', cors());
 
 const uuid = require('uuid');
+
+const helmet = require('helmet');
 
 const Analytics = require('analytics-node');
 
@@ -57,20 +63,23 @@ const analytics = new Analytics(
   },
 );
 
-fastify.get('/', async (_request, reply) => {
-  reply.code(200).send({ success: true });
+app.use(helmet());
+app.disable('x-powered-by');
+
+app.get('/', (_req, res) => {
+  res.json({ success: true });
 });
 
-fastify.post('/debug', async (request, reply) => {
+app.post('/debug', (_req, res) => {
   try {
-    const { body } = request;
+    const { body } = _req;
 
     if (!body.event) {
-      return reply.status(400).send({ error: 'event is required' });
+      return res.status(400).json({ error: 'event is required' });
     }
 
     if (!body.event.startsWith('sdk_')) {
-      return reply.status(400).send({ error: 'wrong event name' });
+      return res.status(400).json({ error: 'wrong event name' });
     }
 
     const id = body.id || 'socket.io-server';
@@ -112,9 +121,9 @@ fastify.post('/debug', async (request, reply) => {
       }
     });
 
-    return reply.send({ success: true });
+    return res.json({ success: true });
   } catch (error) {
-    return reply.send({ error });
+    return res.json({ error });
   }
 });
 
@@ -126,90 +135,115 @@ io.on('connection', (socket) => {
     console.log(`socketId=${socketId} clientIp=${clientIp}`);
   }
 
-  // eslint-disable-next-line consistent-return
   socket.on('create_channel', async (id) => {
-    if (!uuid.validate(id)) {
-      return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+    try {
+      await rateLimiter.consume(socket.handshake.address);
+
+      if (isDevelopment) {
+        console.log('create channel', id);
+      }
+
+      if (!uuid.validate(id)) {
+        return socket.emit(`message-${id}`, {
+          error: 'must specify a valid id',
+        });
+      }
+
+      const room = io.sockets.adapter.rooms.get(id);
+      if (!id) {
+        return socket.emit(`message-${id}`, { error: 'must specify an id' });
+      }
+
+      if (room) {
+        return socket.emit(`message-${id}`, { error: 'room already created' });
+      }
+      socket.join(id);
+      return socket.emit(`channel_created-${id}`, id);
+    } catch (error) {
+      console.error('Error on create_channel:', error);
+      // emit an error message back to the client, if appropriate
+      return socket.emit(`error`, { error: error.message });
     }
-
-    await rateLimiter.consume(socket.handshake.address);
-
-    if (isDevelopment) {
-      console.log('create channel', id);
-    }
-
-    const room = io.sockets.adapter.rooms.get(id);
-
-    if (room) {
-      return socket.emit(`message-${id}`, { error: 'room already created' });
-    }
-
-    socket.join(id);
-    socket.emit(`channel_created-${id}`, id);
   });
 
   socket.on('message', async ({ id, message, context, plaintext }) => {
     try {
       await rateLimiterMesssage.consume(socket.handshake.address);
-    } catch (e) {
-      return;
-    }
 
-    if (isDevelopment) {
-      // Minify encrypted message for easier readability
-      let displayMessage = message;
-      if (plaintext) {
-        displayMessage = 'AAAAAA_ENCRYPTED_AAAAAA';
+      if (isDevelopment) {
+        // Minify encrypted message for easier readibility
+        let displayMessage = message;
+        if (plaintext) {
+          displayMessage = 'AAAAAA_ENCRYPTED_AAAAAA';
+        }
+
+        if (context === 'mm-mobile') {
+          console.log(`\x1b[33m message-${id} -> \x1b[0m`, {
+            id,
+            context,
+            displayMessage,
+            plaintext,
+          });
+        } else {
+          console.log(`message-${id} -> `, {
+            id,
+            context,
+            displayMessage,
+            plaintext,
+          });
+        }
       }
-
-      const logMessage =
-        context === 'mm-mobile'
-          ? `\x1b[33m message-${id} -> \x1b[0m`
-          : `message-${id} -> `;
-
-      console.log(logMessage, { id, context, displayMessage, plaintext });
+      return socket.to(id).emit(`message-${id}`, { id, message });
+    } catch (error) {
+      console.error('Error on message:', error);
+      // emit an error message back to the client, if appropriate
+      return socket.emit(`message-${id}`, { error: error.message });
     }
-
-    socket.to(id).emit(`message-${id}`, { id, message });
   });
 
   socket.on('ping', async ({ id, message, context }) => {
     try {
       await rateLimiterMesssage.consume(socket.handshake.address);
-    } catch (e) {
-      return;
-    }
 
-    if (isDevelopment) {
-      console.log(`ping-${id} -> `, { id, context, message });
+      if (isDevelopment) {
+        console.log(`ping-${id} -> `, { id, context, message });
+      }
+      socket.to(id).emit(`ping-${id}`, { id, message });
+    } catch (error) {
+      console.error('Error on ping:', error);
+      // emit an error message back to the client, if appropriate
+      // socket.emit(`ping-${id}`, { error: error.message });
     }
-
-    socket.to(id).emit(`ping-${id}`, { id, message });
   });
 
-  // eslint-disable-next-line consistent-return
   socket.on('join_channel', async (id, test) => {
-    if (!uuid.validate(id)) {
-      return socket.emit(`message-${id}`, { error: 'must specify a valid id' });
-    }
-
     try {
       await rateLimiter.consume(socket.handshake.address);
     } catch (e) {
-      return null;
+      return;
     }
 
     if (isDevelopment) {
       console.log(`join_channel ${id} ${test}`);
     }
 
+    if (!uuid.validate(id)) {
+      socket.emit(`message-${id}`, { error: 'must specify a valid id' });
+      return;
+    }
+
     const room = io.sockets.adapter.rooms.get(id);
+    if (isDevelopment) {
+      console.log(`join_channel ${id} room.size=${room && room.size}`);
+    }
 
     if (room && room.size > 2) {
       if (isDevelopment) {
         console.log(`join_channel ${id} room already full`);
       }
-      return socket.emit(`message-${id}`, { error: 'room already full' });
+      socket.emit(`message-${id}`, { error: 'room already full' });
+      io.sockets.in(id).socketsLeave(id);
+      return;
     }
 
     socket.join(id);
@@ -218,11 +252,12 @@ io.on('connection', (socket) => {
       socket.emit(`clients_waiting_to_join-${id}`, room ? room.size : 1);
     }
 
-    socket.on('disconnect', (error) => {
+    socket.on('disconnect', function (error) {
       if (isDevelopment) {
         console.log(`disconnect event channel=${id}: `, error);
       }
       io.sockets.in(id).emit(`clients_disconnected-${id}`, error);
+      // io.sockets.in(id).socketsLeave(id);
     });
 
     if (room && room.size === 2) {
@@ -240,21 +275,22 @@ io.on('connection', (socket) => {
   });
 });
 
-const port = process.env.port || 4000;
-
 // flushes all Segment events when Node process is interrupted for any reason
 // https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
 const exitGracefully = async (code) => {
   console.log('Flushing events');
-  await analytics.flush(function (err) {
-    console.log('Flushed, and now this program can exit!');
-
-    if (err) {
-      console.log(err);
-    }
-    // eslint-disable-next-line node/no-process-exit
-    process.exit(code);
-  });
+  try {
+    await analytics.flush(function (err) {
+      console.log('Flushed, and now this program can exit!');
+      if (err) {
+        console.log(err);
+      }
+    });
+  } catch (error) {
+    console.error('Error on exitGracefully:', error);
+  }
+  // eslint-disable-next-line node/no-process-exit
+  process.exit(code);
 };
 
 // Define a variable to track if the server is shutting down
@@ -286,15 +322,7 @@ const cleanupAndExit = async () => {
 process.on('SIGINT', cleanupAndExit);
 process.on('SIGTERM', cleanupAndExit);
 
-const start = async () => {
-  try {
-    await fastify.listen({ port });
-    console.log(`server listening on ${fastify.server.address().port}`);
-  } catch (err) {
-    console.error('Error starting the server:', err);
-    // eslint-disable-next-line node/no-process-exit
-    process.exit(1);
-  }
-};
-
-start();
+const port = process.env.port || 4000;
+server.listen(port, () => {
+  console.log(`listening on *:${port}`);
+});
