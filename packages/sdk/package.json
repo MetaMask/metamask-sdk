@@ -102,7 +102,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-native": "^0.71.1"
+    "react-native": "^0.72.0"
   },
   "publishConfig": {
     "access": "public",
