@@ -56,13 +56,10 @@ const _abi = [
 ];
 
 export const App = () => {
-  const {sdk, ready, connected, connecting, provider, chainId, status: serviceStatus} = useSDK();
+  const {sdk, connected, connecting, provider, chainId, status: serviceStatus} = useSDK();
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
 
-  console.debug(`ready`, ready)
-  console.debug(`sdk`, sdk)
-  console.debug(`provider`, provider)
   const connect = async () => {
     try {
       const accounts = await sdk?.connect();
