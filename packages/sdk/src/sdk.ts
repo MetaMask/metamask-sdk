@@ -335,7 +335,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     } else if (checkInstallationImmediately) {
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       try {
-        await this.installer.start({ wait: true });
+        await this.connect();
       } catch (err: unknown) {
         // ignore error on autorocnnect
       }
