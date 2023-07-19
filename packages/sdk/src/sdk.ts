@@ -326,8 +326,6 @@ export class MetaMaskSDK extends EventEmitter2 {
       debug: this.debug,
     });
 
-    window.ethereum = this.activeProvider;
-
     this.initEventListeners();
 
     if (preferExtension) {
@@ -336,7 +334,11 @@ export class MetaMaskSDK extends EventEmitter2 {
       });
     } else if (checkInstallationImmediately) {
       // This will check if the connection was correctly done or if the user needs to install MetaMask
-      await this.installer.start({ wait: true });
+      try {
+        await this.installer.start({ wait: true });
+      } catch (err: unknown) {
+        // ignore error on autorocnnect
+      }
     }
 
     this._initialized = true;
