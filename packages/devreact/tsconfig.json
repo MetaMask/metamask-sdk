@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  // "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "target": "es5",
     "lib": [
@@ -19,9 +19,29 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
+      "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
+      "@metamask/sdk-react": ["../sdk-react/src"],
+      "@metamask/sdk": ["../sdk/src"]
+    }
   },
   "include": [
     "src/**.ts"
+  ],
+  "references": [
+    {
+      "path": "../sdk/tsconfig.build.json"
+    },
+    {
+      "path": "../sdk-react/tsconfig.json"
+    },
+    {
+      "path": "../sdk-communication-layer/tsconfig.build.json"
+    },
+    {
+      "path": "../sdk-install-modal-web"
+    }
   ]
 }

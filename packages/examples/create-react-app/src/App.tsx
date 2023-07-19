@@ -1,116 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
+import { useSDK } from '@metamask/sdk-react';
+import React, { useState } from 'react';
 import './App.css';
-import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
-import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
-import React from 'react';
 
 export const App = () => {
-  const [chain, setChain] = useState("");
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
-  const [connected, setConnected] = useState(false);
-  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
-  const [sdk, setSDK] = useState<MetaMaskSDK>();
-  const [activeProvider, setActiveProvider] = useState<SDKProvider>();
-  const hasInit = useRef(false);
+  const {sdk, connected, connecting, provider, chainId} = useSDK();
 
-  useEffect(() => {
-    if(!activeProvider) return;
 
-    const onChainChanged = (chain) => {
-      console.log(chain);
-      setChain(chain);
-    }
-
-    const onAccountsChanged = (accounts) => {
-      console.log(accounts);
+  const connect = async () => {
+    try {
+      const accounts = await sdk?.connect();
       setAccount(accounts?.[0]);
+    } catch(err) {
+      console.warn(`failed to connect..`, err);
     }
-
-    window.ethereum?.on("chainChanged", onChainChanged);
-    window.ethereum?.on("accountsChanged", onAccountsChanged);
-
-    return () => {
-      window.ethereum?.removeListener("chainChanged", onChainChanged);
-      window.ethereum?.removeListener("accountsChanged", onAccountsChanged);
-    }
-  }, [activeProvider]);
-
-
-  useEffect( () => {
-    if(hasInit.current) {
-      return;
-    }
-
-    hasInit.current = true;
-
-    const onProviderEvent = (accounts) => {
-      console.debug(`onProviderEvent`, accounts);
-      if (accounts?.[0]?.startsWith('0x')) {
-        setAccount(accounts?.[0]);
-        setConnected(true);
-      } else {
-        setAccount(undefined);
-        setConnected(false);
-      }
-    }
-
-    const doAsync = async () => {
-      const clientSDK = new MetaMaskSDK({
-        autoConnect: {
-          enable: false
-        },
-        logging:{
-          developerMode: true,
-        },
-        dappMetadata: {
-          name: "Demo React App",
-          url: window.location.host,
-        }
-      });
-      await clientSDK.init();
-
-      // listen for provider change events
-      clientSDK.on(EventType.PROVIDER_UPDATE, onProviderEvent);
-
-      setSDK(clientSDK);
-      setActiveProvider(clientSDK.getProvider());
-    };
-
-    doAsync();
-
-    return () => {
-      if(sdk) {
-        sdk.removeListener(EventType.SERVICE_STATUS, onProviderEvent);
-      }
-    }
-  });
-
-  const connect = () => {
-    if(!window.ethereum) {
-      throw new Error(`invalid ethereum provider`);
-    }
-    window.ethereum
-      .request({
-        method: "eth_requestAccounts",
-        params: [],
-      })
-      .then((accounts) => {
-        if(accounts) {
-          console.debug(`connect:: accounts result`);
-          setAccount((accounts as string[])[0]);
-          setConnected(true);
-        }
-      })
-      .catch((e) => console.log("request accounts ERR", e));
   };
 
   const addEthereumChain = () => {
-    if(!window.ethereum) {
+    if(!provider) {
       throw new Error(`invalid ethereum provider`);
     }
 
-    window.ethereum
+    provider
       .request({
         method: "wallet_addEthereumChain",
         params: [
@@ -131,14 +43,14 @@ export const App = () => {
     const to = "0x0000000000000000000000000000000000000000";
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: window.ethereum?.selectedAddress, // must match user's active address.
+      from: provider?.selectedAddress, // must match user's active address.
       value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await window.ethereum?.request({
+      const txHash = await provider?.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
       }) as string;
@@ -153,7 +65,7 @@ export const App = () => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum?.chainId ?? "", 16),
+        chainId: parseInt(provider?.chainId ?? "", 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: "Ether Mail",
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -219,7 +131,7 @@ export const App = () => {
       },
     });
 
-    let from = window.ethereum?.selectedAddress;
+    let from = provider?.selectedAddress;
 
     console.debug(`sign from: ${from}`);
     try {
@@ -232,7 +144,7 @@ export const App = () => {
       const method = "eth_signTypedData_v4";
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
     } catch (e) {
       console.log(e);
@@ -246,7 +158,7 @@ export const App = () => {
   const changeNetwork = async (hexChainId:string) => {
     console.debug(`switching to network chainId=${hexChainId}`)
     try {
-      const response = await window.ethereum?.request({
+      const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
       })
@@ -259,7 +171,7 @@ export const App = () => {
   return (
     <div className="App">
       <div className="sdkConfig">
-          {serviceStatus?.connectionStatus===ConnectionStatus.WAITING &&
+          {connecting &&
             <div>
               Waiting for Metamask to link the connection...
             </div>
@@ -300,15 +212,17 @@ export const App = () => {
         Terminate
       </button>
 
-      <div>
-        <>
-          {chain && `Connected chain: ${chain}`}
-          <p></p>
-          {account && `Connected account: ${account}`}
-          <p></p>
-          {response && `Last request response: ${response}`}
-        </>
-      </div>
+      {connected &&
+          <div>
+            <>
+              {chainId && `Connected chain: ${chainId}`}
+              <p></p>
+              {account && `Connected account: ${account}`}
+              <p></p>
+              {response && `Last request response: ${response}`}
+            </>
+          </div>
+      }
     </div>
   );
 }

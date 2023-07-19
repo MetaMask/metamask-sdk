@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
-import './App.css';
-import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
-import { ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
-import React from 'react';
+import { SDKProvider } from '@metamask/sdk';
+import { useSDK } from '@metamask/sdk-react';
+import React, { useState } from 'react';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
+import './App.css';
 
 declare global {
   interface Window {
@@ -57,111 +56,24 @@ const _abi = [
 ];
 
 export const App = () => {
-  const [chain, setChain] = useState("");
+  const {sdk, connected, connecting, provider, chainId, status: serviceStatus} = useSDK();
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
-  const [connected, setConnected] = useState(false);
-  const [serviceStatus] = useState<ServiceStatus>();
-  const [sdk, setSDK] = useState<MetaMaskSDK>();
-  const [activeProvider, setActiveProvider] = useState<SDKProvider>();
-  const hasInit = useRef(false);
 
-  useEffect(() => {
-    if(!activeProvider) return;
-
-    if(activeProvider.selectedAddress) {
-      setAccount(activeProvider.selectedAddress);
-    }
-
-    setConnected(activeProvider.isConnected());
-
-    const onChainChanged = (chain) => {
-      console.log(chain);
-      setChain(chain);
-    }
-
-    const onAccountsChanged = (accounts) => {
-      console.log(accounts);
+  const connect = async () => {
+    try {
+      const accounts = await sdk?.connect();
       setAccount(accounts?.[0]);
+    } catch(err) {
+      console.warn(`failed to connect..`, err);
     }
-
-    activeProvider.on("chainChanged", onChainChanged);
-    activeProvider.on("accountsChanged", onAccountsChanged);
-
-    return () => {
-      activeProvider.removeListener("chainChanged", onChainChanged);
-      activeProvider.removeListener("accountsChanged", onAccountsChanged);
-    }
-  }, [activeProvider]);
-
-
-  useEffect( () => {
-    if(hasInit.current) {
-      return;
-    }
-
-    hasInit.current = true;
-
-    const onProviderEvent = (clientSDK: MetaMaskSDK) => {
-      setActiveProvider(clientSDK?.getProvider())
-    }
-
-    const doAsync = async () => {
-      const clientSDK = new MetaMaskSDK({
-        communicationServerUrl: 'http://192.168.50.114:4000',
-        enableDebug: true,
-        autoConnect: {
-          enable: false
-        },
-        logging:{
-          developerMode: true,
-        },
-        dappMetadata: {
-          name: "DEV React App",
-          url: window.location.host,
-        }
-      });
-      await clientSDK.init();
-
-      // listen for provider change events
-      clientSDK.on(EventType.PROVIDER_UPDATE, () => onProviderEvent(clientSDK));
-
-      setSDK(clientSDK);
-      setActiveProvider(clientSDK.getProvider());
-    };
-
-    doAsync();
-
-    return () => {
-      if(sdk) {
-        sdk.removeListener(EventType.SERVICE_STATUS, onProviderEvent);
-      }
-    }
-  });
-
-  const connect = () => {
-    if(!activeProvider) {
-      throw new Error(`invalid ethereum provider`);
-    }
-    activeProvider.request({
-        method: "eth_requestAccounts",
-        params: [],
-      })
-      .then((accounts) => {
-        if(accounts) {
-          console.debug(`connect:: accounts result`);
-          setAccount((accounts as string[])[0]);
-          setConnected(true);
-        }
-      })
-      .catch((e) => console.log("request accounts ERR", e));
   };
 
   const addEthereumChain = () => {
-    if(!activeProvider) {
+    if(!provider) {
       throw new Error(`invalid ethereum provider`);
     }
-    activeProvider.request({
+    provider.request({
         method: "wallet_addEthereumChain",
         params: [
           {
@@ -181,14 +93,14 @@ export const App = () => {
     const to = "0x0000000000000000000000000000000000000000";
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: activeProvider?.selectedAddress, // must match user's active address.
+      from: provider?.selectedAddress, // must match user's active address.
       value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await activeProvider?.request({
+      const txHash = await provider?.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
       }) as string;
@@ -203,7 +115,7 @@ export const App = () => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(activeProvider?.chainId ?? "", 16),
+        chainId: parseInt(provider?.chainId ?? "", 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: "Ether Mail",
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -269,7 +181,7 @@ export const App = () => {
       },
     });
 
-    let from = account;
+    let from = provider?.selectedAddress;
 
     console.debug(`sign from: ${from}`);
     try {
@@ -282,7 +194,7 @@ export const App = () => {
       const method = "eth_signTypedData_v4";
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
       console.debug(`sign params`, params);
-      const resp = await activeProvider?.request({ method, params });
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
     } catch (e) {
       console.log(e);
@@ -291,7 +203,7 @@ export const App = () => {
 
   const ping = async () => {
     console.debug(`ping`)
-    const web3 = new Web(activeProvider as any)
+    const web3 = new Web(provider as any)
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     const simple = new web3.eth.Contract(
@@ -306,14 +218,14 @@ export const App = () => {
 
   const setText = async () => {
     console.debug(`setText`)
-    const web3 = new Web(activeProvider as any)
+    const web3 = new Web(provider as any)
     const simple = new web3.eth.Contract(
       _abi  as AbiItem[],
       '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
     )
 
     const ret = await simple.methods.set('new value').send({
-      from: activeProvider?.selectedAddress
+      from: provider?.selectedAddress
     })
     console.debug(`result`, ret)
   }
@@ -330,7 +242,7 @@ export const App = () => {
   const changeNetwork = async (hexChainId:string) => {
     console.debug(`switching to network chainId=${hexChainId}`)
     try {
-      const response = await activeProvider?.request({
+      const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
       })
@@ -359,13 +271,11 @@ export const App = () => {
           <p>
             Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
           </p>
-          {serviceStatus?.connectionStatus===ConnectionStatus.WAITING &&
+          {connecting &&
             <div>
               Waiting for Metamask to link the connection...
             </div>
           }
-          <p>ChannelId: {serviceStatus?.channelId}</p>
-          <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
       </div>
 
       {connected ? <div>
@@ -410,10 +320,6 @@ export const App = () => {
           }} >
             Print Key Info
           </button>
-
-          <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
-            Disconnect
-          </button>
         </div> :
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
           Connect
@@ -424,15 +330,17 @@ export const App = () => {
         Terminate
       </button>
 
-      <div>
-        <>
-          {chain && `Connected chain: ${chain}`}
-          <p></p>
-          {account && `Connected account: ${account}`}
-          <p></p>
-          {response && `Last request response: ${response}`}
-        </>
-      </div>
+      {connected &&
+        <div>
+          <>
+            {chainId && `Connected chain: ${chainId}`}
+            <p></p>
+            {account && `Connected account: ${account}`}
+            <p></p>
+            {response && `Last request response: ${response}`}
+          </>
+        </div>
+      }
     </div>
   );
 }

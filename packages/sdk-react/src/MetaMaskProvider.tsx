@@ -9,7 +9,7 @@ import {
 } from '@metamask/sdk';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Chain,
   configureChains,
@@ -22,6 +22,7 @@ import MetaMaskConnector from './MetaMaskConnector';
 
 const initProps: {
   sdk?: MetaMaskSDK;
+  ready: boolean;
   connected: boolean;
   connecting: boolean;
   provider?: SDKProvider;
@@ -30,6 +31,7 @@ const initProps: {
   account?: string;
   status?: ServiceStatus;
 } = {
+  ready: false,
   connected: false,
   connecting: false,
 };
@@ -46,11 +48,13 @@ const WagmiWrapper = ({
   children,
   networks,
   sdk,
+  ready,
   debug,
   connectors = [],
 }: {
   children: React.ReactNode;
   networks?: Chain[];
+  ready: boolean;
   sdk?: MetaMaskSDK;
   debug?: boolean;
   connectors?: Connector[];
@@ -60,13 +64,20 @@ const WagmiWrapper = ({
   }
 
   // If no sdk is provided, we will use the public client
-  const validConnectors: Connector[] = [
-    new MetaMaskConnector({
-      chains: networks,
-      options: { sdk, debug },
-    }),
-    ...connectors,
-  ];
+  const validConnectors: Connector[] = useMemo(() => {
+    if(ready) {
+      return [
+        new MetaMaskConnector({
+          chains: networks,
+          options: { sdk, debug },
+        }),
+        ...connectors,
+      ];
+    }
+
+    return connectors;
+  }, [ready]);
+
   const [config] = useState(
     createConfig({ publicClient, connectors: validConnectors }),
   );
@@ -85,6 +96,7 @@ const MetaMaskProviderClient = ({
 }) => {
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
+  const [ready, setReady] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(1);
@@ -93,23 +105,30 @@ const MetaMaskProviderClient = ({
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
+  const hasInit = useRef(false);
 
   useEffect(() => {
-    // Prevent sdk re-rendering
-    if (sdk) {
+    // Prevent sdk double rendering with StrictMode
+    if(hasInit.current) {
       if (debug) {
         console.debug(`[MetamaskProvider] sdk already initialized`);
       }
       return;
     }
+
+    hasInit.current = true;
+
     const _sdk = new MetaMaskSDK({
       ...sdkOptions,
     });
-    setSDK(_sdk);
+    _sdk.init().then(() => {
+      setSDK(_sdk);
+      setReady(true);
+    });
   }, [sdkOptions]);
 
   useEffect(() => {
-    if (!sdk) {
+    if (!ready || !sdk) {
       return;
     }
 
@@ -227,10 +246,10 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('chainChanged', onChainChanged);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
-  }, [trigger, sdk]);
+  }, [trigger, sdk, ready]);
 
   useEffect(() => {
-    if (!sdk) {
+    if (!ready || !sdk) {
       return;
     }
 
@@ -247,12 +266,13 @@ const MetaMaskProviderClient = ({
     return () => {
       sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);
     };
-  }, [sdk]);
+  }, [sdk, ready]);
 
   return (
     <SDKContext.Provider
       value={{
         sdk,
+        ready,
         connected,
         provider,
         connecting,
@@ -262,9 +282,13 @@ const MetaMaskProviderClient = ({
         status,
       }}
     >
-      <WagmiWrapper sdk={sdk} debug={debug}>
-        {children}
-      </WagmiWrapper>
+      {ready ? (
+        <WagmiWrapper sdk={sdk} ready={ready} debug={debug}>
+          {children}
+        </WagmiWrapper>
+      ) : (
+        <>{children}</>
+      )}
     </SDKContext.Provider>
   );
 };
