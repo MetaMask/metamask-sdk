@@ -9,7 +9,7 @@ import {
 } from '@metamask/sdk';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Chain,
   configureChains,
@@ -48,11 +48,13 @@ const WagmiWrapper = ({
   children,
   networks,
   sdk,
+  ready,
   debug,
   connectors = [],
 }: {
   children: React.ReactNode;
   networks?: Chain[];
+  ready: boolean;
   sdk?: MetaMaskSDK;
   debug?: boolean;
   connectors?: Connector[];
@@ -62,13 +64,20 @@ const WagmiWrapper = ({
   }
 
   // If no sdk is provided, we will use the public client
-  const validConnectors: Connector[] = [
-    new MetaMaskConnector({
-      chains: networks,
-      options: { sdk, debug },
-    }),
-    ...connectors,
-  ];
+  const validConnectors: Connector[] = useMemo(() => {
+    if(ready) {
+      return [
+        new MetaMaskConnector({
+          chains: networks,
+          options: { sdk, debug },
+        }),
+        ...connectors,
+      ];
+    }
+
+    return connectors;
+  }, [ready]);
+
   const [config] = useState(
     createConfig({ publicClient, connectors: validConnectors }),
   );
@@ -96,22 +105,26 @@ const MetaMaskProviderClient = ({
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
+  const hasInit = useRef(false);
 
   useEffect(() => {
-    // Prevent sdk re-rendering
-    if (sdk) {
+    // Prevent sdk double rendering with StrictMode
+    if(hasInit.current) {
       if (debug) {
         console.debug(`[MetamaskProvider] sdk already initialized`);
       }
       return;
     }
+
+    hasInit.current = true;
+
     const _sdk = new MetaMaskSDK({
       ...sdkOptions,
     });
     _sdk.init().then(() => {
+      setSDK(_sdk);
       setReady(true);
     });
-    setSDK(_sdk);
   }, [sdkOptions]);
 
   useEffect(() => {
@@ -269,13 +282,13 @@ const MetaMaskProviderClient = ({
         status,
       }}
     >
-      {ready ?
-      <WagmiWrapper sdk={sdk} debug={debug}>
-      {children}
-      </WagmiWrapper>
-    : <>{children}</>
-    }
-
+      {ready ? (
+        <WagmiWrapper sdk={sdk} ready={ready} debug={debug}>
+          {children}
+        </WagmiWrapper>
+      ) : (
+        <>{children}</>
+      )}
     </SDKContext.Provider>
   );
 };
