@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.3]
+### Added
+- Upgrade to latest sdk
+
 ## [0.3.1]
 ### Added
 - Release 3.0.0
@@ -14,5 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...v0.5.3
 [0.3.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.3.1
