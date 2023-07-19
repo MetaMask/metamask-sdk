@@ -48,12 +48,13 @@ class MetaMaskConnector extends InjectedConnector {
     }
 
     const { sdk } = options_;
-    const sdkProvider = sdk.getProvider();
 
     const options = {
       name: 'MetaMask',
       shimDisconnect: true,
       getProvider() {
+        // delay querying provider to prevent sdk not being initialized
+        const sdkProvider = sdk.getProvider();
         // ignore _events from WindowProvider not implemented in SDKProvider
         return sdkProvider as unknown as WindowProvider;
       },
@@ -65,7 +66,6 @@ class MetaMaskConnector extends InjectedConnector {
       this.#debug = options_.debug;
     }
     this.#sdk = sdk;
-    this.#provider = sdkProvider;
     // Listen to sdk provider events and re-initialize events listeners accordingly
     this.#sdk.on(
       EventType.PROVIDER_UPDATE,

@@ -22,6 +22,7 @@ import MetaMaskConnector from './MetaMaskConnector';
 
 const initProps: {
   sdk?: MetaMaskSDK;
+  ready: boolean;
   connected: boolean;
   connecting: boolean;
   provider?: SDKProvider;
@@ -30,6 +31,7 @@ const initProps: {
   account?: string;
   status?: ServiceStatus;
 } = {
+  ready: false,
   connected: false,
   connecting: false,
 };
@@ -85,6 +87,7 @@ const MetaMaskProviderClient = ({
 }) => {
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
+  const [ready, setReady] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(1);
@@ -105,11 +108,14 @@ const MetaMaskProviderClient = ({
     const _sdk = new MetaMaskSDK({
       ...sdkOptions,
     });
+    _sdk.init().then(() => {
+      setReady(true);
+    });
     setSDK(_sdk);
   }, [sdkOptions]);
 
   useEffect(() => {
-    if (!sdk) {
+    if (!ready || !sdk) {
       return;
     }
 
@@ -227,10 +233,10 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('chainChanged', onChainChanged);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
-  }, [trigger, sdk]);
+  }, [trigger, sdk, ready]);
 
   useEffect(() => {
-    if (!sdk) {
+    if (!ready || !sdk) {
       return;
     }
 
@@ -247,12 +253,13 @@ const MetaMaskProviderClient = ({
     return () => {
       sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);
     };
-  }, [sdk]);
+  }, [sdk, ready]);
 
   return (
     <SDKContext.Provider
       value={{
         sdk,
+        ready,
         connected,
         provider,
         connecting,
@@ -262,9 +269,13 @@ const MetaMaskProviderClient = ({
         status,
       }}
     >
+      {ready ?
       <WagmiWrapper sdk={sdk} debug={debug}>
-        {children}
+      {children}
       </WagmiWrapper>
+    : <>{children}</>
+    }
+
     </SDKContext.Provider>
   );
 };
