@@ -4,6 +4,7 @@
   "description": "",
   "license": "ISC",
   "author": "",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",

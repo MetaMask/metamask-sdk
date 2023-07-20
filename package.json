@@ -32,7 +32,7 @@
     "child-workspace-package-names-as-json": "ts-node scripts/child-workspace-package-names-as-json.ts",
     "prepack": "./scripts/prepack.sh",
     "prepare-preview-builds": "yarn workspaces foreach --no-private --parallel run prepare-manifest:preview",
-    "publish-previews": "yarn workspaces foreach --parallel run publish:preview",
+    "publish-previews": "yarn workspaces foreach --no-private --parallel run publish:preview",
     "publish:all": "./scripts/publish-all.sh",
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces foreach --no-private run test",
