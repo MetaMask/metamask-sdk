@@ -4115,7 +4115,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-react@workspace:^, @metamask/sdk-react@workspace:packages/sdk-react":
+"@metamask/sdk-react@workspace:packages/sdk-react":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-react@workspace:packages/sdk-react"
   dependencies:
@@ -10758,7 +10758,6 @@ __metadata:
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-install-modal-web": "workspace:^"
-    "@metamask/sdk-react": "workspace:^"
     "@types/eslint": ^8
     "@types/node": 18.15.3
     "@types/react": 18.0.28
