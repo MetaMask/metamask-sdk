@@ -113,7 +113,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       ethereum.on('accountsChanged', (...args: unknown[]) => {
         const accounts = args[0] as string[]; // Assuming the first argument is an array of strings
         console.log('useEffect::ethereum on "accountsChanged"', accounts);
-        if (accounts && accounts.length > 0 && accounts[0] !== account) {
+        if (accounts?.length > 0 && accounts[0] !== account) {
           setAccount(accounts[0]);
           getBalance();
         }
