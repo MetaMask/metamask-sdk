@@ -16,7 +16,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "workspace:*",
+    "@metamask/sdk": "^0.5.3",
     "serve": "13.0.2"
   }
 }

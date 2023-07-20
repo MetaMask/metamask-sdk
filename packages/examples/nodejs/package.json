@@ -13,7 +13,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "workspace:*",
+    "@metamask/sdk": "^0.5.3",
     "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {
