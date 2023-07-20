@@ -296,6 +296,11 @@ export class RemoteConnection implements ProviderService {
       link,
       installer: this.options.getMetaMaskInstaller(),
       terminate: () => {
+        if (this.developerMode) {
+          console.debug(
+            `RemoteConnection::showInstallModal() terminate connection`,
+          );
+        }
         this.options.sdk.terminate();
       },
       debug: this.developerMode,
@@ -407,6 +412,11 @@ export class RemoteConnection implements ProviderService {
         EventType.PROVIDER_UPDATE,
         async (type: PROVIDER_UPDATE_TYPE) => {
           // handle the provider change in initializeProvider
+          if (this.developerMode) {
+            console.debug(
+              `RemoteConnection::startConnection::on 'provider_update' -- resolving startConnection promise`,
+            );
+          }
           reject(type);
         },
       );
