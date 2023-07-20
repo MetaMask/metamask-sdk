@@ -23,12 +23,14 @@ const config = [
       {
         file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
+        inlineDynamicImports: true,
         sourcemap: true,
       },
       {
         name: 'browser',
         // file: 'dist/browser/umd/metamask-sdk.js',
         file: packageJson.unpkg,
+        inlineDynamicImports: true,
         format: 'umd',
         sourcemap: true,
       },
@@ -36,6 +38,7 @@ const config = [
         file: 'dist/browser/iife/metamask-sdk.js',
         format: 'iife',
         name: 'MetaMaskSDK',
+        inlineDynamicImports: true,
         sourcemap: true,
       },
     ],
@@ -62,6 +65,7 @@ const config = [
       {
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',
+        inlineDynamicImports: true,
         sourcemap: true,
       },
     ],
@@ -89,11 +93,13 @@ const config = [
         file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
         sourcemap: true,
+        inlineDynamicImports: true,
       },
       {
         file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
         sourcemap: true,
+        inlineDynamicImports: true,
       },
     ],
     plugins: [
