@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.4]
 ### Added
+- feat: monorepo examples integration ([#239](https://github.com/MetaMask/metamask-sdk/pull/239))
 - fix: sdk hook connector error with strictmode ([#234](https://github.com/MetaMask/metamask-sdk/pull/234))
 
 ## [0.5.3]
