@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -7,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.5.6]
-### Uncategorized
+### Added
 - feat: optimize provider initialization
 
 ## [0.5.5]
