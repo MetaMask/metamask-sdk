@@ -91,7 +91,8 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         setConnected(true);
       });
 
-      ethereum.on('chainChanged', (newChain: string) => {
+      ethereum.on('chainChanged', (arg: unknown) => {
+        const newChain = String(arg) as string; // Type assertion to string
         console.log('useEffect::ethereum on "chainChanged"', newChain);
         setChain(newChain);
       });
@@ -109,10 +110,11 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         }
       });
 
-      ethereum.on('accountsChanged', (accounts: string[]) => {
+      ethereum.on('accountsChanged', (...args: unknown[]) => {
+        const accounts = args[0] as string[]; // Assuming the first argument is an array of strings
         console.log('useEffect::ethereum on "accountsChanged"', accounts);
-        if (accounts.length > 0 && accounts[0] !== account) {
-          setAccount(accounts?.[0]);
+        if (accounts && accounts.length > 0 && accounts[0] !== account) {
+          setAccount(accounts[0]);
           getBalance();
         }
       });
@@ -302,14 +304,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       ) : (
         <Button title={'Connect'} onPress={connect} />
       )}
-
-      <Button
-        title={'Test Storage'}
-        onPress={() => {
-          // sdk.testStorage();
-          console.debug(sdk.getServiceStatus());
-        }}
-      />
 
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}

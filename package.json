@@ -14,7 +14,8 @@
     "packages/sdk-react",
     "packages/devreact",
     "packages/devnext",
-    "packages/deve2e"
+    "packages/deve2e",
+    "packages/examples/*"
   ],
   "scripts": {
     "build": "yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc",

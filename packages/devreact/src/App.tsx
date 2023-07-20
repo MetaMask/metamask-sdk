@@ -230,10 +230,6 @@ export const App = () => {
     console.debug(`result`, ret)
   }
 
-  const disconnect = () => {
-    sdk?.disconnect();
-  }
-
   const terminate = () => {
     sdk?.terminate();
     // sdk.debugPersistence({terminate: true, disconnect: false})
