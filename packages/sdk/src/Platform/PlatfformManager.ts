@@ -177,6 +177,10 @@ export class PlatformManager {
     );
   }
 
+  isNodeJS() {
+    return this.isNotBrowser() && !this.isReactNative();
+  }
+
   isBrowser() {
     return !this.isNotBrowser();
   }

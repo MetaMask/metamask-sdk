@@ -35,11 +35,17 @@ Import the SDK (for possible parameters check this):
 ```ts
 import { MetaMaskSDK } from '@metamask/sdk';
 const MMSDK = new MetaMaskSDK({});
-MMSDK.init()
-  .then(() => {
-    console.log('MetaMask SDK is ready');
+MMSDK.connect()
+  .then((accounts) => {
+    console.log('MetaMask SDK is connected', accounts);
     const ethereum = MMSDK.getProvider();
-    ethereum.request({ method: 'eth_requestAccounts', params: [] });
+    const ethereum = sdk.getProvider();
+    const balance = await ethereum.request({
+      method: 'eth_getBalance',
+      params: accounts,
+    });
+
+    console.debug(`account balance`, balance);
   })
   .catch((error) => {
     console.error(error);
