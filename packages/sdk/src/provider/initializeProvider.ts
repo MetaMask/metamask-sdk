@@ -78,17 +78,6 @@ const initializeProvider = ({
     f: any,
     debugRequest: boolean,
   ) => {
-    const isInstalled = platformManager.isMetaMaskInstalled();
-    // Also check that socket is connected -- otherwise it would be in inconherant state.
-    const socketConnected = remoteConnection?.isConnected();
-    const { selectedAddress } = Ethereum.getProvider();
-
-    if (debugRequest) {
-      console.debug(
-        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
-      );
-    }
-
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
@@ -107,6 +96,17 @@ const initializeProvider = ({
       }
       // Previous init has completed, meaning we can safely interrup and call the provider.
       return f(...args);
+    }
+
+    const isInstalled = platformManager.isMetaMaskInstalled();
+    // Also check that socket is connected -- otherwise it would be in inconherant state.
+    const socketConnected = remoteConnection?.isConnected();
+    const { selectedAddress } = Ethereum.getProvider();
+
+    if (debugRequest) {
+      console.debug(
+        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
+      );
     }
 
     if (
