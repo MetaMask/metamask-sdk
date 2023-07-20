@@ -3,21 +3,24 @@ import { MetaMaskSDK } from '@metamask/sdk';
 export const mainSDK = async () => {
   const sdk = new MetaMaskSDK({
     shouldShimWeb3: false,
-    // communicationServerUrl: 'http://localhost:4000/',
+    communicationServerUrl: 'http://localhost:4000/',
+    logging: {
+      developerMode: false,
+    },
     dappMetadata: {
       name: 'NodeJS Console',
       url: 'N/A',
     },
   });
 
-  const ethereum = sdk.getProvider();
+  const accounts = await sdk.connect();
 
-  const accounts = await ethereum.request({
-    method: 'eth_requestAccounts',
-    params: [],
+  console.log(`connected with accounts`, accounts);
+  const ethereum = sdk.getProvider();
+  const balance = await ethereum.request({
+    method: 'eth_getBalance',
+    params: accounts,
   });
 
-  console.log('request accounts', accounts);
-
-  sdk.disconnect();
+  console.debug(`account balance`, balance);
 };

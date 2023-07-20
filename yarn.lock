@@ -3875,7 +3875,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/deve2e@workspace:packages/deve2e"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/providers": ^10.2.1
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
@@ -3888,6 +3887,7 @@ __metadata:
     rollup: ^3.7.3
     rollup-plugin-serve: ^2.0.2
     rollup-plugin-typescript2: ^0.34.1
+    ts-node: ^10.9.1
     typescript: ^5.0.4
   languageName: unknown
   linkType: soft
@@ -4115,7 +4115,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-react@workspace:packages/sdk-react":
+"@metamask/sdk-react@workspace:^, @metamask/sdk-react@workspace:packages/sdk-react":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-react@workspace:packages/sdk-react"
   dependencies:
@@ -10758,6 +10758,7 @@ __metadata:
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-install-modal-web": "workspace:^"
+    "@metamask/sdk-react": "workspace:^"
     "@types/eslint": ^8
     "@types/node": 18.15.3
     "@types/react": 18.0.28
