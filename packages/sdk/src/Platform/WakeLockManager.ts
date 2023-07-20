@@ -41,11 +41,20 @@ export class WakeLockManager {
         'MetaMask SDK - Listening for responses',
       );
       this.noSleepVideo.setAttribute('playsinline', '');
+      this.noSleepVideo.setAttribute('controls', '');
+      this.noSleepVideo.setAttribute('loop', '');
+      this.noSleepVideo.setAttribute('autoPlay', '');
+      this.noSleepVideo.setAttribute('mute', '');
 
       this._addSourceToVideo(this.noSleepVideo, 'webm', webm);
       this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4);
 
       this.noSleepVideo.addEventListener('loadedmetadata', () => {
+        console.log(
+          `noSleepvideo loaded... duration=${this.noSleepVideo?.duration}`,
+          this.noSleepVideo,
+        );
+
         if (!this.noSleepVideo) {
           return;
         }
@@ -66,6 +75,8 @@ export class WakeLockManager {
           });
         }
       });
+
+      document.body.appendChild(this.noSleepVideo);
     }
   }
 
@@ -73,6 +84,7 @@ export class WakeLockManager {
     const source = document.createElement('source');
     source.src = dataURI;
     source.type = `video/${type}`;
+    console.debug(`WakeLockManager::_addSourceToVideo()`, source);
     element.appendChild(source);
   }
 
@@ -88,6 +100,7 @@ export class WakeLockManager {
 
     this.start();
     if (hasNativeWakeLock()) {
+      console.debug(`WakeLockManager::enable() hasNativeWakeLock=true`);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return navigator.wakeLock
@@ -124,10 +137,21 @@ export class WakeLockManager {
       return Promise.resolve();
     }
 
+    console.debug(
+      `WakeLockManager::enable() hasNativeWakeLock=false`,
+      this.noSleepVideo,
+    );
+
     if (this.noSleepVideo) {
       const playPromise = this.noSleepVideo?.play();
       this.enabled = true;
-      return playPromise.then(() => true).catch(() => false);
+      return playPromise
+        .then(() => {
+          console.info(`VIDEO HAS PLAYED!`);
+        })
+        .catch((err) => {
+          console.log(`an error occured`, err);
+        });
     }
     this.enabled = true;
     return Promise.resolve();

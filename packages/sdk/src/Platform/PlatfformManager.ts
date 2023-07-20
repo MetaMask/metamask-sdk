@@ -44,22 +44,28 @@ export class PlatformManager {
     this.preferredOpenLink = preferredOpenLink;
     this.wakeLockStatus = wakeLockStatus;
     this.debug = debug;
+    console.info(`initial wakelock status: ${this.wakeLockStatus}`);
   }
 
   enableWakeLock() {
+    console.log(
+      `Platform::enableWakeLock() wakeLockStatus=${this.wakeLockStatus}`,
+    );
+
     if (this.wakeLockStatus === WakeLockStatus.Disabled) {
       return;
     }
 
     this.wakeLock.enable();
 
-    const maxTime =
-      this.wakeLockStatus === WakeLockStatus.Temporary
-        ? TEMPORARY_WAKE_LOCK_TIME
-        : UNTIL_RESPONSE_WAKE_LOCK_TIME;
+    const maxTime = 10000;
+    // this.wakeLockStatus === WakeLockStatus.Temporary
+    //   ? TEMPORARY_WAKE_LOCK_TIME
+    //   : UNTIL_RESPONSE_WAKE_LOCK_TIME;
 
     // At the most wake lock a maximum of time
     this.wakeLockTimer = setTimeout(() => {
+      console.debug(`wakelock timer has expired`);
       this.disableWakeLock();
     }, maxTime) as unknown as NodeJS.Timeout;
 
@@ -68,7 +74,10 @@ export class PlatformManager {
       this.wakeLockStatus === WakeLockStatus.UntilResponse
     ) {
       this.wakeLockFeatureActive = true;
-      window.addEventListener('focus', () => this.disableWakeLock());
+      window.addEventListener('focus', () => {
+        console.debug(`window has gained focus --- disable waklock`);
+        this.disableWakeLock();
+      });
     }
   }
 
@@ -96,24 +105,24 @@ export class PlatformManager {
       this.enableWakeLock();
     }
 
-    try {
-      if (this.preferredOpenLink) {
-        this.preferredOpenLink(universalLink, target);
-        return;
-      }
+    // try {
+    //   if (this.preferredOpenLink) {
+    //     this.preferredOpenLink(universalLink, target);
+    //     return;
+    //   }
 
-      if (typeof window !== 'undefined') {
-        let win: Window | null;
-        if (this.useDeeplink) {
-          win = window.open(deeplink, '_blank');
-        } else {
-          win = window.open(universalLink, '_blank');
-        }
-        setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
-      }
-    } catch (err) {
-      console.log(`Platform::openDeepLink() can't open link`, err);
-    }
+    //   if (typeof window !== 'undefined') {
+    //     let win: Window | null;
+    //     if (this.useDeeplink) {
+    //       win = window.open(deeplink, '_blank');
+    //     } else {
+    //       win = window.open(universalLink, '_blank');
+    //     }
+    //     setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
+    //   }
+    // } catch (err) {
+    //   console.log(`Platform::openDeepLink() can't open link`, err);
+    // }
 
     // console.log('Please setup the openDeeplink parameter');
   }
