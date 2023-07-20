@@ -222,7 +222,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     if (storage?.enabled === true && !storage.storageManager) {
       storage.storageManager = await getStorageManager(
-        this.platformManager,
+        // this.platformManager,
         storage,
       );
     }
