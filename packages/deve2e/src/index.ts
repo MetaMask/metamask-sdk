@@ -13,6 +13,12 @@ if (target === 'sdk') {
   methodToCall = ECIESEncryptedCommunicaition;
 }
 
-methodToCall().then(() => {
-  console.log(`exiting.`);
-});
+const startAsync = async () => {
+  try {
+    await methodToCall();
+  } catch (err) {
+    console.error(`error: ${err}`);
+  }
+};
+
+startAsync();

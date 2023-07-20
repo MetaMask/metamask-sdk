@@ -10,14 +10,14 @@ export const mainSDK = async () => {
     },
   });
 
-  const ethereum = sdk.getProvider();
+  const accounts = await sdk.connect();
 
-  const accounts = await ethereum.request({
-    method: 'eth_requestAccounts',
-    params: [],
+  console.log(`connected with accounts`, accounts);
+  const ethereum = sdk.getProvider();
+  const balance = await ethereum.request({
+    method: 'eth_getBalance',
+    params: accounts,
   });
 
-  console.log('request accounts', accounts);
-
-  sdk.disconnect();
+  console.debug(`account balance`, balance);
 };

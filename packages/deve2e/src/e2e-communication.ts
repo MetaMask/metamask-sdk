@@ -1,3 +1,4 @@
+import { PlatformType } from '@metamask/sdk';
 import {
   CommunicationLayerPreference,
   EventType,
@@ -20,12 +21,11 @@ const waitForReady = async (): Promise<void> => {
 
 export const mainCommunication = async () => {
   const communicationLayerPreference = CommunicationLayerPreference.SOCKET;
-  const platform = 'jest';
   const communicationServerUrl = 'http://localhost:4000/';
 
   const remote = new RemoteCommunication({
     communicationLayerPreference,
-    platform,
+    platformType: PlatformType.NonBrowser,
     communicationServerUrl,
     context: 'dapp',
     logging: {
@@ -37,7 +37,7 @@ export const mainCommunication = async () => {
     analytics: true,
   });
 
-  const { channelId, pubKey } = await remote.generateChannelId();
+  const { channelId, pubKey } = await remote.generateChannelIdConnect();
 
   remote.on(EventType.CLIENTS_READY, () => {
     clientsReady = true;
@@ -45,7 +45,7 @@ export const mainCommunication = async () => {
 
   const mmRemote = new RemoteCommunication({
     communicationLayerPreference,
-    platform,
+    platformType: 'metamask-mobile',
     otherPublicKey: pubKey,
     communicationServerUrl,
     context: 'metamask',

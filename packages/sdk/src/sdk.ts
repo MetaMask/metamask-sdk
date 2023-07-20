@@ -126,6 +126,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
   }
 
+  // TODO make method private to let dapp call connect() directly.
   public async init() {
     if (this._initialized) {
       if (this.debug) {
@@ -220,7 +221,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
 
     if (storage?.enabled === true && !storage.storageManager) {
-      storage.storageManager = getStorageManager(storage);
+      storage.storageManager = await getStorageManager(
+        this.platformManager,
+        storage,
+      );
     }
 
     if (this.platformManager.isBrowser() && !dappMetadata.base64Icon) {
@@ -345,7 +349,22 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   async connect() {
-    return await this.activeProvider?.request({
+    if (!this._initialized) {
+      if (this.debug) {
+        console.log(`SDK::connect() provider not ready -- wait for init()`);
+      }
+      await this.init();
+    }
+
+    if (this.debug) {
+      console.debug(`SDK::connect()`, this.activeProvider);
+    }
+
+    if (!this.activeProvider) {
+      throw new Error(`SDK state invalid -- undefined provider`);
+    }
+
+    return this.activeProvider.request({
       method: 'eth_requestAccounts',
       params: [],
     });
