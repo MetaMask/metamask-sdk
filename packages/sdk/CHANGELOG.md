@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.4]
+### Added
+- feat: monorepo examples integration ([#239](https://github.com/MetaMask/metamask-sdk/pull/239))
+- feat: check init before connect (+dynamic platform import) ([#238](https://github.com/MetaMask/metamask-sdk/pull/238))
+- fix: sdk hook connector error with strictmode ([#234](https://github.com/MetaMask/metamask-sdk/pull/234))
+- fix: autoconnection setting ([#235](https://github.com/MetaMask/metamask-sdk/pull/235))
+- fix: invalid types during build pipeline ([#233](https://github.com/MetaMask/metamask-sdk/pull/233))
+
 ## [0.5.3]
 ### Added
 - feat: persist extension provider preferences
@@ -72,7 +80,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.4...HEAD
+[0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.3...@metamask/sdk@0.5.4
 [0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.2...@metamask/sdk@0.5.3
 [0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.1...@metamask/sdk@0.5.2
 [0.5.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.0...@metamask/sdk@0.5.1

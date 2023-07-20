@@ -221,8 +221,8 @@ export class MetaMaskSDK extends EventEmitter2 {
     });
 
     if (storage?.enabled === true && !storage.storageManager) {
-      storage.storageManager = await getStorageManager(
-        this.platformManager,
+      storage.storageManager = getStorageManager(
+        // this.platformManager,
         storage,
       );
     }
@@ -333,13 +333,28 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.initEventListeners();
 
     if (preferExtension) {
+      if (this.debug) {
+        console.debug(
+          `SDK::_doInit() preferExtension is detected -- connect with it.`,
+        );
+      }
+
       this.connectWithExtensionProvider().catch((_err) => {
         console.warn(`Can't connect with MetaMask extension...`);
       });
     } else if (checkInstallationImmediately) {
       // This will check if the connection was correctly done or if the user needs to install MetaMask
       try {
-        await this.connect();
+        if (this.debug) {
+          console.debug(`SDK::_doInit() checkInstallationImmediately`);
+        }
+
+        this.connect().catch((_err) => {
+          // ignore error on autoconnect
+          if (this.debug) {
+            console.warn(`error during autoconnect`, _err);
+          }
+        });
       } catch (err: unknown) {
         // ignore error on autorocnnect
       }
