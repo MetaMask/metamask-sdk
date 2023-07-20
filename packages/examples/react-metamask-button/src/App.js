@@ -3,6 +3,7 @@ import {
   MetaMaskButton,
   useSignTypedData,
   useAccount,
+  useSDK,
   useSignMessage,
 } from '@metamask/sdk-react';
 
@@ -39,7 +40,7 @@ const value = {
   contents: 'Hello, Bob!',
 };
 
-function App() {
+function AppReady() {
   const { data, isError, isLoading, isSuccess, signTypedData } =
     useSignTypedData({
       domain,
@@ -81,6 +82,17 @@ function App() {
       </header>
     </div>
   );
+}
+
+function App() {
+
+  const { ready } = useSDK();
+
+  if(!ready) {
+    return <div>Loading...</div>
+  }
+
+  return <AppReady />;
 }
 
 export default App;
