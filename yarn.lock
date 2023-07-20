@@ -99,7 +99,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.1.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.6, @babel/core@npm:^7.20.0, @babel/core@npm:^7.20.12, @babel/core@npm:^7.21.8, @babel/core@npm:^7.7.2, @babel/core@npm:^7.8.0":
+"@babel/core@npm:^7.1.0, @babel/core@npm:^7.11.1, @babel/core@npm:^7.11.6, @babel/core@npm:^7.12.16, @babel/core@npm:^7.12.3, @babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.16.0, @babel/core@npm:^7.18.6, @babel/core@npm:^7.20.0, @babel/core@npm:^7.21.8, @babel/core@npm:^7.7.2, @babel/core@npm:^7.8.0":
   version: 7.22.9
   resolution: "@babel/core@npm:7.22.9"
   dependencies:
@@ -2102,15 +2102,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/is-prop-valid@npm:0.8.8":
-  version: 0.8.8
-  resolution: "@emotion/is-prop-valid@npm:0.8.8"
-  dependencies:
-    "@emotion/memoize": 0.7.4
-  checksum: bb7ec6d48c572c540e24e47cc94fc2f8dec2d6a342ae97bc9c8b6388d9b8d283862672172a1bb62d335c02662afe6291e10c71e9b8642664a8b43416cdceffac
-  languageName: node
-  linkType: hard
-
 "@emotion/is-prop-valid@npm:^1.2.1":
   version: 1.2.1
   resolution: "@emotion/is-prop-valid@npm:1.2.1"
@@ -2192,34 +2183,6 @@ __metadata:
   version: 1.2.2
   resolution: "@emotion/sheet@npm:1.2.2"
   checksum: d973273c9c15f1c291ca2269728bf044bd3e92a67bca87943fa9ec6c3cd2b034f9a6bfe95ef1b5d983351d128c75b547b43ff196a00a3875f7e1d269793cecfe
-  languageName: node
-  linkType: hard
-
-"@emotion/styled-base@npm:^10.0.27":
-  version: 10.3.0
-  resolution: "@emotion/styled-base@npm:10.3.0"
-  dependencies:
-    "@babel/runtime": ^7.5.5
-    "@emotion/is-prop-valid": 0.8.8
-    "@emotion/serialize": ^0.11.15
-    "@emotion/utils": 0.11.3
-  peerDependencies:
-    "@emotion/core": ^10.0.28
-    react: ">=16.3.0"
-  checksum: ac0bb8f39e92fda12686afe5d398f7215cc7276d66195d5937f58ee7dae516e58017594cc74deed72859043623db824fdaf8213d29276316749ebff2ef7a5e4d
-  languageName: node
-  linkType: hard
-
-"@emotion/styled@npm:10.0.27":
-  version: 10.0.27
-  resolution: "@emotion/styled@npm:10.0.27"
-  dependencies:
-    "@emotion/styled-base": ^10.0.27
-    babel-plugin-emotion: ^10.0.27
-  peerDependencies:
-    "@emotion/core": ^10.0.27
-    react: ">=16.3.0"
-  checksum: 09e86fe47adbca1eabb34f36cee17289fbe1f2332c40051d4d5a6077eed1682612685663efb7fd68a8f290d20f9f5cb6ad1c9ca18dcdfc05ee51784d707d279c
   languageName: node
   linkType: hard
 
@@ -3867,20 +3830,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.2.5":
-  version: 0.2.5
-  resolution: "@metamask/sdk-communication-layer@npm:0.2.5"
-  dependencies:
-    cross-fetch: ^3.1.5
-    date-fns: ^2.29.3
-    eciesjs: ^0.3.16
-    eventemitter2: ^6.4.5
-    socket.io-client: ^4.5.1
-    uuid: ^8.3.2
-  checksum: d059d674d3b751580f2e19a4d4097c1ee7c53b74d509ed80b7b55c302a75080aaa5760775d25abda5bc7ca2aa86920db07fffa39983c13037292f88ffdd2ff74
-  languageName: node
-  linkType: hard
-
 "@metamask/sdk-communication-layer@npm:0.4.2":
   version: 0.4.2
   resolution: "@metamask/sdk-communication-layer@npm:0.4.2"
@@ -3942,18 +3891,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-install-modal-web@npm:0.2.1":
-  version: 0.2.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.2.1"
-  dependencies:
-    "@babel/core": ^7.20.12
-    "@emotion/styled": 10.0.27
-    qr-code-styling: ^1.6.0-rc.1
-    react: ^18.2.0
-  checksum: 16a1b43979f5be3b565219882e773edb93b7944a8e196001462521e4e0c2615e17a9fe71c5a52e99f17882ead74c96a8883d984d4e111cce896870d132e6c704
-  languageName: node
-  linkType: hard
-
 "@metamask/sdk-install-modal-web@npm:0.3.3":
   version: 0.3.3
   resolution: "@metamask/sdk-install-modal-web@npm:0.3.3"
@@ -4011,25 +3948,6 @@ __metadata:
     serve: 13.0.2
   languageName: unknown
   linkType: soft
-
-"@metamask/sdk-react@file:../../sdk-react::locator=react-metamask-button%40workspace%3Apackages%2Fexamples%2Freact-metamask-button":
-  version: 0.5.3
-  resolution: "@metamask/sdk-react@file:../../sdk-react#../../sdk-react::hash=710bf1&locator=react-metamask-button%40workspace%3Apackages%2Fexamples%2Freact-metamask-button"
-  dependencies:
-    "@headlessui/react": ^1.6.6
-    "@metamask/sdk": "workspace:^"
-    ethers: ^5.6.9
-    mersenne-twister: ^1.1.0
-    react-copy-to-clipboard: ^5.1.0
-    react-jazzicon: ^1.0.4
-    viem: latest
-    wagmi: ^1.3.8
-  peerDependencies:
-    react: ^18.2.0
-    react-dom: ^18.2.0
-  checksum: 04b9ebde66543f5de4332490642f90a6b74f991df815a215de1cc66acdc2782f8485c8cbf70cdb281ef9713f5a44563eccbfa9ddce2e418dbccd4c325d24e4bc
-  languageName: node
-  linkType: hard
 
 "@metamask/sdk-react@workspace:*, @metamask/sdk-react@workspace:^, @metamask/sdk-react@workspace:packages/sdk-react, @metamask/sdk-react@workspaces:*":
   version: 0.0.0-use.local
@@ -4181,36 +4099,6 @@ __metadata:
     react-native: ^0.71.1
   languageName: unknown
   linkType: soft
-
-"@metamask/sdk@npm:^0.2.4":
-  version: 0.2.4
-  resolution: "@metamask/sdk@npm:0.2.4"
-  dependencies:
-    "@metamask/onboarding": ^1.0.1
-    "@metamask/post-message-stream": ^6.1.0
-    "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.2.5
-    "@metamask/sdk-install-modal-web": 0.2.1
-    "@react-native-async-storage/async-storage": ^1.17.11
-    "@types/dom-screen-wake-lock": ^1.0.0
-    bowser: ^2.9.0
-    eciesjs: ^0.3.15
-    eventemitter2: ^6.4.7
-    extension-port-stream: ^2.0.1
-    obj-multiplex: ^1.0.0
-    pump: ^3.0.0
-    qrcode-terminal: ^0.12.0
-    react-native-webview: ^11.26.0
-    readable-stream: ^2.3.7
-    socket.io-client: ^4.5.1
-    util: ^0.12.4
-    uuid: ^8.3.2
-  peerDependencies:
-    react: ^18.2.0
-    react-native: ^0.71.1
-  checksum: 08a8908e6e800a0f06b258eb98ff51f180485c3967cc6164b4952e920442d4a0d70356d0400f3470961cf6b375b4d119b8f7358e6ad5899daddd3b43e4e4300d
-  languageName: node
-  linkType: hard
 
 "@metamask/sdk@npm:^0.4.2":
   version: 0.4.2
@@ -7669,7 +7557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/chains@npm:1.6.0":
+"@wagmi/chains@npm:1.6.0, @wagmi/chains@npm:^1.6.0":
   version: 1.6.0
   resolution: "@wagmi/chains@npm:1.6.0"
   peerDependencies:
@@ -23308,14 +23196,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "react-metamask-button@workspace:packages/examples/react-metamask-button"
   dependencies:
-    "@metamask/sdk": ^0.2.4
-    "@metamask/sdk-react": ../../sdk-react
+    "@lavamoat/allow-scripts": ^2.3.1
+    "@metamask/sdk-react": "workspaces:*"
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^13.5.0
+    "@types/node": ^20.4.1
+    "@types/react": ^18.2.14
+    "@types/react-dom": ^18.2.6
+    "@wagmi/chains": ^1.6.0
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
+    typescript: ^5.1.6
+    wagmi: ^1.3.9
     web-vitals: ^2.1.4
   languageName: unknown
   linkType: soft
@@ -27633,7 +27527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^1.3.8":
+"wagmi@npm:^1.3.8, wagmi@npm:^1.3.9":
   version: 1.3.9
   resolution: "wagmi@npm:1.3.9"
   dependencies:
