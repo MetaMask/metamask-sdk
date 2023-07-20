@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -5,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.6]
+### Added
+- feat: optimize provider initialization
 
 ## [0.5.5]
 ### Added
@@ -84,7 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.6...HEAD
+[0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.5...@metamask/sdk@0.5.6
 [0.5.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.4...@metamask/sdk@0.5.5
 [0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.3...@metamask/sdk@0.5.4
 [0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.2...@metamask/sdk@0.5.3
