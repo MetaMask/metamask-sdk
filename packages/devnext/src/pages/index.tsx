@@ -1,10 +1,8 @@
-import { SDKProvider } from '@metamask/sdk';
-import { ConnectionStatus } from '@metamask/sdk-communication-layer';
+import { useSDK } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
 import styles from 'src/styles/Home.module.css';
-import { useSDK } from '../../../sdk-react/src/MetaMaskHooks';
 
 export default function Home() {
   const {
@@ -160,10 +158,7 @@ export default function Home() {
         <Link href={'uikit'}>UI Kit demo</Link>
       </header>
       <main className={styles.main}>
-        <p>
-          Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
-        </p>
-        {serviceStatus?.connectionStatus === ConnectionStatus.WAITING && (
+        {connecting && (
           <div>Waiting for Metamask to link the connection...</div>
         )}
         <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>

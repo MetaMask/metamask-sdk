@@ -108,7 +108,10 @@
       "wagmi>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
       "wagmi>@coinbase/wallet-sdk>keccak": false,
       "viem>ws>bufferutil": false,
-      "viem>ws>utf-8-validate": false
+      "viem>ws>utf-8-validate": false,
+      "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
+      "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
+      "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>keccak": false
     }
   }
 }

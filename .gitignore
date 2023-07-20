@@ -3,6 +3,7 @@
 .vscode
 # sed backup files
 *.*-e
+**/.sdk-comm
 
 # Logs
 logs

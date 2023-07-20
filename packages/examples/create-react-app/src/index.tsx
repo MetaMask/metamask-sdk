@@ -11,16 +11,17 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <MetaMaskProvider sdkOptions={{
-        logging:{
-          developerMode: true,
+    <MetaMaskProvider debug sdkOptions={{
+      logging:{
+          developerMode: false,
         },
+        checkInstallationImmediately: true, // This will automatically connect to MetaMask on page load
         dappMetadata: {
           name: "Demo React App",
           url: window.location.host,
         }
     }}>
-    <App />
+      <App />
     </MetaMaskProvider>
   </React.StrictMode>
 );
