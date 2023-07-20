@@ -11,7 +11,6 @@ const options: MetaMaskSDKOptions = {
   logging: {
     sdk: false
   },
-  communicationServerUrl: 'http://192.168.50.114:4000',
   checkInstallationImmediately: false,
   // Optional: customize modal text
   modals: {
