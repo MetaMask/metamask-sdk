@@ -13,10 +13,10 @@ import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
 import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 // #endif
 
-export const getStorageManager = async (
+export const getStorageManager = (
   // platformManager: PlatformManager,
   options: StorageManagerProps,
-): Promise<StorageManager> => {
+): StorageManager => {
   // TODO uncomment and test to use similar dynamic imports for each platforms and drop support for JSCC
   // Currently might have an issue with NextJS and server side rendering
   // if (platformManager.isNotBrowser()) {
