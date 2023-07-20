@@ -5,6 +5,7 @@ const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { LRUCache } = require('lru-cache');
+const os = require('os');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -19,15 +20,90 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
-const rateLimiter = new RateLimiterMemory({
-  points: 20,
+let rateLimitPoints = 10;
+let rateLimitMessagePoints = 100;
+const rateLimitPointsMax = 40;
+const rateLimitMessagePointsMax = 400;
+let lastConnectionErrorTimestamp;
+
+// Store the initial values
+const initialRateLimitPoints = rateLimitPoints;
+const initialRateLimitMessagePoints = rateLimitMessagePoints;
+
+// Create the rate limiters with initial points
+let rateLimiter = new RateLimiterMemory({
+  points: rateLimitPoints,
   duration: 1,
 });
 
-const rateLimiterMesssage = new RateLimiterMemory({
-  points: 200,
+let rateLimiterMesssage = new RateLimiterMemory({
+  points: rateLimitMessagePoints,
   duration: 1,
 });
+
+const resetRateLimits = () => {
+  const tenSecondsPassedSinceLastError =
+    lastConnectionErrorTimestamp &&
+    Date.now() - lastConnectionErrorTimestamp >= 10000;
+
+  if (tenSecondsPassedSinceLastError) {
+    // Reset the rate limits to their initial values
+    rateLimitPoints = initialRateLimitPoints;
+    rateLimitMessagePoints = initialRateLimitMessagePoints;
+  }
+
+  console.log(`Rate limit points: ${rateLimitPoints}`);
+  console.log(`Rate limit message points: ${rateLimitMessagePoints}`);
+};
+
+const increaseRateLimits = (cpuUsagePercentMin, freeMemoryPercentMin) => {
+  // Check the CPU usage
+  const cpuLoad = os.loadavg()[0]; // 1 minute load average
+  const numCpus = os.cpus().length;
+  const cpuUsagePercent = (cpuLoad / numCpus) * 100;
+  console.log(`CPU usage: ${cpuUsagePercent}%`);
+
+  // Check the memory usage
+  const totalMemory = os.totalmem();
+  const freeMemory = os.freemem();
+  const memoryUsagePercent = ((totalMemory - freeMemory) / totalMemory) * 100;
+  const freeMemoryPercent = 100 - memoryUsagePercent;
+  console.log(`Free memory: ${freeMemoryPercent}%`);
+
+  // If CPU is not at 100% and there is at least 10% of free memory
+  if (
+    cpuUsagePercent <= cpuUsagePercentMin
+    // && freeMemoryPercent >= freeMemoryPercentMin
+  ) {
+    // Increase the rate limits by steps of 5 and 10, up to a max of 50 and 500
+    rateLimitPoints = Math.min(rateLimitPoints + 5, rateLimitPointsMax);
+    rateLimitMessagePoints = Math.min(
+      rateLimitMessagePoints + 50,
+      rateLimitMessagePointsMax,
+    );
+  } else {
+    // Reduce the rate limits by steps of 5 and 10, down to the initial values
+    rateLimitPoints = Math.max(rateLimitPoints - 5, initialRateLimitPoints);
+    rateLimitMessagePoints = Math.max(
+      rateLimitMessagePoints - 10,
+      initialRateLimitMessagePoints,
+    );
+  }
+
+  // Update the rate limiters
+  rateLimiter = new RateLimiterMemory({
+    points: rateLimitPoints,
+    duration: 1,
+  });
+
+  rateLimiterMesssage = new RateLimiterMemory({
+    points: rateLimitMessagePoints,
+    duration: 1,
+  });
+
+  console.log(`Rate limit points: ${rateLimitPoints}`);
+  console.log(`Rate limit message points: ${rateLimitMessagePoints}`);
+};
 
 const io = new Server(server, {
   cors: {
@@ -157,9 +233,14 @@ io.on('connection', (socket) => {
       if (room) {
         return socket.emit(`message-${id}`, { error: 'room already created' });
       }
+
+      resetRateLimits();
+
       socket.join(id);
       return socket.emit(`channel_created-${id}`, id);
     } catch (error) {
+      lastConnectionErrorTimestamp = Date.now();
+      increaseRateLimits(90, 0);
       console.error('Error on create_channel:', error);
       // emit an error message back to the client, if appropriate
       return socket.emit(`error`, { error: error.message });
@@ -193,8 +274,13 @@ io.on('connection', (socket) => {
           });
         }
       }
+
+      resetRateLimits();
+
       return socket.to(id).emit(`message-${id}`, { id, message });
     } catch (error) {
+      lastConnectionErrorTimestamp = Date.now();
+      increaseRateLimits(90, 0);
       console.error('Error on message:', error);
       // emit an error message back to the client, if appropriate
       return socket.emit(`message-${id}`, { error: error.message });
