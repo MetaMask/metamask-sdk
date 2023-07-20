@@ -31,12 +31,12 @@ const sdkWebInstallModal = ({
     );
   }
 
-  const unmount = (shouldTerminate = true) => {
+  const unmount = (shouldTerminate?: boolean) => {
     if (div) {
       div.style.display = 'none';
     }
 
-    if (shouldTerminate !== false) {
+    if (shouldTerminate === true) {
       terminate?.();
     }
   };

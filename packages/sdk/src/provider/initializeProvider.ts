@@ -126,10 +126,10 @@ const initializeProvider = ({
           });
         } catch (installError) {
           setInitializing(false);
+
           if (debug) {
             console.debug(
-              `initializeProvider failed to start installer`,
-              installError,
+              `initializeProvider failed to start installer: ${installError}`,
             );
           }
 
@@ -140,6 +140,7 @@ const initializeProvider = ({
               params: args,
             });
           }
+
           throw installError;
         }
 
