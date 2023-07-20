@@ -49,11 +49,7 @@ export default function SDKContainer() {
       const clientSDK = new MetaMaskSDK({
         useDeeplink: false,
         communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
-        forceInjectProvider: true,
-        forceDeleteProvider: true,
-        autoConnect: {
-          enable: false,
-        },
+        checkInstallationImmediately: false,
         dappMetadata: {
           name: 'NEXTJS demo',
           url: window.location.host,
@@ -112,10 +108,7 @@ export default function SDKContainer() {
 
     const onConnect = (_connectInfo: unknown) => {
       console.log(`App::useEfect on 'connect'`, _connectInfo);
-      const connectInfo = _connectInfo as { chainId: string };
       setConnected(true);
-      // setConnectionStatus(ConnectionStatus.LINKED)
-      setChain(connectInfo.chainId);
     };
 
     const onDisconnect = (error: unknown) => {
