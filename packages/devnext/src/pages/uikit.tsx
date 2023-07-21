@@ -1,13 +1,17 @@
-import {
-  MetaMaskButton, useAccount, useSDK
-} from '@metamask/sdk-react';
+import { MetaMaskButton, useAccount, useSDK } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { WalletActions } from '../components/WalletActions';
 
 export default function UIKitPage() {
-  const { isConnected } = useAccount();
-  const { connected } = useSDK();
+  const { isConnected, isConnecting, isDisconnected, isReconnecting } =
+    useAccount();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <>
@@ -23,9 +27,16 @@ export default function UIKitPage() {
         <div>
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
-        {connected && (
-          <WalletActions />
+        {isClient && (
+          <pre>
+            {JSON.stringify(
+              { isConnected, isConnecting, isDisconnected, isReconnecting },
+              null,
+              2,
+            )}
+          </pre>
         )}
+        {isConnected && <WalletActions />}
       </header>
     </>
   );
