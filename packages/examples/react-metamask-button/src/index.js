@@ -8,8 +8,8 @@ import { MetaMaskProvider } from '@metamask/sdk-react';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
-    <MetaMaskProvider debug sdkOptions={{
+  <>
+    <MetaMaskProvider sdkOptions={{
         dappMetadata: {
           name: 'React Demo Button',
           url: 'http://reactdemobutton.localhost'
@@ -19,7 +19,7 @@ root.render(
       >
       <App />
     </MetaMaskProvider>
-  </React.StrictMode>,
+  </>,
 );
 
 // If you want to start measuring performance in your app, pass a function
