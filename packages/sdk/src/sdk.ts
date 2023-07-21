@@ -121,9 +121,15 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.options = options;
 
     // Automatically initialize the SDK to keep the same behavior as before
-    this.init().catch((err) => {
-      console.error(`MetaMaskSDK error during initialization`, err);
-    });
+    this.init()
+      .then(() => {
+        if (this.debug) {
+          console.debug(`MetaMaskSDK() initialized`);
+        }
+      })
+      .catch((err) => {
+        console.error(`MetaMaskSDK error during initialization`, err);
+      });
   }
 
   // TODO make method private to let dapp call connect() directly.
