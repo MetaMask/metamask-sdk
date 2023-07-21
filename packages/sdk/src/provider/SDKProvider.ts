@@ -62,6 +62,13 @@ export class SDKProvider extends MetaMaskInpageProvider {
     return this._initializeStateAsync();
   }
 
+  _setConnected() {
+    if (this.debug) {
+      console.debug(`SDKProvider::_setConnected()`);
+    }
+    this._state.isConnected = true;
+  }
+
   getState() {
     return this._state;
   }
