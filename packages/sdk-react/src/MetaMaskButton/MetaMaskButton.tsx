@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import {
-  useAccount, useConnect, useNetwork,
-  useSDK
-} from '../MetaMaskHooks';
+import { useAccount, useConnect, useNetwork, useSDK } from '../MetaMaskHooks';
 import '../style.css';
 import Balance from './Balance';
 import IconNetwork from './IconNetwork';
@@ -74,16 +71,18 @@ Props) => {
       if (!isConnected) {
         connect();
       }
-    }
-    if(connected && !isConnected) {
-      connect();
-    } else if(!connected) {
+    };
+
+    if (connected && !isConnected) {
+      // force synchronize state between sdk and wagmi
+      synConnected();
+    } else if (!connected) {
       sdk?.getProvider()?.once('_initialized', synConnected);
     }
 
     return () => {
       sdk?.getProvider()?.removeListener('_initialized', synConnected);
-    }
+    };
   }, [sdk, connected, isConnected, connect]);
 
   const getColors = () => {
@@ -252,7 +251,7 @@ Props) => {
         onClick={
           isConnected
             ? openModal
-            :  () => {
+            : () => {
                 connect(); // TODO manage multichain.
               }
         }
