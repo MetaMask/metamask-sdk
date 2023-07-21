@@ -1,11 +1,24 @@
 /* eslint-disable node/no-process-env */
 require('dotenv').config();
-const os = require('os');
+
 const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { LRUCache } = require('lru-cache');
+const cors = require('cors');
+const uuid = require('uuid');
+const helmet = require('helmet');
+const Analytics = require('analytics-node');
+const { Server } = require('socket.io');
+
+const {
+  rateLimiter,
+  rateLimiterMesssage,
+  resetRateLimits,
+  increaseRateLimits,
+  setLastConnectionErrorTimestamp,
+} = require('./rate-limiter');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -15,102 +28,7 @@ const userIdHashCache = new LRUCache({
 });
 
 const app = express();
-
 const server = http.createServer(app);
-const { Server } = require('socket.io');
-const { RateLimiterMemory } = require('rate-limiter-flexible');
-
-let rateLimitPoints = 10;
-let rateLimitMessagePoints = 100;
-const rateLimitPointsMax = 40;
-const rateLimitMessagePointsMax = 400;
-let lastConnectionErrorTimestamp;
-
-// Store the initial values
-const initialRateLimitPoints = rateLimitPoints;
-const initialRateLimitMessagePoints = rateLimitMessagePoints;
-
-// Create the rate limiters with initial points
-let rateLimiter = new RateLimiterMemory({
-  points: rateLimitPoints,
-  duration: 1,
-});
-
-let rateLimiterMesssage = new RateLimiterMemory({
-  points: rateLimitMessagePoints,
-  duration: 1,
-});
-
-const resetRateLimits = () => {
-  const tenSecondsPassedSinceLastError =
-    lastConnectionErrorTimestamp &&
-    Date.now() - lastConnectionErrorTimestamp >= 10000;
-
-  if (tenSecondsPassedSinceLastError) {
-    // Reset the rate limits to their initial values
-    rateLimitPoints = initialRateLimitPoints;
-    rateLimitMessagePoints = initialRateLimitMessagePoints;
-  }
-
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
-};
-
-const increaseRateLimits = (
-  cpuUsagePercentMin,
-  // freeMemoryPercentMin
-) => {
-  // Check the CPU usage
-  const cpuLoad = os.loadavg()[0]; // 1 minute load average
-  const numCpus = os.cpus().length;
-  const cpuUsagePercent = (cpuLoad / numCpus) * 100;
-
-  // Check the memory usage
-  const totalMemory = os.totalmem();
-  const freeMemory = os.freemem();
-  const memoryUsagePercent = ((totalMemory - freeMemory) / totalMemory) * 100;
-  const freeMemoryPercent = 100 - memoryUsagePercent;
-
-  console.log(
-    `INFO> CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
-  );
-
-  // If CPU is not at 100% and there is at least 10% of free memory
-  if (
-    cpuUsagePercent <= cpuUsagePercentMin
-    // && freeMemoryPercent >= freeMemoryPercentMin
-  ) {
-    // Increase the rate limits by steps of 5 and 10, up to a max of 50 and 500
-    rateLimitPoints = Math.min(rateLimitPoints + 5, rateLimitPointsMax);
-    rateLimitMessagePoints = Math.min(
-      rateLimitMessagePoints + 50,
-      rateLimitMessagePointsMax,
-    );
-  } else {
-    // Reduce the rate limits by steps of 5 and 10, down to the initial values
-    rateLimitPoints = Math.max(rateLimitPoints - 5, initialRateLimitPoints);
-    rateLimitMessagePoints = Math.max(
-      rateLimitMessagePoints - 10,
-      initialRateLimitMessagePoints,
-    );
-  }
-
-  // Update the rate limiters
-  rateLimiter = new RateLimiterMemory({
-    points: rateLimitPoints,
-    duration: 1,
-  });
-
-  rateLimiterMesssage = new RateLimiterMemory({
-    points: rateLimitMessagePoints,
-    duration: 1,
-  });
-
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
-};
 
 const io = new Server(server, {
   cors: {
@@ -118,18 +36,10 @@ const io = new Server(server, {
   },
 });
 
-const cors = require('cors');
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.options('*', cors());
-
-const uuid = require('uuid');
-
-const helmet = require('helmet');
-
-const Analytics = require('analytics-node');
 
 console.log('INFO> isDevelopment?', isDevelopment);
 
@@ -246,7 +156,7 @@ io.on('connection', (socket) => {
       socket.join(id);
       return socket.emit(`channel_created-${id}`, id);
     } catch (error) {
-      lastConnectionErrorTimestamp = Date.now();
+      setLastConnectionErrorTimestamp(Date.now());
       increaseRateLimits(90, 0);
       console.error('ERROR> Error on create_channel:', error);
       // emit an error message back to the client, if appropriate
@@ -286,7 +196,7 @@ io.on('connection', (socket) => {
 
       return socket.to(id).emit(`message-${id}`, { id, message });
     } catch (error) {
-      lastConnectionErrorTimestamp = Date.now();
+      setLastConnectionErrorTimestamp(Date.now());
       increaseRateLimits(90, 0);
       console.error(`ERROR> Error on message: ${error}`);
       // emit an error message back to the client, if appropriate
@@ -305,7 +215,7 @@ io.on('connection', (socket) => {
     } catch (error) {
       console.error('ERROR> Error on ping:', error);
       // emit an error message back to the client, if appropriate
-      // socket.emit(`ping-${id}`, { error: error.message });
+      socket.emit(`ping-${id}`, { error: error.message });
     }
   });
 
