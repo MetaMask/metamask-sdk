@@ -131,7 +131,7 @@ class MetaMaskConnector extends InjectedConnector {
       }
 
       // backward compatibility with older wallet (<7.3) version that return accounts before authorization
-      if (!this.#sdk._getConnection()?.isAuthorized()) {
+      if (!this.#sdk.isExtensionActive() && !this.#sdk._getConnection()?.isAuthorized()) {
         const waitForAuthorized = () => {
           return new Promise((resolve) => {
             this.#sdk
