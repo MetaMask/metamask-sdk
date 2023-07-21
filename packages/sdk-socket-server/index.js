@@ -1,11 +1,11 @@
 /* eslint-disable node/no-process-env */
 require('dotenv').config();
+const os = require('os');
 const crypto = require('crypto');
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { LRUCache } = require('lru-cache');
-const os = require('os');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -52,23 +52,29 @@ const resetRateLimits = () => {
     rateLimitMessagePoints = initialRateLimitMessagePoints;
   }
 
-  console.log(`Rate limit points: ${rateLimitPoints}`);
-  console.log(`Rate limit message points: ${rateLimitMessagePoints}`);
+  console.log(
+    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+  );
 };
 
-const increaseRateLimits = (cpuUsagePercentMin, freeMemoryPercentMin) => {
+const increaseRateLimits = (
+  cpuUsagePercentMin,
+  // freeMemoryPercentMin
+) => {
   // Check the CPU usage
   const cpuLoad = os.loadavg()[0]; // 1 minute load average
   const numCpus = os.cpus().length;
   const cpuUsagePercent = (cpuLoad / numCpus) * 100;
-  console.log(`CPU usage: ${cpuUsagePercent}%`);
 
   // Check the memory usage
   const totalMemory = os.totalmem();
   const freeMemory = os.freemem();
   const memoryUsagePercent = ((totalMemory - freeMemory) / totalMemory) * 100;
   const freeMemoryPercent = 100 - memoryUsagePercent;
-  console.log(`Free memory: ${freeMemoryPercent}%`);
+
+  console.log(
+    `INFO> CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
+  );
 
   // If CPU is not at 100% and there is at least 10% of free memory
   if (
@@ -101,8 +107,9 @@ const increaseRateLimits = (cpuUsagePercentMin, freeMemoryPercentMin) => {
     duration: 1,
   });
 
-  console.log(`Rate limit points: ${rateLimitPoints}`);
-  console.log(`Rate limit message points: ${rateLimitMessagePoints}`);
+  console.log(
+    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+  );
 };
 
 const io = new Server(server, {
@@ -124,7 +131,7 @@ const helmet = require('helmet');
 
 const Analytics = require('analytics-node');
 
-console.log('isDevelopment?', isDevelopment);
+console.log('INFO> isDevelopment?', isDevelopment);
 
 const analytics = new Analytics(
   isDevelopment
@@ -133,8 +140,7 @@ const analytics = new Analytics(
   {
     flushInterval: isDevelopment ? 1000 : 10000,
     errorHandler: (err) => {
-      console.error('Analytics-node flush failed.');
-      console.error(err);
+      console.error(`ERROR> Analytics-node flush failed: ${err}`);
     },
   },
 );
@@ -184,16 +190,16 @@ app.post('/debug', (_req, res) => {
     }
 
     if (isDevelopment) {
-      console.log('EVENT object:', event);
+      console.log('DEBUG> Event object:', event);
     }
 
     analytics.track(event, function (err, batch) {
       if (isDevelopment) {
-        console.log('SEGMENT BATCH', batch);
+        console.log('DEBUG> Segment batch', batch);
       }
 
       if (err) {
-        console.log('SEGMENT ERROR:', err);
+        console.error('ERROR: Segment error:', err);
       }
     });
 
@@ -206,9 +212,10 @@ app.post('/debug', (_req, res) => {
 io.on('connection', (socket) => {
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
-  console.log('a user connected');
+  console.log('INFO> a user connected');
+
   if (isDevelopment) {
-    console.log(`socketId=${socketId} clientIp=${clientIp}`);
+    console.log(`DEBUG> socketId=${socketId} clientIp=${clientIp}`);
   }
 
   socket.on('create_channel', async (id) => {
@@ -216,7 +223,7 @@ io.on('connection', (socket) => {
       await rateLimiter.consume(socket.handshake.address);
 
       if (isDevelopment) {
-        console.log('create channel', id);
+        console.log('DEBUG> create channel', id);
       }
 
       if (!uuid.validate(id)) {
@@ -241,7 +248,7 @@ io.on('connection', (socket) => {
     } catch (error) {
       lastConnectionErrorTimestamp = Date.now();
       increaseRateLimits(90, 0);
-      console.error('Error on create_channel:', error);
+      console.error('ERROR> Error on create_channel:', error);
       // emit an error message back to the client, if appropriate
       return socket.emit(`error`, { error: error.message });
     }
@@ -259,14 +266,14 @@ io.on('connection', (socket) => {
         }
 
         if (context === 'mm-mobile') {
-          console.log(`\x1b[33m message-${id} -> \x1b[0m`, {
+          console.log(`DEBUG> \x1b[33m message-${id} -> \x1b[0m`, {
             id,
             context,
             displayMessage,
             plaintext,
           });
         } else {
-          console.log(`message-${id} -> `, {
+          console.log(`DEBUG> message-${id} -> `, {
             id,
             context,
             displayMessage,
@@ -281,7 +288,7 @@ io.on('connection', (socket) => {
     } catch (error) {
       lastConnectionErrorTimestamp = Date.now();
       increaseRateLimits(90, 0);
-      console.error('Error on message:', error);
+      console.error(`ERROR> Error on message: ${error}`);
       // emit an error message back to the client, if appropriate
       return socket.emit(`message-${id}`, { error: error.message });
     }
@@ -292,11 +299,11 @@ io.on('connection', (socket) => {
       await rateLimiterMesssage.consume(socket.handshake.address);
 
       if (isDevelopment) {
-        console.log(`ping-${id} -> `, { id, context, message });
+        console.log(`DEBUG> ping-${id} -> `, { id, context, message });
       }
       socket.to(id).emit(`ping-${id}`, { id, message });
     } catch (error) {
-      console.error('Error on ping:', error);
+      console.error('ERROR> Error on ping:', error);
       // emit an error message back to the client, if appropriate
       // socket.emit(`ping-${id}`, { error: error.message });
     }
@@ -310,7 +317,7 @@ io.on('connection', (socket) => {
     }
 
     if (isDevelopment) {
-      console.log(`join_channel ${id} ${test}`);
+      console.log(`DEBUG> join_channel ${id} ${test}`);
     }
 
     if (!uuid.validate(id)) {
@@ -320,12 +327,12 @@ io.on('connection', (socket) => {
 
     const room = io.sockets.adapter.rooms.get(id);
     if (isDevelopment) {
-      console.log(`join_channel ${id} room.size=${room && room.size}`);
+      console.log(`DEBUG> join_channel ${id} room.size=${room && room.size}`);
     }
 
     if (room && room.size > 2) {
       if (isDevelopment) {
-        console.log(`join_channel ${id} room already full`);
+        console.log(`DEBUG> join_channel ${id} room already full`);
       }
       socket.emit(`message-${id}`, { error: 'room already full' });
       io.sockets.in(id).socketsLeave(id);
@@ -340,8 +347,9 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', function (error) {
       if (isDevelopment) {
-        console.log(`disconnect event channel=${id}: `, error);
+        console.log(`DEBUG> disconnect event channel=${id}: `, error);
       }
+
       io.sockets.in(id).emit(`clients_disconnected-${id}`, error);
       // io.sockets.in(id).socketsLeave(id);
     });
@@ -353,7 +361,7 @@ io.on('connection', (socket) => {
 
   socket.on('leave_channel', (id) => {
     if (isDevelopment) {
-      console.log(`leave_channel id=${id}`);
+      console.log(`DEBUG> leave_channel id=${id}`);
     }
 
     socket.leave(id);
@@ -364,16 +372,16 @@ io.on('connection', (socket) => {
 // flushes all Segment events when Node process is interrupted for any reason
 // https://segment.com/docs/connections/sources/catalog/libraries/server/node/#long-running-process
 const exitGracefully = async (code) => {
-  console.log('Flushing events');
+  console.log('INFO> Flushing events');
   try {
     await analytics.flush(function (err) {
-      console.log('Flushed, and now this program can exit!');
+      console.log('INFO> Flushed, and now this program can exit!');
       if (err) {
-        console.log(err);
+        console.error(`ERROR> ${err}`);
       }
     });
   } catch (error) {
-    console.error('Error on exitGracefully:', error);
+    console.error('ERROR> Error on exitGracefully:', error);
   }
   // eslint-disable-next-line node/no-process-exit
   process.exit(code);
@@ -393,12 +401,12 @@ const cleanupAndExit = async () => {
   try {
     // Close the server
     await server.close();
-    console.log('Server closed.');
+    console.log('INFO> Server closed.');
 
     // Perform any other necessary cleanup operations
     exitGracefully(0);
   } catch (err) {
-    console.error('Error during server shutdown:', err);
+    console.error('ERROR> Error during server shutdown:', err);
     // eslint-disable-next-line node/no-process-exit
     process.exit(1);
   }
@@ -410,5 +418,5 @@ process.on('SIGTERM', cleanupAndExit);
 
 const port = process.env.port || 4000;
 server.listen(port, () => {
-  console.log(`listening on *:${port}`);
+  console.log(`INFO> listening on *:${port}`);
 });
