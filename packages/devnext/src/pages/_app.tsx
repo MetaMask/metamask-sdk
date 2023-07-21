@@ -6,7 +6,6 @@ import '../styles/globals.css';
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MetaMaskProvider debug={true} sdkOptions={{
-      communicationServerUrl: 'http://192.168.0.118:4000',
       logging: {
         developerMode: true,
         sdk: false,
