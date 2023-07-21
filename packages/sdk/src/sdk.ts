@@ -347,6 +347,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
       this.connectWithExtensionProvider().catch((_err) => {
         console.warn(`Can't connect with MetaMask extension...`);
+        // Clean preferences
+        localStorage.removeItem(STORAGE_PROVIDER_TYPE);
       });
     } else if (checkInstallationImmediately) {
       // This will check if the connection was correctly done or if the user needs to install MetaMask
@@ -367,6 +369,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this._initialized = true;
+  }
+
+  isExtensionActive() {
+    return this.extensionActive;
   }
 
   async connect() {
@@ -420,10 +426,20 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.activeProvider = window.extension as any;
     // Set extension provider as default on window
     window.ethereum = window.extension as any;
-    // always create initial query to connect the account
-    await this.activeProvider?.request({
-      method: 'eth_requestAccounts',
-    });
+
+    try {
+      // always create initial query to connect the account
+      await this.activeProvider?.request({
+        method: 'eth_requestAccounts',
+      });
+    } catch (err) {
+      // ignore error˝
+      console.warn(
+        `SDK::connectWithExtensionProvider() can't request accounts error`,
+        err,
+      );
+      return;
+    }
 
     // remember setting for next time (until terminated)
     localStorage.setItem(STORAGE_PROVIDER_TYPE, 'extension');
