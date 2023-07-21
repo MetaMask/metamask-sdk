@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.6]
 ### Added
-- feat: optimize provider initialization
+- feat: force provider connect state ([#245](https://github.com/MetaMask/metamask-sdk/pull/245))
+- feat: optimize provider initialization ([#243](https://github.com/MetaMask/metamask-sdk/pull/243))
 
 ## [0.5.5]
 ### Added
