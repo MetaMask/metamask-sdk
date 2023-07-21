@@ -5,18 +5,24 @@ import {
   MetaMaskSDKOptions,
   PROVIDER_UPDATE_TYPE,
   SDKProvider,
-  ServiceStatus,
+  ServiceStatus
 } from '@metamask/sdk';
 import { publicProvider } from '@wagmi/core/providers/public';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import {
   Chain,
   configureChains,
   Connector,
   createConfig,
   mainnet,
-  WagmiConfig,
+  WagmiConfig
 } from 'wagmi';
 import MetaMaskConnector from './MetaMaskConnector';
 
@@ -59,13 +65,12 @@ const WagmiWrapper = ({
   debug?: boolean;
   connectors?: Connector[];
 }) => {
-  if (!sdk) {
-    return <></>;
-  }
-
   // If no sdk is provided, we will use the public client
   const validConnectors: Connector[] = useMemo(() => {
-    if(ready) {
+    if (debug) {
+      console.debug(`[MetamaskProvider] validConnectors`, { ready, sdk });
+    }
+    if (ready && sdk) {
       return [
         new MetaMaskConnector({
           chains: networks,
@@ -76,11 +81,9 @@ const WagmiWrapper = ({
     }
 
     return connectors;
-  }, [ready]);
+  }, [ready, sdk]);
 
-  const [config] = useState(
-    createConfig({ publicClient, connectors: validConnectors }),
-  );
+  const config = createConfig({ publicClient, connectors: validConnectors })
 
   return <WagmiConfig config={config}>{children}</WagmiConfig>;
 };
@@ -109,7 +112,7 @@ const MetaMaskProviderClient = ({
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
-    if(hasInit.current) {
+    if (hasInit.current) {
       if (debug) {
         console.debug(`[MetamaskProvider] sdk already initialized`);
       }
@@ -282,13 +285,9 @@ const MetaMaskProviderClient = ({
         status,
       }}
     >
-      {ready ? (
-        <WagmiWrapper sdk={sdk} ready={ready} debug={debug}>
-          {children}
-        </WagmiWrapper>
-      ) : (
-        <>{children}</>
-      )}
+      <WagmiWrapper sdk={sdk} ready={ready} debug={debug}>
+        {children}
+      </WagmiWrapper>
     </SDKContext.Provider>
   );
 };

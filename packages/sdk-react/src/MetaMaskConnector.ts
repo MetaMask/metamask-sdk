@@ -62,18 +62,14 @@ class MetaMaskConnector extends InjectedConnector {
 
     super({ chains, options });
 
-    if(options_?.debug) {
+    if (options_?.debug) {
       this.#debug = options_.debug;
     }
     this.#sdk = sdk;
-    // Listen to sdk provider events and re-initialize events listeners accordingly
-    this.#sdk.on(
-      EventType.PROVIDER_UPDATE,
-      this.onSDKProviderUpdate.bind(this),
-    );
+    this.updateProviderListeners();
   }
 
-  private onSDKProviderUpdate(_accounts: Address[]) {
+  private updateProviderListeners() {
     if (this.#provider) {
       // Cleanup previous handlers first
       this.#provider?.removeListener(
@@ -118,33 +114,24 @@ class MetaMaskConnector extends InjectedConnector {
     provider: any;
   }> {
     try {
-      if (!this.#sdk.isInitialized()) {
-        await this.#sdk.init();
-      }
+      const accounts = (await this.#sdk.connect()) as Address[];
+
+      // Get latest provider instance (it may have changed based on user selection)
+      this.updateProviderListeners()
 
       this.#provider = this.#sdk.getProvider();
-
-      // check if previouslt disconnected -- if shims is removed it means disconnected
-      // TODO see if we need to keep/use shimDisconnect
-      // const shimDisconnect = this.storage?.getItem(this.shimDisconnectKey);
-
-      const accounts = (await this.#provider?.request({
-        method: 'eth_requestAccounts',
-        params: [],
-      })) as Address[];
-
       const selectedAccount: Address = accounts?.[0] ?? '0x';
 
-      if(this.#debug) {
+      if (this.#debug) {
         console.debug(
           `MetaMaskConnector::connect() TEST authorization ${Date.now()} authorized=${this.#sdk
             ._getConnection()
-            ?.isAuthorized()}}`,
+            ?.isAuthorized()}`,
         );
       }
 
-      // backward compatibility with older wallet version that return accounts before authorization
-      if (!this.#sdk._getConnection()?.isAuthorized()) {
+      // backward compatibility with older wallet (<7.3) version that return accounts before authorization
+      if (!this.#sdk.isExtensionActive() && !this.#sdk._getConnection()?.isAuthorized()) {
         const waitForAuthorized = () => {
           return new Promise((resolve) => {
             this.#sdk
@@ -161,16 +148,10 @@ class MetaMaskConnector extends InjectedConnector {
       let providerChainId: string | null | undefined = this.#provider?.chainId;
       if (!providerChainId) {
         // request chainId from provider
-        try {
-          providerChainId = (await this.#provider?.request({
-            method: 'eth_chainId',
-            params: [],
-          })) as string;
-        } catch (error) {
-          console.warn(`MetamaskConnector::connect() provider chainId error -- reset to mainnet`, error);
-          // use default mainnet provider
-          providerChainId = '0x1';
-        }
+        providerChainId = (await this.#provider?.request({
+          method: 'eth_chainId',
+          params: [],
+        })) as string;
       }
 
       const chain = {
@@ -185,9 +166,10 @@ class MetaMaskConnector extends InjectedConnector {
         chain.unsupported = unsupported;
       }
 
-      if (this.options?.shimDisconnect) {
-        this.storage?.setItem(this.shimDisconnectKey, true);
-      }
+      // TODO check if  we try to switch connected wallet on extension
+      // if (this.options?.shimDisconnect) {
+      //   this.storage?.setItem(this.shimDisconnectKey, true);
+      // }
 
       const connectResponse = {
         isConnected: true,
