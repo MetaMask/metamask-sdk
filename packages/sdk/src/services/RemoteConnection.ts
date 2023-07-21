@@ -158,7 +158,13 @@ export class RemoteConnection implements ProviderService {
       }, 10000);
     }
 
-    if (!platformManager.isSecure()) {
+    this.setupListeners();
+
+    return this.connector;
+  }
+
+  private setupListeners() {
+    if (!this.platformManager.isSecure()) {
       this.connector.on(EventType.OTP, (otpAnswer: string) => {
         // Prevent double handling OTP message
         if (this.otpAnswer === otpAnswer) {
@@ -186,12 +192,6 @@ export class RemoteConnection implements ProviderService {
       });
     }
 
-    this.setupListeners();
-
-    return this.connector;
-  }
-
-  private setupListeners() {
     // TODO this event can probably be removed in future version as it was created to maintain backward compatibility with older wallet (< 7.0.0).
     this.connector.on(
       EventType.SDK_RPC_CALL,
@@ -221,13 +221,18 @@ export class RemoteConnection implements ProviderService {
             this.installModal,
           );
         }
+
+        // Force connected state on provider
+        // This prevents some rpc method being received in Ethereum before connected state is.
+        const provider = Ethereum.getProvider();
+        provider._setConnected();
+
         // close modals
         this.pendingModal?.unmount?.();
         this.installModal?.unmount?.(false);
         this.otpAnswer = undefined;
         this.authorized = true;
 
-        const provider = Ethereum.getProvider();
         provider.emit('connect');
 
         if (this.developerMode) {
