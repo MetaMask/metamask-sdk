@@ -25,7 +25,6 @@ class ConnectModalComponent {
   }
 
   get connectApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
-    console.log('------ Getting Connect Approval Button ------');
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
