@@ -33,7 +33,7 @@ export interface MetaMaskSDKOptions {
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
-  // Tries to autoconnect on startup
+  // Tries to autoconnect on startup (only for Desktop WEB)
   checkInstallationImmediately?: boolean;
   checkInstallationOnAllCalls?: boolean;
   preferDesktop?: boolean;
@@ -351,20 +351,22 @@ export class MetaMaskSDK extends EventEmitter2 {
         localStorage.removeItem(STORAGE_PROVIDER_TYPE);
       });
     } else if (checkInstallationImmediately) {
-      // This will check if the connection was correctly done or if the user needs to install MetaMask
-      try {
+      if (this.platformManager.isDesktopWeb()) {
         if (this.debug) {
           console.debug(`SDK::_doInit() checkInstallationImmediately`);
         }
 
+        // Don't block /await initialization on autoconnect
         this.connect().catch((_err) => {
           // ignore error on autoconnect
           if (this.debug) {
             console.warn(`error during autoconnect`, _err);
           }
         });
-      } catch (err: unknown) {
-        // ignore error on autorocnnect
+      } else {
+        console.warn(
+          `SDK::_doInit() checkInstallationImmediately --- IGNORED --- only for web desktop`,
+        );
       }
     }
 
