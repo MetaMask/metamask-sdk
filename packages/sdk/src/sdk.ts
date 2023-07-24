@@ -350,32 +350,24 @@ export class MetaMaskSDK extends EventEmitter2 {
         // Clean preferences
         localStorage.removeItem(STORAGE_PROVIDER_TYPE);
       });
-    } else if (
-      checkInstallationImmediately &&
-      this.platformManager.isDesktopWeb()
-    ) {
-      // This will check if the connection was correctly done or if the user needs to install MetaMask
-      try {
+    } else if (checkInstallationImmediately) {
+      if (this.platformManager.isDesktopWeb()) {
         if (this.debug) {
           console.debug(`SDK::_doInit() checkInstallationImmediately`);
         }
 
+        // Don't block /await initialization on autoconnect
         this.connect().catch((_err) => {
           // ignore error on autoconnect
           if (this.debug) {
             console.warn(`error during autoconnect`, _err);
           }
         });
-      } catch (err: unknown) {
-        // ignore error on autorocnnect
+      } else {
+        console.warn(
+          `SDK::_doInit() checkInstallationImmediately --- IGNORED --- only for web desktop`,
+        );
       }
-    } else if (
-      checkInstallationImmediately &&
-      !this.platformManager.isDesktopWeb()
-    ) {
-      console.warn(
-        `SDK::_doInit() checkInstallationImmediately --- IGNORED --- only for web desktop`,
-      );
     }
 
     this._initialized = true;
