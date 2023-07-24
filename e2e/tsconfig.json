@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "types": [
+            "node",
+            "@wdio/globals/types",
+            "expect-webdriverio",
+            "@wdio/appium-service",
+            "@wdio/mocha-framework",
+            "@types/allure-commandline"
+        ],
+        "target": "ES6",
+        "removeComments": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        },
+    },
+    "include": [
+      "test",
+      "src",
+      "node_modules/@types/mocha/index.d.ts"
+    ]
+}
