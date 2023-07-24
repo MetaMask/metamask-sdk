@@ -10,8 +10,8 @@ class SecurityUpdatesScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'no-thanks-button',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='no-thanks-button']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "No thanks"',

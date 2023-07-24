@@ -36,7 +36,7 @@ describe('JS SDK Connection', () => {
     await browserScreen.goToAddress(reactDappUrl);
 
     await CreateReactDappScreen.terminate();
-    await SafariBrowserScreen.refreshPage();
+    await browserScreen.refreshPage();
 
     await CreateReactDappScreen.connect();
     if (driver.isAndroid) {

@@ -11,8 +11,8 @@ class BottomNavigationComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().description("tab-bar-item-Setting")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: "//*[@resource-id='tab-bar-item-Setting']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "tab-bar-item-Setting"',
@@ -26,8 +26,8 @@ class BottomNavigationComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().description("tab-bar-item-Wallet")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: "//*[@resource-id='tab-bar-item-Wallet']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "tab-bar-item-Wallet"',

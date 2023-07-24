@@ -54,6 +54,7 @@ class SettingsScreen {
     );
   }
 
+  // Needs Android locator on mobile
   get disconnectButtonList(): ReturnType<WebdriverIO.Browser['$$']> {
     return $$(
       Utils.getLocatorPerPlatformAndStrategy({

@@ -11,8 +11,8 @@ class OptinMetricsScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'optin-metrics-i-agree-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='optin-metrics-i-agree-button-id']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "I agree"',

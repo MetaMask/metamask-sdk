@@ -11,8 +11,8 @@ class GetStartedScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'welcome-screen-get-started-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='welcome-screen-get-started-button-id']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Get started"',

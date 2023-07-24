@@ -12,9 +12,8 @@ class ConnectModalComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator:
-            'new UiSelector().description("account-approval-modal-container")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: "//*[@resource-id='account-approval-modal-container']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "account-approval-modal-container"',
@@ -28,7 +27,8 @@ class ConnectModalComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().description("connect-approve-button")',
+          locator:
+            'new UiSelector().description("connect-approve-button")',
           strategy: AndroidSelectorStrategies.UIAutomator2,
         },
         iosLocator: {

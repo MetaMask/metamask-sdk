@@ -3,6 +3,7 @@ import { ChainablePromiseElement } from 'webdriverio';
 import { IOSSelectorStrategies } from '../../Strategies';
 import Utils from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
+import { driver } from '@wdio/globals';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -40,6 +41,7 @@ class SafariBrowserScreen implements MobileBrowser {
 
   async refreshPage(): Promise<void> {
     await (await this.refreshButton).click();
+    await driver.pause(500); // Wait for the page to refresh
   }
 
   async goToAddress(address: string): Promise<void> {

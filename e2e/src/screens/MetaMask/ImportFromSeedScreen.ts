@@ -10,8 +10,9 @@ class ImportFromSeedScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'import-from-seed-screen-seed-phrase-input-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator:
+            "//*[@resource-id='import-from-seed-screen-seed-phrase-input-id']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Enter your Secret Recovery Phrase"',

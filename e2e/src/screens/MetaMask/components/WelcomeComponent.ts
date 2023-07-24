@@ -11,8 +11,8 @@ class WelcomeComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'onboarding-wizard-no-thanks-button',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='onboarding-wizard-no-thanks-button']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: '**/XCUIElementTypeOther[`label == "No thanks"`]',

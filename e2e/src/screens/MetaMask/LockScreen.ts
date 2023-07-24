@@ -11,8 +11,8 @@ class LockScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'login-password-input',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: '//*[@resource-id="login-password-input"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "login-password-input"',
@@ -26,8 +26,8 @@ class LockScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'login-title',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: '//*[@resource-id="login-title"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Welcome Back!"',
@@ -41,8 +41,8 @@ class LockScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'log-in-button',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: '//*[@resource-id="log-in-button"]/android.widget.Button',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "UNLOCK" AND name == "UNLOCK"',

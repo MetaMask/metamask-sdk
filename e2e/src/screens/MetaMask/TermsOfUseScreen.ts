@@ -10,8 +10,8 @@ class TermsOfUseScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'terms-of-use-checkbox',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='terms-of-use-checkbox']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label BEGINSWITH "I agree to the Terms of Use"',
@@ -25,8 +25,9 @@ class TermsOfUseScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'terms-of-use-scroll-end-arrow-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator:
+            "//*[@resource-id='terms-of-use-scroll-end-arrow-button-id']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "terms-of-use-scroll-end-arrow-button-id"',
@@ -40,8 +41,8 @@ class TermsOfUseScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'terms-of-use-accept-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator: "//*[@resource-id='terms-of-use-accept-button-id']",
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Accept"',
