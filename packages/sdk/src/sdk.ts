@@ -369,7 +369,10 @@ export class MetaMaskSDK extends EventEmitter2 {
       } catch (err: unknown) {
         // ignore error on autorocnnect
       }
-    } else if (checkInstallationImmediately && this.debug) {
+    } else if (
+      checkInstallationImmediately &&
+      !this.platformManager.isDesktopWeb()
+    ) {
       console.warn(
         `SDK::_doInit() checkInstallationImmediately --- IGNORED --- only for web desktop`,
       );
