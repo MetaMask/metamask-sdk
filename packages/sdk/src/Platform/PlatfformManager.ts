@@ -140,6 +140,10 @@ export class PlatformManager {
     return eth?.isMetaMask && eth?.isConnected();
   }
 
+  isDesktopWeb() {
+    return this.isBrowser() && !this.isMobileWeb();
+  }
+
   isMobile() {
     const browser = Bowser.parse(window.navigator.userAgent);
     return (
