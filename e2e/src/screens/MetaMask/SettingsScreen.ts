@@ -108,7 +108,8 @@ class SettingsScreen {
           strategy: AndroidSelectorStrategies.UIAutomator2,
         },
         iosLocator: {
-          locator: '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
+          locator:
+            '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
           strategy: IOSSelectorStrategies.IOSClassChain,
         },
       }),
