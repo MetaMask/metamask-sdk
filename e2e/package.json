@@ -1,5 +1,6 @@
 {
   "name": "metamask-sdk-e2e",
+  "private": true,
   "devDependencies": {
     "@wdio/allure-reporter": "^8.11.0",
     "@wdio/appium-service": "^8.11.2",
