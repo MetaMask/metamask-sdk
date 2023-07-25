@@ -44,6 +44,14 @@ class BottomNavigationComponent {
   async tapHomeButton(): Promise<void> {
     await (await this.walletButton).click();
   }
+
+  // Relying on the bottom navigation to be displayed to determine if the user is onboarded
+  async isMetaMaskOnboarded(): Promise<boolean> {
+    return (
+      (await (await this.walletButton).isDisplayed()) &&
+      (await (await this.settingsButton).isDisplayed())
+    );
+  }
 }
 
 const bottomNavigationComponent = new BottomNavigationComponent();
