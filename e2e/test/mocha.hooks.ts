@@ -17,9 +17,29 @@ const SRP =
   process.env.SRP ??
   'test test test test test test test test test test test test';
 
+const goToSettingsAndClearAllConnections = async () => {
+  try {
+    await BottomNavigationComponent.tapSettingsButton();
+    await SettingsScreen.clearAllConnections();
+    await BottomNavigationComponent.tapHomeButton();
+  } catch (e) {
+    console.log('No Connections to clear', e.message);
+  }
+};
+
 export const beforeHook = async () => {
   // Fox animation takes a while to finish
   await driver.pause(5000);
+
+  // Checks it is onboarded. If it is and MM is locked, it unlocks it
+  if (
+    (await LockScreen.isMMLocked()) ||
+    (await BottomNavigationComponent.isMetaMaskOnboarded())
+  ) {
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await goToSettingsAndClearAllConnections();
+    return;
+  }
   await GetStartedScreen.tapGetStarted();
   await WalletSetupScreen.tapImportWithSRP();
   await OptinMetricsScreen.tapAgreeOptinMetrics();
@@ -46,11 +66,5 @@ export const beforeEachHook = async () => {
 export const afterEachHook = async () => {
   await Utils.launchMetaMask();
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
-  try {
-    await BottomNavigationComponent.tapSettingsButton();
-    await SettingsScreen.clearAllConnections();
-    await BottomNavigationComponent.tapHomeButton();
-  } catch (e) {
-    console.log('No Connections to clear', e.message);
-  }
+  await goToSettingsAndClearAllConnections();
 };
