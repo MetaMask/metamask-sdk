@@ -71,4 +71,5 @@ class CreateReactDappScreen implements Dapp {
   }
 }
 
-export default new CreateReactDappScreen();
+const createReactDappScreen = new CreateReactDappScreen();
+export default createReactDappScreen;

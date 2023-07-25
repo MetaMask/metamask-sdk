@@ -55,4 +55,5 @@ class ChromeBrowserScreen implements MobileBrowser {
   }
 }
 
-export default new ChromeBrowserScreen();
+const chromeBrowserScreen = new ChromeBrowserScreen();
+export default chromeBrowserScreen;

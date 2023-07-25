@@ -63,4 +63,5 @@ class ReactNativeDappScreen implements Dapp {
   }
 }
 
-export default new ReactNativeDappScreen();
+const reactNativeDappScreen = new ReactNativeDappScreen();
+export default reactNativeDappScreen;

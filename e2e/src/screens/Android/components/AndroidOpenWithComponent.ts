@@ -35,4 +35,5 @@ class AndroidOpenWithComponent {
   }
 }
 
-export default new AndroidOpenWithComponent();
+const androidOpenWithComponent = new AndroidOpenWithComponent();
+export default androidOpenWithComponent;

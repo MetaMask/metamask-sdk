@@ -68,4 +68,5 @@ class LockScreen {
   }
 }
 
-export default new LockScreen();
+const lockScreen = new LockScreen();
+export default lockScreen;

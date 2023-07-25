@@ -6,29 +6,29 @@ export enum Dapps {
   CreateReactDapp = 'create-react-dapp',
   NextDapp = 'nextjs-dapp',
   IOSNativeDapp = 'ios-native-dapp',
-}
+};
 
-export interface BrowserSize {
+export type BrowserSize = {
   width: number;
   height: number;
-}
+};
 
-interface MetaMaskLocatorProps {
+type MetaMaskLocatorProps = {
   locator: string;
   strategy: AndroidSelectorStrategies | IOSSelectorStrategies;
-}
+};
 
-export interface Coordinates {
+export type Coordinates = {
   x: number;
   y: number;
-}
+};
 
 export type ScreenPercentage = Coordinates;
 
-export interface MetaMaskElementLocator {
+export type MetaMaskElementLocator = {
   androidLocator?: MetaMaskLocatorProps;
   iosLocator?: MetaMaskLocatorProps;
-}
+};
 
 // Coordinates representing a certain Unity element on screen
 export class UnityDappElement {

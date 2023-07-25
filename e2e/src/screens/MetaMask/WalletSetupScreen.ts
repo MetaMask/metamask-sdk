@@ -26,4 +26,5 @@ class WalletSetupScreen {
   }
 }
 
-export default new WalletSetupScreen();
+const walletSetupScreen = new WalletSetupScreen();
+export default walletSetupScreen;

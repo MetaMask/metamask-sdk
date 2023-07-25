@@ -108,4 +108,5 @@ class ImportFromSeedScreen {
   }
 }
 
-export default new ImportFromSeedScreen();
+const importFromSeedScreen = new ImportFromSeedScreen();
+export default importFromSeedScreen;

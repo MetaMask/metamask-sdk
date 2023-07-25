@@ -27,4 +27,5 @@ class GetStartedScreen {
   }
 }
 
-export default new GetStartedScreen();
+const getStartedScreen = new GetStartedScreen();
+export default getStartedScreen;

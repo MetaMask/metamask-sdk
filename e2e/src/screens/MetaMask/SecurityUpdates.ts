@@ -26,4 +26,5 @@ class SecurityUpdatesScreen {
   }
 }
 
-export default new SecurityUpdatesScreen();
+const securityUpdatesScreen = new SecurityUpdatesScreen();
+export default securityUpdatesScreen;

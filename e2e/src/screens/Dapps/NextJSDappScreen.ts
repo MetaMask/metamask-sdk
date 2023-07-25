@@ -69,4 +69,5 @@ class NextJSDappScreen implements Dapp {
   }
 }
 
-export default new NextJSDappScreen();
+const nextJSDappScreen = new NextJSDappScreen();
+export default nextJSDappScreen;

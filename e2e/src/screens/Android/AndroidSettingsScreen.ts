@@ -68,4 +68,5 @@ class AndroidSettingsScreen {
   }
 }
 
-export default new AndroidSettingsScreen();
+const androidSettingsScreen = new AndroidSettingsScreen();
+export default androidSettingsScreen;

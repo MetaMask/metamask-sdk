@@ -2,7 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio';
 
 import {
   AndroidSelectorStrategies,
-  IOSSelectorStrategies
+  IOSSelectorStrategies,
 } from '../../../Strategies';
 import Utils from '../../../Utils';
 
@@ -31,4 +31,5 @@ class WhatsNewComponent {
   }
 }
 
-export default new WhatsNewComponent();
+const whatsNewComponent = new WhatsNewComponent();
+export default whatsNewComponent;

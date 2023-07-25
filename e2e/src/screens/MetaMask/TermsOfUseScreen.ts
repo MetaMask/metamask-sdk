@@ -69,4 +69,5 @@ class TermsOfUseScreen {
   }
 }
 
-export default new TermsOfUseScreen();
+const termsOfUseScreen = new TermsOfUseScreen();
+export default termsOfUseScreen;

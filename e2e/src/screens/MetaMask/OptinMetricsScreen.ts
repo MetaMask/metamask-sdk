@@ -34,4 +34,5 @@ class OptinMetricsScreen {
   }
 }
 
-export default new OptinMetricsScreen();
+const optinMetricsScreen = new OptinMetricsScreen();
+export default optinMetricsScreen;

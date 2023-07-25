@@ -53,4 +53,5 @@ class SafariBrowserScreen implements MobileBrowser {
   }
 }
 
-export default new SafariBrowserScreen();
+const safariBrowserScreen = new SafariBrowserScreen();
+export default safariBrowserScreen;

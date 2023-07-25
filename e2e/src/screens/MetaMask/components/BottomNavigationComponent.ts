@@ -46,4 +46,5 @@ class BottomNavigationComponent {
   }
 }
 
-export default new BottomNavigationComponent();
+const bottomNavigationComponent = new BottomNavigationComponent();
+export default bottomNavigationComponent;

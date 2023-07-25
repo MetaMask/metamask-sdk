@@ -2,7 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio';
 
 import {
   AndroidSelectorStrategies,
-  IOSSelectorStrategies
+  IOSSelectorStrategies,
 } from '../../../Strategies';
 import Utils from '../../../Utils';
 
@@ -29,4 +29,5 @@ class WelcomeComponent {
   }
 }
 
-export default new WelcomeComponent();
+const welcomeComponent = new WelcomeComponent();
+export default welcomeComponent;

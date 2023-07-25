@@ -59,4 +59,5 @@ class ConnectModalComponent {
   }
 }
 
-export default new ConnectModalComponent();
+const connectModalComponent = new ConnectModalComponent();
+export default connectModalComponent;

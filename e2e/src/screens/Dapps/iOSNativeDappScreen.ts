@@ -65,4 +65,5 @@ class IOSNNativeDappScreen implements Dapp {
   }
 }
 
-export default new IOSNNativeDappScreen();
+const iosNativeDappScreen = new IOSNNativeDappScreen();
+export default iosNativeDappScreen;

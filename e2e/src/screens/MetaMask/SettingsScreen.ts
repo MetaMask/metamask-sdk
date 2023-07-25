@@ -151,4 +151,5 @@ class SettingsScreen {
   }
 }
 
-export default new SettingsScreen();
+const settingsScreen = new SettingsScreen();
+export default settingsScreen;

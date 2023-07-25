@@ -37,4 +37,5 @@ class UnityDappScreen implements Dapp {
   }
 }
 
-export default new UnityDappScreen();
+const unityDappScreen = new UnityDappScreen();
+export default unityDappScreen;
