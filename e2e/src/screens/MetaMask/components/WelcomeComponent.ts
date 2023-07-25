@@ -23,9 +23,14 @@ class WelcomeComponent {
   }
 
   async tapNoThanksButton(): Promise<void> {
-    while (await this.noThanksButton.isDisplayed()) {
-      await (await this.noThanksButton).click();
-    }
+    await (await this.noThanksButton).click();
+    // Wait for the button to disappear
+    await (
+      await this.noThanksButton
+    ).waitForDisplayed({
+      timeout: 1000,
+      reverse: true,
+    });
   }
 }
 
