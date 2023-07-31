@@ -66,7 +66,7 @@
     "workbox-webpack-plugin": "^6.4.1"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "GENERATE_SOURCEMAP=false node scripts/start.js",
     "build": "echo 'N/A'",
     "build:dev": "node scripts/build.js",
     "build:post-tsc": "echo 'N/A'",
