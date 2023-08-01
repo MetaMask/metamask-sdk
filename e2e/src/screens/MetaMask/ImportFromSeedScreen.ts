@@ -85,10 +85,9 @@ class ImportFromSeedScreen {
   }
 
   async tapBiometricsToggleIfDisplayed(): Promise<void> {
-    if (!(await this.biometricsToggle.isDisplayed())) {
-      return;
+    if (await this.biometricsToggle.isDisplayed()) {
+      await (await this.biometricsToggle).click();
     }
-    await (await this.biometricsToggle).click();
   }
 
   async fillSrpField(srp: string): Promise<void> {
