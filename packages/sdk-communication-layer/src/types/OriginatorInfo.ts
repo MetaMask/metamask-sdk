@@ -3,5 +3,6 @@ export interface OriginatorInfo {
   title: string;
   platform: string;
   icon?: string;
+  source?: string;
   apiVersion?: string;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.4.2",
+  "version": "0.5.6",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -15,7 +15,7 @@
   "module": "dist/node/es/metamask-sdk.js",
   "browser": "dist/browser/umd/metamask-sdk.js",
   "react-native": "dist/react-native/es/metamask-sdk.js",
-  "types": "dist/browser/es/sdk/src/index.d.ts",
+  "types": "dist/browser/es/src/index.d.ts",
   "files": [
     "/dist"
   ],
@@ -97,6 +97,7 @@
     "rollup-plugin-typescript2": "^0.31.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
+    "tslib": "latest",
     "typescript": "^4.3.2"
   },
   "peerDependencies": {

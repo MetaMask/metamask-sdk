@@ -1,10 +1,12 @@
 import crossFetch from 'cross-fetch';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { OriginatorInfo } from './types/OriginatorInfo';
+import { TrackingEvents } from './types/TrackingEvent';
 
 export interface AnaliticsProps {
   id: string;
-  event: unknown;
-  originationInfo?: unknown;
+  event: TrackingEvents;
+  originationInfo?: OriginatorInfo;
   commLayer?: CommunicationLayerPreference;
   sdkVersion?: string;
   commLayerVersion: string;

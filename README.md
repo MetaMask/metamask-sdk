@@ -24,7 +24,7 @@ The following code examplifies importing the SDK into a javascript-based app. Fo
 
 Install the SDK:
 
-```
+```bash
 yarn add @metamask/sdk
 or
 npm i @metamask/sdk
@@ -32,18 +32,26 @@ npm i @metamask/sdk
 
 Import the SDK (for possible parameters check this):
 
-```
-import { MetaMaskSDK } from '@metamask/sdk'
-const MMSDK = new MetaMaskSDK({})
-const ethereum = MMSDK.getProvider()
-```
+```ts
+import { MetaMaskSDK } from '@metamask/sdk';
+const MMSDK = new MetaMaskSDK({});
+MMSDK.connect()
+  .then((accounts) => {
+    console.log('MetaMask SDK is connected', accounts);
+    const ethereum = MMSDK.getProvider();
+    const ethereum = sdk.getProvider();
+    const balance = await ethereum.request({
+      method: 'eth_getBalance',
+      params: accounts,
+    });
 
-Use the SDK:
-
-```
-ethereum.request({method: 'eth_requestAccounts', params: []})
+    console.debug(`account balance`, balance);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
 ```
 
 # Follow the full documentation
 
-[Please access this to read the MetaMask SDK full documentation](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-intro.html)
+[Please access this to read the MetaMask SDK full documentation](https://docs.metamask.io/wallet/how-to/use-sdk/)

@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { EventEmitter2 } from 'eventemitter2';
-import { validate, v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, validate } from 'uuid';
 import packageJson from '../package.json';
 import { SendAnalytics } from './Analytics';
 import {
@@ -12,25 +12,27 @@ import {
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { StorageManager, StorageManagerProps } from './types/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
-import { DappMetadata } from './types/DappMetadata';
+import { DappMetadataWithSource } from './types/DappMetadata';
 import { DisconnectOptions } from './types/DisconnectOptions';
+import { EventType } from './types/EventType';
+import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { MessageType } from './types/MessageType';
 import { OriginatorInfo } from './types/OriginatorInfo';
+import { PlatformType } from './types/PlatformType';
+import { ServiceStatus } from './types/ServiceStatus';
+import {
+  StorageManager as SessionStorageManager,
+  StorageManagerProps,
+} from './types/StorageManager';
 import { TrackingEvents } from './types/TrackingEvent';
 import { WalletInfo } from './types/WalletInfo';
-import { WebRTCLib } from './types/WebRTCLib';
-import { WebRTCService } from './WebRTCService';
-import { ServiceStatus } from './types/ServiceStatus';
-import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { EventType } from './types/EventType';
-import { PlatformType } from './types/PlatformType';
+import { wait } from './utils/wait';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -38,9 +40,8 @@ export interface RemoteCommunicationProps {
   platformType: PlatformType | MetaMaskMobile;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
-  webRTCLib?: WebRTCLib;
   reconnect?: boolean;
-  dappMetadata?: DappMetadata;
+  dappMetadata?: DappMetadataWithSource;
   walletInfo?: WalletInfo;
   transports?: string[];
   analytics?: boolean;
@@ -66,8 +67,6 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private otherPublicKey?: string;
 
-  private webRTCLib?: WebRTCLib;
-
   private transports?: string[];
 
   private platformType: PlatformType | MetaMaskMobile;
@@ -86,13 +85,13 @@ export class RemoteCommunication extends EventEmitter2 {
 
   private originatorInfoSent = false;
 
-  private dappMetadata?: DappMetadata;
+  private dappMetadata?: DappMetadataWithSource;
 
   private communicationServerUrl: string;
 
   private context: string;
 
-  private storageManager?: StorageManager;
+  private storageManager?: SessionStorageManager;
 
   private storageOptions?: StorageManagerProps;
 
@@ -106,7 +105,7 @@ export class RemoteCommunication extends EventEmitter2 {
   private sessionDuration: number = DEFAULT_SESSION_TIMEOUT_MS;
 
   // this flag is switched on when the connection is automatically initialized after finding existing channel configuration.
-  private autoStarted = false;
+  private originatorConnectStarted = false;
 
   private debug = false;
 
@@ -122,7 +121,6 @@ export class RemoteCommunication extends EventEmitter2 {
     platformType,
     communicationLayerPreference,
     otherPublicKey,
-    webRTCLib,
     reconnect,
     walletInfo,
     dappMetadata,
@@ -141,7 +139,6 @@ export class RemoteCommunication extends EventEmitter2 {
     super();
 
     this.otherPublicKey = otherPublicKey;
-    this.webRTCLib = webRTCLib;
     this.dappMetadata = dappMetadata;
     this.walletInfo = walletInfo;
     this.transports = transports;
@@ -169,7 +166,6 @@ export class RemoteCommunication extends EventEmitter2 {
     this.initCommunicationLayer({
       communicationLayerPreference,
       otherPublicKey,
-      webRTCLib,
       reconnect,
       ecies,
       communicationServerUrl,
@@ -181,7 +177,6 @@ export class RemoteCommunication extends EventEmitter2 {
   private initCommunicationLayer({
     communicationLayerPreference,
     otherPublicKey,
-    webRTCLib,
     reconnect,
     ecies,
     communicationServerUrl = DEFAULT_SERVER_URL,
@@ -189,7 +184,6 @@ export class RemoteCommunication extends EventEmitter2 {
     RemoteCommunicationProps,
     | 'communicationLayerPreference'
     | 'otherPublicKey'
-    | 'webRTCLib'
     | 'reconnect'
     | 'ecies'
     | 'communicationServerUrl'
@@ -197,19 +191,6 @@ export class RemoteCommunication extends EventEmitter2 {
     // this.communicationLayer?.removeAllListeners();
 
     switch (communicationLayerPreference) {
-      case CommunicationLayerPreference.WEBRTC:
-        this.communicationLayer = new WebRTCService({
-          communicationLayerPreference,
-          otherPublicKey,
-          reconnect,
-          transports: this.transports,
-          webRTCLib,
-          communicationServerUrl,
-          ecies,
-          context: this.context,
-          logging: this.logging,
-        });
-        break;
       case CommunicationLayerPreference.SOCKET:
         this.communicationLayer = new SocketService({
           communicationLayerPreference,
@@ -240,39 +221,61 @@ export class RemoteCommunication extends EventEmitter2 {
     const originatorInfo: OriginatorInfo = {
       url,
       title,
+      source: this.dappMetadata?.source,
       icon: this.dappMetadata?.base64Icon,
       platform: this.platformType,
       apiVersion: packageJson.version,
     };
     this.originatorInfo = originatorInfo;
 
-    // FIXME remove this hack pending wallet release 7.3+
-    if ('7.3'.localeCompare(this.walletInfo?.version || '') === 1) {
-      this.communicationLayer?.on(EventType.AUTHORIZED, () => {
-        if (this.authorized) {
-          // Ignore duplicate event or already authorized
-          return;
-        }
+    // TODO below listeners is only added for backward compatibility with wallet < 7.3
+    this.communicationLayer?.on(EventType.AUTHORIZED, async () => {
+      if (this.authorized) {
+        // Ignore duplicate event or already authorized
+        return;
+      }
 
-        const isSecurePlatform =
-          this.platformType === PlatformType.MobileWeb ||
-          this.platformType === PlatformType.ReactNative ||
-          this.platformType === PlatformType.MetaMaskMobileWebview;
-
-        if (this.debug) {
-          console.debug(
-            `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
-          );
+      // Sometime the wallet version is not yet received upon authorized message
+      const waitForWalletVersion = async () => {
+        while (!this.walletInfo) {
+          await wait(500);
         }
+      };
+      await waitForWalletVersion();
 
-        // bacward compatibility for wallet <7.3
-        if (isSecurePlatform) {
-          // Propagate authorized event.
-          this.authorized = true;
-          this.emit(EventType.AUTHORIZED);
-        }
-      });
-    }
+      // The event might be received twice because of a backward compatibility hack in SocketService.
+      // bacward compatibility for wallet <7.3
+      const compareValue = '7.3'.localeCompare(this.walletInfo?.version || '');
+
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication HACK 'authorized' version=${this.walletInfo?.version} compareValue=${compareValue}`,
+        );
+      }
+
+      // FIXME remove this hack pending wallet release 7.3+
+      if (compareValue !== 1) {
+        // ignore for version 7.3+
+        return;
+      }
+
+      const isSecurePlatform =
+        this.platformType === PlatformType.MobileWeb ||
+        this.platformType === PlatformType.ReactNative ||
+        this.platformType === PlatformType.MetaMaskMobileWebview;
+
+      if (this.debug) {
+        console.debug(
+          `RemoteCommunication HACK 'authorized' platform=${this.platformType} secure=${isSecurePlatform} channel=${this.channelId} walletVersion=${this.walletInfo?.version}`,
+        );
+      }
+
+      if (isSecurePlatform) {
+        // Propagate authorized event.
+        this.authorized = true;
+        this.emit(EventType.AUTHORIZED);
+      }
+    });
 
     this.communicationLayer?.on(
       EventType.MESSAGE,
@@ -405,13 +408,6 @@ export class RemoteCommunication extends EventEmitter2 {
         this.emit(EventType.CLIENTS_DISCONNECTED, this.channelId);
         this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
 
-        // if (!this.isOriginator) {
-        //   // if I am on metamask -- force pause it
-        //   // reset encryption status to re-initialize key exchange
-        //   // this.paused = true;
-        //   return;
-        // }
-
         this.ready = false;
         this.authorized = false;
 
@@ -445,17 +441,17 @@ export class RemoteCommunication extends EventEmitter2 {
     this.communicationLayer?.on(EventType.CLIENTS_WAITING, (numberUsers) => {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${this.ready} autoStarted=${this.autoStarted}`,
+          `RemoteCommunication::${this.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${this.ready} autoStarted=${this.originatorConnectStarted}`,
         );
       }
 
       this.setConnectionStatus(ConnectionStatus.WAITING);
 
       this.emit(EventType.CLIENTS_WAITING, numberUsers);
-      if (this.autoStarted) {
+      if (this.originatorConnectStarted) {
         if (this.debug) {
           console.debug(
-            `RemoteCommunication::on 'clients_waiting' watch autoStarted=${this.autoStarted} timeout`,
+            `RemoteCommunication::on 'clients_waiting' watch autoStarted=${this.originatorConnectStarted} timeout`,
             this.autoConnectOptions,
           );
         }
@@ -470,7 +466,7 @@ export class RemoteCommunication extends EventEmitter2 {
           }
           // Cleanup previous channelId
           // this.storageManager?.terminate();
-          this.autoStarted = false;
+          this.originatorConnectStarted = false;
           if (!this.ready) {
             this.setConnectionStatus(ConnectionStatus.TIMEOUT);
           }
@@ -539,11 +535,22 @@ export class RemoteCommunication extends EventEmitter2 {
     } else if (message.type === MessageType.READY && this.isOriginator) {
       this.setConnectionStatus(ConnectionStatus.LINKED);
 
+      // keep track of resumed state before resetting it and emitting messages
+      // Better to reset the paused status before emitting as otherwise it may interfer.
+      const resumed = this.paused;
+      // Reset paused status
       this.paused = false;
+
       this.emit(EventType.CLIENTS_READY, {
         isOriginator: this.isOriginator,
         walletInfo: this.walletInfo,
       });
+
+      if (resumed) {
+        this.authorized = true;
+        // If connection is resumed, automatically assume authorized.
+        this.emit(EventType.AUTHORIZED);
+      }
     } else if (message.type === MessageType.OTP && this.isOriginator) {
       // OTP message are ignored on the wallet.
       this.emit(EventType.OTP, message.otpAnswer);
@@ -569,11 +576,14 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emit(EventType.MESSAGE, message);
   }
 
-  async startAutoConnect(): Promise<ChannelConfig | undefined> {
+  /**
+   * Connect from the dapp using session persistence.
+   */
+  async originatorSessionConnect(): Promise<ChannelConfig | undefined> {
     if (!this.storageManager) {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::startAutoConnect() no storage manager defined - skip`,
+          `RemoteCommunication::connect() no storage manager defined - skip`,
         );
       }
       return undefined;
@@ -584,7 +594,7 @@ export class RemoteCommunication extends EventEmitter2 {
     );
     if (this.debug) {
       console.debug(
-        `RemoteCommunication::startAutoConnect() autoStarted=${this.autoStarted} channelConfig`,
+        `RemoteCommunication::connect() autoStarted=${this.originatorConnectStarted} channelConfig`,
         channelConfig,
       );
     }
@@ -593,7 +603,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (connected) {
       if (this.debug) {
         console.debug(
-          `RemoteCommunication::startAutoConnect() socket already connected - exit autoConnect()`,
+          `RemoteCommunication::connect() socket already connected - skip`,
         );
       }
       return channelConfig;
@@ -604,24 +614,22 @@ export class RemoteCommunication extends EventEmitter2 {
 
       if (validSession) {
         this.channelConfig = channelConfig;
-        this.autoStarted = true;
+        this.originatorConnectStarted = true;
         this.channelId = channelConfig?.channelId;
         this.communicationLayer?.connectToChannel({
           channelId: channelConfig.channelId,
           isOriginator: true,
         });
-        return Promise.resolve(channelConfig);
+        return channelConfig;
       } else if (this.debug) {
         console.log(`RemoteCommunication::autoConnect Session has expired`);
       }
-    } else if (this.debug) {
-      console.debug(`RemoteCommunication::autoConnect not available`);
     }
-    this.autoStarted = false;
+    this.originatorConnectStarted = false;
     return undefined;
   }
 
-  async generateChannelId() {
+  async generateChannelIdConnect() {
     if (!this.communicationLayer) {
       throw new Error('communication layer not initialized');
     }
@@ -681,7 +689,7 @@ export class RemoteCommunication extends EventEmitter2 {
 
     this.channelConfig = undefined;
     this.ready = false;
-    this.autoStarted = false;
+    this.originatorConnectStarted = false;
   }
 
   connectToChannel(channelId: string, withKeyExchange?: boolean) {
@@ -758,7 +766,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   sendMessage(message: CommunicationLayerMessage): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.debug) {
         console.log(
           `RemoteCommunication::${this.context}::sendMessage paused=${
@@ -790,17 +798,27 @@ export class RemoteCommunication extends EventEmitter2 {
               `RemoteCommunication::${this.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
             );
           }
-          await this.handleAuthorization(message);
-          resolve();
+
+          try {
+            await this.handleAuthorization(message);
+            resolve();
+          } catch (err) {
+            reject(err);
+          }
         });
       } else {
         // Send the message or wait for authorization
-        this.handleAuthorization(message).catch((err) => {
-          console.error(
-            `RemoteCommunication::${this.context}::sendMessage  ERROR`,
-            err,
-          );
-        });
+        this.handleAuthorization(message)
+          .then(() => {
+            resolve();
+          })
+          .catch((err) => {
+            console.error(
+              `RemoteCommunication::${this.context}::sendMessage  ERROR`,
+              err,
+            );
+            reject(err);
+          });
       }
     });
   }
@@ -922,6 +940,10 @@ export class RemoteCommunication extends EventEmitter2 {
     this.setConnectionStatus(ConnectionStatus.PAUSED);
   }
 
+  getVersion() {
+    return packageJson.version;
+  }
+
   resume() {
     if (this.debug) {
       console.debug(`RemoteCommunication::resume() channel=${this.channelId}`);
@@ -959,7 +981,7 @@ export class RemoteCommunication extends EventEmitter2 {
       this.channelId = uuidv4();
       options.channelId = this.channelId;
       this.channelConfig = undefined;
-      this.autoStarted = false;
+      this.originatorConnectStarted = false;
       this.communicationLayer?.disconnect(options);
       this.setConnectionStatus(ConnectionStatus.TERMINATED);
     } else {

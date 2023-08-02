@@ -1,47 +1,51 @@
 import {
   CommunicationLayerPreference,
+  EventType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
-import { Platform } from '../Platform/Platfform';
+import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
+import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
-import { WalletConnect } from '../services/WalletConnect';
+import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
+import { wait } from '../utils/wait';
 
-// TODO refactor to be part of Ethereum class.
 const initializeProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
-  platformType,
   injectProvider,
   shouldShimWeb3,
+  platformManager,
   installer,
+  sdk,
   remoteConnection,
-  walletConnect,
   debug,
 }: {
   communicationLayerPreference: CommunicationLayerPreference;
   checkInstallationOnAllCalls?: boolean;
-  platformType: PlatformType;
   injectProvider?: boolean;
   shouldShimWeb3: boolean;
+  sdk: MetaMaskSDK;
+  platformManager: PlatformManager;
   installer: MetaMaskInstaller;
   remoteConnection?: RemoteConnection;
-  walletConnect?: WalletConnect;
   debug: boolean;
 }) => {
   // Setup stream for content script communication
   const metamaskStream = getPostMessageStream({
     name: ProviderConstants.INPAGE,
     target: ProviderConstants.CONTENT_SCRIPT,
+    platformManager,
     communicationLayerPreference,
     remoteConnection,
-    walletConnect,
     debug,
   });
+
+  const platformType = platformManager.getPlatformType();
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -59,24 +63,51 @@ const initializeProvider = ({
     debug,
   });
 
+  let initializationOngoing = false;
+  const setInitializing = (ongoing: boolean) => {
+    initializationOngoing = ongoing;
+  };
+
+  const getInitializing = () => {
+    return initializationOngoing;
+  };
+
   const sendRequest = async (
     method: string,
     args: any,
     f: any,
     debugRequest: boolean,
   ) => {
-    const isInstalled = Platform.getInstance().isMetaMaskInstalled();
+    if (initializationOngoing) {
+      // make sure the active modal is displayed
+      remoteConnection?.showActiveModal();
+
+      let loop = getInitializing();
+      while (loop) {
+        // Wait for already ongoing method that triggered installation to complete
+        await wait(1000);
+        loop = getInitializing();
+      }
+
+      if (debug) {
+        console.debug(
+          `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
+        );
+      }
+      // Previous init has completed, meaning we can safely interrup and call the provider.
+      return f(...args);
+    }
+
+    const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
     const { selectedAddress } = Ethereum.getProvider();
 
     if (debugRequest) {
       console.debug(
-        `initializeProvider::sendRequest() method=${method} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
+        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
-
-    const platform = Platform.getInstance();
 
     if (
       (!isInstalled || (isInstalled && !socketConnected)) &&
@@ -86,16 +117,78 @@ const initializeProvider = ({
         method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
         checkInstallationOnAllCalls
       ) {
-        // Start installation and once installed try the request again
-        const isConnectedNow = await installer.start({
-          wait: false,
-        });
+        setInitializing(true);
 
-        // Installation/connection is now completed so we are re-sending the request
-        if (isConnectedNow) {
-          return f(...args);
+        try {
+          // installer modal display but doesn't mean connection is auhtorized
+          await installer.start({
+            wait: false,
+          });
+        } catch (installError) {
+          setInitializing(false);
+
+          if (debug) {
+            console.debug(
+              `initializeProvider failed to start installer: ${installError}`,
+            );
+          }
+
+          if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
+            // Re-create the query on the active provider
+            return await sdk.getProvider()?.request({
+              method,
+              params: args,
+            });
+          }
+
+          throw installError;
         }
-      } else if (platform.isSecure() && METHODS_TO_REDIRECT[method]) {
+
+        // Initialize the request (otherwise the rpc call is not sent)
+        const response = f(...args);
+
+        // Wait for the provider to be initialized so we can process requests
+        try {
+          await new Promise((resolve, reject) => {
+            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+              resolve(true);
+            });
+
+            // Also detect changes of provider
+            sdk.once(
+              EventType.PROVIDER_UPDATE,
+              (type: PROVIDER_UPDATE_TYPE) => {
+                if (debug) {
+                  console.debug(
+                    `initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`,
+                    type,
+                  );
+                }
+
+                if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
+                  reject(EventType.PROVIDER_UPDATE);
+                } else {
+                  reject(new Error('Connection Terminated'));
+                }
+              },
+            );
+          });
+        } catch (err: unknown) {
+          setInitializing(false);
+          if (err === EventType.PROVIDER_UPDATE) {
+            // Re-create the query on the active provider
+            return await sdk.getProvider()?.request({
+              method,
+              params: args,
+            });
+          }
+          throw err;
+        }
+
+        setInitializing(false);
+
+        return response;
+      } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
@@ -110,7 +203,14 @@ const initializeProvider = ({
       );
     }
 
-    return await f(...args);
+    const rpcResponse = await f(...args);
+    if (debug) {
+      console.debug(
+        `initializeProvider::sendRequest() method=${method} rpcResponse:`,
+        rpcResponse,
+      );
+    }
+    return rpcResponse;
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask

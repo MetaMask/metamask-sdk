@@ -34,6 +34,7 @@ const config = [
       {
         file: 'dist/deve2e.js',
         format: 'cjs',
+        inlineDynamicImports: true,
         sourcemap: true,
       },
     ],
