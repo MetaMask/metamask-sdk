@@ -1,5 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { FOX_IMAGE } from './constants';
 
 import { InstallModal, InstallModalProps } from './InstallModal';
 import { PendingModal, PendingModalProps } from './PendingModal';
@@ -54,6 +55,11 @@ export class ModalLoader {
         connectWithExtension={props.connectWithExtension}
       />,
     );
+
+    setTimeout( () => {
+      this.updateQRCode(props.link);
+    }, 100);
+
   }
 
   renderPendingModal(props: PendingWidgetProps) {
@@ -74,12 +80,45 @@ export class ModalLoader {
   }
 
   updateOTPValue = (otpValue: string) => {
-    const otpNode = document.getElementById('sdk-mm-otp-value');
+    const otpNode = this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
     }
   };
+
+  updateQRCode = (link: string) => {
+    // TODO use scoped elem
+    const qrCodeNode = this.selectContainer?.querySelector('#sdk-qrcode-container');
+    if (qrCodeNode) {
+      qrCodeNode.innerHTML = '';
+      // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const QRCodeStyling = require('qr-code-styling');
+      // Prevent nextjs import issue
+      const qrCode = new QRCodeStyling({
+        width: 270,
+        height: 270,
+        type: 'svg',
+        data: link,
+        image: FOX_IMAGE,
+        dotsOptions: {
+          color: 'black',
+          type: 'rounded',
+        },
+        imageOptions: {
+          margin: 5,
+        },
+        cornersDotOptions: {
+          color: '#f66a07',
+        },
+        qrOptions: {
+          errorCorrectionLevel: 'M',
+        },
+      });
+      qrCode.append(qrCodeNode);
+    }
+  }
 
   unmount() {
     if (this.pendingContainer) {

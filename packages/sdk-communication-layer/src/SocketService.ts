@@ -278,23 +278,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       });
 
       if (this.resumed) {
-        if (this.keyExchange.areKeysExchanged()) {
-          if (this.debug) {
-            console.debug(
-              `SocketService::${this.context}::on 'clients_connected' reconnect=true keysExchanged=false`,
-            );
-          }
-          if (
-            this.communicationLayerPreference ===
-            CommunicationLayerPreference.WEBRTC
-          ) {
-            this.emit(EventType.CLIENTS_READY, {
-              isOriginator: this.isOriginator,
-              keysExchanged: this.keyExchange.areKeysExchanged(),
-              context: this.context,
-            });
-          }
-        } else if (!this.isOriginator) {
+        if (!this.isOriginator) {
           // should ask to redo a key exchange because it wasn't paused.
           if (this.debug) {
             console.debug(
@@ -353,7 +337,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           `SocketService::${this.context}::setupChannelListener::on 'clients_disconnected-${channelId}'`,
         );
       }
-      if (this.isOriginator) {
+      if (this.isOriginator && !this.clientsPaused) {
         // If it wasn't paused - need to reset keys.
         this.keyExchange.clean();
       }
@@ -504,7 +488,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
           this.rpcMethodTracker[rpcMessage.id] = rpcResult;
 
           if (this.debug) {
-            console.debug(`HACK update rpcMethodTracker`, rpcResult);
+            console.debug(
+              `HACK (wallet <7.3) update rpcMethodTracker`,
+              rpcResult,
+            );
           }
           // FIXME hack while waiting for mobile release 7.3
           this.emit(EventType.AUTHORIZED);
@@ -802,6 +789,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.channelId = options.channelId;
       this.keyExchange.clean();
     }
+    // Reset rpcMethodTracker
+    this.rpcMethodTracker = {};
     this.manualDisconnect = true;
     this.socket.disconnect();
   }

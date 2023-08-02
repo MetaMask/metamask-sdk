@@ -89,9 +89,9 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         setConnected(true);
       });
 
-      ethereum.on('chainChanged', (newChain: string) => {
+      ethereum.on('chainChanged', (newChain: unknown) => {
         console.log('useEffect::ethereum on "chainChanged"', newChain);
-        setChain(newChain);
+        setChain(newChain as string);
       });
 
       ethereum.on('_initialized', () => {
@@ -107,7 +107,8 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         }
       });
 
-      ethereum.on('accountsChanged', (accounts: string[]) => {
+      ethereum.on('accountsChanged', (_accounts: unknown) => {
+        const accounts = _accounts as string[];
         console.log('useEffect::ethereum on "accountsChanged"', accounts);
         if (accounts.length > 0 && accounts[0] !== account) {
           setAccount(accounts?.[0]);
@@ -276,7 +277,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   return (
     <View style={{borderWidth: 2, padding: 5}}>
       <Text style={styles.title}>
-        {sdk.getDappMetadata()?.name} (
+        {sdk._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
 

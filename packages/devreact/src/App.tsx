@@ -1,45 +1,15 @@
-import { useEffect, useState } from 'react';
-import './App.css';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { MetaMaskSDK } from '@metamask/sdk';
-import { CommunicationLayerPreference, ConnectionStatus, EventType, ServiceStatus } from '@metamask/sdk-communication-layer';
+import { SDKProvider } from '@metamask/sdk';
+import { useSDK } from '@metamask/sdk-react';
+import React, { useState } from 'react';
 import Web from 'web3';
 import { AbiItem } from 'web3-utils';
-import React from 'react';
-import { MetaMaskInpageProvider } from "@metamask/providers";
+import './App.css';
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
   interface Window {
-    ethereum?: MetaMaskInpageProvider;
+    ethereum?: SDKProvider;
   }
 }
-
-const sdk = new MetaMaskSDK({
-  useDeeplink: false,
-  communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-  // communicationServerUrl: 'http://192.168.50.114:4000', // avoid localhost while testing deeplink
-  enableDebug: true,
-  autoConnect: {
-    enable: true
-  },
-  dappMetadata: {
-    name: "DEV React App",
-    url: window.location.host,
-  },
-  logging: {
-    sdk: false,
-    developerMode: true,
-    eciesLayer: false,
-    remoteLayer: false,
-    keyExchangeLayer: false,
-    serviceLayer: false,
-    plaintext: true,
-  },
-  storage: {
-    enabled: true,
-  }
-});
 
 const _abi = [
   {
@@ -86,38 +56,24 @@ const _abi = [
 ];
 
 export const App = () => {
-  const [chain, setChain] = useState("");
+  const {sdk, connected, connecting, provider, chainId, status: serviceStatus} = useSDK();
   const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>("");
-  const [connected, setConnected] = useState(false);
-  const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
 
-  const connect = () => {
-    if(!window.ethereum) {
-      throw new Error(`invalid ethereum provider`);
+  const connect = async () => {
+    try {
+      const accounts = await sdk?.connect();
+      setAccount(accounts?.[0]);
+    } catch(err) {
+      console.warn(`failed to connect..`, err);
     }
-    window.ethereum
-      .request({
-        method: "eth_requestAccounts",
-        params: [],
-      })
-      .then((accounts) => {
-        if(accounts) {
-          console.debug(`connect:: accounts result`);
-          setAccount((accounts as string[])[0]);
-          setConnected(true);
-        }
-      })
-      .catch((e) => console.log("request accounts ERR", e));
   };
 
   const addEthereumChain = () => {
-    if(!window.ethereum) {
+    if(!provider) {
       throw new Error(`invalid ethereum provider`);
     }
-
-    window.ethereum
-      .request({
+    provider.request({
         method: "wallet_addEthereumChain",
         params: [
           {
@@ -133,82 +89,18 @@ export const App = () => {
       .catch((e) => console.log("ADD ERR", e));
   };
 
-  useEffect(() => {
-    console.debug(`App::useEffect window.ethereum listeners sdk.isInitialized=${sdk.isInitialized()}`);
-
-    if(window.ethereum?.selectedAddress) {
-      console.debug(`App::useEffect setting account from window.ethereum `);
-      setAccount(window.ethereum?.selectedAddress);
-      setConnected(true);
-    } else {
-      setConnected(false);
-    }
-
-    if(sdk.isInitialized()) {
-      window.ethereum?.on("chainChanged", (chain) => {
-        console.log(`App::useEfect on 'chainChanged'`, chain);
-        setChain(chain as string);
-        setConnected(true);
-      });
-      window.ethereum?.on('_initialized', () => {
-        console.debug(`App::useEffect on _initialized`);
-        setConnected(true);
-        if(window.ethereum?.selectedAddress) {
-          setAccount(window.ethereum?.selectedAddress);
-        }
-        if(window.ethereum?.chainId) {
-          setChain(window.ethereum.chainId);
-        }
-      })
-      window.ethereum?.on("accountsChanged", (accounts) => {
-        const tsAccounts = (accounts as string[]);
-        console.log(`App::useEfect on 'accountsChanged'`, tsAccounts);
-        if(tsAccounts.length > 0) {
-          setAccount(accounts?.[0]);
-        } else {
-          setAccount(undefined);
-        }
-      });
-      window.ethereum?.on('connect', (_connectInfo) => {
-        console.log(`App::useEfect on 'connect'`, _connectInfo);
-        const connectInfo = _connectInfo as {chainId: string};
-        setConnected(true);
-        // setConnectionStatus(ConnectionStatus.LINKED)
-        setChain(connectInfo.chainId);
-      })
-      window.ethereum?.on("disconnect", (error) => {
-        console.log(`App::useEfect on 'disconnect'`, error);
-        setConnected(false);
-        setChain("");
-      });
-    }
-
-  }, []);
-
-  useEffect( () => {
-    console.debug(`App::useEffect sdk listeners`);
-    sdk.on(EventType.SERVICE_STATUS, (_serviceStatus:ServiceStatus) => {
-      console.debug(`sdk connection_status`, _serviceStatus);
-      setServiceStatus(_serviceStatus)
-      // if(connectionStatus === ConnectionStatus.TIMEOUT) {
-      //   console.warn(`timeout detected - re-initialize connection`);
-      //   connect();
-      // }
-    })
-  }, []);
-
   const sendTransaction = async () => {
     const to = "0x0000000000000000000000000000000000000000";
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: window.ethereum?.selectedAddress, // must match user's active address.
+      from: provider?.selectedAddress, // must match user's active address.
       value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await window.ethereum?.request({
+      const txHash = await provider?.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
       }) as string;
@@ -223,7 +115,7 @@ export const App = () => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum?.chainId ?? "", 16),
+        chainId: parseInt(provider?.chainId ?? "", 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: "Ether Mail",
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -289,7 +181,7 @@ export const App = () => {
       },
     });
 
-    let from = window.ethereum?.selectedAddress;
+    let from = provider?.selectedAddress;
 
     console.debug(`sign from: ${from}`);
     try {
@@ -302,7 +194,7 @@ export const App = () => {
       const method = "eth_signTypedData_v4";
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
     } catch (e) {
       console.log(e);
@@ -311,7 +203,7 @@ export const App = () => {
 
   const ping = async () => {
     console.debug(`ping`)
-    const web3 = new Web(window.ethereum as any)
+    const web3 = new Web(provider as any)
     // const provider = new ethers.providers.Web3Provider(window.ethereum)
 
     const simple = new web3.eth.Contract(
@@ -326,30 +218,27 @@ export const App = () => {
 
   const setText = async () => {
     console.debug(`setText`)
-    const web3 = new Web(window.ethereum as any)
+    const web3 = new Web(provider as any)
     const simple = new web3.eth.Contract(
       _abi  as AbiItem[],
       '0x2D4ea5A745caF8C668290E98355722d5Fb9175Df'
     )
 
     const ret = await simple.methods.set('new value').send({
-      from: window.ethereum?.selectedAddress
+      from: provider?.selectedAddress
     })
     console.debug(`result`, ret)
   }
-  const disconnect = () => {
-    sdk.disconnect();
-  }
 
   const terminate = () => {
-    sdk.terminate();
+    sdk?.terminate();
     // sdk.debugPersistence({terminate: true, disconnect: false})
   }
 
   const changeNetwork = async (hexChainId:string) => {
     console.debug(`switching to network chainId=${hexChainId}`)
     try {
-      const response = await window.ethereum?.request({
+      const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
       })
@@ -378,13 +267,11 @@ export const App = () => {
           <p>
             Connection Status: <strong>{serviceStatus?.connectionStatus}</strong>
           </p>
-          {serviceStatus?.connectionStatus===ConnectionStatus.WAITING &&
+          {connecting &&
             <div>
               Waiting for Metamask to link the connection...
             </div>
           }
-          <p>ChannelId: {serviceStatus?.channelId}</p>
-          <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
       </div>
 
       {connected ? <div>
@@ -425,13 +312,9 @@ export const App = () => {
           </button>
 
           <button style={{ padding: 10, margin: 10 }} onClick={() => {
-            console.debug(`App::keyinfo`, sdk.getKeyInfo());
+            console.debug(`App::keyinfo`, sdk?._getKeyInfo());
           }} >
             Print Key Info
-          </button>
-
-          <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={disconnect} >
-            Disconnect
           </button>
         </div> :
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
@@ -443,15 +326,17 @@ export const App = () => {
         Terminate
       </button>
 
-      <div>
-        <>
-          {chain && `Connected chain: ${chain}`}
-          <p></p>
-          {account && `Connected account: ${account}`}
-          <p></p>
-          {response && `Last request response: ${response}`}
-        </>
-      </div>
+      {connected &&
+        <div>
+          <>
+            {chainId && `Connected chain: ${chainId}`}
+            <p></p>
+            {account && `Connected account: ${account}`}
+            <p></p>
+            {response && `Last request response: ${response}`}
+          </>
+        </div>
+      }
     </div>
   );
 }

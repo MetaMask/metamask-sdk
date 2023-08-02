@@ -53,7 +53,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
-  const [serviceStatus, _setServiceStatus] = useState(sdk.getServiceStatus());
+  const [serviceStatus, _setServiceStatus] = useState(sdk._getServiceStatus());
   const styles = createStyles(status);
 
   const getBalance = async () => {
@@ -91,7 +91,8 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         setConnected(true);
       });
 
-      ethereum.on('chainChanged', (newChain: string) => {
+      ethereum.on('chainChanged', (arg: unknown) => {
+        const newChain = String(arg) as string; // Type assertion to string
         console.log('useEffect::ethereum on "chainChanged"', newChain);
         setChain(newChain);
       });
@@ -109,10 +110,11 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         }
       });
 
-      ethereum.on('accountsChanged', (accounts: string[]) => {
+      ethereum.on('accountsChanged', (...args: unknown[]) => {
+        const accounts = args[0] as string[]; // Assuming the first argument is an array of strings
         console.log('useEffect::ethereum on "accountsChanged"', accounts);
-        if (accounts.length > 0 && accounts[0] !== account) {
-          setAccount(accounts?.[0]);
+        if (accounts?.length > 0 && accounts[0] !== account) {
+          setAccount(accounts[0]);
           getBalance();
         }
       });
@@ -279,7 +281,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   return (
     <View style={{borderWidth: 2, padding: 5}}>
       <Text style={styles.title}>
-        {sdk.getDappMetadata()?.name} (
+        {sdk._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
       <ServiceStatusView serviceStatus={serviceStatus} />
@@ -302,14 +304,6 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       ) : (
         <Button title={'Connect'} onPress={connect} />
       )}
-
-      <Button
-        title={'Test Storage'}
-        onPress={() => {
-          // sdk.testStorage();
-          console.debug(sdk.getServiceStatus());
-        }}
-      />
 
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}

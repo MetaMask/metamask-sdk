@@ -5,7 +5,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 
 export interface ProviderService {
-  startConnection(): Promise<boolean>;
+  startConnection(): Promise<void>;
   isConnected(): boolean;
   isAuthorized(): boolean;
   getConnector(): RemoteCommunication | unknown;

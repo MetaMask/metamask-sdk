@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "",
-  "main": "dist/node/es/deve2e.js",
+  "main": "dist/deve2e.js",
   "files": [
     "dist"
   ],
@@ -17,8 +17,9 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "rimraf node_modules && yarn clean",
-    "start": "ROLLUP_RUN=true yarn build",
+    "start": "yarn build && node dist/deve2e.js ${TARGET:-sdk}",
     "test": "echo 'N/A'",
+    "allow-scripts": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
     "watch": "yarn start --watch"
   },
@@ -30,7 +31,6 @@
     "pump": "^3.0.0"
   },
   "devDependencies": {
-    "@lavamoat/allow-scripts": "^2.3.1",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-run": "^3.0.1",
@@ -38,15 +38,7 @@
     "rollup": "^3.7.3",
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
+    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@metamask/sdk>eciesjs>secp256k1": false,
-      "@metamask/sdk>react-native>react-devtools-core>ws>bufferutil": false,
-      "@metamask/sdk>react-native>react-devtools-core>ws>utf-8-validate": false,
-      "@metamask/sdk>socket.io-client>engine.io-client>ws>bufferutil": false,
-      "@metamask/sdk>socket.io-client>engine.io-client>ws>utf-8-validate": false
-    }
   }
 }

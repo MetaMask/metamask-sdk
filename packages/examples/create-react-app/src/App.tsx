@@ -1,38 +1,28 @@
-import "./App.css";
-import { MetaMaskSDK } from "@metamask/sdk";
-import { useState, useEffect } from "react";
+import { useSDK } from '@metamask/sdk-react';
+import React, { useState } from 'react';
+import './App.css';
 
-const sdk = new MetaMaskSDK({
-  enableDebug: true,
-  autoConnect: {
-    enable: true
-  },
-  dappMetadata: {
-    url: window.location.href,
-    name: document.title,
-  },
-  storage: {
-    enabled: true,
-  }
-});
+export const App = () => {
+  const [account, setAccount] = useState<string>();
+  const [response, setResponse] = useState<unknown>("");
+  const {sdk, connected, connecting, provider, chainId} = useSDK();
 
-function App() {
-  const [chain, setChain] = useState("");
-  const [account, setAccount] = useState("");
-  const [response, setResponse] = useState("");
 
-  const connect = () => {
-    window.ethereum
-      .request({
-        method: "eth_requestAccounts",
-        params: [],
-      })
-      .then((res) => console.log("request accounts", res))
-      .catch((e) => console.log("request accounts ERR", e));
+  const connect = async () => {
+    try {
+      const accounts = await sdk?.connect();
+      setAccount(accounts?.[0]);
+    } catch(err) {
+      console.warn(`failed to connect..`, err);
+    }
   };
 
   const addEthereumChain = () => {
-    window.ethereum
+    if(!provider) {
+      throw new Error(`invalid ethereum provider`);
+    }
+
+    provider
       .request({
         method: "wallet_addEthereumChain",
         params: [
@@ -49,32 +39,21 @@ function App() {
       .catch((e) => console.log("ADD ERR", e));
   };
 
-  useEffect(() => {
-    window.ethereum.on("chainChanged", (chain) => {
-      console.log(chain);
-      setChain(chain);
-    });
-    window.ethereum.on("accountsChanged", (accounts) => {
-      console.log(accounts);
-      setAccount(accounts?.[0]);
-    });
-  }, []);
-
   const sendTransaction = async () => {
     const to = "0x0000000000000000000000000000000000000000";
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: window.ethereum.selectedAddress, // must match user's active address.
+      from: provider?.selectedAddress, // must match user's active address.
       value: "0x5AF3107A4000", // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await window.ethereum.request({
+      const txHash = await provider?.request({
         method: "eth_sendTransaction",
         params: [transactionParameters],
-      });
+      }) as string;
 
       setResponse(txHash);
     } catch (e) {
@@ -86,7 +65,7 @@ function App() {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum.chainId, 16),
+        chainId: parseInt(provider?.chainId ?? "", 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: "Ether Mail",
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -152,44 +131,98 @@ function App() {
       },
     });
 
-    var from = window.ethereum.selectedAddress;
+    let from = provider?.selectedAddress;
 
-    var params = [from, msgParams];
-    var method = "eth_signTypedData_v4";
-
+    console.debug(`sign from: ${from}`);
     try {
-      const resp = await window.ethereum.request({ method, params });
+      if (!from || from===null) {
+        alert(`Invalid account -- please connect using eth_requestAccounts first`);
+        return;
+      }
+
+      const params = [from, msgParams];
+      const method = "eth_signTypedData_v4";
+      console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4))
+      console.debug(`sign params`, params);
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
     } catch (e) {
       console.log(e);
     }
   };
 
+  const terminate = () => {
+    sdk?.terminate();
+  }
+
+  const changeNetwork = async (hexChainId:string) => {
+    console.debug(`switching to network chainId=${hexChainId}`)
+    try {
+      const response = await provider?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexChainId }] // chainId must be in hexadecimal numbers
+      })
+      console.debug(`response`, response)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
+      <div className="sdkConfig">
+          {connecting &&
+            <div>
+              Waiting for Metamask to link the connection...
+            </div>
+          }
+      </div>
+
+      {connected ? <div>
+          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+            Request Accounts
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={sign}>
+            Sign
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction} >
+            Send transaction
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x1')} >
+            Switch Ethereum
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={() => changeNetwork('0x89')} >
+            Switch Polygon
+          </button>
+
+          <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain} >
+            Add ethereum chain
+          </button>
+        </div> :
         <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-          {account ? "Connected" : "Connect"}
+          Connect
         </button>
+      }
 
-        <button style={{ padding: 10, margin: 10 }} onClick={sign}>
-          Sign
-        </button>
+      <button style={{ padding: 10, margin: 10, backgroundColor: 'red' }} onClick={terminate} >
+        Terminate
+      </button>
 
-        <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}>
-          Send transaction
-        </button>
-
-        <button style={{ padding: 10, margin: 10 }} onClick={addEthereumChain}>
-          Add ethereum chain
-        </button>
-
-        {chain && `Connected chain: ${chain}`}
-        <p></p>
-        {account && `Connected account: ${account}`}
-        <p></p>
-        {response && `Last request response: ${response}`}
-      </header>
+      {connected &&
+          <div>
+            <>
+              {chainId && `Connected chain: ${chainId}`}
+              <p></p>
+              {account && `Connected account: ${account}`}
+              <p></p>
+              {response && `Last request response: ${response}`}
+            </>
+          </div>
+      }
     </div>
   );
 }

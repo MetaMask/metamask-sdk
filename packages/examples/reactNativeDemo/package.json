@@ -8,10 +8,11 @@
     "ios:device": "react-native run-ios --port=9097 --device",
     "lint": "eslint .",
     "start": "react-native start --port=9097",
-    "test": "jest"
+    "test": "jest",
+    "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "0.3.3",
+    "@metamask/sdk": "^0.5.3",
     "@react-native-async-storage/async-storage": "^1.18.1",
     "ethers": "5.7.2",
     "node-libs-react-native": "^1.2.1",
@@ -25,7 +26,6 @@
     "@babel/core": "^7.20.0",
     "@babel/preset-env": "^7.20.0",
     "@babel/runtime": "^7.20.0",
-    "@lavamoat/allow-scripts": "^2.3.1",
     "@react-native-community/eslint-config": "^3.2.0",
     "@tsconfig/react-native": "^2.0.2",
     "@types/jest": "^29.2.1",
@@ -42,12 +42,5 @@
   },
   "jest": {
     "preset": "react-native"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@metamask/sdk>eciesjs>secp256k1": false,
-      "ethers>@ethersproject/providers>ws>bufferutil": false,
-      "ethers>@ethersproject/providers>ws>utf-8-validate": false
-    }
   }
 }

@@ -1,6 +1,6 @@
 {
-  "name": "root",
-  "version": "5.0.0",
+  "name": "metamask-sdk-monorepo",
+  "version": "19.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -14,28 +14,29 @@
     "packages/sdk-react",
     "packages/devreact",
     "packages/devnext",
-    "packages/deve2e"
+    "packages/deve2e",
+    "packages/examples/*"
   ],
   "scripts": {
     "build": "yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc",
     "build:clean": "yarn clean && yarn build",
     "build:tsc": "tsc --build --force tsconfig.json",
-    "clean": "yarn workspaces foreach run clean",
+    "clean": "yarn workspaces foreach --no-private run clean",
     "postinstall": "patch-package",
     "link-packages": "./scripts/link-packages.sh",
-    "lint": "yarn workspaces foreach run lint",
+    "lint": "yarn workspaces foreach --no-private run lint",
     "lint:changelogs": "yarn workspaces foreach --no-private run lint:changelog",
-    "lint:eslint": "yarn workspaces foreach run lint:eslint",
-    "lint:fix": "yarn workspaces foreach run lint:fix",
-    "lint:misc": "yarn workspaces foreach run lint:mix",
+    "lint:eslint": "yarn workspaces foreach --no-private run lint:eslint",
+    "lint:fix": "yarn workspaces foreach --no-private run lint:fix",
+    "lint:misc": "yarn workspaces foreach --no-private run lint:misc",
     "child-workspace-package-names-as-json": "ts-node scripts/child-workspace-package-names-as-json.ts",
     "prepack": "./scripts/prepack.sh",
-    "prepare-preview-builds": "yarn workspaces foreach --parallel run prepare-manifest:preview",
-    "publish-previews": "yarn workspaces foreach --parallel run publish:preview",
+    "prepare-preview-builds": "yarn workspaces foreach --no-private --parallel run prepare-manifest:preview",
+    "publish-previews": "yarn workspaces foreach --no-private --parallel run publish:preview",
     "publish:all": "./scripts/publish-all.sh",
-    "reset": "yarn workspaces foreach run reset && rimraf node_modules && yarn setup",
-    "test": "yarn workspaces foreach run test",
-    "test:ci": "yarn workspaces foreach run test:ci"
+    "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
+    "test": "yarn workspaces foreach --no-private run test",
+    "test:ci": "yarn workspaces foreach --no-private run test:ci"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",

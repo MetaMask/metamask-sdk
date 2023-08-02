@@ -7,7 +7,7 @@ const sdkWebPendingModal = (onDisconnect?: () => void) => {
 
   const modalLoader = new ModalLoader();
 
-  const onClose = () => {
+  const unmount = () => {
     div.style.display = 'none';
   };
 
@@ -20,21 +20,22 @@ const sdkWebPendingModal = (onDisconnect?: () => void) => {
   const mount = () => {
     if (mounted) {
       div.style.display = 'block';
-    } else {
-      modalLoader.renderPendingModal({
-        parentElement: div,
-        onClose,
-        onDisconnect,
-        updateOTPValue,
-      });
-      mounted = true;
+      return;
     }
+
+    modalLoader.renderPendingModal({
+      parentElement: div,
+      onClose: unmount,
+      onDisconnect,
+      updateOTPValue,
+    });
+    mounted = true;
   };
 
   // Auto mount on initialization
   mount();
 
-  return { installModal: modalLoader, onClose, mount, updateOTPValue };
+  return { mount, unmount, updateOTPValue };
 };
 
 export default sdkWebPendingModal;

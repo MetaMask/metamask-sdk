@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
+import { useAccount, useConnect, useNetwork, useSDK } from '../MetaMaskHooks';
 import '../style.css';
+import Balance from './Balance';
+import IconNetwork from './IconNetwork';
 import IconOriginal from './IconOriginal';
 import IconSimplified from './IconSimplified';
 import IconWrongNetwork from './IconWrongNetwork';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import MetaMaskModal from './MetaMaskModal';
-import IconNetwork from './IconNetwork';
-import { useConnect, useAccount, useNetwork, useSDK } from '../MetaMaskHooks';
 import { truncatedAddress } from './utils';
-import Balance from './Balance';
 
 export interface Account {
   address: string;
@@ -32,11 +32,11 @@ interface Props {
   wrongNetworkText?: 'Wrong network' | 'Switch network' | string;
   connectedComponent?: React.ReactNode;
   connectedType?:
-  | 'custom-text'
-  | 'network-account-balance'
-  | 'network-account'
-  | 'account-balance'
-  | 'separate-network-account';
+    | 'custom-text'
+    | 'network-account-balance'
+    | 'network-account'
+    | 'account-balance'
+    | 'separate-network-account';
   connectedText?: 'Connected';
 }
 
@@ -56,23 +56,34 @@ const MetaMaskButton = ({
   wrongNetworkComponent,
   wrongNetworkText = 'Switch network',
   connectedComponent,
-  connectedType = 'network-account-balance',
-}: Props) => {
-  const { connect } = useConnect();
+}: // connectedType = 'network-account-balance', // keep for reference and future implementation
+Props) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { sdk } = useSDK();
+  const { sdk, connected } = useSDK();
+  const { connect } = useConnect();
 
   const [modalOpen, setModalOpen] = useState(false);
   const wrongNetwork = isConnected && (!chain || chain.unsupported);
 
   useEffect(() => {
-    sdk?.getProvider()?.on('_initialized', (_params) => {
+    const synConnected = () => {
       if (!isConnected) {
         connect();
       }
-    });
-  }, [sdk])
+    };
+
+    if (connected && !isConnected) {
+      // force synchronize state between sdk and wagmi
+      synConnected();
+    } else if (!connected) {
+      sdk?.getProvider()?.once('_initialized', synConnected);
+    }
+
+    return () => {
+      sdk?.getProvider()?.removeListener('_initialized', synConnected);
+    };
+  }, [sdk, connected, isConnected, connect]);
 
   const getColors = () => {
     if (wrongNetwork) return 'from-red-500 to-red-500';
@@ -132,8 +143,9 @@ const MetaMaskButton = ({
       if (wrongNetworkComponent) return wrongNetworkComponent;
       return (
         <div
-          className={`relative flex content-center ${textAlign !== 'left' ? 'justify-center' : ''
-            } ${getTextColor()}`}
+          className={`relative flex content-center ${
+            textAlign !== 'left' ? 'justify-center' : ''
+          } ${getTextColor()}`}
         >
           <IconWrongNetwork style={iconStyle} />{' '}
           <span style={textStyle} className={'pl-2'}>
@@ -147,8 +159,9 @@ const MetaMaskButton = ({
       if (connectedComponent) return connectedComponent;
       return (
         <div
-          className={`flex relative content-center ${textAlign !== 'left' ? 'justify-center' : ''
-            } ${getTextColor()}`}
+          className={`flex relative content-center ${
+            textAlign !== 'left' ? 'justify-center' : ''
+          } ${getTextColor()}`}
         >
           <div style={{ width: 30, height: 30 }} className="mt-1 relative">
             <div
@@ -207,8 +220,9 @@ const MetaMaskButton = ({
     if (connectComponent) return connectedComponent;
     return (
       <div
-        className={`relative flex ${textAlign !== 'left' ? 'justify-center' : ''
-          } ${getTextColor()}`}
+        className={`relative flex ${
+          textAlign !== 'left' ? 'justify-center' : ''
+        } ${getTextColor()}`}
       >
         {iconPosition !== 'right' && getIcon()}{' '}
         {text && (
@@ -231,9 +245,16 @@ const MetaMaskButton = ({
     <>
       <button
         style={buttonStyle}
-        className={`${connectedAndRightNetwork ? 'px-3' : 'px-6'} ${connectedAndRightNetwork ? 'py-1' : 'py-2.5'
-          } relative ${getShape()} group font-medium text-white font-medium inline-block text-base`}
-        onClick={isConnected ? openModal : () => connect()}
+        className={`${connectedAndRightNetwork ? 'px-3' : 'px-6'} ${
+          connectedAndRightNetwork ? 'py-1' : 'py-2.5'
+        } relative ${getShape()} group font-medium text-white font-medium inline-block text-base`}
+        onClick={
+          isConnected
+            ? openModal
+            : () => {
+                connect(); // TODO manage multichain.
+              }
+        }
       >
         {!removeDefaultStyles && (
           <>

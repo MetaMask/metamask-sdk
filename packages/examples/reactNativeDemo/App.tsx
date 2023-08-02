@@ -5,11 +5,10 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef} from 'react';
 import {
   AppState,
   AppStateStatus,
-  Button,
   Linking,
   SafeAreaView,
   ScrollView,
@@ -21,15 +20,6 @@ import {
 } from 'react-native';
 
 import {MetaMaskSDK} from '@metamask/sdk';
-import {
-  CommunicationLayerMessage,
-  CommunicationLayerPreference,
-  DappMetadata,
-  MessageType,
-  RemoteCommunication,
-} from '@metamask/sdk-communication-layer';
-import crypto from 'crypto';
-import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -49,18 +39,28 @@ const sdk = new MetaMaskSDK({
     }
   },
   timer: BackgroundTimer,
-  enableDebug: true,
   dappMetadata: {
     url: 'ReactNativeTS',
     name: 'ReactNativeTS',
-  },
-  storage: {
-    enabled: true,
   },
 });
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [ready, setReady] = React.useState(false);
+  const shouldInit = useRef(true);
+
+  // initialize sdk
+  useEffect(() => {
+    if (!shouldInit.current) {
+      return;
+    }
+    shouldInit.current = false;
+
+    sdk.init().then(() => {
+      setReady(true);
+    });
+  });
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppState);
@@ -97,7 +97,7 @@ function App(): JSX.Element {
           <Text style={{color: Colors.black, fontSize: 24}}>
             reactNativeDemo (RN v0.71.7)
           </Text>
-          <DAPPView sdk={sdk} />
+          {ready ? <DAPPView sdk={sdk} /> : <Text>initializing...</Text>}
         </View>
       </ScrollView>
     </SafeAreaView>
