@@ -3985,7 +3985,7 @@ __metadata:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": ^2.3.0
     analytics-node: ^6.2.0
-    body-parser: ^1.20.1
+    body-parser: ^1.20.2
     cors: ^2.8.5
     dotenv: ^16.0.3
     eslint: ^7.30.0
@@ -3995,8 +3995,9 @@ __metadata:
     eslint-plugin-jsdoc: ^40.1.1
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
-    express: ^4.17.3
+    express: ^4.18.2
     helmet: ^5.1.1
+    lru-cache: ^10.0.0
     nodemon: ^2.0.20
     prettier: ^2.8.8
     rate-limiter-flexible: ^2.3.8
@@ -9624,7 +9625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^1.16.0, body-parser@npm:^1.20.1":
+"body-parser@npm:^1.16.0, body-parser@npm:^1.20.2":
   version: 1.20.2
   resolution: "body-parser@npm:1.20.2"
   dependencies:
@@ -13970,7 +13971,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express@npm:^4.14.0, express@npm:^4.17.3":
+"express@npm:^4.14.0, express@npm:^4.17.3, express@npm:^4.18.2":
   version: 4.18.2
   resolution: "express@npm:4.18.2"
   dependencies:
@@ -18714,6 +18715,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^10.0.0, lru-cache@npm:^9.1.1 || ^10.0.0":
+  version: 10.0.0
+  resolution: "lru-cache@npm:10.0.0"
+  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^4.0.1, lru-cache@npm:^4.1.2":
   version: 4.1.5
   resolution: "lru-cache@npm:4.1.5"
@@ -18746,13 +18754,6 @@ __metadata:
   version: 7.18.3
   resolution: "lru-cache@npm:7.18.3"
   checksum: e550d772384709deea3f141af34b6d4fa392e2e418c1498c078de0ee63670f1f46f5eee746e8ef7e69e1c895af0d4224e62ee33e66a543a14763b0f2e74c1356
-  languageName: node
-  linkType: hard
-
-"lru-cache@npm:^9.1.1 || ^10.0.0":
-  version: 10.0.0
-  resolution: "lru-cache@npm:10.0.0"
-  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
   languageName: node
   linkType: hard
 
