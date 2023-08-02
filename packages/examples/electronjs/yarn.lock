@@ -353,9 +353,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.4.2":
-  version: 0.4.2
-  resolution: "@metamask/sdk-communication-layer@npm:0.4.2"
+"@metamask/sdk-communication-layer@npm:0.5.3":
+  version: 0.5.3
+  resolution: "@metamask/sdk-communication-layer@npm:0.5.3"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -363,32 +363,32 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 8049dbcf8ef886d2b54c5fb93adfcca659ed668973fd18e944a9093bf0ce08d59cae94469cc033fe85f0e3581919a1a983ea2cccd0327c7b85fbd0a82cc11742
+  checksum: 635f0cdac3839001c8f69e214d0c007c05ffb286e6ce637309bb59442bbb8849899f4e8f974b4ec154129bfe5f3fd69752114c451eb79a0761d54a677bce8419
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.3.3":
-  version: 0.3.3
-  resolution: "@metamask/sdk-install-modal-web@npm:0.3.3"
+"@metamask/sdk-install-modal-web@npm:0.5.1":
+  version: 0.5.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.5.1"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 340129c1c80c2edca2118e37260a621252459503d7529893e4b37960b710ed9802bcbc2706aee1e149cf81bd0bc9960c4c1fd9ae0db8570bf37b554a804b470b
+  checksum: ea2ef81d7f7f76b552a1f2a3edef61dc619da5334b9555c79eb9ad1b977664d5e7d44f657f9641291bc835b03efc6c0a2bb4115af9caa94fec81329f47218430
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:0.4.2":
-  version: 0.4.2
-  resolution: "@metamask/sdk@npm:0.4.2"
+"@metamask/sdk@npm:0.5.6":
+  version: 0.5.6
+  resolution: "@metamask/sdk@npm:0.5.6"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.4.2
-    "@metamask/sdk-install-modal-web": 0.3.3
+    "@metamask/sdk-communication-layer": 0.5.3
+    "@metamask/sdk-install-modal-web": 0.5.1
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -407,7 +407,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: c533ff45b3e1a79c6fe93d70d85015979c9136ca9c7a34fefaa24158b403292f2f611bbfde45712fea754b2f596fc0b0a8d7e26bbea0c89829a2125342e5214c
+  checksum: ed3b69e6f15654cdc13f64eebe5fb42f364e3d1d83eb4816fdc7bd6d3cc91741dc3f743013feca170217435559a48dc6b1ff9f62a73db6e45625298026679574
   languageName: node
   linkType: hard
 
@@ -634,6 +634,15 @@ __metadata:
   version: 4.0.0
   resolution: "@types/parse-json@npm:4.0.0"
   checksum: fd6bce2b674b6efc3db4c7c3d336bd70c90838e8439de639b909ce22f3720d21344f52427f1d9e57b265fcb7f6c018699b99e5e0c208a1a4823014269a6bf35b
+  languageName: node
+  linkType: hard
+
+"@types/qrcode@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "@types/qrcode@npm:1.5.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 0f780f31d983fa8d1bfbba1a130e8f7b07866d556807eccfb1d08d841c70644cdee8fc169ca752bdf17e99995e6155fcb6179079338ac8359294c781b95112b5
   languageName: node
   linkType: hard
 
@@ -1185,13 +1194,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electronjs@workspace:.":
+"electronjs-test-dapp@workspace:.":
   version: 0.0.0-use.local
-  resolution: "electronjs@workspace:."
+  resolution: "electronjs-test-dapp@workspace:."
   dependencies:
-    "@metamask/sdk": 0.4.2
+    "@metamask/sdk": 0.5.6
+    "@types/qrcode": ^1.5.1
     electron: ^25.2.0
     qrcode: ^1.5.3
+    typescript: ^5.1.6
   languageName: unknown
   linkType: soft
 
@@ -3093,6 +3104,26 @@ __metadata:
   version: 0.13.1
   resolution: "type-fest@npm:0.13.1"
   checksum: e6bf2e3c449f27d4ef5d56faf8b86feafbc3aec3025fc9a5fbe2db0a2587c44714521f9c30d8516a833c8c506d6263f5cc11267522b10c6ccdb6cc55b0a9d1c4
+  languageName: node
+  linkType: hard
+
+"typescript@npm:^5.1.6":
+  version: 5.1.6
+  resolution: "typescript@npm:5.1.6"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: b2f2c35096035fe1f5facd1e38922ccb8558996331405eb00a5111cc948b2e733163cc22fab5db46992aba7dd520fff637f2c1df4996ff0e134e77d3249a7350
+  languageName: node
+  linkType: hard
+
+"typescript@patch:typescript@^5.1.6#~builtin<compat/typescript>":
+  version: 5.1.6
+  resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=77c9e2"
+  bin:
+    tsc: bin/tsc
+    tsserver: bin/tsserver
+  checksum: 21e88b0a0c0226f9cb9fd25b9626fb05b4c0f3fddac521844a13e1f30beb8f14e90bd409a9ac43c812c5946d714d6e0dee12d5d02dfc1c562c5aacfa1f49b606
   languageName: node
   linkType: hard
 
