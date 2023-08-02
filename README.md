@@ -39,20 +39,25 @@ npm i @metamask/sdk
 
 ## Web (d)apps
 
-Import the SDK (for possible parameters check this):
-
-
-
+![](./docs/demo_web.gif)
+Follow example on:
+ - [nextjs demo](./packages/examples/nextjs-demo/README.md)
+ - [react demo](./packages/examples/create-react-app/README.md)
 
 ## React Native
 ![](./docs/demo_rn_ios.gif)
-
+Follow example on:
+ - [react native demo](./packages/examples/reactNativeDemo/README.md)
 
 ## NodeJS
 
 ```ts
 import { MetaMaskSDK } from '@metamask/sdk';
-const MMSDK = new MetaMaskSDK({});
+const MMSDK = new MetaMaskSDK({
+  dappMetadata: {
+    name: 'NodeJS example',
+  }
+});
 MMSDK.connect()
   .then((accounts) => {
     console.log('MetaMask SDK is connected', accounts);
@@ -70,13 +75,13 @@ MMSDK.connect()
   });
 ```
 ![](./docs/demo_nodejs.gif)
-
+ - [nodejs example](./packages/examples/nodejs/README.md)
 
 ## SDK Options
 
-You can find the full interface in `sdk.ts` file but here are the useful options:
+You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but here are the useful options:
 
-- `checkInstallationImmediately``: boolean (default: false) - If true, the SDK will check if MetaMask is installed on the user's browser and send a connection request. If not it will prompt the user to install it. If false, the SDK will wait for the `connect` method to be called to check if MetaMask is installed.
+- `checkInstallationImmediately`: boolean (default: false) - If true, the SDK will check if MetaMask is installed on the user's browser and send a connection request. If not it will prompt the user to install it. If false, the SDK will wait for the `connect` method to be called to check if MetaMask is installed.
 
 - `useDeeplink`: boolean (default: false) - If true, the SDK will use deeplinks to connect with MetaMask Mobile. If false, the SDK will use universal links to connect with MetaMask Mobile.
 
@@ -84,3 +89,8 @@ You can find the full interface in `sdk.ts` file but here are the useful options
 
 - `enableDebug`: boolean (default: true) - Send anonymous analytics to MetaMask to help us improve the SDK.
 
+- `modals`: see nodejs example to customize or translate each of the displayed modals.
+
+## Contributing
+
+Please see our [contributing guidelines](./docs/CONTRIBUTING.md) for more information.
