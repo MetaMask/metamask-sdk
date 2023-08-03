@@ -19,7 +19,7 @@ import { Ethereum } from './services/Ethereum';
 import {
   RemoteConnection,
   RemoteConnectionProps,
-} from './services/RemoteConnection';
+} from './services/RemoteConnection/RemoteConnection';
 import { getStorageManager } from './storage-manager/getStorageManager';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';

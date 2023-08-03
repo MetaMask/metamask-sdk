@@ -1,7 +1,7 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
-import { ProviderConstants } from '../constants';
 import { PlatformManager } from '../Platform/PlatfformManager';
-import { RemoteConnection } from '../services/RemoteConnection';
+import { ProviderConstants } from '../constants';
+import { RemoteConnection } from '../services/RemoteConnection/RemoteConnection';
 import { PostMessageStream } from './PostMessageStream';
 import { RemoteCommunicationPostMessageStream } from './RemoteCommunicationPostMessageStream';
 
