@@ -50,7 +50,6 @@ export interface MetaMaskSDKOptions {
    * If MetaMask browser extension is detected, directly use it.
    */
   extensionOnly?: boolean;
-  developerMode?: boolean;
   ui?: SDKUIOptions;
   modals?: RemoteConnectionProps['modals'];
   communicationServerUrl?: string;

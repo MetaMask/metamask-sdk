@@ -15,6 +15,20 @@ lerna-debug.log*
 
 **/.npmrc
 
+# Ignore e2e files
+e2e/allure-report
+e2e/allure-results
+e2e/.idea
+e2e/.vscode
+e2e/*.sample
+e2e/.android.env
+e2e/.ios.env
+e2e/.env
+e2e/.dapps.env
+e2e/browserstack.err
+e2e/local.log
+e2e/appium.log
+
 **/dist
 **/dist-webpack
 **/dist-tsc
