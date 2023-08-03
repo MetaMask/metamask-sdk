@@ -40,12 +40,19 @@ npm i @metamask/sdk
 ## Web (d)apps
 
 ![](./docs/demo_web.gif)
+
 Follow example on:
  - [nextjs demo](./packages/examples/nextjs-demo/README.md)
  - [react demo](./packages/examples/create-react-app/README.md)
+ - [vuejs demo](./packages/examples/vuejs/README.md)
+ - [pure javascript demo](./packages/examples/pure-javascript/README.md)
+
 
 ## React Native
 ![](./docs/demo_rn_ios.gif)
+
+We recommend using RN v0.71.4 or higher otherwise you may encounter significant performance issues on Android.
+
 Follow example on:
  - [react native demo](./packages/examples/reactNativeDemo/README.md)
 
@@ -75,6 +82,9 @@ MMSDK.connect()
   });
 ```
 ![](./docs/demo_nodejs.gif)
+
+Follow example on:
+
  - [nodejs example](./packages/examples/nodejs/README.md)
 
 ## SDK Options
