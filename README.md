@@ -51,6 +51,8 @@ Follow example on:
 ## React Native
 ![](./docs/demo_rn_ios.gif)
 
+We recommend using RN v0.71.4 or higher otherwise you may encounter significant performance issues on Android.
+
 Follow example on:
  - [react native demo](./packages/examples/reactNativeDemo/README.md)
 
