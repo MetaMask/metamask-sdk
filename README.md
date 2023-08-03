@@ -83,9 +83,13 @@ MMSDK.connect()
 ```
 ![](./docs/demo_nodejs.gif)
 
+### Electron
+![](./docs/demo_electron.gif)
+
 Follow example on:
 
- - [nodejs example](./packages/examples/nodejs/README.md)
+- [nodejs example](./packages/examples/nodejs/README.md)
+- [electron example](./packages/examples/electronjs/README.md)
 
 ## SDK Options
 
