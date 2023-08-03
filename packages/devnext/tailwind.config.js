@@ -6,7 +6,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     // Or if using `src` directory:
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "../sdk-react/src/**/*.{ts,tsx}",
+    "../sdk-react-ui/src/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {},

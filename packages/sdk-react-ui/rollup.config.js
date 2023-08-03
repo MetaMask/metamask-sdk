@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
+import postcss from 'rollup-plugin-postcss';
 import json from '@rollup/plugin-json';
 
 
@@ -30,6 +31,16 @@ const config =
         }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),
+        postcss({
+          config: {
+            path: './postcss.config.js',
+          },
+          extensions: ['.css'],
+          minimize: true,
+          inject: {
+            insertAt: 'top',
+          },
+        }),
         json(),
         terser(),
       ],

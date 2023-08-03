@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNetwork, useAccount, useBalance } from '../MetaMaskHooks';
+import { useNetwork, useAccount, useBalance } from '@metamask/sdk-react';
 import { getBalance } from './utils';
 
 const Balance = ({ theme }: { theme: string }) => {
