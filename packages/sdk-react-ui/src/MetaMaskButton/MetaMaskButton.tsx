@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useAccount, useConnect, useNetwork, useSDK } from '../MetaMaskHooks';
+import { useAccount, useConnect, useNetwork, useSDK } from '@metamask/sdk-react';
 import '../style.css';
 import Balance from './Balance';
 import IconNetwork from './IconNetwork';

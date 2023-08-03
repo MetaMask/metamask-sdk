@@ -11,8 +11,7 @@ import {
   useSwitchOrAddNetwork,
   useAccount,
   useBalance,
-  useSDK,
-} from '../MetaMaskHooks';
+} from '@metamask/sdk-react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Chain } from 'wagmi';
 
@@ -25,7 +24,6 @@ export default function Modal({
 }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  const { sdk } = useSDK();
   const { switchOrAddNetwork } = useSwitchOrAddNetwork();
   const { chain, chains } = useNetwork();
 
@@ -45,8 +43,8 @@ export default function Modal({
     setIsOpen(false);
   }
 
-  const changeNetwork = async (chain: Chain) => {
-    await switchOrAddNetwork(chain);
+  const changeNetwork = async (newChain: Chain) => {
+    await switchOrAddNetwork(newChain);
     closeModal();
   };
 
