@@ -18,6 +18,13 @@ The MetaMask SDK instance returns a provider, this provider is the `ethereum` ob
   - [Android](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-mobile.html#android)
   - [iOS](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-mobile.html#ios)
 
+## Features
+- Session persistence
+- Multi Provider (Let user choose between browser extension and mobile wallet)
+- Wagmi Hook Integration (alpha)
+- i18n throuhg Modal customization
+- smart contract library ( upcoming )
+
 # Getting Started
 
 The following code examplifies importing the SDK into a javascript-based app. For other languages, check the sections bellow.
@@ -30,11 +37,34 @@ or
 npm i @metamask/sdk
 ```
 
-Import the SDK (for possible parameters check this):
+## Web (d)apps
+
+![](./docs/demo_web.gif)
+
+Follow example on:
+ - [nextjs demo](./packages/examples/nextjs-demo/README.md)
+ - [react demo](./packages/examples/create-react-app/README.md)
+ - [vuejs demo](./packages/examples/vuejs/README.md)
+ - [pure javascript demo](./packages/examples/pure-javascript/README.md)
+
+
+## React Native
+![](./docs/demo_rn_ios.gif)
+
+We recommend using RN v0.71.4 or higher otherwise you may encounter significant performance issues on Android.
+
+Follow example on:
+ - [react native demo](./packages/examples/reactNativeDemo/README.md)
+
+## NodeJS
 
 ```ts
 import { MetaMaskSDK } from '@metamask/sdk';
-const MMSDK = new MetaMaskSDK({});
+const MMSDK = new MetaMaskSDK({
+  dappMetadata: {
+    name: 'NodeJS example',
+  }
+});
 MMSDK.connect()
   .then((accounts) => {
     console.log('MetaMask SDK is connected', accounts);
@@ -51,7 +81,26 @@ MMSDK.connect()
     console.error(error);
   });
 ```
+![](./docs/demo_nodejs.gif)
 
-# Follow the full documentation
+Follow example on:
 
-[Please access this to read the MetaMask SDK full documentation](https://docs.metamask.io/wallet/how-to/use-sdk/)
+ - [nodejs example](./packages/examples/nodejs/README.md)
+
+## SDK Options
+
+You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but here are the useful options:
+
+- `checkInstallationImmediately`: boolean (default: false) - If true, the SDK will check if MetaMask is installed on the user's browser and send a connection request. If not it will prompt the user to install it. If false, the SDK will wait for the `connect` method to be called to check if MetaMask is installed.
+
+- `useDeeplink`: boolean (default: false) - If true, the SDK will use deeplinks to connect with MetaMask Mobile. If false, the SDK will use universal links to connect with MetaMask Mobile.
+
+- `shouldShimWeb3`: boolean (default: false) - If true, the SDK will shim the `window.web3` object with the provider returned by the SDK (useful for compatibility with older browser).
+
+- `enableDebug`: boolean (default: true) - Send anonymous analytics to MetaMask to help us improve the SDK.
+
+- `modals`: see nodejs example to customize or translate each of the displayed modals.
+
+## Contributing
+
+Please see our [contributing guidelines](./docs/CONTRIBUTING.md) for more information.
