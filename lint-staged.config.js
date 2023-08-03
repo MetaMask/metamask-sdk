@@ -20,7 +20,6 @@ module.exports = {
       // Find the nearest package.json file to the changed file
       const packageDir = findPackageJson(path.dirname(filename));
 
-      console.log(`packageDir: ${packageDir}`, filename);
       // Change to the package directory and run the commands
       return `cd ${packageDir} && eslint --fix ${filename} && prettier --write ${filename}`;
     });
