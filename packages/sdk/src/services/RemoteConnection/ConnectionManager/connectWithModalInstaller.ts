@@ -1,5 +1,3 @@
-// connectionManager.ts
-
 import { EventType } from '@metamask/sdk-communication-layer';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { showInstallModal } from '../ModalManager/showInstallModal';

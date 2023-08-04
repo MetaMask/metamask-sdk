@@ -10,7 +10,7 @@ import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
-import { RemoteConnection } from '../services/RemoteConnection/RemoteConnection';
+import { RemoteConnection } from '../services/RemoteConnection';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { wait } from '../utils/wait';
 

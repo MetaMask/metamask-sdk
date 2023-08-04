@@ -1,5 +1,3 @@
-// connectionManager.ts
-
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {

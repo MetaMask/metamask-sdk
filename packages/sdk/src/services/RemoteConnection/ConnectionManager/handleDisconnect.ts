@@ -1,5 +1,3 @@
-// connectionManager.ts
-
 import { DisconnectOptions } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnectionState } from '../RemoteConnection';
