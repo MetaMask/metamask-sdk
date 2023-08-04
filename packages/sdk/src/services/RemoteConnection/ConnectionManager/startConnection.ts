@@ -14,6 +14,7 @@ export async function startConnection(
   options: RemoteConnectionProps,
 ): Promise<void> {
   if (!state.connector) {
+    console.log('channelConfig is undefined');
     throw new Error('no connector defined');
   }
 
@@ -37,6 +38,7 @@ export async function startConnection(
   let pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
 
   if (!channelConfig) {
+    console.log('channelConfig is undefined');
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
@@ -50,13 +52,15 @@ export async function startConnection(
 
   // first handle secure connection
   if (state.platformManager?.isSecure()) {
+    console.log('AAA');
     // FIXME do we also need to wait for event on secure platform? ready / authorized
     return connectWithDeeplink(state, linkParams);
   }
 
   if (channelConfig?.lastActive) {
+    console.log('BBB');
     return reconnectWithModalOTP(state, options);
   }
-
+  console.log('CCCC');
   return connectWithModalInstaller(state, options, linkParams);
 }

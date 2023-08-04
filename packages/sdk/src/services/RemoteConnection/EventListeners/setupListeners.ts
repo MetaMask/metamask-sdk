@@ -4,46 +4,46 @@ import { Ethereum } from '../../Ethereum';
 import { RemoteConnection, RemoteConnectionState } from '../RemoteConnection';
 
 export function setupListeners(
-  remoteConnectionState: RemoteConnectionState,
+  state: RemoteConnectionState,
   options: RemoteConnection['options'],
 ): void {
-  if (!remoteConnectionState.connector) {
+  if (!state.connector) {
     return;
   }
 
-  if (!remoteConnectionState.platformManager?.isSecure()) {
-    remoteConnectionState.connector.on(EventType.OTP, (otpAnswer: string) => {
+  if (!state.platformManager?.isSecure()) {
+    state.connector.on(EventType.OTP, (otpAnswer: string) => {
       // Prevent double handling OTP message
-      if (remoteConnectionState.otpAnswer === otpAnswer) {
+      if (state.otpAnswer === otpAnswer) {
         return;
       }
 
-      if (remoteConnectionState.developerMode) {
+      if (state.developerMode) {
         console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
       }
-      remoteConnectionState.otpAnswer = otpAnswer;
-      if (!remoteConnectionState.pendingModal) {
-        if (remoteConnectionState.developerMode) {
+      state.otpAnswer = otpAnswer;
+      if (!state.pendingModal) {
+        if (state.developerMode) {
           console.debug(`RemoteConnection::on 'OTP' init pending modal`);
         }
 
         const onDisconnect = () => {
           options.modals.onPendingModalDisconnect?.();
-          remoteConnectionState.pendingModal?.unmount?.();
-          remoteConnectionState.pendingModal?.updateOTPValue?.('');
+          state.pendingModal?.unmount?.();
+          state.pendingModal?.updateOTPValue?.('');
         };
-        remoteConnectionState.pendingModal = options.modals.otp?.(onDisconnect);
+        state.pendingModal = options.modals.otp?.(onDisconnect);
       }
-      remoteConnectionState.pendingModal?.updateOTPValue?.(otpAnswer);
-      remoteConnectionState.pendingModal?.mount?.();
+      state.pendingModal?.updateOTPValue?.(otpAnswer);
+      state.pendingModal?.mount?.();
     });
   }
 
   // TODO this event can probably be removed in future version as it was created to maintain backward compatibility with older wallet (< 7.0.0).
-  remoteConnectionState.connector.on(
+  state.connector.on(
     EventType.SDK_RPC_CALL,
     async (requestParams: RequestArguments) => {
-      if (remoteConnectionState.developerMode) {
+      if (state.developerMode) {
         console.debug(
           `RemoteConnection::on 'sdk_rpc_call' requestParam`,
           requestParams,
@@ -51,21 +51,21 @@ export function setupListeners(
       }
       const provider = Ethereum.getProvider();
       const result = await provider.request(requestParams);
-      if (remoteConnectionState.developerMode) {
+      if (state.developerMode) {
         console.debug(`RemoteConnection::on 'sdk_rpc_call' result`, result);
       }
       // Close opened modals
-      remoteConnectionState.pendingModal?.unmount?.();
+      state.pendingModal?.unmount?.();
     },
   );
 
-  remoteConnectionState.connector.on(EventType.AUTHORIZED, async () => {
+  state.connector.on(EventType.AUTHORIZED, async () => {
     try {
-      if (remoteConnectionState.developerMode) {
+      if (state.developerMode) {
         console.debug(
           `RemoteConnection::on 'authorized' closing modals`,
-          remoteConnectionState.pendingModal,
-          remoteConnectionState.installModal,
+          state.pendingModal,
+          state.installModal,
         );
       }
 
@@ -75,14 +75,14 @@ export function setupListeners(
       provider._setConnected();
 
       // close modals
-      remoteConnectionState.pendingModal?.unmount?.();
-      remoteConnectionState.installModal?.unmount?.(false);
-      remoteConnectionState.otpAnswer = undefined;
-      remoteConnectionState.authorized = true;
+      state.pendingModal?.unmount?.();
+      state.installModal?.unmount?.(false);
+      state.otpAnswer = undefined;
+      state.authorized = true;
 
       provider.emit('connect');
 
-      if (remoteConnectionState.developerMode) {
+      if (state.developerMode) {
         console.debug(
           `RCPMS::on 'authorized' provider.state`,
           provider.getState(),
@@ -95,30 +95,30 @@ export function setupListeners(
     }
   });
 
-  remoteConnectionState.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
-    if (remoteConnectionState.developerMode) {
+  state.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
+    if (state.developerMode) {
       console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
     }
 
-    if (!remoteConnectionState.platformManager?.isSecure()) {
+    if (!state.platformManager?.isSecure()) {
       const provider = Ethereum.getProvider();
       provider.handleDisconnect({ terminate: false });
-      remoteConnectionState.pendingModal?.updateOTPValue?.('');
+      state.pendingModal?.updateOTPValue?.('');
     }
   });
 
-  remoteConnectionState.connector.on(EventType.TERMINATE, () => {
-    if (remoteConnectionState.platformManager?.isBrowser()) {
+  state.connector.on(EventType.TERMINATE, () => {
+    if (state.platformManager?.isBrowser()) {
       // TODO use a modal or let user customize messsage instead
       // eslint-disable-next-line no-alert
       alert(`SDK Connection has been terminated from MetaMask.`);
     } else {
       console.info(`SDK Connection has been terminated`);
     }
-    remoteConnectionState.pendingModal?.unmount?.();
-    remoteConnectionState.pendingModal = undefined;
-    remoteConnectionState.otpAnswer = undefined;
-    remoteConnectionState.authorized = false;
+    state.pendingModal?.unmount?.();
+    state.pendingModal = undefined;
+    state.otpAnswer = undefined;
+    state.authorized = false;
 
     const provider = Ethereum.getProvider();
     provider.handleDisconnect({ terminate: true });

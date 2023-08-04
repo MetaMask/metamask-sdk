@@ -19,6 +19,7 @@ import { ProviderService } from '../ProviderService';
 import { initializeConnector } from './ConnectionInitializer/initializeConnector';
 import { startConnection } from './ConnectionManager/startConnection';
 import { setupListeners } from './EventListeners/setupListeners';
+import { showActiveModal } from './ModalManager/showActiveModal';
 
 export interface RemoteConnectionProps {
   timer?: {
@@ -60,29 +61,26 @@ export interface RemoteConnectionProps {
 }
 
 export interface RemoteConnectionState {
-  connector: RemoteCommunication | undefined;
-  universalLink: string | undefined;
+  connector?: RemoteCommunication;
+  universalLink?: string;
   developerMode: boolean;
   authorized: boolean;
-  communicationLayerPreference: CommunicationLayerPreference | undefined;
-  platformManager: PlatformManager | undefined;
-  pendingModal:
-    | {
-        mount?: () => void;
-        updateOTPValue?: (otpValue: string) => void;
-        unmount?: () => void;
-      }
-    | undefined;
-  installModal:
-    | {
-        unmount?: (shouldTerminate: boolean) => void;
-        mount?: (link: string) => void;
-      }
-    | undefined;
+  communicationLayerPreference?: CommunicationLayerPreference;
+  platformManager?: PlatformManager;
+  pendingModal?: {
+    mount?: () => void;
+    updateOTPValue?: (otpValue: string) => void;
+    unmount?: () => void;
+  };
+
+  installModal?: {
+    unmount?: (shouldTerminate: boolean) => void;
+    mount?: (link: string) => void;
+  };
   /**
    * Wait for value from metamask mobile
    */
-  otpAnswer: string | undefined;
+  otpAnswer?: string;
 }
 
 export class RemoteConnection implements ProviderService {
@@ -95,8 +93,8 @@ export class RemoteConnection implements ProviderService {
     authorized: false,
     communicationLayerPreference: undefined,
     platformManager: undefined,
-    pendingModal: {},
-    installModal: {},
+    pendingModal: undefined,
+    installModal: undefined,
     otpAnswer: undefined,
   };
 
@@ -118,10 +116,7 @@ export class RemoteConnection implements ProviderService {
       options.modals.otp = PendingModal;
     }
 
-    this.state.connector = initializeConnector({
-      options: this.options,
-      developerMode: this.state.developerMode,
-    });
+    initializeConnector(this.state, this.options);
 
     setupListeners(this.state, this.options);
   }
@@ -131,7 +126,11 @@ export class RemoteConnection implements ProviderService {
    * It doesn't wait for the actual connection to be authorized.
    */
   async startConnection(): Promise<void> {
-    await startConnection(this.state, this.options);
+    return startConnection(this.state, this.options);
+  }
+
+  showActiveModal() {
+    return showActiveModal(this.state);
   }
 
   getUniversalLink() {
@@ -139,22 +138,6 @@ export class RemoteConnection implements ProviderService {
       throw new Error('connection not started. run startConnection() first.');
     }
     return this.state.universalLink;
-  }
-
-  showActiveModal() {
-    if (this.state.authorized) {
-      if (this.state.developerMode) {
-        console.debug(`RemoteConnection::showActiveModal() already authorized`);
-      }
-      return;
-    }
-
-    if (this.state.pendingModal) {
-      // only display the modal if the connection is not authorized
-      this.state.pendingModal.mount?.();
-    } else if (this.state.installModal) {
-      this.state.installModal.mount?.(this.getUniversalLink());
-    }
   }
 
   getChannelConfig(): ChannelConfig | undefined {

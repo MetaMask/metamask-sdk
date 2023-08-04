@@ -1,15 +1,14 @@
 import { RemoteCommunication } from '@metamask/sdk-communication-layer';
 import packageJson from '../../../../package.json';
-import { RemoteConnection } from '../RemoteConnection';
+import {
+  RemoteConnectionProps,
+  RemoteConnectionState,
+} from '../RemoteConnection';
 
-export function initializeConnector({
-  options,
-  developerMode = false,
-}: {
-  options: RemoteConnection['options'];
-  developerMode?: boolean;
-  connector?: RemoteCommunication;
-}) {
+export function initializeConnector(
+  state: RemoteConnectionState,
+  options: RemoteConnectionProps,
+) {
   const {
     dappMetadata,
     communicationLayerPreference,
@@ -24,13 +23,13 @@ export function initializeConnector({
     logging,
   } = options;
 
-  if (developerMode) {
+  if (state.developerMode) {
     console.debug(
       `RemoteConnection::initializeConnector() intialize connector`,
     );
   }
 
-  const connector = new RemoteCommunication({
+  state.connector = new RemoteCommunication({
     platformType: platformManager.getPlatformType(),
     communicationLayerPreference,
     transports,
@@ -45,7 +44,7 @@ export function initializeConnector({
   });
 
   if (timer) {
-    if (developerMode) {
+    if (state.developerMode) {
       console.debug(`RemoteConnection::setup reset background timer`, timer);
     }
 
@@ -56,6 +55,4 @@ export function initializeConnector({
       return false;
     }, 10000);
   }
-
-  return connector;
 }
