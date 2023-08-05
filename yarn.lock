@@ -4200,6 +4200,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": ^2.3.0
+    "@socket.io/sticky": ^1.0.3
     analytics-node: ^6.2.0
     body-parser: ^1.20.2
     cors: ^2.8.5
@@ -4219,6 +4220,7 @@ __metadata:
     rate-limiter-flexible: ^2.3.8
     rimraf: ^4.4.0
     socket.io: ^4.4.1
+    socket.io-redis: ^6.1.1
     uuid: ^8.3.2
   languageName: unknown
   linkType: soft
@@ -5556,6 +5558,13 @@ __metadata:
   version: 3.1.0
   resolution: "@socket.io/component-emitter@npm:3.1.0"
   checksum: db069d95425b419de1514dffe945cc439795f6a8ef5b9465715acf5b8b50798e2c91b8719cbf5434b3fe7de179d6cdcd503c277b7871cb3dd03febb69bdd50fa
+  languageName: node
+  linkType: hard
+
+"@socket.io/sticky@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@socket.io/sticky@npm:1.0.3"
+  checksum: 7f4edf3ac19327468e7d581d967237466854547f89a718996121b33653e0b872985eaf632bb2be9b1b269e998b2f55bf8b798e0a5efefc641befc96502dc23c6
   languageName: node
   linkType: hard
 
@@ -12204,6 +12213,13 @@ __metadata:
   version: 1.2.1
   resolution: "denodeify@npm:1.2.1"
   checksum: a85c8f7fce5626e311edd897c27ad571b29393c4a739dc29baee48328e09edd82364ff697272dd612462c67e48b4766389642b5bdfaea0dc114b7c6a276c0eae
+  languageName: node
+  linkType: hard
+
+"denque@npm:^1.5.0":
+  version: 1.5.1
+  resolution: "denque@npm:1.5.1"
+  checksum: 4375ad19d5cea99f90effa82a8cecdaa10f4eb261fbcd7e47cd753ff2737f037aac8f7f4e031cc77f3966314c491c86a0d3b20c128aeee57f791b4662c45108e
   languageName: node
   linkType: hard
 
@@ -21329,6 +21345,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"notepack.io@npm:~2.2.0":
+  version: 2.2.0
+  resolution: "notepack.io@npm:2.2.0"
+  checksum: e44ac029e42c050c572877f1fa3fe77af573a7394d7002980ce0e00ae45a7a9a157bc8f9d0f6a80345c53439e4f04c4cbd6db3582cc2541b5fb9a52c85360ceb
+  languageName: node
+  linkType: hard
+
 "npm-normalize-package-bin@npm:^3.0.0":
   version: 3.0.1
   resolution: "npm-normalize-package-bin@npm:3.0.1"
@@ -24383,6 +24406,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"redis-commands@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "redis-commands@npm:1.7.0"
+  checksum: d1ff7fbcb5e54768c77f731f1d49679d2a62c3899522c28addb4e2e5813aea8bcac3f22519d71d330224c3f2937f935dfc3d8dc65e90db0f5fe22dc2c1515aa7
+  languageName: node
+  linkType: hard
+
+"redis-errors@npm:^1.0.0, redis-errors@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "redis-errors@npm:1.2.0"
+  checksum: f28ac2692113f6f9c222670735aa58aeae413464fd58ccf3fce3f700cae7262606300840c802c64f2b53f19f65993da24dc918afc277e9e33ac1ff09edb394f4
+  languageName: node
+  linkType: hard
+
+"redis-parser@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "redis-parser@npm:3.0.0"
+  dependencies:
+    redis-errors: ^1.0.0
+  checksum: 89290ae530332f2ae37577647fa18208d10308a1a6ba750b9d9a093e7398f5e5253f19855b64c98757f7129cccce958e4af2573fdc33bad41405f87f1943459a
+  languageName: node
+  linkType: hard
+
+"redis@npm:^3.0.0":
+  version: 3.1.2
+  resolution: "redis@npm:3.1.2"
+  dependencies:
+    denque: ^1.5.0
+    redis-commands: ^1.7.0
+    redis-errors: ^1.2.0
+    redis-parser: ^3.0.0
+  checksum: baec42198626b22d2dfc063b6a6f30394daee994c21f380e58ecf91c3edee333c4e32907c30f082fe66d2177695f7b2567902eef399ecb22da3e199ea6363a30
+  languageName: node
+  linkType: hard
+
 "regenerate-unicode-properties@npm:^10.1.0":
   version: 10.1.0
   resolution: "regenerate-unicode-properties@npm:10.1.0"
@@ -25905,6 +25963,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"socket.io-adapter@npm:~2.2.0":
+  version: 2.2.0
+  resolution: "socket.io-adapter@npm:2.2.0"
+  checksum: 751d161f973ec8d8112ebce5715daf06f79c5ed1d9388f4856c62094cf9eecfbd917142add339517eb1c6f84ee8b04377a799888a1e3207567d28d516088e656
+  languageName: node
+  linkType: hard
+
 "socket.io-adapter@npm:~2.5.2":
   version: 2.5.2
   resolution: "socket.io-adapter@npm:2.5.2"
@@ -25933,6 +25998,19 @@ __metadata:
     "@socket.io/component-emitter": ~3.1.0
     debug: ~4.3.1
   checksum: 61540ef99af33e6a562b9effe0fad769bcb7ec6a301aba5a64b3a8bccb611a0abdbe25f469933ab80072582006a78ca136bf0ad8adff9c77c9953581285e2263
+  languageName: node
+  linkType: hard
+
+"socket.io-redis@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "socket.io-redis@npm:6.1.1"
+  dependencies:
+    debug: ~4.3.1
+    notepack.io: ~2.2.0
+    redis: ^3.0.0
+    socket.io-adapter: ~2.2.0
+    uid2: 0.0.3
+  checksum: 3add75bc82101747175425477b961d69421f10ce92616bea1a4991f08c41456ea737d0ccf660730eaeb88b674a370c82e5a360418c5d391d19ee66461b957b38
   languageName: node
   linkType: hard
 
@@ -27814,6 +27892,13 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 22b028b6454c4d684c76617e9ac5b8da0e56611b32cd5d89e797225d6f1022f697a5642d9084319436df3aed462225749f8287d37bf67dccda1ac9d0365dd950
+  languageName: node
+  linkType: hard
+
+"uid2@npm:0.0.3":
+  version: 0.0.3
+  resolution: "uid2@npm:0.0.3"
+  checksum: c8f64acfa94aa42d90c1a61ba9df0162f0db0d28c211e21cf5792b3d70b7ad9fd75d19c7cadcce81896ea111335e57e65891a3b6d0a1343a9adf45abf3d4c47d
   languageName: node
   linkType: hard
 

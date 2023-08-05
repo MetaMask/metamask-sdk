@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '4000:4000'
+    depends_on:
+      - redis
+
+  redis:
+    image: 'redis:latest'
+    ports:
+      - '6379:6379'

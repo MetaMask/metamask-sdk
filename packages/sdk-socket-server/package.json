@@ -19,6 +19,7 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "echo 'N/A'",
     "debug": "NODE_ENV=development nodemon index.js --trace-warnings",
+    "debug:cluster": "NODE_ENV=development nodemon index_cluster.js --trace-warnings",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -26,10 +27,14 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "node index.js",
+    "start:cluster": "node index_cluster.js",
+    "start:server": "docker-compose up --build",
+    "stop:server": "docker-compose down",
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'"
   },
   "dependencies": {
+    "@socket.io/sticky": "^1.0.3",
     "analytics-node": "^6.2.0",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -40,6 +45,7 @@
     "rate-limiter-flexible": "^2.3.8",
     "rimraf": "^4.4.0",
     "socket.io": "^4.4.1",
+    "socket.io-redis": "^6.1.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

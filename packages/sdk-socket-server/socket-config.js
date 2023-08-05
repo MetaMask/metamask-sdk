@@ -58,7 +58,7 @@ module.exports = (server) => {
         return socket.emit(`channel_created-${id}`, id);
       } catch (error) {
         setLastConnectionErrorTimestamp(Date.now());
-        increaseRateLimits(90, 0);
+        increaseRateLimits(500, 0); // TODO: check this value
         console.error('ERROR> Error on create_channel:', error);
         // emit an error message back to the client, if appropriate
         return socket.emit(`error`, { error: error.message });
@@ -98,7 +98,7 @@ module.exports = (server) => {
         return socket.to(id).emit(`message-${id}`, { id, message });
       } catch (error) {
         setLastConnectionErrorTimestamp(Date.now());
-        increaseRateLimits(90, 0);
+        increaseRateLimits(500, 0); // TODO: check this value
         console.error(`ERROR> Error on message: ${error}`);
         // emit an error message back to the client, if appropriate
         return socket.emit(`message-${id}`, { error: error.message });
