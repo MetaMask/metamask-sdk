@@ -1,12 +1,6 @@
 const { Server } = require('socket.io');
 const uuid = require('uuid');
-const {
-  rateLimiter,
-  rateLimiterMesssage,
-  resetRateLimits,
-  increaseRateLimits,
-  setLastConnectionErrorTimestamp,
-} = require('./rate-limiter');
+const { rateLimiter, rateLimiterMessage } = require('./rate-limiter');
 
 const { isDevelopment } = require('./utils');
 
@@ -51,13 +45,9 @@ module.exports = (server) => {
           });
         }
 
-        resetRateLimits();
-
         socket.join(id);
         return socket.emit(`channel_created-${id}`, id);
       } catch (error) {
-        setLastConnectionErrorTimestamp(Date.now());
-        increaseRateLimits(500, 0); // TODO: check this value
         console.error('ERROR> Error on create_channel:', error);
         // emit an error message back to the client, if appropriate
         return socket.emit(`error`, { error: error.message });
@@ -66,7 +56,7 @@ module.exports = (server) => {
 
     socket.on('message', async ({ id, message, context, plaintext }) => {
       try {
-        await rateLimiterMesssage.consume(id);
+        await rateLimiterMessage.consume(id);
 
         if (isDevelopment) {
           // Minify encrypted message for easier readibility
@@ -92,12 +82,8 @@ module.exports = (server) => {
           }
         }
 
-        resetRateLimits();
-
         return socket.to(id).emit(`message-${id}`, { id, message });
       } catch (error) {
-        setLastConnectionErrorTimestamp(Date.now());
-        increaseRateLimits(500, 0); // TODO: check this value
         console.error(`ERROR> Error on message: ${error}`);
         // emit an error message back to the client, if appropriate
         return socket.emit(`message-${id}`, { error: error.message });
@@ -106,7 +92,7 @@ module.exports = (server) => {
 
     socket.on('ping', async ({ id, message, context }) => {
       try {
-        await rateLimiterMesssage.consume(id);
+        await rateLimiterMessage.consume(id);
 
         if (isDevelopment) {
           console.log(`DEBUG> ping-${id} -> `, { id, context, message });
