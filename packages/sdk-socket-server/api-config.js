@@ -22,17 +22,22 @@ app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
 
-const analytics = new Analytics(
-  isDevelopment
-    ? process.env.SEGMENT_API_KEY_DEBUG
-    : process.env.SEGMENT_API_KEY_PRODUCTION,
-  {
-    flushInterval: isDevelopment ? 1000 : 10000,
-    errorHandler: (err) => {
-      console.error(`ERROR> Analytics-node flush failed: ${err}`);
-    },
+const apiKey = isDevelopment
+  ? process.env.SEGMENT_API_KEY_DEBUG || ''
+  : process.env.SEGMENT_API_KEY_PRODUCTION || '';
+
+if (!apiKey) {
+  console.warn(
+    'WARNING> No API key provided for Analytics. Using an empty string as a fallback.',
+  );
+}
+
+const analytics = new Analytics(apiKey, {
+  flushInterval: isDevelopment ? 1000 : 10000,
+  errorHandler: (err) => {
+    console.error(`ERROR> Analytics-node flush failed: ${err}`);
   },
-);
+});
 
 app.get('/', (_req, res) => {
   res.json({ success: true });
