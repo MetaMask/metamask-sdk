@@ -13,7 +13,10 @@ module.exports = (server) => {
 
   io.on('connection', (socket) => {
     const socketId = socket.id;
-    const clientIp = socket.request.socket.remoteAddress;
+    const clientIp =
+      socket.request.headers['x-forwarded-for'] ||
+      socket.request.socket.remoteAddress;
+
     console.log('INFO> a user connected');
 
     if (isDevelopment) {
@@ -22,7 +25,7 @@ module.exports = (server) => {
 
     socket.on('create_channel', async (id) => {
       try {
-        await rateLimiter.consume(id);
+        await rateLimiter.consume(clientIp);
 
         if (isDevelopment) {
           console.log('DEBUG> create channel', id);
@@ -56,7 +59,7 @@ module.exports = (server) => {
 
     socket.on('message', async ({ id, message, context, plaintext }) => {
       try {
-        await rateLimiterMessage.consume(id);
+        await rateLimiterMessage.consume(clientIp);
 
         if (isDevelopment) {
           // Minify encrypted message for easier readibility
@@ -92,7 +95,7 @@ module.exports = (server) => {
 
     socket.on('ping', async ({ id, message, context }) => {
       try {
-        await rateLimiterMessage.consume(id);
+        await rateLimiterMessage.consume(clientIp);
 
         if (isDevelopment) {
           console.log(`DEBUG> ping-${id} -> `, { id, context, message });
@@ -107,7 +110,7 @@ module.exports = (server) => {
 
     socket.on('join_channel', async (id, test) => {
       try {
-        await rateLimiter.consume(id);
+        await rateLimiter.consume(clientIp);
       } catch (e) {
         return;
       }
