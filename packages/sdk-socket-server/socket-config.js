@@ -3,6 +3,7 @@ const uuid = require('uuid');
 const { rateLimiter, rateLimiterMessage } = require('./rate-limiter');
 
 const { isDevelopment } = require('./utils');
+const { ErrorCategories, emitError } = require('./errorHandler');
 
 module.exports = (server) => {
   const io = new Server(server, {
@@ -32,28 +33,43 @@ module.exports = (server) => {
         }
 
         if (!uuid.validate(id)) {
-          return socket.emit(`message-${id}`, {
-            error: 'must specify a valid id',
-          });
+          return emitError(
+            socket,
+            id,
+            'Must specify a valid id',
+            ErrorCategories.VALIDATION,
+          );
         }
 
         const room = io.sockets.adapter.rooms.get(id);
         if (!id) {
-          return socket.emit(`message-${id}`, { error: 'must specify an id' });
+          return emitError(
+            socket,
+            id,
+            'Must specify an id',
+            ErrorCategories.VALIDATION,
+          );
         }
 
         if (room) {
-          return socket.emit(`message-${id}`, {
-            error: 'room already created',
-          });
+          return emitError(
+            socket,
+            id,
+            'Room already created',
+            ErrorCategories.VALIDATION,
+          );
         }
 
         socket.join(id);
         return socket.emit(`channel_created-${id}`, id);
       } catch (error) {
         console.error('ERROR> Error on create_channel:', error);
-        // emit an error message back to the client, if appropriate
-        return socket.emit(`error`, { error: error.message });
+        return emitError(
+          socket,
+          id,
+          `create_channel: ${error.message}`,
+          ErrorCategories.SERVER,
+        );
       }
     });
 
@@ -88,8 +104,12 @@ module.exports = (server) => {
         return socket.to(id).emit(`message-${id}`, { id, message });
       } catch (error) {
         console.error(`ERROR> Error on message: ${error}`);
-        // emit an error message back to the client, if appropriate
-        return socket.emit(`message-${id}`, { error: error.message });
+        return emitError(
+          socket,
+          id,
+          `message: ${error.message}`,
+          ErrorCategories.MESSAGE,
+        );
       }
     });
 
@@ -103,8 +123,7 @@ module.exports = (server) => {
         socket.to(id).emit(`ping-${id}`, { id, message });
       } catch (error) {
         console.error('ERROR> Error on ping:', error);
-        // emit an error message back to the client, if appropriate
-        socket.emit(`ping-${id}`, { error: error.message });
+        emitError(socket, id, `ping: ${error.message}`, ErrorCategories.PING);
       }
     });
 
@@ -112,30 +131,35 @@ module.exports = (server) => {
       try {
         await rateLimiter.consume(clientIp);
       } catch (e) {
-        return;
-      }
-
-      if (isDevelopment) {
-        console.log(`DEBUG> join_channel ${id} ${test}`);
+        emitError(
+          socket,
+          id,
+          'Rate limit exceeded',
+          ErrorCategories.RATE_LIMIT,
+        );
       }
 
       if (!uuid.validate(id)) {
-        socket.emit(`message-${id}`, { error: 'must specify a valid id' });
-        return;
+        emitError(
+          socket,
+          id,
+          'Must specify a valid id',
+          ErrorCategories.VALIDATION,
+        );
       }
 
       const room = io.sockets.adapter.rooms.get(id);
       if (isDevelopment) {
         console.log(`DEBUG> join_channel ${id} room.size=${room && room.size}`);
+        console.log(`DEBUG> join_channel ${id} ${test}`);
       }
 
       if (room && room.size > 2) {
         if (isDevelopment) {
           console.log(`DEBUG> join_channel ${id} room already full`);
         }
-        socket.emit(`message-${id}`, { error: 'room already full' });
+        emitError(socket, id, 'Room already full', ErrorCategories.VALIDATION);
         io.sockets.in(id).socketsLeave(id);
-        return;
       }
 
       socket.join(id);
