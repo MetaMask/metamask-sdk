@@ -22,22 +22,31 @@ app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
 
-const apiKey = isDevelopment
-  ? process.env.SEGMENT_API_KEY_DEBUG || ''
-  : process.env.SEGMENT_API_KEY_PRODUCTION || '';
+let analytics;
 
+const apiKey = isDevelopment
+  ? process.env.SEGMENT_API_KEY_DEBUG
+  : process.env.SEGMENT_API_KEY_PRODUCTION;
+
+// eslint-disable-next-line no-negated-condition
 if (!apiKey) {
   console.warn(
-    'WARNING> No API key provided for Analytics. Using an empty string as a fallback.',
+    'WARNING> No API key provided for Analytics. Analytics will be disabled.',
   );
-}
 
-const analytics = new Analytics(apiKey, {
-  flushInterval: isDevelopment ? 1000 : 10000,
-  errorHandler: (err) => {
-    console.error(`ERROR> Analytics-node flush failed: ${err}`);
-  },
-});
+  // Mocking the Analytics methods you might use in the app.
+  analytics = {
+    // eslint-disable-next-line no-empty-function
+    track: () => {},
+  };
+} else {
+  analytics = new Analytics(apiKey, {
+    flushInterval: isDevelopment ? 1000 : 10000,
+    errorHandler: (err) => {
+      console.error(`ERROR> Analytics-node flush failed: ${err}`);
+    },
+  });
+}
 
 app.get('/', (_req, res) => {
   res.json({ success: true });
