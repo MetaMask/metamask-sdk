@@ -6,8 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const { LRUCache } = require('lru-cache');
 const Analytics = require('analytics-node');
-
-const isDevelopment = process.env.NODE_ENV === 'development';
+const { isDevelopment } = require('./utils');
 
 const userIdHashCache = new LRUCache({
   max: 5000,

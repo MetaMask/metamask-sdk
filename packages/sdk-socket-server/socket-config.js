@@ -1,4 +1,3 @@
-/* eslint-disable node/no-process-env */
 const { Server } = require('socket.io');
 const uuid = require('uuid');
 const {
@@ -9,7 +8,7 @@ const {
   setLastConnectionErrorTimestamp,
 } = require('./rate-limiter');
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const { isDevelopment } = require('./utils');
 
 module.exports = (server) => {
   const io = new Server(server, {

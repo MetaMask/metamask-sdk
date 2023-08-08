@@ -4,9 +4,7 @@ const http = require('http');
 
 const { app, analytics } = require('./api-config');
 const configureSocketIO = require('./socket-config');
-const { cleanupAndExit } = require('./utils');
-
-const isDevelopment = process.env.NODE_ENV === 'development';
+const { cleanupAndExit, isDevelopment } = require('./utils');
 
 const server = http.createServer(app);
 configureSocketIO(server); // configure socket.io server

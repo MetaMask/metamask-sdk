@@ -1,18 +1,19 @@
 /* eslint-disable node/no-process-env */
 require('dotenv').config();
-const http = require('http');
-const { app, analytics } = require('./api-config');
-const configureSocketIO = require('./socket-config');
-const { cleanupAndExit } = require('./utils');
-const cluster = require('cluster');
 
+const http = require('http');
+const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
-console.log('INFO> numCPUs', numCPUs);
 
 const { setupMaster, setupWorker } = require('@socket.io/sticky');
 const redisAdapter = require('socket.io-redis');
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const configureSocketIO = require('./socket-config');
+const { app, analytics } = require('./api-config');
+const { cleanupAndExit } = require('./utils');
+
+console.log('INFO> numCPUs:', numCPUs);
+console.log(`INFO> Environment: ${process.env.NODE_ENV || 'PRODUCTION'}`);
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
@@ -50,6 +51,4 @@ if (cluster.isMaster) {
   // Register event listeners for process termination events for cleanup in each worker.
   process.on('SIGINT', () => cleanupAndExit(server, analytics));
   process.on('SIGTERM', () => cleanupAndExit(server, analytics));
-
-  console.log('INFO> isDevelopment?', isDevelopment);
 }

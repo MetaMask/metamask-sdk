@@ -41,7 +41,11 @@ const cleanupAndExit = async (server, analytics) => {
   }
 };
 
+// eslint-disable-next-line node/no-process-env
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 module.exports = {
   exitGracefully,
   cleanupAndExit,
+  isDevelopment,
 };
