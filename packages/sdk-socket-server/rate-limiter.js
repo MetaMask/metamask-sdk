@@ -3,8 +3,8 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 let rateLimitPoints = 10;
 let rateLimitMessagePoints = 100;
-const rateLimitPointsMax = 40;
-const rateLimitMessagePointsMax = 400;
+const rateLimitPointsMax = 100;
+const rateLimitMessagePointsMax = 1000;
 let lastConnectionErrorTimestamp;
 
 // Store the initial values

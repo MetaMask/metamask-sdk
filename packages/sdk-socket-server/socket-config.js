@@ -29,7 +29,7 @@ module.exports = (server) => {
 
     socket.on('create_channel', async (id) => {
       try {
-        await rateLimiter.consume(socket.handshake.address);
+        await rateLimiter.consume(id);
 
         if (isDevelopment) {
           console.log('DEBUG> create channel', id);
@@ -67,7 +67,7 @@ module.exports = (server) => {
 
     socket.on('message', async ({ id, message, context, plaintext }) => {
       try {
-        await rateLimiterMesssage.consume(socket.handshake.address);
+        await rateLimiterMesssage.consume(id);
 
         if (isDevelopment) {
           // Minify encrypted message for easier readibility
@@ -107,7 +107,7 @@ module.exports = (server) => {
 
     socket.on('ping', async ({ id, message, context }) => {
       try {
-        await rateLimiterMesssage.consume(socket.handshake.address);
+        await rateLimiterMesssage.consume(id);
 
         if (isDevelopment) {
           console.log(`DEBUG> ping-${id} -> `, { id, context, message });
@@ -122,7 +122,7 @@ module.exports = (server) => {
 
     socket.on('join_channel', async (id, test) => {
       try {
-        await rateLimiter.consume(socket.handshake.address);
+        await rateLimiter.consume(id);
       } catch (e) {
         return;
       }
