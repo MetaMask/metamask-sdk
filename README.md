@@ -69,7 +69,6 @@ MMSDK.connect()
   .then((accounts) => {
     console.log('MetaMask SDK is connected', accounts);
     const ethereum = MMSDK.getProvider();
-    const ethereum = sdk.getProvider();
     const balance = await ethereum.request({
       method: 'eth_getBalance',
       params: accounts,
