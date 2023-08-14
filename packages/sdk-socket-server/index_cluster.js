@@ -45,7 +45,10 @@ if (cluster.isMaster) {
 
   // Configuring the Socket.IO server and attaching the redis adapter.
   const io = configureSocketIO(server);
-  io.adapter(redisAdapter({ host: 'redis', port: 6379 }));
+
+  const redisHost = process.env.REDIS_SERVER_HOST || 'redis';
+  const redisPort = process.env.REDIS_SERVER_PORT || 6379;
+  io.adapter(redisAdapter({ host: redisHost, port: redisPort }));
   setupWorker(io);
 
   // Register event listeners for process termination events for cleanup in each worker.
