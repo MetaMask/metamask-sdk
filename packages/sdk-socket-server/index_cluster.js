@@ -5,7 +5,7 @@ const http = require('http');
 const cluster = require('cluster');
 const numCPUs = require('os').cpus().length;
 
-const { setupMaster, setupWorker } = require('@socket.io/sticky');
+const { setupWorker } = require('@socket.io/sticky');
 const redisAdapter = require('socket.io-redis');
 
 const configureSocketIO = require('./socket-config');
@@ -15,21 +15,10 @@ const { cleanupAndExit } = require('./utils');
 console.log('INFO> numCPUs:', numCPUs);
 console.log(`INFO> Environment: ${process.env.NODE_ENV || 'PRODUCTION'}`);
 
+const port = process.env.port || 4000;
+
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
-
-  // Creating a server instance here but it won't be used to listen.
-  // It is only for the sticky session setup.
-  const httpServer = http.createServer(app);
-  setupMaster(httpServer, {
-    loadBalancingMethod: 'least-connection',
-  });
-
-  const port = process.env.port || 4000;
-  httpServer.listen(port, () => {
-    console.log(`INFO> Master listening on *:${port}`);
-  });
-
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
@@ -42,6 +31,9 @@ if (cluster.isMaster) {
   console.log(`Worker ${process.pid} started`);
 
   const server = http.createServer(app);
+  server.listen(port, () => {
+    console.log(`INFO> Worker listening on *:${port}`);
+  });
 
   // Configuring the Socket.IO server and attaching the redis adapter.
   const io = configureSocketIO(server);

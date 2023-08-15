@@ -15,6 +15,16 @@ const userIdHashCache = new LRUCache({
 
 const app = express();
 
+if (isDevelopment) {
+  // Log the worker ID with every request
+  app.use((req, _res, next) => {
+    console.log(
+      `Worker ${process.pid} received request for ${req.method} ${req.originalUrl}`,
+    );
+    next();
+  });
+}
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -48,15 +58,16 @@ if (!apiKey) {
   });
 }
 
-// app.get('/', (_req, res) => {
-//   try {
-//     return res.json({ success: true });
-//   } catch (error) {
-//     return res.json({ error });
-//   }
-// });
+app.get('/', (_req, res) => {
+  try {
+    return res.json({ success: true });
+  } catch (error) {
+    return res.json({ error });
+  }
+});
 
 app.post('/debug', (_req, res) => {
+  console.log('CALLED');
   try {
     const { body } = _req;
 
