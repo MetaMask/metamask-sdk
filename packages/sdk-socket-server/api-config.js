@@ -51,7 +51,7 @@ if (!apiKey) {
   };
 } else {
   analytics = new Analytics(apiKey, {
-    flushInterval: isDevelopment ? 1000 : 10000,
+    flushInterval: isDevelopment ? 10000 : 10000,
     errorHandler: (err) => {
       console.error(`ERROR> Analytics-node flush failed: ${err}`);
     },
