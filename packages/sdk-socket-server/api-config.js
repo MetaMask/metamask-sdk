@@ -48,9 +48,13 @@ if (!apiKey) {
   });
 }
 
-app.get('/', (_req, res) => {
-  res.json({ success: true });
-});
+// app.get('/', (_req, res) => {
+//   try {
+//     return res.json({ success: true });
+//   } catch (error) {
+//     return res.json({ error });
+//   }
+// });
 
 app.post('/debug', (_req, res) => {
   try {

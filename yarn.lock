@@ -4207,11 +4207,11 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": ^2.3.0
-    "@socket.io/sticky": ^1.0.3
+    "@socket.io/sticky": ^1.0.4
     analytics-node: ^6.2.0
     body-parser: ^1.20.2
     cors: ^2.8.5
-    dotenv: ^16.0.3
+    dotenv: ^16.3.1
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4
@@ -4220,16 +4220,16 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     express: ^4.18.2
-    helmet: ^5.1.1
+    helmet: ^7.0.0
     ioredis: ^5.3.2
-    lru-cache: ^10.0.0
+    lru-cache: ^10.0.1
     nodemon: ^2.0.20
     prettier: ^2.8.8
     rate-limiter-flexible: ^2.4.2
-    rimraf: ^4.4.0
-    socket.io: ^4.4.1
+    rimraf: ^5.0.1
+    socket.io: ^4.7.2
     socket.io-redis: ^6.1.1
-    uuid: ^8.3.2
+    uuid: ^9.0.0
   languageName: unknown
   linkType: soft
 
@@ -5569,10 +5569,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@socket.io/sticky@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "@socket.io/sticky@npm:1.0.3"
-  checksum: 7f4edf3ac19327468e7d581d967237466854547f89a718996121b33653e0b872985eaf632bb2be9b1b269e998b2f55bf8b798e0a5efefc641befc96502dc23c6
+"@socket.io/sticky@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@socket.io/sticky@npm:1.0.4"
+  checksum: 7619e3406f31f1cbcdae91430c93acf9707512f2c360760a2baf6f924c10ba96f3b022bb0013c1de76ce11ef9f49d8926d11331ef205cb58912f04f2c7634626
   languageName: node
   linkType: hard
 
@@ -12682,7 +12682,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.3":
+"dotenv@npm:^16.3.1":
   version: 16.3.1
   resolution: "dotenv@npm:16.3.1"
   checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
@@ -12902,9 +12902,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"engine.io@npm:~6.5.0":
-  version: 6.5.1
-  resolution: "engine.io@npm:6.5.1"
+"engine.io-parser@npm:~5.2.1":
+  version: 5.2.1
+  resolution: "engine.io-parser@npm:5.2.1"
+  checksum: 55b0e8e18500f50c1573675c53597c5552554ead08d3f30ff19fde6409e48f882a8e01f84e9772cd155c18a1d653d06f6bf57b4e1f8b834c63c9eaf3b657b88e
+  languageName: node
+  linkType: hard
+
+"engine.io@npm:~6.5.2":
+  version: 6.5.2
+  resolution: "engine.io@npm:6.5.2"
   dependencies:
     "@types/cookie": ^0.4.1
     "@types/cors": ^2.8.12
@@ -12914,9 +12921,9 @@ __metadata:
     cookie: ~0.4.1
     cors: ~2.8.5
     debug: ~4.3.1
-    engine.io-parser: ~5.1.0
+    engine.io-parser: ~5.2.1
     ws: ~8.11.0
-  checksum: e902bbb3a484236edd6f0be89c14eb694cd905e727f88f3082a8b33ba23af9a71ca51e109b213962ccf836b02ba5bb9eea6f680a44d5008eb5b6aa2028d3bb7f
+  checksum: 2fb1da39932d526cd5033c399978c65d367cce51e6b511a572bcf4a520b863652e26123d7efceee6cef8c96221585eb953a0e541ae25f6009e9ff5149b067ecd
   languageName: node
   linkType: hard
 
@@ -15885,10 +15892,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"helmet@npm:^5.1.1":
-  version: 5.1.1
-  resolution: "helmet@npm:5.1.1"
-  checksum: b72ba26cc431804ad3b8ecdc18db95409a492cbb7a7e825efc27fc502b9433fec39fc083f2aad4fe7ed1a89a4287560b59f4435f9689eebbae6a2b61a1ec1b7d
+"helmet@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "helmet@npm:7.0.0"
+  checksum: 3622b8b68b7ac4736369fe7717adb5b87ddcdcda7c11c13277d79fb5670acab032e8c971835565b1d2144d234f3e0dbcd327a44249b9e61f0f64c0c753faf1bc
   languageName: node
   linkType: hard
 
@@ -19473,10 +19480,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:^10.0.0, lru-cache@npm:^9.1.1 || ^10.0.0":
-  version: 10.0.0
-  resolution: "lru-cache@npm:10.0.0"
-  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
+"lru-cache@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "lru-cache@npm:10.0.1"
+  checksum: 06f8d0e1ceabd76bb6f644a26dbb0b4c471b79c7b514c13c6856113879b3bf369eb7b497dad4ff2b7e2636db202412394865b33c332100876d838ad1372f0181
   languageName: node
   linkType: hard
 
@@ -19512,6 +19519,13 @@ __metadata:
   version: 7.18.3
   resolution: "lru-cache@npm:7.18.3"
   checksum: e550d772384709deea3f141af34b6d4fa392e2e418c1498c078de0ee63670f1f46f5eee746e8ef7e69e1c895af0d4224e62ee33e66a543a14763b0f2e74c1356
+  languageName: node
+  linkType: hard
+
+"lru-cache@npm:^9.1.1 || ^10.0.0":
+  version: 10.0.0
+  resolution: "lru-cache@npm:10.0.0"
+  checksum: 18f101675fe283bc09cda0ef1e3cc83781aeb8373b439f086f758d1d91b28730950db785999cd060d3c825a8571c03073e8c14512b6655af2188d623031baf50
   languageName: node
   linkType: hard
 
@@ -24953,7 +24967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rimraf@npm:^5.0.0":
+"rimraf@npm:^5.0.0, rimraf@npm:^5.0.1":
   version: 5.0.1
   resolution: "rimraf@npm:5.0.1"
   dependencies:
@@ -26067,18 +26081,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io@npm:^4.4.1":
-  version: 4.7.1
-  resolution: "socket.io@npm:4.7.1"
+"socket.io@npm:^4.7.2":
+  version: 4.7.2
+  resolution: "socket.io@npm:4.7.2"
   dependencies:
     accepts: ~1.3.4
     base64id: ~2.0.0
     cors: ~2.8.5
     debug: ~4.3.2
-    engine.io: ~6.5.0
+    engine.io: ~6.5.2
     socket.io-adapter: ~2.5.2
     socket.io-parser: ~4.2.4
-  checksum: 81404d06383aa5495b3cb9a1a4fc1435cfa97d8963c89fa54403c3ef20e0884eccedb8799b1c804a40896f903d64543e2303071d5d60dcbf7e062edf7a98d87f
+  checksum: 2dfac8983a75e100e889c3dafc83b21b75a9863d0d1ee79cdc60c4391d5d9dffcf3a86fc8deca7568032bc11c2572676335fd2e469c7982f40d19f1141d4b266
   languageName: node
   linkType: hard
 
