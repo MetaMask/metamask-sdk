@@ -1,8 +1,8 @@
+import React from 'react';
 import { useSDK } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
-import styles from 'src/styles/Home.module.css';
 
 export default function Home() {
   const {
@@ -157,7 +157,7 @@ export default function Home() {
       <header>
         <Link href={'uikit'}>UI Kit demo</Link>
       </header>
-      <main className={styles.main}>
+      <main>
         {connecting && (
           <div>Waiting for Metamask to link the connection...</div>
         )}

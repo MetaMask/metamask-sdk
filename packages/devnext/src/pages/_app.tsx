@@ -1,5 +1,5 @@
-// eslint-disable-next-line import/no-unassigned-import
 import { MetaMaskProvider } from '@metamask/sdk-react';
+import React from 'react';
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 
