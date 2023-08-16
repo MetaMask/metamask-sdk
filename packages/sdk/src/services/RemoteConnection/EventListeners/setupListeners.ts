@@ -3,6 +3,13 @@ import { EventType } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnection, RemoteConnectionState } from '../RemoteConnection';
 
+/**
+ * Sets up event listeners for MetaMask remote communication and handles responses accordingly.
+ *
+ * @param state Current state of the RemoteConnection class instance.
+ * @param options Configuration options for the events.
+ * @returns void
+ */
 export function setupListeners(
   state: RemoteConnectionState,
   options: RemoteConnection['options'],

@@ -16,10 +16,10 @@ import InstallModal from '../../ui/InstallModal/installModal';
 import PendingModal from '../../ui/InstallModal/pendingModal';
 import { Ethereum } from '../Ethereum';
 import { ProviderService } from '../ProviderService';
-import { initializeConnector } from './ConnectionInitializer/initializeConnector';
-import { startConnection } from './ConnectionManager/startConnection';
-import { setupListeners } from './EventListeners/setupListeners';
-import { showActiveModal } from './ModalManager/showActiveModal';
+import { initializeConnector } from './ConnectionInitializer';
+import { startConnection } from './ConnectionManager';
+import { setupListeners } from './EventListeners';
+import { showActiveModal } from './ModalManager';
 
 export interface RemoteConnectionProps {
   timer?: {

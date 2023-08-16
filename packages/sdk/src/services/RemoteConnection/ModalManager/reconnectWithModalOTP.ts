@@ -3,6 +3,13 @@ import {
   RemoteConnectionState,
 } from '../RemoteConnection';
 
+/**
+ * Reconnects to MetaMask using an OTP modal and waits for an OTP answer.
+ *
+ * @param state Current state of the RemoteConnection class instance.
+ * @param options Configuration options for the OTP modal.
+ * @returns Promise<void>
+ */
 export async function reconnectWithModalOTP(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
