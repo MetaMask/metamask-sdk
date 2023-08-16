@@ -1,4 +1,4 @@
-import { useSignMessage, useSignTypedData } from "@metamask/sdk-react";
+import { useSignMessage, useSignTypedData } from "@metamask/sdk-react-ui";
 
 // All properties on a domain are optional
 const domain = {

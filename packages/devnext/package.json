@@ -21,6 +21,7 @@
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-install-modal-web": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
+    "@metamask/sdk-react-ui": "workspace:^",
     "@types/node": "18.15.3",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -44,7 +45,16 @@
     "allowScripts": {
       "@metamask/sdk>eciesjs>secp256k1": false,
       "bufferutil": false,
-      "utf-8-validate": false
+      "utf-8-validate": false,
+      "@metamask/sdk-react>wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
+      "@metamask/sdk-react>wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
+      "web3": false,
+      "web3>web3-bzz": false,
+      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>es5-ext": false,
+      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>utf-8-validate": false,
+      "web3>web3-shh": false,
+      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>keccak": false,
+      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>secp256k1": false
     }
   }
 }
