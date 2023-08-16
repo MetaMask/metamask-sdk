@@ -8,7 +8,11 @@ import {
 } from '@metamask/sdk-communication-layer';
 
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
-import { ProviderConstants } from '../constants';
+import {
+  METAMASK_CONNECT_BASE_URL,
+  METAMASK_DEEPLINK_BASE,
+  ProviderConstants,
+} from '../constants';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { Ethereum } from '../services/Ethereum';
 import { PostMessageStream } from './PostMessageStream';
@@ -162,8 +166,8 @@ export class RemoteCommunicationPostMessageStream
 
         // Use otp to re-enable host approval
         this.platformManager.openDeeplink(
-          `https://metamask.app.link/connect?${urlParams}`,
-          `metamask://connect?${urlParams}`,
+          `${METAMASK_CONNECT_BASE_URL}?${urlParams}`,
+          `${METAMASK_DEEPLINK_BASE}?${urlParams}`,
           '_self',
         );
       } else if (this.remote.isPaused()) {
@@ -174,8 +178,8 @@ export class RemoteCommunicationPostMessageStream
         }
 
         this.platformManager.openDeeplink(
-          `https://metamask.app.link/connect?redirect=true&${urlParams}`,
-          `metamask://connect?redirect=true&${urlParams}`,
+          `${METAMASK_CONNECT_BASE_URL}?redirect=true&${urlParams}`,
+          `${METAMASK_DEEPLINK_BASE}?redirect=true&${urlParams}`,
           '_self',
         );
       } else {

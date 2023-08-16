@@ -5,7 +5,15 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { METAMASK_CONNECT_BASE_URL } from '../../../constants';
 
+/**
+ * Handles the disconnection process for a MetaMask connection based on the current state and provided options.
+ *
+ * @param state Current state of the RemoteConnection class instance.
+ * @param options Configuration options for the disconnection.
+ * @returns Promise<void>
+ */
 export async function connectWithModalInstaller(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
@@ -16,7 +24,7 @@ export async function connectWithModalInstaller(
       return;
     }
 
-    const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+    const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
     showInstallModal(state, options, universalLink);
 
     // Event means browser extension is selected, interrupt gracefully.

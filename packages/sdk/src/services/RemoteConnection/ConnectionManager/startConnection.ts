@@ -1,3 +1,4 @@
+import { METAMASK_CONNECT_BASE_URL } from '../../../constants';
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
@@ -7,6 +8,13 @@ import {
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
+/**
+ * Initiates the connection process to MetaMask, choosing the appropriate connection method based on state and options.
+ *
+ * @param state Current state of the RemoteConnection class instance.
+ * @param options Configuration options for the connection.
+ * @returns Promise<void>
+ */
 export async function startConnection(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
@@ -43,7 +51,7 @@ export async function startConnection(
   const linkParams = encodeURI(
     `channelId=${channelId}&comm=${state.communicationLayerPreference}&pubkey=${pubKey}`,
   );
-  const universalLink = `${'https://metamask.app.link/connect?'}${linkParams}`;
+  const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
   state.universalLink = universalLink;
 
   // first handle secure connection
