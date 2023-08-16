@@ -1,11 +1,11 @@
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 import React from 'react';
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <MetaMaskProvider debug={true} sdkOptions={{
+    <MetaMaskUIProvider debug={true} sdkOptions={{
       communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
       logging: {
         developerMode: true,
@@ -22,6 +22,6 @@ export default function App({ Component, pageProps }: AppProps) {
         name: 'DevNext',
         url: 'http://devnext.fakeurl.com',
       }
-    }}><Component {...pageProps} /></MetaMaskProvider>
+    }}><Component {...pageProps} /></MetaMaskUIProvider>
   );
 }

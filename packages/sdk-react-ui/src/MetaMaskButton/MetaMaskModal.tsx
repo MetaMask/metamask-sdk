@@ -11,7 +11,7 @@ import {
   useSwitchOrAddNetwork,
   useAccount,
   useBalance,
-} from '@metamask/sdk-react';
+} from '../hooks/MetaMaskWagmiHooks';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Chain } from 'wagmi';
 

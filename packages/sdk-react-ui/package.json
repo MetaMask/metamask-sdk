@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.6.6",
-    "@metamask/sdk": "workspace:^",
+    "@metamask/sdk-react": "workspace:*",
     "ethers": "^5.6.9",
     "mersenne-twister": "^1.1.0",
     "react-copy-to-clipboard": "^5.1.0",
@@ -101,17 +101,12 @@
   },
   "lavamoat": {
     "allowScripts": {
-      "@metamask/sdk>eciesjs>secp256k1": false,
-      "ethers>@ethersproject/providers>ws>bufferutil": false,
-      "ethers>@ethersproject/providers>ws>utf-8-validate": false,
-      "wagmi>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
-      "wagmi>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
-      "wagmi>@coinbase/wallet-sdk>keccak": false,
       "viem>ws>bufferutil": false,
       "viem>ws>utf-8-validate": false,
       "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
       "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
-      "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>keccak": false
+      "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>keccak": false,
+      "@metamask/sdk-react>@metamask/sdk>eciesjs>secp256k1": false
     }
   }
 }

@@ -1,5 +1,4 @@
-import { useAccount } from '@metamask/sdk-react';
-import { MetaMaskButton } from '@metamask/sdk-react-ui';
+import { MetaMaskButton, useAccount } from '@metamask/sdk-react-ui';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
