@@ -70,18 +70,14 @@ export const useSwitchOrAddNetwork = () => {
           nativeCurrency: chain.nativeCurrency,
         };
 
-        const rpcUrls = [];
+        const rpcUrls: string[] = [];
 
-        if (chain.rpcUrls.default) {
-          rpcUrls.push(chain.rpcUrls.default);
-        }
+        const keys = ['default', 'infura', 'public'];
 
-        if (chain.rpcUrls.infura) {
-          rpcUrls.push(chain.rpcUrls.infura);
-        }
-
-        if (chain.rpcUrls.public) {
-          rpcUrls.push(chain.rpcUrls.public);
+        for (const key of keys) {
+            if (chain.rpcUrls[key]) {
+                rpcUrls.push(chain.rpcUrls[key].toString());
+            }
         }
 
         if (chain.blockExplorers) {
