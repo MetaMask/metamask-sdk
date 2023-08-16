@@ -7,24 +7,12 @@ import {
   SDKProvider,
   ServiceStatus
 } from '@metamask/sdk';
-import { publicProvider } from '@wagmi/core/providers/public';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, {
   createContext,
-  useEffect,
-  useMemo,
-  useRef,
+  useEffect, useRef,
   useState
 } from 'react';
-import {
-  Chain,
-  configureChains,
-  Connector,
-  createConfig,
-  mainnet,
-  WagmiConfig
-} from 'wagmi';
-import MetaMaskConnector from './MetaMaskConnector';
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -42,51 +30,6 @@ const initProps: {
   connecting: false,
 };
 export const SDKContext = createContext(initProps);
-
-const { publicClient } = configureChains([mainnet], [publicProvider()]);
-
-const serverConfig = createConfig({
-  autoConnect: true,
-  publicClient,
-});
-
-const WagmiWrapper = ({
-  children,
-  networks,
-  sdk,
-  ready,
-  debug,
-  connectors = [],
-}: {
-  children: React.ReactNode;
-  networks?: Chain[];
-  ready: boolean;
-  sdk?: MetaMaskSDK;
-  debug?: boolean;
-  connectors?: Connector[];
-}) => {
-  // If no sdk is provided, we will use the public client
-  const validConnectors: Connector[] = useMemo(() => {
-    if (debug) {
-      console.debug(`[MetamaskProvider] validConnectors`, { ready, sdk });
-    }
-    if (ready && sdk) {
-      return [
-        new MetaMaskConnector({
-          chains: networks,
-          options: { sdk, debug },
-        }),
-        ...connectors,
-      ];
-    }
-
-    return connectors;
-  }, [ready, sdk]);
-
-  const config = createConfig({ publicClient, connectors: validConnectors })
-
-  return <WagmiConfig config={config}>{children}</WagmiConfig>;
-};
 
 const MetaMaskProviderClient = ({
   children,
@@ -285,9 +228,7 @@ const MetaMaskProviderClient = ({
         status,
       }}
     >
-      <WagmiWrapper sdk={sdk} ready={ready} debug={debug}>
-        {children}
-      </WagmiWrapper>
+      {children}
     </SDKContext.Provider>
   );
 };
@@ -315,7 +256,7 @@ export const MetaMaskProvider = ({
           {children}
         </MetaMaskProviderClient>
       ) : (
-        <WagmiConfig config={serverConfig}>{children}</WagmiConfig>
+        <>{children}</>
       )}
     </>
   );
