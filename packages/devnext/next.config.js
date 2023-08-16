@@ -6,6 +6,7 @@ const nextConfig = {
     '@metamask/sdk',
     '@metamask/sdk-install-modal-web',
     '@metamask/sdk-react',
+    '@metamask/sdk-react-ui',
   ],
 };
 
