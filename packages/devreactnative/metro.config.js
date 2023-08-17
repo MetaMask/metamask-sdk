@@ -4,10 +4,22 @@
  *
  * @format
  */
+const escape = require('escape-string-regexp');
+const { getDefaultConfig } = require('@expo/metro-config');
+const exclusionList = require('metro-config/src/defaults/exclusionList');
+
+const defaultConfig = getDefaultConfig(__dirname);
 
 const sdkRootPath = __dirname + '/../../';
 
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 module.exports = {
+  ...defaultConfig,
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -22,6 +34,7 @@ module.exports = {
     `./node_modules/`,
     `${sdkRootPath}packages/sdk-communication-layer/node_modules`,
     `${sdkRootPath}packages/sdk/node_modules`,
+    // `${sdkRootPath}packages/sdk-react/node_modules`,
     `${sdkRootPath}node_modules`,
     ],
     extraNodeModules: {
@@ -46,6 +59,24 @@ module.exports = {
         );
         return {
           filePath: sdkRootPath + 'packages/sdk/src/index.ts',
+          type: 'sourceFile',
+        };
+      } else if (moduleName === '@metamask/sdk-react') {
+        console.debug(
+          `CUSTOM RESOLVER ${moduleName}`,
+          sdkRootPath + 'packages/sdk-react/src/index.ts',
+        );
+        return {
+          filePath: sdkRootPath + 'packages/sdk-react/src/index.ts',
+          type: 'sourceFile',
+        };
+      } else if (moduleName === '@metamask/sdk-react-native') {
+        console.debug(
+          `CUSTOM RESOLVER ${moduleName}`,
+          sdkRootPath + 'packages/sdk-react-native/src/index.ts',
+        );
+        return {
+          filePath: sdkRootPath + 'packages/sdk-react-native/src/index.ts',
           type: 'sourceFile',
         };
       }

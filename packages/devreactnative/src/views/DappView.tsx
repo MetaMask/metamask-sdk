@@ -3,6 +3,7 @@ import {ethers} from 'ethers';
 import React, {useEffect, useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from './colors';
+import IconSimplified from './IconSimplified';
 import {ServiceStatusView} from './service-status-view';
 
 export interface DAPPViewProps {
@@ -18,6 +19,7 @@ const createStyles = (connectionStatus: ConnectionStatus) => {
           ? colors.success.default
           : colors.warning.default,
       padding: 10,
+      zIndex: 1,
       backgroundColor: colors.background.default,
     },
     button: {
@@ -258,6 +260,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
+    console.log(`lallala  ${ethereum?.selectedAddress}`);
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
@@ -279,13 +282,13 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   };
 
   return (
-    <View style={{borderWidth: 2, padding: 5}}>
+    <View style={styles.container}>
       <Text style={styles.title}>
         {sdk._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
+      <IconSimplified color="orange" style={{}} />
       <ServiceStatusView serviceStatus={serviceStatus} />
-
       {connected ? (
         <>
           <Button title={'Request Accounts'} onPress={connect} />

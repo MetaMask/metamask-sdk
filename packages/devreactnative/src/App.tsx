@@ -10,7 +10,6 @@ import {
   AppState,
   AppStateStatus,
   Button,
-  Linking,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -20,12 +19,11 @@ import {
   View,
 } from 'react-native';
 
-import {MetaMaskSDK} from '@metamask/sdk';
+import {useSDK} from '@metamask/sdk-react';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
-import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DAPPView} from './src/views/DappView';
+import {DAPPView} from './views/DappView';
 
 LogBox.ignoreLogs([
   //'Possible Unhandled Promise Rejection'
@@ -36,41 +34,42 @@ LogBox.ignoreLogs([
 // hence usage of a global variable.
 let canOpenLink = true;
 
-const sdk = new MetaMaskSDK({
-  openDeeplink: (link: string) => {
-    if (canOpenLink) {
-      console.debug(`App::openDeepLink() ${link}`);
-      Linking.openURL(link);
-    } else {
-      console.debug(
-        'useBlockchainProiver::openDeepLink app is not active - skip link',
-        link,
-      );
-    }
-  },
-  // Replace with local socket server for dev debug
-  // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
-  communicationServerUrl: 'http://192.168.50.114:4000',
-  checkInstallationOnAllCalls: false,
-  timer: BackgroundTimer,
-  enableDebug: true,
-  dappMetadata: {
-    url: 'devreactnative',
-    name: 'devreactnative',
-  },
-  storage: {
-    enabled: true,
-    // storageManager: new StorageManagerRN({debug: true}),
-  },
-  logging: {
-    developerMode: true,
-    plaintext: true,
-  },
-});
+// const sdk = new MetaMaskSDK({
+//   openDeeplink: (link: string) => {
+//     if (canOpenLink) {
+//       console.debug(`App::openDeepLink() ${link}`);
+//       Linking.openURL(link);
+//     } else {
+//       console.debug(
+//         'useBlockchainProiver::openDeepLink app is not active - skip link',
+//         link,
+//       );
+//     }
+//   },
+//   // Replace with local socket server for dev debug
+//   // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
+//   communicationServerUrl: 'http://192.168.50.114:4000',
+//   checkInstallationOnAllCalls: false,
+//   timer: BackgroundTimer,
+//   enableDebug: true,
+//   dappMetadata: {
+//     url: 'devreactnative',
+//     name: 'devreactnative',
+//   },
+//   storage: {
+//     enabled: true,
+//     // storageManager: new StorageManagerRN({debug: true}),
+//   },
+//   logging: {
+//     developerMode: true,
+//     plaintext: true,
+//   },
+// });
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
+  const {sdk} = useSDK();
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppState);
@@ -107,6 +106,10 @@ function App(): JSX.Element {
     setEncryptionTime(timeSpent);
     console.debug(`encryption time: ${timeSpent} ms`);
   };
+
+  if (!sdk) {
+    return <Text>waiting</Text>;
+  }
 
   return (
     <SafeAreaView style={backgroundStyle}>
