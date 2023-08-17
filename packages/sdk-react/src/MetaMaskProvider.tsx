@@ -1,3 +1,4 @@
+// MetaMaskProvider.tsx
 'use client';
 import {
   EventType,

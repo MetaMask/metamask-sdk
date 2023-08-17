@@ -4215,6 +4215,9 @@ __metadata:
     rollup-plugin-babel: ^4.4.0
     rollup-plugin-node-resolve: ^5.2.0
     typescript: ^5.1.6
+  peerDependencies:
+    react: "*"
+    react-native: "*"
   languageName: unknown
   linkType: soft
 
@@ -4284,7 +4287,7 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
-    "@metamask/sdk": "workspace:^"
+    "@metamask/sdk": 0.5.6
     "@rollup/plugin-commonjs": ^22.0.1
     "@rollup/plugin-node-resolve": ^13.3.0
     "@rollup/plugin-typescript": ^8.3.3
@@ -4414,7 +4417,7 @@ __metadata:
     uuid: ^8.3.2
   peerDependencies:
     react: ^18.2.0
-    react-native: ^0.71.1
+    react-native: ^0.71.8
   languageName: unknown
   linkType: soft
 

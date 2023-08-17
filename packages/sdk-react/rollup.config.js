@@ -8,12 +8,15 @@ import json from '@rollup/plugin-json';
 
 const packageJson = require('./package.json');
 
+const listDepForRollup = ['react','react-native','react-dom'];
+
 /**
  * @type {import('rollup').RollupOptions}
  */
 const config =
   [
     {
+      external: listDepForRollup,
       input: 'src/index.ts',
       output: [
         {

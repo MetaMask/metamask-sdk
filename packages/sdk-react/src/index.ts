@@ -1,3 +1,4 @@
+// index.ts
 import MetaMaskProvider from './MetaMaskProvider';
 
 export * from './MetaMaskHooks';

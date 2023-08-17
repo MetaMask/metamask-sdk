@@ -102,7 +102,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-native": "^0.71.1"
+    "react-native": "^0.71.8"
   },
   "publishConfig": {
     "access": "public",
@@ -112,7 +112,9 @@
     "allowScripts": {
       "eciesjs>secp256k1": false,
       "socket.io-client>engine.io-client>ws>bufferutil": false,
-      "socket.io-client>engine.io-client>ws>utf-8-validate": false
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false,
+      "react-native>react-devtools-core>ws>bufferutil": false,
+      "react-native>react-devtools-core>ws>utf-8-validate": false
     }
   }
 }
