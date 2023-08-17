@@ -9,7 +9,7 @@ const options: MetaMaskSDKOptions = {
     name: 'NodeJS example',
   },
   logging: {
-    sdk: false
+    sdk: false,
   },
   checkInstallationImmediately: false,
   // Optional: customize modal text
@@ -76,7 +76,7 @@ const msgParams = {
 const start = async () => {
   console.debug(`start NodeJS example`);
 
-  const accounts =  await sdk.connect();
+  const accounts = await sdk.connect();
 
   console.log('connect request accounts', accounts);
 
