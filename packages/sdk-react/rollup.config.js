@@ -25,6 +25,12 @@ const config =
           format: 'esm',
           sourcemap: true,
         },
+        {
+          file: packageJson.main,
+          inlineDynamicImports: true,
+          format: 'cjs',
+          sourcemap: true,
+        },
       ],
       plugins: [
         external(),
