@@ -17,7 +17,6 @@ LogBox.ignoreLogs([
 
 export const ConnectedApp = () => {
   return (
-    // <App />
     <MetaMaskProvider
       debug={true}
       sdkOptions={{
