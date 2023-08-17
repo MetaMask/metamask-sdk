@@ -41,6 +41,10 @@
     "test": "echo 'N/A'",
     "test:ci": "echo 'N/A'"
   },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
@@ -50,7 +54,7 @@
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-prettier": "^5.0.0",
     "prettier": "^3.0.1",
-    "react-native": "^0.71.8",
+    "react-native": "^0.72.4",
     "rimraf": "^5.0.1",
     "rollup": "^3.27.1",
     "rollup-plugin-babel": "^4.4.0",
