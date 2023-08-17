@@ -5,10 +5,7 @@
  * @format
  */
 const escape = require('escape-string-regexp');
-const { getDefaultConfig } = require('@expo/metro-config');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
-
-const defaultConfig = getDefaultConfig(__dirname);
 
 const sdkRootPath = __dirname + '/../../';
 
@@ -19,7 +16,6 @@ const sdkRootPath = __dirname + '/../../';
  * @type {import('metro-config').MetroConfig}
  */
 module.exports = {
-  ...defaultConfig,
   transformer: {
     getTransformOptions: async () => ({
       transform: {

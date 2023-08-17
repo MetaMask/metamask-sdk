@@ -83,7 +83,10 @@
     "allowScripts": {
       "@lavamoat/preinstall-always-fail": false,
       "canvas": true,
-      "$root$": false
+      "$root$": false,
+      "bob>plato>eslint>es6-map>es5-ext": false,
+      "react-native>react-devtools-core>ws>bufferutil": false,
+      "react-native>react-devtools-core>ws>utf-8-validate": false
     }
   },
   "packageManager": "yarn@3.5.1",
