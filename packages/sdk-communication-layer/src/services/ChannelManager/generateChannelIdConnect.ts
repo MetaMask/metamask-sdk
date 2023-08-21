@@ -1,6 +1,14 @@
 import { RemoteCommunicationState } from '../../RemoteCommunication';
 import { clean } from './clean';
 
+/**
+ * Generates a new channel ID for the communication layer or reuses an existing one.
+ * Also establishes necessary configurations and throws errors if the layer isn't initialized or if the channel is already connected.
+ *
+ * @param state Current state of the RemoteCommunication class instance.
+ * @returns An object containing the channelId and its corresponding public key.
+ */
+
 export function generateChannelIdConnect(state: RemoteCommunicationState) {
   if (!state.communicationLayer) {
     throw new Error('communication layer not initialized');

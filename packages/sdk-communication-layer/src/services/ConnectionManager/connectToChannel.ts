@@ -2,6 +2,15 @@ import { validate } from 'uuid';
 import { RemoteCommunicationState } from '../../RemoteCommunication';
 import { ChannelConfig } from '../../types/ChannelConfig';
 
+/**
+ * Initiates a connection to a specified channel. Validates the channel ID, establishes a new connection if not connected, and sets necessary configurations.
+ * Also persists the new channel configuration if a storage manager is available.
+ *
+ * @param channelId Unique identifier for the channel.
+ * @param withKeyExchange Optional flag indicating if key exchange should occur during the connection process.
+ * @param state Current state of the RemoteCommunication class instance.
+ * @returns void
+ */
 export function connectToChannel({
   channelId,
   withKeyExchange,
