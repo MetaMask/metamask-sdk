@@ -21,8 +21,10 @@ import { disconnect } from '../ConnectionManager';
  * @param instance The `RemoteCommunication` instance that needs to be acted upon when a terminate message is received.
  */
 export function handleTerminateMessage(instance: RemoteCommunication) {
+  const { isOriginator } = instance.state;
+
   // remove channel config from persistence layer and close active connections.
-  if (instance.state.isOriginator) {
+  if (isOriginator) {
     disconnect({
       options: { terminate: true, sendMessage: false },
       instance,

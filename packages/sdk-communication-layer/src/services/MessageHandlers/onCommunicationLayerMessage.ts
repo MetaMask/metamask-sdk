@@ -31,45 +31,32 @@ export function onCommunicationLayerMessage(
   message: CommunicationLayerMessage,
   instance: RemoteCommunication,
 ) {
-  if (instance.state.debug) {
+  const { debug, isOriginator, context } = instance.state;
+  if (debug) {
     console.debug(
-      `RemoteCommunication::${
-        instance.state.context
-      }::on 'message' typeof=${typeof message}`,
+      `RemoteCommunication::${context}::on 'message' typeof=${typeof message}`,
       message,
     );
   }
 
   instance.state.ready = true;
 
-  if (
-    !instance.state.isOriginator &&
-    message.type === MessageType.ORIGINATOR_INFO
-  ) {
+  if (!isOriginator && message.type === MessageType.ORIGINATOR_INFO) {
     handleOriginatorInfoMessage(instance, message);
     return;
-  } else if (
-    instance.state.isOriginator &&
-    message.type === MessageType.WALLET_INFO
-  ) {
+  } else if (isOriginator && message.type === MessageType.WALLET_INFO) {
     handleWalletInfoMessage(instance, message);
     return;
   } else if (message.type === MessageType.TERMINATE) {
     handleTerminateMessage(instance);
   } else if (message.type === MessageType.PAUSE) {
     handlePauseMessage(instance);
-  } else if (
-    message.type === MessageType.READY &&
-    instance.state.isOriginator
-  ) {
+  } else if (message.type === MessageType.READY && isOriginator) {
     handleReadyMessage(instance);
-  } else if (message.type === MessageType.OTP && instance.state.isOriginator) {
+  } else if (message.type === MessageType.OTP && isOriginator) {
     handleOtpMessage(instance, message);
     return;
-  } else if (
-    message.type === MessageType.AUTHORIZED &&
-    instance.state.isOriginator
-  ) {
+  } else if (message.type === MessageType.AUTHORIZED && isOriginator) {
     handleAuthorizedMessage(instance);
   }
 

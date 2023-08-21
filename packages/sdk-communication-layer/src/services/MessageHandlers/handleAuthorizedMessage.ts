@@ -13,6 +13,8 @@ import { EventType } from '../../types/EventType';
  * @param instance The `RemoteCommunication` instance on which the authorized message is processed.
  */
 export function handleAuthorizedMessage(instance: RemoteCommunication) {
-  instance.state.authorized = true;
+  const { state } = instance;
+
+  state.authorized = true;
   instance.emit(EventType.AUTHORIZED);
 }

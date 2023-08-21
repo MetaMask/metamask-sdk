@@ -23,36 +23,37 @@ export function handleClientsConnectedEvent(
   communicationLayerPreference: CommunicationLayerPreference,
 ) {
   return () => {
+    const { state } = instance;
     // Propagate the event to manage different loading states on the ui.
-    if (instance.state.debug) {
+    if (state.debug) {
       console.debug(
         `RemoteCommunication::on 'clients_connected' channel=${
-          instance.state.channelId
+          state.channelId
         } keysExchanged=${
-          instance.state.communicationLayer?.getKeyInfo()?.keysExchanged
+          state.communicationLayer?.getKeyInfo()?.keysExchanged
         }`,
       );
     }
 
-    if (instance.state.analytics) {
+    if (state.analytics) {
       SendAnalytics(
         {
-          id: instance.state.channelId ?? '',
+          id: state.channelId ?? '',
           event: TrackingEvents.REQUEST,
-          ...instance.state.originatorInfo,
+          ...state.originatorInfo,
           commLayer: communicationLayerPreference,
-          sdkVersion: instance.state.sdkVersion,
-          walletVersion: instance.state.walletInfo?.version,
+          sdkVersion: state.sdkVersion,
+          walletVersion: state.walletInfo?.version,
           commLayerVersion: packageJson.version,
         },
-        instance.state.communicationServerUrl,
+        state.communicationServerUrl,
       ).catch((err) => {
         console.error(`Cannot send analytics`, err);
       });
     }
 
-    instance.state.clientsConnected = true;
-    instance.state.originatorInfoSent = false; // Always re-send originator info.
+    state.clientsConnected = true;
+    state.originatorInfoSent = false; // Always re-send originator info.
     instance.emit(EventType.CLIENTS_CONNECTED);
   };
 }

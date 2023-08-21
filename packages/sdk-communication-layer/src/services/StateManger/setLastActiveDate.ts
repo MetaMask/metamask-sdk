@@ -19,16 +19,18 @@ export function setLastActiveDate(
   instance: RemoteCommunication,
   lastActiveDate: Date,
 ) {
-  if (instance.state.debug) {
+  const { channelId, channelConfig, debug, storageManager } = instance.state;
+
+  if (debug) {
     console.debug(
-      `RemoteCommunication::setLastActiveDate() channel=${instance.state.channelId}`,
+      `RemoteCommunication::setLastActiveDate() channel=${channelId}`,
       lastActiveDate,
     );
   }
   const newChannelConfig: ChannelConfig = {
-    channelId: instance.state.channelId ?? '',
-    validUntil: instance.state.channelConfig?.validUntil ?? 0,
+    channelId: channelId ?? '',
+    validUntil: channelConfig?.validUntil ?? 0,
     lastActive: lastActiveDate.getTime(),
   };
-  instance.state.storageManager?.persistChannelConfig(newChannelConfig);
+  storageManager?.persistChannelConfig(newChannelConfig);
 }

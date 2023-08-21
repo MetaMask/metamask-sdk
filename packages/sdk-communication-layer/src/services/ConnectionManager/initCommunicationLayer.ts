@@ -18,8 +18,19 @@ import {
   handleSocketReconnectEvent,
 } from '../EventListeners';
 
+type CommunicationLayerHandledEvents =
+  | EventType.CLIENTS_CONNECTED
+  | EventType.CLIENTS_DISCONNECTED
+  | EventType.CLIENTS_WAITING
+  | EventType.SOCKET_DISCONNECTED
+  | EventType.SOCKET_RECONNECT
+  | EventType.CHANNEL_CREATED
+  | EventType.KEYS_EXCHANGED
+  | EventType.AUTHORIZED
+  | EventType.MESSAGE;
+
 /**
- * Initializes the communication layer for a given RemoteCommunication instance. This function creates a communication layer based on the provided preference (e.g., SOCKET), sets up originator information, and attaches necessary event listeners.
+ * Initializes the communication layer for a given RemoteCommunication  This function creates a communication layer based on the provided preference (e.g., SOCKET), sets up originator information, and attaches necessary event listeners.
  *
  * If the dappMetadata is available, this metadata is used to populate originator information such as the URL and name of the dapp.
  * This function also sets up various event listeners to handle different types of events that can occur in the communication layer, ensuring that the RemoteCommunication instance responds appropriately to each event.
@@ -47,19 +58,20 @@ export function initCommunicationLayer({
   communicationServerUrl?: string;
   instance: RemoteCommunication;
 }) {
-  // instance.state.communicationLayer?.removeAllListeners();
+  const { state } = instance;
+  // state.communicationLayer?.removeAllListeners();
 
   switch (communicationLayerPreference) {
     case CommunicationLayerPreference.SOCKET:
-      instance.state.communicationLayer = new SocketService({
+      state.communicationLayer = new SocketService({
         communicationLayerPreference,
         otherPublicKey,
         reconnect,
-        transports: instance.state.transports,
+        transports: state.transports,
         communicationServerUrl,
-        context: instance.state.context,
+        context: state.context,
         ecies,
-        logging: instance.state.logging,
+        logging: state.logging,
       });
       break;
     default:
@@ -69,67 +81,50 @@ export function initCommunicationLayer({
   let url = (typeof document !== 'undefined' && document.URL) || '';
   let title = (typeof document !== 'undefined' && document.title) || '';
 
-  if (instance.state.dappMetadata?.url) {
-    url = instance.state.dappMetadata.url;
+  if (state.dappMetadata?.url) {
+    url = state.dappMetadata.url;
   }
 
-  if (instance.state.dappMetadata?.name) {
-    title = instance.state.dappMetadata.name;
+  if (state.dappMetadata?.name) {
+    title = state.dappMetadata.name;
   }
 
   const originatorInfo: OriginatorInfo = {
     url,
     title,
-    source: instance.state.dappMetadata?.source,
-    icon: instance.state.dappMetadata?.base64Icon,
-    platform: instance.state.platformType,
+    source: state.dappMetadata?.source,
+    icon: state.dappMetadata?.base64Icon,
+    platform: state.platformType,
     apiVersion: packageJson.version,
   };
-  instance.state.originatorInfo = originatorInfo;
+  state.originatorInfo = originatorInfo;
+
+  const { communicationLayer } = state;
 
   // TODO below listeners is only added for backward compatibility with wallet < 7.3
-  instance.state.communicationLayer?.on(
-    EventType.AUTHORIZED,
-    handleAuthorizedEvent(instance),
-  );
+  const eventsMapping: {
+    [key in CommunicationLayerHandledEvents]: (...args: any[]) => void;
+  } = {
+    [EventType.AUTHORIZED]: () => handleAuthorizedEvent(instance),
+    [EventType.MESSAGE]: () => handleMessageEvent(instance),
+    [EventType.CLIENTS_CONNECTED]: () =>
+      handleClientsConnectedEvent(instance, communicationLayerPreference),
+    [EventType.KEYS_EXCHANGED]: () =>
+      handleKeysExchangedEvent(instance, communicationLayerPreference),
+    [EventType.SOCKET_DISCONNECTED]: () =>
+      handleSocketDisconnectedEvent(instance),
+    [EventType.SOCKET_RECONNECT]: () => handleSocketReconnectEvent(instance),
+    [EventType.CLIENTS_DISCONNECTED]: () =>
+      handleClientsDisconnectedEvent(instance, communicationLayerPreference),
+    [EventType.CHANNEL_CREATED]: () => handleChannelCreatedEvent(instance),
+    [EventType.CLIENTS_WAITING]: () => handleClientsWaitingEvent(instance),
+  };
 
-  instance.state.communicationLayer?.on(
-    EventType.MESSAGE,
-    handleMessageEvent(instance),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.CLIENTS_CONNECTED,
-    handleClientsConnectedEvent(instance, communicationLayerPreference),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.KEYS_EXCHANGED,
-    handleKeysExchangedEvent(instance, communicationLayerPreference),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.SOCKET_DISCONNECTED,
-    handleSocketDisconnectedEvent(instance),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.SOCKET_RECONNECT,
-    handleSocketReconnectEvent(instance),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.CLIENTS_DISCONNECTED,
-    handleClientsDisconnectedEvent,
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.CHANNEL_CREATED,
-    handleChannelCreatedEvent(instance),
-  );
-
-  instance.state.communicationLayer?.on(
-    EventType.CLIENTS_WAITING,
-    handleClientsWaitingEvent(instance),
-  );
+  for (const [eventType, handler] of Object.entries(eventsMapping)) {
+    try {
+      communicationLayer.on(eventType, handler);
+    } catch (error) {
+      console.error(`Error registering handler for ${eventType}:`, error);
+    }
+  }
 }

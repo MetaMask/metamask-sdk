@@ -38,57 +38,59 @@ export function handleKeysExchangedEvent(
     originatorInfo: OriginatorInfo;
     originator: OriginatorInfo;
   }) => {
-    if (instance.state.debug) {
+    const { state } = instance;
+
+    if (state.debug) {
       console.debug(
-        `RemoteCommunication::${instance.state.context}::on commLayer.'keys_exchanged' channel=${instance.state.channelId}`,
+        `RemoteCommunication::${state.context}::on commLayer.'keys_exchanged' channel=${state.channelId}`,
         message,
       );
     }
 
-    if (instance.state.communicationLayer?.getKeyInfo()?.keysExchanged) {
+    if (state.communicationLayer?.getKeyInfo()?.keysExchanged) {
       instance.setConnectionStatus(ConnectionStatus.LINKED);
     }
 
     setLastActiveDate(instance, new Date());
 
-    if (instance.state.analytics && instance.state.channelId) {
+    if (state.analytics && state.channelId) {
       SendAnalytics(
         {
-          id: instance.state.channelId,
+          id: state.channelId,
           event: TrackingEvents.CONNECTED,
-          sdkVersion: instance.state.sdkVersion,
+          sdkVersion: state.sdkVersion,
           commLayer: communicationLayerPreference,
           commLayerVersion: packageJson.version,
-          walletVersion: instance.state.walletInfo?.version,
+          walletVersion: state.walletInfo?.version,
         },
-        instance.state.communicationServerUrl,
+        state.communicationServerUrl,
       ).catch((err) => {
         console.error(`Cannot send analytics`, err);
       });
     }
 
-    instance.state.isOriginator = message.isOriginator;
+    state.isOriginator = message.isOriginator;
 
     if (!message.isOriginator) {
       // Don't send originator message from wallet.
       // Always Tell the DAPP metamask is ready
       // the dapp will send originator message when receiving ready.
-      instance.state.communicationLayer?.sendMessage({
+      state.communicationLayer?.sendMessage({
         type: MessageType.READY,
       });
-      instance.state.ready = true;
-      instance.state.paused = false;
+      state.ready = true;
+      state.paused = false;
     }
 
     // Keep sending originator info from this location for backward compatibility
-    if (message.isOriginator && !instance.state.originatorInfoSent) {
+    if (message.isOriginator && !state.originatorInfoSent) {
       // Always re-send originator info in case the session was deleted on the wallet
-      instance.state.communicationLayer?.sendMessage({
+      state.communicationLayer?.sendMessage({
         type: MessageType.ORIGINATOR_INFO,
-        originatorInfo: instance.state.originatorInfo,
-        originator: instance.state.originatorInfo,
+        originatorInfo: state.originatorInfo,
+        originator: state.originatorInfo,
       });
-      instance.state.originatorInfoSent = true;
+      state.originatorInfoSent = true;
     }
   };
 }

@@ -16,21 +16,23 @@ import { EventType } from '../../types/EventType';
  * @param instance The `RemoteCommunication` instance whose state needs to be updated in response to a ready message.
  */
 export function handleReadyMessage(instance: RemoteCommunication) {
+  const { state } = instance;
+
   instance.setConnectionStatus(ConnectionStatus.LINKED);
 
   // keep track of resumed state before resetting it and emitting messages
   // Better to reset the paused status before emitting as otherwise it may interfer.
-  const resumed = instance.state.paused;
+  const resumed = state.paused;
   // Reset paused status
-  instance.state.paused = false;
+  state.paused = false;
 
   instance.emit(EventType.CLIENTS_READY, {
-    isOriginator: instance.state.isOriginator,
-    walletInfo: instance.state.walletInfo,
+    isOriginator: state.isOriginator,
+    walletInfo: state.walletInfo,
   });
 
   if (resumed) {
-    instance.state.authorized = true;
+    state.authorized = true;
     // If connection is resumed, automatically assume authorized.
     instance.emit(EventType.AUTHORIZED);
   }
