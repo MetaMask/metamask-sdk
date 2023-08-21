@@ -18,6 +18,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "rimraf node_modules && yarn clean",
     "start": "yarn build && node dist/deve2e.js ${TARGET:-sdk}",
+    "ts-start": "ts-node -r tsconfig-paths/register --project tsconfig.json src/index.ts ${TARGET:-sdk}",
     "test": "echo 'N/A'",
     "allow-scripts": "echo 'N/A'",
     "test:ci": "echo 'N/A'",
@@ -39,6 +40,7 @@
     "rollup-plugin-serve": "^2.0.2",
     "rollup-plugin-typescript2": "^0.34.1",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4"
   }
 }
