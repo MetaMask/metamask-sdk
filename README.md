@@ -4,19 +4,22 @@ The MetaMask SDK enables developers to easily connect their dapps with a MetaMas
 
 The MetaMask SDK is a library that can be installed by developers on their projects and will automatically guide their users to easily connect with a MetaMask wallet client. For instance, for dapps running on a desktop browser, the SDK will check if Extension is installed and if not it will prompt the user to install it or to connect via QR code with their MetaMask Mobile wallet. Another example, for native mobile applications, the SDK will automatically deeplink into MetaMask Mobile wallet to make the connection.
 
-The MetaMask SDK instance returns a provider, this provider is the `ethereum` object that developers are already used to which is [here](https://docs.metamask.io/guide/ethereum-provider.html). This provider will now be available for:
+The MetaMask SDK instance returns a [provider](https://docs.metamask.io/wallet/concepts/provider-api/).
+This provider is the `ethereum` object that developers are already used to. This provider is available for:
 
-- [Javascript-based apps](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-js.html#javascript)
-  - [Web (d)apps](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-js.html#web-d-apps)
-  - [React Native](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-js.html#react-native)
-  - [Electron](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-js.html#electron)
-  - [NodeJS](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-js.html#nodejs)
-- [Gaming](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-gaming.html#gaming)
-  - [Unity](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-gaming.html#unity)
-  - [Unreal Engine](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-gaming.html#unreal-engine)
-- [Mobile Native Apps](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-mobile.html#mobile)
-  - [Android](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-mobile.html#android)
-  - [iOS](https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/guide/metamask-sdk-mobile.html#ios)
+- [Javascript-based apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/)
+  - [React](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/react/)
+  - [Pure JavaScript](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/pure-js/)
+  - [Other web frameworks](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/other-web-frameworks/)
+  - [React Native](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/react-native/)
+  - [NodeJS](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/nodejs/)
+  - [Electron](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/electron/)
+- [Gaming apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/gaming/)
+  - [Unity](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/gaming/unity/)
+  - [Unreal Engine](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/gaming/unreal-engine/) (coming soon)
+- [Mobile Native apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/)
+  - [iOS](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/ios/)
+  - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/) (coming soon)
 
 ## Features
 - Session persistence
