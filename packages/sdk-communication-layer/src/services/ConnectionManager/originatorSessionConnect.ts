@@ -8,12 +8,12 @@ import { RemoteCommunication } from '../../RemoteCommunication';
  *
  * This function is particularly useful for re-establishing connections with saved session configurations.
  *
- * @param instace The current instance of the RemoteCommunication class.
+ * @param instance The current instance of the RemoteCommunication class.
  * @returns The channel configuration if available and valid, otherwise undefined.
  */
-export async function originatorSessionConnect(instace: RemoteCommunication) {
-  if (!instace.state.storageManager) {
-    if (instace.state.debug) {
+export async function originatorSessionConnect(instance: RemoteCommunication) {
+  if (!instance.state.storageManager) {
+    if (instance.state.debug) {
       console.debug(
         `RemoteCommunication::connect() no storage manager defined - skip`,
       );
@@ -22,19 +22,19 @@ export async function originatorSessionConnect(instace: RemoteCommunication) {
   }
 
   const channelConfig =
-    await instace.state.storageManager.getPersistedChannelConfig(
-      instace.state.channelId ?? '',
+    await instance.state.storageManager.getPersistedChannelConfig(
+      instance.state.channelId ?? '',
     );
-  if (instace.state.debug) {
+  if (instance.state.debug) {
     console.debug(
-      `RemoteCommunication::connect() autoStarted=${instace.state.originatorConnectStarted} channelConfig`,
+      `RemoteCommunication::connect() autoStarted=${instance.state.originatorConnectStarted} channelConfig`,
       channelConfig,
     );
   }
 
-  const connected = instace.state.communicationLayer?.isConnected();
+  const connected = instance.state.communicationLayer?.isConnected();
   if (connected) {
-    if (instace.state.debug) {
+    if (instance.state.debug) {
       console.debug(
         `RemoteCommunication::connect() socket already connected - skip`,
       );
@@ -46,18 +46,18 @@ export async function originatorSessionConnect(instace: RemoteCommunication) {
     const validSession = channelConfig.validUntil > Date.now();
 
     if (validSession) {
-      instace.state.channelConfig = channelConfig;
-      instace.state.originatorConnectStarted = true;
-      instace.state.channelId = channelConfig?.channelId;
-      instace.state.communicationLayer?.connectToChannel({
+      instance.state.channelConfig = channelConfig;
+      instance.state.originatorConnectStarted = true;
+      instance.state.channelId = channelConfig?.channelId;
+      instance.state.communicationLayer?.connectToChannel({
         channelId: channelConfig.channelId,
         isOriginator: true,
       });
       return channelConfig;
-    } else if (instace.state.debug) {
+    } else if (instance.state.debug) {
       console.log(`RemoteCommunication::autoConnect Session has expired`);
     }
   }
-  instace.state.originatorConnectStarted = false;
+  instance.state.originatorConnectStarted = false;
   return undefined;
 }
