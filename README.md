@@ -106,4 +106,4 @@ You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but 
 
 ## Contributing
 
-Please see our [contributing guidelines](./docs/CONTRIBUTING.md) for more information.
+Please see our [contributing guidelines](./docs/contributing.md) for more information.

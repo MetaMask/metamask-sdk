@@ -7,3 +7,7 @@ export enum ProviderConstants {
 export const ErrorMessages = {
   MANUAL_DISCONNECT: 'manual-disconnect',
 };
+
+export const METAMASK_CONNECT_BASE_URL = 'https://metamask.app.link/connect';
+
+export const METAMASK_DEEPLINK_BASE = 'metamask://connect';
