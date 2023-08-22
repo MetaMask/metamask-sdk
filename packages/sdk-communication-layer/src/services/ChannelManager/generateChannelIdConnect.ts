@@ -10,40 +10,48 @@ import { clean } from './clean';
  */
 
 export function generateChannelIdConnect(state: RemoteCommunicationState) {
-  if (!state.communicationLayer) {
+  const {
+    debug,
+    sessionDuration,
+    storageManager,
+    communicationLayer,
+    ready,
+    channelId,
+  } = state;
+  if (!communicationLayer) {
     throw new Error('communication layer not initialized');
   }
 
-  if (state.ready) {
+  if (ready) {
     throw new Error('Channel already connected');
   }
 
-  if (state.channelId && state.communicationLayer?.isConnected()) {
+  if (channelId && communicationLayer?.isConnected()) {
     console.warn(
       `Channel already exists -- interrupt generateChannelId`,
       state.channelConfig,
     );
 
     state.channelConfig = {
-      channelId: state.channelId,
-      validUntil: Date.now() + state.sessionDuration,
+      channelId,
+      validUntil: Date.now() + sessionDuration,
     };
-    state.storageManager?.persistChannelConfig(state.channelConfig);
+    storageManager?.persistChannelConfig(state.channelConfig);
 
     return {
-      channelId: state.channelId,
-      pubKey: state.communicationLayer?.getKeyInfo()?.ecies.public,
+      channelId,
+      pubKey: communicationLayer?.getKeyInfo()?.ecies.public,
     };
   }
 
-  if (state.debug) {
+  if (debug) {
     console.debug(`RemoteCommunication::generateChannelId()`);
   }
 
   clean(state);
-  const channel = state.communicationLayer.createChannel();
+  const channel = communicationLayer.createChannel();
 
-  if (state.debug) {
+  if (debug) {
     console.debug(
       `RemoteCommunication::generateChannelId() channel created`,
       channel,
@@ -52,12 +60,12 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
 
   const channelConfig = {
     channelId: channel.channelId,
-    validUntil: Date.now() + state.sessionDuration,
+    validUntil: Date.now() + sessionDuration,
   };
   state.channelId = channel.channelId;
   state.channelConfig = channelConfig;
   // save current channel config
-  state.storageManager?.persistChannelConfig(channelConfig);
+  storageManager?.persistChannelConfig(channelConfig);
 
-  return { channelId: state.channelId, pubKey: channel.pubKey };
+  return { channelId, pubKey: channel.pubKey };
 }

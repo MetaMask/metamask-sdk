@@ -7,8 +7,9 @@ import { RemoteCommunicationState } from '../../RemoteCommunication';
  * @returns void
  */
 export function clean(state: RemoteCommunicationState) {
-  if (state.debug) {
-    console.debug(`RemoteCommunication::${state.context}::clean()`);
+  const { debug, context } = state;
+  if (debug) {
+    console.debug(`RemoteCommunication::${context}::clean()`);
   }
 
   state.channelConfig = undefined;
