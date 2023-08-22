@@ -19,6 +19,7 @@ export function disconnect({
   instance: RemoteCommunication;
 }) {
   const { state } = instance;
+
   if (state.debug) {
     console.debug(
       `RemoteCommunication::disconnect() channel=${state.channelId}`,

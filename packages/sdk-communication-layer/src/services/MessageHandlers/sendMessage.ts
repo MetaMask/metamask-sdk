@@ -28,51 +28,59 @@ export async function sendMessage(
   instance: RemoteCommunication,
   message: CommunicationLayerMessage,
 ): Promise<void> {
-  const {
-    paused,
-    ready,
-    communicationLayer,
-    clientsConnected,
-    debug,
-    context,
-    authorized,
-    _connectionStatus,
-  } = instance.state;
-
-  if (debug) {
-    console.log(
-      `RemoteCommunication::${context}::sendMessage paused=${paused} ready=${ready} authorized=${authorized} socket=${communicationLayer?.isConnected()} clientsConnected=${clientsConnected} status=${_connectionStatus}`,
-      message,
-    );
-  }
-
-  if (
-    paused ||
-    !ready ||
-    !communicationLayer?.isConnected() ||
-    !clientsConnected
-  ) {
-    if (debug) {
+  return new Promise((resolve, reject) => {
+    if (instance.state.debug) {
       console.log(
-        `RemoteCommunication::${context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
+        `RemoteCommunication::${instance.state.context}::sendMessage paused=${
+          instance.state.paused
+        } ready=${instance.state.ready} authorized=${
+          instance.state.authorized
+        } socker=${instance.state.communicationLayer?.isConnected()} clientsConnected=${
+          instance.state.clientsConnected
+        } status=${instance.state._connectionStatus}`,
+        message,
       );
     }
 
-    await new Promise<void>((resolve) => {
-      instance.once(EventType.CLIENTS_READY, resolve);
-    });
+    if (
+      instance.state.paused ||
+      !instance.state.ready ||
+      !instance.state.communicationLayer?.isConnected() ||
+      !instance.state.clientsConnected
+    ) {
+      if (instance.state.debug) {
+        console.log(
+          `RemoteCommunication::${instance.state.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
+        );
+      }
 
-    if (debug) {
-      console.log(
-        `RemoteCommunication::${context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
-      );
+      instance.once(EventType.CLIENTS_READY, async () => {
+        if (instance.state.debug) {
+          console.log(
+            `RemoteCommunication::${instance.state.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
+          );
+        }
+
+        try {
+          await handleAuthorization(instance, message);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      });
+    } else {
+      // Send the message or wait for authorization
+      handleAuthorization(instance, message)
+        .then(() => {
+          resolve();
+        })
+        .catch((err: unknown) => {
+          console.error(
+            `RemoteCommunication::${instance.state.context}::sendMessage  ERROR`,
+            err,
+          );
+          reject(err);
+        });
     }
-  }
-
-  try {
-    await handleAuthorization(instance, message);
-  } catch (err) {
-    console.error(`RemoteCommunication::${context}::sendMessage  ERROR`, err);
-    throw err;
-  }
+  });
 }

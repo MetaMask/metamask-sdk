@@ -13,10 +13,10 @@ import { EventType } from '../../types/EventType';
  */
 export function handleChannelCreatedEvent(instance: RemoteCommunication) {
   return (id: string) => {
-    const { debug, context } = instance.state;
-    if (debug) {
+    const { state } = instance;
+    if (state.debug) {
       console.debug(
-        `RemoteCommunication::${context}::on 'channel_created' channelId=${id}`,
+        `RemoteCommunication::${state.context}::on 'channel_created' channelId=${id}`,
       );
     }
     instance.emit(EventType.CHANNEL_CREATED, id);

@@ -19,13 +19,13 @@ export function handleOtpMessage(
   instance: RemoteCommunication,
   message: CommunicationLayerMessage,
 ) {
-  const { walletInfo } = instance.state;
+  const { state } = instance;
 
   // OTP message are ignored on the wallet.
   instance.emit(EventType.OTP, message.otpAnswer);
 
   // backward compatibility for wallet <6.6
-  if ('6.6'.localeCompare(walletInfo?.version || '') === 1) {
+  if ('6.6'.localeCompare(state.walletInfo?.version || '') === 1) {
     console.warn(
       `RemoteCommunication::on 'otp' -- backward compatibility <6.6 -- triger eth_requestAccounts`,
     );

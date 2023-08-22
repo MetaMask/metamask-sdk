@@ -99,30 +99,33 @@ export function initCommunicationLayer({
   };
   state.originatorInfo = originatorInfo;
 
-  const { communicationLayer } = state;
-
   // TODO below listeners is only added for backward compatibility with wallet < 7.3
   const eventsMapping: {
     [key in CommunicationLayerHandledEvents]: (...args: any[]) => void;
   } = {
-    [EventType.AUTHORIZED]: () => handleAuthorizedEvent(instance),
-    [EventType.MESSAGE]: () => handleMessageEvent(instance),
-    [EventType.CLIENTS_CONNECTED]: () =>
-      handleClientsConnectedEvent(instance, communicationLayerPreference),
-    [EventType.KEYS_EXCHANGED]: () =>
-      handleKeysExchangedEvent(instance, communicationLayerPreference),
-    [EventType.SOCKET_DISCONNECTED]: () =>
-      handleSocketDisconnectedEvent(instance),
-    [EventType.SOCKET_RECONNECT]: () => handleSocketReconnectEvent(instance),
-    [EventType.CLIENTS_DISCONNECTED]: () =>
-      handleClientsDisconnectedEvent(instance, communicationLayerPreference),
-    [EventType.CHANNEL_CREATED]: () => handleChannelCreatedEvent(instance),
-    [EventType.CLIENTS_WAITING]: () => handleClientsWaitingEvent(instance),
+    [EventType.AUTHORIZED]: handleAuthorizedEvent(instance),
+    [EventType.MESSAGE]: handleMessageEvent(instance),
+    [EventType.CLIENTS_CONNECTED]: handleClientsConnectedEvent(
+      instance,
+      communicationLayerPreference,
+    ),
+    [EventType.KEYS_EXCHANGED]: handleKeysExchangedEvent(
+      instance,
+      communicationLayerPreference,
+    ),
+    [EventType.SOCKET_DISCONNECTED]: handleSocketDisconnectedEvent(instance),
+    [EventType.SOCKET_RECONNECT]: handleSocketReconnectEvent(instance),
+    [EventType.CLIENTS_DISCONNECTED]: handleClientsDisconnectedEvent(
+      instance,
+      communicationLayerPreference,
+    ),
+    [EventType.CHANNEL_CREATED]: handleChannelCreatedEvent(instance),
+    [EventType.CLIENTS_WAITING]: handleClientsWaitingEvent(instance),
   };
 
   for (const [eventType, handler] of Object.entries(eventsMapping)) {
     try {
-      communicationLayer.on(eventType, handler);
+      state.communicationLayer.on(eventType, handler);
     } catch (error) {
       console.error(`Error registering handler for ${eventType}:`, error);
     }

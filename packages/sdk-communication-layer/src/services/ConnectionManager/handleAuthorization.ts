@@ -14,47 +14,39 @@ export async function handleAuthorization(
   message: CommunicationLayerMessage,
 ): Promise<void> {
   return new Promise((resolve) => {
-    const {
-      debug,
-      context,
-      isOriginator,
-      authorized,
-      communicationLayer,
-      walletInfo,
-      ready,
-    } = instance.state;
+    const { state } = instance;
 
-    if (debug) {
+    if (state.debug) {
       console.log(
-        `RemoteCommunication::${context}::sendMessage::handleAuthorization ready=${ready} authorized=${authorized} method=${message.method}`,
+        `RemoteCommunication::${state.context}::sendMessage::handleAuthorization ready=${state.ready} authorized=${state.authorized} method=${message.method}`,
       );
     }
 
     // TODO remove after wallet 7.3+ is deployed
     // backward compatibility for wallet <7.3
-    if ('7.3'.localeCompare(walletInfo?.version || '') === 1) {
-      if (debug) {
+    if ('7.3'.localeCompare(state.walletInfo?.version || '') === 1) {
+      if (state.debug) {
         console.debug(
-          `compatibility hack wallet version > ${walletInfo?.version}`,
+          `compatibility hack wallet version > ${state.walletInfo?.version}`,
         );
       }
-      communicationLayer?.sendMessage(message);
+      state.communicationLayer?.sendMessage(message);
       resolve();
       return;
     }
 
-    if (!isOriginator || authorized) {
-      communicationLayer?.sendMessage(message);
+    if (!state.isOriginator || state.authorized) {
+      state.communicationLayer?.sendMessage(message);
       resolve();
     } else {
       instance.once(EventType.AUTHORIZED, () => {
-        if (debug) {
+        if (state.debug) {
           console.log(
-            `RemoteCommunication::${context}::sendMessage  AFTER SKIP / AUTHORIZED -- sending pending message`,
+            `RemoteCommunication::${state.context}::sendMessage  AFTER SKIP / AUTHORIZED -- sending pending message`,
           );
         }
         // only send the message after the clients have awaken.
-        communicationLayer?.sendMessage(message);
+        state.communicationLayer?.sendMessage(message);
         resolve();
       });
     }
