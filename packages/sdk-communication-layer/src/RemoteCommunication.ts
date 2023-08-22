@@ -1,9 +1,12 @@
 import { EventEmitter2 } from 'eventemitter2';
 import packageJson from '../package.json';
 import { ECIESProps } from './ECIES';
-import { clean, generateChannelIdConnect } from './services/ChannelManager';
-import { sendMessage } from './services/MessageHandlers';
-import { testStorage } from './services/StorageManager';
+import {
+  clean,
+  generateChannelIdConnect,
+} from './services/RemoteCommunication/ChannelManager';
+import { sendMessage } from './services/RemoteCommunication/MessageHandlers';
+import { testStorage } from './services/RemoteCommunication/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
 import { CommunicationLayer } from './types/CommunicationLayer';
@@ -28,7 +31,7 @@ import {
   initCommunicationLayer,
   originatorSessionConnect,
   resume,
-} from './services/ConnectionManager';
+} from './services/RemoteCommunication/ConnectionManager';
 import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
