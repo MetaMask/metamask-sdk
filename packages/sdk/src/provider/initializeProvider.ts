@@ -127,18 +127,23 @@ const initializeProvider = ({
         } catch (installError) {
           setInitializing(false);
 
-          if (debug) {
-            console.debug(
-              `initializeProvider failed to start installer: ${installError}`,
-            );
-          }
-
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
+            if (debug) {
+              console.debug(
+                `initializeProvider extension provider detect: re-create ${method} on the active provider`,
+              );
+            }
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
               method,
               params: args,
             });
+          }
+
+          if (debug) {
+            console.debug(
+              `initializeProvider failed to start installer: ${installError}`,
+            );
           }
 
           throw installError;
@@ -191,6 +196,20 @@ const initializeProvider = ({
       } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
+      }
+
+      if (sdk.isExtensionActive()) {
+        // It means there was a switch of provider while waiting for initialization -- redirect to the extension.
+        if (debug) {
+          console.debug(
+            `initializeProvider::sendRequest() EXTENSION active - redirect request '${method}' to it`,
+          );
+        }
+        // redirect to extension
+        return await sdk.getProvider()?.request({
+          method,
+          params: args,
+        });
       }
 
       if (debug) {
