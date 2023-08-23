@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.0]
-### Uncategorized
+### Added
 - feat: refactor RemoteCommunication class for enhanced modularity and testability ([#282](https://github.com/MetaMask/metamask-sdk/pull/282))
 
 ## [0.5.3]
