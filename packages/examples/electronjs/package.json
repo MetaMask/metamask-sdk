@@ -1,6 +1,7 @@
 {
   "name": "electronjs-test-dapp",
   "private": true,
+  "version": "0.1.0",
   "packageManager": "yarn@3.5.1",
   "devDependencies": {
     "@types/qrcode": "^1.5.1",
