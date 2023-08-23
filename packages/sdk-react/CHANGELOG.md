@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.0]
-### Uncategorized
+### Added
 - refactor: move wagmi to sdk-react-ui ([#271](https://github.com/MetaMask/metamask-sdk/pull/271))
 
 ## [0.5.6]
