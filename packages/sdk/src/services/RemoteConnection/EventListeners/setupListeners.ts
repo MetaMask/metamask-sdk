@@ -87,8 +87,6 @@ export function setupListeners(
       state.otpAnswer = undefined;
       state.authorized = true;
 
-      provider.emit('connect');
-
       if (state.developerMode) {
         console.debug(
           `RCPMS::on 'authorized' provider.state`,
