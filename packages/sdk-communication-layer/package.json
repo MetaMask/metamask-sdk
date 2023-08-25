@@ -33,7 +33,7 @@
     "publish:preview": "yarn npm publish --tag preview",
     "prepack": "../../scripts/prepack.sh",
     "reset": "yarn clean && rimraf ./node_modules/",
-    "test": "echo 'N/A'",
+    "test": "jest",
     "test:ci": "echo 'N/A'",
     "test:dev": "jest  ",
     "watch": "rollup -c -w"
