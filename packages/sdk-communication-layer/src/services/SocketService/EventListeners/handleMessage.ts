@@ -14,7 +14,15 @@ import { checkSameId } from '../ChannelManager';
  * @returns {Function} A handler function for incoming messages.
  */
 export function handleMessage(instance: SocketService, channelId: string) {
-  return ({ id, message, error }: { id: string; message: any; error: any }) => {
+  return ({
+    id,
+    message,
+    error,
+  }: {
+    id: string;
+    message: any;
+    error?: any;
+  }) => {
     if (instance.state.debug) {
       console.debug(
         `SocketService::${

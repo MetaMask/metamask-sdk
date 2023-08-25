@@ -1,7 +1,6 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
-import { handleKeyHandshake } from '../KeysManager/handleKeyHandshake';
-import { validateKeyExchange } from '../KeysManager/validateKeyExchange';
+import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 import { handleRpcReplies } from './handleRpcReplies';
 import { trackRpcMethod } from './trackRpcMethod';
@@ -39,6 +38,7 @@ export function handleSendMessage(
   const isKeyHandshakeMessage = message?.type?.startsWith('key_handshake');
 
   if (isKeyHandshakeMessage) {
+    console.log('AAA');
     handleKeyHandshake(instance, message);
     return;
   }
@@ -52,5 +52,7 @@ export function handleSendMessage(
 
   // Only makes sense on originator side.
   // wait for reply when eth_requestAccounts is sent.
-  handleRpcReplies(instance, message);
+  handleRpcReplies(instance, message).catch((err) => {
+    console.warn('Error handleRpcReplies', err);
+  });
 }

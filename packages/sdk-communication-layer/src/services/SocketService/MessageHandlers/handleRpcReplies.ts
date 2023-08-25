@@ -11,7 +11,7 @@ import { waitForRpc } from '../../../utils/wait';
  * @param instance The current instance of the SocketService.
  * @param message The message for which to handle RPC replies.
  */
-export function handleRpcReplies(
+export async function handleRpcReplies(
   instance: SocketService,
   message: CommunicationLayerMessage,
 ) {
@@ -19,17 +19,20 @@ export function handleRpcReplies(
   const method = message?.method ?? '';
 
   if (instance.state.isOriginator && rpcId) {
-    waitForRpc(rpcId, instance.state.rpcMethodTracker, 200)
-      .then((result) => {
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::waitForRpc id=${rpcId} ${method} ( ${result.elapsedTime} ms)`,
-            result.result,
-          );
-        }
-      })
-      .catch((err) => {
-        console.warn(`Error rpcId=${rpcId} ${method}`, err);
-      });
+    try {
+      const result = await waitForRpc(
+        rpcId,
+        instance.state.rpcMethodTracker,
+        200,
+      );
+      if (instance.state.debug) {
+        console.debug(
+          `SocketService::waitForRpc id=${message.id} ${method} ( ${result.elapsedTime} ms)`,
+          result.result,
+        );
+      }
+    } catch (err) {
+      console.warn(`Error rpcId=${message.id} ${method}`, err);
+    }
   }
 }

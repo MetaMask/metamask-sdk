@@ -1,5 +1,5 @@
 import { SocketService } from '../../../SocketService';
-import { checkFocusAndReconnect } from '../ConnectionManager/checkFocusAndReconnect';
+import { checkFocusAndReconnect } from '../ConnectionManager';
 
 /**
  * Returns a handler function to handle the 'error' event of the socket.
