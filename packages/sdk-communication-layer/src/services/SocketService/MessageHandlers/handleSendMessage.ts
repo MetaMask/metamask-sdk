@@ -38,7 +38,6 @@ export function handleSendMessage(
   const isKeyHandshakeMessage = message?.type?.startsWith('key_handshake');
 
   if (isKeyHandshakeMessage) {
-    console.log('AAA');
     handleKeyHandshake(instance, message);
     return;
   }
