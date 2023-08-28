@@ -47,7 +47,7 @@ describe('handleClientsConnectedEvent', () => {
     const handler = handleClientsConnectedEvent(
       instance,
       CommunicationLayerPreference.SOCKET,
-    ); // You might need to specify the correct preference here
+    );
     handler();
     expect(console.debug).toHaveBeenCalledWith(
       `RemoteCommunication::on 'clients_connected' channel=testChannel keysExchanged=true`,
