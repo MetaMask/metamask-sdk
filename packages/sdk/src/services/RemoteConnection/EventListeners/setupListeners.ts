@@ -1,5 +1,5 @@
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
-import { EventType } from '@metamask/sdk-communication-layer';
+import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnection, RemoteConnectionState } from '../RemoteConnection';
 
@@ -76,6 +76,8 @@ export function setupListeners(
         );
       }
 
+      state.analytics?.send({ event: TrackingEvents.AUTHORIZED });
+
       // Force connected state on provider
       // This prevents some rpc method being received in Ethereum before connected state is.
       const provider = Ethereum.getProvider();
@@ -113,6 +115,11 @@ export function setupListeners(
   });
 
   state.connector.on(EventType.TERMINATE, () => {
+    if (!state.connector?.isAuthorized()) {
+      // It means the connection was rejected by the user
+      state.analytics?.send({ event: TrackingEvents.REJECTED });
+    }
+
     if (state.platformManager?.isBrowser()) {
       // TODO use a modal or let user customize messsage instead
       // eslint-disable-next-line no-alert
