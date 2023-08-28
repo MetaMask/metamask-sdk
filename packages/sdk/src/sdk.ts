@@ -503,6 +503,8 @@ export class MetaMaskSDK extends EventEmitter2 {
       terminate: true,
       sendMessage: true,
     });
+
+    this._initialized = false;
   }
 
   isInitialized() {
