@@ -21,6 +21,7 @@ export async function connectWithModalInstaller(
 ) {
   return new Promise<void>((resolve, reject) => {
     if (!state.connector) {
+      reject(new Error('No connector available'));
       return;
     }
 

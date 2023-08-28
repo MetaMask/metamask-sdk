@@ -8,12 +8,12 @@
     "esModuleInterop": true,
     "module": "ES2020",
     "moduleResolution": "Node",
-    "resolveJsonModule": true,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
-    "types": ["node"]
+    "resolveJsonModule": true,
+    "types": ["node", "jest"]
     // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
   "include": ["./src"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist"]
 }

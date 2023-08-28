@@ -86,7 +86,7 @@ export interface RemoteConnectionState {
 export class RemoteConnection implements ProviderService {
   private options: RemoteConnectionProps;
 
-  private state: RemoteConnectionState = {
+  public state: RemoteConnectionState = {
     connector: undefined,
     universalLink: undefined,
     developerMode: false,

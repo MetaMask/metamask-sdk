@@ -45,7 +45,7 @@ describe('MetaMask Simulator', () => {
 
     const mmRemote = new RemoteCommunication({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      platform: 'test',
+      platformType: 'metamask-mobile',
       otherPublicKey: pubkey,
       // communicationServerUrl: 'http://localhost:4000',
       context: 'mm',
