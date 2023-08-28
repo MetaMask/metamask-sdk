@@ -77,8 +77,6 @@ describe('onCommunicationLayerMessage', () => {
     expect(instance.state.ready).toBe(true);
   });
 
-  // ... more similar tests for each handler function ...
-
   it('should invoke handleOriginatorInfoMessage for ORIGINATOR_INFO messages when not originator', () => {
     message = { type: MessageType.ORIGINATOR_INFO };
 

@@ -118,7 +118,6 @@ describe('RemoteCommunication', () => {
       const pingMock = jest.fn();
       remoteCommunicationInstance.state.communicationLayer = {
         ping: pingMock,
-        // ...mock other properties if necessary
       } as unknown as CommunicationLayer;
       remoteCommunicationInstance.state.debug = true;
       remoteCommunicationInstance.ping();
