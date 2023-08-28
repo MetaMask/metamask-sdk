@@ -50,6 +50,7 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
       state.channelConfig = channelConfig;
       state.originatorConnectStarted = true;
       state.channelId = channelConfig?.channelId;
+      state.reconnection = true;
       state.communicationLayer?.connectToChannel({
         channelId: channelConfig.channelId,
         isOriginator: true,

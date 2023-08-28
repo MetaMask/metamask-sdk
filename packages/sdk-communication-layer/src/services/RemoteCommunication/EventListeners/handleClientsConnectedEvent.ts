@@ -36,10 +36,13 @@ export function handleClientsConnectedEvent(
     }
 
     if (state.analytics) {
+      const requestEvent = state.isOriginator
+        ? TrackingEvents.REQUEST
+        : TrackingEvents.REQUEST_MOBILE;
       SendAnalytics(
         {
           id: state.channelId ?? '',
-          event: TrackingEvents.REQUEST,
+          event: state.reconnection ? TrackingEvents.RECONNECT : requestEvent,
           ...state.originatorInfo,
           commLayer: communicationLayerPreference,
           sdkVersion: state.sdkVersion,
