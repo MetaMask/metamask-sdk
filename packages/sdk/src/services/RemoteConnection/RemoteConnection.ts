@@ -14,6 +14,7 @@ import { MetaMaskSDK } from '../../sdk';
 import { SDKLoggingOptions } from '../../types/SDKLoggingOptions';
 import InstallModal from '../../ui/InstallModal/installModal';
 import PendingModal from '../../ui/InstallModal/pendingModal';
+import { Analytics } from '../Analytics';
 import { Ethereum } from '../Ethereum';
 import { ProviderService } from '../ProviderService';
 import { initializeConnector } from './ConnectionInitializer';
@@ -30,6 +31,7 @@ export interface RemoteConnectionProps {
   dappMetadata?: DappMetadata;
   _source?: string;
   enableDebug?: boolean;
+  analytics: Analytics;
   sdk: MetaMaskSDK;
   transports?: string[];
   platformManager: PlatformManager;
@@ -64,7 +66,9 @@ export interface RemoteConnectionState {
   connector?: RemoteCommunication;
   universalLink?: string;
   developerMode: boolean;
+  analytics?: Analytics;
   authorized: boolean;
+  reconnection: boolean;
   communicationLayerPreference?: CommunicationLayerPreference;
   platformManager?: PlatformManager;
   pendingModal?: {
@@ -89,8 +93,10 @@ export class RemoteConnection implements ProviderService {
   private state: RemoteConnectionState = {
     connector: undefined,
     universalLink: undefined,
+    analytics: undefined,
     developerMode: false,
     authorized: false,
+    reconnection: false,
     communicationLayerPreference: undefined,
     platformManager: undefined,
     pendingModal: undefined,
@@ -103,6 +109,7 @@ export class RemoteConnection implements ProviderService {
     const developerMode =
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.state.developerMode = developerMode;
+    this.state.analytics = options.analytics;
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;

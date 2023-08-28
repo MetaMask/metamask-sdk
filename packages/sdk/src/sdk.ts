@@ -288,6 +288,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.remoteConnection = new RemoteConnection({
       communicationLayerPreference,
+      analytics: this.analytics,
       dappMetadata,
       _source,
       enableDebug,
