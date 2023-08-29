@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0]
 ### Added
+- feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
+- feat: add unit tests to the SocketService class ([#294](https://github.com/MetaMask/metamask-sdk/pull/294))
 - feat: refactor SocketService class for enhanced modularity and testability ([#292](https://github.com/MetaMask/metamask-sdk/pull/292))
 - feat: refactor RemoteCommunication class for enhanced modularity and testability ([#282](https://github.com/MetaMask/metamask-sdk/pull/282))
 

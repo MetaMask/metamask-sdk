@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0]
 ### Added
+- feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
+- feat: reinitialize sdk on termination ([#296](https://github.com/MetaMask/metamask-sdk/pull/296))
 - feat: remove invalid connect event (should contain chainId) ([#287](https://github.com/MetaMask/metamask-sdk/pull/287))
 - feat: add sideEffects field to sdk package ([#286](https://github.com/MetaMask/metamask-sdk/pull/286))
 - feat: refactor the RemoteConnection class ([#258](https://github.com/MetaMask/metamask-sdk/pull/258))
