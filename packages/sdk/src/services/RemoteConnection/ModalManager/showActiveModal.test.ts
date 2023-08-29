@@ -20,7 +20,7 @@ describe('showActiveModal', () => {
         mount: mockInstallModalMount,
       },
       universalLink: 'http://example.com',
-    };
+    } as unknown as RemoteConnectionState;
   });
 
   it('should not mount any modal if the connection is already authorized', () => {

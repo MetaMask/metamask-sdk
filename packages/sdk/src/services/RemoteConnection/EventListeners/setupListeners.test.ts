@@ -1,4 +1,4 @@
-import { EventType } from '@metamask/sdk-communication-layer';
+import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../../Ethereum';
 import {
   RemoteConnectionProps,
@@ -28,13 +28,18 @@ describe('setupListeners', () => {
   const mockOtpModal = jest.fn();
   const mocksIsSecure = jest.fn();
   const mockIsBrowser = jest.fn();
+  const mockIsAuthorized = jest.fn();
+  const mockSendAnalytics = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
+    mockIsAuthorized.mockReturnValue(true);
+
     state = {
       connector: {
         on: mockConnectorOn,
+        isAuthorized: mockIsAuthorized,
       },
       developerMode: false,
       platformManager: {
@@ -43,6 +48,9 @@ describe('setupListeners', () => {
       },
       pendingModal: {
         updateOTPValue: mockUpdateOTPValue,
+      },
+      analytics: {
+        send: mockSendAnalytics,
       },
     } as unknown as RemoteConnectionState;
 
@@ -195,5 +203,57 @@ describe('setupListeners', () => {
 
     const provider = Ethereum.getProvider();
     expect(provider.request).toHaveBeenCalledWith(anotherMockRequestParams);
+  });
+
+  it('should not handle OTP event when platform is secure', () => {
+    mocksIsSecure.mockReturnValue(true);
+
+    setupListeners(state, options);
+
+    const otpCallback = mockConnectorOn.mock.calls.find(
+      ([event]) => event === EventType.OTP,
+    )?.[1];
+
+    expect(otpCallback).toBeUndefined();
+    expect(state.otpAnswer).toBeUndefined();
+  });
+
+  it('should handle TERMINATE event without rejected connection', () => {
+    mockIsAuthorized.mockReturnValue(true);
+
+    setupListeners(state, options);
+
+    const terminateCallback = mockConnectorOn.mock.calls.find(
+      ([event]) => event === EventType.TERMINATE,
+    )[1];
+
+    terminateCallback();
+
+    expect(mockSendAnalytics).not.toHaveBeenCalledWith({
+      event: TrackingEvents.REJECTED,
+    });
+  });
+
+  it('should handle error in AUTHORIZED event', async () => {
+    const mockProvider = {
+      _setConnected: jest.fn(),
+      forceInitializeState: jest
+        .fn()
+        .mockRejectedValue(new Error('Mock Error')),
+    };
+    (Ethereum.getProvider as jest.MockedFunction<any>).mockReturnValue(
+      mockProvider,
+    );
+
+    setupListeners(state, options);
+
+    const authorizedCallback = mockConnectorOn.mock.calls.find(
+      ([event]) => event === EventType.AUTHORIZED,
+    )[1];
+
+    await authorizedCallback();
+
+    expect(mockProvider._setConnected).toHaveBeenCalled();
+    expect(mockProvider.forceInitializeState).toHaveBeenCalled();
   });
 });
