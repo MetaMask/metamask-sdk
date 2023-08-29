@@ -180,22 +180,24 @@ export default function Home() {
 
     const transport = http(rpcUrl);
     const client = createPublicClient({transport});
-    const balance = await client.getBalance({
-      address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E',
-    })
-    console.debug('balance', balance)
-
-    const chainId = await client.getChainId()
-    console.log(`chainId`, chainId)
-
-    const contract = getContract({
-      address: contractAddress,
-      abi: SimpleABI.abi,
-      publicClient: client,
-    })
-
-    const text = await contract.read.ping()
-    console.debug(`ping`, text)
+try {
+  const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
+  console.debug('balance', balance);
+  
+  const chainId = await client.getChainId();
+  console.debug('chainId', chainId);
+  
+  const contract = getContract({
+    address: contractAddress,
+    abi: SimpleABI.abi,
+    publicClient: client,
+  });
+  
+  const text = await contract.read.ping();
+  console.debug('ping', text);
+} catch (error) {
+  console.error('Error pinging Viem:', error.message);
+}
   }
 
   return (
