@@ -67,10 +67,14 @@ app.post('/debug', (_req, res) => {
       },
     };
 
+    // Define properties to be excluded
+    const propertiesToExclude = ['icon'];
+
     for (const property in body) {
       if (
         Object.prototype.hasOwnProperty.call(body, property) &&
-        body[property]
+        body[property] &&
+        !propertiesToExclude.includes(property)
       ) {
         event.properties[property] = body[property];
       }

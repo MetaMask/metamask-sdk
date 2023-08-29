@@ -54,10 +54,16 @@ export function handleKeysExchangedEvent(
     setLastActiveDate(instance, new Date());
 
     if (state.analytics && state.channelId) {
+      console.warn(
+        `TrackingEvents.CONNECTED message.isOriginator=${message.isOriginator} originator=${state.isOriginator}`,
+      );
+
       SendAnalytics(
         {
           id: state.channelId,
-          event: TrackingEvents.CONNECTED,
+          event: message.isOriginator
+            ? TrackingEvents.CONNECTED
+            : TrackingEvents.CONNECTED_MOBILE,
           sdkVersion: state.sdkVersion,
           commLayer: communicationLayerPreference,
           commLayerVersion: packageJson.version,
