@@ -34,6 +34,7 @@
     "prepack": "../../scripts/prepack.sh",
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:ci": "echo 'N/A'",
     "test:dev": "jest  ",
     "watch": "rollup -c -w"

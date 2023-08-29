@@ -2,6 +2,8 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { onOTPModalDisconnect } from './onOTPModalDisconnect';
+import { waitForOTPAnswer } from './waitForOTPAnswer';
 
 /**
  * Reconnects to MetaMask using an OTP modal and waits for an OTP answer.
@@ -14,25 +16,16 @@ export async function reconnectWithModalOTP(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
 ): Promise<void> {
-  const onDisconnect = () => {
-    options.modals.onPendingModalDisconnect?.();
-    state.pendingModal?.unmount?.();
-  };
-
-  const waitForOTP = async (): Promise<string> => {
-    while (state.otpAnswer === undefined) {
-      await new Promise<void>((res) => setTimeout(() => res(), 1000));
-    }
-    return state.otpAnswer;
-  };
-
   if (state.pendingModal) {
     state.pendingModal?.mount?.();
   } else {
-    state.pendingModal = options.modals.otp?.(onDisconnect);
+    state.pendingModal = options.modals.otp?.(() =>
+      onOTPModalDisconnect(options, state),
+    );
   }
 
-  const otp = await waitForOTP();
+  const otp = await waitForOTPAnswer(state);
+
   if (state.otpAnswer !== otp) {
     state.otpAnswer = otp;
     state.pendingModal?.updateOTPValue?.(otp);
