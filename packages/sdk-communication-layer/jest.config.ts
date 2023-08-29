@@ -19,11 +19,14 @@ const config: JestConfigWithTsJest = {
   // clearMocks: false,
 
   // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
+  // collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
-
+  // collectCoverageFrom: [
+  //   'src/**/*.{ts,tsx}', // Modify this pattern to fit your project's structure
+  //   '!src/**/*.d.ts', // Exclude TypeScript declaration files
+  //   '!src/**/index.ts', // Optional: Exclude index.ts files (if they just re-export)
+  // ],
   // The directory where Jest should output its coverage files
   // coverageDirectory: undefined,
 
@@ -36,12 +39,7 @@ const config: JestConfigWithTsJest = {
   // coverageProvider: "babel",
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  // coverageReporters: ['clover', 'json-summary', 'lcov', 'text'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -67,7 +65,11 @@ const config: JestConfigWithTsJest = {
   // globalTeardown: undefined,
 
   // A set of global variables that need to be available in all test environments
-  globals: {},
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.test.json',
+    },
+  },
 
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: "50%",
