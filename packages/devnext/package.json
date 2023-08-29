@@ -12,6 +12,7 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'N/A'",
+    "allow-scripts": "",
     "prepack": "../../scripts/prepack.sh",
     "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh"
   },
@@ -29,32 +30,18 @@
     "encoding": "^0.1.13",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "ethers": "5.7.2",
     "next": "13.2.4",
     "preact": "^10.13.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.0.2",
     "utf-8-validate": "^6.0.3",
-    "web3": "1.9.0"
+    "viem": "^1.8.1",
+    "web3": "^4.1.1"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
     "@types/eslint": "^8"
-  },
-  "lavamoat": {
-    "allowScripts": {
-      "@metamask/sdk>eciesjs>secp256k1": false,
-      "bufferutil": false,
-      "utf-8-validate": false,
-      "@metamask/sdk-react>wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
-      "@metamask/sdk-react>wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
-      "web3": false,
-      "web3>web3-bzz": false,
-      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>es5-ext": false,
-      "web3>web3-core>web3-core-requestmanager>web3-providers-ws>websocket>utf-8-validate": false,
-      "web3>web3-shh": false,
-      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>keccak": false,
-      "web3>web3-utils>ethereumjs-util>ethereum-cryptography>secp256k1": false
-    }
   }
 }
