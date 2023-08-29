@@ -164,11 +164,15 @@ export default function Home() {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const contract = new ethers.Contract(contractAddress, SimpleABI.abi, provider);
 
-    const text = await contract.ping();
-    console.debug('ping', text)
-
-    const chainId = await provider.getNetwork()
-    console.debug(`chainId`, chainId)
+try {
+  const text = await contract.ping();
+  console.debug('ping', text);
+  
+  const network = await provider.getNetwork();
+  console.debug('Network', network);
+} catch (error) {
+  console.error('Error pinging ethers:', error.message);
+}
   }
 
   const pingViem = async () => {
