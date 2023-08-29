@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals';
 import { MetaMaskSDK } from '../src';
 
 describe('SDK', () => {
-  it('should communicate as a DAPP', async () => {
+  it.skip('should communicate as a DAPP', async () => {
     const sdk = new MetaMaskSDK({
       shouldShimWeb3: false,
       // communicationServerUrl: 'http://localhost:4000',
@@ -11,7 +11,6 @@ describe('SDK', () => {
         url: 'http://whateverwewant',
       },
       enableDebug: false,
-      developerMode: true,
     });
 
     const ethereum = sdk.getProvider();

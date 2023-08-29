@@ -34,7 +34,8 @@
     "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh",
     "publish:preview": "yarn npm publish --tag preview",
     "reset": "yarn clean && rimraf ./node_modules/",
-    "test": "echo 'N/A'",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
     "test:ci": "echo 'N/A'",
     "test:dev": "jest -c ./jest.config.ts --detectOpenHandles",
     "watch": "rollup -c -w"
