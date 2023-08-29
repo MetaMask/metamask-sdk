@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2018"],
+    "module": "CommonJS",
+    "outDir": "dist",
+    "target": "ES2018",
+    "allowJs": false,
+    "strict": true,
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types", "./types"],
+  },
+  "include": ["**/*.ts", "./migrations/*.ts", "./types/truffle-contracts/**/*.ts"],
+  "exclude": ["node_modules", "build", "cache", "artifacts"]
+}

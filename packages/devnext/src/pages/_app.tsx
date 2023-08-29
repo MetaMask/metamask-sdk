@@ -10,8 +10,8 @@ export default function App({ Component, pageProps }: AppProps) {
       logging: {
         developerMode: true,
         sdk: false,
-        remoteLayer: false,
-        serviceLayer: false,
+        remoteLayer: true,
+        serviceLayer: true,
         plaintext: true,
       },
       checkInstallationImmediately: false,
