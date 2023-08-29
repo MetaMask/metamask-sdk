@@ -4078,20 +4078,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.5.3":
-  version: 0.5.3
-  resolution: "@metamask/sdk-communication-layer@npm:0.5.3"
-  dependencies:
-    cross-fetch: ^3.1.5
-    date-fns: ^2.29.3
-    eciesjs: ^0.3.16
-    eventemitter2: ^6.4.5
-    socket.io-client: ^4.5.1
-    uuid: ^8.3.2
-  checksum: 635f0cdac3839001c8f69e214d0c007c05ffb286e6ce637309bb59442bbb8849899f4e8f974b4ec154129bfe5f3fd69752114c451eb79a0761d54a677bce8419
-  languageName: node
-  linkType: hard
-
 "@metamask/sdk-communication-layer@workspace:*, @metamask/sdk-communication-layer@workspace:^, @metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer"
@@ -4139,7 +4125,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-install-modal-web@0.5.1, @metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
