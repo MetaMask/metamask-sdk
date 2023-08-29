@@ -73,6 +73,7 @@ export interface RemoteCommunicationState {
   communicationLayer?: CommunicationLayer;
   originatorInfo?: OriginatorInfo;
   originatorInfoSent: boolean;
+  reconnection: boolean;
   dappMetadata?: DappMetadataWithSource;
   communicationServerUrl: string;
   context: string;
@@ -97,6 +98,7 @@ export class RemoteCommunication extends EventEmitter2 {
     paused: false,
     platformType: 'metamask-mobile',
     analytics: false,
+    reconnection: false,
     originatorInfoSent: false,
     communicationServerUrl: DEFAULT_SERVER_URL,
     context: '',

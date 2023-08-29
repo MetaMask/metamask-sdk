@@ -3,6 +3,9 @@ import { useSDK } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ethers } from 'ethers';
+import SimpleABI from '../abi/Simple.json'
+import { Address, createPublicClient, getContract, http } from 'viem'
 
 export default function Home() {
   const {
@@ -146,6 +149,61 @@ export default function Home() {
     sdk?.terminate();
   };
 
+  const addNetwork = () => {
+
+  }
+
+  const pingEthers = async () => {
+    // Get value from contract
+    const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
+    const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS;
+    if(!contractAddress || !rpcUrl) {
+      throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const contract = new ethers.Contract(contractAddress, SimpleABI.abi, provider);
+
+try {
+  const text = await contract.ping();
+  console.debug('ping', text);
+  
+  const network = await provider.getNetwork();
+  console.debug('Network', network);
+} catch (error) {
+  console.error('Error pinging ethers:', error.message);
+}
+  }
+
+  const pingViem = async () => {
+    const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
+    const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
+    if(!contractAddress || !rpcUrl) {
+      throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
+    }
+
+    const transport = http(rpcUrl);
+    const client = createPublicClient({transport});
+try {
+  const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
+  console.debug('balance', balance);
+  
+  const chainId = await client.getChainId();
+  console.debug('chainId', chainId);
+  
+  const contract = getContract({
+    address: contractAddress,
+    abi: SimpleABI.abi,
+    publicClient: client,
+  });
+  
+  const text = await contract.read.ping();
+  console.debug('ping', text);
+} catch (error) {
+  console.error('Error pinging Viem:', error.message);
+}
+  }
+
   return (
     <>
       <Head>
@@ -177,6 +235,20 @@ export default function Home() {
 
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Request Accounts
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={pingEthers}
+            >
+              ping (ethers)
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={pingViem}
+            >
+              ping (viem)
             </button>
 
             <button

@@ -1,0 +1,29 @@
+{
+  "name": "truffle",
+  "private": true,
+  "packageManager": "yarn@3.5.1",
+  "main": "dist/src/index.js",
+  "scripts": {
+    "migrate": "truffle migrate",
+    "compile": "truffle compile",
+    "ganache": "ganache --port=8545 --chain.chainId=1337 -m \"$MNEMONIC\" --server.host=0.0.0.0",
+    "generate-truffle-types": "npx truffle compile && yarn typechain --target=truffle-v5 'build/contracts/*.json'",
+    "allow-scripts": "",
+    "postinstall": "truffle compile && yarn generate-truffle-types"
+  },
+  "devDependencies": {
+    "@typechain/truffle-v5": "^8.0.6",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.7",
+    "chai": "^4.3.8",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.48.0",
+    "ganache": "^7.9.1",
+    "mocha": "^10.2.0",
+    "truffle": "^5.11.3",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.3.1",
+    "typescript": "^5.2.2"
+  }
+}

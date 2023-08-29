@@ -1,6 +1,6 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import { checkFocusAndReconnect } from '../ConnectionManager/checkFocusAndReconnect';
+import { checkFocusAndReconnect } from '../ConnectionManager';
 
 /**
  * Returns a handler function to handle the 'disconnect' event.

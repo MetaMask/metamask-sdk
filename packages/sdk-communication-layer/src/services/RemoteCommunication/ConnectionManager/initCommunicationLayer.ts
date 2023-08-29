@@ -99,10 +99,10 @@ export function initCommunicationLayer({
   };
   state.originatorInfo = originatorInfo;
 
-  // TODO below listeners is only added for backward compatibility with wallet < 7.3
   const eventsMapping: {
     [key in CommunicationLayerHandledEvents]: (...args: any[]) => void;
   } = {
+    // TODO AUTHORIZED listeners is only added for backward compatibility with wallet < 7.3
     [EventType.AUTHORIZED]: handleAuthorizedEvent(instance),
     [EventType.MESSAGE]: handleMessageEvent(instance),
     [EventType.CLIENTS_CONNECTED]: handleClientsConnectedEvent(

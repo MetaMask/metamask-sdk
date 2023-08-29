@@ -51,7 +51,7 @@ describe('SDK Comm Server', () => {
 
     const remote = new RemoteCommunication({
       communicationLayerPreference,
-      platform,
+      platformType: 'metamask-mobile',
       communicationServerUrl,
       dappMetadata: {
         name: 'jest dapp',
@@ -67,7 +67,7 @@ describe('SDK Comm Server', () => {
       },
     });
 
-    const { channelId, pubKey } = await remote.generateChannelId();
+    const { channelId, pubKey } = await remote.generateChannelIdConnect();
 
     // TODO allow for fixed roomid / pubkey setup during testing
     // fs.writeFileSync(
@@ -81,7 +81,7 @@ describe('SDK Comm Server', () => {
 
     const mmRemote = new RemoteCommunication({
       communicationLayerPreference,
-      platform,
+      platformType: 'metamask-mobile',
       otherPublicKey: pubKey,
       communicationServerUrl,
       analytics: true,

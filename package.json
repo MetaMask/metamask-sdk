@@ -7,6 +7,8 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "workspaces": [
+    "packages/hardhat",
+    "packages/truffle",
     "packages/sdk-socket-server",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
@@ -15,8 +17,7 @@
     "packages/sdk-react-ui",
     "packages/devreact",
     "packages/devnext",
-    "packages/deve2e",
-    "packages/examples/*"
+    "packages/deve2e"
   ],
   "scripts": {
     "build": "yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc",
