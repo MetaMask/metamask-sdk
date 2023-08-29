@@ -12,8 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1]
 ### Uncategorized
-- Revert "Release 12.0.0" ([#210](https://github.com/MetaMask/metamask-sdk/pull/210))
-- Release 12.0.0 ([#208](https://github.com/MetaMask/metamask-sdk/pull/208))
 - feat: optimize modal rendering and re-use existing node ([#206](https://github.com/MetaMask/metamask-sdk/pull/206))
 
 ## [0.3.3]
