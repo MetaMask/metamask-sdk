@@ -1,0 +1,30 @@
+import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
+import { Analytics } from '../../Analytics';
+import { MetaMaskSDK } from '../../../sdk';
+
+/**
+ * Sets up the analytics instance for the MetaMask SDK.
+ *
+ * This function initializes an Analytics object and attaches it to the MetaMask SDK instance.
+ * The analytics object is configured based on various options like the server URL, debug settings, and Dapp metadata.
+ *
+ * @param instance The MetaMaskSDK instance for which analytics will be set up.
+ * @returns void
+ * @async
+ */
+export async function setupAnalytics(instance: MetaMaskSDK) {
+  const { options } = instance;
+
+  const platformType = instance.platformManager?.getPlatformType();
+
+  instance.analytics = new Analytics({
+    serverURL: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+    debug: instance.debug,
+    metadata: {
+      url: options.dappMetadata.url ?? '',
+      title: options.dappMetadata.name ?? '',
+      platform: platformType ?? '',
+      source: options._source ?? '',
+    },
+  });
+}
