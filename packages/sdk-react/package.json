@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.6.1",
+  "version": "0.5.6",
   "description": "A react component and react hooks to connect and use MetaMask",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
