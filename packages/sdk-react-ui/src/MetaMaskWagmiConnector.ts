@@ -102,7 +102,7 @@ class MetaMaskConnector extends InjectedConnector {
   }
 
   async disconnect() {
-    this.#sdk.terminate();
+    return this.#sdk.terminate();
   }
 
   async connect({ chainId }: { chainId?: number } = {}): Promise<{
@@ -117,7 +117,7 @@ class MetaMaskConnector extends InjectedConnector {
       const accounts = (await this.#sdk.connect()) as Address[];
 
       // Get latest provider instance (it may have changed based on user selection)
-      this.updateProviderListeners()
+      this.updateProviderListeners();
 
       this.#provider = this.#sdk.getProvider();
       const selectedAccount: Address = accounts?.[0] ?? '0x';
@@ -131,7 +131,10 @@ class MetaMaskConnector extends InjectedConnector {
       }
 
       // backward compatibility with older wallet (<7.3) version that return accounts before authorization
-      if (!this.#sdk.isExtensionActive() && !this.#sdk._getConnection()?.isAuthorized()) {
+      if (
+        !this.#sdk.isExtensionActive() &&
+        !this.#sdk._getConnection()?.isAuthorized()
+      ) {
         const waitForAuthorized = () => {
           return new Promise((resolve) => {
             this.#sdk

@@ -16,20 +16,6 @@ export function initializeConnector(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
 ) {
-  const {
-    dappMetadata,
-    communicationLayerPreference,
-    transports,
-    _source,
-    enableDebug = false,
-    platformManager,
-    timer,
-    ecies,
-    storage,
-    communicationServerUrl,
-    logging,
-  } = options;
-
   if (state.developerMode) {
     console.debug(
       `RemoteConnection::initializeConnector() intialize connector`,
@@ -37,26 +23,29 @@ export function initializeConnector(
   }
 
   state.connector = new RemoteCommunication({
-    platformType: platformManager.getPlatformType(),
-    communicationLayerPreference,
-    transports,
-    dappMetadata: { ...dappMetadata, source: _source },
-    analytics: enableDebug,
-    communicationServerUrl,
+    platformType: options.platformManager.getPlatformType(),
+    communicationLayerPreference: options.communicationLayerPreference,
+    transports: options.transports,
+    dappMetadata: { ...options.dappMetadata, source: options._source },
+    analytics: options.enableDebug,
+    communicationServerUrl: options.communicationServerUrl,
     sdkVersion: packageJson.version,
     context: 'dapp',
-    ecies,
-    storage,
-    logging,
+    ecies: options.ecies,
+    storage: options.storage,
+    logging: options.logging,
   });
 
-  if (timer) {
+  if (options.timer) {
     if (state.developerMode) {
-      console.debug(`RemoteConnection::setup reset background timer`, timer);
+      console.debug(
+        `RemoteConnection::setup reset background timer`,
+        options.timer,
+      );
     }
 
-    timer?.stopBackgroundTimer?.();
-    timer?.runBackgroundTimer?.(() => {
+    options.timer?.stopBackgroundTimer?.();
+    options.timer?.runBackgroundTimer?.(() => {
       // Used to maintain the connection when the app is backgrounded.
       // console.debug(`Running background timer`);
       return false;
