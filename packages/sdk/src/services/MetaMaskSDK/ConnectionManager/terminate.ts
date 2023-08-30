@@ -14,7 +14,7 @@ import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
  * @returns void
  * @emits EventType.PROVIDER_UPDATE with payload PROVIDER_UPDATE_TYPE.TERMINATE when the provider is updated.
  */
-export async function terminate(instance: MetaMaskSDK) {
+export function terminate(instance: MetaMaskSDK) {
   // nothing to do on inapp browser.
   if (instance.platformManager?.isMetaMaskMobileWebView()) {
     return;
