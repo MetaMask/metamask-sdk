@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add unit tests to the RemoteCommunication class ([#295](https://github.com/MetaMask/metamask-sdk/pull/295))
 
 ## [0.6.0]
+### Uncategorized
+- feat: trigger pipeline detection ([#307](https://github.com/MetaMask/metamask-sdk/pull/307))
+- Release 21.0.0 ([#306](https://github.com/MetaMask/metamask-sdk/pull/306))
+
 ### Added
 - feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
 - feat: add unit tests to the SocketService class ([#294](https://github.com/MetaMask/metamask-sdk/pull/294))
