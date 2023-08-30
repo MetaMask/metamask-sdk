@@ -6,21 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.1]
-### Uncategorized
-- feat: force trigger new version ([#305](https://github.com/MetaMask/metamask-sdk/pull/305))
-- Release 20.0.1 ([#303](https://github.com/MetaMask/metamask-sdk/pull/303))
-- Revert "Release 20.0.0" ([#302](https://github.com/MetaMask/metamask-sdk/pull/302))
-- Release 20.0.0 ([#291](https://github.com/MetaMask/metamask-sdk/pull/291))
-- feat: add unit tests to the RemoteConnection class ([#301](https://github.com/MetaMask/metamask-sdk/pull/301))
-- feat: add unit tests to the RemoteCommunication class ([#295](https://github.com/MetaMask/metamask-sdk/pull/295))
-
 ## [0.6.0]
-### Uncategorized
-- feat: trigger pipeline detection ([#307](https://github.com/MetaMask/metamask-sdk/pull/307))
-- Release 21.0.0 ([#306](https://github.com/MetaMask/metamask-sdk/pull/306))
-
 ### Added
+- feat: add unit tests to the RemoteConnection class ([#301](https://github.com/MetaMask/metamask-sdk/pull/301))
 - feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
 - feat: add unit tests to the SocketService class ([#294](https://github.com/MetaMask/metamask-sdk/pull/294))
 - feat: refactor SocketService class for enhanced modularity and testability ([#292](https://github.com/MetaMask/metamask-sdk/pull/292))
@@ -70,8 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.1...HEAD
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...@metamask/sdk-communication-layer@0.6.1
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...HEAD
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.3...@metamask/sdk-communication-layer@0.6.0
 [0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.2...@metamask/sdk-communication-layer@0.5.3
 [0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.0...@metamask/sdk-communication-layer@0.5.2

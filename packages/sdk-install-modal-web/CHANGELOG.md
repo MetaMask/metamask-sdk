@@ -7,16 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.0]
-### Uncategorized
+### Added
 - feat: trigger pipeline detection ([#307](https://github.com/MetaMask/metamask-sdk/pull/307))
-- Release 21.0.0 ([#306](https://github.com/MetaMask/metamask-sdk/pull/306))
-
-## [0.6.1]
-### Uncategorized
-- feat: force trigger new version ([#305](https://github.com/MetaMask/metamask-sdk/pull/305))
 
 ## [0.5.1]
-### Uncategorized
+### Added
 - feat: optimize modal rendering and re-use existing node ([#206](https://github.com/MetaMask/metamask-sdk/pull/206))
 
 ## [0.3.3]
@@ -40,9 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.0...HEAD
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.5.1...@metamask/sdk-install-modal-web@0.6.0
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.5.1...@metamask/sdk-install-modal-web@0.6.1
 [0.5.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.3...@metamask/sdk-install-modal-web@0.5.1
 [0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.2...@metamask/sdk-install-modal-web@0.3.3
 [0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.0...@metamask/sdk-install-modal-web@0.3.2
