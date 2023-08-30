@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.6.0]
-### Added
-- refactor: move wagmi to sdk-react-ui ([#271](https://github.com/MetaMask/metamask-sdk/pull/271))
-
 ## [0.5.6]
 ### Added
 - feat: react hooks with wagmi ([#246](https://github.com/MetaMask/metamask-sdk/pull/246))
@@ -31,8 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...HEAD
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.6...v0.6.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.6...HEAD
 [0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.4...v0.5.6
 [0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...v0.5.3
