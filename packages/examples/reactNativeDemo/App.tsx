@@ -40,7 +40,6 @@ const sdk = new MetaMaskSDK({
   },
   timer: BackgroundTimer,
   dappMetadata: {
-    url: 'ReactNativeTS',
     name: 'ReactNativeTS',
   },
 });
