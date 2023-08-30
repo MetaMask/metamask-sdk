@@ -1,0 +1,27 @@
+# Docker-compose that spawns create-react-dapp, nextjs-dapp and vue-dapp
+version: '3'
+services:
+  create-react-dapp:
+    build:
+      context: ./create-react-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"  # Map host port to container port for app1
+    volumes:
+      - ./create-react-app:/app
+  nextjs-dapp:
+    build:
+      context: ./nextjs-demo
+      dockerfile: Dockerfile
+    ports:
+      - "3334:3334"  # Map host port to container port for app2
+    volumes:
+      - ./nextjs-demo:/app
+  vuejs-dapp:
+    build:
+      context: ./vuejs
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"  # Map host port to container port for app3
+    volumes:
+      - ./vuejs:/app
