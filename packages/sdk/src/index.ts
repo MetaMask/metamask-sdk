@@ -3,6 +3,7 @@ import {
   ConnectionStatus,
   DEFAULT_SERVER_URL,
   EventType,
+  ServiceStatus,
   MessageType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
@@ -28,6 +29,7 @@ export {
   DEFAULT_SERVER_URL,
   EventType,
   MessageType,
+  ServiceStatus,
   MetaMaskSDK,
   PROVIDER_UPDATE_TYPE,
   PlatformType,
