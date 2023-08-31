@@ -1,8 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
+  // "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
     "outDir": "dist",
-    "module": "CommonJS",
+    "module": "ES2020",
     "target": "es2017",
     "types": ["node"]
   },
@@ -13,13 +21,7 @@
       "path": "../sdk/tsconfig.build.json"
     },
     {
-      "path": "../sdk-react/tsconfig.json"
-    },
-    {
       "path": "../sdk-communication-layer/tsconfig.build.json"
-    },
-    {
-      "path": "../sdk-install-modal-web"
     }
   ]
 }

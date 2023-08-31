@@ -25122,9 +25122,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"truffle@workspace:packages/truffle":
+"truffle@workspace:packages/contracts":
   version: 0.0.0-use.local
-  resolution: "truffle@workspace:packages/truffle"
+  resolution: "truffle@workspace:packages/contracts"
   dependencies:
     "@typechain/truffle-v5": ^8.0.6
     "@types/chai": ^4.3.5
