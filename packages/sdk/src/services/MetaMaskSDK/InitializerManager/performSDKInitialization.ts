@@ -3,7 +3,7 @@ import { MetaMaskSDK } from '../../../sdk';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
 import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { setupAnalytics } from './setupAnalytics';
-import { setupDappMetadata } from './setupDappMetadataAndIcon';
+import { setupDappMetadata } from './setupDappMetadata';
 import { setupExtensionPreferences } from './setupExtensionPreferences';
 import { setupPlatformManager } from './setupPlatformManager';
 import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndInstaller';
