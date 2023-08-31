@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
+    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "directory": "packages/sdk-communication-layer"
   },
   "main": "dist/node/cjs/metamask-sdk-communication-layer.js",
   "unpkg": "dist/browser/umd/metamask-sdk-communication-layer.js",
