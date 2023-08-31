@@ -206,6 +206,9 @@ const MetaMaskProviderClient = ({
           type,
         );
       }
+      if(type===PROVIDER_UPDATE_TYPE.TERMINATE){
+        setConnecting(false);
+      }
       setTrigger((_trigger) => _trigger + 1);
     };
     sdk.on(EventType.PROVIDER_UPDATE, onProviderEvent);
