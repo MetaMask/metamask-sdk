@@ -167,11 +167,11 @@ export default function Home() {
 try {
   const text = await contract.ping();
   console.debug('ping', text);
-  
+
   const network = await provider.getNetwork();
   console.debug('Network', network);
 } catch (error) {
-  console.error('Error pinging ethers:', error.message);
+  console.error('Error pinging ethers:', error);
 }
   }
 
@@ -187,20 +187,20 @@ try {
 try {
   const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
   console.debug('balance', balance);
-  
+
   const chainId = await client.getChainId();
   console.debug('chainId', chainId);
-  
+
   const contract = getContract({
     address: contractAddress,
     abi: SimpleABI.abi,
     publicClient: client,
   });
-  
+
   const text = await contract.read.ping();
   console.debug('ping', text);
 } catch (error) {
-  console.error('Error pinging Viem:', error.message);
+  console.error('Error pinging Viem:', error);
 }
   }
 
