@@ -93,8 +93,8 @@ export const App = () => {
           },
         ],
       })
-      .then((res) => console.log('add', res))
-      .catch((e) => console.log('ADD ERR', e));
+      .then((res: unknown) => console.log('add', res))
+      .catch((e: unknown) => console.log('ADD ERR', e));
   };
 
   const sendTransaction = async () => {
