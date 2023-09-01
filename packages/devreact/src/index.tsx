@@ -16,7 +16,7 @@ root.render(
         logging: {
           developerMode: true,
         },
-        communicationServerUrl: 'http://localhost:4000',
+        communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
         dappMetadata: {
           name: 'Demo React App',
           url: window.location.host,
