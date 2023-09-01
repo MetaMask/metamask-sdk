@@ -1,6 +1,9 @@
 import { Duplex } from 'stream';
-import { BaseProvider, MetaMaskInpageProvider } from '@metamask/providers';
-import { ethErrors } from 'eth-rpc-errors';
+import { MetaMaskInpageProvider } from '@metamask/providers';
+import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
+import { handleDisconnect } from '../services/SDKProvider/ConnectionManager/handleDisconnect';
+import { initializeState } from '../services/SDKProvider/InitializationManager/initializeState';
+import { initializeStateAsync } from '../services/SDKProvider/InitializationManager/initializeStateAsync';
 
 export interface SDKProviderProps {
   /**
@@ -26,11 +29,11 @@ export interface SDKProviderProps {
 }
 
 export class SDKProvider extends MetaMaskInpageProvider {
-  private debug = false;
+  public debug = false;
 
-  private autoRequestAccounts = false;
+  public autoRequestAccounts = false;
 
-  private providerStateRequested = false;
+  public providerStateRequested = false;
 
   constructor({
     connectionStream,
@@ -74,96 +77,14 @@ export class SDKProvider extends MetaMaskInpageProvider {
   }
 
   handleDisconnect({ terminate = false }: { terminate: boolean }) {
-    if (this.debug) {
-      console.debug(
-        `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
-        this,
-      );
-    }
-
-    if (terminate) {
-      this.chainId = null;
-      this._state.accounts = null;
-      this.selectedAddress = null;
-      this._state.isUnlocked = false;
-      this._state.isPermanentlyDisconnected = true;
-      this._state.initialized = false;
-    }
-    this._handleAccountsChanged([]);
-    this._state.isConnected = false;
-    this.emit('disconnect', ethErrors.provider.disconnected());
-
-    this.providerStateRequested = false;
+    handleDisconnect({
+      terminate,
+      instance: this,
+    });
   }
 
   protected async _initializeStateAsync(): Promise<void> {
-    if (this.debug) {
-      console.debug(`SDKProvider::_initializeStateAsync()`);
-    }
-
-    if (this.providerStateRequested) {
-      if (this.debug) {
-        console.debug(
-          `SDKProvider::_initializeStateAsync() initialization already in progress`,
-        );
-      }
-    } else {
-      this.providerStateRequested = true;
-      // Replace super.initialState logic to automatically request account if not found in providerstate.
-      let initialState: Parameters<BaseProvider['_initializeState']>[0];
-      try {
-        initialState = (await this.request({
-          method: 'metamask_getProviderState',
-        })) as Parameters<BaseProvider['_initializeState']>[0];
-      } catch (error) {
-        this._log.error(
-          'MetaMask: Failed to get initial state. Please report this bug.',
-          error,
-        );
-        this.providerStateRequested = false;
-        return;
-      }
-
-      if (this.debug) {
-        console.debug(
-          `SDKProvider::_initializeStateAsync state selectedAddress=${this.selectedAddress} `,
-          initialState,
-        );
-      }
-
-      if (initialState?.accounts?.length === 0) {
-        if (this.debug) {
-          console.debug(
-            `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
-          );
-        }
-
-        if (this.selectedAddress) {
-          if (this.debug) {
-            console.debug(
-              `SDKProvider::_initializeStateAsync using this.selectedAddress instead`,
-            );
-          }
-
-          initialState.accounts = [this.selectedAddress];
-        } else {
-          if (this.debug) {
-            console.debug(
-              `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
-            );
-          }
-
-          const accounts = (await this.request({
-            method: 'eth_requestAccounts',
-            params: [],
-          })) as string[];
-          initialState.accounts = accounts;
-        }
-      }
-
-      this._initializeState(initialState);
-      this.providerStateRequested = false;
-    }
+    return initializeStateAsync(this);
   }
 
   protected _initializeState(
@@ -176,38 +97,22 @@ export class SDKProvider extends MetaMaskInpageProvider {
         }
       | undefined,
   ): void {
-    if (this.debug) {
-      console.debug(
-        `SDKProvider::_initializeState() set state._initialized to false`,
-      );
-    }
-    // Force re-initialize without error.
-    this._state.initialized = false;
-    return super._initializeState(initialState);
+    return initializeState(
+      this,
+      super._initializeState.bind(this),
+      initialState,
+    );
   }
 
   protected _handleChainChanged({
     chainId,
     networkVersion,
   }: { chainId?: string; networkVersion?: string } = {}) {
-    if (this.debug) {
-      console.debug(
-        `SDKProvider::_handleChainChanged chainId=${chainId} networkVersion=${networkVersion}`,
-      );
-    }
-
-    // FIXME on RN IOS networkVersion is sometime missing? why?
-    let forcedNetworkVersion = networkVersion;
-    if (!networkVersion) {
-      console.info(`forced network version to prevent provider error`);
-      forcedNetworkVersion = '1';
-    }
-
-    this._state.isConnected = true;
-    this.emit('connect', { chainId });
-    super._handleChainChanged({
+    handleChainChanged({
+      instance: this,
       chainId,
-      networkVersion: forcedNetworkVersion,
+      networkVersion,
+      superHandleChainChanged: super._handleChainChanged.bind(this),
     });
   }
 }
