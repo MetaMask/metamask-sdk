@@ -7,6 +7,7 @@ const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
   dappMetadata: {
     name: 'NodeJS example',
+    url: 'NodeJS example',
   },
   logging: {
     sdk: false,
