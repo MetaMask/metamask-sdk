@@ -51,19 +51,4 @@ export function terminate(instance: MetaMaskSDK) {
     terminate: true,
     sendMessage: true,
   });
-
-  instance._initialized = false;
-  instance.sdkInitPromise = undefined;
-  // TODO use a separate module to cleanup the DOM
-  if (instance.platformManager?.isDesktopWeb()) {
-    const selectModalDiv = document.querySelector('.select-modal');
-    if (selectModalDiv?.parentElement) {
-      selectModalDiv.parentElement.remove();
-    }
-
-    const pendingModalDiv = document.querySelector('.pending-modal');
-    if (pendingModalDiv?.parentElement) {
-      pendingModalDiv.parentElement.remove();
-    }
-  }
 }
