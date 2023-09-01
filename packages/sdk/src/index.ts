@@ -29,12 +29,11 @@ export {
   DEFAULT_SERVER_URL,
   EventType,
   MessageType,
-  ServiceStatus,
   MetaMaskSDK,
   PROVIDER_UPDATE_TYPE,
   PlatformType,
   SDKProvider,
 };
-export type { MetaMaskSDKOptions, SDKLoggingOptions };
+export type { MetaMaskSDKOptions, SDKLoggingOptions, ServiceStatus };
 
 export default MetaMaskSDK;
