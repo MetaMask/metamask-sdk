@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1]
+### Added
+- feat: clean logs ([#316](https://github.com/MetaMask/metamask-sdk/pull/316))
+
 ## [0.6.0]
 ### Added
 - feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
@@ -57,7 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.1...HEAD
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...@metamask/sdk-communication-layer@0.6.1
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.3...@metamask/sdk-communication-layer@0.6.0
 [0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.2...@metamask/sdk-communication-layer@0.5.3
 [0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.0...@metamask/sdk-communication-layer@0.5.2
