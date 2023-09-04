@@ -1,8 +1,8 @@
+import { CommunicationLayerMessage, RemoteCommunication } from '@metamask/sdk-communication-layer';
 import {
-  CommunicationLayerMessage,
-  RemoteCommunication,
-} from '@metamask/sdk-communication-layer';
-import { CommunicationLayerPreference, MessageType } from '../src';
+  CommunicationLayerPreference,
+  MessageType,
+} from '../src';
 
 describe('MetaMask Simulator', () => {
   let clientDisconnected = false;
