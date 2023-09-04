@@ -30,6 +30,7 @@ describe('performSDKInitialization', () => {
     jest.clearAllMocks();
     instance = {
       options: {},
+      emit: jest.fn(),
     } as unknown as MetaMaskSDK;
 
     mockSetupExtensionPreferencesReturnValue = {
