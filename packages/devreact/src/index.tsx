@@ -6,22 +6,26 @@ import reportWebVitals from './reportWebVitals';
 import { MetaMaskProvider } from '@metamask/sdk-react';
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 root.render(
   <React.StrictMode>
-     <MetaMaskProvider debug sdkOptions={{
-        logging:{
+    <MetaMaskProvider
+      debug
+      sdkOptions={{
+        logging: {
           developerMode: true,
         },
+        communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
         dappMetadata: {
-          name: "Demo React App",
+          name: 'Demo React App',
           url: window.location.host,
-        }
-    }}>
-    <App />
+        },
+      }}
+    >
+      <App />
     </MetaMaskProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want to start measuring performance in your app, pass a function

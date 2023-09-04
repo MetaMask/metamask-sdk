@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -8,7 +8,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
+    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "directory": "packages/sdk"
   },
   "main": "dist/node/cjs/metamask-sdk.js",
   "unpkg": "dist/browser/umd/metamask-sdk.js",
