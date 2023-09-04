@@ -1,6 +1,6 @@
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
-import { connectWithExtensionProvider } from '../ProviderManager/connectWithExtensionProvider';
+import { connectWithExtensionProvider } from '../ProviderManager';
 
 /**
  * Handles automatic and extension-based connections for MetaMask SDK.

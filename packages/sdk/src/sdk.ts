@@ -8,10 +8,12 @@ import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import { SDKProvider } from './provider/SDKProvider';
 import { Analytics } from './services/Analytics';
-import { connect } from './services/MetaMaskSDK/ConnectionManager/connect';
-import { resume } from './services/MetaMaskSDK/ConnectionManager/resume';
-import { terminate } from './services/MetaMaskSDK/ConnectionManager/terminate';
-import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager/initializeMetaMaskSDK';
+import {
+  connect,
+  resume,
+  terminate,
+} from './services/MetaMaskSDK/ConnectionManager';
+import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
 import {
   RemoteConnection,
   RemoteConnectionProps,

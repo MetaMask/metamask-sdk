@@ -37,7 +37,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:ci": "echo 'N/A'",
-    "test:dev": "jest  ",
+    "test:dev": "jest",
     "watch": "rollup -c -w"
   },
   "dependencies": {

@@ -4,7 +4,7 @@ import { MetaMaskSDK } from '../../../sdk';
 import { RemoteConnection } from '../../RemoteConnection';
 import { Analytics } from '../../Analytics';
 import { PlatformManager } from '../../../Platform/PlatfformManager';
-import { connectWithExtensionProvider } from '../ProviderManager/connectWithExtensionProvider';
+import { connectWithExtensionProvider } from '../ProviderManager';
 
 /**
  * Initializes and sets up both the RemoteConnection and MetaMaskInstaller for the MetaMaskSDK instance.
