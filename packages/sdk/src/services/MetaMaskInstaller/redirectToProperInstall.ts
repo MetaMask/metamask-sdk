@@ -4,7 +4,7 @@ import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 /**
  * Redirects the user to the appropriate MetaMask installation method based on the platform type.
  *
- * The function determines the platform type using the platformManager of the provided MetaMaskInstaller instance.
+ * The function determines the platform type using the platformManager of the provided MetaMaskInstaller state.
  * If the platform is a MetaMask Mobile Webview, the function returns false, as no installation is needed.
  * For desktop web platforms, the function initiates the desktop onboarding process if `preferDesktop` is true.
  * If none of these conditions are met, it initiates a remote connection for MetaMask installation.
@@ -14,11 +14,13 @@ import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
  * @throws Throws an error if the remote startConnection fails.
  */
 export async function redirectToProperInstall(instance: MetaMaskInstaller) {
-  const platformType = instance.platformManager.getPlatformType();
+  const { state } = instance;
 
-  if (instance?.debug) {
+  const platformType = state.platformManager?.getPlatformType();
+
+  if (instance?.state.debug) {
     console.debug(
-      `MetamaskInstaller::redirectToProperInstall() platform=${platformType} instance.preferDesktop=${instance.preferDesktop}`,
+      `MetamaskInstaller::redirectToProperInstall() platform=${platformType} state.preferDesktop=${state.preferDesktop}`,
     );
   }
 
@@ -29,8 +31,8 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
 
   // If is not installed and is Extension, start Extension onboarding
   if (platformType === PlatformType.DesktopWeb) {
-    instance.isInstalling = true;
-    if (instance.preferDesktop) {
+    state.isInstalling = true;
+    if (state.preferDesktop) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       instance.startDesktopOnboarding();
       return false;
@@ -38,17 +40,17 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
   }
 
   // If is not installed, start remote connection
-  instance.isInstalling = true;
+  state.isInstalling = true;
   try {
-    await instance.remote.startConnection();
+    await state.remote?.startConnection();
 
     // eslint-disable-next-line require-atomic-updates
-    instance.isInstalling = false;
+    state.isInstalling = false;
     // eslint-disable-next-line require-atomic-updates
-    instance.hasInstalled = true;
+    state.hasInstalled = true;
   } catch (err) {
     // eslint-disable-next-line require-atomic-updates
-    instance.isInstalling = false;
+    state.isInstalling = false;
     throw err;
   }
 

@@ -15,25 +15,31 @@ interface InstallerProps {
   debug?: boolean;
 }
 
+interface MetaMaskInstallerState {
+  isInstalling: boolean;
+  hasInstalled: boolean;
+  resendRequest: any;
+  preferDesktop: boolean;
+  platformManager: PlatformManager | null;
+  remote: ProviderService | null;
+  debug: boolean;
+}
+
 /**
  * Singleton class instance
  */
 export class MetaMaskInstaller {
   private static instance: MetaMaskInstaller;
 
-  public isInstalling = false;
-
-  public hasInstalled = false;
-
-  public resendRequest = null;
-
-  public preferDesktop = false;
-
-  public platformManager: PlatformManager;
-
-  public remote: ProviderService;
-
-  public debug = false;
+  public state: MetaMaskInstallerState = {
+    isInstalling: false,
+    hasInstalled: false,
+    resendRequest: null,
+    preferDesktop: false,
+    platformManager: null,
+    remote: null,
+    debug: false,
+  };
 
   public constructor({
     preferDesktop,
@@ -41,10 +47,10 @@ export class MetaMaskInstaller {
     platformManager,
     debug = false,
   }: InstallerProps) {
-    this.preferDesktop = preferDesktop;
-    this.remote = remote;
-    this.platformManager = platformManager;
-    this.debug = debug;
+    this.state.preferDesktop = preferDesktop;
+    this.state.remote = remote;
+    this.state.platformManager = platformManager;
+    this.state.debug = debug;
   }
 
   startDesktopOnboarding() {
