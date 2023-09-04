@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.1]
-### Added
-- feat: clean logs ([#316](https://github.com/MetaMask/metamask-sdk/pull/316))
+### Uncategorized
+- feat: align versions ([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
 
 ## [0.6.0]
 ### Added
