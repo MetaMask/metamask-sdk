@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1]
+### Added
+- feat: refactor MetaMaskSDK class for enhanced modularity and testability  ([#309](https://github.com/MetaMask/metamask-sdk/pull/309))
+- feat: update demo examples ([#316](https://github.com/MetaMask/metamask-sdk/pull/316))
+
 ## [0.6.0]
 ### Added
 - refactor: move wagmi to sdk-react-ui ([#271](https://github.com/MetaMask/metamask-sdk/pull/271))
@@ -31,7 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.6...v0.6.0
 [0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.4...v0.5.6
 [0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.3...v0.5.4
