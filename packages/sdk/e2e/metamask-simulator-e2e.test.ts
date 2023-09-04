@@ -1,8 +1,7 @@
+import { CommunicationLayerMessage, RemoteCommunication } from '@metamask/sdk-communication-layer';
 import {
-  CommunicationLayerMessage,
   CommunicationLayerPreference,
   MessageType,
-  RemoteCommunication,
 } from '../src';
 
 describe('MetaMask Simulator', () => {
