@@ -1,5 +1,9 @@
-import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import {
+  CommunicationLayerPreference,
+  EventType,
+} from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../../sdk';
+import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
 import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { setupAnalytics } from './setupAnalytics';
@@ -78,4 +82,6 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
 
   await initializeProviderAndEventListeners(instance);
   await handleAutoAndExtensionConnections(instance, preferExtension);
+
+  instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.INITIALIZED);
 }

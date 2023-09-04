@@ -26,6 +26,7 @@ import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DAPPView} from './src/views/DappView';
+import {COMM_SERVER_URL} from '@env';
 
 LogBox.ignoreLogs([
   //'Possible Unhandled Promise Rejection'
@@ -35,6 +36,7 @@ LogBox.ignoreLogs([
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
 // hence usage of a global variable.
 let canOpenLink = true;
+const serverUrl = COMM_SERVER_URL ?? DEFAULT_SERVER_URL;
 
 const sdk = new MetaMaskSDK({
   openDeeplink: (link: string) => {
@@ -50,7 +52,7 @@ const sdk = new MetaMaskSDK({
   },
   // Replace with local socket server for dev debug
   // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
-  communicationServerUrl: DEFAULT_SERVER_URL,
+  communicationServerUrl: serverUrl,
   checkInstallationOnAllCalls: false,
   timer: BackgroundTimer,
   enableDebug: true,
@@ -125,6 +127,9 @@ function App(): JSX.Element {
           }}>
           <Text style={{color: Colors.black, fontSize: 24}}>
             devreactnative Mobile Dapp Test (RN v0.71.7)
+          </Text>
+          <Text>
+            ServerUrl: {serverUrl}
           </Text>
           <Button title="TestEncrypt" onPress={testEncrypt} />
           <Text style={{color: Colors.black}}>
