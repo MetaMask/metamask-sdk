@@ -8,9 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.1]
 ### Uncategorized
-- feat: force version detection ([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
-- fix: release files ([#322](https://github.com/MetaMask/metamask-sdk/pull/322))
-- Release 25.0.0 ([#317](https://github.com/MetaMask/metamask-sdk/pull/317))
 - feat: refactor MetaMaskSDK class for enhanced modularity and testability  ([#309](https://github.com/MetaMask/metamask-sdk/pull/309))
 
 ## [0.6.0]
