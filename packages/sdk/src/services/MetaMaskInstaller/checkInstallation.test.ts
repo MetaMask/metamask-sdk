@@ -10,8 +10,10 @@ describe('checkInstallation', () => {
     jest.clearAllMocks();
 
     instance = {
-      platformManager: { isMetaMaskInstalled: mockIsMetaMaskInstalled },
-      debug: false,
+      state: {
+        debug: false,
+        platformManager: { isMetaMaskInstalled: mockIsMetaMaskInstalled },
+      },
       redirectToProperInstall: mockRedirectToProperInstall,
     } as unknown as MetaMaskInstaller;
   });
@@ -20,7 +22,7 @@ describe('checkInstallation', () => {
     mockIsMetaMaskInstalled.mockReturnValue(true);
     const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
 
-    instance.debug = true;
+    instance.state.debug = true;
 
     await checkInstallation(instance);
 
