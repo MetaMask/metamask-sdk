@@ -22,7 +22,9 @@ export function handleDisconnect({
   terminate: boolean;
   instance: SDKProvider;
 }) {
-  if (instance.debug) {
+  const { state } = instance;
+
+  if (state.debug) {
     console.debug(
       `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
       instance,
@@ -53,5 +55,5 @@ export function handleDisconnect({
   instance._state.isConnected = false;
   instance.emit('disconnect', ethErrors.provider.disconnected());
 
-  instance.providerStateRequested = false;
+  state.providerStateRequested = false;
 }

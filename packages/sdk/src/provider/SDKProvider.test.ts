@@ -50,11 +50,11 @@ describe('SDKProvider', () => {
 
   describe('Initialization', () => {
     it('should set debug mode correctly', () => {
-      expect(provider.debug).toBe(true);
+      expect(provider.state.debug).toBe(true);
     });
 
     it('should set autoRequestAccounts correctly', () => {
-      expect(provider.autoRequestAccounts).toBe(false);
+      expect(provider.state.autoRequestAccounts).toBe(false);
     });
   });
 

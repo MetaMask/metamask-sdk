@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SDKProvider } from '../../../provider/SDKProvider';
 import { initializeStateAsync } from './initializeStateAsync';
 
 describe('initializeStateAsync', () => {
-  let mockSDKProvider: any;
+  let mockSDKProvider: SDKProvider;
   const mockRequest: jest.Mock = jest.fn();
   const mockLogError: jest.Mock = jest.fn();
   const mockInitializeState: jest.Mock = jest.fn();
@@ -11,12 +12,14 @@ describe('initializeStateAsync', () => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
-      debug: false,
+      state: {
+        debug: false,
+      },
       providerStateRequested: false,
       request: mockRequest,
       _initializeState: mockInitializeState,
       _log: { error: mockLogError },
-    };
+    } as unknown as SDKProvider;
   });
 
   it('should log debug information when debug is true', async () => {
@@ -26,7 +29,7 @@ describe('initializeStateAsync', () => {
     expect(console.debug).not.toHaveBeenCalled();
 
     // eslint-disable-next-line require-atomic-updates
-    mockSDKProvider.debug = true;
+    mockSDKProvider.state.debug = true;
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
@@ -36,7 +39,7 @@ describe('initializeStateAsync', () => {
   });
 
   it('should skip initialization if providerStateRequested is true', async () => {
-    mockSDKProvider.providerStateRequested = true;
+    mockSDKProvider.state.providerStateRequested = true;
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
@@ -48,11 +51,12 @@ describe('initializeStateAsync', () => {
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
+    // @ts-ignore
     expect(mockSDKProvider._log.error).toHaveBeenCalledWith(
       'MetaMask: Failed to get initial state. Please report this bug.',
       expect.any(Error),
     );
-    expect(mockSDKProvider.providerStateRequested).toBe(false);
+    expect(mockSDKProvider.state.providerStateRequested).toBe(false);
   });
 
   it('should call _initializeState with the correct initialState', async () => {
@@ -64,6 +68,7 @@ describe('initializeStateAsync', () => {
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
+    // @ts-ignore
     expect(mockSDKProvider._initializeState).toHaveBeenCalledWith(
       mockInitialState,
     );
@@ -82,6 +87,7 @@ describe('initializeStateAsync', () => {
       params: [],
     });
 
+    // @ts-ignore
     expect(mockSDKProvider._initializeState).toHaveBeenCalledWith({
       accounts: ['remoteAccount'],
     });
@@ -94,6 +100,7 @@ describe('initializeStateAsync', () => {
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
+    // @ts-ignore
     expect(mockSDKProvider._initializeState).toHaveBeenCalledWith({
       accounts: ['selectedAddress'],
     });
@@ -105,7 +112,7 @@ describe('initializeStateAsync', () => {
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
-    expect(mockSDKProvider.providerStateRequested).toBe(false);
+    expect(mockSDKProvider.state.providerStateRequested).toBe(false);
   });
 
   it('should call _initializeState even if no accounts are found', async () => {
@@ -114,6 +121,7 @@ describe('initializeStateAsync', () => {
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
+    // @ts-ignore
     expect(mockSDKProvider._initializeState).toHaveBeenCalledWith(
       mockInitialState,
     );
@@ -121,7 +129,7 @@ describe('initializeStateAsync', () => {
 
   it('should log debug information for different scenarios', async () => {
     jest.spyOn(console, 'debug').mockImplementation();
-    mockSDKProvider.debug = true;
+    mockSDKProvider.state.debug = true;
     const mockInitialState = { accounts: [] };
     mockRequest.mockResolvedValue(mockInitialState);
 
