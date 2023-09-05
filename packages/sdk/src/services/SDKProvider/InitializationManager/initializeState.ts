@@ -19,7 +19,9 @@ export function initializeState(
   superInitializeState: (initialState: InitializeStateArgs) => void,
   initialState?: InitializeStateArgs | undefined,
 ): void {
-  if (instance.debug) {
+  const { state } = instance;
+
+  if (state.debug) {
     console.debug(
       `SDKProvider::_initializeState() set state._initialized to false`,
     );

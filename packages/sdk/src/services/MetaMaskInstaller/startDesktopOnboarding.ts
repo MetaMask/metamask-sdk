@@ -13,7 +13,7 @@ import { Ethereum } from '../Ethereum';
  * @returns Promise<void> This function returns a promise that resolves to void.
  */
 export async function startDesktopOnboarding(instance: MetaMaskInstaller) {
-  if (instance?.debug) {
+  if (instance?.state.debug) {
     console.debug(`MetamaskInstaller::startDesktopOnboarding()`);
   }
   Ethereum.destroy();

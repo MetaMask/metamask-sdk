@@ -10,7 +10,9 @@ describe('initializeState', () => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
-      debug: false,
+      state: {
+        debug: false,
+      },
       _state: {
         initialized: true,
       },
@@ -23,7 +25,7 @@ describe('initializeState', () => {
 
     expect(console.debug).not.toHaveBeenCalled();
 
-    mockSDKProvider.debug = true;
+    mockSDKProvider.state.debug = true;
 
     initializeState(mockSDKProvider, mockSuperInitializeState);
 
