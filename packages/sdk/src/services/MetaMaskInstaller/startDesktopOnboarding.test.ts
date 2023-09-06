@@ -44,7 +44,6 @@ describe('startDesktopOnboarding', () => {
   it('should log debug message when debug is enabled', async () => {
     const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
     instance.state.debug = true;
-    instance.state.debug = true;
 
     await startDesktopOnboarding(instance);
 
