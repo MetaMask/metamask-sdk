@@ -11,7 +11,9 @@ describe('handleChainChanged', () => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
-      debug: false,
+      state: {
+        debug: false,
+      },
       _state: { isConnected: false },
       emit: mockEmit,
     } as unknown as SDKProvider;
@@ -26,7 +28,7 @@ describe('handleChainChanged', () => {
     });
     expect(console.debug).not.toHaveBeenCalled();
 
-    mockSDKProvider.debug = true;
+    mockSDKProvider.state.debug = true;
     handleChainChanged({
       instance: mockSDKProvider,
       chainId: '1',
