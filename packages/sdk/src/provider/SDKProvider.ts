@@ -28,12 +28,18 @@ export interface SDKProviderProps {
   debug?: boolean;
 }
 
+interface SDKProviderState {
+  debug: boolean;
+  autoRequestAccounts: boolean;
+  providerStateRequested: boolean;
+}
+
 export class SDKProvider extends MetaMaskInpageProvider {
-  public debug = false;
-
-  public autoRequestAccounts = false;
-
-  public providerStateRequested = false;
+  public state: SDKProviderState = {
+    debug: false,
+    autoRequestAccounts: false,
+    providerStateRequested: false,
+  };
 
   constructor({
     connectionStream,
@@ -52,21 +58,21 @@ export class SDKProvider extends MetaMaskInpageProvider {
         `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
       );
     }
-    this.autoRequestAccounts = autoRequestAccounts;
-    this.debug = debug;
+    this.state.autoRequestAccounts = autoRequestAccounts;
+    this.state.debug = debug;
   }
 
   async forceInitializeState() {
-    if (this.debug) {
+    if (this.state.debug) {
       console.debug(
-        `SDKProvider::forceInitializeState() autoRequestAccounts=${this.autoRequestAccounts}`,
+        `SDKProvider::forceInitializeState() autoRequestAccounts=${this.state.autoRequestAccounts}`,
       );
     }
     return this._initializeStateAsync();
   }
 
   _setConnected() {
-    if (this.debug) {
+    if (this.state.debug) {
       console.debug(`SDKProvider::_setConnected()`);
     }
     this._state.isConnected = true;
@@ -74,6 +80,17 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
   getState() {
     return this._state;
+  }
+
+  getSDKProviderState() {
+    return this.state;
+  }
+
+  setSDKProviderState(state: Partial<SDKProviderState>) {
+    this.state = {
+      ...this.state,
+      ...state,
+    };
   }
 
   handleDisconnect({ terminate = false }: { terminate: boolean }) {

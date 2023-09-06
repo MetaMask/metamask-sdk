@@ -12,7 +12,10 @@ describe('handleDisconnect', () => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
-      debug: false,
+      state: {
+        debug: false,
+        providerStateRequested: true,
+      },
       _state: {
         isConnected: true,
         accounts: ['someAccount'],
@@ -24,7 +27,6 @@ describe('handleDisconnect', () => {
       selectedAddress: 'someAddress',
       _handleAccountsChanged: mockHandleAccountsChanged,
       emit: mockEmit,
-      providerStateRequested: true,
     } as unknown as SDKProvider;
   });
 
@@ -34,7 +36,7 @@ describe('handleDisconnect', () => {
 
     expect(console.debug).not.toHaveBeenCalled();
 
-    mockSDKProvider.debug = true;
+    mockSDKProvider.state.debug = true;
 
     handleDisconnect({ terminate: false, instance: mockSDKProvider });
 
@@ -78,7 +80,7 @@ describe('handleDisconnect', () => {
   it('should set providerStateRequested to false', () => {
     handleDisconnect({ terminate: false, instance: mockSDKProvider });
 
-    expect(mockSDKProvider.providerStateRequested).toBe(false);
+    expect(mockSDKProvider.state.providerStateRequested).toBe(false);
   });
 
   it('should call _handleAccountsChanged with empty array', () => {

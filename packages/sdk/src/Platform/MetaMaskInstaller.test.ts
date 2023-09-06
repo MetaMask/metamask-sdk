@@ -8,7 +8,6 @@ describe('MetaMaskInstaller', () => {
   let installer: MetaMaskInstaller;
 
   beforeEach(() => {
-    // Initialize MetaMaskInstaller
     installer = new MetaMaskInstaller({
       preferDesktop: true,
       remote: mockProviderService,
@@ -18,10 +17,10 @@ describe('MetaMaskInstaller', () => {
   });
 
   it('should properly initialize', () => {
-    expect(installer.preferDesktop).toBe(true);
-    expect(installer.remote).toBe(mockProviderService);
-    expect(installer.platformManager).toBe(mockPlatformManager);
-    expect(installer.debug).toBe(false);
+    expect(installer.state.preferDesktop).toBe(true);
+    expect(installer.state.remote).toBe(mockProviderService);
+    expect(installer.state.platformManager).toBe(mockPlatformManager);
+    expect(installer.state.debug).toBe(false);
   });
 
   it('should start desktop onboarding', async () => {
