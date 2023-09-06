@@ -31,7 +31,9 @@ export function handleChainChanged({
     networkVersion?: string;
   }) => void;
 }) {
-  if (instance.debug) {
+  const { state } = instance;
+
+  if (state.debug) {
     console.debug(
       `SDKProvider::_handleChainChanged chainId=${chainId} networkVersion=${networkVersion}`,
     );

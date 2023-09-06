@@ -16,18 +16,20 @@ import { SDKProvider } from '../../../provider/SDKProvider';
  * @throws Error if the initialization fails.
  */
 export async function initializeStateAsync(instance: SDKProvider) {
-  if (instance.debug) {
+  const { state } = instance;
+
+  if (state.debug) {
     console.debug(`SDKProvider::_initializeStateAsync()`);
   }
 
-  if (instance.providerStateRequested) {
-    if (instance.debug) {
+  if (state.providerStateRequested) {
+    if (state.debug) {
       console.debug(
         `SDKProvider::_initializeStateAsync() initialization already in progress`,
       );
     }
   } else {
-    instance.providerStateRequested = true;
+    state.providerStateRequested = true;
     // Replace super.initialState logic to automatically request account if not found in providerstate.
     let initialState: Parameters<BaseProvider['_initializeState']>[0];
     try {
@@ -41,11 +43,11 @@ export async function initializeStateAsync(instance: SDKProvider) {
         'MetaMask: Failed to get initial state. Please report this bug.',
         error,
       );
-      instance.providerStateRequested = false;
+      state.providerStateRequested = false;
       return;
     }
 
-    if (instance.debug) {
+    if (state.debug) {
       console.debug(
         `SDKProvider::_initializeStateAsync state selectedAddress=${instance.selectedAddress} `,
         initialState,
@@ -53,14 +55,14 @@ export async function initializeStateAsync(instance: SDKProvider) {
     }
 
     if (initialState?.accounts?.length === 0) {
-      if (instance.debug) {
+      if (state.debug) {
         console.debug(
           `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
         );
       }
 
       if (instance.selectedAddress) {
-        if (instance.debug) {
+        if (state.debug) {
           console.debug(
             `SDKProvider::_initializeStateAsync using instance.selectedAddress instead`,
           );
@@ -68,7 +70,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
 
         initialState.accounts = [instance.selectedAddress];
       } else {
-        if (instance.debug) {
+        if (state.debug) {
           console.debug(
             `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
           );
@@ -85,6 +87,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._initializeState(initialState);
-    instance.providerStateRequested = false;
+    state.providerStateRequested = false;
   }
 }
