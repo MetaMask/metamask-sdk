@@ -12,20 +12,22 @@ describe('redirectToProperInstall', () => {
     jest.clearAllMocks();
 
     instance = {
-      platformManager: { getPlatformType: mockGetPlatformType },
-      debug: false,
-      preferDesktop: false,
-      isInstalling: false,
-      hasInstalled: false,
+      state: {
+        platformManager: { getPlatformType: mockGetPlatformType },
+        debug: false,
+        preferDesktop: false,
+        isInstalling: false,
+        hasInstalled: false,
+        remote: { startConnection: mockStartConnection },
+      },
       startDesktopOnboarding: mockStartDesktopOnboarding,
-      remote: { startConnection: mockStartConnection },
     } as unknown as MetaMaskInstaller;
   });
 
   it('should log debug message when debug is enabled', async () => {
     const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
     mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    instance.debug = true;
+    instance.state.debug = true;
 
     await redirectToProperInstall(instance);
 
@@ -42,7 +44,7 @@ describe('redirectToProperInstall', () => {
 
   it('should start desktop onboarding if platform is DesktopWeb and preferDesktop is true', async () => {
     mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    instance.preferDesktop = true;
+    instance.state.preferDesktop = true;
 
     const result = await redirectToProperInstall(instance);
 
@@ -58,8 +60,8 @@ describe('redirectToProperInstall', () => {
 
     expect(mockStartConnection).toHaveBeenCalled();
     expect(result).toBe(true);
-    expect(instance.isInstalling).toBe(false);
-    expect(instance.hasInstalled).toBe(true);
+    expect(instance.state.isInstalling).toBe(false);
+    expect(instance.state.hasInstalled).toBe(true);
   });
 
   it('should handle error during remote connection', async () => {
@@ -69,6 +71,6 @@ describe('redirectToProperInstall', () => {
     await expect(redirectToProperInstall(instance)).rejects.toThrow(
       'Connection error',
     );
-    expect(instance.isInstalling).toBe(false);
+    expect(instance.state.isInstalling).toBe(false);
   });
 });
