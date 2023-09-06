@@ -31,7 +31,9 @@ describe('startDesktopOnboarding', () => {
     );
 
     instance = {
-      debug: false,
+      state: {
+        debug: false,
+      },
     } as unknown as MetaMaskInstaller;
 
     global.window = {
@@ -41,7 +43,7 @@ describe('startDesktopOnboarding', () => {
 
   it('should log debug message when debug is enabled', async () => {
     const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.debug = true;
+    instance.state.debug = true;
 
     await startDesktopOnboarding(instance);
 

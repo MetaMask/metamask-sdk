@@ -16,7 +16,9 @@ export async function startInstaller(
   instance: MetaMaskInstaller,
   { wait = false }: { wait: boolean },
 ) {
-  if (instance.debug) {
+  const { state } = instance;
+
+  if (state.debug) {
     console.debug(`MetamaskInstaller::start() wait=${wait}`);
   }
 

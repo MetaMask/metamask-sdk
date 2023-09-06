@@ -14,14 +14,16 @@ describe('startInstaller', () => {
     jest.clearAllMocks();
 
     instance = {
-      debug: false,
+      state: {
+        debug: false,
+      },
       checkInstallation: mockCheckInstallation,
     } as unknown as MetaMaskInstaller;
   });
 
   it('should log debug message when debug is enabled', async () => {
     const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.debug = true;
+    instance.state.debug = true;
 
     await startInstaller(instance, { wait: false });
 
