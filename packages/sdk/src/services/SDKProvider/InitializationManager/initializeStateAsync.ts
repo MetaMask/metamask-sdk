@@ -16,6 +16,21 @@ import { SDKProvider } from '../../../provider/SDKProvider';
  * @throws Error if the initialization fails.
  */
 export async function initializeStateAsync(instance: SDKProvider) {
+  // Don't remove this logic, it's required to initialize the state in some cases.
+  if (instance.state === undefined) {
+    /**
+     * The Workaround: Initializing the state here to address an issue where properties
+     * were not set before this method was invoked, possibly by the parent class, leading to
+     * unexpected behavior.
+     *
+     */
+    instance.state = {
+      debug: false,
+      autoRequestAccounts: false,
+      providerStateRequested: false,
+    };
+  }
+
   const { state } = instance;
 
   if (state.debug) {
