@@ -24,7 +24,7 @@ interface PlatformManagerState {
   wakeLockStatus: WakeLockStatus;
   wakeLockTimer?: NodeJS.Timeout;
   wakeLockFeatureActive: boolean;
-  platformType: PlatformType;
+  platformType?: PlatformType;
   useDeeplink: boolean;
   preferredOpenLink?: (link: string, target?: string) => void;
   debug: boolean;
@@ -36,7 +36,7 @@ export class PlatformManager {
     wakeLockStatus: WakeLockStatus.Temporary,
     wakeLockTimer: undefined,
     wakeLockFeatureActive: false,
-    platformType: PlatformType.DesktopWeb,
+    platformType: undefined,
     useDeeplink: false,
     preferredOpenLink: undefined,
     debug: false,
