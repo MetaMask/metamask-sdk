@@ -35,6 +35,9 @@ export class ModalLoader {
 
     if (this.installContainer) {
       // Already rendered
+      if(this.debug) {
+        console.debug(`ModalLoader: renderInstallModal: already rendered`)
+      }
       return;
     }
 
@@ -56,6 +59,9 @@ export class ModalLoader {
     }
 
     if(this.selectContainer) {
+      if(this.debug) {
+        console.debug(`ModalLoader: renderSelectModal: already rendered`)
+      }
       return;
     }
     this.selectContainer = props.parentElement;
@@ -81,7 +87,9 @@ export class ModalLoader {
     }
 
     if (this.pendingContainer) {
-      // Already rendered
+      if(this.debug) {
+        console.debug(`ModalLoader: renderPendingModal: already rendered`)
+      }
       return;
     }
     this.pendingContainer = props.parentElement;
