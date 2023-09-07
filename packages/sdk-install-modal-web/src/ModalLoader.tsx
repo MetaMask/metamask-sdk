@@ -22,8 +22,17 @@ export class ModalLoader {
   private installContainer?: Element;
   private pendingContainer?: Element;
   private selectContainer?: Element;
+  private debug = false;
+
+  constructor(debug?: boolean) {
+    this.debug = debug ?? false;
+  }
 
   renderInstallModal(props: InstallWidgetProps) {
+    if(this.debug) {
+      console.debug(`ModalLoader: renderInstallModal`, props)
+    }
+
     if (this.installContainer) {
       // Already rendered
       return;
@@ -42,6 +51,10 @@ export class ModalLoader {
   }
 
   renderSelectModal(props: SelectWidgetProps) {
+    if(this.debug) {
+      console.debug(`ModalLoader: renderSelectModal`, props)
+    }
+
     if(this.selectContainer) {
       return;
     }
@@ -63,6 +76,10 @@ export class ModalLoader {
   }
 
   renderPendingModal(props: PendingWidgetProps) {
+    if(this.debug) {
+      console.debug(`ModalLoader: renderPendingModal`, props)
+    }
+
     if (this.pendingContainer) {
       // Already rendered
       return;
@@ -80,6 +97,9 @@ export class ModalLoader {
   }
 
   updateOTPValue = (otpValue: string) => {
+    if(this.debug) {
+      console.debug(`ModalLoader: updateOTPValue`, otpValue)
+    }
     const otpNode = this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
@@ -88,6 +108,9 @@ export class ModalLoader {
   };
 
   updateQRCode = (link: string) => {
+    if(this.debug) {
+      console.debug(`ModalLoader: updateQRCode`, link)
+    }
     // TODO use scoped elem
     const qrCodeNode = this.selectContainer?.querySelector('#sdk-qrcode-container');
     if (qrCodeNode) {

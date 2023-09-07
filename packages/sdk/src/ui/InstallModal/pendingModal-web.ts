@@ -42,7 +42,7 @@ const sdkWebPendingModal = ({
       return;
     }
 
-    modalLoader = new ModalLoader();
+    modalLoader = new ModalLoader(debug);
     div = document.createElement('div');
     document.body.appendChild(div);
 
