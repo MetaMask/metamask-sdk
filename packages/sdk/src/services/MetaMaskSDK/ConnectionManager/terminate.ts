@@ -53,4 +53,5 @@ export function terminate(instance: MetaMaskSDK) {
   });
 
   instance._initialized = false;
+  instance.sdkInitPromise = undefined;
 }
