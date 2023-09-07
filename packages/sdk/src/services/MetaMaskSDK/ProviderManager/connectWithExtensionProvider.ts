@@ -28,11 +28,14 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
 
   try {
     // always create initial query to connect the account
-    await instance.activeProvider?.request({
+    const accounts = await instance.activeProvider?.request({
       method: 'eth_requestAccounts',
     });
+    if (instance.debug) {
+      console.debug(`SDK::connectWithExtensionProvider() accounts`, accounts);
+    }
   } catch (err) {
-    // ignore error˝
+    // ignore error
     console.warn(
       `SDK::connectWithExtensionProvider() can't request accounts error`,
       err,

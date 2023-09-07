@@ -1,27 +1,50 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
-const sdkWebPendingModal = (onDisconnect?: () => void) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-  let mounted = false;
-
-  const modalLoader = new ModalLoader();
+const sdkWebPendingModal = ({
+  debug,
+  onDisconnect,
+}: {
+  debug?: boolean;
+  onDisconnect?: () => void;
+}) => {
+  let div: HTMLDivElement | null = null;
+  let modalLoader: ModalLoader | null = null;
 
   const unmount = () => {
-    div.style.display = 'none';
+    if (debug) {
+      console.log(`pendingModal-web unmount`, div);
+    }
+
+    if (div) {
+      div.style.display = 'none';
+    }
+    div = null;
+    modalLoader = null;
   };
 
   const updateOTPValue = (otpValue: string) => {
+    if (debug) {
+      console.log(`pendingModal-web updateOTPValue`, otpValue);
+    }
+
     if (modalLoader) {
       modalLoader.updateOTPValue(otpValue);
     }
   };
 
   const mount = () => {
-    if (mounted) {
+    if (debug) {
+      console.log(`pendingModal-web mount`, div);
+    }
+
+    if (div) {
       div.style.display = 'block';
       return;
     }
+
+    modalLoader = new ModalLoader();
+    div = document.createElement('div');
+    document.body.appendChild(div);
 
     modalLoader.renderPendingModal({
       parentElement: div,
@@ -29,7 +52,6 @@ const sdkWebPendingModal = (onDisconnect?: () => void) => {
       onDisconnect,
       updateOTPValue,
     });
-    mounted = true;
   };
 
   // Auto mount on initialization
