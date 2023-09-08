@@ -17,7 +17,6 @@ export async function write(
   const isRemoteReady = instance.state.remote?.isReady();
   const socketConnected = instance.state.remote?.isConnected();
   const isPaused = instance.state.remote?.isPaused();
-  const ready = instance.state.remote?.isReady();
   const provider = Ethereum.getProvider();
   const channelId = instance.state.remote?.getChannelId();
   const authorized = instance.state.remote?.isAuthorized();
@@ -44,7 +43,7 @@ export async function write(
 
   if (instance.state.debug) {
     console.debug(
-      `RPCMS::_write remote.isPaused()=${instance.state.remote?.isPaused()} authorized=${authorized} ready=${ready} socketConnected=${socketConnected}`,
+      `RPCMS::_write remote.isPaused()=${instance.state.remote?.isPaused()} authorized=${authorized} ready=${isRemoteReady} socketConnected=${socketConnected}`,
       chunk,
     );
   }
@@ -71,18 +70,18 @@ export async function write(
       return callback();
     }
 
-    if (!socketConnected && !ready) {
+    if (!socketConnected && !isRemoteReady) {
       // Invalid connection status
       if (instance.state.debug) {
         console.debug(
-          `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${ready} providerConnected=${provider.isConnected()}\n\n`,
+          `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}\n\n`,
         );
       }
 
       return callback();
     }
 
-    if (!socketConnected && ready) {
+    if (!socketConnected && isRemoteReady) {
       // Shouldn't happen -- needs to refresh
       console.warn(`RCPMS::_write invalid socket status -- shouln't happen`);
       return callback();
