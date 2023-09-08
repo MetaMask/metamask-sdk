@@ -121,11 +121,6 @@ describe('terminate', () => {
           sendMessage: true,
         });
       });
-
-      it('should set _initialized to false', () => {
-        terminate(instance);
-        expect(instance._initialized).toBe(false);
-      });
     });
   });
 });

@@ -7,6 +7,7 @@ describe('handleDisconnect', () => {
   let mockSDKProvider: SDKProvider;
   const mockEmit: jest.Mock = jest.fn();
   const mockHandleAccountsChanged: jest.Mock = jest.fn();
+  const mockIsConnected: jest.Mock = jest.fn(() => true);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -27,6 +28,7 @@ describe('handleDisconnect', () => {
       selectedAddress: 'someAddress',
       _handleAccountsChanged: mockHandleAccountsChanged,
       emit: mockEmit,
+      isConnected: mockIsConnected,
     } as unknown as SDKProvider;
   });
 

@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
-import { Buffer } from 'buffer';
+import { onMessage } from '../services/MobilePortStream/onMessage';
+import { write } from '../services/MobilePortStream/write';
 
 const noop = () => undefined;
 
@@ -39,39 +40,7 @@ export class MobilePortStream extends Duplex {
    * @param {Object} msg - Payload from the onMessage listener of Port
    */
   _onMessage(event: any) {
-    const msg = event.data;
-
-    // validate message
-    if (this._origin !== '*' && event.origin !== this._origin) {
-      return;
-    }
-
-    if (!msg || typeof msg !== 'object') {
-      return;
-    }
-
-    if (!msg.data || typeof msg.data !== 'object') {
-      return;
-    }
-
-    if (msg.target && msg.target !== this._name) {
-      return;
-    }
-
-    // Filter outgoing messages
-    if (msg.data.data?.toNative) {
-      return;
-    }
-
-    if (Buffer.isBuffer(msg)) {
-      // eslint-disable-next-line prettier/prettier, @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      delete msg._isBuffer;
-      const data = Buffer.from(msg);
-      this.push(data);
-    } else {
-      this.push(msg);
-    }
+    return onMessage(this, event);
   }
 
   /**
@@ -103,30 +72,6 @@ export class MobilePortStream extends Duplex {
     _encoding: BufferEncoding,
     cb: (error?: Error | null) => void,
   ) {
-    try {
-      if (Buffer.isBuffer(chunk)) {
-        const data: {
-          type: 'Buffer';
-          data: number[];
-          _isBuffer?: boolean;
-        } = chunk.toJSON();
-
-        data._isBuffer = true;
-        window.ReactNativeWebView?.postMessage(
-          JSON.stringify({ ...data, origin: window.location.href }),
-        );
-      } else {
-        if (chunk.data) {
-          chunk.data.toNative = true;
-        }
-
-        window.ReactNativeWebView?.postMessage(
-          JSON.stringify({ ...chunk, origin: window.location.href }),
-        );
-      }
-    } catch (err) {
-      return cb(new Error('MobilePortStream - disconnected'));
-    }
-    return cb();
+    return write(chunk, _encoding, cb);
   }
 }

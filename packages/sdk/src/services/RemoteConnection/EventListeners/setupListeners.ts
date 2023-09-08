@@ -39,7 +39,8 @@ export function setupListeners(
           state.pendingModal?.unmount?.();
           state.pendingModal?.updateOTPValue?.('');
         };
-        state.pendingModal = options.modals.otp?.(onDisconnect);
+
+        state.pendingModal = options.modals.otp?.({ onDisconnect });
       }
       state.pendingModal?.updateOTPValue?.(otpAnswer);
       state.pendingModal?.mount?.();
