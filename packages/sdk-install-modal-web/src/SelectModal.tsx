@@ -1,10 +1,10 @@
 import React, { CSSProperties, useState } from 'react';
+import { WidgetWrapper } from './WidgetWrapper';
 import CloseButton from './components/CloseButton';
 import ConnectIcon from './components/ConnectIcon';
 import Logo from './components/Logo';
 import { MetamaskExtensionImage } from './components/MetamaskExtensionImage';
 import styles from './styles';
-import { WidgetWrapper } from './WidgetWrapper';
 
 export interface SelectModalProps {
   onClose: () => void;

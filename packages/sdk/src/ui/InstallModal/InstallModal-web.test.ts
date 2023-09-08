@@ -32,11 +32,18 @@ describe('sdkWebInstallModal', () => {
       },
     } as any;
 
+    global.window = {} as any;
+
     documentSpy = jest.spyOn(global.document, 'createElement');
   });
 
   it('should create a div element and append it to body', () => {
-    sdkWebInstallModal({ link: 'http://example.com', installer: {} as any });
+    const { mount } = sdkWebInstallModal({
+      link: 'http://example.com',
+      installer: {} as any,
+    });
+
+    mount('http://example-qrcode.com'); // Add this line
 
     expect(documentSpy).toHaveBeenCalledWith('div');
     expect(global.document.body.appendChild).toHaveBeenCalled();
@@ -134,16 +141,36 @@ describe('sdkWebInstallModal', () => {
   });
 
   describe('unmount', () => {
-    it('should set display to none on div element', () => {
+    it('should remove the div element from its parent', () => {
+      const divMock = { parentNode: { removeChild: jest.fn() } };
+
+      jest
+        .spyOn(global.document, 'createElement')
+        .mockImplementation(() => divMock as any);
+
+      const { unmount, mount } = sdkWebInstallModal({
+        link: 'http://example.com',
+        installer: {} as any,
+      });
+
+      mount('http://example-qrcode.com');
+      unmount();
+
+      expect(divMock.parentNode.removeChild).toHaveBeenCalledWith(divMock);
+    });
+
+    it('should log debug information if debug is true', () => {
+      const consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
+
       const { unmount } = sdkWebInstallModal({
         link: 'http://example.com',
+        debug: true,
         installer: {} as any,
       });
 
       unmount();
 
-      expect(documentSpy).toHaveBeenCalledWith('div');
-      expect(documentSpy.mock.results[0].value.style.display).toBe('none');
+      expect(consoleInfoSpy).toHaveBeenCalled();
     });
 
     it('should call terminate if shouldTerminate is true', () => {

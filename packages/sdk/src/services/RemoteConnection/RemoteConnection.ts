@@ -54,7 +54,13 @@ export interface RemoteConnectionProps {
       unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;
     };
-    otp?: (onDisconnect?: () => void) => {
+    otp?: ({
+      debug,
+      onDisconnect,
+    }: {
+      debug?: boolean;
+      onDisconnect?: () => void;
+    }) => {
       mount?: () => void;
       updateOTPValue?: (otpValue: string) => void;
       unmount?: () => void;

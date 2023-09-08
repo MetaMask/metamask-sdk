@@ -25,6 +25,13 @@ export async function connectWithModalInstaller(
       return;
     }
 
+    if (state.developerMode) {
+      console.debug(`connectWithModalInstaller()`, {
+        state,
+        options,
+        linkParams,
+      });
+    }
     const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
     showInstallModal(state, options, universalLink);
 

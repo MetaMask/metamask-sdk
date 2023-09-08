@@ -24,6 +24,16 @@ export function handleDisconnect({
 }) {
   const { state } = instance;
 
+  const connected = instance.isConnected();
+  if (!connected) {
+    if (state.debug) {
+      console.debug(
+        `SDKProvider::handleDisconnect() not connected --- interrup disconnection`,
+      );
+    }
+    return;
+  }
+
   if (state.debug) {
     console.debug(
       `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
