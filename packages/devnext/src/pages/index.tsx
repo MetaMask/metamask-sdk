@@ -3,9 +3,9 @@ import { useSDK } from '@metamask/sdk-react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ethers } from 'ethers';
 import SimpleABI from '../abi/Simple.json'
 import { Address, createPublicClient, getContract, http } from 'viem'
-import { ethers } from 'ethers'
 
 export default function Home() {
   const {
@@ -14,7 +14,6 @@ export default function Home() {
     connecting,
     status: serviceStatus,
     account,
-    provider,
     chainId,
     error,
   } = useSDK();
@@ -25,7 +24,7 @@ export default function Home() {
       const accounts = await sdk?.connect();
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
-    } catch (err) {
+    } catch(err) {
       console.log('request accounts ERR', err)
     }
   };
@@ -144,7 +143,7 @@ export default function Home() {
     }
   };
 
-  const personalSign = async () => { };
+  const personalSign = async () => {};
 
   const terminate = () => {
     sdk?.terminate();
@@ -158,142 +157,51 @@ export default function Home() {
     // Get value from contract
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
     const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS;
-    if (!contractAddress || !rpcUrl) {
+    if(!contractAddress || !rpcUrl) {
       throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
     }
 
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const contract = new ethers.Contract(contractAddress, SimpleABI.abi, provider);
 
-    try {
-      const text = await contract.ping();
-      console.debug('ping', text);
+try {
+  const text = await contract.ping();
+  console.debug('ping', text);
 
-      const network = await provider.getNetwork();
-      console.debug('Network', network);
-    } catch (error) {
-      console.error('Error pinging ethers:', error);
-    }
-  }
-
-  const queryBalance = async () => {
-    const ethersProvider = new ethers.providers.Web3Provider(
-      sdk?.getProvider() as any,
-      'any'
-    )
-    const signer = ethersProvider.getSigner()
-
-    const erc20ABISubset = [
-      {
-        inputs: [{ name: 'owner', type: 'address' }],
-        name: 'balanceOf',
-        outputs: [{ name: '', type: 'uint256' }],
-        stateMutability: 'view',
-        type: 'function'
-      },
-      {
-        inputs: [],
-        name: 'symbol',
-        outputs: [{ name: '', type: 'string' }],
-        stateMutability: 'view',
-        type: 'function'
-      }
-    ]
-
-    // const callData = {
-    //   "method": "eth_call",
-    //   "params": [
-    //     {
-    //       "from": "0x8e0e30e296961f476e01184274ce85ae60184cb0",
-    //       "to": "0x111111111117dc0aa78b770fa6a738034120c302",
-    //       "data": "0x70a082310000000000000000000000008e0e30e296961f476e01184274ce85ae60184cb0"
-    //     },
-    //     "latest"
-    //   ]
-    // }
-    const swapContract = new ethers.Contract(
-      '0x111111111117dc0aa78b770fa6a738034120c302',
-      erc20ABISubset,
-      signer
-    )
-    try {
-      const bigNumBalance = await swapContract.balanceOf(account)
-      const tokenName = await swapContract.symbol()
-
-      console.debug(`Balance of ${tokenName}: ${bigNumBalance.toString()}`)
-    } catch (err) {
-      console.error(`Error querying balance`, err)
-    }
-
-  }
-
-  const handleBugDeeplinks = async () => {
-    if (!provider) {
-      throw new Error(`invalid ethereum provider`);
-    }
-
-    try {
-      const currentChainId = await provider.request({ method: 'eth_chainId' });
-      console.log("Current chain ID: ", currentChainId);
-
-      const to = "0x0000000000000000000000000000000000000000";
-      const transactionParameters = {
-        to,
-        from: provider.selectedAddress,
-        value: "0x5AF3107A4000",
-      };
-
-      // Different scenarios to manage:
-      // Wallet is connected:
-      // - dapp sends eth_chainID
-      // - dapp sends eth_sendTransaction
-      // Wallet is disconnected:
-      // - dapp sends eth_chainID
-      // - dapp sends eth_sendTransaction
-
-      // console.log(`Wait 4sec before sending transaction to ${to}...`)
-      // // Why if I had a delay > 500ms the deeplink doesn't open?
-      // // https://developer.apple.com/forums/thread/734266
-      // await new Promise((res) => setTimeout(res, 1000));
-      // console.log(`Sending transaction to ${to}...`)
-      await provider
-        .request({
-          method: 'eth_sendTransaction',
-          params: [transactionParameters],
-        })
-    } catch (err) {
-      console.error('Error sending transaction', err);
-    }
-
+  const network = await provider.getNetwork();
+  console.debug('Network', network);
+} catch (error) {
+  console.error('Error pinging ethers:', error);
+}
   }
 
   const pingViem = async () => {
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
     const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
-    if (!contractAddress || !rpcUrl) {
+    if(!contractAddress || !rpcUrl) {
       throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
     }
 
     const transport = http(rpcUrl);
-    const client = createPublicClient({ transport });
-    try {
-      const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
-      console.debug('balance', balance);
+    const client = createPublicClient({transport});
+try {
+  const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
+  console.debug('balance', balance);
 
-      const chainId = await client.getChainId();
-      console.debug('chainId', chainId);
+  const chainId = await client.getChainId();
+  console.debug('chainId', chainId);
 
-      const contract = getContract({
-        address: contractAddress,
-        abi: SimpleABI.abi,
-        publicClient: client,
-      });
+  const contract = getContract({
+    address: contractAddress,
+    abi: SimpleABI.abi,
+    publicClient: client,
+  });
 
-      const text = await contract.read.ping();
-      console.debug('ping', text);
-    } catch (error) {
-      console.error('Error pinging Viem:', error);
-    }
+  const text = await contract.read.ping();
+  console.debug('ping', text);
+} catch (error) {
+  console.error('Error pinging Viem:', error);
+}
   }
 
   return (
@@ -331,13 +239,6 @@ export default function Home() {
 
             <button
               style={{ padding: 10, margin: 10 }}
-              onClick={queryBalance}
-            >
-              Query Contract
-            </button>
-
-            <button
-              style={{ padding: 10, margin: 10 }}
               onClick={pingEthers}
             >
               ping (ethers)
@@ -355,13 +256,6 @@ export default function Home() {
               onClick={eth_signTypedData_v4}
             >
               eth_signTypedData_v4
-            </button>
-
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={handleBugDeeplinks}
-            >
-              Bug Deeplink
             </button>
 
             <button
