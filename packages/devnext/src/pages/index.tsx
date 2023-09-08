@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSDK } from '@metamask/sdk-react';
+import { useSDK } from '@metamask/sdk-react-ui';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';

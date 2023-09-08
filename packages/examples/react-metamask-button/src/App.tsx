@@ -2,8 +2,9 @@ import {
   MetaMaskButton, useAccount,
   useSDK,
   useSignMessage
-} from '@metamask/sdk-react';
+} from '@metamask/sdk-react-ui';
 import './App.css';
+import { useEffect } from 'react';
 
 function AppReady() {
   const {
@@ -39,7 +40,11 @@ function AppReady() {
 }
 
 function App() {
-  const { ready } = useSDK();
+  const { ready, status } = useSDK();
+
+  useEffect(() => {
+    console.log('status', status);
+  }, [status])
 
   if (!ready) {
     return <div>Loading...</div>;
