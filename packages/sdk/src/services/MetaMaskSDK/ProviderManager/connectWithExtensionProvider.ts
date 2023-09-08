@@ -1,7 +1,7 @@
 import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
+import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
-import { STORAGE_PROVIDER_TYPE } from '../../../config';
 
 /**
  * Connects the MetaMaskSDK instance to the MetaMask browser extension as the active provider.
@@ -18,8 +18,9 @@ import { STORAGE_PROVIDER_TYPE } from '../../../config';
  */
 export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
   if (instance.debug) {
-    console.debug(`SDK::connectWithExtensionProvider()`);
+    console.debug(`SDK::connectWithExtensionProvider()`, instance);
   }
+
   // save a copy of the instance before it gets overwritten
   instance.sdkProvider = instance.activeProvider;
   instance.activeProvider = window.extension as any;
@@ -28,11 +29,14 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
 
   try {
     // always create initial query to connect the account
-    await instance.activeProvider?.request({
+    const accounts = await instance.activeProvider?.request({
       method: 'eth_requestAccounts',
     });
+    if (instance.debug) {
+      console.debug(`SDK::connectWithExtensionProvider() accounts`, accounts);
+    }
   } catch (err) {
-    // ignore error˝
+    // ignore error
     console.warn(
       `SDK::connectWithExtensionProvider() can't request accounts error`,
       err,

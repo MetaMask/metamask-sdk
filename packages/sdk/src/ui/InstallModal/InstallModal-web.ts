@@ -15,11 +15,8 @@ const sdkWebInstallModal = ({
   terminate?: () => void;
   connectWithExtension?: () => void;
 }) => {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-  let mounted = false;
-
-  const modalLoader = new ModalLoader();
+  let modalLoader: ModalLoader | null = null;
+  let div: HTMLDivElement | null = null;
 
   if (debug) {
     console.debug(`################## Installing Modal #################`);
@@ -32,22 +29,36 @@ const sdkWebInstallModal = ({
   }
 
   const unmount = (shouldTerminate?: boolean) => {
-    if (div) {
-      div.style.display = 'none';
+    if (debug) {
+      console.info('installModal-web unmounting install modal', div);
     }
 
+    if (div) {
+      // div.style.display = 'none';
+      // remove div node from dom
+      div.parentNode?.removeChild(div);
+    }
+    div = null;
+    modalLoader = null;
     if (shouldTerminate === true) {
       terminate?.();
     }
   };
 
   const mount = (qrcodeLink: string) => {
-    if (mounted) {
+    if (debug) {
+      console.info('installModal-web mounting install modal', div);
+    }
+
+    if (div) {
       div.style.display = 'block';
-      modalLoader.updateQRCode(qrcodeLink);
+      modalLoader?.updateQRCode(qrcodeLink);
       return;
     }
 
+    modalLoader = new ModalLoader(debug);
+    div = document.createElement('div');
+    document.body.appendChild(div);
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
       modalLoader.renderSelectModal({
@@ -67,7 +78,6 @@ const sdkWebInstallModal = ({
         onClose: unmount,
       });
     }
-    mounted = true;
   };
 
   return { mount, unmount };

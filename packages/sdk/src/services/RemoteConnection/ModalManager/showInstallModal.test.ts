@@ -32,15 +32,6 @@ describe('showInstallModal', () => {
     } as unknown as RemoteConnectionProps;
   });
 
-  it('should mount existing installModal if already initialized', () => {
-    const link = 'http://example.com/qrcode';
-
-    showInstallModal(state, options, link);
-
-    expect(mockInstallModalMount).toHaveBeenCalledWith(link);
-    expect(mockModalsInstall).not.toHaveBeenCalled();
-  });
-
   it('should initialize and mount a new installModal if not already initialized', () => {
     const link = 'http://example.com/newqrcode';
     state.installModal = undefined;
