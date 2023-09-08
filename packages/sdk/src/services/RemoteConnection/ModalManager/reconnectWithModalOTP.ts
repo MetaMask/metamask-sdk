@@ -19,9 +19,10 @@ export async function reconnectWithModalOTP(
   if (state.pendingModal) {
     state.pendingModal?.mount?.();
   } else {
-    state.pendingModal = options.modals.otp?.(() =>
-      onOTPModalDisconnect(options, state),
-    );
+    state.pendingModal = options.modals.otp?.({
+      debug: state.developerMode,
+      onDisconnect: () => onOTPModalDisconnect(options, state),
+    });
   }
 
   const otp = await waitForOTPAnswer(state);
