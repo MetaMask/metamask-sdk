@@ -14,6 +14,7 @@ export default function Home() {
     connecting,
     status: serviceStatus,
     account,
+    provider,
     chainId,
     error,
   } = useSDK();
@@ -220,8 +221,48 @@ export default function Home() {
       const tokenName = await swapContract.symbol()
 
       console.debug(`Balance of ${tokenName}: ${bigNumBalance.toString()}`)
-    } catch(err) {
+    } catch (err) {
       console.error(`Error querying balance`, err)
+    }
+
+  }
+
+  const handleBugDeeplinks = async () => {
+    if (!provider) {
+      throw new Error(`invalid ethereum provider`);
+    }
+
+    try {
+      const currentChainId = await provider.request({ method: 'eth_chainId' });
+      console.log("Current chain ID: ", currentChainId);
+
+      const to = "0x0000000000000000000000000000000000000000";
+      const transactionParameters = {
+        to,
+        from: provider.selectedAddress,
+        value: "0x5AF3107A4000",
+      };
+
+      // Different scenarios to manage:
+      // Wallet is connected:
+      // - dapp sends eth_chainID
+      // - dapp sends eth_sendTransaction
+      // Wallet is disconnected:
+      // - dapp sends eth_chainID
+      // - dapp sends eth_sendTransaction
+
+      // console.log(`Wait 4sec before sending transaction to ${to}...`)
+      // // Why if I had a delay > 500ms the deeplink doesn't open?
+      // // https://developer.apple.com/forums/thread/734266
+      // await new Promise((res) => setTimeout(res, 1000));
+      // console.log(`Sending transaction to ${to}...`)
+      await provider
+        .request({
+          method: 'eth_sendTransaction',
+          params: [transactionParameters],
+        })
+    } catch (err) {
+      console.error('Error sending transaction', err);
     }
 
   }
@@ -314,6 +355,13 @@ export default function Home() {
               onClick={eth_signTypedData_v4}
             >
               eth_signTypedData_v4
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={handleBugDeeplinks}
+            >
+              Bug Deeplink
             </button>
 
             <button
