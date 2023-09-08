@@ -14,18 +14,6 @@ export function showInstallModal(
   options: RemoteConnectionProps,
   link: string,
 ): void {
-  // prevent double initialization
-  if (state.installModal) {
-    if (state.developerMode) {
-      console.debug(
-        `RemoteConnection::showInstallModal() install modal already initialized`,
-        state.installModal,
-      );
-    }
-    state.installModal.mount?.(link);
-    return;
-  }
-
   state.installModal = options.modals.install?.({
     link,
     installer: options.getMetaMaskInstaller(),

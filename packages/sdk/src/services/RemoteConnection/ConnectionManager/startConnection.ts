@@ -49,7 +49,9 @@ export async function startConnection(
   }
 
   const linkParams = encodeURI(
-    `channelId=${channelId}&comm=${state.communicationLayerPreference}&pubkey=${pubKey}`,
+    `channelId=${channelId}&comm=${
+      state.communicationLayerPreference ?? ''
+    }&pubkey=${pubKey}`,
   );
   const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
   state.universalLink = universalLink;

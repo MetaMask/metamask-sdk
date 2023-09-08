@@ -51,6 +51,4 @@ export function terminate(instance: MetaMaskSDK) {
     terminate: true,
     sendMessage: true,
   });
-
-  instance._initialized = false;
 }

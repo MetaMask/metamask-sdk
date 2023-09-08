@@ -74,8 +74,8 @@ describe('reconnectWithModalOTP', () => {
 
   it('should call onOTPModalDisconnect when the modal disconnect occurs', async () => {
     state.pendingModal = undefined;
-    mockOtpModal.mockImplementation((callback) => {
-      callback();
+    mockOtpModal.mockImplementation(({ onDisconnect }) => {
+      onDisconnect();
 
       return { mount: mockMount, unmount: mockUnmount };
     });
