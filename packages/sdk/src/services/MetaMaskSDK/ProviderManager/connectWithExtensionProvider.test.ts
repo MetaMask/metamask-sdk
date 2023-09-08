@@ -81,6 +81,12 @@ describe('connectWithExtensionProvider', () => {
 
     expect(consoleDebugSpy).toHaveBeenCalledWith(
       'SDK::connectWithExtensionProvider()',
+      instance,
+    );
+
+    expect(consoleDebugSpy).toHaveBeenLastCalledWith(
+      'SDK::connectWithExtensionProvider() accounts',
+      undefined,
     );
   });
 
