@@ -1,5 +1,9 @@
 # MetaMask SDK
 
+## Tests Coverage
+
+![Statements](https://img.shields.io/badge/statements-80.22%25-yellow.svg?style=flat) ![Branches](https://img.shields.io/badge/branches-68.87%25-red.svg?style=flat) ![Functions](https://img.shields.io/badge/functions-74.89%25-red.svg?style=flat) ![Lines](https://img.shields.io/badge/lines-80.25%25-yellow.svg?style=flat)
+
 The MetaMask SDK enables developers to easily connect their dapps with a MetaMask wallet (Extension or Mobile) no matter the dapp environment or platform.
 
 The MetaMask SDK is a library that can be installed by developers on their projects and will automatically guide their users to easily connect with a MetaMask wallet client. For instance, for dapps running on a desktop browser, the SDK will check if Extension is installed and if not it will prompt the user to install it or to connect via QR code with their MetaMask Mobile wallet. Another example, for native mobile applications, the SDK will automatically deeplink into MetaMask Mobile wallet to make the connection.
