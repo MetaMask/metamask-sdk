@@ -119,25 +119,20 @@ jobs:
       - run: yarn --immutable --immutable-cache
       - run: yarn build
       - run: yarn workspace ${{ matrix.package-name }} run test:ci
-      - name: Check if coverage folder exists
-        id: check-coverage-folder
+      - name: Get coverage folder
+        id: get-coverage-folder
         run: |
-          COVERAGE_DIR=$(yarn workspaces list --json | grep ${{ matrix.package-name }} | jq -r '.location')/coverage
-          if [[ -d "$COVERAGE_DIR" ]]; then
-            echo "coverage-folder-exists=true" >> "$GITHUB_OUTPUT"
-            echo "coverage-folder=$COVERAGE_DIR" >> "$GITHUB_OUTPUT"
-          else
-            echo "coverage-folder-exists=false" >> "$GITHUB_OUTPUT"
-          fi
+          echo "stub" >> stub
+          echo "coverage-folder=$(yarn workspaces list --json | grep ${{ matrix.package-name }} | jq -r '.location')/coverage" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: Upload coverage artifact
-        if: steps.check-coverage-folder.outputs.coverage-folder-exists == 'true' && matrix.node-version == '16.x'
+        if: ${{ matrix.node-version == '16.x' }}
         uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: |
             stub
-            ${{ steps.check-coverage-folder.outputs.coverage-folder }}/**/coverage-final.json
+            ${{ steps.get-coverage-folder.outputs.coverage-folder }}/**/coverage-final.json
           if-no-files-found: warn
           retention-days: 1
       - name: Require clean working directory
