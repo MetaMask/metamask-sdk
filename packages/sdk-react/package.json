@@ -39,7 +39,7 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "yarn clean && rimraf ./node_modules/",
-    "test": "echo 'N/A'",
+    "test": "echo 'N/A' ",
     "test:ci": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
