@@ -1,5 +1,7 @@
 # MetaMask SDK
 
+[![codecov](https://codecov.io/gh/MetaMask/metamask-sdk/graph/badge.svg?token=6B3Z3724OO)](https://codecov.io/gh/MetaMask/metamask-sdk)
+
 The MetaMask SDK enables developers to easily connect their dapps with a MetaMask wallet (Extension or Mobile) no matter the dapp environment or platform.
 
 The MetaMask SDK is a library that can be installed by developers on their projects and will automatically guide their users to easily connect with a MetaMask wallet client. For instance, for dapps running on a desktop browser, the SDK will check if Extension is installed and if not it will prompt the user to install it or to connect via QR code with their MetaMask Mobile wallet. Another example, for native mobile applications, the SDK will automatically deeplink into MetaMask Mobile wallet to make the connection.
@@ -22,6 +24,7 @@ This provider is the `ethereum` object that developers are already used to. This
   - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/) (coming soon)
 
 ## Features
+
 - Session persistence
 - Multi Provider (Let user choose between browser extension and mobile wallet)
 - Wagmi Hook Integration (alpha)
@@ -45,19 +48,21 @@ npm i @metamask/sdk
 ![](./docs/demo_web.gif)
 
 Follow example on:
- - [nextjs demo](./packages/examples/nextjs-demo/README.md)
- - [react demo](./packages/examples/create-react-app/README.md)
- - [vuejs demo](./packages/examples/vuejs/README.md)
- - [pure javascript demo](./packages/examples/pure-javascript/README.md)
 
+- [nextjs demo](./packages/examples/nextjs-demo/README.md)
+- [react demo](./packages/examples/create-react-app/README.md)
+- [vuejs demo](./packages/examples/vuejs/README.md)
+- [pure javascript demo](./packages/examples/pure-javascript/README.md)
 
 ## React Native
+
 ![](./docs/demo_rn_ios.gif)
 
 We recommend using RN v0.71.4 or higher otherwise you may encounter significant performance issues on Android.
 
 Follow example on:
- - [react native demo](./packages/examples/reactNativeDemo/README.md)
+
+- [react native demo](./packages/examples/reactNativeDemo/README.md)
 
 ## NodeJS
 
@@ -66,7 +71,7 @@ import { MetaMaskSDK } from '@metamask/sdk';
 const MMSDK = new MetaMaskSDK({
   dappMetadata: {
     name: 'NodeJS example',
-  }
+  },
 });
 MMSDK.connect()
   .then((accounts) => {
@@ -83,9 +88,11 @@ MMSDK.connect()
     console.error(error);
   });
 ```
+
 ![](./docs/demo_nodejs.gif)
 
 ### Electron
+
 ![](./docs/demo_electron.gif)
 
 Follow example on:
