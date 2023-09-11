@@ -36,7 +36,7 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage",
+    "test:ci": "jest --coverage --passWithNoTests",
     "test:dev": "jest",
     "watch": "rollup -c -w"
   },

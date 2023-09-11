@@ -28,7 +28,7 @@
     "clean": "rimraf dist",
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "echo 'N/A'",
-    "test:ci": "echo 'N/A'",
+    "test:ci": "jest --coverage --passWithNoTests",
     "allow-scripts": ""
   },
   "eslintConfig": {

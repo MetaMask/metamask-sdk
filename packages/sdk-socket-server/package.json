@@ -27,7 +27,7 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "node index.js",
     "test": "echo 'N/A'",
-    "test:ci": "echo 'N/A'"
+    "test:ci": "jest --coverage --passWithNoTests"
   },
   "dependencies": {
     "analytics-node": "^6.2.0",

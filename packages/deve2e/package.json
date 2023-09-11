@@ -21,7 +21,7 @@
     "ts-start": "ts-node -r tsconfig-paths/register --project tsconfig.json src/index.ts ${TARGET:-sdk}",
     "test": "echo 'N/A'",
     "allow-scripts": "echo 'N/A'",
-    "test:ci": "echo 'N/A'",
+    "test:ci": "jest --coverage --passWithNoTests",
     "watch": "yarn start --watch"
   },
   "dependencies": {
