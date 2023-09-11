@@ -37,7 +37,7 @@ const config: JestConfigWithTsJest = {
   // coverageProvider: "babel",
 
   // A list of reporter names that Jest uses when writing coverage reports
-  coverageReporters: ['clover', 'json-summary', 'lcov', 'text'],
+  coverageReporters: ['clover', 'json-summary', 'json', 'lcov', 'text'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
