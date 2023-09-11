@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2]
+### Uncategorized
+- fix: edge case when modal not fully resetting after termination ([#339](https://github.com/MetaMask/metamask-sdk/pull/339))
+
 ## [0.6.1]
 ### Uncategorized
 - feat: align versions([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
@@ -39,7 +43,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.2...HEAD
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.1...@metamask/sdk-install-modal-web@0.6.2
 [0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.0...@metamask/sdk-install-modal-web@0.6.1
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.5.1...@metamask/sdk-install-modal-web@0.6.0
 [0.5.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.3...@metamask/sdk-install-modal-web@0.5.1

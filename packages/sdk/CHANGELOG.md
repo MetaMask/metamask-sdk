@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.2]
+### Uncategorized
+- feat: add unit tests to the RemoteCommunicationPostMessageStream class ([#337](https://github.com/MetaMask/metamask-sdk/pull/337))
+- feat: refactor the RemoteCommunicationPostMessage stream class ([#336](https://github.com/MetaMask/metamask-sdk/pull/336))
+- feat: add unit tests to the MobilePortStream class ([#335](https://github.com/MetaMask/metamask-sdk/pull/335))
+- feat: add unit tests to the PlatformManager class ([#333](https://github.com/MetaMask/metamask-sdk/pull/333))
+- feat: refactor the PlatformManager class ([#332](https://github.com/MetaMask/metamask-sdk/pull/332))
+- fix: edge case when modal not fully resetting after termination ([#339](https://github.com/MetaMask/metamask-sdk/pull/339))
+- fix: initialize state in _initializeStateAsync to address uninitialized properties issue ([#331](https://github.com/MetaMask/metamask-sdk/pull/331))
+- feat: add unit tests to the MetaMaskInstaller class ([#326](https://github.com/MetaMask/metamask-sdk/pull/326))
+- feat: refactor the MetaMaskInstaller class ([#325](https://github.com/MetaMask/metamask-sdk/pull/325))
+- feat: refactor the SDKProvider class for enhanced modularity and testability ([#321](https://github.com/MetaMask/metamask-sdk/pull/321))
+- feat: add unit tests to uncovered parts of the sdk package ([#320](https://github.com/MetaMask/metamask-sdk/pull/320))
+- feat: add unit tests to the MetaMaskSDK class ([#319](https://github.com/MetaMask/metamask-sdk/pull/319))
+
 ## [0.6.1]
 ### Uncategorized
 - feat: refactor MetaMaskSDK class for enhanced modularity and testability  ([#309](https://github.com/MetaMask/metamask-sdk/pull/309))
@@ -103,7 +118,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.2...HEAD
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.1...@metamask/sdk@0.6.2
 [0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.0...@metamask/sdk@0.6.1
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.6...@metamask/sdk@0.6.0
 [0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.5...@metamask/sdk@0.5.6
