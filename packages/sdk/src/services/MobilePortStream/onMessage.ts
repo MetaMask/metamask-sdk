@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import { MobilePortStream } from '../../PortStream/MobilePortStream';
 
 export function onMessage(instance: MobilePortStream, event: any) {

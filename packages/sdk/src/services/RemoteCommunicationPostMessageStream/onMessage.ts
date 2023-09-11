@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import { CommunicationLayerMessage } from '@metamask/sdk-communication-layer';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { ProviderConstants } from '../../constants';
