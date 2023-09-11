@@ -156,5 +156,5 @@ jobs:
       - name: Upload coverage results
         uses: codecov/codecov-action@v3
         with:
-            token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: packages/**/coverage-final.json
