@@ -123,7 +123,7 @@ jobs:
         id: get-coverage-folder
         run: |
           echo "stub" >> stub
-          echo "coverage-folder=$(yarn workspaces list --json | grep ${{ matrix.package-name }} | jq -r '.location')/coverage" >> "$GITHUB_OUTPUT"
+          echo "coverage-folder=$(yarn workspaces list --json | grep '^${{ matrix.package-name }}$' | jq -r '.location')/coverage" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: Upload coverage artifact
         if: ${{ matrix.node-version == '16.x' }}
