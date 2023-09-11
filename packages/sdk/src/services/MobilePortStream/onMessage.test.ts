@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import { MobilePortStream } from '../../PortStream/MobilePortStream';
 import { onMessage } from './onMessage';
 
