@@ -19,29 +19,25 @@ const config: JestConfigWithTsJest = {
   // clearMocks: false,
 
   // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
+  // collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
-
+  collectCoverageFrom: [
+    './src/**/*.ts',
+    '!./src/**/*.test.ts',
+    '!./src/**/*.spec.ts',
+  ],
   // The directory where Jest should output its coverage files
-  // coverageDirectory: undefined,
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "/node_modules/"
-  // ],
+  // coveragePathIgnorePatterns: ['./src/index.ts'],
 
   // Indicates which provider should be used to instrument code for coverage
   // coverageProvider: "babel",
 
   // A list of reporter names that Jest uses when writing coverage reports
-  // coverageReporters: [
-  //   "json",
-  //   "text",
-  //   "lcov",
-  //   "clover"
-  // ],
+  coverageReporters: ['clover', 'json-summary', 'json', 'lcov', 'text'],
 
   // An object that configures minimum threshold enforcement for coverage results
   // coverageThreshold: undefined,
@@ -90,16 +86,7 @@ const config: JestConfigWithTsJest = {
   ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // Here we ensure that Jest resolves `@metamask/*` imports to the uncompiled source code for packages that live in this repo.
-  // NOTE: This must be synchronized with the `paths` option in `tsconfig.packages.json`.
-  moduleNameMapper: {
-    '^@metamask/(.+)$': [
-      '<rootDir>/../$1/src',
-      // Some @metamask/* packages we are referencing aren't in this monorepo,
-      // so in that case use their published versions
-      '<rootDir>/../../node_modules/@metamask/$1',
-    ],
-  },
+  // moduleNameMapper: {},
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -139,7 +126,7 @@ const config: JestConfigWithTsJest = {
   //   "<rootDir>"
   // ],
 
-  testTimeout: 50000000,
+  testTimeout: 500000,
   // Allows you to use a custom runner instead of Jest's default test runner
   // runner: "jest-runner",
 
@@ -180,7 +167,9 @@ const config: JestConfigWithTsJest = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  transform: {
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.test.json' }],
+  },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\/]+$'],

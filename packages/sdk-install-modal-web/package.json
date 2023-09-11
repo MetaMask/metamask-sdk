@@ -40,7 +40,7 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
-    "test:ci": "echo 'N/A'",
+    "test:ci": "jest --coverage --passWithNoTests",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
@@ -70,6 +70,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.32.2",
+    "jest": "^29.6.4",
     "prettier": "^2.8.8",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.7",
