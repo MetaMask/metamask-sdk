@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 export function write(
   chunk: any,
   _encoding: BufferEncoding,

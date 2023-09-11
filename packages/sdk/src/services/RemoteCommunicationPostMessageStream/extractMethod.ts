@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 // TODO refactor to have proper types on data
 export const extractMethod = (chunk: any): { method: string; data: any } => {
   let data: any;
