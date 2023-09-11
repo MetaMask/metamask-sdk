@@ -7,19 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.2]
-### Uncategorized
+### Added
 - fix: edge case when modal not fully resetting after termination ([#339](https://github.com/MetaMask/metamask-sdk/pull/339))
 
 ## [0.6.1]
-### Uncategorized
+### Added
 - feat: align versions([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
 
 ## [0.6.0]
-### Uncategorized
+### Added
 - feat: trigger pipeline detection ([#307](https://github.com/MetaMask/metamask-sdk/pull/307))
 
 ## [0.5.1]
-### Uncategorized
+### Added
 - feat: optimize modal rendering and re-use existing node ([#206](https://github.com/MetaMask/metamask-sdk/pull/206))
 
 ## [0.3.3]

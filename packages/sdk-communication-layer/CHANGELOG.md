@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.2]
-### Uncategorized
+### Added
 - feat: add unit tests to the MetaMaskSDK class ([#319](https://github.com/MetaMask/metamask-sdk/pull/319))
 
 ## [0.6.1]
-### Uncategorized
+### Added
 - feat: align versions ([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
 
 ## [0.6.0]

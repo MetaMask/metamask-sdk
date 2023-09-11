@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.6.2]
-### Uncategorized
+### Added
 - feat: add unit tests to the RemoteCommunicationPostMessageStream class ([#337](https://github.com/MetaMask/metamask-sdk/pull/337))
 - feat: refactor the RemoteCommunicationPostMessage stream class ([#336](https://github.com/MetaMask/metamask-sdk/pull/336))
 - feat: add unit tests to the MobilePortStream class ([#335](https://github.com/MetaMask/metamask-sdk/pull/335))
@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: add unit tests to the MetaMaskSDK class ([#319](https://github.com/MetaMask/metamask-sdk/pull/319))
 
 ## [0.6.1]
-### Uncategorized
+### Added
 - feat: refactor MetaMaskSDK class for enhanced modularity and testability  ([#309](https://github.com/MetaMask/metamask-sdk/pull/309))
 
 ## [0.6.0]
