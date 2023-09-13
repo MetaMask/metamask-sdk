@@ -103,15 +103,21 @@ describe('startConnection', () => {
   });
 
   it('should call reconnectWithModalOTP when channelConfig lastActive is true and isSecure is false', async () => {
-    mockOriginatorSessionConnect.mockResolvedValue({
+    const mockChannelConfig = {
       lastActive: true,
-    });
+    };
+
+    mockOriginatorSessionConnect.mockResolvedValue(mockChannelConfig);
 
     mockIsSecure.mockReturnValue(false);
 
     await startConnection(state, options);
 
-    expect(mockReconnectWithModalOTP).toHaveBeenCalledWith(state, options);
+    expect(mockReconnectWithModalOTP).toHaveBeenCalledWith(
+      state,
+      options,
+      mockChannelConfig,
+    );
   });
 
   it('should call connectWithModalInstaller when platform is not secure and channelConfig does not have lastActive', async () => {
