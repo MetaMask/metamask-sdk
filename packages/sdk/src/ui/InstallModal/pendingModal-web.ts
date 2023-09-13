@@ -32,7 +32,15 @@ const sdkWebPendingModal = ({
     }
   };
 
-  const mount = () => {
+  const mount = (
+    {
+      displayOTP,
+    }: {
+      displayOTP: boolean;
+    } = {
+      displayOTP: true,
+    },
+  ) => {
     if (debug) {
       console.log(`pendingModal-web mount`, div);
     }
@@ -51,6 +59,7 @@ const sdkWebPendingModal = ({
       onClose: unmount,
       onDisconnect,
       updateOTPValue,
+      displayOTP,
     });
   };
 

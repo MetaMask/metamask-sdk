@@ -29,14 +29,14 @@ export class ModalLoader {
   }
 
   renderInstallModal(props: InstallWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderInstallModal`, props)
+    if (this.debug) {
+      console.debug(`ModalLoader: renderInstallModal`, props);
     }
 
     if (this.installContainer) {
       // Already rendered
-      if(this.debug) {
-        console.debug(`ModalLoader: renderInstallModal: already rendered`)
+      if (this.debug) {
+        console.debug(`ModalLoader: renderInstallModal: already rendered`);
       }
       return;
     }
@@ -54,13 +54,13 @@ export class ModalLoader {
   }
 
   renderSelectModal(props: SelectWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderSelectModal`, props)
+    if (this.debug) {
+      console.debug(`ModalLoader: renderSelectModal`, props);
     }
 
-    if(this.selectContainer) {
-      if(this.debug) {
-        console.debug(`ModalLoader: renderSelectModal: already rendered`)
+    if (this.selectContainer) {
+      if (this.debug) {
+        console.debug(`ModalLoader: renderSelectModal: already rendered`);
       }
       return;
     }
@@ -75,20 +75,19 @@ export class ModalLoader {
       />,
     );
 
-    setTimeout( () => {
+    setTimeout(() => {
       this.updateQRCode(props.link);
     }, 100);
-
   }
 
   renderPendingModal(props: PendingWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderPendingModal`, props)
+    if (this.debug) {
+      console.debug(`ModalLoader: renderPendingModal`, props);
     }
 
     if (this.pendingContainer) {
-      if(this.debug) {
-        console.debug(`ModalLoader: renderPendingModal: already rendered`)
+      if (this.debug) {
+        console.debug(`ModalLoader: renderPendingModal: already rendered`);
       }
       return;
     }
@@ -100,15 +99,17 @@ export class ModalLoader {
         onClose={props.onClose}
         onDisconnect={props.onDisconnect}
         updateOTPValue={props.updateOTPValue}
+        displayOTP={props.displayOTP}
       />,
     );
   }
 
   updateOTPValue = (otpValue: string) => {
-    if(this.debug) {
-      console.debug(`ModalLoader: updateOTPValue`, otpValue)
+    if (this.debug) {
+      console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
-    const otpNode = this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
+    const otpNode =
+      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -116,11 +117,13 @@ export class ModalLoader {
   };
 
   updateQRCode = (link: string) => {
-    if(this.debug) {
-      console.debug(`ModalLoader: updateQRCode`, link)
+    if (this.debug) {
+      console.debug(`ModalLoader: updateQRCode`, link);
     }
     // TODO use scoped elem
-    const qrCodeNode = this.selectContainer?.querySelector('#sdk-qrcode-container');
+    const qrCodeNode = this.selectContainer?.querySelector(
+      '#sdk-qrcode-container',
+    );
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
@@ -149,7 +152,7 @@ export class ModalLoader {
       });
       qrCode.append(qrCodeNode);
     }
-  }
+  };
 
   unmount() {
     if (this.pendingContainer) {
@@ -160,7 +163,7 @@ export class ModalLoader {
       this.installContainer?.parentNode?.removeChild(this.installContainer);
       this.installContainer = undefined;
     }
-    if(this.selectContainer) {
+    if (this.selectContainer) {
       this.selectContainer?.parentNode?.removeChild(this.selectContainer);
       this.selectContainer = undefined;
     }

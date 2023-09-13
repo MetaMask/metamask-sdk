@@ -18,7 +18,7 @@ import { connectWithModalInstaller } from './connectWithModalInstaller';
 export async function startConnection(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
-): Promise<void> {
+): Promise<void | undefined> {
   if (!state.connector) {
     throw new Error('no connector defined');
   }
@@ -63,7 +63,7 @@ export async function startConnection(
   }
 
   if (channelConfig?.lastActive) {
-    return reconnectWithModalOTP(state, options);
+    return reconnectWithModalOTP(state, options, channelConfig);
   }
 
   return connectWithModalInstaller(state, options, linkParams);
