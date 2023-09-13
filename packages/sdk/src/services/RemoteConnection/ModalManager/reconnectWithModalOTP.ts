@@ -4,16 +4,19 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { ONE_HOUR_IN_MS } from '../../../constants';
 import { onOTPModalDisconnect } from './onOTPModalDisconnect';
 import { waitForOTPAnswer } from './waitForOTPAnswer';
-
-const ONE_HOUR_IN_MS = 60 * 60 * 1000;
 
 /**
  * Reconnects to MetaMask using an OTP modal and waits for an OTP answer.
  *
+ * - If MetaMask's channel was active in the last hour, it reconnects without requiring OTP.
+ * - Otherwise, prompts user for OTP and waits for a response.
+ *
  * @param state Current state of the RemoteConnection class instance.
  * @param options Configuration options for the OTP modal.
+ * @param channelConfig Configuration related to the communication channel with MetaMask.
  * @returns Promise<void>
  */
 export async function reconnectWithModalOTP(

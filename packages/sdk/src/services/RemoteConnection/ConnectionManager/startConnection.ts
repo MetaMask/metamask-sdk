@@ -18,7 +18,7 @@ import { connectWithModalInstaller } from './connectWithModalInstaller';
 export async function startConnection(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
-): Promise<void | undefined> {
+): Promise<void> {
   if (!state.connector) {
     throw new Error('no connector defined');
   }
