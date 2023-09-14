@@ -3,16 +3,19 @@ import {
   EventType,
   MetaMaskSDK,
   MetaMaskSDKOptions,
-  PROVIDER_UPDATE_TYPE,
   SDKProvider,
-  ServiceStatus
+  ServiceStatus,
 } from '@metamask/sdk';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, {
-  createContext,
-  useEffect, useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
+import { handleAccountsChangedEvent } from './EventsHandlers/handleAccountsChangedEvent';
+import { handleChainChangedEvent } from './EventsHandlers/handleChainChangedEvent';
+import { handleConnectEvent } from './EventsHandlers/handleConnectEvent';
+import { handleDisconnectEvent } from './EventsHandlers/handleDisconnectEvent';
+import { handleInitializedEvent } from './EventsHandlers/handleInitializedEvent';
+import { handleOnConnectingEvent } from './EventsHandlers/handleOnConnectingEvent';
+import { handleProviderEvent } from './EventsHandlers/handleProviderEvent';
+import { handleSDKStatusEvent } from './EventsHandlers/handleSDKStatusEvent';
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -67,6 +70,7 @@ const MetaMaskProviderClient = ({
     const _sdk = new MetaMaskSDK({
       ...sdkOptions,
     });
+
     _sdk.init().then(() => {
       setSDK(_sdk);
       setReady(true);
@@ -87,93 +91,53 @@ const MetaMaskProviderClient = ({
     setAccount(activeProvider.selectedAddress || undefined);
     setProvider(activeProvider);
 
-    const onConnecting = () => {
-      if (debug) {
-        console.debug(`MetaMaskProvider::provider on 'connecting' event.`);
-      }
-      setConnected(false);
-      setConnecting(true);
-      setError(undefined);
-    };
+    const onConnecting = handleOnConnectingEvent(
+      debug,
+      setConnected,
+      setConnecting,
+      setError,
+    );
 
-    const onInitialized = () => {
-      if (debug) {
-        console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
-      }
-      setConnecting(false);
-      setAccount(activeProvider?.selectedAddress || undefined);
-      setConnected(true);
-      setError(undefined);
-    };
+    const onInitialized = handleInitializedEvent(
+      debug,
+      setConnecting,
+      setAccount,
+      activeProvider,
+      setConnected,
+      setError,
+    );
 
-    const onConnect = (connectParam: unknown) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'connect' event.`,
-          connectParam,
-        );
-      }
-      setConnecting(false);
-      setConnected(true);
-      setChainId((connectParam as { chainId: string })?.chainId);
-      setError(undefined);
-      if (chainId) {
-        setChainId(chainId);
-      }
-    };
+    const onConnect = handleConnectEvent(
+      debug,
+      setConnecting,
+      setConnected,
+      setChainId,
+      setError,
+      chainId,
+    );
 
-    const onDisconnect = (reason: unknown) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'disconnect' event.`,
-          reason,
-        );
-      }
-      setConnecting(false);
-      setConnected(false);
-      setError(reason as EthereumRpcError<unknown>);
-    };
+    const onDisconnect = handleDisconnectEvent(
+      debug,
+      setConnecting,
+      setConnected,
+      setError,
+    );
 
-    const onAccountsChanged = (newAccounts: any) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'accountsChanged' event.`,
-          newAccounts,
-        );
-      }
-      setAccount((newAccounts as string[])?.[0]);
-      setConnected(true);
-      setError(undefined);
-    };
+    const onAccountsChanged = handleAccountsChangedEvent(
+      debug,
+      setAccount,
+      setConnected,
+      setError,
+    );
 
-    const onChainChanged = (networkVersion: any) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'chainChanged' event.`,
-          networkVersion,
-        );
-      }
-      setChainId(
-        (
-          networkVersion as {
-            chainId?: string;
-            networkVersion?: string;
-          }
-        )?.chainId,
-      );
-      setConnected(true);
-      setError(undefined);
-    };
+    const onChainChanged = handleChainChangedEvent(
+      debug,
+      setChainId,
+      setConnected,
+      setError,
+    );
 
-    const onSDKStatusEvent = (_serviceStatus: ServiceStatus) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`,
-          _serviceStatus,
-        );
-      }
-      setStatus(_serviceStatus);
-    };
+    const onSDKStatusEvent = handleSDKStatusEvent(debug, setStatus);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);
@@ -199,18 +163,11 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    const onProviderEvent = (type: PROVIDER_UPDATE_TYPE) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::sdk on '${EventType.PROVIDER_UPDATE}' event.`,
-          type,
-        );
-      }
-      if(type===PROVIDER_UPDATE_TYPE.TERMINATE){
-        setConnecting(false);
-      }
-      setTrigger((_trigger) => _trigger + 1);
-    };
+    const onProviderEvent = handleProviderEvent(
+      debug,
+      setConnecting,
+      setTrigger,
+    );
     sdk.on(EventType.PROVIDER_UPDATE, onProviderEvent);
     return () => {
       sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);
