@@ -20,11 +20,13 @@
 require("ts-node").register({
   files: true,
 });
-// require('dotenv').config();
-// const mnemonic = process.env["MNEMONIC"];
-// const infuraProjectId = process.env["INFURA_PROJECT_ID"];
+require('dotenv').config();
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider')
+
+const mnemonic = process.env["MNEMONIC"];
+const customNetworkUrl = process.env["CUSTOM_NETWORK_URL"];
+// const infuraProjectId = process.env["INFURA_PROJECT_ID"];
 
 module.exports = {
   /**
@@ -45,10 +47,17 @@ module.exports = {
     // options below to some value.
     //
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 8545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 8545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
+      chain_id: 1337
     },
+
+    custom: {
+      provider: () => new HDWalletProvider(mnemonic, customNetworkUrl),
+      network_id: "*",
+      chain_id: 1337
+    }
     //
     // goerli: {
     //   provider: () => new HDWalletProvider(mnemonic, `https://goerli.infura.io/v3/${infuraProjectId}`),
