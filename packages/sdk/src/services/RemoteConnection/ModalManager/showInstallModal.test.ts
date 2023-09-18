@@ -127,7 +127,7 @@ describe('showInstallModal', () => {
   it('should not throw error if mount is not defined', () => {
     const link = 'http://example.com/newqrcode';
     state.installModal = undefined;
-    mockModalsInstall.mockReturnValueOnce({} as any);
+    mockModalsInstall.mockReturnValueOnce({});
 
     expect(() => {
       showInstallModal(state, options, link);

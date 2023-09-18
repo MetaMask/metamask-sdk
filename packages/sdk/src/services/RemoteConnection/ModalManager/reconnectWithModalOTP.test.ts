@@ -4,6 +4,7 @@ import {
   RemoteConnectionState,
 } from '../RemoteConnection';
 import { Ethereum } from '../../Ethereum';
+import { SDKProvider } from '../../../provider/SDKProvider';
 import { onOTPModalDisconnect } from './onOTPModalDisconnect';
 import { reconnectWithModalOTP } from './reconnectWithModalOTP';
 import { waitForOTPAnswer } from './waitForOTPAnswer';
@@ -40,7 +41,7 @@ describe('reconnectWithModalOTP', () => {
     mockEthereum.getProvider.mockReturnValue({
       _setConnected: jest.fn(),
       getState: jest.fn(),
-    } as unknown as any);
+    } as unknown as SDKProvider);
 
     channelConfig = {
       channelId: 'test_channel_id',
