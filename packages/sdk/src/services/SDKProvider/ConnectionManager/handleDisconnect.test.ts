@@ -90,4 +90,54 @@ describe('handleDisconnect', () => {
 
     expect(mockHandleAccountsChanged).toHaveBeenCalledWith([]);
   });
+
+  it('should interrupt disconnection and log when not connected and debug is true', () => {
+    mockIsConnected.mockReturnValueOnce(false);
+    mockSDKProvider.state.debug = true;
+    const spyConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
+
+    handleDisconnect({ terminate: false, instance: mockSDKProvider });
+
+    expect(spyConsoleDebug).toHaveBeenCalledWith(
+      'SDKProvider::handleDisconnect() not connected --- interrup disconnection',
+    );
+
+    expect(mockSDKProvider.chainId).toBe('someChainId');
+    // @ts-ignore
+    expect(mockSDKProvider._state.isConnected).toBe(true);
+    expect(mockEmit).not.toHaveBeenCalled();
+
+    spyConsoleDebug.mockRestore();
+  });
+
+  it('should interrupt disconnection and not log when not connected and debug is false', () => {
+    mockIsConnected.mockReturnValueOnce(false);
+    mockSDKProvider.state.debug = false;
+    const spyConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
+
+    handleDisconnect({ terminate: false, instance: mockSDKProvider });
+
+    expect(spyConsoleDebug).not.toHaveBeenCalled();
+
+    expect(mockSDKProvider.chainId).toBe('someChainId');
+    // @ts-ignore
+    expect(mockSDKProvider._state.isConnected).toBe(true);
+    expect(mockEmit).not.toHaveBeenCalled();
+
+    spyConsoleDebug.mockRestore();
+  });
+
+  it('should not interrupt disconnection when connected', () => {
+    mockIsConnected.mockReturnValue(true);
+
+    handleDisconnect({ terminate: false, instance: mockSDKProvider });
+
+    expect(mockEmit).toHaveBeenCalledWith(
+      'disconnect',
+      ethErrors.provider.disconnected(),
+    );
+    // @ts-ignore
+    expect(mockSDKProvider._state.isConnected).toBe(false);
+    expect(mockHandleAccountsChanged).toHaveBeenCalledWith([]);
+  });
 });
