@@ -8,7 +8,11 @@ describe('showInstallModal', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
   const mockInstallModalMount = jest.fn();
-  const mockModalsInstall = jest.fn();
+  const mockModalsInstall = jest.fn(() => {
+    return {
+      mount: mockInstallModalMount,
+    };
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -36,13 +40,110 @@ describe('showInstallModal', () => {
     const link = 'http://example.com/newqrcode';
     state.installModal = undefined;
 
-    mockModalsInstall.mockReturnValue({
-      mount: mockInstallModalMount,
+    showInstallModal(state, options, link);
+
+    expect(mockModalsInstall).toHaveBeenCalledWith({
+      link,
+      installer: undefined,
+      terminate: expect.any(Function),
+      debug: state.developerMode,
+      connectWithExtension: expect.any(Function),
     });
+    expect(mockModalsInstall).toHaveBeenCalledTimes(1);
+    expect(mockInstallModalMount).toHaveBeenCalledWith(link);
+    expect(mockInstallModalMount).toHaveBeenCalledTimes(1);
+  });
+
+  it('should terminate the connection and possibly log the termination', () => {
+    const link = 'http://example.com/terminate';
+
+    const mockConsoleDebug = jest
+      .spyOn(console, 'debug')
+      .mockImplementation(() => {
+        // do nothing
+      });
+
+    // when developerMode is true
+    state.developerMode = true;
 
     showInstallModal(state, options, link);
 
-    expect(mockModalsInstall).toHaveBeenCalled();
-    expect(mockInstallModalMount).toHaveBeenCalledWith(link);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const terminateCall = mockModalsInstall.mock.calls[0][0]
+      .terminate as () => void;
+
+    terminateCall();
+
+    expect(mockConsoleDebug).toHaveBeenCalledWith(
+      'RemoteConnection::showInstallModal() terminate connection',
+    );
+    expect(options.sdk.terminate).toHaveBeenCalledTimes(1);
+
+    mockConsoleDebug.mockClear();
+
+    state.developerMode = false;
+
+    showInstallModal(state, options, link);
+
+    terminateCall();
+
+    expect(mockConsoleDebug).not.toHaveBeenCalled();
+    expect(options.sdk.terminate).toHaveBeenCalledTimes(2);
+
+    mockConsoleDebug.mockRestore();
+  });
+
+  it('should call connectWithExtensionProvider and return false', () => {
+    const link = 'http://example.com/extension';
+
+    jest.spyOn(options, 'connectWithExtensionProvider').mockImplementation();
+
+    showInstallModal(state, options, link);
+
+    const connectWithExtensionCall =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      mockModalsInstall.mock.calls[0][0].connectWithExtension as () => boolean;
+    const result = connectWithExtensionCall();
+
+    expect(options.connectWithExtensionProvider).toHaveBeenCalledTimes(1);
+    expect(result).toBe(false);
+  });
+
+  it('should still return false if connectWithExtensionProvider is not defined', () => {
+    const link = 'http://example.com/extensionNoProvider';
+
+    options.connectWithExtensionProvider = undefined;
+
+    showInstallModal(state, options, link);
+
+    const connectWithExtensionCall =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      mockModalsInstall.mock.calls[0][0].connectWithExtension as () => boolean;
+    const result = connectWithExtensionCall();
+
+    expect(result).toBe(false);
+  });
+
+  it('should not throw error if mount is not defined', () => {
+    const link = 'http://example.com/newqrcode';
+    state.installModal = undefined;
+    mockModalsInstall.mockReturnValueOnce({} as any);
+
+    expect(() => {
+      showInstallModal(state, options, link);
+    }).not.toThrow();
+  });
+
+  it('should not throw error if installModal is not defined', () => {
+    const link = 'http://example.com/newqrcode';
+    state.installModal = undefined;
+    options.modals.install = undefined;
+
+    expect(() => {
+      showInstallModal(state, options, link);
+    }).not.toThrow();
   });
 });
