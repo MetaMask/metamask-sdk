@@ -8,14 +8,16 @@ describe('showInstallModal', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
   const mockInstallModalMount = jest.fn();
-  const mockModalsInstall = jest.fn(() => {
-    return {
-      mount: mockInstallModalMount,
-    };
-  });
+  const mockModalsInstall = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockModalsInstall.mockImplementation(() => {
+      return {
+        mount: mockInstallModalMount,
+      };
+    });
 
     state = {
       developerMode: false,
@@ -63,13 +65,10 @@ describe('showInstallModal', () => {
         // do nothing
       });
 
-    // when developerMode is true
     state.developerMode = true;
 
     showInstallModal(state, options, link);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const terminateCall = mockModalsInstall.mock.calls[0][0]
       .terminate as () => void;
 
@@ -101,10 +100,9 @@ describe('showInstallModal', () => {
 
     showInstallModal(state, options, link);
 
-    const connectWithExtensionCall =
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      mockModalsInstall.mock.calls[0][0].connectWithExtension as () => boolean;
+    const connectWithExtensionCall = mockModalsInstall.mock.calls[0][0]
+      .connectWithExtension as () => boolean;
+
     const result = connectWithExtensionCall();
 
     expect(options.connectWithExtensionProvider).toHaveBeenCalledTimes(1);
@@ -118,10 +116,9 @@ describe('showInstallModal', () => {
 
     showInstallModal(state, options, link);
 
-    const connectWithExtensionCall =
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      mockModalsInstall.mock.calls[0][0].connectWithExtension as () => boolean;
+    const connectWithExtensionCall = mockModalsInstall.mock.calls[0][0]
+      .connectWithExtension as () => boolean;
+
     const result = connectWithExtensionCall();
 
     expect(result).toBe(false);
