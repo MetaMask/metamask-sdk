@@ -12,20 +12,24 @@ import { setupExtensionPreferences } from './setupExtensionPreferences';
 import { setupPlatformManager } from './setupPlatformManager';
 import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndInstaller';
 import { setupStorageManager } from './setupStorage';
+import { setupInfuraProvider } from './setupInfuraProvider';
+import { setupReadOnlyRPCProviders } from './setupRPCNetworkMap';
 
 /**
  * Performs the complete initialization of the MetaMask SDK instance.
  *
  * This function sets up the SDK with a series of asynchronous tasks, including:
- * 1. Setting up default options and logging preferences.
- * 2. Configuring the platform manager.
- * 3. Initializing analytics.
- * 4. Setting up storage manager.
- * 5. Configuring Dapp metadata.
- * 6. Handling extension preferences.
- * 7. Setting up remote connections and installer.
- * 8. Initializing the provider and event listeners.
- * 9. Handling automatic and extension-based connections.
+ * - Setting up default options and logging preferences.
+ * - Configuring the platform manager.
+ * - Initializing analytics.
+ * - Setting up storage manager.
+ * - Configuring Dapp metadata.
+ * - Setting up Infura provider.
+ * - Setting up read-only RPC providers.
+ * - Handling extension preferences.
+ * - Setting up remote connections and installer.
+ * - Initializing the provider and event listeners.
+ * - Handling automatic and extension-based connections.
  *
  * @param instance The MetaMaskSDK instance to be fully initialized.
  * @returns void
@@ -70,6 +74,10 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   await setupStorageManager(instance);
 
   await setupDappMetadata(instance);
+
+  await setupInfuraProvider(instance);
+
+  await setupReadOnlyRPCProviders(instance);
 
   const { metamaskBrowserExtension, preferExtension, shouldReturn } =
     await setupExtensionPreferences(instance);

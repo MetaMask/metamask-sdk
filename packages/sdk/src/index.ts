@@ -10,6 +10,7 @@ import {
 import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupRPCNetworkMap';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
 
@@ -29,6 +30,7 @@ export {
   DEFAULT_SERVER_URL,
   EventType,
   MessageType,
+  RPC_URLS_MAP,
   MetaMaskSDK,
   PROVIDER_UPDATE_TYPE,
   PlatformType,

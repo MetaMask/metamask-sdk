@@ -19,6 +19,8 @@ const initProps: {
   ready: boolean;
   connected: boolean;
   connecting: boolean;
+  // Allow querying blockchain while wallet isn't connected
+  readOnlyCalls: boolean;
   provider?: SDKProvider;
   error?: EthereumRpcError<unknown>;
   chainId?: string;
@@ -28,6 +30,7 @@ const initProps: {
   ready: false,
   connected: false,
   connecting: false,
+  readOnlyCalls: false,
 };
 export const SDKContext = createContext(initProps);
 
@@ -43,6 +46,7 @@ const MetaMaskProviderClient = ({
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
   const [ready, setReady] = useState<boolean>(false);
+  const [readOnlyCalls, setReadOnlyCalls] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(1);
@@ -70,6 +74,7 @@ const MetaMaskProviderClient = ({
     _sdk.init().then(() => {
       setSDK(_sdk);
       setReady(true);
+      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls())
     });
   }, [sdkOptions]);
 
@@ -146,21 +151,20 @@ const MetaMaskProviderClient = ({
       setError(undefined);
     };
 
-    const onChainChanged = (networkVersion: any) => {
+    const onChainChanged = (networkVersionOrChainId: any) => {
       if (debug) {
         console.debug(
           `MetaMaskProvider::provider on 'chainChanged' event.`,
-          networkVersion,
+          networkVersionOrChainId,
         );
       }
-      setChainId(
-        (
-          networkVersion as {
-            chainId?: string;
-            networkVersion?: string;
-          }
-        )?.chainId,
-      );
+      // check if networkVersion has correct format
+      if (typeof networkVersionOrChainId === 'object' && networkVersionOrChainId?.chainId) {
+        setChainId(networkVersionOrChainId.chainId)
+      } else {
+        setChainId(networkVersionOrChainId);
+      }
+
       setConnected(true);
       setError(undefined);
     };
@@ -206,7 +210,7 @@ const MetaMaskProviderClient = ({
           type,
         );
       }
-      if(type===PROVIDER_UPDATE_TYPE.TERMINATE){
+      if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
       }
       setTrigger((_trigger) => _trigger + 1);
@@ -223,6 +227,7 @@ const MetaMaskProviderClient = ({
         sdk,
         ready,
         connected,
+        readOnlyCalls,
         provider,
         connecting,
         account,
