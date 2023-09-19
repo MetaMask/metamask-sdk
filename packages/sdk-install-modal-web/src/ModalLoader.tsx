@@ -33,14 +33,6 @@ export class ModalLoader {
       console.debug(`ModalLoader: renderInstallModal`, props);
     }
 
-    if (this.installContainer) {
-      // Already rendered
-      if (this.debug) {
-        console.debug(`ModalLoader: renderInstallModal: already rendered`);
-      }
-      return;
-    }
-
     this.installContainer = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
@@ -56,13 +48,6 @@ export class ModalLoader {
   renderSelectModal(props: SelectWidgetProps) {
     if (this.debug) {
       console.debug(`ModalLoader: renderSelectModal`, props);
-    }
-
-    if (this.selectContainer) {
-      if (this.debug) {
-        console.debug(`ModalLoader: renderSelectModal: already rendered`);
-      }
-      return;
     }
     this.selectContainer = props.parentElement;
 
@@ -85,12 +70,6 @@ export class ModalLoader {
       console.debug(`ModalLoader: renderPendingModal`, props);
     }
 
-    if (this.pendingContainer) {
-      if (this.debug) {
-        console.debug(`ModalLoader: renderPendingModal: already rendered`);
-      }
-      return;
-    }
     this.pendingContainer = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
@@ -113,6 +92,8 @@ export class ModalLoader {
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
+    } else {
+      console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
     }
   };
 
