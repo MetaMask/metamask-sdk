@@ -136,17 +136,11 @@ export class ModalLoader {
   };
 
   unmount() {
-    if (this.pendingContainer) {
-      this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
-      this.pendingContainer = undefined;
-    }
-    if (this.installContainer) {
-      this.installContainer?.parentNode?.removeChild(this.installContainer);
-      this.installContainer = undefined;
-    }
-    if (this.selectContainer) {
-      this.selectContainer?.parentNode?.removeChild(this.selectContainer);
-      this.selectContainer = undefined;
-    }
+    this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
+    this.pendingContainer = undefined;
+    this.installContainer?.parentNode?.removeChild(this.installContainer);
+    this.installContainer = undefined;
+    this.selectContainer?.parentNode?.removeChild(this.selectContainer);
+    this.selectContainer = undefined;
   }
 }
