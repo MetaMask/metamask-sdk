@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import SimpleABI from '../abi/Simple.json'
-import { Address, createPublicClient, getContract, http } from 'viem'
+import { Address, createPublicClient, createWalletClient, custom, getContract, http } from 'viem'
 
 export default function Home() {
   const {
@@ -13,7 +13,9 @@ export default function Home() {
     connected,
     connecting,
     status: serviceStatus,
+    readOnlyCalls,
     account,
+    provider,
     chainId,
     error,
   } = useSDK();
@@ -24,7 +26,7 @@ export default function Home() {
       const accounts = await sdk?.connect();
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
-    } catch(err) {
+    } catch (err) {
       console.log('request accounts ERR', err)
     }
   };
@@ -143,7 +145,7 @@ export default function Home() {
     }
   };
 
-  const personalSign = async () => {};
+  const personalSign = async () => { };
 
   const terminate = () => {
     sdk?.terminate();
@@ -153,55 +155,156 @@ export default function Home() {
 
   }
 
-  const pingEthers = async () => {
+  const interactEthers = async () => {
     // Get value from contract
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
     const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS;
-    if(!contractAddress || !rpcUrl) {
+    if (!contractAddress || !rpcUrl) {
       throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    const contract = new ethers.Contract(contractAddress, SimpleABI.abi, provider);
+    const web3Provider = new ethers.providers.Web3Provider(provider! as any)
+    const signer = web3Provider.getSigner();
+    console.debug(`signer`, signer);
 
-try {
-  const text = await contract.ping();
-  console.debug('ping', text);
 
-  const network = await provider.getNetwork();
-  console.debug('Network', network);
-} catch (error) {
-  console.error('Error pinging ethers:', error);
-}
+    const msg = await signer.signMessage('hello world')
+    console.debug(`msg`, msg);
+    const contract = new ethers.Contract(contractAddress, SimpleABI.abi, signer);
+
+    try {
+      const text = await contract.ping();
+      console.debug('ping', text);
+
+      const nextValue = `now: ${Date.now()}`
+      console.debug(`Set new contract value to: `, nextValue)
+      const trx = await contract.set(nextValue);
+      console.debug(`Wait for trx to complete...`);
+      await trx.wait();
+      console.debug(`Check result...`);
+      const text2 = await contract.ping();
+      const success = text2 === nextValue;
+      console.debug(`Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `, text2);
+
+      const chainId = provider?.request({ method: 'eth_chainId', params: [] })
+      const network = provider?.request({ method: 'net_version', params: [] })
+      console.debug(`chainId=${chainId}, network=${network}`)
+    } catch (error) {
+      console.error('Error pinging ethers:', error);
+    }
   }
 
-  const pingViem = async () => {
+  const interactViem = async () => {
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
     const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
-    if(!contractAddress || !rpcUrl) {
+    if (!contractAddress || !rpcUrl) {
       throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
     }
 
-    const transport = http(rpcUrl);
-    const client = createPublicClient({transport});
-try {
-  const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
-  console.debug('balance', balance);
+    // const transport = http(rpcUrl);
+    const transport = custom(provider!)
+    const client = createPublicClient({ transport });
+    const wallet = createWalletClient({
+      transport, account: provider?.selectedAddress! as `0x{string}`,
+    });
+    try {
+      const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
+      console.debug('balance', balance);
 
-  const chainId = await client.getChainId();
-  console.debug('chainId', chainId);
+      const chainId = await client.getChainId();
+      console.debug('chainId', chainId);
 
-  const contract = getContract({
-    address: contractAddress,
-    abi: SimpleABI.abi,
-    publicClient: client,
-  });
+      const contract = getContract({
+        address: contractAddress,
+        abi: SimpleABI.abi,
+        publicClient: client,
+        walletClient: wallet,
+      });
 
-  const text = await contract.read.ping();
-  console.debug('ping', text);
-} catch (error) {
-  console.error('Error pinging Viem:', error);
-}
+      let text = await contract.read.ping();
+      console.debug('ping', text);
+
+      const nextValue = `now: ${Date.now()}`
+      console.debug(`Set new contract value to: `, nextValue)
+      const trxHash = await contract.write.set([nextValue], {
+        account: provider?.selectedAddress!,
+        chain: { id: parseInt(provider?.chainId!) },
+      });
+
+      console.debug(`Wait for trx to complete...`);
+      // Wait for transaction to be mined
+      const trx = await client.waitForTransactionReceipt({ hash: trxHash, confirmations: 1 });
+
+      console.debug(`Check result...`);
+      text = await contract.read.ping();
+      const success = text === nextValue;
+      console.debug(`Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `, text);
+    } catch (error) {
+      console.error('Error pinging Viem:', error);
+    }
+  }
+
+  const testPayload = async () => {
+    // const res = await provider?.request({
+    //   "method": "wallet_addEthereumChain",
+    //   "params": [
+    //     {
+    //       "chainId": "0x1",
+    //       "chainName": "Ethereum",
+    //       "nativeCurrency": {
+    //         "name": "Ethereum",
+    //         "symbol": "ETH",
+    //         "decimals": 18
+    //       },
+    //       "rpcUrls": [
+    //         "https://rpc.blocknative.com/boost"
+    //       ]
+    //     }
+    //   ]
+    // })
+    // console.log(`res`, res);
+    checkBalances()
+  }
+
+  const checkBalances = async () => {
+    const acc1 = `0x8e0E30e296961f476E01184274Ce85ae60184CB0`
+    const acc2 = `0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E`;
+    const b1 = await provider?.request({ method: 'eth_getBalance', params: [acc1, "latest"] })
+    const b2 = await provider?.request({ method: 'eth_getBalance', params: [acc2, "latest"] })
+
+    console.log(`balances`, {
+      network: chainId,
+      balances: {
+        account: b1,
+        acc2: b2
+      }
+    })
+  }
+
+  const testReadOnlyCalls = async () => {
+    const chain = await provider?.request({ method: 'eth_chainId', params: [] })
+    console.log(`chain`, chain);
+  }
+
+  const addGanache = async () => {
+    const res = await provider?.request({
+      "method": "wallet_addEthereumChain",
+      "params": [
+        {
+          "chainId": "0x539",
+          "chainName": "Ganache Dev",
+          "nativeCurrency": {
+            "name": "Ethereum",
+            "symbol": "ETH",
+            "decimals": 18
+          },
+          "rpcUrls": [
+            process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''
+          ]
+        }
+      ]
+    })
+    console.log(`res`, res);
   }
 
   return (
@@ -223,7 +326,7 @@ try {
         <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
 
         <div>{`Connected: ${connected}`}</div>
-        {connected ? (
+        {connected && (
           <div>
             <div>
               {`Connected chain: ${chainId}`}
@@ -239,14 +342,14 @@ try {
 
             <button
               style={{ padding: 10, margin: 10 }}
-              onClick={pingEthers}
+              onClick={interactEthers}
             >
               ping (ethers)
             </button>
 
             <button
               style={{ padding: 10, margin: 10 }}
-              onClick={pingViem}
+              onClick={interactViem}
             >
               ping (viem)
             </button>
@@ -260,17 +363,64 @@ try {
 
             <button
               style={{ padding: 10, margin: 10 }}
+              onClick={testPayload}
+            >
+              testPayload
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
               onClick={sendTransaction}
             >
               sendTransaction
             </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={addGanache}
+            >
+              Add Local Ganache Chain
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={async () => {
+                await provider?.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xe704' }] })
+              }}
+            >
+              Switch to linea
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={async () => {
+                await provider?.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x1' }] })
+              }}
+            >
+              Switch to mainnet
+            </button>
           </div>
-        ) : connecting ? <>
+        )
+        }
+        {connecting && <>
           <div>Connecting...</div>
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
             Connect
           </button>
-        </> : (
+        </>}
+
+        {!connecting && readOnlyCalls &&
+          <div>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={testReadOnlyCalls}
+            >
+              testReadOnlyCalls
+            </button>
+          </div>
+        }
+
+        {!connecting && !connected && (
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
             Connect
           </button>
