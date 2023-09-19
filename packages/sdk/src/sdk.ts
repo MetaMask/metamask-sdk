@@ -21,8 +21,16 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 
 export interface MetaMaskSDKOptions {
+  infuraAPIKey?: string;
+  /**
+   * Allow sending read-only rpc calls before the user has connected to the wallet.
+   * The value will be automatically updated to the wallet chainId once connected.
+   */
+  defaultReadOnlyChainId?: number | `0x${string}`;
+  readonlyRPCMap?: RPC_URLS_MAP;
   injectProvider?: boolean;
   forceInjectProvider?: boolean;
   forceDeleteProvider?: boolean;
@@ -77,6 +85,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public analytics?: Analytics;
 
+  private readonlyRPCCalls = false;
+
+  public defaultReadOnlyChainId = `0x1`;
+
   constructor(
     options: MetaMaskSDKOptions = {
       storage: {
@@ -108,6 +120,20 @@ export class MetaMaskSDK extends EventEmitter2 {
           `You must provide dAppMetadata option (name and/or url)`,
         );
       }
+    }
+
+    if (options.defaultReadOnlyChainId) {
+      if (typeof options.defaultReadOnlyChainId === 'number') {
+        this.defaultReadOnlyChainId = `0x${options.defaultReadOnlyChainId.toString(
+          16,
+        )}`; // convert to hex string
+      } else if (
+        typeof options.defaultReadOnlyChainId === 'string' &&
+        !options.defaultReadOnlyChainId.startsWith('0x')
+      ) {
+        throw new Error(`Invalid defaultReadOnlyChainId, must start with '0x'`);
+      }
+      this.defaultReadOnlyChainId = options.defaultReadOnlyChainId.toString();
     }
 
     this.options = options;
@@ -155,6 +181,14 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   isInitialized() {
     return this._initialized;
+  }
+
+  setReadOnlyRPCCalls(allowed: boolean) {
+    this.readonlyRPCCalls = allowed;
+  }
+
+  hasReadOnlyRPCCalls() {
+    return this.readonlyRPCCalls;
   }
 
   // Return the active ethereum provider object

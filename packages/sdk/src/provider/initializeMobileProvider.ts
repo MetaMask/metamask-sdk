@@ -3,18 +3,20 @@ import {
   EventType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
-import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { wait } from '../utils/wait';
+import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
+import packageJson from '../../package.json';
 
-const initializeProvider = ({
+const initializeMobileProvider = ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
   injectProvider,
@@ -46,6 +48,10 @@ const initializeProvider = ({
   });
 
   const platformType = platformManager.getPlatformType();
+  const dappInfo = sdk.options.dappMetadata;
+  const sdkInfo = `Sdk/Javascript SdkVersion/${
+    packageJson.version
+  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -107,6 +113,32 @@ const initializeProvider = ({
       console.debug(
         `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
+    }
+
+    // is it a readonly method with infura supported chain?
+    const isReadOnlyMethod = !METHODS_TO_REDIRECT[method]; // && method !== 'eth_accounts';
+    const chainId = sdk.getProvider()?.chainId || sdk.defaultReadOnlyChainId;
+    const rpcEndpoint = sdk.options.readonlyRPCMap?.[chainId as `0x${string}`];
+    if (rpcEndpoint && isReadOnlyMethod) {
+      try {
+        const params = args?.[0]?.params;
+        const readOnlyResponse = await rpcRequestHandler({
+          rpcEndpoint,
+          sdkInfo,
+          method,
+          params: params || [],
+        });
+
+        if (debugRequest) {
+          console.log(
+            `initializeProvider::ReadOnlyRPCResponse`,
+            readOnlyResponse,
+          );
+        }
+        return readOnlyResponse;
+      } catch (err) {
+        // Ignore error and fallback to extension
+      }
     }
 
     if (
@@ -254,4 +286,4 @@ const initializeProvider = ({
   return ethereum;
 };
 
-export default initializeProvider;
+export default initializeMobileProvider;

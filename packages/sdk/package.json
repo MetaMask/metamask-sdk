@@ -50,6 +50,7 @@
     "@react-native-async-storage/async-storage": "^1.17.11",
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
+    "cross-fetch": "^4.0.0",
     "eciesjs": "^0.3.15",
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",

@@ -8,10 +8,14 @@ export default function App({ Component, pageProps }: AppProps) {
     <MetaMaskUIProvider debug={true} sdkOptions={{
       communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
       enableDebug: true,
+      infuraAPIKey: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+      readonlyRPCMap: {
+        '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+      },
       logging: {
         developerMode: false,
         sdk: true,
-        remoteLayer: true,
+        remoteLayer: false,
         serviceLayer: false,
         plaintext: true,
       },
