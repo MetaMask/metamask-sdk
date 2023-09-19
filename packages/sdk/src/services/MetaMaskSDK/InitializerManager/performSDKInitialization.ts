@@ -13,7 +13,7 @@ import { setupPlatformManager } from './setupPlatformManager';
 import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndInstaller';
 import { setupStorageManager } from './setupStorage';
 import { setupInfuraProvider } from './setupInfuraProvider';
-import { setupReadOnlyRPCProviders } from './setupRPCNetworkMap';
+import { setupReadOnlyRPCProviders } from './setupReadOnlyRPCProviders';
 
 /**
  * Performs the complete initialization of the MetaMask SDK instance.

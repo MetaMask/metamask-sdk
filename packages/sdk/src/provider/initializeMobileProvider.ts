@@ -13,7 +13,8 @@ import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { wait } from '../utils/wait';
-import { rpcRequestHandler } from '../services/rpc-requests/rpcRequestHandler';
+import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
+import packageJson from '../../package.json';
 
 const initializeMobileProvider = ({
   checkInstallationOnAllCalls = false,
@@ -47,6 +48,10 @@ const initializeMobileProvider = ({
   });
 
   const platformType = platformManager.getPlatformType();
+  const dappInfo = sdk.options.dappMetadata;
+  const sdkInfo = `Sdk/Javascript SdkVersion/${
+    packageJson.version
+  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -119,6 +124,7 @@ const initializeMobileProvider = ({
         const params = args?.[0]?.params;
         const readOnlyResponse = await rpcRequestHandler({
           rpcEndpoint,
+          sdkInfo,
           method,
           params: params || [],
         });

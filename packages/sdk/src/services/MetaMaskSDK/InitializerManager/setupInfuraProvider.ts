@@ -1,5 +1,5 @@
 import { MetaMaskSDK } from '../../../sdk';
-import { RPC_URLS_MAP } from './setupRPCNetworkMap';
+import { RPC_URLS_MAP } from './setupReadOnlyRPCProviders';
 
 export const setupInfuraProvider = async (instance: MetaMaskSDK) => {
   const { options } = instance;

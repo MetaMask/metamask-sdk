@@ -10,7 +10,7 @@ import {
 import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
-import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupRPCNetworkMap';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
 

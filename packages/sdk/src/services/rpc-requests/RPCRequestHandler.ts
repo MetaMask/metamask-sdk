@@ -7,10 +7,10 @@ export const rpcRequestHandler = async ({
   params,
 }: {
   rpcEndpoint: string;
+  sdkInfo: string;
   method: string;
   params: unknown[];
 }) => {
-  console.log(`rpcRequestHandler method=${method}`, params);
   const body = JSON.stringify({
     jsonrpc: '2.0',
     method,
@@ -21,13 +21,19 @@ export const rpcRequestHandler = async ({
   // Increment rpcId to have unique id for each request
   rpcId += 1;
 
+  const headers: { [key: string]: string } = {
+    // eslint-disable-next-line prettier/prettier
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+  // if (rpcEndpoint.includes('infura')) {
+  // TODO re-enable once infura allows for custom headers
+  // headers['Metamask-Sdk-Info'] = sdkInfo;
+  // }
+
   const response = await crossFetch(rpcEndpoint, {
     method: 'POST',
-    headers: {
-      // eslint-disable-next-line prettier/prettier
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers,
     body,
   });
   const result = await response.json();

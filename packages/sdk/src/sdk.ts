@@ -21,7 +21,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupRPCNetworkMap';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 
 export interface MetaMaskSDKOptions {
   infuraAPIKey?: string;
