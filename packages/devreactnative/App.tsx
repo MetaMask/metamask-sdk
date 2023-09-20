@@ -26,7 +26,7 @@ import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DAPPView} from './src/views/DappView';
-import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+import {COMM_SERVER_URL} from '@env';
 
 LogBox.ignoreLogs([
   //'Possible Unhandled Promise Rejection'
@@ -54,7 +54,6 @@ const sdk = new MetaMaskSDK({
   // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
   communicationServerUrl: serverUrl,
   checkInstallationOnAllCalls: false,
-  infuraAPIKey: INFURA_API_KEY ?? undefined,
   timer: BackgroundTimer,
   enableDebug: true,
   dappMetadata: {
@@ -131,9 +130,6 @@ function App(): JSX.Element {
           </Text>
           <Text>
             ServerUrl: {serverUrl}
-          </Text>
-          <Text>
-            INFURA KEY: {INFURA_API_KEY}
           </Text>
           <Button title="TestEncrypt" onPress={testEncrypt} />
           <Text style={{color: Colors.black}}>

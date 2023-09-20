@@ -78,7 +78,7 @@ export interface RemoteConnectionState {
   communicationLayerPreference?: CommunicationLayerPreference;
   platformManager?: PlatformManager;
   pendingModal?: {
-    mount?: (props?: { displayOTP?: boolean }) => void;
+    mount?: ({ displayOTP }?: { displayOTP?: boolean }) => void;
     updateOTPValue?: (otpValue: string) => void;
     unmount?: () => void;
   };
