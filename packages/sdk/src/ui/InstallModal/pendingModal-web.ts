@@ -15,9 +15,11 @@ const sdkWebPendingModal = ({
       console.log(`pendingModal-web unmount`, div);
     }
 
-    if (div) {
-      div.style.display = 'none';
+    // Remove the node from the DOM
+    if (div?.parentNode) {
+      div.parentNode.removeChild(div);
     }
+
     div = null;
     modalLoader = null;
   };
