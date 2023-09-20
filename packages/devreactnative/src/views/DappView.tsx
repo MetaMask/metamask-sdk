@@ -1,9 +1,9 @@
-import {ConnectionStatus, EventType, MetaMaskSDK} from '@metamask/sdk';
-import {ethers} from 'ethers';
-import React, {useEffect, useState} from 'react';
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {colors} from './colors';
-import {ServiceStatusView} from './service-status-view';
+import { ConnectionStatus, EventType, MetaMaskSDK } from '@metamask/sdk';
+import { ethers } from 'ethers';
+import React, { useEffect, useState } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors } from './colors';
+import { ServiceStatusView } from './service-status-view';
 
 export interface DAPPViewProps {
   sdk: MetaMaskSDK;
@@ -44,12 +44,13 @@ const createStyles = (connectionStatus: ConnectionStatus) => {
   });
 };
 
-export const DAPPView = ({sdk}: DAPPViewProps) => {
+export const DAPPView = ({ sdk }: DAPPViewProps) => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
   const [ethereum] = useState(sdk.getProvider());
   const [response, setResponse] = useState<unknown>('');
   const [account, setAccount] = useState<string>();
   const [chain, setChain] = useState<string>();
+  const [readOnlyCalls, setReadOnlyCalls] = useState<boolean>(false);
   const [balance, setBalance] = useState<string>();
   const [connected, setConnected] = useState<boolean>(false);
   const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
@@ -108,6 +109,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
         if (ethereum.chainId) {
           setChain(ethereum.chainId);
         }
+        setReadOnlyCalls(sdk.hasReadOnlyRPCCalls())
       });
 
       ethereum.on('accountsChanged', (...args: unknown[]) => {
@@ -144,6 +146,8 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       console.log('RESULT', result?.[0]);
       setConnected(true);
       setAccount(result?.[0]);
+      setReadOnlyCalls(sdk.hasReadOnlyRPCCalls())
+      getBalance();
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -158,7 +162,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
             chainId: '0x89',
             chainName: 'Polygon',
             blockExplorerUrls: ['https://polygonscan.com'],
-            nativeCurrency: {symbol: 'MATIC', decimals: 18},
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
             rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
@@ -216,26 +220,26 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       types: {
         // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
         EIP712Domain: [
-          {name: 'name', type: 'string'},
-          {name: 'version', type: 'string'},
-          {name: 'chainId', type: 'uint256'},
-          {name: 'verifyingContract', type: 'address'},
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
         ],
         // Not an EIP712Domain definition
         Group: [
-          {name: 'name', type: 'string'},
-          {name: 'members', type: 'Person[]'},
+          { name: 'name', type: 'string' },
+          { name: 'members', type: 'Person[]' },
         ],
         // Refer to PrimaryType
         Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person[]'},
-          {name: 'contents', type: 'string'},
+          { name: 'from', type: 'Person' },
+          { name: 'to', type: 'Person[]' },
+          { name: 'contents', type: 'string' },
         ],
         // Not an EIP712Domain definition
         Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallets', type: 'address[]'},
+          { name: 'name', type: 'string' },
+          { name: 'wallets', type: 'address[]' },
         ],
       },
     });
@@ -245,7 +249,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     var params = [from, msgParams];
     var method = 'eth_signTypedData_v4';
 
-    const resp = await ethereum?.request({method, params});
+    const resp = await ethereum?.request({ method, params });
     console.debug('sign response', resp);
     setResponse(resp);
   };
@@ -272,6 +276,22 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     }
   };
 
+  const testReadOnlyCalls = async () => {
+    try {
+      const chain = await ethereum?.request({ method: 'eth_chainId', params: [] })
+      console.log(`testReadOnlyCalls: chain`, chain);
+
+      const acc1 = `0x8e0E30e296961f476E01184274Ce85ae60184CB0`
+      const b1 = await ethereum?.request({ method: 'eth_getBalance', params: [acc1, "latest"] })
+      const acc2 = `0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E`;
+      const b2 = await ethereum?.request({ method: 'eth_getBalance', params: [acc2, "latest"] })
+      console.log(`balance: ${acc1}`, b1);
+      console.log(`balance: ${acc2}`, b2);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   const textStyle = {
     color: colors.text.default,
     margin: 10,
@@ -279,12 +299,16 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   };
 
   return (
-    <View style={{borderWidth: 2, padding: 5}}>
+    <View style={{ borderWidth: 2, padding: 5 }}>
       <Text style={styles.title}>
         {sdk._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
       <ServiceStatusView serviceStatus={serviceStatus} />
+
+      {readOnlyCalls && (
+        <Button title="Test read-only calls" onPress={testReadOnlyCalls} />
+      )}
 
       {connected ? (
         <>

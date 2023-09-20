@@ -37,6 +37,9 @@ describe('sdkWebPendingModal', () => {
   it('should automatically mount upon initialization', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      onDisconnect() {
+        return false;
+      },
     });
 
     console.debug('Returned from sdkWebPendingModal:', result);
@@ -47,6 +50,9 @@ describe('sdkWebPendingModal', () => {
   it('should return an object with mount, unmount, and updateOTPValue functions', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      onDisconnect() {
+        return false;
+      },
     });
 
     expect(result).toHaveProperty('mount');
@@ -61,6 +67,9 @@ describe('sdkWebPendingModal', () => {
     const otpValue = '123456';
     const result = sdkWebPendingModal({
       debug: true,
+      onDisconnect() {
+        return false;
+      },
     });
 
     result.updateOTPValue(otpValue);
@@ -71,6 +80,9 @@ describe('sdkWebPendingModal', () => {
   it('should unmount when unmount is invoked', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      onDisconnect() {
+        return false;
+      },
     });
     result.unmount();
 
@@ -80,6 +92,9 @@ describe('sdkWebPendingModal', () => {
   it('should mount correctly when mount is invoked', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      onDisconnect() {
+        return false;
+      },
     });
     result.mount();
 

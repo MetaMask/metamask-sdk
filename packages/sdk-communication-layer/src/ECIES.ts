@@ -74,6 +74,12 @@ export class ECIES {
     let encryptedString = data;
     if (this.enabled) {
       try {
+        if (this.debug) {
+          console.debug(
+            `ECIES::encrypt() using otherPublicKey`,
+            otherPublicKey,
+          );
+        }
         const payload = Buffer.from(data);
         const encryptedData = encrypt(otherPublicKey, payload);
         encryptedString = Buffer.from(encryptedData).toString('base64');
@@ -100,6 +106,12 @@ export class ECIES {
     let decryptedString = encryptedData;
     if (this.enabled) {
       try {
+        if (this.debug) {
+          console.debug(
+            `ECIES::decrypt() using privateKey`,
+            this.ecies.toHex(),
+          );
+        }
         const payload = Buffer.from(encryptedData.toString(), 'base64');
         const decrypted = decrypt(this.ecies.toHex(), payload);
 
