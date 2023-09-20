@@ -36,7 +36,6 @@ export async function reconnectWithModalOTP(
 
     state.pendingModal = options.modals.otp?.({
       debug: state.developerMode,
-      onDisconnect: () => onOTPModalDisconnect(options, state),
     });
 
     state.installModal?.unmount?.(false);

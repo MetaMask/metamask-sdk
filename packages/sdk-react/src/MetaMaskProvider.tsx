@@ -148,7 +148,6 @@ const MetaMaskProviderClient = ({
       }
       setAccount((newAccounts as string[])?.[0]);
       setConnected(true);
-      setConnecting(false);
       setError(undefined);
     };
 
@@ -167,7 +166,6 @@ const MetaMaskProviderClient = ({
       }
 
       setConnected(true);
-      setConnecting(false);
       setError(undefined);
     };
 
@@ -214,10 +212,6 @@ const MetaMaskProviderClient = ({
       }
       if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
-      } else if(type === PROVIDER_UPDATE_TYPE.EXTENSION) {
-        setConnecting(false)
-        setConnected(true)
-        setError(undefined)
       }
       setTrigger((_trigger) => _trigger + 1);
     };

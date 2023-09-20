@@ -33,8 +33,9 @@ const sdkWebInstallModal = ({
       console.info('installModal-web unmounting install modal', div);
     }
 
-    // Remove the node from the DOM
-    if (div?.parentNode) {
+    if (div) {
+      // div.style.display = 'none';
+      // remove div node from dom
       div.parentNode?.removeChild(div);
     }
     div = null;
