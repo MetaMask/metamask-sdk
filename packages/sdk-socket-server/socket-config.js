@@ -192,6 +192,28 @@ module.exports = (server) => {
       socket.leave(id);
       io.sockets.in(id).emit(`clients_disconnected-${id}`);
     });
+
+    socket.on('check_room', (id, callback) => {
+      console.log('INFO> check_room');
+
+      if (isDevelopment) {
+        console.log(`DEBUG> check_room id=${id}`);
+      }
+
+      if (!uuid.validate(id)) {
+        return callback(new Error('must specify a valid id'), null);
+      }
+
+      const room = io.sockets.adapter.rooms.get(id);
+      const occupancy = room ? room.size : 0;
+
+      if (isDevelopment) {
+        console.log(`DEBUG> check_room id=${id} occupancy=${occupancy}`);
+      }
+
+      // Callback with null as the first argument, meaning "no error"
+      return callback(null, { occupancy });
+    });
   });
 
   return io;
