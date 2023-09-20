@@ -147,6 +147,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
       setConnected(true);
       setAccount(result?.[0]);
       setReadOnlyCalls(sdk.hasReadOnlyRPCCalls())
+      getBalance();
     } catch (e) {
       console.log('ERROR', e);
     }
