@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.7.1]
-### Uncategorized
+### Added
+- feat: allow all react-native peer deps ([#366](https://github.com/MetaMask/metamask-sdk/pull/366))
+- fix: sdk connection request event ([#364](https://github.com/MetaMask/metamask-sdk/pull/364))
 - feat: wrap eth_accounts when disconnected to allow read only / offline calls ([#363](https://github.com/MetaMask/metamask-sdk/pull/363))
 
 ## [0.7.0]
