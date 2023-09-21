@@ -1,5 +1,6 @@
 name: Bug Report
 description: Create a bug report for the MetaMask SDK
+title: "[Bug]: "
 labels: ['template: bug']
 body:
   - type: dropdown
@@ -67,6 +68,3 @@ body:
   - type: markdown
     attributes:
       value: Before posting the issue go through the steps you've written down to make sure the steps provided are detailed and clear.
-  - type: markdown
-    attributes:
-      value: ' '

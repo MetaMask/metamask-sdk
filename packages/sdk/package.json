@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.6.2",
+  "version": "0.7.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -106,7 +106,7 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-native": "^0.71.1"
+    "react-native": "*"
   },
   "publishConfig": {
     "access": "public",

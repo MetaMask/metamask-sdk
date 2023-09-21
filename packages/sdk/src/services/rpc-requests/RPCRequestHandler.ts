@@ -1,6 +1,18 @@
 import crossFetch from 'cross-fetch';
 
 let rpcId = 1;
+
+function getNextRpcId() {
+  rpcId += 1;
+  return rpcId;
+}
+
+interface RpcResponse {
+  id: number;
+  jsonrpc: string;
+  result: unknown;
+}
+
 export const rpcRequestHandler = async ({
   rpcEndpoint,
   method,
@@ -15,11 +27,8 @@ export const rpcRequestHandler = async ({
     jsonrpc: '2.0',
     method,
     params,
-    id: rpcId,
+    id: getNextRpcId(),
   });
-
-  // Increment rpcId to have unique id for each request
-  rpcId += 1;
 
   const headers: { [key: string]: string } = {
     // eslint-disable-next-line prettier/prettier
@@ -31,11 +40,25 @@ export const rpcRequestHandler = async ({
   // headers['Metamask-Sdk-Info'] = sdkInfo;
   // }
 
-  const response = await crossFetch(rpcEndpoint, {
-    method: 'POST',
-    headers,
-    body,
-  });
-  const result = await response.json();
-  return result;
+  let response;
+  try {
+    response = await crossFetch(rpcEndpoint, {
+      method: 'POST',
+      headers,
+      body,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch from RPC: ${error.message}`);
+    } else {
+      throw new Error(`Failed to fetch from RPC: ${error}`);
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(`Server responded with a status of ${response.status}`);
+  }
+
+  const rpcResponse = (await response.json()) as RpcResponse;
+  return rpcResponse.result;
 };

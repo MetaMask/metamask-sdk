@@ -88,7 +88,7 @@ export class ModalLoader {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
     const otpNode =
-      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
+      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ?? document.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -104,7 +104,7 @@ export class ModalLoader {
     // TODO use scoped elem
     const qrCodeNode = this.selectContainer?.querySelector(
       '#sdk-qrcode-container',
-    );
+    ) ?? document.querySelector('#sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
@@ -136,17 +136,11 @@ export class ModalLoader {
   };
 
   unmount() {
-    if (this.pendingContainer) {
-      this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
-      this.pendingContainer = undefined;
-    }
-    if (this.installContainer) {
-      this.installContainer?.parentNode?.removeChild(this.installContainer);
-      this.installContainer = undefined;
-    }
-    if (this.selectContainer) {
-      this.selectContainer?.parentNode?.removeChild(this.selectContainer);
-      this.selectContainer = undefined;
-    }
+    this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
+    this.pendingContainer = undefined;
+    this.installContainer?.parentNode?.removeChild(this.installContainer);
+    this.installContainer = undefined;
+    this.selectContainer?.parentNode?.removeChild(this.selectContainer);
+    this.selectContainer = undefined;
   }
 }
