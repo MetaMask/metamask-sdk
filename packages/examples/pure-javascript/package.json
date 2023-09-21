@@ -17,7 +17,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.6.0",
+    "@metamask/sdk": "^0.7.0",
     "serve": "13.0.2"
   }
 }

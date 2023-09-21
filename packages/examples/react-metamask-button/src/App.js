@@ -2,7 +2,7 @@ import {
   MetaMaskButton, useAccount,
   useSDK,
   useSignMessage
-} from '@metamask/sdk-react';
+} from '@metamask/sdk-react-ui';
 import './App.css';
 
 function AppReady() {

@@ -354,9 +354,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.6.0":
-  version: 0.6.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.6.0"
+"@metamask/sdk-communication-layer@npm:0.7.0":
+  version: 0.7.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.7.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -364,35 +364,36 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 0fca9f50564abf8fb706a0c7a1c125525869cc4bbd6e18a800238ca7a5bffcb03d233ed417d24f8ceab46ad1447b0e30aae4d1c3a7298acc4eb91ddb3e46de78
+  checksum: 17f76d994ed1971e77102d65e30010ff95637431fc24a51d7ccf55325d128527c011e8366e265d15645182ab34df6edeb2b1b71178d735a1595824fa7d04d4da
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.6.0":
-  version: 0.6.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.6.0"
+"@metamask/sdk-install-modal-web@npm:0.7.0":
+  version: 0.7.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.7.0"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: ae3846e4f2281f7c5b30d8ba0188bef9aa637a8bc2354a724d81a42ac5784989f8865dcf1ce57cc67ccff9ebd45b7e9fb5bc8e2e66f35439f65f40d7c65a0304
+  checksum: 2c6d4a9168206ea06d829e11c09acf2d6a600e6c9371f5758b27855411c7182dd67f0a6424f512628f916392a8bee8e7f9987e4cfd2658b5dcfa1c03e887bd7f
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@metamask/sdk@npm:0.6.0"
+"@metamask/sdk@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@metamask/sdk@npm:0.7.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.6.0
-    "@metamask/sdk-install-modal-web": 0.6.0
+    "@metamask/sdk-communication-layer": 0.7.0
+    "@metamask/sdk-install-modal-web": 0.7.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
+    cross-fetch: ^4.0.0
     eciesjs: ^0.3.15
     eth-rpc-errors: ^4.0.3
     eventemitter2: ^6.4.7
@@ -408,7 +409,7 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-native: ^0.71.1
-  checksum: a27ae76c2466398d416db65ce0f8103b237cfc059dcdd55dff8f5a3c6360d6989b42c086834ba0d9c57c0b850084815679e31fb27c0341ae9c8953ebfd56e58f
+  checksum: bf6c70b6892a80fd4121a4f988df73f187270792c57628cb5664be13c6da48c91ed3f100ef98c26d3623778257ea38dcf6efc369890ce9d1d6b05e20459ac92e
   languageName: node
   linkType: hard
 
@@ -1055,6 +1056,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-fetch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cross-fetch@npm:4.0.0"
+  dependencies:
+    node-fetch: ^2.6.12
+  checksum: ecca4f37ffa0e8283e7a8a590926b66713a7ef7892757aa36c2d20ffa27b0ac5c60dcf453119c809abe5923fc0bae3702a4d896bfb406ef1077b0d0018213e24
+  languageName: node
+  linkType: hard
+
 "cross-spawn@npm:^7.0.0":
   version: 7.0.3
   resolution: "cross-spawn@npm:7.0.3"
@@ -1190,7 +1200,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "electronjs-test-dapp@workspace:."
   dependencies:
-    "@metamask/sdk": ^0.6.0
+    "@metamask/sdk": ^0.7.0
     "@types/qrcode": ^1.5.1
     electron: ^25.2.0
     qrcode: ^1.5.3
