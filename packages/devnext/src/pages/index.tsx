@@ -284,6 +284,9 @@ export default function Home() {
   const testReadOnlyCalls = async () => {
     const chain = await provider?.request({ method: 'eth_chainId', params: [] })
     console.log(`chain`, chain);
+
+    const accounts = await provider?.request({ method: 'eth_accounts', params: [] })
+    console.log(`accounts`, accounts);
   }
 
   const addGanache = async () => {

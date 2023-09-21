@@ -115,8 +115,17 @@ const initializeMobileProvider = ({
       );
     }
 
+    // Special case for eth_accounts to allow working with read-only RPC
+    if (
+      !socketConnected &&
+      selectedAddress &&
+      method === RPC_METHODS.ETH_ACCOUNTS
+    ) {
+      return [selectedAddress];
+    }
+
     // is it a readonly method with infura supported chain?
-    const isReadOnlyMethod = !METHODS_TO_REDIRECT[method]; // && method !== 'eth_accounts';
+    const isReadOnlyMethod = !METHODS_TO_REDIRECT[method];
     const chainId = sdk.getProvider()?.chainId || sdk.defaultReadOnlyChainId;
     const rpcEndpoint = sdk.options.readonlyRPCMap?.[chainId as `0x${string}`];
     if (rpcEndpoint && isReadOnlyMethod) {
