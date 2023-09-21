@@ -16,4 +16,5 @@ export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const RPC_METHODS = {
   METAMASK_GETPROVIDERSTATE: 'metamask_getProviderState',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',
+  ETH_ACCOUNTS: 'eth_accounts',
 };
