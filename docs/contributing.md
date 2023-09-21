@@ -1,4 +1,27 @@
-# Contributing to the monorepo
+# Contributing Guide
+
+Welcome to our repository! We're excited to collaborate with you. Before contributing, please take a moment to read through our guidelines and best practices to ensure a smooth contribution process.
+
+## Table of Contents
+
+- [Contributing Guide](#contributing-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Getting started](#getting-started)
+  - [Testing](#testing)
+  - [Using packages in other projects during development/testing](#using-packages-in-other-projects-during-developmenttesting)
+    - [As a MetaMask contributor](#as-a-metamask-contributor)
+    - [As an independent contributor](#as-an-independent-contributor)
+  - [Linting](#linting)
+  - [Performing operations across the monorepo](#performing-operations-across-the-monorepo)
+  - [Releasing](#releasing)
+  - [Engineering Principles](#engineering-principles)
+  - [Secure Development Lifecycle Policy](#secure-development-lifecycle-policy)
+  - [Guide to Pull Requests](#guide-to-pull-requests)
+  - [Unit Testing Guidelines](#unit-testing-guidelines)
+  - [JavaScript Guidelines](#javascript-guidelines)
+  - [TypeScript Guidelines](#typescript-guidelines)
+
+---
 
 ## Getting started
 
@@ -161,3 +184,43 @@ The [`create-release-branch`](https://github.com/MetaMask/create-release-branch)
    The `publish-release` GitHub Action workflow runs the `publish-npm` job, which publishes relevant packages to NPM. It requires approval from the [`npm-publishers`](https://github.com/orgs/MetaMask/teams/npm-publishers) team to complete. If you're not on the team, ask a member to approve it for you; otherwise, approve the job.
 
    Once the `publish-npm` job has finished, [check NPM](https://npms.io/search?q=scope%3Ametamask) to verify that all relevant packages has been published.
+
+## Engineering Principles
+
+Our Engineering Principles guide our decisions and development practices. Understanding these principles is crucial for anyone who wishes to contribute.
+
+- Read our [Engineering Principles](https://github.com/MetaMask/contributor-docs/blob/main/docs/engineering-principles.md).
+
+## Secure Development Lifecycle Policy
+
+Security is of utmost importance in our development process. We adhere to a Secure Development Lifecycle Policy to mitigate risks.
+
+- Read our [Secure Development Lifecycle Policy](https://github.com/MetaMask/contributor-docs/blob/main/docs/sdlc.md).
+
+## Guide to Pull Requests
+
+To contribute code to this repository, you'll need to submit a Pull Request. Our guide explains the process, from forking the repository to getting your code reviewed and merged.
+
+- Read our [Guide to Pull Requests](https://github.com/MetaMask/contributor-docs/blob/main/docs/pull-requests.md).
+
+## Unit Testing Guidelines
+
+Testing is an integral part of our development workflow. Follow our Unit Testing Guidelines to write tests that ensure the quality and integrity of your contributions.
+
+- Read our [Unit Testing Guidelines](https://github.com/MetaMask/contributor-docs/blob/main/docs/unit-testing.md).
+
+## JavaScript Guidelines
+
+If your contribution involves JavaScript, be sure to follow our JavaScript Guidelines to maintain code quality and consistency.
+
+- Read our [JavaScript Guidelines](https://github.com/MetaMask/contributor-docs/blob/main/docs/javascript.md).
+
+## TypeScript Guidelines
+
+For TypeScript-related contributions, our TypeScript Guidelines offer a comprehensive overview of our preferred practices and standards.
+
+- Read our [TypeScript Guidelines](https://github.com/MetaMask/contributor-docs/blob/main/docs/typescript.md).
+
+---
+
+Thank you for taking the time to read through our guidelines. We look forward to your contributions!
