@@ -142,6 +142,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.transports = transports;
     this.state.platformType = platformType;
     this.state.analytics = analytics;
+    this.state.isOriginator = !otherPublicKey;
     this.state.communicationServerUrl = communicationServerUrl;
     this.state.context = context;
     this.state.sdkVersion = sdkVersion;
