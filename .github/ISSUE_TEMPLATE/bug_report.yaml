@@ -68,6 +68,3 @@ body:
   - type: markdown
     attributes:
       value: Before posting the issue go through the steps you've written down to make sure the steps provided are detailed and clear.
-  - type: markdown
-    attributes:
-      value: ' '

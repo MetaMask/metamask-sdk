@@ -4872,7 +4872,7 @@ __metadata:
     uuid: ^8.3.2
   peerDependencies:
     react: ^18.2.0
-    react-native: ^0.71.1
+    react-native: "*"
   languageName: unknown
   linkType: soft
 
