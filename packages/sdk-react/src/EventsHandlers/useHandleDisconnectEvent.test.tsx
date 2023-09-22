@@ -1,11 +1,14 @@
-import { handleDisconnectEvent } from './handleDisconnectEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleDisconnectEvent } from './useHandleDisconnectEvent';
 
-describe('handleDisconnectEvent', () => {
+describe('useHandleDisconnectEvent', () => {
   let setConnecting: jest.Mock;
   let setConnected: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setConnecting = jest.fn();
     setConnected = jest.fn();
     setError = jest.fn();
@@ -17,14 +20,10 @@ describe('handleDisconnectEvent', () => {
     const debug = true;
     const mockReason = { message: 'Disconnected due to xyz', code: -32000 };
 
-    const callback = handleDisconnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleDisconnectEvent(debug, setConnecting, setConnected, setError),
     );
-
-    callback(mockReason);
+    result.current(mockReason);
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on 'disconnect' event.",
@@ -39,14 +38,10 @@ describe('handleDisconnectEvent', () => {
     const debug = false;
     const mockReason = { message: 'Disconnected due to xyz', code: -32000 };
 
-    const callback = handleDisconnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleDisconnectEvent(debug, setConnecting, setConnected, setError),
     );
-
-    callback(mockReason);
+    result.current(mockReason);
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setConnecting).toHaveBeenCalledWith(false);

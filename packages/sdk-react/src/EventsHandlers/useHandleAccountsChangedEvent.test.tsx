@@ -1,11 +1,14 @@
-import { handleAccountsChangedEvent } from './handleAccountsChangedEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleAccountsChangedEvent } from './useHandleAccountsChangedEvent';
 
-describe('handleAccountsChangedEvent', () => {
+describe('useHandleAccountsChangedEvent', () => {
   let setAccount: jest.Mock;
   let setConnected: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setAccount = jest.fn();
     setConnected = jest.fn();
     setError = jest.fn();
@@ -15,14 +18,10 @@ describe('handleAccountsChangedEvent', () => {
     const debug = true;
     const newAccountsMock = ['0x1234567890abcdef'];
 
-    const callback = handleAccountsChangedEvent(
-      debug,
-      setAccount,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleAccountsChangedEvent(debug, setAccount, setConnected, setError),
     );
-
-    callback(newAccountsMock);
+    result.current(newAccountsMock);
 
     expect(setAccount).toHaveBeenCalledWith(newAccountsMock[0]);
     expect(setConnected).toHaveBeenCalledWith(true);
@@ -33,14 +32,11 @@ describe('handleAccountsChangedEvent', () => {
     const debug = false;
     const newAccountsMock = ['0x1234567890abcdef'];
 
-    const callback = handleAccountsChangedEvent(
-      debug,
-      setAccount,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleAccountsChangedEvent(debug, setAccount, setConnected, setError),
     );
 
-    callback(newAccountsMock);
+    result.current(newAccountsMock);
 
     expect(setAccount).toHaveBeenCalledWith(newAccountsMock[0]);
     expect(setConnected).toHaveBeenCalledWith(true);

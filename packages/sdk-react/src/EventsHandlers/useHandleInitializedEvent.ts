@@ -1,17 +1,18 @@
-import { EthereumRpcError } from 'eth-rpc-errors';
 import { SDKProvider } from '@metamask/sdk';
+import { EthereumRpcError } from 'eth-rpc-errors';
+import React, { useCallback } from 'react';
 
-export function handleInitializedEvent(
+export const useHandleInitializedEvent = (
   debug: boolean | undefined,
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>,
   setAccount: React.Dispatch<React.SetStateAction<string | undefined>>,
-  activeProvider: SDKProvider,
+  activeProvider: SDKProvider | undefined,
   setConnected: React.Dispatch<React.SetStateAction<boolean>>,
   setError: React.Dispatch<
     React.SetStateAction<EthereumRpcError<unknown> | undefined>
   >,
-) {
-  return () => {
+) => {
+  return useCallback(() => {
     if (debug) {
       console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
     }
@@ -19,5 +20,12 @@ export function handleInitializedEvent(
     setAccount(activeProvider?.selectedAddress || undefined);
     setConnected(true);
     setError(undefined);
-  };
-}
+  }, [
+    debug,
+    setConnecting,
+    setAccount,
+    activeProvider,
+    setConnected,
+    setError,
+  ]);
+};

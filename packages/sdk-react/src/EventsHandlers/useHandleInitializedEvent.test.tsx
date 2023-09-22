@@ -1,12 +1,15 @@
-import { handleInitializedEvent } from './handleInitializedEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleInitializedEvent } from './useHandleInitializedEvent';
 
-describe('handleInitializedEvent', () => {
+describe('useHandleInitializedEvent', () => {
   let setConnecting: jest.Mock;
   let setAccount: jest.Mock;
   let setConnected: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setConnecting = jest.fn();
     setAccount = jest.fn();
     setConnected = jest.fn();
@@ -21,16 +24,17 @@ describe('handleInitializedEvent', () => {
       selectedAddress: '0x12345Abcdef',
     } as any;
 
-    const callback = handleInitializedEvent(
-      debug,
-      setConnecting,
-      setAccount,
-      mockActiveProvider,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleInitializedEvent(
+        debug,
+        setConnecting,
+        setAccount,
+        mockActiveProvider,
+        setConnected,
+        setError,
+      ),
     );
-
-    callback();
+    result.current();
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on '_initialized' event.",
@@ -47,16 +51,17 @@ describe('handleInitializedEvent', () => {
       selectedAddress: '0x12345Abcdef',
     } as any;
 
-    const callback = handleInitializedEvent(
-      debug,
-      setConnecting,
-      setAccount,
-      mockActiveProvider,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleInitializedEvent(
+        debug,
+        setConnecting,
+        setAccount,
+        mockActiveProvider,
+        setConnected,
+        setError,
+      ),
     );
-
-    callback();
+    result.current();
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setConnecting).toHaveBeenCalledWith(false);
@@ -69,16 +74,17 @@ describe('handleInitializedEvent', () => {
     const debug = false;
     const mockActiveProvider = {};
 
-    const callback = handleInitializedEvent(
-      debug,
-      setConnecting,
-      setAccount,
-      mockActiveProvider as any,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleInitializedEvent(
+        debug,
+        setConnecting,
+        setAccount,
+        mockActiveProvider as any,
+        setConnected,
+        setError,
+      ),
     );
-
-    callback();
+    result.current();
 
     expect(setConnecting).toHaveBeenCalledWith(false);
     expect(setAccount).toHaveBeenCalledWith(undefined);

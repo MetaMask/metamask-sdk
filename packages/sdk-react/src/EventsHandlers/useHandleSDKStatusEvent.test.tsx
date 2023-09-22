@@ -1,10 +1,13 @@
-import { handleSDKStatusEvent } from './handleSDKStatusEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleSDKStatusEvent } from './useHandleSDKStatusEvent';
 import { EventType } from '@metamask/sdk';
 
 describe('handleSDKStatusEvent', () => {
   let setStatus: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setStatus = jest.fn();
 
     console.debug = jest.fn();
@@ -16,8 +19,10 @@ describe('handleSDKStatusEvent', () => {
       connectionStatus: 'connected',
     } as any;
 
-    const callback = handleSDKStatusEvent(debug, setStatus);
-    callback(mockServiceStatus);
+    const { result } = renderHook(() =>
+      useHandleSDKStatusEvent(debug, setStatus),
+    );
+    result.current(mockServiceStatus);
 
     expect(console.debug).toHaveBeenCalledWith(
       `MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${mockServiceStatus.connectionStatus}' event.`,
@@ -32,8 +37,10 @@ describe('handleSDKStatusEvent', () => {
       connectionStatus: 'connected',
     } as any;
 
-    const callback = handleSDKStatusEvent(debug, setStatus);
-    callback(mockServiceStatus);
+    const { result } = renderHook(() =>
+      useHandleSDKStatusEvent(debug, setStatus),
+    );
+    result.current(mockServiceStatus);
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setStatus).toHaveBeenCalledWith(mockServiceStatus);

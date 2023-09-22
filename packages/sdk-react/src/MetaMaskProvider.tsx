@@ -8,14 +8,14 @@ import {
 } from '@metamask/sdk';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { handleAccountsChangedEvent } from './EventsHandlers/handleAccountsChangedEvent';
-import { handleChainChangedEvent } from './EventsHandlers/handleChainChangedEvent';
-import { handleConnectEvent } from './EventsHandlers/handleConnectEvent';
-import { handleDisconnectEvent } from './EventsHandlers/handleDisconnectEvent';
-import { handleInitializedEvent } from './EventsHandlers/handleInitializedEvent';
-import { handleOnConnectingEvent } from './EventsHandlers/handleOnConnectingEvent';
-import { handleProviderEvent } from './EventsHandlers/handleProviderEvent';
-import { handleSDKStatusEvent } from './EventsHandlers/handleSDKStatusEvent';
+import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
+import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
+import { useHandleConnectEvent } from './EventsHandlers/useHandleConnectEvent';
+import { useHandleDisconnectEvent } from './EventsHandlers/useHandleDisconnectEvent';
+import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitializedEvent';
+import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
+import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
+import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -56,6 +56,60 @@ const MetaMaskProviderClient = ({
   const [status, setStatus] = useState<ServiceStatus>();
   const hasInit = useRef(false);
 
+  const onConnecting = useHandleOnConnectingEvent(
+    debug,
+    setConnected,
+    setConnecting,
+    setError,
+  );
+
+  const onInitialized = useHandleInitializedEvent(
+    debug,
+    setConnecting,
+    setAccount,
+    sdk?.getProvider(),
+    setConnected,
+    setError,
+  );
+
+  const onConnect = useHandleConnectEvent(
+    debug,
+    setConnecting,
+    setConnected,
+    setChainId,
+    setError,
+    chainId,
+  );
+
+  const onDisconnect = useHandleDisconnectEvent(
+    debug,
+    setConnecting,
+    setConnected,
+    setError,
+  );
+
+  const onAccountsChanged = useHandleAccountsChangedEvent(
+    debug,
+    setAccount,
+    setConnected,
+    setError,
+  );
+
+  const onChainChanged = useHandleChainChangedEvent(
+    debug,
+    setChainId,
+    setConnected,
+    setError,
+  );
+
+  const onSDKStatusEvent = useHandleSDKStatusEvent(debug, setStatus);
+
+  const onProviderEvent = useHandleProviderEvent(
+    debug,
+    setConnecting,
+    setTrigger,
+  );
+
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
     if (hasInit.current) {
@@ -91,54 +145,6 @@ const MetaMaskProviderClient = ({
     setAccount(activeProvider.selectedAddress || undefined);
     setProvider(activeProvider);
 
-    const onConnecting = handleOnConnectingEvent(
-      debug,
-      setConnected,
-      setConnecting,
-      setError,
-    );
-
-    const onInitialized = handleInitializedEvent(
-      debug,
-      setConnecting,
-      setAccount,
-      activeProvider,
-      setConnected,
-      setError,
-    );
-
-    const onConnect = handleConnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setChainId,
-      setError,
-      chainId,
-    );
-
-    const onDisconnect = handleDisconnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setError,
-    );
-
-    const onAccountsChanged = handleAccountsChangedEvent(
-      debug,
-      setAccount,
-      setConnected,
-      setError,
-    );
-
-    const onChainChanged = handleChainChangedEvent(
-      debug,
-      setChainId,
-      setConnected,
-      setError,
-    );
-
-    const onSDKStatusEvent = handleSDKStatusEvent(debug, setStatus);
-
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);
     activeProvider.on('connect', onConnect);
@@ -163,11 +169,6 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    const onProviderEvent = handleProviderEvent(
-      debug,
-      setConnecting,
-      setTrigger,
-    );
     sdk.on(EventType.PROVIDER_UPDATE, onProviderEvent);
     return () => {
       sdk.removeListener(EventType.PROVIDER_UPDATE, onProviderEvent);

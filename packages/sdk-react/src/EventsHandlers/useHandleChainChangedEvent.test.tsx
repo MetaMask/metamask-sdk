@@ -1,11 +1,14 @@
-import { handleChainChangedEvent } from './handleChainChangedEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleChainChangedEvent } from './useHandleChainChangedEvent';
 
-describe('handleChainChangedEvent', () => {
+describe('useHandleChainChangedEvent', () => {
   let setChainId: jest.Mock;
   let setConnected: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setChainId = jest.fn();
     setConnected = jest.fn();
     setError = jest.fn();
@@ -20,14 +23,10 @@ describe('handleChainChangedEvent', () => {
       networkVersion: '1',
     };
 
-    const callback = handleChainChangedEvent(
-      debug,
-      setChainId,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleChainChangedEvent(debug, setChainId, setConnected, setError),
     );
-
-    callback(mockNetworkVersion);
+    result.current(mockNetworkVersion);
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on 'chainChanged' event.",
@@ -45,14 +44,10 @@ describe('handleChainChangedEvent', () => {
       networkVersion: '1',
     };
 
-    const callback = handleChainChangedEvent(
-      debug,
-      setChainId,
-      setConnected,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleChainChangedEvent(debug, setChainId, setConnected, setError),
     );
-
-    callback(mockNetworkVersion);
+    result.current(mockNetworkVersion);
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setChainId).toHaveBeenCalledWith(mockNetworkVersion.chainId);

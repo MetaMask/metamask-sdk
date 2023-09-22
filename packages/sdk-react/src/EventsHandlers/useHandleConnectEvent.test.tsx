@@ -1,12 +1,15 @@
-import { handleConnectEvent } from './handleConnectEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleConnectEvent } from './useHandleConnectEvent';
 
-describe('handleConnectEvent', () => {
+describe('useHandleConnectEvent', () => {
   let setConnecting: jest.Mock;
   let setConnected: jest.Mock;
   let setChainId: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setConnecting = jest.fn();
     setConnected = jest.fn();
     setChainId = jest.fn();
@@ -21,16 +24,17 @@ describe('handleConnectEvent', () => {
       chainId: '0x2',
     };
 
-    const callback = handleConnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setChainId,
-      setError,
-      undefined,
+    const { result } = renderHook(() =>
+      useHandleConnectEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setChainId,
+        setError,
+        undefined,
+      ),
     );
-
-    callback(mockConnectParam);
+    result.current(mockConnectParam);
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on 'connect' event.",
@@ -48,16 +52,17 @@ describe('handleConnectEvent', () => {
       chainId: '0x2',
     };
 
-    const callback = handleConnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setChainId,
-      setError,
-      undefined,
+    const { result } = renderHook(() =>
+      useHandleConnectEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setChainId,
+        setError,
+        undefined,
+      ),
     );
-
-    callback(mockConnectParam);
+    result.current(mockConnectParam);
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setConnecting).toHaveBeenCalledWith(false);
@@ -73,16 +78,17 @@ describe('handleConnectEvent', () => {
     };
     const externalChainId = '0x3';
 
-    const callback = handleConnectEvent(
-      debug,
-      setConnecting,
-      setConnected,
-      setChainId,
-      setError,
-      externalChainId,
+    const { result } = renderHook(() =>
+      useHandleConnectEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setChainId,
+        setError,
+        externalChainId,
+      ),
     );
-
-    callback(mockConnectParam);
+    result.current(mockConnectParam);
 
     expect(setConnecting).toHaveBeenCalledWith(false);
     expect(setConnected).toHaveBeenCalledWith(true);

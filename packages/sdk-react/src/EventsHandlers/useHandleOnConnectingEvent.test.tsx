@@ -1,11 +1,14 @@
-import { handleOnConnectingEvent } from './handleOnConnectingEvent';
+import { renderHook } from '@testing-library/react-hooks';
+import { useHandleOnConnectingEvent } from './useHandleOnConnectingEvent';
 
-describe('handleOnConnectingEvent', () => {
+describe('useHandleOnConnectingEvent', () => {
   let setConnected: jest.Mock;
   let setConnecting: jest.Mock;
   let setError: jest.Mock;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     setConnected = jest.fn();
     setConnecting = jest.fn();
     setError = jest.fn();
@@ -16,13 +19,10 @@ describe('handleOnConnectingEvent', () => {
   it('should handle connecting event correctly with debug enabled', () => {
     const debug = true;
 
-    const callback = handleOnConnectingEvent(
-      debug,
-      setConnected,
-      setConnecting,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleOnConnectingEvent(debug, setConnected, setConnecting, setError),
     );
-    callback();
+    result.current();
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on 'connecting' event.",
@@ -35,13 +35,10 @@ describe('handleOnConnectingEvent', () => {
   it('should handle connecting event without debug logs', () => {
     const debug = false;
 
-    const callback = handleOnConnectingEvent(
-      debug,
-      setConnected,
-      setConnecting,
-      setError,
+    const { result } = renderHook(() =>
+      useHandleOnConnectingEvent(debug, setConnected, setConnecting, setError),
     );
-    callback();
+    result.current();
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(setConnected).toHaveBeenCalledWith(false);
