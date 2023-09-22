@@ -9,13 +9,23 @@ function TestComponent() {
   return <div>{account}</div>;
 }
 
-describe('useSDK hook', () => {
+describe('useSDK', () => {
+  let dummyValue = {
+    sdk: undefined,
+    ready: true,
+    connected: true,
+    provider: undefined,
+    connecting: false,
+    account: '0xYourAddress',
+    chainId: '0x1',
+    error: undefined,
+    status: undefined,
+    readOnlyCalls: false,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('should return the context value if used within the SDKContext provider', () => {
-    const dummyValue = {
+    dummyValue = {
       sdk: undefined,
       ready: true,
       connected: true,
@@ -25,8 +35,11 @@ describe('useSDK hook', () => {
       chainId: '0x1',
       error: undefined,
       status: undefined,
+      readOnlyCalls: false,
     };
+  });
 
+  it('should return the context value if used within the SDKContext provider', () => {
     render(
       <SDKContext.Provider value={dummyValue}>
         <TestComponent />

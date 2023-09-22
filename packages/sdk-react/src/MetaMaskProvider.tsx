@@ -103,6 +103,7 @@ const MetaMaskProviderClient = ({
     debug,
     setChainId,
     setConnected,
+    setConnecting,
     setError,
   );
 
@@ -111,7 +112,9 @@ const MetaMaskProviderClient = ({
   const onProviderEvent = useHandleProviderEvent(
     debug,
     setConnecting,
+    setConnected,
     setTrigger,
+    setError,
   );
 
   useEffect(() => {

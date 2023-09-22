@@ -5,12 +5,16 @@ import { renderHook } from '@testing-library/react-hooks';
 describe('useHandleProviderEvent', () => {
   let setConnecting: jest.Mock;
   let setTrigger: jest.Mock;
+  let setConnected: jest.Mock;
+  let setError: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     setConnecting = jest.fn();
     setTrigger = jest.fn();
+    setConnected = jest.fn();
+    setError = jest.fn();
 
     console.debug = jest.fn();
   });
@@ -20,7 +24,13 @@ describe('useHandleProviderEvent', () => {
     const type = PROVIDER_UPDATE_TYPE.TERMINATE;
 
     const { result } = renderHook(() =>
-      useHandleProviderEvent(debug, setConnecting, setTrigger),
+      useHandleProviderEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setTrigger,
+        setError,
+      ),
     );
     result.current(type);
 
@@ -32,16 +42,24 @@ describe('useHandleProviderEvent', () => {
     expect(setTrigger).toHaveBeenCalledWith(expect.any(Function));
   });
 
-  it('should handle provider event with other type than TERMINATE', () => {
+  it('should handle provider event with EXTENSION type', () => {
     const debug = true;
     const type = PROVIDER_UPDATE_TYPE.EXTENSION;
 
     const { result } = renderHook(() =>
-      useHandleProviderEvent(debug, setConnecting, setTrigger),
+      useHandleProviderEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setTrigger,
+        setError,
+      ),
     );
     result.current(type);
 
-    expect(setConnecting).not.toHaveBeenCalled();
+    expect(setConnecting).toHaveBeenCalledWith(false);
+    expect(setConnected).toHaveBeenCalledWith(true);
+    expect(setError).toHaveBeenCalledWith(undefined);
     expect(setTrigger).toHaveBeenCalledWith(expect.any(Function));
   });
 
@@ -50,7 +68,13 @@ describe('useHandleProviderEvent', () => {
     const type = PROVIDER_UPDATE_TYPE.TERMINATE;
 
     const { result } = renderHook(() =>
-      useHandleProviderEvent(debug, setConnecting, setTrigger),
+      useHandleProviderEvent(
+        debug,
+        setConnecting,
+        setConnected,
+        setTrigger,
+        setError,
+      ),
     );
     result.current(type);
 
@@ -67,7 +91,13 @@ describe('useHandleProviderEvent', () => {
     });
 
     const { result } = renderHook(() =>
-      useHandleProviderEvent(undefined, setConnecting, setTrigger),
+      useHandleProviderEvent(
+        undefined,
+        setConnecting,
+        setConnected,
+        setTrigger,
+        setError,
+      ),
     );
     result.current(type);
   });

@@ -1,8 +1,14 @@
 import '@testing-library/jest-dom';
 import React from 'react';
 import { render, act, cleanup } from '@testing-library/react';
-import { MetaMaskSDK, MetaMaskSDKOptions } from '@metamask/sdk';
-import MetaMaskProvider from './MetaMaskProvider';
+import {
+  MetaMaskSDK,
+  MetaMaskSDKOptions,
+  SDKProvider,
+  ServiceStatus,
+} from '@metamask/sdk';
+import MetaMaskProvider, { SDKContext } from './MetaMaskProvider';
+import { EthereumRpcError } from 'eth-rpc-errors';
 
 jest.mock('@metamask/sdk');
 
@@ -11,6 +17,7 @@ describe('MetaMaskProvider Component', () => {
   const initMock = jest.fn().mockResolvedValue(true);
 
   const mockSdkRemoveListener = jest.fn();
+  const mockSdkHasReadOnlyRPCCalls = jest.fn();
   const mockSdkOn = jest.fn();
   const mockProviderRemoveListener = jest.fn();
   const mockProviderOn = jest.fn();
@@ -32,6 +39,7 @@ describe('MetaMaskProvider Component', () => {
     mockMetaMaskSDK.mockImplementation(
       () =>
         ({
+          hasReadOnlyRPCCalls: mockSdkHasReadOnlyRPCCalls,
           on: mockSdkOn,
           removeListener: mockSdkRemoveListener,
           init: initMock,
@@ -43,6 +51,8 @@ describe('MetaMaskProvider Component', () => {
           }),
         } as unknown as MetaMaskSDK),
     );
+
+    mockSdkHasReadOnlyRPCCalls.mockReturnValue(false);
 
     sdkOptions = {
       dappMetadata: {
@@ -195,5 +205,39 @@ describe('MetaMaskProvider Component', () => {
 
       expect(getByText('Test Child')).toBeInTheDocument();
     });
+  });
+
+  it('should set readOnlyCalls state based on hasReadOnlyRPCCalls', async () => {
+    mockSdkHasReadOnlyRPCCalls.mockReturnValue(true);
+
+    let contextValue:
+      | {
+          sdk?: MetaMaskSDK;
+          ready: boolean;
+          connected: boolean;
+          connecting: boolean;
+          readOnlyCalls: boolean;
+          provider?: SDKProvider;
+          error?: EthereumRpcError<unknown>;
+          chainId?: string;
+          account?: string;
+          status?: ServiceStatus;
+        }
+      | undefined;
+
+    const TestComponent = () => {
+      contextValue = React.useContext(SDKContext);
+      return null;
+    };
+
+    await act(async () => {
+      render(
+        <MetaMaskProvider sdkOptions={sdkOptions}>
+          <TestComponent />
+        </MetaMaskProvider>,
+      );
+    });
+
+    expect(contextValue?.readOnlyCalls).toBe(true);
   });
 });
