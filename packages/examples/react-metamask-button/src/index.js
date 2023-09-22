@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <>
-    <MetaMaskProvider sdkOptions={{
+    <MetaMaskUIProvider sdkOptions={{
         dappMetadata: {
           name: 'React Demo Button',
           url: 'http://reactdemobutton.localhost'
@@ -18,7 +18,7 @@ root.render(
       }}
       >
       <App />
-    </MetaMaskProvider>
+    </MetaMaskUIProvider>
   </>,
 );
 

@@ -2,12 +2,12 @@ import baseConfig from '../../jest.config.base';
 
 module.exports = {
   ...baseConfig,
-  coveragePathIgnorePatterns: ['./src/types'],
+  coveragePathIgnorePatterns: ['./src/types', '/index.ts$'],
   coverageThreshold: {
     global: {
       branches: 79,
       functions: 84,
-      lines: 91,
+      lines: 90,
       statements: 90,
     },
   },

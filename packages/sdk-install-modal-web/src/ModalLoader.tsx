@@ -29,16 +29,8 @@ export class ModalLoader {
   }
 
   renderInstallModal(props: InstallWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderInstallModal`, props)
-    }
-
-    if (this.installContainer) {
-      // Already rendered
-      if(this.debug) {
-        console.debug(`ModalLoader: renderInstallModal: already rendered`)
-      }
-      return;
+    if (this.debug) {
+      console.debug(`ModalLoader: renderInstallModal`, props);
     }
 
     this.installContainer = props.parentElement;
@@ -54,15 +46,8 @@ export class ModalLoader {
   }
 
   renderSelectModal(props: SelectWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderSelectModal`, props)
-    }
-
-    if(this.selectContainer) {
-      if(this.debug) {
-        console.debug(`ModalLoader: renderSelectModal: already rendered`)
-      }
-      return;
+    if (this.debug) {
+      console.debug(`ModalLoader: renderSelectModal`, props);
     }
     this.selectContainer = props.parentElement;
 
@@ -75,23 +60,16 @@ export class ModalLoader {
       />,
     );
 
-    setTimeout( () => {
+    setTimeout(() => {
       this.updateQRCode(props.link);
     }, 100);
-
   }
 
   renderPendingModal(props: PendingWidgetProps) {
-    if(this.debug) {
-      console.debug(`ModalLoader: renderPendingModal`, props)
+    if (this.debug) {
+      console.debug(`ModalLoader: renderPendingModal`, props);
     }
 
-    if (this.pendingContainer) {
-      if(this.debug) {
-        console.debug(`ModalLoader: renderPendingModal: already rendered`)
-      }
-      return;
-    }
     this.pendingContainer = props.parentElement;
 
     const reactRoot = createRoot(props.parentElement);
@@ -100,27 +78,33 @@ export class ModalLoader {
         onClose={props.onClose}
         onDisconnect={props.onDisconnect}
         updateOTPValue={props.updateOTPValue}
+        displayOTP={props.displayOTP}
       />,
     );
   }
 
   updateOTPValue = (otpValue: string) => {
-    if(this.debug) {
-      console.debug(`ModalLoader: updateOTPValue`, otpValue)
+    if (this.debug) {
+      console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
-    const otpNode = this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value');
+    const otpNode =
+      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ?? document.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
+    } else {
+      console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
     }
   };
 
   updateQRCode = (link: string) => {
-    if(this.debug) {
-      console.debug(`ModalLoader: updateQRCode`, link)
+    if (this.debug) {
+      console.debug(`ModalLoader: updateQRCode`, link);
     }
     // TODO use scoped elem
-    const qrCodeNode = this.selectContainer?.querySelector('#sdk-qrcode-container');
+    const qrCodeNode = this.selectContainer?.querySelector(
+      '#sdk-qrcode-container',
+    ) ?? document.querySelector('#sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
@@ -149,20 +133,14 @@ export class ModalLoader {
       });
       qrCode.append(qrCodeNode);
     }
-  }
+  };
 
   unmount() {
-    if (this.pendingContainer) {
-      this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
-      this.pendingContainer = undefined;
-    }
-    if (this.installContainer) {
-      this.installContainer?.parentNode?.removeChild(this.installContainer);
-      this.installContainer = undefined;
-    }
-    if(this.selectContainer) {
-      this.selectContainer?.parentNode?.removeChild(this.selectContainer);
-      this.selectContainer = undefined;
-    }
+    this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
+    this.pendingContainer = undefined;
+    this.installContainer?.parentNode?.removeChild(this.installContainer);
+    this.installContainer = undefined;
+    this.selectContainer?.parentNode?.removeChild(this.selectContainer);
+    this.selectContainer = undefined;
   }
 }

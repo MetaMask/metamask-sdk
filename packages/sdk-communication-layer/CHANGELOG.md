@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1]
+### Uncategorized
+- fix: sdk connection request event ([#364](https://github.com/MetaMask/metamask-sdk/pull/364))
+
+## [0.7.0]
+### Added
+- feat: extend the time we resume the session without showing OTP ([#348](https://github.com/MetaMask/metamask-sdk/pull/348))
+- feat: add codecov to CI ([#343](https://github.com/MetaMask/metamask-sdk/pull/343))
+
 ## [0.6.2]
 ### Added
 - feat: add unit tests to the MetaMaskSDK class ([#319](https://github.com/MetaMask/metamask-sdk/pull/319))
@@ -65,7 +74,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.1...HEAD
+[0.7.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.0...@metamask/sdk-communication-layer@0.7.1
+[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.2...@metamask/sdk-communication-layer@0.7.0
 [0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.1...@metamask/sdk-communication-layer@0.6.2
 [0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...@metamask/sdk-communication-layer@0.6.1
 [0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.3...@metamask/sdk-communication-layer@0.6.0

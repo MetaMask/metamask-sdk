@@ -1,7 +1,7 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { MetaMaskInstaller } from '../../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../../Platform/PlatfformManager';
-import initializeProvider from '../../../provider/initializeProvider';
+import initializeMobileProvider from '../../../provider/initializeMobileProvider';
 import { MetaMaskSDK } from '../../../sdk';
 import { initEventListeners } from './initEventListeners';
 
@@ -21,7 +21,7 @@ export async function initializeProviderAndEventListeners(
   const { options } = instance;
 
   // Inject our provider into window.ethereum
-  instance.activeProvider = initializeProvider({
+  instance.activeProvider = initializeMobileProvider({
     communicationLayerPreference:
       options.communicationLayerPreference ??
       CommunicationLayerPreference.SOCKET,

@@ -6,6 +6,10 @@ const path = require('path');
 module.exports = {
   extends: [],
   root: true,
+  "env": {
+    "es6": true,
+    "node": true
+  },
   overrides: [
     {
       files: ['**/*.ts'],

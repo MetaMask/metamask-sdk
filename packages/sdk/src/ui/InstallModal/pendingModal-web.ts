@@ -15,9 +15,11 @@ const sdkWebPendingModal = ({
       console.log(`pendingModal-web unmount`, div);
     }
 
-    if (div) {
-      div.style.display = 'none';
+    // Remove the node from the DOM
+    if (div?.parentNode) {
+      div.parentNode.removeChild(div);
     }
+
     div = null;
     modalLoader = null;
   };
@@ -32,7 +34,15 @@ const sdkWebPendingModal = ({
     }
   };
 
-  const mount = () => {
+  const mount = (
+    {
+      displayOTP,
+    }: {
+      displayOTP: boolean;
+    } = {
+      displayOTP: true,
+    },
+  ) => {
     if (debug) {
       console.log(`pendingModal-web mount`, div);
     }
@@ -51,6 +61,7 @@ const sdkWebPendingModal = ({
       onClose: unmount,
       onDisconnect,
       updateOTPValue,
+      displayOTP,
     });
   };
 

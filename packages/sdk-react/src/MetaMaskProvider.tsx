@@ -22,6 +22,8 @@ const initProps: {
   ready: boolean;
   connected: boolean;
   connecting: boolean;
+  // Allow querying blockchain while wallet isn't connected
+  readOnlyCalls: boolean;
   provider?: SDKProvider;
   error?: EthereumRpcError<unknown>;
   chainId?: string;
@@ -31,6 +33,7 @@ const initProps: {
   ready: false,
   connected: false,
   connecting: false,
+  readOnlyCalls: false,
 };
 export const SDKContext = createContext(initProps);
 
@@ -46,6 +49,7 @@ const MetaMaskProviderClient = ({
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
   const [ready, setReady] = useState<boolean>(false);
+  const [readOnlyCalls, setReadOnlyCalls] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
   const [connected, setConnected] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(1);
@@ -128,6 +132,7 @@ const MetaMaskProviderClient = ({
     _sdk.init().then(() => {
       setSDK(_sdk);
       setReady(true);
+      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
   }, [sdkOptions]);
 
@@ -181,6 +186,7 @@ const MetaMaskProviderClient = ({
         sdk,
         ready,
         connected,
+        readOnlyCalls,
         provider,
         connecting,
         account,
