@@ -1,4 +1,4 @@
-import  baseConfig from '../../jest.config.base';
+import baseConfig from '../../jest.config.base';
 
 module.exports = {
   ...baseConfig,

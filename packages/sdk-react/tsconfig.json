@@ -1,5 +1,4 @@
 {
-  // "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "dist",
     "strict": true,
@@ -17,10 +16,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["./src/**/*"],
-  "exclude": [
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/*.spec.tsx",
-    "**/*.test.tsx",
-  ]
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"]
 }
