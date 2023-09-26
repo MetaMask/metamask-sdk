@@ -1,16 +1,14 @@
-import React, { useCallback } from 'react';
 import { EventType, PROVIDER_UPDATE_TYPE } from '@metamask/sdk';
-import { EthereumRpcError } from 'eth-rpc-errors';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleProviderEvent = (
-  debug: boolean | undefined,
-  setConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  setTrigger: React.Dispatch<React.SetStateAction<number>>,
-  setError: React.Dispatch<
-    React.SetStateAction<EthereumRpcError<unknown> | undefined>
-  >,
-) => {
+export const useHandleProviderEvent = ({
+  debug,
+  setConnecting,
+  setConnected,
+  setTrigger,
+  setError,
+}: EventHandlerProps) => {
   return useCallback(
     (type: PROVIDER_UPDATE_TYPE) => {
       if (debug) {

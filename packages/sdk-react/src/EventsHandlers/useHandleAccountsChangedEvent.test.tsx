@@ -1,45 +1,53 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useHandleAccountsChangedEvent } from './useHandleAccountsChangedEvent';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
 describe('useHandleAccountsChangedEvent', () => {
-  let setAccount: jest.Mock;
-  let setConnected: jest.Mock;
-  let setError: jest.Mock;
+  const eventHandlerProps = {
+    setConnected: jest.fn(),
+    setError: jest.fn(),
+    setAccount: jest.fn(),
+    debug: true,
+  } as unknown as EventHandlerProps;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    setAccount = jest.fn();
-    setConnected = jest.fn();
-    setError = jest.fn();
+    eventHandlerProps.setAccount = jest.fn();
+    eventHandlerProps.setConnected = jest.fn();
+    eventHandlerProps.setError = jest.fn();
   });
 
   it('should handle accounts changed event correctly with debug', () => {
-    const debug = true;
+    eventHandlerProps.debug = true;
     const newAccountsMock = ['0x1234567890abcdef'];
 
     const { result } = renderHook(() =>
-      useHandleAccountsChangedEvent(debug, setAccount, setConnected, setError),
+      useHandleAccountsChangedEvent(eventHandlerProps),
     );
     result.current(newAccountsMock);
 
-    expect(setAccount).toHaveBeenCalledWith(newAccountsMock[0]);
-    expect(setConnected).toHaveBeenCalledWith(true);
-    expect(setError).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
+      newAccountsMock[0],
+    );
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 
   it('should handle accounts changed event without debug', () => {
-    const debug = false;
+    eventHandlerProps.debug = false;
     const newAccountsMock = ['0x1234567890abcdef'];
 
     const { result } = renderHook(() =>
-      useHandleAccountsChangedEvent(debug, setAccount, setConnected, setError),
+      useHandleAccountsChangedEvent(eventHandlerProps),
     );
 
     result.current(newAccountsMock);
 
-    expect(setAccount).toHaveBeenCalledWith(newAccountsMock[0]);
-    expect(setConnected).toHaveBeenCalledWith(true);
-    expect(setError).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
+      newAccountsMock[0],
+    );
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 });

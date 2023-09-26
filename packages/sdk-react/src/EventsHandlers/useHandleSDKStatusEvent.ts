@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
 import { EventType, ServiceStatus } from '@metamask/sdk';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleSDKStatusEvent = (
-  debug: boolean | undefined,
-  setStatus: React.Dispatch<React.SetStateAction<ServiceStatus | undefined>>,
-) => {
+export const useHandleSDKStatusEvent = ({
+  debug,
+  setStatus,
+}: EventHandlerProps) => {
   return useCallback(
     (_serviceStatus: ServiceStatus) => {
       if (debug) {

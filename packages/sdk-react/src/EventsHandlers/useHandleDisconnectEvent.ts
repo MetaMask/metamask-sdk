@@ -1,14 +1,13 @@
-import React, { useCallback } from 'react';
 import { EthereumRpcError } from 'eth-rpc-errors';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleDisconnectEvent = (
-  debug: boolean | undefined,
-  setConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<
-    React.SetStateAction<EthereumRpcError<unknown> | undefined>
-  >,
-) => {
+export const useHandleDisconnectEvent = ({
+  debug,
+  setConnecting,
+  setConnected,
+  setError,
+}: EventHandlerProps) => {
   return useCallback(
     (reason: unknown) => {
       if (debug) {

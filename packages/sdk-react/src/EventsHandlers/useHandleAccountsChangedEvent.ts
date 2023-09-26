@@ -1,14 +1,12 @@
-import React, { useCallback } from 'react';
-import { EthereumRpcError } from 'eth-rpc-errors';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleAccountsChangedEvent = (
-  debug: boolean | undefined,
-  setAccount: React.Dispatch<React.SetStateAction<string | undefined>>,
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<
-    React.SetStateAction<EthereumRpcError<unknown> | undefined>
-  >,
-) => {
+export const useHandleAccountsChangedEvent = ({
+  debug,
+  setAccount,
+  setConnected,
+  setError,
+}: EventHandlerProps) => {
   return useCallback(
     (newAccounts: any) => {
       if (debug) {

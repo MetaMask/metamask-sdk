@@ -1,27 +1,31 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useHandleDisconnectEvent } from './useHandleDisconnectEvent';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
 describe('useHandleDisconnectEvent', () => {
-  let setConnecting: jest.Mock;
-  let setConnected: jest.Mock;
-  let setError: jest.Mock;
+  const eventHandlerProps = {
+    setConnected: jest.fn(),
+    setError: jest.fn(),
+    setConnecting: jest.fn(),
+    debug: true,
+  } as unknown as EventHandlerProps;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    setConnecting = jest.fn();
-    setConnected = jest.fn();
-    setError = jest.fn();
+    eventHandlerProps.setConnecting = jest.fn();
+    eventHandlerProps.setConnected = jest.fn();
+    eventHandlerProps.setError = jest.fn();
 
     console.debug = jest.fn();
   });
 
   it('should handle disconnect event correctly with debug enabled', () => {
-    const debug = true;
+    eventHandlerProps.debug = true;
     const mockReason = { message: 'Disconnected due to xyz', code: -32000 };
 
     const { result } = renderHook(() =>
-      useHandleDisconnectEvent(debug, setConnecting, setConnected, setError),
+      useHandleDisconnectEvent(eventHandlerProps),
     );
     result.current(mockReason);
 
@@ -29,23 +33,23 @@ describe('useHandleDisconnectEvent', () => {
       "MetaMaskProvider::provider on 'disconnect' event.",
       mockReason,
     );
-    expect(setConnecting).toHaveBeenCalledWith(false);
-    expect(setConnected).toHaveBeenCalledWith(false);
-    expect(setError).toHaveBeenCalledWith(mockReason);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(mockReason);
   });
 
   it('should handle disconnect event without debug logs', () => {
-    const debug = false;
+    eventHandlerProps.debug = false;
     const mockReason = { message: 'Disconnected due to xyz', code: -32000 };
 
     const { result } = renderHook(() =>
-      useHandleDisconnectEvent(debug, setConnecting, setConnected, setError),
+      useHandleDisconnectEvent(eventHandlerProps),
     );
     result.current(mockReason);
 
     expect(console.debug).not.toHaveBeenCalled();
-    expect(setConnecting).toHaveBeenCalledWith(false);
-    expect(setConnected).toHaveBeenCalledWith(false);
-    expect(setError).toHaveBeenCalledWith(mockReason);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(mockReason);
   });
 });

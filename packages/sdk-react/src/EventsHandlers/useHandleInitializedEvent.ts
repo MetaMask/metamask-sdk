@@ -1,17 +1,14 @@
-import { SDKProvider } from '@metamask/sdk';
-import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleInitializedEvent = (
-  debug: boolean | undefined,
-  setConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setAccount: React.Dispatch<React.SetStateAction<string | undefined>>,
-  activeProvider: SDKProvider | undefined,
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<
-    React.SetStateAction<EthereumRpcError<unknown> | undefined>
-  >,
-) => {
+export const useHandleInitializedEvent = ({
+  debug,
+  setConnecting,
+  setAccount,
+  activeProvider,
+  setConnected,
+  setError,
+}: EventHandlerProps) => {
   return useCallback(() => {
     if (debug) {
       console.debug(`MetaMaskProvider::provider on '_initialized' event.`);

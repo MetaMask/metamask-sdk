@@ -1,94 +1,85 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { useHandleInitializedEvent } from './useHandleInitializedEvent';
+import { EventHandlerProps } from '../MetaMaskProvider';
+import { SDKProvider } from '@metamask/sdk';
 
 describe('useHandleInitializedEvent', () => {
-  let setConnecting: jest.Mock;
-  let setAccount: jest.Mock;
-  let setConnected: jest.Mock;
-  let setError: jest.Mock;
+  const eventHandlerProps = {
+    setConnected: jest.fn(),
+    setError: jest.fn(),
+    setAccount: jest.fn(),
+    setConnecting: jest.fn(),
+    debug: true,
+    activeProvider: {} as SDKProvider,
+  } as unknown as EventHandlerProps;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    setConnecting = jest.fn();
-    setAccount = jest.fn();
-    setConnected = jest.fn();
-    setError = jest.fn();
+    eventHandlerProps.setConnected = jest.fn();
+    eventHandlerProps.setError = jest.fn();
+    eventHandlerProps.setAccount = jest.fn();
+    eventHandlerProps.setConnecting = jest.fn();
+    eventHandlerProps.debug = true;
+    eventHandlerProps.activeProvider = {} as SDKProvider;
 
     console.debug = jest.fn();
   });
 
   it('should handle initialized event correctly with debug enabled', () => {
-    const debug = true;
-    const mockActiveProvider = {
+    eventHandlerProps.debug = true;
+    eventHandlerProps.activeProvider = {
       selectedAddress: '0x12345Abcdef',
-    } as any;
+    } as unknown as SDKProvider;
 
     const { result } = renderHook(() =>
-      useHandleInitializedEvent(
-        debug,
-        setConnecting,
-        setAccount,
-        mockActiveProvider,
-        setConnected,
-        setError,
-      ),
+      useHandleInitializedEvent(eventHandlerProps),
     );
     result.current();
 
     expect(console.debug).toHaveBeenCalledWith(
       "MetaMaskProvider::provider on '_initialized' event.",
     );
-    expect(setConnecting).toHaveBeenCalledWith(false);
-    expect(setAccount).toHaveBeenCalledWith(mockActiveProvider.selectedAddress);
-    expect(setConnected).toHaveBeenCalledWith(true);
-    expect(setError).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
+      eventHandlerProps.activeProvider.selectedAddress,
+    );
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 
   it('should handle initialized event without debug logs', () => {
-    const debug = false;
-    const mockActiveProvider = {
+    eventHandlerProps.debug = false;
+    eventHandlerProps.activeProvider = {
       selectedAddress: '0x12345Abcdef',
-    } as any;
+    } as unknown as SDKProvider;
 
     const { result } = renderHook(() =>
-      useHandleInitializedEvent(
-        debug,
-        setConnecting,
-        setAccount,
-        mockActiveProvider,
-        setConnected,
-        setError,
-      ),
+      useHandleInitializedEvent(eventHandlerProps),
     );
     result.current();
 
     expect(console.debug).not.toHaveBeenCalled();
-    expect(setConnecting).toHaveBeenCalledWith(false);
-    expect(setAccount).toHaveBeenCalledWith(mockActiveProvider.selectedAddress);
-    expect(setConnected).toHaveBeenCalledWith(true);
-    expect(setError).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
+      eventHandlerProps.activeProvider.selectedAddress,
+    );
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 
   it('should handle scenario where activeProvider has no selectedAddress', () => {
-    const debug = false;
-    const mockActiveProvider = {};
+    eventHandlerProps.debug = false;
+    eventHandlerProps.activeProvider = {} as unknown as SDKProvider;
 
     const { result } = renderHook(() =>
-      useHandleInitializedEvent(
-        debug,
-        setConnecting,
-        setAccount,
-        mockActiveProvider as any,
-        setConnected,
-        setError,
-      ),
+      useHandleInitializedEvent(eventHandlerProps),
     );
     result.current();
 
-    expect(setConnecting).toHaveBeenCalledWith(false);
-    expect(setAccount).toHaveBeenCalledWith(undefined);
-    expect(setConnected).toHaveBeenCalledWith(true);
-    expect(setError).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
+    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(undefined);
+    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 });

@@ -14,8 +14,23 @@ import { useHandleConnectEvent } from './EventsHandlers/useHandleConnectEvent';
 import { useHandleDisconnectEvent } from './EventsHandlers/useHandleDisconnectEvent';
 import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitializedEvent';
 import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
-import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
+import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
+
+export interface EventHandlerProps {
+  setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
+  setConnected: React.Dispatch<React.SetStateAction<boolean>>;
+  setChainId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setError: React.Dispatch<
+    React.SetStateAction<EthereumRpcError<unknown> | undefined>
+  >;
+  setAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setStatus: React.Dispatch<React.SetStateAction<ServiceStatus | undefined>>;
+  setTrigger: React.Dispatch<React.SetStateAction<number>>;
+  debug?: boolean;
+  chainId?: string;
+  activeProvider?: SDKProvider;
+}
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -60,62 +75,34 @@ const MetaMaskProviderClient = ({
   const [status, setStatus] = useState<ServiceStatus>();
   const hasInit = useRef(false);
 
-  const onConnecting = useHandleOnConnectingEvent(
-    debug,
-    setConnected,
-    setConnecting,
-    setError,
-  );
-
-  const onInitialized = useHandleInitializedEvent(
-    debug,
-    setConnecting,
-    setAccount,
-    sdk?.getProvider(),
-    setConnected,
-    setError,
-  );
-
-  const onConnect = useHandleConnectEvent(
-    debug,
+  const eventHandlerProps: EventHandlerProps = {
     setConnecting,
     setConnected,
     setChainId,
     setError,
-    chainId,
-  );
-
-  const onDisconnect = useHandleDisconnectEvent(
-    debug,
-    setConnecting,
-    setConnected,
-    setError,
-  );
-
-  const onAccountsChanged = useHandleAccountsChangedEvent(
-    debug,
     setAccount,
-    setConnected,
-    setError,
-  );
-
-  const onChainChanged = useHandleChainChangedEvent(
-    debug,
-    setChainId,
-    setConnected,
-    setConnecting,
-    setError,
-  );
-
-  const onSDKStatusEvent = useHandleSDKStatusEvent(debug, setStatus);
-
-  const onProviderEvent = useHandleProviderEvent(
-    debug,
-    setConnecting,
-    setConnected,
+    setStatus,
     setTrigger,
-    setError,
-  );
+    debug,
+    chainId,
+    activeProvider: sdk?.getProvider(),
+  };
+
+  const onConnecting = useHandleOnConnectingEvent(eventHandlerProps);
+
+  const onInitialized = useHandleInitializedEvent(eventHandlerProps);
+
+  const onConnect = useHandleConnectEvent(eventHandlerProps);
+
+  const onDisconnect = useHandleDisconnectEvent(eventHandlerProps);
+
+  const onAccountsChanged = useHandleAccountsChangedEvent(eventHandlerProps);
+
+  const onChainChanged = useHandleChainChangedEvent(eventHandlerProps);
+
+  const onSDKStatusEvent = useHandleSDKStatusEvent(eventHandlerProps);
+
+  const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode

@@ -1,14 +1,12 @@
-import React, { useCallback } from 'react';
-import { EthereumRpcError } from 'eth-rpc-errors';
+import { useCallback } from 'react';
+import { EventHandlerProps } from '../MetaMaskProvider';
 
-export const useHandleOnConnectingEvent = (
-  debug: boolean | undefined,
-  setConnected: React.Dispatch<React.SetStateAction<boolean>>,
-  setConnecting: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<
-    React.SetStateAction<EthereumRpcError<unknown> | undefined>
-  >,
-) => {
+export const useHandleOnConnectingEvent = ({
+  debug,
+  setConnected,
+  setConnecting,
+  setError,
+}: EventHandlerProps) => {
   return useCallback(() => {
     if (debug) {
       console.debug(`MetaMaskProvider::provider on 'connecting' event.`);
