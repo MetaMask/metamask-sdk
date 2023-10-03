@@ -117,3 +117,7 @@ You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but 
 ## Contributing
 
 Please see our [contributing guidelines](./docs/contributing.md) for more information.
+
+## Contacts
+
+Contact the MetaMask SDK team for a complimentary design optimization workshop [here](https://fq1an8d8ib2.typeform.com/to/sC7eK5F1)

@@ -48,3 +48,7 @@ ethereum.request({method: 'eth_requestAccounts', params: []})
 # Follow the full documentation
 
 [Please access this to read the MetaMask SDK full documentation](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/)
+
+## Contacts
+
+Contact the MetaMask SDK team for a complimentary design optimization workshop [here](https://fq1an8d8ib2.typeform.com/to/sC7eK5F1)
