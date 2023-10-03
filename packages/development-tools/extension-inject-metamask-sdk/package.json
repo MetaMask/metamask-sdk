@@ -86,7 +86,7 @@
     "wext-manifest-webpack-plugin": "^1.2.1"
   },
   "engines": {
-    "node": ">=10.0.0",
+    "node": ">=18.0.0",
     "yarn": ">= 1.0.0"
   }
 }
