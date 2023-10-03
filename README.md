@@ -21,7 +21,7 @@ This provider is the `ethereum` object that developers are already used to. This
   - [Unreal Engine](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/gaming/unreal-engine/) (coming soon)
 - [Mobile Native apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/)
   - [iOS](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/ios/)
-  - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/) (coming soon)
+  - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/)
 
 ## Features
 
