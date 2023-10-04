@@ -146,7 +146,7 @@ const initializeMobileProvider = ({
         }
         return readOnlyResponse;
       } catch (err) {
-        // Log error and fallback to extension
+        // Log error and fallback to mobile provider
         console.warn(
           `initializeProvider::sendRequest() method=${method} readOnlyRPCRequest failed:`,
           err,
