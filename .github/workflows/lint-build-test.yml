@@ -9,7 +9,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         os: [ubuntu-latest, macOS-latest, windows-latest]
     outputs:
       child-workspace-package-names: ${{ steps.workspace-package-names.outputs.child-workspace-package-names }}
@@ -33,7 +33,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
@@ -57,7 +57,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         package-name: ${{ fromJson(needs.prepare.outputs.child-workspace-package-names) }}
     steps:
       - uses: actions/checkout@v3
@@ -82,7 +82,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         os: [macOS-latest, windows-latest]
     steps:
       - uses: actions/checkout@v3
@@ -107,7 +107,7 @@ jobs:
     needs: prepare
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         package-name: ${{ fromJson(needs.prepare.outputs.child-workspace-package-names) }}
     steps:
       - uses: actions/checkout@v3
@@ -127,7 +127,7 @@ jobs:
           echo "coverage-folder=$(yarn workspaces list --json | grep "\"name\":\"${{ matrix.package-name }}\"" | jq -r '.location')/coverage" >> "$GITHUB_OUTPUT"
         shell: bash
       - name: Upload coverage artifact
-        if: ${{ matrix.node-version == '16.x' }}
+        if: ${{ matrix.node-version == '18.x' }}
         uses: actions/upload-artifact@v3
         with:
           name: coverage
