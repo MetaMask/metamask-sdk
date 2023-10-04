@@ -16,6 +16,7 @@ interface RpcResponse {
 export const rpcRequestHandler = async ({
   rpcEndpoint,
   method,
+  sdkInfo,
   params,
 }: {
   rpcEndpoint: string;
@@ -35,10 +36,9 @@ export const rpcRequestHandler = async ({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   };
-  // if (rpcEndpoint.includes('infura')) {
-  // TODO re-enable once infura allows for custom headers
-  // headers['Metamask-Sdk-Info'] = sdkInfo;
-  // }
+  if (rpcEndpoint.includes('infura')) {
+    headers['Metamask-Sdk-Info'] = sdkInfo;
+  }
 
   let response;
   try {
