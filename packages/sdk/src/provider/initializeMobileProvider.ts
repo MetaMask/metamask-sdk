@@ -53,6 +53,9 @@ const initializeMobileProvider = ({
     packageJson.version
   } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
 
+  let cachedAccountAddress: string | null = null;
+  let cachedChainId: string | null = null;
+
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
     !injectProvider ||
@@ -107,7 +110,19 @@ const initializeMobileProvider = ({
     const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
-    const { selectedAddress } = Ethereum.getProvider();
+    let { selectedAddress, chainId } = Ethereum.getProvider();
+
+    selectedAddress = selectedAddress ?? cachedAccountAddress;
+    chainId = chainId ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
+
+    // keep cached values for selectedAddress and chainId
+    if (selectedAddress) {
+      cachedAccountAddress = selectedAddress;
+    }
+
+    if (chainId) {
+      cachedChainId = chainId;
+    }
 
     if (debugRequest) {
       console.debug(
@@ -117,16 +132,22 @@ const initializeMobileProvider = ({
 
     // Special case for eth_accounts to allow working with read-only RPC
     if (
-      !socketConnected &&
       selectedAddress &&
-      method === RPC_METHODS.ETH_ACCOUNTS
+      method.toLowerCase() === RPC_METHODS.ETH_ACCOUNTS.toLowerCase()
     ) {
       return [selectedAddress];
     }
 
+    // Special case for eth_chainId to allow working with read-only RPC
+    if (
+      chainId &&
+      method.toLowerCase() === RPC_METHODS.ETH_CHAINID.toLowerCase()
+    ) {
+      return chainId;
+    }
+
     // is it a readonly method with infura supported chain?
     const isReadOnlyMethod = !METHODS_TO_REDIRECT[method];
-    const chainId = sdk.getProvider()?.chainId || sdk.defaultReadOnlyChainId;
     const rpcEndpoint = sdk.options.readonlyRPCMap?.[chainId as `0x${string}`];
     if (rpcEndpoint && isReadOnlyMethod) {
       try {
@@ -146,7 +167,11 @@ const initializeMobileProvider = ({
         }
         return readOnlyResponse;
       } catch (err) {
-        // Ignore error and fallback to extension
+        // Log error and fallback to mobile provider
+        console.warn(
+          `initializeProvider::sendRequest() method=${method} readOnlyRPCRequest failed:`,
+          err,
+        );
       }
     }
 

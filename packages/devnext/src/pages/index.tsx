@@ -341,18 +341,12 @@ export default function Home() {
         <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
         <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
         <p>Extension active: {extensionActive ? 'YES' : 'NO'}</p>
-
+        <p>{`Connected chain: ${chainId}`}</p>
+        <p>{`Connected account: ${account}`}</p>
+        <p>{`Last request response: ${response}`}</p>
         <div>{`Connected: ${connected}`}</div>
         {connected && (
           <div>
-            <div>
-              {`Connected chain: ${chainId}`}
-              <p></p>
-              {`Connected account: ${account}`}
-              <p></p>
-              {`Last request response: ${response}`}
-            </div>
-
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Request Accounts
             </button>

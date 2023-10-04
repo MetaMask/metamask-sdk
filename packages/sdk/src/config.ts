@@ -18,4 +18,5 @@ export const RPC_METHODS = {
   METAMASK_GETPROVIDERSTATE: 'metamask_getProviderState',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',
   ETH_ACCOUNTS: 'eth_accounts',
+  ETH_CHAINID: 'eth_chainId',
 };
