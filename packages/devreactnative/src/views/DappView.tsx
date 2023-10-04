@@ -174,6 +174,18 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     }
   };
 
+  const testEthers = async () => {
+    const web3Provider = new ethers.providers.Web3Provider(sdk?.getProvider()! as any)
+    const signer = web3Provider.getSigner();
+    console.debug(`signer`, signer);
+
+    // const addr = await signer.getAddress();
+    // console.log('addr', addr);
+
+    const msg = await signer.signMessage('hello world')
+    console.debug(`msg`, msg);
+  }
+
   const sign = async () => {
     const msgParams = JSON.stringify({
       domain: {
@@ -314,6 +326,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
         <>
           <Button title={'Request Accounts'} onPress={connect} />
           <Button title="Sign" onPress={sign} />
+          <Button title="testEthers" onPress={testEthers} />
           <Button title="Send transaction" onPress={sendTransaction} />
           <Button title="Add chain" onPress={exampleRequest} />
           <Text style={textStyle}>

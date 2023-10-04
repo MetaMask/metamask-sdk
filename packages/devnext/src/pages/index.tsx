@@ -244,6 +244,18 @@ export default function Home() {
     }
   }
 
+  const testEthers = async () => {
+    const web3Provider = new ethers.providers.Web3Provider(sdk?.getProvider()! as any)
+    const signer = web3Provider.getSigner();
+    console.debug(`signer`, signer);
+
+    // const addr = await signer.getAddress();
+    // console.log('addr', addr);
+
+    const msg = await signer.signMessage('hello world')
+    console.debug(`msg`, msg);
+  }
+
   const testPayload = async () => {
     // const res = await provider?.request({
     //   "method": "wallet_addEthereumChain",
@@ -369,6 +381,13 @@ export default function Home() {
               onClick={testPayload}
             >
               testPayload
+            </button>
+
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={testEthers}
+            >
+              testEthers
             </button>
 
             <button
