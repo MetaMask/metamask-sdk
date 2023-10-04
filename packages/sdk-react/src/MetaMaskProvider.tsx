@@ -19,6 +19,7 @@ const initProps: {
   ready: boolean;
   connected: boolean;
   connecting: boolean;
+  extensionActive: boolean;
   // Allow querying blockchain while wallet isn't connected
   readOnlyCalls: boolean;
   provider?: SDKProvider;
@@ -28,6 +29,7 @@ const initProps: {
   status?: ServiceStatus;
 } = {
   ready: false,
+  extensionActive: false,
   connected: false,
   connecting: false,
   readOnlyCalls: false,
@@ -55,6 +57,7 @@ const MetaMaskProviderClient = ({
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
+  const [extensionActive, setExtensionActive] = useState<boolean>(false);
   const hasInit = useRef(false);
 
   useEffect(() => {
@@ -86,6 +89,8 @@ const MetaMaskProviderClient = ({
     if (debug) {
       console.debug(`[MetamaskProvider] init SDK Provider listeners`);
     }
+
+    setExtensionActive(sdk.isExtensionActive());
 
     const activeProvider = sdk.getProvider();
     setConnected(activeProvider.isConnected());
@@ -237,6 +242,7 @@ const MetaMaskProviderClient = ({
         provider,
         connecting,
         account,
+        extensionActive,
         chainId,
         error,
         status,
