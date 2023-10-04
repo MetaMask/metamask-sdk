@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0]
 ### Uncategorized
+- feat: remove npm dependency warnings for peers packages
 - feat: enable infura http headers for analytics ([#387](https://github.com/MetaMask/metamask-sdk/pull/387))
 - feat: cache selected account and selected chain ([#385](https://github.com/MetaMask/metamask-sdk/pull/385))
 - feat: adds contact form to npm packages ([#382](https://github.com/MetaMask/metamask-sdk/pull/382))
