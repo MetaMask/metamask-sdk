@@ -28,9 +28,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.8.0...HEAD
-[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.7.0...@metamask/sdk-react-ui@0.8.0
-[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.6.2...@metamask/sdk-react-ui@0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.6.1...@metamask/sdk-react-ui@0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.6.0...@metamask/sdk-react-ui@0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-react-ui@0.6.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.6.0

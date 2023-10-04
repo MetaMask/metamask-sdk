@@ -7,22 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.8.0]
-### Uncategorized
+### Added
 - feat: update account and chain values in sdk hook on extension ([#386](https://github.com/MetaMask/metamask-sdk/pull/386))
 - feat: add extensionActive info into hook ([#384](https://github.com/MetaMask/metamask-sdk/pull/384))
 - feat: adds contact form to npm packages ([#382](https://github.com/MetaMask/metamask-sdk/pull/382))
 
 ## [0.7.0]
-### Uncategorized
+### Added
 - feat: rpc read only calls and infura provider ([#353](https://github.com/MetaMask/metamask-sdk/pull/353))
 - feat: add codecov to CI ([#343](https://github.com/MetaMask/metamask-sdk/pull/343))
 
 ## [0.6.2]
-### Uncategorized
+### Added
 - docs: add readme info for sdk-react and sdk-react-ui ([#342](https://github.com/MetaMask/metamask-sdk/pull/342))
 
 ## [0.6.1]
-### Uncategorized
+### Added
 - feat: align versions ([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
 
 ## [0.6.0]
@@ -50,13 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.8.0...HEAD
-[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.7.0...@metamask/sdk-react@0.8.0
-[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.6.2...@metamask/sdk-react@0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.6.1...@metamask/sdk-react@0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.6.0...@metamask/sdk-react@0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.5.6...@metamask/sdk-react@0.6.0
-[0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.5.4...@metamask/sdk-react@0.5.6
-[0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.5.3...@metamask/sdk-react@0.5.4
-[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.3.1...@metamask/sdk-react@0.5.3
-[0.3.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-react@0.3.1
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
+[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.6...v0.6.0
+[0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.4...v0.5.6
+[0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.3...v0.5.4
+[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...v0.5.3
+[0.3.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.3.1
