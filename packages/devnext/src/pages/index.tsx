@@ -300,6 +300,8 @@ export default function Home() {
 
     const accounts = await provider?.request({ method: 'eth_accounts', params: [] })
     console.log(`accounts`, accounts);
+
+    await checkBalances();
   }
 
   const addGanache = async () => {
