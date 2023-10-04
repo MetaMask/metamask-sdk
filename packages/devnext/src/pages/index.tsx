@@ -14,6 +14,7 @@ export default function Home() {
     connecting,
     status: serviceStatus,
     readOnlyCalls,
+    extensionActive,
     account,
     provider,
     chainId,
@@ -339,6 +340,7 @@ export default function Home() {
         )}
         <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
         <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
+        <p>Extension active: {extensionActive ? 'YES' : 'NO'}</p>
 
         <div>{`Connected: ${connected}`}</div>
         {connected && (
