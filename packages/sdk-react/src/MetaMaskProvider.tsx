@@ -123,13 +123,12 @@ const MetaMaskProviderClient = ({
           connectParam,
         );
       }
+      const currentChainId = (connectParam as { chainId: string }).chainId;
+
       setConnecting(false);
       setConnected(true);
-      setChainId((connectParam as { chainId: string })?.chainId);
+      setChainId(currentChainId);
       setError(undefined);
-      if (chainId) {
-        setChainId(chainId);
-      }
     };
 
     const onDisconnect = (reason: unknown) => {
@@ -219,10 +218,19 @@ const MetaMaskProviderClient = ({
       }
       if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
-      } else if(type === PROVIDER_UPDATE_TYPE.EXTENSION) {
+      } else if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
         setConnecting(false)
         setConnected(true)
         setError(undefined)
+        // Extract chainId and account from provider
+        const extensionProvider = sdk.getProvider();
+        const extensionChainId = extensionProvider.chainId || undefined;
+        const extensionAccount = extensionProvider.selectedAddress || undefined;
+        if (debug) {
+          console.debug(`[MetaMaskProvider] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`)
+        }
+        setChainId(extensionChainId)
+        setAccount(extensionAccount)
       }
       setTrigger((_trigger) => _trigger + 1);
     };
