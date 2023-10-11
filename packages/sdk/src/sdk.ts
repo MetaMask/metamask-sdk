@@ -258,8 +258,12 @@ export class MetaMaskSDK extends EventEmitter2 {
     return resume(this);
   }
 
+  /**
+   * DEPRECATED: use terminate() instead.
+   */
   disconnect() {
-    this.remoteConnection?.disconnect();
+    console.warn(`MetaMaskSDK.disconnect() is deprecated, use terminate()`);
+    this.terminate();
   }
 
   isAuthorized() {
