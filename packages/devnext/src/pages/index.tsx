@@ -12,6 +12,7 @@ export default function Home() {
     sdk,
     connected,
     connecting,
+    balance,
     status: serviceStatus,
     readOnlyCalls,
     extensionActive,
@@ -345,6 +346,7 @@ export default function Home() {
         <p>Extension active: {extensionActive ? 'YES' : 'NO'}</p>
         <p>{`Connected chain: ${chainId}`}</p>
         <p>{`Connected account: ${account}`}</p>
+        <p>{`Account balance: ${balance}`}</p>
         <p>{`Last request response: ${response}`}</p>
         <div>{`Connected: ${connected}`}</div>
         {connected && (
