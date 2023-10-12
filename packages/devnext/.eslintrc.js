@@ -9,8 +9,16 @@ module.exports = {
   parserOptions: {
     project: [path.resolve(__dirname, 'tsconfig.json')],
   },
+  ignorePatterns: [
+    'tailwind.config.js',
+    'postcss.config.js',
+    '**/.eslintrc.js',
+    'jest.config.ts',
+    '**/dist*/',
+    'next.config.js',
+  ],
   extends: [
-    "next/babel", "next/core-web-vitals",
+    "next",
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
   ],
