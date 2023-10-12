@@ -1,4 +1,5 @@
 import { Dialog, Transition } from '@headlessui/react';
+import MetaMaskSDK from '@metamask/sdk';
 import React, { Fragment, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -12,7 +13,6 @@ import {
 } from '../hooks/MetaMaskWagmiHooks';
 import IconNetwork from './IconNetwork';
 import { getBalance, truncatedAddress } from './utils';
-import { TFunction } from 'i18next';
 
 export default function Modal({
   isOpen,
@@ -21,7 +21,7 @@ export default function Modal({
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  t: TFunction;
+  t: typeof MetaMaskSDK.prototype.i18nInstance.t;
 }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
