@@ -140,12 +140,9 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
 
   const connect = async () => {
     try {
-      const result = (await ethereum?.request({
-        method: 'eth_requestAccounts',
-      })) as string[];
-      console.log('RESULT', result?.[0]);
+      const accounts = await sdk.connect() as string[];
       setConnected(true);
-      setAccount(result?.[0]);
+      setAccount(accounts[0]);
       setReadOnlyCalls(sdk.hasReadOnlyRPCCalls())
       getBalance();
     } catch (e) {
