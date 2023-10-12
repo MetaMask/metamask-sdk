@@ -12736,6 +12736,7 @@ __metadata:
     jest: ^29.6.4
     next: 13.2.4
     preact: ^10.13.1
+    prettier: ^3.0.3
     react: 18.2.0
     react-dom: 18.2.0
     typescript: 5.0.2
