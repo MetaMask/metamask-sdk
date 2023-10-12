@@ -46,7 +46,6 @@
     "@headlessui/react": "^1.6.6",
     "@metamask/sdk-react": "workspace:*",
     "ethers": "^5.6.9",
-    "i18next": "^23.5.1",
     "mersenne-twister": "^1.1.0",
     "react-copy-to-clipboard": "^5.1.0",
     "react-jazzicon": "^1.0.4",
