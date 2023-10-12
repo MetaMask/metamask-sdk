@@ -1,7 +1,11 @@
+import { useSDK } from '@metamask/sdk-react';
 import React, { useEffect, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useAccount, useConnect, useNetwork } from '../hooks/MetaMaskWagmiHooks';
-import { useSDK } from '@metamask/sdk-react';
+import {
+  useAccount,
+  useConnect,
+  useNetwork,
+} from '../hooks/MetaMaskWagmiHooks';
 import '../style.css';
 import Balance from './Balance';
 import IconNetwork from './IconNetwork';
@@ -242,6 +246,10 @@ Props) => {
 
   const connectedAndRightNetwork = isConnected && !wrongNetwork;
 
+  if (!sdk?.i18nInstance) return null;
+
+  const t = sdk.i18nInstance.t;
+
   return (
     <>
       <button
@@ -272,7 +280,7 @@ Props) => {
         )}
         {getText()}
       </button>
-      {<MetaMaskModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
+      {<MetaMaskModal t={t} isOpen={modalOpen} setIsOpen={setModalOpen} />}
     </>
   );
 };

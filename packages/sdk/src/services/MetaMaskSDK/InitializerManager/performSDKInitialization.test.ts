@@ -1,5 +1,7 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../../sdk';
+import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
+import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { performSDKInitialization } from './performSDKInitialization';
 import { setupAnalytics } from './setupAnalytics';
 import { setupDappMetadata } from './setupDappMetadata';
@@ -7,8 +9,6 @@ import { setupExtensionPreferences } from './setupExtensionPreferences';
 import { setupPlatformManager } from './setupPlatformManager';
 import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndInstaller';
 import { setupStorageManager } from './setupStorage';
-import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
-import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
 
 jest.mock('./setupAnalytics');
 jest.mock('./setupDappMetadata');
@@ -18,9 +18,11 @@ jest.mock('./setupRemoteConnectionAndInstaller');
 jest.mock('./setupStorage');
 jest.mock('./initializeProviderAndEventListeners');
 jest.mock('./handleAutoAndExtensionConnections');
+jest.mock('./initializeI18next');
 
 describe('performSDKInitialization', () => {
   let instance: MetaMaskSDK;
+
   let mockSetupExtensionPreferencesReturnValue: Awaited<
     ReturnType<typeof setupExtensionPreferences>
   >;

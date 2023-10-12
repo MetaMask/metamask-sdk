@@ -35,6 +35,7 @@ export async function reconnectWithModalOTP(
     provider._setConnected();
 
     state.pendingModal = options.modals.otp?.({
+      i18nInstance: options.i18nInstance,
       debug: state.developerMode,
       onDisconnect: () => onOTPModalDisconnect(options, state),
     });
@@ -62,6 +63,7 @@ export async function reconnectWithModalOTP(
     state.pendingModal?.mount?.();
   } else {
     state.pendingModal = options.modals.otp?.({
+      i18nInstance: options.i18nInstance,
       debug: state.developerMode,
       onDisconnect: () => onOTPModalDisconnect(options, state),
     });

@@ -5,15 +5,10 @@ import {
   MetaMaskSDKOptions,
   PROVIDER_UPDATE_TYPE,
   SDKProvider,
-  ServiceStatus
+  ServiceStatus,
 } from '@metamask/sdk';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, {
-  createContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -67,23 +62,32 @@ const MetaMaskProviderClient = ({
     if (account) {
       if (debug) {
         // Retrieve balance of account
-        sdk?.getProvider().request({
-          method: 'eth_getBalance',
-          params: [account, 'latest'],
-        }).then((accountBalance) => {
-          if (debug) {
-            console.debug(`[MetamaskProvider] balance of ${account} is ${accountBalance}`);
-          }
+        sdk
+          ?.getProvider()
+          .request({
+            method: 'eth_getBalance',
+            params: [account, 'latest'],
+          })
+          .then((accountBalance) => {
+            if (debug) {
+              console.debug(
+                `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
+              );
+            }
 
-          setBalance(accountBalance as string);
-        }).catch((err: any) => {
-          console.warn(`[MetamaskProvider] error retrieving balance of ${account}`, err);
-        })
+            setBalance(accountBalance as string);
+          })
+          .catch((err: any) => {
+            console.warn(
+              `[MetamaskProvider] error retrieving balance of ${account}`,
+              err,
+            );
+          });
       }
     } else {
-      setBalance(undefined)
+      setBalance(undefined);
     }
-  }, [account])
+  }, [account]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -102,7 +106,7 @@ const MetaMaskProviderClient = ({
     _sdk.init().then(() => {
       setSDK(_sdk);
       setReady(true);
-      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls())
+      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
   }, [sdkOptions]);
 
@@ -189,8 +193,11 @@ const MetaMaskProviderClient = ({
         );
       }
       // check if networkVersion has correct format
-      if (typeof networkVersionOrChainId === 'object' && networkVersionOrChainId?.chainId) {
-        setChainId(networkVersionOrChainId.chainId)
+      if (
+        typeof networkVersionOrChainId === 'object' &&
+        networkVersionOrChainId?.chainId
+      ) {
+        setChainId(networkVersionOrChainId.chainId);
       } else {
         setChainId(networkVersionOrChainId);
       }
@@ -244,18 +251,20 @@ const MetaMaskProviderClient = ({
       if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
       } else if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
-        setConnecting(false)
-        setConnected(true)
-        setError(undefined)
+        setConnecting(false);
+        setConnected(true);
+        setError(undefined);
         // Extract chainId and account from provider
         const extensionProvider = sdk.getProvider();
         const extensionChainId = extensionProvider.chainId || undefined;
         const extensionAccount = extensionProvider.selectedAddress || undefined;
         if (debug) {
-          console.debug(`[MetaMaskProvider] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`)
+          console.debug(
+            `[MetaMaskProvider] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`,
+          );
         }
-        setChainId(extensionChainId)
-        setAccount(extensionAccount)
+        setChainId(extensionChainId);
+        setAccount(extensionAccount);
       }
       setTrigger((_trigger) => _trigger + 1);
     };
