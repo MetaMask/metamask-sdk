@@ -23,44 +23,53 @@ import { MetaMaskSDK } from '../../../sdk';
  * @throws Error if the initialization process encounters an error.
  */
 export async function initializeI18next(instance: MetaMaskSDK) {
+  const i18nOptions = instance.options.i18nOptions ?? {};
+
+  const isEnabled = i18nOptions.enabled;
+
   await instance.i18nInstance
     .use(initReactI18next)
     .use(LanguageDetector)
     .init({
-      debug: false,
+      debug: i18nOptions.debug ?? false,
       fallbackLng: 'en',
       interpolation: {
         escapeValue: false,
       },
-      resources: {
-        en: {
-          translation: en,
-        },
-        es: {
-          translation: es,
-        },
-        it: {
-          translation: it,
-        },
-        fr: {
-          translation: fr,
-        },
-        pt: {
-          translation: pt,
-        },
-        tr: {
-          translation: tr,
-        },
-        he: {
-          translation: he,
-        },
-      },
+      resources: isEnabled
+        ? {
+            en: {
+              translation: en,
+            },
+            es: {
+              translation: es,
+            },
+            it: {
+              translation: it,
+            },
+            fr: {
+              translation: fr,
+            },
+            pt: {
+              translation: pt,
+            },
+            tr: {
+              translation: tr,
+            },
+            he: {
+              translation: he,
+            },
+          }
+        : {
+            en: {
+              translation: en,
+            },
+          },
       detection: {
         order: ['localStorage', 'navigator'],
         lookupLocalStorage: 'MetaMaskSDKLng',
         caches: ['localStorage'],
       },
-      ...instance.options.i18nOptions,
     });
 
   instance.availableLanguages = Object.keys(

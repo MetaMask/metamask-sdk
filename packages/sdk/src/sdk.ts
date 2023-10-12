@@ -156,6 +156,7 @@ export interface MetaMaskSDKOptions {
    */
   i18nOptions?: {
     debug?: boolean;
+    enabled?: boolean;
   };
 }
 
@@ -204,6 +205,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       dappMetadata: {
         name: '',
         url: '',
+      },
+      i18nOptions: {
+        enabled: false,
       },
     },
   ) {
