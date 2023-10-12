@@ -30,6 +30,7 @@ describe('setupListeners', () => {
   const mockIsBrowser = jest.fn();
   const mockIsAuthorized = jest.fn();
   const mockSendAnalytics = jest.fn();
+  const mockDisconnect = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -40,6 +41,7 @@ describe('setupListeners', () => {
       connector: {
         on: mockConnectorOn,
         isAuthorized: mockIsAuthorized,
+        disconnect: mockDisconnect,
       },
       developerMode: false,
       platformManager: {

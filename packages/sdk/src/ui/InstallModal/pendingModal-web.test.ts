@@ -1,3 +1,4 @@
+import { i18n } from 'i18next';
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import sdkWebPendingModal from './pendingModal-web';
 
@@ -5,6 +6,9 @@ jest.mock('@metamask/sdk-install-modal-web');
 
 describe('sdkWebPendingModal', () => {
   const mockModalLoader = ModalLoader as jest.MockedClass<typeof ModalLoader>;
+  let mockI18n: i18n = {
+    t: jest.fn((key) => key),
+  } as unknown as i18n;
 
   const mockRenderPendingModal = jest.fn();
   const mockUpdateOTPValue = jest.fn();
@@ -19,6 +23,10 @@ describe('sdkWebPendingModal', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockI18n = {
+      t: jest.fn((key) => key),
+    } as unknown as i18n;
 
     global.document = {
       createElement: jest.fn(
@@ -37,6 +45,7 @@ describe('sdkWebPendingModal', () => {
   it('should automatically mount upon initialization', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      i18nInstance: mockI18n,
       onDisconnect() {
         return false;
       },
@@ -50,6 +59,7 @@ describe('sdkWebPendingModal', () => {
   it('should return an object with mount, unmount, and updateOTPValue functions', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      i18nInstance: mockI18n,
       onDisconnect() {
         return false;
       },
@@ -67,6 +77,7 @@ describe('sdkWebPendingModal', () => {
     const otpValue = '123456';
     const result = sdkWebPendingModal({
       debug: true,
+      i18nInstance: mockI18n,
       onDisconnect() {
         return false;
       },
@@ -80,6 +91,7 @@ describe('sdkWebPendingModal', () => {
   it('should unmount when unmount is invoked', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      i18nInstance: mockI18n,
       onDisconnect() {
         return false;
       },
@@ -92,6 +104,7 @@ describe('sdkWebPendingModal', () => {
   it('should mount correctly when mount is invoked', () => {
     const result = sdkWebPendingModal({
       debug: true,
+      i18nInstance: mockI18n,
       onDisconnect() {
         return false;
       },
