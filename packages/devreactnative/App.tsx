@@ -58,6 +58,7 @@ const sdk = new MetaMaskSDK({
   infuraAPIKey: INFURA_API_KEY ?? undefined,
   timer: BackgroundTimer,
   enableDebug: true,
+  useDeeplink: true,
   dappMetadata: {
     url: 'devreactnative',
     name: 'devreactnative',
