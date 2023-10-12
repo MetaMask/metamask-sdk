@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { useAccount, useConnect, useNetwork } from '../hooks/MetaMaskWagmiHooks';
+import {
+  useAccount,
+  useConnect,
+  useNetwork,
+} from '../hooks/MetaMaskWagmiHooks';
 import { useSDK } from '@metamask/sdk-react';
 import '../style.css';
 import Balance from './Balance';
@@ -10,6 +14,7 @@ import IconSimplified from './IconSimplified';
 import IconWrongNetwork from './IconWrongNetwork';
 import MetaMaskModal from './MetaMaskModal';
 import { truncatedAddress } from './utils';
+import { TFunction } from 'i18next';
 
 export interface Account {
   address: string;
@@ -63,6 +68,8 @@ Props) => {
   const { chain } = useNetwork();
   const { sdk, connected } = useSDK();
   const { connect } = useConnect();
+
+  const t = sdk?.i18nInstance?.t as TFunction;
 
   const [modalOpen, setModalOpen] = useState(false);
   const wrongNetwork = isConnected && (!chain || chain.unsupported);
@@ -272,7 +279,7 @@ Props) => {
         )}
         {getText()}
       </button>
-      {<MetaMaskModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
+      {<MetaMaskModal t={t} isOpen={modalOpen} setIsOpen={setModalOpen} />}
     </>
   );
 };

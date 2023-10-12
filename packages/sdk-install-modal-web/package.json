@@ -47,9 +47,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "i18next": "22.5.1",
+    "i18next-browser-languagedetector": "^7.1.0",
     "qr-code-styling": "^1.6.0-rc.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-i18next": "^13.2.2"
   },
   "devDependencies": {
     "@emotion/core": "10.1.1",

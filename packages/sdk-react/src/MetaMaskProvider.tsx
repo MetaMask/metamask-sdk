@@ -5,14 +5,10 @@ import {
   MetaMaskSDKOptions,
   PROVIDER_UPDATE_TYPE,
   SDKProvider,
-  ServiceStatus
+  ServiceStatus,
 } from '@metamask/sdk';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, {
-  createContext,
-  useEffect, useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 
 const initProps: {
   sdk?: MetaMaskSDK;
@@ -74,7 +70,7 @@ const MetaMaskProviderClient = ({
     _sdk.init().then(() => {
       setSDK(_sdk);
       setReady(true);
-      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls())
+      setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
   }, [sdkOptions]);
 
@@ -160,8 +156,11 @@ const MetaMaskProviderClient = ({
         );
       }
       // check if networkVersion has correct format
-      if (typeof networkVersionOrChainId === 'object' && networkVersionOrChainId?.chainId) {
-        setChainId(networkVersionOrChainId.chainId)
+      if (
+        typeof networkVersionOrChainId === 'object' &&
+        networkVersionOrChainId?.chainId
+      ) {
+        setChainId(networkVersionOrChainId.chainId);
       } else {
         setChainId(networkVersionOrChainId);
       }
@@ -214,10 +213,10 @@ const MetaMaskProviderClient = ({
       }
       if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
-      } else if(type === PROVIDER_UPDATE_TYPE.EXTENSION) {
-        setConnecting(false)
-        setConnected(true)
-        setError(undefined)
+      } else if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
+        setConnecting(false);
+        setConnected(true);
+        setError(undefined);
       }
       setTrigger((_trigger) => _trigger + 1);
     };

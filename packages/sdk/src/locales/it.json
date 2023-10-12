@@ -1,0 +1,27 @@
+{
+  "DESKTOP": "Desktop",
+  "MOBILE": "Mobile",
+  "META_MASK_MOBILE_APP": "App mobile MetaMask",
+  "SCAN_TO_CONNECT": "Scansiona per connetterti e firmare con",
+  "CONNECT_WITH_EXTENSION": "Connetti con l'estensione MetaMask",
+  "INSTALL_MODAL": {
+    "TRUSTED_BY_USERS": "Fidato da oltre 30 milioni di utenti per acquistare, conservare, inviare e scambiare cripto in modo sicuro",
+    "LEADING_CRYPTO_WALLET": "Il principale portafoglio cripto e gateway per applicazioni blockchain costruite su Ethereum Mainnet, Polygon, Optimism, e molte altre reti",
+    "CONTROL_DIGITAL_INTERACTIONS": "Ti mette in controllo delle tue interazioni digitali rendendo il potere della crittografia più accessibile",
+    "INSTALL_META_MASK_EXTENSION": "Installa l'estensione MetaMask"
+  },
+  "PENDING_MODAL": {
+    "OPEN_META_MASK_SELECT_CODE": "Si prega di aprire l'app del portafoglio MetaMask e selezionare il codice sullo schermo OPPURE scollegarsi",
+    "OPEN_META_MASK_CONTINUE": "Apri l'app MetaMask per continuare con la tua sessione.",
+    "NUMBER_AFTER_OPEN_NOTICE": "Se un numero non appare dopo aver aperto MetaMask, si prega di fare clic su disconnetti e ris canzionare il QRCode.",
+    "DISCONNECT": "Disconnetti"
+  },
+  "SELECT_MODAL": {
+    "CRYPTO_TAKE_CONTROL_TEXT": "Prendi il controllo delle tue cripto e esplora la blockchain con il portafoglio fidato da oltre 30 milioni di persone in tutto il mondo"
+  },
+  "META_MASK_MODAL": {
+    "ADDRESS_COPIED": "Indirizzo copiato negli appunti!",
+    "DISCONNECT": "Disconnetti",
+    "ACTIVE_NETWORK": "Rete attiva"
+  }
+}

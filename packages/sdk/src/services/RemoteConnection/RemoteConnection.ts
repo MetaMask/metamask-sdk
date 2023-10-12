@@ -8,6 +8,7 @@ import {
   RemoteCommunication,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -39,12 +40,14 @@ export interface RemoteConnectionProps {
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
+  i18nInstance: i18n;
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
+      i18nInstance: i18n;
       link: string;
       debug?: boolean;
       installer: MetaMaskInstaller;
@@ -55,9 +58,11 @@ export interface RemoteConnectionProps {
       mount?: (link: string) => void;
     };
     otp?: ({
+      i18nInstance,
       debug,
       onDisconnect,
     }: {
+      i18nInstance: i18n;
       debug?: boolean;
       onDisconnect?: () => void;
     }) => {

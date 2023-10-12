@@ -41,6 +41,7 @@ export class ModalLoader {
         link={props.link}
         onClose={props.onClose}
         metaMaskInstaller={props.metaMaskInstaller}
+        i18nInstance={props.i18nInstance}
       />,
     );
   }
@@ -57,6 +58,7 @@ export class ModalLoader {
         link={props.link}
         onClose={props.onClose}
         connectWithExtension={props.connectWithExtension}
+        i18nInstance={props.i18nInstance}
       />,
     );
 
@@ -79,6 +81,7 @@ export class ModalLoader {
         onDisconnect={props.onDisconnect}
         updateOTPValue={props.updateOTPValue}
         displayOTP={props.displayOTP}
+        i18nInstance={props.i18nInstance}
       />,
     );
   }
@@ -88,7 +91,8 @@ export class ModalLoader {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
     const otpNode =
-      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ?? document.querySelector<HTMLElement>('#sdk-mm-otp-value');
+      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ??
+      document.querySelector<HTMLElement>('#sdk-mm-otp-value');
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -102,9 +106,9 @@ export class ModalLoader {
       console.debug(`ModalLoader: updateQRCode`, link);
     }
     // TODO use scoped elem
-    const qrCodeNode = this.selectContainer?.querySelector(
-      '#sdk-qrcode-container',
-    ) ?? document.querySelector('#sdk-qrcode-container');
+    const qrCodeNode =
+      this.selectContainer?.querySelector('#sdk-qrcode-container') ??
+      document.querySelector('#sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
