@@ -7,7 +7,7 @@ export interface CommunicationLayerMessage {
   type?: MessageType | KeyExchangeMessageType;
   walletInfo?: WalletInfo;
   originatorInfo?: OriginatorInfo;
-  // should be named originatorInfo but we keep originator field for backward compatiblity.
+  // should be named originatorInfo but we keep originator field for backward compatibility.
   originator?: OriginatorInfo;
   pubkey?: string;
   answer?: RTCSessionDescriptionInit;

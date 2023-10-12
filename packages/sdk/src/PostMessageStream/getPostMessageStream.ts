@@ -20,7 +20,7 @@ export const getPostMessageStream = ({
   debug,
 }: GetPostMessageStreamProps): PostMessageStream => {
   if (!remoteConnection || !remoteConnection?.getConnector()) {
-    throw new Error(`Missing remote conenction parameter`);
+    throw new Error(`Missing remote connection parameter`);
   }
 
   return new RemoteCommunicationPostMessageStream({
