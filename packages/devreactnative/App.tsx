@@ -97,7 +97,7 @@ function App(): JSX.Element {
   const testEncrypt = async () => {
     // const privateKey =
     //   '0x131ded88ca58162376374eecc9f74349eb90a8fc9457466321dd9ce925beca1a';
-    console.debug('begin encryptiion test');
+    console.debug('begin encryption test');
     const startTime = Date.now();
 
     const data =
