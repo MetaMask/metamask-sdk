@@ -27,6 +27,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {DAPPView} from './src/views/DappView';
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+import packageJSON from './package.json';
 
 LogBox.ignoreLogs([
   //'Possible Unhandled Promise Rejection'
@@ -127,14 +128,14 @@ function App(): JSX.Element {
             backgroundColor: Colors.white,
           }}>
           <Text style={{color: Colors.black, fontSize: 24}}>
-            devreactnative Mobile Dapp Test (RN v0.71.7)
+            devreactnative Mobile Dapp Test ( RN{' '}
+            {`v${packageJSON.dependencies['react-native']
+              .trim()
+              .replaceAll('\n', '')}`}
+            )
           </Text>
-          <Text>
-            ServerUrl: {serverUrl}
-          </Text>
-          <Text>
-            INFURA KEY: {INFURA_API_KEY}
-          </Text>
+          <Text>ServerUrl: {serverUrl}</Text>
+          <Text>INFURA KEY: {INFURA_API_KEY}</Text>
           <Button title="TestEncrypt" onPress={testEncrypt} />
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}

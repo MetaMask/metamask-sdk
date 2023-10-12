@@ -19,15 +19,18 @@ module.exports = (server) => {
   });
 
   io.on('connection', (socket) => {
+    console.log('INFO> connection');
+
     const socketId = socket.id;
     const clientIp = socket.request.socket.remoteAddress;
-    console.log('INFO> a user connected');
 
     if (isDevelopment) {
       console.log(`DEBUG> socketId=${socketId} clientIp=${clientIp}`);
     }
 
     socket.on('create_channel', async (id) => {
+      console.log('INFO> create_channel');
+
       try {
         await rateLimiter.consume(socket.handshake.address);
 
@@ -66,6 +69,9 @@ module.exports = (server) => {
     });
 
     socket.on('message', async ({ id, message, context, plaintext }) => {
+      const isMobile = context === 'mm-mobile';
+      console.log(`INFO> message' ${isMobile ? ' mobile' : ''}`);
+
       try {
         await rateLimiterMesssage.consume(socket.handshake.address);
 
@@ -76,7 +82,7 @@ module.exports = (server) => {
             displayMessage = 'AAAAAA_ENCRYPTED_AAAAAA';
           }
 
-          if (context === 'mm-mobile') {
+          if (isMobile) {
             console.log(`DEBUG> \x1b[33m message-${id} -> \x1b[0m`, {
               id,
               context,
@@ -106,6 +112,8 @@ module.exports = (server) => {
     });
 
     socket.on('ping', async ({ id, message, context }) => {
+      console.log('INFO> ping');
+
       try {
         await rateLimiterMesssage.consume(socket.handshake.address);
 
@@ -121,6 +129,8 @@ module.exports = (server) => {
     });
 
     socket.on('join_channel', async (id, test) => {
+      console.log('INFO> join_channel');
+
       try {
         await rateLimiter.consume(socket.handshake.address);
       } catch (e) {
@@ -157,6 +167,8 @@ module.exports = (server) => {
       }
 
       socket.on('disconnect', function (error) {
+        console.log('INFO> disconnect');
+
         if (isDevelopment) {
           console.log(`DEBUG> disconnect event channel=${id}: `, error);
         }
@@ -171,12 +183,36 @@ module.exports = (server) => {
     });
 
     socket.on('leave_channel', (id) => {
+      console.log('INFO> leave_channel');
+
       if (isDevelopment) {
         console.log(`DEBUG> leave_channel id=${id}`);
       }
 
       socket.leave(id);
       io.sockets.in(id).emit(`clients_disconnected-${id}`);
+    });
+
+    socket.on('check_room', (id, callback) => {
+      console.log('INFO> check_room');
+
+      if (isDevelopment) {
+        console.log(`DEBUG> check_room id=${id}`);
+      }
+
+      if (!uuid.validate(id)) {
+        return callback(new Error('must specify a valid id'), null);
+      }
+
+      const room = io.sockets.adapter.rooms.get(id);
+      const occupancy = room ? room.size : 0;
+
+      if (isDevelopment) {
+        console.log(`DEBUG> check_room id=${id} occupancy=${occupancy}`);
+      }
+
+      // Callback with null as the first argument, meaning "no error"
+      return callback(null, { occupancy });
     });
   });
 

@@ -21,7 +21,7 @@ This provider is the `ethereum` object that developers are already used to. This
   - [Unreal Engine](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/gaming/unreal-engine/) (coming soon)
 - [Mobile Native apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/)
   - [iOS](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/ios/)
-  - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/) (coming soon)
+  - [Android](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/mobile/android/)
 
 ## Features
 
@@ -117,3 +117,7 @@ You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but 
 ## Contributing
 
 Please see our [contributing guidelines](./docs/contributing.md) for more information.
+
+## Contacts
+
+Contact the MetaMask SDK team for a complimentary design optimization workshop [here](https://fq1an8d8ib2.typeform.com/to/sC7eK5F1)

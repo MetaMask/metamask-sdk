@@ -1,9 +1,6 @@
-/**
- * @type {import('eslint').Linter.Config}
- */
 module.exports = {
   root: true,
-  extends: '@react-native-community',
+  extends: '@react-native',
   parserOptions: {
     project: [path.resolve(__dirname, 'tsconfig.json')],
     babelOptions: {

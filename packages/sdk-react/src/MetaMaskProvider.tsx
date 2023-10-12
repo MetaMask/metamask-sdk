@@ -15,15 +15,18 @@ const initProps: {
   ready: boolean;
   connected: boolean;
   connecting: boolean;
+  extensionActive: boolean;
   // Allow querying blockchain while wallet isn't connected
   readOnlyCalls: boolean;
   provider?: SDKProvider;
   error?: EthereumRpcError<unknown>;
   chainId?: string;
+  balance?: string; // hex value in wei
   account?: string;
   status?: ServiceStatus;
 } = {
   ready: false,
+  extensionActive: false,
   connected: false,
   connecting: false,
   readOnlyCalls: false,
@@ -47,11 +50,44 @@ const MetaMaskProviderClient = ({
   const [connected, setConnected] = useState<boolean>(false);
   const [trigger, setTrigger] = useState<number>(1);
   const [chainId, setChainId] = useState<string>();
+  const [balance, setBalance] = useState<string>();
   const [account, setAccount] = useState<string>();
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
+  const [extensionActive, setExtensionActive] = useState<boolean>(false);
   const hasInit = useRef(false);
+
+  useEffect(() => {
+    if (account) {
+      if (debug) {
+        // Retrieve balance of account
+        sdk
+          ?.getProvider()
+          .request({
+            method: 'eth_getBalance',
+            params: [account, 'latest'],
+          })
+          .then((accountBalance) => {
+            if (debug) {
+              console.debug(
+                `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
+              );
+            }
+
+            setBalance(accountBalance as string);
+          })
+          .catch((err: any) => {
+            console.warn(
+              `[MetamaskProvider] error retrieving balance of ${account}`,
+              err,
+            );
+          });
+      }
+    } else {
+      setBalance(undefined);
+    }
+  }, [account]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -82,6 +118,8 @@ const MetaMaskProviderClient = ({
     if (debug) {
       console.debug(`[MetamaskProvider] init SDK Provider listeners`);
     }
+
+    setExtensionActive(sdk.isExtensionActive());
 
     const activeProvider = sdk.getProvider();
     setConnected(activeProvider.isConnected());
@@ -114,13 +152,12 @@ const MetaMaskProviderClient = ({
           connectParam,
         );
       }
+      const currentChainId = (connectParam as { chainId: string }).chainId;
+
       setConnecting(false);
       setConnected(true);
-      setChainId((connectParam as { chainId: string })?.chainId);
+      setChainId(currentChainId);
       setError(undefined);
-      if (chainId) {
-        setChainId(chainId);
-      }
     };
 
     const onDisconnect = (reason: unknown) => {
@@ -217,6 +254,17 @@ const MetaMaskProviderClient = ({
         setConnecting(false);
         setConnected(true);
         setError(undefined);
+        // Extract chainId and account from provider
+        const extensionProvider = sdk.getProvider();
+        const extensionChainId = extensionProvider.chainId || undefined;
+        const extensionAccount = extensionProvider.selectedAddress || undefined;
+        if (debug) {
+          console.debug(
+            `[MetaMaskProvider] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`,
+          );
+        }
+        setChainId(extensionChainId);
+        setAccount(extensionAccount);
       }
       setTrigger((_trigger) => _trigger + 1);
     };
@@ -236,6 +284,8 @@ const MetaMaskProviderClient = ({
         provider,
         connecting,
         account,
+        balance,
+        extensionActive,
         chainId,
         error,
         status,
