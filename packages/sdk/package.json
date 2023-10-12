@@ -55,6 +55,7 @@
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",
     "extension-port-stream": "^2.0.1",
+    "i18next": "22.5.1",
     "i18next-browser-languagedetector": "^7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
