@@ -1,14 +1,16 @@
-import { TFunction, i18n } from 'i18next';
+import { i18n } from 'i18next';
 import React from 'react';
 import { WidgetWrapper } from './WidgetWrapper';
 import CloseButton from './components/CloseButton';
 import Logo from './components/Logo';
 import TranslationWrapper from './providers/TranslationWrapper';
 import styles from './styles';
+import SDKVersion from './components/SDKVersion';
 
 export interface PendingModalProps {
   onClose: () => void;
   onDisconnect?: () => void;
+  sdkVersion?: string;
   updateOTPValue: (otpValue: string) => void;
   displayOTP?: boolean;
   i18nInstance: i18n;
@@ -16,6 +18,7 @@ export interface PendingModalProps {
 
 export const PendingModal = (props: PendingModalProps) => {
   const displayOTP = props.displayOTP ?? true;
+  const { sdkVersion } = props;
 
   const t = props.i18nInstance.t;
   return (
@@ -82,6 +85,7 @@ export const PendingModal = (props: PendingModalProps) => {
               </button>
             </div>
           </div>
+          <SDKVersion version={sdkVersion} />
         </div>
       </WidgetWrapper>
     </TranslationWrapper>

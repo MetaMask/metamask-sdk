@@ -1,5 +1,6 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import { i18n } from 'i18next';
+import packageJson from '../../../package.json';
 
 const sdkWebPendingModal = ({
   debug,
@@ -55,7 +56,7 @@ const sdkWebPendingModal = ({
       return;
     }
 
-    modalLoader = new ModalLoader(debug);
+    modalLoader = new ModalLoader({ debug, sdkVersion: packageJson.version });
     div = document.createElement('div');
     document.body.appendChild(div);
 
