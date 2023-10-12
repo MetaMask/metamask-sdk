@@ -7,6 +7,7 @@ describe('useHandleAccountsChangedEvent', () => {
     setConnected: jest.fn(),
     setError: jest.fn(),
     setAccount: jest.fn(),
+    setConnecting: jest.fn(),
     debug: true,
   } as unknown as EventHandlerProps;
 
@@ -16,6 +17,7 @@ describe('useHandleAccountsChangedEvent', () => {
     eventHandlerProps.setAccount = jest.fn();
     eventHandlerProps.setConnected = jest.fn();
     eventHandlerProps.setError = jest.fn();
+    eventHandlerProps.setConnecting = jest.fn();
   });
 
   it('should handle accounts changed event correctly with debug', () => {
@@ -31,6 +33,7 @@ describe('useHandleAccountsChangedEvent', () => {
       newAccountsMock[0],
     );
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 
@@ -48,6 +51,7 @@ describe('useHandleAccountsChangedEvent', () => {
       newAccountsMock[0],
     );
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
+    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
 });

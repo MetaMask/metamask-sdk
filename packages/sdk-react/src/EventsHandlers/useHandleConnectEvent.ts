@@ -17,13 +17,12 @@ export const useHandleConnectEvent = ({
           connectParam,
         );
       }
+      const currentChainId = (connectParam as { chainId: string }).chainId;
+
       setConnecting(false);
       setConnected(true);
-      setChainId((connectParam as { chainId: string })?.chainId);
+      setChainId(currentChainId);
       setError(undefined);
-      if (chainId) {
-        setChainId(chainId);
-      }
     },
     [debug, setConnecting, setConnected, setChainId, setError, chainId],
   );

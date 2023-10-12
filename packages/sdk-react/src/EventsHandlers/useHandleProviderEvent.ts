@@ -8,6 +8,9 @@ export const useHandleProviderEvent = ({
   setConnected,
   setTrigger,
   setError,
+  setChainId,
+  setAccount,
+  sdk,
 }: EventHandlerProps) => {
   return useCallback(
     (type: PROVIDER_UPDATE_TYPE) => {
@@ -23,6 +26,18 @@ export const useHandleProviderEvent = ({
         setConnecting(false);
         setConnected(true);
         setError(undefined);
+        // Extract chainId and account from provider
+        const extensionProvider = sdk?.getProvider();
+        const extensionChainId = extensionProvider?.chainId || undefined;
+        const extensionAccount =
+          extensionProvider?.selectedAddress || undefined;
+        if (debug) {
+          console.debug(
+            `[MetaMaskProvider] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`,
+          );
+        }
+        setChainId(extensionChainId);
+        setAccount(extensionAccount);
       }
       setTrigger((_trigger) => _trigger + 1);
     },

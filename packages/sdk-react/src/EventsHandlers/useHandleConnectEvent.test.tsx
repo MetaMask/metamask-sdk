@@ -81,7 +81,7 @@ describe('useHandleConnectEvent', () => {
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setChainId).toHaveBeenCalledWith(
-      eventHandlerProps.chainId,
+      mockConnectParam.chainId,
     );
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });

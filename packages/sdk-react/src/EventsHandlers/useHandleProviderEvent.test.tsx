@@ -3,12 +3,19 @@ import { useHandleProviderEvent } from './useHandleProviderEvent';
 import { renderHook } from '@testing-library/react-hooks';
 import { EventHandlerProps } from '../MetaMaskProvider';
 
+jest.mock('@metamask/sdk', () => ({
+  ...jest.requireActual('@metamask/sdk'),
+  getProvider: jest.fn(),
+}));
+
 describe('useHandleProviderEvent', () => {
   const eventHandlerProps = {
     setConnected: jest.fn(),
     setConnecting: jest.fn(),
+    setChainId: jest.fn(),
     setError: jest.fn(),
     setTrigger: jest.fn(),
+    setAccount: jest.fn(),
     debug: true,
   } as unknown as EventHandlerProps;
 
@@ -19,6 +26,8 @@ describe('useHandleProviderEvent', () => {
     eventHandlerProps.setTrigger = jest.fn();
     eventHandlerProps.setConnected = jest.fn();
     eventHandlerProps.setError = jest.fn();
+    eventHandlerProps.setChainId = jest.fn();
+    eventHandlerProps.setAccount = jest.fn();
 
     console.debug = jest.fn();
   });

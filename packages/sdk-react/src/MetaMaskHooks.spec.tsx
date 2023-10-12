@@ -21,6 +21,7 @@ describe('useSDK', () => {
     error: undefined,
     status: undefined,
     readOnlyCalls: false,
+    extensionActive: true,
   };
 
   beforeEach(() => {
@@ -36,6 +37,7 @@ describe('useSDK', () => {
       error: undefined,
       status: undefined,
       readOnlyCalls: false,
+      extensionActive: true,
     };
   });
 

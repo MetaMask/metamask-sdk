@@ -20,8 +20,10 @@ describe('MetaMaskProvider Component', () => {
   const mockSdkHasReadOnlyRPCCalls = jest.fn();
   const mockSdkOn = jest.fn();
   const mockProviderRemoveListener = jest.fn();
+  const mockIsExtensionActive = jest.fn(() => true);
   const mockProviderOn = jest.fn();
   const mockIsConnected = jest.fn().mockReturnValue(true);
+  const mockRequest = jest.fn();
 
   const dummyChild = <div>Test Child</div>;
   let sdkOptions: MetaMaskSDKOptions = {
@@ -43,14 +45,18 @@ describe('MetaMaskProvider Component', () => {
           on: mockSdkOn,
           removeListener: mockSdkRemoveListener,
           init: initMock,
+          isExtensionActive: mockIsExtensionActive,
           getProvider: jest.fn().mockReturnValue({
             isConnected: mockIsConnected,
             selectedAddress: '0xYourAddress',
             on: mockProviderOn,
             removeListener: mockProviderRemoveListener,
+            request: mockRequest,
           }),
         } as unknown as MetaMaskSDK),
     );
+
+    mockRequest.mockResolvedValue('0xYourAddress');
 
     mockSdkHasReadOnlyRPCCalls.mockReturnValue(false);
 
@@ -176,7 +182,7 @@ describe('MetaMaskProvider Component', () => {
         );
       });
 
-      expect(consoleSpy).toHaveBeenCalledTimes(1);
+      expect(consoleSpy).toHaveBeenCalledTimes(2);
       expect(consoleSpy.mock.calls[0][0]).toContain(
         '[MetamaskProvider] init SDK Provider listeners',
       );
