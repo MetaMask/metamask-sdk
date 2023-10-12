@@ -4653,8 +4653,8 @@ __metadata:
     "@emotion/styled": ^11.10.6
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
-    "@rollup/plugin-node-resolve": ^15.2.3
-    "@rollup/plugin-terser": ^0.4.4
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.1
     "@rollup/plugin-typescript": ^11.1.1
     "@types/prettier": ^2
     "@types/react": ^18.0.26
@@ -4669,7 +4669,6 @@ __metadata:
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-react: ^7.32.2
     i18next: 22.5.1
-    i18next-browser-languagedetector: ^7.1.0
     jest: ^29.6.4
     prettier: ^2.8.8
     qr-code-styling: ^1.6.0-rc.1
@@ -4717,7 +4716,6 @@ __metadata:
     eslint-plugin-prettier: ^3.4.0
     ethers: ^5.6.9
     i18next: ^23.5.1
-    i18next-browser-languagedetector: ^7.1.0
     jest: ^29.6.4
     mersenne-twister: ^1.1.0
     next: canary
@@ -4726,7 +4724,6 @@ __metadata:
     react: ^18.2.0
     react-copy-to-clipboard: ^5.1.0
     react-dom: ^18.2.0
-    react-i18next: ^13.2.2
     react-jazzicon: ^1.0.4
     rimraf: ^5.0.0
     rollup: ^3.21.8
@@ -5656,25 +5653,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^15.2.3":
-  version: 15.2.3
-  resolution: "@rollup/plugin-node-resolve@npm:15.2.3"
-  dependencies:
-    "@rollup/pluginutils": ^5.0.1
-    "@types/resolve": 1.20.2
-    deepmerge: ^4.2.2
-    is-builtin-module: ^3.2.1
-    is-module: ^1.0.0
-    resolve: ^1.22.1
-  peerDependencies:
-    rollup: ^2.78.0||^3.0.0||^4.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-  checksum: 730f32c2f8fdddff07cf0fca86a5dac7c475605fb96930197a868c066e62eb6388c557545e4f7d99b7a283411754c9fbf98944ab086b6074e04fc1292e234aa8
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-replace@npm:^2.4.1":
   version: 2.4.2
   resolution: "@rollup/plugin-replace@npm:2.4.2"
@@ -5714,22 +5692,6 @@ __metadata:
     rollup:
       optional: true
   checksum: 0d697e816f32e9609c48defbda6f3ed90548126fbf673451cfde2c576a7511073cd25d45a9669f179d0b89485e62f56cabeb65428c2232469ab6057ae5dc7709
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-terser@npm:^0.4.4":
-  version: 0.4.4
-  resolution: "@rollup/plugin-terser@npm:0.4.4"
-  dependencies:
-    serialize-javascript: ^6.0.1
-    smob: ^1.0.0
-    terser: ^5.17.4
-  peerDependencies:
-    rollup: ^2.0.0||^3.0.0||^4.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-  checksum: 5472f659fbb7034488df91eb01ecd2ddf6d2cf203d049aa486139225ad5566254c6ec24aad1f5d1167e35f480212ede5160df9cc80e149a28874f78ed6a7fd9a
   languageName: node
   linkType: hard
 
