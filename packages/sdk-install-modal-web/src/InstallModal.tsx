@@ -1,4 +1,4 @@
-import { TFunction, i18n } from 'i18next';
+import { i18n } from 'i18next';
 import React, { CSSProperties, useEffect, useRef, useState } from 'react';
 import { WidgetWrapper } from './WidgetWrapper';
 import AdvantagesListItem from './components/AdvantagesListItem';
@@ -11,10 +11,12 @@ import LockIcon from './components/WalletIcon';
 import { FOX_IMAGE } from './constants';
 import TranslationWrapper from './providers/TranslationWrapper';
 import styles from './styles';
+import SDKVersion from './components/SDKVersion';
 
 export interface InstallModalProps {
   onClose: () => void;
   link: string;
+  sdkVersion?: string;
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
@@ -22,8 +24,9 @@ export interface InstallModalProps {
 }
 
 export const InstallModal = (props: InstallModalProps) => {
-  const [tab, setTab] = useState<number>(1);
+  const [tab, setTab] = useState<number>(2);
   const qrCodeContainer = useRef<HTMLDivElement>(null);
+  const { sdkVersion } = props;
 
   const t = props.i18nInstance.t;
 
@@ -150,6 +153,7 @@ export const InstallModal = (props: InstallModalProps) => {
               </button>
             </div>
           </div>
+          <SDKVersion version={sdkVersion} />
         </div>
       </WidgetWrapper>
     </TranslationWrapper>

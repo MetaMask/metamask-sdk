@@ -23,9 +23,11 @@ export class ModalLoader {
   private pendingContainer?: Element;
   private selectContainer?: Element;
   private debug = false;
+  private sdkVersion?: string;
 
-  constructor(debug?: boolean) {
+  constructor({debug, sdkVersion}: {debug?: boolean, sdkVersion?: string}) {
     this.debug = debug ?? false;
+    this.sdkVersion = sdkVersion;
   }
 
   renderInstallModal(props: InstallWidgetProps) {
@@ -40,6 +42,7 @@ export class ModalLoader {
       <InstallModal
         link={props.link}
         onClose={props.onClose}
+        sdkVersion={this.sdkVersion}
         metaMaskInstaller={props.metaMaskInstaller}
         i18nInstance={props.i18nInstance}
       />,
@@ -56,6 +59,7 @@ export class ModalLoader {
     reactRoot.render(
       <SelectModal
         link={props.link}
+        sdkVersion={this.sdkVersion}
         onClose={props.onClose}
         connectWithExtension={props.connectWithExtension}
         i18nInstance={props.i18nInstance}
@@ -79,6 +83,7 @@ export class ModalLoader {
       <PendingModal
         onClose={props.onClose}
         onDisconnect={props.onDisconnect}
+        sdkVersion={this.sdkVersion}
         updateOTPValue={props.updateOTPValue}
         displayOTP={props.displayOTP}
         i18nInstance={props.i18nInstance}

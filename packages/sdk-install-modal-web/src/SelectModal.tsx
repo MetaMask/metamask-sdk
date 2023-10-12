@@ -1,4 +1,4 @@
-import { TFunction, i18n } from 'i18next';
+import { i18n } from 'i18next';
 import React, { CSSProperties, useState } from 'react';
 import { WidgetWrapper } from './WidgetWrapper';
 import CloseButton from './components/CloseButton';
@@ -7,16 +7,20 @@ import Logo from './components/Logo';
 import { MetamaskExtensionImage } from './components/MetamaskExtensionImage';
 import TranslationWrapper from './providers/TranslationWrapper';
 import styles from './styles';
+import SDKVersion from './components/SDKVersion';
 
 export interface SelectModalProps {
   onClose: () => void;
   link: string;
+  sdkVersion?: string;
   connectWithExtension: () => void;
   i18nInstance: i18n;
 }
 
 export const SelectModal = (props: SelectModalProps) => {
-  const [tab, setTab] = useState<number>(1);
+  const [tab, setTab] = useState<number>(2);
+
+  const { sdkVersion } = props;
 
   const t = props.i18nInstance.t;
 
@@ -110,6 +114,7 @@ export const SelectModal = (props: SelectModalProps) => {
               </button>
             </div>
           </div>
+          <SDKVersion version={sdkVersion} />
         </div>
       </WidgetWrapper>
     </TranslationWrapper>
