@@ -132,8 +132,11 @@ export function setupListeners(
       console.info(`SDK Connection has been terminated`);
     }
     state.pendingModal?.unmount?.();
+    state.installModal?.unmount?.(true);
     state.pendingModal = undefined;
+    state.installModal = undefined;
     state.otpAnswer = undefined;
+    state.connector?.disconnect({ terminate: true });
     state.authorized = false;
 
     const provider = Ethereum.getProvider();
