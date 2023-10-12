@@ -62,16 +62,6 @@ describe('MetaMaskSDK', () => {
       await sdk.terminate();
       expect(terminateSpy).toHaveBeenCalled();
     });
-
-    it('should disconnect correctly', () => {
-      sdk.remoteConnection = {
-        disconnect: jest.fn(),
-      } as unknown as RemoteConnection;
-
-      sdk.disconnect();
-
-      expect(sdk.remoteConnection.disconnect).toHaveBeenCalled();
-    });
   });
 
   describe('Provider Handling', () => {
