@@ -114,6 +114,8 @@ You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but 
 
 - `modals`: see nodejs example to customize or translate each of the displayed modals.
 
+- `i18nOptions.enabled`: boolean (default: false) - Options for enabling i18n multi-language support on the SDK.
+
 ## Contributing
 
 Please see our [contributing guidelines](./docs/contributing.md) for more information.
