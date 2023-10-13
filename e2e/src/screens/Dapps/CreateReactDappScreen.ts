@@ -42,7 +42,7 @@ class CreateReactDappScreen implements Dapp {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().text("Connect")',
+          locator: 'new UiSelector().text("Terminate")',
           strategy: AndroidSelectorStrategies.UIAutomator2,
         },
         iosLocator: {

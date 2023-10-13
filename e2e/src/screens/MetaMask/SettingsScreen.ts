@@ -140,7 +140,9 @@ class SettingsScreen {
     await this.tapSecurityAndPrivacy();
     let isDisplayed = await this.manageConnectionsButton.isDisplayed();
     while (!isDisplayed) {
+      // Swipe down twice
       await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      await Gestures.swipeByPercentage({ x: 50, y: 60 }, { x: 50, y: 5 });
       isDisplayed = await this.manageConnectionsButton.isDisplayed();
     }
     await this.tapManageConnections();

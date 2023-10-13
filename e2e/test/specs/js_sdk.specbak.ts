@@ -32,7 +32,7 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const reactDappUrl = process.env.REACT_DAPP_URL ?? 'https://google.com';
+    const reactDappUrl = process.env.REACT_DAPP_URL ?? '';
     await browserScreen.goToAddress(reactDappUrl);
 
     await CreateReactDappScreen.terminate();
