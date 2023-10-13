@@ -95,9 +95,10 @@ export class ModalLoader {
     if (this.debug) {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
+
     const otpNode =
-      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ??
       document.getElementById('sdk-mm-otp-value');
+
     if (otpNode) {
       otpNode.textContent = otpValue;
       otpNode.style.display = 'block';
@@ -112,7 +113,6 @@ export class ModalLoader {
     }
     // TODO use scoped elem
     const qrCodeNode =
-      this.selectContainer?.querySelector('#sdk-qrcode-container') ??
       document.getElementById('sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
