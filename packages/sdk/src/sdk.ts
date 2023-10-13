@@ -152,7 +152,7 @@ export interface MetaMaskSDKOptions {
   _source?: string;
 
   /*
-   * Options for customizing the i18n behavior of the SDK.
+   * Options for enabling i18n multi-language support on the SDK.
    */
   i18nOptions?: {
     debug?: boolean;
