@@ -95,15 +95,30 @@ export class ModalLoader {
     if (this.debug) {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
-    const otpNode =
-      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ??
+
+    const tryUpdate = () => {
+      const otpNode =
       document.getElementById('sdk-mm-otp-value');
-    if (otpNode) {
-      otpNode.textContent = otpValue;
-      otpNode.style.display = 'block';
-    } else {
-      console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
+
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: otpNode`, otpNode);
+      }
+
+      if (otpNode) {
+        otpNode.textContent = otpValue;
+        otpNode.style.display = 'block';
+        return true;
+      } else {
+        return false;
+      }
     }
+    // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
+    setTimeout(() => {
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: delayed otp update`)
+      }
+      tryUpdate();
+    }, 800);
   };
 
   updateQRCode = (link: string) => {
@@ -112,7 +127,6 @@ export class ModalLoader {
     }
     // TODO use scoped elem
     const qrCodeNode =
-      this.selectContainer?.querySelector('#sdk-qrcode-container') ??
       document.getElementById('sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
