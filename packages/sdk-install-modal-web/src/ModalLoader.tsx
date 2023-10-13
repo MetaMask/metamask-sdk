@@ -96,14 +96,33 @@ export class ModalLoader {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
 
-    const otpNode =
+    const tryUpdate = () => {
+      const otpNode =
       document.getElementById('sdk-mm-otp-value');
 
-    if (otpNode) {
-      otpNode.textContent = otpValue;
-      otpNode.style.display = 'block';
-    } else {
-      console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: otpNode`, otpNode);
+        if(!otpNode) {
+          console.debug(`ModalLoader: updateOTPValue: otpNode not found`, document.getElementById('#sdk-mm-otp-value'));
+        }
+      }
+
+      if (otpNode) {
+        otpNode.textContent = otpValue;
+        otpNode.style.display = 'block';
+        return true;
+      } else {
+        console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
+        return false;
+      }
+    }
+    const firstTrial = tryUpdate();
+    // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
+    if(!firstTrial) {
+      // Try again after 1s
+      setTimeout(() => {
+        tryUpdate();
+      }, 1000);
     }
   };
 
