@@ -1,10 +1,10 @@
 import path from 'path';
 import * as dotenv from 'dotenv';
-
 // const allure = require('allure-commandline');
 
 dotenv.config({ path: path.join(process.cwd(), '.dapps.env') });
 dotenv.config({ path: path.join(process.cwd(), '.env') });
+
 
 export const config: WebdriverIO.Config = {
   runner: 'local',
