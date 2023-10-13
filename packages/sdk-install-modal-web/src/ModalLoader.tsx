@@ -113,7 +113,12 @@ export class ModalLoader {
       }
     }
     // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
-    setTimeout(tryUpdate, 800);
+    setTimeout(() => {
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: delayed otp update`)
+      }
+      tryUpdate();
+    }, 800);
   };
 
   updateQRCode = (link: string) => {
