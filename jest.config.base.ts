@@ -24,9 +24,13 @@ const config: JestConfigWithTsJest = {
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   collectCoverageFrom: [
     './src/**/*.ts',
+    './src/**/*.tsx',
     '!./src/**/*.test.ts',
-    '!./src/**/*.spec.ts',
+    '!./src/**/*.test.ts',
+    '!./src/**/*.spec.tsx',
+    '!./src/**/*.spec.tsx',
   ],
+
   // The directory where Jest should output its coverage files
   coverageDirectory: 'coverage',
 
