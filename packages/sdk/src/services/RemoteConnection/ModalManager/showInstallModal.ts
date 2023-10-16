@@ -15,6 +15,7 @@ export function showInstallModal(
   link: string,
 ): void {
   state.installModal = options.modals.install?.({
+    i18nInstance: options.sdk.i18nInstance,
     link,
     installer: options.getMetaMaskInstaller(),
     terminate: () => {

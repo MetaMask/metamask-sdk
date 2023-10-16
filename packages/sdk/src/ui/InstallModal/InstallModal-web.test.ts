@@ -1,11 +1,18 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
+import { i18n } from 'i18next';
 import sdkWebInstallModal from './InstallModal-web';
 
 jest.mock('@metamask/sdk-install-modal-web');
+jest.mock('i18next', () => ({
+  t: jest.fn((key) => key),
+}));
 
 describe('sdkWebInstallModal', () => {
   let consoleDebugSpy: jest.SpyInstance;
   let documentSpy: jest.SpyInstance;
+  let mockI18n: i18n = {
+    t: jest.fn((key) => key),
+  } as unknown as i18n;
 
   const mockModalLoader = ModalLoader as jest.MockedClass<typeof ModalLoader>;
 
@@ -21,6 +28,10 @@ describe('sdkWebInstallModal', () => {
     mockModalLoader.mockImplementation(() => modalLoaderMock as any);
 
     consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
+
+    mockI18n = {
+      t: jest.fn((key) => key),
+    } as unknown as i18n;
 
     global.document = {
       createElement: jest.fn(() => ({
@@ -41,6 +52,7 @@ describe('sdkWebInstallModal', () => {
     const { mount } = sdkWebInstallModal({
       link: 'http://example.com',
       installer: {} as any,
+      i18nInstance: mockI18n,
     });
 
     mount('http://example-qrcode.com'); // Add this line
@@ -54,6 +66,7 @@ describe('sdkWebInstallModal', () => {
       link: 'http://example.com',
       debug: true,
       installer: {} as any,
+      i18nInstance: mockI18n,
     });
 
     expect(consoleDebugSpy).toHaveBeenCalled();
@@ -65,6 +78,7 @@ describe('sdkWebInstallModal', () => {
     const { mount } = sdkWebInstallModal({
       link: 'http://example.com',
       installer: {} as any,
+      i18nInstance: mockI18n,
     });
 
     mount('http://example-qrcode.com');
@@ -78,6 +92,7 @@ describe('sdkWebInstallModal', () => {
     const { mount } = sdkWebInstallModal({
       link: 'http://example.com',
       installer: {} as any,
+      i18nInstance: mockI18n,
     });
 
     mount('http://example-qrcode.com');
@@ -89,6 +104,7 @@ describe('sdkWebInstallModal', () => {
     const result = sdkWebInstallModal({
       link: 'http://example.com',
       installer: {} as any,
+      i18nInstance: mockI18n,
     });
 
     expect(result).toHaveProperty('mount');
@@ -104,6 +120,7 @@ describe('sdkWebInstallModal', () => {
       const { mount } = sdkWebInstallModal({
         link: 'http://example.com',
         installer: {} as any,
+        i18nInstance: mockI18n,
       });
 
       mount('http://example-qrcode.com');
@@ -117,6 +134,7 @@ describe('sdkWebInstallModal', () => {
       const { mount } = sdkWebInstallModal({
         link: 'http://example.com',
         installer: {} as any,
+        i18nInstance: mockI18n,
       });
 
       mount('http://example-qrcode.com');
@@ -131,6 +149,7 @@ describe('sdkWebInstallModal', () => {
       const { mount } = sdkWebInstallModal({
         link: 'http://example.com',
         installer: {} as any,
+        i18nInstance: mockI18n,
       });
 
       mount('http://example-qrcode.com');
@@ -151,6 +170,7 @@ describe('sdkWebInstallModal', () => {
       const { unmount, mount } = sdkWebInstallModal({
         link: 'http://example.com',
         installer: {} as any,
+        i18nInstance: mockI18n,
       });
 
       mount('http://example-qrcode.com');
@@ -166,6 +186,7 @@ describe('sdkWebInstallModal', () => {
         link: 'http://example.com',
         debug: true,
         installer: {} as any,
+        i18nInstance: mockI18n,
       });
 
       unmount();
@@ -180,6 +201,7 @@ describe('sdkWebInstallModal', () => {
         link: 'http://example.com',
         installer: {} as any,
         terminate: terminateMock,
+        i18nInstance: mockI18n,
       });
 
       unmount(true);

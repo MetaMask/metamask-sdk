@@ -30,6 +30,9 @@ export default function App({ Component, pageProps }: AppProps) {
           name: 'DevNext',
           url: 'http://devnext.fakeurl.com',
         },
+        i18nOptions: {
+          enabled: false,
+        },
       }}
     >
       <Component {...pageProps} />

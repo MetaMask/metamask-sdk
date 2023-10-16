@@ -1,6 +1,8 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
+import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import packageJson from '../../../package.json';
 
 const sdkWebInstallModal = ({
   link,
@@ -8,12 +10,14 @@ const sdkWebInstallModal = ({
   installer,
   terminate,
   connectWithExtension,
+  i18nInstance,
 }: {
   link: string;
   debug?: boolean;
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
+  i18nInstance: i18n;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -55,12 +59,13 @@ const sdkWebInstallModal = ({
       return;
     }
 
-    modalLoader = new ModalLoader(debug);
+    modalLoader = new ModalLoader({ debug, sdkVersion: packageJson.version });
     div = document.createElement('div');
     document.body.appendChild(div);
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
       modalLoader.renderSelectModal({
+        i18nInstance,
         parentElement: div,
         connectWithExtension: () => {
           unmount();
@@ -71,6 +76,7 @@ const sdkWebInstallModal = ({
       });
     } else {
       modalLoader.renderInstallModal({
+        i18nInstance,
         parentElement: div,
         link,
         metaMaskInstaller: installer,

@@ -1,11 +1,16 @@
-import React from 'react';
 import { useSDK } from '@metamask/sdk-react';
+import { ethers } from 'ethers';
 import Head from 'next/head';
 import Link from 'next/link';
-import { useState } from 'react';
-import { ethers } from 'ethers';
-import SimpleABI from '../abi/Simple.json'
-import { Address, createPublicClient, createWalletClient, custom, getContract, http } from 'viem'
+import React, { useState } from 'react';
+import {
+  Address,
+  createPublicClient,
+  createWalletClient,
+  custom,
+  getContract,
+} from 'viem';
+import SimpleABI from '../abi/Simple.json';
 
 export default function Home() {
   const {
@@ -21,7 +26,28 @@ export default function Home() {
     chainId,
     error,
   } = useSDK();
+
+  const languages = sdk?.availableLanguages || ['en'];
+
   const [response, setResponse] = useState<unknown>('');
+
+  const getInitialLanguage = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('MetaMaskSDKLng') || 'en';
+    }
+    return 'en';
+  };
+
+  const [currentLanguage, setCurrentLanguage] = useState(getInitialLanguage());
+
+  const handleLanguageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    setCurrentLanguage(event.target.value);
+    localStorage.setItem('MetaMaskSDKLng', event.target.value);
+
+    window.location.reload();
+  };
 
   const connect = async () => {
     try {
@@ -29,7 +55,7 @@ export default function Home() {
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
     } catch (err) {
-      console.log('request accounts ERR', err)
+      console.log('request accounts ERR', err);
     }
   };
 
@@ -147,70 +173,82 @@ export default function Home() {
     }
   };
 
-  const personalSign = async () => { };
+  const personalSign = async () => {};
 
   const terminate = () => {
     sdk?.terminate();
   };
 
-  const addNetwork = () => {
-
-  }
+  const addNetwork = () => {};
 
   const interactEthers = async () => {
     // Get value from contract
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
     const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS;
     if (!contractAddress || !rpcUrl) {
-      throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
+      throw new Error(
+        'NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set',
+      );
     }
 
-    const web3Provider = new ethers.providers.Web3Provider(provider! as any)
+    const web3Provider = new ethers.providers.Web3Provider(provider! as any);
     const signer = web3Provider.getSigner();
     console.debug(`signer`, signer);
 
-
-    const msg = await signer.signMessage('hello world')
+    const msg = await signer.signMessage('hello world');
     console.debug(`msg`, msg);
-    const contract = new ethers.Contract(contractAddress, SimpleABI.abi, signer);
+    const contract = new ethers.Contract(
+      contractAddress,
+      SimpleABI.abi,
+      signer,
+    );
 
     try {
       const text = await contract.ping();
       console.debug('ping', text);
 
-      const nextValue = `now: ${Date.now()}`
-      console.debug(`Set new contract value to: `, nextValue)
+      const nextValue = `now: ${Date.now()}`;
+      console.debug(`Set new contract value to: `, nextValue);
       const trx = await contract.set(nextValue);
       console.debug(`Wait for trx to complete...`);
       await trx.wait();
       console.debug(`Check result...`);
       const text2 = await contract.ping();
       const success = text2 === nextValue;
-      console.debug(`Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `, text2);
+      console.debug(
+        `Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `,
+        text2,
+      );
 
-      const chainId = provider?.request({ method: 'eth_chainId', params: [] })
-      const network = provider?.request({ method: 'net_version', params: [] })
-      console.debug(`chainId=${chainId}, network=${network}`)
+      const chainId = provider?.request({ method: 'eth_chainId', params: [] });
+      const network = provider?.request({ method: 'net_version', params: [] });
+      console.debug(`chainId=${chainId}, network=${network}`);
     } catch (error) {
       console.error('Error pinging ethers:', error);
     }
-  }
+  };
 
   const interactViem = async () => {
     const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
-    const contractAddress = process.env.NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
+    const contractAddress = process.env
+      .NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
     if (!contractAddress || !rpcUrl) {
-      throw new Error('NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set')
+      throw new Error(
+        'NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set',
+      );
     }
 
     // const transport = http(rpcUrl);
-    const transport = custom(provider!)
+    const transport = custom(provider!);
     const client = createPublicClient({ transport });
     const wallet = createWalletClient({
-      transport, account: provider?.selectedAddress! as `0x{string}`,
+      transport,
+      account: provider?.selectedAddress! as `0x{string}`,
     });
     try {
-      const balance = await client.getBalance({ address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E' });
+      const balance = await client.getBalance({
+        address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E',
+      });
       console.debug('balance', balance);
 
       const chainId = await client.getChainId();
@@ -226,8 +264,8 @@ export default function Home() {
       let text = await contract.read.ping();
       console.debug('ping', text);
 
-      const nextValue = `now: ${Date.now()}`
-      console.debug(`Set new contract value to: `, nextValue)
+      const nextValue = `now: ${Date.now()}`;
+      console.debug(`Set new contract value to: `, nextValue);
       const trxHash = await contract.write.set([nextValue], {
         account: provider?.selectedAddress!,
         chain: { id: parseInt(provider?.chainId!) },
@@ -235,28 +273,36 @@ export default function Home() {
 
       console.debug(`Wait for trx to complete...`);
       // Wait for transaction to be mined
-      const trx = await client.waitForTransactionReceipt({ hash: trxHash, confirmations: 1 });
+      const trx = await client.waitForTransactionReceipt({
+        hash: trxHash,
+        confirmations: 1,
+      });
 
       console.debug(`Check result...`);
       text = await contract.read.ping();
       const success = text === nextValue;
-      console.debug(`Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `, text);
+      console.debug(
+        `Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `,
+        text,
+      );
     } catch (error) {
       console.error('Error pinging Viem:', error);
     }
-  }
+  };
 
   const testEthers = async () => {
-    const web3Provider = new ethers.providers.Web3Provider(sdk?.getProvider()! as any)
+    const web3Provider = new ethers.providers.Web3Provider(
+      sdk?.getProvider()! as any,
+    );
     const signer = web3Provider.getSigner();
     console.debug(`signer`, signer);
 
     // const addr = await signer.getAddress();
     // console.log('addr', addr);
 
-    const msg = await signer.signMessage('hello world')
+    const msg = await signer.signMessage('hello world');
     console.debug(`msg`, msg);
-  }
+  };
 
   const testPayload = async () => {
     // const res = await provider?.request({
@@ -277,54 +323,64 @@ export default function Home() {
     //   ]
     // })
     // console.log(`res`, res);
-    checkBalances()
-  }
+    checkBalances();
+  };
 
   const checkBalances = async () => {
-    const acc1 = `0x8e0E30e296961f476E01184274Ce85ae60184CB0`
+    const acc1 = `0x8e0E30e296961f476E01184274Ce85ae60184CB0`;
     const acc2 = `0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E`;
-    const b1 = await provider?.request({ method: 'eth_getBalance', params: [acc1, "latest"] })
-    const b2 = await provider?.request({ method: 'eth_getBalance', params: [acc2, "latest"] })
+    const b1 = await provider?.request({
+      method: 'eth_getBalance',
+      params: [acc1, 'latest'],
+    });
+    const b2 = await provider?.request({
+      method: 'eth_getBalance',
+      params: [acc2, 'latest'],
+    });
 
     console.log(`balances`, {
       network: chainId,
       balances: {
         account: b1,
-        acc2: b2
-      }
-    })
-  }
+        acc2: b2,
+      },
+    });
+  };
 
   const testReadOnlyCalls = async () => {
-    const chain = await provider?.request({ method: 'eth_chainId', params: [] })
+    const chain = await provider?.request({
+      method: 'eth_chainId',
+      params: [],
+    });
     console.log(`chain`, chain);
 
-    const accounts = await provider?.request({ method: 'eth_accounts', params: [] })
+    const accounts = await provider?.request({
+      method: 'eth_accounts',
+      params: [],
+    });
     console.log(`accounts`, accounts);
 
     await checkBalances();
-  }
+  };
 
   const addGanache = async () => {
     const res = await provider?.request({
-      "method": "wallet_addEthereumChain",
-      "params": [
+      method: 'wallet_addEthereumChain',
+      params: [
         {
-          "chainId": "0x539",
-          "chainName": "Ganache Dev",
-          "nativeCurrency": {
-            "name": "Ethereum",
-            "symbol": "ETH",
-            "decimals": 18
+          chainId: '0x539',
+          chainName: 'Ganache Dev',
+          nativeCurrency: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
           },
-          "rpcUrls": [
-            process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''
-          ]
-        }
-      ]
-    })
+          rpcUrls: [process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''],
+        },
+      ],
+    });
     console.log(`res`, res);
-  }
+  };
 
   return (
     <>
@@ -338,6 +394,21 @@ export default function Home() {
         <Link href={'uikit'}>UI Kit demo</Link>
       </header>
       <main>
+        <div className="language-dropdown">
+          <label htmlFor="language-select">Language: </label>
+          <select
+            id="language-select"
+            value={currentLanguage}
+            onChange={handleLanguageChange}
+          >
+            {languages.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {connecting && (
           <div>Waiting for Metamask to link the connection...</div>
         )}
@@ -362,10 +433,7 @@ export default function Home() {
               ping (ethers)
             </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={interactViem}
-            >
+            <button style={{ padding: 10, margin: 10 }} onClick={interactViem}>
               ping (viem)
             </button>
 
@@ -376,17 +444,11 @@ export default function Home() {
               eth_signTypedData_v4
             </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={testPayload}
-            >
+            <button style={{ padding: 10, margin: 10 }} onClick={testPayload}>
               testPayload
             </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={testEthers}
-            >
+            <button style={{ padding: 10, margin: 10 }} onClick={testEthers}>
               testEthers
             </button>
 
@@ -397,17 +459,17 @@ export default function Home() {
               sendTransaction
             </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={addGanache}
-            >
+            <button style={{ padding: 10, margin: 10 }} onClick={addGanache}>
               Add Local Ganache Chain
             </button>
 
             <button
               style={{ padding: 10, margin: 10 }}
               onClick={async () => {
-                await provider?.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0xe704' }] })
+                await provider?.request({
+                  method: 'wallet_switchEthereumChain',
+                  params: [{ chainId: '0xe704' }],
+                });
               }}
             >
               Switch to linea
@@ -416,22 +478,26 @@ export default function Home() {
             <button
               style={{ padding: 10, margin: 10 }}
               onClick={async () => {
-                await provider?.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x1' }] })
+                await provider?.request({
+                  method: 'wallet_switchEthereumChain',
+                  params: [{ chainId: '0x1' }],
+                });
               }}
             >
               Switch to mainnet
             </button>
           </div>
-        )
-        }
-        {connecting && <>
-          <div>Connecting...</div>
-          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-            Connect
-          </button>
-        </>}
+        )}
+        {connecting && (
+          <>
+            <div>Connecting...</div>
+            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+              Connect
+            </button>
+          </>
+        )}
 
-        {!connecting && readOnlyCalls &&
+        {!connecting && readOnlyCalls && (
           <div>
             <button
               style={{ padding: 10, margin: 10 }}
@@ -440,7 +506,7 @@ export default function Home() {
               testReadOnlyCalls
             </button>
           </div>
-        }
+        )}
 
         {!connecting && !connected && (
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>

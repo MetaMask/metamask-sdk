@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
-
 import { Dialog, Transition } from '@headlessui/react';
+import MetaMaskSDK from '@metamask/sdk';
+import React, { Fragment, useState } from 'react';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
-import { Fragment } from 'react';
-import IconNetwork from './IconNetwork';
-import { getBalance, truncatedAddress } from './utils';
+import { Chain } from 'wagmi';
 import {
+  useAccount,
+  useBalance,
   useDisconnect,
   useNetwork,
   useSwitchOrAddNetwork,
-  useAccount,
-  useBalance,
 } from '../hooks/MetaMaskWagmiHooks';
-import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Chain } from 'wagmi';
+import IconNetwork from './IconNetwork';
+import { getBalance, truncatedAddress } from './utils';
 
 export default function Modal({
   isOpen,
   setIsOpen,
+  t,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
+  t: typeof MetaMaskSDK.prototype.i18nInstance.t;
 }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
@@ -56,13 +57,15 @@ export default function Modal({
         onClick={() => changeNetwork(chainToRender)}
       >
         <div
-          className={`text-sm p-2 ${chainToRender.id === chain?.id && 'bg-blue-50'
-            } flex rounded`}
+          className={`text-sm p-2 ${
+            chainToRender.id === chain?.id && 'bg-blue-50'
+          } flex rounded`}
         >
           <div
             style={{ width: 4, height: 48 }}
-            className={`${chainToRender.id === chain?.id && 'bg-blue-500'
-              } rounded mr-2`}
+            className={`${
+              chainToRender.id === chain?.id && 'bg-blue-500'
+            } rounded mr-2`}
           ></div>
           <div className="grid content-center justify-center text-lg font-semibold">
             <div className="flex">
@@ -162,7 +165,7 @@ export default function Modal({
                       <div className="text-2xl font-bold mt-2 flex text-center content-center justify-center">
                         {copied ? (
                           <div className="text-lg text-blue-500 grid content-center justify-center">
-                            Address copied to clipboard!
+                            {t('META_MASK_MODAL.ADDRESS_COPIED')}
                           </div>
                         ) : (
                           address && (
@@ -210,11 +213,15 @@ export default function Modal({
                             fill="#037DD6"
                           />
                         </svg>
-                        <span className="ml-1">Disconnect</span>
+                        <span className="ml-1">
+                          {t('META_MASK_MODAL.DISCONNECT')}
+                        </span>
                       </button>
                     </div>
                   </div>
-                  <div className="text-sm font-bold	mt-6">Active network</div>
+                  <div className="text-sm font-bold	mt-6">
+                    {t('META_MASK_MODAL.ACTIVE_NETWORK')}
+                  </div>
                   <div className="mt-4">{getNetworks()}</div>
                 </Dialog.Panel>
               </Transition.Child>

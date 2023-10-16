@@ -4,6 +4,7 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
+import { createInstance, i18n } from 'i18next';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import { SDKProvider } from './provider/SDKProvider';
@@ -14,6 +15,7 @@ import {
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
   RemoteConnection,
   RemoteConnectionProps,
@@ -21,7 +23,6 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -149,6 +150,14 @@ export interface MetaMaskSDKOptions {
    * A string to track external integrations (e.g. wagmi).
    */
   _source?: string;
+
+  /*
+   * Options for enabling i18n multi-language support on the SDK.
+   */
+  i18nOptions?: {
+    debug?: boolean;
+    enabled?: boolean;
+  };
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -180,6 +189,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public defaultReadOnlyChainId = `0x1`;
 
+  public i18nInstance: i18n = createInstance();
+
+  public availableLanguages: string[] = ['en'];
+
   constructor(
     options: MetaMaskSDKOptions = {
       storage: {
@@ -192,6 +205,9 @@ export class MetaMaskSDK extends EventEmitter2 {
       dappMetadata: {
         name: '',
         url: '',
+      },
+      i18nOptions: {
+        enabled: false,
       },
     },
   ) {

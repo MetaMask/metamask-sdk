@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0]
+### Added
+- feat: implementing internationalization via i18next package ([#403](https://github.com/MetaMask/metamask-sdk/pull/403))
+- feat: automatically compute account balance and return from sdk-react ([#400](https://github.com/MetaMask/metamask-sdk/pull/400))
+
 ## [0.8.0]
 ### Added
 - feat: update account and chain values in sdk hook on extension ([#386](https://github.com/MetaMask/metamask-sdk/pull/386))
@@ -50,7 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...HEAD
+[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0
 [0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...v0.6.2
