@@ -62,15 +62,15 @@ export const App = () => {
     connecting,
     provider,
     chainId,
+    balance,
+    account,
     status: serviceStatus,
   } = useSDK();
-  const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>('');
 
   const connect = async () => {
     try {
-      const accounts = (await sdk?.connect()) as string[];
-      setAccount(accounts?.[0]);
+      await sdk?.connect();
     } catch (err) {
       console.warn(`failed to connect..`, err);
     }
@@ -352,17 +352,11 @@ export const App = () => {
         Terminate
       </button>
 
-      {connected && (
-        <div>
-          <>
-            {chainId && `Connected chain: ${chainId}`}
-            <p></p>
-            {account && `Connected account: ${account}`}
-            <p></p>
-            {response && `Last request response: ${response}`}
-          </>
-        </div>
-      )}
+      <p>{`Connected chain: ${chainId}`}</p>
+      <p>{`Connected account: ${account}`}</p>
+      <p>{`Account balance: ${balance}`}</p>
+      <p>{`Last request response: ${response}`}</p>
+      <p>{`Connected: ${connected}`}</p>
     </div>
   );
 };
