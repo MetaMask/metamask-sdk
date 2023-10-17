@@ -23,6 +23,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -268,6 +269,12 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   async connect() {
     return connect(this);
+  }
+
+  // WARNING: This method only works for MetaMask Mobile v7.10+. It will throw an error otherwise.
+  // msg can be a simple string or ABNF RFC 5234 compliant string.
+  async connectAndSign({ msg }: { msg: string }) {
+    return connectAndSign({ instance: this, msg });
   }
 
   resume() {

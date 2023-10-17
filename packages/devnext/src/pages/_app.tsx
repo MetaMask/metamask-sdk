@@ -31,7 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
           url: 'http://devnext.fakeurl.com',
         },
         i18nOptions: {
-          enabled: false,
+          enabled: true,
         },
       }}
     >

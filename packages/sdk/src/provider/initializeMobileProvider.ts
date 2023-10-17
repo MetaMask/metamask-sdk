@@ -146,6 +146,11 @@ const initializeMobileProvider = ({
       return chainId;
     }
 
+    const ALLOWED_CONNECT_METHODS = [
+      RPC_METHODS.ETH_REQUESTACCOUNTS,
+      RPC_METHODS.METAMASK_CONNECTSIGN,
+    ];
+
     // is it a readonly method with infura supported chain?
     const isReadOnlyMethod = !METHODS_TO_REDIRECT[method];
     const rpcEndpoint = sdk.options.readonlyRPCMap?.[chainId as `0x${string}`];
@@ -180,7 +185,7 @@ const initializeMobileProvider = ({
       method !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
     ) {
       if (
-        method === RPC_METHODS.ETH_REQUESTACCOUNTS ||
+        ALLOWED_CONNECT_METHODS.indexOf(method) !== -1 ||
         checkInstallationOnAllCalls
       ) {
         setInitializing(true);
@@ -199,6 +204,25 @@ const initializeMobileProvider = ({
                 `initializeProvider extension provider detect: re-create ${method} on the active provider`,
               );
             }
+
+            // Special case for metamask_connectSign, split the request in 2 parts (connect + sign)
+            if (method === RPC_METHODS.METAMASK_CONNECTSIGN) {
+              const [temp] = args;
+              const { params } = temp;
+              const accounts = (await sdk.getProvider()?.request({
+                method: RPC_METHODS.ETH_REQUESTACCOUNTS,
+                params: [],
+              })) as string[];
+              if (!accounts.length) {
+                throw new Error(`SDK state invalid -- undefined accounts`);
+              }
+
+              return await sdk.getProvider()?.request({
+                method: RPC_METHODS.PERSONAL_SIGN,
+                params: [params[0], accounts[0]],
+              });
+            }
+
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
               method,
@@ -271,6 +295,7 @@ const initializeMobileProvider = ({
             `initializeProvider::sendRequest() EXTENSION active - redirect request '${method}' to it`,
           );
         }
+
         // redirect to extension
         return await sdk.getProvider()?.request({
           method,
