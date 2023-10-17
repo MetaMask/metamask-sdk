@@ -113,7 +113,6 @@ const MetaMaskProviderClient = ({
 
   useEffect(() => {
     if (account) {
-      if (debug) {
         // Retrieve balance of account
         sdk
           ?.getProvider()
@@ -121,7 +120,7 @@ const MetaMaskProviderClient = ({
             method: 'eth_getBalance',
             params: [account, 'latest'],
           })
-          .then((accountBalance) => {
+          .then((accountBalance: unknown) => {
             if (debug) {
               console.debug(
                 `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
@@ -136,7 +135,6 @@ const MetaMaskProviderClient = ({
               err,
             );
           });
-      }
     } else {
       setBalance(undefined);
     }
