@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.10.0]
-### Uncategorized
+### Added
 - feat: connectAndSign feature ([#410](https://github.com/MetaMask/metamask-sdk/pull/410))
 
 ## [0.9.0]
