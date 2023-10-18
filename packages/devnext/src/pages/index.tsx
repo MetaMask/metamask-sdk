@@ -59,6 +59,17 @@ export default function Home() {
     }
   };
 
+  const connectAndSign = async () => {
+    try {
+      const hexResponse = await sdk?.connectAndSign({msg: 'hello world'});
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connectAndSign response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('request accounts ERR', err);
+    }
+  };
+
   const sendTransaction = async () => {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
@@ -494,6 +505,9 @@ export default function Home() {
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Connect
             </button>
+            <button style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+              Connect And Sign
+            </button>
           </>
         )}
 
@@ -509,9 +523,14 @@ export default function Home() {
         )}
 
         {!connecting && !connected && (
-          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-            Connect
-          </button>
+          <div>
+            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+              Connect
+            </button>
+            <button style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+              Connect And Sign
+            </button>
+          </div>
         )}
 
         <button
