@@ -230,6 +230,10 @@ export class KeyExchange extends EventEmitter2 {
     }
   }
 
+  setKeysExchanged(keysExchanged: boolean) {
+    this.keysExchanged = keysExchanged;
+  }
+
   areKeysExchanged() {
     return this.keysExchanged;
   }
