@@ -12,6 +12,7 @@ const packageJson = require('./package.json');
 
 const listDepForRollup = ['@react-native-async-storage/async-storage'];
 const webExternalDeps = [...listDepForRollup, 'qrcode-terminal'];
+const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal'];
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -60,7 +61,7 @@ const config = [
     ],
   },
   {
-    external: listDepForRollup,
+    external: rnExternalDeps,
     input: 'src/index.ts',
     output: [
       {
