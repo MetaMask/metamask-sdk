@@ -11,13 +11,14 @@ import globals from 'rollup-plugin-node-globals';
 const packageJson = require('./package.json');
 
 const listDepForRollup = ['@react-native-async-storage/async-storage'];
+const webExternalDeps = [...listDepForRollup, 'qrcode-terminal'];
 
 /**
  * @type {import('rollup').RollupOptions}
  */
 const config = [
   {
-    external: listDepForRollup,
+    external: webExternalDeps,
     input: 'src/index.ts',
     output: [
       {
