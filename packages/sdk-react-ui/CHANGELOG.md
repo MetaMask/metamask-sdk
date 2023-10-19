@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0]
+### Uncategorized
+- Force align package version to sdk
+
 ## [0.9.0]
 ### Added
 - feat: implementing internationalization via i18next package ([#403](https://github.com/MetaMask/metamask-sdk/pull/403))
@@ -32,7 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...HEAD
+[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0

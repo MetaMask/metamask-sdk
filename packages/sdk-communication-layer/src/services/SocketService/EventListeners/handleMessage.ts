@@ -112,7 +112,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
         instance.state.keyExchange?.decryptMessage(message);
         canDecrypt = true;
       } catch (err) {
-        return;
+        // Ignore error.
       }
 
       if (canDecrypt) {
@@ -150,7 +150,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
     const decryptedMessage =
       instance.state.keyExchange?.decryptMessage(message);
-    const messageReceived = JSON.parse(decryptedMessage ?? '');
+    const messageReceived = JSON.parse(decryptedMessage ?? '{}');
 
     if (messageReceived?.type === MessageType.PAUSE) {
       /**
