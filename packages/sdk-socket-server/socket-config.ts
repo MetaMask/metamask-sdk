@@ -4,7 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import {
   rateLimiter,
-  rateLimiterMesssage,
+  rateLimiterMessage,
   resetRateLimits,
   increaseRateLimits,
   setLastConnectionErrorTimestamp,
@@ -62,7 +62,7 @@ export default (server: HTTPServer): Server => {
         return socket.emit(`channel_created-${id}`, id);
       } catch (error) {
         setLastConnectionErrorTimestamp(Date.now());
-        increaseRateLimits(90, 0);
+        increaseRateLimits(90);
         console.error('ERROR> Error on create_channel:', error);
         // emit an error message back to the client, if appropriate
         return socket.emit(`error`, { error: (error as Error).message });
@@ -86,7 +86,7 @@ export default (server: HTTPServer): Server => {
         console.log(`INFO> message' ${isMobile ? ' mobile' : ''}`);
 
         try {
-          await rateLimiterMesssage.consume(socket.handshake.address);
+          await rateLimiterMessage.consume(socket.handshake.address);
 
           if (isDevelopment) {
             // Minify encrypted message for easier readibility
@@ -117,7 +117,7 @@ export default (server: HTTPServer): Server => {
           return socket.to(id).emit(`message-${id}`, { id, message });
         } catch (error) {
           setLastConnectionErrorTimestamp(Date.now());
-          increaseRateLimits(90, 0);
+          increaseRateLimits(90);
           console.error(`ERROR> Error on message: ${error}`);
           // emit an error message back to the client, if appropriate
           return socket.emit(`message-${id}`, {
@@ -141,7 +141,7 @@ export default (server: HTTPServer): Server => {
         console.log('INFO> ping');
 
         try {
-          await rateLimiterMesssage.consume(socket.handshake.address);
+          await rateLimiterMessage.consume(socket.handshake.address);
 
           if (isDevelopment) {
             console.log(`DEBUG> ping-${id} -> `, { id, context, message });
