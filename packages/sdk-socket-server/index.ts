@@ -1,12 +1,11 @@
-/* eslint-disable node/no-process-env */
-require('dotenv').config();
-const http = require('http');
+import http from 'http';
+import dotenv from 'dotenv';
+import { app, analytics } from './api-config';
+import configureSocketIO from './socket-config';
+import { cleanupAndExit } from './utils';
 
-const { app, analytics } = require('./api-config');
-const configureSocketIO = require('./socket-config');
-const { cleanupAndExit } = require('./utils');
-
-const isDevelopment = process.env.NODE_ENV === 'development';
+dotenv.config();
+const isDevelopment: boolean = process.env.NODE_ENV === 'development';
 
 const server = http.createServer(app);
 configureSocketIO(server); // configure socket.io server
@@ -17,7 +16,7 @@ console.log('INFO> isDevelopment?', isDevelopment);
 process.on('SIGINT', () => cleanupAndExit(server, analytics));
 process.on('SIGTERM', () => cleanupAndExit(server, analytics));
 
-const port = process.env.port || 4000;
+const port: number = Number(process.env.port) || 4000;
 server.listen(port, () => {
   console.log(`INFO> listening on *:${port}`);
 });
