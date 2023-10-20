@@ -5017,6 +5017,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": ^2.3.0
+    "@types/analytics-node": ^3.1.13
     "@types/body-parser": ^1.19.4
     "@types/cors": ^2.8.15
     "@types/dotenv": ^8.2.0
@@ -7121,6 +7122,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 590b7580570534a640510c071e09074cf63b5958b237a728f94322567350aea4d239f8a9d897a12b15c856b992ee4d7907e9812bb079886af2c00714e7fb3f60
+  languageName: node
+  linkType: hard
+
+"@types/analytics-node@npm:^3.1.13":
+  version: 3.1.13
+  resolution: "@types/analytics-node@npm:3.1.13"
+  checksum: c8c4fbfd8389dbe5c72a95fbf873d67a56818656f22a2179152f24f59e57a015bc2f1d3e932e23c8875620844ccb6b8efbc8cc6f6ae575a9e5709a535f67020d
   languageName: node
   linkType: hard
 
