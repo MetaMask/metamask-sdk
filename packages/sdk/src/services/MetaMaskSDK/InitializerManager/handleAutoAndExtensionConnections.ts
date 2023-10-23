@@ -29,7 +29,7 @@ export async function handleAutoAndExtensionConnections(
       );
     }
 
-    instance.analytics?.send({ event: TrackingEvents.SDK_USE_UTILIZED });
+    instance.analytics?.send({ event: TrackingEvents.SDK_EXTENSION_UTILIZED });
 
     connectWithExtensionProvider(instance).catch((_err) => {
       console.warn(`Can't connect with MetaMask extension...`);

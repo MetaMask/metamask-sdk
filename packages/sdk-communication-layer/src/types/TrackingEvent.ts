@@ -9,6 +9,6 @@ export enum TrackingEvents {
   TERMINATED = 'sdk_connection_terminated',
   DISCONNECTED = 'sdk_disconnected',
   SDK_USE_EXTENSION = 'sdk_use_extension',
-  SDK_USE_UTILIZED = 'sdk_extension_utilized',
+  SDK_EXTENSION_UTILIZED = 'sdk_extension_utilized',
   SDK_USE_INAPP_BROWSER = 'sdk_use_inapp_browser',
 }
