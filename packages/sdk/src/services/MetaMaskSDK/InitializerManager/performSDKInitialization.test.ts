@@ -38,7 +38,7 @@ describe('performSDKInitialization', () => {
     mockSetupExtensionPreferencesReturnValue = {
       shouldReturn: false,
       preferExtension: false,
-      metamaskBrowserExtension: null,
+      metamaskBrowserExtension: undefined,
     };
 
     mockSetupExtensionPreferences.mockImplementation(() => {

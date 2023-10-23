@@ -1,9 +1,9 @@
-import { BaseProvider } from '@metamask/providers';
+import { SDKProvider } from '../provider/SDKProvider';
 import {
   EIP6963EventNames,
-  eip6963RequestProvider,
-  EIP6963ProviderInfo,
   EIP6963ProviderDetail,
+  EIP6963ProviderInfo,
+  eip6963RequestProvider,
 } from './eip6963RequestProvider';
 
 describe('eip6963RequestProvider', () => {
@@ -33,7 +33,7 @@ describe('eip6963RequestProvider', () => {
   });
 
   it('should resolve with valid provider', async () => {
-    const mockProvider: BaseProvider = {} as BaseProvider;
+    const mockProvider: SDKProvider = {} as SDKProvider;
     const mockInfo: EIP6963ProviderInfo = {
       uuid: 'test-uuid',
       name: 'MetaMask Main',
