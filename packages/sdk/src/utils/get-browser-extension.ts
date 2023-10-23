@@ -1,4 +1,6 @@
-export function getBrowserExtension({
+import { eip6963RequestProvider } from './eip6963RequestProvider';
+
+export async function getBrowserExtension({
   mustBeMetaMask,
 }: {
   mustBeMetaMask: boolean;
@@ -7,30 +9,36 @@ export function getBrowserExtension({
     throw new Error(`window not available`);
   }
 
-  const { ethereum } = window as { ethereum: any };
+  try {
+    const baseProvider = await eip6963RequestProvider();
 
-  if (!ethereum) {
-    throw new Error('Ethereum not found in window object');
-  }
+    return baseProvider;
+  } catch (e) {
+    const { ethereum } = window as { ethereum: any };
 
-  // The `providers` field is populated when CoinBase Wallet extension is also installed
-  // The expected object is an array of providers, the MetaMask provider is inside
-  // See https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider-guidance for
-  if (Array.isArray(ethereum.providers)) {
-    const provider = mustBeMetaMask
-      ? ethereum.providers.find((p: any) => p.isMetaMask)
-      : ethereum.providers[0];
-
-    if (!provider) {
-      throw new Error('No suitable provider found');
+    if (!ethereum) {
+      throw new Error('Ethereum not found in window object');
     }
 
-    return provider;
-  }
+    // The `providers` field is populated when CoinBase Wallet extension is also installed
+    // The expected object is an array of providers, the MetaMask provider is inside
+    // See https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider-guidance for
+    if (Array.isArray(ethereum.providers)) {
+      const provider = mustBeMetaMask
+        ? ethereum.providers.find((p: any) => p.isMetaMask)
+        : ethereum.providers[0];
 
-  if (mustBeMetaMask && !ethereum.isMetaMask) {
-    throw new Error('MetaMask provider not found in Ethereum');
-  }
+      if (!provider) {
+        throw new Error('No suitable provider found');
+      }
 
-  return ethereum;
+      return provider;
+    }
+
+    if (mustBeMetaMask && !ethereum.isMetaMask) {
+      throw new Error('MetaMask provider not found in Ethereum');
+    }
+
+    return ethereum;
+  }
 }
