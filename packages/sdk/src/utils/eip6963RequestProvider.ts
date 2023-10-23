@@ -1,4 +1,4 @@
-import { BaseProvider } from '@metamask/providers';
+import { SDKProvider } from '../provider/SDKProvider';
 
 export enum EIP6963EventNames {
   Announce = 'eip6963:announceProvider',
@@ -14,7 +14,7 @@ export interface EIP6963ProviderInfo {
 
 export interface EIP6963ProviderDetail {
   info: EIP6963ProviderInfo;
-  provider: BaseProvider;
+  provider: SDKProvider;
 }
 
 export type EIP6963AnnounceProviderEvent = CustomEvent & {
@@ -22,7 +22,7 @@ export type EIP6963AnnounceProviderEvent = CustomEvent & {
   detail: EIP6963ProviderDetail;
 };
 
-export function eip6963RequestProvider(): Promise<BaseProvider> {
+export function eip6963RequestProvider(): Promise<SDKProvider> {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error('eip6963RequestProvider timed out'));
