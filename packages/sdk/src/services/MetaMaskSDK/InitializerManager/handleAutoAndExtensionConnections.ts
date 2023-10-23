@@ -1,3 +1,4 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
@@ -27,6 +28,8 @@ export async function handleAutoAndExtensionConnections(
         `SDK::performSDKInitialization) preferExtension is detected -- connect with it.`,
       );
     }
+
+    instance.analytics?.send({ event: TrackingEvents.SDK_USE_UTILIZED });
 
     connectWithExtensionProvider(instance).catch((_err) => {
       console.warn(`Can't connect with MetaMask extension...`);
