@@ -1,7 +1,7 @@
 import { blockedDomainCheck } from './blockedDomainCheck';
+import { doctypeCheck } from './doctypeCheck';
 import { documentElementCheck } from './documentElementCheck';
 import { suffixCheck } from './suffixCheck';
-import { doctypeCheck } from './doctypeCheck';
 
 export const shouldInjectProvider = () => {
   if (
