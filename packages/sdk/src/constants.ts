@@ -17,5 +17,8 @@ export const METAMASK_EIP_6369_PROVIDER_INFO = {
   RDNS: 'io.metamask',
 };
 
+export const UUID_V4_REGEX =
+  /(?:^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12}$)|(?:^0{8}-0{4}-0{4}-0{4}-0{12}$)/u;
+
 export const ONE_MINUTE_IN_MS = 60 * 1000;
 export const ONE_HOUR_IN_MS = ONE_MINUTE_IN_MS * 60;

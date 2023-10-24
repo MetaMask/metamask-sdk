@@ -1,4 +1,4 @@
-import { METAMASK_EIP_6369_PROVIDER_INFO } from '../constants';
+import { METAMASK_EIP_6369_PROVIDER_INFO, UUID_V4_REGEX } from '../constants';
 import { SDKProvider } from '../provider/SDKProvider';
 
 export enum EIP6963EventNames {
@@ -37,11 +37,12 @@ export function eip6963RequestProvider(): Promise<SDKProvider> {
 
         const { detail: { info, provider } = {} } = event;
 
-        const { name: providerName, rdns: providerRdns } = info ?? {};
+        const { name, rdns, uuid } = info ?? {};
 
         const isValid =
-          providerName === METAMASK_EIP_6369_PROVIDER_INFO.NAME &&
-          providerRdns === METAMASK_EIP_6369_PROVIDER_INFO.RDNS;
+          UUID_V4_REGEX.test(uuid) &&
+          name === METAMASK_EIP_6369_PROVIDER_INFO.NAME &&
+          rdns === METAMASK_EIP_6369_PROVIDER_INFO.RDNS;
 
         if (isValid) {
           clearTimeout(timeoutId);
