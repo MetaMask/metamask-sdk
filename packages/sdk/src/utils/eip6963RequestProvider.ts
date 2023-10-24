@@ -1,3 +1,4 @@
+import { METAMASK_EIP_6369_PROVIDER_INFO } from '../constants';
 import { SDKProvider } from '../provider/SDKProvider';
 
 export enum EIP6963EventNames {
@@ -38,10 +39,11 @@ export function eip6963RequestProvider(): Promise<SDKProvider> {
 
         const { name: providerName, rdns: providerRdns } = info ?? {};
 
-        const isNameValid = providerName === 'MetaMask Main';
-        const isRdnsValid = providerRdns === 'io.metamask';
+        const isValid =
+          providerName === METAMASK_EIP_6369_PROVIDER_INFO.NAME &&
+          providerRdns === METAMASK_EIP_6369_PROVIDER_INFO.RDNS;
 
-        if (isNameValid || isRdnsValid) {
+        if (isValid) {
           clearTimeout(timeoutId);
 
           resolve(provider);
