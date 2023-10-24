@@ -2,7 +2,7 @@
 module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
   corePlugins: {
-    preflight: false,
+    preflight: false, // disable to prevent conflict with dapps css
   },
   theme: {
     extend: {
