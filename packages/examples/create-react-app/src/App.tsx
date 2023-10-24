@@ -177,24 +177,37 @@ export const App = () => {
 
       {connected ? (
         <div>
-          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
             Request Accounts
           </button>
 
-          <button style={{ padding: 10, margin: 10 }} onClick={eth_signTypedData_v4}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={eth_signTypedData_v4}
+          >
             eth_signTypedData_v4
           </button>
 
-          <button style={{ padding: 10, margin: 10 }} onClick={eth_personal_sign}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={eth_personal_sign}
+          >
             personal_sign
           </button>
 
-          <button style={{ padding: 10, margin: 10 }} onClick={sendTransaction}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={sendTransaction}
+          >
             Send transaction
           </button>
 
           { provider?.chainId === '0x1' ? (
             <button
+              className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}
               onClick={() => changeNetwork('0x5')}
             >
@@ -202,6 +215,7 @@ export const App = () => {
             </button>
           ) : (
             <button
+              className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}
               onClick={() => changeNetwork('0x1')}
             >
@@ -210,20 +224,23 @@ export const App = () => {
           )}
 
           <button
+            className={'Button-Normal'}
             style={{ padding: 10, margin: 10 }}
             onClick={() => changeNetwork('0x89')}
           >
-            Switch Polygon
+            Switch to Polygon
           </button>
 
           <button
+            className={'Button-Normal'}
             style={{ padding: 10, margin: 10 }}
             onClick={addEthereumChain}
           >
-            Add ethereum chain
+            Add Polygon Chain
           </button>
 
           <button
+            className={'Button-Normal'}
             style={{ padding: 10, margin: 10 }}
             onClick={readOnlyCalls}
           >
@@ -232,17 +249,18 @@ export const App = () => {
         </div>
       ) : (
         <div>
-          <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
             Connect
           </button>
-          <button style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
             Connect w/ Sign
           </button>
         </div>
       )}
 
       <button
-        style={{ padding: 10, margin: 10, backgroundColor: 'red' }}
+        className={'Button-Danger'}
+        style={{ padding: 10, margin: 10 }}
         onClick={terminate}
       >
         Terminate
