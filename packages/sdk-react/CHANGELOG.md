@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1]
+### Uncategorized
+- chore: align version number with sdk
+
 ## [0.10.0]
 ### Added
 - fix: balance only display when debug is set ([#408](https://github.com/MetaMask/metamask-sdk/pull/408))
@@ -60,7 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...HEAD
+[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
 [0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
