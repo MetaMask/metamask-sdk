@@ -34,8 +34,6 @@ export function eip6963RequestProvider(): Promise<SDKProvider> {
         const event =
           eip6963AnnounceProviderEvent as EIP6963AnnounceProviderEvent;
 
-        clearTimeout(timeoutId);
-
         const { detail: { info, provider } = {} } = event;
 
         const { name: providerName, rdns: providerRdns } = info ?? {};
@@ -44,6 +42,8 @@ export function eip6963RequestProvider(): Promise<SDKProvider> {
         const isRdnsValid = providerRdns === 'io.metamask';
 
         if (isNameValid || isRdnsValid) {
+          clearTimeout(timeoutId);
+
           resolve(provider);
         }
       },
