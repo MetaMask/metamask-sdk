@@ -74,27 +74,29 @@ const msgParams = {
   },
 };
 
-const start = async () => {
+const start = async (startType) => {
   console.debug(`start NodeJS example`);
 
-  const accounts = await sdk.connect();
-
-  console.log('connect request accounts', accounts);
+  if (startType === 'connect') {
+    const accounts = await sdk.connect();
+    console.log('connect request accounts', accounts);
+  } else {
+    const hexSign = await sdk.connectAndSign({msg: "Hello from the NodeJS Example!"})
+    console.log('connect and sign', hexSign);
+  }
 
   const ethereum = sdk.getProvider();
 
-  ethereum.on('_initialized', async () => {
-    const from = accounts?.[0];
-
-    const signResponse = await ethereum.request({
-      method: 'eth_signTypedData_v3',
-      params: [from, JSON.stringify(msgParams)],
-    });
-
-    console.log('sign response', signResponse);
+  const signResponse = await ethereum.request({
+    method: 'eth_signTypedData_v3',
+    params: [ethereum.selectedAddress, JSON.stringify(msgParams)],
   });
+
+  console.log('eth_signTypedData_v3 response', signResponse);
 };
 
-start().catch((err) => {
+const startType = process.argv[2];
+
+start(startType).catch((err) => {
   console.error(err);
 });
