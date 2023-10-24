@@ -35,7 +35,7 @@ describe('eip6963RequestProvider', () => {
   it('should resolve with valid provider', async () => {
     const mockProvider: SDKProvider = {} as SDKProvider;
     const mockInfo: EIP6963ProviderInfo = {
-      uuid: 'test-uuid',
+      uuid: 'a1d2c588-106f-4d05-958d-5e7d6c57c822',
       name: 'MetaMask Main',
       icon: 'icon-path',
       rdns: 'io.metamask',
