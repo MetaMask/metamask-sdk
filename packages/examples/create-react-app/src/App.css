@@ -7,6 +7,16 @@
   pointer-events: none;
 }
 
+.Info-Status {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  border: 1px solid blueviolet;
+  background-color: aliceblue;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
