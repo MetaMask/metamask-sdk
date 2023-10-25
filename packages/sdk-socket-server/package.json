@@ -76,24 +76,6 @@
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.2.2"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": [
-        "ts-jest",
-        {}
-      ]
-    },
-    "testMatch": [
-      "**/*.test.(ts|tsx|js)"
-    ]
-  },
   "lavamoat": {
     "allowScripts": {
       "socket.io>engine.io>ws>bufferutil": false,
