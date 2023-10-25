@@ -41,22 +41,20 @@ export async function handleAutoAndExtensionConnections(
       } = remoteConnection;
 
       const originatorInfo = connector?.state.originatorInfo ?? {};
-      const communicationServerUrl = connector?.state.communicationServerUrl;
+      const communicationServerUrl = '';
 
-      if (communicationServerUrl) {
-        const analyticsData = {
-          id: ANALYTICS_CONSTANTS.DEFAULT_ID,
-          event: TrackingEvents.SDK_EXTENSION_UTILIZED,
-          ...originatorInfo,
-          commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
-        };
+      const analyticsData = {
+        id: ANALYTICS_CONSTANTS.DEFAULT_ID,
+        event: TrackingEvents.SDK_EXTENSION_UTILIZED,
+        ...originatorInfo,
+        commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
+      };
 
-        SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
-          console.warn(
-            `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
-          );
-        });
-      }
+      SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
+        console.warn(
+          `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
+        );
+      });
     }
 
     connectWithExtensionProvider(instance).catch((_err) => {
