@@ -8,13 +8,13 @@ describe('Socket Config', () => {
   let ioServer: IoServer;
   let clientSocket: Socket;
   let logSpy: jest.SpyInstance;
+  let errorSpy: jest.SpyInstance;
 
   beforeEach(async () => {
-    // make this async
     logSpy = jest.spyOn(console, 'log').mockImplementation();
+    errorSpy = jest.spyOn(console, 'error').mockImplementation();
     httpServer = new HTTPServer();
 
-    // Promisify the httpServer.listen call
     await new Promise<void>((resolve) => {
       httpServer.listen(() => {
         const { port } = httpServer.address() as { port: number };
@@ -30,17 +30,8 @@ describe('Socket Config', () => {
     clientSocket.close();
     httpServer.close();
     logSpy.mockRestore();
+    errorSpy.mockRestore();
   });
-
-  // it('should log "INFO> connection" on connection', (done) => {
-  //   clientSocket.on('connect', () => {
-  //     // Wait for a small delay to ensure the server has processed the connection
-  //     setTimeout(() => {
-  //       expect(logSpy).toHaveBeenCalledWith('INFO> connection');
-  //       done(); // call done to signify the end of the test
-  //     }, 100); // Adjust the delay as needed
-  //   });
-  // });
 
   it('should log "INFO> connection" on connection', (done) => {
     clientSocket.on('connect', () => {
