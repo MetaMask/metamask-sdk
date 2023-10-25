@@ -37,23 +37,17 @@ export async function handleAutoAndExtensionConnections(
 
     if (remoteConnection) {
       const {
-        state: { connector, communicationLayerPreference },
+        state: { connector },
       } = remoteConnection;
 
-      const channelId = connector?.state.channelId ?? '';
       const originatorInfo = connector?.state.originatorInfo ?? {};
-      const sdkVersion = connector?.state.sdkVersion;
-      const walletVersion = connector?.state.walletInfo?.version;
       const communicationServerUrl = connector?.state.communicationServerUrl;
 
       if (communicationServerUrl) {
         const analyticsData = {
-          id: channelId,
+          id: ANALYTICS_CONSTANTS.DEFAULT_ID,
           event: TrackingEvents.SDK_EXTENSION_UTILIZED,
           ...originatorInfo,
-          commLayer: communicationLayerPreference,
-          sdkVersion,
-          walletVersion,
           commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
         };
 
