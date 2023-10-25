@@ -5,7 +5,7 @@ import {
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
-import packageJson from '../../../../package.json';
+import { ANALYTICS_CONSTANTS } from '../../Analytics';
 
 /**
  * Handles automatic and extension-based connections for MetaMask SDK.
@@ -33,24 +33,37 @@ export async function handleAutoAndExtensionConnections(
       );
     }
 
-    SendAnalytics(
-      {
-        id: instance.remoteConnection?.state.connector?.state.channelId ?? '',
-        event: TrackingEvents.SDK_EXTENSION_UTILIZED,
-        ...instance.remoteConnection?.state.connector?.state.originatorInfo,
-        commLayer:
-          instance.remoteConnection?.state.communicationLayerPreference,
-        sdkVersion:
-          instance.remoteConnection?.state.connector?.state.sdkVersion,
-        walletVersion:
-          instance.remoteConnection?.state.connector?.state.walletInfo?.version,
-        commLayerVersion: packageJson.version,
-      },
-      instance.remoteConnection?.state.connector?.state
-        .communicationServerUrl as string,
-    ).catch((_err) => {
-      console.warn(`Can't send the SDK_EXTENSION_UTILIZED analytics event...`);
-    });
+    const { remoteConnection } = instance;
+
+    if (remoteConnection) {
+      const {
+        state: { connector, communicationLayerPreference },
+      } = remoteConnection;
+
+      const channelId = connector?.state.channelId ?? '';
+      const originatorInfo = connector?.state.originatorInfo ?? {};
+      const sdkVersion = connector?.state.sdkVersion;
+      const walletVersion = connector?.state.walletInfo?.version;
+      const communicationServerUrl = connector?.state.communicationServerUrl;
+
+      if (communicationServerUrl) {
+        const analyticsData = {
+          id: channelId,
+          event: TrackingEvents.SDK_EXTENSION_UTILIZED,
+          ...originatorInfo,
+          commLayer: communicationLayerPreference,
+          sdkVersion,
+          walletVersion,
+          commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
+        };
+
+        SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
+          console.warn(
+            `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
+          );
+        });
+      }
+    }
 
     connectWithExtensionProvider(instance).catch((_err) => {
       console.warn(`Can't connect with MetaMask extension...`);
