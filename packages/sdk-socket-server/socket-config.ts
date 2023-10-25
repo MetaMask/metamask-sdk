@@ -83,7 +83,7 @@ export default (server: HTTPServer): Server => {
         plaintext: string;
       }) => {
         const isMobile = context === 'mm-mobile';
-        console.log(`INFO> message' ${isMobile ? ' mobile' : ''}`);
+        console.log(`INFO> message${isMobile ? ' mobile' : ''}`);
 
         try {
           await rateLimiterMessage.consume(socket.handshake.address);
