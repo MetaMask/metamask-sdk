@@ -52,25 +52,25 @@ export default function Modal({
   const renderNetwork = (chainToRender: Chain) => {
     return (
       <button
-        className="grid w-full"
+        className="tw-grid tw-w-full"
         key={chainToRender.id}
         onClick={() => changeNetwork(chainToRender)}
       >
         <div
-          className={`text-sm p-2 ${
-            chainToRender.id === chain?.id && 'bg-blue-50'
-          } flex rounded`}
+          className={`tw-text-sm tw-p-2 ${
+            chainToRender.id === chain?.id && 'tw-bg-blue-50'
+          } tw-flex tw-rounded`}
         >
           <div
             style={{ width: 4, height: 48 }}
             className={`${
-              chainToRender.id === chain?.id && 'bg-blue-500'
-            } rounded mr-2`}
+              chainToRender.id === chain?.id && 'tw-bg-blue-500'
+            } tw-rounded tw-mr-2`}
           ></div>
-          <div className="grid content-center justify-center text-lg font-semibold">
-            <div className="flex">
+          <div className="tw-grid tw-content-center tw-justify-center tw-text-lg tw-font-semibold">
+            <div className="tw-flex">
               <IconNetwork network={chainToRender} size="big"></IconNetwork>
-              <span className="pl-4">{chainToRender?.name}</span>
+              <span className="tw-pl-4">{chainToRender?.name}</span>
             </div>
           </div>
         </div>
@@ -108,33 +108,33 @@ export default function Modal({
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+        <Dialog as="div" className="tw-relative tw-z-10" onClose={closeModal}>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
+            enter="tw-ease-out tw-duration-300"
+            enterFrom="tw-opacity-0"
+            enterTo="tw-opacity-100"
+            leave="tw-ease-in tw-duration-200"
+            leaveFrom="tw-opacity-100"
+            leaveTo="tw-opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-40" />
+            <div className="tw-fixed tw-inset-0 tw-bg-black tw-bg-opacity-40" />
           </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <div className="tw-fixed tw-inset-0 tw-overflow-y-auto">
+            <div className="tw-flex tw-min-h-full tw-items-center tw-justify-center tw-p-4 tw-text-center">
               <Transition.Child
                 as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
+                enter="tw-ease-out tw-duration-300"
+                enterFrom="tw-opacity-0 tw-scale-95"
+                enterTo="tw-opacity-100 tw-scale-100"
+                leave="tw-ease-in tw-duration-200"
+                leaveFrom="tw-opacity-100 tw-scale-100"
+                leaveTo="tw-opacity-0 tw-scale-95"
               >
-                <Dialog.Panel className="bg-white border w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="tw-bg-white tw-border tw-w-full tw-max-w-md tw-transform tw-overflow-hidden tw-rounded-2xl tw-bg-white tw-p-6 tw-text-left tw-align-middle tw-shadow-xl tw-transition-all">
                   <div>
-                    <div className="flex justify-end">
+                    <div className="tw-flex tw-justify-end">
                       <button onClick={closeModal}>
                         <svg
                           width="16"
@@ -153,8 +153,8 @@ export default function Modal({
                         </svg>
                       </button>
                     </div>
-                    <div className="flex justify-center content-center flex-col text-center mt-2">
-                      <div className="flex justify-center">
+                    <div className="tw-flex tw-justify-center tw-content-center tw-flex-col tw-text-center tw-mt-2">
+                      <div className="tw-flex tw-justify-center">
                         <div style={{ width: 48, height: 48 }}>
                           <Jazzicon
                             diameter={48}
@@ -162,22 +162,23 @@ export default function Modal({
                           />
                         </div>
                       </div>
-                      <div className="text-2xl font-bold mt-2 flex text-center content-center justify-center">
+
+                      <div className="tw-text-2xl tw-font-bold tw-mt-2 tw-flex tw-text-center tw-content-center tw-justify-center">
                         {copied ? (
-                          <div className="text-lg text-blue-500 grid content-center justify-center">
+                          <div className="tw-text-lg tw-text-blue-500 tw-grid tw-content-center tw-justify-center">
                             {t('META_MASK_MODAL.ADDRESS_COPIED')}
                           </div>
                         ) : (
                           address && (
-                            <div className="flex text-center content-center justify-center">
-                              <span className="mr-2">
+                            <div className="tw-flex tw-text-center tw-content-center tw-justify-center">
+                              <span className="tw-mr-2">
                                 {truncatedAddress(address)}
                               </span>
                               <CopyToClipboard
                                 text={address}
                                 onCopy={copyAddressToClipboard}
                               >
-                                <button className="grid content-center justify-center">
+                                <button className="tw-grid tw-content-center tw-justify-center">
                                   <svg
                                     width="10"
                                     height="11"
@@ -196,9 +197,9 @@ export default function Modal({
                           )
                         )}
                       </div>
-                      <div className="text-base mt-2">{balance}</div>
+                      <div className="tw-text-base tw-mt-2">{balance}</div>
                       <button
-                        className="text-blue-500 mt-2 text-xs flex content-center justify-center items-center"
+                        className="tw-text-blue-500 tw-mt-2 tw-text-xs tw-flex tw-content-center tw-justify-center tw-items-center"
                         onClick={disconnectAndClose}
                       >
                         <svg
@@ -213,16 +214,16 @@ export default function Modal({
                             fill="#037DD6"
                           />
                         </svg>
-                        <span className="ml-1">
+                        <span className="tw-ml-1">
                           {t('META_MASK_MODAL.DISCONNECT')}
                         </span>
                       </button>
                     </div>
                   </div>
-                  <div className="text-sm font-bold	mt-6">
+                  <div className="tw-text-sm tw-font-bold	tw-mt-6">
                     {t('META_MASK_MODAL.ACTIVE_NETWORK')}
                   </div>
-                  <div className="mt-4">{getNetworks()}</div>
+                  <div className="tw-mt-4">{getNetworks()}</div>
                 </Dialog.Panel>
               </Transition.Child>
             </div>
