@@ -26,9 +26,12 @@ This provider is the `ethereum` object that developers are already used to. This
 ## Features
 
 - Session persistence
-- Multi Provider (Let user choose between browser extension and mobile wallet)
+- Multi MetaMask Provider (Let user choose between browser extension and mobile wallet)
+- Chain RPC calls (send multiple requests to your wallet at once)
+- Read Only RPC calls and Infura Integration
 - Wagmi Hook Integration (alpha)
-- i18n throuhg Modal customization
+- i18n
+- Full Modal UI customization
 - smart contract library ( upcoming )
 
 # Getting Started
@@ -109,6 +112,8 @@ You can find the full interface in [sdk.ts](./packages/sdk/src/sdk.ts) file but 
 - `useDeeplink`: boolean (default: false) - If true, the SDK will use deeplinks to connect with MetaMask Mobile. If false, the SDK will use universal links to connect with MetaMask Mobile.
 
 - `shouldShimWeb3`: boolean (default: false) - If true, the SDK will shim the `window.web3` object with the provider returned by the SDK (useful for compatibility with older browser).
+
+- `infuraAPIKey`: string (default: '') - Infura API key for read-only calls and speed up blockchain interactions. We strongly recommend setting allow-list https://docs.infura.io/networks/ethereum/how-to/secure-a-project/use-an-allowlist as your key would be available to anyone using your dapp.
 
 - `enableDebug`: boolean (default: true) - Send anonymous analytics to MetaMask to help us improve the SDK.
 
