@@ -7,12 +7,23 @@ interface RequestArguments {
   // add any other necessary properties
 }
 
-export const wrapExtensionProvider = (provider: SDKProvider) => {
+export const wrapExtensionProvider = ({
+  provider,
+  debug,
+}: {
+  provider: SDKProvider;
+  debug?: boolean;
+}) => {
   return new Proxy(provider, {
     get(target, propKey: keyof SDKProvider) {
       if (propKey === 'request') {
         return async function (args: RequestArguments) {
-          console.log('Overwriting request method, args:', args);
+          if (debug) {
+            console.debug(
+              '[wrapExtensionProvider] Overwriting request method, args:',
+              args,
+            );
+          }
 
           const { method, params } = args;
           // special method handling
