@@ -20,35 +20,36 @@
     margin-top: 20px;
   }
   #buttonContainers {
-    margin-top: 20px;
+      margin-top: 20px;
   }
   .button {
-    min-width: 100px;
-    height: 50px;
-    border-radius: 5px;
-    border-color: transparent;
+      min-width: 100px;
+      height: 50px;
+      border-radius: 5px;
+      border-color: transparent;
 
   }
   .button.primary {
-    background-color: teal;
-    color: white
+      background-color: teal;
+      color: white
   }
   .button.action {
-    background-color: coral;
-    color: white;
+      background-color: coral;
+      color: white;
+      display: none;
   }
   .button.danger {
-    background-color: red;
-    color: white
+      background-color: red;
+      color: white
   }
   #response {
-    max-width: 80%;
-    overflow: auto;
+      max-width: 80%;
+      overflow: auto;
   }
   #otpContainer {
-    position: fixed;
-    bottom: 30px;
-    width: 100%;
+      position: fixed;
+      bottom: 30px;
+      width: 100%;
   }
 </style>
 <body>
@@ -58,7 +59,11 @@
 
   <div id="buttonContainers">
     <button class="button primary" id="connectButton">Connect</button>
-    <button class="button action" id="signButton">personal_sign</button>
+    <button class="button action" id="personalSignButton">personal_sign</button>
+    <button class="button action" id="signTypedDataButton">eth_signTypedData_v4</button>
+    <button class="button action" id="switchChainButton">Toggle Chain</button>
+    <button class="button action" id="addChainButton">Add Polygon</button>
+    <button class="button action" id="switchPolygonButton">Switch to Polygon</button>
     <button class="button danger" id="terminateButton">Terminate</button>
   </div>
 
