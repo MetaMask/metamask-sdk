@@ -4,7 +4,6 @@ import { SDKProvider } from './SDKProvider';
 interface RequestArguments {
   method: string;
   params?: any[];
-  // add any other necessary properties
 }
 
 export const wrapExtensionProvider = ({
