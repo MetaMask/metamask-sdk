@@ -1,4 +1,5 @@
 import { SDKProvider } from '../provider/SDKProvider';
+import { wrapExtensionProvider } from '../provider/WrapExtensionProvider';
 import { eip6963RequestProvider } from './eip6963RequestProvider';
 
 export async function getBrowserExtension({
@@ -10,10 +11,12 @@ export async function getBrowserExtension({
     throw new Error(`window not available`);
   }
 
-  try {
-    const baseProvider = await eip6963RequestProvider();
+  let baseProvider: SDKProvider;
 
-    return baseProvider;
+  try {
+    baseProvider = await eip6963RequestProvider();
+
+    return wrapExtensionProvider(baseProvider);
   } catch (e) {
     const { ethereum } = window as unknown as {
       ethereum:
@@ -40,12 +43,12 @@ export async function getBrowserExtension({
           throw new Error('No suitable provider found');
         }
 
-        return provider as SDKProvider;
+        return wrapExtensionProvider(provider as SDKProvider);
       }
     } else if (mustBeMetaMask && !ethereum.isMetaMask) {
       throw new Error('MetaMask provider not found in Ethereum');
     }
 
-    return ethereum as SDKProvider;
+    return wrapExtensionProvider(ethereum as SDKProvider);
   }
 }
