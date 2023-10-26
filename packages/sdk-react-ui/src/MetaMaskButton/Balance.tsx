@@ -1,5 +1,9 @@
 import React from 'react';
-import { useNetwork, useAccount, useBalance } from '../hooks/MetaMaskWagmiHooks';
+import {
+  useNetwork,
+  useAccount,
+  useBalance,
+} from '../hooks/MetaMaskWagmiHooks';
 import { getBalance } from './utils';
 
 const Balance = ({ theme }: { theme: string }) => {
@@ -17,13 +21,13 @@ const Balance = ({ theme }: { theme: string }) => {
 
   return (
     <div
-      className="pl-4 grid content-center justify-center text-center"
+      className="tw-pl-4 tw-grid tw-content-center tw-justify-center tw-text-center"
       style={{ fontSize: 13 }}
     >
       <span
         className={`${
-          theme === 'light' ? 'bg-neutral-200' : 'bg-neutral-400'
-        } p-1.5 rounded`}
+          theme === 'light' ? 'tw-bg-neutral-200' : 'tw-bg-neutral-400'
+        } tw-p-1.5 tw-rounded`}
       >
         {balance}
       </span>
