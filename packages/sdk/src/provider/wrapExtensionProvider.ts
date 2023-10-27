@@ -26,10 +26,7 @@ export const wrapExtensionProvider = ({
 
           const { method, params } = args;
           // special method handling
-          if (
-            method === RPC_METHODS.METAMASK_CHAINRPCS &&
-            Array.isArray(params)
-          ) {
+          if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
             // params is a list of RPCs to call
             const responses = [];
             for (const rpc of params) {

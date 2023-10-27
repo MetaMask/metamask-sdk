@@ -32,7 +32,7 @@ and the [iOS SDK repository](https://github.com/MetaMask/metamask-ios-sdk/tree/m
 
 - Session persistence
 - Multi MetaMask provider (let user choose between browser extension and mobile wallet)
-- Chain RPC calls (send multiple requests to your wallet at once)
+- Batch RPC calls (send multiple requests to your wallet at once)
 - Read-only RPC calls and Infura integration
 - Wagmi hook integration (alpha)
 - i18n
