@@ -9,7 +9,7 @@ import { WakeLockStatus } from '../types/WakeLockStatus';
 import { WakeLockManager } from './WakeLockManager';
 
 export const TEMPORARY_WAKE_LOCK_TIME = 2000;
-export const UNTIL_RESPONSE_WAKE_LOCK_TIME = 20000;
+export const UNTIL_RESPONSE_WAKE_LOCK_TIME = 40000;
 export const LINK_OPEN_DELAY = 500;
 
 interface PlatformProps {
@@ -33,7 +33,7 @@ interface PlatformManagerState {
 export class PlatformManager {
   public state: PlatformManagerState = {
     wakeLock: new WakeLockManager(),
-    wakeLockStatus: WakeLockStatus.Temporary,
+    wakeLockStatus: WakeLockStatus.UntilResponse,
     wakeLockTimer: undefined,
     wakeLockFeatureActive: false,
     platformType: undefined,
@@ -45,7 +45,7 @@ export class PlatformManager {
   constructor({
     useDeepLink,
     preferredOpenLink,
-    wakeLockStatus = WakeLockStatus.Temporary,
+    wakeLockStatus = WakeLockStatus.UntilResponse,
     debug = false,
   }: PlatformProps) {
     this.state.platformType = this.getPlatformType();
