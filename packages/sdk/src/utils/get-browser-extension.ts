@@ -1,5 +1,5 @@
 import { SDKProvider } from '../provider/SDKProvider';
-import { wrapExtensionProvider } from '../provider/ewrapExtensionProvider';
+import { wrapExtensionProvider } from '../provider/wrapExtensionProvider';
 import { eip6963RequestProvider } from './eip6963RequestProvider';
 
 export async function getBrowserExtension({
