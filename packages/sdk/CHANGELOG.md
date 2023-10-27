@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
 - fix: add metadata to the sdk_extension_utilized analytics event ([#433](https://github.com/MetaMask/metamask-sdk/pull/433))
 - feat: chaining of rpc calls ([#434](https://github.com/MetaMask/metamask-sdk/pull/434))
+- feat: add support to EIP-6963 protocol ([#423](https://github.com/MetaMask/metamask-sdk/pull/423))
 
 ## [0.10.1]
 ### Added
