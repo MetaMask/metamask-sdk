@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.11.0]
-### Uncategorized
+### Added
 - feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
 - fix: add metadata to the sdk_extension_utilized analytics event ([#433](https://github.com/MetaMask/metamask-sdk/pull/433))
 - feat: chaining of rpc calls ([#434](https://github.com/MetaMask/metamask-sdk/pull/434))
