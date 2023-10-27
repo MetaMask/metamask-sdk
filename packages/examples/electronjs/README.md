@@ -1,19 +1,16 @@
-# Electron SDK example
+# electronjs example
 
-Get started by running:
-
+### Install dependencies
 ```bash
 yarn install
 ```
 
-and
-
+### Start
 ```bash
 yarn start
 ```
 
-If the installation does not work inside this repository, run the following command after `yarn install`:
-
+If the installation does not work inside this repo run the following command after yarn install:
 ```bash
-node node_modules/electron/install.js
+ node node_modules/electron/install.js
 ```

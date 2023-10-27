@@ -1,27 +1,29 @@
-# Vue.js SDK example
+# metamasksdk_vuejs
 
-To set up the project, run:
+## Project setup
 
 ```
 yarn install
 ```
 
-To compile and hot-reload for development, run:
+### Compiles and hot-reloads for development
 
 ```
 yarn serve
 ```
 
-To compile and minify for production, run:
+### Compiles and minifies for production
 
 ```
 yarn build
 ```
 
-To lint and fix files, run:
+### Lints and fixes files
 
 ```
 yarn lint
 ```
 
-For information about customizing your configuration, see the [Vue.js configuration reference](https://cli.vuejs.org/config/).
+### Customize configuration
+
+See [Configuration Reference](https://cli.vuejs.org/config/).

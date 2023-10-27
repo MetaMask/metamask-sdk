@@ -1,13 +1,5 @@
-# Next.js SDK example
-
-Get started by running:
-
-```bash
-yarn
+## init demo nextjs project
 ```
-
-and
-
-```bash
+yarn
 yarn dev
 ```

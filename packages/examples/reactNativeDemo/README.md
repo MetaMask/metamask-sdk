@@ -1,3 +1,1 @@
-# React Native SDK example
-
-We recommend using React Native v0.71.4 or higher to avoid performance issues on Android.
+Please use react native 0.71.3+ to avoid performance issue on android.
