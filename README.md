@@ -27,7 +27,7 @@ This provider is the `ethereum` object that developers are already used to. This
 
 - Session persistence
 - Multi MetaMask Provider (Let user choose between browser extension and mobile wallet)
-- Chain RPC calls (send multiple requests to your wallet at once)
+- Batch RPC calls (send multiple requests to your wallet at once)
 - Read Only RPC calls and Infura Integration
 - Wagmi Hook Integration (alpha)
 - i18n
