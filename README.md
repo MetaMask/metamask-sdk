@@ -62,7 +62,7 @@ See the following examples:
 - [Next.js](./packages/examples/nextjs-demo/README.md)
 - [React](./packages/examples/create-react-app/README.md)
 - [Vue.js](./packages/examples/vuejs/README.md)
-- [Pure JavaScript demo](./packages/examples/pure-javascript/README.md)
+- [Pure JavaScript](./packages/examples/pure-javascript/README.md)
 
 Read the documentation for
 [using the SDK with JavaScript](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/)
