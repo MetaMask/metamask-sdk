@@ -168,6 +168,7 @@ export default function Home() {
 
     let from = window.ethereum?.selectedAddress;
 
+    setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
       if (!from || from === null) {
@@ -181,10 +182,11 @@ export default function Home() {
       const method = 'eth_signTypedData_v4';
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
+      console.debug(`sign response`, resp);
     } catch (e) {
-      console.log(e);
+      console.error(`an error occured`, e);
     }
   };
 
@@ -417,7 +419,7 @@ export default function Home() {
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_chainRPCs', params: rpcs}) as any[];
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
@@ -452,7 +454,7 @@ export default function Home() {
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_chainRPCs', params: rpcs}) as any[];
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
@@ -489,7 +491,7 @@ export default function Home() {
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_chainRPCs', params: rpcs}) as any[];
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
