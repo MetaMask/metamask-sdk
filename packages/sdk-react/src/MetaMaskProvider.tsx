@@ -138,7 +138,7 @@ const MetaMaskProviderClient = ({
     } else {
       setBalance(undefined);
     }
-  }, [account]);
+  }, [account, chainId]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
