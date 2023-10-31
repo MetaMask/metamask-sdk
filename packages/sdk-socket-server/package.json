@@ -25,7 +25,7 @@
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "yarn clean && rimraf ./node_modules/",
-    "start": "yarn build && node dist/index.js",
+    "start": "yarn build && node dist/packages/sdk-socket-server/index.js",
     "start:docker": "docker run -p 4000:4000 -d socket-test",
     "test": "jest",
     "test:ci": "jest --coverage --passWithNoTests"
