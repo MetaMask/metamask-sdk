@@ -85,7 +85,8 @@ export class WakeLockManager {
     this.start();
     if (hasNativeWakeLock()) {
       try {
-        const wakeLock = await navigator.wakeLock.request('screen');
+        const wakeLock = await (navigator as any).wakeLock.request('screen');
+
         this._wakeLock = wakeLock;
         this.enabled = true;
         // console.log('Wake Lock active.');
