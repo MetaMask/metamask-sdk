@@ -31,6 +31,8 @@ export function enableWakeLock(instance: PlatformManager) {
     state.wakeLockStatus === WakeLockStatus.UntilResponse
   ) {
     state.wakeLockFeatureActive = true;
-    window.addEventListener('focus', () => instance.disableWakeLock());
+    window.addEventListener('focus', () => {
+      instance.disableWakeLock();
+    });
   }
 }
