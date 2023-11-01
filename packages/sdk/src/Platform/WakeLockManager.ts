@@ -77,7 +77,6 @@ export class WakeLockManager {
     const source = document.createElement('source');
     source.src = dataURI;
     source.type = `video/${type}`;
-    console.debug(`WakeLockManager::_addSourceToVideo()`, source);
     element.appendChild(source);
   }
 
@@ -89,14 +88,11 @@ export class WakeLockManager {
   async enable() {
     console.log(`WakeLockManager::enable() enabled=${this.enabled}`);
     if (this.enabled) {
-      console.warn(`WakeLockManager::enable() already enabled`);
       this.disable('from_enable');
     }
 
     this.start();
     if (hasNativeWakeLock()) {
-      console.debug(`WakeLockManager::enable() hasNativeWakeLock=true`);
-
       try {
         const wakeLock = await navigator.wakeLock.request('screen');
         this._wakeLock = wakeLock;
@@ -109,12 +105,10 @@ export class WakeLockManager {
             console.log('Wake Lock released.');
           });*/
       } catch (err) {
-        console.warn(`WakeLockManager::enable() failed`, err);
         this.enabled = false;
         return false;
       }
     } else if (isOldIOS()) {
-      console.warn(`WakeLockManager::enable() isOldIOS=true`);
       this.disable('from_enable_old_ios');
       /* console.warn(`
         NoSleep enabled for older iOS devices. This can interrupt
@@ -122,10 +116,6 @@ export class WakeLockManager {
         See https://github.com/richtr/NoSleep.js/issues/15 for more details.
       `);*/
       this.noSleepTimer = window.setInterval(() => {
-        console.log(
-          `WakeLockManager::enable() noSleepTimer fired document.hidden=${document.hidden}`,
-        );
-
         if (!document.hidden) {
           window.location.href = window.location.href.split('#')[0];
           window.setTimeout(window.stop, 0);
@@ -135,21 +125,15 @@ export class WakeLockManager {
       return true;
     }
 
-    console.debug(
-      `WakeLockManager::enable() hasNativeWakeLock=false`,
-      this.noSleepVideo,
-    );
-
     if (this.noSleepVideo) {
       try {
-        console.log(`WakeLockManager::enable() video should start playing...`);
         this.noSleepVideo?.play().catch((err) => {
           console.warn(`WakeLockManager::enable() video failed to play`, err);
         });
         this.enabled = true;
         return true;
       } catch (err) {
-        console.log(
+        console.warn(
           `WakeLockManager::enable() video failed to start playing`,
           err,
         );
@@ -158,15 +142,10 @@ export class WakeLockManager {
       }
     }
 
-    console.warn(`WakeLockManager::enable() failed`);
     return false;
   }
 
-  disable(context?: string) {
-    console.log(
-      `WakeLockManager::disable() context=${context} this.enabled=${this.enabled}`,
-    );
-
+  disable(_context?: string) {
     if (!this.enabled) {
       return;
     }

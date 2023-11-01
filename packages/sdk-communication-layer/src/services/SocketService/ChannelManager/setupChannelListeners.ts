@@ -16,7 +16,20 @@ import {
   handleKeysExchanged,
 } from '../EventListeners';
 
-const socketEventListenerMap = [
+type SocketEventNames =
+  | 'error'
+  | 'ping'
+  | 'reconnect'
+  | 'reconnect_error'
+  | 'reconnect_failed'
+  | 'disconnect';
+
+interface SocketEventMapItem {
+  event: SocketEventNames;
+  handler: (instance: SocketService) => void;
+}
+
+const socketEventListenerMap: SocketEventMapItem[] = [
   { event: 'error', handler: handleSocketError },
   { event: 'ping', handler: handlePing },
   { event: 'reconnect', handler: handleReconnect },
@@ -28,7 +41,7 @@ const socketEventListenerMap = [
     event: 'reconnect_failed',
     handler: handleReconnectFailed,
   },
-  { event: 'disconnect', handler: handleDisconnect },
+  // { event: 'disconnect', handler: handleDisconnect },
 ];
 
 const channelEventListenerMap = [
@@ -85,7 +98,7 @@ export function setupChannelListeners(
   const { keyExchange } = instance.state;
 
   socketEventListenerMap.forEach(({ event, handler }) => {
-    socket?.io.on(event as any, handler(instance));
+    socket?.io.on(event, handler(instance));
   });
 
   channelEventListenerMap.forEach(({ event, handler }) => {
