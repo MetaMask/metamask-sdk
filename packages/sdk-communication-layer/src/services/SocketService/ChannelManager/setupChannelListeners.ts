@@ -84,16 +84,6 @@ export function setupChannelListeners(
   const { socket } = instance.state;
   const { keyExchange } = instance.state;
 
-  if (typeof window !== undefined) {
-    window.onblur = () => {
-      console.debug(`window.onblur()`);
-    };
-
-    window.onfocus = () => {
-      console.debug(`window.onfocus()`);
-    };
-  }
-
   socketEventListenerMap.forEach(({ event, handler }) => {
     socket?.io.on(event as any, handler(instance));
   });
