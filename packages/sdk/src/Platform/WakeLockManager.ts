@@ -16,18 +16,11 @@ export class WakeLockManager {
 
   start() {
     this.enabled = false;
-    console.debug(
-      `WakeLockManager::start() hasNativeWakeLock=${hasNativeWakeLock()}`,
-    );
 
     if (hasNativeWakeLock() && !this._eventsAdded) {
       this._eventsAdded = true;
       this._wakeLock = undefined;
       const handleVisibilityChange = async () => {
-        console.log(
-          `WakeLockManager::handleVisibilityChange() visibility=${document.visibilityState}`,
-        );
-
         if (this._wakeLock !== null && document.visibilityState === 'visible') {
           await this.enable();
         }
@@ -84,9 +77,7 @@ export class WakeLockManager {
     return this.enabled;
   }
 
-  // TODO convert to async function
   async enable() {
-    console.log(`WakeLockManager::enable() enabled=${this.enabled}`);
     if (this.enabled) {
       this.disable('from_enable');
     }
