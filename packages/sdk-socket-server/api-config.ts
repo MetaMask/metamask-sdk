@@ -1,17 +1,17 @@
 /* eslint-disable node/no-process-env */
-const crypto = require('crypto');
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const { LRUCache } = require('lru-cache');
-const Analytics = require('analytics-node');
+import crypto from 'crypto';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import helmet from 'helmet';
+import { LRUCache } from 'lru-cache';
+import Analytics from 'analytics-node';
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment: boolean = process.env.NODE_ENV === 'development';
 
-const userIdHashCache = new LRUCache({
+const userIdHashCache = new LRUCache<string, string>({
   max: 5000,
-  maxAge: 1000 * 60 * 60 * 24,
+  ttl: 1000 * 60 * 60 * 24,
 });
 
 const app = express();
@@ -25,11 +25,11 @@ app.disable('x-powered-by');
 
 const analytics = new Analytics(
   isDevelopment
-    ? process.env.SEGMENT_API_KEY_DEBUG
-    : process.env.SEGMENT_API_KEY_PRODUCTION,
+    ? process.env.SEGMENT_API_KEY_DEBUG || ''
+    : process.env.SEGMENT_API_KEY_PRODUCTION || '',
   {
     flushInterval: isDevelopment ? 1000 : 10000,
-    errorHandler: (err) => {
+    errorHandler: (err: Error) => {
       console.error(`ERROR> Analytics-node flush failed: ${err}`);
     },
   },
@@ -51,15 +51,22 @@ app.post('/debug', (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
-    const id = body.id || 'socket.io-server';
-    let userIdHash = userIdHashCache.get(id);
+    const id: string = body.id || 'socket.io-server';
+    let userIdHash: string | undefined = userIdHashCache.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
       userIdHashCache.set(id, userIdHash);
     }
 
-    const event = {
+    const event: {
+      userId: string;
+      event: string;
+      properties: {
+        userId: string;
+        [key: string]: string | undefined; // This line adds an index signature
+      };
+    } = {
       userId: userIdHash,
       event: body.event,
       properties: {
@@ -68,7 +75,7 @@ app.post('/debug', (_req, res) => {
     };
 
     // Define properties to be excluded
-    const propertiesToExclude = ['icon'];
+    const propertiesToExclude: string[] = ['icon'];
 
     for (const property in body) {
       if (
@@ -84,9 +91,9 @@ app.post('/debug', (_req, res) => {
       console.log('DEBUG> Event object:', event);
     }
 
-    analytics.track(event, function (err, batch) {
+    analytics.track(event, function (err: Error) {
       if (isDevelopment) {
-        console.log('DEBUG> Segment batch', batch);
+        console.log('DEBUG> Segment batch');
       }
 
       if (err) {
@@ -100,4 +107,4 @@ app.post('/debug', (_req, res) => {
   }
 });
 
-module.exports = { app, analytics };
+export { app, analytics };
