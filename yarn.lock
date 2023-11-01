@@ -5080,7 +5080,7 @@ __metadata:
     "@rollup/plugin-json": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.2
     "@rollup/plugin-terser": ^0.4.1
-    "@types/dom-screen-wake-lock": ^1.0.0
+    "@types/dom-screen-wake-lock": ^1.0.2
     "@types/node": ^20.1.3
     "@types/pump": ^1.1.1
     "@types/qrcode-terminal": ^0.12.0
@@ -7329,10 +7329,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/dom-screen-wake-lock@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@types/dom-screen-wake-lock@npm:1.0.1"
-  checksum: 5762535a813d5f9462ed91f39ed15d6e21e15ad5735dcba9cd6dbf543a6a6af0d82c32b9d22693464f051da59f91f617e6d041497ea5e59016250ffde454c515
+"@types/dom-screen-wake-lock@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@types/dom-screen-wake-lock@npm:1.0.2"
+  checksum: 5375170e3fe9839203a434408771b87b3cbcbc0e0eaf733c699b76b3c8a23163e8e89e25cf8775d8f065d0d3fc5253fdc3df1a10425c2d16ad8c09f8fe7f2c5e
   languageName: node
   linkType: hard
 
