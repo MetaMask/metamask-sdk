@@ -45,20 +45,11 @@ export class WakeLockManager {
         'MetaMask SDK - Listening for responses',
       );
       this.noSleepVideo.setAttribute('playsinline', '');
-      this.noSleepVideo.setAttribute('controls', '');
-      this.noSleepVideo.setAttribute('loop', '');
-      this.noSleepVideo.setAttribute('autoPlay', '');
-      this.noSleepVideo.setAttribute('mute', '');
 
       this._addSourceToVideo(this.noSleepVideo, 'webm', webm);
       this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4);
 
       this.noSleepVideo.addEventListener('loadedmetadata', () => {
-        console.log(
-          `noSleepvideo loaded... duration=${this.noSleepVideo?.duration}`,
-          this.noSleepVideo,
-        );
-
         if (!this.noSleepVideo) {
           return;
         }
@@ -79,9 +70,6 @@ export class WakeLockManager {
           });
         }
       });
-
-      console.log(`Append no sleepVideo to body`);
-      document.body.appendChild(this.noSleepVideo);
     }
   }
 
