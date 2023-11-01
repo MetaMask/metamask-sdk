@@ -39,7 +39,6 @@ const socketEventListenerMap: SocketEventMapItem[] = [
     event: 'reconnect_failed',
     handler: handleReconnectFailed,
   },
-  // { event: 'disconnect', handler: handleDisconnect },
 ];
 
 const channelEventListenerMap = [
