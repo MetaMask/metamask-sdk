@@ -231,8 +231,8 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?channelId=some_channel_id&pubkey=&comm=socket',
-        'metamask://connect?channelId=some_channel_id&pubkey=&comm=socket',
+        'https://metamask.app.link/connect?channelId=some_channel_id&pubkey=&comm=socket&t=q',
+        'metamask://connect?channelId=some_channel_id&pubkey=&comm=socket&t=q',
         '_self',
       );
     });
@@ -249,8 +249,8 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket',
-        'metamask://connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket',
+        'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=q',
+        'metamask://connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=q',
         '_self',
       );
     });
