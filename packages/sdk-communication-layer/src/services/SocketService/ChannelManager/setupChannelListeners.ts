@@ -6,7 +6,6 @@ import {
   handleReconnect,
   handleReconnectError,
   handleReconnectFailed,
-  handleDisconnect,
   handleClientsConnected,
   handleChannelCreated,
   handlesClientsDisconnected,
@@ -21,8 +20,7 @@ type SocketEventNames =
   | 'ping'
   | 'reconnect'
   | 'reconnect_error'
-  | 'reconnect_failed'
-  | 'disconnect';
+  | 'reconnect_failed';
 
 interface SocketEventMapItem {
   event: SocketEventNames;
@@ -98,7 +96,7 @@ export function setupChannelListeners(
   const { keyExchange } = instance.state;
 
   socketEventListenerMap.forEach(({ event, handler }) => {
-    socket?.io.on(event, handler(instance));
+    socket?.io.on(event, () => handler(instance));
   });
 
   channelEventListenerMap.forEach(({ event, handler }) => {
