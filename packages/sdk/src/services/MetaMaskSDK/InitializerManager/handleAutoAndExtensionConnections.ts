@@ -58,7 +58,7 @@ export async function handleAutoAndExtensionConnections(
     }
 
     connectWithExtensionProvider(instance).catch((_err) => {
-      console.warn(`Can't connect with MetaMask extension...`);
+      console.warn(`Can't connect with MetaMask extension...`, _err);
       // Clean preferences
       localStorage.removeItem(STORAGE_PROVIDER_TYPE);
     });
