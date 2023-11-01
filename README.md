@@ -31,10 +31,10 @@ and the [iOS SDK repository](https://github.com/MetaMask/metamask-ios-sdk/tree/m
 ## Features
 
 - Session persistence
-- Multi MetaMask Provider (Let user choose between browser extension and mobile wallet)
+- Multi MetaMask provider (let user choose between browser extension and mobile wallet)
 - Batch RPC calls (send multiple requests to your wallet at once)
-- Read Only RPC calls and Infura Integration
-- Wagmi Hook Integration (alpha)
+- Read-only RPC calls and Infura integration
+- Wagmi hook integration (alpha)
 - i18n
 - Full modal UI customization
 - Smart contract library (coming soon)
