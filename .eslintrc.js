@@ -34,5 +34,6 @@ module.exports = {
     '**/!.eslintrc.js',
     '**/dist*/',
     '**/examples/**',
+    '**/coverage/**',
   ],
 };

@@ -6,12 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0]
+### Added
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
+- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk.git/pull/437))
+
 ## [0.10.1]
 ### Added
 - fix: flightwind css leaking with preflight ([#428](https://github.com/MetaMask/metamask-sdk/pull/428))
 
 ## [0.10.0]
-### Uncategorized
+### Added
 - Force align package version to sdk
 
 ## [0.9.0]
@@ -40,7 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.0...HEAD
+[0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
 [0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
