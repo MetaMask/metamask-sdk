@@ -78,3 +78,9 @@ Ensure the custom modal operates as intended, especially in scenarios like when 
 Creating custom MetaMask modals provides a uniform and engaging user experience across different web frameworks. The principles detailed here for React are adaptable to frameworks like Vue.js or even vanilla HTML/JavaScript, ensuring flexibility and consistency in handling MetaMask interactions across diverse web applications.
 
 For a React-specific implementation example, check out the `react-with-custom-modal` in our repo. This example can serve as a starting point for understanding the approach, which you can then adapt to other frameworks as needed.
+
+## Screen Recording
+
+https://github.com/MetaMask/metamask-sdk/assets/61094771/10eb3ab3-6d44-4c8c-a635-796d4be24540
+
+
