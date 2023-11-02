@@ -3,10 +3,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ReactDOMClient from 'react-dom/client';
 import App from './App';
-import { Modal } from './Modal';
+import { QrCodeModal } from './QrCodeModal';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { updateQrCode } from './helpers';
+import { updateQrCode, updateOTPValue } from './helpers';
+import { OtpModal } from './OtpModal';
 
 const root = ReactDOMClient.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -35,6 +36,8 @@ root.render(
 
             return {
               mount: () => {
+                if (modalContainer) return;
+
                 modalContainer = document.createElement('div');
 
                 modalContainer.id = 'meta-mask-modal-container';
@@ -42,7 +45,7 @@ root.render(
                 document.body.appendChild(modalContainer);
 
                 ReactDOM.render(
-                  <Modal
+                  <QrCodeModal
                     onClose={() => {
                       ReactDOM.unmountComponentAtNode(modalContainer);
                       modalContainer.remove();
@@ -61,6 +64,50 @@ root.render(
 
                   modalContainer.remove();
                 }
+              },
+            };
+          },
+
+          otp: ({ onDisconnect }) => {
+            let modalContainer: HTMLElement | null;
+
+            return {
+              mount: () => {
+                if (modalContainer) return;
+
+                modalContainer = document.createElement('div');
+
+                modalContainer.id = 'meta-mask-otp-modal-container';
+
+                document.body.appendChild(modalContainer);
+
+                ReactDOM.render(
+                  <OtpModal
+                    onClose={() => {
+                      ReactDOM.unmountComponentAtNode(modalContainer);
+                      modalContainer.remove();
+                    }}
+                    onDisconnect={() => {
+                      onDisconnect();
+
+                      ReactDOM.unmountComponentAtNode(modalContainer);
+                      modalContainer.remove();
+                    }}
+                    sdkVersion={''}
+                    updateOTPValue={updateOTPValue}
+                  />,
+                  modalContainer,
+                );
+              },
+              unmount: () => {
+                if (modalContainer) {
+                  ReactDOM.unmountComponentAtNode(modalContainer);
+
+                  modalContainer.remove();
+                }
+              },
+              updateOTPValue: (otpValue: string) => {
+                updateOTPValue(otpValue);
               },
             };
           },

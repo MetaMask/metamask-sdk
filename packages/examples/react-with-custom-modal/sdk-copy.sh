@@ -10,7 +10,7 @@ SDK_REACT_DIR="$SDK_WORKSPACE_DIR/packages/sdk-react"
 SDK_REACT_UI_DIR="$SDK_WORKSPACE_DIR/packages/sdk-react-ui"
 SDK_INSTALL_MODAL_WEB_DIR="$SDK_WORKSPACE_DIR/packages/sdk-install-modal-web"
 
-DAPP_DIR="$SDK_WORKSPACE_DIR/packages/examples/create-react-app"
+DAPP_DIR="$SDK_WORKSPACE_DIR/packages/examples/react-with-custom-modal"
 
 echo "SDK_DIR: $SDK_DIR"
 echo "COMM_LAYER_DIR: $COMM_LAYER_DIR"

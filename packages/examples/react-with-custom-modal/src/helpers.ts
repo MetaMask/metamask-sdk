@@ -33,3 +33,21 @@ export const updateQrCode = (link: string) => {
     qrCode.append(qrCodeNode);
   }
 };
+
+export const updateOTPValue = (otpValue: string) => {
+  const tryUpdate = () => {
+    const otpNode = document.getElementById('sdk-mm-otp-value');
+
+    if (otpNode) {
+      otpNode.textContent = otpValue;
+      otpNode.style.display = 'block';
+      return true;
+    } else {
+      return false;
+    }
+  };
+  // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
+  setTimeout(() => {
+    tryUpdate();
+  }, 800);
+};
