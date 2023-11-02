@@ -7,25 +7,84 @@ import globals from 'rollup-plugin-node-globals';
 import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
+import { visualizer } from 'rollup-plugin-visualizer';
+import pkgJson from './package.json'; // Ensure this path is correct
 
-const listDepForRollup = ['@react-native-async-storage/async-storage'];
+// Check if environment variable is set to 'dev'
+const isDev = process.env.NODE_ENV === 'dev';
+
+// Base external dependencies across different builds
+const baseExternalDeps = [
+  '@react-native-async-storage/async-storage',
+];
+
+// Dependencies for rollup to consider as external
+const listDepForRollup = [
+  ...baseExternalDeps,
+  'cross-fetch',
+  'date-fns',
+  'eciesjs',
+  'eventemitter2',
+  'socket.io-client',
+  'uuid',
+];
+
+// Keeping separate external deps list for web and react-native to allow for future divergence
+const webExternalDeps = [...listDepForRollup];
+const rnExternalDeps = [...listDepForRollup];
 
 /**
  * @type {import('rollup').RollupOptions}
  */
 const config = [
+  // Browser builds (ES)
   {
-    external: listDepForRollup,
+    external: webExternalDeps,
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/browser/es/metamask-sdk-communication-layer.js',
+        file: pkgJson.browser,
         format: 'es',
         sourcemap: true,
       },
+    ],
+    plugins: [
+      // Replace macros in your source code with environment-specific variables
+      jscc({
+        values: { _WEB: 1 },
+      }),
+      // TypeScript plugin with overridden configuration file path
+      typescript({ tsconfig: './tsconfig.json' }),
+      // Resolves modules specified in "node_modules"
+      nodeResolve({
+        browser: true, // Prefer browser versions of modules if available
+        preferBuiltins: false, // Do not prefer Node.js built-ins over npm modules
+        exportConditions: ['browser'], // Use "browser" field in package.json for overrides
+      }),
+      // Converts CommonJS modules to ES6, to be included in the Rollup bundle
+      commonjs({ transformMixedEsModules: true }),
+      // Polyfills Node.js globals and modules for use in the browser
+      globals(),
+      builtins({ crypto: true }), // Includes Node.js built-ins like 'crypto'
+      // Convert .json files to ES6 modules
+      json(),
+      // Minify the bundle
+      terser(),
+      // Visualize the bundle to analyze its composition and size
+      isDev && visualizer({
+        filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
+      }),
+    ],
+  },
+  // Browser builds (UMD, IIFE)
+  {
+    // Only considering base external deps for UMD and IIFE builds
+    external: baseExternalDeps,
+    input: 'src/index.ts',
+    output: [
       {
         name: 'browser',
-        file: 'dist/browser/umd/metamask-sdk-communication-layer.js',
+        file: pkgJson.unpkg,
         format: 'umd',
         sourcemap: true,
       },
@@ -40,25 +99,28 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
-        exportConditions: ['browser']
+        exportConditions: ['browser'],
       }),
       commonjs({ transformMixedEsModules: true }),
       globals(),
       builtins({ crypto: true }),
       json(),
       terser(),
+      isDev && visualizer({
+        filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
   {
-    external: listDepForRollup,
+    external: rnExternalDeps,
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/react-native/es/metamask-sdk-communication-layer.js',
+        file: pkgJson['react-native'],
         format: 'es',
         sourcemap: true,
       },
@@ -67,7 +129,7 @@ const config = [
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: './tsconfig.json' }),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
@@ -77,6 +139,9 @@ const config = [
       }),
       json(),
       terser(),
+      isDev && visualizer({
+        filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
   {
@@ -84,12 +149,12 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/node/cjs/metamask-sdk-communication-layer.js',
+        file: pkgJson.main,
         format: 'cjs',
         sourcemap: true,
       },
       {
-        file: 'dist/node/es/metamask-sdk-communication-layer.js',
+        file: pkgJson.module,
         format: 'es',
         sourcemap: true,
       },
@@ -105,7 +170,7 @@ const config = [
         // Generate sourcemap
         sourcemap: true,
       }),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: false,
         preferBuiltins: true,
@@ -114,6 +179,9 @@ const config = [
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser(),
+      isDev && visualizer({
+        filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
 ];
