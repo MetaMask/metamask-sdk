@@ -61,5 +61,6 @@ module.exports = {
     '**/dist*/',
     'rollup.config.js',
     'webpack.config.js',
+    '**/coverage/**',
   ],
 };
