@@ -1,93 +1,80 @@
-# Creating a Custom MetaMask Modal in React
+# Creating Custom MetaMask Modals for Web Applications
 
-When integrating MetaMask into your React application, you might need to provide a custom user interface for certain interactions, such as displaying a modal when MetaMask is not installed. This documentation guides you through the process of creating and using a custom modal within the `MetaMaskProvider`.
+When integrating MetaMask into web applications, providing a tailored user interface for interactions such as prompting the installation of MetaMask can significantly enhance user experience. This guide will walk you through the process of creating custom modals for MetaMask within various web frameworks, focusing on a React implementation with insights on adapting the concept for other frameworks like Vue.js or plain HTML/JavaScript.
 
-## Overview
-
-The `MetaMaskProvider` in `@metamask/sdk-react` allows you to integrate MetaMask into your React application seamlessly. One of the key features of this provider is the ability to define custom modals for various MetaMask interactions, such as prompting installation. This is achieved using the `modals` prop of the `MetaMaskProvider`.
-
-## Step-by-Step Guide
+## Step-by-Step Guide for React
 
 ### 1. Create a Custom Modal Component
 
-You need to define a custom modal component. This component can be styled and behave according to your application's needs.
+Begin by crafting a custom modal component that aligns with your application's design and functionality requirements.
 
 ```javascript
 import React from 'react';
 
-const CustomModal = ({ onClose }) => {
-  return (
-    <div className="modal">
-      <button onClick={onClose}>Close</button>
-    </div>
-  );
-};
+const CustomModal = ({ onClose }) => (
+  <div className="modal">
+    <button onClick={onClose}>Close</button>
+  </div>
+);
 
 export default CustomModal;
 ```
 
-### 3. Implement the Custom Modal Logic in MetaMaskProvider
+### 2. Implement Custom Modal Logic with MetaMaskProvider
 
-When initializing `MetaMaskProvider`, you can pass a `modals` prop where you define custom behavior, like displaying a modal when MetaMask is not installed.
+Within `MetaMaskProvider`, use the `modals` prop to set up custom behavior for scenarios like MetaMask not being installed.
 
 ```javascript
 import { MetaMaskProvider } from '@metamask/sdk-react';
 import CustomModal from './CustomModal';
+import ReactDOM from 'react-dom';
 
-const App = () => {
-  // ...
+const App = () => (
+  <MetaMaskProvider
+    sdkOptions={{
+      modals: {
+        install: ({ link }) => {
+          let modalContainer = null;
 
-  return (
-    <MetaMaskProvider
-      sdkOptions={{
-        modals: {
-          install: ({ link }) => {
-            let modalContainer = null;
+          return {
+            mount: () => {
+              modalContainer = document.createElement('div');
+              document.body.appendChild(modalContainer);
 
-            return {
-              mount: () => {
-                modalContainer = document.createElement('div');
-                document.body.appendChild(modalContainer);
-
-                ReactDOM.render(
-                  <CustomModal
-                    onClose={() => {
-                      ReactDOM.unmountComponentAtNode(modalContainer);
-                      modalContainer.remove();
-                    }}
-                  />,
-                  modalContainer,
-                );
-              },
-              unmount: () => {
-                if (modalContainer) {
-                  ReactDOM.unmountComponentAtNode(modalContainer);
-                  modalContainer.remove();
-                }
-              },
-            };
-          },
+              ReactDOM.render(
+                <CustomModal
+                  onClose={() => {
+                    ReactDOM.unmountComponentAtNode(modalContainer);
+                    modalContainer.remove();
+                  }}
+                />,
+                modalContainer,
+              );
+            },
+            unmount: () => {
+              if (modalContainer) {
+                ReactDOM.unmountComponentAtNode(modalContainer);
+                modalContainer.remove();
+              }
+            },
+          };
         },
-      }}
-    >
-      {/* ... other components */}
-    </MetaMaskProvider>
-  );
-};
+      },
+    }}
+  >
+    {/* Other components */}
+  </MetaMaskProvider>
+);
 
 export default App;
 ```
 
-### 3. Integrate the Custom Modal with the Provider
+### 3. Test Your Application
 
-In the example above, the `install` modal is overridden to display a `CustomModal` component. This modal will appear when MetaMask needs to be installed, utilizing the `mount` and `unmount` lifecycle methods to manage the modal's rendering.
-
-### 4. Test Your Application
-
-Run your React application and test the custom modal functionality. Ensure that the modal behaves as expected in scenarios like when MetaMask is not installed.
+Ensure the custom modal operates as intended, especially in scenarios like when MetaMask isn't installed.
 
 ## Conclusion
 
-Custom modals in MetaMask provide a flexible way to create a consistent and engaging user experience. By following the steps outlined above, you can implement a custom modal that fits the look and feel of your application.
+Creating custom MetaMask modals provides a uniform and engaging user experience across different web frameworks. The principles detailed here for React are adaptable to frameworks like Vue.js or even vanilla HTML/JavaScript, ensuring flexibility and consistency in handling MetaMask interactions across diverse web applications.
 
-For a detailed example on implementing a custom modal, check the `react-with-custom-modal` example in our repo.
+For a React-specific implementation example, check out the `react-with-custom-modal` in our repo. This example can serve as a starting point for understanding the approach, which you can then adapt to other frameworks as needed.
