@@ -23,7 +23,7 @@ describe('enableWakeLock', () => {
         wakeLockTimer: null,
         wakeLockFeatureActive: false,
         wakeLock: {
-          enable: jest.fn(),
+          enable: jest.fn().mockReturnValue(Promise.resolve()),
         },
       },
     } as unknown as jest.Mocked<PlatformManager>;
