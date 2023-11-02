@@ -8,6 +8,7 @@ import { LRUCache } from 'lru-cache';
 import Analytics from 'analytics-node';
 
 const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+const isDevelopmentServer: boolean = process.env.ENVIRONMENT === 'development';
 
 const userIdHashCache = new LRUCache<string, string>({
   max: 5000,
@@ -24,7 +25,7 @@ app.use(helmet());
 app.disable('x-powered-by');
 
 const analytics = new Analytics(
-  isDevelopment
+  isDevelopment || isDevelopmentServer
     ? process.env.SEGMENT_API_KEY_DEBUG || ''
     : process.env.SEGMENT_API_KEY_PRODUCTION || '',
   {
