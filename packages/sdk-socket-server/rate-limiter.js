@@ -1,11 +1,11 @@
-import os from 'os';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
+const os = require('os');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 let rateLimitPoints = 10;
 let rateLimitMessagePoints = 100;
 const rateLimitPointsMax = 40;
 const rateLimitMessagePointsMax = 400;
-let lastConnectionErrorTimestamp: number | null = null;
+let lastConnectionErrorTimestamp;
 
 // Store the initial values
 const initialRateLimitPoints = rateLimitPoints;
@@ -17,16 +17,16 @@ let rateLimiter = new RateLimiterMemory({
   duration: 1,
 });
 
-let rateLimiterMessage = new RateLimiterMemory({
+let rateLimiterMesssage = new RateLimiterMemory({
   points: rateLimitMessagePoints,
   duration: 1,
 });
 
-const setLastConnectionErrorTimestamp = (timestamp: number): void => {
+const setLastConnectionErrorTimestamp = (timestamp) => {
   lastConnectionErrorTimestamp = timestamp;
 };
 
-const resetRateLimits = (): void => {
+const resetRateLimits = () => {
   const tenSecondsPassedSinceLastError =
     lastConnectionErrorTimestamp &&
     Date.now() - lastConnectionErrorTimestamp >= 10000;
@@ -42,7 +42,10 @@ const resetRateLimits = (): void => {
   );
 };
 
-const increaseRateLimits = (cpuUsagePercentMin: number): void => {
+const increaseRateLimits = (
+  cpuUsagePercentMin,
+  // freeMemoryPercentMin
+) => {
   // Check the CPU usage
   const cpuLoad = os.loadavg()[0]; // 1 minute load average
   const numCpus = os.cpus().length;
@@ -59,7 +62,10 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   );
 
   // If CPU is not at 100% and there is at least 10% of free memory
-  if (cpuUsagePercent <= cpuUsagePercentMin) {
+  if (
+    cpuUsagePercent <= cpuUsagePercentMin
+    // && freeMemoryPercent >= freeMemoryPercentMin
+  ) {
     // Increase the rate limits by steps of 5 and 10, up to a max of 50 and 500
     rateLimitPoints = Math.min(rateLimitPoints + 5, rateLimitPointsMax);
     rateLimitMessagePoints = Math.min(
@@ -81,7 +87,7 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
     duration: 1,
   });
 
-  rateLimiterMessage = new RateLimiterMemory({
+  rateLimiterMesssage = new RateLimiterMemory({
     points: rateLimitMessagePoints,
     duration: 1,
   });
@@ -91,9 +97,9 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   );
 };
 
-export {
+module.exports = {
   rateLimiter,
-  rateLimiterMessage,
+  rateLimiterMesssage,
   resetRateLimits,
   increaseRateLimits,
   setLastConnectionErrorTimestamp,
