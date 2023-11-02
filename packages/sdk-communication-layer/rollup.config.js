@@ -10,6 +10,9 @@ import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 import pkgJson from './package.json'; // Ensure this path is correct
 
+// Check if environment variable is set to 'dev'
+const isDev = process.env.NODE_ENV === 'dev';
+
 // Base external dependencies across different builds
 const baseExternalDeps = [
   '@react-native-async-storage/async-storage',
@@ -68,8 +71,8 @@ const config = [
       // Minify the bundle
       terser(),
       // Visualize the bundle to analyze its composition and size
-      visualizer({
-        filename: `stats/browser-es-stats-${pkgJson.version}.html`,
+      isDev && visualizer({
+        filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
       }),
     ],
   },
@@ -107,8 +110,8 @@ const config = [
       builtins({ crypto: true }),
       json(),
       terser(),
-      visualizer({
-        filename: `stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+      isDev && visualizer({
+        filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
       }),
     ],
   },
@@ -136,8 +139,8 @@ const config = [
       }),
       json(),
       terser(),
-      visualizer({
-        filename: `stats/react-native-stats-${pkgJson.version}.html`,
+      isDev && visualizer({
+        filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
       }),
     ],
   },
@@ -176,8 +179,8 @@ const config = [
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser(),
-      visualizer({
-        filename: `stats/node-stats-${pkgJson.version}.html`,
+      isDev && visualizer({
+        filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
       }),
     ],
   },
