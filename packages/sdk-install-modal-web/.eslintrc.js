@@ -8,7 +8,12 @@ module.exports = {
 
   parser: '@typescript-eslint/parser',
 
-  ignorePatterns: ['.eslintrc.js', 'dist', 'rollup.config.js'],
+  ignorePatterns: [
+    '.eslintrc.js',
+    'dist',
+    'rollup.config.js',
+    '**/coverage/**',
+  ],
 
   parserOptions: {
     project: true,
