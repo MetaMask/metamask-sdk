@@ -2,11 +2,13 @@ import dotenv from 'dotenv';
 import cluster from 'cluster';
 import os from 'os';
 import http from 'http';
+
+// must be kept before importing app that relies on process.env
+dotenv.config();
+
 import { app, analytics } from './api-config';
 import configureSocketIO from './socket-config';
 import { cleanupAndExit } from './utils';
-
-dotenv.config();
 
 const isDevelopment: boolean = process.env.NODE_ENV === 'development';
 const numCPUs = os.cpus().length;
