@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.1]
+### Added
+- feat: send sdk_extension_utilized analytics event when extension is selected from cached choice. ([#425](https://github.com/MetaMask/metamask-sdk/pull/425))
+
+## [0.10.0]
+### Added
+- feat: connection recovery edge case ([#411](https://github.com/MetaMask/metamask-sdk/pull/411))
+
 ## [0.9.0]
 ### Added
 - fix typos ([#401](https://github.com/MetaMask/metamask-sdk/pull/401))
@@ -82,7 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.9.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.1...HEAD
+[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.0...@metamask/sdk-communication-layer@0.10.1
+[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.9.0...@metamask/sdk-communication-layer@0.10.0
 [0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.8.0...@metamask/sdk-communication-layer@0.9.0
 [0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.1...@metamask/sdk-communication-layer@0.8.0
 [0.7.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.0...@metamask/sdk-communication-layer@0.7.1

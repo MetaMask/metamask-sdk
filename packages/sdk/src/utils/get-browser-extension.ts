@@ -1,36 +1,59 @@
-export function getBrowserExtension({
+import { SDKProvider } from '../provider/SDKProvider';
+import { wrapExtensionProvider } from '../provider/wrapExtensionProvider';
+import { eip6963RequestProvider } from './eip6963RequestProvider';
+
+export async function getBrowserExtension({
   mustBeMetaMask,
+  debug,
 }: {
   mustBeMetaMask: boolean;
-}) {
+  debug?: boolean;
+}): Promise<SDKProvider> {
   if (typeof window === 'undefined') {
     throw new Error(`window not available`);
   }
 
-  const { ethereum } = window as { ethereum: any };
+  let baseProvider: SDKProvider;
 
-  if (!ethereum) {
-    throw new Error('Ethereum not found in window object');
-  }
+  try {
+    baseProvider = await eip6963RequestProvider();
 
-  // The `providers` field is populated when CoinBase Wallet extension is also installed
-  // The expected object is an array of providers, the MetaMask provider is inside
-  // See https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider-guidance for
-  if (Array.isArray(ethereum.providers)) {
-    const provider = mustBeMetaMask
-      ? ethereum.providers.find((p: any) => p.isMetaMask)
-      : ethereum.providers[0];
+    return wrapExtensionProvider({ provider: baseProvider, debug });
+  } catch (e) {
+    const { ethereum } = window as unknown as {
+      ethereum:
+        | (SDKProvider & {
+            isMetaMask: boolean;
+          })
+        | { providers: any[] };
+    };
 
-    if (!provider) {
-      throw new Error('No suitable provider found');
+    if (!ethereum) {
+      throw new Error('Ethereum not found in window object');
     }
 
-    return provider;
-  }
+    // The `providers` field is populated when CoinBase Wallet extension is also installed
+    // The expected object is an array of providers, the MetaMask provider is inside
+    // See https://docs.cloud.coinbase.com/wallet-sdk/docs/injected-provider-guidance for
+    if ('providers' in ethereum) {
+      if (Array.isArray(ethereum.providers)) {
+        const provider = mustBeMetaMask
+          ? ethereum.providers.find((p: any) => p.isMetaMask)
+          : ethereum.providers[0];
 
-  if (mustBeMetaMask && !ethereum.isMetaMask) {
-    throw new Error('MetaMask provider not found in Ethereum');
-  }
+        if (!provider) {
+          throw new Error('No suitable provider found');
+        }
 
-  return ethereum;
+        return wrapExtensionProvider({
+          provider: provider as SDKProvider,
+          debug,
+        });
+      }
+    } else if (mustBeMetaMask && !ethereum.isMetaMask) {
+      throw new Error('MetaMask provider not found in Ethereum');
+    }
+
+    return wrapExtensionProvider({ provider: ethereum as SDKProvider, debug });
+  }
 }

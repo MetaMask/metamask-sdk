@@ -12,7 +12,9 @@ export function enableWakeLock(instance: PlatformManager) {
     return;
   }
 
-  state.wakeLock.enable();
+  state.wakeLock.enable().catch((err) => {
+    console.error('WakeLock is not supported', err);
+  });
 
   const maxTime =
     state.wakeLockStatus === WakeLockStatus.Temporary
@@ -29,6 +31,8 @@ export function enableWakeLock(instance: PlatformManager) {
     state.wakeLockStatus === WakeLockStatus.UntilResponse
   ) {
     state.wakeLockFeatureActive = true;
-    window.addEventListener('focus', () => instance.disableWakeLock());
+    window.addEventListener('focus', () => {
+      instance.disableWakeLock();
+    });
   }
 }

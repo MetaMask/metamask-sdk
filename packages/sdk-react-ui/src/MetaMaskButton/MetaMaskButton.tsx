@@ -91,34 +91,34 @@ Props) => {
   }, [sdk, connected, isConnected, connect]);
 
   const getColors = () => {
-    if (wrongNetwork) return 'from-red-500 to-red-500';
+    if (wrongNetwork) return 'tw-from-red-500 tw-to-red-500';
 
     if (isConnected && theme === 'light') {
-      return 'from-white to-white';
+      return 'tw-from-white tw-to-white';
     } else if (isConnected) {
-      return 'from-neutral-500 to-neutral-500';
+      return 'tw-from-neutral-500 tw-to-neutral-500';
     }
 
-    if (color === 'blue') return 'from-blue-500 to-blue-500';
-    else if (color === 'white') return 'from-white to-white';
+    if (color === 'blue') return 'tw-from-blue-500 tw-to-blue-500';
+    else if (color === 'white') return 'tw-from-white tw-to-white';
 
-    return 'from-orange-500 to-orange-500';
+    return 'tw-from-orange-500 tw-to-orange-500';
   };
 
   const getTextColor = () => {
-    if (color === 'white') return 'text-black';
+    if (color === 'white') return 'tw-text-black';
 
-    return 'text-white';
+    return 'tw-text-white';
   };
 
   const getShape = () => {
     if (shape === 'rectangle') {
       return '';
     } else if (shape === 'rounded-full') {
-      return 'rounded-full';
+      return 'tw-rounded-full';
     }
 
-    return 'rounded-lg';
+    return 'tw-rounded-lg';
   };
 
   const getIcon = () => {
@@ -138,9 +138,9 @@ Props) => {
 
   const getIconMargin = () => {
     if (icon === 'no-icon') return '';
-    else if (iconPosition === 'right') return 'pr-3';
+    else if (iconPosition === 'right') return 'tw-pr-3';
 
-    return 'pl-3';
+    return 'tw-pl-3';
   };
 
   const getText = () => {
@@ -148,12 +148,12 @@ Props) => {
       if (wrongNetworkComponent) return wrongNetworkComponent;
       return (
         <div
-          className={`relative flex content-center ${
-            textAlign !== 'left' ? 'justify-center' : ''
+          className={`tw-relative tw-flex tw-content-center ${
+            textAlign !== 'left' ? 'tw-justify-center' : ''
           } ${getTextColor()}`}
         >
           <IconWrongNetwork style={iconStyle} />{' '}
-          <span style={textStyle} className={'pl-2'}>
+          <span style={textStyle} className={'tw-pl-2'}>
             {wrongNetworkText}
           </span>
         </div>
@@ -164,18 +164,21 @@ Props) => {
       if (connectedComponent) return connectedComponent;
       return (
         <div
-          className={`flex relative content-center ${
-            textAlign !== 'left' ? 'justify-center' : ''
+          className={`tw-flex tw-relative tw-content-center ${
+            textAlign !== 'left' ? 'tw-justify-center' : ''
           } ${getTextColor()}`}
         >
-          <div style={{ width: 30, height: 30 }} className="mt-1 relative">
+          <div
+            style={{ width: 30, height: 30 }}
+            className="tw-mt-1 tw-relative"
+          >
             <div
               style={{
                 fontSize: 8,
                 marginTop: -3,
                 marginRight: -3,
               }}
-              className="flex content-center justify-center absolute right-0"
+              className="tw-flex tw-content-center tw-justify-center tw-absolute tw-right-0"
             >
               <IconNetwork network={chain} />
             </div>
@@ -186,25 +189,25 @@ Props) => {
           </div>
           <div
             style={{ fontSize: 13, lineHeight: '18px' }}
-            className="pl-4 text-left flex flex-col"
+            className="tw-pl-4 tw-text-left tw-flex tw-flex-col"
           >
             {chain && (
               <span
                 style={{ ...textStyle, height: 19.5 }}
-                className={'text-left'}
+                className={'tw-text-left'}
               >
                 <b>{chain?.name || chain?.network}</b>
               </span>
             )}
             <span
               style={{ ...textStyle, fontSize: 11, height: 16.5 }}
-              className={'text-left'}
+              className={'tw-text-left'}
             >
               {truncatedAddress(address)}
             </span>
           </div>
           {isConnected && <Balance theme={theme} />}
-          <div className="pl-2 grid content-center justify-center text-center">
+          <div className="tw-pl-2 tw-grid tw-content-center tw-justify-center tw-text-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"
@@ -225,8 +228,8 @@ Props) => {
     if (connectComponent) return connectedComponent;
     return (
       <div
-        className={`relative flex ${
-          textAlign !== 'left' ? 'justify-center' : ''
+        className={`tw-relative tw-flex ${
+          textAlign !== 'left' ? 'tw-justify-center' : ''
         } ${getTextColor()}`}
       >
         {iconPosition !== 'right' && getIcon()}{' '}
@@ -254,9 +257,9 @@ Props) => {
     <>
       <button
         style={buttonStyle}
-        className={`${connectedAndRightNetwork ? 'px-3' : 'px-6'} ${
-          connectedAndRightNetwork ? 'py-1' : 'py-2.5'
-        } relative ${getShape()} group font-medium text-white font-medium inline-block text-base`}
+        className={`${connectedAndRightNetwork ? 'tw-px-3' : 'tw-px-6'} ${
+          connectedAndRightNetwork ? 'tw-py-1' : 'tw-py-2.5'
+        } tw-relative ${getShape()} tw-group tw-font-medium tw-text-white tw-font-medium tw-inline-block tw-text-base`}
         onClick={
           isConnected
             ? openModal
@@ -268,13 +271,13 @@ Props) => {
         {!removeDefaultStyles && (
           <>
             <span
-              className={`absolute top-0 left-0 w-full h-full ${getShape()} opacity-50 filter blur-sm bg-gradient-to-br ${getColors()}`}
+              className={`tw-absolute tw-top-0 tw-left-0 tw-w-full tw-h-full ${getShape()} tw-opacity-50 tw-filter tw-blur-sm tw-bg-gradient-to-br ${getColors()}`}
             ></span>
             <span
-              className={`absolute inset-0 w-full h-full transition-all duration-200 ease-out ${getShape()} shadow-xl bg-gradient-to-br filter group-active:opacity-0 group-hover:blur-sm ${getColors()}`}
+              className={`tw-absolute tw-inset-0 tw-w-full tw-h-full tw-transition-all tw-duration-200 tw-ease-out ${getShape()} tw-shadow-xl tw-bg-gradient-to-br tw-filter group-active:tw-opacity-0 group-hover:tw-blur-sm ${getColors()}`}
             ></span>
             <span
-              className={`absolute inset-0 w-full h-full transition duration-200 ease-out ${getShape()} bg-gradient-to-br ${getColors()}`}
+              className={`tw-absolute tw-inset-0 tw-w-full tw-h-full tw-transition tw-duration-200 tw-ease-out ${getShape()} tw-bg-gradient-to-br ${getColors()}`}
             ></span>
           </>
         )}

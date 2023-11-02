@@ -11,6 +11,7 @@ import {
   getContract,
 } from 'viem';
 import SimpleABI from '../abi/Simple.json';
+import RPCChainViewer, { ChainRPC, ChainRPCs } from '../components/rpcchain-viewer';
 
 export default function Home() {
   const {
@@ -27,6 +28,7 @@ export default function Home() {
     error,
   } = useSDK();
 
+  const [chainRPCs, setChainRPCs] = useState<ChainRPCs>();
   const languages = sdk?.availableLanguages || ['en'];
 
   const [response, setResponse] = useState<unknown>('');
@@ -71,17 +73,19 @@ export default function Home() {
   };
 
   const sendTransaction = async () => {
+    const selectedAddress = provider?.selectedAddress;
+
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: window.ethereum?.selectedAddress, // must match user's active address.
+      from: selectedAddress, // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = (await window.ethereum?.request({
+      const txHash = (await provider?.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
       })) as string;
@@ -164,6 +168,7 @@ export default function Home() {
 
     let from = window.ethereum?.selectedAddress;
 
+    setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
       if (!from || from === null) {
@@ -177,10 +182,11 @@ export default function Home() {
       const method = 'eth_signTypedData_v4';
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
       console.debug(`sign params`, params);
-      const resp = await window.ethereum?.request({ method, params });
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
+      console.debug(`sign response`, resp);
     } catch (e) {
-      console.log(e);
+      console.error(`an error occured`, e);
     }
   };
 
@@ -393,6 +399,109 @@ export default function Home() {
     console.log(`res`, res);
   };
 
+  const handleChainRPCs = async () => {
+    const selectedAddress = provider?.selectedAddress;
+
+    const rpcs: ChainRPC[] = [{
+      method: "personal_sign",
+      params: ["something to sign 1", selectedAddress],
+    },
+    {
+      method: "personal_sign",
+      params: ["hello world", selectedAddress],
+    },
+    {
+      method: "personal_sign",
+      params: ["Another one #3", selectedAddress],
+    }];
+
+    setChainRPCs({processing: true, rpcs});
+
+    let error;
+    try {
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      console.log(`response`, response);
+      response.forEach((result, index) => {
+        rpcs[index].result = result;
+      });
+    } catch(e) {
+      console.error(`error`, e);
+      error = e;
+    }
+    setChainRPCs({processing: false, rpcs, error})
+  };
+
+
+  const chainSwitchAndSignAndBack = async () => {
+    const selectedAddress = provider?.selectedAddress;
+
+    const initChainId = chainId;
+    const targetChainId = initChainId === '0x1' ? '0xe704' : '0x1';
+
+    const rpcs: ChainRPC[] = [{
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: targetChainId }],
+    },
+    {
+      method: "personal_sign",
+      params: ["Another one #3", selectedAddress],
+    },{
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: initChainId }],
+    }];
+
+    setChainRPCs({processing: true, rpcs});
+
+    let error;
+    try {
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      console.log(`response`, response);
+      response.forEach((result, index) => {
+        rpcs[index].result = result;
+      });
+    } catch(e) {
+      console.error(`error`, e);
+      error = e;
+    }
+    setChainRPCs({processing: false, rpcs, error})
+  }
+
+  const chainTransactions = async () => {
+    const selectedAddress = provider?.selectedAddress;
+    const to = '0x0000000000000000000000000000000000000000';
+    const transactionParameters = {
+      to, // Required except during contract publications.
+      from: selectedAddress, // must match user's active address.
+      value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+    };
+
+    const rpcs: ChainRPC[] = [{
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    },
+    {
+      method: "personal_sign",
+      params: ["Hello Wolrd", selectedAddress],
+    },{
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    }];
+
+    setChainRPCs({processing: true, rpcs});
+
+    let error;
+    try {
+      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      console.log(`response`, response);
+      response.forEach((result, index) => {
+        rpcs[index].result = result;
+      });
+    } catch(e) {
+      console.error(`error`, e);
+      error = e;
+    }
+    setChainRPCs({processing: false, rpcs, error})
+  }
   return (
     <>
       <Head>
@@ -420,84 +529,145 @@ export default function Home() {
           </select>
         </div>
 
-        {connecting && (
-          <div>Waiting for Metamask to link the connection...</div>
-        )}
-        <p>ChannelId: {serviceStatus?.channelConfig?.channelId}</p>
-        <p>{`Expiration: ${serviceStatus?.channelConfig?.validUntil ?? ''}`}</p>
-        <p>Extension active: {extensionActive ? 'YES' : 'NO'}</p>
-        <p>{`Connected chain: ${chainId}`}</p>
-        <p>{`Connected account: ${account}`}</p>
-        <p>{`Account balance: ${balance}`}</p>
-        <p>{`Last request response: ${response}`}</p>
-        <div>{`Connected: ${connected}`}</div>
+        <div id='header'>
+          {connecting && (
+            <div>Waiting for Metamask to link the connection...</div>
+          )}
+          {connected &&
+            <>
+              <table className="head-table">
+                <tbody>
+                  <tr>
+                    <td className="table-label">ChannelId:</td>
+                    <td className="table-value">{serviceStatus?.channelConfig?.channelId}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Expiration:</td>
+                    <td className="table-value">{serviceStatus?.channelConfig?.validUntil ?? ''}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Extension active:</td>
+                    <td className="table-value">{extensionActive ? 'YES' : 'NO'}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Connected chain:</td>
+                    <td className="table-value">{chainId}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Connected account:</td>
+                    <td className="table-value">{account}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Account balance:</td>
+                    <td className="table-value">{balance}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Last request response:</td>
+                    <td className="table-value">{JSON.stringify(response)}</td>
+                  </tr>
+                  <tr>
+                    <td className="table-label">Connected:</td>
+                    <td className="table-value">{connected ? 'YES' : 'NO'}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </>
+          }
+        </div>
         {connected && (
-          <div>
-            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-              Request Accounts
-            </button>
+          <>
+            <div className='action-buttons'>
+              <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+                Request Accounts
+              </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={interactEthers}
-            >
-              ping (ethers)
-            </button>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={interactEthers}
+              >
+                ping (ethers)
+              </button>
 
-            <button style={{ padding: 10, margin: 10 }} onClick={interactViem}>
-              ping (viem)
-            </button>
+              <button style={{ padding: 10, margin: 10 }} onClick={interactViem}>
+                ping (viem)
+              </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={eth_signTypedData_v4}
-            >
-              eth_signTypedData_v4
-            </button>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={eth_signTypedData_v4}
+              >
+                eth_signTypedData_v4
+              </button>
 
-            <button style={{ padding: 10, margin: 10 }} onClick={testPayload}>
-              testPayload
-            </button>
+              <button style={{ padding: 10, margin: 10 }} onClick={testPayload}>
+                testPayload
+              </button>
 
-            <button style={{ padding: 10, margin: 10 }} onClick={testEthers}>
-              testEthers
-            </button>
+              <button style={{ padding: 10, margin: 10 }} onClick={testEthers}>
+                testEthers
+              </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={sendTransaction}
-            >
-              sendTransaction
-            </button>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={sendTransaction}
+              >
+                sendTransaction
+              </button>
 
-            <button style={{ padding: 10, margin: 10 }} onClick={addGanache}>
-              Add Local Ganache Chain
-            </button>
+              <button style={{ padding: 10, margin: 10 }} onClick={addGanache}>
+                Add Local Ganache Chain
+              </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={async () => {
-                await provider?.request({
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0xe704' }],
-                });
-              }}
-            >
-              Switch to linea
-            </button>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={async () => {
+                  await provider?.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0xe704' }],
+                  });
+                }}
+              >
+                Switch to linea
+              </button>
 
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={async () => {
-                await provider?.request({
-                  method: 'wallet_switchEthereumChain',
-                  params: [{ chainId: '0x1' }],
-                });
-              }}
-            >
-              Switch to mainnet
-            </button>
-          </div>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={async () => {
+                  await provider?.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x1' }],
+                  });
+                }}
+              >
+                Switch to mainnet
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                className='chain'
+                onClick={handleChainRPCs}
+              >
+                Chain RPC Calls
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                className='chain'
+                onClick={chainSwitchAndSignAndBack}
+              >
+                Chain Switch + sign + switch back
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                className='chain'
+                onClick={chainTransactions}
+              >
+                Chain sendTransaction + personal_sign + sendTransaction
+              </button>
+            </div>
+            {chainRPCs && <RPCChainViewer chainRPCs={chainRPCs} />}
+          </>
         )}
         {connecting && (
           <>
@@ -514,7 +684,7 @@ export default function Home() {
         {!connecting && readOnlyCalls && (
           <div>
             <button
-              style={{ padding: 10, margin: 10 }}
+              style={{ padding: 10, margin: 10, backgroundColor: '#FFFFCC' }}
               onClick={testReadOnlyCalls}
             >
               testReadOnlyCalls

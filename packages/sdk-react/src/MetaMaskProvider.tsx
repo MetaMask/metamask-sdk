@@ -113,32 +113,32 @@ const MetaMaskProviderClient = ({
 
   useEffect(() => {
     if (account) {
-        // Retrieve balance of account
-        sdk
-          ?.getProvider()
-          .request({
-            method: 'eth_getBalance',
-            params: [account, 'latest'],
-          })
-          .then((accountBalance: unknown) => {
-            if (debug) {
-              console.debug(
-                `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
-              );
-            }
-
-            setBalance(accountBalance as string);
-          })
-          .catch((err: any) => {
-            console.warn(
-              `[MetamaskProvider] error retrieving balance of ${account}`,
-              err,
+      // Retrieve balance of account
+      sdk
+        ?.getProvider()
+        .request({
+          method: 'eth_getBalance',
+          params: [account, 'latest'],
+        })
+        .then((accountBalance: unknown) => {
+          if (debug) {
+            console.debug(
+              `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
             );
-          });
+          }
+
+          setBalance(accountBalance as string);
+        })
+        .catch((err: any) => {
+          console.warn(
+            `[MetamaskProvider] error retrieving balance of ${account}`,
+            err,
+          );
+        });
     } else {
       setBalance(undefined);
     }
-  }, [account]);
+  }, [account, chainId]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -177,6 +177,7 @@ const MetaMaskProviderClient = ({
     setConnected(activeProvider.isConnected());
     setAccount(activeProvider.selectedAddress || undefined);
     setProvider(activeProvider);
+    setChainId(activeProvider.chainId);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);

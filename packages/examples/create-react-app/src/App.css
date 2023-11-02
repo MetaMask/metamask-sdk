@@ -7,6 +7,36 @@
   pointer-events: none;
 }
 
+.Button-Normal {
+  background-color: blueviolet;
+  border: 1px solid blueviolet;
+  color: white;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Button-Danger {
+  background-color: red;
+  border-color: red;
+  color: white;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Info-Status {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  border: 1px solid blueviolet;
+  background-color: aliceblue;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

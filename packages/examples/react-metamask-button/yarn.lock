@@ -3011,9 +3011,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.9.0"
+"@metamask/sdk-communication-layer@npm:0.10.0":
+  version: 0.10.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.10.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -3021,13 +3021,13 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 1cc30b48003e164060664f27277b3c4b057c184ac95d1b4d68a773d206a45df3b50710174b080e672e7649cb524d3aac4d40127c9879c7361cd3d60d00e87b47
+  checksum: 0bf3702e137f8fdbc3f4ac7242f83dc741083cda7ee0102f6d9c2044405e925e14e411014350a2c8068f4e110c1172613161433b3d61d968ea3b615f9cc0929b
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.9.0"
+"@metamask/sdk-install-modal-web@npm:0.10.0":
+  version: 0.10.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.10.0"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -3036,16 +3036,16 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: 932ed1dfb196d173b8e4a2c63eef4b42f4215c67522415e0b4189c4a5e34aa6d78c7ebd043a56ee3302bebffb42c7ddfbdf93ab5e3c022a327f6a86c447b59e9
+  checksum: dae908e28915ed34cb7ae924503fa8a0f4543f871638bdd0651f731282ee11a50be6e82ac37365d3e8238a1e7222820e3627a58f978b3f529d9da2b122b77de9
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-ui@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@metamask/sdk-react-ui@npm:0.9.0"
+"@metamask/sdk-react-ui@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@metamask/sdk-react-ui@npm:0.10.0"
   dependencies:
     "@headlessui/react": ^1.6.6
-    "@metamask/sdk-react": 0.9.0
+    "@metamask/sdk-react": 0.10.0
     ethers: ^5.6.9
     mersenne-twister: ^1.1.0
     react-copy-to-clipboard: ^5.1.0
@@ -3055,31 +3055,31 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: e7d30e058aa2ca9c0ac013ed805019bae2ac79d24d3d84936fa39d397577c95ff0e2f68ddf235c914c3963e42ba21068777704a44e23c01cf7d4b8efc0278e03
+  checksum: 346883114b5cc53c44dd4fbdd2b4afab30bd86f7813394ccd6ae49120ad37453a6a16cd29c94b951d4915400445f0ce89ac6ee60564db6d8bb400e072275353c
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@metamask/sdk-react@npm:0.9.0"
+"@metamask/sdk-react@npm:0.10.0":
+  version: 0.10.0
+  resolution: "@metamask/sdk-react@npm:0.10.0"
   dependencies:
-    "@metamask/sdk": ^0.9.0
+    "@metamask/sdk": ^0.10.0
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: e11b15edee6d2cbf1b9cbeb29614eb5ec93f16f72fa902faac107f9d6adb350f6e6705ffd74c2ecf6ac0dc865ce7d637047402bde3b264ab8576b10521bda39c
+  checksum: ee3a998ff4355740c0395c8a49d305aafb1133a593678b27e27071911e2b3aae44ffdb00fd765703dcb0b08efdca2f718092e6608b26bc5f34014972282b2967
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.9.0":
-  version: 0.9.0
-  resolution: "@metamask/sdk@npm:0.9.0"
+"@metamask/sdk@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@metamask/sdk@npm:0.10.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.9.0
-    "@metamask/sdk-install-modal-web": 0.9.0
+    "@metamask/sdk-communication-layer": 0.10.0
+    "@metamask/sdk-install-modal-web": 0.10.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -3107,7 +3107,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 59c03ce7f3b00bab64e2a7003fcea30a9e7d255d796ab1bca073e00008257fc8734b944e07f7f274035331676a7da2b3bdfdb58963efa17b6aac85db465109a2
+  checksum: a1c9f0e3bce0b682cdd1dd51bedec7229bf800655fea07e03e2686ea1a5441bd355c9e4e9aa63150fffa623ea467c463f9cf991f1a21855c9b85a448e2e3930d
   languageName: node
   linkType: hard
 
@@ -14097,7 +14097,7 @@ __metadata:
   resolution: "react-metamask-button@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react-ui": ^0.9.0
+    "@metamask/sdk-react-ui": ^0.10.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^13.5.0

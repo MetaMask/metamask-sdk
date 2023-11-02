@@ -39,9 +39,11 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       localStorage.getItem(STORAGE_PROVIDER_TYPE) === 'extension';
 
     try {
-      metamaskBrowserExtension = getBrowserExtension({
+      metamaskBrowserExtension = await getBrowserExtension({
         mustBeMetaMask: true,
+        debug: developerMode,
       });
+
       window.extension = metamaskBrowserExtension;
     } catch (err) {
       // Ignore error if metamask extension not found

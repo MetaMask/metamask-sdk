@@ -62,7 +62,7 @@ describe('PlatformManager', () => {
       expect(platformManager).toBeDefined();
       expect(platformManager.state.useDeeplink).toBe(false);
       expect(platformManager.state.wakeLockStatus).toBe(
-        WakeLockStatus.Temporary,
+        WakeLockStatus.UntilResponse,
       );
       expect(platformManager.state.debug).toBe(false);
       expect(platformManager.state.wakeLock).toBeInstanceOf(WakeLockManager);

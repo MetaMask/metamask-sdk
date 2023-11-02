@@ -16,16 +16,13 @@ export class WakeLockManager {
 
   start() {
     this.enabled = false;
-    console.debug(
-      `WakeLockManager::start() hasNativeWakeLock=${hasNativeWakeLock()}`,
-    );
 
     if (hasNativeWakeLock() && !this._eventsAdded) {
       this._eventsAdded = true;
       this._wakeLock = undefined;
-      const handleVisibilityChange = () => {
+      const handleVisibilityChange = async () => {
         if (this._wakeLock !== null && document.visibilityState === 'visible') {
-          this.enable();
+          await this.enable();
         }
       };
       document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -80,35 +77,31 @@ export class WakeLockManager {
     return this.enabled;
   }
 
-  // TODO convert to async function
-  enable() {
+  async enable() {
     if (this.enabled) {
-      this.disable();
+      this.disable('from_enable');
     }
 
     this.start();
     if (hasNativeWakeLock()) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return navigator.wakeLock
-        .request('screen')
-        .then((wakeLock: any) => {
-          this._wakeLock = wakeLock;
-          this.enabled = true;
-          // console.log('Wake Lock active.');
-          /* this._wakeLock.addEventListener('release', () => {
+      try {
+        const wakeLock = await (navigator as any).wakeLock.request('screen');
+
+        this._wakeLock = wakeLock;
+        this.enabled = true;
+        // console.log('Wake Lock active.');
+        /* this._wakeLock.addEventListener('release', () => {
             // ToDo: Potentially emit an event for the page to observe since
             // Wake Lock releases happen when page visibility changes.
             // (https://web.dev/wakelock/#wake-lock-lifecycle)
             console.log('Wake Lock released.');
           });*/
-        })
-        .catch(() => {
-          this.enabled = false;
-          return false;
-        });
+      } catch (err) {
+        this.enabled = false;
+        return false;
+      }
     } else if (isOldIOS()) {
-      this.disable();
+      this.disable('from_enable_old_ios');
       /* console.warn(`
         NoSleep enabled for older iOS devices. This can interrupt
         active or long-running network requests from completing successfully.
@@ -121,19 +114,30 @@ export class WakeLockManager {
         }
       }, 15000);
       this.enabled = true;
-      return Promise.resolve();
+      return true;
     }
 
     if (this.noSleepVideo) {
-      const playPromise = this.noSleepVideo?.play();
-      this.enabled = true;
-      return playPromise.then(() => true).catch(() => false);
+      try {
+        this.noSleepVideo?.play().catch((err) => {
+          console.warn(`WakeLockManager::enable() video failed to play`, err);
+        });
+        this.enabled = true;
+        return true;
+      } catch (err) {
+        console.warn(
+          `WakeLockManager::enable() video failed to start playing`,
+          err,
+        );
+        this.enabled = false;
+        return false;
+      }
     }
-    this.enabled = true;
-    return Promise.resolve();
+
+    return false;
   }
 
-  disable() {
+  disable(_context?: string) {
     if (!this.enabled) {
       return;
     }
