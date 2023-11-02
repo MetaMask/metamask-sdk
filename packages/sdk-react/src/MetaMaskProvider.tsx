@@ -177,7 +177,7 @@ const MetaMaskProviderClient = ({
     setConnected(activeProvider.isConnected());
     setAccount(activeProvider.selectedAddress || undefined);
     setProvider(activeProvider);
-    setChainId(activeProvider.chainId);
+    setChainId(activeProvider.chainId || undefined);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);
