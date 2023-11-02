@@ -7,10 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.11.0]
-### Uncategorized
+### Added
 - build: optimize rollup output by env ([#450](https://github.com/MetaMask/metamask-sdk.git/pull/450))
-- Revert "Release 34.0.0 (#442)" ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
-- Release 34.0.0 ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
 - fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk.git/pull/446))
 - feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
 
@@ -98,23 +96,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.11.0...HEAD
-[0.11.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.10.1...@metamask/sdk-communication-layer@0.11.0
-[0.10.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.10.0...@metamask/sdk-communication-layer@0.10.1
-[0.10.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.9.0...@metamask/sdk-communication-layer@0.10.0
-[0.9.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.8.0...@metamask/sdk-communication-layer@0.9.0
-[0.8.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.7.1...@metamask/sdk-communication-layer@0.8.0
-[0.7.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.7.0...@metamask/sdk-communication-layer@0.7.1
-[0.7.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.6.2...@metamask/sdk-communication-layer@0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.6.1...@metamask/sdk-communication-layer@0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.6.0...@metamask/sdk-communication-layer@0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.5.3...@metamask/sdk-communication-layer@0.6.0
-[0.5.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.5.2...@metamask/sdk-communication-layer@0.5.3
-[0.5.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.5.0...@metamask/sdk-communication-layer@0.5.2
-[0.5.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.4.2...@metamask/sdk-communication-layer@0.5.0
-[0.4.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.4.0...@metamask/sdk-communication-layer@0.4.2
-[0.4.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.3.3...@metamask/sdk-communication-layer@0.4.0
-[0.3.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.3.2...@metamask/sdk-communication-layer@0.3.3
-[0.3.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.3.0...@metamask/sdk-communication-layer@0.3.2
-[0.3.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-communication-layer@0.2.5...@metamask/sdk-communication-layer@0.3.0
-[0.2.5]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-communication-layer@0.2.5
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.0...HEAD
+[0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.1...@metamask/sdk-communication-layer@0.11.0
+[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.0...@metamask/sdk-communication-layer@0.10.1
+[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.9.0...@metamask/sdk-communication-layer@0.10.0
+[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.8.0...@metamask/sdk-communication-layer@0.9.0
+[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.1...@metamask/sdk-communication-layer@0.8.0
+[0.7.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.7.0...@metamask/sdk-communication-layer@0.7.1
+[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.2...@metamask/sdk-communication-layer@0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.1...@metamask/sdk-communication-layer@0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.6.0...@metamask/sdk-communication-layer@0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.3...@metamask/sdk-communication-layer@0.6.0
+[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.2...@metamask/sdk-communication-layer@0.5.3
+[0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.5.0...@metamask/sdk-communication-layer@0.5.2
+[0.5.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.4.2...@metamask/sdk-communication-layer@0.5.0
+[0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.4.0...@metamask/sdk-communication-layer@0.4.2
+[0.4.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.3.3...@metamask/sdk-communication-layer@0.4.0
+[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.3.2...@metamask/sdk-communication-layer@0.3.3
+[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.3.0...@metamask/sdk-communication-layer@0.3.2
+[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.2.5...@metamask/sdk-communication-layer@0.3.0
+[0.2.5]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-communication-layer@0.2.5

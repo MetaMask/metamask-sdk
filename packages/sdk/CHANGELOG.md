@@ -7,9 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.11.0]
-### Uncategorized
-- Revert "Release 34.0.0 (#442)" ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
-- Release 34.0.0 ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
+### Added
 - feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
 - fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk.git/pull/446))
 - feat: detect qrcode origin on wallet ([#443](https://github.com/MetaMask/metamask-sdk.git/pull/443))
@@ -165,29 +163,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.11.0...HEAD
-[0.11.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.10.1...@metamask/sdk@0.11.0
-[0.10.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.10.0...@metamask/sdk@0.10.1
-[0.10.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.9.0...@metamask/sdk@0.10.0
-[0.9.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.8.0...@metamask/sdk@0.9.0
-[0.8.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.7.1...@metamask/sdk@0.8.0
-[0.7.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.7.0...@metamask/sdk@0.7.1
-[0.7.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.6.2...@metamask/sdk@0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.6.1...@metamask/sdk@0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.6.0...@metamask/sdk@0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.6...@metamask/sdk@0.6.0
-[0.5.6]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.5...@metamask/sdk@0.5.6
-[0.5.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.4...@metamask/sdk@0.5.5
-[0.5.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.3...@metamask/sdk@0.5.4
-[0.5.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.2...@metamask/sdk@0.5.3
-[0.5.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.1...@metamask/sdk@0.5.2
-[0.5.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.5.0...@metamask/sdk@0.5.1
-[0.5.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.4.2...@metamask/sdk@0.5.0
-[0.4.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.4.1...@metamask/sdk@0.4.2
-[0.4.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.4.0...@metamask/sdk@0.4.1
-[0.4.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.3.3...@metamask/sdk@0.4.0
-[0.3.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.3.2...@metamask/sdk@0.3.3
-[0.3.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.3.1...@metamask/sdk@0.3.2
-[0.3.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.3.0...@metamask/sdk@0.3.1
-[0.3.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk@0.2.4...@metamask/sdk@0.3.0
-[0.2.4]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk@0.2.4
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.0...HEAD
+[0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.10.1...@metamask/sdk@0.11.0
+[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.10.0...@metamask/sdk@0.10.1
+[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.9.0...@metamask/sdk@0.10.0
+[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.8.0...@metamask/sdk@0.9.0
+[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.7.1...@metamask/sdk@0.8.0
+[0.7.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.7.0...@metamask/sdk@0.7.1
+[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.2...@metamask/sdk@0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.1...@metamask/sdk@0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.6.0...@metamask/sdk@0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.6...@metamask/sdk@0.6.0
+[0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.5...@metamask/sdk@0.5.6
+[0.5.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.4...@metamask/sdk@0.5.5
+[0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.3...@metamask/sdk@0.5.4
+[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.2...@metamask/sdk@0.5.3
+[0.5.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.1...@metamask/sdk@0.5.2
+[0.5.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.5.0...@metamask/sdk@0.5.1
+[0.5.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.4.2...@metamask/sdk@0.5.0
+[0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.4.1...@metamask/sdk@0.4.2
+[0.4.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.4.0...@metamask/sdk@0.4.1
+[0.4.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.3...@metamask/sdk@0.4.0
+[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.2...@metamask/sdk@0.3.3
+[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.1...@metamask/sdk@0.3.2
+[0.3.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.3.0...@metamask/sdk@0.3.1
+[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.2.4...@metamask/sdk@0.3.0
+[0.2.4]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk@0.2.4
