@@ -3,6 +3,7 @@ import cluster from 'cluster';
 import os from 'os';
 import http from 'http';
 
+// must be kept before importing app that relies on process.env
 dotenv.config();
 
 import { app, analytics } from './api-config';
