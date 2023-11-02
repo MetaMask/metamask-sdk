@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0]
+### Uncategorized
+- fix: setChainId cause a build error ([#452](https://github.com/MetaMask/metamask-sdk.git/pull/452))
+- Revert "Release 34.0.0 (#442)" ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
+- Release 34.0.0 ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
+- fix: chainId is undefined on first connection with extension ([#445](https://github.com/MetaMask/metamask-sdk.git/pull/445))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
+- fix: account balance not updating when chain changes ([#435](https://github.com/MetaMask/metamask-sdk.git/pull/435))
+
 ## [0.10.1]
 ### Uncategorized
 - chore: align version number with sdk
@@ -64,16 +74,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...HEAD
-[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...v0.10.1
-[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
-[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
-[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
-[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...v0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.6...v0.6.0
-[0.5.6]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.4...v0.5.6
-[0.5.4]: https://github.com/MetaMask/metamask-sdk/compare/v0.5.3...v0.5.4
-[0.5.3]: https://github.com/MetaMask/metamask-sdk/compare/v0.3.1...v0.5.3
-[0.3.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.3.1
+[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.11.0...HEAD
+[0.11.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.10.1...@metamask/sdk-react@0.11.0
+[0.10.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.10.0...@metamask/sdk-react@0.10.1
+[0.10.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.9.0...@metamask/sdk-react@0.10.0
+[0.9.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.8.0...@metamask/sdk-react@0.9.0
+[0.8.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.7.0...@metamask/sdk-react@0.8.0
+[0.7.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.6.2...@metamask/sdk-react@0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.6.1...@metamask/sdk-react@0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.6.0...@metamask/sdk-react@0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.5.6...@metamask/sdk-react@0.6.0
+[0.5.6]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.5.4...@metamask/sdk-react@0.5.6
+[0.5.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.5.3...@metamask/sdk-react@0.5.4
+[0.5.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react@0.3.1...@metamask/sdk-react@0.5.3
+[0.3.1]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-react@0.3.1

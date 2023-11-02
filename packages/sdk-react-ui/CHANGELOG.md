@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0]
+### Uncategorized
+- Revert "Release 34.0.0 (#442)" ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
+- Release 34.0.0 ([#442](https://github.com/MetaMask/metamask-sdk.git/pull/442))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
+- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk.git/pull/437))
+
 ## [0.10.1]
 ### Added
 - fix: flightwind css leaking with preflight ([#428](https://github.com/MetaMask/metamask-sdk/pull/428))
@@ -40,12 +48,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...HEAD
-[0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...v0.10.1
-[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
-[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.8.0...v0.9.0
-[0.8.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.7.0...v0.8.0
-[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.2...v0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.6.0...v0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/v0.6.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.11.0...HEAD
+[0.11.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.10.1...@metamask/sdk-react-ui@0.11.0
+[0.10.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.10.0...@metamask/sdk-react-ui@0.10.1
+[0.10.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.9.0...@metamask/sdk-react-ui@0.10.0
+[0.9.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.8.0...@metamask/sdk-react-ui@0.9.0
+[0.8.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.7.0...@metamask/sdk-react-ui@0.8.0
+[0.7.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.6.2...@metamask/sdk-react-ui@0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.6.1...@metamask/sdk-react-ui@0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-ui@0.6.0...@metamask/sdk-react-ui@0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-react-ui@0.6.0
