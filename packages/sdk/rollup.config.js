@@ -10,14 +10,26 @@ import globals from 'rollup-plugin-node-globals';
 
 const packageJson = require('./package.json');
 
-const listDepForRollup = ['@react-native-async-storage/async-storage'];
-const webExternalDeps = [...listDepForRollup, 'qrcode-terminal'];
-const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal'];
+// Check if environment variable is set to 'dev'
+const isDev = process.env.NODE_ENV === 'dev';
+
+// Base external dependencies across different builds
+const baseExternalDeps = [
+  '@react-native-async-storage/async-storage',
+];
+
+// Dependencies for rollup to consider as external
+const listDepForRollup = [
+  ...baseExternalDeps,
+];
+const webExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
+const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
 
 /**
  * @type {import('rollup').RollupOptions}
  */
 const config = [
+  // Browser builds (ES)
   {
     external: webExternalDeps,
     input: 'src/index.ts',
@@ -28,6 +40,32 @@ const config = [
         inlineDynamicImports: true,
         sourcemap: true,
       },
+    ],
+    plugins: [
+      jscc({
+        values: { _WEB: 1 },
+      }),
+      nodeResolve({
+        browser: true,
+        preferBuiltins: false,
+      }),
+      commonjs({ transformMixedEsModules: true }),
+      typescript({ tsconfig: './tsconfig.json' }),
+      globals(),
+      builtins({ crypto: true }),
+      json(),
+      terser(),
+      // Visualize the bundle to analyze its composition and size
+      isDev && visualizer({
+        filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
+      }),
+    ],
+  },
+  // Browser builds (UMD, IIFE)
+  {
+    external: baseExternalDeps,
+    input: 'src/index.ts',
+    output: [
       {
         name: 'browser',
         // file: 'dist/browser/umd/metamask-sdk.js',
@@ -58,6 +96,10 @@ const config = [
       builtins({ crypto: true }),
       json(),
       terser(),
+      // Visualize the bundle to analyze its composition and size
+      isDev && visualizer({
+        filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
   {
@@ -84,7 +126,10 @@ const config = [
         preferBuiltins: true,
       }),
       json(),
-      terser()
+      terser(),
+      isDev && visualizer({
+        filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
   {
@@ -123,7 +168,10 @@ const config = [
       }),
       commonjs({ transformMixedEsModules: true }),
       json(),
-      terser()
+      terser(),
+      isDev && visualizer({
+        filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
+      }),
     ],
   },
 ];
