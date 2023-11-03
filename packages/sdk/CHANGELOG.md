@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1]
+### Added
+- build: improve sdk bundle to work with nodejs strictmode ([#457](https://github.com/MetaMask/metamask-sdk/pull/457))
+
 ## [0.11.0]
 ### Added
 - feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
@@ -163,7 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.1...HEAD
+[0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.0...@metamask/sdk@0.11.1
 [0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.10.1...@metamask/sdk@0.11.0
 [0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.10.0...@metamask/sdk@0.10.1
 [0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.9.0...@metamask/sdk@0.10.0

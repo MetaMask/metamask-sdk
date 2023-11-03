@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1]
+### Added
+- align version with sdk
+
 ## [0.11.0]
 ### Added
 - fix: setChainId cause a build error ([#452](https://github.com/MetaMask/metamask-sdk.git/pull/452))
@@ -72,7 +76,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.1...HEAD
+[0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.0...v0.11.1
 [0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.1...v0.11.0
 [0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.9.0...v0.10.0
