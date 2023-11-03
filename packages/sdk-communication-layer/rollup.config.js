@@ -8,7 +8,7 @@ import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
-import pkgJson from './package.json'; // Ensure this path is correct
+import packageJson from './package.json'; // Ensure this path is correct
 
 // Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
@@ -43,7 +43,7 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: pkgJson.browser,
+        file: packageJson.browser,
         format: 'es',
         sourcemap: true,
       },
@@ -72,7 +72,7 @@ const config = [
       terser(),
       // Visualize the bundle to analyze its composition and size
       isDev && visualizer({
-        filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -84,7 +84,7 @@ const config = [
     output: [
       {
         name: 'browser',
-        file: pkgJson.unpkg,
+        file: packageJson.unpkg,
         format: 'umd',
         sourcemap: true,
       },
@@ -111,7 +111,7 @@ const config = [
       json(),
       terser(),
       isDev && visualizer({
-        filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -120,7 +120,7 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: pkgJson['react-native'],
+        file: packageJson['react-native'],
         format: 'es',
         sourcemap: true,
       },
@@ -140,7 +140,7 @@ const config = [
       json(),
       terser(),
       isDev && visualizer({
-        filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -149,12 +149,12 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: pkgJson.main,
+        file: packageJson.main,
         format: 'cjs',
         sourcemap: true,
       },
       {
-        file: pkgJson.module,
+        file: packageJson.module,
         format: 'es',
         sourcemap: true,
       },
@@ -180,7 +180,7 @@ const config = [
       json(),
       terser(),
       isDev && visualizer({
-        filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/node-stats-${packageJson.version}.html`,
       }),
     ],
   },

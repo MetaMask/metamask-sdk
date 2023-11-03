@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && rollup -c --bundleConfigAsCjs",
+    "build:dev": "rimraf dist && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist",
@@ -59,10 +60,11 @@
     "i18next-browser-languagedetector": "^7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
-    "qrcode-terminal": "^0.12.0",
+    "qrcode-terminal-nooctal": "^0.12.1",
     "react-i18next": "^13.2.2",
     "react-native-webview": "^11.26.0",
     "readable-stream": "^2.3.7",
+    "rollup-plugin-visualizer": "^5.9.2",
     "socket.io-client": "^4.5.1",
     "util": "^0.12.4",
     "uuid": "^8.3.2"
