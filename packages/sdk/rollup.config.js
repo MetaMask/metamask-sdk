@@ -7,6 +7,7 @@ import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 const packageJson = require('./package.json');
 
@@ -57,7 +58,7 @@ const config = [
       terser(),
       // Visualize the bundle to analyze its composition and size
       isDev && visualizer({
-        filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -98,7 +99,7 @@ const config = [
       terser(),
       // Visualize the bundle to analyze its composition and size
       isDev && visualizer({
-        filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -128,7 +129,7 @@ const config = [
       json(),
       terser(),
       isDev && visualizer({
-        filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
       }),
     ],
   },
@@ -170,7 +171,7 @@ const config = [
       json(),
       terser(),
       isDev && visualizer({
-        filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
+        filename: `bundle_stats/node-stats-${packageJson.version}.html`,
       }),
     ],
   },
