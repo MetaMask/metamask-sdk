@@ -1,7 +1,7 @@
 import { generate } from 'qrcode-terminal';
 import InstallModal from './InstallModal-nodejs';
 
-jest.mock('qrcode-terminal', () => ({
+jest.mock('qrcode-terminal-nooctal', () => ({
   generate: jest.fn((_, __, callback) => callback('Mocked QR Code')),
 }));
 
