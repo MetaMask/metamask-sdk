@@ -75,7 +75,7 @@ const WagmiWrapper = ({
     }
 
     return connectors;
-  }, [ready, sdk]);
+  }, [ready, sdk, networks, debug, connectors]);
 
   const config = createConfig({ publicClient, connectors: validConnectors })
 
