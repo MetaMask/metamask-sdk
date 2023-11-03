@@ -1,4 +1,4 @@
-import { generate } from 'qrcode-terminal';
+import { generate } from 'qrcode-terminal-nooctal';
 import InstallModal from './InstallModal-nodejs';
 
 jest.mock('qrcode-terminal-nooctal', () => ({
