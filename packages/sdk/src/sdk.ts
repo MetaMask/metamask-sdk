@@ -203,6 +203,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       forceInjectProvider: false,
       enableDebug: true,
       shouldShimWeb3: true,
+      useDeeplink: false,
       dappMetadata: {
         name: '',
         url: '',
