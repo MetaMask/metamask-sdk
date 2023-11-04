@@ -25,7 +25,9 @@ describe('RemoteConnection', () => {
   beforeEach(() => {
     options = {
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      sdk: {} as MetaMaskSDK,
+      sdk: {
+        options: {},
+      } as MetaMaskSDK,
       platformManager: {} as PlatformManager,
       modals: {},
     } as unknown as RemoteConnectionProps;
@@ -70,7 +72,7 @@ describe('RemoteConnection', () => {
 
     it('should return the universal link if connection is started', () => {
       const connection = new RemoteConnection(options);
-      connection.state.universalLink = 'http://example.com';
+      connection.state.qrcodeLink = 'http://example.com';
       expect(connection.getUniversalLink()).toBe('http://example.com');
     });
   });
