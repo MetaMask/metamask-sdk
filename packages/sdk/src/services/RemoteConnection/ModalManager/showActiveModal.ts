@@ -18,6 +18,6 @@ export function showActiveModal(state: RemoteConnectionState): void {
     // only display the modal if the connection is not authorized
     state.pendingModal.mount?.();
   } else if (state.installModal) {
-    state.installModal.mount?.(state.universalLink || '');
+    state.installModal.mount?.(state.qrcodeLink || '');
   }
 }
