@@ -29,15 +29,17 @@ export function openDeeplink(
       return;
     }
 
-    if (typeof window !== 'undefined') {
-      let win: Window | null;
-      if (state.useDeeplink) {
-        win = window.open(deeplink, '_blank');
-      } else {
-        win = window.open(universalLink, '_blank');
+    setTimeout(() => {
+      if (typeof window !== 'undefined') {
+        let win: Window | null;
+        if (state.useDeeplink) {
+          win = window.open(deeplink, '_blank');
+        } else {
+          win = window.open(universalLink, '_blank');
+        }
+        setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
       }
-      setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
-    }
+    }, 200);
   } catch (err) {
     console.log(`Platform::openDeepLink() can't open link`, err);
   }
