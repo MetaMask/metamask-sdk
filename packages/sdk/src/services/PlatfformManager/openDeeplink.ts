@@ -22,7 +22,10 @@ export function openDeeplink(
 
   try {
     if (state.preferredOpenLink) {
-      state.preferredOpenLink(universalLink, target);
+      state.preferredOpenLink(
+        state.useDeeplink ? deeplink : universalLink,
+        target,
+      );
       return;
     }
 
