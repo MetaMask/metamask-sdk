@@ -56,6 +56,7 @@ export interface RPCMethodResult {
   timestamp: number; // timestamp of last request
   method: string;
   result?: unknown;
+  error?: unknown;
   elapsedTime?: number; // elapsed time between request and response
 }
 export interface RPCMethodCache {
