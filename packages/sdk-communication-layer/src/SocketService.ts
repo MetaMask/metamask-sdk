@@ -185,6 +185,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     return resume(this);
   }
 
+  getRPCMethodTracker() {
+    return this.state.rpcMethodTracker;
+  }
+
   disconnect(options?: DisconnectOptions): void {
     return disconnect(this, options);
   }

@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { RPCMethodCache } from '../SocketService';
 import { KeyExchange } from '../KeyExchange';
 import { Channel } from './Channel';
 import { CommunicationLayerMessage } from './CommunicationLayerMessage';
@@ -16,6 +17,7 @@ export interface CommunicationLayer extends EventEmitter2 {
   ping(): void;
   keyCheck(): void;
   isConnected(): boolean;
+  getRPCMethodTracker(): RPCMethodCache;
   resume(): void;
   disconnect(options?: DisconnectOptions): void;
   getKeyExchange(): KeyExchange;
