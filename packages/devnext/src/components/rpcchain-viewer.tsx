@@ -20,6 +20,16 @@ export default function RPCChainViewer({ chainRPCs }: RPCChainViewerProps) {
   return (
     <div style={{ padding: 10, border: '1px solid' }}>
       <span>RPCChainViewer</span>
+      <a
+        href="#"
+        onClick={(e) => {
+          e.preventDefault();
+          return false;
+        }}
+        style={{ paddingLeft: 10, paddingRight: 10 }}
+      >
+        [ Hide ]
+      </a>
       {processing && <div>Waiting for result...</div>}
       {error && (
         <div style={{ fontWeight: 'bold', color: 'red' }}>

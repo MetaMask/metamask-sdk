@@ -12,20 +12,17 @@ import {
 } from 'viem';
 import SimpleABI from '../abi/Simple.json';
 import SDKStatus from '../components/header-status';
-import RPCChainViewer, {
-  ChainRPC,
-  ChainRPCs,
-} from '../components/rpcchain-viewer';
+import { ChainRPC } from '../components/rpcchain-viewer';
 import RPCHistoryViewer from '../components/rpchistory-viewer';
 
 export default function Home() {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
     useSDK();
 
-  const [chainRPCs, setChainRPCs] = useState<ChainRPCs>();
   const languages = sdk?.availableLanguages || ['en'];
 
   const [response, setResponse] = useState<unknown>('');
+  const [rpcError, setRpcError] = useState<unknown>();
   const [requesting, setRequesting] = useState(false);
 
   const getInitialLanguage = () => {
@@ -48,22 +45,37 @@ export default function Home() {
 
   const connect = async () => {
     try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
       const accounts = await sdk?.connect();
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
+      setResponse(accounts);
     } catch (err) {
       console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
   const connectAndSign = async () => {
     try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
       const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectAndSign response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
       console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -76,6 +88,9 @@ export default function Home() {
       from: selectedAddress, // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
+    setRpcError(null);
+    setRequesting(true);
+    setResponse(''); // reset response first
 
     try {
       // txHash is a hex string
@@ -88,6 +103,9 @@ export default function Home() {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
+      setRpcError(null);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -164,6 +182,7 @@ export default function Home() {
     const from = window.ethereum?.selectedAddress;
 
     setRequesting(true);
+    setRpcError(null);
     setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
@@ -183,6 +202,7 @@ export default function Home() {
       console.debug(`sign response`, resp);
     } catch (e) {
       console.error(`an error occured`, e);
+      setRpcError(e);
     } finally {
       setRequesting(false);
     }
@@ -191,6 +211,7 @@ export default function Home() {
   const personalSign = async () => {
     const from = window.ethereum?.selectedAddress;
     setRequesting(true);
+    setRpcError(null);
     setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
@@ -210,6 +231,7 @@ export default function Home() {
       console.debug(`sign response`, resp);
     } catch (e) {
       console.error(`an error occured`, e);
+      setRpcError(e);
     } finally {
       setRequesting(false);
     }
@@ -402,22 +424,34 @@ export default function Home() {
   };
 
   const addGanache = async () => {
-    const res = await provider?.request({
-      method: 'wallet_addEthereumChain',
-      params: [
-        {
-          chainId: '0x539',
-          chainName: 'Ganache Dev',
-          nativeCurrency: {
-            name: 'Ethereum',
-            symbol: 'ETH',
-            decimals: 18,
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
+
+    try {
+      const resp = await provider?.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x539',
+            chainName: 'Ganache Dev',
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            rpcUrls: [process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''],
           },
-          rpcUrls: [process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''],
-        },
-      ],
-    });
-    console.log(`res`, res);
+        ],
+      });
+      setResponse(resp);
+      console.debug(`sign response`, resp);
+    } catch (e) {
+      console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const handleChainRPCs = async () => {
@@ -438,25 +472,22 @@ export default function Home() {
       },
     ];
 
-    setChainRPCs({ processing: true, rpcs });
     setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
       const response = (await provider?.request({
         method: 'metamask_batch',
         params: rpcs,
       })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
     } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
     } finally {
       setRequesting(false);
-      setChainRPCs({ processing: false, rpcs, error });
     }
   };
 
@@ -481,23 +512,23 @@ export default function Home() {
       },
     ];
 
-    setChainRPCs({ processing: true, rpcs });
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
       const response = (await provider?.request({
         method: 'metamask_batch',
         params: rpcs,
       })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
     } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
-    setChainRPCs({ processing: false, rpcs, error });
   };
 
   const chainTransactions = async () => {
@@ -524,24 +555,25 @@ export default function Home() {
       },
     ];
 
-    setChainRPCs({ processing: true, rpcs });
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
       const response = (await provider?.request({
         method: 'metamask_batch',
         params: rpcs,
       })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
     } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
-    setChainRPCs({ processing: false, rpcs, error });
   };
+
   return (
     <>
       <Head>
@@ -569,7 +601,11 @@ export default function Home() {
           </select>
         </div>
 
-        <SDKStatus requesting={requesting} response={response} />
+        <SDKStatus
+          requesting={requesting}
+          response={response}
+          error={rpcError}
+        />
         {connected && (
           <>
             <div className="action-buttons">
@@ -672,7 +708,6 @@ export default function Home() {
                 Chain sendTransaction + personal_sign + sendTransaction
               </button>
             </div>
-            {chainRPCs && <RPCChainViewer chainRPCs={chainRPCs} />}
           </>
         )}
         {connecting && (

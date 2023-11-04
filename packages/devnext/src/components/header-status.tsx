@@ -1,12 +1,19 @@
 import { useSDK } from '@metamask/sdk-react';
 import ItemView from './ItemView';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface SDKStatusProps {
   response: unknown;
   requesting?: boolean;
+  error?: any;
 }
 
-export default function SDKStatus({ response, requesting }: SDKStatusProps) {
+export default function SDKStatus({
+  response,
+  requesting,
+  error,
+}: SDKStatusProps) {
   const {
     connected,
     connecting,
@@ -19,7 +26,21 @@ export default function SDKStatus({ response, requesting }: SDKStatusProps) {
 
   return (
     <div id="header">
-      {connecting && <div>Waiting for Metamask to link the connection...</div>}
+      {connecting && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 10,
+          }}
+        >
+          <span className="loading-spinner">
+            <FontAwesomeIcon icon={faSpinner} pulse />
+          </span>
+          <span>Waiting for Metamask to link the connection...</span>
+        </div>
+      )}
       {connected && (
         <div className="data-container">
           {!extensionActive && (
@@ -36,6 +57,7 @@ export default function SDKStatus({ response, requesting }: SDKStatusProps) {
               />
             </>
           )}
+          <ItemView label="Connected" value={connected ? 'YES' : 'NO'} />
           <ItemView
             label="Extension active"
             value={extensionActive ? 'YES' : 'NO'}
@@ -43,12 +65,23 @@ export default function SDKStatus({ response, requesting }: SDKStatusProps) {
           <ItemView label="Connected chain" value={chainId} />
           <ItemView label="Connected account" value={account} />
           <ItemView label="Account balance" value={balance} />
-          <ItemView
-            label="Last request response"
-            processing={requesting}
-            value={JSON.stringify(response)}
-          />
-          <ItemView label="Connected" value={connected ? 'YES' : 'NO'} />
+          {error ? (
+            <ItemView
+              label="Last request error"
+              processing={requesting}
+              contentStyle={{ color: 'red' }}
+              value={JSON.stringify({
+                code: error.code,
+                message: error.message,
+              })}
+            />
+          ) : (
+            <ItemView
+              label="Last request response"
+              processing={requesting}
+              value={JSON.stringify(response)}
+            />
+          )}
         </div>
       )}
     </div>

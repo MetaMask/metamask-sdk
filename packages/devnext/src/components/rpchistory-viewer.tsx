@@ -79,7 +79,7 @@ export default function RPCHistoryViewer({
       <div style={headerStyle}>
         <span>RPCHistoryViewer [{sortedRpcHistory.length}]</span>
         <button onClick={() => setVisible(!visible)} style={buttonStyle}>
-          {visible ? 'Hide History' : 'Show RPC History'}
+          {visible ? 'Hide' : 'Show'}
         </button>
       </div>
 
