@@ -1,45 +1,20 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import {
-  handleSocketError,
+  handleChannelCreated,
+  handleClientsConnected,
+  handleClientsWaitingToJoin,
+  handleDisconnect,
+  handleKeyInfo,
+  handleKeysExchanged,
+  handleMessage,
   handlePing,
   handleReconnect,
   handleReconnectError,
   handleReconnectFailed,
-  handleClientsConnected,
-  handleChannelCreated,
+  handleSocketError,
   handlesClientsDisconnected,
-  handleMessage,
-  handleClientsWaitingToJoin,
-  handleKeyInfo,
-  handleKeysExchanged,
 } from '../EventListeners';
-
-type SocketEventNames =
-  | 'error'
-  | 'ping'
-  | 'reconnect'
-  | 'reconnect_error'
-  | 'reconnect_failed';
-
-interface SocketEventMapItem {
-  event: SocketEventNames;
-  handler: (instance: SocketService) => void;
-}
-
-const socketEventListenerMap: SocketEventMapItem[] = [
-  { event: 'error', handler: handleSocketError },
-  { event: 'ping', handler: handlePing },
-  { event: 'reconnect', handler: handleReconnect },
-  {
-    event: 'reconnect_error',
-    handler: handleReconnectError,
-  },
-  {
-    event: 'reconnect_failed',
-    handler: handleReconnectFailed,
-  },
-];
 
 const channelEventListenerMap = [
   {
@@ -94,9 +69,38 @@ export function setupChannelListeners(
   const { socket } = instance.state;
   const { keyExchange } = instance.state;
 
-  socketEventListenerMap.forEach(({ event, handler }) => {
-    socket?.io.on(event, () => handler(instance));
-  });
+  // Only available for the originator -- used for connection recovery
+  if (socket && instance.state.isOriginator) {
+    socket?.io.on('error', (error) => {
+      console.warn(`socket event=error`, error);
+      return handleSocketError(instance)(error);
+    });
+
+    socket?.io.on('reconnect', (attempt) => {
+      console.warn(`socket event=reconnect`, instance);
+      return handleReconnect(instance)(attempt);
+    });
+
+    socket?.io.on('reconnect_error', (error) => {
+      console.warn(`socket event=reconnect_error`, instance);
+      return handleReconnectError(instance)(error);
+    });
+
+    socket?.io.on('reconnect_failed', () => {
+      console.warn(`socket event=reconnect_failed`, instance);
+      return handleReconnectFailed(instance)();
+    });
+
+    socket?.io.on('ping', () => {
+      console.warn(`socket event=ping`, instance);
+      return handlePing(instance)();
+    });
+
+    socket?.on('disconnect', (reason: string) => {
+      console.warn(`handle socket disconnect`, reason);
+      return handleDisconnect(instance)(reason);
+    });
+  }
 
   channelEventListenerMap.forEach(({ event, handler }) => {
     const fullEventName = `${event}-${channelId}`;
