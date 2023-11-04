@@ -12,6 +12,7 @@ import {
 } from 'viem';
 import SimpleABI from '../abi/Simple.json';
 import RPCChainViewer, { ChainRPC, ChainRPCs } from '../components/rpcchain-viewer';
+import ItemView from '../components/ItemView';
 
 export default function Home() {
   const {
@@ -32,6 +33,7 @@ export default function Home() {
   const languages = sdk?.availableLanguages || ['en'];
 
   const [response, setResponse] = useState<unknown>('');
+  const [requesting, setRequesting] = useState(false);
 
   const getInitialLanguage = () => {
     if (typeof window !== 'undefined') {
@@ -63,7 +65,7 @@ export default function Home() {
 
   const connectAndSign = async () => {
     try {
-      const hexResponse = await sdk?.connectAndSign({msg: 'hello world'});
+      const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectAndSign response:`, hexResponse);
       setResponse(hexResponse);
@@ -168,6 +170,7 @@ export default function Home() {
 
     let from = window.ethereum?.selectedAddress;
 
+    setRequesting(true);
     setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
@@ -187,16 +190,18 @@ export default function Home() {
       console.debug(`sign response`, resp);
     } catch (e) {
       console.error(`an error occured`, e);
+    } finally {
+      setRequesting(false);
     }
   };
 
-  const personalSign = async () => {};
+  const personalSign = async () => { };
 
   const terminate = () => {
     sdk?.terminate();
   };
 
-  const addNetwork = () => {};
+  const addNetwork = () => { };
 
   const interactEthers = async () => {
     // Get value from contract
@@ -415,20 +420,23 @@ export default function Home() {
       params: ["Another one #3", selectedAddress],
     }];
 
-    setChainRPCs({processing: true, rpcs});
+    setChainRPCs({ processing: true, rpcs });
+    setRequesting(true);
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = await provider?.request({ method: 'metamask_batch', params: rpcs }) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
       });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
       error = e;
+    } finally {
+      setRequesting(false);
+      setChainRPCs({ processing: false, rpcs, error })
     }
-    setChainRPCs({processing: false, rpcs, error})
   };
 
 
@@ -445,25 +453,25 @@ export default function Home() {
     {
       method: "personal_sign",
       params: ["Another one #3", selectedAddress],
-    },{
+    }, {
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: initChainId }],
     }];
 
-    setChainRPCs({processing: true, rpcs});
+    setChainRPCs({ processing: true, rpcs });
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = await provider?.request({ method: 'metamask_batch', params: rpcs }) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
       });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
       error = e;
     }
-    setChainRPCs({processing: false, rpcs, error})
+    setChainRPCs({ processing: false, rpcs, error })
   }
 
   const chainTransactions = async () => {
@@ -482,25 +490,25 @@ export default function Home() {
     {
       method: "personal_sign",
       params: ["Hello Wolrd", selectedAddress],
-    },{
+    }, {
       method: 'eth_sendTransaction',
       params: [transactionParameters],
     }];
 
-    setChainRPCs({processing: true, rpcs});
+    setChainRPCs({ processing: true, rpcs });
 
     let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = await provider?.request({ method: 'metamask_batch', params: rpcs }) as any[];
       console.log(`response`, response);
       response.forEach((result, index) => {
         rpcs[index].result = result;
       });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
       error = e;
     }
-    setChainRPCs({processing: false, rpcs, error})
+    setChainRPCs({ processing: false, rpcs, error })
   }
   return (
     <>
@@ -533,46 +541,18 @@ export default function Home() {
           {connecting && (
             <div>Waiting for Metamask to link the connection...</div>
           )}
-          {connected &&
-            <>
-              <table className="head-table">
-                <tbody>
-                  <tr>
-                    <td className="table-label">ChannelId:</td>
-                    <td className="table-value">{serviceStatus?.channelConfig?.channelId}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Expiration:</td>
-                    <td className="table-value">{serviceStatus?.channelConfig?.validUntil ?? ''}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Extension active:</td>
-                    <td className="table-value">{extensionActive ? 'YES' : 'NO'}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected chain:</td>
-                    <td className="table-value">{chainId}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected account:</td>
-                    <td className="table-value">{account}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Account balance:</td>
-                    <td className="table-value">{balance}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Last request response:</td>
-                    <td className="table-value">{JSON.stringify(response)}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected:</td>
-                    <td className="table-value">{connected ? 'YES' : 'NO'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </>
-          }
+          {connected && (
+            <div className="data-container">
+              <ItemView label="ChannelId" value={serviceStatus?.channelConfig?.channelId} />
+              <ItemView label="Expiration" value={serviceStatus?.channelConfig?.validUntil.toString() ?? ''} />
+              <ItemView label="Extension active" value={extensionActive ? 'YES' : 'NO'} />
+              <ItemView label="Connected chain" value={chainId} />
+              <ItemView label="Connected account" value={account} />
+              <ItemView label="Account balance" value={balance} />
+              <ItemView label="Last request response" value={JSON.stringify(response)} />
+              <ItemView label="Connected" value={connected ? 'YES' : 'NO'} />
+            </div>
+          )}
         </div>
         {connected && (
           <>
@@ -671,7 +651,6 @@ export default function Home() {
         )}
         {connecting && (
           <>
-            <div>Connecting...</div>
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Connect
             </button>
