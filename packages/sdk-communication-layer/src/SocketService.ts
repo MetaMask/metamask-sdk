@@ -48,6 +48,7 @@ export interface SocketServiceState {
   rpcMethodTracker: RPCMethodCache;
   hasPlaintext: boolean;
   socket?: Socket;
+  setupChannelListeners?: boolean;
   keyExchange?: KeyExchange;
 }
 

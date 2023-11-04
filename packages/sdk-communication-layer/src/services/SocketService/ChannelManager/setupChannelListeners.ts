@@ -69,6 +69,13 @@ export function setupChannelListeners(
   const { socket } = instance.state;
   const { keyExchange } = instance.state;
 
+  if (instance.state.setupChannelListeners) {
+    console.warn(
+      `SocketService::${instance.state.context}::setupChannelListener socket listeners already set up for channel ${channelId}`,
+    );
+    return;
+  }
+
   // Only available for the originator -- used for connection recovery
   if (socket && instance.state.isOriginator) {
     socket?.io.on('error', (error) => {
@@ -110,4 +117,6 @@ export function setupChannelListeners(
   keyExchangeEventListenerMap.forEach(({ event, handler }) => {
     keyExchange?.on(event, handler(instance));
   });
+
+  instance.state.setupChannelListeners = true;
 }
