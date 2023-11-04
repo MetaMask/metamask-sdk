@@ -20,6 +20,10 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ entry }) => {
         <strong>Result:</strong>
         {JSON.stringify(entry.result, null, 2)}
       </div>
+      <div style={contentStyle}>
+        <strong>Error:</strong>
+        {JSON.stringify(entry.error, null, 2)}
+      </div>
       <div>
         <strong>Elapsed Time:</strong>{' '}
         {entry.elapsedTime ? `${entry.elapsedTime} ms` : 'N/A'}
