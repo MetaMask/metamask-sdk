@@ -351,6 +351,10 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.state.channelId;
   }
 
+  getRPCMethodTracker() {
+    return this.state.communicationLayer?.getRPCMethodTracker();
+  }
+
   disconnect(options?: DisconnectOptions) {
     return disconnect({
       options,
