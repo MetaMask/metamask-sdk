@@ -29,7 +29,16 @@ export function openDeeplink(
       return;
     }
 
-    setTimeout(() => {
+    const f = () => {
+      if (state.debug) {
+        console.warn(
+          `Platform::openDeepLink() open link now useDeepLink=${state.useDeeplink}`,
+          state.useDeeplink ? deeplink : universalLink,
+        );
+      }
+
+      // It should only open after we can acknowledge that the rpc call that triggered the deeplink has been sent
+      // TODO how can we know that the rpc call has been sent?
       if (typeof window !== 'undefined') {
         let win: Window | null;
         if (state.useDeeplink) {
@@ -39,7 +48,9 @@ export function openDeeplink(
         }
         setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
       }
-    }, 200);
+    };
+    // Slight delay to allow the video to play
+    setTimeout(f, 100);
   } catch (err) {
     console.log(`Platform::openDeepLink() can't open link`, err);
   }
