@@ -39,10 +39,12 @@ LogBox.ignoreLogs([
 let canOpenLink = true;
 const serverUrl = COMM_SERVER_URL ?? DEFAULT_SERVER_URL;
 
+const useDeeplink = true;
+
 const sdk = new MetaMaskSDK({
-  openDeeplink: (link: string) => {
-    if (canOpenLink) {
+  openDeeplink: (link: string, target?: string) => {
       console.debug(`App::openDeepLink() ${link}`);
+    if (canOpenLink) {
       Linking.openURL(link);
     } else {
       console.debug(
@@ -58,7 +60,7 @@ const sdk = new MetaMaskSDK({
   infuraAPIKey: INFURA_API_KEY ?? undefined,
   timer: BackgroundTimer,
   enableDebug: true,
-  useDeeplink: true,
+  useDeeplink,
   dappMetadata: {
     url: 'devreactnative',
     name: 'devreactnative',
