@@ -1,10 +1,13 @@
 import React, { CSSProperties } from 'react';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export interface ItemViewProps {
   label: string;
   value?: string;
   processing?: boolean;
   containerStyle?: React.CSSProperties;
+  contentStyle?: React.CSSProperties;
 }
 
 const styles: { [key: string]: CSSProperties } = {
@@ -35,11 +38,20 @@ export default function ItemView({
   value,
   processing,
   containerStyle,
+  contentStyle,
 }: ItemViewProps) {
   return (
     <div style={{ ...styles.container, ...containerStyle }}>
       <div style={styles.label}>{label}</div>
-      <div style={styles.content}>{processing ? 'processing...' : value}</div>
+      <div style={{ ...styles.content, ...contentStyle }}>
+        {processing ? (
+          <div className="loading-spinner">
+            <FontAwesomeIcon icon={faSpinner} pulse />
+          </div>
+        ) : (
+          value
+        )}
+      </div>
     </div>
   );
 }

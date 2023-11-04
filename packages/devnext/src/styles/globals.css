@@ -72,3 +72,8 @@ table th, table td {
   padding: 10px;
   text-align: left;
 }
+
+.loading-spinner {
+  color: #007bff; /* Or any color you prefer */
+  font-size: 2rem; /* Adjust the size as needed */
+}
