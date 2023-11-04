@@ -368,4 +368,8 @@ export class MetaMaskSDK extends EventEmitter2 {
   _getConnection() {
     return this.remoteConnection;
   }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
 }
