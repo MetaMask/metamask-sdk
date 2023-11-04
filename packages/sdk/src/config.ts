@@ -25,3 +25,5 @@ export const RPC_METHODS = {
   ETH_ACCOUNTS: 'eth_accounts',
   ETH_CHAINID: 'eth_chainId',
 };
+
+export const DEFAULT_RPC_HISTORY_LENGTH = 10;

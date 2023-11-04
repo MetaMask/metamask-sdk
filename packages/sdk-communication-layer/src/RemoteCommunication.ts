@@ -56,6 +56,7 @@ export interface RemoteCommunicationProps {
   context: string;
   autoConnect?: AutoConnectOptions;
   logging?: CommunicationLayerLoggingOptions;
+  rpcHistoryLength?: number;
 }
 
 export interface RemoteCommunicationState {
@@ -130,6 +131,7 @@ export class RemoteCommunication extends EventEmitter2 {
     sdkVersion,
     communicationServerUrl = DEFAULT_SERVER_URL,
     logging,
+    // rpcHistoryLength = Infinity, // TODO implement and use value from sdk.
     autoConnect = {
       timeout: CHANNEL_MAX_WAITING_TIME,
     },
