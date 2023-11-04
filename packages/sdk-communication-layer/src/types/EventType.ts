@@ -3,6 +3,7 @@ export enum EventType {
   KEY_INFO = 'key_info',
   SERVICE_STATUS = 'service_status',
   PROVIDER_UPDATE = 'provider_update',
+  RPC_UPDATE = 'rpc_update',
   KEYS_EXCHANGED = 'keys_exchanged',
   JOIN_CHANNEL = 'join_channel',
   CHANNEL_CREATED = 'channel_created',
