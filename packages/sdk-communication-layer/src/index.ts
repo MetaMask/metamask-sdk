@@ -3,57 +3,63 @@ import {
   RemoteCommunication,
   RemoteCommunicationProps,
 } from './RemoteCommunication';
-import { SocketService } from './SocketService';
-import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
-import { MessageType } from './types/MessageType';
-import { DappMetadata } from './types/DappMetadata';
-import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
-import { OriginatorInfo } from './types/OriginatorInfo';
-import { WalletInfo } from './types/WalletInfo';
-import { ConnectionStatus } from './types/ConnectionStatus';
+import {
+  RPCMethodCache,
+  RPCMethodResult,
+  SocketService,
+} from './SocketService';
 import { ChannelConfig } from './types/ChannelConfig';
-import { KeyInfo } from './types/KeyInfo';
-import { PlatformType } from './types/PlatformType';
+import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
+import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
+import { ConnectionStatus } from './types/ConnectionStatus';
+import { DappMetadata } from './types/DappMetadata';
 import { DisconnectOptions } from './types/DisconnectOptions';
-// eslint-disable-next-line @typescript-eslint/no-shadow
-import { StorageManagerProps, StorageManager } from './types/StorageManager';
-import { AutoConnectType } from './types/AutoConnectType';
-import { AutoConnectOptions } from './types/AutoConnectOptions';
-import { ServiceStatus } from './types/ServiceStatus';
-import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { EventType } from './types/EventType';
+import { KeyInfo } from './types/KeyInfo';
+import { MessageType } from './types/MessageType';
+import { OriginatorInfo } from './types/OriginatorInfo';
+import { PlatformType } from './types/PlatformType';
+import { WalletInfo } from './types/WalletInfo';
 import { SendAnalytics } from './Analytics';
-import { TrackingEvents } from './types/TrackingEvent';
 import { DEFAULT_SERVER_URL } from './config';
+import { AutoConnectOptions } from './types/AutoConnectOptions';
+import { AutoConnectType } from './types/AutoConnectType';
+import { EventType } from './types/EventType';
+import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
+import { ServiceStatus } from './types/ServiceStatus';
+// eslint-disable-next-line @typescript-eslint/no-shadow
+import { StorageManager, StorageManagerProps } from './types/StorageManager';
+import { TrackingEvents } from './types/TrackingEvent';
 
 export type {
-  KeyInfo,
-  StorageManager,
   AutoConnectOptions,
-  RemoteCommunicationProps,
-  WalletInfo,
-  DappMetadata,
   ChannelConfig,
-  CommunicationLayerMessage,
-  OriginatorInfo,
-  ECIESProps,
-  ServiceStatus,
   CommunicationLayerLoggingOptions,
+  CommunicationLayerMessage,
+  DappMetadata,
   DisconnectOptions,
+  ECIESProps,
+  KeyInfo,
+  OriginatorInfo,
+  RPCMethodCache,
+  RPCMethodResult,
+  RemoteCommunicationProps,
+  ServiceStatus,
+  StorageManager,
   StorageManagerProps,
+  WalletInfo,
 };
 
 export {
-  RemoteCommunication,
-  DEFAULT_SERVER_URL,
-  PlatformType,
-  SendAnalytics,
-  ConnectionStatus,
-  TrackingEvents,
-  EventType,
   AutoConnectType,
-  SocketService,
-  ECIES,
-  MessageType,
   CommunicationLayerPreference,
+  ConnectionStatus,
+  DEFAULT_SERVER_URL,
+  ECIES,
+  EventType,
+  MessageType,
+  PlatformType,
+  RemoteCommunication,
+  SendAnalytics,
+  SocketService,
+  TrackingEvents,
 };
