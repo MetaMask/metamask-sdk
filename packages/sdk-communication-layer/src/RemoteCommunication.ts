@@ -2,9 +2,21 @@ import { EventEmitter2 } from 'eventemitter2';
 import packageJson from '../package.json';
 import { ECIESProps } from './ECIES';
 import {
+  CHANNEL_MAX_WAITING_TIME,
+  DEFAULT_SERVER_URL,
+  DEFAULT_SESSION_TIMEOUT_MS,
+} from './config';
+import {
   clean,
   generateChannelIdConnect,
 } from './services/RemoteCommunication/ChannelManager';
+import {
+  connectToChannel,
+  disconnect,
+  initCommunicationLayer,
+  originatorSessionConnect,
+  resume,
+} from './services/RemoteCommunication/ConnectionManager';
 import { sendMessage } from './services/RemoteCommunication/MessageHandlers';
 import { testStorage } from './services/RemoteCommunication/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
@@ -20,23 +32,11 @@ import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { OriginatorInfo } from './types/OriginatorInfo';
 import { PlatformType } from './types/PlatformType';
 import { ServiceStatus } from './types/ServiceStatus';
-import { WalletInfo } from './types/WalletInfo';
 import {
   StorageManager as SessionStorageManager,
   StorageManagerProps,
 } from './types/StorageManager';
-import {
-  connectToChannel,
-  disconnect,
-  initCommunicationLayer,
-  originatorSessionConnect,
-  resume,
-} from './services/RemoteCommunication/ConnectionManager';
-import {
-  CHANNEL_MAX_WAITING_TIME,
-  DEFAULT_SERVER_URL,
-  DEFAULT_SESSION_TIMEOUT_MS,
-} from './config';
+import { WalletInfo } from './types/WalletInfo';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -56,7 +56,6 @@ export interface RemoteCommunicationProps {
   context: string;
   autoConnect?: AutoConnectOptions;
   logging?: CommunicationLayerLoggingOptions;
-  rpcHistoryLength?: number;
 }
 
 export interface RemoteCommunicationState {
@@ -131,7 +130,6 @@ export class RemoteCommunication extends EventEmitter2 {
     sdkVersion,
     communicationServerUrl = DEFAULT_SERVER_URL,
     logging,
-    // rpcHistoryLength = Infinity, // TODO implement and use value from sdk.
     autoConnect = {
       timeout: CHANNEL_MAX_WAITING_TIME,
     },
