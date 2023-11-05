@@ -196,21 +196,33 @@ export class WakeLockManager {
 
     if (hasNativeWakeLock()) {
       if (this._wakeLock) {
+        if (this.debug) {
+          console.debug(`WakeLockManager::disable() release wake lock`);
+        }
         this._wakeLock.release();
       }
       this._wakeLock = undefined;
     } else if (isOldIOS()) {
       if (this.noSleepTimer) {
-        /* console.warn(`
+        console.warn(`
           NoSleep now disabled for older iOS devices.
-        `);*/
+        `);
         window.clearInterval(this.noSleepTimer as number);
         this.noSleepTimer = undefined;
       }
     } else {
       try {
         if (!this.noSleepVideo) {
+          if (this.debug) {
+            console.debug(
+              `WakeLockManager::disable() noSleepVideo is undefined`,
+            );
+          }
           return;
+        }
+
+        if (this.debug) {
+          console.debug(`WakeLockManager::disable() pause noSleepVideo`);
         }
 
         if (this.noSleepVideo.firstChild) {
