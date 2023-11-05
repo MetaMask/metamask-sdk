@@ -318,6 +318,17 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.communicationLayer?.resetKeys();
   }
 
+  setOtherPublicKey(otherPublicKey: string) {
+    const keyExchange = this.state.communicationLayer?.getKeyExchange();
+    if (!keyExchange) {
+      throw new Error('KeyExchange is not initialized.');
+    }
+
+    if (keyExchange.getOtherPublicKey() !== otherPublicKey) {
+      keyExchange.setOtherPublicKey(otherPublicKey);
+    }
+  }
+
   pause() {
     if (this.state.debug) {
       console.debug(

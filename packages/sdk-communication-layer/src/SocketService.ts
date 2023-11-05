@@ -161,6 +161,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     return keyCheck(this);
   }
 
+  getKeyExchange() {
+    return this.state.keyExchange as KeyExchange;
+  }
+
   sendMessage(message: CommunicationLayerMessage): void {
     return handleSendMessage(this, message);
   }
