@@ -46,7 +46,6 @@ export default function Home() {
   const connect = async () => {
     try {
       setRpcError(null);
-      setRequesting(true);
       setResponse('');
 
       const accounts = await sdk?.connect();
