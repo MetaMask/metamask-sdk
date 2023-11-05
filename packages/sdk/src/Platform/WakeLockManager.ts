@@ -82,6 +82,7 @@ export class WakeLockManager {
           });
         }
       });
+      this.noSleepVideo.load();
 
       if (this.debug) {
         console.debug(`WakeLockManager::start() DEBUG display nosleepVideo`);
