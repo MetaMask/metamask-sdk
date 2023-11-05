@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { KeyExchange } from '../KeyExchange';
 import { Channel } from './Channel';
 import { CommunicationLayerMessage } from './CommunicationLayerMessage';
 import { ConnectToChannelOptions } from './ConnectToChannelOptions';
@@ -17,4 +18,5 @@ export interface CommunicationLayer extends EventEmitter2 {
   isConnected(): boolean;
   resume(): void;
   disconnect(options?: DisconnectOptions): void;
+  getKeyExchange(): KeyExchange;
 }
