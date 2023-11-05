@@ -193,7 +193,9 @@ const MetaMaskProviderClient = ({
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
     sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, () => {
-      setRPCHistory(sdk.getRPCHistory() ?? {});
+      // hack to force a react re-render when the RPC cache is updated
+      const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
+      setRPCHistory(temp);
     })
 
     return () => {
