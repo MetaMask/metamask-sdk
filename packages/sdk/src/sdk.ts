@@ -14,6 +14,7 @@ import {
   resume,
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
+import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
@@ -23,8 +24,6 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
-import { DEFAULT_RPC_HISTORY_LENGTH } from './config';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -142,13 +141,6 @@ export interface MetaMaskSDKOptions {
    * Options for customizing the storage manager used by the SDK.
    */
   storage?: StorageManagerProps;
-
-  /**
-   * Max number of RPC calls to keep in history. Default to 10.
-   * Feature is only available for the mobile provider.
-   * TODO: not implemented yet on the communication layer.
-   */
-  rpcHistoryLength?: number;
 
   /**
    * Options for customizing the logging behavior of the SDK.
