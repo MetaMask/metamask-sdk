@@ -85,13 +85,16 @@ export default function RPCHistoryViewer({
 
       <div className={'history-view'} style={historyViewStyle}>
         {visible && (
-          <ul style={listStyle}>
-            {sortedRpcHistory.map((entry, index) => (
-              <li key={index} style={listItemStyle}>
-                <HistoryItem entry={entry} />
-              </li>
-            ))}
-          </ul>
+          <>
+            {sortedRpcHistory?.length === 0 && <p>No RPC history</p>}
+            <ul style={listStyle}>
+              {sortedRpcHistory.map((entry, index) => (
+                <li key={index} style={listItemStyle}>
+                  <HistoryItem entry={entry} />
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </div>
     </div>
