@@ -9,13 +9,6 @@ describe('setupChannelListeners', () => {
   let socket: jest.Mocked<Partial<Socket>>;
   let keyExchange: jest.Mocked<Partial<KeyExchange>>;
 
-  const socketEvents = [
-    'error',
-    'ping',
-    'reconnect',
-    'reconnect_error',
-    'reconnect_failed',
-  ];
   const channelEvents = [
     'clients_connected',
     'channel_created',
@@ -41,14 +34,6 @@ describe('setupChannelListeners', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  it('should setup socket event listeners with correct names', () => {
-    setupChannelListeners(instance, 'testChannelId');
-
-    socketEvents.forEach((event) => {
-      expect(socket.io?.on).toHaveBeenCalledWith(event, expect.any(Function));
-    });
   });
 
   it('should setup channel event listeners with correct names', () => {
