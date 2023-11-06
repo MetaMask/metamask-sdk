@@ -1,6 +1,4 @@
 import { SocketService } from '../../../SocketService';
-import { MessageType } from '../../../types/MessageType';
-import { EventType } from '../../../types/EventType';
 import { ping } from './ping';
 
 describe('ping', () => {
