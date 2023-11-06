@@ -242,6 +242,10 @@ export class KeyExchange extends EventEmitter2 {
     return this.myPublicKey;
   }
 
+  getOtherPublicKey() {
+    return this.otherPublicKey;
+  }
+
   setOtherPublicKey(otherPubKey: string) {
     if (this.debug) {
       console.debug(`KeyExchange::setOtherPubKey()`, otherPubKey);
