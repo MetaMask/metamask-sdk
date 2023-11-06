@@ -16,6 +16,7 @@ describe('useHandleProviderEvent', () => {
     setError: jest.fn(),
     setTrigger: jest.fn(),
     setAccount: jest.fn(),
+    setRPCHistory: jest.fn(),
     debug: true,
   } as unknown as EventHandlerProps;
 

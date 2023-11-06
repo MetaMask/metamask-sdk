@@ -53,6 +53,7 @@ describe('MetaMaskProvider Component', () => {
             removeListener: mockProviderRemoveListener,
             request: mockRequest,
           }),
+          _getConnection: jest.fn(),
         } as unknown as MetaMaskSDK),
     );
 
