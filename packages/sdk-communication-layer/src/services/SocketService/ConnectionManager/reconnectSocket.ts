@@ -33,4 +33,8 @@ export const reconnectSocket = async (instance: SocketService) => {
       `${instance.state.context}connect_again`,
     );
   }
+
+  // wait again to make sure socket status is updated.
+  await wait(100);
+  return instance.state.socket?.connected;
 };

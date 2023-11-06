@@ -133,7 +133,10 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
         //  ignore message and wait for completion.
         console.warn(
-          `Message ignored because invalid key exchange status`,
+          `Message ignored because invalid key exchange status. step=${
+            instance.state.keyExchange?.getKeyInfo().step
+          }`,
+          instance.state.keyExchange?.getKeyInfo(),
           message,
         );
         return;

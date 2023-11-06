@@ -14,16 +14,23 @@ import { MessageType } from '../../../types/MessageType';
 export function ping(instance: SocketService) {
   if (instance.state.debug) {
     console.debug(
-      `SocketService::${
-        instance.state.context
-      }::ping() keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+      `SocketService::${instance.state.context}::ping() originator=${
+        instance.state.isOriginator
+      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
     );
   }
 
-  if (!instance.state.isOriginator) {
+  if (instance.state.isOriginator) {
     if (instance.state.keyExchange?.areKeysExchanged()) {
+      console.warn(
+        `SocketService::${instance.state.context}::ping() sending READY message`,
+      );
       instance.sendMessage({ type: MessageType.READY });
     } else {
+      console.warn(
+        `SocketService::${instance.state.context}::ping() starting key exchange`,
+      );
+
       instance.state.keyExchange?.start({
         isOriginator: instance.state.isOriginator ?? false,
       });

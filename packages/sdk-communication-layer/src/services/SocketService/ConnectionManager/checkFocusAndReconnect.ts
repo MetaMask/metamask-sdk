@@ -21,9 +21,21 @@ export function checkFocusAndReconnect(instance: SocketService) {
   }
 
   if (document.hasFocus()) {
-    reconnectSocket(instance).catch((err) => {
-      console.error(`SocketService::checkFocus Error reconnecting socket`, err);
-    });
+    reconnectSocket(instance)
+      .then((success) => {
+        if (instance.state.debug) {
+          console.debug(
+            `SocketService::checkFocus reconnectSocket success=${success}`,
+            instance,
+          );
+        }
+      })
+      .catch((err) => {
+        console.error(
+          `SocketService::checkFocus Error reconnecting socket`,
+          err,
+        );
+      });
   } else {
     window.addEventListener(
       'focus',

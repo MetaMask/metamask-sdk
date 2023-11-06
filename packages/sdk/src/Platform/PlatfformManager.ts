@@ -53,6 +53,7 @@ export class PlatformManager {
     this.state.preferredOpenLink = preferredOpenLink;
     this.state.wakeLockStatus = wakeLockStatus;
     this.state.debug = debug;
+    this.state.wakeLock.setDebug(debug);
   }
 
   enableWakeLock() {

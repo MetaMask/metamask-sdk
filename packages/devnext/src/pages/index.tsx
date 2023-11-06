@@ -11,27 +11,19 @@ import {
   getContract,
 } from 'viem';
 import SimpleABI from '../abi/Simple.json';
-import RPCChainViewer, { ChainRPC, ChainRPCs } from '../components/rpcchain-viewer';
+import SDKStatus from '../components/header-status';
+import { ChainRPC } from '../components/rpcchain-viewer';
+import RPCHistoryViewer from '../components/rpchistory-viewer';
 
 export default function Home() {
-  const {
-    sdk,
-    connected,
-    connecting,
-    balance,
-    status: serviceStatus,
-    readOnlyCalls,
-    extensionActive,
-    account,
-    provider,
-    chainId,
-    error,
-  } = useSDK();
+  const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
+    useSDK();
 
-  const [chainRPCs, setChainRPCs] = useState<ChainRPCs>();
   const languages = sdk?.availableLanguages || ['en'];
 
   const [response, setResponse] = useState<unknown>('');
+  const [rpcError, setRpcError] = useState<unknown>();
+  const [requesting, setRequesting] = useState(false);
 
   const getInitialLanguage = () => {
     if (typeof window !== 'undefined') {
@@ -53,22 +45,36 @@ export default function Home() {
 
   const connect = async () => {
     try {
+      setRpcError(null);
+      setResponse('');
+
       const accounts = await sdk?.connect();
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
+      setResponse(accounts);
     } catch (err) {
       console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
   const connectAndSign = async () => {
     try {
-      const hexResponse = await sdk?.connectAndSign({msg: 'hello world'});
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectAndSign response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
       console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -81,6 +87,9 @@ export default function Home() {
       from: selectedAddress, // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
+    setRpcError(null);
+    setRequesting(true);
+    setResponse(''); // reset response first
 
     try {
       // txHash is a hex string
@@ -93,6 +102,9 @@ export default function Home() {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
+      setRpcError(null);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -166,8 +178,10 @@ export default function Home() {
       },
     });
 
-    let from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.selectedAddress;
 
+    setRequesting(true);
+    setRpcError(null);
     setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
@@ -187,16 +201,44 @@ export default function Home() {
       console.debug(`sign response`, resp);
     } catch (e) {
       console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
   };
 
-  const personalSign = async () => {};
+  const personalSign = async () => {
+    const from = window.ethereum?.selectedAddress;
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
+    console.debug(`sign from: ${from}`);
+    try {
+      if (!from || from === null) {
+        alert(
+          `Invalid account -- please connect using eth_requestAccounts first`,
+        );
+        return;
+      }
+
+      const params = ['hello world', from];
+      const method = 'personal_sign';
+      console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
+      console.debug(`sign params`, params);
+      const resp = await provider?.request({ method, params });
+      setResponse(resp);
+      console.debug(`sign response`, resp);
+    } catch (e) {
+      console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   const terminate = () => {
     sdk?.terminate();
   };
-
-  const addNetwork = () => {};
 
   const interactEthers = async () => {
     // Get value from contract
@@ -260,7 +302,7 @@ export default function Home() {
     const client = createPublicClient({ transport });
     const wallet = createWalletClient({
       transport,
-      account: provider?.selectedAddress! as `0x{string}`,
+      account: provider?.selectedAddress as `0x{string}`,
     });
     try {
       const balance = await client.getBalance({
@@ -284,8 +326,8 @@ export default function Home() {
       const nextValue = `now: ${Date.now()}`;
       console.debug(`Set new contract value to: `, nextValue);
       const trxHash = await contract.write.set([nextValue], {
-        account: provider?.selectedAddress!,
-        chain: { id: parseInt(provider?.chainId!) },
+        account: provider?.selectedAddress,
+        chain: { id: parseInt(provider?.chainId ?? '') },
       });
 
       console.debug(`Wait for trx to complete...`);
@@ -295,7 +337,7 @@ export default function Home() {
         confirmations: 1,
       });
 
-      console.debug(`Check result...`);
+      console.debug(`Check result...`, trx);
       text = await contract.read.ping();
       const success = text === nextValue;
       console.debug(
@@ -309,7 +351,7 @@ export default function Home() {
 
   const testEthers = async () => {
     const web3Provider = new ethers.providers.Web3Provider(
-      sdk?.getProvider()! as any,
+      sdk?.getProvider() as any,
     );
     const signer = web3Provider.getSigner();
     console.debug(`signer`, signer);
@@ -381,56 +423,72 @@ export default function Home() {
   };
 
   const addGanache = async () => {
-    const res = await provider?.request({
-      method: 'wallet_addEthereumChain',
-      params: [
-        {
-          chainId: '0x539',
-          chainName: 'Ganache Dev',
-          nativeCurrency: {
-            name: 'Ethereum',
-            symbol: 'ETH',
-            decimals: 18,
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
+
+    try {
+      const resp = await provider?.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x539',
+            chainName: 'Ganache Dev',
+            nativeCurrency: {
+              name: 'Ethereum',
+              symbol: 'ETH',
+              decimals: 18,
+            },
+            rpcUrls: [process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''],
           },
-          rpcUrls: [process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? ''],
-        },
-      ],
-    });
-    console.log(`res`, res);
+        ],
+      });
+      setResponse(resp);
+      console.debug(`sign response`, resp);
+    } catch (e) {
+      console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const handleChainRPCs = async () => {
     const selectedAddress = provider?.selectedAddress;
 
-    const rpcs: ChainRPC[] = [{
-      method: "personal_sign",
-      params: ["something to sign 1", selectedAddress],
-    },
-    {
-      method: "personal_sign",
-      params: ["hello world", selectedAddress],
-    },
-    {
-      method: "personal_sign",
-      params: ["Another one #3", selectedAddress],
-    }];
+    const rpcs: ChainRPC[] = [
+      {
+        method: 'personal_sign',
+        params: ['something to sign 1', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['hello world', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['Another one #3', selectedAddress],
+      },
+    ];
 
-    setChainRPCs({processing: true, rpcs});
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = (await provider?.request({
+        method: 'metamask_batch',
+        params: rpcs,
+      })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
-    setChainRPCs({processing: false, rpcs, error})
   };
-
 
   const chainSwitchAndSignAndBack = async () => {
     const selectedAddress = provider?.selectedAddress;
@@ -438,33 +496,39 @@ export default function Home() {
     const initChainId = chainId;
     const targetChainId = initChainId === '0x1' ? '0xe704' : '0x1';
 
-    const rpcs: ChainRPC[] = [{
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: targetChainId }],
-    },
-    {
-      method: "personal_sign",
-      params: ["Another one #3", selectedAddress],
-    },{
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: initChainId }],
-    }];
+    const rpcs: ChainRPC[] = [
+      {
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: targetChainId }],
+      },
+      {
+        method: 'personal_sign',
+        params: ['Another one #3', selectedAddress],
+      },
+      {
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: initChainId }],
+      },
+    ];
 
-    setChainRPCs({processing: true, rpcs});
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = (await provider?.request({
+        method: 'metamask_batch',
+        params: rpcs,
+      })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
-    setChainRPCs({processing: false, rpcs, error})
-  }
+  };
 
   const chainTransactions = async () => {
     const selectedAddress = provider?.selectedAddress;
@@ -475,33 +539,40 @@ export default function Home() {
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
-    const rpcs: ChainRPC[] = [{
-      method: 'eth_sendTransaction',
-      params: [transactionParameters],
-    },
-    {
-      method: "personal_sign",
-      params: ["Hello Wolrd", selectedAddress],
-    },{
-      method: 'eth_sendTransaction',
-      params: [transactionParameters],
-    }];
+    const rpcs: ChainRPC[] = [
+      {
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      },
+      {
+        method: 'personal_sign',
+        params: ['Hello Wolrd', selectedAddress],
+      },
+      {
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      },
+    ];
 
-    setChainRPCs({processing: true, rpcs});
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
 
-    let error;
     try {
-      const response = await provider?.request({method: 'metamask_batch', params: rpcs}) as any[];
+      const response = (await provider?.request({
+        method: 'metamask_batch',
+        params: rpcs,
+      })) as any[];
+      setResponse(response);
       console.log(`response`, response);
-      response.forEach((result, index) => {
-        rpcs[index].result = result;
-      });
-    } catch(e) {
+    } catch (e) {
       console.error(`error`, e);
-      error = e;
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
-    setChainRPCs({processing: false, rpcs, error})
-  }
+  };
+
   return (
     <>
       <Head>
@@ -513,7 +584,7 @@ export default function Home() {
       <header>
         <Link href={'uikit'}>UI Kit demo</Link>
       </header>
-      <main>
+      <main style={{ paddingBottom: 50 }}>
         <div className="language-dropdown">
           <label htmlFor="language-select">Language: </label>
           <select
@@ -529,54 +600,14 @@ export default function Home() {
           </select>
         </div>
 
-        <div id='header'>
-          {connecting && (
-            <div>Waiting for Metamask to link the connection...</div>
-          )}
-          {connected &&
-            <>
-              <table className="head-table">
-                <tbody>
-                  <tr>
-                    <td className="table-label">ChannelId:</td>
-                    <td className="table-value">{serviceStatus?.channelConfig?.channelId}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Expiration:</td>
-                    <td className="table-value">{serviceStatus?.channelConfig?.validUntil ?? ''}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Extension active:</td>
-                    <td className="table-value">{extensionActive ? 'YES' : 'NO'}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected chain:</td>
-                    <td className="table-value">{chainId}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected account:</td>
-                    <td className="table-value">{account}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Account balance:</td>
-                    <td className="table-value">{balance}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Last request response:</td>
-                    <td className="table-value">{JSON.stringify(response)}</td>
-                  </tr>
-                  <tr>
-                    <td className="table-label">Connected:</td>
-                    <td className="table-value">{connected ? 'YES' : 'NO'}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </>
-          }
-        </div>
+        <SDKStatus
+          requesting={requesting}
+          response={response}
+          error={rpcError}
+        />
         {connected && (
           <>
-            <div className='action-buttons'>
+            <div className="action-buttons">
               <button style={{ padding: 10, margin: 10 }} onClick={connect}>
                 Request Accounts
               </button>
@@ -588,7 +619,10 @@ export default function Home() {
                 ping (ethers)
               </button>
 
-              <button style={{ padding: 10, margin: 10 }} onClick={interactViem}>
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={interactViem}
+              >
                 ping (viem)
               </button>
 
@@ -597,6 +631,13 @@ export default function Home() {
                 onClick={eth_signTypedData_v4}
               >
                 eth_signTypedData_v4
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={personalSign}
+              >
+                personal_sign
               </button>
 
               <button style={{ padding: 10, margin: 10 }} onClick={testPayload}>
@@ -644,7 +685,7 @@ export default function Home() {
 
               <button
                 style={{ padding: 10, margin: 10 }}
-                className='chain'
+                className="chain"
                 onClick={handleChainRPCs}
               >
                 Chain RPC Calls
@@ -652,7 +693,7 @@ export default function Home() {
 
               <button
                 style={{ padding: 10, margin: 10 }}
-                className='chain'
+                className="chain"
                 onClick={chainSwitchAndSignAndBack}
               >
                 Chain Switch + sign + switch back
@@ -660,22 +701,23 @@ export default function Home() {
 
               <button
                 style={{ padding: 10, margin: 10 }}
-                className='chain'
+                className="chain"
                 onClick={chainTransactions}
               >
                 Chain sendTransaction + personal_sign + sendTransaction
               </button>
             </div>
-            {chainRPCs && <RPCChainViewer chainRPCs={chainRPCs} />}
           </>
         )}
         {connecting && (
           <>
-            <div>Connecting...</div>
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Connect
             </button>
-            <button style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={connectAndSign}
+            >
               Connect And Sign
             </button>
           </>
@@ -697,7 +739,10 @@ export default function Home() {
             <button style={{ padding: 10, margin: 10 }} onClick={connect}>
               Connect
             </button>
-            <button style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={connectAndSign}
+            >
               Connect And Sign
             </button>
           </div>
@@ -710,6 +755,7 @@ export default function Home() {
           Terminate
         </button>
       </main>
+      <RPCHistoryViewer />
     </>
   );
 }

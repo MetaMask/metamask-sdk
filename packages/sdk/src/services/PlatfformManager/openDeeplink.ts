@@ -29,6 +29,15 @@ export function openDeeplink(
       return;
     }
 
+    if (state.debug) {
+      console.warn(
+        `Platform::openDeepLink() open link now useDeepLink=${state.useDeeplink}`,
+        state.useDeeplink ? deeplink : universalLink,
+      );
+    }
+
+    // It should only open after we can acknowledge that the rpc call that triggered the deeplink has been sent
+    // TODO how can we know that the rpc call has been sent?
     if (typeof window !== 'undefined') {
       let win: Window | null;
       if (state.useDeeplink) {

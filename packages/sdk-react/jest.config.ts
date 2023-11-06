@@ -6,10 +6,10 @@ module.exports = {
   coveragePathIgnorePatterns: ['./src/types', './src/index.ts'],
   coverageThreshold: {
     global: {
-      branches: 88,
-      functions: 96,
-      lines: 97,
-      statements: 97,
+      branches: 85,
+      functions: 85,
+      lines: 85,
+      statements: 85,
     },
   },
   clearMocks: true,

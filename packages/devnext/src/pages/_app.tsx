@@ -2,6 +2,9 @@ import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 import React from 'react';
 import type { AppProps } from 'next/app';
 import '../styles/globals.css';
+import { config } from '@fortawesome/fontawesome-svg-core';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+config.autoAddCss = false;
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
         },
         logging: {
-          developerMode: false,
+          developerMode: true,
           sdk: true,
           remoteLayer: false,
           serviceLayer: false,
