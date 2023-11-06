@@ -23,12 +23,12 @@ export function checkFocusAndReconnect(instance: SocketService) {
   if (document.hasFocus()) {
     reconnectSocket(instance)
       .then((success) => {
-        // if (instance.state.debug) {
-        console.warn(
-          `SocketService::checkFocus reconnectSocket success=${success}`,
-          instance,
-        );
-        // }
+        if (instance.state.debug) {
+          console.debug(
+            `SocketService::checkFocus reconnectSocket success=${success}`,
+            instance,
+          );
+        }
       })
       .catch((err) => {
         console.error(
