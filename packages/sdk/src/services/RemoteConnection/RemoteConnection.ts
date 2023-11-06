@@ -75,7 +75,8 @@ export interface RemoteConnectionProps {
 
 export interface RemoteConnectionState {
   connector?: RemoteCommunication;
-  universalLink?: string;
+  qrcodeLink?: string;
+  useDeeplink?: boolean;
   developerMode: boolean;
   analytics?: Analytics;
   authorized: boolean;
@@ -103,7 +104,7 @@ export class RemoteConnection implements ProviderService {
 
   public state: RemoteConnectionState = {
     connector: undefined,
-    universalLink: undefined,
+    qrcodeLink: undefined,
     analytics: undefined,
     developerMode: false,
     authorized: false,
@@ -121,6 +122,7 @@ export class RemoteConnection implements ProviderService {
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.state.developerMode = developerMode;
     this.state.analytics = options.analytics;
+    this.state.useDeeplink = options.sdk.options.useDeeplink;
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;
@@ -152,10 +154,10 @@ export class RemoteConnection implements ProviderService {
   }
 
   getUniversalLink() {
-    if (!this.state.universalLink) {
+    if (!this.state.qrcodeLink) {
       throw new Error('connection not started. run startConnection() first.');
     }
-    return this.state.universalLink;
+    return this.state.qrcodeLink;
   }
 
   getChannelConfig(): ChannelConfig | undefined {
