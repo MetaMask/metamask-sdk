@@ -93,7 +93,7 @@ export function initCommunicationLayer({
     url,
     title,
     source: state.dappMetadata?.source,
-    icon: state.dappMetadata?.base64Icon,
+    // icon: state.dappMetadata?.base64Icon, // TODO re-enable and replace with url
     platform: state.platformType,
     apiVersion: packageJson.version,
   };
