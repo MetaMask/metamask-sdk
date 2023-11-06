@@ -17,7 +17,7 @@
     "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh"
   },
   "dependencies": {
-    "@metamask/providers": "^10.2.1",
+    "@metamask/providers": "^13.1.0",
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-install-modal-web": "workspace:^",

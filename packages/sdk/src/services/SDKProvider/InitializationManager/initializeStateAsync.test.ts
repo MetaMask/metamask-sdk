@@ -95,6 +95,8 @@ describe('initializeStateAsync', () => {
 
   it('should use instance.selectedAddress when initialState does not contain accounts', async () => {
     const mockInitialState = { accounts: [] };
+
+    // @ts-ignore
     mockSDKProvider.selectedAddress = 'selectedAddress';
     mockRequest.mockResolvedValue(mockInitialState);
 

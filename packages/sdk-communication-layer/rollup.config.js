@@ -14,9 +14,7 @@ import packageJson from './package.json'; // Ensure this path is correct
 const isDev = process.env.NODE_ENV === 'dev';
 
 // Base external dependencies across different builds
-const baseExternalDeps = [
-  '@react-native-async-storage/async-storage',
-];
+const baseExternalDeps = ['@react-native-async-storage/async-storage'];
 
 // Dependencies for rollup to consider as external
 const listDepForRollup = [
@@ -71,9 +69,10 @@ const config = [
       // Minify the bundle
       terser(),
       // Visualize the bundle to analyze its composition and size
-      isDev && visualizer({
-        filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-es-stats-${pkgJson.version}.html`,
+        }),
     ],
   },
   // Browser builds (UMD, IIFE)
@@ -110,9 +109,10 @@ const config = [
       builtins({ crypto: true }),
       json(),
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-umd-iife-stats-${pkgJson.version}.html`,
+        }),
     ],
   },
   {
@@ -139,9 +139,10 @@ const config = [
       }),
       json(),
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/react-native-stats-${pkgJson.version}.html`,
+        }),
     ],
   },
   {
@@ -179,9 +180,10 @@ const config = [
       commonjs({ transformMixedEsModules: true }),
       json(),
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/node-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/node-stats-${pkgJson.version}.html`,
+        }),
     ],
   },
 ];

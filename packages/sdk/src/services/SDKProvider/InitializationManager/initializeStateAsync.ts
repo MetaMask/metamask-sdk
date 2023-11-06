@@ -83,7 +83,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
           );
         }
 
-        initialState.accounts = [instance.selectedAddress];
+        initialState.accounts = [instance.selectedAddress ?? ''];
       } else {
         if (state.debug) {
           console.debug(

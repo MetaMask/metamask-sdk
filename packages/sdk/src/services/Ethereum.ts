@@ -35,14 +35,16 @@ export class Ethereum {
     });
 
     this.debug = debug;
+
     const proxiedProvieer = new Proxy(provider, {
       // some common libraries, e.g. web3@1.x, can confict with our API.
       deleteProperty: () => true,
     });
-    this.provider = proxiedProvieer;
+
+    this.provider = provider;
 
     if (shouldSetOnWindow && typeof window !== 'undefined') {
-      setGlobalProvider(this.provider);
+      setGlobalProvider(provider);
     }
 
     if (shouldShimWeb3 && typeof window !== 'undefined') {
