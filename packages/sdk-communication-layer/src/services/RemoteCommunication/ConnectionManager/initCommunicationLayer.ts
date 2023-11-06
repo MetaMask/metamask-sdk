@@ -27,7 +27,8 @@ type CommunicationLayerHandledEvents =
   | EventType.CHANNEL_CREATED
   | EventType.KEYS_EXCHANGED
   | EventType.AUTHORIZED
-  | EventType.MESSAGE;
+  | EventType.MESSAGE
+  | EventType.RPC_UPDATE;
 
 /**
  * Initializes the communication layer for a given RemoteCommunication  This function creates a communication layer based on the provided preference (e.g., SOCKET), sets up originator information, and attaches necessary event listeners.
@@ -121,6 +122,11 @@ export function initCommunicationLayer({
     ),
     [EventType.CHANNEL_CREATED]: handleChannelCreatedEvent(instance),
     [EventType.CLIENTS_WAITING]: handleClientsWaitingEvent(instance),
+    [EventType.RPC_UPDATE]: () => {
+      // TODO use a separate function to isolate unit tests
+      // propagate RPC_UPDATE event to the SDK
+      instance.emit(EventType.RPC_UPDATE);
+    },
   };
 
   for (const [eventType, handler] of Object.entries(eventsMapping)) {

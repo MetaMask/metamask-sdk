@@ -56,6 +56,7 @@ export interface RPCMethodResult {
   timestamp: number; // timestamp of last request
   method: string;
   result?: unknown;
+  error?: unknown;
   elapsedTime?: number; // elapsed time between request and response
 }
 export interface RPCMethodCache {
@@ -183,6 +184,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   resume(): void {
     return resume(this);
+  }
+
+  getRPCMethodTracker() {
+    return this.state.rpcMethodTracker;
   }
 
   disconnect(options?: DisconnectOptions): void {

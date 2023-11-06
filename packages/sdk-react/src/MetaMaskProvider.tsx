@@ -16,6 +16,7 @@ import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitialized
 import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
+import { RPCMethodCache } from '@metamask/sdk-communication-layer';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,6 +28,7 @@ export interface EventHandlerProps {
   setAccount: React.Dispatch<React.SetStateAction<string | undefined>>;
   setStatus: React.Dispatch<React.SetStateAction<ServiceStatus | undefined>>;
   setTrigger: React.Dispatch<React.SetStateAction<number>>;
+  setRPCHistory: React.Dispatch<React.SetStateAction<RPCMethodCache>>;
   debug?: boolean;
   chainId?: string;
   activeProvider?: SDKProvider;
@@ -47,6 +49,7 @@ const initProps: {
   balance?: string; // hex value in wei
   account?: string;
   status?: ServiceStatus;
+  rpcHistory?: RPCMethodCache;
 } = {
   ready: false,
   extensionActive: false,
@@ -78,6 +81,7 @@ const MetaMaskProviderClient = ({
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
+  const [rpcHistory, setRPCHistory] = useState<RPCMethodCache>({});
   const [extensionActive, setExtensionActive] = useState<boolean>(false);
   const hasInit = useRef(false);
 
@@ -89,6 +93,7 @@ const MetaMaskProviderClient = ({
     setAccount,
     setStatus,
     setTrigger,
+    setRPCHistory,
     debug,
     chainId,
     activeProvider: sdk?.getProvider(),
@@ -187,6 +192,12 @@ const MetaMaskProviderClient = ({
     activeProvider.on('chainChanged', onChainChanged);
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
+    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, () => {
+      // hack to force a react re-render when the RPC cache is updated
+      const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
+      setRPCHistory(temp);
+    })
+
     return () => {
       activeProvider.removeListener('_initialized', onInitialized);
       activeProvider.removeListener('connecting', onConnecting);
@@ -217,6 +228,7 @@ const MetaMaskProviderClient = ({
         connected,
         readOnlyCalls,
         provider,
+        rpcHistory,
         connecting,
         account,
         balance,

@@ -168,6 +168,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
       const rpcMessage = messageReceived.data as {
         id: string;
         result: unknown;
+        error: {
+          code: number;
+          message: string;
+          stack: string;
+        };
       };
       const initialRPCMethod = instance.state.rpcMethodTracker[rpcMessage.id];
       if (initialRPCMethod) {
@@ -181,9 +186,16 @@ export function handleMessage(instance: SocketService, channelId: string) {
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,
+          error: rpcMessage.error
+            ? {
+                code: rpcMessage.error?.code,
+                message: rpcMessage.error?.message,
+              }
+            : undefined,
           elapsedTime,
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
+        instance.emit(EventType.RPC_UPDATE);
 
         if (instance.state.debug) {
           console.debug(

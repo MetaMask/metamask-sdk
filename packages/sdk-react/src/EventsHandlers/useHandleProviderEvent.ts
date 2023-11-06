@@ -10,6 +10,7 @@ export const useHandleProviderEvent = ({
   setError,
   setChainId,
   setAccount,
+  setRPCHistory,
   sdk,
 }: EventHandlerProps) => {
   return useCallback(
@@ -20,6 +21,7 @@ export const useHandleProviderEvent = ({
           type,
         );
       }
+
       if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
         setConnecting(false);
       } else if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
@@ -39,6 +41,9 @@ export const useHandleProviderEvent = ({
         setChainId(extensionChainId);
         setAccount(extensionAccount);
       }
+
+      // Always reset RPC history when changing providers
+      setRPCHistory({});
       setTrigger((_trigger) => _trigger + 1);
     },
     [debug, setConnecting, setTrigger, setConnected, setError],

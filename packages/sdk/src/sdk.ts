@@ -14,6 +14,7 @@ import {
   resume,
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
+import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
@@ -23,7 +24,6 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -367,5 +367,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
+  }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
   }
 }
