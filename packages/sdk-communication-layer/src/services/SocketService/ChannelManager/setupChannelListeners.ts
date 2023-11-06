@@ -8,11 +8,6 @@ import {
   handleKeyInfo,
   handleKeysExchanged,
   handleMessage,
-  handlePing,
-  handleReconnect,
-  handleReconnectError,
-  handleReconnectFailed,
-  handleSocketError,
   handlesClientsDisconnected,
 } from '../EventListeners';
 
@@ -73,38 +68,55 @@ export function setupChannelListeners(
     console.warn(
       `SocketService::${instance.state.context}::setupChannelListener socket listeners already set up for channel ${channelId}`,
     );
-    return;
   }
 
   // Only available for the originator -- used for connection recovery
   if (socket && instance.state.isOriginator) {
-    socket?.io.on('error', (error) => {
-      console.warn(`socket event=error`, error);
-      return handleSocketError(instance)(error);
-    });
+    if (instance.state.debug) {
+      // TODO remove all the handleSocker* functions
+      // They are not required since it is managed via the handleDisconnect function
+      socket?.io.on('error', (error) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=error`,
+          error,
+        );
+        // return handleSocketError(instance)(error);
+      });
 
-    socket?.io.on('reconnect', (attempt) => {
-      console.warn(`socket event=reconnect`, instance);
-      return handleReconnect(instance)(attempt);
-    });
+      socket?.io.on('reconnect', (attempt) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect`,
+          attempt,
+        );
+      });
 
-    socket?.io.on('reconnect_error', (error) => {
-      console.warn(`socket event=reconnect_error`, instance);
-      return handleReconnectError(instance)(error);
-    });
+      socket?.io.on('reconnect_error', (error) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_error`,
+          error,
+        );
+        // return handleReconnectError(instance)(error);
+      });
 
-    socket?.io.on('reconnect_failed', () => {
-      console.warn(`socket event=reconnect_failed`, instance);
-      return handleReconnectFailed(instance)();
-    });
+      socket?.io.on('reconnect_failed', () => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_failed`,
+        );
+        // return handleReconnectFailed(instance)();
+      });
 
-    socket?.io.on('ping', () => {
-      console.warn(`socket event=ping`, instance);
-      return handlePing(instance)();
-    });
+      socket?.io.on('ping', () => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=ping`,
+        );
+        // return handlePing(instance)();
+      });
+    }
 
     socket?.on('disconnect', (reason: string) => {
-      console.warn(`handle socket disconnect`, reason);
+      console.log(
+        `MetaMaskSDK socket disconnected '${reason}' begin recovery...`,
+      );
       return handleDisconnect(instance)(reason);
     });
   }
