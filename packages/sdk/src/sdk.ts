@@ -24,6 +24,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import packageJson from '../package.json';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -371,5 +372,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getRPCHistory() {
     return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
   }
 }
