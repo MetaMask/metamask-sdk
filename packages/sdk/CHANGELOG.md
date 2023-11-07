@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0]
+### Added
+- feat: update onboard package ([#475](https://github.com/MetaMask/metamask-sdk/pull/475))
+- feat: expose sdk version ([#474](https://github.com/MetaMask/metamask-sdk/pull/474))
+- feat: set minimum required coverage to 50/100 ([#473](https://github.com/MetaMask/metamask-sdk/pull/473))
+- feat: installmodal deeplink compatibility ([#471](https://github.com/MetaMask/metamask-sdk/pull/471))
+- feat: socket handling optimization and devnext ui ([#468](https://github.com/MetaMask/metamask-sdk/pull/468))
+- feat: expose rpc history tracker ([#462](https://github.com/MetaMask/metamask-sdk/pull/462))
+- refactor: rewrite ios browser version detection for improved readibility ([#465](https://github.com/MetaMask/metamask-sdk/pull/465))
+- feat: qrcode deeplinks ([#463](https://github.com/MetaMask/metamask-sdk/pull/463))
+- feat: sdk option openDeepLink with dynamic url  ([#464](https://github.com/MetaMask/metamask-sdk/pull/464))
+
 ## [0.11.2]
 ### Uncategorized
 - align version with sdk-react* packages
@@ -171,7 +183,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.0...HEAD
+[0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.2...@metamask/sdk@0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.1...@metamask/sdk@0.11.2
 [0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.0...@metamask/sdk@0.11.1
 [0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.10.1...@metamask/sdk@0.11.0
