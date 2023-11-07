@@ -5,6 +5,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import { createInstance, i18n } from 'i18next';
+import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import { SDKProvider } from './provider/SDKProvider';
@@ -24,7 +25,6 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import packageJson from '../package.json';
 
 export interface MetaMaskSDKOptions {
   /**
