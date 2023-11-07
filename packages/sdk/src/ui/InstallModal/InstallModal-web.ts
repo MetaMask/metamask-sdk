@@ -26,17 +26,6 @@ const sdkWebInstallModal = ({
     console.debug(`################## Installing Modal #################`);
     console.debug(`${link}`);
     console.debug(`npx uri-scheme open "${link}" --ios`);
-    console.debug(
-      `xcrun simctl openurl BF58F2C6-D3F8-4E78-AE3F-571CB018094C "${link}"`,
-    );
-    console.debug(`iphone13:`);
-    console.info(
-      `xcrun simctl openurl BF58F2C6-D3F8-4E78-AE3F-571CB018094C "${link}"`,
-    );
-    console.debug(`iphone13 (Pro)`);
-    console.info(
-      `xcrun simctl openurl B7C37834-CC76-4FE3-ACDA-53B0600E48E0 "${link}"`,
-    );
     console.debug(`npx uri-scheme open "${link}" --android`);
     console.debug(
       `adb shell am start -a android.intent.action.VIEW -d "${link}"`,
