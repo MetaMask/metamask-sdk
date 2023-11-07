@@ -7,10 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.0]
-### Uncategorized
+### Added
 - feat: set minimum required coverage to 50/100 ([#473](https://github.com/MetaMask/metamask-sdk/pull/473))
-- Revert "Release 37.0.0" ([#470](https://github.com/MetaMask/metamask-sdk/pull/470))
-- Release 37.0.0 ([#469](https://github.com/MetaMask/metamask-sdk/pull/469))
 - feat: socket handling optimization and devnext ui ([#468](https://github.com/MetaMask/metamask-sdk/pull/468))
 - feat: expose rpc history tracker ([#462](https://github.com/MetaMask/metamask-sdk/pull/462))
 - feat: allow editing otherpublickey for faster connection recovery ([#466](https://github.com/MetaMask/metamask-sdk/pull/466))
