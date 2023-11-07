@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0]
+### Uncategorized
+- feat: set minimum required coverage to 50/100 ([#473](https://github.com/MetaMask/metamask-sdk/pull/473))
+- Revert "Release 37.0.0" ([#470](https://github.com/MetaMask/metamask-sdk/pull/470))
+- Release 37.0.0 ([#469](https://github.com/MetaMask/metamask-sdk/pull/469))
+- feat: socket handling optimization and devnext ui ([#468](https://github.com/MetaMask/metamask-sdk/pull/468))
+- feat: expose rpc history tracker ([#462](https://github.com/MetaMask/metamask-sdk/pull/462))
+- feat: allow editing otherpublickey for faster connection recovery ([#466](https://github.com/MetaMask/metamask-sdk/pull/466))
+- feat: disable favicon in dappmetadata ([#467](https://github.com/MetaMask/metamask-sdk/pull/467))
+
 ## [0.11.1]
 ### Added
 - build: improve sdk bundle to work with nodejs strictmode ([#457](https://github.com/MetaMask/metamask-sdk/pull/457))
@@ -100,7 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.0...HEAD
+[0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.1...@metamask/sdk-communication-layer@0.12.0
 [0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.0...@metamask/sdk-communication-layer@0.11.1
 [0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.1...@metamask/sdk-communication-layer@0.11.0
 [0.10.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.10.0...@metamask/sdk-communication-layer@0.10.1
