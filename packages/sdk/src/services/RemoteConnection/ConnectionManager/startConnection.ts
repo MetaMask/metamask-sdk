@@ -51,13 +51,10 @@ export async function startConnection(
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
   }
 
-  // if we are on desktop browser
-  const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
-
   const linkParams = encodeURI(
     `channelId=${channelId}&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}`,
+    }&pubkey=${pubKey}&t=q`,
   );
 
   const qrcodeLink = `${
