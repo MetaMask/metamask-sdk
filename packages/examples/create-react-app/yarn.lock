@@ -2542,9 +2542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.10.0"
+"@metamask/sdk-communication-layer@npm:0.10.1":
+  version: 0.10.1
+  resolution: "@metamask/sdk-communication-layer@npm:0.10.1"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -2552,7 +2552,7 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 0bf3702e137f8fdbc3f4ac7242f83dc741083cda7ee0102f6d9c2044405e925e14e411014350a2c8068f4e110c1172613161433b3d61d968ea3b615f9cc0929b
+  checksum: 12976e562c4e9da65c52fb8d4f14305653557d4ccb5721ad1de87f9a08d7679503dc2fb92c8330b30cae4c4aa5cab05399100d6590e68e4e614c9b9560602c1d
   languageName: node
   linkType: hard
 
@@ -2571,26 +2571,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk-react@npm:0.10.0"
+"@metamask/sdk-react@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@metamask/sdk-react@npm:0.10.1"
   dependencies:
-    "@metamask/sdk": ^0.10.0
+    "@metamask/sdk": ^0.10.1
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: ee3a998ff4355740c0395c8a49d305aafb1133a593678b27e27071911e2b3aae44ffdb00fd765703dcb0b08efdca2f718092e6608b26bc5f34014972282b2967
+  checksum: 5651610d1182da4fb93683adb1779b90823f1f27fc0435f0ca0bc5f5be2983b45aad4ef2534585fcd9b5a7f1f7813e7f9da4c31e530e6a6a7b2b5b9116d1a7c4
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk@npm:0.10.0"
+"@metamask/sdk@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@metamask/sdk@npm:0.10.1"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.10.0
+    "@metamask/sdk-communication-layer": 0.10.1
     "@metamask/sdk-install-modal-web": 0.10.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -2619,7 +2619,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: a1c9f0e3bce0b682cdd1dd51bedec7229bf800655fea07e03e2686ea1a5441bd355c9e4e9aa63150fffa623ea467c463f9cf991f1a21855c9b85a448e2e3930d
+  checksum: 461a7db50533c11b2c2c7fb992d5f09204a095b622693163c9d8a936046a31c51ebf6526f1bc602619256ef8c88bf2af76c37da2eda03a78d52ed2cac7ed05e8
   languageName: node
   linkType: hard
 
@@ -10017,7 +10017,7 @@ __metadata:
   resolution: "mm-sdk-cra@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react": ^0.10.0
+    "@metamask/sdk-react": ^0.10.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0

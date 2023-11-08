@@ -117,13 +117,16 @@ const config = [
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
-      typescript({ tsconfig: './tsconfig.json' }),
-      commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
         exportConditions: ['react-native', 'node', 'browser'],
         browser: true,
         preferBuiltins: true,
+      }),
+      typescript({ tsconfig: './tsconfig.json' }),
+      commonjs({ transformMixedEsModules: true }),
+      nodePolyfills({
+        process: true,
       }),
       json(),
       terser(),
