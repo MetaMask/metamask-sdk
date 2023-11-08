@@ -344,9 +344,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.10.0"
+"@metamask/sdk-communication-layer@npm:0.12.0":
+  version: 0.12.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
   dependencies:
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
@@ -354,13 +354,13 @@ __metadata:
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
     uuid: ^8.3.2
-  checksum: 0bf3702e137f8fdbc3f4ac7242f83dc741083cda7ee0102f6d9c2044405e925e14e411014350a2c8068f4e110c1172613161433b3d61d968ea3b615f9cc0929b
+  checksum: 9042d7b38832dfb2c1efa93441ee4f9e8fee76da22a60d860720cdd0091d08dd34e0234269eecdde64c11868d6e2f0d566331815658b313d44aa329f221f390e
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.10.0"
+"@metamask/sdk-install-modal-web@npm:0.12.0":
+  version: 0.12.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.0"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -369,7 +369,7 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: dae908e28915ed34cb7ae924503fa8a0f4543f871638bdd0651f731282ee11a50be6e82ac37365d3e8238a1e7222820e3627a58f978b3f529d9da2b122b77de9
+  checksum: 4fd1eb7a108bc1ac123731906aba5930fd4818a40448b94dc0c909bc60376da7d25e95fe163ad7983936f7525c93078b05047d66e1a39a3f6780c56ee5694258
   languageName: node
   linkType: hard
 
@@ -377,20 +377,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-pure-javascript-example@workspace:."
   dependencies:
-    "@metamask/sdk": ^0.10.0
+    "@metamask/sdk": ^0.12.0
     serve: 13.0.2
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@metamask/sdk@npm:0.10.0"
+"@metamask/sdk@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@metamask/sdk@npm:0.12.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.10.0
-    "@metamask/sdk-install-modal-web": 0.10.0
+    "@metamask/sdk-communication-layer": 0.12.0
+    "@metamask/sdk-install-modal-web": 0.12.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -403,10 +403,11 @@ __metadata:
     i18next-browser-languagedetector: ^7.1.0
     obj-multiplex: ^1.0.0
     pump: ^3.0.0
-    qrcode-terminal: ^0.12.0
+    qrcode-terminal-nooctal: ^0.12.1
     react-i18next: ^13.2.2
     react-native-webview: ^11.26.0
     readable-stream: ^2.3.7
+    rollup-plugin-visualizer: ^5.9.2
     socket.io-client: ^4.5.1
     util: ^0.12.4
     uuid: ^8.3.2
@@ -418,7 +419,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: a1c9f0e3bce0b682cdd1dd51bedec7229bf800655fea07e03e2686ea1a5441bd355c9e4e9aa63150fffa623ea467c463f9cf991f1a21855c9b85a448e2e3930d
+  checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
   languageName: node
   linkType: hard
 
@@ -945,6 +946,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cliui@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "cliui@npm:8.0.1"
+  dependencies:
+    string-width: ^4.2.0
+    strip-ansi: ^6.0.1
+    wrap-ansi: ^7.0.0
+  checksum: 79648b3b0045f2e285b76fb2e24e207c6db44323581e421c3acbd0e86454cba1b37aea976ab50195a49e7384b871e6dfb2247ad7dec53c02454ac6497394cb56
+  languageName: node
+  linkType: hard
+
 "color-convert@npm:^1.9.0":
   version: 1.9.3
   resolution: "color-convert@npm:1.9.3"
@@ -1153,6 +1165,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"define-lazy-prop@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "define-lazy-prop@npm:2.0.0"
+  checksum: 0115fdb065e0490918ba271d7339c42453d209d4cb619dfe635870d906731eff3e1ade8028bb461ea27ce8264ec5e22c6980612d332895977e89c1bbc80fcee2
+  languageName: node
+  linkType: hard
+
 "delegates@npm:^1.0.0":
   version: 1.0.0
   resolution: "delegates@npm:1.0.0"
@@ -1272,6 +1291,13 @@ __metadata:
   dependencies:
     is-arrayish: ^0.2.1
   checksum: c1c2b8b65f9c91b0f9d75f0debaa7ec5b35c266c2cac5de412c1a6de86d4cbae04ae44e510378cb14d032d0645a36925d0186f8bb7367bcc629db256b743a001
+  languageName: node
+  linkType: hard
+
+"escalade@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "escalade@npm:3.1.1"
+  checksum: a3e2a99f07acb74b3ad4989c48ca0c3140f69f923e56d0cba0526240ee470b91010f9d39001f2a4a313841d237ede70a729e92125191ba5d21e74b106800b133
   languageName: node
   linkType: hard
 
@@ -1470,6 +1496,13 @@ __metadata:
     strip-ansi: ^6.0.1
     wide-align: ^1.1.5
   checksum: 788b6bfe52f1dd8e263cda800c26ac0ca2ff6de0b6eee2fe0d9e3abf15e149b651bd27bf5226be10e6e3edb5c4e5d5985a5a1a98137e7a892f75eff76467ad2d
+  languageName: node
+  linkType: hard
+
+"get-caller-file@npm:^2.0.5":
+  version: 2.0.5
+  resolution: "get-caller-file@npm:2.0.5"
+  checksum: b9769a836d2a98c3ee734a88ba712e62703f1df31b94b784762c433c27a386dd6029ff55c2a920c392e33657d80191edbf18c61487e198844844516f843496b9
   languageName: node
   linkType: hard
 
@@ -1792,7 +1825,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-docker@npm:^2.0.0":
+"is-docker@npm:^2.0.0, is-docker@npm:^2.1.1":
   version: 2.2.1
   resolution: "is-docker@npm:2.2.1"
   bin:
@@ -1854,7 +1887,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-wsl@npm:^2.1.1":
+"is-wsl@npm:^2.1.1, is-wsl@npm:^2.2.0":
   version: 2.2.0
   resolution: "is-wsl@npm:2.2.0"
   dependencies:
@@ -2333,6 +2366,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"open@npm:^8.4.0":
+  version: 8.4.2
+  resolution: "open@npm:8.4.2"
+  dependencies:
+    define-lazy-prop: ^2.0.0
+    is-docker: ^2.1.1
+    is-wsl: ^2.2.0
+  checksum: 6388bfff21b40cb9bd8f913f9130d107f2ed4724ea81a8fd29798ee322b361ca31fa2cdfb491a5c31e43a3996cfe9566741238c7a741ada8d7af1cb78d85cf26
+  languageName: node
+  linkType: hard
+
 "p-finally@npm:^1.0.0":
   version: 1.0.0
   resolution: "p-finally@npm:1.0.0"
@@ -2429,6 +2473,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"picomatch@npm:^2.3.1":
+  version: 2.3.1
+  resolution: "picomatch@npm:2.3.1"
+  checksum: 050c865ce81119c4822c45d3c84f1ced46f93a0126febae20737bd05ca20589c564d6e9226977df859ed5e03dc73f02584a2b0faad36e896936238238b0446cf
+  languageName: node
+  linkType: hard
+
 "process-nextick-args@npm:~1.0.6":
   version: 1.0.7
   resolution: "process-nextick-args@npm:1.0.7"
@@ -2493,12 +2544,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qrcode-terminal@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "qrcode-terminal@npm:0.12.0"
+"qrcode-terminal-nooctal@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "qrcode-terminal-nooctal@npm:0.12.1"
   bin:
-    qrcode-terminal: ./bin/qrcode-terminal.js
-  checksum: 51638d11d080e06ef79ef2d5cfe911202159e48d2873d6a80a3c5489b4b767acf4754811ceba4e113db8f41f61a06c163bcb17e6e18e6b34e04a7a5155dac974
+    qrcode-terminal: bin/qrcode-terminal.js
+  checksum: 1071c4be2bfa07b3956ad0a63c87452ced0b5180a9dc19f224fc3dd69bb24ad687a7af365acdde0f876ddf89dc1a4beadba88d89c7c5c5cbf2ef3efaef64736e
   languageName: node
   linkType: hard
 
@@ -2649,6 +2700,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"require-directory@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "require-directory@npm:2.1.1"
+  checksum: fb47e70bf0001fdeabdc0429d431863e9475e7e43ea5f94ad86503d918423c1543361cc5166d713eaa7029dd7a3d34775af04764bebff99ef413111a5af18c80
+  languageName: node
+  linkType: hard
+
 "resolve-from@npm:^4.0.0":
   version: 4.0.0
   resolution: "resolve-from@npm:4.0.0"
@@ -2697,6 +2755,25 @@ __metadata:
   bin:
     rimraf: bin.js
   checksum: 87f4164e396f0171b0a3386cc1877a817f572148ee13a7e113b238e48e8a9f2f31d009a92ec38a591ff1567d9662c6b67fd8818a2dbbaed74bc26a87a2a4a9a0
+  languageName: node
+  linkType: hard
+
+"rollup-plugin-visualizer@npm:^5.9.2":
+  version: 5.9.2
+  resolution: "rollup-plugin-visualizer@npm:5.9.2"
+  dependencies:
+    open: ^8.4.0
+    picomatch: ^2.3.1
+    source-map: ^0.7.4
+    yargs: ^17.5.1
+  peerDependencies:
+    rollup: 2.x || 3.x
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  bin:
+    rollup-plugin-visualizer: dist/bin/cli.js
+  checksum: ab2adf322e3b20bffc94a8dc804f46be8840a9fcbab4f872dcc2dec205cdd7752e4d2d90cfcf00783bfb5209c5a8bb4e591984e8b61bca41fd048fb7deb0ed4e
   languageName: node
   linkType: hard
 
@@ -2907,6 +2984,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"source-map@npm:^0.7.4":
+  version: 0.7.4
+  resolution: "source-map@npm:0.7.4"
+  checksum: 01cc5a74b1f0e1d626a58d36ad6898ea820567e87f18dfc9d24a9843a351aaa2ec09b87422589906d6ff1deed29693e176194dc88bcae7c9a852dc74b311dbf5
+  languageName: node
+  linkType: hard
+
 "ssri@npm:^10.0.0":
   version: 10.0.5
   resolution: "ssri@npm:10.0.5"
@@ -2916,7 +3000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.2, string-width@npm:^4.2.3":
+"string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^1.0.2 || 2 || 3 || 4, string-width@npm:^4.0.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.2, string-width@npm:^4.2.3":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
@@ -3295,6 +3379,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"y18n@npm:^5.0.5":
+  version: 5.0.8
+  resolution: "y18n@npm:5.0.8"
+  checksum: 54f0fb95621ee60898a38c572c515659e51cc9d9f787fb109cef6fde4befbe1c4602dc999d30110feee37456ad0f1660fa2edcfde6a9a740f86a290999550d30
+  languageName: node
+  linkType: hard
+
 "yallist@npm:^4.0.0":
   version: 4.0.0
   resolution: "yallist@npm:4.0.0"
@@ -3306,5 +3397,27 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f
+  languageName: node
+  linkType: hard
+
+"yargs-parser@npm:^21.1.1":
+  version: 21.1.1
+  resolution: "yargs-parser@npm:21.1.1"
+  checksum: ed2d96a616a9e3e1cc7d204c62ecc61f7aaab633dcbfab2c6df50f7f87b393993fe6640d017759fe112d0cb1e0119f2b4150a87305cc873fd90831c6a58ccf1c
+  languageName: node
+  linkType: hard
+
+"yargs@npm:^17.5.1":
+  version: 17.7.2
+  resolution: "yargs@npm:17.7.2"
+  dependencies:
+    cliui: ^8.0.1
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.3
+    y18n: ^5.0.5
+    yargs-parser: ^21.1.1
+  checksum: 73b572e863aa4a8cbef323dd911d79d193b772defd5a51aab0aca2d446655216f5002c42c5306033968193bdbf892a7a4c110b0d77954a7fdf563e653967b56a
   languageName: node
   linkType: hard
