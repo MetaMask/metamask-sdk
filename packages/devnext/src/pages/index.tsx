@@ -407,19 +407,25 @@ export default function Home() {
   };
 
   const testReadOnlyCalls = async () => {
-    const chain = await provider?.request({
-      method: 'eth_chainId',
-      params: [],
-    });
-    console.log(`chain`, chain);
+    try {
+      await checkBalances();
 
-    const accounts = await provider?.request({
-      method: 'eth_accounts',
-      params: [],
-    });
-    console.log(`accounts`, accounts);
+      // Following code can only work after the sdk has connected once and saved initial accounts+chainid.
+      console.log(`Testing sdk accounts+chainid caching...`);
+      const chain = await provider?.request({
+        method: 'eth_chainId',
+        params: [],
+      });
+      console.log(`chain`, chain);
 
-    await checkBalances();
+      const accounts = await provider?.request({
+        method: 'eth_accounts',
+        params: [],
+      });
+      console.log(`accounts`, accounts);
+    } catch (err) {
+      console.error(`testReadOnlyCalls error`, err);
+    }
   };
 
   const addGanache = async () => {
