@@ -31,6 +31,7 @@ import packageJSON from './package.json';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
+  'Message ignored because invalid key exchange status',
   "MetaMask: 'ethereum._metamask' exposes",
   "`new NativeEventEmitter()` was called with a non-null",
 ]); // Ignore log notification by message
