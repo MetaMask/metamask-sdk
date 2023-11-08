@@ -32,6 +32,7 @@ export async function initializeI18next(instance: MetaMaskSDK) {
     .use(LanguageDetector)
     .init({
       debug: i18nOptions.debug ?? false,
+      compatibilityJSON: 'v3',
       fallbackLng: 'en',
       interpolation: {
         escapeValue: false,
