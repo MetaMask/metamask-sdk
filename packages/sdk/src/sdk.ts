@@ -5,6 +5,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
 import { createInstance, i18n } from 'i18next';
+import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import { SDKProvider } from './provider/SDKProvider';
@@ -371,5 +372,9 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getRPCHistory() {
     return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
   }
 }

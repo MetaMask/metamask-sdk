@@ -9,6 +9,9 @@ export function enableWakeLock(instance: PlatformManager) {
   const { state } = instance;
 
   if (state.wakeLockStatus === WakeLockStatus.Disabled) {
+    if (state.debug) {
+      console.debug('WakeLock is disabled');
+    }
     return;
   }
 

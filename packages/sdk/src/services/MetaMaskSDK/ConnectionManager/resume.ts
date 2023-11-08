@@ -16,5 +16,7 @@ export async function resume(instance: MetaMaskSDK) {
       console.debug(`SDK::resume channel`);
     }
     instance.remoteConnection?.startConnection();
+  } else if (instance.debug) {
+    console.debug(`SDK::resume channel is ready`);
   }
 }

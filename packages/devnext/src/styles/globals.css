@@ -47,10 +47,6 @@
   color: white;
 }
 
-.head-table { overflow-x: auto; width: 100%; }
-.table-label { text-align: right; font-weight: bold; }
-.table-value { padding-left: 20px;  word-wrap: break-word;
-  white-space: pre-wrap; /* or 'normal' */}
 
 .action-buttons button {
   padding: 10;
@@ -75,4 +71,9 @@ table th, table td {
   border: 1px solid black;
   padding: 10px;
   text-align: left;
+}
+
+.loading-spinner {
+  color: #007bff; /* Or any color you prefer */
+  font-size: 2rem; /* Adjust the size as needed */
 }

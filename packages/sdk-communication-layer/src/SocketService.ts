@@ -1,4 +1,3 @@
-/* eslint-disable padding-line-between-statements */
 import { EventEmitter2 } from 'eventemitter2';
 import { io, Socket } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
@@ -49,6 +48,7 @@ export interface SocketServiceState {
   rpcMethodTracker: RPCMethodCache;
   hasPlaintext: boolean;
   socket?: Socket;
+  setupChannelListeners?: boolean;
   keyExchange?: KeyExchange;
 }
 
