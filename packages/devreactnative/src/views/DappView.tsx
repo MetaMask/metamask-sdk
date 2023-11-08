@@ -152,6 +152,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
 
   const exampleRequest = async () => {
     try {
+      setResponse('');
       const result = await ethereum?.request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -179,8 +180,10 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     // const addr = await signer.getAddress();
     // console.log('addr', addr);
 
+    setResponse('');
     const msg = await signer.signMessage('hello world')
     console.debug(`msg`, msg);
+    setResponse(msg);
   }
 
   const sign = async () => {
@@ -258,6 +261,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     var params = [from, msgParams];
     var method = 'eth_signTypedData_v4';
 
+    setResponse('');
     const resp = await ethereum?.request({ method, params });
     console.debug('sign response', resp);
     setResponse(resp);
@@ -272,6 +276,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     };
 
     try {
+      setResponse('');
       // txHash is a hex string
       // As with any RPC call, it may throw an error
       const txHash = await ethereum?.request({
@@ -301,6 +306,37 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     }
   }
 
+  const batch = async () => {
+    const selectedAddress = ethereum?.selectedAddress;
+
+    const rpcs = [
+      {
+        method: 'personal_sign',
+        params: ['something to sign 1', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['hello world', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['Another one #3', selectedAddress],
+      },
+    ];
+
+    try {
+      setResponse('');
+      const response = (await ethereum?.request({
+        method: 'metamask_batch',
+        params: rpcs,
+      })) as any[];
+      setResponse(response);
+      console.log(`response`, response);
+    } catch (e) {
+      console.error(`error`, e);
+    }
+  }
+
   const textStyle = {
     color: colors.text.default,
     margin: 10,
@@ -326,6 +362,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
           <Button title="testEthers" onPress={testEthers} />
           <Button title="Send transaction" onPress={sendTransaction} />
           <Button title="Add chain" onPress={exampleRequest} />
+          <Button title="Batch Calls" onPress={batch} />
           <Text style={textStyle}>
             {chain && `Connected chain: ${chain}\n`}
             {account && `Connected account: ${account}\n\n`}
