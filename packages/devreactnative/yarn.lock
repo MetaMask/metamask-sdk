@@ -4650,6 +4650,7 @@ __metadata:
     eciesjs: ^0.4.4
     eslint: ^8.19.0
     ethers: 5.7.2
+    intl-pluralrules: ^2.0.1
     jest: ^29.2.1
     metro-react-native-babel-preset: 0.76.8
     node-libs-react-native: ^1.2.1
@@ -6142,6 +6143,13 @@ __metadata:
     has: ^1.0.3
     side-channel: ^1.0.4
   checksum: 97e84046bf9e7574d0956bd98d7162313ce7057883b6db6c5c7b5e5f05688864b0978ba07610c726d15d66544ffe4b1050107d93f8a39ebc59b15d8b429b497a
+  languageName: node
+  linkType: hard
+
+"intl-pluralrules@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "intl-pluralrules@npm:2.0.1"
+  checksum: e07d5818a0583decb24677f958689f4dfc3c62d972d897c576917aefcd6af429ce8c1eee77af9e2fbf4fce71a800851fe1c33970f7ca56efbe3e70c023e658c1
   languageName: node
   linkType: hard
 

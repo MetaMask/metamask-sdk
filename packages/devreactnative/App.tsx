@@ -30,7 +30,10 @@ import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import packageJSON from './package.json';
 
 LogBox.ignoreLogs([
-  //'Possible Unhandled Promise Rejection'
+  'Possible Unhandled Promise Rejection',
+  'Message ignored because invalid key exchange status',
+  "MetaMask: 'ethereum._metamask' exposes",
+  "`new NativeEventEmitter()` was called with a non-null",
 ]); // Ignore log notification by message
 
 // TODO how to properly make sure we only try to open link when the app is active?
