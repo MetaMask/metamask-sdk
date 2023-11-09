@@ -5,6 +5,7 @@ import React, { CSSProperties } from 'react';
 import { useSDKConfig } from '../providers/sdkconfig-context';
 import ItemView from './ItemView';
 import { useQRCode } from 'next-qrcode';
+import { LanguagePicker } from './language-picker';
 
 export interface SDKConfigProps {
   startVisible?: boolean;
@@ -26,7 +27,6 @@ export default function SDKConfig({
   const [visible, setVisible] = React.useState(startVisible ?? false);
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
   const { Canvas } = useQRCode();
-  const languages = ['en', 'fr', 'it', 'es', 'pt', 'tr', 'he'];
 
   const updateSocketServer = () => {
     // TODO let user input the actual server
@@ -43,13 +43,6 @@ export default function SDKConfig({
   const handleHomePress = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     onHomePress?.();
-  };
-
-  const handleLanguageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    localStorage.setItem('MetaMaskSDKLng', event.target.value);
-    setAppContext({ lang: event.target.value });
   };
 
   // Define the main container style
@@ -106,9 +99,12 @@ export default function SDKConfig({
           <FontAwesomeIcon icon={faHome} />
         </a>
         <span>SDKConfig</span>
-        <button onClick={() => setVisible(!visible)} style={buttonStyle}>
-          {visible ? 'Hide' : 'Show'}
-        </button>
+        <div>
+          <LanguagePicker />
+          <button onClick={() => setVisible(!visible)} style={buttonStyle}>
+            {visible ? 'Hide' : 'Show'}
+          </button>
+        </div>
       </div>
       {/* TODO configure all the components of the AppContext */}
       <div style={configViewStyle}>
@@ -135,20 +131,6 @@ export default function SDKConfig({
               <button onClick={updateUseDeeplink} style={actionButtonStyle}>
                 Toggle CheckInstallationImmediately
               </button>
-            </div>
-            <div className="language-dropdown">
-              <label htmlFor="language-select">Language: </label>
-              <select
-                id="language-select"
-                value={lang}
-                onChange={handleLanguageChange}
-              >
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
             </div>
             <div
               style={{
