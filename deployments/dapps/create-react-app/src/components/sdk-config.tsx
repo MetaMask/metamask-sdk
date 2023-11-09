@@ -19,6 +19,7 @@ export default function SDKConfig({
     useDeeplink,
     checkInstallationImmediately,
     infuraAPIKey,
+    lang,
     setAppContext,
   } = useSDKConfig();
   const [visible, setVisible] = React.useState(startVisible ?? false);
@@ -106,6 +107,7 @@ export default function SDKConfig({
           <>
             <ItemView label="Socket Server" value={socketServer} />
             <ItemView label="Infura API Key" value={infuraAPIKey} />
+            <ItemView label="Lang" value={lang} />
             <ItemView
               label="Use DeepLink"
               value={JSON.stringify(useDeeplink)}

@@ -5,11 +5,15 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { SDKConfigProvider, useSDKConfig } from './providers/sdkconfig-context';
 import { Layout } from './components/layout';
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+import { Demo } from './pages/demo';
+import { Onboard } from './pages/onboard';
 
-const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+const WithSDKProvider = ({ children }: { children: React.ReactNode }) => {
   const {
     socketServer,
     infuraAPIKey,
@@ -17,50 +21,71 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
     checkInstallationImmediately,
   } = useSDKConfig();
 
-    return (
-      <MetaMaskProvider
-        debug={true}
-        sdkOptions={{
-          communicationServerUrl: socketServer,
-          enableDebug: true,
-          infuraAPIKey,
-          readonlyRPCMap: {
-            '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
-          },
-          logging: {
-            developerMode: true,
-            sdk: true,
-            remoteLayer: false,
-            serviceLayer: false,
-            plaintext: true,
-          },
-          useDeeplink,
-          checkInstallationImmediately,
-          storage: {
-            enabled: true,
-          },
-          dappMetadata: {
-            name: 'DevNext',
-            url: 'http://devnext.fakeurl.com',
-          },
-          i18nOptions: {
-            enabled: true,
-          },
-        }}
-      >
-        {children}
-      </MetaMaskProvider>
-    );
+  return (
+    <MetaMaskProvider
+      debug={true}
+      sdkOptions={{
+        communicationServerUrl: socketServer,
+        enableDebug: true,
+        infuraAPIKey,
+        readonlyRPCMap: {
+          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+        },
+        logging: {
+          developerMode: true,
+          sdk: true,
+          remoteLayer: false,
+          serviceLayer: false,
+          plaintext: true,
+        },
+        useDeeplink,
+        checkInstallationImmediately,
+        storage: {
+          enabled: true,
+        },
+        dappMetadata: {
+          name: 'DevNext',
+          url: 'http://devnext.fakeurl.com',
+        },
+        i18nOptions: {
+          enabled: true,
+        },
+      }}
+    >
+      {children}
+    </MetaMaskProvider>
+  );
 };
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <WithSDKProvider>
+      <App />
+    </WithSDKProvider>
+  },
+  {
+    path: "/demo",
+    element: <WithSDKProvider>
+      <Demo />
+    </WithSDKProvider>
+  },
+  {
+    path: "/onboard",
+    element: <Onboard />
+  },
+]);
+
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
 
 root.render(
   <>
     <SDKConfigProvider>
-      <WithSDKConfig>
-        <Layout>
-          <App />
-        </Layout>
-      </WithSDKConfig>
+      <Layout>
+        <RouterProvider router={router} />
+      </Layout>
     </SDKConfigProvider>
   </>
 );
