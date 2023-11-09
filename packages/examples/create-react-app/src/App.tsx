@@ -2,7 +2,6 @@ import { useSDK } from '@metamask/sdk-react';
 import React, { useState } from 'react';
 import './App.css';
 import { send_eth_signTypedData_v4, send_personal_sign } from './SignHelpers';
-import RPCHistoryViewer from './components/rpchistory-viewer';
 
 export const App = () => {
   const [response, setResponse] = useState<unknown>('');
@@ -267,7 +266,6 @@ export const App = () => {
       >
         Terminate
       </button>
-      <RPCHistoryViewer />
     </div>
   );
 };
