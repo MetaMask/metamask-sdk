@@ -1,33 +1,68 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { MetaMaskProvider } from '@metamask/sdk-react';
-
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
+import { SDKConfigProvider, useSDKConfig } from './providers/sdkconfig-context';
+import { Layout } from './components/layout';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
+const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    checkInstallationImmediately,
+  } = useSDKConfig();
+
+    return (
+      <MetaMaskProvider
+        debug={true}
+        sdkOptions={{
+          communicationServerUrl: socketServer,
+          enableDebug: true,
+          infuraAPIKey,
+          readonlyRPCMap: {
+            '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+          },
+          logging: {
+            developerMode: true,
+            sdk: true,
+            remoteLayer: false,
+            serviceLayer: false,
+            plaintext: true,
+          },
+          useDeeplink,
+          checkInstallationImmediately,
+          storage: {
+            enabled: true,
+          },
+          dappMetadata: {
+            name: 'DevNext',
+            url: 'http://devnext.fakeurl.com',
+          },
+          i18nOptions: {
+            enabled: true,
+          },
+        }}
+      >
+        {children}
+      </MetaMaskProvider>
+    );
+};
+
 root.render(
-  <React.StrictMode>
-    <MetaMaskProvider debug={false} sdkOptions={{
-      logging:{
-          developerMode: false,
-        },
-        communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
-        checkInstallationImmediately: false, // This will automatically connect to MetaMask on page load
-        i18nOptions: {
-          enabled: true,
-        },
-        dappMetadata: {
-          name: "Demo React App",
-          url: window.location.host,
-        }
-    }}>
-      <App />
-    </MetaMaskProvider>
-  </React.StrictMode>
+  <>
+    <SDKConfigProvider>
+      <WithSDKConfig>
+        <Layout>
+          <App />
+        </Layout>
+      </WithSDKConfig>
+    </SDKConfigProvider>
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function
