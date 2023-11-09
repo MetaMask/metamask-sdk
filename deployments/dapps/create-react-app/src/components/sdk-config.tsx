@@ -25,7 +25,7 @@ export default function SDKConfig({
   const [visible, setVisible] = React.useState(startVisible ?? false);
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
   const { Canvas } = useQRCode();
-  const languages = ['en', 'fr', 'it'];
+  const languages = ['en', 'fr', 'it','es','pt','tr','he'];
 
   const updateSocketServer = () => {
     // TODO let user input the actual server
