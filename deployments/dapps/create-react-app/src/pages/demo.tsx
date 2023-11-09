@@ -64,7 +64,7 @@ export const Demo = () => {
       setResponse(`(${gotFrom}) ${result}`);
     } catch (e) {
       console.log(`error getting the blockNumber`, e);
-      setResponse('error getting the blockNumber');
+      setResponse(e);
     }
   };
 
@@ -114,7 +114,7 @@ export const Demo = () => {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
-      setRpcError(null);
+      setRpcError(e);
     } finally {
       setRequesting(false);
     }
@@ -126,11 +126,19 @@ export const Demo = () => {
       return;
     }
 
-    setRequesting(true);
-    setRpcError(null);
-    setResponse(''); // reset response first
-    const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
-    setResponse(result);
+    try {
+
+      setRequesting(true);
+      setRpcError(null);
+      setResponse(''); // reset response first
+      const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
+      setResponse(result);
+    } catch (e) {
+      console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const eth_personal_sign = async () => {
@@ -167,7 +175,7 @@ export const Demo = () => {
       console.debug(`response`, response);
     } catch (e) {
       console.log(e);
-      setRpcError(null);
+      setRpcError(e);
     } finally {
       setRequesting(false);
     }
