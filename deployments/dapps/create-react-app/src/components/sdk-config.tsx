@@ -25,6 +25,7 @@ export default function SDKConfig({
   const [visible, setVisible] = React.useState(startVisible ?? false);
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
   const { Canvas } = useQRCode();
+  const languages = ['en', 'fr', 'it'];
 
   const updateSocketServer = () => {
     // TODO let user input the actual server
@@ -90,6 +91,13 @@ export default function SDKConfig({
     onHomePress?.();
   };
 
+  const handleLanguageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    localStorage.setItem('MetaMaskSDKLng', event.target.value);
+    setAppContext({ lang: event.target.value })
+  };
+
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
@@ -126,6 +134,20 @@ export default function SDKConfig({
               <button onClick={updateUseDeeplink} style={actionButtonStyle}>
                 Toggle CheckInstallationImmediately
               </button>
+            </div>
+            <div className="language-dropdown">
+              <label htmlFor="language-select">Language: </label>
+              <select
+                id="language-select"
+                value={lang}
+                onChange={handleLanguageChange}
+              >
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
             </div>
             <div
               style={{

@@ -167,6 +167,7 @@ export const Demo = () => {
         )}
       </div>
 
+
       {connected ? (
         <div>
           <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
