@@ -1,16 +1,12 @@
 import { useSDK } from '@metamask/sdk-react';
-import React, { useState } from 'react';
-import './demo.css';
+import { useState } from 'react';
 import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
-import RPCHistoryViewer from '../components/rpchistory-viewer';
 import HeaderStatus from '../components/header-status';
+import RPCHistoryViewer from '../components/rpchistory-viewer';
+import './demo.css';
 
 export const Demo = () => {
-  const { sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
-  const languages = sdk?.availableLanguages ?? ['en'];
-  const [currentLanguage, setCurrentLanguage] = useState(
-    localStorage.getItem('MetaMaskSDKLng') || 'en',
-  );
+  const { sdk, connected, provider } = useSDK();
   const [response, setResponse] = useState<unknown>('');
   const [rpcError, setRpcError] = useState<unknown>();
   const [requesting, setRequesting] = useState(false);
@@ -19,37 +15,38 @@ export const Demo = () => {
     return <div>SDK is not initialized</div>;
   }
 
-  const changeLanguage = async (currentLanguage: string) => {
-    localStorage.setItem('MetaMaskSDKLng', currentLanguage);
-    window.location.reload();
-  };
-
-  const handleLanguageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setCurrentLanguage(event.target.value);
-
-    changeLanguage(event.target.value).then(() => {
-      console.debug(`language changed to ${event.target.value}`);
-    });
-  };
-
   const connectAndSign = async () => {
     try {
-      const signResult = await sdk?.connectAndSign({
-        msg: 'Connect + Sign message'
-      });
-      setResponse(signResult);
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connectAndSign response:`, hexResponse);
+      setResponse(hexResponse);
     } catch (err) {
-      console.warn(`failed to connect..`, err);
+      console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
   const connect = async () => {
     try {
-      await sdk?.connect();
+      setRpcError(null);
+      setResponse('');
+
+      const accounts = await sdk?.connect();
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connect:: accounts result`, accounts);
+      setResponse(accounts);
     } catch (err) {
-      console.warn(`failed to connect..`, err);
+      console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -102,6 +99,10 @@ export const Demo = () => {
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
+    setRpcError(null);
+    setRequesting(true);
+    setResponse(''); // reset response first
+
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
@@ -113,6 +114,9 @@ export const Demo = () => {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
+      setRpcError(null);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -121,6 +125,10 @@ export const Demo = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
+
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
     const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
     setResponse(result);
   };
@@ -130,8 +138,16 @@ export const Demo = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_personal_sign(provider as any);
-    setResponse(result);
+
+    try {
+      const result = await send_personal_sign(provider as any);
+      setResponse(result);
+    } catch (e) {
+      console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const terminate = () => {
@@ -140,14 +156,20 @@ export const Demo = () => {
 
   const changeNetwork = async (hexChainId: string) => {
     console.debug(`switching to network chainId=${hexChainId}`);
+    setRpcError(null);
+    setRequesting(true);
+
     try {
       const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
       });
       console.debug(`response`, response);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.log(e);
+      setRpcError(null);
+    } finally {
+      setRequesting(false);
     }
   };
 

@@ -39,6 +39,19 @@ export default function SDKConfig({
     setAppContext({ useDeeplink: !useDeeplink });
   };
 
+
+  const handleHomePress = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onHomePress?.();
+  };
+
+  const handleLanguageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    localStorage.setItem('MetaMaskSDKLng', event.target.value);
+    setAppContext({ lang: event.target.value })
+  };
+
   // Define the main container style
   const containerStyle: CSSProperties = {
     border: '1px solid #ccc',
@@ -84,18 +97,6 @@ export default function SDKConfig({
     backgroundColor: '#286090',
     borderColor: '#204d74',
     color: 'white',
-  };
-
-  const handleHomePress = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    onHomePress?.();
-  };
-
-  const handleLanguageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    localStorage.setItem('MetaMaskSDKLng', event.target.value);
-    setAppContext({ lang: event.target.value })
   };
 
   return (

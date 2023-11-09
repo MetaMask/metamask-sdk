@@ -18,29 +18,9 @@ export default function Demo() {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
     useSDK();
 
-  const languages = sdk?.availableLanguages || ['en'];
-
   const [response, setResponse] = useState<unknown>('');
   const [rpcError, setRpcError] = useState<unknown>();
   const [requesting, setRequesting] = useState(false);
-
-  const getInitialLanguage = () => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('MetaMaskSDKLng') || 'en';
-    }
-    return 'en';
-  };
-
-  const [currentLanguage, setCurrentLanguage] = useState(getInitialLanguage());
-
-  const handleLanguageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setCurrentLanguage(event.target.value);
-    localStorage.setItem('MetaMaskSDKLng', event.target.value);
-
-    window.location.reload();
-  };
 
   const connect = async () => {
     try {
@@ -587,21 +567,6 @@ export default function Demo() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main style={{ paddingBottom: 50 }}>
-        <div className="language-dropdown">
-          <label htmlFor="language-select">Language: </label>
-          <select
-            id="language-select"
-            value={currentLanguage}
-            onChange={handleLanguageChange}
-          >
-            {languages.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
-        </div>
-
         <SDKStatus
           requesting={requesting}
           response={response}

@@ -18,6 +18,7 @@ export default function SDKConfig({
   const {
     socketServer,
     useDeeplink,
+    lang,
     checkInstallationImmediately,
     infuraAPIKey,
     setAppContext,
@@ -25,6 +26,7 @@ export default function SDKConfig({
   const [visible, setVisible] = React.useState(startVisible ?? false);
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
   const { Canvas } = useQRCode();
+  const languages = ['en', 'fr', 'it', 'es', 'pt', 'tr', 'he'];
 
   const updateSocketServer = () => {
     // TODO let user input the actual server
@@ -36,6 +38,18 @@ export default function SDKConfig({
 
   const updateUseDeeplink = () => {
     setAppContext({ useDeeplink: !useDeeplink });
+  };
+
+  const handleHomePress = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    onHomePress?.();
+  };
+
+  const handleLanguageChange = (
+    event: React.ChangeEvent<HTMLSelectElement>,
+  ) => {
+    localStorage.setItem('MetaMaskSDKLng', event.target.value);
+    setAppContext({ lang: event.target.value });
   };
 
   // Define the main container style
@@ -85,11 +99,6 @@ export default function SDKConfig({
     color: 'white',
   };
 
-  const handleHomePress = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    onHomePress?.();
-  };
-
   return (
     <div style={containerStyle}>
       <div style={headerStyle}>
@@ -107,6 +116,7 @@ export default function SDKConfig({
           <>
             <ItemView label="Socket Server" value={socketServer} />
             <ItemView label="Infura API Key" value={infuraAPIKey} />
+            <ItemView label="Lang" value={lang} />
             <ItemView
               label="Use DeepLink"
               value={JSON.stringify(useDeeplink)}
@@ -125,6 +135,20 @@ export default function SDKConfig({
               <button onClick={updateUseDeeplink} style={actionButtonStyle}>
                 Toggle CheckInstallationImmediately
               </button>
+            </div>
+            <div className="language-dropdown">
+              <label htmlFor="language-select">Language: </label>
+              <select
+                id="language-select"
+                value={lang}
+                onChange={handleLanguageChange}
+              >
+                {languages.map((lang) => (
+                  <option key={lang} value={lang}>
+                    {lang}
+                  </option>
+                ))}
+              </select>
             </div>
             <div
               style={{
