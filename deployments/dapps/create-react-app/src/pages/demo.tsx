@@ -161,13 +161,6 @@ export const Demo = () => {
         error={rpcError}
       />
 
-      <div className="sdkConfig">
-        {connecting && (
-          <div>Waiting for Metamask to link the connection...</div>
-        )}
-      </div>
-
-
       {connected ? (
         <div>
           <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
