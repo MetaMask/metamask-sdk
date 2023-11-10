@@ -14,6 +14,7 @@
     "packages/sdk",
     "packages/sdk-react",
     "packages/sdk-react-ui",
+    "packages/sdk-ui",
     "packages/devreact",
     "packages/devnext",
     "packages/deve2e"

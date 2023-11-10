@@ -1,0 +1,21 @@
+{
+  // "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "strict": true,
+    "allowJs": false,
+    "skipLibCheck": true,
+    "paths": {
+      "@metamask/sdk-ui": ["./src/index"],
+    }
+  },
+  "include": [
+    "./src/"
+  ]
+}
