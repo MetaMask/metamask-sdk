@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSDK } from '@metamask/sdk-react';
 import ItemView from './ItemView';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';

@@ -1,68 +1,71 @@
 import { useSDK } from '@metamask/sdk-react';
-import React, { useState } from 'react';
-import './App.css';
-import { send_eth_signTypedData_v4, send_personal_sign } from './SignHelpers';
+import { useState } from 'react';
+import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
+import HeaderStatus from '../components/header-status';
+import RPCHistoryViewer from '../components/rpchistory-viewer';
+import './demo.css';
 
-export const App = () => {
+export const Demo = () => {
+  const { sdk, connected, provider } = useSDK();
   const [response, setResponse] = useState<unknown>('');
-  const { sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
+  const [rpcError, setRpcError] = useState<unknown>();
+  const [requesting, setRequesting] = useState(false);
 
-  const languages = sdk?.availableLanguages ?? ['en'];
-
-  const [currentLanguage, setCurrentLanguage] = useState(
-    localStorage.getItem('MetaMaskSDKLng') || 'en',
-  );
-
-  const changeLanguage = async (currentLanguage: string) => {
-    localStorage.setItem('MetaMaskSDKLng', currentLanguage);
-    window.location.reload();
-  };
-
-  const handleLanguageChange = (
-    event: React.ChangeEvent<HTMLSelectElement>,
-  ) => {
-    setCurrentLanguage(event.target.value);
-
-    changeLanguage(event.target.value).then(() => {
-      console.debug(`language changed to ${event.target.value}`);
-    });
-  };
+  if (!sdk) {
+    return <div>SDK is not initialized</div>;
+  }
 
   const connectAndSign = async () => {
     try {
-      const signResult = await sdk?.connectAndSign({
-        msg: 'Connect + Sign message'
-      });
-      setResponse(signResult);
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connectAndSign response:`, hexResponse);
+      setResponse(hexResponse);
     } catch (err) {
-      console.warn(`failed to connect..`, err);
+      console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
   const connect = async () => {
     try {
-      await sdk?.connect();
+      setRpcError(null);
+      setResponse('');
+
+      const accounts = await sdk?.connect();
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connect:: accounts result`, accounts);
+      setResponse(accounts);
     } catch (err) {
-      console.warn(`failed to connect..`, err);
+      console.log('request accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
     }
   };
 
   const readOnlyCalls = async () => {
-     if(!sdk?.hasReadOnlyRPCCalls() && !provider){
-         setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
-         return;
-     }
-     try {
-       const result = await provider.request({
-         method: 'eth_blockNumber',
-         params: [],
-       });
-       const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
-       setResponse(`(${gotFrom}) ${result}`);
-     } catch (e) {
-       console.log(`error getting the blockNumber`, e);
-       setResponse('error getting the blockNumber');
-     }
+    if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
+      setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
+      return;
+    }
+    try {
+      const result = await provider?.request({
+        method: 'eth_blockNumber',
+        params: [],
+      });
+      const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
+      setResponse(`(${gotFrom}) ${result}`);
+    } catch (e) {
+      console.log(`error getting the blockNumber`, e);
+      setResponse(e);
+    }
   };
 
   const addEthereumChain = () => {
@@ -96,6 +99,10 @@ export const App = () => {
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
+    setRpcError(null);
+    setRequesting(true);
+    setResponse(''); // reset response first
+
     try {
       // txHash is a hex string
       // As with any RPC call, it may throw an error
@@ -107,6 +114,9 @@ export const App = () => {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
   };
 
@@ -115,8 +125,20 @@ export const App = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_eth_signTypedData_v4(provider, provider.chainId);
-    setResponse(result);
+
+    try {
+
+      setRequesting(true);
+      setRpcError(null);
+      setResponse(''); // reset response first
+      const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
+      setResponse(result);
+    } catch (e) {
+      console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const eth_personal_sign = async () => {
@@ -124,8 +146,16 @@ export const App = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_personal_sign(provider);
-    setResponse(result);
+
+    try {
+      const result = await send_personal_sign(provider as any);
+      setResponse(result);
+    } catch (e) {
+      console.error(`an error occured`, e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
   };
 
   const terminate = () => {
@@ -134,47 +164,32 @@ export const App = () => {
 
   const changeNetwork = async (hexChainId: string) => {
     console.debug(`switching to network chainId=${hexChainId}`);
+    setRpcError(null);
+    setRequesting(true);
+
     try {
       const response = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
       });
       console.debug(`response`, response);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
     }
   };
 
   return (
     <div className="App">
-      <h1>Create-React-App Example</h1>
-      <div className={"Info-Status"}>
-        <p>{`Connected chain: ${chainId}`}</p>
-        <p>{`Connected account: ${account}`}</p>
-        <p>{`Account balance: ${balance}`}</p>
-        <p>{`Last request response: ${response}`}</p>
-        <p>{`Connected: ${connected}`}</p>
-      </div>
+      <h1>SDK Provider Demo</h1>
 
-      <div className="sdkConfig">
-        {connecting && (
-          <div>Waiting for Metamask to link the connection...</div>
-        )}
-      </div>
-      <div className="language-dropdown">
-        <label htmlFor="language-select">Language: </label>
-        <select
-          id="language-select"
-          value={currentLanguage}
-          onChange={handleLanguageChange}
-        >
-          {languages.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </select>
-      </div>
+      <HeaderStatus
+        requesting={requesting}
+        response={response}
+        error={rpcError}
+      />
 
       {connected ? (
         <div>
@@ -206,7 +221,7 @@ export const App = () => {
             Send transaction
           </button>
 
-          { provider?.chainId === '0x1' ? (
+          {provider?.chainId === '0x1' ? (
             <button
               className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}
@@ -266,8 +281,7 @@ export const App = () => {
       >
         Terminate
       </button>
+      <RPCHistoryViewer />
     </div>
   );
 };
-
-export default App;
