@@ -81,7 +81,7 @@ export default function Demo() {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
-      setRpcError(null);
+      setRpcError(e);
     } finally {
       setRequesting(false);
     }
