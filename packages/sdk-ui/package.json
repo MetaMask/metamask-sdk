@@ -22,27 +22,19 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "allow-scripts": ""
   },
-  "peerDependencies": {
-    "exp-font": "*",
-    "expo-av": "*",
-    "expo-clipboard": "*",
-    "expo-image": "*",
-    "react": "*",
-    "react-native": "*",
-    "react-native-paper": "*",
-    "react-native-reanimated": "*",
-    "react-native-safe-area-context": "*",
-    "react-native-svg": "*",
-    "react-native-vector-icons": "*"
-  },
   "dependencies": {
     "i18n-js": "^4.3.2",
     "i18next": "^23.6.0",
     "intl-pluralrules": "^2.0.1",
-    "react-i18next": "^13.3.1"
+    "react": "^18.2.0",
+    "react-i18next": "^13.3.1",
+    "react-native": "^0.72.6",
+    "react-native-paper": "^5.11.1"
   },
   "devDependencies": {
     "@react-native-community/eslint-config": "^3.2.0",
+    "@types/react": "~18.2.14",
+    "@types/react-native": "^0.72.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",
@@ -51,9 +43,6 @@
     "expo": "^49.0.17",
     "expo-clipboard": "^4.5.0",
     "prettier": "^3.0.3",
-    "react": "^18.2.0",
-    "react-native": "^0.72.6",
-    "react-native-paper": "^5.11.1",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
   }

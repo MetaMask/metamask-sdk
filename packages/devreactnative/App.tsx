@@ -21,6 +21,7 @@ import {
 } from 'react-native';
 
 import {DEFAULT_SERVER_URL, MetaMaskSDK} from '@metamask/sdk';
+import { First, plop } from '@metamask/sdk-ui';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
@@ -35,6 +36,8 @@ LogBox.ignoreLogs([
   "MetaMask: 'ethereum._metamask' exposes",
   "`new NativeEventEmitter()` was called with a non-null",
 ]); // Ignore log notification by message
+
+plop();
 
 // TODO how to properly make sure we only try to open link when the app is active?
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
@@ -127,6 +130,7 @@ function App(): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
+          <First />
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{

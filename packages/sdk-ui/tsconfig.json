@@ -3,7 +3,8 @@
   "compilerOptions": {
     "baseUrl": "./",
     "target": "es2016",
-    "module": "commonjs",
+    "module": "ESNext", // supports esmodule natively / useful for yarn3 with pnp
+    "moduleResolution": "node",
     "esModuleInterop": true,
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,

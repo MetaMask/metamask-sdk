@@ -1,2 +1,6 @@
 import { First } from './first/first';
-export { First };
+
+const plop = () => {
+  console.log('pldasdfasdfasdfsop');
+};
+export { First, plop };
