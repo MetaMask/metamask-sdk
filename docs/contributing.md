@@ -39,7 +39,7 @@ Welcome to our repository! We're excited to collaborate with you. Before contrib
 
 > **Note**
 >
-> `workspaceName` in these commands is the `name` field within a package's `package.json`, e.g., `@metamask/address-book-controller`, not the directory where it is located, e.g., `packages/address-book-controller`.
+> `workspaceName` in these commands is the `name` field within a package's `package.json`, e.g., `@metamask/sdk`, not the directory where it is located, e.g., `packages/sdk-react`.
 
 ## Using packages in other projects during development/testing
 
@@ -139,8 +139,8 @@ This repository relies on Yarn's [workspaces feature](https://yarnpkg.com/featur
 
 > **Note**
 >
-> - `workspaceName` in the Yarn documentation is the `name` field within a package's `package.json`, e.g., `@metamask/address-book-controller`, not the directory where it is located, e.g., `packages/address-book-controller`.
-> - `commandName` in the Yarn documentation is any sub-command that the `yarn` executable would usually take. Pay special attention to the difference between `run` vs `exec`. If you want to run a package script, you would use `run`, e.g., `yarn workspace @metamask/address-book-controller run lint:changelog`; but if you want to run _any_ shell command, you'd use `exec`, e.g. `yarn workspace @metamask/address-book-controller exec cat package.json | jq '.version'`.
+> - `workspaceName` in the Yarn documentation is the `name` field within a package's `package.json`, e.g., `@metamask/sdk`, not the directory where it is located, e.g., `packages/sdk`.
+> - `commandName` in the Yarn documentation is any sub-command that the `yarn` executable would usually take. Pay special attention to the difference between `run` vs `exec`. If you want to run a package script, you would use `run`, e.g., `yarn workspace @metamask/sdk run lint:changelog`; but if you want to run _any_ shell command, you'd use `exec`, e.g. `yarn workspace @metamask/sdk exec cat package.json | jq '.version'`.
 
 ## Releasing
 
