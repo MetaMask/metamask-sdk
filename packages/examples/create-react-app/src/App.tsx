@@ -70,6 +70,7 @@ export const App = () => {
       throw new Error(`invalid ethereum provider`);
     }
 
+
     provider
       .request({
         method: 'wallet_addEthereumChain',

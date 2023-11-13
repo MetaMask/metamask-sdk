@@ -7,14 +7,15 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "workspaces": [
-    "packages/contracts",
     "packages/sdk-socket-server",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
     "packages/sdk",
     "packages/sdk-react",
     "packages/sdk-react-ui",
+    "packages/sdk-ui",
     "packages/devreact",
+    "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e"
   ],
@@ -47,7 +48,7 @@
     "@commitlint/cli": "^17.6.7",
     "@commitlint/config-conventional": "^17.6.7",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "3.1.0",
+    "@metamask/auto-changelog": "^3.4.3",
     "@metamask/create-release-branch": "^1.0.1",
     "@metamask/eslint-config": "^8.0.0",
     "@metamask/eslint-config-jest": "^8.0.0",

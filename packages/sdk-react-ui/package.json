@@ -60,6 +60,7 @@
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
     "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.3",
     "@types/jest": "^29.5.1",
@@ -108,7 +109,13 @@
       "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>bigint-buffer": false,
       "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>@solana/web3.js>rpc-websockets>utf-8-validate": false,
       "wagmi>@wagmi/core>@wagmi/connectors>@coinbase/wallet-sdk>keccak": false,
-      "@metamask/sdk-react>@metamask/sdk>eciesjs>secp256k1": false
+      "@metamask/sdk-react>@metamask/sdk>eciesjs>secp256k1": false,
+      "@metamask/sdk-react>@metamask/sdk-communication-layer>bufferutil": false,
+      "@metamask/sdk-react>@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
+      "@metamask/sdk-react>@metamask/sdk-communication-layer>utf-8-validate": false,
+      "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>bufferutil": false,
+      "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
+      "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>utf-8-validate": false
     }
   }
 }

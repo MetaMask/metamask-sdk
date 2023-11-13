@@ -21,6 +21,7 @@ export default function SDKStatus({
     status: serviceStatus,
     extensionActive,
     account,
+    sdk,
     chainId,
   } = useSDK();
 
@@ -43,8 +44,13 @@ export default function SDKStatus({
       )}
       {connected && (
         <div className="data-container">
+          <ItemView label="SDK Version" value={sdk?.getVersion()} />
           {!extensionActive && (
             <>
+              <ItemView
+                label="Socket Server"
+                value={serviceStatus?.channelConfig?.channelId}
+              />
               <ItemView
                 label="ChannelId"
                 value={serviceStatus?.channelConfig?.channelId}

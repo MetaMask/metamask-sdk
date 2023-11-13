@@ -24,6 +24,7 @@
     <button class="action-button" @click="addEthereumChain">Add Polygon</button>
     <button class="action-button" @click="switchChain('0x89')">Switch to Polygon</button>
     <button class="action-button" @click="readOnlyCalls">readOnlyCalls</button>
+    <button class="action-button" @click="batchCalls">batch</button>
     <p></p>
     <button class="action-button-danger" @click="terminate">TERMINATE</button>
   </div>
@@ -53,6 +54,8 @@ export default {
         url: window.location.href,
         name: 'MetaMask VueJS Example Dapp',
       },
+      // useDeeplink: true,
+      communicationServerUrl: 'https://socket.siteed.net',
       enableDebug: true,
       checkInstallationImmediately: true,
       logging: {
@@ -296,6 +299,40 @@ export default {
     async changeLanguage() {
       localStorage.setItem('MetaMaskSDKLng', this.selectedLanguage);
       window.location.reload();
+    },
+    async batchCalls() {
+      const rpcs = [
+        {
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: '0x5' }],
+        },
+        {
+          method: "eth_sendTransaction",
+          params: [{
+            to: '0x0000000000000000000000000000000000000000', // Required except during contract publications.
+            from: this.provider?.selectedAddress, // must match user's active address.
+            value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+          }],
+        },
+        {
+          method: "personal_sign",
+          params: ["hello world", this.account],
+        },
+        {
+          method: "personal_sign",
+          params: ["Another one #3", this.account],
+        }];
+
+      try {
+        const response = await this.provider?.request({ method: 'metamask_batch', params: rpcs });
+        this.lastResponse = response;
+        response.forEach((r, i) => {
+          console.log(`response ${i}`, r);
+        });
+      } catch (err) {
+        console.error(err);
+        this.lastResponse = err.message;
+      }
     },
     terminate() {
       this.sdk?.terminate();

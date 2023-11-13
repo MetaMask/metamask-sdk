@@ -1,19 +1,36 @@
-import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
-import React from 'react';
-import type { AppProps } from 'next/app';
-import '../styles/globals.css';
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
+import type { AppProps } from 'next/app';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+
+import React from 'react';
+import {
+  SDKConfigProvider,
+  useSDKConfig,
+} from '../providers/sdkconfig-context';
+import '../styles/globals.css';
+import { Layout } from '../components/layout';
 config.autoAddCss = false;
 
-export default function App({ Component, pageProps }: AppProps) {
+const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    checkInstallationImmediately,
+  } = useSDKConfig();
+
   return (
     <MetaMaskUIProvider
       debug={true}
       sdkOptions={{
-        communicationServerUrl: process.env.NEXT_PUBLIC_COMM_SERVER_URL,
+        communicationServerUrl: socketServer,
         enableDebug: true,
-        infuraAPIKey: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+        infuraAPIKey,
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
         },
@@ -24,8 +41,8 @@ export default function App({ Component, pageProps }: AppProps) {
           serviceLayer: false,
           plaintext: true,
         },
-        useDeeplink: false,
-        checkInstallationImmediately: false,
+        useDeeplink,
+        checkInstallationImmediately,
         storage: {
           enabled: true,
         },
@@ -38,7 +55,21 @@ export default function App({ Component, pageProps }: AppProps) {
         },
       }}
     >
-      <Component {...pageProps} />
+      {children}
     </MetaMaskUIProvider>
+  );
+};
+
+export default function App({ Component, pageProps }: AppProps) {
+  return (
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <SDKConfigProvider>
+        <WithSDKConfig>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </WithSDKConfig>
+      </SDKConfigProvider>
+    </SafeAreaProvider>
   );
 }
