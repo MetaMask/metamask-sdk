@@ -5,6 +5,7 @@ const escape = require('escape-string-regexp')
 
 const sdkRootPath = path.resolve(__dirname, '../../');
 const uiRoot = sdkRootPath + '/packages/sdk-ui';
+const hooksRoot = sdkRootPath + '/packages/sdk-react';
 console.log(`sdkRootPath: ${sdkRootPath}`);
 
 const modules = [
@@ -19,18 +20,25 @@ const extraNodeModules = modules.reduce((acc, name) => {
   return acc
 }, {});
 
-const blacklistRE = exclusionList(
-  modules.map(
-    (m) =>
-      new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`)
-  )
-);
+
+// Create the first blacklist regular expressions array
+const blacklistRE1 = modules.map(m => new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`));
+
+// Create the second blacklist regular expressions array
+const blacklistRE2 = modules.map(m => new RegExp(`^${escape(path.join(hooksRoot, 'node_modules', m))}\\/.*$`));
+
+// Combine the two arrays
+const combinedBlacklistRE = [...blacklistRE1, ...blacklistRE2];
+
+// Create a single exclusion list using the combined array
+const finalBlacklistRE = exclusionList(combinedBlacklistRE);
+
 
 console.log(`modules: `, modules)
 console.log(`###################`)
 console.log(`extraNodeModules`, extraNodeModules)
 console.log(`###################`)
-console.log(`blacklistRE`, blacklistRE)
+console.log(`finalBlacklistRE`, finalBlacklistRE)
 
 /**
  * Metro configuration
@@ -55,7 +63,7 @@ const config = {
       // crypto: require.resolve('react-native-quick-crypto'),
       // url: require.resolve('whatwg-url'),
     },
-    blacklistRE: blacklistRE,
+    blacklistRE: finalBlacklistRE,
     // nodeModulesPaths: [
     //   './node_modules/',
     //   `${sdkRootPath}/packages/sdk-communication-layer/node_modules`,
@@ -80,6 +88,15 @@ const config = {
         );
         return {
           filePath: sdkRootPath + '/packages/sdk/src/index.ts',
+          type: 'sourceFile',
+        };
+      } else if (moduleName === '@metamask/sdk-react') {
+        console.debug(
+          `CUSTOM RESOLVER ${moduleName}`,
+          sdkRootPath + '/packages/sdk-react/src/index.ts',
+        );
+        return {
+          filePath: sdkRootPath + '/packages/sdk-react/src/index.ts',
           type: 'sourceFile',
         };
       } else if (moduleName === '@metamask/sdk-ui') {
