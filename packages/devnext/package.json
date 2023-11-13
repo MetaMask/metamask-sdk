@@ -24,6 +24,7 @@
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-install-modal-web": "workspace:^",
+    "@metamask/sdk-lab": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
     "@metamask/sdk-react-ui": "workspace:^",
     "@types/node": "18.15.3",

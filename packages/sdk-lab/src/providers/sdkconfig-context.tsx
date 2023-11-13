@@ -1,7 +1,7 @@
 // create an app context to fetch the socket server address in all components
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
-import { useRouter } from 'next/router';
 import { createContext, useContext, useEffect, useState } from 'react';
+import React from 'react';
 
 export interface CustomContext {
   socketServer: string;
@@ -30,17 +30,13 @@ const initProps: CustomContext = {
 };
 export const SDKConfigContext = createContext({
   ...initProps,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   setAppContext: (_: Partial<CustomContext>) => {}, // placeholder
 });
 
-export const SDKConfigProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+// FIXME use appropriate children type ( currently linting issue on devnext )
+export const SDKConfigProvider = ({ children }: { children: any }) => {
   const [appContext, setAppContext] = useState(initProps);
-  const router = useRouter();
 
   const syncState = (newState: CustomContext) => {
     const queryString = new URLSearchParams();
@@ -53,9 +49,11 @@ export const SDKConfigProvider = ({
       localStorage.setItem('appContext', JSON.stringify(newState));
     }
 
-    // Update URL without refreshing the page using Next.js router
-    const url = `${window.location.pathname}?${queryString}`;
-    router.push(url, undefined, { shallow: true });
+    // Update URL without refreshing the page using History API
+    const newurl = `${window.location.protocol}//${window.location.host}${
+      window.location.pathname
+    }?${queryString.toString()}`;
+    window.history.pushState({ path: newurl }, '', newurl);
   };
 
   useEffect(() => {

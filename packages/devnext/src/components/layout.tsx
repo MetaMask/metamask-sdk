@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
-import SDKConfig from './sdk-config';
 import { useRouter } from 'next/router';
+import { SDKConfig } from '@metamask/sdk-lab';
 
 export interface LayoutProps {
   children: ReactNode;
