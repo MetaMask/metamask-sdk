@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppState,
   AppStateStatus,
@@ -16,18 +16,20 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  useColorScheme,
 } from 'react-native';
 
-import {DEFAULT_SERVER_URL, MetaMaskSDK} from '@metamask/sdk';
-import {encrypt} from 'eciesjs';
-import {LogBox} from 'react-native';
+import { COMM_SERVER_URL, INFURA_API_KEY } from '@env';
+import { DEFAULT_SERVER_URL, MetaMaskSDK, MetaMaskSDKOptions } from '@metamask/sdk';
+import { First } from '@metamask/sdk-ui';
+import { encrypt } from 'eciesjs';
+import { LogBox } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DAPPView} from './src/views/DappView';
-import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import packageJSON from './package.json';
+import { DAPPView } from './src/views/DappView';
+import { MetaMaskProvider, useSDK } from '@metamask/sdk-react';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -44,7 +46,7 @@ const serverUrl = COMM_SERVER_URL ?? DEFAULT_SERVER_URL;
 
 const useDeeplink = true;
 
-const sdk = new MetaMaskSDK({
+const sdkOptions: MetaMaskSDKOptions = {
   openDeeplink: (link: string, target?: string) => {
       console.debug(`App::openDeepLink() ${link}`);
     if (canOpenLink) {
@@ -76,11 +78,12 @@ const sdk = new MetaMaskSDK({
     developerMode: true,
     plaintext: true,
   },
-});
+}
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
+  const {sdk} = useSDK();
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppState);
@@ -89,6 +92,10 @@ function App(): JSX.Element {
       subscription.remove();
     };
   }, []);
+
+  if(!sdk) {
+    return <Text>SDK loading</Text>
+  }
 
   const handleAppState = (appState: AppStateStatus) => {
     canOpenLink = appState === 'active';
@@ -127,6 +134,7 @@ function App(): JSX.Element {
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
+          <First />
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
@@ -146,7 +154,7 @@ function App(): JSX.Element {
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}
           </Text>
-          <DAPPView sdk={sdk} />
+          <DAPPView />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -173,4 +181,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export const SafeApp = () => {
+  return     <MetaMaskProvider sdkOptions={sdkOptions} debug={true}><App /></MetaMaskProvider>
+}

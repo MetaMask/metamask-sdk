@@ -42,11 +42,13 @@
     "watch": "rollup -c -w"
   },
   "dependencies": {
+    "bufferutil": "^4.0.8",
     "cross-fetch": "^3.1.5",
     "date-fns": "^2.29.3",
     "eciesjs": "^0.3.16",
     "eventemitter2": "^6.4.5",
     "socket.io-client": "^4.5.1",
+    "utf-8-validate": "^6.0.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -96,7 +98,9 @@
       "canvas": true,
       "eciesjs>secp256k1": false,
       "socket.io-client>engine.io-client>ws>bufferutil": false,
-      "socket.io-client>engine.io-client>ws>utf-8-validate": false
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false,
+      "bufferutil": false,
+      "utf-8-validate": false
     }
   }
 }
