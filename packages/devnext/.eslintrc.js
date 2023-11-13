@@ -15,6 +15,7 @@ module.exports = {
     '**/.eslintrc.js',
     'jest.config.ts',
     '**/dist*/',
+    'babel.config.js',
     'next.config.js',
   ],
   extends: [

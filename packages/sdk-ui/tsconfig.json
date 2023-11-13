@@ -9,6 +9,7 @@
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
+    "composite": true,
     "strict": true,
     "allowJs": false,
     "skipLibCheck": true,

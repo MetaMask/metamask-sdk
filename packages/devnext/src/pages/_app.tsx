@@ -2,6 +2,11 @@ import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 import type { AppProps } from 'next/app';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+
 import React from 'react';
 import {
   SDKConfigProvider,
@@ -57,12 +62,14 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SDKConfigProvider>
-      <WithSDKConfig>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </WithSDKConfig>
-    </SDKConfigProvider>
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <SDKConfigProvider>
+        <WithSDKConfig>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </WithSDKConfig>
+      </SDKConfigProvider>
+    </SafeAreaProvider>
   );
 }
