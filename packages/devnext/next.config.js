@@ -25,6 +25,7 @@ const nextConfig = withExpo({
     '@metamask/sdk-install-modal-web',
     '@metamask/sdk-react',
     '@metamask/sdk-react-ui',
+    '@metamask/sdk-ui',
     // Add more React Native / Expo packages here...
   ],
   experimental: {
