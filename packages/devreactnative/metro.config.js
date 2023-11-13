@@ -1,4 +1,4 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 const path = require('path');
 
 const sdkRootPath = path.resolve(__dirname, '../../');
@@ -23,6 +23,7 @@ const config = {
   resolver: {
     extraNodeModules: {
       ...require('node-libs-react-native'),
+      stream: require.resolve('readable-stream'),
       'react-native': path.resolve(__dirname, 'node_modules/react-native'),
       // crypto: require.resolve('react-native-quick-crypto'),
       // url: require.resolve('whatwg-url'),
@@ -53,7 +54,7 @@ const config = {
           type: 'sourceFile',
         };
       }
-    //   // Optionally, chain to the standard Metro resolver.
+      //   // Optionally, chain to the standard Metro resolver.
       return context.resolveRequest(context, moduleName, platform);
     },
   },
