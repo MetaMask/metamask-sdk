@@ -10,9 +10,7 @@ import {
   getContract,
 } from 'viem';
 import SimpleABI from '../abi/Simple.json';
-import SDKStatus from '../components/header-status';
-import { ChainRPC } from '../components/rpcchain-viewer';
-import RPCHistoryViewer from '../components/rpchistory-viewer';
+import { ChainRPC, RPCHistoryViewer, SDKStatus } from '@metamask/sdk-lab';
 
 export default function Demo() {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
