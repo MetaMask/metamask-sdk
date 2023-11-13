@@ -36,7 +36,7 @@ describe('MetaMaskProvider Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.spyOn(React, 'useState').mockReset();
+    // jest.spyOn(React, 'useState').mockReset();
 
     mockMetaMaskSDK.mockImplementation(
       () =>
