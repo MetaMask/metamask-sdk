@@ -6610,6 +6610,7 @@ __metadata:
     prettier: ^2.3.0
     pump: ^3.0.0
     qrcode-terminal-nooctal: ^0.12.1
+    react: ^18.2.0
     react-i18next: ^13.2.2
     react-native-webview: ^11.26.0
     readable-stream: ^2.3.7
