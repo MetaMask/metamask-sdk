@@ -6083,6 +6083,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/auto-changelog@npm:^3.4.3":
+  version: 3.4.3
+  resolution: "@metamask/auto-changelog@npm:3.4.3"
+  dependencies:
+    diff: ^5.0.0
+    execa: ^5.1.1
+    prettier: ^2.8.8
+    semver: ^7.3.5
+    yargs: ^17.0.1
+  bin:
+    auto-changelog: dist/cli.js
+  checksum: 3405f1f85d02684a95945ab253523619014bdae5da6121fb540140f8b21ddf2dda104683d91a24176c4c67a44fb9446d2e607d94a532a2bbb4f08a08a1e5a605
+  languageName: node
+  linkType: hard
+
 "@metamask/create-release-branch@npm:^1.0.1":
   version: 1.1.0
   resolution: "@metamask/create-release-branch@npm:1.1.0"
@@ -6524,6 +6539,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-ui@workspace:packages/sdk-ui"
   dependencies:
+    "@metamask/auto-changelog": ^3.4.3
     "@react-native-community/eslint-config": ^3.2.0
     "@types/react": ~18.2.14
     "@types/react-native": ^0.72.2
@@ -23004,7 +23020,7 @@ __metadata:
     "@commitlint/cli": ^17.6.7
     "@commitlint/config-conventional": ^17.6.7
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
+    "@metamask/auto-changelog": ^3.4.3
     "@metamask/create-release-branch": ^1.0.1
     "@metamask/eslint-config": ^8.0.0
     "@metamask/eslint-config-jest": ^8.0.0
