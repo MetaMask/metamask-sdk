@@ -1,6 +1,7 @@
 import { First } from './first/first';
 
-const plop = () => {
-  console.log('pldasdfasdfasdfsop');
+const testMe = () => {
+  console.log('Hi, I have been tested.');
 };
-export { First, plop };
+
+export { First, testMe };

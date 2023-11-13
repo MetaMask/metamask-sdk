@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AppState,
   AppStateStatus,
@@ -16,19 +16,19 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  useColorScheme,
 } from 'react-native';
 
-import {DEFAULT_SERVER_URL, MetaMaskSDK} from '@metamask/sdk';
-import { First, plop } from '@metamask/sdk-ui';
-import {encrypt} from 'eciesjs';
-import {LogBox} from 'react-native';
+import { COMM_SERVER_URL, INFURA_API_KEY } from '@env';
+import { DEFAULT_SERVER_URL, MetaMaskSDK } from '@metamask/sdk';
+import { First } from '@metamask/sdk-ui';
+import { encrypt } from 'eciesjs';
+import { LogBox } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DAPPView} from './src/views/DappView';
-import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 import packageJSON from './package.json';
+import { DAPPView } from './src/views/DappView';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -36,8 +36,6 @@ LogBox.ignoreLogs([
   "MetaMask: 'ethereum._metamask' exposes",
   "`new NativeEventEmitter()` was called with a non-null",
 ]); // Ignore log notification by message
-
-plop();
 
 // TODO how to properly make sure we only try to open link when the app is active?
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
@@ -80,6 +78,7 @@ const sdk = new MetaMaskSDK({
     plaintext: true,
   },
 });
+sdk.init();
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -177,4 +176,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export const SafeApp = () => {
+  return     <App />
+}

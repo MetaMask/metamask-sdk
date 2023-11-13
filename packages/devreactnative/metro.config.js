@@ -11,6 +11,7 @@ const modules = [
   'react',
   'react-dom',
   'react-native',
+  'react-native-safe-area-context',
 ]
 
 const extraNodeModules = modules.reduce((acc, name) => {
