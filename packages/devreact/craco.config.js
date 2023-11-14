@@ -29,17 +29,28 @@ module.exports = {
     configure: (webpackConfig) => {
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
+        // alias: {
+        //   react: path.resolve(__dirname, './node_modules/react'),
+        //   'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+        //   'react-native$': require.resolve('react-native-web')
+        // },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
           "stream": require.resolve("stream-browserify")
         },
       };
+      // write resolve config for debug
+      const webpackConfigPath = path.resolve(__dirname, './webpack.config.json');
+      fs.writeFileSync(webpackConfigPath, JSON.stringify(webpackConfig, null, 2));
+      console.log(`Wrote webpack config to ${webpackConfigPath}`);
       return webpackConfig;
     },
   },
   babel: {
-    "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
+    "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow", "@babel/preset-typescript"],
     "plugins": [
+      ["@babel/plugin-proposal-class-properties", { "loose": true }],
+      ["@babel/plugin-proposal-object-rest-spread", { "loose": true }],
       ["@babel/plugin-transform-class-properties", { "loose": true }],
       ["@babel/plugin-transform-private-methods", { "loose": true }],
       ["@babel/plugin-transform-private-property-in-object", { "loose": true }]

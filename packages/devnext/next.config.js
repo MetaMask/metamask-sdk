@@ -67,8 +67,8 @@ const nextConfig = withExpo({
       },
     );
     // write config to disk for debugging
-    fs.writeFileSync('./next.config.json', JSON.stringify(config.resolve, null, 2));
-    console.log(`Wrote webpack config to ./next.config.json`);
+    fs.writeFileSync('./next.webpack.config.json', JSON.stringify(config.resolve, null, 2));
+    console.log(`Wrote webpack config to ./next.webpack.config.json`);
     return config;
   }
 });

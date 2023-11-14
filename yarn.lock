@@ -14828,7 +14828,7 @@ __metadata:
     postcss: ^8.4.31
     preact: ^10.13.1
     prettier: ^3.0.3
-    react: 18.2.0
+    react: ^18.2.0
     react-dom: 18.2.0
     react-native: ^0.72.3
     react-native-gesture-handler: ^2.12.1
@@ -14849,6 +14849,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "devreact@workspace:packages/devreact"
   dependencies:
+    "@babel/plugin-proposal-object-rest-spread": ^7.20.7
+    "@babel/preset-flow": ^7.23.3
     "@craco/craco": ^7.1.0
     "@metamask/eslint-config-typescript": ^12.1.0
     "@metamask/sdk": "workspace:^"
@@ -14868,11 +14870,17 @@ __metadata:
     prettier: ^3.0.3
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-native: ^0.72.6
+    react-native-paper: ^5.11.1
+    react-native-web: ^0.19.9
     react-scripts: 5.0.1
     stream-browserify: ^3.0.0
     typescript: ^5.2.2
     web-vitals: ^2.1.4
     web3: ^4.1.1
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
   languageName: unknown
   linkType: soft
 
@@ -27425,7 +27433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-web@npm:^0.19.7":
+"react-native-web@npm:^0.19.7, react-native-web@npm:^0.19.9":
   version: 0.19.9
   resolution: "react-native-web@npm:0.19.9"
   dependencies:
@@ -27659,7 +27667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.2.0, react@npm:^18.2.0":
+"react@npm:^18.2.0":
   version: 18.2.0
   resolution: "react@npm:18.2.0"
   dependencies:

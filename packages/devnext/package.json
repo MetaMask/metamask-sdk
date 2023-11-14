@@ -35,7 +35,7 @@
     "ethers": "5.7.2",
     "next-qrcode": "^2.5.1",
     "preact": "^10.13.1",
-    "react": "18.2.0",
+    "react": "^18.2.0",
     "react-dom": "18.2.0",
     "react-native": "^0.72.3",
     "react-native-gesture-handler": "^2.12.1",

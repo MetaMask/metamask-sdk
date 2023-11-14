@@ -12,8 +12,9 @@
     "@testing-library/user-event": "^13.5.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react-native": "^0.72.6",
+    "react-native-paper": "^5.11.1",
+    "react-native-web": "^0.19.9",
     "react-scripts": "5.0.1",
     "stream-browserify": "^3.0.0",
     "web-vitals": "^2.1.4",
@@ -54,6 +55,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/preset-flow": "^7.23.3",
     "@craco/craco": "^7.1.0",
     "@metamask/eslint-config-typescript": "^12.1.0",
     "@types/react": "^18.2.21",
@@ -62,6 +65,12 @@
     "craco-babel-loader": "^1.0.4",
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
