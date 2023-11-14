@@ -23,7 +23,8 @@ const listDepForRollup = [
   ...baseExternalDeps,
   'cross-fetch',
   'date-fns',
-  'eciesjs',
+  // do not include eciesjs in the bundle otherwise it would force the dapp to include crypto-browserify and stream-browserify
+  // 'eciesjs',
   'eventemitter2',
   'socket.io-client',
   'uuid',

@@ -14006,7 +14006,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-browserify@npm:^3.11.0":
+"crypto-browserify@npm:^3.11.0, crypto-browserify@npm:^3.12.0":
   version: 3.12.0
   resolution: "crypto-browserify@npm:3.12.0"
   dependencies:
@@ -14853,6 +14853,7 @@ __metadata:
     "@metamask/eslint-config-typescript": ^12.1.0
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
+    "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^13.4.0
@@ -14860,12 +14861,15 @@ __metadata:
     "@types/react": ^18.2.21
     "@types/react-dom": ^18.2.7
     "@typescript-eslint/parser": ^6.5.0
+    buffer: ^6.0.3
     craco-babel-loader: ^1.0.4
+    crypto-browserify: ^3.12.0
     eslint: ^8.48.0
     prettier: ^3.0.3
     react: ^18.2.0
     react-dom: ^18.2.0
     react-scripts: 5.0.1
+    stream-browserify: ^3.0.0
     typescript: ^5.2.2
     web-vitals: ^2.1.4
     web3: ^4.1.1

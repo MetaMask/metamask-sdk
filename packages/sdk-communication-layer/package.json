@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "build": "rimraf dist && rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc",
     "build:dev": "rimraf dist && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",

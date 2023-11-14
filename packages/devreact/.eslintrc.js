@@ -27,6 +27,7 @@ module.exports = {
     '.prettierrc.js',
     '**/.eslintrc.js',
     'craco.config.js',
+    'config-overrides.js',
     'jest.config.ts',
     '**/dist*/',
     'e2e/',

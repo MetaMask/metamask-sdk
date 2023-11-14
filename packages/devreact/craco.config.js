@@ -5,11 +5,37 @@ const cracoBabelLoader = require('craco-babel-loader')
 // Handle relative paths to sibling packages
 const appDirectory = fs.realpathSync(process.cwd())
 const resolvePackage = relativePath => path.resolve(appDirectory, relativePath)
+const packagesToTranspile = [
+  resolvePackage('../sdk-communication-layer'),
+  resolvePackage('../sdk-install-modal-web'),
+  resolvePackage('../sdk'),
+  resolvePackage('../sdk-react'),
+  resolvePackage('../sdk-react-ui'),
+  resolvePackage('../sdk-lab'),
+]
+
+console.log(`Transpiling packages: ${packagesToTranspile.join('\n')}`)
 
 module.exports = {
   // ...
+  watchOptions: {
+    followSymlinks: true,
+    ignored: /node_modules/,
+  },
   typescript: {
     enableTypeChecking: false /* (default value) */,
+  },
+  webpack: {
+    configure: (webpackConfig) => {
+      webpackConfig.resolve = {
+        ...webpackConfig.resolve,
+        fallback: {
+          "crypto": require.resolve("crypto-browserify"),
+          "stream": require.resolve("stream-browserify")
+        },
+      };
+      return webpackConfig;
+    },
   },
   babel: {
     "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
@@ -19,36 +45,11 @@ module.exports = {
       ["@babel/plugin-transform-private-property-in-object", { "loose": true }]
     ]
   },
-  // webpack: {
-  //   alias: { /* ... */ },
-  //   plugins: {
-  //     add: [ /* ... */],
-  //     remove: [ /* ... */],
-  //   },
-  //   configure: (webpackConfig, { env, paths }) => {
-  //     /* ... */
-  //     const { isFound, match } = getLoader(webpackConfig, loaderByName('babel-loader'));
-  //     if (isFound) {
-  //       console.log(`babel found at ${match.loader.include}`)
-  //       const include = Array.isArray(match.loader.include) ? match.loader.include : [match.loader.include];
-  //       match.loader.include = include.concat(packagesToTranspile);
-  //       console.log(`babel include: `, match.loader.include)
-  //     }
-  //     return webpackConfig;
-  //   },
-  // },
   plugins: [
     {
       plugin: cracoBabelLoader,
       options: {
-        // includes: packagesToTranspile,
-        includes: [
-          resolvePackage('../sdk-communication-layer'),
-          resolvePackage('../sdk-install-modal-web'),
-          resolvePackage('../sdk'),
-          resolvePackage('../sdk-react'),
-          resolvePackage('../sdk-react-ui'),
-        ],
+        includes: packagesToTranspile,
         excludes: [/node_modules/],
       }
     }
