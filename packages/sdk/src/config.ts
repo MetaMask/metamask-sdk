@@ -25,3 +25,11 @@ export const RPC_METHODS = {
   ETH_ACCOUNTS: 'eth_accounts',
   ETH_CHAINID: 'eth_chainId',
 };
+
+export const EXTENSION_EVENTS = {
+  CHAIN_CHANGED: 'chainChanged',
+  ACCOUNTS_CHANGED: 'accountsChanged',
+  DISCONNECT: 'disconnect',
+  CONNECT: 'connect',
+  CONNECTED: 'connected',
+};
