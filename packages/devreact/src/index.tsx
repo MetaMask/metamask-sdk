@@ -1,5 +1,4 @@
 import React from 'react';
-import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
@@ -11,33 +10,23 @@ const root = ReactDOM.createRoot(
 );
 
 const WithProvider = () => {
-  const handleClick = () => {
-    console.log('click');
-  };
-  // return (
-  //   <MetaMaskProvider
-  //     debug
-  //     sdkOptions={{
-  //       logging: {
-  //         developerMode: true,
-  //       },
-  //       communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
-  //       dappMetadata: {
-  //         name: 'Demo React App',
-  //         url: window.location.host,
-  //       },
-  //     }}
-  //   >
-  //     <div>
-  //       ok: {DEFAULT_SERVER_URL}
-  //       <div>
-  //         <button onClick={handleClick}>test</button>
-  //       </div>
-  //       <App />
-  //     </div>
-  //   </MetaMaskProvider>
-  // );
-  return <>ok</>;
+  return (
+    <MetaMaskProvider
+      debug
+      sdkOptions={{
+        logging: {
+          developerMode: true,
+        },
+        communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
+        dappMetadata: {
+          name: 'Demo React App',
+          url: window.location.host,
+        },
+      }}
+    >
+      <App />
+    </MetaMaskProvider>
+  );
 };
 
 root.render(<WithProvider />);
