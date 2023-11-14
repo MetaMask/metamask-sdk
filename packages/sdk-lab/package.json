@@ -22,7 +22,7 @@
     "build": "tsc",
     "build:post-tsc": "echo 'n/a'",
     "lint:eslint": "eslint . --cache \"**/*.{js,ts,tsx}\"",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-ui",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-lab",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'n/a'",
