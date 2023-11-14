@@ -1,5 +1,5 @@
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { STORAGE_PROVIDER_TYPE } from '../../../config';
+import { EXTENSION_EVENTS, STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { getBrowserExtension } from '../../../utils/get-browser-extension';
 import { Ethereum } from '../../Ethereum';
@@ -47,39 +47,49 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       window.extension = metamaskBrowserExtension;
 
       // Propagate browser extension events onto the main provider since some clients only subscribe to the main mobile provider.
-      metamaskBrowserExtension.on('chainChanged', (chainId) => {
+      metamaskBrowserExtension.on(EXTENSION_EVENTS.CHAIN_CHANGED, (chainId) => {
         if (developerMode) {
           console.debug('PROPAGATE chainChanged', chainId);
         }
-        instance.getMobileProvider().emit('chainChanged', chainId);
+
+        instance
+          .getMobileProvider()
+          .emit(EXTENSION_EVENTS.CHAIN_CHANGED, chainId);
       });
 
-      metamaskBrowserExtension.on('accountsChanged', (accounts) => {
-        if (developerMode) {
-          console.debug('PROPAGATE accountsChanged', accounts);
-        }
-        instance.getMobileProvider().emit('accountsChanged', accounts);
-      });
+      metamaskBrowserExtension.on(
+        EXTENSION_EVENTS.ACCOUNTS_CHANGED,
+        (accounts) => {
+          if (developerMode) {
+            console.debug('PROPAGATE accountsChanged', accounts);
+          }
 
-      metamaskBrowserExtension.on('disconnect', (error) => {
+          instance
+            .getMobileProvider()
+            .emit(EXTENSION_EVENTS.ACCOUNTS_CHANGED, accounts);
+        },
+      );
+
+      metamaskBrowserExtension.on(EXTENSION_EVENTS.DISCONNECT, (error) => {
         if (developerMode) {
           console.debug('PROPAGATE disconnect', error);
         }
-        instance.getMobileProvider().emit('disconnect', error);
+
+        instance.getMobileProvider().emit(EXTENSION_EVENTS.DISCONNECT, error);
       });
 
-      metamaskBrowserExtension.on('connect', (args) => {
+      metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECT, (args) => {
         if (developerMode) {
           console.debug('PROPAGATE connect', args);
         }
-        instance.getMobileProvider().emit('connect', args);
+        instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECT, args);
       });
 
-      metamaskBrowserExtension.on('connected', (args) => {
+      metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECTED, (args) => {
         if (developerMode) {
           console.debug('PROPAGATE connected', args);
         }
-        instance.getMobileProvider().emit('connected', args);
+        instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECTED, args);
       });
     } catch (err) {
       // Ignore error if metamask extension not found
