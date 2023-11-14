@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.12.1]
-### Uncategorized
-- align version with sdk
-
 ## [0.12.0]
 ### Added
 - feat: set minimum required coverage to 50/100 ([#473](https://github.com/MetaMask/metamask-sdk/pull/473))
@@ -90,8 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.12.1...HEAD
-[0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.12.0...v0.12.1
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/v0.12.0...HEAD
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.2...v0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.1...v0.11.2
 [0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/v0.11.0...v0.11.1
