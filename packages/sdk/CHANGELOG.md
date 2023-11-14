@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.1]
+### Uncategorized
+- Revert "feat: release 38.0.0" ([#504](https://github.com/MetaMask/metamask-sdk/pull/504))
+- feat: release 38.0.0 ([#502](https://github.com/MetaMask/metamask-sdk/pull/502))
+- Revert "Release 38.0.0" ([#499](https://github.com/MetaMask/metamask-sdk/pull/499))
+- Release 38.0.0 ([#497](https://github.com/MetaMask/metamask-sdk/pull/497))
+- feat: propagate extension events ([#493](https://github.com/MetaMask/metamask-sdk/pull/493))
+- feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
+- feat: add backward v3 json compatibility on i18n ([#483](https://github.com/MetaMask/metamask-sdk/pull/483))
+
 ## [0.12.0]
 ### Added
 - feat: update onboard package ([#475](https://github.com/MetaMask/metamask-sdk/pull/475))
@@ -183,7 +193,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.1...HEAD
+[0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.0...@metamask/sdk@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.2...@metamask/sdk@0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.1...@metamask/sdk@0.11.2
 [0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.0...@metamask/sdk@0.11.1
