@@ -320,6 +320,14 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.activeProvider;
   }
 
+  getMobileProvider(): SDKProvider {
+    if (!this.sdkProvider) {
+      throw new Error(`SDK state invalid -- undefined mobile provider`);
+    }
+
+    return this.sdkProvider;
+  }
+
   getUniversalLink() {
     const universalLink = this.remoteConnection?.getUniversalLink();
 

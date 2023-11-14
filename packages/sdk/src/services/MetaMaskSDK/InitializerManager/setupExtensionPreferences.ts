@@ -45,6 +45,42 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       });
 
       window.extension = metamaskBrowserExtension;
+
+      // Propagate browser extension events onto the main provider since some clients only subscribe to the main mobile provider.
+      metamaskBrowserExtension.on('chainChanged', (chainId) => {
+        if (developerMode) {
+          console.debug('PROPAGATE chainChanged', chainId);
+        }
+        instance.getMobileProvider().emit('chainChanged', chainId);
+      });
+
+      metamaskBrowserExtension.on('accountsChanged', (accounts) => {
+        if (developerMode) {
+          console.debug('PROPAGATE accountsChanged', accounts);
+        }
+        instance.getMobileProvider().emit('accountsChanged', accounts);
+      });
+
+      metamaskBrowserExtension.on('disconnect', (error) => {
+        if (developerMode) {
+          console.debug('PROPAGATE disconnect', error);
+        }
+        instance.getMobileProvider().emit('disconnect', error);
+      });
+
+      metamaskBrowserExtension.on('connect', (args) => {
+        if (developerMode) {
+          console.debug('PROPAGATE connect', args);
+        }
+        instance.getMobileProvider().emit('connect', args);
+      });
+
+      metamaskBrowserExtension.on('connected', (args) => {
+        if (developerMode) {
+          console.debug('PROPAGATE connected', args);
+        }
+        instance.getMobileProvider().emit('connected', args);
+      });
     } catch (err) {
       // Ignore error if metamask extension not found
       delete window.extension;
