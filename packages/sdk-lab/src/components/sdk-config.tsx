@@ -2,20 +2,16 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { CSSProperties } from 'react';
-import { useSDKConfig } from '../providers/sdkconfig-context';
 import ItemView from './ItemView';
 import { useQRCode } from 'next-qrcode';
-import { LanguagePicker } from './language-picker';
+import { LanguagePicker, useSDKConfig } from '..';
 
 export interface SDKConfigProps {
   startVisible?: boolean;
   onHomePress?: () => void;
 }
 
-export default function SDKConfig({
-  startVisible,
-  onHomePress,
-}: SDKConfigProps) {
+export const SDKConfig = ({ startVisible, onHomePress }: SDKConfigProps) => {
   const {
     socketServer,
     useDeeplink,
@@ -160,4 +156,4 @@ export default function SDKConfig({
       </div>
     </div>
   );
-}
+};

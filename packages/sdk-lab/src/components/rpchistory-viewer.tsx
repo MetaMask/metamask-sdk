@@ -6,9 +6,7 @@ export interface RPCHistoryViewerProps {
   startVisible?: boolean;
 }
 
-export default function RPCHistoryViewer({
-  startVisible,
-}: RPCHistoryViewerProps) {
+export const RPCHistoryViewer = ({ startVisible }: RPCHistoryViewerProps) => {
   const { rpcHistory } = useSDK();
   const [visible, setVisible] = React.useState(startVisible ?? false);
 
@@ -99,4 +97,4 @@ export default function RPCHistoryViewer({
       </div>
     </div>
   );
-}
+};

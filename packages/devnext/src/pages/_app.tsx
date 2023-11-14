@@ -8,10 +8,7 @@ import {
 } from 'react-native-safe-area-context';
 
 import React from 'react';
-import {
-  SDKConfigProvider,
-  useSDKConfig,
-} from '../providers/sdkconfig-context';
+import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
 import '../styles/globals.css';
 import { Layout } from '../components/layout';
 config.autoAddCss = false;

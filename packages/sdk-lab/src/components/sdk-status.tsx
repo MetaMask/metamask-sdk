@@ -1,7 +1,8 @@
+import React from 'react';
 import { useSDK } from '@metamask/sdk-react';
-import ItemView from './ItemView';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ItemView from './ItemView';
 
 interface SDKStatusProps {
   response: unknown;
@@ -9,11 +10,7 @@ interface SDKStatusProps {
   error?: any;
 }
 
-export default function SDKStatus({
-  response,
-  requesting,
-  error,
-}: SDKStatusProps) {
+export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
   const {
     connected,
     connecting,
@@ -92,4 +89,4 @@ export default function SDKStatus({
       )}
     </div>
   );
-}
+};

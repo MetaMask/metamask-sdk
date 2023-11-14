@@ -15,7 +15,7 @@ export interface RPCChainViewerProps {
   chainRPCs: ChainRPCs;
 }
 
-export default function RPCChainViewer({ chainRPCs }: RPCChainViewerProps) {
+export const RPCChainViewer = ({ chainRPCs }: RPCChainViewerProps) => {
   const { processing, rpcs, error } = chainRPCs;
   return (
     <div style={{ padding: 10, border: '1px solid' }}>
@@ -39,7 +39,7 @@ export default function RPCChainViewer({ chainRPCs }: RPCChainViewerProps) {
       <table>
         <thead>
           <tr>
-            <th></th>
+            <th />
             <th>Result</th>
           </tr>
         </thead>
@@ -73,4 +73,4 @@ export default function RPCChainViewer({ chainRPCs }: RPCChainViewerProps) {
       </table>
     </div>
   );
-}
+};

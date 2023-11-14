@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "37.0.0",
+  "version": "38.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -14,6 +14,7 @@
     "packages/sdk-react",
     "packages/sdk-react-ui",
     "packages/sdk-ui",
+    "packages/sdk-lab",
     "packages/devreact",
     "packages/devreactnative",
     "packages/devnext",
