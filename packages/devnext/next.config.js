@@ -1,5 +1,6 @@
 const { withExpo } = require('@expo/next-adapter');
 const path = require('path');
+const fs = require('fs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withExpo({
@@ -65,6 +66,9 @@ const nextConfig = withExpo({
         type: 'asset/resource'
       },
     );
+    // write config to disk for debugging
+    fs.writeFileSync('./next.config.json', JSON.stringify(config.resolve, null, 2));
+    console.log(`Wrote webpack config to ./next.config.json`);
     return config;
   }
 });

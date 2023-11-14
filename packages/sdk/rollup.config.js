@@ -46,12 +46,13 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
+        exportConditions: ['browser'],
       }),
       commonjs({ transformMixedEsModules: true }),
-      typescript({ tsconfig: './tsconfig.json' }),
       globals(),
       builtins({ crypto: true }),
       json(),
@@ -87,12 +88,13 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
+        exportConditions: ['browser'],
       }),
       commonjs({ transformMixedEsModules: true }),
-      typescript({ tsconfig: './tsconfig.json' }),
       globals(),
       builtins({ crypto: true }),
       json(),

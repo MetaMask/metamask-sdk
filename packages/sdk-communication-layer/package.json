@@ -40,7 +40,7 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --coverage --passWithNoTests",
     "test:dev": "jest",
-    "watch": "rollup -c -w"
+    "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
     "bufferutil": "^4.0.8",
