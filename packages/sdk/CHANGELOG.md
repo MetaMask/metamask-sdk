@@ -7,9 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.1]
-### Uncategorized
-- Revert "Release 38.0.0" ([#499](https://github.com/MetaMask/metamask-sdk/pull/499))
-- Release 38.0.0 ([#497](https://github.com/MetaMask/metamask-sdk/pull/497))
+### Added
 - feat: propagate extension events ([#493](https://github.com/MetaMask/metamask-sdk/pull/493))
 - feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
 - feat: add backward v3 json compatibility on i18n ([#483](https://github.com/MetaMask/metamask-sdk/pull/483))
