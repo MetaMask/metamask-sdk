@@ -162,7 +162,7 @@ function App() {
       const error = err as RPCError;
       console.log(typeof error)
       console.log(error);
-      if (error.code === -32603) {
+      if (error.code === -32603 || error.code === 4902) {
         const confirmation = document.getElementById('confirmation');
         confirmation!.style.display = 'block';
       }
