@@ -7,12 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.1]
-### Uncategorized
-- Revert "feat: release 38.0.0" ([#504](https://github.com/MetaMask/metamask-sdk/pull/504))
-- feat: release 38.0.0 ([#502](https://github.com/MetaMask/metamask-sdk/pull/502))
-- Revert "Release 38.0.0" ([#499](https://github.com/MetaMask/metamask-sdk/pull/499))
-- Release 38.0.0 ([#497](https://github.com/MetaMask/metamask-sdk/pull/497))
-- feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
+### Added
+- Force align package version to sdk
 
 ## [0.12.0]
 ### Added
