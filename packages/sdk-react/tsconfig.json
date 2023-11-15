@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "outDir": "dist",
     "strict": true,
     "declaration": true,
     "declarationMap": true,
+    "incremental": true,
     "sourceMap": true,
     "composite": true,
     "target": "ESNext",

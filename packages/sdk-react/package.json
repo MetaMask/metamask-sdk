@@ -60,11 +60,11 @@
     "@rollup/plugin-node-resolve": "^13.3.0",
     "@rollup/plugin-typescript": "^8.3.3",
     "@testing-library/jest-dom": "^6.1.3",
-    "@testing-library/react": "^14.0.0",
+    "@testing-library/react": "^14.1.0",
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.1",
     "@types/mersenne-twister": "^1.1.2",
-    "@types/react": "18.0.14",
+    "@types/react": "^18.2.37",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/rebass": "^4.0.10",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
@@ -82,8 +82,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.12",
     "prettier": "^2.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.8",
     "rollup-plugin-dts": "^4.2.2",
@@ -111,7 +109,8 @@
       "@metamask/sdk>@metamask/sdk-communication-layer>utf-8-validate": false,
       "@metamask/sdk-communication-layer>bufferutil": false,
       "@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
-      "@metamask/sdk-communication-layer>utf-8-validate": false
+      "@metamask/sdk-communication-layer>utf-8-validate": false,
+      "jest-environment-jsdom>jsdom>ws>bufferutil": false
     }
   }
 }

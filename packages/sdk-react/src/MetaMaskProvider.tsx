@@ -6,6 +6,7 @@ import {
   SDKProvider,
   ServiceStatus,
 } from '@metamask/sdk';
+import { RPCMethodCache } from '@metamask/sdk-communication-layer';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, { createContext, useEffect, useRef, useState } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
@@ -16,7 +17,6 @@ import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitialized
 import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
-import { RPCMethodCache } from '@metamask/sdk-communication-layer';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;

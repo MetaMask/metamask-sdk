@@ -14,6 +14,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
+      external: ["react", "react-dom"],
       input: 'src/index.ts',
       output: [
         {
@@ -21,6 +22,12 @@ const config =
           inlineDynamicImports: true,
           format: 'esm',
           sourcemap: true,
+          sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+            // Not sure why rollup otherwise adds an extra '../' to the path
+
+            // Adjust the path transformation logic as needed
+            return relativeSourcePath.replace(/^..\//, '');
+          },
         },
       ],
       plugins: [

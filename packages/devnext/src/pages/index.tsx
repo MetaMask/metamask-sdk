@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { First } from '@metamask/sdk-ui';
+import { First, ItemView } from '@metamask/sdk-ui';
 
 export default function Home() {
   return (
@@ -12,6 +12,9 @@ export default function Home() {
       </div>
       <div style={{ margin: 20 }}>
         <First />
+      </div>
+      <div style={{ margin: 20 }}>
+        <ItemView processing={true} label="label" value="value" />
       </div>
     </div>
   );
