@@ -1,6 +1,4 @@
 import { MetaMaskSDK } from '../../../sdk';
-import { extractFavicon } from '../../../utils/extractFavicon';
-import { getBase64FromUrl } from '../../../utils/getBase64FromUrl';
 
 /**
  * Sets up Dapp metadata for the MetaMask SDK instance.
@@ -15,22 +13,6 @@ import { getBase64FromUrl } from '../../../utils/getBase64FromUrl';
  */
 export async function setupDappMetadata(instance: MetaMaskSDK) {
   const { options } = instance;
-
-  if (
-    instance.platformManager?.isBrowser() &&
-    !options.dappMetadata.base64Icon
-  ) {
-    // Try to extract default icon
-    const favicon = extractFavicon();
-    if (favicon) {
-      try {
-        const faviconUri = await getBase64FromUrl(favicon);
-        options.dappMetadata.base64Icon = faviconUri;
-      } catch (err) {
-        // Ignore favicon error.
-      }
-    }
-  }
 
   // eslint-disable-next-line require-atomic-updates
   instance.dappMetadata = options.dappMetadata;
