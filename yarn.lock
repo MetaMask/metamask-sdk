@@ -6719,6 +6719,7 @@ __metadata:
     "@react-native-community/eslint-config": ^3.2.0
     "@types/react": ^18.2.37
     "@types/react-native": ^0.72.2
+    "@types/react-native-vector-icons": ^6.4.17
     "@typescript-eslint/eslint-plugin": ^6.10.0
     "@typescript-eslint/parser": ^6.10.0
     eslint: ^8.53.0
@@ -7952,6 +7953,13 @@ __metadata:
   version: 0.72.0
   resolution: "@react-native/assets-registry@npm:0.72.0"
   checksum: 94c2b842f9fcc6e2817463dd5f26a40b69a5ff10d8d10a2af95b677f88c6645e833f985db9d85c9c3d8e66fb882b2065921ad8890fe6ac7b5eb3f9d04f6e17fa
+  languageName: node
+  linkType: hard
+
+"@react-native/assets-registry@npm:^0.74.0":
+  version: 0.74.0
+  resolution: "@react-native/assets-registry@npm:0.74.0"
+  checksum: b9b29c3dd128ba807b078a6cac09796b22ad6f8d983ff562528f05c24a56dd289760dd59e92fa33407e5e34b5fdf534d4c7dfd26a9a3dff7a8f05f8761d630c3
   languageName: node
   linkType: hard
 
@@ -15179,6 +15187,7 @@ __metadata:
     "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@metamask/sdk-ui": "workspace:^"
+    "@react-native/assets-registry": ^0.74.0
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.1.0
     "@testing-library/user-event": ^13.5.0

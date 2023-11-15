@@ -13,6 +13,7 @@ const packagesToTranspile = [
   resolvePackage('../sdk-react-ui'),
   resolvePackage('../sdk-lab'),
   resolvePackage('../sdk-ui'),
+  path.resolve('node_modules/@react-native/assets-registry/registry.js'),
 ]
 
 console.log(`Transpiling packages: ${packagesToTranspile.join('\n')}`)
@@ -33,7 +34,7 @@ module.exports = {
         alias: {
           ...webpackConfig.resolve.alias,
           // 'react-native$': require.resolve('react-native-web'),
-          'react-native/Libraries/Image/AssetRegistry': path.resolve(__dirname, 'mocks/AssetRegistry.js'),
+          // 'react-native/Libraries/Image/AssetRegistry': path.resolve(__dirname, 'mocks/AssetRegistry.js'),
         },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
@@ -41,20 +42,20 @@ module.exports = {
         },
       };
       webpackConfig.module.rules.push(
-        {
-          test: /\.(js|jsx|mjs)$/,
-          include: [
-            // Add the path to the problematic module
-            path.resolve('../sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
-            // Add other React Native modules if needed
-          ],
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-react', '@babel/preset-flow'],
-            },
-          },
-        },
+        // {
+        //   test: /\.(js|jsx|mjs)$/,
+        //   include: [
+        //     // Add the path to the problematic module
+        //     path.resolve('../sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
+        //     // Add other React Native modules if needed
+        //   ],
+        //   use: {
+        //     loader: 'babel-loader',
+        //     options: {
+        //       presets: ['@babel/preset-react', '@babel/preset-flow'],
+        //     },
+        //   },
+        // },
         {
           test: /\.ttf$/,
           loader: "url-loader", // or directly file-loader

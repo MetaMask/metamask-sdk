@@ -4,6 +4,7 @@ import { MetaMaskProvider } from '@metamask/sdk-react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
 import './index.css';
+import './icons.css';
 import reportWebVitals from './reportWebVitals';
 import {
   SafeAreaProvider,
@@ -11,6 +12,7 @@ import {
 } from 'react-native-safe-area-context';
 import { View, Text } from 'react-native';
 import { First, ItemView } from '@metamask/sdk-ui';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
@@ -53,7 +55,7 @@ const WithProvider = () => {
       </View>
       <First />
       <ItemView processing={true} label="label" value="value" />
-      {/* <App /> */}
+      <App />
     </MetaMaskProvider>
   );
 };

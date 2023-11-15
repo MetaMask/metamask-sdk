@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Text, ActivityIndicator } from 'react-native-paper';
-// import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export interface ItemViewProps {
   label: string;
@@ -47,9 +47,9 @@ export const ItemView = ({
       <View style={[styles.content, contentStyle]}>
         {processing ? (
           <View>
-            {/* DISABLED until finding a fix for CRA setup */}
-            {/* <FontAwesome name="spinner" size={30} color="#900" /> */}
             <ActivityIndicator size="small" color="#00ff00" />
+            <Icon name="rocket" size={30} color="#900" />
+            <Text>ok</Text>
           </View>
         ) : (
           value

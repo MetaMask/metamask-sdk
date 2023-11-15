@@ -10,11 +10,13 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "composite": true,
+    "noEmit": false,
     "strict": true,
     "allowJs": false,
     "skipLibCheck": true,
     "paths": {
       "@metamask/sdk-ui": ["./src/index"],
+      "react": ["node_modules/@types/react"]
     }
   },
   "include": [
