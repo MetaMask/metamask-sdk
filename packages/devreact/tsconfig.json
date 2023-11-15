@@ -27,7 +27,8 @@
       "@metamask/sdk-react": ["../sdk-react/src"],
       "@metamask/sdk": ["../sdk/src"],
       "@metamask/sdk-ui": ["../sdk-ui/src"],
-      "@metamask/sdk-lab": ["../sdk-lab/src"]
+      "@metamask/sdk-lab": ["../sdk-lab/src"],
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.d.ts"],

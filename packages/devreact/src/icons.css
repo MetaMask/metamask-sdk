@@ -1,0 +1,14 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../public/Fonts/FontAwesome.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MaterialIcons';
+  src: url('../public/Fonts/MaterialIcons.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MaterialCommunityIcons';
+  src: url('../public/Fonts/MaterialCommunityIcons.ttf') format('truetype');
+}

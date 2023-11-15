@@ -3,6 +3,11 @@ import { init, useConnectWallet } from '@web3-onboard/react';
 
 import './App.css';
 
+interface RPCError {
+  code: number;
+  message: string;
+}
+
 const chains = [
   {
     id: '0x1',
@@ -122,6 +127,48 @@ function App() {
     }
   }
 
+  const addEthereumChain = async () => {
+    wallet.provider
+      .request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
+            rpcUrls: ['https://polygon-rpc.com/'],
+          },
+        ],
+      })
+      .then(() => {
+        const confirmation = document.getElementById('confirmation');
+        confirmation!.style.display = 'block';
+        confirmation!.innerText = "Polygon has been added to MetaMask.";
+      })
+      .catch((error: unknown) => {
+        console.log(`error: `, error);
+      });
+  }
+
+  const switchChain = async (hexChainId: string) => {
+    try {
+      const result = await wallet.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
+      });
+      console.log(`result: `, result)
+    } catch (err: unknown) {
+      const error = err as RPCError;
+      console.log(typeof error)
+      console.log(error);
+      if (error.code === -32603 || error.code === 4902) {
+        const confirmation = document.getElementById('confirmation');
+        confirmation!.style.display = 'block';
+      }
+    }
+  }
+
   return (
     <>
     <div>
@@ -137,6 +184,13 @@ function App() {
         {connecting ? 'connecting' : wallet ? 'disconnect' : 'connect'}
       </button>
       <button  title='test sign' onClick={handleTestSign}>Test Sign</button>
+      <div>
+        <button title='Add Polygon' id={'addPolygonButton'} onClick={() => switchChain('0x89')}>Switch to Polygon</button>
+        <div id={'confirmation'}>
+          <p>MetaMask doesn't have Polygon, do you want to add it?</p>
+          <button title='Add Polygon' id={'addPolygonButtonConfirmation'} onClick={addEthereumChain}>Add Polygon</button>
+        </div>
+      </div>
     </>
   )
 }

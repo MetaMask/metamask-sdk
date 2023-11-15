@@ -11,6 +11,7 @@ import React from 'react';
 import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
 import '../styles/globals.css';
 import { Layout } from '../components/layout';
+
 config.autoAddCss = false;
 
 const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
