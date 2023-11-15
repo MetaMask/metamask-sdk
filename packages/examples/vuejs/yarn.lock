@@ -1805,23 +1805,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
+"@metamask/sdk-communication-layer@npm:0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.1"
   dependencies:
+    bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
+    utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 9042d7b38832dfb2c1efa93441ee4f9e8fee76da22a60d860720cdd0091d08dd34e0234269eecdde64c11868d6e2f0d566331815658b313d44aa329f221f390e
+  checksum: 273340fbe8e677f603c5f4a91d6e2d692f85c9406ea4269da4eff1bade6b5c897b6f76749ba7cde59d10cc8a33a2912d8d1d3355d5fdcaf62b3dfe8d7e1cdaf2
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.0"
+"@metamask/sdk-install-modal-web@npm:0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.1"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -1830,19 +1832,19 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: 4fd1eb7a108bc1ac123731906aba5930fd4818a40448b94dc0c909bc60376da7d25e95fe163ad7983936f7525c93078b05047d66e1a39a3f6780c56ee5694258
+  checksum: c93d607a23d74e3b25602f6c13936e4dc4d9c834a86c412dc743369196d79831c6da5e2997207ee3214561c7b367e6e771d47389bbaa7df28b0f21a2d0445b74
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk@npm:0.12.0"
+"@metamask/sdk@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk@npm:0.12.1"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.0
-    "@metamask/sdk-install-modal-web": 0.12.0
+    "@metamask/sdk-communication-layer": 0.12.1
+    "@metamask/sdk-install-modal-web": 0.12.1
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -1871,7 +1873,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
+  checksum: 3b71316670ae9558aed953b8240ed15612e92a7c65c9fd7537a6ec0fc73ead9d7300428163d25974860256d16e6830dba4a1e3307f916d4e38ad8c534838bf74
   languageName: node
   linkType: hard
 
@@ -3627,6 +3629,16 @@ __metadata:
     base64-js: ^1.3.1
     ieee754: ^1.1.13
   checksum: e2cf8429e1c4c7b8cbd30834ac09bd61da46ce35f5c22a78e6c2f04497d6d25541b16881e30a019c6fd3154150650ccee27a308eff3e26229d788bbdeb08ab84
+  languageName: node
+  linkType: hard
+
+"bufferutil@npm:^4.0.8":
+  version: 4.0.8
+  resolution: "bufferutil@npm:4.0.8"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 7e9a46f1867dca72fda350966eb468eca77f4d623407b0650913fadf73d5750d883147d6e5e21c56f9d3b0bdc35d5474e80a600b9f31ec781315b4d2469ef087
   languageName: node
   linkType: hard
 
@@ -6915,7 +6927,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.12.16
     "@babel/eslint-parser": ^7.12.16
-    "@metamask/sdk": ^0.12.0
+    "@metamask/sdk": ^0.12.1
     "@vue/cli-plugin-babel": ~5.0.0
     "@vue/cli-plugin-eslint": ~5.0.0
     "@vue/cli-service": ~5.0.0
@@ -7278,7 +7290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp-build@npm:^4.2.0":
+"node-gyp-build@npm:^4.2.0, node-gyp-build@npm:^4.3.0":
   version: 4.6.1
   resolution: "node-gyp-build@npm:4.6.1"
   bin:
@@ -9694,6 +9706,16 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"utf-8-validate@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "utf-8-validate@npm:6.0.3"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 

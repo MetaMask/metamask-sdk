@@ -12,6 +12,7 @@ const packagesToTranspile = [
   resolvePackage('../sdk-react'),
   resolvePackage('../sdk-react-ui'),
   resolvePackage('../sdk-lab'),
+  resolvePackage('../sdk-ui'),
 ]
 
 console.log(`Transpiling packages: ${packagesToTranspile.join('\n')}`)

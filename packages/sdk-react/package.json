@@ -64,7 +64,7 @@
     "@testing-library/react-hooks": "^8.0.1",
     "@types/jest": "^29.5.1",
     "@types/mersenne-twister": "^1.1.2",
-    "@types/react": "18.0.14",
+    "@types/react": "^18.2.37",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@types/rebass": "^4.0.10",
     "@typescript-eslint/eslint-plugin": "^4.26.0",

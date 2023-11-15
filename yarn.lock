@@ -6364,7 +6364,7 @@ __metadata:
     "@rollup/plugin-terser": ^0.4.1
     "@rollup/plugin-typescript": ^11.1.1
     "@types/prettier": ^2
-    "@types/react": ^18.0.26
+    "@types/react": ^18.2.37
     "@types/react-dom": ^18.2.15
     "@typescript-eslint/eslint-plugin": ^5.56.0
     "@typescript-eslint/parser": ^5.56.0
@@ -6402,8 +6402,8 @@ __metadata:
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@react-native-community/eslint-config": ^3.2.0
-    "@types/react": ~18.2.14
-    "@types/react-native": ^0.72.2
+    "@types/react": ^18.2.37
+    "@types/react-native": latest
     "@typescript-eslint/eslint-plugin": ^6.10.0
     "@typescript-eslint/parser": ^6.10.0
     eslint: ^8.53.0
@@ -6416,13 +6416,15 @@ __metadata:
     intl-pluralrules: ^2.0.1
     next-qrcode: ^2.5.1
     prettier: ^3.0.3
-    react: ^18.2.0
     react-i18next: ^13.3.1
+    rimraf: ^5.0.5
+    typescript: ^5.2.2
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
     react-native: ^0.72.6
     react-native-paper: ^5.11.1
     react-native-svg: ^13.14.0
-    rimraf: ^5.0.5
-    typescript: ^5.2.2
   languageName: unknown
   linkType: soft
 
@@ -6444,7 +6446,7 @@ __metadata:
     "@rollup/plugin-typescript": ^8.3.3
     "@types/jest": ^29.5.1
     "@types/mersenne-twister": ^1.1.2
-    "@types/react": 18.0.14
+    "@types/react": ^18.2.37
     "@types/react-copy-to-clipboard": ^5.0.4
     "@types/rebass": ^4.0.10
     "@typescript-eslint/eslint-plugin": ^4.26.0
@@ -6505,7 +6507,7 @@ __metadata:
     "@testing-library/react-hooks": ^8.0.1
     "@types/jest": ^29.5.1
     "@types/mersenne-twister": ^1.1.2
-    "@types/react": 18.0.14
+    "@types/react": ^18.2.37
     "@types/react-copy-to-clipboard": ^5.0.4
     "@types/rebass": ^4.0.10
     "@typescript-eslint/eslint-plugin": ^4.26.0
@@ -6574,7 +6576,7 @@ __metadata:
   dependencies:
     "@metamask/auto-changelog": ^3.4.3
     "@react-native-community/eslint-config": ^3.2.0
-    "@types/react": ~18.2.14
+    "@types/react": ^18.2.37
     "@types/react-native": ^0.72.2
     "@typescript-eslint/eslint-plugin": ^6.10.0
     "@typescript-eslint/parser": ^6.10.0
@@ -6587,13 +6589,15 @@ __metadata:
     i18next: ^23.6.0
     intl-pluralrules: ^2.0.1
     prettier: ^3.0.3
-    react: ^18.2.0
     react-i18next: ^13.3.1
     react-native: ^0.72.6
     react-native-paper: ^5.11.1
     react-native-svg: ^13.14.0
+    react-native-vector-icons: ^10.0.2
     rimraf: ^5.0.5
     typescript: ^5.2.2
+  peerDependencies:
+    react: ^18.2.0
   languageName: unknown
   linkType: soft
 
@@ -9255,16 +9259,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:18.0.11":
-  version: 18.0.11
-  resolution: "@types/react-dom@npm:18.0.11"
-  dependencies:
-    "@types/react": "*"
-  checksum: 579691e4d5ec09688087568037c35edf8cfb1ab3e07f6c60029280733ee7b5c06d66df6fcc90786702c93ac8cb13bc7ff16c79ddfc75d082938fbaa36e1cdbf4
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.0.0, @types/react-dom@npm:^18.2.7":
+"@types/react-dom@npm:^18.0.0":
   version: 18.2.7
   resolution: "@types/react-dom@npm:18.2.7"
   dependencies:
@@ -9289,7 +9284,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-native@npm:^0.72.2":
+"@types/react-native@npm:^0.72.2, @types/react-native@npm:latest":
   version: 0.72.6
   resolution: "@types/react-native@npm:0.72.6"
   dependencies:
@@ -9308,7 +9303,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:^18.0.26":
+"@types/react@npm:*":
   version: 18.2.15
   resolution: "@types/react@npm:18.2.15"
   dependencies:
@@ -9319,29 +9314,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:18.0.14":
-  version: 18.0.14
-  resolution: "@types/react@npm:18.0.14"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: 608eb57a383eedc54c79949673e5e8314f6b0c61542bff58721c8c47a18c23e2832e77c656050c2c2c004b62cf25582136c7c56fe1b6263a285c065fae31dbcf
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.0.28":
-  version: 18.0.28
-  resolution: "@types/react@npm:18.0.28"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: e752df961105e5127652460504785897ca6e77259e0da8f233f694f9e8f451cde7fa0709d4456ade0ff600c8ce909cfe29f9b08b9c247fa9b734e126ec53edd7
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.0.24, @types/react@npm:~18.2.14":
+"@types/react@npm:^18.2.37":
   version: 18.2.37
   resolution: "@types/react@npm:18.2.37"
   dependencies:
@@ -9349,17 +9322,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 2d2599f1a09e4f678509161fea8baeaf76d21deee460f4f3ccc1ca431ebe85f896d7d0b906127de17e97ed57240cec61955eb97d0b5d9cbf4e97fd6620b1acdb
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:^18.2.21":
-  version: 18.2.21
-  resolution: "@types/react@npm:18.2.21"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: ffed203bfe7aad772b8286f7953305c9181ac3a8f27d3f5400fbbc2a8e27ca8e5bbff818ee014f39ca0d19d2b3bb154e5bdbec7e232c6f80b59069375aa78349
   languageName: node
   linkType: hard
 
@@ -14788,8 +14750,8 @@ __metadata:
     "@metamask/sdk-react-ui": "workspace:^"
     "@types/eslint": ^8
     "@types/node": 18.15.3
-    "@types/react": 18.0.28
-    "@types/react-dom": 18.0.11
+    "@types/react": ^18.2.37
+    "@types/react-dom": ^18.2.15
     "@typescript-eslint/eslint-plugin": ^6.9.1
     "@typescript-eslint/parser": ^6.9.1
     autoprefixer: ^10.4.16
@@ -14806,7 +14768,7 @@ __metadata:
     preact: ^10.13.1
     prettier: ^3.0.3
     react: ^18.2.0
-    react-dom: 18.2.0
+    react-dom: ^18.2.0
     react-native: ^0.72.3
     react-native-gesture-handler: ^2.12.1
     react-native-paper: ^5.10.3
@@ -14834,12 +14796,13 @@ __metadata:
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
+    "@metamask/sdk-ui": "workspace:^"
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.1.0
     "@testing-library/user-event": ^13.5.0
     "@types/node": ^20.9.0
-    "@types/react": ^18.2.21
-    "@types/react-dom": ^18.2.7
+    "@types/react": ^18.2.37
+    "@types/react-dom": ^18.2.15
     "@typescript-eslint/parser": ^6.5.0
     buffer: ^6.0.3
     craco-babel-loader: ^1.0.4
@@ -14850,6 +14813,7 @@ __metadata:
     react-dom: ^18.2.0
     react-native: ^0.72.6
     react-native-paper: ^5.11.1
+    react-native-safe-area-context: ^4.7.4
     react-native-web: ^0.19.9
     react-scripts: 5.0.1
     react-test-renderer: ^18.2.0
@@ -14879,7 +14843,7 @@ __metadata:
     "@react-native/eslint-config": ^0.72.2
     "@react-native/metro-config": ^0.72.11
     "@tsconfig/react-native": ^3.0.0
-    "@types/react": ^18.0.24
+    "@types/react": ^18.2.37
     "@types/react-native-background-timer": ^2.0.0
     "@types/react-test-renderer": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^6.10.0
@@ -27397,7 +27361,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-vector-icons@npm:^10.0.0":
+"react-native-vector-icons@npm:^10.0.0, react-native-vector-icons@npm:^10.0.2":
   version: 10.0.2
   resolution: "react-native-vector-icons@npm:10.0.2"
   dependencies:
