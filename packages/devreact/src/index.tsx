@@ -1,32 +1,74 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import { App } from './App';
-import reportWebVitals from './reportWebVitals';
+import { SDKConfig, SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
 import { MetaMaskProvider } from '@metamask/sdk-react';
-
+import ReactDOM from 'react-dom/client';
+import { App } from './App';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+import { View, Text } from 'react-native';
+import { First, ItemView } from '@metamask/sdk-ui';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
-root.render(
-  <React.StrictMode>
+
+const WithProvider = () => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    checkInstallationImmediately,
+  } = useSDKConfig();
+
+  return (
     <MetaMaskProvider
       debug
       sdkOptions={{
         logging: {
           developerMode: true,
         },
-        communicationServerUrl: process.env.REACT_APP_COMM_SERVER_URL,
+        infuraAPIKey,
+        communicationServerUrl: socketServer,
+        useDeeplink,
+        checkInstallationImmediately,
         dappMetadata: {
           name: 'Demo React App',
           url: window.location.host,
         },
+        i18nOptions: {
+          enabled: true,
+        },
       }}
     >
-      <App />
+      <SDKConfig
+        onHomePress={() => {
+          console.debug(`nothing to do here`);
+        }}
+      />
+      <View>
+        <Text>Test text</Text>
+      </View>
+      <First />
+      <ItemView processing={true} label="label" value="value" />
+      {/* <App /> */}
     </MetaMaskProvider>
-  </React.StrictMode>,
-);
+  );
+};
+
+const WithSDKConfig = () => {
+  return (
+    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+      <SDKConfigProvider>
+        <WithProvider />
+      </SDKConfigProvider>
+    </SafeAreaProvider>
+  );
+};
+
+root.render(<WithSDKConfig />);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

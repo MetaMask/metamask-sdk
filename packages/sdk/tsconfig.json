@@ -1,14 +1,17 @@
 {
   "compilerOptions": {
-    "outDir": "dist",
+    "baseUrl": "./",
     "declaration": true,
     "declarationMap": true,
+    "sourceMap": true,
     "strict": true,
+    "outDir": "dist",
     "target": "es6",
     "esModuleInterop": true,
     "module": "ES2020",
     "moduleResolution": "Node",
     "resolveJsonModule": true,
+    "incremental": true,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
     "types": ["node"]

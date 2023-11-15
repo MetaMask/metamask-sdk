@@ -55,9 +55,8 @@ export default {
         name: 'MetaMask VueJS Example Dapp',
       },
       // useDeeplink: true,
-      communicationServerUrl: 'https://socket.siteed.net',
       enableDebug: true,
-      checkInstallationImmediately: true,
+      checkInstallationImmediately: false,
       logging: {
         developerMode: true,
       },
@@ -301,6 +300,12 @@ export default {
       window.location.reload();
     },
     async batchCalls() {
+      if(!this.provider?.selectedAddress){
+        this.lastResponse = 'Please connect first';
+        console.warn(`batchCalls: selectedAddress is not set`);
+        return;
+      }
+
       const rpcs = [
         {
           method: "wallet_switchEthereumChain",

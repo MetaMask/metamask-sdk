@@ -15,6 +15,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
+      external: ["react", "react-dom"],
       input: 'src/index.ts',
       output: [
         {

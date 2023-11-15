@@ -41,15 +41,15 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
+        exportConditions: ['browser'],
       }),
       commonjs({ transformMixedEsModules: true }),
       typescript({ tsconfig: './tsconfig.json' }),
-      nodePolyfills({
-        process: true,
-      }),
+      nodePolyfills(),
       json(),
       terser(),
       // Visualize the bundle to analyze its composition and size
@@ -84,15 +84,14 @@ const config = [
       jscc({
         values: { _WEB: 1 },
       }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
+        exportConditions: ['browser'],
       }),
-      typescript({ tsconfig: './tsconfig.json' }),
       commonjs({ transformMixedEsModules: true }),
-      nodePolyfills({
-        process: true,
-      }),
+      nodePolyfills(),
       json(),
       terser(),
       // Visualize the bundle to analyze its composition and size

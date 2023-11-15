@@ -1,5 +1,6 @@
 const { withExpo } = require('@expo/next-adapter');
 const path = require('path');
+const fs = require('fs');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = withExpo({
@@ -50,7 +51,7 @@ const nextConfig = withExpo({
         test: /\.(js|jsx|mjs)$/,
         include: [
           // Add the path to the problematic module
-          // path.resolve('../../packages/ui/node_modules/@react-native/assets-registry/registry.js'),
+          path.resolve('../../packages/sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
           // Add other React Native modules if needed
         ],
         use: {
@@ -65,6 +66,9 @@ const nextConfig = withExpo({
         type: 'asset/resource'
       },
     );
+    // write config to disk for debugging
+    fs.writeFileSync('./next.webpack.config.json', JSON.stringify(config.resolve, null, 2));
+    console.log(`Wrote webpack config to ./next.webpack.config.json`);
     return config;
   }
 });

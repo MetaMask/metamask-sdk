@@ -46,8 +46,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "../sdk-lab/src/components/language-picker.tsx"  ],
+    "**/*.tsx" ],
   "exclude": [
     "node_modules"
   ],

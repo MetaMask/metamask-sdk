@@ -59,6 +59,7 @@ module.exports = {
     '**/.eslintrc.js',
     'jest.config.ts',
     '**/dist*/',
+    'jest.resolver.js',
     'rollup.config.js',
     'webpack.config.js',
     '**/coverage/**',

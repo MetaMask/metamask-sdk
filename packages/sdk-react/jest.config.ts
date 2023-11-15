@@ -4,6 +4,7 @@ module.exports = {
   ...baseConfig,
   testEnvironment: 'jsdom',
   coveragePathIgnorePatterns: ['./src/types', './src/index.ts'],
+  resolver: '<rootDir>/jest.resolver.js',
   coverageThreshold: {
     global: {
       branches: 10,

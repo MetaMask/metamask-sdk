@@ -1,6 +1,7 @@
 {
   "name": "@metamask/sdk-lab",
-  "version": "0.1.0",
+  "version": "0.0.0",
+  "private": true,
   "description": "MetaMask SDK lab -- alpha components for sdk development",
   "main": "src/index.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
@@ -22,7 +23,7 @@
     "build": "tsc",
     "build:post-tsc": "echo 'n/a'",
     "lint:eslint": "eslint . --cache \"**/*.{js,ts,tsx}\"",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-ui",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-lab",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'n/a'",
@@ -40,17 +41,13 @@
     "i18next": "^23.6.0",
     "intl-pluralrules": "^2.0.1",
     "next-qrcode": "^2.5.1",
-    "react": "^18.2.0",
-    "react-i18next": "^13.3.1",
-    "react-native": "^0.72.6",
-    "react-native-paper": "^5.11.1",
-    "react-native-svg": "^13.14.0"
+    "react-i18next": "^13.3.1"
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^3.4.3",
     "@react-native-community/eslint-config": "^3.2.0",
-    "@types/react": "~18.2.14",
-    "@types/react-native": "^0.72.2",
+    "@types/react": "^18.2.37",
+    "@types/react-native": "latest",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",
@@ -61,5 +58,12 @@
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
     "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "^0.72.6",
+    "react-native-paper": "^5.11.1",
+    "react-native-svg": "^13.14.0"
   }
 }
