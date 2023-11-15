@@ -29,6 +29,7 @@ module.exports = {
     'craco.config.js',
     'config-overrides.js',
     'jest.config.ts',
+    'mocks/**',
     '**/dist*/',
     'e2e/',
     'rollup.config.js',

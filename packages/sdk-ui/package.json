@@ -32,6 +32,8 @@
     "allow-scripts": ""
   },
   "dependencies": {
+    "@expo/vector-icons": "^13.0.0",
+    "@metamask/sdk-react": "workspace:^",
     "i18n-js": "^4.3.2",
     "i18next": "^23.6.0",
     "intl-pluralrules": "^2.0.1",

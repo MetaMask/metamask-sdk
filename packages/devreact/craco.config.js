@@ -30,16 +30,70 @@ module.exports = {
     configure: (webpackConfig) => {
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
-        // alias: {
-        //   react: path.resolve(__dirname, './node_modules/react'),
-        //   'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-        //   'react-native$': require.resolve('react-native-web')
-        // },
+        alias: {
+          ...webpackConfig.resolve.alias,
+          // 'react-native$': require.resolve('react-native-web'),
+          'react-native/Libraries/Image/AssetRegistry': path.resolve(__dirname, 'mocks/AssetRegistry.js'),
+        },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
           "stream": require.resolve("stream-browserify")
         },
       };
+      webpackConfig.module.rules.push(
+        {
+          test: /\.(js|jsx|mjs)$/,
+          include: [
+            // Add the path to the problematic module
+            path.resolve('../sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
+            // Add other React Native modules if needed
+          ],
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-react', '@babel/preset-flow'],
+            },
+          },
+        },
+        {
+          test: /\.ttf$/,
+          loader: "url-loader", // or directly file-loader
+          include: path.resolve(__dirname, "node_modules/react-native-vector-icons"),
+        },
+        {
+          test: /\.js$/,
+          exclude: /node_modules[/\\](?!react-native-vector-icons)/,
+          include: [
+            // Add the path to the problematic module
+            path.resolve('../../packages/sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
+            // Add other React Native modules if needed
+          ],
+          use: {
+            loader: "babel-loader",
+            options: {
+              // Disable reading babel configuration
+              babelrc: false,
+              configFile: false,
+
+              // The configuration for compilation
+              presets: [
+                ["@babel/preset-env", { useBuiltIns: "usage" }],
+                "@babel/preset-react",
+                "@babel/preset-flow",
+                "@babel/preset-typescript"
+              ],
+              plugins: [
+                "@babel/plugin-proposal-class-properties",
+                '@babel/plugin-syntax-jsx',
+                "@babel/plugin-proposal-object-rest-spread"
+              ]
+            }
+          }
+        },
+        {
+          test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
+          type: 'asset/resource'
+        });
       // write resolve config for debug
       const webpackConfigPath = path.resolve(__dirname, './webpack.config.json');
       fs.writeFileSync(webpackConfigPath, JSON.stringify(webpackConfig, null, 2));
@@ -50,6 +104,7 @@ module.exports = {
   babel: {
     "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow", "@babel/preset-typescript"],
     "plugins": [
+      ['@babel/plugin-syntax-jsx', { "loose": true }],
       ["@babel/plugin-proposal-class-properties", { "loose": true }],
       ["@babel/plugin-proposal-object-rest-spread", { "loose": true }],
       ["@babel/plugin-transform-class-properties", { "loose": true }],

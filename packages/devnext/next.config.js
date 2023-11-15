@@ -51,7 +51,7 @@ const nextConfig = withExpo({
         test: /\.(js|jsx|mjs)$/,
         include: [
           // Add the path to the problematic module
-          // path.resolve('../../packages/ui/node_modules/@react-native/assets-registry/registry.js'),
+          path.resolve('../../packages/sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
           // Add other React Native modules if needed
         ],
         use: {
