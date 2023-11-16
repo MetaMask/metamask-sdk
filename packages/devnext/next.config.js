@@ -20,6 +20,7 @@ const nextConfig = withExpo({
     'expo-font',
     'expo-module-core',
     'expo-modules-core',
+    'react-native-jazzicon',
     "@expo/vector-icons",
     '@metamask/sdk-communication-layer',
     '@metamask/sdk',
