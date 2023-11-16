@@ -1,10 +1,5 @@
 import { MetaMaskSDK } from '../../../sdk';
-import { extractFavicon } from '../../../utils/extractFavicon';
-import { getBase64FromUrl } from '../../../utils/getBase64FromUrl';
 import { setupDappMetadata } from './setupDappMetadata';
-
-jest.mock('../../../utils/extractFavicon');
-jest.mock('../../../utils/getBase64FromUrl');
 
 describe('setupDappMetadata', () => {
   let instance: MetaMaskSDK;
@@ -13,39 +8,49 @@ describe('setupDappMetadata', () => {
     jest.clearAllMocks();
 
     instance = {
-      platformManager: {
-        isBrowser: jest.fn().mockReturnValue(true),
-      },
       options: {
         dappMetadata: {},
       },
     } as unknown as MetaMaskSDK;
   });
 
-  it('should call extractFavicon if conditions are met', async () => {
-    await setupDappMetadata(instance);
-    expect(extractFavicon).toHaveBeenCalled();
+  it('should attach dappMetadata to the instance if valid', async () => {
+    instance.options.dappMetadata = {
+      iconUrl: 'https://example.com/favicon.ico',
+      url: 'https://example.com',
+    };
+
+    setupDappMetadata(instance);
+
+    expect(instance.dappMetadata).toStrictEqual(instance.options.dappMetadata);
   });
 
-  it('should set base64Icon if favicon is extracted', async () => {
-    (extractFavicon as jest.Mock).mockReturnValue(
-      'http://favicon.com/icon.png',
+  it('should throw error if iconUrl does not start with http:// or https://', async () => {
+    instance.options.dappMetadata = {
+      iconUrl: 'ftp://example.com/favicon.ico',
+      url: 'https://example.com',
+    };
+
+    expect(() => setupDappMetadata(instance)).toThrow(
+      'Invalid dappMetadata.iconUrl: URL must start with http:// or https://',
     );
-    (getBase64FromUrl as jest.Mock).mockResolvedValue('base64data');
-
-    await setupDappMetadata(instance);
-
-    expect(instance.options.dappMetadata.base64Icon).toBe('base64data');
   });
 
-  it('should handle errors gracefully', async () => {
-    (extractFavicon as jest.Mock).mockReturnValue(
-      'http://favicon.com/icon.png',
+  it('should throw error if url does not start with http:// or https://', async () => {
+    instance.options.dappMetadata = {
+      iconUrl: 'https://example.com/favicon.ico',
+      url: 'ftp://example.com',
+    };
+
+    expect(() => setupDappMetadata(instance)).toThrow(
+      'Invalid dappMetadata.url: URL must start with http:// or https://',
     );
-    (getBase64FromUrl as jest.Mock).mockRejectedValue(new Error('Failed'));
+  });
 
-    await setupDappMetadata(instance);
+  it('should not throw an error if dappMetadata is not provided', async () => {
+    instance.options.dappMetadata =
+      undefined as unknown as MetaMaskSDK['options']['dappMetadata'];
 
-    expect(instance.options.dappMetadata.base64Icon).toBeUndefined();
+    expect(setupDappMetadata(instance)).toBeUndefined();
   });
 });
