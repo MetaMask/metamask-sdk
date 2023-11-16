@@ -1,13 +1,17 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import { IconSimplified } from '../icons/IconsSimplified';
+import { IconOriginal } from '../icons/IconOriginal';
+import Jazzicon from 'react-native-jazzicon';
 
 const getStyles = () => {
   return StyleSheet.create({
     buttonContainer: {
-      backgroundColor: '#E5E5E5',
+      // backgroundColor: '#E5E5E5',
       display: 'flex',
+      width: '100%',
       flexDirection: 'row',
       // center and vertically align
       justifyContent: 'center',
@@ -106,7 +110,7 @@ export const MetaMaskButton = ({
   connectedComponent,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 Props) => {
-  const { sdk, connected } = useSDK();
+  const { sdk, connected, error, account } = useSDK();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
   const [buttonLayout, setButtonLayout] = useState<ButtonLayout | null>(null);
@@ -114,6 +118,9 @@ Props) => {
   useEffect(() => {
     console.log('sdk', sdk);
     console.log('connected', connected);
+    if (!connected) {
+      setModalOpen(false);
+    }
   }, [sdk, connected]);
 
   const openModal = () => {
@@ -146,15 +153,95 @@ Props) => {
     event.stopPropagation(); // Prevent the press event from propagating to the full-screen view
   };
 
+  const getColors = () => {
+    const neutral500 = '#737373';
+    const orange500 = '#f97316';
+    const red500 = '#ef4444';
+    const blue500 = '#3b82f6';
+    const white = '#ffffff';
+
+    let bgColor = orange500;
+
+    if (!connected && error) {
+      bgColor = red500;
+    } else if (connected && theme === 'light') {
+      bgColor = white;
+    } else if (connected) {
+      bgColor = neutral500;
+    } else if (color === 'blue') {
+      bgColor = blue500;
+    } else if (color === 'white') {
+      bgColor = white;
+    }
+
+    return {
+      backgroundColor: bgColor,
+    };
+  };
+
+  const getShape = () => {
+    if (shape === 'rectangle') {
+      return { borderRadius: 0 };
+    } else if (shape === 'rounded-full') {
+      return { borderRadius: 9999 };
+    }
+
+    return { borderRadius: 8 };
+  };
+
+  const getIcon = () => {
+    if (icon === 'no-icon') {
+      return null;
+    } else if (icon === 'original') {
+      return <IconOriginal />;
+    }
+
+    return <IconSimplified color={color === 'white' ? 'orange' : 'white'} />;
+  };
+
   return (
     <>
       <Pressable
         onLayout={handleButtonLayout}
-        style={styles.buttonContainer}
+        style={[styles.buttonContainer, getShape(), getColors()]}
         onPress={connected ? openModal : connect}
       >
-        {/* <IconSimplified color='orange' style={{}} /> */}
-        <Text>{connected ? 'YEAH' : text}</Text>
+        <View style={{ borderWidth: 1, padding: 5 }}>
+          {connected ? (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                paddingRight: 15,
+                paddingLeft: 15,
+                // backgroundColor: 'red',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Jazzicon size={32} address={account} />
+              <Text
+                ellipsizeMode="middle"
+                numberOfLines={1}
+                style={{ paddingLeft: 10 }}
+              >
+                {account}
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {getIcon()}
+              <Text>{text}</Text>
+            </View>
+          )}
+        </View>
       </Pressable>
       {modalOpen && buttonLayout && (
         <Pressable style={styles.fullScreenModal} onPress={handleOutsidePress}>

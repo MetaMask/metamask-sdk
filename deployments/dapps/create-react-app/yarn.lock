@@ -3533,20 +3533,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.11.1":
-  version: 0.11.1
-  resolution: "@metamask/sdk-communication-layer@npm:0.11.1"
-  dependencies:
-    cross-fetch: ^3.1.5
-    date-fns: ^2.29.3
-    eciesjs: ^0.3.16
-    eventemitter2: ^6.4.5
-    socket.io-client: ^4.5.1
-    uuid: ^8.3.2
-  checksum: 560150a3b3ad79ef72f5ae9d3dee3447d0cc6590917b9bfe299f27db0393e98112f6fcc86bd07dc370c8f7d2be9cd52b6ef4c882cfbe8f5bd9a3da7d944ef872
-  languageName: node
-  linkType: hard
-
 "@metamask/sdk-communication-layer@npm:0.12.0, @metamask/sdk-communication-layer@npm:^0.12.0":
   version: 0.12.0
   resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
@@ -3561,18 +3547,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.11.1":
-  version: 0.11.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.11.1"
+"@metamask/sdk-communication-layer@npm:0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.1"
   dependencies:
-    "@emotion/react": ^11.10.6
-    "@emotion/styled": ^11.10.6
-    i18next: 22.5.1
-    qr-code-styling: ^1.6.0-rc.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-i18next: ^13.2.2
-  checksum: decd4f3ba7f2cc35361564e5e3d9da73f3efd31c75f842aec2c23358607bac28b46f71ee455a3409968ba233a8fbe0f29d0d7b7298b0296a3cb749e09a5ad288
+    bufferutil: ^4.0.8
+    cross-fetch: ^3.1.5
+    date-fns: ^2.29.3
+    eciesjs: ^0.3.16
+    eventemitter2: ^6.4.5
+    socket.io-client: ^4.5.1
+    utf-8-validate: ^6.0.3
+    uuid: ^8.3.2
+  checksum: 273340fbe8e677f603c5f4a91d6e2d692f85c9406ea4269da4eff1bade6b5c897b6f76749ba7cde59d10cc8a33a2912d8d1d3355d5fdcaf62b3dfe8d7e1cdaf2
   languageName: node
   linkType: hard
 
@@ -3591,6 +3578,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/sdk-install-modal-web@npm:0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.1"
+  dependencies:
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    i18next: 22.5.1
+    qr-code-styling: ^1.6.0-rc.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-i18next: ^13.2.2
+  checksum: c93d607a23d74e3b25602f6c13936e4dc4d9c834a86c412dc743369196d79831c6da5e2997207ee3214561c7b367e6e771d47389bbaa7df28b0f21a2d0445b74
+  languageName: node
+  linkType: hard
+
 "@metamask/sdk-react@npm:^0.12.0":
   version: 0.12.0
   resolution: "@metamask/sdk-react@npm:0.12.0"
@@ -3600,47 +3602,6 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
   checksum: 35941f41166929529148c92954fc4ed9caa63d31dac6015f8ba5ce3c930131dda646d61eeb98aa9bb2ace866ec420c780f2483dd3f1047cb23ad169af6de52c9
-  languageName: node
-  linkType: hard
-
-"@metamask/sdk@npm:^0.11.1":
-  version: 0.11.2
-  resolution: "@metamask/sdk@npm:0.11.2"
-  dependencies:
-    "@metamask/onboarding": ^1.0.1
-    "@metamask/post-message-stream": ^6.1.0
-    "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.11.1
-    "@metamask/sdk-install-modal-web": 0.11.1
-    "@react-native-async-storage/async-storage": ^1.17.11
-    "@types/dom-screen-wake-lock": ^1.0.0
-    bowser: ^2.9.0
-    cross-fetch: ^4.0.0
-    eciesjs: ^0.3.15
-    eth-rpc-errors: ^4.0.3
-    eventemitter2: ^6.4.7
-    extension-port-stream: ^2.0.1
-    i18next: 22.5.1
-    i18next-browser-languagedetector: ^7.1.0
-    obj-multiplex: ^1.0.0
-    pump: ^3.0.0
-    qrcode-terminal-nooctal: ^0.12.1
-    react-i18next: ^13.2.2
-    react-native-webview: ^11.26.0
-    readable-stream: ^2.3.7
-    rollup-plugin-visualizer: ^5.9.2
-    socket.io-client: ^4.5.1
-    util: ^0.12.4
-    uuid: ^8.3.2
-  peerDependencies:
-    react: ^18.2.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 237c97dbea9c328c2527915636e15c5a06b59f2abb4096e89fc73dd85bb62e9f77add5077c78e094400e2c1394bcc40eb6d428959f5ee305125dbf89e0dd500b
   languageName: node
   linkType: hard
 
@@ -3682,6 +3643,47 @@ __metadata:
     react-native:
       optional: true
   checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "@metamask/sdk@npm:0.12.1"
+  dependencies:
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/post-message-stream": ^6.1.0
+    "@metamask/providers": ^10.2.1
+    "@metamask/sdk-communication-layer": 0.12.1
+    "@metamask/sdk-install-modal-web": 0.12.1
+    "@react-native-async-storage/async-storage": ^1.17.11
+    "@types/dom-screen-wake-lock": ^1.0.0
+    bowser: ^2.9.0
+    cross-fetch: ^4.0.0
+    eciesjs: ^0.3.15
+    eth-rpc-errors: ^4.0.3
+    eventemitter2: ^6.4.7
+    extension-port-stream: ^2.0.1
+    i18next: 22.5.1
+    i18next-browser-languagedetector: ^7.1.0
+    obj-multiplex: ^1.0.0
+    pump: ^3.0.0
+    qrcode-terminal-nooctal: ^0.12.1
+    react-i18next: ^13.2.2
+    react-native-webview: ^11.26.0
+    readable-stream: ^2.3.7
+    rollup-plugin-visualizer: ^5.9.2
+    socket.io-client: ^4.5.1
+    util: ^0.12.4
+    uuid: ^8.3.2
+  peerDependencies:
+    react: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 3b71316670ae9558aed953b8240ed15612e92a7c65c9fd7537a6ec0fc73ead9d7300428163d25974860256d16e6830dba4a1e3307f916d4e38ad8c534838bf74
   languageName: node
   linkType: hard
 
@@ -4910,13 +4912,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/metamask@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@web3-onboard/metamask@npm:2.0.1"
+"@web3-onboard/metamask@npm:^2.0.2-alpha.2":
+  version: 2.0.2-alpha.2
+  resolution: "@web3-onboard/metamask@npm:2.0.2-alpha.2"
   dependencies:
-    "@metamask/sdk": ^0.11.1
+    "@metamask/sdk": ^0.12.1
     "@web3-onboard/common": ^2.3.3
-  checksum: 3af9b4735ea88017addd77f2198935966b6df5d324bc5d8a24809dc687a6f3a32f7d172c7851a6817820049dad5351848a938be3a14a256d445784419c0b9b54
+  checksum: 84446a614ee096aa09108213b6df466d1d48b0c49cf92852d1c059a8f508f043d320a119cdc5596209de6225afe3637dd66ace0c52b77a8f5ee957fefd9d559a
   languageName: node
   linkType: hard
 
@@ -6123,6 +6125,16 @@ __metadata:
     base64-js: ^1.3.1
     ieee754: ^1.2.1
   checksum: 5ad23293d9a731e4318e420025800b42bf0d264004c0286c8cc010af7a270c7a0f6522e84f54b9ad65cbd6db20b8badbfd8d2ebf4f80fa03dab093b89e68c3f9
+  languageName: node
+  linkType: hard
+
+"bufferutil@npm:^4.0.8":
+  version: 4.0.8
+  resolution: "bufferutil@npm:4.0.8"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 7e9a46f1867dca72fda350966eb468eca77f4d623407b0650913fadf73d5750d883147d6e5e21c56f9d3b0bdc35d5474e80a600b9f31ec781315b4d2469ef087
   languageName: node
   linkType: hard
 
@@ -12008,7 +12020,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp-build@npm:^4.2.0":
+"node-gyp-build@npm:^4.2.0, node-gyp-build@npm:^4.3.0":
   version: 4.6.1
   resolution: "node-gyp-build@npm:4.6.1"
   bin:
@@ -13751,7 +13763,7 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.12.0
+    "@metamask/sdk": ^0.12.1
     "@metamask/sdk-communication-layer": ^0.12.0
     "@metamask/sdk-react": ^0.12.0
     "@testing-library/jest-dom": ^5.16.5
@@ -13761,7 +13773,7 @@ __metadata:
     "@types/react": ^18.2.14
     "@types/react-dom": ^18.2.6
     "@web3-onboard/injected-wallets": ^2.10.9
-    "@web3-onboard/metamask": ^2.0.1
+    "@web3-onboard/metamask": ^2.0.2-alpha.2
     "@web3-onboard/react": ^2.8.13
     buffer: ^6.0.3
     crypto-browserify: ^3.12.0
@@ -16025,6 +16037,16 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0-rc
   checksum: f3df10af62625169d6a8cd8d4f38942dc6817aa27398fa7f474421fd574b0c4c83679b9d15f983f482c396ee1183416eb146814c81f44241e1480acd701ef018
+  languageName: node
+  linkType: hard
+
+"utf-8-validate@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "utf-8-validate@npm:6.0.3"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 

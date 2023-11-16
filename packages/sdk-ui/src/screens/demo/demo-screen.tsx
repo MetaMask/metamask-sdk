@@ -72,7 +72,12 @@ export const DemoScreen = () => {
           />
         </View>
         <View style={styles.componentContainer}>
-          <MetaMaskButton connectedType="separate-network-account" />
+          <MetaMaskButton
+            icon="original"
+            shape="rectangle"
+            theme="light"
+            color="white"
+          />
         </View>
       </View>
     </View>
