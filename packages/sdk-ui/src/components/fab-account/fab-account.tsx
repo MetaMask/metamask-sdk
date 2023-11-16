@@ -52,7 +52,7 @@ export const FABAccount = ({
   return (
     <AnimatedFAB
       icon={'plus'}
-      label={label ?? 'yeah baby'}
+      label={label ?? 'extended label'}
       extended={!!isExtended}
       onPress={() => {
         console.log('Pressed');

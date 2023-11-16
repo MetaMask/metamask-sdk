@@ -23,15 +23,14 @@ import {
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import {DEFAULT_SERVER_URL, MetaMaskSDKOptions} from '@metamask/sdk';
 import {MetaMaskProvider, useSDK} from '@metamask/sdk-react';
-import {FABAccount, First, IconSimplified} from '@metamask/sdk-ui';
+import {DemoScreen, FABAccount} from '@metamask/sdk-ui';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from './package.json';
 import {DAPPView} from './src/views/DappView';
-import {FAB} from 'react-native-paper';
-import {ActivityIndicator, MD2Colors} from 'react-native-paper';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -135,12 +134,6 @@ function App(): JSX.Element {
         backgroundColor={backgroundStyle.backgroundColor}
       />
       <ScrollView contentInsetAdjustmentBehavior="automatic">
-        <First />
-        {/* <FAB
-          icon="plus"
-          style={styles.fab}
-          onPress={() => console.log('Pressed')}
-        /> */}
         <View
           // eslint-disable-next-line react-native/no-inline-styles
           style={{
@@ -160,9 +153,10 @@ function App(): JSX.Element {
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}
           </Text>
-          {/* <DAPPView /> */}
-          <IconSimplified />
-          {}
+          <DAPPView />
+        </View>
+        <View style={styles.sectionContainer}>
+          <DemoScreen />
         </View>
       </ScrollView>
       <FABAccount />
@@ -198,7 +192,9 @@ const styles = StyleSheet.create({
 export const SafeApp = () => {
   return (
     <MetaMaskProvider sdkOptions={sdkOptions} debug={true}>
-      <App />
+      <SafeAreaProvider>
+        <App />
+      </SafeAreaProvider>
     </MetaMaskProvider>
   );
 };

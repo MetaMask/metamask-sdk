@@ -11,7 +11,7 @@ import {
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 import { View, Text } from 'react-native';
-import { First, ItemView } from '@metamask/sdk-ui';
+import { DemoScreen, First, ItemView } from '@metamask/sdk-ui';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -50,12 +50,8 @@ const WithProvider = () => {
           console.debug(`nothing to do here`);
         }}
       />
-      <View>
-        <Text>Test text</Text>
-      </View>
-      <First />
-      <ItemView processing={true} label="label" value="value" />
-      <App />
+      <DemoScreen />
+      {/* <App /> */}
     </MetaMaskProvider>
   );
 };

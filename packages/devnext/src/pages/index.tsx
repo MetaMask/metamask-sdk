@@ -1,5 +1,6 @@
+import { MetaMaskButton } from '@metamask/sdk-react-ui';
 import Link from 'next/link';
-import { FABAccount, First, IconSimplified, ItemView } from '@metamask/sdk-ui';
+import { DemoScreen } from '@metamask/sdk-ui';
 
 export default function Home() {
   return (
@@ -24,18 +25,11 @@ export default function Home() {
         </div>
         <hr />
         <div>
-          <h2>Testing UI Components</h2>
-          <div style={{ margin: 20 }}>
-            <First />
-          </div>
-          <div style={{ margin: 20, backgroundColor: 'black' }}>
-            <IconSimplified color={'white'} />
-            <IconSimplified color={'orange'} />
-          </div>
-          <div style={{ margin: 20 }}>
-            <ItemView processing={true} label="label" value="value" />
-          </div>
-          <FABAccount />
+          {/* <MetaMaskButton connectedType="account-balance" /> */}
+          {/* <MetaMaskButton connectedType="custom-text" /> */}
+        </div>
+        <div>
+          <DemoScreen />
         </div>
       </div>
     </div>

@@ -8,7 +8,6 @@ export const First = () => {
   const { account } = useSDK();
   return (
     <View>
-      <Text>Testing cross-platform component to validate the library</Text>
       <Text>account: {account}</Text>
       <Button
         mode="outlined"
