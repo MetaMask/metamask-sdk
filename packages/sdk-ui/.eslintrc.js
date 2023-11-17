@@ -11,5 +11,12 @@ module.exports = {
     project: [path.resolve(__dirname, 'tsconfig.json')],
   },
   ignorePatterns: ['*.js'],
-  rules: {},
+  rules: {
+    "react-hooks/exhaustive-deps": [
+      "error",
+      {
+        "additionalHooks": "(useAnimatedStyle|useDerivedValue|useAnimatedProps)"
+      }
+    ]
+  }
 };

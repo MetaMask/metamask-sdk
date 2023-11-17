@@ -52,9 +52,12 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
   );
   const { bottom: bottomNotchSpacing } = useSafeAreaInsets();
   const translateYProgress = useSharedValue(screenHeight);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateYProgress.value }],
-  }));
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ translateY: translateYProgress.value }],
+    }),
+    [translateYProgress],
+  );
   const baseStyle: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>> =
     useMemo(() => [styles.base, animatedStyle], [animatedStyle]);
 
