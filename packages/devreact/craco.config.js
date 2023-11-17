@@ -29,12 +29,16 @@ module.exports = {
   },
   webpack: {
     configure: (webpackConfig) => {
+      const scopePluginIndex = webpackConfig.resolve.plugins.findIndex(
+        ({ constructor }) => constructor && constructor.name === 'ModuleScopePlugin'
+      );
+
+      webpackConfig.resolve.plugins.splice(scopePluginIndex, 1);
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
         alias: {
           ...webpackConfig.resolve.alias,
-          // 'react-native$': require.resolve('react-native-web'),
-          // 'react-native/Libraries/Image/AssetRegistry': path.resolve(__dirname, 'mocks/AssetRegistry.js'),
+          'react': require.resolve('react'),
         },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
@@ -42,20 +46,6 @@ module.exports = {
         },
       };
       webpackConfig.module.rules.push(
-        // {
-        //   test: /\.(js|jsx|mjs)$/,
-        //   include: [
-        //     // Add the path to the problematic module
-        //     path.resolve('../sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
-        //     // Add other React Native modules if needed
-        //   ],
-        //   use: {
-        //     loader: 'babel-loader',
-        //     options: {
-        //       presets: ['@babel/preset-react', '@babel/preset-flow'],
-        //     },
-        //   },
-        // },
         {
           test: /\.ttf$/,
           loader: "url-loader", // or directly file-loader

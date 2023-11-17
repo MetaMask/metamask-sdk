@@ -6996,6 +6996,7 @@ __metadata:
     eslint: ^8.53.0
     eslint-config-prettier: ^9.0.0
     eslint-plugin-prettier: ^5.0.1
+    eslint-plugin-storybook: ^0.6.15
     expo: ^49.0.17
     expo-clipboard: ^4.5.0
     i18n-js: ^4.3.2
@@ -7007,7 +7008,6 @@ __metadata:
     react-dom: ^18.2.0
     react-i18next: ^13.3.1
     react-native: ^0.72.6
-    react-native-async-storage: ^0.0.1
     react-native-device-info: ^10.11.0
     react-native-gesture-handler: ^2.13.4
     react-native-jazzicon: ^0.1.2
@@ -7024,6 +7024,8 @@ __metadata:
     typescript: ^5.2.2
   peerDependencies:
     react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native-web: ^0.19.9
   languageName: unknown
   linkType: soft
 
@@ -10556,6 +10558,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/csf@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "@storybook/csf@npm:0.0.1"
+  dependencies:
+    lodash: ^4.17.15
+  checksum: fb57fa028b08a51edf44e1a2bf4be40a4607f5c6ccb58aae8924f476a42b9bbd61a0ad521cfc82196f23e6a912caae0a615e70a755e6800b284c91c509fd2de6
+  languageName: node
+  linkType: hard
+
 "@storybook/csf@npm:^0.1.0":
   version: 0.1.1
   resolution: "@storybook/csf@npm:0.1.1"
@@ -13010,7 +13021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:5.62.0, @typescript-eslint/utils@npm:^5.10.0, @typescript-eslint/utils@npm:^5.58.0":
+"@typescript-eslint/utils@npm:5.62.0, @typescript-eslint/utils@npm:^5.10.0, @typescript-eslint/utils@npm:^5.45.0, @typescript-eslint/utils@npm:^5.58.0":
   version: 5.62.0
   resolution: "@typescript-eslint/utils@npm:5.62.0"
   dependencies:
@@ -19870,6 +19881,20 @@ __metadata:
   peerDependencies:
     eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
   checksum: b4c3d76390b0ae6b6f9fed78170604cc2c04b48e6778a637db339e8e3911ec9ef22510b0ae77c429698151d0f1b245f282177f384105b6830e7b29b9c9b26610
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-storybook@npm:^0.6.15":
+  version: 0.6.15
+  resolution: "eslint-plugin-storybook@npm:0.6.15"
+  dependencies:
+    "@storybook/csf": ^0.0.1
+    "@typescript-eslint/utils": ^5.45.0
+    requireindex: ^1.1.0
+    ts-dedent: ^2.2.0
+  peerDependencies:
+    eslint: ">=6"
+  checksum: e2c4d7be3e695c88d7194c363fba8ac644b36583bf9d608aa59dcd53cc5e422f7828611ee49c7934639ce827c0206d33fa94b3ea452ffbd2c8e7254ed90bc412
   languageName: node
   linkType: hard
 
@@ -31694,15 +31719,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-async-storage@npm:^0.0.1":
-  version: 0.0.1
-  resolution: "react-native-async-storage@npm:0.0.1"
-  peerDependencies:
-    react-native: ">=0.5.0"
-  checksum: 60a1abd5c8a872997949dff7542655f3ef34cb6594573402849a1a127aba6c980c0ad6a7ab2fa786456055b2ba13d4daa78b513544b164e009941c5c88192e5e
-  languageName: node
-  linkType: hard
-
 "react-native-background-timer@npm:^2.4.1":
   version: 2.4.1
   resolution: "react-native-background-timer@npm:2.4.1"
@@ -32686,6 +32702,13 @@ __metadata:
     rc: ~1.2.7
     resolve: ~1.7.1
   checksum: 99b420a02e7272717153cdf75891cbb133c02c04b287721eb1bdb0668b6a98aa1da38c08d8148fc8b1443a668d939eeb622d390538ac8da17b18a977ebe998ae
+  languageName: node
+  linkType: hard
+
+"requireindex@npm:^1.1.0":
+  version: 1.2.0
+  resolution: "requireindex@npm:1.2.0"
+  checksum: 50d8b10a1ff1fdf6aea7a1870bc7bd238b0fb1917d8d7ca17fd03afc38a65dcd7a8a4eddd031f89128b5f0065833d5c92c4fef67f2c04e8624057fe626c9cf94
   languageName: node
   linkType: hard
 

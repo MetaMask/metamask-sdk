@@ -37,7 +37,11 @@ const config: StorybookConfig = {
       ),
       'react': path.resolve(
         __dirname,
-        '../node_modules/react'
+        '../../devreact/node_modules/react'
+      ),
+      'react-dom': path.resolve(
+        __dirname,
+        '../../devreact/node_modules/react-dom'
       ),
       'react-native-paper': path.resolve(__dirname, '../node_modules/react-native-paper'),
       '@metamask/ui': path.resolve(__dirname, "../src"),
