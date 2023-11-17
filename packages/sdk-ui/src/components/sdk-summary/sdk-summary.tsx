@@ -1,16 +1,18 @@
-import { StyleSheet, View } from 'react-native';
 import React from 'react';
-import { useSDK } from '@metamask/sdk-react';
-import { Button, Text } from 'react-native-paper';
-import Jazzicon from 'react-native-jazzicon';
 import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
+import Jazzicon from 'react-native-jazzicon';
+import { Button, Text } from 'react-native-paper';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
+import { SDKState, useSDK } from '@metamask/sdk-react';
 
-export interface SDKSummaryProps {}
-export const SDKSummary = ({}: SDKSummaryProps) => {
+export interface SDKSummaryProps {
+  _sdkState?: SDKState;
+}
+export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
   const { t } = useTranslation('sdk-summary');
-
-  const { account, balance, chainId, sdk } = useSDK();
+  const sdkState = useSDK();
+  const { account, balance, chainId, sdk } = _sdkState ?? sdkState;
   return (
     <View style={styles.container}>
       <View style={styles.header}>

@@ -6978,6 +6978,7 @@ __metadata:
     "@react-native-community/eslint-config": ^3.2.0
     "@storybook/addon-essentials": ^7.5.3
     "@storybook/addon-interactions": ^7.5.3
+    "@storybook/addon-jest": ^7.5.3
     "@storybook/addon-knobs": ^7.0.2
     "@storybook/addon-links": ^7.5.3
     "@storybook/addon-react-native-web": ^0.0.21
@@ -6991,6 +6992,7 @@ __metadata:
     "@types/react-native-vector-icons": ^6.4.17
     "@typescript-eslint/eslint-plugin": ^6.10.0
     "@typescript-eslint/parser": ^6.10.0
+    babel-jest: ^29.7.0
     cryptocurrency-icons: ^0.18.1
     enzyme: ^3.11.0
     eslint: ^8.53.0
@@ -7002,6 +7004,7 @@ __metadata:
     i18n-js: ^4.3.2
     i18next: ^23.6.0
     intl-pluralrules: ^2.0.1
+    jest: ^29.7.0
     lodash: ^4.17.21
     prettier: ^3.0.3
     react: ^18.2.0
@@ -7021,6 +7024,9 @@ __metadata:
     react-test-renderer: ^18.2.0
     rimraf: ^5.0.5
     storybook: ^7.5.3
+    storybook-addon-deep-controls: ^0.3.0
+    storybook-react-context: ^0.6.0
+    ts-jest: ^29.1.1
     typescript: ^5.2.2
   peerDependencies:
     react: ^18.2.0
@@ -9824,6 +9830,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@storybook/addon-jest@npm:^7.5.3":
+  version: 7.5.3
+  resolution: "@storybook/addon-jest@npm:7.5.3"
+  dependencies:
+    "@storybook/client-logger": 7.5.3
+    "@storybook/components": 7.5.3
+    "@storybook/core-events": 7.5.3
+    "@storybook/global": ^5.0.0
+    "@storybook/manager-api": 7.5.3
+    "@storybook/preview-api": 7.5.3
+    "@storybook/theming": 7.5.3
+    react-resize-detector: ^7.1.2
+    tiny-invariant: ^1.3.1
+    upath: ^2.0.1
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 853fed793425b183e19aa4efb5d9bf62fe65973444a3d7a28f01dcdc9807b087bd70c1d95bd68946e0549b4f4124df1dea9302d236404c36871b8aa57bb2f8d7
+  languageName: node
+  linkType: hard
+
 "@storybook/addon-knobs@npm:^7.0.2":
   version: 7.0.2
   resolution: "@storybook/addon-knobs@npm:7.0.2"
@@ -9994,7 +10026,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@storybook/addons@npm:6.5.16, @storybook/addons@npm:^6.5.14":
+"@storybook/addons@npm:6.5.16, @storybook/addons@npm:^6.3.6, @storybook/addons@npm:^6.5.14":
   version: 6.5.16
   resolution: "@storybook/addons@npm:6.5.16"
   dependencies:
@@ -23384,7 +23416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-plain-object@npm:5.0.0":
+"is-plain-object@npm:5.0.0, is-plain-object@npm:^5.0.0":
   version: 5.0.0
   resolution: "is-plain-object@npm:5.0.0"
   checksum: e32d27061eef62c0847d303125440a38660517e586f2f3db7c9d179ae5b6674ab0f469d519b2e25c147a1a3bc87156d0d5f4d8821e0ce4a9ee7fe1fcf11ce45c
@@ -32158,6 +32190,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-resize-detector@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "react-resize-detector@npm:7.1.2"
+  dependencies:
+    lodash: ^4.17.21
+  peerDependencies:
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 55f4abad7f7523d16b081b5ab20f75c539a54a08253ce7e9df473d48386f42ceca6c31584ba9fa26e3528b498ef6685ec77fb9a22cffc97df05fb326d0bf1b26
+  languageName: node
+  linkType: hard
+
 "react-scripts@npm:5.0.1":
   version: 5.0.1
   resolution: "react-scripts@npm:5.0.1"
@@ -34365,6 +34409,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"storybook-addon-deep-controls@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "storybook-addon-deep-controls@npm:0.3.0"
+  peerDependencies:
+    "@storybook/addon-controls": 7.x.x
+    storybook: 7.x.x
+  checksum: 9227920e5b6fbf804052578c3d407e53112ccfdcba458f7ae08e5ac6f29dff9e8e70180d970023208b1673ebab38b3408ee2b7a6d4a407a3ccce7a27475cd23f
+  languageName: node
+  linkType: hard
+
+"storybook-react-context@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "storybook-react-context@npm:0.6.0"
+  dependencies:
+    "@storybook/addons": ^6.3.6
+    is-plain-object: ^5.0.0
+    react: ^17.0.2
+  checksum: 611dadd38ada786a9eac7614dc87fd6d0ed40d410a9fd162d4f4632c8b96a93d81268a2f1aaff9941420dae871e951bf7588a1ee056d51b6074db2fa6277b5e6
+  languageName: node
+  linkType: hard
+
 "storybook@npm:^7.5.3":
   version: 7.5.3
   resolution: "storybook@npm:7.5.3"
@@ -35611,7 +35676,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-jest@npm:^29.0.3":
+"ts-jest@npm:^29.0.3, ts-jest@npm:^29.1.1":
   version: 29.1.1
   resolution: "ts-jest@npm:29.1.1"
   dependencies:
@@ -36277,6 +36342,13 @@ __metadata:
   version: 1.2.0
   resolution: "upath@npm:1.2.0"
   checksum: 4c05c094797cb733193a0784774dbea5b1889d502fc9f0572164177e185e4a59ba7099bf0b0adf945b232e2ac60363f9bf18aac9b2206fb99cbef971a8455445
+  languageName: node
+  linkType: hard
+
+"upath@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "upath@npm:2.0.1"
+  checksum: 2db04f24a03ef72204c7b969d6991abec9e2cb06fb4c13a1fd1c59bc33b46526b16c3325e55930a11ff86a77a8cbbcda8f6399bf914087028c5beae21ecdb33c
   languageName: node
   linkType: hard
 

@@ -1,3 +1,4 @@
+import ethIcon from 'cryptocurrency-icons/32/color/eth.png';
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import Jazzicon from 'react-native-jazzicon';
@@ -13,7 +14,6 @@ import { MetaMaskButton } from '../../components/metamask-button/metamask-button
 import Button, {
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
-import p from 'cryptocurrency-icons/32/color/eth.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -55,7 +55,7 @@ export const PreviewScreen = () => {
         </View>
         <View style={styles.componentContainer}>
           <Text>gere now</Text>
-          <Image style={{ width: 50, height: 50 }} source={p} />
+          <Image style={{ width: 50, height: 50 }} source={ethIcon} />
           <Button
             label="test"
             variant={ButtonVariants.Primary}

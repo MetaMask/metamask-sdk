@@ -10,12 +10,12 @@ export interface ConnectButtonProps {
   text?: MetaMaskButtonProps['text'];
   containerStyle?: StyleProp<ViewStyle>;
 }
-export default function ConnectButton({
+export const ConnectButton = ({
   icon,
   text = 'Connect MetaMask',
   color,
   containerStyle,
-}: ConnectButtonProps) {
+}: ConnectButtonProps) => {
   const getIcon = () => {
     if (icon === 'no-icon') {
       return null;
@@ -40,7 +40,7 @@ export default function ConnectButton({
       </View>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
