@@ -21,6 +21,10 @@
     }
   },
   "include": [
-    "./src/"
+    "./src/","./storybook/"
+  ],
+  "exclude": [
+    "./src/**/*.test.tsx",
+    "./src/**/*.test.ts",
   ]
 }

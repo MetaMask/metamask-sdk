@@ -12,7 +12,7 @@ import generateTestId from '../../../../../../utils/generateTestId';
 import { NETWORK_AVATAR_IMAGE_ID } from './../../../../../../constants/test-ids';
 import stylesheet from './AvatarNetwork.styles';
 import { AvatarNetworkProps } from './AvatarNetwork.types';
-import { useStyles } from '../../../../../../hooks/useStyles';
+import { useStyles } from '../../../../../hooks/useStyles';
 
 const AvatarNetwork = ({
   size = AvatarSize.Md,

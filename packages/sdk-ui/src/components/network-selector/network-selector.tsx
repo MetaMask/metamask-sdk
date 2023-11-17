@@ -1,15 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import { AvatarVariant } from '../../design-system/components/Avatars/Avatar';
-import Cell, { CellVariant } from '../../design-system/components/Cells/Cell';
+// import Cell, { CellVariant } from '../../design-system/components/Cells/Cell';
 
 // Internal dependencies
 import { useSDK } from '@metamask/sdk-react';
 import { Text } from 'react-native-paper';
-import styles from './NetworkSelector.styles';
-
-const t = require('node_modules/cryptocurrency-icons/svg/color/eth.svg');
 
 export interface NetworkSelectorProps {
   showTestNetworks: boolean;
@@ -25,18 +21,19 @@ const NetworkSelector = ({ showTestNetworks }: NetworkSelectorProps) => {
   const renderMainnet = () => {
     const mainnetName = 'Ethereum';
     return (
-      <Cell
-        variant={CellVariant.Select}
-        title={mainnetName}
-        avatarProps={{
-          variant: AvatarVariant.Network,
-          name: mainnetName,
-          imageSource: t,
-        }}
-        isSelected={chainId === '0x1'}
-        onPress={() => onNetworkChange(mainnetName)}
-        style={styles.networkCell}
-      />
+      // <Cell
+      //   variant={CellVariant.Select}
+      //   title={mainnetName}
+      //   avatarProps={{
+      //     variant: AvatarVariant.Network,
+      //     name: mainnetName,
+      //     imageSource: t,
+      //   }}
+      //   isSelected={chainId === '0x1'}
+      //   onPress={() => onNetworkChange(mainnetName)}
+      //   style={styles.networkCell}
+      // />
+      <Text>{mainnetName}</Text>
     );
   };
 
