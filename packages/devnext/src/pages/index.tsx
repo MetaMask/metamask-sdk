@@ -1,6 +1,6 @@
 import { MetaMaskButton } from '@metamask/sdk-react-ui';
 import Link from 'next/link';
-import { DemoScreen } from '@metamask/sdk-ui';
+import { PreviewScreen } from '@metamask/sdk-ui';
 
 export default function Home() {
   return (
@@ -29,7 +29,7 @@ export default function Home() {
           {/* <MetaMaskButton connectedType="custom-text" /> */}
         </div>
         <div>
-          <DemoScreen />
+          <PreviewScreen />
         </div>
       </div>
     </div>

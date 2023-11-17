@@ -23,11 +23,10 @@ import {
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import {DEFAULT_SERVER_URL, MetaMaskSDKOptions} from '@metamask/sdk';
 import {MetaMaskProvider, useSDK} from '@metamask/sdk-react';
-import {DemoScreen, FABAccount} from '@metamask/sdk-ui';
+import {PreviewScreen, FABAccount, UIProvider} from '@metamask/sdk-ui';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import {SafeAreaProvider} from 'react-native-safe-area-context';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from './package.json';
 import {DAPPView} from './src/views/DappView';
@@ -68,7 +67,7 @@ const sdkOptions: MetaMaskSDKOptions = {
   enableDebug: true,
   useDeeplink,
   dappMetadata: {
-    url: 'devreactnative',
+    url: 'http://devreactnative',
     name: 'devreactnative',
   },
   storage: {
@@ -156,7 +155,7 @@ function App(): JSX.Element {
           <DAPPView />
         </View>
         <View style={styles.sectionContainer}>
-          <DemoScreen />
+          <PreviewScreen />
         </View>
       </ScrollView>
       <FABAccount />
@@ -192,9 +191,9 @@ const styles = StyleSheet.create({
 export const SafeApp = () => {
   return (
     <MetaMaskProvider sdkOptions={sdkOptions} debug={true}>
-      <SafeAreaProvider>
+      <UIProvider>
         <App />
-      </SafeAreaProvider>
+      </UIProvider>
     </MetaMaskProvider>
   );
 };

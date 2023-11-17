@@ -1,10 +1,10 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
-import { Text } from 'react-native-paper';
-import { IconSimplified } from '../icons/IconsSimplified';
-import { IconOriginal } from '../icons/IconOriginal';
-import Jazzicon from 'react-native-jazzicon';
+import { Pressable, StyleSheet } from 'react-native';
+import { Modal, Portal } from 'react-native-paper';
+import ConnectButton from '../connect-button/connect-button';
+import ConnectedButton from '../connected-button/connected-button';
+import { SDKSummary } from '../sdk-summary-modal/sdk-summary-modal';
 
 const getStyles = () => {
   return StyleSheet.create({
@@ -13,27 +13,29 @@ const getStyles = () => {
       display: 'flex',
       width: '100%',
       flexDirection: 'row',
+      borderWidth: 1,
       // center and vertically align
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 5,
+      padding: 10,
     },
     fullScreenModal: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      zIndex: 999,
-      backgroundColor: 'transparent', // Transparent background
+      // center modal in screen
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      // position: 'absolute',
+      // top: 0,
+      // left: 0,
+      // right: 0,
+      // bottom: 0,
+      // zIndex: 999,
+      // backgroundColor: 'transparent', // Transparent background
     },
     modalContainer: {
-      position: 'absolute',
-      top: 50, // Adjust as needed
-      left: 0,
-      right: 0,
+      marginLeft: 20,
+      marginRight: 20,
       backgroundColor: 'white',
-      width: '100%',
       zIndex: 1000,
       padding: 10,
       borderRadius: 5,
@@ -48,10 +50,6 @@ const getStyles = () => {
       shadowRadius: 3.84,
       elevation: 5,
     },
-    closeButton: {
-      borderWidth: 1,
-      padding: 5,
-    },
   });
 };
 
@@ -60,7 +58,7 @@ export interface Account {
   balance?: string;
 }
 
-interface Props {
+export interface MetaMaskButtonProps {
   color?: 'blue' | 'white' | 'orange';
   theme?: 'dark' | 'light';
   shape?: 'rectangle' | 'rounded' | 'rounded-full';
@@ -109,7 +107,7 @@ export const MetaMaskButton = ({
   wrongNetworkText = 'Switch network',
   connectedComponent,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
-Props) => {
+MetaMaskButtonProps) => {
   const { sdk, connected, error, account } = useSDK();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
@@ -143,14 +141,6 @@ Props) => {
   const handleButtonLayout = (event) => {
     const { x, y, width, height } = event.nativeEvent.layout;
     setButtonLayout({ x, y, width, height });
-  };
-
-  const handleOutsidePress = () => {
-    closeModal();
-  };
-
-  const handleModalPress = (event: any) => {
-    event.stopPropagation(); // Prevent the press event from propagating to the full-screen view
   };
 
   const getColors = () => {
@@ -189,79 +179,33 @@ Props) => {
     return { borderRadius: 8 };
   };
 
-  const getIcon = () => {
-    if (icon === 'no-icon') {
-      return null;
-    } else if (icon === 'original') {
-      return <IconOriginal />;
-    }
-
-    return <IconSimplified color={color === 'white' ? 'orange' : 'white'} />;
-  };
-
   return (
     <>
       <Pressable
-        onLayout={handleButtonLayout}
         style={[styles.buttonContainer, getShape(), getColors()]}
         onPress={connected ? openModal : connect}
       >
-        <View style={{ borderWidth: 1, padding: 5 }}>
-          {connected ? (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                paddingRight: 15,
-                paddingLeft: 15,
-                // backgroundColor: 'red',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Jazzicon size={32} address={account} />
-              <Text
-                ellipsizeMode="middle"
-                numberOfLines={1}
-                style={{ paddingLeft: 10 }}
-              >
-                {account}
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              {getIcon()}
-              <Text>{text}</Text>
-            </View>
-          )}
-        </View>
+        {connected ? (
+          <ConnectedButton
+            containerStyle={[buttonStyle, getColors()]}
+            balance={0}
+            active={modalOpen}
+            network={'Ethereum'}
+            address={account ?? ''}
+          />
+        ) : (
+          <ConnectButton icon={icon} color={color} />
+        )}
       </Pressable>
-      {modalOpen && buttonLayout && (
-        <Pressable style={styles.fullScreenModal} onPress={handleOutsidePress}>
-          <View
-            style={[
-              styles.modalContainer,
-              { top: buttonLayout.y + buttonLayout.height }, // Position below the button
-            ]}
-            onStartShouldSetResponder={() => true} // Capture touch events
-            onResponderRelease={handleModalPress} // Handle touch release
-          >
-            <Text>Option 1</Text>
-            <Text>Option 2</Text>
-            <Text>Option 3</Text>
-            <Pressable onPress={closeModal} style={styles.closeButton}>
-              <Text>Close</Text>
-            </Pressable>
-          </View>
-        </Pressable>
-      )}
+      <Portal>
+        <Modal
+          visible={modalOpen}
+          onDismiss={closeModal}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <SDKSummary />
+        </Modal>
+      </Portal>
     </>
   );
 };

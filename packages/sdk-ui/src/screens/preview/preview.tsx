@@ -1,6 +1,8 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
+import Jazzicon from 'react-native-jazzicon';
 import { Text } from 'react-native-paper';
+import { AddressCopyButton } from '../../components/address-copy-button/address-copy-button';
 import { BalanceConversionText } from '../../components/balance-conversion-text/balance-conversion-text';
 import { First } from '../../components/first/first';
 import { IconOriginal } from '../../components/icons/IconOriginal';
@@ -8,8 +10,10 @@ import { IconWrongNetwork } from '../../components/icons/IconWrongNetwork';
 import { IconSimplified } from '../../components/icons/IconsSimplified';
 import { ItemView } from '../../components/item-view/item-view';
 import { MetaMaskButton } from '../../components/metamask-button/metamask-button';
-import { AddressCopyButton } from '../../components/address-copy-button/address-copy-button';
-import Jazzicon from 'react-native-jazzicon';
+import Button, {
+  ButtonVariants,
+} from '../../design-system/components/Buttons/Button';
+import p from 'cryptocurrency-icons/32/color/eth.png';
 
 const styles = StyleSheet.create({
   container: {
@@ -28,7 +32,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export const DemoScreen = () => {
+export const PreviewScreen = () => {
   return (
     <View style={{ width: '100%' }}>
       <Text>Testing UI cross platform components</Text>
@@ -48,6 +52,16 @@ export const DemoScreen = () => {
         </View>
         <View style={styles.componentContainer}>
           <IconWrongNetwork />
+        </View>
+        <View style={styles.componentContainer}>
+          <Text>gere now</Text>
+          <Image style={{ width: 50, height: 50 }} source={p} />
+          <Button
+            label="test"
+            variant={ButtonVariants.Primary}
+            onPress={() => false}
+          />
+          <Text>{ButtonVariants.Primary}</Text>
         </View>
         <View style={styles.componentContainer}>
           <Jazzicon
