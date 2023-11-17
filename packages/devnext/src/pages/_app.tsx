@@ -12,6 +12,7 @@ import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
 import '../styles/globals.css';
 import '../styles/icons.css';
 import { Layout } from '../components/layout';
+import { UIProvider } from '@metamask/sdk-ui';
 
 config.autoAddCss = false;
 
@@ -64,9 +65,11 @@ export default function App({ Component, pageProps }: AppProps) {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <SDKConfigProvider>
         <WithSDKConfig>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <UIProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </UIProvider>
         </WithSDKConfig>
       </SDKConfigProvider>
     </SafeAreaProvider>

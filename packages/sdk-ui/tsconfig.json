@@ -10,9 +10,10 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "composite": true,
+    "resolveJsonModule": true,
     "noEmit": false,
     "strict": true,
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": true,
     "paths": {
       "@metamask/sdk-ui": ["./src/index"],

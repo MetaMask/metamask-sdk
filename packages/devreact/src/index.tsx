@@ -11,7 +11,7 @@ import {
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 import { View, Text } from 'react-native';
-import { DemoScreen, First, ItemView } from '@metamask/sdk-ui';
+import { PreviewScreen, First, ItemView, UIProvider } from '@metamask/sdk-ui';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -50,7 +50,7 @@ const WithProvider = () => {
           console.debug(`nothing to do here`);
         }}
       />
-      <DemoScreen />
+      <PreviewScreen />
       {/* <App /> */}
     </MetaMaskProvider>
   );
@@ -60,7 +60,9 @@ const WithSDKConfig = () => {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <SDKConfigProvider>
-        <WithProvider />
+        <UIProvider>
+          <WithProvider />
+        </UIProvider>
       </SDKConfigProvider>
     </SafeAreaProvider>
   );

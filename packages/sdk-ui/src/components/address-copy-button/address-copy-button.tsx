@@ -1,6 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { IconButton, Snackbar } from 'react-native-paper';
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
+import { IconButton, Snackbar, Text } from 'react-native-paper';
 
 const sizeMap = {
   xs: 12,
@@ -12,16 +18,19 @@ const sizeMap = {
 
 interface AddressCopyButtonProps {
   address: string;
+  showAddress?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  containerStyle?: StyleProp<ViewStyle>;
   handleCopy?: (_: string) => void;
 }
 
 export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
   address,
   size = 'sm',
+  showAddress = true,
+  containerStyle,
   handleCopy,
 }) => {
-  const [copied, setCopied] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const handleCopied = useCallback(() => {
@@ -29,35 +38,45 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
     if (!handleCopy) {
       console.warn(`No handleCopy function provided for address ${address}`);
     }
-    setCopied(true);
     setVisible(true);
     setTimeout(() => {
-      setCopied(false);
       setVisible(false);
     }, 1000);
   }, [address, handleCopy]);
 
   return (
-    <View style={styles.center}>
-      <IconButton
-        icon="content-copy"
-        size={sizeMap[size]}
-        onPress={handleCopied}
-      />
+    <View style={[styles.container, containerStyle]}>
+      <Pressable style={styles.pressable} onPress={handleCopied}>
+        {showAddress && (
+          <Text ellipsizeMode="middle" numberOfLines={1} style={styles.address}>
+            {address}
+          </Text>
+        )}
+        <IconButton icon="content-copy" size={sizeMap[size]} />
+      </Pressable>
       <Snackbar
         visible={visible}
         onDismiss={() => setVisible(false)}
         duration={1000}
       >
-        {copied ? 'Copied!' : 'Copy address to clipboard'}
+        {'Copied to clipboard'}
       </Snackbar>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  center: {
+  container: {
+    width: '80%',
+  },
+  pressable: {
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    flexDirection: 'row',
+    padding: 5,
+    flexShrink: 1,
+    borderWidth: 1,
   },
+  address: {},
 });
