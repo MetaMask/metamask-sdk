@@ -35,7 +35,7 @@ export interface EventHandlerProps {
   sdk?: MetaMaskSDK;
 }
 
-const initProps: {
+export interface SDKState {
   sdk?: MetaMaskSDK;
   ready: boolean;
   connected: boolean;
@@ -50,7 +50,9 @@ const initProps: {
   account?: string;
   status?: ServiceStatus;
   rpcHistory?: RPCMethodCache;
-} = {
+}
+
+const initProps: SDKState = {
   ready: false,
   extensionActive: false,
   connected: false,
