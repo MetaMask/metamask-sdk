@@ -1,48 +1,20 @@
-// Third party dependencies.
 import React from 'react';
-import { View } from 'react-native';
-import { select } from '@storybook/addon-knobs';
-import { storiesOf } from '@storybook/react-native';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../constants/storybook.constants';
-import BadgeNetworkStory, {
-  getBadgeNetworkStoryProps,
-} from './variants/BadgeNetwork/BadgeNetwork.stories';
-import BadgeStatusStory, {
-  getBadgeStatusStoryProps,
-} from './variants/BadgeStatus/BadgeStatus.stories';
-
-// Internal dependencies.
-import { BadgeVariant, BadgeProps } from './Badge.types';
 import Badge from './Badge';
 
-export const getBadgeStoryProps = (): BadgeProps => {
-  let badgeProps: BadgeProps;
+import { Meta } from '@storybook/react';
+import { View } from 'react-native';
+import { BadgeProps, BadgeVariant } from './Badge.types';
+import BadgeNetwork from './variants/BadgeNetwork';
+import { SAMPLE_BADGENETWORK_PROPS } from './variants/BadgeNetwork/BadgeNetwork.constants';
+import BadgeStatus from './variants/BadgeStatus';
+import { BadgeStatusState } from './variants/BadgeStatus/BadgeStatus.types';
 
-  const badgeVariantSelector = select(
-    'variant',
-    BadgeVariant,
-    BadgeVariant.Network,
-    storybookPropsGroupID,
-  );
-  switch (badgeVariantSelector) {
-    case BadgeVariant.Network:
-      badgeProps = {
-        ...getBadgeNetworkStoryProps(),
-        variant: BadgeVariant.Network,
-      };
-      break;
-    case BadgeVariant.Status:
-      badgeProps = {
-        ...getBadgeStatusStoryProps(),
-        variant: BadgeVariant.Status,
-      };
-      break;
-  }
-  return badgeProps;
-};
-const BadgeStory = () => (
+export default {
+  title: 'Component Library/Badges',
+  component: Badge,
+} as Meta<BadgeProps>;
+
+export const Network = () => (
   <View
     // eslint-disable-next-line react-native/no-inline-styles
     style={{
@@ -50,13 +22,21 @@ const BadgeStory = () => (
       width: 50,
     }}
   >
-    <Badge {...getBadgeStoryProps()} />
+    <BadgeNetwork {...SAMPLE_BADGENETWORK_PROPS} />
   </View>
 );
 
-storiesOf('Component Library / Badges', module)
-  .add('Badge', BadgeStory)
-  .add('Variants / BadgeNetwork', BadgeNetworkStory)
-  .add('Variants / BadgeStatus', BadgeStatusStory);
-
-export default BadgeStory;
+export const Status = () => (
+  <View
+    // eslint-disable-next-line react-native/no-inline-styles
+    style={{
+      height: 50,
+      width: 50,
+    }}
+  >
+    <BadgeStatus
+      variant={BadgeVariant.Status}
+      state={BadgeStatusState.Active}
+    />
+  </View>
+);

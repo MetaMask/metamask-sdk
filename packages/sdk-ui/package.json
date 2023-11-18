@@ -73,6 +73,7 @@
     "@storybook/addon-react-native-web": "^0.0.21",
     "@storybook/react-native": "^6.5.7",
     "@storybook/react-webpack5": "^7.5.3",
+    "@svgr/webpack": "^8.1.0",
     "@types/enzyme": "^3.10.16",
     "@types/lodash": "^4.14.201",
     "@types/react": "^18.2.37",
@@ -97,6 +98,7 @@
     "rimraf": "^5.0.5",
     "storybook": "^7.5.3",
     "storybook-addon-deep-controls": "^0.3.0",
+    "storybook-addon-next": "^1.8.0",
     "storybook-react-context": "^0.6.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.2.2"

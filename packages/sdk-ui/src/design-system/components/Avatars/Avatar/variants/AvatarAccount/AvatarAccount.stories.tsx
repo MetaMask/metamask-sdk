@@ -3,7 +3,7 @@ import React from 'react';
 import { text, select } from '@storybook/addon-knobs';
 
 // External dependencies.
-import { AvatarSize } from '../../Avatar.types';
+import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 
 // Internal dependencies.
 import AvatarAccount from './AvatarAccount';
@@ -24,6 +24,7 @@ export const getAvatarAccountStoryProps = (): AvatarAccountProps => ({
     AvatarAccountType.JazzIcon,
     storybookPropsGroupID,
   ),
+  variant: AvatarVariant.Account,
 });
 const AvatarAccountStory = () => (
   <AvatarAccount {...getAvatarAccountStoryProps()} />

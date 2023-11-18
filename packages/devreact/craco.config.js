@@ -13,6 +13,10 @@ const packagesToTranspile = [
   resolvePackage('../sdk-react-ui'),
   resolvePackage('../sdk-lab'),
   resolvePackage('../sdk-ui'),
+  require.resolve('react-native-gesture-handler'),
+  require.resolve('react-native-svg'),
+  require.resolve('react-native-reanimated'),
+  require.resolve('react-native-safe-area-context'),
   path.resolve('node_modules/@react-native/assets-registry/registry.js'),
 ]
 
@@ -32,13 +36,17 @@ module.exports = {
       const scopePluginIndex = webpackConfig.resolve.plugins.findIndex(
         ({ constructor }) => constructor && constructor.name === 'ModuleScopePlugin'
       );
-
       webpackConfig.resolve.plugins.splice(scopePluginIndex, 1);
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
         alias: {
           ...webpackConfig.resolve.alias,
           'react': require.resolve('react'),
+          // 'react-dom': require.resolve('react-dom'),
+          'react-native-reanimated': path.resolve(__dirname, './node_modules/react-native-reanimated'),
+          'react-native-gesture-handler': path.resolve(__dirname, './node_modules/react-native-gesture-handler'),
+          'react-native-safe-area-context': path.resolve(__dirname, './node_modules/react-native-safe-area-context'),
+          'react-native-svg': path.resolve(__dirname, './node_modules/react-native-svg'),
         },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),

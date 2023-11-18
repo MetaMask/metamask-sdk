@@ -3,6 +3,7 @@ import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import Jazzicon from 'react-native-jazzicon';
 import { Text } from 'react-native-paper';
+import images from '../../../assets/images/image-icons';
 import { AddressCopyButton } from '../../components/address-copy-button/address-copy-button';
 import { BalanceConversionText } from '../../components/balance-conversion-text/balance-conversion-text';
 import { First } from '../../components/first/first';
@@ -11,11 +12,14 @@ import { IconWrongNetwork } from '../../components/icons/IconWrongNetwork';
 import { IconSimplified } from '../../components/icons/IconsSimplified';
 import { ItemView } from '../../components/item-view/item-view';
 import { MetaMaskButton } from '../../components/metamask-button/metamask-button';
+import { AvatarSize } from '../../design-system/components/Avatars/Avatar';
+import { ICON_SIZE_BY_AVATAR_SIZE } from '../../design-system/components/Avatars/Avatar/variants/AvatarFavicon/AvatarFavicon.constants';
+import { BadgeVariant } from '../../design-system/components/Badges/Badge';
+import BadgeNetwork from '../../design-system/components/Badges/Badge/variants/BadgeNetwork';
 import Button, {
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
-import { LINEA_MAINNET, MAINNET } from '../../constants/networks.constants';
-import images from '../../../assets/images/image-icons';
+import Icon, { IconName } from '../../design-system/components/Icons/Icon';
 
 const styles = StyleSheet.create({
   container: {
@@ -35,6 +39,7 @@ const styles = StyleSheet.create({
 });
 
 console.log(`images`, images);
+console.warn(`ethIcon`, ethIcon);
 
 export const PreviewScreen = () => {
   return (
@@ -58,8 +63,34 @@ export const PreviewScreen = () => {
           <IconWrongNetwork />
         </View>
         <View style={styles.componentContainer}>
-          <Text>gere now</Text>
-          <Image style={{ width: 50, height: 50 }} source={ethIcon} />
+          <Text>Here is ethIcon</Text>
+          <Image
+            style={{ width: 50, height: 50, borderWidth: 1 }}
+            source={images.ETHEREUM}
+          />
+          <Image
+            style={{
+              width: 50,
+              height: 50,
+              borderWidth: 1,
+              borderColor: 'red',
+            }}
+            source={ethIcon}
+          />
+          <BadgeNetwork
+            variant={BadgeVariant.Network}
+            style={{ width: 50, height: 50, borderWidth: 1 }}
+            name="Ethereum"
+            imageSource={{
+              uri: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880',
+            }}
+          />
+          <Text>Here is icon</Text>
+          <Icon
+            size={ICON_SIZE_BY_AVATAR_SIZE[AvatarSize.Md]}
+            name={IconName.Global}
+          />
+          <Text>Here is linea</Text>
           <Image
             style={{ width: 50, height: 50 }}
             source={images['LINEA-MAINNET']}

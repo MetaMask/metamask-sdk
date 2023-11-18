@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 // Third party dependencies.
 import React from 'react';
 
@@ -8,10 +7,11 @@ import { SAMPLE_CELLMULTISELECT_PROPS } from './variants/CellMultiSelect/CellMul
 import { SAMPLE_CELLSELECT_PROPS } from './variants/CellSelect/CellSelect.constants';
 
 // Internal dependencies.
-import { CellVariant } from './Cell.types';
+import { CellProps, CellVariant } from './Cell.types';
 import { default as CellComponent } from './Cell';
+import { Meta } from '@storybook/react-native';
 
-const CellMeta = {
+const CellMeta: Meta<CellProps> = {
   title: 'Component Library / Cells',
   component: CellComponent,
   argTypes: {
@@ -22,6 +22,9 @@ const CellMeta = {
       },
       defaultValue: CellVariant.Display,
     },
+  },
+  args: {
+    variant: CellVariant.Display,
   },
 };
 export default CellMeta;

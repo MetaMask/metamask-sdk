@@ -1,12 +1,6 @@
-/* eslint-disable no-console */
-
-// Third party dependencies.
 import React from 'react';
-import { select } from '@storybook/addon-knobs';
-import { storiesOf } from '@storybook/react-native';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../constants/storybook.constants';
+import Avatar from './Avatar';
+import { AvatarProps, AvatarVariant } from './Avatar.types';
 import AvatarAccountStory, {
   getAvatarAccountStoryProps,
 } from './variants/AvatarAccount/AvatarAccount.stories';
@@ -22,62 +16,35 @@ import AvatarNetworkStory, {
 import AvatarTokenStory, {
   getAvatarTokenStoryProps,
 } from './variants/AvatarToken/AvatarToken.stories';
+import { Meta, Story } from '@storybook/react-native';
 
-// Internal dependencies.
-import { AvatarVariant, AvatarProps } from './Avatar.types';
-import Avatar from './Avatar';
+export default {
+  title: 'Component Library/Avatars',
+  component: Avatar,
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: Object.values(AvatarVariant),
+      },
+      defaultValue: AvatarVariant.Account,
+    },
+  },
+} as Meta<AvatarProps>;
 
-export const getAvatarStoryProps = (): AvatarProps => {
-  let avatarProps: AvatarProps;
+const Template: Story<AvatarProps> = (args) => <Avatar {...args} />;
 
-  const avatarVariantsSelector = select(
-    'Avatar Variant',
-    AvatarVariant,
-    AvatarVariant.Account,
-    storybookPropsGroupID,
-  );
-  switch (avatarVariantsSelector) {
-    case AvatarVariant.Account:
-      avatarProps = {
-        variant: AvatarVariant.Account,
-        ...getAvatarAccountStoryProps(),
-      };
-      break;
-    case AvatarVariant.Favicon:
-      avatarProps = {
-        variant: AvatarVariant.Favicon,
-        ...getAvatarFaviconStoryProps(),
-      };
-      break;
-    case AvatarVariant.Icon:
-      avatarProps = {
-        variant: AvatarVariant.Icon,
-        ...getAvatarIconStoryProps(),
-      };
-      break;
-    case AvatarVariant.Network:
-      avatarProps = {
-        variant: AvatarVariant.Network,
-        ...getAvatarNetworkStoryProps(),
-      };
-      break;
-    case AvatarVariant.Token:
-      avatarProps = {
-        variant: AvatarVariant.Token,
-        ...getAvatarTokenStoryProps(),
-      };
-      break;
-  }
-  return avatarProps;
-};
-const AvatarStory = () => <Avatar {...getAvatarStoryProps()} />;
+export const AvatarAccount = Template.bind({});
+AvatarAccount.args = getAvatarAccountStoryProps();
 
-storiesOf('Component Library / Avatars', module)
-  .add('Avatar', AvatarStory)
-  .add('Variants / AvatarAccount', AvatarAccountStory)
-  .add('Variants / AvatarFavicon', AvatarFaviconStory)
-  .add('Variants / AvatarIcon', AvatarIconStory)
-  .add('Variants / AvatarNetwork', AvatarNetworkStory)
-  .add('Variants / AvatarToken', AvatarTokenStory);
+export const AvatarFavicon = Template.bind({});
+AvatarFavicon.args = getAvatarFaviconStoryProps();
 
-export default AvatarStory;
+export const AvatarIcon = Template.bind({});
+AvatarIcon.args = getAvatarIconStoryProps();
+
+export const AvatarNetwork = Template.bind({});
+AvatarNetwork.args = getAvatarNetworkStoryProps();
+
+export const AvatarToken = Template.bind({});
+AvatarToken.args = getAvatarTokenStoryProps();

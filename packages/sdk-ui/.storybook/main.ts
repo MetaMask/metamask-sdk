@@ -1,20 +1,26 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
 import path, { dirname, join } from 'path';
+import { Configuration, RuleSetRule } from 'webpack';
 
 const config: StorybookConfig = {
   stories: [
     '../src/**/*.mdx',
     '../src/components/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Avatars/Avatar/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Cells/Cell/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Badges/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Texts/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Icons/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/screens/**/*.stories.@(js|jsx|ts|tsx)',
   ],
-  staticDirs: ['../assets/'],
+  staticDirs: ['../assets/','../src/design-system/components/Icons/Icon/assets/'],
   addons: [
     getAbsolutePath('@storybook/addon-links'),
     getAbsolutePath('@storybook/addon-jest'),
     getAbsolutePath('@storybook/addon-essentials'),
     getAbsolutePath('@storybook/addon-interactions'),
     getAbsolutePath('@storybook/addon-react-native-web'),
-   'storybook-addon-deep-controls',
+    'storybook-addon-deep-controls',
 
     {
       name: '@storybook/addon-react-native-web',
@@ -42,8 +48,14 @@ const config: StorybookConfig = {
         __dirname,
         '../node_modules/react-native-safe-area-context',
       ),
-      'images/image-icons': path.resolve(__dirname, '../assets/images/image-icons'),
-      '@metamask/sdk-design-system': path.resolve(__dirname, '../src/design-system/'),
+      'images/image-icons': path.resolve(
+        __dirname,
+        '../assets/images/image-icons',
+      ),
+      '@metamask/sdk-design-system': path.resolve(
+        __dirname,
+        '../src/design-system/',
+      ),
       react: path.resolve(__dirname, '../../devreact/node_modules/react'),
       'react-dom': path.resolve(
         __dirname,
@@ -55,6 +67,31 @@ const config: StorybookConfig = {
       ),
       '@metamask/ui': path.resolve(__dirname, '../src'),
     };
+
+    // // Ensure config.module and config.module.rules are defined
+    // config.module = config.module || { rules: [] };
+
+    // // Find and modify the rule that handles SVG files
+    // const fileLoaderRule = config.module.rules?.find(
+    //   (rule): rule is RuleSetRule => {
+    //     if (rule && typeof rule === 'object' && 'test' in rule) {
+    //       const testRegex = rule.test as RegExp;
+    //       return testRegex.test('.svg');
+    //     }
+    //     return false;
+    //   },
+    // );
+
+    // if (fileLoaderRule) {
+    //   // Exclude SVGs from the existing rule
+    //   fileLoaderRule.exclude = /\.svg$/;
+    // }
+
+    // // Add a new rule for handling SVGs with SVGR
+    // config.module.rules?.push({
+    //   test: /\.svg$/,
+    //   use: ['@svgr/webpack', 'url-loader'],
+    // });
 
     return config;
   },

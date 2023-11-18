@@ -1,27 +1,32 @@
 // Third party dependencies.
 import React from 'react';
+
+// External dependencies.
+import { useStyles } from '../../../hooks/useStyles';
+
 // Internal dependencies.
 import { IconProps, IconColor } from './Icon.types';
+import styleSheet from './Icon.styles';
 import { assetByIconName } from './Icon.assets';
 import { DEFAULT_ICON_SIZE, DEFAULT_ICON_COLOR } from './Icon.constants';
-import { useTheme } from '../../../../theme/index';
+import { Platform, View } from 'react-native';
 
 const Icon = ({
   size = DEFAULT_ICON_SIZE,
+  style,
   name,
   color = DEFAULT_ICON_COLOR,
   ...props
 }: IconProps) => {
-  // const { styles, theme } = useStyles(styleSheet, {
-  //   size,
-  //   style,
-  //   color,
-  // });
-  const SVG = assetByIconName[name];
-  const theme = useTheme();
+  const { styles, theme } = useStyles(styleSheet, {
+    size,
+    style,
+    color,
+  });
 
+  const SVG = assetByIconName[name];
   const sizeAsNum = Number(size);
-  let iconColor = '';
+  let iconColor;
   switch (color) {
     case IconColor.Default:
       iconColor = theme.colors.icon.default;
@@ -60,10 +65,30 @@ const Icon = ({
       iconColor = color;
   }
 
+  if (!SVG || (typeof SVG !== 'function' && Platform.OS === 'web')) {
+    // Fallback mechanism for web
+    // if this condition is met you probably need to configure webpack svgr loader
+    console.error(
+      `Icon for name "${name}" not found or is not a valid React component.`,
+      SVG,
+    );
+    return (
+      <View
+        // eslint-disable-next-line react-native/no-inline-styles
+        style={{
+          width: sizeAsNum,
+          height: sizeAsNum,
+          borderWidth: 1,
+          backgroundColor: iconColor,
+        }}
+      />
+    );
+  }
+
   return (
     <SVG
       color={iconColor}
-      // style={styles.icon}
+      style={styles.icon}
       width={sizeAsNum}
       height={sizeAsNum}
       // This prop it's for testing purposes

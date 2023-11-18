@@ -75,7 +75,12 @@ const nextConfig = withExpo({
         },
       },
       {
-        test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.(jpg|png|woff|woff2|eot|ttf)$/,
         type: 'asset/resource'
       },
     );

@@ -3,7 +3,7 @@ import React from 'react';
 import { select } from '@storybook/addon-knobs';
 
 // External dependencies.
-import { AvatarSize } from '../../Avatar.types';
+import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
 
 // Internal dependencies.
@@ -41,6 +41,7 @@ export const getAvatarFaviconStoryProps = (): AvatarFaviconProps => {
   return {
     size: sizeSelector,
     imageSource: imgSrcToSrc[imgSourceSelector],
+    variant: AvatarVariant.Favicon,
   };
 };
 const AvatarFaviconStory = () => (

@@ -61,6 +61,7 @@
     "@babel/preset-typescript": "^7.23.3",
     "@expo/next-adapter": "^5.0.2",
     "@lavamoat/allow-scripts": "^2.3.1",
+    "@svgr/webpack": "^8.1.0",
     "@types/eslint": "^8",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.9.1",

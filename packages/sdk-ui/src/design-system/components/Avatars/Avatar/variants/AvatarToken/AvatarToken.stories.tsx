@@ -5,7 +5,7 @@ import { boolean, select, text } from '@storybook/addon-knobs';
 
 // External dependencies.
 import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
-import { AvatarSize } from '../../Avatar.types';
+import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 
 // Internal dependencies.
 import AvatarToken from './AvatarToken';
@@ -62,6 +62,7 @@ export const getAvatarTokenStoryProps = (): AvatarTokenProps => {
     name: tokenNameSelector,
     imageSource: image,
     isHaloEnabled,
+    variant: AvatarVariant.Token,
   };
 };
 
