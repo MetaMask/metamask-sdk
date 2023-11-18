@@ -17,11 +17,13 @@
     "skipLibCheck": true,
     "paths": {
       "@metamask/sdk-ui": ["./src/index"],
+      "@metamask/sdk-design-system": ["./src/design-system"],
+      "@assets": ["./assets"],
       "react": ["node_modules/@types/react"]
     }
   },
   "include": [
-    "./src/","./storybook/"
+    "./src/","./storybook/","./assets/",
   ],
   "exclude": [
     "./src/**/*.test.tsx",

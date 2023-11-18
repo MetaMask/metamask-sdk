@@ -14,6 +14,8 @@ import { MetaMaskButton } from '../../components/metamask-button/metamask-button
 import Button, {
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
+import { LINEA_MAINNET, MAINNET } from '../../constants/networks.constants';
+import images from '../../../assets/images/image-icons';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,6 +33,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+console.log(`images`, images);
 
 export const PreviewScreen = () => {
   return (
@@ -56,6 +60,10 @@ export const PreviewScreen = () => {
         <View style={styles.componentContainer}>
           <Text>gere now</Text>
           <Image style={{ width: 50, height: 50 }} source={ethIcon} />
+          <Image
+            style={{ width: 50, height: 50 }}
+            source={images['LINEA-MAINNET']}
+          />
           <Button
             label="test"
             variant={ButtonVariants.Primary}

@@ -1,24 +1,11 @@
 import React from 'react';
-import { IconOriginal } from './IconOriginal';
-import { IconSimplified } from './IconsSimplified';
-import { IconWrongNetwork } from './IconWrongNetwork';
-import { View } from 'react-native';
 import { Meta } from '@storybook/react-native';
+import { IconsPreview, IconsPreviewProps } from './icons-preview';
 
-const Icons = () => {
-  return (
-    <View>
-      <IconOriginal />
-      <IconSimplified />
-      <IconWrongNetwork />
-    </View>
-  );
+const IconsPreviewMeta: Meta<IconsPreviewProps> = {
+  component: IconsPreview,
 };
 
-const IconsMeta: Meta<typeof Icons> = {
-  component: Icons,
-};
+export default IconsPreviewMeta;
 
-export default IconsMeta;
-
-export const Primary = () => <Icons />;
+export const Primary = () => <IconsPreview />;

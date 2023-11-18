@@ -42,6 +42,8 @@ const config: StorybookConfig = {
         __dirname,
         '../node_modules/react-native-safe-area-context',
       ),
+      'images/image-icons': path.resolve(__dirname, '../assets/images/image-icons'),
+      '@metamask/sdk-design-system': path.resolve(__dirname, '../src/design-system/'),
       react: path.resolve(__dirname, '../../devreact/node_modules/react'),
       'react-dom': path.resolve(
         __dirname,

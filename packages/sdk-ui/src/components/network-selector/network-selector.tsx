@@ -1,58 +1,110 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-// import Cell, { CellVariant } from '../../design-system/components/Cells/Cell';
-
+import Cell, { CellVariant } from '../../design-system/components/Cells/Cell';
 // Internal dependencies
+import { NetworkConfiguration } from '@metamask/network-controller';
 import { useSDK } from '@metamask/sdk-react';
-import { Text } from 'react-native-paper';
+import images from 'images/image-icons';
+import { useTranslation } from 'react-i18next';
+import { LINEA_MAINNET } from '../../constants/networks.constants';
+import { AvatarVariant } from '../../design-system/components/Avatars/Avatar';
+import Text from '../../design-system/components/Texts/Text';
+import Networks, {
+  NetworkList,
+  getNetworkImageSource,
+} from '../../utils/networks';
+import styles from './NetworkSelector.styles';
+
+import Button, {
+  ButtonSize,
+  ButtonVariants,
+  ButtonWidthTypes,
+} from '../../design-system/components/Buttons/Button';
+import generateTestId from '../../utils/generateTestId';
 
 export interface NetworkSelectorProps {
   showTestNetworks: boolean;
+  goToNetworkSettings?: () => void;
+  onSetRpcTarget?: (rpcUrl: string) => void;
+  onNetworkChange?: (type: string) => void;
 }
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NetworkSelector = ({ showTestNetworks }: NetworkSelectorProps) => {
-  const { chainId } = useSDK();
 
-  const onNetworkChange = (type: string) => {
-    console.log(`onNetworkChange: ${type}`);
-  };
+export const NetworkSelector = ({
+  showTestNetworks,
+  onNetworkChange,
+  goToNetworkSettings,
+  onSetRpcTarget,
+}: NetworkSelectorProps) => {
+  const { t: strings } = useTranslation('network-selector');
+
+  const { chainId: selectedChainId } = useSDK();
+  const networkConfigurations: Record<
+    string,
+    NetworkConfiguration & {
+      id: string;
+    }
+  > = {};
 
   const renderMainnet = () => {
-    const mainnetName = 'Ethereum';
+    const { name: mainnetName, chainId } = Networks.mainnet;
     return (
-      // <Cell
-      //   variant={CellVariant.Select}
-      //   title={mainnetName}
-      //   avatarProps={{
-      //     variant: AvatarVariant.Network,
-      //     name: mainnetName,
-      //     imageSource: t,
-      //   }}
-      //   isSelected={chainId === '0x1'}
-      //   onPress={() => onNetworkChange(mainnetName)}
-      //   style={styles.networkCell}
-      // />
-      <Text>{mainnetName}</Text>
+      <Cell
+        variant={CellVariant.Select}
+        title={mainnetName}
+        avatarProps={{
+          variant: AvatarVariant.Network,
+          name: mainnetName,
+          imageSource: images.ETHEREUM,
+        }}
+        isSelected={chainId.toString() === selectedChainId}
+        onPress={() => onNetworkChange?.(mainnetName)}
+        style={styles.networkCell}
+      />
     );
   };
 
-  // const renderLineaMainnet = () => {
-  //   const { name: lineaMainnetName, chainId } = Networks['linea-mainnet'];
-  //   return (
-  //     <Cell
-  //       variant={CellVariant.Select}
-  //       title={lineaMainnetName}
-  //       avatarProps={{
-  //         variant: AvatarVariant.Network,
-  //         name: lineaMainnetName,
-  //         imageSource: images['LINEA-MAINNET'],
-  //       }}
-  //       isSelected={chainId.toString() === providerConfig.chainId}
-  //       onPress={() => onNetworkChange(LINEA_MAINNET)}
-  //     />
-  //   );
-  // };
+  const renderLineaMainnet = () => {
+    const { name: lineaMainnetName, chainId } = NetworkList[LINEA_MAINNET];
+    return (
+      <Cell
+        variant={CellVariant.Select}
+        title={lineaMainnetName}
+        avatarProps={{
+          variant: AvatarVariant.Network,
+          name: lineaMainnetName,
+          imageSource: images['LINEA-MAINNET'],
+        }}
+        isSelected={chainId.toString() === selectedChainId}
+        onPress={() => onNetworkChange?.(LINEA_MAINNET)}
+      />
+    );
+  };
+
+  const renderRpcNetworks = () =>
+    Object.values(networkConfigurations).map(
+      ({ nickname, rpcUrl, chainId }) => {
+        if (!chainId) return null;
+        const { name } = { name: nickname || rpcUrl };
+        const image = getNetworkImageSource({ chainId: chainId?.toString() });
+
+        return (
+          <Cell
+            key={chainId}
+            variant={CellVariant.Select}
+            title={name}
+            avatarProps={{
+              variant: AvatarVariant.Network,
+              name,
+              imageSource: image,
+            }}
+            isSelected={Boolean(chainId.toString() === selectedChainId)}
+            onPress={() => onSetRpcTarget?.(rpcUrl)}
+            style={styles.networkCell}
+          />
+        );
+      },
+    );
 
   // const renderOtherNetworks = () => {
   //   const getOtherNetworks = () => getAllNetworks().slice(2);
@@ -104,21 +156,21 @@ const NetworkSelector = ({ showTestNetworks }: NetworkSelectorProps) => {
       <Text>Select Network</Text>
       <ScrollView>
         {renderMainnet()}
-        {/* {renderLineaMainnet()}
-        {renderRpcNetworks()} */}
+        {renderLineaMainnet()}
+        {renderRpcNetworks()}
         {/* {renderTestNetworksSwitch()} */}
         {/* {showTestNetworks && renderOtherNetworks()} */}
       </ScrollView>
 
-      {/* <Button
+      <Button
         variant={ButtonVariants.Secondary}
         label={strings('app_settings.network_add_network')}
-        onPress={goToNetworkSettings}
+        onPress={() => goToNetworkSettings?.()}
         width={ButtonWidthTypes.Full}
         size={ButtonSize.Lg}
         style={styles.addNetworkButton}
-        {...generateTestId(Platform, ADD_NETWORK_BUTTON)}
-      /> */}
+        {...generateTestId(Platform, 'add-network-button')}
+      />
     </View>
   );
 };
