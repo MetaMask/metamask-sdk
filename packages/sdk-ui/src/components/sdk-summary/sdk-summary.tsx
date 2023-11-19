@@ -8,11 +8,13 @@ import Avatar, {
   AvatarVariant,
 } from '../../design-system/components/Avatars/Avatar';
 import Button, {
+  ButtonSize,
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
 import Text from '../../design-system/components/Texts/Text';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
 import NetworkSelector from '../network-selector/network-selector';
+import { IconName } from '../../design-system/components/Icons/Icon';
 
 export interface SDKSummaryProps {
   _sdkState?: SDKState;
@@ -37,14 +39,18 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
           </Text>
           <Text>{chainId === '0x1' ? 'ETH' : '???'}</Text>
         </View>
+        <View style={{ alignItems: 'center' }}>
+          <Button
+            variant={ButtonVariants.Link}
+            isDanger={false}
+            size={ButtonSize.Lg}
+            endIconName={IconName.Logout}
+            onPress={() => sdk?.terminate()}
+            label={t('Disconnect')}
+          />
+        </View>
       </View>
-      <Button
-        variant={ButtonVariants.Link}
-        style={{ width: '100%' }}
-        isDanger={true}
-        onPress={() => sdk?.terminate()}
-        label={t('Disconnect')}
-      />
+
       {sdk && <NetworkSelector showTestNetworks={true} />}
     </View>
   );
@@ -66,7 +72,6 @@ const styles = StyleSheet.create({
   },
   header: {
     // flex: 1,
-    padding: 10,
     gap: 10,
     justifyContent: 'center',
     alignItems: 'center',
