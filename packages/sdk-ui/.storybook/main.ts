@@ -10,6 +10,7 @@ const config: StorybookConfig = {
     '../src/design-system/components/Badges/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Banners/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Buttons/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Cards/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Cells/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Texts/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Icons/**/*.stories.@(js|jsx|ts|tsx)',
