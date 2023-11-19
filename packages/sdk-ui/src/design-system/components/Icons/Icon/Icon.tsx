@@ -69,7 +69,7 @@ const Icon = ({
     // Fallback mechanism for web
     // if this condition is met you probably need to configure webpack svgr loader
     console.error(
-      `Icon for name "${name}" not found or is not a valid React component.`,
+      `Icon for name "${name}" not found or is not a valid React component. Please check if you have configured webpack svgr loader correctly.`,
       SVG,
     );
     return (
@@ -88,9 +88,10 @@ const Icon = ({
   return (
     <SVG
       color={iconColor}
-      style={styles.icon}
+      style={{ ...styles.icon, height: sizeAsNum, width: sizeAsNum }}
       width={sizeAsNum}
       height={sizeAsNum}
+      viewBox={`0 0 ${sizeAsNum} ${sizeAsNum}`}
       // This prop it's for testing purposes
       name={name}
       {...props}

@@ -7,7 +7,7 @@ import {
   RPC,
   NETWORKS_CHAIN_ID,
 } from '../constants/networks.constants';
-import images from 'images/image-icons';
+import images from '../../assets/images/image-icons';
 
 /**
  * List of the supported networks
@@ -25,7 +25,7 @@ export const NetworkList = {
     hexChainId: '0x1',
     color: '#3cc29e',
     networkType: 'mainnet',
-    imageSource: images[MAINNET],
+    imageSource: images.ETHEREUM,
   },
   [LINEA_MAINNET]: {
     name: 'Linea Main Network',
@@ -45,7 +45,7 @@ export const NetworkList = {
     hexChainId: '0x5',
     color: '#3099f2',
     networkType: 'goerli',
-    imageSource: images[GOERLI],
+    imageSource: images.GOERLI,
   },
   [SEPOLIA]: {
     name: 'Sepolia Test Network',
@@ -55,7 +55,7 @@ export const NetworkList = {
     hexChainId: '0xaa36a7',
     color: '#cfb5f0',
     networkType: 'sepolia',
-    imageSource: images[SEPOLIA],
+    imageSource: images.SEPOLIA,
   },
   [LINEA_GOERLI]: {
     name: 'Linea Goerli Test Network',
@@ -130,16 +130,16 @@ export const getTestNetImage = (networkType: string) => {
     networkType === SEPOLIA ||
     networkType === LINEA_GOERLI
   ) {
-    return images[networkType.toUpperCase()];
+    return images[networkType.toUpperCase() as keyof typeof images];
   }
 };
 
 export const getTestNetImageByChainId = (chainId: string) => {
   if (NETWORKS_CHAIN_ID.GOERLI === chainId) {
-    return images[GOERLI];
+    return images.GOERLI;
   }
   if (NETWORKS_CHAIN_ID.SEPOLIA === chainId) {
-    return images[SEPOLIA];
+    return images.SEPOLIA;
   }
   if (NETWORKS_CHAIN_ID.LINEA_GOERLI === chainId) {
     return images['LINEA-GOERLI'];
