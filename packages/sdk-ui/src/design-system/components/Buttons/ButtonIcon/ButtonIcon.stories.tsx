@@ -1,55 +1,41 @@
-// Third party dependencies.
 import React from 'react';
-import { select, boolean } from '@storybook/addon-knobs';
-import { storiesOf } from '@storybook/react-native';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../constants/storybook.constants';
-import { IconName } from '../../Icons/Icon';
-
-// Internal dependencies.
 import ButtonIcon from './ButtonIcon';
 import {
-  ButtonIconVariants,
   ButtonIconProps,
   ButtonIconSizes,
+  ButtonIconVariants,
 } from './ButtonIcon.types';
+import { IconName } from '../../Icons/Icon';
+import { Meta, Story } from '@storybook/react-native';
 
-export const getButtonIconStoryProps = (): ButtonIconProps => {
-  const sizeSelector = select(
-    'size',
-    ButtonIconSizes,
-    ButtonIconSizes.Lg,
-    storybookPropsGroupID,
-  );
-  const iconNameSelector = select(
-    'iconName',
-    IconName,
-    IconName.Lock,
-    storybookPropsGroupID,
-  );
-  const variantSelector = select(
-    'variant',
-    ButtonIconVariants,
-    ButtonIconVariants.Primary,
-    storybookPropsGroupID,
-  );
-  const isDisabledToggle = boolean('isDisabled', false, storybookPropsGroupID);
+export default {
+  title: 'Component Library / Buttons / ButtonIcon',
+  component: ButtonIcon,
+  argTypes: {
+    size: {
+      control: { type: 'select', options: Object.values(ButtonIconSizes) },
+      defaultValue: ButtonIconSizes.Lg,
+    },
+    iconName: {
+      control: { type: 'select', options: Object.values(IconName) },
+      defaultValue: IconName.Lock,
+    },
+    variant: {
+      control: { type: 'select', options: Object.values(ButtonIconVariants) },
+      defaultValue: ButtonIconVariants.Primary,
+    },
+    isDisabled: { control: 'boolean' },
+    // Other props can be added here if needed
+  },
+} as Meta<ButtonIconProps>;
 
-  return {
-    variant: variantSelector,
-    iconName: iconNameSelector,
-    isDisabled: isDisabledToggle,
-    onPress: () => console.log("I'm clicked!"),
-    size: sizeSelector,
-  };
+const Template: Story<ButtonIconProps> = (args) => <ButtonIcon {...args} />;
+
+export const Default = Template.bind({});
+Default.args = {
+  size: ButtonIconSizes.Lg,
+  iconName: IconName.Lock,
+  variant: ButtonIconVariants.Primary,
+  isDisabled: false,
+  onPress: () => console.log("I'm clicked!"),
 };
-
-const ButtonIconStory = () => <ButtonIcon {...getButtonIconStoryProps()} />;
-
-storiesOf('Component Library / Buttons', module).add(
-  'ButtonIcon',
-  ButtonIconStory,
-);
-
-export default ButtonIconStory;

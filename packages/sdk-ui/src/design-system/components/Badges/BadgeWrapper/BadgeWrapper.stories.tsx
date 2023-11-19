@@ -14,7 +14,7 @@ import {
 } from './BadgeWrapper.types';
 
 export default {
-  title: 'Component Library/BadgeWrapper',
+  title: 'Component Library/Badges/BadgeWrapper',
   component: BadgeWrapper,
   args: {
     anchorElementShape: BadgeAnchorElementShape.Circular,

@@ -1,18 +1,24 @@
-// Third party dependencies.
 import React from 'react';
-
-// External dependencies.
-import { getButtonBaseStoryProps } from '../../foundation/ButtonBase/ButtonBase.stories';
-
-// Internal dependencies.
 import ButtonSecondary from './ButtonSecondary';
 import { ButtonSecondaryProps } from './ButtonSecondary.types';
+import { Meta, Story } from '@storybook/react-native';
+import { SAMPLE_BUTTONBASE_PROPS } from '../../foundation/ButtonBase/ButtonBase.constants';
 
-export const getButtonSecondaryStoryProps = (): ButtonSecondaryProps =>
-  getButtonBaseStoryProps();
+export default {
+  title: 'Component Library / Buttons / ButtonSecondary',
+  component: ButtonSecondary,
+  argTypes: {
+    // Define any specific props for ButtonSecondary if needed
+    // You can also reuse argTypes from ButtonBase as needed
+  },
+} as Meta<ButtonSecondaryProps>;
 
-const ButtonSecondaryStory = () => (
-  <ButtonSecondary {...getButtonSecondaryStoryProps()} />
+const Template: Story<ButtonSecondaryProps> = (args) => (
+  <ButtonSecondary {...args} />
 );
 
-export default ButtonSecondaryStory;
+export const Default = Template.bind({});
+Default.args = {
+  ...SAMPLE_BUTTONBASE_PROPS,
+  // Override or add any additional args specific to ButtonSecondary here
+};
