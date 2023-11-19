@@ -12,6 +12,11 @@ const modules = [
   'react',
   'react-dom',
   'react-native',
+  'react-native-gesture-handler',
+  'react-native-paper',
+  'react-native-reanimated',
+  'react-native-svg',
+  'react-native-vector-icons',
   'react-native-safe-area-context',
 ]
 

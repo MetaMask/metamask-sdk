@@ -9,12 +9,13 @@ import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 // Internal dependencies.
 import AvatarNetwork from './AvatarNetwork';
 import {
-  TEST_LOCAL_IMAGE_SOURCE,
   TEST_NETWORK_NAME,
   TEST_REMOTE_IMAGE_SOURCE,
 } from './AvatarNetwork.constants';
 import { AvatarNetworkProps } from './AvatarNetwork.types';
+import { TEST_LOCAL_IMAGE_SOURCE } from '../AvatarFavicon/AvatarFavicon.constants';
 
+// eslint-disable-next-line storybook/prefer-pascal-case
 export const getAvatarNetworkStoryProps = (): AvatarNetworkProps => {
   const sizeSelector = select(
     'size',

@@ -14,5 +14,5 @@ const NetworkSelectMeta: Meta<NetworkSelectorProps> = {
 export default NetworkSelectMeta;
 
 export const Primary = (args: NetworkSelectorProps) => (
-  <NetworkSelector {...args} />
+  <NetworkSelector {...args} showTestNetworks={true} />
 );

@@ -71,6 +71,7 @@
     "@babel/preset-flow": "^7.23.3",
     "@craco/craco": "^7.1.0",
     "@metamask/eslint-config-typescript": "^12.1.0",
+    "@svgr/webpack": "^8.1.0",
     "@testing-library/react": "^14.1.0",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -79,8 +80,10 @@
     "craco-babel-loader": "^1.0.4",
     "eslint": "^8.48.0",
     "expo": "^49.0.18",
+    "file-loader": "^6.2.0",
     "prettier": "^3.0.3",
     "react-test-renderer": "^18.2.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "url-loader": "^4.1.1"
   }
 }

@@ -7169,6 +7169,7 @@ __metadata:
     eslint-plugin-storybook: ^0.6.15
     expo: ^49.0.17
     expo-clipboard: ^4.5.0
+    file-loader: ^6.2.0
     i18n-js: ^4.3.2
     i18next: ^23.6.0
     intl-pluralrules: ^2.0.1
@@ -7197,6 +7198,7 @@ __metadata:
     storybook-react-context: ^0.6.0
     ts-jest: ^29.1.1
     typescript: ^5.2.2
+    url-loader: ^4.1.1
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -12666,6 +12668,16 @@ __metadata:
     "@types/react": "*"
     "@types/react-native": ^0.70
   checksum: 570fa19340b7832e5ca1b123d12a3ab7f07c8f0468b03b67790613bd759c61a461d93b84488a9d1612cea44c0397d452dde99fa403b6c1598a0ac287177341f4
+  languageName: node
+  linkType: hard
+
+"@types/react-native-vector-icons@npm:^6.4.18":
+  version: 6.4.18
+  resolution: "@types/react-native-vector-icons@npm:6.4.18"
+  dependencies:
+    "@types/react": "*"
+    "@types/react-native": ^0.70
+  checksum: 1ef458cb5e7a37f41eb400e3153940b1b152e4df76a7c06c7a47c712dbfe46e14b9999f04dde1bd074f338f850e161c6c925174ddea33386b74f8112c940065b
   languageName: node
   linkType: hard
 
@@ -18704,6 +18716,7 @@ __metadata:
     "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@metamask/sdk-react-ui": "workspace:^"
+    "@metamask/sdk-ui": "workspace:^"
     "@svgr/webpack": ^8.1.0
     "@types/eslint": ^8
     "@types/node": 18.15.3
@@ -18760,6 +18773,7 @@ __metadata:
     "@metamask/sdk-react": "workspace:^"
     "@metamask/sdk-ui": "workspace:^"
     "@react-native/assets-registry": ^0.74.0
+    "@svgr/webpack": ^8.1.0
     "@testing-library/jest-dom": ^5.17.0
     "@testing-library/react": ^14.1.0
     "@testing-library/user-event": ^13.5.0
@@ -18774,6 +18788,7 @@ __metadata:
     eslint: ^8.48.0
     expo: ^49.0.18
     expo-asset: ^8.10.1
+    file-loader: ^6.2.0
     prettier: ^3.0.3
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -18790,6 +18805,7 @@ __metadata:
     react-test-renderer: ^18.2.0
     stream-browserify: ^3.0.0
     typescript: ^5.2.2
+    url-loader: ^4.1.1
     web-vitals: ^2.1.4
     web3: ^4.1.1
   languageName: unknown
@@ -18813,6 +18829,7 @@ __metadata:
     "@tsconfig/react-native": ^3.0.0
     "@types/react": ^18.2.37
     "@types/react-native-background-timer": ^2.0.0
+    "@types/react-native-vector-icons": ^6.4.18
     "@types/react-test-renderer": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^6.10.0
     "@typescript-eslint/parser": ^6.10.0
@@ -37200,6 +37217,23 @@ __metadata:
   version: 4.0.0
   resolution: "url-join@npm:4.0.0"
   checksum: d2ac05f8ac276edbcd2b234745415abe27ef6b0c18c4d7a8e7f88fbafa1e9470912392b09391fb47f097f470d4c8b93bf2219b5638286852b2bf65d693e207ee
+  languageName: node
+  linkType: hard
+
+"url-loader@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "url-loader@npm:4.1.1"
+  dependencies:
+    loader-utils: ^2.0.0
+    mime-types: ^2.1.27
+    schema-utils: ^3.0.0
+  peerDependencies:
+    file-loader: "*"
+    webpack: ^4.0.0 || ^5.0.0
+  peerDependenciesMeta:
+    file-loader:
+      optional: true
+  checksum: c1122a992c6cff70a7e56dfc2b7474534d48eb40b2cc75467cde0c6972e7597faf8e43acb4f45f93c2473645dfd803bcbc20960b57544dd1e4c96e77f72ba6fd
   languageName: node
   linkType: hard
 

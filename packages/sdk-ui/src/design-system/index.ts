@@ -19,6 +19,7 @@ import Toast from './components/Toast';
 
 // Hooks
 import { useComponentSize, useStyles } from './hooks';
+import assets from './assets';
 
 export default {
   Avatar,
@@ -40,4 +41,5 @@ export default {
   Toast,
   useComponentSize,
   useStyles,
+  assets,
 };

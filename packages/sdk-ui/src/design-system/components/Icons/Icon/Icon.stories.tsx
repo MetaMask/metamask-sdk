@@ -1,9 +1,10 @@
 // Internal dependencies.
+import { Meta } from '@storybook/react-native';
 import { default as IconComponent } from './Icon';
 import { SAMPLE_ICON_PROPS } from './Icon.constants';
-import { IconColor, IconName, IconSize } from './Icon.types';
+import { IconColor, IconName, IconProps, IconSize } from './Icon.types';
 
-const IconMeta = {
+const IconMeta: Meta<IconProps> = {
   title: 'Component Library / Icons',
   component: IconComponent,
   argTypes: {
@@ -28,6 +29,11 @@ const IconMeta = {
       },
       defaultValue: SAMPLE_ICON_PROPS.color,
     },
+  },
+  args: {
+    name: IconName.Activity,
+    size: IconSize.Xl,
+    color: IconColor.Primary,
   },
 };
 export default IconMeta;

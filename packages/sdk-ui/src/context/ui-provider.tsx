@@ -32,6 +32,7 @@ export const WithPreferences = ({
   children: React.ReactNode;
 }) => {
   const preferences = usePreferences();
+  console.log(`WithPreferences::lightTheme`, lightTheme);
   return (
     <PaperProvider
       // theme={preferences.theme}

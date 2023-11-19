@@ -28,7 +28,13 @@ const AvatarNetwork = ({
       : TextVariant.HeadingSMRegular;
   const chainNameFirstLetter = name?.[0] ?? '?';
 
-  const onError = useCallback(() => setShowFallback(true), [setShowFallback]);
+  const onError = useCallback(
+    (err: unknown) => {
+      console.error(`avatar loading error`, err);
+      setShowFallback(true);
+    },
+    [setShowFallback],
+  );
 
   useEffect(() => {
     setShowFallback(!imageSource);
@@ -42,7 +48,7 @@ const AvatarNetwork = ({
         </Text>
       ) : (
         <Image
-          source={imageSource as ImageSourcePropType}
+          source={(imageSource as any).src || imageSource}
           style={styles.image}
           onError={onError}
           {...generateTestId(Platform, NETWORK_AVATAR_IMAGE_ID)}

@@ -23,13 +23,17 @@ import {
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import {DEFAULT_SERVER_URL, MetaMaskSDKOptions} from '@metamask/sdk';
 import {MetaMaskProvider, useSDK} from '@metamask/sdk-react';
-import {PreviewScreen, FABAccount, UIProvider} from '@metamask/sdk-ui';
+import {FABAccount, Icon, UIProvider} from '@metamask/sdk-ui';
+import {
+  IconName,
+  IconSize,
+} from '@metamask/sdk-ui/src/design-system/components/Icons/Icon';
 import {encrypt} from 'eciesjs';
 import {LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from './package.json';
-import {DAPPView} from './src/views/DappView';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -152,10 +156,13 @@ function App(): JSX.Element {
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}
           </Text>
-          <DAPPView />
+          {/* <DAPPView /> */}
         </View>
         <View style={styles.sectionContainer}>
-          <PreviewScreen />
+          {/* <PreviewScreen /> */}
+          <Icon size={IconSize.XXL} name={IconName.Add} />
+          <FAIcon name="rocket" size={50} color="#900" />
+          {/* <Image source={assets.ethereum} style={{width: 32, height: 32}} /> */}
         </View>
       </ScrollView>
       <FABAccount />

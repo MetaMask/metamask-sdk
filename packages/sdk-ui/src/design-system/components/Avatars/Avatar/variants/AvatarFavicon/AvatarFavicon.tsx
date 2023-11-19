@@ -6,7 +6,7 @@ import {
   ImageSourcePropType,
   NativeSyntheticEvent,
 } from 'react-native';
-import { SvgUri } from 'react-native-svg';
+import RNSVG from 'react-native-svg';
 
 // External dependencies.
 import AvatarBase from '../../foundation/AvatarBase';
@@ -67,17 +67,24 @@ const AvatarFavicon = ({
     }
   }, [imageSource]);
 
-  const renderSvg = () =>
-    svgSource ? (
-      <SvgUri
-        testID={FAVICON_AVATAR_IMAGE_ID}
-        width="100%"
-        height="100%"
-        uri={svgSource}
-        style={styles.image}
-        onError={onSvgError}
-      />
-    ) : null;
+  const renderSvg = () => {
+    if (svgSource) {
+      if ('SvgUri' in RNSVG) {
+        const SvgUri = RNSVG.SvgUri as any;
+        return (
+          <SvgUri
+            testID={FAVICON_AVATAR_IMAGE_ID}
+            width="100%"
+            height="100%"
+            uri={svgSource}
+            style={styles.image}
+            onError={onSvgError}
+          />
+        );
+      }
+    }
+    return null;
+  };
 
   const renderImage = () => (
     <Image

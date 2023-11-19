@@ -10,11 +10,11 @@ import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 // Internal dependencies.
 import AvatarToken from './AvatarToken';
 import {
-  TEST_LOCAL_IMAGE_SOURCE,
   TEST_REMOTE_TOKEN_IMAGES,
   TEST_TOKEN_NAME,
 } from './AvatarToken.constants';
 import { AvatarTokenProps } from './AvatarToken.types';
+import { TEST_LOCAL_IMAGE_SOURCE } from '../AvatarFavicon/AvatarFavicon.constants';
 
 export const getAvatarTokenStoryProps = (): AvatarTokenProps => {
   const sizeSelector = select(
@@ -57,13 +57,16 @@ export const getAvatarTokenStoryProps = (): AvatarTokenProps => {
   );
 
   const isHaloEnabled = boolean('isHaloEnabled', false, storybookPropsGroupID);
-  return {
+
+  const args: AvatarTokenProps = {
     size: sizeSelector,
     name: tokenNameSelector,
     imageSource: image,
     isHaloEnabled,
+    style: { backgroundColor: 'red' },
     variant: AvatarVariant.Token,
   };
+  return args;
 };
 
 const AvatarTokenStory = () => <AvatarToken {...getAvatarTokenStoryProps()} />;

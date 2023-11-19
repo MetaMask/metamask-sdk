@@ -1,5 +1,6 @@
-import { PreviewScreen } from '@metamask/sdk-ui';
+import { Avatar, PreviewScreen, assets } from '@metamask/sdk-ui';
 import Link from 'next/link';
+import { AvatarVariant } from '../../../sdk-ui/src/design-system/components/Avatars/Avatar';
 import ADD from './add.svg';
 
 export default function Home() {
@@ -31,6 +32,11 @@ export default function Home() {
         <div>
           <ADD />
           <PreviewScreen />
+          <Avatar
+            variant={AvatarVariant.Network}
+            name="Ethereum"
+            imageSource={assets.ethereum}
+          />
         </div>
       </div>
     </div>

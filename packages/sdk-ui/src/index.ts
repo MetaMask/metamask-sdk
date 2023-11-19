@@ -7,6 +7,32 @@ import { MetaMaskButton } from './components/metamask-button/metamask-button';
 import { PreviewScreen } from './screens/preview/preview';
 import { AddressCopyButton } from './components/address-copy-button/address-copy-button';
 import { UIProvider } from './context/ui-provider';
+import DS from './design-system';
+import { useTheme } from './theme';
+
+const {
+  Avatar,
+  AvatarGroup,
+  Button,
+  ButtonIcon,
+  Card,
+  Cell,
+  Checkbox,
+  Icon,
+  ListItem,
+  ListItemColumn,
+  ListItemMultiSelect,
+  ListItemSelect,
+  Tag,
+  TagUrl,
+  Text,
+  TextWithPrefixIcon,
+  Toast,
+  useComponentSize,
+  useStyles,
+  assets,
+} = DS;
+
 export {
   First,
   AddressCopyButton,
@@ -17,4 +43,25 @@ export {
   IconOriginal,
   MetaMaskButton,
   PreviewScreen,
+  Avatar,
+  AvatarGroup,
+  Button,
+  ButtonIcon,
+  Card,
+  Cell,
+  Checkbox,
+  Icon,
+  ListItem,
+  ListItemColumn,
+  ListItemMultiSelect,
+  ListItemSelect,
+  Tag,
+  TagUrl,
+  Text,
+  TextWithPrefixIcon,
+  Toast,
+  useComponentSize,
+  useStyles,
+  useTheme,
+  assets,
 };

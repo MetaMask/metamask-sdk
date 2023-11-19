@@ -1,22 +1,12 @@
+import { Meta, Story } from '@storybook/react-native';
 import React from 'react';
 import Avatar from './Avatar';
 import { AvatarProps, AvatarVariant } from './Avatar.types';
-import AvatarAccountStory, {
-  getAvatarAccountStoryProps,
-} from './variants/AvatarAccount/AvatarAccount.stories';
-import AvatarFaviconStory, {
-  getAvatarFaviconStoryProps,
-} from './variants/AvatarFavicon/AvatarFavicon.stories';
-import AvatarIconStory, {
-  getAvatarIconStoryProps,
-} from './variants/AvatarIcon/AvatarIcon.stories';
-import AvatarNetworkStory, {
-  getAvatarNetworkStoryProps,
-} from './variants/AvatarNetwork/AvatarNetwork.stories';
-import AvatarTokenStory, {
-  getAvatarTokenStoryProps,
-} from './variants/AvatarToken/AvatarToken.stories';
-import { Meta, Story } from '@storybook/react-native';
+import { getAvatarAccountStoryProps } from './variants/AvatarAccount/AvatarAccount.stories';
+import { getAvatarFaviconStoryProps } from './variants/AvatarFavicon/AvatarFavicon.stories';
+import { getAvatarIconStoryProps } from './variants/AvatarIcon/AvatarIcon.stories';
+import { getAvatarNetworkStoryProps } from './variants/AvatarNetwork/AvatarNetwork.stories';
+import { getAvatarTokenStoryProps } from './variants/AvatarToken/AvatarToken.stories';
 
 export default {
   title: 'Component Library/Avatars',

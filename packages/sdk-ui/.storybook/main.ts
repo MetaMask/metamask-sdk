@@ -68,30 +68,34 @@ const config: StorybookConfig = {
       '@metamask/ui': path.resolve(__dirname, '../src'),
     };
 
-    // // Ensure config.module and config.module.rules are defined
-    // config.module = config.module || { rules: [] };
+    // Ensure config.module and config.module.rules are defined
+    config.module = config.module || { rules: [] };
 
-    // // Find and modify the rule that handles SVG files
-    // const fileLoaderRule = config.module.rules?.find(
-    //   (rule): rule is RuleSetRule => {
-    //     if (rule && typeof rule === 'object' && 'test' in rule) {
-    //       const testRegex = rule.test as RegExp;
-    //       return testRegex.test('.svg');
-    //     }
-    //     return false;
-    //   },
-    // );
+    // Find and modify the rule that handles SVG files
+    const fileLoaderRule = config.module.rules?.find(
+      (rule): rule is RuleSetRule => {
+        if (rule && typeof rule === 'object' && 'test' in rule) {
+          const testRegex = rule.test as RegExp;
+          const match = testRegex.test('.svg');
+          if(match) {
+            console.log('match', rule);
+          }
+          return match;
+        }
+        return false;
+      },
+    );
 
-    // if (fileLoaderRule) {
-    //   // Exclude SVGs from the existing rule
-    //   fileLoaderRule.exclude = /\.svg$/;
-    // }
+    if (fileLoaderRule) {
+      // Exclude SVGs from the existing rule
+      fileLoaderRule.exclude = /\.svg$/;
+    }
 
-    // // Add a new rule for handling SVGs with SVGR
-    // config.module.rules?.push({
-    //   test: /\.svg$/,
-    //   use: ['@svgr/webpack', 'url-loader'],
-    // });
+    // Add a new rule for handling SVGs with SVGR
+    config.module.rules?.push({
+      test: /\.svg$/,
+      use: ['@svgr/webpack'],
+    });
 
     return config;
   },

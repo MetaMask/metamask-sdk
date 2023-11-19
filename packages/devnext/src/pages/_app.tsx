@@ -1,5 +1,3 @@
-import 'raf/polyfill';
-
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';

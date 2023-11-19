@@ -27,6 +27,7 @@
     "@metamask/sdk-lab": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
     "@metamask/sdk-react-ui": "workspace:^",
+    "@metamask/sdk-ui": "workspace:^",
     "@types/node": "18.15.3",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",

@@ -1,10 +1,18 @@
+import { SDKState, useSDK } from '@metamask/sdk-react';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import Jazzicon from 'react-native-jazzicon';
-import { Button, Text } from 'react-native-paper';
+import Avatar, {
+  AvatarAccountType,
+  AvatarSize,
+  AvatarVariant,
+} from '../../design-system/components/Avatars/Avatar';
+import Button, {
+  ButtonVariants,
+} from '../../design-system/components/Buttons/Button';
+import Text from '../../design-system/components/Texts/Text';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
-import { SDKState, useSDK } from '@metamask/sdk-react';
+import NetworkSelector from '../network-selector/network-selector';
 
 export interface SDKSummaryProps {
   _sdkState?: SDKState;
@@ -16,7 +24,12 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Jazzicon size={32} address={account} />
+        <Avatar
+          variant={AvatarVariant.Account}
+          accountAddress={account ?? ''}
+          type={AvatarAccountType.Blockies}
+          size={AvatarSize.Md}
+        />
         <AddressCopyButton address={account ?? ''} />
         <View style={styles.balanceContainer}>
           <Text ellipsizeMode="middle" numberOfLines={1}>
@@ -25,12 +38,14 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
           <Text>{chainId === '0x1' ? 'ETH' : '???'}</Text>
         </View>
       </View>
-      <Button mode="outlined" onPress={() => sdk?.terminate()}>
-        {t('Disconnect')}
-      </Button>
-      <View>
-        <Text>{t('Networks')}</Text>
-      </View>
+      <Button
+        variant={ButtonVariants.Link}
+        style={{ width: '100%' }}
+        isDanger={true}
+        onPress={() => sdk?.terminate()}
+        label={t('Disconnect')}
+      />
+      {sdk && <NetworkSelector showTestNetworks={true} />}
     </View>
   );
 };
