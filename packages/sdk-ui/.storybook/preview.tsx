@@ -4,6 +4,14 @@ import React from 'react';
 import { Platform } from 'react-native';
 import { UIProvider } from '../src/index';
 
+import { Buffer } from 'buffer';
+
+// Assign Buffer to the global scope so it's available globally
+if (typeof global !== 'undefined') {
+  global.Buffer = Buffer;
+} else if (typeof window !== 'undefined') {
+  (window as any ).Buffer = Buffer;
+}
 const preview: Preview = {
   parameters: {
     actions: { argTypesRegex: '^on[A-Z].*' },

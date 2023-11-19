@@ -15,8 +15,11 @@ const config: StorybookConfig = {
     '../src/design-system/components/Checkbox/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Form/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/HeaderBase/**/*.stories.@(js|jsx|ts|tsx)',
-    '../src/design-system/components/Texts/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Icons/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Overlay/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Pickers/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Texts/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Toast/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/screens/**/*.stories.@(js|jsx|ts|tsx)',
   ],
   staticDirs: ['../assets/','../src/design-system/components/Icons/Icon/assets/'],
@@ -50,6 +53,7 @@ const config: StorybookConfig = {
     if (!config.resolve) config.resolve = {};
     config.resolve.alias = {
       ...config.resolve.alias,
+      // 'buffer': require.resolve('buffer-browserify'),
       'react-native-safe-area-context': path.resolve(
         __dirname,
         '../node_modules/react-native-safe-area-context',

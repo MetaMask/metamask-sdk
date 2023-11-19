@@ -5,11 +5,11 @@ import { TextColor, TextVariant } from '../Text';
 
 // Internal dependencies.
 import { Meta } from '@storybook/react-native';
+import { IconColor, IconName, IconSize } from '../../Icons/Icon';
 import { default as TextWithPrefixIconComponent } from './TextWithPrefixIcon';
 import { SAMPLE_TEXTWITHPREFIXICON_PROPS } from './TextWithPrefixIcon.constants';
-import { TextWithPrefixIconProps } from './TextWithPrefixIcon.types';
 
-const TextWithPrefixIconMeta: Meta<TextWithPrefixIconProps> = {
+const TextWithPrefixIconMeta: Meta = {
   title: 'Component Library / Texts',
   component: TextWithPrefixIconComponent,
   argTypes: {
@@ -31,43 +31,48 @@ const TextWithPrefixIconMeta: Meta<TextWithPrefixIconProps> = {
       },
       defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.color,
     },
-    // iconProps: {
-    //   control: { type: 'object' },
-    //   defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps,
-    // },
-    // iconSize: {
-    //   options: IconSize,
-    //   control: {
-    //     type: 'select',
-    //   },
-    //   defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.size,
-    // },
-    // iconName: {
-    //   options: IconName,
-    //   control: {
-    //     type: 'select',
-    //   },
-    //   defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.name,
-    // },
-    // iconColor: {
-    //   options: IconColor,
-    //   control: {
-    //     type: 'select',
-    //   },
-    //   defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.color,
-    // },
+    iconProps: {
+      control: { type: 'object' },
+      defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps,
+    },
+    iconSize: {
+      options: IconSize,
+      control: {
+        type: 'select',
+      },
+      defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.size,
+    },
+    iconName: {
+      options: IconName,
+      control: {
+        type: 'select',
+      },
+      defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.name,
+    },
+    iconColor: {
+      options: IconColor,
+      control: {
+        type: 'select',
+      },
+      defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.color,
+    },
   },
   args: {
     children: 'here is a sample text',
+    iconProps: {
+      name: IconName.Add,
+    },
   },
 };
 export default TextWithPrefixIconMeta;
 
 export const TextWithPrefixIcon = (args: any) => {
+  const { iconSize, iconName, iconColor } = args;
+  console.log(`change params`, args);
   return (
     <TextWithPrefixIconComponent
-      // iconProps={{ size: iconSize, name: iconName, color: iconColor }}
       {...args}
+      iconProps={{ size: iconSize, name: iconName, color: iconColor }}
     />
   );
 };
