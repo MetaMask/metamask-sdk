@@ -6,7 +6,8 @@ const config: StorybookConfig = {
   stories: [
     '../src/**/*.mdx',
     '../src/components/**/*.stories.@(js|jsx|ts|tsx)',
-    '../src/design-system/components/Avatars/Avatar/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Avatars/**/*.stories.@(js|jsx|ts|tsx)',
+    '../src/design-system/components/Banners/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Cells/Cell/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Badges/**/*.stories.@(js|jsx|ts|tsx)',
     '../src/design-system/components/Texts/**/*.stories.@(js|jsx|ts|tsx)',

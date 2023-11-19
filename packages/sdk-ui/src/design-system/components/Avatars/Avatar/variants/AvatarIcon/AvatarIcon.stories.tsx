@@ -1,36 +1,34 @@
-// Third party dependencies.
 import React from 'react';
-import { select } from '@storybook/addon-knobs';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
-import { AvatarSize, AvatarVariant } from '../../Avatar.types';
-import { IconName } from '../../../../Icons/Icon';
-
-// Internal dependencies.
 import AvatarIcon from './AvatarIcon';
 import { AvatarIconProps } from './AvatarIcon.types';
+import { AvatarSize, AvatarVariant } from '../../Avatar.types';
+import { IconName } from '../../../../Icons/Icon';
+import { Meta, Story } from '@storybook/react-native';
 
-export const getAvatarIconStoryProps = (): AvatarIconProps => {
-  const sizeSelector = select(
-    'size',
-    AvatarSize,
-    AvatarSize.Md,
-    storybookPropsGroupID,
-  );
-  const iconNameSelector = select(
-    'name',
-    IconName,
-    IconName.Lock,
-    storybookPropsGroupID,
-  );
+export default {
+  title: 'Component Library/Avatars/Avatar/AvatarIcon',
+  component: AvatarIcon,
+  argTypes: {
+    size: {
+      control: { type: 'select', options: Object.values(AvatarSize) },
+      defaultValue: AvatarSize.Md,
+    },
+    name: {
+      control: { type: 'select', options: Object.values(IconName) },
+      defaultValue: IconName.Lock,
+    },
+    variant: {
+      control: { type: 'select', options: Object.values(AvatarVariant) },
+      defaultValue: AvatarVariant.Icon,
+    },
+  },
+} as Meta<AvatarIconProps>;
 
-  return {
-    size: sizeSelector,
-    name: iconNameSelector,
-    variant: AvatarVariant.Icon,
-  };
+const Template: Story<AvatarIconProps> = (args) => <AvatarIcon {...args} />;
+
+export const Default = Template.bind({});
+Default.args = {
+  size: AvatarSize.Md,
+  name: IconName.Lock,
+  variant: AvatarVariant.Icon,
 };
-const AvatarIconStory = () => <AvatarIcon {...getAvatarIconStoryProps()} />;
-
-export default AvatarIconStory;

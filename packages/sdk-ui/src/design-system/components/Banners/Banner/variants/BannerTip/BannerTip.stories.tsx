@@ -1,11 +1,4 @@
-// Third party dependencies.
 import React from 'react';
-import { select, text } from '@storybook/addon-knobs';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
-
-// Internal dependencies.
 import BannerTip from './BannerTip';
 import { BannerTipProps, BannerTipLogoType } from './BannerTip.types';
 import {
@@ -14,31 +7,29 @@ import {
   SAMPLE_BANNERTIP_DESCRIPTION,
   SAMPLE_BANNERTIP_PROPS,
 } from './BannerTip.constants';
+import { Meta, Story } from '@storybook/react-native';
 
-export const getBannerTipStoryProps = (): BannerTipProps => {
-  const logoTypeSelector = select(
-    'logoType',
-    BannerTipLogoType,
-    DEFAULT_BANNERTIP_LOGOTYPE,
-    storybookPropsGroupID,
-  );
+export default {
+  title: 'Component Library/Banners/BannerTip',
+  component: BannerTip,
+  argTypes: {
+    logoType: {
+      control: { type: 'select', options: BannerTipLogoType },
+      defaultValue: DEFAULT_BANNERTIP_LOGOTYPE,
+    },
+    title: { control: 'text', defaultValue: SAMPLE_BANNERTIP_TITLE },
+    description: {
+      control: 'text',
+      defaultValue: SAMPLE_BANNERTIP_DESCRIPTION,
+    },
+    // Define other props here
+  },
+} as Meta<BannerTipProps>;
 
-  const title = text('title', SAMPLE_BANNERTIP_TITLE, storybookPropsGroupID);
-  const description = text(
-    'description',
-    SAMPLE_BANNERTIP_DESCRIPTION,
-    storybookPropsGroupID,
-  );
+const Template: Story<BannerTipProps> = (args) => <BannerTip {...args} />;
 
-  return {
-    logoType: logoTypeSelector,
-    title,
-    description,
-    actionButtonProps: SAMPLE_BANNERTIP_PROPS.actionButtonProps,
-    onClose: SAMPLE_BANNERTIP_PROPS.onClose,
-  };
+export const Default = Template.bind({});
+Default.args = {
+  actionButtonProps: SAMPLE_BANNERTIP_PROPS.actionButtonProps,
+  onClose: SAMPLE_BANNERTIP_PROPS.onClose,
 };
-
-const BannerTipStory = () => <BannerTip {...getBannerTipStoryProps()} />;
-
-export default BannerTipStory;

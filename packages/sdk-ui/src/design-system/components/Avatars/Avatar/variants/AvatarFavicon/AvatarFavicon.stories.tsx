@@ -1,51 +1,45 @@
-// Third party dependencies.
 import React from 'react';
-import { select } from '@storybook/addon-knobs';
-
-// External dependencies.
-import { AvatarSize, AvatarVariant } from '../../Avatar.types';
-import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
-
-// Internal dependencies.
 import AvatarFavicon from './AvatarFavicon';
+import { AvatarFaviconProps } from './AvatarFavicon.types';
+import { AvatarSize, AvatarVariant } from '../../Avatar.types';
 import {
   TEST_LOCAL_IMAGE_SOURCE,
   TEST_REMOTE_IMAGE_SOURCE,
 } from './AvatarFavicon.constants';
-import { AvatarFaviconProps } from './AvatarFavicon.types';
+import { Meta, Story } from '@storybook/react-native';
 
-export const getAvatarFaviconStoryProps = (): AvatarFaviconProps => {
-  const sizeSelector = select(
-    'size',
-    AvatarSize,
-    AvatarSize.Md,
-    storybookPropsGroupID,
-  );
+export default {
+  title: 'Component Library/Avatars/Avatar/AvatarFavicon',
+  component: AvatarFavicon,
+  argTypes: {
+    size: {
+      control: { type: 'select', options: Object.values(AvatarSize) },
+      defaultValue: AvatarSize.Md,
+    },
+    imageSource: {
+      control: {
+        type: 'select',
+        options: {
+          Remote: TEST_REMOTE_IMAGE_SOURCE,
+          Local: TEST_LOCAL_IMAGE_SOURCE,
+        },
+      },
+      defaultValue: TEST_REMOTE_IMAGE_SOURCE,
+    },
+    variant: {
+      control: { type: 'select', options: Object.values(AvatarVariant) },
+      defaultValue: AvatarVariant.Favicon,
+    },
+  },
+} as Meta<AvatarFaviconProps>;
 
-  const imgSourceOptions = {
-    Remote: 'REMOTE',
-    Local: 'LOCAL',
-  };
-
-  const imgSourceSelector = select(
-    'imageSource.uri Source',
-    imgSourceOptions,
-    imgSourceOptions.Remote,
-    storybookPropsGroupID,
-  );
-
-  const imgSrcToSrc = {
-    [imgSourceOptions.Local]: TEST_LOCAL_IMAGE_SOURCE,
-    [imgSourceOptions.Remote]: TEST_REMOTE_IMAGE_SOURCE,
-  };
-  return {
-    size: sizeSelector,
-    imageSource: imgSrcToSrc[imgSourceSelector],
-    variant: AvatarVariant.Favicon,
-  };
-};
-const AvatarFaviconStory = () => (
-  <AvatarFavicon {...getAvatarFaviconStoryProps()} />
+const Template: Story<AvatarFaviconProps> = (args) => (
+  <AvatarFavicon {...args} />
 );
 
-export default AvatarFaviconStory;
+export const Default = Template.bind({});
+Default.args = {
+  size: AvatarSize.Md,
+  imageSource: TEST_REMOTE_IMAGE_SOURCE,
+  variant: AvatarVariant.Favicon,
+};
