@@ -1,19 +1,17 @@
-// External dependencies.
-import { TextFieldSize } from '../TextField/TextField.types';
-
-// Internal dependencies.
-import { default as TextFieldSearchComponent } from './TextFieldSearch';
+import React from 'react';
+import TextFieldSearchComponent from './TextFieldSearch';
 import { SAMPLE_TEXTFIELDSEARCH_PROPS } from './TextFieldSearch.constants';
+import { TextFieldSize } from '../TextField/TextField.types';
+import { Meta, Story } from '@storybook/react-native';
+import { TextFieldSearchProps } from './TextFieldSearch.types';
 
-const TextFieldSearchMeta = {
-  title: 'Component Library / Form',
+export default {
+  title: 'Component Library / Form / TextFieldSearch',
   component: TextFieldSearchComponent,
   argTypes: {
     size: {
-      options: TextFieldSize,
-      control: {
-        type: 'select',
-      },
+      options: Object.values(TextFieldSize),
+      control: { type: 'select' },
       defaultValue: SAMPLE_TEXTFIELDSEARCH_PROPS.size,
     },
     isError: {
@@ -36,8 +34,13 @@ const TextFieldSearchMeta = {
       control: { type: 'boolean' },
       defaultValue: SAMPLE_TEXTFIELDSEARCH_PROPS.showClearButton,
     },
+    // Add other argTypes if necessary
   },
-};
-export default TextFieldSearchMeta;
+} as Meta<TextFieldSearchProps>;
 
-export const TextFieldSearch = {};
+const Template: Story<TextFieldSearchProps> = (args) => (
+  <TextFieldSearchComponent {...args} />
+);
+
+export const TextFieldSearch = Template.bind({});
+TextFieldSearch.args = SAMPLE_TEXTFIELDSEARCH_PROPS;

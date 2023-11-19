@@ -1,8 +1,9 @@
-// Internal dependencies.
-import { default as CheckboxComponent } from './Checkbox';
+import React from 'react';
+import CheckboxComponent from './Checkbox';
 import { SAMPLE_CHECKBOX_PROPS } from './Checkbox.constants';
+import { Meta, Story } from '@storybook/react-native';
 
-const CheckboxMeta = {
+export default {
   title: 'Component Library / Checkbox',
   component: CheckboxComponent,
   argTypes: {
@@ -21,10 +22,13 @@ const CheckboxMeta = {
     isDanger: {
       control: { type: 'boolean' },
     },
+    // Add other argTypes if necessary
   },
-};
-export default CheckboxMeta;
+} as Meta<typeof CheckboxComponent>;
 
-export const Checkbox = {
-  args: SAMPLE_CHECKBOX_PROPS,
-};
+const Template: Story<typeof CheckboxComponent> = (args) => (
+  <CheckboxComponent {...args} />
+);
+
+export const Checkbox = Template.bind({});
+Checkbox.args = SAMPLE_CHECKBOX_PROPS;

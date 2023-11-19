@@ -1,19 +1,16 @@
 import React from 'react';
-
-// Internal dependencies.
-import { default as TextFieldComponent } from './TextField';
+import TextFieldComponent from './TextField';
 import { SAMPLE_TEXTFIELD_PROPS } from './TextField.constants';
 import { TextFieldProps, TextFieldSize } from './TextField.types';
+import { Meta, Story } from '@storybook/react-native';
 
-const TextFieldMeta = {
-  title: 'Component Library / Form',
+export default {
+  title: 'Component Library / Form / TextField',
   component: TextFieldComponent,
   argTypes: {
     size: {
-      options: TextFieldSize,
-      control: {
-        type: 'select',
-      },
+      options: Object.values(TextFieldSize),
+      control: { type: 'select' },
       defaultValue: SAMPLE_TEXTFIELD_PROPS.size,
     },
     isError: {
@@ -32,19 +29,19 @@ const TextFieldMeta = {
       control: { type: 'text' },
       defaultValue: SAMPLE_TEXTFIELD_PROPS.placeholder,
     },
+    // Add other argTypes if necessary
   },
-};
-export default TextFieldMeta;
+} as Meta<TextFieldProps>;
 
-export const TextField = {
-  render: (
-    args: JSX.IntrinsicAttributes &
-      TextFieldProps & { children?: React.ReactNode },
-  ) => (
-    <TextFieldComponent
-      {...args}
-      startAccessory={SAMPLE_TEXTFIELD_PROPS.startAccessory}
-      endAccessory={SAMPLE_TEXTFIELD_PROPS.endAccessory}
-    />
-  ),
+const Template: Story<TextFieldProps> = (args) => (
+  <TextFieldComponent
+    {...args}
+    startAccessory={SAMPLE_TEXTFIELD_PROPS.startAccessory}
+    endAccessory={SAMPLE_TEXTFIELD_PROPS.endAccessory}
+  />
+);
+
+export const TextField = Template.bind({});
+TextField.args = {
+  ...SAMPLE_TEXTFIELD_PROPS,
 };

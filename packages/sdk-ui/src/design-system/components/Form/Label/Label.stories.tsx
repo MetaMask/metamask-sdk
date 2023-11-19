@@ -1,19 +1,23 @@
-// Internal dependencies.
-import { default as LabelComponent } from './Label';
+import React from 'react';
+import LabelComponent from './Label';
 import { SAMPLE_LABEL_TEXT } from './Label.constants';
+import { Meta, Story } from '@storybook/react-native';
+import { LabelProps } from './Label.types';
 
-const LabelMeta = {
-  title: 'Component Library / Form',
+export default {
+  title: 'Component Library / Form / Label',
   component: LabelComponent,
   argTypes: {
     children: {
-      control: {
-        type: 'text',
-      },
+      control: { type: 'text' },
       defaultValue: SAMPLE_LABEL_TEXT,
     },
   },
-};
-export default LabelMeta;
+} as Meta<LabelProps>;
 
-export const Label = {};
+const Template: Story<LabelProps> = (args) => <LabelComponent {...args} />;
+
+export const Label = Template.bind({});
+Label.args = {
+  children: SAMPLE_LABEL_TEXT,
+};
