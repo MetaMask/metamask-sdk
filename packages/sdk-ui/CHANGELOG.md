@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.1.1]
+### Uncategorized
+- chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
+- chore: trigger release ([#523](https://github.com/MetaMask/metamask-sdk/pull/523))
+- Release 39.0.0 ([#522](https://github.com/MetaMask/metamask-sdk/pull/522))
+- feat: release 39.0.0 ([#520](https://github.com/MetaMask/metamask-sdk/pull/520))
+
 ### Added
 - chore: enable sdk-ui and sdk-lab to v0.1.0 ([#518](https://github.com/MetaMask/metamask-sdk/pull/518))
 - feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
