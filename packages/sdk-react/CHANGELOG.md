@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.2]
-### Uncategorized
+### Added
 - feat: add processing state when computing balance ([#519](https://github.com/MetaMask/metamask-sdk/pull/519))
 - feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))

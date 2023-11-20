@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.2]
-### Uncategorized
+### Added
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 - fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
