@@ -27,6 +27,9 @@ export function setupDappMetadata(instance: MetaMaskSDK) {
       );
     }
 
+    // This check ensures that the base64Icon string in the dappMetadata does not exceed 163,400 characters.
+    // The character limit is important because a longer base64-encoded string causes the connection to the mobile app to fail.
+    // Keeping the base64Icon string length below this threshold ensures reliable communication and functionality.
     if (
       options.dappMetadata.base64Icon &&
       options.dappMetadata.base64Icon.length > 163400
