@@ -11,10 +11,10 @@ import Button, {
   ButtonSize,
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
+import { IconName } from '../../design-system/components/Icons/Icon';
 import Text from '../../design-system/components/Texts/Text';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
 import NetworkSelector from '../network-selector/network-selector';
-import { IconName } from '../../design-system/components/Icons/Icon';
 
 export interface SDKSummaryProps {
   _sdkState?: SDKState;
@@ -22,7 +22,17 @@ export interface SDKSummaryProps {
 export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
   const { t } = useTranslation('sdk-summary');
   const sdkState = useSDK();
-  const { account, balance, chainId, sdk } = _sdkState ?? sdkState;
+  const { account, balance, chainId, provider, sdk } = _sdkState ?? sdkState;
+
+  const handleNetworkChange = (newChainId: number) => {
+    // make newChainId as 0x{string}
+    const hexChainId = `0x${newChainId.toString(16)}`;
+    provider?.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: hexChainId }],
+    });
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -51,7 +61,12 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
         </View>
       </View>
 
-      {sdk && <NetworkSelector showTestNetworks={true} />}
+      {sdk && (
+        <NetworkSelector
+          showTestNetworks={true}
+          onNetworkChange={handleNetworkChange}
+        />
+      )}
     </View>
   );
 };

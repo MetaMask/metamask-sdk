@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAppThemeFromContext } from '../../theme';
+import { useTheme } from '../../theme';
 import { Theme } from '../../theme/models';
 
 /**
@@ -13,7 +13,7 @@ export const useStyles = <R, V>(
   styleSheet: (params: { theme: Theme; vars: V }) => R,
   vars: V,
 ): { styles: R; theme: Theme } => {
-  const theme = useAppThemeFromContext();
+  const theme = useTheme();
   const styles = useMemo(
     () => styleSheet({ theme, vars }),
     [styleSheet, theme, vars],

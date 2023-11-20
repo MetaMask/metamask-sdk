@@ -1,7 +1,15 @@
 import { SDKState, useSDK } from '@metamask/sdk-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
-import { Modal, Portal } from 'react-native-paper';
+import {
+  Modal,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ConnectButton } from '../connect-button/connect-button';
 import { ConnectedButton } from '../connected-button/connected-button';
 import { SDKSummary } from '../sdk-summary/sdk-summary';
@@ -19,18 +27,40 @@ const getStyles = () => {
       alignItems: 'center',
       padding: 10,
     },
-    fullScreenModal: {
-      // center modal in screen
-      display: 'flex',
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonOpen: {
+      backgroundColor: '#F194FF',
+    },
+    closeButton: {
+      position: 'absolute',
+      right: 10,
+      top: 10,
+    },
+    centeredView: {
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      // position: 'absolute',
-      // top: 0,
-      // left: 0,
-      // right: 0,
-      // bottom: 0,
-      // zIndex: 999,
-      // backgroundColor: 'transparent', // Transparent background
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      zIndex: 1000,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
     },
     modalContainer: {
       marginLeft: 20,
@@ -165,15 +195,19 @@ MetaMaskButtonProps) => {
           <ConnectButton text={text} icon={icon} color={color} />
         )}
       </Pressable>
-      <Portal>
-        <Modal
-          visible={modalOpen}
-          onDismiss={closeModal}
-          contentContainerStyle={styles.modalContainer}
-        >
-          <SDKSummary />
-        </Modal>
-      </Portal>
+      <Modal visible={modalOpen} transparent={true} onDismiss={closeModal}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalOpen(false)}
+            >
+              <MaterialCommunityIcons name="close" size={24} />
+            </TouchableOpacity>
+            <SDKSummary />
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };

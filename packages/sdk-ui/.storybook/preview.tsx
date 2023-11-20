@@ -1,4 +1,4 @@
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { MetaMaskProvider, SDKContext } from '@metamask/sdk-react';
 import type { Decorator, Preview } from '@storybook/react';
 import React from 'react';
 import { Platform } from 'react-native';

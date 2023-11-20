@@ -1,5 +1,5 @@
-import React from 'react';
-import { Platform, Switch, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Switch, View } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import Cell, { CellVariant } from '../../design-system/components/Cells/Cell';
 // Internal dependencies
@@ -13,27 +13,20 @@ import Text, { TextVariant } from '../../design-system/components/Texts/Text';
 import Networks, { NetworkList, getAllNetworks } from '../../utils/networks';
 import styles from './NetworkSelector.styles';
 
-import Button, {
-  ButtonSize,
-  ButtonVariants,
-  ButtonWidthTypes,
-} from '../../design-system/components/Buttons/Button';
+import { AvatarProps } from '../../design-system/components/Avatars/Avatar/Avatar.types';
 import { colors as importedColors } from '../../styles/common';
 import { useAppTheme } from '../../theme';
-import generateTestId from '../../utils/generateTestId';
-import { AvatarProps } from '../../design-system/components/Avatars/Avatar/Avatar.types';
 
 export interface NetworkSelectorProps {
   showTestNetworks: boolean;
   goToNetworkSettings?: () => void;
   onSetRpcTarget?: (rpcUrl: string) => void;
-  onNetworkChange?: (type: string) => void;
+  onNetworkChange?: (chainId: number) => void;
 }
 
 export const NetworkSelector = ({
   showTestNetworks: initialShowTestNetworks = false,
   onNetworkChange,
-  goToNetworkSettings,
   onSetRpcTarget,
 }: NetworkSelectorProps) => {
   const { t: strings } = useTranslation('network-selector');
@@ -50,6 +43,10 @@ export const NetworkSelector = ({
     }
   > = {};
 
+  useEffect(() => {
+    setShowTestNetworks(initialShowTestNetworks);
+  }, [initialShowTestNetworks]);
+
   const renderMainnet = () => {
     const { name: mainnetName, chainId } = Networks.mainnet;
     const avatarProps: AvatarProps = {
@@ -64,7 +61,7 @@ export const NetworkSelector = ({
         title={mainnetName}
         avatarProps={avatarProps}
         isSelected={chainId.toString() === selectedChainId}
-        onPress={() => onNetworkChange?.(mainnetName)}
+        onPress={() => onNetworkChange?.(chainId)}
       />
     );
   };
@@ -81,7 +78,7 @@ export const NetworkSelector = ({
           imageSource: images['LINEA-MAINNET'],
         }}
         isSelected={chainId.toString() === selectedChainId}
-        onPress={() => onNetworkChange?.(LINEA_MAINNET)}
+        onPress={() => onNetworkChange?.(chainId)}
       />
     );
   };
@@ -128,7 +125,7 @@ export const NetworkSelector = ({
             imageSource,
           }}
           isSelected={chainId.toString() === selectedChainId}
-          onPress={() => onNetworkChange?.(networkType)}
+          onPress={() => onNetworkChange?.(chainId)}
         />
       );
     });
@@ -154,8 +151,8 @@ export const NetworkSelector = ({
   );
 
   return (
-    <View style={{ flex: 1 }}>
-      <Text>Select Network</Text>
+    <View style={{ flex: 1, width: '100%' }}>
+      <Text>{strings('Select Network')}</Text>
       <ScrollView>
         {renderMainnet()}
         {renderLineaMainnet()}
@@ -163,16 +160,6 @@ export const NetworkSelector = ({
         {renderTestNetworksSwitch()}
         {showTestNetworks && renderOtherNetworks()}
       </ScrollView>
-
-      <Button
-        variant={ButtonVariants.Secondary}
-        label={strings('app_settings.network_add_network')}
-        onPress={() => goToNetworkSettings?.()}
-        width={ButtonWidthTypes.Full}
-        size={ButtonSize.Lg}
-        style={styles.addNetworkButton}
-        {...generateTestId(Platform, 'add-network-button')}
-      />
     </View>
   );
 };

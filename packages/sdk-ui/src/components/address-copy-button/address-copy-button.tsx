@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import {
   Pressable,
   StyleProp,
@@ -6,7 +6,11 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { IconButton, Snackbar, Text } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
+import {
+  ToastContext,
+  ToastVariants,
+} from '../../design-system/components/Toast';
 
 const sizeMap = {
   xs: 12,
@@ -31,18 +35,20 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
   containerStyle,
   handleCopy,
 }) => {
-  const [visible, setVisible] = useState(false);
+  const { toastRef } = useContext(ToastContext);
 
   const handleCopied = useCallback(() => {
     handleCopy?.(address);
     if (!handleCopy) {
       console.warn(`No handleCopy function provided for address ${address}`);
     }
-    setVisible(true);
-    setTimeout(() => {
-      setVisible(false);
-    }, 1000);
-  }, [address, handleCopy]);
+
+    console.log(`toastRef`, toastRef);
+    toastRef?.current?.showToast({
+      variant: ToastVariants.Plain,
+      labelOptions: [{ label: 'Copied to clipboard' }],
+    });
+  }, [address, handleCopy, toastRef]);
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -54,13 +60,6 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
         )}
         <IconButton icon="content-copy" size={sizeMap[size]} />
       </Pressable>
-      <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        duration={1000}
-      >
-        {'Copied to clipboard'}
-      </Snackbar>
     </View>
   );
 };

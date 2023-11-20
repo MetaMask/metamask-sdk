@@ -1,7 +1,5 @@
-import { Avatar, PreviewScreen, assets } from '@metamask/sdk-ui';
+import { MetaMaskButton } from '@metamask/sdk-ui';
 import Link from 'next/link';
-import { AvatarVariant } from '../../../sdk-ui/src/design-system/components/Avatars/Avatar';
-import ADD from './add.svg';
 
 export default function Home() {
   return (
@@ -25,18 +23,17 @@ export default function Home() {
           </div>
         </div>
         <hr />
-        <div>
-          {/* <MetaMaskButton connectedType="account-balance" /> */}
-          {/* <MetaMaskButton connectedType="custom-text" /> */}
+        <div style={{ padding: 20 }}>
+          <MetaMaskButton />
         </div>
         <div>
-          <ADD />
+          {/* <ADD />
           <PreviewScreen />
           <Avatar
             variant={AvatarVariant.Network}
             name="Ethereum"
             imageSource={assets.ethereum}
-          />
+          /> */}
         </div>
       </div>
     </div>

@@ -39,6 +39,7 @@
     "@metamask/network-controller": "^16.0.0",
     "@metamask/sdk-react": "workspace:^",
     "@react-native-async-storage/async-storage": "^1.19.5",
+    "@react-navigation/native": "^6.1.9",
     "@testing-library/react-native": "^12.4.0",
     "buffer": "^6.0.3",
     "buffer-browserify": "^0.2.5",
