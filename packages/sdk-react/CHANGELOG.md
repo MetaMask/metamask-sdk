@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2]
+### Uncategorized
+- feat: add processing state when computing balance ([#519](https://github.com/MetaMask/metamask-sdk/pull/519))
+- feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
+- feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
+- fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
+- fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
+
 ## [0.12.1]
 ### Uncategorized
 - align version with sdk
@@ -90,7 +98,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.2...HEAD
+[0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.1...@metamask/sdk-react@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.0...@metamask/sdk-react@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.11.2...@metamask/sdk-react@0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.11.1...@metamask/sdk-react@0.11.2
