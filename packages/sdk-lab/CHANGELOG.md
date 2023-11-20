@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.1.1]
-### Uncategorized
+### Added
 - chore: enable sdk-ui and sdk-lab to v0.1.0 ([#518](https://github.com/MetaMask/metamask-sdk/pull/518))
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
