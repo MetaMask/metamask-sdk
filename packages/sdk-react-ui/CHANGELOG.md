@@ -13,11 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
 
 ## [0.12.1]
-### Uncategorized
-- Revert "feat: release 38.0.0" ([#504](https://github.com/MetaMask/metamask-sdk/pull/504))
-- feat: release 38.0.0 ([#502](https://github.com/MetaMask/metamask-sdk/pull/502))
-- Revert "Release 38.0.0" ([#499](https://github.com/MetaMask/metamask-sdk/pull/499))
-- Release 38.0.0 ([#497](https://github.com/MetaMask/metamask-sdk/pull/497))
+### Added
 - feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
 
 ## [0.12.0]
