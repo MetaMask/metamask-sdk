@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.12.2]
+### Uncategorized
+- chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
+- chore: trigger release ([#523](https://github.com/MetaMask/metamask-sdk/pull/523))
+- feat: release 39.0.0 ([#520](https://github.com/MetaMask/metamask-sdk/pull/520))
+
 ### Added
 - feat: add the option to add iconUrl to the dappMetadata ([#511](https://github.com/MetaMask/metamask-sdk/pull/511))
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
