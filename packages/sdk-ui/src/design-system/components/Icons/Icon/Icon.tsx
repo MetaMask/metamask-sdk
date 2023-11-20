@@ -1,11 +1,12 @@
 // Third party dependencies.
 import React from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 // External dependencies.
 import { useStyles } from '../../../hooks/useStyles';
 
 // Internal dependencies.
-import { IconProps, IconColor } from './Icon.types';
+import { IconProps, IconColor, IconName } from './Icon.types';
 import styleSheet from './Icon.styles';
 import { assetByIconName } from './Icon.assets';
 import { DEFAULT_ICON_SIZE, DEFAULT_ICON_COLOR } from './Icon.constants';
@@ -63,6 +64,16 @@ const Icon = ({
       break;
     default:
       iconColor = color;
+  }
+
+  if (name === IconName.Logout) {
+    return (
+      <MaterialCommunityIcons
+        name="logout"
+        size={sizeAsNum}
+        color={iconColor}
+      />
+    );
   }
 
   if (!SVG || (typeof SVG !== 'function' && Platform.OS === 'web')) {
