@@ -20,8 +20,8 @@ export const TEST_REMOTE_SVG_IMAGE_SOURCE: ImageSourcePropType = {
   uri: TEST_REMOTE_SVG_IMAGE_URL,
 };
 
-/* eslint-disable-next-line */
-export const TEST_LOCAL_IMAGE_SOURCE: ImageSourcePropType = require('../../../../../../images/fox.png');
+import foxIcon from '../../../../../../../assets/images/fox.png';
+export const TEST_LOCAL_IMAGE_SOURCE = foxIcon;
 
 export const FAVICON_AVATAR_IMAGE_ID = 'favicon-avatar-image';
 

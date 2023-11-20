@@ -1,6 +1,5 @@
-import { MetaMaskButton } from '@metamask/sdk-react-ui';
+import { MetaMaskButton } from '@metamask/sdk-ui';
 import Link from 'next/link';
-import { PreviewScreen } from '@metamask/sdk-ui';
 
 export default function Home() {
   return (
@@ -24,12 +23,17 @@ export default function Home() {
           </div>
         </div>
         <hr />
-        <div>
-          {/* <MetaMaskButton connectedType="account-balance" /> */}
-          {/* <MetaMaskButton connectedType="custom-text" /> */}
+        <div style={{ padding: 20 }}>
+          <MetaMaskButton />
         </div>
         <div>
+          {/* <ADD />
           <PreviewScreen />
+          <Avatar
+            variant={AvatarVariant.Network}
+            name="Ethereum"
+            imageSource={assets.ethereum}
+          /> */}
         </div>
       </div>
     </div>

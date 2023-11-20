@@ -1,22 +1,39 @@
 import { View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
 import { useSDK } from '@metamask/sdk-react';
 
-import React from 'react';
+import React, { useContext } from 'react';
+import Button, {
+  ButtonVariants,
+} from '../../design-system/components/Buttons/Button';
+import {
+  ToastContext,
+  ToastVariants,
+} from '../../design-system/components/Toast';
+import { TEST_AVATAR_TYPE } from '../../design-system/components/Toast/Toast.constants';
 
 export const First = () => {
-  const { account } = useSDK();
+  const allSDK = useSDK();
+  const { toastRef } = useContext(ToastContext);
+
   return (
     <View>
-      <Text>account: {account}</Text>
+      <Text>account: {allSDK.account}</Text>
       <Button
-        mode="outlined"
+        label="test"
+        variant={ButtonVariants.Primary}
         onPress={() => {
-          console.log(`ok I was pressed`);
+          console.log(`ok I was pressed`, toastRef);
+          toastRef?.current?.showToast({
+            variant: ToastVariants.Account,
+            labelOptions: [
+              { label: 'Switching to' },
+              { label: ' Account 2.', isBold: true },
+            ],
+            accountAddress: 'asdfadsfasdf',
+            accountAvatarType: TEST_AVATAR_TYPE,
+          });
         }}
-      >
-        test
-      </Button>
+      />
       <Text>hello</Text>
     </View>
   );

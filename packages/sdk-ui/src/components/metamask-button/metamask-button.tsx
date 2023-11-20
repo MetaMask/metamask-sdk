@@ -1,10 +1,18 @@
-import { useSDK } from '@metamask/sdk-react';
+import { SDKState, useSDK } from '@metamask/sdk-react';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
-import { Modal, Portal } from 'react-native-paper';
-import ConnectButton from '../connect-button/connect-button';
-import ConnectedButton from '../connected-button/connected-button';
-import { SDKSummary } from '../sdk-summary-modal/sdk-summary-modal';
+import {
+  Modal,
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { ConnectButton } from '../connect-button/connect-button';
+import { ConnectedButton } from '../connected-button/connected-button';
+import { SDKSummary } from '../sdk-summary/sdk-summary';
 
 const getStyles = () => {
   return StyleSheet.create({
@@ -19,18 +27,40 @@ const getStyles = () => {
       alignItems: 'center',
       padding: 10,
     },
-    fullScreenModal: {
-      // center modal in screen
-      display: 'flex',
+    button: {
+      borderRadius: 20,
+      padding: 10,
+      elevation: 2,
+    },
+    buttonOpen: {
+      backgroundColor: '#F194FF',
+    },
+    closeButton: {
+      position: 'absolute',
+      right: 10,
+      top: 10,
+    },
+    centeredView: {
+      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      // position: 'absolute',
-      // top: 0,
-      // left: 0,
-      // right: 0,
-      // bottom: 0,
-      // zIndex: 999,
-      // backgroundColor: 'transparent', // Transparent background
+      backgroundColor: 'rgba(0,0,0,0.5)',
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: 'white',
+      borderRadius: 20,
+      zIndex: 1000,
+      padding: 35,
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5,
     },
     modalContainer: {
       marginLeft: 20,
@@ -59,59 +89,32 @@ export interface Account {
 }
 
 export interface MetaMaskButtonProps {
+  // for storybook only
+  _sdkState?: Partial<SDKState>;
   color?: 'blue' | 'white' | 'orange';
   theme?: 'dark' | 'light';
   shape?: 'rectangle' | 'rounded' | 'rounded-full';
   icon?: 'original' | 'simplified' | 'no-icon';
-  iconPosition?: 'left' | 'right';
-  text?: 'Connect wallet' | 'MetaMask' | 'Connect with MetaMask' | string;
-  textAlign?: 'middle' | 'left';
-  buttonStyle?: any;
-  textStyle?: any;
-  iconStyle?: any;
-  removeDefaultStyles?: boolean;
-  connectComponent?: React.ReactNode;
-  wrongNetworkComponent?: React.ReactNode;
-  wrongNetworkText?: 'Wrong network' | 'Switch network' | string;
+  text?: 'Connect with MetaMask' | string;
   connectedComponent?: React.ReactNode;
-  connectedType?:
-    | 'custom-text'
-    | 'network-account-balance'
-    | 'network-account'
-    | 'account-balance'
-    | 'separate-network-account';
-  connectedText?: 'Connected';
-}
-
-interface ButtonLayout {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  buttonStyle?: StyleProp<ViewStyle>;
 }
 
 export const MetaMaskButton = ({
+  _sdkState,
   color,
   theme = 'dark',
   shape,
   icon,
-  iconPosition,
-  text = 'Connect wallet',
-  textAlign,
+  text = 'Connect with MetaMask',
   buttonStyle,
-  textStyle,
-  iconStyle,
-  removeDefaultStyles,
-  connectComponent,
-  wrongNetworkComponent,
-  wrongNetworkText = 'Switch network',
-  connectedComponent,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 MetaMaskButtonProps) => {
-  const { sdk, connected, error, account } = useSDK();
+  // Add fake state for storybook
+  const actualState = useSDK();
+  const { sdk, connected, error, account } = _sdkState ?? actualState;
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
-  const [buttonLayout, setButtonLayout] = useState<ButtonLayout | null>(null);
 
   useEffect(() => {
     console.log('sdk', sdk);
@@ -136,11 +139,6 @@ MetaMaskButtonProps) => {
     } catch (err) {
       console.error(` failed to connect `, err);
     }
-  };
-
-  const handleButtonLayout = (event) => {
-    const { x, y, width, height } = event.nativeEvent.layout;
-    setButtonLayout({ x, y, width, height });
   };
 
   const getColors = () => {
@@ -194,18 +192,22 @@ MetaMaskButtonProps) => {
             address={account ?? ''}
           />
         ) : (
-          <ConnectButton icon={icon} color={color} />
+          <ConnectButton text={text} icon={icon} color={color} />
         )}
       </Pressable>
-      <Portal>
-        <Modal
-          visible={modalOpen}
-          onDismiss={closeModal}
-          contentContainerStyle={styles.modalContainer}
-        >
-          <SDKSummary />
-        </Modal>
-      </Portal>
+      <Modal visible={modalOpen} transparent={true} onDismiss={closeModal}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalOpen(false)}
+            >
+              <MaterialCommunityIcons name="close" size={24} />
+            </TouchableOpacity>
+            <SDKSummary />
+          </View>
+        </View>
+      </Modal>
     </>
   );
 };

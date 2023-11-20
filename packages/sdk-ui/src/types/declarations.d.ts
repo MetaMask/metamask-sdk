@@ -20,6 +20,7 @@ declare module '*.svg' {
 }
 
 declare module 'images/image-icons' {
+  import { ImageSourcePropType } from 'react-native';
   const content: { [key: string]: ImageSourcePropType };
   export default content;
 }

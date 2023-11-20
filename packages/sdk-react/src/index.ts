@@ -1,4 +1,4 @@
-import MetaMaskProvider from './MetaMaskProvider';
+import MetaMaskProvider, { SDKContext, SDKState } from './MetaMaskProvider';
 
 export * from './MetaMaskHooks';
-export { MetaMaskProvider };
+export { MetaMaskProvider, SDKContext, SDKState };

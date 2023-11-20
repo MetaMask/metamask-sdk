@@ -20,4 +20,5 @@ export const TEST_REMOTE_IMAGE_SOURCE: ImageSourcePropType = {
   uri: TEST_REMOTE_TOKEN_IMAGES[0],
 };
 
-export const TEST_LOCAL_IMAGE_SOURCE: ImageSourcePropType = require('../../../../../../images/ethereum.png');
+import ethIcon from '../../../../../../../assets/images/ethereum.png';
+export const TEXT_LOCAL_IMAGE_SOURCE = ethIcon;

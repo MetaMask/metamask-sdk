@@ -1,83 +1,45 @@
-// Third party dependencies.
 import React from 'react';
-import { boolean, select, text } from '@storybook/addon-knobs';
-
-// External dependencies.
-import { storybookPropsGroupID } from '../../../../../../constants/storybook.constants';
+import ButtonBase from './ButtonBase';
+import { ButtonBaseProps } from './ButtonBase.types';
 import { ButtonSize, ButtonWidthTypes } from '../../Button.types';
+import { IconName } from '../../../../Icons/Icon';
+import { Meta, Story } from '@storybook/react-native';
 import {
   DEFAULT_BUTTONBASE_SIZE,
   DEFAULT_BUTTONBASE_WIDTH,
   SAMPLE_BUTTONBASE_PROPS,
 } from './ButtonBase.constants';
-import { IconName } from '../../../../Icons/Icon';
 
-// Internal dependencies.
-import ButtonBase from './ButtonBase';
-import { ButtonBaseProps } from './ButtonBase.types';
+export default {
+  title: 'Component Library / Buttons / Button / ButtonBase',
+  component: ButtonBase,
+  argTypes: {
+    size: {
+      control: { type: 'select', options: Object.values(ButtonSize) },
+      defaultValue: DEFAULT_BUTTONBASE_SIZE,
+    },
+    width: {
+      control: { type: 'select', options: Object.values(ButtonWidthTypes) },
+      defaultValue: DEFAULT_BUTTONBASE_WIDTH,
+    },
+    label: { control: 'text', defaultValue: SAMPLE_BUTTONBASE_PROPS.label },
+    isDanger: { control: 'boolean' },
+    isDisabled: { control: 'boolean' },
+    startIconName: {
+      control: { type: 'select', options: Object.values(IconName) },
+    },
+    endIconName: {
+      control: { type: 'select', options: Object.values(IconName) },
+    },
+    // Additional props can be defined here
+  },
+} as Meta<ButtonBaseProps>;
 
-export const getButtonBaseStoryProps = (): ButtonBaseProps => {
-  const sizeSelector = select(
-    'size',
-    ButtonSize,
-    DEFAULT_BUTTONBASE_SIZE,
-    storybookPropsGroupID,
-  );
-  const widthSelector = select(
-    'width',
-    ButtonWidthTypes,
-    DEFAULT_BUTTONBASE_WIDTH,
-    storybookPropsGroupID,
-  );
-  const labelInput = text(
-    'label',
-    SAMPLE_BUTTONBASE_PROPS.label as string,
-    storybookPropsGroupID,
-  );
-  const isDangerToggle = boolean('isDanger', false, storybookPropsGroupID);
-  const isDisabledToggle = boolean('isDisabled', false, storybookPropsGroupID);
+const Template: Story<ButtonBaseProps> = (args) => <ButtonBase {...args} />;
 
-  const buttonBaseProps: ButtonBaseProps = {
-    size: sizeSelector,
-    width: widthSelector,
-    label: labelInput,
-    onPress: () => console.log("I'm clicked!"),
-    isDanger: isDangerToggle,
-    isDisabled: isDisabledToggle,
-  };
-  const includesStartIconToggle = boolean(
-    'includesStartIcon',
-    false,
-    storybookPropsGroupID,
-  );
-
-  if (includesStartIconToggle) {
-    buttonBaseProps.startIconName = select(
-      'startIconName',
-      IconName,
-      SAMPLE_BUTTONBASE_PROPS.startIconName,
-      storybookPropsGroupID,
-    );
-  }
-
-  const includesEndIconToggle = boolean(
-    'includesEndIcon',
-    false,
-    storybookPropsGroupID,
-  );
-
-  if (includesEndIconToggle) {
-    buttonBaseProps.endIconName = select(
-      'endIconName',
-      IconName,
-      SAMPLE_BUTTONBASE_PROPS.endIconName,
-      storybookPropsGroupID,
-    );
-  }
-
-  return buttonBaseProps;
+export const Default = Template.bind({});
+Default.args = {
+  ...SAMPLE_BUTTONBASE_PROPS,
+  onPress: () => console.log("I'm clicked!"),
+  // Override or add any additional args here
 };
-
-const ButtonBaseStory = () => <ButtonBase {...getButtonBaseStoryProps()} />;
-
-export default ButtonBaseStory;
