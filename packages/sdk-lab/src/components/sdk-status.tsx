@@ -15,6 +15,7 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
     connected,
     connecting,
     balance,
+    balanceProcessing,
     status: serviceStatus,
     extensionActive,
     account,
@@ -67,7 +68,11 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
           />
           <ItemView label="Connected chain" value={chainId} />
           <ItemView label="Connected account" value={account} />
-          <ItemView label="Account balance" value={balance} />
+          <ItemView
+            label="Account balance"
+            value={balance}
+            processing={balanceProcessing}
+          />
           {error ? (
             <ItemView
               label="Last request error"
