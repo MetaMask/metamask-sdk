@@ -15,6 +15,7 @@ import { IconName } from '../../design-system/components/Icons/Icon';
 import Text from '../../design-system/components/Texts/Text';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
 import NetworkSelector from '../network-selector/network-selector';
+import { ActivityIndicator } from 'react-native-paper';
 
 export interface SDKSummaryProps {
   _sdkState?: SDKState;
@@ -22,7 +23,8 @@ export interface SDKSummaryProps {
 export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
   const { t } = useTranslation('sdk-summary');
   const sdkState = useSDK();
-  const { account, balance, chainId, provider, sdk } = _sdkState ?? sdkState;
+  const { account, balance, balanceProcessing, chainId, provider, sdk } =
+    _sdkState ?? sdkState;
 
   const handleNetworkChange = (newChainId: number) => {
     // make newChainId as 0x{string}
@@ -44,9 +46,13 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
         />
         <AddressCopyButton address={account ?? ''} />
         <View style={styles.balanceContainer}>
-          <Text ellipsizeMode="middle" numberOfLines={1}>
-            {balance}
-          </Text>
+          {balanceProcessing ? (
+            <ActivityIndicator />
+          ) : (
+            <Text ellipsizeMode="middle" numberOfLines={1}>
+              {balance}
+            </Text>
+          )}
           <Text>{chainId === '0x1' ? 'ETH' : '???'}</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
