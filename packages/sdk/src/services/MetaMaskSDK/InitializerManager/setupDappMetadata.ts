@@ -28,6 +28,15 @@ export function setupDappMetadata(instance: MetaMaskSDK) {
     }
 
     if (
+      options.dappMetadata.base64Icon &&
+      options.dappMetadata.base64Icon.length > 163400
+    ) {
+      throw new Error(
+        'Invalid dappMetadata.base64Icon: Base64-encoded icon string length must be less than 163400 characters',
+      );
+    }
+
+    if (
       options.dappMetadata.url &&
       !urlPattern.test(options.dappMetadata.url)
     ) {
