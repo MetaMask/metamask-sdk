@@ -60,7 +60,7 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
             variant={ButtonVariants.Link}
             isDanger={false}
             size={ButtonSize.Lg}
-            endIconName={IconName.Logout}
+            startIconName={IconName.Logout}
             onPress={() => sdk?.terminate()}
             label={t('Disconnect')}
           />

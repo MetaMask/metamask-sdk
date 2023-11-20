@@ -1,5 +1,6 @@
 import { SDKState, useSDK } from '@metamask/sdk-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import { Toast, ToastContext } from '@metamask/sdk-ui';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Modal,
   Pressable,
@@ -115,6 +116,7 @@ MetaMaskButtonProps) => {
   const { sdk, connected, error, account } = _sdkState ?? actualState;
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
+  const { toastRef } = useContext(ToastContext);
 
   useEffect(() => {
     console.log('sdk', sdk);
@@ -207,6 +209,7 @@ MetaMaskButtonProps) => {
             <SDKSummary />
           </View>
         </View>
+        <Toast ref={toastRef} />
       </Modal>
     </>
   );

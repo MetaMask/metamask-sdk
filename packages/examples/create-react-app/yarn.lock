@@ -2542,9 +2542,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.1, @metamask/sdk-communication-layer@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.1"
+"@metamask/sdk-communication-layer@npm:0.12.2, @metamask/sdk-communication-layer@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.2"
   dependencies:
     bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
@@ -2554,13 +2554,13 @@ __metadata:
     socket.io-client: ^4.5.1
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 273340fbe8e677f603c5f4a91d6e2d692f85c9406ea4269da4eff1bade6b5c897b6f76749ba7cde59d10cc8a33a2912d8d1d3355d5fdcaf62b3dfe8d7e1cdaf2
+  checksum: 07d0fe3d1bfbe78b5f0df388a0a1a4b907b5ddd2d42cfad89542f854cf7a49f5dc54ed2710d776f0901981fa8d3482cb50eb84ffadfcce41c7707876e5d7fb84
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.1"
+"@metamask/sdk-install-modal-web@npm:0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.2"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -2569,33 +2569,33 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: c93d607a23d74e3b25602f6c13936e4dc4d9c834a86c412dc743369196d79831c6da5e2997207ee3214561c7b367e6e771d47389bbaa7df28b0f21a2d0445b74
+  checksum: 21b6af3fe1e40e58ca9896ff96dded6e5b65b35e605b2d73ac7455d06fcbe2fa5aa36ff634baa3d5e30771a49910884a5ec5a38d327a273b111115be3accba5b
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk-react@npm:0.12.1"
+"@metamask/sdk-react@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-react@npm:0.12.2"
   dependencies:
-    "@metamask/sdk": ^0.12.1
-    "@metamask/sdk-communication-layer": ^0.12.1
+    "@metamask/sdk": ^0.12.2
+    "@metamask/sdk-communication-layer": ^0.12.2
     eth-rpc-errors: ^4.0.3
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 0be9647c11aa5f521daece0e64b3e7699634437150c3b7613f8ee56da4c19632f1a21a331fb1c9ffb8f9e8fa2cc7b39d77f8edf204e8b49dca6cbbba89d5a726
+  checksum: ae06c7910382e698756e95fe4bf721f0c4275adac30adde54ea136db32848cb4d77a2dfa779c2aeaf09283e4482051497a91efb508e851f33a93a09a3bd0a560
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk@npm:0.12.1"
+"@metamask/sdk@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk@npm:0.12.2"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.1
-    "@metamask/sdk-install-modal-web": 0.12.1
+    "@metamask/sdk-communication-layer": 0.12.2
+    "@metamask/sdk-install-modal-web": 0.12.2
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -2624,7 +2624,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 3b71316670ae9558aed953b8240ed15612e92a7c65c9fd7537a6ec0fc73ead9d7300428163d25974860256d16e6830dba4a1e3307f916d4e38ad8c534838bf74
+  checksum: 389791e55a73be9ec00310233fdf92491cebf3efeb97a703dbb4fb91e1bac5fc00af33241b9f11c4c58d5d3cb34192a1bdf16ffad3afd9ab962a39a1b66db2e0
   languageName: node
   linkType: hard
 
@@ -10067,7 +10067,7 @@ __metadata:
   resolution: "mm-sdk-cra@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react": ^0.12.1
+    "@metamask/sdk-react": ^0.12.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0
