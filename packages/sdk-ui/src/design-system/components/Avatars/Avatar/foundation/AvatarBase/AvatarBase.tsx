@@ -3,7 +3,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 // External dependencies.
-import { useStyles } from '../../../../../../hooks/useStyles';
+import { useStyles } from '../../../../../hooks/useStyles';
 import { AvatarSize } from '../../Avatar.types';
 
 // Internal dependencies.

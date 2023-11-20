@@ -18,23 +18,26 @@ const AvatarAccount = ({
   size = AvatarSize.Md,
   style,
   ...props
-}: AvatarAccountProps) => (
-  <AvatarBase size={size} style={style} {...props}>
-    {
+}: AvatarAccountProps) => {
+  if (!accountAddress) return null;
+  return (
+    <AvatarBase size={size} style={style} {...props}>
       {
-        [AvatarAccountType.JazzIcon]: (
-          <JazzIcon size={Number(size)} address={accountAddress} />
-        ),
-        [AvatarAccountType.Blockies]: (
-          <Image
-            source={{ uri: toDataUrl(accountAddress) }}
-            style={stylesheet.imageStyle}
-          />
-        ),
-      }[type]
-    }
-  </AvatarBase>
-);
+        {
+          [AvatarAccountType.JazzIcon]: (
+            <JazzIcon size={Number(size)} address={accountAddress} />
+          ),
+          [AvatarAccountType.Blockies]: (
+            <Image
+              source={{ uri: toDataUrl(accountAddress) }}
+              style={stylesheet.imageStyle}
+            />
+          ),
+        }[type]
+      }
+    </AvatarBase>
+  );
+};
 
 export default AvatarAccount;
 

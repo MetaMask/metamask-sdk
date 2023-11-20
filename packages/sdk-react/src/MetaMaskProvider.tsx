@@ -35,7 +35,7 @@ export interface EventHandlerProps {
   sdk?: MetaMaskSDK;
 }
 
-const initProps: {
+export interface SDKState {
   sdk?: MetaMaskSDK;
   ready: boolean;
   connected: boolean;
@@ -47,10 +47,13 @@ const initProps: {
   error?: EthereumRpcError<unknown>;
   chainId?: string;
   balance?: string; // hex value in wei
+  balanceProcessing?: boolean;
   account?: string;
   status?: ServiceStatus;
   rpcHistory?: RPCMethodCache;
-} = {
+}
+
+const initProps: SDKState = {
   ready: false,
   extensionActive: false,
   connected: false,
@@ -77,6 +80,7 @@ const MetaMaskProviderClient = ({
   const [trigger, setTrigger] = useState<number>(1);
   const [chainId, setChainId] = useState<string>();
   const [balance, setBalance] = useState<string>();
+  const [balanceProcessing, setBalanceProcessing] = useState<boolean>(false);
   const [account, setAccount] = useState<string>();
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
@@ -119,6 +123,7 @@ const MetaMaskProviderClient = ({
   useEffect(() => {
     if (account) {
       // Retrieve balance of account
+      setBalanceProcessing(true);
       sdk
         ?.getProvider()
         .request({
@@ -131,7 +136,6 @@ const MetaMaskProviderClient = ({
               `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
             );
           }
-
           setBalance(accountBalance as string);
         })
         .catch((err: any) => {
@@ -139,6 +143,8 @@ const MetaMaskProviderClient = ({
             `[MetamaskProvider] error retrieving balance of ${account}`,
             err,
           );
+        }).finally(() => {
+          setBalanceProcessing(false);
         });
     } else {
       setBalance(undefined);
@@ -232,6 +238,7 @@ const MetaMaskProviderClient = ({
         connecting,
         account,
         balance,
+        balanceProcessing,
         extensionActive,
         chainId,
         error,

@@ -1,14 +1,15 @@
 import React from 'react';
 
 // External dependencies.
-import { TextVariant, TextColor } from '../Text';
-import { IconName, IconSize, IconColor } from '../../Icons/Icon';
+import { TextColor, TextVariant } from '../Text';
 
 // Internal dependencies.
+import { Meta } from '@storybook/react-native';
+import { IconColor, IconName, IconSize } from '../../Icons/Icon';
 import { default as TextWithPrefixIconComponent } from './TextWithPrefixIcon';
 import { SAMPLE_TEXTWITHPREFIXICON_PROPS } from './TextWithPrefixIcon.constants';
 
-const TextWithPrefixIconMeta = {
+const TextWithPrefixIconMeta: Meta = {
   title: 'Component Library / Texts',
   component: TextWithPrefixIconComponent,
   argTypes: {
@@ -29,6 +30,10 @@ const TextWithPrefixIconMeta = {
         type: 'select',
       },
       defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.color,
+    },
+    iconProps: {
+      control: { type: 'object' },
+      defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps,
     },
     iconSize: {
       options: IconSize,
@@ -52,14 +57,22 @@ const TextWithPrefixIconMeta = {
       defaultValue: SAMPLE_TEXTWITHPREFIXICON_PROPS.iconProps.color,
     },
   },
+  args: {
+    children: 'here is a sample text',
+    iconProps: {
+      name: IconName.Add,
+    },
+  },
 };
 export default TextWithPrefixIconMeta;
 
-export const TextWithPrefixIcon = {
-  render: ({ iconSize, iconName, iconColor, ...props }: any) => (
+export const TextWithPrefixIcon = (args: any) => {
+  const { iconSize, iconName, iconColor } = args;
+  console.log(`change params`, args);
+  return (
     <TextWithPrefixIconComponent
+      {...args}
       iconProps={{ size: iconSize, name: iconName, color: iconColor }}
-      {...props}
     />
-  ),
+  );
 };

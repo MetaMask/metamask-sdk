@@ -1,6 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const cracoBabelLoader = require('craco-babel-loader')
+const webpack = require('webpack');
 
 // Handle relative paths to sibling packages
 const appDirectory = fs.realpathSync(process.cwd())
@@ -13,6 +14,10 @@ const packagesToTranspile = [
   resolvePackage('../sdk-react-ui'),
   resolvePackage('../sdk-lab'),
   resolvePackage('../sdk-ui'),
+  require.resolve('react-native-gesture-handler'),
+  require.resolve('react-native-svg'),
+  require.resolve('react-native-reanimated'),
+  require.resolve('react-native-safe-area-context'),
   path.resolve('node_modules/@react-native/assets-registry/registry.js'),
 ]
 
@@ -29,12 +34,28 @@ module.exports = {
   },
   webpack: {
     configure: (webpackConfig) => {
+      const scopePluginIndex = webpackConfig.resolve.plugins.findIndex(
+        ({ constructor }) => constructor && constructor.name === 'ModuleScopePlugin'
+      );
+
+      // Inject __DEV__ which is required by some modules
+      webpackConfig.plugins.push(
+        new webpack.DefinePlugin({
+          __DEV__: process.env.NODE_ENV !== 'production',
+        })
+      );
+
+      webpackConfig.resolve.plugins.splice(scopePluginIndex, 1);
       webpackConfig.resolve = {
         ...webpackConfig.resolve,
         alias: {
           ...webpackConfig.resolve.alias,
-          // 'react-native$': require.resolve('react-native-web'),
-          // 'react-native/Libraries/Image/AssetRegistry': path.resolve(__dirname, 'mocks/AssetRegistry.js'),
+          'react': require.resolve('react'),
+          // 'react-dom': require.resolve('react-dom'),
+          'react-native-reanimated': path.resolve(__dirname, './node_modules/react-native-reanimated'),
+          'react-native-gesture-handler': path.resolve(__dirname, './node_modules/react-native-gesture-handler'),
+          'react-native-safe-area-context': path.resolve(__dirname, './node_modules/react-native-safe-area-context'),
+          'react-native-svg': path.resolve(__dirname, './node_modules/react-native-svg'),
         },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
@@ -42,20 +63,6 @@ module.exports = {
         },
       };
       webpackConfig.module.rules.push(
-        // {
-        //   test: /\.(js|jsx|mjs)$/,
-        //   include: [
-        //     // Add the path to the problematic module
-        //     path.resolve('../sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
-        //     // Add other React Native modules if needed
-        //   ],
-        //   use: {
-        //     loader: 'babel-loader',
-        //     options: {
-        //       presets: ['@babel/preset-react', '@babel/preset-flow'],
-        //     },
-        //   },
-        // },
         {
           test: /\.ttf$/,
           loader: "url-loader", // or directly file-loader
@@ -95,6 +102,12 @@ module.exports = {
           test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
           type: 'asset/resource'
         });
+      // // Add SVGR loader for SVG files
+      // webpackConfig.module.rules.push({
+      //   test: /\.svg$/,
+      //   use: ['@svgr/webpack'], // This will use SVGR for SVG files and url-loader as a fallback
+      // });
+
       // write resolve config for debug
       const webpackConfigPath = path.resolve(__dirname, './webpack.config.json');
       fs.writeFileSync(webpackConfigPath, JSON.stringify(webpackConfig, null, 2));

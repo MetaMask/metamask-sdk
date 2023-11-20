@@ -1,5 +1,5 @@
 // Third party dependencies.
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 import { darkTheme } from '@metamask/design-tokens';
 
 const { colors } = darkTheme;
@@ -14,7 +14,7 @@ const toastWidth = Dimensions.get('window').width - marginWidth * 2;
  */
 const styleSheet = StyleSheet.create({
   base: {
-    position: 'absolute',
+    position: Platform.OS === 'web' ? 'fixed' : ('absolute' as any),
     width: toastWidth,
     left: marginWidth,
     bottom: 0,
@@ -22,6 +22,7 @@ const styleSheet = StyleSheet.create({
     borderRadius: 4,
     padding,
     flexDirection: 'row',
+    zIndex: 9999,
   },
   avatar: {
     marginRight: 8,

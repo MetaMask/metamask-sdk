@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.2]
+### Added
+- feat: add the option to add iconUrl to the dappMetadata ([#511](https://github.com/MetaMask/metamask-sdk/pull/511))
+- feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
+
 ## [0.12.1]
 ### Added
 - feat: propagate extension events ([#493](https://github.com/MetaMask/metamask-sdk/pull/493))
@@ -189,7 +194,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.2...HEAD
+[0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.1...@metamask/sdk@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.0...@metamask/sdk@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.2...@metamask/sdk@0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.11.1...@metamask/sdk@0.11.2

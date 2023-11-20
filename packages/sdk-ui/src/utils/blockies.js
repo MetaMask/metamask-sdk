@@ -1,9 +1,13 @@
 (function (global, factory) {
-  exports && typeof exports === 'object' && typeof module !== 'undefined'
-    ? factory(exports)
-    : typeof define === 'function' && define.amd
-    ? define(['exports'], factory)
-    : factory((global.blockies = {}));
+  const g = typeof window !== 'undefined' ? window : global; // Add this line
+
+  if (typeof exports === 'object' && typeof module !== 'undefined') {
+    factory(exports);
+  } else if (typeof define === 'function' && define.amd) {
+    define(['exports'], factory);
+  } else {
+    factory((g.blockies = {})); // Use `g` here instead of `global`
+  }
 })(this, (exports) => {
   'use strict';
 

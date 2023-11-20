@@ -5,14 +5,18 @@ const path = require('path');
  */
 module.exports = {
   root: true,
-  extends: [
-    '@react-native-community',
-    'prettier',
-  ],
+  extends: ['@react-native-community', 'prettier', 'plugin:storybook/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: [path.resolve(__dirname, 'tsconfig.json')],
   },
   ignorePatterns: ['*.js'],
-  rules: {},
+  rules: {
+    "react-hooks/exhaustive-deps": [
+      "error",
+      {
+        "additionalHooks": "(useAnimatedStyle|useDerivedValue|useAnimatedProps)"
+      }
+    ]
+  }
 };

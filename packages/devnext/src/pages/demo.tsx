@@ -265,65 +265,59 @@ export default function Demo() {
   };
 
   const interactViem = async () => {
-    const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
-    const contractAddress = process.env
-      .NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
-    if (!contractAddress || !rpcUrl) {
-      throw new Error(
-        'NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set',
-      );
-    }
-
-    // const transport = http(rpcUrl);
-    const transport = custom(provider!);
-    const client = createPublicClient({ transport });
-    const wallet = createWalletClient({
-      transport,
-      account: provider?.selectedAddress as `0x{string}`,
-    });
-    try {
-      const balance = await client.getBalance({
-        address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E',
-      });
-      console.debug('balance', balance);
-
-      const chainId = await client.getChainId();
-      console.debug('chainId', chainId);
-
-      const contract = getContract({
-        address: contractAddress,
-        abi: SimpleABI.abi,
-        publicClient: client,
-        walletClient: wallet,
-      });
-
-      let text = await contract.read.ping();
-      console.debug('ping', text);
-
-      const nextValue = `now: ${Date.now()}`;
-      console.debug(`Set new contract value to: `, nextValue);
-      const trxHash = await contract.write.set([nextValue], {
-        account: provider?.selectedAddress,
-        chain: { id: parseInt(provider?.chainId ?? '') },
-      });
-
-      console.debug(`Wait for trx to complete...`);
-      // Wait for transaction to be mined
-      const trx = await client.waitForTransactionReceipt({
-        hash: trxHash,
-        confirmations: 1,
-      });
-
-      console.debug(`Check result...`, trx);
-      text = await contract.read.ping();
-      const success = text === nextValue;
-      console.debug(
-        `Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `,
-        text,
-      );
-    } catch (error) {
-      console.error('Error pinging Viem:', error);
-    }
+    console.debug(`DEBUG`);
+    // const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
+    //   const contractAddress = process.env
+    //     .NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
+    //   if (!contractAddress || !rpcUrl) {
+    //     throw new Error(
+    //       'NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set',
+    //     );
+    //   }
+    //   // const transport = http(rpcUrl);
+    //   const transport = custom(provider!);
+    //   const client = createPublicClient({ transport });
+    //   const wallet = createWalletClient({
+    //     transport,
+    //     account: provider?.selectedAddress as `0x{string}`,
+    //   });
+    //   try {
+    //     const balance = await client.getBalance({
+    //       address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E',
+    //     });
+    //     console.debug('balance', balance);
+    //     const chainId = await client.getChainId();
+    //     console.debug('chainId', chainId);
+    //     const contract = getContract({
+    //       address: contractAddress,
+    //       abi: SimpleABI.abi,
+    //       publicClient: client,
+    //       walletClient: wallet,
+    //     });
+    //     let text = await contract.read.ping();
+    //     console.debug('ping', text);
+    //     const nextValue = `now: ${Date.now()}`;
+    //     console.debug(`Set new contract value to: `, nextValue);
+    //     const trxHash = await contract.write.set([nextValue], {
+    //       account: provider?.selectedAddress,
+    //       chain: { id: parseInt(provider?.chainId ?? '') },
+    //     });
+    //     console.debug(`Wait for trx to complete...`);
+    //     // Wait for transaction to be mined
+    //     const trx = await client.waitForTransactionReceipt({
+    //       hash: trxHash,
+    //       confirmations: 1,
+    //     });
+    //     console.debug(`Check result...`, trx);
+    //     text = await contract.read.ping();
+    //     const success = text === nextValue;
+    //     console.debug(
+    //       `Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `,
+    //       text,
+    //     );
+    //   } catch (error) {
+    //     console.error('Error pinging Viem:', error);
+    //   }
   };
 
   const testEthers = async () => {
@@ -341,24 +335,22 @@ export default function Demo() {
   };
 
   const testPayload = async () => {
-    // const res = await provider?.request({
-    //   "method": "wallet_addEthereumChain",
-    //   "params": [
-    //     {
-    //       "chainId": "0x1",
-    //       "chainName": "Ethereum",
-    //       "nativeCurrency": {
-    //         "name": "Ethereum",
-    //         "symbol": "ETH",
-    //         "decimals": 18
-    //       },
-    //       "rpcUrls": [
-    //         "https://rpc.blocknative.com/boost"
-    //       ]
-    //     }
-    //   ]
-    // })
-    // console.log(`res`, res);
+    const res = await provider?.request({
+      method: 'wallet_addEthereumChain',
+      params: [
+        {
+          chainId: '0x1',
+          chainName: 'Ethereum',
+          nativeCurrency: {
+            name: 'Ethereum',
+            symbol: 'ETH',
+            decimals: 18,
+          },
+          rpcUrls: ['https://rpc.blocknative.com/boost'],
+        },
+      ],
+    });
+    console.log(`res`, res);
     checkBalances();
   };
 

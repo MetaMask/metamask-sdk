@@ -12,7 +12,7 @@ import generateTestId from '../../../../../../utils/generateTestId';
 import { NETWORK_AVATAR_IMAGE_ID } from './../../../../../../constants/test-ids';
 import stylesheet from './AvatarNetwork.styles';
 import { AvatarNetworkProps } from './AvatarNetwork.types';
-import { useStyles } from '../../../../../../hooks/useStyles';
+import { useStyles } from '../../../../../hooks/useStyles';
 
 const AvatarNetwork = ({
   size = AvatarSize.Md,
@@ -28,7 +28,13 @@ const AvatarNetwork = ({
       : TextVariant.HeadingSMRegular;
   const chainNameFirstLetter = name?.[0] ?? '?';
 
-  const onError = useCallback(() => setShowFallback(true), [setShowFallback]);
+  const onError = useCallback(
+    (err: unknown) => {
+      console.error(`avatar loading error`, err);
+      setShowFallback(true);
+    },
+    [setShowFallback],
+  );
 
   useEffect(() => {
     setShowFallback(!imageSource);
@@ -42,7 +48,7 @@ const AvatarNetwork = ({
         </Text>
       ) : (
         <Image
-          source={imageSource as ImageSourcePropType}
+          source={(imageSource as any).src || imageSource}
           style={styles.image}
           onError={onError}
           {...generateTestId(Platform, NETWORK_AVATAR_IMAGE_ID)}

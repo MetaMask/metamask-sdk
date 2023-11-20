@@ -40,7 +40,8 @@
       ],
       "@metamask/sdk": [
         "../sdk/src"
-      ]
+      ],
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": [

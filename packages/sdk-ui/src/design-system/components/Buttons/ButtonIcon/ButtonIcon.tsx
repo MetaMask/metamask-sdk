@@ -4,7 +4,7 @@ import { GestureResponderEvent, TouchableOpacity } from 'react-native';
 
 // External dependencies.
 import Icon from '../../Icons/Icon';
-import { useStyles } from '../../../../hooks/useStyles';
+import { useStyles } from '../../../hooks/useStyles';
 
 // Internal dependencies.
 import { ButtonIconProps, ButtonIconVariants } from './ButtonIcon.types';

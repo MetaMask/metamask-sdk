@@ -1,86 +1,44 @@
-// Third party dependencies.
-import React, { useContext } from 'react';
-import { Alert } from 'react-native';
-import { storiesOf } from '@storybook/react-native';
+import { Meta, Story } from '@storybook/react-native';
+import React, { useRef } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
-// External dependencies.
 import Button, { ButtonSize, ButtonVariants } from '../Buttons/Button';
+import Toast, { ToastComponentType } from './Toast';
+import { TEST_ACCOUNT_ADDRESS, TEST_AVATAR_TYPE } from './Toast.constants';
+import { ToastContextWrapper } from './Toast.context';
+import { ToastRef, ToastVariants } from './Toast.types';
 
-// Internal dependencies.
-import Toast from './Toast';
-import { ToastContext, ToastContextWrapper } from './Toast.context';
-import { ToastVariants } from './Toast.types';
-import {
-  TEST_ACCOUNT_ADDRESS,
-  TEST_AVATAR_TYPE,
-  TEST_NETWORK_IMAGE_URL,
-} from './Toast.constants';
+export default {
+  title: 'Component Library / Toast',
+  component: Toast,
+} as Meta<ToastComponentType>;
 
-const ToastExample = () => {
-  const { toastRef } = useContext(ToastContext);
+const Template: Story<ToastComponentType> = () => {
+  const toastRef = useRef<ToastRef>(null);
 
   return (
-    <>
-      <Button
-        variant={ButtonVariants.Link}
-        size={ButtonSize.Md}
-        label={'Show Account Toast'}
-        onPress={() => {
-          toastRef?.current?.showToast({
-            variant: ToastVariants.Account,
-            labelOptions: [
-              { label: 'Switching to' },
-              { label: ' Account 2.', isBold: true },
-            ],
-            accountAddress: TEST_ACCOUNT_ADDRESS,
-            accountAvatarType: TEST_AVATAR_TYPE,
-          });
-        }}
-      />
-      <Button
-        variant={ButtonVariants.Link}
-        size={ButtonSize.Md}
-        label={'Show Network Toast'}
-        onPress={() => {
-          toastRef?.current?.showToast({
-            variant: ToastVariants.Network,
-            labelOptions: [
-              { label: 'Added' },
-              { label: ' Mainnet', isBold: true },
-              { label: ' network.' },
-            ],
-            networkImageSource: { uri: TEST_NETWORK_IMAGE_URL },
-            linkButtonOptions: {
-              label: 'Click here!',
-              onPress: () => {
-                Alert.alert('Clicked toast link!');
-              },
-            },
-          });
-        }}
-      />
-      <Button
-        variant={ButtonVariants.Link}
-        size={ButtonSize.Md}
-        label={'Show Plain Toast'}
-        onPress={() => {
-          toastRef?.current?.showToast({
-            variant: ToastVariants.Plain,
-            labelOptions: [{ label: 'This is a plain message.' }],
-          });
-        }}
-      />
-
-      <Toast ref={toastRef} />
-    </>
+    <SafeAreaProvider>
+      <ToastContextWrapper>
+        <Button
+          variant={ButtonVariants.Link}
+          size={ButtonSize.Md}
+          label={'Show Account Toast'}
+          onPress={() => {
+            toastRef.current?.showToast({
+              variant: ToastVariants.Account,
+              labelOptions: [
+                { label: 'Switching to' },
+                { label: ' Account 2.', isBold: true },
+              ],
+              accountAddress: TEST_ACCOUNT_ADDRESS,
+              accountAvatarType: TEST_AVATAR_TYPE,
+            });
+          }}
+        />
+        {/* Additional buttons for other toast examples */}
+        <Toast ref={toastRef} />
+      </ToastContextWrapper>
+    </SafeAreaProvider>
   );
 };
 
-storiesOf('Component Library / Toast', module)
-  .addDecorator((storyFn) => (
-    <SafeAreaProvider>
-      <ToastContextWrapper>{storyFn()}</ToastContextWrapper>
-    </SafeAreaProvider>
-  ))
-  .add('Default', () => <ToastExample />);
+export const Default = Template.bind({});

@@ -46,15 +46,18 @@ const animationDuration = 250;
 const bottomPadding = 16;
 const screenHeight = Dimensions.get('window').height;
 
-const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
+const Toast = forwardRef<ToastRef, {}>((_, ref) => {
   const [toastOptions, setToastOptions] = useState<ToastOptions | undefined>(
     undefined,
   );
   const { bottom: bottomNotchSpacing } = useSafeAreaInsets();
   const translateYProgress = useSharedValue(screenHeight);
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateYProgress.value }],
-  }));
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      transform: [{ translateY: translateYProgress.value }],
+    }),
+    [translateYProgress],
+  );
   const baseStyle: StyleProp<Animated.AnimateStyle<StyleProp<ViewStyle>>> =
     useMemo(() => [styles.base, animatedStyle], [animatedStyle]);
 
@@ -185,3 +188,8 @@ const Toast = forwardRef((_, ref: React.ForwardedRef<ToastRef>) => {
 });
 
 export default Toast;
+
+// Define the type for the Toast component when it doesn't accept props but uses a ref
+export type ToastComponentType = React.ForwardRefExoticComponent<
+  React.RefAttributes<ToastRef>
+>;

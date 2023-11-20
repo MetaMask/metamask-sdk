@@ -12,6 +12,11 @@ const modules = [
   'react',
   'react-dom',
   'react-native',
+  'react-native-gesture-handler',
+  'react-native-paper',
+  'react-native-reanimated',
+  'react-native-svg',
+  'react-native-vector-icons',
   'react-native-safe-area-context',
 ]
 
@@ -46,6 +51,14 @@ console.log(`finalBlacklistRE`, finalBlacklistRE)
  *
  * @type {import('metro-config').MetroConfig}
  */
+const defaultConfig = getDefaultConfig(__dirname);
+const { assetExts, sourceExts } = defaultConfig.resolver ?? {};
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
 const config = {
   transformer: {
     getTransformOptions: async () => ({
@@ -54,6 +67,7 @@ const config = {
         inlineRequires: true,
       },
     }),
+    babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },
   watchFolders: [sdkRootPath],
   resolver: {
@@ -63,6 +77,8 @@ const config = {
       // crypto: require.resolve('react-native-quick-crypto'),
       // url: require.resolve('whatwg-url'),
     },
+    assetExts: assetExts.filter((ext) => ext !== 'svg'),
+    sourceExts: [...sourceExts, 'svg'],
     blacklistRE: finalBlacklistRE,
     // nodeModulesPaths: [
     //   './node_modules/',
@@ -115,4 +131,4 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+module.exports = mergeConfig(defaultConfig, config);

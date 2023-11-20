@@ -1,7 +1,6 @@
 {
   "name": "@metamask/sdk-lab",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.1",
   "description": "MetaMask SDK lab -- alpha components for sdk development",
   "main": "src/index.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",

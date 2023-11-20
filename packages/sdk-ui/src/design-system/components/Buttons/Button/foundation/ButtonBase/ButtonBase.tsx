@@ -1,6 +1,6 @@
 // Third party dependencies.
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 // External dependencies.
 import Text from '../../../../Texts/Text';
@@ -46,12 +46,13 @@ const ButtonBase = ({
       {...props}
     >
       {startIconName && (
-        <Icon
-          color={labelColor.toString()}
-          name={startIconName}
-          size={DEFAULT_BUTTONBASE_ICON_SIZE}
-          style={styles.startIcon}
-        />
+        <View style={styles.startIcon}>
+          <Icon
+            color={labelColor.toString()}
+            name={startIconName}
+            size={DEFAULT_BUTTONBASE_ICON_SIZE}
+          />
+        </View>
       )}
       {typeof label === 'string' ? (
         <Text
@@ -64,12 +65,13 @@ const ButtonBase = ({
         label
       )}
       {endIconName && (
-        <Icon
-          color={labelColor.toString()}
-          name={endIconName}
-          size={DEFAULT_BUTTONBASE_ICON_SIZE}
-          style={styles.endIcon}
-        />
+        <View style={styles.endIcon}>
+          <Icon
+            color={labelColor.toString()}
+            name={endIconName}
+            size={DEFAULT_BUTTONBASE_ICON_SIZE}
+          />
+        </View>
       )}
     </TouchableOpacity>
   );

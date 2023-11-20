@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import { throttle } from 'lodash';
 import { AppThemeKey, Theme } from './models';
-import { useSelector } from 'react-redux';
 import { lightTheme, darkTheme } from '@metamask/design-tokens';
 import Device from '../utils/device';
 
@@ -95,11 +94,9 @@ const useColorSchemeCustom = (
 };
 /* eslint-enable */
 
-export const useAppTheme = (): Theme => {
+export const useAppTheme = (appThemeKey = AppThemeKey.light): Theme => {
   const osThemeName = useColorSchemeCustom();
-  const appTheme: AppThemeKey = useSelector(
-    (state: any) => state.user.appTheme,
-  );
+  const appTheme: AppThemeKey = appThemeKey;
   const themeAppearance = getAssetFromTheme(
     appTheme,
     osThemeName,
@@ -187,7 +184,7 @@ export const useTheme = (): Theme => {
  */
 export const useAssetFromTheme = (light: any, dark: any) => {
   const osColorScheme = useColorScheme();
-  const appTheme = useSelector((state: any) => state.user.appTheme);
+  const appTheme = AppThemeKey.light;
   const asset = getAssetFromTheme(appTheme, osColorScheme, light, dark);
 
   return asset;

@@ -1,17 +1,16 @@
 import React from 'react';
 import { SDKConfig, SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
 import { MetaMaskProvider } from '@metamask/sdk-react';
+import { UIProvider } from '@metamask/sdk-ui';
 import ReactDOM from 'react-dom/client';
-import { App } from './App';
-import './index.css';
-import './icons.css';
-import reportWebVitals from './reportWebVitals';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import { View, Text } from 'react-native';
-import { PreviewScreen, First, ItemView, UIProvider } from '@metamask/sdk-ui';
+import { App } from './App';
+import './icons.css';
+import './index.css';
+import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
@@ -50,8 +49,8 @@ const WithProvider = () => {
           console.debug(`nothing to do here`);
         }}
       />
-      <PreviewScreen />
-      {/* <App /> */}
+      {/* <PreviewScreen /> */}
+      <App />
     </MetaMaskProvider>
   );
 };

@@ -12,13 +12,13 @@ export interface ConnectedButtonProps {
   containerStyle?: StyleProp<ViewStyle>;
 }
 
-export default function ConnectedButton({
+export const ConnectedButton = ({
   active,
   address,
   balance,
   network,
   containerStyle,
-}: ConnectedButtonProps) {
+}: ConnectedButtonProps) => {
   return (
     <View style={[styles.container, containerStyle]}>
       <Jazzicon size={32} address={address} />
@@ -43,7 +43,7 @@ export default function ConnectedButton({
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
