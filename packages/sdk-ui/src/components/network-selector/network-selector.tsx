@@ -14,6 +14,7 @@ import Networks, {
   NetworkList,
   NetworkType,
   getAllTestsNetworks,
+  getNetworkImageSource,
 } from '../../utils/networks';
 import styles from './NetworkSelector.styles';
 

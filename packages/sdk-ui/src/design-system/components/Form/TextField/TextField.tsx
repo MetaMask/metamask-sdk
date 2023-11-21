@@ -72,7 +72,7 @@ const TextField: React.FC<TextFieldProps> = ({
       )}
       <View style={styles.input}>
         {inputElement ? (
-          { inputElement }
+          ({ inputElement } as any)
         ) : (
           <Input
             textVariant={TOKEN_TEXTFIELD_INPUT_TEXT_VARIANT}

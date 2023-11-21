@@ -2,7 +2,7 @@
 import { StyleSheet, ViewStyle } from 'react-native';
 
 // External dependencies.
-import { Theme } from '../../../../../theme/models';
+import { Theme } from '../../../../../../theme/models';
 
 // Internal dependencies.
 import { AvatarBaseStyleSheetVars } from './AvatarBase.types';

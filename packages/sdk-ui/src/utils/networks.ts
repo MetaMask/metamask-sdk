@@ -76,12 +76,6 @@ export const NetworkList: { [key: string]: NetworkType } = {
     networkType: 'linea-goerli',
     imageSource: images['LINEA-GOERLI'],
   },
-  [RPC]: {
-    name: 'Private Network',
-    shortName: 'Private',
-    color: '#f2f3f4',
-    networkType: 'rpc',
-  },
 };
 
 const NetworkListKeys = Object.keys(NetworkList);
@@ -165,4 +159,21 @@ export const getTestNetImageByChainId = (chainId: string) => {
   if (NETWORKS_CHAIN_ID.LINEA_GOERLI === chainId) {
     return images['LINEA-GOERLI'];
   }
+};
+
+/**
+ * Gets the image source given both the network type and the chain ID.
+ *
+ * @param {object} params - Params that contains information about the network.
+ * @param {string} params.chainId - ChainID of the network.
+ * @returns {Object} - Image source of the network.
+ */
+export const getNetworkImageSource = ({ chainId }: { chainId: string }) => {
+  if (isMainnetByChainId(chainId)) {
+    return images.ETHEREUM;
+  }
+  if (isLineaMainnetByChainId(chainId)) {
+    return images['LINEA-MAINNET'];
+  }
+  return getTestNetImageByChainId(chainId);
 };
