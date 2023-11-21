@@ -15,7 +15,8 @@ export function setupDappMetadata(instance: MetaMaskSDK) {
   const { options } = instance;
 
   // Check if iconUrl and url are valid
-  const urlPattern = /^https?:\/\//u; // Regular expression for URLs starting with http:// or https://
+  // eslint-disable-next-line require-unicode-regexp
+  const urlPattern = /^(http|https):\/\/[^\s]*|localhost(:\d+)?$/; // Regular expression for URLs starting with http:// or https://
 
   if (options.dappMetadata) {
     if (
