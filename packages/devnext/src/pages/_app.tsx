@@ -1,18 +1,21 @@
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
+import {
+  MetaMaskUIProvider,
+  useSDKConfig,
+  SDKConfigProvider,
+} from '@metamask/sdk-react-ui';
 import type { AppProps } from 'next/app';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 
+import { UIProvider } from '@metamask/sdk-ui';
 import React from 'react';
-import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
+import { Layout } from '../components/layout';
 import '../styles/globals.css';
 import '../styles/icons.css';
-import { Layout } from '../components/layout';
-import { UIProvider } from '@metamask/sdk-ui';
 
 config.autoAddCss = false;
 

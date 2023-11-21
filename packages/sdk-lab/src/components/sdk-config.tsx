@@ -4,7 +4,8 @@ import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { CSSProperties } from 'react';
 import ItemView from './ItemView';
 import { useQRCode } from 'next-qrcode';
-import { LanguagePicker, useSDKConfig } from '..';
+import { useSDKConfig } from '@metamask/sdk-react';
+import { LanguagePicker } from '../components/language-picker';
 
 export interface SDKConfigProps {
   startVisible?: boolean;

@@ -1,9 +1,9 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {MD3Theme, useTheme} from 'react-native-paper';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {App} from './DevRNDemoApp';
 import {DemoStack, MainTab} from './screens/navigation.params';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const getStyles = ({theme}: {theme: MD3Theme}) => {
   return StyleSheet.create({
