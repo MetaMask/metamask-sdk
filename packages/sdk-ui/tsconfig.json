@@ -23,9 +23,11 @@
     }
   },
   "include": [
-    "./src/","./storybook/","./assets/",
+    "./src","./storybook/","./assets/","package.json","./**/*.js"
   ],
   "exclude": [
+    "dist",
+    "node_modules",
     "./src/**/*.test.tsx",
     "./src/**/*.test.ts",
   ]

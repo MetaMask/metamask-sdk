@@ -1602,6 +1602,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.23.2":
+  version: 7.23.4
+  resolution: "@babel/runtime@npm:7.23.4"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: 8eb6a6b2367f7d60e7f7dd83f477cc2e2fdb169e5460694d7614ce5c730e83324bcf29251b70940068e757ad1ee56ff8073a372260d90cad55f18a825caf97cd
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
   version: 7.22.5
   resolution: "@babel/template@npm:7.22.5"
@@ -3549,9 +3558,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.2, @metamask/sdk-communication-layer@npm:^0.12.2":
-  version: 0.12.2
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.2"
+"@metamask/sdk-communication-layer@npm:0.12.3, @metamask/sdk-communication-layer@npm:^0.12.3":
+  version: 0.12.3
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.3"
   dependencies:
     bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
@@ -3561,7 +3570,7 @@ __metadata:
     socket.io-client: ^4.5.1
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 07d0fe3d1bfbe78b5f0df388a0a1a4b907b5ddd2d42cfad89542f854cf7a49f5dc54ed2710d776f0901981fa8d3482cb50eb84ffadfcce41c7707876e5d7fb84
+  checksum: 4bdeca91c96ef718d90df4a55f83f1a5632170bb9f81ce8631e182fba8c8fd79a98eb76ac30b9a955620bb762fd3eb288c23bd12ca19632b46ec2c45d287e16d
   languageName: node
   linkType: hard
 
@@ -3595,17 +3604,41 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.12.2":
-  version: 0.12.2
-  resolution: "@metamask/sdk-react@npm:0.12.2"
+"@metamask/sdk-lab@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@metamask/sdk-lab@npm:0.1.2"
   dependencies:
-    "@metamask/sdk": ^0.12.2
-    "@metamask/sdk-communication-layer": ^0.12.2
+    "@fortawesome/fontawesome-svg-core": ^6.4.2
+    "@fortawesome/free-solid-svg-icons": ^6.4.2
+    "@fortawesome/react-fontawesome": ^0.2.0
+    "@metamask/sdk-communication-layer": ^0.12.3
+    "@metamask/sdk-react": ^0.12.3
+    i18n-js: ^4.3.2
+    i18next: ^23.6.0
+    intl-pluralrules: ^2.0.1
+    next-qrcode: ^2.5.1
+    react-i18next: ^13.3.1
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native: ^0.72.6
+    react-native-paper: ^5.11.1
+    react-native-svg: ^13.14.0
+  checksum: c0d019bd3a669553d94f7bdec4c90a7be8ee6f3accbd8de6ba7f9b4eeea39d576715ce64c4e45440e4a541472476579d7b3684c2df736299c51477ec18fa56ed
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-react@npm:^0.12.3":
+  version: 0.12.3
+  resolution: "@metamask/sdk-react@npm:0.12.3"
+  dependencies:
+    "@metamask/sdk": ^0.12.3
+    "@metamask/sdk-communication-layer": ^0.12.3
     eth-rpc-errors: ^4.0.3
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: ae06c7910382e698756e95fe4bf721f0c4275adac30adde54ea136db32848cb4d77a2dfa779c2aeaf09283e4482051497a91efb508e851f33a93a09a3bd0a560
+  checksum: dd17eef8f340c61f0a71a70fee8aa2f52138a3b32d9480415c5a5d76994b985e7dff1aaf8ea4a1963c0617a3a888190b349b9bb36a0c394fcca46ef6ff544526
   languageName: node
   linkType: hard
 
@@ -3650,14 +3683,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.2":
-  version: 0.12.2
-  resolution: "@metamask/sdk@npm:0.12.2"
+"@metamask/sdk@npm:^0.12.3":
+  version: 0.12.3
+  resolution: "@metamask/sdk@npm:0.12.3"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.2
+    "@metamask/sdk-communication-layer": 0.12.3
     "@metamask/sdk-install-modal-web": 0.12.2
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -3687,7 +3720,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 389791e55a73be9ec00310233fdf92491cebf3efeb97a703dbb4fb91e1bac5fc00af33241b9f11c4c58d5d3cb34192a1bdf16ffad3afd9ab962a39a1b66db2e0
+  checksum: a0b8f066ee35088025bce9e84632a6e2224d1baf44a8420e8dc38a6aec6e262b4c9f00dbeea38bc74b8043af53b5125296b7822dd81e804888b271ea846f8bc3
   languageName: node
   linkType: hard
 
@@ -5874,7 +5907,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bignumber.js@npm:^9.0.0, bignumber.js@npm:^9.1.0":
+"bignumber.js@npm:*, bignumber.js@npm:^9.0.0, bignumber.js@npm:^9.1.0":
   version: 9.1.2
   resolution: "bignumber.js@npm:9.1.2"
   checksum: 582c03af77ec9cb0ebd682a373ee6c66475db94a4325f92299621d544aa4bd45cb45fd60001610e94aef8ae98a0905fa538241d9638d4422d57abbeeac6fadaf
@@ -9657,6 +9690,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"i18n-js@npm:^4.3.2":
+  version: 4.3.2
+  resolution: "i18n-js@npm:4.3.2"
+  dependencies:
+    bignumber.js: "*"
+    lodash: "*"
+    make-plural: "*"
+  checksum: 08a051dba75d93447e2021c1feb92f34c9034b5a818957885ea19ac58954d764c848c4deaaf46ada3e15d51f61ad9f7e0bf4ddffa3c765871ff1b26638ca0a8f
+  languageName: node
+  linkType: hard
+
 "i18next-browser-languagedetector@npm:^7.1.0":
   version: 7.1.0
   resolution: "i18next-browser-languagedetector@npm:7.1.0"
@@ -9672,6 +9716,15 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.20.6
   checksum: 175f8ab7fac2abcee147b00cc2d8e7d4fa9b05cdc227f02cac841fc2fd9545ed4a6d88774f594f8ad12dc944e4d34cc8e88aa00c8b9947baef9e859d93abd305
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^23.6.0":
+  version: 23.7.6
+  resolution: "i18next@npm:23.7.6"
+  dependencies:
+    "@babel/runtime": ^7.23.2
+  checksum: ddfca4277f9a19b0c5d85f8506384f8bfebe8b32d75a51d472d81e9c39ada5911594d8a41fa63ab25f66f63a9519544809d1a46ef6f6d905af1e2724b39ba55b
   languageName: node
   linkType: hard
 
@@ -9826,6 +9879,13 @@ __metadata:
     "@formatjs/icu-messageformat-parser": 2.1.0
     tslib: ^2.1.0
   checksum: effb840ae6e213adceab9951dbb2d18d1a354c82e35dbd213011daf23bcc79e2a18b6ef79157ae3b69c1e6d898fe66b54dd184ac180ee0646e26a70276e60038
+  languageName: node
+  linkType: hard
+
+"intl-pluralrules@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "intl-pluralrules@npm:2.0.1"
+  checksum: e07d5818a0583decb24677f958689f4dfc3c62d972d897c576917aefcd6af429ce8c1eee77af9e2fbf4fce71a800851fe1c33970f7ca56efbe3e70c023e658c1
   languageName: node
   linkType: hard
 
@@ -11399,7 +11459,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.17.15, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
+"lodash@npm:*, lodash@npm:^4.17.15, lodash@npm:^4.17.20, lodash@npm:^4.17.21, lodash@npm:^4.7.0":
   version: 4.17.21
   resolution: "lodash@npm:4.17.21"
   checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
@@ -11523,6 +11583,13 @@ __metadata:
     socks-proxy-agent: ^7.0.0
     ssri: ^10.0.0
   checksum: 7268bf274a0f6dcf0343829489a4506603ff34bd0649c12058753900b0eb29191dce5dba12680719a5d0a983d3e57810f594a12f3c18494e93a1fbc6348a4540
+  languageName: node
+  linkType: hard
+
+"make-plural@npm:*":
+  version: 7.3.0
+  resolution: "make-plural@npm:7.3.0"
+  checksum: bb39b4b77533f0d5fb94eec128340b54dda8c1707d6b0a98c148e5d7bc23094e123f88275a61573fa31dc2f5d7352215cee0df523cd69b5d8fcb3969a2bcf8f8
   languageName: node
   linkType: hard
 
@@ -13767,9 +13834,10 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.12.2
-    "@metamask/sdk-communication-layer": ^0.12.2
-    "@metamask/sdk-react": ^0.12.2
+    "@metamask/sdk": ^0.12.3
+    "@metamask/sdk-communication-layer": ^0.12.3
+    "@metamask/sdk-lab": ^0.1.2
+    "@metamask/sdk-react": ^0.12.3
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0
@@ -13858,6 +13926,24 @@ __metadata:
     react-native:
       optional: true
   checksum: 6c950a4497215df03b6d6f12c63153656cb482ddb15e944c514ae8e85e99ebe80d466aa615abc73d77eac69042eb4559a6f87006f018f433f438d889a22bab01
+  languageName: node
+  linkType: hard
+
+"react-i18next@npm:^13.3.1":
+  version: 13.5.0
+  resolution: "react-i18next@npm:13.5.0"
+  dependencies:
+    "@babel/runtime": ^7.22.5
+    html-parse-stringify: ^3.0.1
+  peerDependencies:
+    i18next: ">= 23.2.3"
+    react: ">= 16.8.0"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 2f68ccd24daf72ddd2d11a526fb3c2b66c11ea4fcd2e24ac7aed42bf57ec7bffa7455ad1dc93679968ff629e9b1896465cdf6d1a61c29b92138ef88098e8dcba
   languageName: node
   linkType: hard
 

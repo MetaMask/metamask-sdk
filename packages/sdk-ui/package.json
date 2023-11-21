@@ -3,7 +3,8 @@
   "version": "0.1.2",
   "private": false,
   "description": "MetaMask SDK cross-platform ui library",
-  "main": "src/index.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
@@ -15,12 +16,16 @@
   },
   "sideEffects": false,
   "files": [
-    "/dist"
+    "dist",
+    "package.json",
+    "README.md"
   ],
   "scripts": {
     "clean": "rimraf ./dist",
     "build:pre-tsc": "echo 'n/a'",
-    "build": "tsc",
+    "build": "yarn build:tsc",
+    "build:rollup": "yarn clean && rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc",
     "build:post-tsc": "echo 'n/a'",
     "storybook": "storybook dev -p 6226",
     "lint:eslint": "eslint . --cache \"**/*.{js,ts,tsx}\"",
@@ -44,6 +49,7 @@
     "buffer": "^6.0.3",
     "buffer-browserify": "^0.2.5",
     "cryptocurrency-icons": "^0.18.1",
+    "ethereumjs-util": "^7.1.5",
     "i18n-js": "^4.3.2",
     "i18next": "^23.6.0",
     "intl-pluralrules": "^2.0.1",
@@ -68,6 +74,11 @@
   "devDependencies": {
     "@metamask/auto-changelog": "^3.4.3",
     "@react-native-community/eslint-config": "^3.2.0",
+    "@rollup/plugin-commonjs": "^22.0.1",
+    "@rollup/plugin-image": "^3.0.3",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-jest": "^7.5.3",
@@ -100,6 +111,11 @@
     "react-native-web": "^0.19.9",
     "react-test-renderer": "^18.2.0",
     "rimraf": "^5.0.5",
+    "rollup": "^3.21.8",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2",
     "storybook": "^7.5.3",
     "storybook-addon-deep-controls": "^0.3.0",
     "storybook-addon-next": "^1.8.0",
