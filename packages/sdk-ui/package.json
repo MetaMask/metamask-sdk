@@ -1,7 +1,7 @@
 {
   "name": "@metamask/sdk-ui",
   "version": "0.1.2",
-  "private": true,
+  "private": false,
   "description": "MetaMask SDK cross-platform ui library",
   "main": "src/index.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
