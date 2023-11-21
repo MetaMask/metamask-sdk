@@ -44,6 +44,9 @@ describe('useSDK', () => {
   it('should return the context value if used within the SDKContext provider', () => {
     render(
       <SDKContext.Provider value={dummyValue}>
+        {/* FIXME why it doesn't recognize it? */}
+        {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+        {/* @ts-ignore */}
         <TestComponent />
       </SDKContext.Provider>,
     );
