@@ -3,8 +3,8 @@ import {StyleSheet, View} from 'react-native';
 import {MD3Theme, useTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {DemoScreen} from './screens/DemoScreen';
+import {SettingsScreen} from './screens/SettingsScreen';
 import {DemoStack, MainTab, SettingsStack} from './screens/navigation.params';
-import { SettingsScreen } from './screens/SettingsScreen';
 
 const getStyles = ({theme}: {theme: MD3Theme}) => {
   return StyleSheet.create({
