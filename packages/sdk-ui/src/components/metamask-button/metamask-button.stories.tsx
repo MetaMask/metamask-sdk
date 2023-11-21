@@ -1,25 +1,36 @@
-import type { Meta } from '@storybook/react-native';
-import React from 'react';
+import { SDKState } from '@metamask/sdk-react';
+import type { Meta, StoryObj } from '@storybook/react-native';
+import {
+  SdkContextDecorator,
+  sdkProviderArgTypes,
+  defaultSDKtArgs,
+} from '../../mocks/storybook.mocks';
 import { MetaMaskButton, MetaMaskButtonProps } from './metamask-button';
 
-const MetaMaskButtonMeta: Meta<MetaMaskButtonProps> = {
+const MetaMaskButtonMeta: Meta<MetaMaskButtonProps & SDKState> = {
+  title: 'SDK UI / MetaMask Button',
   component: MetaMaskButton,
-  argTypes: {},
-  args: {},
-  parameters: {
-    deepControls: { enabled: true },
+  argTypes: {
+    ...sdkProviderArgTypes,
+  },
+  decorators: [SdkContextDecorator],
+  args: {
+    ...defaultSDKtArgs,
   },
 };
 
 export default MetaMaskButtonMeta;
 
-export const Disconnected = (args: MetaMaskButtonProps) => (
-  <MetaMaskButton {...args} />
-);
+export const Disconnected: StoryObj<MetaMaskButtonProps & SDKState> = {
+  args: {
+    ...defaultSDKtArgs,
+    connected: false,
+  },
+};
 
-export const Connected = (args: MetaMaskButtonProps) => (
-  <MetaMaskButton
-    {...args}
-    _sdkState={{ connected: true, account: '0x1223444' }}
-  />
-);
+export const Connected: StoryObj<MetaMaskButtonProps & SDKState> = {
+  args: {
+    ...defaultSDKtArgs,
+    connected: true,
+  },
+};

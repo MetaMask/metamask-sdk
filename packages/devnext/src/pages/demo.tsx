@@ -2,15 +2,9 @@ import { useSDK } from '@metamask/sdk-react';
 import { ethers } from 'ethers';
 import Head from 'next/head';
 import React, { useState } from 'react';
-import {
-  Address,
-  createPublicClient,
-  createWalletClient,
-  custom,
-  getContract,
-} from 'viem';
 import SimpleABI from '../abi/Simple.json';
 import { ChainRPC, RPCHistoryViewer, SDKStatus } from '@metamask/sdk-lab';
+import { MetaMaskButton } from '@metamask/sdk-ui';
 
 export default function Demo() {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
@@ -262,62 +256,6 @@ export default function Demo() {
     } catch (error) {
       console.error('Error pinging ethers:', error);
     }
-  };
-
-  const interactViem = async () => {
-    console.debug(`DEBUG`);
-    // const rpcUrl = process.env.NEXT_PUBLIC_PROVIDER_RPCURL;
-    //   const contractAddress = process.env
-    //     .NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS as Address;
-    //   if (!contractAddress || !rpcUrl) {
-    //     throw new Error(
-    //       'NEXT_PUBLIC_SIMPLE_CONTRACT_ADDRESS or NEXT_PUBLIC_PROVIDER_RPCURL not set',
-    //     );
-    //   }
-    //   // const transport = http(rpcUrl);
-    //   const transport = custom(provider!);
-    //   const client = createPublicClient({ transport });
-    //   const wallet = createWalletClient({
-    //     transport,
-    //     account: provider?.selectedAddress as `0x{string}`,
-    //   });
-    //   try {
-    //     const balance = await client.getBalance({
-    //       address: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E',
-    //     });
-    //     console.debug('balance', balance);
-    //     const chainId = await client.getChainId();
-    //     console.debug('chainId', chainId);
-    //     const contract = getContract({
-    //       address: contractAddress,
-    //       abi: SimpleABI.abi,
-    //       publicClient: client,
-    //       walletClient: wallet,
-    //     });
-    //     let text = await contract.read.ping();
-    //     console.debug('ping', text);
-    //     const nextValue = `now: ${Date.now()}`;
-    //     console.debug(`Set new contract value to: `, nextValue);
-    //     const trxHash = await contract.write.set([nextValue], {
-    //       account: provider?.selectedAddress,
-    //       chain: { id: parseInt(provider?.chainId ?? '') },
-    //     });
-    //     console.debug(`Wait for trx to complete...`);
-    //     // Wait for transaction to be mined
-    //     const trx = await client.waitForTransactionReceipt({
-    //       hash: trxHash,
-    //       confirmations: 1,
-    //     });
-    //     console.debug(`Check result...`, trx);
-    //     text = await contract.read.ping();
-    //     const success = text === nextValue;
-    //     console.debug(
-    //       `Check result ==> ${success ? 'SUCCESS' : 'FAILED'} `,
-    //       text,
-    //     );
-    //   } catch (error) {
-    //     console.error('Error pinging Viem:', error);
-    //   }
   };
 
   const testEthers = async () => {
@@ -572,6 +510,9 @@ export default function Demo() {
           response={response}
           error={rpcError}
         />
+        <div style={{ padding: 20 }}>
+          <MetaMaskButton />
+        </div>
         {connected && (
           <>
             <div className="action-buttons">
@@ -584,13 +525,6 @@ export default function Demo() {
                 onClick={interactEthers}
               >
                 ping (ethers)
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={interactViem}
-              >
-                ping (viem)
               </button>
 
               <button

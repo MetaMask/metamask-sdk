@@ -5,9 +5,17 @@ import { Platform, StyleSheet } from 'react-native';
  * @returns StyleSheet object.
  */
 const styleSheet = StyleSheet.create({
+  mainContainer: { flex: 1, width: '100%' },
   addNetworkButton: {
     marginHorizontal: 16,
     marginBottom: Platform.OS === 'android' ? 16 : 0,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 5,
+    height: 25,
   },
   switchContainer: {
     flexDirection: 'row',

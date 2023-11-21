@@ -18,15 +18,11 @@ import {
 } from 'react-native';
 
 import {useSDK} from '@metamask/sdk-react';
-import {FABAccount, Icon} from '@metamask/sdk-ui';
-import {
-  IconName,
-  IconSize,
-} from '@metamask/sdk-ui/src/design-system/components/Icons/Icon';
+import {FloatingMetaMaskButton} from '@metamask/sdk-ui';
 import {encrypt} from 'eciesjs';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from '../package.json';
+import {DAPPView} from './views/DappView';
 
 const styles = StyleSheet.create({
   sectionContainer: {
@@ -111,16 +107,10 @@ export function App(): JSX.Element {
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}
           </Text>
-          {/* <DAPPView /> */}
-        </View>
-        <View style={styles.sectionContainer}>
-          {/* <PreviewScreen /> */}
-          <Icon size={IconSize.XXL} name={IconName.Add} />
-          <FAIcon name="rocket" size={50} color="#900" />
-          {/* <Image source={assets.ethereum} style={{width: 32, height: 32}} /> */}
+          <DAPPView />
         </View>
       </ScrollView>
-      <FABAccount />
+      <FloatingMetaMaskButton />
     </SafeAreaView>
   );
 }

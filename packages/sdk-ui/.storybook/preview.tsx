@@ -44,6 +44,8 @@ export const decorators: Decorator[] = [
         <React.Fragment>
           {Platform.OS === 'web' ? (
             <style type="text/css">{`
+                  @import url('https://fonts.cdnfonts.com/css/euclid-circular-b');
+
                   @font-face {
                     font-family: 'MaterialCommunityIcons';
                     src: url(${require('react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');

@@ -42,8 +42,6 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
     if (!handleCopy) {
       console.warn(`No handleCopy function provided for address ${address}`);
     }
-
-    console.log(`toastRef`, toastRef);
     toastRef?.current?.showToast({
       variant: ToastVariants.Plain,
       labelOptions: [{ label: 'Copied to clipboard' }],
@@ -66,16 +64,18 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '80%',
+    flex: 1,
+    width: '100%',
   },
   pressable: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    padding: 5,
-    flexShrink: 1,
-    borderWidth: 1,
+    maxWidth: '100%', // Ensure this does not exceed the parent width
   },
-  address: {},
+  address: {
+    maxWidth: '90%',
+    flexShrink: 1,
+  },
 });

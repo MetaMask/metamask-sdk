@@ -1,4 +1,4 @@
-import { MetaMaskButton } from '@metamask/sdk-ui';
+import { FloatingMetaMaskButton, MetaMaskButton } from '@metamask/sdk-ui';
 import Link from 'next/link';
 
 export default function Home() {
