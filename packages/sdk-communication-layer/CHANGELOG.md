@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.3]
+### Uncategorized
+- feat: add the option to add dapp icon in base64 format ([#521](https://github.com/MetaMask/metamask-sdk/pull/521))
+
 ## [0.12.2]
 ### Uncategorized
 - chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
@@ -122,7 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.3...HEAD
+[0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.2...@metamask/sdk-communication-layer@0.12.3
 [0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.1...@metamask/sdk-communication-layer@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.0...@metamask/sdk-communication-layer@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.1...@metamask/sdk-communication-layer@0.12.0

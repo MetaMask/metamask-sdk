@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2]
+### Uncategorized
+- feat: design system part3 ([#527](https://github.com/MetaMask/metamask-sdk/pull/527))
+- feat: update examples 0.12.2 ([#526](https://github.com/MetaMask/metamask-sdk/pull/526))
+
 ## [0.1.1]
 ### Uncategorized
 - chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
@@ -22,5 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.2...HEAD
+[0.1.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.1...@metamask/sdk-ui@0.1.2
 [0.1.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-ui@0.1.1

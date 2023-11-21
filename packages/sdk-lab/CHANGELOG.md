@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2]
+### Uncategorized
+- feat: sdk config context as part of sdk-react ([#529](https://github.com/MetaMask/metamask-sdk/pull/529))
+- feat: design system part3 ([#527](https://github.com/MetaMask/metamask-sdk/pull/527))
+- feat: add the option to add dapp icon in base64 format ([#521](https://github.com/MetaMask/metamask-sdk/pull/521))
+- feat: update examples 0.12.2 ([#526](https://github.com/MetaMask/metamask-sdk/pull/526))
+
 ## [0.1.1]
 ### Uncategorized
 - chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
@@ -19,5 +26,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 - fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.2...HEAD
+[0.1.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.1...@metamask/sdk-lab@0.1.2
 [0.1.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-lab@0.1.1
