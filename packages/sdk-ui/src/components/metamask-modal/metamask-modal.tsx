@@ -5,6 +5,7 @@ import React, { useContext, useMemo } from 'react';
 import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SDKSummary } from '../sdk-summary/sdk-summary';
+import { useSDK } from '@metamask/sdk-react';
 
 export interface MetaMaskModalProps {
   modalOpen: boolean;
@@ -46,10 +47,15 @@ const getStyles = () => {
 
 export const MetaMaskModal = ({ modalOpen, onClose }: MetaMaskModalProps) => {
   const { toastRef } = useContext(ToastContext);
+  const { connected } = useSDK();
   const styles = useMemo(() => getStyles(), []);
 
   return (
-    <Modal visible={modalOpen} transparent={true} onDismiss={onClose}>
+    <Modal
+      visible={modalOpen && connected}
+      transparent={true}
+      onDismiss={onClose}
+    >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <SDKSummary />

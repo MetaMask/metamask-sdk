@@ -26,7 +26,7 @@ export interface NetworkSelectorProps {
   showTestNetworks: boolean;
   goToNetworkSettings?: () => void;
   onSetRpcTarget?: (rpcUrl: string) => void;
-  otherNetworks: NetworkType[];
+  otherNetworks?: NetworkType[];
 }
 
 export const NetworkSelector = ({

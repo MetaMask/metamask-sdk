@@ -61,6 +61,7 @@ const styles = StyleSheet.create({
   container: {
     display: 'flex',
     width: '100%',
+    flex: 1,
     padding: 5,
     flexDirection: 'column',
     // flex: 1,
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     gap: 0,
+    height: 150,
     justifyContent: 'center',
     alignItems: 'center',
   },
