@@ -24,30 +24,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from '../package.json';
 import {DAPPView} from './views/DappView';
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 0,
-  },
-});
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const styles = StyleSheet.create({});
 
 export function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';

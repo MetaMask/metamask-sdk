@@ -1,9 +1,8 @@
 // create an app context to fetch the socket server address in all components
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
-import { createContext, useContext, useEffect, useState } from 'react';
-import React from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
-export interface CustomContext {
+export interface SDKConfigContextProps {
   socketServer: string;
   useDeeplink?: boolean;
   infuraAPIKey?: string;
@@ -16,7 +15,7 @@ export interface CustomContext {
   lang: string;
 }
 
-const initProps: CustomContext = {
+const initProps: SDKConfigContextProps = {
   socketServer: process.env.NEXT_PUBLIC_COMM_SERVER_URL ?? DEFAULT_SERVER_URL,
   useDeeplink: true,
   checkInstallationImmediately: false,
@@ -30,15 +29,18 @@ const initProps: CustomContext = {
 };
 export const SDKConfigContext = createContext({
   ...initProps,
-
-  setAppContext: (_: Partial<CustomContext>) => {}, // placeholder
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  setAppContext: (_: Partial<SDKConfigContextProps>) => {}, // placeholder implemented in the provider.
 });
 
+export interface SDKConfigProviderProps {
+  children: React.ReactNode;
+}
 // FIXME use appropriate children type ( currently linting issue on devnext )
-export const SDKConfigProvider = ({ children }: { children: any }) => {
+export const SDKConfigProvider = ({ children }: SDKConfigProviderProps) => {
   const [appContext, setAppContext] = useState(initProps);
 
-  const syncState = (newState: CustomContext) => {
+  const syncState = (newState: SDKConfigContextProps) => {
     const queryString = new URLSearchParams();
     for (const [key, value] of Object.entries(newState)) {
       queryString.set(key, encodeURIComponent(JSON.stringify(value)));
@@ -60,7 +62,7 @@ export const SDKConfigProvider = ({ children }: { children: any }) => {
     // Load context from localStorage and URL (priority to URL)
     const loadContext = () => {
       const storedContext = localStorage.getItem('appContext');
-      const initialContext: Partial<CustomContext> = storedContext
+      const initialContext: Partial<SDKConfigContextProps> = storedContext
         ? JSON.parse(storedContext)
         : {};
 
@@ -70,16 +72,16 @@ export const SDKConfigProvider = ({ children }: { children: any }) => {
       const urlContext = Array.from(urlParams.keys()).reduce((acc, key) => {
         try {
           // We need to assert that acc conforms to Partial<CustomContext>
-          (acc as Partial<CustomContext>)[key as keyof Partial<CustomContext>] =
+          (acc as Partial<SDKConfigContextProps>)[key as keyof Partial<SDKConfigContextProps>] =
             JSON.parse(decodeURIComponent(urlParams.get(key) || ''));
         } catch (e) {
           console.error(`Error parsing URL param ${key}`, e);
         }
         return acc;
-      }, {} as Partial<CustomContext>);
+      }, {} as Partial<SDKConfigContextProps>);
       console.log(`[SDKConfigProvider] urlContext`, urlContext);
 
-      const computedContext: CustomContext = {
+      const computedContext: SDKConfigContextProps = {
         ...initProps,
         ...initialContext,
         ...urlContext,
@@ -95,7 +97,7 @@ export const SDKConfigProvider = ({ children }: { children: any }) => {
     }
   }, []);
 
-  const updateAppContext = (newProps: Partial<CustomContext>) => {
+  const updateAppContext = (newProps: Partial<SDKConfigContextProps>) => {
     setAppContext((current) => {
       const updatedContext = { ...current, ...newProps };
       syncState(updatedContext);
@@ -119,12 +121,4 @@ export const SDKConfigProvider = ({ children }: { children: any }) => {
       {children}
     </SDKConfigContext.Provider>
   );
-};
-
-export const useSDKConfig = () => {
-  const context = useContext(SDKConfigContext);
-  if (context === undefined) {
-    throw new Error('useSDKConfig must be used within a SDKConfigContext');
-  }
-  return context;
 };

@@ -24,7 +24,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/css-tools@npm:^4.0.1, @adobe/css-tools@npm:^4.3.0":
+"@adobe/css-tools@npm:^4.0.1, @adobe/css-tools@npm:^4.3.1":
   version: 4.3.1
   resolution: "@adobe/css-tools@npm:4.3.1"
   checksum: ad43456379ff391132aff687ece190cb23ea69395e23c9b96690eeabe2468da89a4aaf266e4f8b6eaab53db3d1064107ce0f63c3a974e864f4a04affc768da3f
@@ -160,7 +160,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.20.0, @babel/core@npm:^7.21.3, @babel/core@npm:^7.22.0, @babel/core@npm:^7.22.9, @babel/core@npm:^7.7.5":
+"@babel/core@npm:^7.13.16, @babel/core@npm:^7.14.0, @babel/core@npm:^7.20.0, @babel/core@npm:^7.21.3, @babel/core@npm:^7.22.0, @babel/core@npm:^7.22.9, @babel/core@npm:^7.23.3, @babel/core@npm:^7.7.5":
   version: 7.23.3
   resolution: "@babel/core@npm:7.23.3"
   dependencies:
@@ -7051,7 +7051,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-react@workspace:packages/sdk-react"
   dependencies:
-    "@babel/core": ^7.18.6
+    "@babel/core": ^7.23.3
+    "@babel/preset-env": ^7.23.3
+    "@babel/preset-react": ^7.23.3
+    "@babel/preset-typescript": ^7.23.3
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
@@ -7063,17 +7066,18 @@ __metadata:
     "@rollup/plugin-json": ^6.0.1
     "@rollup/plugin-node-resolve": ^13.3.0
     "@rollup/plugin-typescript": ^8.3.3
-    "@testing-library/jest-dom": ^6.1.3
-    "@testing-library/react": ^14.1.0
+    "@testing-library/jest-dom": ^6.1.4
+    "@testing-library/react": ^14.1.2
     "@testing-library/react-hooks": ^8.0.1
     "@types/jest": ^29.5.1
     "@types/mersenne-twister": ^1.1.2
-    "@types/react": ^18.2.37
+    "@types/react": ^18.2.38
     "@types/react-copy-to-clipboard": ^5.0.4
     "@types/rebass": ^4.0.10
     "@typescript-eslint/eslint-plugin": ^4.26.0
     "@typescript-eslint/parser": ^4.26.0
     autoprefixer: ^10.4.4
+    babel-jest: ^29.7.0
     babel-loader: ^8.2.5
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
@@ -11906,11 +11910,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/jest-dom@npm:^6.1.3":
-  version: 6.1.3
-  resolution: "@testing-library/jest-dom@npm:6.1.3"
+"@testing-library/jest-dom@npm:^6.1.4":
+  version: 6.1.4
+  resolution: "@testing-library/jest-dom@npm:6.1.4"
   dependencies:
-    "@adobe/css-tools": ^4.3.0
+    "@adobe/css-tools": ^4.3.1
     "@babel/runtime": ^7.9.2
     aria-query: ^5.0.0
     chalk: ^3.0.0
@@ -11932,7 +11936,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 5bd14ba31fd3d64cff8ca55cccd335bedadf1db1119643954ca8cd30af835defe6f3a21e7d7617d20205b07abba1b2e668be1b9d6743504800f17fdc4344db75
+  checksum: c6bd9469554136a25d94b55ea16736d56b8c5d200526023774dbf35ca35551a721257e6734f1b404bbd07ae0a1950f1912b5be60e113db2ff2ff50af14f7085c
   languageName: node
   linkType: hard
 
@@ -11988,6 +11992,20 @@ __metadata:
     react: ^18.0.0
     react-dom: ^18.0.0
   checksum: e76681911947f0981a1a72802ea01abeacdc4973c62deaf19c206cb9ff8d23eff5e3888c572303614686f029ee8a2a2dad6d0f0a9fb222944dbd9e0ea573b248
+  languageName: node
+  linkType: hard
+
+"@testing-library/react@npm:^14.1.2":
+  version: 14.1.2
+  resolution: "@testing-library/react@npm:14.1.2"
+  dependencies:
+    "@babel/runtime": ^7.12.5
+    "@testing-library/dom": ^9.0.0
+    "@types/react-dom": ^18.0.0
+  peerDependencies:
+    react: ^18.0.0
+    react-dom: ^18.0.0
+  checksum: 0269903e53412cf96fddb55c8a97a9987a89c3308d71fa1418fe61c47d275445e7044c5387f57cf39b8cda319a41623dbad2cce7a17016aed3a9e85185aac75a
   languageName: node
   linkType: hard
 
@@ -12836,6 +12854,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: a9b0f1e1eb63137b137ee4720f2d954ce5f95e236678cdb48b4bf437016fad5869c645b3936b78ed77ebda42590ed8a3670114833332eb72d04952308e8545d1
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^18.2.38":
+  version: 18.2.38
+  resolution: "@types/react@npm:18.2.38"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 71f8c167173d32252be8b2d3c1c76b3570b94d2fbbd139da86d146be453626f5777e12c2781559119637520dbef9f91cffe968f67b5901618f29226d49fad326
   languageName: node
   linkType: hard
 

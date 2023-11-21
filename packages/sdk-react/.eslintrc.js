@@ -56,6 +56,7 @@ module.exports = {
 
   ignorePatterns: [
     '!.prettierrc.js',
+    'babel.config.js',
     '**/.eslintrc.js',
     'jest.config.ts',
     '**/dist*/',

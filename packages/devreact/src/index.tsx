@@ -1,6 +1,10 @@
 import React from 'react';
-import { SDKConfig, SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { SDKConfig } from '@metamask/sdk-lab';
+import {
+  MetaMaskProvider,
+  SDKConfigProvider,
+  useSDKConfig,
+} from '@metamask/sdk-react';
 import { UIProvider } from '@metamask/sdk-ui';
 import ReactDOM from 'react-dom/client';
 import {
