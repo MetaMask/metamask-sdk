@@ -1,13 +1,17 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import Jazzicon from 'react-native-jazzicon';
 import { Text } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Avatar, {
+  AvatarAccountType,
+  AvatarSize,
+  AvatarVariant,
+} from '../../../design-system/components/Avatars/Avatar';
+import { AccountBalance } from '../account-balance/account-balance';
 
 export interface ConnectedButtonProps {
   network: string;
   address: string;
-  balance: number;
   active?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 }
@@ -15,13 +19,17 @@ export interface ConnectedButtonProps {
 export const ConnectedButton = ({
   active,
   address,
-  balance,
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
   return (
     <View style={[styles.container, containerStyle]}>
-      <Jazzicon size={32} address={address} />
+      <Avatar
+        variant={AvatarVariant.Account}
+        accountAddress={address}
+        type={AvatarAccountType.Blockies}
+        size={AvatarSize.Md}
+      />
       <View style={styles.content}>
         <Text style={styles.network} variant="titleMedium">
           {network}
@@ -30,12 +38,7 @@ export const ConnectedButton = ({
           {address}
         </Text>
       </View>
-      <View style={styles.balanceContainer}>
-        <Text ellipsizeMode="middle" numberOfLines={1}>
-          {balance}
-        </Text>
-        <Text>ETH</Text>
-      </View>
+      <AccountBalance decimals={2} />
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
@@ -57,6 +60,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    maxWidth: '99%',
   },
   balanceContainer: {
     display: 'flex',

@@ -3533,20 +3533,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.0, @metamask/sdk-communication-layer@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
-  dependencies:
-    cross-fetch: ^3.1.5
-    date-fns: ^2.29.3
-    eciesjs: ^0.3.16
-    eventemitter2: ^6.4.5
-    socket.io-client: ^4.5.1
-    uuid: ^8.3.2
-  checksum: 9042d7b38832dfb2c1efa93441ee4f9e8fee76da22a60d860720cdd0091d08dd34e0234269eecdde64c11868d6e2f0d566331815658b313d44aa329f221f390e
-  languageName: node
-  linkType: hard
-
 "@metamask/sdk-communication-layer@npm:0.12.1":
   version: 0.12.1
   resolution: "@metamask/sdk-communication-layer@npm:0.12.1"
@@ -3563,18 +3549,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.0"
+"@metamask/sdk-communication-layer@npm:0.12.2, @metamask/sdk-communication-layer@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.2"
   dependencies:
-    "@emotion/react": ^11.10.6
-    "@emotion/styled": ^11.10.6
-    i18next: 22.5.1
-    qr-code-styling: ^1.6.0-rc.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-i18next: ^13.2.2
-  checksum: 4fd1eb7a108bc1ac123731906aba5930fd4818a40448b94dc0c909bc60376da7d25e95fe163ad7983936f7525c93078b05047d66e1a39a3f6780c56ee5694258
+    bufferutil: ^4.0.8
+    cross-fetch: ^3.1.5
+    date-fns: ^2.29.3
+    eciesjs: ^0.3.16
+    eventemitter2: ^6.4.5
+    socket.io-client: ^4.5.1
+    utf-8-validate: ^6.0.3
+    uuid: ^8.3.2
+  checksum: 07d0fe3d1bfbe78b5f0df388a0a1a4b907b5ddd2d42cfad89542f854cf7a49f5dc54ed2710d776f0901981fa8d3482cb50eb84ffadfcce41c7707876e5d7fb84
   languageName: node
   linkType: hard
 
@@ -3593,56 +3580,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-react@npm:0.12.0"
+"@metamask/sdk-install-modal-web@npm:0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.2"
   dependencies:
-    "@metamask/sdk": ^0.12.0
-  peerDependencies:
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    i18next: 22.5.1
+    qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 35941f41166929529148c92954fc4ed9caa63d31dac6015f8ba5ce3c930131dda646d61eeb98aa9bb2ace866ec420c780f2483dd3f1047cb23ad169af6de52c9
+    react-i18next: ^13.2.2
+  checksum: 21b6af3fe1e40e58ca9896ff96dded6e5b65b35e605b2d73ac7455d06fcbe2fa5aa36ff634baa3d5e30771a49910884a5ec5a38d327a273b111115be3accba5b
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk@npm:0.12.0"
+"@metamask/sdk-react@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-react@npm:0.12.2"
   dependencies:
-    "@metamask/onboarding": ^1.0.1
-    "@metamask/post-message-stream": ^6.1.0
-    "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.0
-    "@metamask/sdk-install-modal-web": 0.12.0
-    "@react-native-async-storage/async-storage": ^1.17.11
-    "@types/dom-screen-wake-lock": ^1.0.0
-    bowser: ^2.9.0
-    cross-fetch: ^4.0.0
-    eciesjs: ^0.3.15
+    "@metamask/sdk": ^0.12.2
+    "@metamask/sdk-communication-layer": ^0.12.2
     eth-rpc-errors: ^4.0.3
-    eventemitter2: ^6.4.7
-    extension-port-stream: ^2.0.1
-    i18next: 22.5.1
-    i18next-browser-languagedetector: ^7.1.0
-    obj-multiplex: ^1.0.0
-    pump: ^3.0.0
-    qrcode-terminal-nooctal: ^0.12.1
-    react-i18next: ^13.2.2
-    react-native-webview: ^11.26.0
-    readable-stream: ^2.3.7
-    rollup-plugin-visualizer: ^5.9.2
-    socket.io-client: ^4.5.1
-    util: ^0.12.4
-    uuid: ^8.3.2
   peerDependencies:
     react: ^18.2.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
+    react-dom: ^18.2.0
+  checksum: ae06c7910382e698756e95fe4bf721f0c4275adac30adde54ea136db32848cb4d77a2dfa779c2aeaf09283e4482051497a91efb508e851f33a93a09a3bd0a560
   languageName: node
   linkType: hard
 
@@ -3684,6 +3647,47 @@ __metadata:
     react-native:
       optional: true
   checksum: 3b71316670ae9558aed953b8240ed15612e92a7c65c9fd7537a6ec0fc73ead9d7300428163d25974860256d16e6830dba4a1e3307f916d4e38ad8c534838bf74
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk@npm:0.12.2"
+  dependencies:
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/post-message-stream": ^6.1.0
+    "@metamask/providers": ^10.2.1
+    "@metamask/sdk-communication-layer": 0.12.2
+    "@metamask/sdk-install-modal-web": 0.12.2
+    "@react-native-async-storage/async-storage": ^1.17.11
+    "@types/dom-screen-wake-lock": ^1.0.0
+    bowser: ^2.9.0
+    cross-fetch: ^4.0.0
+    eciesjs: ^0.3.15
+    eth-rpc-errors: ^4.0.3
+    eventemitter2: ^6.4.7
+    extension-port-stream: ^2.0.1
+    i18next: 22.5.1
+    i18next-browser-languagedetector: ^7.1.0
+    obj-multiplex: ^1.0.0
+    pump: ^3.0.0
+    qrcode-terminal-nooctal: ^0.12.1
+    react-i18next: ^13.2.2
+    react-native-webview: ^11.26.0
+    readable-stream: ^2.3.7
+    rollup-plugin-visualizer: ^5.9.2
+    socket.io-client: ^4.5.1
+    util: ^0.12.4
+    uuid: ^8.3.2
+  peerDependencies:
+    react: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 389791e55a73be9ec00310233fdf92491cebf3efeb97a703dbb4fb91e1bac5fc00af33241b9f11c4c58d5d3cb34192a1bdf16ffad3afd9ab962a39a1b66db2e0
   languageName: node
   linkType: hard
 
@@ -13763,9 +13767,9 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.12.1
-    "@metamask/sdk-communication-layer": ^0.12.0
-    "@metamask/sdk-react": ^0.12.0
+    "@metamask/sdk": ^0.12.2
+    "@metamask/sdk-communication-layer": ^0.12.2
+    "@metamask/sdk-react": ^0.12.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0

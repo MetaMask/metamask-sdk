@@ -1,5 +1,5 @@
 import React, {useMemo} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 import {MD3Theme, useTheme} from 'react-native-paper';
 import {App} from './DevRNDemoApp';
 import {DemoStack, MainTab} from './screens/navigation.params';

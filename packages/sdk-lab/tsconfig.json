@@ -14,10 +14,8 @@
     "allowJs": false,
     "skipLibCheck": true,
     "paths": {
-      "@metamask/sdk-ui": ["./src/index"],
+      "@metamask/sdk-ui": ["./src/index"]
     }
   },
-  "include": [
-    "./src/"
-  ]
+  "include": ["./src/"]
 }

@@ -1,14 +1,27 @@
-import {
-  MAINNET,
-  LINEA_MAINNET,
-  GOERLI,
-  SEPOLIA,
-  LINEA_GOERLI,
-  RPC,
-  NETWORKS_CHAIN_ID,
-} from '../constants/networks.constants';
+import { ImageSourcePropType } from 'react-native';
 import images from '../../assets/images/image-icons';
+import {
+  GOERLI,
+  LINEA_GOERLI,
+  LINEA_MAINNET,
+  MAINNET,
+  NETWORKS_CHAIN_ID,
+  RPC,
+  SEPOLIA,
+} from '../constants/networks.constants';
 
+export interface NetworkType {
+  name: string;
+  shortName: string;
+  networkId: number;
+  testnet?: boolean;
+  chainId: number;
+  hexChainId: string;
+  symbol?: string;
+  color: string;
+  networkType: string;
+  imageSource?: ImageSourcePropType;
+}
 /**
  * List of the supported networks
  * including name, id, and color
@@ -16,13 +29,14 @@ import images from '../../assets/images/image-icons';
  * This values are used in certain places like
  * navbar and the network switcher.
  */
-export const NetworkList = {
+export const NetworkList: { [key: string]: NetworkType } = {
   [MAINNET]: {
     name: 'Ethereum Main Network',
     shortName: 'Ethereum',
     networkId: 1,
     chainId: 1,
     hexChainId: '0x1',
+    symbol: 'ETH',
     color: '#3cc29e',
     networkType: 'mainnet',
     imageSource: images.ETHEREUM,
@@ -33,6 +47,7 @@ export const NetworkList = {
     networkId: 59144,
     chainId: 59144,
     hexChainId: '0xe708',
+    symbol: 'ETH',
     color: '#121212',
     networkType: 'linea-mainnet',
     imageSource: images['LINEA-MAINNET'],
@@ -43,19 +58,11 @@ export const NetworkList = {
     networkId: 5,
     chainId: 5,
     hexChainId: '0x5',
+    symbol: 'GoerliETH',
+    testnet: true,
     color: '#3099f2',
     networkType: 'goerli',
     imageSource: images.GOERLI,
-  },
-  [SEPOLIA]: {
-    name: 'Sepolia Test Network',
-    shortName: 'Sepolia',
-    networkId: 11155111,
-    chainId: 11155111,
-    hexChainId: '0xaa36a7',
-    color: '#cfb5f0',
-    networkType: 'sepolia',
-    imageSource: images.SEPOLIA,
   },
   [LINEA_GOERLI]: {
     name: 'Linea Goerli Test Network',
@@ -63,6 +70,8 @@ export const NetworkList = {
     networkId: 59140,
     chainId: 59140,
     hexChainId: '0xe704',
+    testnet: true,
+    symbol: 'LineaETH',
     color: '#61dfff',
     networkType: 'linea-goerli',
     imageSource: images['LINEA-GOERLI'],
@@ -81,6 +90,18 @@ export default NetworkList;
 
 export const getAllNetworks = () =>
   NetworkListKeys.filter((name) => name !== RPC);
+
+export const getAllTestsNetworks = () => [
+  NetworkList[GOERLI],
+  NetworkList[LINEA_GOERLI],
+];
+
+export const getNetworkByHexChainId = (hexChainId: string) => {
+  const network = NetworkListKeys.find(
+    (name) => NetworkList[name].hexChainId === hexChainId,
+  );
+  return network ? NetworkList[network] : undefined;
+};
 
 /**
  * Checks if network is default mainnet.

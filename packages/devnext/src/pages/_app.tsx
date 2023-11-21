@@ -48,7 +48,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         },
         dappMetadata: {
           name: 'DevNext',
-          url: 'http://devnext.fakeurl.com',
+          url: window.location.protocol + '//' + window.location.host,
         },
         i18nOptions: {
           enabled: true,

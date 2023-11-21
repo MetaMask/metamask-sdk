@@ -1,54 +1,31 @@
-import { SDKContext, SDKState } from '@metamask/sdk-react';
-import type { Meta } from '@storybook/react-native';
-import React from 'react';
+import { SDKState } from '@metamask/sdk-react';
+import type { Meta, StoryObj } from '@storybook/react-native';
+import {
+  SdkContextDecorator,
+  sdkProviderArgTypes,
+} from '../../mocks/storybook.mocks';
 import { NetworkSelector, NetworkSelectorProps } from './network-selector';
 
 const NetworkSelectMeta: Meta<NetworkSelectorProps & SDKState> = {
+  title: 'SDK UI / Network Selector',
   component: NetworkSelector,
   argTypes: {
-    connected: { control: 'boolean' },
-    connecting: { control: 'boolean' },
-    account: { control: 'text' },
-    chainId: { control: 'text' },
-    extensionActive: { control: 'boolean' },
+    ...sdkProviderArgTypes,
   },
   args: {
     connected: true,
     showTestNetworks: true,
   },
-  decorators: [
-    (Story, sc) => {
-      const {
-        ready,
-        account,
-        connected,
-        connecting,
-        chainId,
-        readOnlyCalls,
-        extensionActive,
-      } = sc.args;
-      return (
-        <SDKContext.Provider
-          value={{
-            ready,
-            extensionActive,
-            connected,
-            readOnlyCalls,
-            connecting,
-            account,
-            chainId,
-          }}
-        >
-          <Story />
-        </SDKContext.Provider>
-      );
-    },
-  ],
+  decorators: [SdkContextDecorator],
   parameters: {},
 };
 
 export default NetworkSelectMeta;
 
-export const Primary = (args: NetworkSelectorProps & SDKState) => (
-  <NetworkSelector {...args} />
-);
+export const Primary: StoryObj<NetworkSelectorProps & SDKState> = {
+  args: {
+    connected: true,
+    chainId: '0x1',
+    account: '0xAAAAA0e296961f476E01184274Ce85ae60184CB0',
+  },
+};
