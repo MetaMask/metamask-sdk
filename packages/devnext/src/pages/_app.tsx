@@ -66,7 +66,10 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <SDKConfigProvider>
+      <SDKConfigProvider
+        initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
+        initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}
+      >
         <WithSDKConfig>
           <UIProvider>
             <Layout>
