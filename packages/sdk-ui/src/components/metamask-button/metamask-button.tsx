@@ -1,20 +1,9 @@
 import { useSDK } from '@metamask/sdk-react';
-import Toast from '../../design-system/components/Toast/Toast';
-import { ToastContext } from '../../design-system/components/Toast/Toast.context';
 
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import {
-  Modal,
-  Pressable,
-  StyleProp,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { getNetworkByHexChainId } from '../../utils/networks';
-import { SDKSummary } from '../sdk-summary/sdk-summary';
+import { MetaMaskModal } from '../metamask-modal/metamask-modal';
 import { ConnectButton } from './connect-button/connect-button';
 import { ConnectedButton } from './connected-button/connected-button';
 
@@ -30,60 +19,6 @@ const getStyles = () => {
       justifyContent: 'center',
       alignItems: 'center',
       padding: 10,
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2,
-    },
-    buttonOpen: {
-      backgroundColor: '#F194FF',
-    },
-    closeButton: {
-      position: 'absolute',
-      right: 10,
-      top: 10,
-    },
-    centeredView: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0,0,0,0.5)',
-    },
-    modalView: {
-      margin: 10,
-      backgroundColor: 'white',
-      borderRadius: 20,
-      zIndex: 1000,
-      padding: 10,
-      maxWidth: '95%',
-      alignItems: 'center',
-      shadowColor: '#000',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5,
-    },
-    modalContainer: {
-      marginLeft: 20,
-      marginRight: 20,
-      backgroundColor: 'white',
-      zIndex: 1000,
-      padding: 10,
-      borderRadius: 5,
-      shadowColor: '#000',
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
     },
   });
 };
@@ -115,7 +50,6 @@ MetaMaskButtonProps) => {
   const { sdk, connected, error, account, chainId } = useSDK();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
-  const { toastRef } = useContext(ToastContext);
 
   useEffect(() => {
     console.log('sdk', sdk);
@@ -204,17 +138,7 @@ MetaMaskButtonProps) => {
         {connected && renderConnected()}
         {!connected && renderDisconnected()}
       </Pressable>
-      <Modal visible={modalOpen} transparent={true} onDismiss={closeModal}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <SDKSummary />
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <MaterialCommunityIcons name="close" size={24} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Toast ref={toastRef} />
-      </Modal>
+      <MetaMaskModal modalOpen={modalOpen} onClose={closeModal} />
     </>
   );
 };

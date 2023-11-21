@@ -1,5 +1,4 @@
 import { ItemView } from './components/item-view/item-view';
-import { FABAccount } from './components/fab-account/fab-account';
 import { IconSimplified } from './components/icons/IconsSimplified';
 import { IconOriginal } from './components/icons/IconOriginal';
 import { MetaMaskButton } from './components/metamask-button/metamask-button';
@@ -9,6 +8,7 @@ import { UIProvider } from './context/ui-provider';
 import DS from './design-system';
 import { useTheme } from './theme';
 import { ToastContext } from './design-system/components/Toast';
+import { FloatingMetaMaskButton } from './components/floating-metamask-button/floating-metamask-button';
 
 const {
   Avatar,
@@ -37,7 +37,7 @@ export {
   AddressCopyButton,
   ItemView,
   UIProvider,
-  FABAccount,
+  FloatingMetaMaskButton,
   IconSimplified,
   IconOriginal,
   MetaMaskButton,
