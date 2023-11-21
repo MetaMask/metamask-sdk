@@ -13,6 +13,8 @@ import {
   useSDKConfig,
 } from '@metamask/sdk-react';
 import {UIProvider} from '@metamask/sdk-ui';
+import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -107,8 +109,8 @@ export const SafeApp = () => {
 
   return (
     <SDKConfigProvider
-      initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
-      initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}>
+      initialSocketServer={COMM_SERVER_URL}
+      initialInfuraKey={INFURA_API_KEY}>
       <WithSDKConfig>
         <UIProvider>
           <NavigationContainer ref={navigationRef} onReady={handleNavReady}>

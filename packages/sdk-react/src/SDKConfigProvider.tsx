@@ -45,8 +45,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
   const [appContext, setAppContext] = useState<SDKConfigContextProps>({ ...initProps, socketServer: initialSocketServer ?? DEFAULT_SERVER_URL, infuraAPIKey: initialInfuraKey });
 
   const syncState = (newState: SDKConfigContextProps) => {
-
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
       return;
     }
 
@@ -96,7 +95,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
       setAppContext(computedContext);
     };
 
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined' && typeof localStorage !== 'undefined') {
       loadContext();
     }
   }, []);
