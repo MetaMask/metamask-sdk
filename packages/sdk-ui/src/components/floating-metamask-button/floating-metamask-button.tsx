@@ -1,6 +1,6 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useMemo, useState } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { FAB } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { IconOriginal } from '../icons/IconOriginal';
@@ -31,12 +31,15 @@ const getStyles = ({
 export const FloatingMetaMaskButton = ({
   distance,
 }: FloatingMetaMaskButtonProps) => {
-  const { sdk, connected } = useSDK();
+  const { sdk, connected, connecting } = useSDK();
   const [modalOpen, setModalOpen] = useState(false);
   const [active, setActive] = useState(false);
   const styles = useMemo(() => getStyles({ distance }), [distance]);
 
-  const renderIcon = () => {
+  const renderIcon = ({ color }: { color: string }) => {
+    if (connecting) {
+      return <ActivityIndicator color={color} />;
+    }
     return <IconOriginal />;
   };
 
