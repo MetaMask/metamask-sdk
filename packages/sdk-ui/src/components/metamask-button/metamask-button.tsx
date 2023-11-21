@@ -1,5 +1,7 @@
-import { SDKState, useSDK } from '@metamask/sdk-react';
-import { Toast, ToastContext } from '@metamask/sdk-ui';
+import { useSDK } from '@metamask/sdk-react';
+import Toast from '../../design-system/components/Toast/Toast';
+import { ToastContext } from '../../design-system/components/Toast/Toast.context';
+
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   Modal,
@@ -11,9 +13,10 @@ import {
   ViewStyle,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ConnectButton } from '../connect-button/connect-button';
-import { ConnectedButton } from '../connected-button/connected-button';
+import { getNetworkByHexChainId } from '../../utils/networks';
 import { SDKSummary } from '../sdk-summary/sdk-summary';
+import { ConnectButton } from './connect-button/connect-button';
+import { ConnectedButton } from './connected-button/connected-button';
 
 const getStyles = () => {
   return StyleSheet.create({
@@ -48,11 +51,12 @@ const getStyles = () => {
       backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalView: {
-      margin: 20,
+      margin: 10,
       backgroundColor: 'white',
       borderRadius: 20,
       zIndex: 1000,
-      padding: 35,
+      padding: 10,
+      maxWidth: '95%',
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: {
@@ -90,8 +94,6 @@ export interface Account {
 }
 
 export interface MetaMaskButtonProps {
-  // for storybook only
-  _sdkState?: Partial<SDKState>;
   color?: 'blue' | 'white' | 'orange';
   theme?: 'dark' | 'light';
   shape?: 'rectangle' | 'rounded' | 'rounded-full';
@@ -102,7 +104,6 @@ export interface MetaMaskButtonProps {
 }
 
 export const MetaMaskButton = ({
-  _sdkState,
   color,
   theme = 'dark',
   shape,
@@ -111,9 +112,7 @@ export const MetaMaskButton = ({
   buttonStyle,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 MetaMaskButtonProps) => {
-  // Add fake state for storybook
-  const actualState = useSDK();
-  const { sdk, connected, error, account } = _sdkState ?? actualState;
+  const { sdk, connected, error, balance, account, chainId } = useSDK();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
   const { toastRef } = useContext(ToastContext);
@@ -125,6 +124,10 @@ MetaMaskButtonProps) => {
       setModalOpen(false);
     }
   }, [sdk, connected]);
+
+  const network = useMemo(() => {
+    return chainId ? getNetworkByHexChainId(chainId) : undefined;
+  }, [chainId]);
 
   const openModal = () => {
     setModalOpen(true);
@@ -144,7 +147,7 @@ MetaMaskButtonProps) => {
   };
 
   const getColors = () => {
-    const neutral500 = '#737373';
+    const white010 = '#FCFCFC';
     const orange500 = '#f97316';
     const red500 = '#ef4444';
     const blue500 = '#3b82f6';
@@ -157,7 +160,7 @@ MetaMaskButtonProps) => {
     } else if (connected && theme === 'light') {
       bgColor = white;
     } else if (connected) {
-      bgColor = neutral500;
+      bgColor = white010;
     } else if (color === 'blue') {
       bgColor = blue500;
     } else if (color === 'white') {
@@ -179,34 +182,51 @@ MetaMaskButtonProps) => {
     return { borderRadius: 8 };
   };
 
+  const formattedBalance = useMemo(() => {
+    if (!balance) {
+      return '0.00';
+    }
+    // Convert the hexadecimal balance to a decimal number
+    const balanceInWei = parseInt(balance, 16);
+
+    // Assuming the balance is in Wei (for Ethereum), convert it to Ether.
+    // 1 Ether = 1e18 Wei
+    const balanceInEther = balanceInWei / 1e18;
+
+    // Format the number to a string with two decimal places
+    return balanceInEther.toFixed(2);
+  }, [balance]);
+
+  const renderConnected = () => (
+    <ConnectedButton
+      containerStyle={[buttonStyle, getColors()]}
+      balance={formattedBalance}
+      active={modalOpen}
+      network={network?.shortName ?? 'Unknown'}
+      address={account ?? ''}
+    />
+  );
+
+  const renderDisconnected = () => (
+    <ConnectButton text={text} icon={icon} color={color} />
+  );
+
   return (
     <>
       <Pressable
         style={[styles.buttonContainer, getShape(), getColors()]}
         onPress={connected ? openModal : connect}
       >
-        {connected ? (
-          <ConnectedButton
-            containerStyle={[buttonStyle, getColors()]}
-            balance={0}
-            active={modalOpen}
-            network={'Ethereum'}
-            address={account ?? ''}
-          />
-        ) : (
-          <ConnectButton text={text} icon={icon} color={color} />
-        )}
+        {connected && renderConnected()}
+        {!connected && renderDisconnected()}
       </Pressable>
       <Modal visible={modalOpen} transparent={true} onDismiss={closeModal}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalOpen(false)}
-            >
+            <SDKSummary />
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
               <MaterialCommunityIcons name="close" size={24} />
             </TouchableOpacity>
-            <SDKSummary />
           </View>
         </View>
         <Toast ref={toastRef} />

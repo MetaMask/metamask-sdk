@@ -1,14 +1,25 @@
-import {
-  MAINNET,
-  LINEA_MAINNET,
-  GOERLI,
-  SEPOLIA,
-  LINEA_GOERLI,
-  RPC,
-  NETWORKS_CHAIN_ID,
-} from '../constants/networks.constants';
+import { ImageSourcePropType } from 'react-native';
 import images from '../../assets/images/image-icons';
+import {
+  GOERLI,
+  LINEA_GOERLI,
+  LINEA_MAINNET,
+  MAINNET,
+  NETWORKS_CHAIN_ID,
+  RPC,
+  SEPOLIA,
+} from '../constants/networks.constants';
 
+export interface NetworkType {
+  name: string;
+  shortName: string;
+  networkId: number;
+  chainId: number;
+  hexChainId: string;
+  color: string;
+  networkType: string;
+  imageSource: ImageSourcePropType;
+}
 /**
  * List of the supported networks
  * including name, id, and color
@@ -16,7 +27,7 @@ import images from '../../assets/images/image-icons';
  * This values are used in certain places like
  * navbar and the network switcher.
  */
-export const NetworkList = {
+export const NetworkList: { [key: string]: Partial<NetworkType> } = {
   [MAINNET]: {
     name: 'Ethereum Main Network',
     shortName: 'Ethereum',
@@ -81,6 +92,13 @@ export default NetworkList;
 
 export const getAllNetworks = () =>
   NetworkListKeys.filter((name) => name !== RPC);
+
+export const getNetworkByHexChainId = (hexChainId: string) => {
+  const network = NetworkListKeys.find(
+    (name) => NetworkList[name].hexChainId === hexChainId,
+  );
+  return network ? NetworkList[network] : undefined;
+};
 
 /**
  * Checks if network is default mainnet.

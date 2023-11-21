@@ -1,4 +1,3 @@
-import { First } from './components/first/first';
 import { ItemView } from './components/item-view/item-view';
 import { FABAccount } from './components/fab-account/fab-account';
 import { IconSimplified } from './components/icons/IconsSimplified';
@@ -35,7 +34,6 @@ const {
 } = DS;
 
 export {
-  First,
   AddressCopyButton,
   ItemView,
   UIProvider,

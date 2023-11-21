@@ -1,7 +1,8 @@
-import { SDKState, useSDK } from '@metamask/sdk-react';
-import React from 'react';
+import { useSDK } from '@metamask/sdk-react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import Avatar, {
   AvatarAccountType,
   AvatarSize,
@@ -15,16 +16,28 @@ import { IconName } from '../../design-system/components/Icons/Icon';
 import Text from '../../design-system/components/Texts/Text';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
 import NetworkSelector from '../network-selector/network-selector';
-import { ActivityIndicator } from 'react-native-paper';
 
-export interface SDKSummaryProps {
-  _sdkState?: SDKState;
-}
-export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
+export interface SDKSummaryProps {}
+export const SDKSummary = () => {
   const { t } = useTranslation('sdk-summary');
-  const sdkState = useSDK();
-  const { account, balance, balanceProcessing, chainId, provider, sdk } =
-    _sdkState ?? sdkState;
+
+  const { account, balance, connected, balanceProcessing, provider, sdk } =
+    useSDK();
+
+  const formattedBalance = useMemo(() => {
+    if (!balance) {
+      return '0.00';
+    }
+    // Convert the hexadecimal balance to a decimal number
+    const balanceInWei = parseInt(balance, 16);
+
+    // Assuming the balance is in Wei (for Ethereum), convert it to Ether.
+    // 1 Ether = 1e18 Wei
+    const balanceInEther = balanceInWei / 1e18;
+
+    // Format the number to a string with two decimal places
+    return balanceInEther.toFixed(2);
+  }, [balance]);
 
   const handleNetworkChange = (newChainId: number) => {
     // make newChainId as 0x{string}
@@ -50,10 +63,10 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
             <ActivityIndicator />
           ) : (
             <Text ellipsizeMode="middle" numberOfLines={1}>
-              {balance}
+              {formattedBalance}
             </Text>
           )}
-          <Text>{chainId === '0x1' ? 'ETH' : '???'}</Text>
+          <Text>ETH</Text>
         </View>
         <View style={{ alignItems: 'center' }}>
           <Button
@@ -67,7 +80,7 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
         </View>
       </View>
 
-      {sdk && (
+      {connected && (
         <NetworkSelector
           showTestNetworks={true}
           onNetworkChange={handleNetworkChange}
@@ -80,27 +93,25 @@ export const SDKSummary = ({ _sdkState }: SDKSummaryProps) => {
 const styles = StyleSheet.create({
   container: {
     display: 'flex',
+    width: '100%',
     padding: 5,
     flexDirection: 'column',
     // flex: 1,
     paddingRight: 15,
     paddingLeft: 15,
     maxHeight: 400,
-    gap: 15,
+    gap: 0,
     // backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
   },
   header: {
-    // flex: 1,
-    gap: 10,
+    width: '100%',
+    gap: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  headerContent: {
-    // flex: 1,
-    flexShrink: 1,
-  },
+  headerContent: {},
   balanceContainer: {
     display: 'flex',
     flexDirection: 'row',
