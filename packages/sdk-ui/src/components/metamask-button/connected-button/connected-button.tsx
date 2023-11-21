@@ -7,11 +7,11 @@ import Avatar, {
   AvatarSize,
   AvatarVariant,
 } from '../../../design-system/components/Avatars/Avatar';
+import { AccountBalance } from '../account-balance/account-balance';
 
 export interface ConnectedButtonProps {
   network: string;
   address: string;
-  balance: number | string;
   active?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
 }
@@ -19,7 +19,6 @@ export interface ConnectedButtonProps {
 export const ConnectedButton = ({
   active,
   address,
-  balance,
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
@@ -30,7 +29,7 @@ export const ConnectedButton = ({
         accountAddress={address}
         type={AvatarAccountType.Blockies}
         size={AvatarSize.Md}
-      />{' '}
+      />
       <View style={styles.content}>
         <Text style={styles.network} variant="titleMedium">
           {network}
@@ -39,12 +38,7 @@ export const ConnectedButton = ({
           {address}
         </Text>
       </View>
-      <View style={styles.balanceContainer}>
-        <Text ellipsizeMode="middle" numberOfLines={1}>
-          {balance}
-        </Text>
-        <Text>ETH</Text>
-      </View>
+      <AccountBalance decimals={2} />
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}

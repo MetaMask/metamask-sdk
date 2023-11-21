@@ -4,6 +4,7 @@ import { useSDK } from '@metamask/sdk-react';
 import { useState } from 'react';
 import Web from 'web3';
 import './App.css';
+import { MetaMaskButton } from '@metamask/sdk-ui';
 
 declare global {
   interface Window {
@@ -282,7 +283,9 @@ export const App = () => {
           <div>Waiting for Metamask to link the connection...</div>
         )}
       </div>
-
+      <div style={{ padding: 20 }}>
+        <MetaMaskButton />
+      </div>
       {connected ? (
         <div>
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>

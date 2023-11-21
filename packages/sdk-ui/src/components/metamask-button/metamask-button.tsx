@@ -112,7 +112,7 @@ export const MetaMaskButton = ({
   buttonStyle,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 MetaMaskButtonProps) => {
-  const { sdk, connected, error, balance, account, chainId } = useSDK();
+  const { sdk, connected, error, account, chainId } = useSDK();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
   const { toastRef } = useContext(ToastContext);
@@ -182,25 +182,9 @@ MetaMaskButtonProps) => {
     return { borderRadius: 8 };
   };
 
-  const formattedBalance = useMemo(() => {
-    if (!balance) {
-      return '0.00';
-    }
-    // Convert the hexadecimal balance to a decimal number
-    const balanceInWei = parseInt(balance, 16);
-
-    // Assuming the balance is in Wei (for Ethereum), convert it to Ether.
-    // 1 Ether = 1e18 Wei
-    const balanceInEther = balanceInWei / 1e18;
-
-    // Format the number to a string with two decimal places
-    return balanceInEther.toFixed(2);
-  }, [balance]);
-
   const renderConnected = () => (
     <ConnectedButton
       containerStyle={[buttonStyle, getColors()]}
-      balance={formattedBalance}
       active={modalOpen}
       network={network?.shortName ?? 'Unknown'}
       address={account ?? ''}

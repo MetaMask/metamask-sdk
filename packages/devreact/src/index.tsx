@@ -37,7 +37,7 @@ const WithProvider = () => {
         checkInstallationImmediately,
         dappMetadata: {
           name: 'Demo React App',
-          url: window.location.host,
+          url: window.location.protocol + '//' + window.location.host,
         },
         i18nOptions: {
           enabled: true,

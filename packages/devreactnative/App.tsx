@@ -55,7 +55,6 @@ const sdkOptions: MetaMaskSDKOptions = {
   enableDebug: true,
   useDeeplink,
   dappMetadata: {
-    url: 'http://devreactnative',
     name: 'devreactnative',
   },
   storage: {
