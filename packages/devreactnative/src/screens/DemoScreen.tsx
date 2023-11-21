@@ -21,13 +21,13 @@ import {useSDK} from '@metamask/sdk-react';
 import {FloatingMetaMaskButton} from '@metamask/sdk-ui';
 import {encrypt} from 'eciesjs';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import packageJSON from '../package.json';
-import {DAPPView} from './views/DappView';
+import packageJSON from '../../package.json';
+import {DAPPView} from '../views/DappView';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const styles = StyleSheet.create({});
 
-export function App(): JSX.Element {
+export function DemoScreen(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
   const {sdk} = useSDK();

@@ -7,10 +7,14 @@
 
 import React, {useEffect} from 'react';
 
-import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
-import {DEFAULT_SERVER_URL, MetaMaskSDKOptions} from '@metamask/sdk';
-import {MetaMaskProvider} from '@metamask/sdk-react';
+import {
+  MetaMaskProvider,
+  SDKConfigProvider,
+  useSDKConfig,
+} from '@metamask/sdk-react';
 import {UIProvider} from '@metamask/sdk-ui';
+import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+
 import {
   NavigationContainer,
   useNavigationContainerRef,
@@ -30,41 +34,57 @@ LogBox.ignoreLogs([
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
 // hence usage of a global variable.
 let canOpenLink = true;
-const serverUrl = COMM_SERVER_URL ?? DEFAULT_SERVER_URL;
 
-const useDeeplink = true;
+const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    debug,
+    checkInstallationImmediately,
+  } = useSDKConfig();
 
-const sdkOptions: MetaMaskSDKOptions = {
-  openDeeplink: (link: string, _target?: string) => {
-    console.debug(`App::openDeepLink() ${link}`);
-    if (canOpenLink) {
-      Linking.openURL(link);
-    } else {
-      console.debug(
-        'useBlockchainProiver::openDeepLink app is not active - skip link',
-        link,
-      );
-    }
-  },
-  // Replace with local socket server for dev debug
-  // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
-  communicationServerUrl: serverUrl,
-  checkInstallationOnAllCalls: false,
-  infuraAPIKey: INFURA_API_KEY ?? undefined,
-  timer: BackgroundTimer,
-  enableDebug: true,
-  useDeeplink,
-  dappMetadata: {
-    name: 'devreactnative',
-  },
-  storage: {
-    enabled: true,
-    // storageManager: new StorageManagerRN({debug: true}),
-  },
-  logging: {
-    developerMode: true,
-    plaintext: true,
-  },
+  return (
+    <MetaMaskProvider
+      debug={debug}
+      sdkOptions={{
+        communicationServerUrl: socketServer,
+        enableDebug: true,
+        infuraAPIKey,
+        readonlyRPCMap: {
+          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+        },
+        logging: {
+          developerMode: true,
+          plaintext: true,
+        },
+        openDeeplink: (link: string, _target?: string) => {
+          console.debug(`App::openDeepLink() ${link}`);
+          if (canOpenLink) {
+            Linking.openURL(link);
+          } else {
+            console.debug(
+              'useBlockchainProiver::openDeepLink app is not active - skip link',
+              link,
+            );
+          }
+        },
+        timer: BackgroundTimer,
+        useDeeplink,
+        checkInstallationImmediately,
+        storage: {
+          enabled: true,
+        },
+        dappMetadata: {
+          name: 'devreactnative',
+        },
+        i18nOptions: {
+          enabled: true,
+        },
+      }}>
+      {children}
+    </MetaMaskProvider>
+  );
 };
 
 export const SafeApp = () => {
@@ -88,12 +108,16 @@ export const SafeApp = () => {
   };
 
   return (
-    <MetaMaskProvider sdkOptions={sdkOptions} debug={true}>
-      <UIProvider>
-        <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
-          <RootNavigator />
-        </NavigationContainer>
-      </UIProvider>
-    </MetaMaskProvider>
+    <SDKConfigProvider
+      initialSocketServer={COMM_SERVER_URL}
+      initialInfuraKey={INFURA_API_KEY}>
+      <WithSDKConfig>
+        <UIProvider>
+          <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
+            <RootNavigator />
+          </NavigationContainer>
+        </UIProvider>
+      </WithSDKConfig>
+    </SDKConfigProvider>
   );
 };

@@ -7,6 +7,7 @@ export interface SDKConfigContextProps {
   useDeeplink?: boolean;
   infuraAPIKey?: string;
   checkInstallationImmediately: boolean;
+  debug: boolean;
   logs: {
     sdk: boolean;
     provider: boolean;
@@ -16,10 +17,10 @@ export interface SDKConfigContextProps {
 }
 
 const initProps: SDKConfigContextProps = {
-  socketServer: process.env.NEXT_PUBLIC_COMM_SERVER_URL ?? DEFAULT_SERVER_URL,
+  socketServer: DEFAULT_SERVER_URL,
   useDeeplink: true,
   checkInstallationImmediately: false,
-  infuraAPIKey: process.env.NEXT_PUBLIC_INFURA_API_KEY,
+  debug: true,
   logs: {
     sdk: true,
     provider: true,
@@ -30,31 +31,33 @@ const initProps: SDKConfigContextProps = {
 export const SDKConfigContext = createContext({
   ...initProps,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setAppContext: (_: Partial<SDKConfigContextProps>) => {}, // placeholder implemented in the provider.
+  setAppContext: (_: Partial<SDKConfigContextProps>) => { }, // placeholder implemented in the provider.
 });
 
 export interface SDKConfigProviderProps {
+  initialSocketServer?: string;
+  initialInfuraKey?: string;
   children: React.ReactNode;
 }
+
 // FIXME use appropriate children type ( currently linting issue on devnext )
-export const SDKConfigProvider = ({ children }: SDKConfigProviderProps) => {
-  const [appContext, setAppContext] = useState(initProps);
+export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, children }: SDKConfigProviderProps) => {
+  const [appContext, setAppContext] = useState<SDKConfigContextProps>({ ...initProps, socketServer: initialSocketServer ?? DEFAULT_SERVER_URL, infuraAPIKey: initialInfuraKey });
 
   const syncState = (newState: SDKConfigContextProps) => {
+    if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+      return;
+    }
+
     const queryString = new URLSearchParams();
     for (const [key, value] of Object.entries(newState)) {
       queryString.set(key, encodeURIComponent(JSON.stringify(value)));
     }
 
-    // Persist to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('appContext', JSON.stringify(newState));
-    }
-
+    localStorage.setItem('appContext', JSON.stringify(newState));
     // Update URL without refreshing the page using History API
-    const newurl = `${window.location.protocol}//${window.location.host}${
-      window.location.pathname
-    }?${queryString.toString()}`;
+    const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname
+      }?${queryString.toString()}`;
     window.history.pushState({ path: newurl }, '', newurl);
   };
 
@@ -92,7 +95,7 @@ export const SDKConfigProvider = ({ children }: SDKConfigProviderProps) => {
       setAppContext(computedContext);
     };
 
-    if (typeof window !== 'undefined') {
+    if (typeof window === 'undefined' && typeof localStorage !== 'undefined') {
       loadContext();
     }
   }, []);
