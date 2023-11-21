@@ -9,6 +9,7 @@ import { AddressCopyButton } from './components/address-copy-button/address-copy
 import { UIProvider } from './context/ui-provider';
 import DS from './design-system';
 import { useTheme } from './theme';
+import { ToastContext } from './design-system/components/Toast';
 
 const {
   Avatar,
@@ -60,6 +61,7 @@ export {
   Text,
   TextWithPrefixIcon,
   Toast,
+  ToastContext,
   useComponentSize,
   useStyles,
   useTheme,

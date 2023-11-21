@@ -61,7 +61,7 @@ export default function SDKContainer() {
         },
         dappMetadata: {
           name: 'NEXTJS demo',
-          url: window.location.host,
+          url: 'https://localhost:3000',
         },
         logging: {
           developerMode: false,

@@ -4,6 +4,9 @@ FROM node:18-alpine
 # Set the working directory inside the container
 WORKDIR /app
 
+# Install Python and build dependencies
+RUN apk add --no-cache python3 make g++
+
 # Copy the package.json and yarn.lock files into the working directory
 COPY package.json ./
 COPY yarn.lock ./
