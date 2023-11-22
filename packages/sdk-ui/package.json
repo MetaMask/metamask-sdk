@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "description": "MetaMask SDK cross-platform ui library",
   "module": "dist/esm/index.js",
-  "types": "dist/esm/src/index.d.ts",
+  "types": "dist/esm/dist/src/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
