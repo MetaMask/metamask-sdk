@@ -6,7 +6,6 @@ import external from 'rollup-plugin-peer-deps-external';
 import json from '@rollup/plugin-json';
 import image from '@rollup/plugin-image';
 
-
 const packageJson = require('./package.json');
 
 /**
@@ -15,25 +14,18 @@ const packageJson = require('./package.json');
 const config =
   [
     {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react-native"],
       input: 'src/index.ts',
       output: [
         {
           file: packageJson.module,
-          inlineDynamicImports: true,
           format: 'esm',
           sourcemap: true,
-          sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-            // Not sure why rollup otherwise adds an extra '../' to the path
-
-            // Adjust the path transformation logic as needed
-            return relativeSourcePath.replace(/^..\//, '');
-          },
         },
       ],
       plugins: [
         external(),
-        image(),
+        image({include: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'], }),
         nodeResolve({
           browser: true,
         }),
