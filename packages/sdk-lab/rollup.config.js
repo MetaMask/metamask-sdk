@@ -14,7 +14,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "@metamask/sdk-ui"],
       input: 'src/index.ts',
       output: [
         {

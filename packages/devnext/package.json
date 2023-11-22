@@ -31,6 +31,8 @@
     "@types/node": "18.15.3",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@web3-onboard/core": "^2.21.2",
+    "@web3-onboard/react": "^2.8.13",
     "bufferutil": "^4.0.7",
     "encoding": "^0.1.13",
     "ethers": "5.7.2",
