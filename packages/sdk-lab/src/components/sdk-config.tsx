@@ -4,7 +4,7 @@ import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { CSSProperties } from 'react';
 import ItemView from './ItemView';
 import { useQRCode } from 'next-qrcode';
-import { useSDKConfig } from '@metamask/sdk-react';
+import { useSDKConfig } from '@metamask/sdk-ui';
 import { LanguagePicker } from '../components/language-picker';
 
 export interface SDKConfigProps {

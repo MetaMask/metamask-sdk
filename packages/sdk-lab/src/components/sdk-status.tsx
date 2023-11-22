@@ -1,7 +1,7 @@
+import React from 'react';
+import { useSDK } from '@metamask/sdk-ui';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSDK } from '@metamask/sdk-react';
-import React from 'react';
 import ItemView from './ItemView';
 
 interface SDKStatusProps {

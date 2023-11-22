@@ -41,6 +41,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
+    "@metamask/sdk-ui": "workspace:^",
     "i18n-js": "^4.3.2",
     "i18next": "^23.6.0",
     "intl-pluralrules": "^2.0.1",

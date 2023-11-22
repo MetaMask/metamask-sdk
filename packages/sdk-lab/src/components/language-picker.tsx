@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSDKConfig } from '@metamask/sdk-react';
+import { useSDKConfig } from '@metamask/sdk-ui';
 
 export const LanguagePicker = () => {
   const { lang, setAppContext } = useSDKConfig();
