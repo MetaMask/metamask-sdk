@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.12.4]
 ### Uncategorized
-- Revert "Release 41.0.0" ([#535](https://github.com/MetaMask/metamask-sdk/pull/535))
-- Release 41.0.0 ([#534](https://github.com/MetaMask/metamask-sdk/pull/534))
+- sdk ui release version
 
 ## [0.12.3]
 ### Uncategorized

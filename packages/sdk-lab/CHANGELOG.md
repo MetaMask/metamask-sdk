@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.1.3]
-### Uncategorized
+### Added
 - feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
 
 ## [0.1.2]

@@ -7,10 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.1.3]
-### Uncategorized
+### Added
 - feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
-- Revert "Release 41.0.0" ([#535](https://github.com/MetaMask/metamask-sdk/pull/535))
-- Release 41.0.0 ([#534](https://github.com/MetaMask/metamask-sdk/pull/534))
 - feat: publish sdk-ui ([#533](https://github.com/MetaMask/metamask-sdk/pull/533))
 
 ## [0.1.2]
