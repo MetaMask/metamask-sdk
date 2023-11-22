@@ -30,8 +30,14 @@ const router = createBrowserRouter([
   },
 ]);
 
-const WithUI = ({ children }: { children: React.ReactNode }) => {
-  return <UIProvider>{children}</UIProvider>;
+export const WithTest = ({ name, children }: { name: string, children: React.ReactNode }) => {
+  const { socketServer } = useSDKConfig();
+
+  return <>
+    <div>name: {name}</div>
+    <div>server: {socketServer}</div>
+    {children}
+  </>;
 };
 
 const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
@@ -79,14 +85,16 @@ root.render(
       initialInfuraKey={process.env.INFURA_API_KEY}
     >
       <WithSDKConfig>
-        <WithUI>
+        <UIProvider>
           <SDKConfigCard
             onHomePress={() => {
               router.navigate("/");
             }}
           />
-          <RouterProvider router={router} />
-        </WithUI>
+          <WithTest name={'test'}>
+            <RouterProvider router={router} />
+          </WithTest>
+        </UIProvider>
       </WithSDKConfig>
     </SDKConfigProvider>
   </SafeAreaProvider>,

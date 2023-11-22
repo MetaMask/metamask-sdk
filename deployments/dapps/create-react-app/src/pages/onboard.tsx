@@ -1,8 +1,7 @@
-import React from 'react';
+import { useSDK, useSDKConfig } from '@metamask/sdk-ui';
 import metamaskSDK from '@web3-onboard/metamask';
 import { init, useConnectWallet } from '@web3-onboard/react';
-import type { ConnectOptions, DisconnectOptions, WalletState } from '@web3-onboard/core';
-import { useSDK, useSDKConfig } from '@metamask/sdk-react';
+import React from 'react';
 
 const chains = [
   {
@@ -133,7 +132,7 @@ export const Onboard = () => {
   } = useSDKConfig();
 
   React.useEffect(() => {
-    if(onboarded) return
+    if (onboarded) return
 
     const doOnboard = async () => {
       // terminate previous sdk instance
