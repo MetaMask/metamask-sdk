@@ -4,7 +4,7 @@ import typescript from '@rollup/plugin-typescript';
 import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
 import json from '@rollup/plugin-json';
-
+import babel from '@rollup/plugin-babel'; // Import the Babel plugin
 
 const packageJson = require('./package.json');
 
@@ -14,7 +14,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", "react-native", "react-native-vector-icons","react-native-reanimated","@metamask/sdk-communication-layer"],
       input: 'src/index.ts',
       output: [
         {
@@ -35,6 +35,7 @@ const config =
         nodeResolve({
           browser: true,
         }),
+        babel({ babelHelpers: 'bundled' }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),
         json(),
