@@ -1,6 +1,8 @@
 import React from 'react';
 import metamaskSDK from '@web3-onboard/metamask';
 import { init, useConnectWallet } from '@web3-onboard/react';
+import type { ConnectOptions, DisconnectOptions, WalletState } from '@web3-onboard/core';
+import { useSDK, useSDKConfig } from '@metamask/sdk-react';
 
 const chains = [
   {
@@ -83,32 +85,8 @@ const chains = [
   },
 ];
 
-
-// initialize the module with options
-const metamaskSDKWallet = metamaskSDK({
-  options: {
-    extensionOnly: false,
-    logging: {
-      developerMode: true,
-    },
-    dappMetadata: {
-      name: 'Demo Web3Onboard'
-    }
-  }
-})
-
-init({
-  // ... other Onboard options
-  wallets: [
-    metamaskSDKWallet
-    //... other wallets
-  ],
-  chains
-});
-
-export const Onboard = () => {
+const OnboardReady = () => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
-
 
   const handleTestSign = async () => {
     console.log(`TODO: test sign`)
@@ -127,7 +105,6 @@ export const Onboard = () => {
 
   return (
     <div>
-      <h1>Web3Onboard Demo</h1>
       <div>
         accounts: {JSON.stringify(wallet?.accounts)}
       </div>
@@ -135,7 +112,6 @@ export const Onboard = () => {
         chains: {JSON.stringify(wallet?.chains)}
       </div>
       <button
-        disabled={connecting}
         onClick={() => (wallet ? disconnect(wallet) : connect())}
       >
         {connecting ? 'connecting' : wallet ? 'disconnect' : 'connect'}
@@ -143,4 +119,65 @@ export const Onboard = () => {
       <button title='test sign' onClick={handleTestSign}>Test Sign</button>
     </div>
   )
+}
+
+export const Onboard = () => {
+  const [onboarded, setOnboarded] = React.useState(false)
+  const { sdk } = useSDK();
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    debug,
+    checkInstallationImmediately,
+  } = useSDKConfig();
+
+  React.useEffect(() => {
+    if(onboarded) return
+
+    const doOnboard = async () => {
+      // terminate previous sdk instance
+      sdk?.terminate();
+
+      // initialize the module with options
+      const metamaskSDKWallet = metamaskSDK({
+        options: {
+          logging: {
+            developerMode: debug,
+          },
+          infuraAPIKey,
+          communicationServerUrl: socketServer,
+          useDeeplink,
+          checkInstallationImmediately,
+          dappMetadata: {
+            name: 'DemoDapp Onboard',
+            url: window.location.protocol + '//' + window.location.host,
+          },
+          i18nOptions: {
+            enabled: true,
+          },
+        }
+      })
+      try {
+        await init({
+          // ... other Onboard options
+          wallets: [
+            metamaskSDKWallet
+            //... other wallets
+          ],
+          chains
+        });
+        setOnboarded(true);
+      } catch (error) {
+        console.error(`error: `, error)
+      }
+    }
+
+    doOnboard()
+  }, [])
+
+  return <div>
+    <h1>Web3Onboard Demo</h1>
+    {onboarded && <OnboardReady />}
+  </div>
 }
