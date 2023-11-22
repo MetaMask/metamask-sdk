@@ -36,7 +36,7 @@ export const SDKConfigContext = createContext({
 export const SDKConfigProvider = ({
   children,
 }: {
-  children: any; // FIXME - ReactNode creates issue on typescript when imported
+  children: React.ReactNode;
 }) => {
   const [appContext, setAppContext] = useState(initProps);
 

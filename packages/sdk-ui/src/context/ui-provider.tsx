@@ -26,7 +26,11 @@ export const WithToasts = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const WithPreferences = ({ children }: { children: any }) => {
+export const WithPreferences = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const preferences = usePreferences();
   console.log(`WithPreferences::lightTheme`, lightTheme);
   return (

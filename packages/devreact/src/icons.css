@@ -12,3 +12,9 @@
   font-family: 'MaterialCommunityIcons';
   src: url('../public/Fonts/MaterialCommunityIcons.ttf') format('truetype');
 }
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

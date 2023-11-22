@@ -6962,6 +6962,7 @@ __metadata:
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
+    "@metamask/sdk-ui": "workspace:^"
     "@react-native-community/eslint-config": ^3.2.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-json": ^6.0.1
