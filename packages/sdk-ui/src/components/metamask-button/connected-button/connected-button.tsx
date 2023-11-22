@@ -9,6 +9,34 @@ import Avatar, {
 } from '../../../design-system/components/Avatars/Avatar';
 import { AccountBalance } from '../account-balance/account-balance';
 
+const styles = StyleSheet.create({
+  container: {
+    // padding: 5,
+    flex: 1,
+    gap: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    flex: 1,
+    maxWidth: '99%',
+  },
+  balanceContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    gap: 5,
+    backgroundColor: '#E2E2E2',
+  },
+  icon: { padding: 5 },
+  network: {},
+  address: {},
+});
+
 export interface ConnectedButtonProps {
   network: string;
   address: string;
@@ -47,31 +75,3 @@ export const ConnectedButton = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    // padding: 5,
-    flex: 1,
-    gap: 5,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    flex: 1,
-    maxWidth: '99%',
-  },
-  balanceContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 5,
-    gap: 5,
-    backgroundColor: '#E2E2E2',
-  },
-  icon: { padding: 5 },
-  network: {},
-  address: {},
-});
