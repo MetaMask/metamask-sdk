@@ -1,10 +1,20 @@
+import { useSDK } from '@metamask/sdk-react';
 import React from 'react';
-import { useSDK } from '@metamask/sdk-ui';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ItemView from './ItemView';
+import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native-paper';
+import { ItemView } from '../item-view/item-view';
 
-interface SDKStatusProps {
+const styles = StyleSheet.create({
+  container: {},
+  waitingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 10,
+  },
+});
+
+export interface SDKStatusProps {
   response: unknown;
   requesting?: boolean;
   error?: any;
@@ -24,24 +34,15 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
   } = useSDK();
 
   return (
-    <div id="header">
+    <View style={styles.container}>
       {connecting && (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          <span className="loading-spinner">
-            <FontAwesomeIcon icon={faSpinner} pulse />
-          </span>
-          <span>Waiting for Metamask to link the connection...</span>
-        </div>
+        <View style={styles.waitingContainer}>
+          <ActivityIndicator size="small" />
+          <Text>Waiting for Metamask to link the connection...</Text>
+        </View>
       )}
       {connected && (
-        <div className="data-container">
+        <View>
           <ItemView label="SDK Version" value={sdk?.getVersion()} />
           {!extensionActive && (
             <>
@@ -77,7 +78,7 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
             <ItemView
               label="Last request error"
               processing={requesting}
-              contentStyle={{ color: 'red' }}
+              error={true}
               value={JSON.stringify({
                 code: error.code,
                 message: error.message,
@@ -90,8 +91,8 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
               value={JSON.stringify(response)}
             />
           )}
-        </div>
+        </View>
       )}
-    </div>
+    </View>
   );
 };
