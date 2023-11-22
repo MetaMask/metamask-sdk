@@ -16,14 +16,26 @@
     "allowJs": true,
     "skipLibCheck": true,
     "paths": {
-      "@metamask/sdk-ui": ["./src/index"],
-      "@metamask/sdk-design-system": ["./src/design-system"],
-      "@assets": ["./assets"],
-      "react": ["node_modules/@types/react"]
+      "@metamask/sdk-ui": [
+        "./src/index"
+      ],
+      "@metamask/sdk-design-system": [
+        "./src/design-system"
+      ],
+      "@assets": [
+        "./assets"
+      ],
+      "react": [
+        "node_modules/@types/react"
+      ]
     }
   },
   "include": [
-    "./src","./storybook/","./assets/","package.json","./**/*.js"
+    "./src",
+    "./storybook/",
+    "./assets/",
+    "package.json",
+    "./**/*.js"
   ],
   "exclude": [
     "dist",

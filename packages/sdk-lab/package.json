@@ -26,6 +26,7 @@
     "build:tsc": "tsc",
     "build:pre-tsc": "echo 'n/a'",
     "build:post-tsc": "echo 'n/a'",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache \"**/*.{js,ts,tsx}\"",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-lab",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
