@@ -43,9 +43,9 @@
     "@metamask/sdk-react": "workspace:^",
     "i18n-js": "^4.3.2",
     "i18next": "^23.6.0",
-    "react-i18next": "^13.3.1",
     "intl-pluralrules": "^2.0.1",
-    "next-qrcode": "^2.5.1"
+    "next-qrcode": "^2.5.1",
+    "react-i18next": "^13.3.1"
   },
   "devDependencies": {
     "@metamask/auto-changelog": "^3.4.3",
@@ -63,9 +63,9 @@
     "eslint-plugin-prettier": "^5.0.1",
     "expo": "^49.0.17",
     "expo-clipboard": "^4.5.0",
-    "rollup": "^4.5.0",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
+    "rollup": "^4.5.0",
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",

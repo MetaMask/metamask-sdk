@@ -1,17 +1,22 @@
+import React from 'react';
 import { MetaMaskProvider } from '@metamask/sdk-react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { SDKConfigProvider, useSDKConfig } from './providers/sdkconfig-context';
+import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-react';
 import { Layout } from './components/layout';
 import { Demo } from './pages/demo';
 import { Onboard } from './pages/onboard';
-
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import { UIProvider, FloatingMetaMaskButton } from '@metamask/sdk-ui';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
 
 const WithSDKProvider = ({ children }: { children: React.ReactNode }) => {
   const {
@@ -67,7 +72,10 @@ const router = createBrowserRouter([
   {
     path: "/demo",
     element: <WithSDKProvider>
-      <Demo />
+      <UIProvider>
+        <Demo />
+        <FloatingMetaMaskButton />
+      </UIProvider>
     </WithSDKProvider>
   },
   {
@@ -81,13 +89,13 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <>
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
     <SDKConfigProvider>
       <Layout>
         <RouterProvider router={router} />
       </Layout>
     </SDKConfigProvider>
-  </>
+  </SafeAreaProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

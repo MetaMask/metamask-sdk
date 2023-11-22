@@ -1,4 +1,5 @@
-import { useSDK } from '@metamask/sdk-react';
+import React from 'react';
+import { useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
 import HeaderStatus from '../components/header-status';

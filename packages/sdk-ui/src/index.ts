@@ -9,6 +9,17 @@ import DS from './design-system';
 import { useTheme } from './theme';
 import { ToastContext } from './design-system/components/Toast';
 import { FloatingMetaMaskButton } from './components/floating-metamask-button/floating-metamask-button';
+import {
+  useSDK,
+  MetaMaskProvider,
+  SDKConfigProvider,
+  SDKConfigProviderProps,
+  SDKContext,
+  SDKState,
+  SDKConfigContext,
+  useSDKConfig,
+  SDKConfigContextProps,
+} from '@metamask/sdk-react';
 
 const {
   Avatar,
@@ -64,4 +75,17 @@ export {
   useStyles,
   useTheme,
   assets,
+};
+
+// Need to re-export these from @metamask/sdk-react to be available in children components
+export {
+  useSDK,
+  useSDKConfig,
+  SDKConfigProvider,
+  SDKConfigProviderProps,
+  MetaMaskProvider,
+  SDKContext,
+  SDKState,
+  SDKConfigContext,
+  SDKConfigContextProps,
 };

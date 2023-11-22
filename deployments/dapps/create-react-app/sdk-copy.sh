@@ -27,15 +27,36 @@ echo "########### START REPLACING SDK_COMMUNICATION_LAYER #########"
 cd $DAPP_DIR
 echo "Hack Metamask sdk && sdk-communication-layer packages..."
 ## hack to debug to latest unpublished version of the sdk
-rm -rf node_modules/@metamask/sdk-communication-layer node_modules/@metamask/sdk node_modules/@metamask/sdk-react node_modules/@metamask/sdk-react-ui node_modules/@metamask/sdk-ui node_modules/@metamask/sdk-lab node_modules/@metamask/sdk-install-modal-web
-cp -rf $COMM_LAYER_DIR node_modules/@metamask/
-cp -rf $SDK_DIR node_modules/@metamask/
-cp -rf $SDK_REACT_DIR node_modules/@metamask/
-cp -rf $SDK_REACT_UI_DIR node_modules/@metamask/
-cp -rf $SDK_UI_DIR node_modules/@metamask/
-cp -rf $SDK_LAB_DIR node_modules/@metamask/
-cp -rf $SDK_INSTALL_MODAL_WEB_DIR node_modules/@metamask/
+rm -rf node_modules/@metamask/sdk-communication-layer
+echo "removed node_modules/@metamask/sdk-communication-layer"
+rm -rf node_modules/@metamask/sdk
+echo "removed node_modules/@metamask/sdk"
+rm -rf node_modules/@metamask/sdk-react
+echo "removed node_modules/@metamask/sdk-react"
+rm -rf node_modules/@metamask/sdk-react-ui
+echo "removed node_modules/@metamask/sdk-react-ui"
+rm -rf node_modules/@metamask/sdk-ui
+echo "removed node_modules/@metamask/sdk-ui"
+rm -rf node_modules/@metamask/sdk-lab
+echo "removed node_modules/@metamask/sdk-lab"
+rm -rf node_modules/@metamask/sdk-install-modal-web
+echo "removed node_modules/@metamask/sdk-install-modal-web"
 
-
+echo "Begin copying sdk packages..."
+# cp -rf $COMM_LAYER_DIR node_modules/@metamask/
+# cp -rf $SDK_DIR node_modules/@metamask/
+# cp -rf $SDK_REACT_DIR node_modules/@metamask/
+# cp -rf $SDK_REACT_UI_DIR node_modules/@metamask/
+# cp -rf $SDK_UI_DIR node_modules/@metamask/
+# cp -rf $SDK_LAB_DIR node_modules/@metamask/
+# cp -rf $SDK_INSTALL_MODAL_WEB_DIR node_modules/@metamask/
+# Create symlinks to local packages
+ln -s $COMM_LAYER_DIR node_modules/@metamask/sdk-communication-layer
+ln -s $SDK_DIR node_modules/@metamask/sdk
+ln -s $SDK_REACT_DIR node_modules/@metamask/sdk-react
+ln -s $SDK_REACT_UI_DIR node_modules/@metamask/sdk-react-ui
+ln -s $SDK_UI_DIR node_modules/@metamask/sdk-ui
+ln -s $SDK_LAB_DIR node_modules/@metamask/sdk-lab
+ln -s $SDK_INSTALL_MODAL_WEB_DIR node_modules/@metamask/sdk-install-modal-web
 
 echo "All done."

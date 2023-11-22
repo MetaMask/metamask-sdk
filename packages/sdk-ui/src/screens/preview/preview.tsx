@@ -1,4 +1,3 @@
-import ethIcon from 'cryptocurrency-icons/32/color/eth.png';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Jazzicon from 'react-native-jazzicon';
@@ -41,7 +40,6 @@ const styles = StyleSheet.create({
 });
 
 console.log(`images`, images);
-console.warn(`ethIcon`, ethIcon);
 
 export const PreviewScreen = () => {
   const { sdk } = useSDK();
@@ -71,15 +69,6 @@ export const PreviewScreen = () => {
           <Image
             style={{ width: 50, height: 50, borderWidth: 1 }}
             source={images.ETHEREUM}
-          />
-          <Image
-            style={{
-              width: 50,
-              height: 50,
-              borderWidth: 1,
-              borderColor: 'red',
-            }}
-            source={ethIcon}
           />
           <BadgeNetwork
             variant={BadgeVariant.Network}

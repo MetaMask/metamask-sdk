@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react';
 import SDKConfig from './sdk-config';
-
 export interface LayoutProps {
   children: ReactNode;
 }

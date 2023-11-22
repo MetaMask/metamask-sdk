@@ -5,6 +5,8 @@ import { terser } from 'rollup-plugin-terser';
 import external from 'rollup-plugin-peer-deps-external';
 import json from '@rollup/plugin-json';
 import image from '@rollup/plugin-image';
+// import image from 'rollup-plugin-img';
+import copy from 'rollup-plugin-copy'
 
 const packageJson = require('./package.json');
 
@@ -19,13 +21,28 @@ const config =
       output: [
         {
           file: packageJson.module,
+          inlineDynamicImports: false,
           format: 'esm',
-          sourcemap: true,
+          sourcemap: false,
+          sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+            // Not sure why rollup otherwise adds an extra '../' to the path
+            console.log(`relativeSourcePath: ${relativeSourcePath} --> sourceMapPath: ${sourcemapPath}`)
+            // Adjust the path transformation logic as needed
+            return relativeSourcePath.replace(/^..\//, '');
+          },
         },
       ],
       plugins: [
         external(),
-        image({include: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'], }),
+        image(),
+        // copy({
+        //   verbose: true,
+        //   targets: [
+        //     { src: 'assets/**/*', dest: 'dist/assets'},
+        //     // { src: ['assets/fonts/arial.woff', 'assets/fonts/arial.woff2'], dest: 'dist/public/fonts' },
+        //     // { src: 'assets/images/**/*', dest: 'dist/public/images' }
+        //   ]
+        // }),
         nodeResolve({
           browser: true,
         }),
