@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4]
+### Added
+- feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
+
 ## [0.12.3]
 ### Uncategorized
 - feat: sdk config context as part of sdk-react ([#529](https://github.com/MetaMask/metamask-sdk/pull/529))
@@ -77,7 +81,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.4...HEAD
+[0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.3...@metamask/sdk-react-ui@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.2...@metamask/sdk-react-ui@0.12.3
 [0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.1...@metamask/sdk-react-ui@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.0...@metamask/sdk-react-ui@0.12.1
