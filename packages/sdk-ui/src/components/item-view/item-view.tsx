@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Text, ActivityIndicator } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { ActivityIndicator } from 'react-native-paper';
+import Text from '../../design-system/components/Texts/Text';
+import { useTheme } from '../../theme';
 
 export interface ItemViewProps {
   label: string;
   value?: string;
   processing?: boolean;
+  error?: boolean;
   containerStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
 }
@@ -28,6 +30,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingLeft: 5,
+    paddingTop: 5,
     wordWrap: 'break-word',
     whiteSpace: 'pre-wrap',
     maxWidth: '100%',
@@ -37,22 +40,27 @@ const styles = StyleSheet.create({
 export const ItemView = ({
   label,
   value,
+  error,
   processing,
   containerStyle,
   contentStyle,
 }: ItemViewProps) => {
+  const { colors } = useTheme();
+
   return (
     <View style={[styles.container, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <View style={[styles.content, contentStyle]}>
         {processing ? (
-          <View>
-            <ActivityIndicator size="small" color="#00ff00" />
-            <Icon name="rocket" size={30} color="#900" />
-            <Text>ok</Text>
-          </View>
+          <ActivityIndicator size="small" />
         ) : (
-          value
+          <Text
+            style={{
+              color: error ? colors.error.default : colors.text.default,
+            }}
+          >
+            {value}
+          </Text>
         )}
       </View>
     </View>

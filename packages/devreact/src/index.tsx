@@ -1,11 +1,12 @@
-import React from 'react';
 import { SDKConfig } from '@metamask/sdk-lab';
 import {
+  FloatingMetaMaskButton,
   MetaMaskProvider,
   SDKConfigProvider,
+  UIProvider,
   useSDKConfig,
-} from '@metamask/sdk-react';
-import { UIProvider } from '@metamask/sdk-ui';
+} from '@metamask/sdk-ui';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   SafeAreaProvider,
@@ -20,17 +21,22 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 
-const WithProvider = () => {
+const WithUI = ({ children }: { children: React.ReactNode }) => {
+  return <UIProvider>{children}</UIProvider>;
+};
+
+const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   const {
     socketServer,
     infuraAPIKey,
     useDeeplink,
+    debug,
     checkInstallationImmediately,
   } = useSDKConfig();
 
   return (
     <MetaMaskProvider
-      debug
+      debug={debug}
       sdkOptions={{
         logging: {
           developerMode: true,
@@ -48,30 +54,31 @@ const WithProvider = () => {
         },
       }}
     >
-      <SDKConfig
-        onHomePress={() => {
-          console.debug(`nothing to do here`);
-        }}
-      />
-      {/* <PreviewScreen /> */}
-      <App />
+      {children}
     </MetaMaskProvider>
   );
 };
 
-const WithSDKConfig = () => {
-  return (
-    <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <SDKConfigProvider>
-        <UIProvider>
-          <WithProvider />
-        </UIProvider>
-      </SDKConfigProvider>
-    </SafeAreaProvider>
-  );
-};
-
-root.render(<WithSDKConfig />);
+root.render(
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <SDKConfigProvider
+      initialSocketServer={process.env.REACT_APP_COMM_SERVER_URL}
+      initialInfuraKey={process.env.INFURA_API_KEY}
+    >
+      <WithSDKConfig>
+        <WithUI>
+          <SDKConfig
+            onHomePress={() => {
+              console.debug(`nothing to do here`);
+            }}
+          />
+          <App />
+          <FloatingMetaMaskButton />
+        </WithUI>
+      </WithSDKConfig>
+    </SDKConfigProvider>
+  </SafeAreaProvider>,
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

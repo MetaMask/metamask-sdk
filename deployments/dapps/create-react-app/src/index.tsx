@@ -1,17 +1,16 @@
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { FloatingMetaMaskButton, MetaMaskProvider, SDKConfigProvider, UIProvider, useSDKConfig } from '@metamask/sdk-ui';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { SDKConfigProvider, useSDKConfig } from './providers/sdkconfig-context';
-import { Layout } from './components/layout';
-import { Demo } from './pages/demo';
-import { Onboard } from './pages/onboard';
-
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import App from './App';
+import { Layout } from './components/layout';
+import './index.css';
+import { Demo } from './pages/demo';
+import { Onboard } from './pages/onboard';
+import reportWebVitals from './reportWebVitals';
 
 const WithSDKProvider = ({ children }: { children: React.ReactNode }) => {
   const {
@@ -67,7 +66,10 @@ const router = createBrowserRouter([
   {
     path: "/demo",
     element: <WithSDKProvider>
-      <Demo />
+      <UIProvider>
+        <Demo />
+        <FloatingMetaMaskButton />
+      </UIProvider>
     </WithSDKProvider>
   },
   {
@@ -81,13 +83,11 @@ const root = ReactDOM.createRoot(
 );
 
 root.render(
-  <>
-    <SDKConfigProvider>
-      <Layout>
-        <RouterProvider router={router} />
-      </Layout>
-    </SDKConfigProvider>
-  </>
+  <SDKConfigProvider>
+    <Layout>
+      <RouterProvider router={router} />
+    </Layout>
+  </SDKConfigProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

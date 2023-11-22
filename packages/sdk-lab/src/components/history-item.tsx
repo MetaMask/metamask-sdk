@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { RPCMethodResult } from '@metamask/sdk-communication-layer';
 import React, { CSSProperties } from 'react';
 

@@ -1,4 +1,3 @@
-// create an app context to fetch the socket server address in all components
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { createContext, useEffect, useState } from 'react';
 
@@ -106,8 +105,12 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
       syncState(updatedContext);
 
       setTimeout(() => {
-        // Reload window with changes
-        window.location.reload();
+        if(typeof window !== 'undefined' && typeof window.location !== 'undefined' && typeof window.location.reload !== 'undefined') {
+          // Reload window with changes
+          window.location.reload();
+        } else {
+          console.warn(`[SDKConfigProvider] updateAppContext not implemented`)
+        }
       }, 100);
       return updatedContext;
     });

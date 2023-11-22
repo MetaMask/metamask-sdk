@@ -1,8 +1,7 @@
-import { useSDK } from '@metamask/sdk-react';
+import React from 'react';
+import { MetaMaskButton, useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
-import HeaderStatus from '../components/header-status';
-import RPCHistoryViewer from '../components/rpchistory-viewer';
 import './demo.css';
 
 export const Demo = () => {
@@ -184,12 +183,9 @@ export const Demo = () => {
   return (
     <div className="App">
       <h1>SDK Provider Demo</h1>
-
-      <HeaderStatus
-        requesting={requesting}
-        response={response}
-        error={rpcError}
-      />
+      <div style={{ padding: 20 }}>
+        <MetaMaskButton />
+      </div>
 
       {connected ? (
         <div>
@@ -281,7 +277,6 @@ export const Demo = () => {
       >
         Terminate
       </button>
-      <RPCHistoryViewer />
     </div>
   );
 };

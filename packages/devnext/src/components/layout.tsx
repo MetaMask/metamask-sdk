@@ -1,5 +1,4 @@
-import { SDKConfig } from '@metamask/sdk-lab';
-import { FloatingMetaMaskButton } from '@metamask/sdk-ui';
+import { FloatingMetaMaskButton, SDKConfigCard } from '@metamask/sdk-ui';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
@@ -12,7 +11,8 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div>
-      <SDKConfig
+      <SDKConfigCard
+        options={{ showQRCode: true }}
         onHomePress={() => {
           router.push('/');
         }}

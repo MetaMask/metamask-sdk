@@ -1,10 +1,10 @@
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import {
-  MetaMaskUIProvider,
+  MetaMaskProvider,
   useSDKConfig,
   SDKConfigProvider,
-} from '@metamask/sdk-react-ui';
+} from '@metamask/sdk-react';
 import type { AppProps } from 'next/app';
 import {
   SafeAreaProvider,
@@ -28,7 +28,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   } = useSDKConfig();
 
   return (
-    <MetaMaskUIProvider
+    <MetaMaskProvider
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
@@ -59,7 +59,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </MetaMaskUIProvider>
+    </MetaMaskProvider>
   );
 };
 

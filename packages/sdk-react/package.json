@@ -46,6 +46,7 @@
   "dependencies": {
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
+    "@react-native-async-storage/async-storage": "^1.19.6",
     "eth-rpc-errors": "^4.0.3"
   },
   "devDependencies": {
@@ -86,6 +87,8 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8.4.12",
     "prettier": "^2.3.0",
+    "react-native": "^0.72.7",
+    "react-native-web": "^0.19.9",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.8",
     "rollup-plugin-dts": "^4.2.2",
@@ -97,7 +100,16 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-native": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public",
