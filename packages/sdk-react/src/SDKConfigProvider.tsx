@@ -1,6 +1,5 @@
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { createContext, useEffect, useState } from 'react';
-import { Platform } from 'react-native';
 
 export interface SDKConfigContextProps {
   socketServer: string;
@@ -106,11 +105,11 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
       syncState(updatedContext);
 
       setTimeout(() => {
-        if(Platform.OS === 'web') {
+        if(typeof window !== 'undefined' && typeof window.location !== 'undefined' && typeof window.location.reload !== 'undefined') {
           // Reload window with changes
           window.location.reload();
         } else {
-          console.warn(`[SDKConfigProvider] updateAppContext not implemented for ${Platform.OS}`)
+          console.warn(`[SDKConfigProvider] updateAppContext not implemented`)
         }
       }, 100);
       return updatedContext;
