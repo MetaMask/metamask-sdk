@@ -4,8 +4,9 @@ import { IconButton } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import Text from '../../design-system/components/Texts/Text';
+import { useTheme } from '../../theme';
 import { LanguagePicker } from '../language-picker/language-picker';
-import { SDKConfig } from '../sdk-config/sdk-config';
+import { SDKConfig, SDKConfigProps } from '../sdk-config/sdk-config';
 
 const styles = StyleSheet.create({
   container: {},
@@ -20,6 +21,7 @@ const styles = StyleSheet.create({
 export interface SDKConfigCardProps {
   startVisible?: boolean;
   title?: string;
+  options?: SDKConfigProps;
   left?: () => React.ReactNode;
   onHomePress?: () => void;
   containerStyle?: StyleProp<ViewStyle>;
@@ -28,9 +30,11 @@ export const SDKConfigCard = ({
   startVisible,
   title = 'SDKConfig',
   containerStyle,
+  options,
   onHomePress,
 }: SDKConfigCardProps) => {
   const [visible, setVisible] = useState(startVisible ?? false);
+  const { colors } = useTheme();
 
   useEffect(() => {
     setVisible(startVisible ?? false);
@@ -60,7 +64,13 @@ export const SDKConfigCard = ({
   };
 
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.background.alternative },
+        containerStyle,
+      ]}
+    >
       <View style={styles.centered}>
         {renderLeft()}
         <View style={styles.titleContainer}>
@@ -68,7 +78,7 @@ export const SDKConfigCard = ({
         </View>
         <View>{renderRight()}</View>
       </View>
-      {visible && <SDKConfig />}
+      {visible && <SDKConfig {...options} />}
     </View>
   );
 };

@@ -35,7 +35,7 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   };
 
   return (
-    <View>
+    <View style={{ paddingBottom: 10 }}>
       <ItemView label="Socket Server" value={socketServer} />
       <ItemView label="Infura API Key" value={infuraAPIKey} />
       <ItemView label="Lang" value={lang} />
