@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.4]
+### Uncategorized
+- Revert "Release 41.0.0" ([#535](https://github.com/MetaMask/metamask-sdk/pull/535))
+- Release 41.0.0 ([#534](https://github.com/MetaMask/metamask-sdk/pull/534))
+
 ## [0.12.3]
 ### Uncategorized
 - fix: regex in setupDappMetadata function ([#528](https://github.com/MetaMask/metamask-sdk/pull/528))
@@ -204,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.4...HEAD
+[0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.3...@metamask/sdk@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.2...@metamask/sdk@0.12.3
 [0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.1...@metamask/sdk@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.0...@metamask/sdk@0.12.1
