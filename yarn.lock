@@ -7089,6 +7089,7 @@ __metadata:
     "@metamask/eslint-config-typescript": ^6.0.0
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
+    "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-commonjs": ^22.0.1
     "@rollup/plugin-json": ^6.0.1
     "@rollup/plugin-node-resolve": ^13.3.0
@@ -7118,6 +7119,7 @@ __metadata:
     jest-environment-jsdom: ^29.7.0
     postcss: ^8.4.12
     prettier: ^2.3.0
+    react-native: ^0.72.7
     rimraf: ^5.0.0
     rollup: ^3.21.8
     rollup-plugin-dts: ^4.2.2
@@ -7125,10 +7127,16 @@ __metadata:
     rollup-plugin-postcss: ^4.0.2
     rollup-plugin-terser: ^7.0.2
     tailwindcss: ^3.1.4
-    typescript: ^5.3.2
+    typescript: ^4.7.4
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: false
+    react-native:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -7170,10 +7178,13 @@ __metadata:
     "@babel/preset-flow": ^7.23.3
     "@babel/preset-react": ^7.23.3
     "@babel/preset-typescript": ^7.23.3
+    "@expo/vector-icons": ^13.0.0
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/controller-utils": ^5.0.2
     "@metamask/design-tokens": ^1.12.0
     "@metamask/network-controller": ^16.0.0
+    "@metamask/sdk": "workspace:^"
+    "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@react-native-async-storage/async-storage": ^1.19.5
     "@react-native-community/eslint-config": ^3.2.0
@@ -7229,6 +7240,7 @@ __metadata:
     react-native-gesture-handler: ^2.13.4
     react-native-jazzicon: ^0.1.2
     react-native-paper: ^5.11.1
+    react-native-qrcode-svg: ^6.2.0
     react-native-reanimated: ^3.5.4
     react-native-safe-area-context: ^4.7.4
     react-native-svg: ^14.0.0
@@ -8523,6 +8535,17 @@ __metadata:
   peerDependencies:
     react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
   checksum: c0e9b58c8fcd2f14bfcf089d65a291cf795f391f5b3c84aaf0a04d9acdee47f99c26f0fa2ac63309097e6a4d2d08c823dce65af60b989659916e2be4a7b1d529
+  languageName: node
+  linkType: hard
+
+"@react-native-async-storage/async-storage@npm:^1.19.6":
+  version: 1.19.6
+  resolution: "@react-native-async-storage/async-storage@npm:1.19.6"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.60 <1.0
+  checksum: ecddc192a03854a0cca046379e971958300cad05d1558331d8dadeb56518feff34ab47aca666b5045946ec5c42efd21b774286d121e4034043cdba814dfb2a96
   languageName: node
   linkType: hard
 
@@ -32231,7 +32254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:*, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
+"prop-types@npm:*, prop-types@npm:^15.6.0, prop-types@npm:^15.6.2, prop-types@npm:^15.7.2, prop-types@npm:^15.8.0, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -32974,6 +32997,20 @@ __metadata:
     react-native-safe-area-context: "*"
     react-native-vector-icons: "*"
   checksum: 26331e8d54205cb8b379db4e986c69fecbb82a14913974d9e22515025b44705f96af8919c19e8044eddb4545d3cb33174dbc6b9d465f751241fb14d3af877988
+  languageName: node
+  linkType: hard
+
+"react-native-qrcode-svg@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "react-native-qrcode-svg@npm:6.2.0"
+  dependencies:
+    prop-types: ^15.8.0
+    qrcode: ^1.5.1
+  peerDependencies:
+    react: "*"
+    react-native: ">=0.63.4"
+    react-native-svg: ^13.2.0
+  checksum: e4e8a709900e16cf0116e9c5edd8ff7150cfbbb2c9763a5a7b171ba6efb1f84d8b93b919dedb915d16686d7a8b0c49c905c62dcbd86f98d471b1c0bcec6f1ae3
   languageName: node
   linkType: hard
 

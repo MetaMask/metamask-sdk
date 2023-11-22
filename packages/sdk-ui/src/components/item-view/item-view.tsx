@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Text, ActivityIndicator } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { ActivityIndicator } from 'react-native-paper';
+import Text from '../../design-system/components/Texts/Text';
 
 export interface ItemViewProps {
   label: string;
@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingLeft: 5,
+    paddingTop: 5,
     wordWrap: 'break-word',
     whiteSpace: 'pre-wrap',
     maxWidth: '100%',
@@ -45,15 +46,7 @@ export const ItemView = ({
     <View style={[styles.container, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
       <View style={[styles.content, contentStyle]}>
-        {processing ? (
-          <View>
-            <ActivityIndicator size="small" color="#00ff00" />
-            <Icon name="rocket" size={30} color="#900" />
-            <Text>ok</Text>
-          </View>
-        ) : (
-          value
-        )}
+        {processing ? <ActivityIndicator size="small" /> : <Text>{value}</Text>}
       </View>
     </View>
   );

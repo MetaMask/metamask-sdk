@@ -16,7 +16,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
-      external: ["react", "react-dom", "react-native"],
+      external: ["react", "react-dom", "react-native","react-native-qrcode-svg"],
       input: 'src/index.ts',
       output: [
         {

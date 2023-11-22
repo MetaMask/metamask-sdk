@@ -129,7 +129,7 @@ export const SDKConfig = ({ startVisible, onHomePress }: SDKConfigProps) => {
                 Toggle CheckInstallationImmediately
               </button>
             </div>
-            <div
+            {/* <div
               style={{
                 justifyContent: 'center',
                 display: 'flex',
@@ -151,7 +151,7 @@ export const SDKConfig = ({ startVisible, onHomePress }: SDKConfigProps) => {
                   },
                 }}
               />
-            </div>
+            </div> */}
           </>
         )}
       </div>
