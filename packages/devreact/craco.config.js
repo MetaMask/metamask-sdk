@@ -17,6 +17,7 @@ const packagesToTranspile = [
   require.resolve('react-native-gesture-handler'),
   require.resolve('react-native-svg'),
   require.resolve('react-native-reanimated'),
+  require.resolve('react-native-web'),
   require.resolve('react-native-safe-area-context'),
   path.resolve('node_modules/@react-native/assets-registry/registry.js'),
 ]
@@ -118,12 +119,12 @@ module.exports = {
   babel: {
     "presets": ["@babel/preset-env", "@babel/preset-react", "@babel/preset-flow", "@babel/preset-typescript"],
     "plugins": [
-      ['@babel/plugin-syntax-jsx', { "loose": true }],
-      ["@babel/plugin-proposal-class-properties", { "loose": true }],
-      ["@babel/plugin-proposal-object-rest-spread", { "loose": true }],
-      ["@babel/plugin-transform-class-properties", { "loose": true }],
-      ["@babel/plugin-transform-private-methods", { "loose": true }],
-      ["@babel/plugin-transform-private-property-in-object", { "loose": true }]
+      ['@babel/plugin-syntax-jsx'],
+      ["@babel/plugin-proposal-class-properties"],
+      ["@babel/plugin-proposal-object-rest-spread"],
+      ["@babel/plugin-transform-class-properties"],
+      ["@babel/plugin-transform-private-methods"],
+      ["@babel/plugin-transform-private-property-in-object"]
     ]
   },
   plugins: [
