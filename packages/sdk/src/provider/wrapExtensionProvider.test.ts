@@ -1,6 +1,6 @@
 import { Duplex } from 'stream';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RPC_METHODS } from '../config';
-import { SDKProvider } from './SDKProvider';
 import { wrapExtensionProvider } from './wrapExtensionProvider';
 
 jest.mock('stream', () => ({
@@ -26,29 +26,21 @@ jest.mock('@metamask/providers', () => {
   };
 });
 
-function createMockSDKProvider(): SDKProvider {
+function createMockExtensionProvider(): MetaMaskInpageProvider {
   const defaultConnectionStream = new Duplex();
-  const shouldSendMetadata = false;
-  const debug = false;
-  const autoRequestAccounts = false;
 
-  return new SDKProvider({
-    connectionStream: defaultConnectionStream,
-    shouldSendMetadata,
-    debug,
-    autoRequestAccounts,
-  });
+  return new MetaMaskInpageProvider(defaultConnectionStream);
 }
 
 describe('wrapExtensionProvider', () => {
   it('initializes Proxy around SDKProvider', () => {
-    const provider = createMockSDKProvider();
+    const provider = createMockExtensionProvider();
     const wrapped = wrapExtensionProvider({ provider });
     expect(typeof wrapped).toBe('object');
   });
 
   it('calls the original request method', async () => {
-    const provider = createMockSDKProvider();
+    const provider = createMockExtensionProvider();
     const wrapped = wrapExtensionProvider({ provider });
     const mockRequest = jest.fn();
     provider.request = mockRequest;
@@ -62,7 +54,7 @@ describe('wrapExtensionProvider', () => {
 
   it('logs debug information if debug flag is enabled', async () => {
     const consoleSpy = jest.spyOn(console, 'debug');
-    const provider = createMockSDKProvider();
+    const provider = createMockExtensionProvider();
     const wrapped = wrapExtensionProvider({ provider, debug: true });
 
     await wrapped.request({ method: 'someMethod' });
@@ -72,7 +64,7 @@ describe('wrapExtensionProvider', () => {
   });
 
   it('handles special method correctly', async () => {
-    const provider = createMockSDKProvider();
+    const provider = createMockExtensionProvider();
     const wrapped = wrapExtensionProvider({ provider });
     const mockRequest = jest.fn().mockResolvedValue('response');
     provider.request = mockRequest;

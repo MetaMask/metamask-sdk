@@ -13,7 +13,7 @@ import { performSDKInitialization } from './performSDKInitialization';
  * @throws Error if the initialization process encounters an error.
  */
 export async function initializeMetaMaskSDK(instance: MetaMaskSDK) {
-  if (window.mmsdk?.isInitialized()) {
+  if (typeof window !== 'undefined' && window.mmsdk?.isInitialized()) {
     if (instance.debug) {
       console.info(`SDK::init() already initialized`);
     }
