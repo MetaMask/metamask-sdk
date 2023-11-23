@@ -19,7 +19,10 @@ export default function Home() {
             <Link href={'demo'}>Main demo</Link>
           </div>
           <div style={{ padding: 20, border: '1px solid' }}>
-            <Link href={'uikit'}>UI Kit demo</Link>
+            <Link href={'uikit'}>UI Kit (Web Only) demo</Link>
+          </div>
+          <div style={{ padding: 20, border: '1px solid' }}>
+            <Link href={'web3onboard'}>Web3 Onboard</Link>
           </div>
         </div>
         <hr />

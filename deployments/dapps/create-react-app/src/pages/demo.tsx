@@ -1,8 +1,7 @@
-import { useSDK } from '@metamask/sdk-react';
+import React from 'react';
+import { MetaMaskButton, useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
-import HeaderStatus from '../components/header-status';
-import RPCHistoryViewer from '../components/rpchistory-viewer';
 import './demo.css';
 
 export const Demo = () => {
@@ -52,7 +51,9 @@ export const Demo = () => {
 
   const readOnlyCalls = async () => {
     if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
-      setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
+      setResponse(
+        'readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options',
+      );
       return;
     }
     try {
@@ -60,7 +61,9 @@ export const Demo = () => {
         method: 'eth_blockNumber',
         params: [],
       });
-      const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
+      const gotFrom = sdk.hasReadOnlyRPCCalls()
+        ? 'infura'
+        : 'MetaMask provider';
       setResponse(`(${gotFrom}) ${result}`);
     } catch (e) {
       console.log(`error getting the blockNumber`, e);
@@ -72,7 +75,6 @@ export const Demo = () => {
     if (!provider) {
       throw new Error(`invalid ethereum provider`);
     }
-
 
     provider
       .request({
@@ -127,11 +129,13 @@ export const Demo = () => {
     }
 
     try {
-
       setRequesting(true);
       setRpcError(null);
       setResponse(''); // reset response first
-      const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
+      const result = await send_eth_signTypedData_v4(
+        provider as any,
+        provider.chainId ?? '0x1',
+      );
       setResponse(result);
     } catch (e) {
       console.log(e);
@@ -184,16 +188,17 @@ export const Demo = () => {
   return (
     <div className="App">
       <h1>SDK Provider Demo</h1>
-
-      <HeaderStatus
-        requesting={requesting}
-        response={response}
-        error={rpcError}
-      />
+      <div style={{ padding: 20 }}>
+        <MetaMaskButton />
+      </div>
 
       {connected ? (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Request Accounts
           </button>
 
@@ -265,10 +270,18 @@ export const Demo = () => {
         </div>
       ) : (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Connect
           </button>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connectAndSign}
+          >
             Connect w/ Sign
           </button>
         </div>
@@ -281,7 +294,6 @@ export const Demo = () => {
       >
         Terminate
       </button>
-      <RPCHistoryViewer />
     </div>
   );
 };

@@ -1,51 +1,90 @@
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import {
+  FloatingMetaMaskButton,
+  MetaMaskProvider,
+  SDKConfigCard,
+  SDKConfigProvider,
+  UIProvider,
+  useSDKConfig,
+} from '@metamask/sdk-ui';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+} from 'react-native-safe-area-context';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
-import reportWebVitals from './reportWebVitals';
-import { SDKConfigProvider, useSDKConfig } from './providers/sdkconfig-context';
-import { Layout } from './components/layout';
 import { Demo } from './pages/demo';
 import { Onboard } from './pages/onboard';
+import reportWebVitals from './reportWebVitals';
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <>
+        <App />
+        <FloatingMetaMaskButton />
+      </>
+    ),
+  },
+  {
+    path: '/demo',
+    element: (
+      <>
+        <Demo />
+        <FloatingMetaMaskButton />
+      </>
+    ),
+  },
+  {
+    path: '/onboard',
+    element: <Onboard />,
+  },
+]);
 
-const WithSDKProvider = ({ children }: { children: React.ReactNode }) => {
+export const WithTest = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: React.ReactNode;
+}) => {
+  const { socketServer } = useSDKConfig();
+
+  return (
+    <>
+      <div>name: {name}</div>
+      <div>server: {socketServer}</div>
+      {children}
+    </>
+  );
+};
+
+const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   const {
     socketServer,
     infuraAPIKey,
     useDeeplink,
+    debug,
     checkInstallationImmediately,
   } = useSDKConfig();
 
   return (
     <MetaMaskProvider
-      debug={true}
+      debug={debug}
       sdkOptions={{
-        communicationServerUrl: socketServer,
-        enableDebug: true,
-        infuraAPIKey,
-        readonlyRPCMap: {
-          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
-        },
         logging: {
-          developerMode: true,
-          sdk: true,
-          remoteLayer: false,
-          serviceLayer: false,
-          plaintext: true,
+          developerMode: debug,
         },
+        infuraAPIKey,
+        communicationServerUrl: socketServer,
         useDeeplink,
         checkInstallationImmediately,
-        storage: {
-          enabled: true,
-        },
         dappMetadata: {
-          name: 'DevNext',
-          url: 'http://devnext.fakeurl.com',
+          name: 'DemoDapp ',
+          url: window.location.protocol + '//' + window.location.host,
         },
         i18nOptions: {
           enabled: true,
@@ -57,37 +96,30 @@ const WithSDKProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <WithSDKProvider>
-      <App />
-    </WithSDKProvider>
-  },
-  {
-    path: "/demo",
-    element: <WithSDKProvider>
-      <Demo />
-    </WithSDKProvider>
-  },
-  {
-    path: "/onboard",
-    element: <Onboard />
-  },
-]);
-
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 
 root.render(
-  <>
-    <SDKConfigProvider>
-      <Layout>
-        <RouterProvider router={router} />
-      </Layout>
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <SDKConfigProvider
+      initialSocketServer={process.env.REACT_APP_COMM_SERVER_URL}
+      initialInfuraKey={process.env.INFURA_API_KEY}
+    >
+      <WithSDKConfig>
+        <UIProvider>
+          <SDKConfigCard
+            onHomePress={() => {
+              router.navigate('/');
+            }}
+          />
+          <WithTest name={'test'}>
+            <RouterProvider router={router} />
+          </WithTest>
+        </UIProvider>
+      </WithSDKConfig>
     </SDKConfigProvider>
-  </>
+  </SafeAreaProvider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

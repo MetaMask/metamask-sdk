@@ -3,10 +3,10 @@ import { ethers } from 'ethers';
 import Head from 'next/head';
 import React, { useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
-import { ChainRPC, RPCHistoryViewer, SDKStatus } from '@metamask/sdk-lab';
-import { MetaMaskButton } from '@metamask/sdk-ui';
+import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
+import { MetaMaskButton, SDKStatus } from '@metamask/sdk-ui';
 
-export default function Demo() {
+const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
     useSDK();
 
@@ -659,4 +659,8 @@ export default function Demo() {
       <RPCHistoryViewer />
     </>
   );
+};
+
+export default function WrapDemo() {
+  return <Demo />;
 }

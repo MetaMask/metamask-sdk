@@ -17,8 +17,10 @@
     "expo-asset": "^8.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-native": "^0.72.7",
+    "react-native": "^0.72.4",
+    "react-native-device-info": "^10.11.0",
     "react-native-gesture-handler": "^2.13.4",
+    "react-native-jazzicon": "^0.1.2",
     "react-native-paper": "^5.11.1",
     "react-native-reanimated": "^3.5.4",
     "react-native-safe-area-context": "^4.7.4",
@@ -46,12 +48,6 @@
     "test": "echo 'N/A'",
     "test:ci": "jest --coverage --passWithNoTests",
     "allow-scripts": ""
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -83,7 +79,7 @@
     "file-loader": "^6.2.0",
     "prettier": "^3.0.3",
     "react-test-renderer": "^18.2.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.3.2",
     "url-loader": "^4.1.1"
   }
 }
