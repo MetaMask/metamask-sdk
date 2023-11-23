@@ -1,9 +1,14 @@
 import { MetaMaskSDK } from '../../../sdk';
 import { extractFavicon } from '../../../utils/extractFavicon';
+import { getBase64FromUrl } from '../../../utils/getBase64FromUrl';
 import { setupDappMetadata } from './setupDappMetadata';
 
 jest.mock('../../../utils/extractFavicon', () => ({
   extractFavicon: jest.fn(),
+}));
+
+jest.mock('../../../utils/getBase64FromUrl', () => ({
+  getBase64FromUrl: jest.fn(),
 }));
 
 describe('setupDappMetadata', () => {
@@ -14,10 +19,15 @@ describe('setupDappMetadata', () => {
     typeof extractFavicon
   >;
 
+  const mockGetBase64FromUrl = getBase64FromUrl as jest.MockedFunction<
+    typeof getBase64FromUrl
+  >;
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockExtractFavicon.mockReturnValue('favicon');
+    mockGetBase64FromUrl.mockResolvedValue('faviconBase64Icon');
 
     instance = {
       options: {
@@ -32,26 +42,26 @@ describe('setupDappMetadata', () => {
       url: 'https://example.com',
     };
 
-    setupDappMetadata(instance);
+    await setupDappMetadata(instance);
 
     expect(instance.dappMetadata).toStrictEqual(instance.options.dappMetadata);
   });
 
-  it('should set iconUrl to favicon if it does not start with http:// or https://', () => {
+  it('should set base64Icon to faviconBase64Icon if it does not start with http:// or https://', async () => {
     instance.options.dappMetadata = {
       iconUrl: 'ftp://example.com/favicon.ico',
       url: 'https://example.com',
     };
 
-    setupDappMetadata(instance);
+    await setupDappMetadata(instance);
 
-    expect(instance.dappMetadata?.iconUrl).toBe('favicon');
+    expect(instance.dappMetadata?.base64Icon).toBe('faviconBase64Icon');
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       'Invalid dappMetadata.iconUrl: URL must start with http:// or https://',
     );
   });
 
-  it('should set iconUrl to undenied if it does not start with http:// or https:// and favicon is undefined', () => {
+  it('should set iconUrl to undenied if it does not start with http:// or https:// and favicon is undefined', async () => {
     instance.options.dappMetadata = {
       iconUrl: 'ftp://example.com/favicon.ico',
       url: 'https://example.com',
@@ -59,7 +69,7 @@ describe('setupDappMetadata', () => {
 
     mockExtractFavicon.mockReturnValue(undefined);
 
-    setupDappMetadata(instance);
+    await setupDappMetadata(instance);
 
     expect(instance.dappMetadata?.iconUrl).toBeUndefined();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -67,7 +77,7 @@ describe('setupDappMetadata', () => {
     );
   });
 
-  it('should set base64Icon to undefined if its length exceeds 163400 characters', () => {
+  it('should set base64Icon to undefined if its length exceeds 163400 characters', async () => {
     const longString = new Array(163401).fill('a').join('');
     instance.options.dappMetadata = {
       iconUrl: 'https://example.com/favicon.ico',
@@ -75,7 +85,7 @@ describe('setupDappMetadata', () => {
       base64Icon: longString,
     };
 
-    setupDappMetadata(instance);
+    await setupDappMetadata(instance);
 
     expect(instance.dappMetadata?.base64Icon).toBeUndefined();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -83,14 +93,14 @@ describe('setupDappMetadata', () => {
     );
   });
 
-  it('should set iconUrl to the extracted favicon if iconUrl and base64Icon are not provided', () => {
+  it('should set base64Icon to the extracted favicon if iconUrl and base64Icon are not provided', async () => {
     instance.options.dappMetadata = {
       url: 'https://example.com',
     };
 
-    setupDappMetadata(instance);
+    await setupDappMetadata(instance);
 
-    expect(instance.dappMetadata?.iconUrl).toBe('favicon');
+    expect(instance.dappMetadata?.base64Icon).toBe('faviconBase64Icon');
   });
 
   it('should not throw an error if dappMetadata is not provided', () => {
