@@ -16,6 +16,7 @@ import React from 'react';
 import { Layout } from '../components/layout';
 import '../styles/globals.css';
 import '../styles/icons.css';
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 
 config.autoAddCss = false;
 
@@ -28,7 +29,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   } = useSDKConfig();
 
   return (
-    <MetaMaskProvider
+    <MetaMaskUIProvider
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
@@ -59,7 +60,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </MetaMaskProvider>
+    </MetaMaskUIProvider>
   );
 };
 
