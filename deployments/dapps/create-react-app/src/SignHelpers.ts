@@ -1,7 +1,10 @@
 import { SDKProvider } from '@metamask/sdk';
 import { Buffer } from 'buffer';
 
-export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: string) => {
+export const send_eth_signTypedData_v4 = async (
+  provider: SDKProvider,
+  chainId: string,
+) => {
   const msgParams = JSON.stringify({
     domain: {
       // Defining the chain aka Rinkeby testnet or Ethereum Main Net
@@ -63,7 +66,7 @@ export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: 
     },
   });
 
-  let from = provider?.selectedAddress;
+  const from = provider?.selectedAddress;
 
   console.debug(`sign from: ${from}`);
   try {
@@ -81,7 +84,7 @@ export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: 
     return await provider?.request({ method, params });
   } catch (e) {
     console.log(e);
-    return "Error: " + e.message;
+    return 'Error: ' + e.message;
   }
 };
 
@@ -99,6 +102,6 @@ export const send_personal_sign = async (provider: SDKProvider) => {
     return sign;
   } catch (err) {
     console.log(err);
-    return "Error: " + err.message;
+    return 'Error: ' + err.message;
   }
 };

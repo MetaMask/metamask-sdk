@@ -85,43 +85,42 @@ const chains = [
 ];
 
 const OnboardReady = () => {
-  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
   const handleTestSign = async () => {
-    console.log(`TODO: test sign`)
+    console.log(`TODO: test sign`);
     if (!wallet) {
-      console.error(`ethersProvider is undefined`)
-      return
+      console.error(`ethersProvider is undefined`);
+      return;
     }
 
     try {
-      const result = await wallet.provider.request({ method: 'personal_sign', params: ['hello world', wallet.accounts?.[0].address] })
-      console.log(`result: `, result)
+      const result = await wallet.provider.request({
+        method: 'personal_sign',
+        params: ['hello world', wallet.accounts?.[0].address],
+      });
+      console.log(`result: `, result);
     } catch (error) {
-      console.error(`error: `, error)
+      console.error(`error: `, error);
     }
-  }
+  };
 
   return (
     <div>
-      <div>
-        accounts: {JSON.stringify(wallet?.accounts)}
-      </div>
-      <div>
-        chains: {JSON.stringify(wallet?.chains)}
-      </div>
-      <button
-        onClick={() => (wallet ? disconnect(wallet) : connect())}
-      >
+      <div>accounts: {JSON.stringify(wallet?.accounts)}</div>
+      <div>chains: {JSON.stringify(wallet?.chains)}</div>
+      <button onClick={() => (wallet ? disconnect(wallet) : connect())}>
         {connecting ? 'connecting' : wallet ? 'disconnect' : 'connect'}
       </button>
-      <button title='test sign' onClick={handleTestSign}>Test Sign</button>
+      <button title="test sign" onClick={handleTestSign}>
+        Test Sign
+      </button>
     </div>
-  )
-}
+  );
+};
 
 export const Onboard = () => {
-  const [onboarded, setOnboarded] = React.useState(false)
+  const [onboarded, setOnboarded] = React.useState(false);
   const { sdk } = useSDK();
   const {
     socketServer,
@@ -132,7 +131,7 @@ export const Onboard = () => {
   } = useSDKConfig();
 
   React.useEffect(() => {
-    if (onboarded) return
+    if (onboarded) return;
 
     const doOnboard = async () => {
       // terminate previous sdk instance
@@ -155,28 +154,30 @@ export const Onboard = () => {
           i18nOptions: {
             enabled: true,
           },
-        }
-      })
+        },
+      });
       try {
         await init({
           // ... other Onboard options
           wallets: [
-            metamaskSDKWallet
+            metamaskSDKWallet,
             //... other wallets
           ],
-          chains
+          chains,
         });
         setOnboarded(true);
       } catch (error) {
-        console.error(`error: `, error)
+        console.error(`error: `, error);
       }
-    }
+    };
 
-    doOnboard()
-  }, [])
+    doOnboard();
+  }, []);
 
-  return <div>
-    <h1>Web3Onboard Demo</h1>
-    {onboarded && <OnboardReady />}
-  </div>
-}
+  return (
+    <div>
+      <h1>Web3Onboard Demo</h1>
+      {onboarded && <OnboardReady />}
+    </div>
+  );
+};

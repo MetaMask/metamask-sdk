@@ -1,14 +1,18 @@
-import { FloatingMetaMaskButton, MetaMaskProvider, SDKConfigCard, SDKConfigProvider, UIProvider, useSDKConfig } from '@metamask/sdk-ui';
+import {
+  FloatingMetaMaskButton,
+  MetaMaskProvider,
+  SDKConfigCard,
+  SDKConfigProvider,
+  UIProvider,
+  useSDKConfig,
+} from '@metamask/sdk-ui';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import {
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import { Demo } from './pages/demo';
@@ -17,27 +21,45 @@ import reportWebVitals from './reportWebVitals';
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <><App /><FloatingMetaMaskButton /></>
+    path: '/',
+    element: (
+      <>
+        <App />
+        <FloatingMetaMaskButton />
+      </>
+    ),
   },
   {
-    path: "/demo",
-    element: <><Demo /><FloatingMetaMaskButton /></>
+    path: '/demo',
+    element: (
+      <>
+        <Demo />
+        <FloatingMetaMaskButton />
+      </>
+    ),
   },
   {
-    path: "/onboard",
-    element: <Onboard />
+    path: '/onboard',
+    element: <Onboard />,
   },
 ]);
 
-export const WithTest = ({ name, children }: { name: string, children: React.ReactNode }) => {
+export const WithTest = ({
+  name,
+  children,
+}: {
+  name: string;
+  children: React.ReactNode;
+}) => {
   const { socketServer } = useSDKConfig();
 
-  return <>
-    <div>name: {name}</div>
-    <div>server: {socketServer}</div>
-    {children}
-  </>;
+  return (
+    <>
+      <div>name: {name}</div>
+      <div>server: {socketServer}</div>
+      {children}
+    </>
+  );
 };
 
 const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
@@ -75,7 +97,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
 };
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById('root') as HTMLElement,
 );
 
 root.render(
@@ -88,7 +110,7 @@ root.render(
         <UIProvider>
           <SDKConfigCard
             onHomePress={() => {
-              router.navigate("/");
+              router.navigate('/');
             }}
           />
           <WithTest name={'test'}>
