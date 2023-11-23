@@ -1,16 +1,13 @@
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import {
-  MetaMaskProvider,
-  useSDKConfig,
-  SDKConfigProvider,
-} from '@metamask/sdk-react';
+import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-react';
 import type { AppProps } from 'next/app';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
 import { UIProvider } from '@metamask/sdk-ui';
 import React from 'react';
 import { Layout } from '../components/layout';
@@ -28,7 +25,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   } = useSDKConfig();
 
   return (
-    <MetaMaskProvider
+    <MetaMaskUIProvider
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
@@ -59,7 +56,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-    </MetaMaskProvider>
+    </MetaMaskUIProvider>
   );
 };
 

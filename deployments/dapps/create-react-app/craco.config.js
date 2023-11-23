@@ -19,8 +19,8 @@ console.log(`Transpiling packages: ${packagesToTranspile.join('\n')}`)
 module.exports = {
   // ...
   watchOptions: {
-    followSymlinks: true,
-    ignored: /node_modules/,
+    followSymlinks: false,
+    // ignored: /node_modules/,
   },
   typescript: {
     enableTypeChecking: false /* (default value) */,

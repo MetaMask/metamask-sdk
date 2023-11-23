@@ -94,7 +94,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
       setAppContext(computedContext);
     };
 
-    if (typeof window === 'undefined' && typeof localStorage !== 'undefined') {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       loadContext();
     }
   }, []);

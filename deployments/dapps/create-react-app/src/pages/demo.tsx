@@ -51,7 +51,9 @@ export const Demo = () => {
 
   const readOnlyCalls = async () => {
     if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
-      setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
+      setResponse(
+        'readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options',
+      );
       return;
     }
     try {
@@ -59,7 +61,9 @@ export const Demo = () => {
         method: 'eth_blockNumber',
         params: [],
       });
-      const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
+      const gotFrom = sdk.hasReadOnlyRPCCalls()
+        ? 'infura'
+        : 'MetaMask provider';
       setResponse(`(${gotFrom}) ${result}`);
     } catch (e) {
       console.log(`error getting the blockNumber`, e);
@@ -71,7 +75,6 @@ export const Demo = () => {
     if (!provider) {
       throw new Error(`invalid ethereum provider`);
     }
-
 
     provider
       .request({
@@ -126,11 +129,13 @@ export const Demo = () => {
     }
 
     try {
-
       setRequesting(true);
       setRpcError(null);
       setResponse(''); // reset response first
-      const result = await send_eth_signTypedData_v4(provider as any, provider.chainId ?? '0x1');
+      const result = await send_eth_signTypedData_v4(
+        provider as any,
+        provider.chainId ?? '0x1',
+      );
       setResponse(result);
     } catch (e) {
       console.log(e);
@@ -189,7 +194,11 @@ export const Demo = () => {
 
       {connected ? (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Request Accounts
           </button>
 
@@ -261,10 +270,18 @@ export const Demo = () => {
         </div>
       ) : (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Connect
           </button>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connectAndSign}
+          >
             Connect w/ Sign
           </button>
         </div>

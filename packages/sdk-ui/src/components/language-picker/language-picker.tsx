@@ -14,7 +14,7 @@ export const LanguagePicker = () => {
   const handleLanguageChange = async (newLang: string) => {
     await AsyncStorage.setItem('MetaMaskSDKLng', newLang);
 
-    setAppContext({ lang });
+    setAppContext({ lang: newLang });
     closeMenu();
   };
 

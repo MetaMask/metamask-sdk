@@ -41,6 +41,7 @@ rm -rf node_modules/@metamask/sdk-lab
 echo "removed node_modules/@metamask/sdk-lab"
 rm -rf node_modules/@metamask/sdk-install-modal-web
 echo "removed node_modules/@metamask/sdk-install-modal-web"
+rm -rf node_modules/@web3-onboard/metamask
 
 echo "Begin copying sdk packages..."
 # cp -rf $COMM_LAYER_DIR node_modules/@metamask/
@@ -58,5 +59,6 @@ ln -s $SDK_REACT_UI_DIR node_modules/@metamask/sdk-react-ui
 ln -s $SDK_UI_DIR node_modules/@metamask/sdk-ui
 ln -s $SDK_LAB_DIR node_modules/@metamask/sdk-lab
 ln -s $SDK_INSTALL_MODAL_WEB_DIR node_modules/@metamask/sdk-install-modal-web
+ln -s /Volumes/FD/Projects/web3-onboard/packages/metamask node_modules/@web3-onboard/metamask
 
 echo "All done."

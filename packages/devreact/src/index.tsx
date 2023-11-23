@@ -1,8 +1,8 @@
-import { SDKConfig } from '@metamask/sdk-lab';
 import {
   FloatingMetaMaskButton,
   MetaMaskProvider,
   SDKConfigProvider,
+  SDKConfigCard,
   UIProvider,
   useSDKConfig,
 } from '@metamask/sdk-ui';
@@ -67,7 +67,7 @@ root.render(
     >
       <WithSDKConfig>
         <WithUI>
-          <SDKConfig
+          <SDKConfigCard
             onHomePress={() => {
               console.debug(`nothing to do here`);
             }}
