@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0]
+### Uncategorized
+- fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
+
 ## [0.12.4]
 ### Added
 - feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
@@ -112,7 +116,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...HEAD
+[0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...@metamask/sdk-react@0.13.0
 [0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.3...@metamask/sdk-react@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.2...@metamask/sdk-react@0.12.3
 [0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.1...@metamask/sdk-react@0.12.2

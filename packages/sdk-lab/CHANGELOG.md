@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4]
+### Uncategorized
+- fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
+
 ## [0.1.3]
 ### Added
 - feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
@@ -30,7 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 - fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.4...HEAD
+[0.1.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.3...@metamask/sdk-lab@0.1.4
 [0.1.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.2...@metamask/sdk-lab@0.1.3
 [0.1.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-lab@0.1.1...@metamask/sdk-lab@0.1.2
 [0.1.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-lab@0.1.1
