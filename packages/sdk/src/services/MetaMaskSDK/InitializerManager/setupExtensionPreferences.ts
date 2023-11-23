@@ -1,4 +1,5 @@
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { SDKProvider } from 'src/provider/SDKProvider';
 import { EXTENSION_EVENTS, STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { getBrowserExtension } from '../../../utils/get-browser-extension';
@@ -93,7 +94,7 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       });
     } catch (err) {
       // Ignore error if metamask extension not found
-      delete window.extension;
+      window.extension = undefined;
     }
     Ethereum.destroy();
   } else if (instance.platformManager?.isMetaMaskMobileWebView()) {
@@ -109,7 +110,7 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       console.warn(`EXTENSION ONLY --- prevent sdk initialization`);
     }
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
-    instance.activeProvider = metamaskBrowserExtension;
+    instance.activeProvider = metamaskBrowserExtension as SDKProvider; // TODO should be MetaMaskInPageProvider
     instance.extensionActive = true;
     instance._initialized = true;
 
