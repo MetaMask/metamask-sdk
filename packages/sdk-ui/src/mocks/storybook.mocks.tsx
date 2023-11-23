@@ -2,8 +2,12 @@ import { SDKContext, SDKState } from '@metamask/sdk-react';
 import { ArgTypes, Story } from '@storybook/react-native';
 import React from 'react';
 import NetworkList from '../utils/networks';
+import MetaMaskSDK, { SDKProvider } from '@metamask/sdk';
 
 export const defaultSDKtArgs: Partial<SDKState> = {
+  sdk: {
+    getProvider: () => ({}) as SDKProvider,
+  } as MetaMaskSDK,
   connected: true,
   connecting: false,
   extensionActive: false,
