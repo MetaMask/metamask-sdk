@@ -1,5 +1,5 @@
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { SDKProvider } from 'src/provider/SDKProvider';
+import { SDKProvider } from '../../../provider/SDKProvider';
 import { EXTENSION_EVENTS, STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { getBrowserExtension } from '../../../utils/get-browser-extension';
