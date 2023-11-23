@@ -7491,6 +7491,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/sdk-communication-layer@npm:0.11.1":
+  version: 0.11.1
+  resolution: "@metamask/sdk-communication-layer@npm:0.11.1"
+  dependencies:
+    cross-fetch: ^3.1.5
+    date-fns: ^2.29.3
+    eciesjs: ^0.3.16
+    eventemitter2: ^6.4.5
+    socket.io-client: ^4.5.1
+    uuid: ^8.3.2
+  checksum: 560150a3b3ad79ef72f5ae9d3dee3447d0cc6590917b9bfe299f27db0393e98112f6fcc86bd07dc370c8f7d2be9cd52b6ef4c882cfbe8f5bd9a3da7d944ef872
+  languageName: node
+  linkType: hard
+
 "@metamask/sdk-communication-layer@workspace:*, @metamask/sdk-communication-layer@workspace:^, @metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer"
@@ -7540,6 +7554,21 @@ __metadata:
     uuid: ^8.3.2
   languageName: unknown
   linkType: soft
+
+"@metamask/sdk-install-modal-web@npm:0.11.1":
+  version: 0.11.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.11.1"
+  dependencies:
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    i18next: 22.5.1
+    qr-code-styling: ^1.6.0-rc.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-i18next: ^13.2.2
+  checksum: decd4f3ba7f2cc35361564e5e3d9da73f3efd31c75f842aec2c23358607bac28b46f71ee455a3409968ba233a8fbe0f29d0d7b7298b0296a3cb749e09a5ad288
+  languageName: node
+  linkType: hard
 
 "@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
@@ -7898,6 +7927,47 @@ __metadata:
     react-native-web: ^0.19.9
   languageName: unknown
   linkType: soft
+
+"@metamask/sdk@npm:^0.11.1":
+  version: 0.11.2
+  resolution: "@metamask/sdk@npm:0.11.2"
+  dependencies:
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/post-message-stream": ^6.1.0
+    "@metamask/providers": ^10.2.1
+    "@metamask/sdk-communication-layer": 0.11.1
+    "@metamask/sdk-install-modal-web": 0.11.1
+    "@react-native-async-storage/async-storage": ^1.17.11
+    "@types/dom-screen-wake-lock": ^1.0.0
+    bowser: ^2.9.0
+    cross-fetch: ^4.0.0
+    eciesjs: ^0.3.15
+    eth-rpc-errors: ^4.0.3
+    eventemitter2: ^6.4.7
+    extension-port-stream: ^2.0.1
+    i18next: 22.5.1
+    i18next-browser-languagedetector: ^7.1.0
+    obj-multiplex: ^1.0.0
+    pump: ^3.0.0
+    qrcode-terminal-nooctal: ^0.12.1
+    react-i18next: ^13.2.2
+    react-native-webview: ^11.26.0
+    readable-stream: ^2.3.7
+    rollup-plugin-visualizer: ^5.9.2
+    socket.io-client: ^4.5.1
+    util: ^0.12.4
+    uuid: ^8.3.2
+  peerDependencies:
+    react: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 237c97dbea9c328c2527915636e15c5a06b59f2abb4096e89fc73dd85bb62e9f77add5077c78e094400e2c1394bcc40eb6d428959f5ee305125dbf89e0dd500b
+  languageName: node
+  linkType: hard
 
 "@metamask/sdk@workspace:^, @metamask/sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
@@ -12901,6 +12971,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/dom-screen-wake-lock@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "@types/dom-screen-wake-lock@npm:1.0.3"
+  checksum: 66bece3508b4f4147db97a530c758f8f5d3132ef00c06cab1db4bf2b4af6a3a614ae0a0ba6b53ddc4177a6545adf9d312547087256efc8eff7314b13221380b8
+  languageName: node
+  linkType: hard
+
 "@types/dom-screen-wake-lock@npm:^1.0.2":
   version: 1.0.2
   resolution: "@types/dom-screen-wake-lock@npm:1.0.2"
@@ -14935,6 +15012,16 @@ __metadata:
     svelte: ^3.49.0
     svelte-i18n: ^3.3.13
   checksum: 13fa0df0c5c8b84cd65e363c2f48f1cd2bcb95217ce570faf87d0e6752add80365fc5554cfb706c375124fcd1e10a0e7321b297f330064574ffb8ac80d16d490
+  languageName: node
+  linkType: hard
+
+"@web3-onboard/metamask@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@web3-onboard/metamask@npm:2.0.1"
+  dependencies:
+    "@metamask/sdk": ^0.11.1
+    "@web3-onboard/common": ^2.3.3
+  checksum: 3af9b4735ea88017addd77f2198935966b6df5d324bc5d8a24809dc687a6f3a32f7d172c7851a6817820049dad5351848a938be3a14a256d445784419c0b9b54
   languageName: node
   linkType: hard
 
@@ -19653,6 +19740,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.9.1
     "@typescript-eslint/parser": ^6.9.1
     "@web3-onboard/core": ^2.21.2
+    "@web3-onboard/metamask": ^2.0.1
     "@web3-onboard/react": ^2.8.13
     autoprefixer: ^10.4.16
     babel-loader: ^9.1.3
