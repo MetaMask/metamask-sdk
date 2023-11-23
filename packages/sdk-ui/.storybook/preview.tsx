@@ -1,4 +1,3 @@
-import { MetaMaskProvider, SDKContext } from '@metamask/sdk-react';
 import type { Decorator, Preview } from '@storybook/react';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -8,9 +7,9 @@ import { Buffer } from 'buffer';
 
 // Assign Buffer to the global scope so it's available globally
 if (typeof global !== 'undefined') {
-  global.Buffer = Buffer;
+  (global as any).Buffer = Buffer;
 } else if (typeof window !== 'undefined') {
-  (window as any ).Buffer = Buffer;
+  (window as any).Buffer = Buffer;
 }
 const preview: Preview = {
   parameters: {
@@ -28,45 +27,31 @@ export const decorators: Decorator[] = [
   // Using a decorator to apply padding for every story
   (StoryFn: any) => {
     return (
-      <MetaMaskProvider
-        debug={true}
-        sdkOptions={{
-          enableDebug: true,
-          logging: {
-            developerMode: true,
-          },
-          dappMetadata: {
-            name: 'StoryBook UI',
-            url: 'http://devnext.fakeurl.com',
-          },
-        }}
-      >
-        <React.Fragment>
-          {Platform.OS === 'web' ? (
-            <style type="text/css">{`
-                  @import url('https://fonts.cdnfonts.com/css/euclid-circular-b');
+      <React.Fragment>
+        {Platform.OS === 'web' ? (
+          <style type="text/css">{`
+                @import url('https://fonts.cdnfonts.com/css/euclid-circular-b');
 
-                  @font-face {
-                    font-family: 'MaterialCommunityIcons';
-                    src: url(${require('react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
-                  }
-                  @font-face {
-                    font-family: 'FontAwesome';
-                    src: url(${require('react-native-vector-icons/Fonts/FontAwesome.ttf')}) format('truetype');
-                  }
-                  @font-face {
-                    font-family: 'MaterialIcons';
-                    src: url(${require('react-native-vector-icons/Fonts/MaterialIcons.ttf')}) format('truetype');
-                  }
-                `}
-            </style>
-          ) : null
-          }
-          <UIProvider>
-            <StoryFn />
-          </UIProvider>
-        </React.Fragment>
-      </MetaMaskProvider>
+                @font-face {
+                  font-family: 'MaterialCommunityIcons';
+                  src: url(${require('react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf')}) format('truetype');
+                }
+                @font-face {
+                  font-family: 'FontAwesome';
+                  src: url(${require('react-native-vector-icons/Fonts/FontAwesome.ttf')}) format('truetype');
+                }
+                @font-face {
+                  font-family: 'MaterialIcons';
+                  src: url(${require('react-native-vector-icons/Fonts/MaterialIcons.ttf')}) format('truetype');
+                }
+              `}
+          </style>
+        ) : null
+        }
+        <UIProvider>
+          <StoryFn />
+        </UIProvider>
+      </React.Fragment>
     )
   },
 ];
