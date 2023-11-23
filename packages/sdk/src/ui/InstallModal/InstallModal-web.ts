@@ -34,7 +34,10 @@ const sdkWebInstallModal = ({
 
   const unmount = (shouldTerminate?: boolean) => {
     if (debug) {
-      console.info('installModal-web unmounting install modal', div);
+      console.info(
+        `installModal-web unmounting install modal -- shouldTerminate=${shouldTerminate}`,
+        div,
+      );
     }
 
     // Remove the node from the DOM

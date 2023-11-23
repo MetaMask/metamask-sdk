@@ -29,7 +29,7 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
 
   try {
     // always create initial query to connect the account
-    const accounts = await instance.activeProvider?.request({
+    const accounts = await window.extension?.request({
       method: 'eth_requestAccounts',
     });
     if (instance.debug) {

@@ -1,11 +1,12 @@
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
   ConnectionStatus,
   DEFAULT_SERVER_URL,
   EventType,
-  ServiceStatus,
   MessageType,
   PlatformType,
+  ServiceStatus,
 } from '@metamask/sdk-communication-layer';
 import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
@@ -19,7 +20,9 @@ declare global {
     ReactNativeWebView?: WebView;
     sdkProvider: SDKProvider;
     ethereum?: SDKProvider;
-    extension: unknown;
+    mmsdk?: MetaMaskSDK;
+    extension?: MetaMaskInpageProvider;
+    extensions?: any[];
     MSStream: unknown;
   }
 }
@@ -30,10 +33,10 @@ export {
   DEFAULT_SERVER_URL,
   EventType,
   MessageType,
-  RPC_URLS_MAP,
   MetaMaskSDK,
   PROVIDER_UPDATE_TYPE,
   PlatformType,
+  RPC_URLS_MAP,
   SDKProvider,
 };
 export type { MetaMaskSDKOptions, SDKLoggingOptions, ServiceStatus };

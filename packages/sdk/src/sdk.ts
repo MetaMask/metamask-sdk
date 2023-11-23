@@ -253,6 +253,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       .then(() => {
         if (this.debug) {
           console.debug(`MetaMaskSDK() initialized`);
+          window.mmsdk = this;
         }
       })
       .catch((err) => {
