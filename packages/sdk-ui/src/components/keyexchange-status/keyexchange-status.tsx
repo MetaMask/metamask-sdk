@@ -83,8 +83,8 @@ export const KeyExchangeStatus = ({
         style={styles.headerContainer}
         onPress={() => setVisible((v) => !v)}
       >
+        <Text style={{ flex: 1, paddingLeft: 5 }}>Status</Text>
         {syncing && <ActivityIndicator size="small" />}
-        <Text>KeyExchange</Text>
         <IconButton icon={renderIcon} onPress={() => setVisible(!visible)} />
       </Pressable>
       {visible && (

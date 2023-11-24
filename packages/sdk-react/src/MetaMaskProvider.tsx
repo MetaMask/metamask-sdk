@@ -123,13 +123,18 @@ const MetaMaskProviderClient = ({
   const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
 
   const syncing = useMemo( () => {
-    const keyInfo = sdk?._getKeyInfo();
-    if(debug) {
-      console.log(`[MetamaskProvider] keyInfo connected=${connected} key=${keyInfo?.step} exchanged=${keyInfo?.keysExchanged}`, )
+    // Syncing if rpc calls have been unprocessed
+    let pendingRpcs = false;
+    for(const rpcId in rpcHistory) {
+      const rpc = rpcHistory[rpcId];
+      if(!rpc.result && !rpc.error) {
+        pendingRpcs = true;
+        break;
+      }
     }
 
-    return connected && keyInfo?.step === 'none' && !keyInfo?.keysExchanged;
-  }, [status, chainId, account, balance, balanceProcessing, extensionActive]);
+    return pendingRpcs;
+  }, [rpcHistory]);
 
   useEffect(() => {
     if (account) {

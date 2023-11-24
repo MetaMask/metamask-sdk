@@ -84,7 +84,6 @@ export class KeyExchange extends EventEmitter2 {
     this.emit(EventType.KEY_INFO, message.type);
 
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
-      // TODO check for either NONE or ACK
       this.checkStep([
         KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
         KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
@@ -105,7 +104,7 @@ export class KeyExchange extends EventEmitter2 {
 
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
-      // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
+      // TODO currently key exchange start from both side so step may be on both SYNACK or NONE.
       this.checkStep([
         KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
         KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
@@ -124,7 +123,7 @@ export class KeyExchange extends EventEmitter2 {
       });
       this.keysExchanged = true;
       // Reset step value for next exchange.
-      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.emit(EventType.KEYS_EXCHANGED);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
       if (this.debug) {
@@ -139,7 +138,7 @@ export class KeyExchange extends EventEmitter2 {
       ]);
       this.keysExchanged = true;
       // Reset step value for next exchange.
-      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
+      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.emit(EventType.KEYS_EXCHANGED);
     }
   }
@@ -194,7 +193,8 @@ export class KeyExchange extends EventEmitter2 {
 
     if (
       (this.keysExchanged ||
-        this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE) &&
+        (this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_NONE &&
+          this.step !== KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK)) &&
       !force
     ) {
       // Key exchange can be restarted if the wallet ask for a new key.
@@ -217,8 +217,8 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     this.clean();
+    // except a SYN_ACK for next step
     this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
-    this.emit(EventType.KEY_INFO, this.step);
     // From v0.2.0, we Always send the public key because exchange can be restarted at any time.
     this.communicationLayer.sendMessage({
       type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
@@ -232,6 +232,11 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   checkStep(stepList: string[]): void {
+    console.warn(
+      `KeyExchange::checkStep() ${this.step} ${Date.now()}`,
+      stepList,
+    );
+
     if (stepList.length > 0 && stepList.indexOf(this.step.toString()) === -1) {
       throw new Error(`Wrong Step "${this.step}" not within ${stepList}`);
     }
