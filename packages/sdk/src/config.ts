@@ -19,6 +19,7 @@ export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const RPC_METHODS = {
   METAMASK_GETPROVIDERSTATE: 'metamask_getProviderState',
   METAMASK_CONNECTSIGN: 'metamask_connectSign',
+  METAMASK_CONNECTWITH: 'metamask_connectWith',
   METAMASK_BATCH: 'metamask_batch',
   PERSONAL_SIGN: 'personal_sign',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',

@@ -496,6 +496,34 @@ const Demo = () => {
     }
   };
 
+  const connectWith = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const rpc = {
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: '0x0', // Required except during contract publications.
+            from: '0xMYACCOUNT', // must match user's active address.
+            value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+          },
+        ],
+      };
+      const hexResponse = await sdk?.connectWith({ rpc });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connectWith response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('connectWith ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -621,6 +649,9 @@ const Demo = () => {
             >
               Connect And Sign
             </button>
+            <button style={{ padding: 10, margin: 10 }} onClick={connectWith}>
+              Connect With (eth_sendTransaction)
+            </button>
           </>
         )}
 
@@ -645,6 +676,9 @@ const Demo = () => {
               onClick={connectAndSign}
             >
               Connect And Sign
+            </button>
+            <button style={{ padding: 10, margin: 10 }} onClick={connectWith}>
+              Connect With (eth_sendTransaction)
             </button>
           </div>
         )}

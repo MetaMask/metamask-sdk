@@ -3,6 +3,7 @@ import {
   EventType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
+import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
@@ -11,10 +12,9 @@ import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
+import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { wait } from '../utils/wait';
-import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
-import packageJson from '../../package.json';
 
 const initializeMobileProvider = ({
   checkInstallationOnAllCalls = false,
@@ -149,6 +149,7 @@ const initializeMobileProvider = ({
     const ALLOWED_CONNECT_METHODS = [
       RPC_METHODS.ETH_REQUESTACCOUNTS,
       RPC_METHODS.METAMASK_CONNECTSIGN,
+      RPC_METHODS.METAMASK_CONNECTWITH,
     ];
 
     // is it a readonly method with infura supported chain?
@@ -206,7 +207,10 @@ const initializeMobileProvider = ({
             }
 
             // Special case for metamask_connectSign, split the request in 2 parts (connect + sign)
-            if (method === RPC_METHODS.METAMASK_CONNECTSIGN) {
+            if (
+              method.toLowerCase() ===
+              RPC_METHODS.METAMASK_CONNECTSIGN.toLowerCase()
+            ) {
               const [temp] = args;
               const { params } = temp;
               const accounts = (await sdk.getProvider()?.request({
@@ -221,6 +225,35 @@ const initializeMobileProvider = ({
                 method: RPC_METHODS.PERSONAL_SIGN,
                 params: [params[0], accounts[0]],
               });
+            } else if (
+              method.toLowerCase() ===
+              RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase()
+            ) {
+              const [temp] = args;
+              const { params } = temp;
+              const accounts = (await sdk.getProvider()?.request({
+                method: RPC_METHODS.ETH_REQUESTACCOUNTS,
+                params: [],
+              })) as string[];
+              if (!accounts.length) {
+                throw new Error(`SDK state invalid -- undefined accounts`);
+              }
+
+              const { rpc } = params;
+              console.warn(`FIXME:: handle CONNECT_WITH`, rpc);
+
+              if (
+                rpc.method?.toLowerCase() ===
+                RPC_METHODS.PERSONAL_SIGN.toLowerCase()
+              ) {
+                const connectedRpc = {
+                  method: rpc.method,
+                  params: [rpc.params[0], accounts[0]],
+                };
+                console.log(`connectWith:: connectedRpc`, connectedRpc);
+                return await sdk.getProvider()?.request(connectedRpc);
+              }
+              console.warn(`FIXME:: handle CONNECT_WITH`, rpc);
             }
 
             // Re-create the query on the active provider
