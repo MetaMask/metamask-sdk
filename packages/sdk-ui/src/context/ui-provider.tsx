@@ -40,7 +40,9 @@ export const WithPreferences = ({
         rippleEffectEnabled: preferences.rippleEffectEnabled,
       }}
     >
-      <ThemeContext.Provider value={darkTheme}>
+      <ThemeContext.Provider
+        value={preferences.darkMode ? darkTheme : lightTheme}
+      >
         <ToastContextWrapper>{children}</ToastContextWrapper>
       </ThemeContext.Provider>
     </PaperProvider>
@@ -56,22 +58,26 @@ export const UIProvider = ({
   preferences?: Partial<ThemePreferences & ThemeActions>;
   locale?: string;
 }) => {
+  const [darkMode, setDarkMode] = React.useState(false);
+
   // Set default Preferences
   const activePreferences: ThemePreferences & ThemeActions = useMemo(() => {
     return {
+      darkMode,
       customFontLoaded: true,
       collapsed: false,
-      darkMode: false,
       rippleEffectEnabled: true,
       toggleCustomFont: () => {},
-      toggleDarkMode: () => {},
+      toggleDarkMode: () => {
+        setDarkMode((oldValue) => !oldValue);
+      },
       toggleThemeVersion: () => {},
       toggleRippleEffect: () => {},
       setThemeColor: () => {},
       toggleCollapsed: () => {},
       ...preferences,
     };
-  }, [preferences]);
+  }, [preferences, darkMode]);
 
   return (
     <SafeAreaProvider>
