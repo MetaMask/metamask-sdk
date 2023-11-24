@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     maxWidth: '100%', // Ensure this does not exceed the parent width
   },
   address: {
-    maxWidth: '90%',
+    maxWidth: 200,
     flexShrink: 1,
   },
 });

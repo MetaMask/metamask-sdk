@@ -33,7 +33,11 @@ const getStyles = ({ theme }: { theme: Theme }) => {
       borderRadius: 20,
       zIndex: 1000,
       padding: 10,
+      width: 500,
+      height: 500,
+      maxHeight: '95%',
       maxWidth: '95%',
+      minWidth: 200,
       alignItems: 'center',
       shadowColor: '#000',
       shadowOffset: {
