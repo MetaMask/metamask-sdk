@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Text } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Avatar, {
   AvatarAccountType,
@@ -8,6 +7,7 @@ import Avatar, {
   AvatarVariant,
 } from '../../../design-system/components/Avatars/Avatar';
 import { AccountBalance } from '../account-balance/account-balance';
+import { Text, useTheme } from '@metamask/sdk-ui';
 
 const styles = StyleSheet.create({
   container: {
@@ -50,6 +50,7 @@ export const ConnectedButton = ({
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
+  const { colors } = useTheme();
   return (
     <View style={[styles.container, containerStyle]}>
       <Avatar
@@ -59,9 +60,7 @@ export const ConnectedButton = ({
         size={AvatarSize.Md}
       />
       <View style={styles.content}>
-        <Text style={styles.network} variant="titleMedium">
-          {network}
-        </Text>
+        <Text style={styles.network}>{network}</Text>
         <Text ellipsizeMode="middle" numberOfLines={1} style={styles.address}>
           {address}
         </Text>
@@ -70,7 +69,7 @@ export const ConnectedButton = ({
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
-        color="black"
+        color={colors.text.default}
       />
     </View>
   );

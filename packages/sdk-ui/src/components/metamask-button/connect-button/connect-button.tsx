@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   StyleProp,
   StyleSheet,
-  Text,
   View,
   ViewStyle,
 } from 'react-native';
@@ -11,6 +10,7 @@ import { IconOriginal } from '../../icons/IconOriginal';
 import { IconSimplified } from '../../icons/IconsSimplified';
 import { MetaMaskButtonProps } from '../../metamask-button/metamask-button';
 import { useSDK } from '@metamask/sdk-react';
+import { Text } from '@metamask/sdk-ui';
 
 export interface ConnectButtonProps {
   icon: MetaMaskButtonProps['icon'];

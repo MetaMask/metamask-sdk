@@ -2,6 +2,7 @@ import { useSDK } from '@metamask/sdk-react';
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { useTheme } from '../../theme';
 import { getNetworkByHexChainId } from '../../utils/networks';
 import { MetaMaskModal } from '../metamask-modal/metamask-modal';
 import { ConnectButton } from './connect-button/connect-button';
@@ -40,7 +41,7 @@ export interface MetaMaskButtonProps {
 
 export const MetaMaskButton = ({
   color,
-  theme = 'dark',
+  theme,
   shape,
   icon,
   text = 'Connect with MetaMask',
@@ -48,6 +49,7 @@ export const MetaMaskButton = ({
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 MetaMaskButtonProps) => {
   const { sdk, connected, error, account, chainId } = useSDK();
+  const { colors } = useTheme();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -81,7 +83,6 @@ MetaMaskButtonProps) => {
   };
 
   const getColors = () => {
-    const white010 = '#FCFCFC';
     const orange500 = '#f97316';
     const red500 = '#ef4444';
     const blue500 = '#3b82f6';
@@ -94,7 +95,7 @@ MetaMaskButtonProps) => {
     } else if (connected && theme === 'light') {
       bgColor = white;
     } else if (connected) {
-      bgColor = white010;
+      bgColor = colors.background.default;
     } else if (color === 'blue') {
       bgColor = blue500;
     } else if (color === 'white') {

@@ -6,11 +6,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { IconButton, Text } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import {
   ToastContext,
   ToastVariants,
 } from '../../design-system/components/Toast';
+import { Text } from '@metamask/sdk-ui';
 
 const sizeMap = {
   xs: 12,

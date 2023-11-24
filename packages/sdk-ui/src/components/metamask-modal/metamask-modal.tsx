@@ -6,13 +6,15 @@ import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SDKSummary } from '../sdk-summary/sdk-summary';
 import { useSDK } from '@metamask/sdk-react';
+import { useTheme } from '../../theme';
+import { Theme } from '@metamask/design-tokens';
 
 export interface MetaMaskModalProps {
   modalOpen: boolean;
   onClose?: () => void;
 }
 
-const getStyles = () => {
+const getStyles = ({ theme }: { theme: Theme }) => {
   return StyleSheet.create({
     closeButton: {
       position: 'absolute',
@@ -27,7 +29,7 @@ const getStyles = () => {
     },
     modalView: {
       margin: 10,
-      backgroundColor: 'white',
+      backgroundColor: theme.colors.background.default,
       borderRadius: 20,
       zIndex: 1000,
       padding: 10,
@@ -48,7 +50,8 @@ const getStyles = () => {
 export const MetaMaskModal = ({ modalOpen, onClose }: MetaMaskModalProps) => {
   const { toastRef } = useContext(ToastContext);
   const { connected } = useSDK();
-  const styles = useMemo(() => getStyles(), []);
+  const theme = useTheme();
+  const styles = useMemo(() => getStyles({ theme }), [theme]);
 
   return (
     <Modal
@@ -60,7 +63,11 @@ export const MetaMaskModal = ({ modalOpen, onClose }: MetaMaskModalProps) => {
         <View style={styles.modalView}>
           <SDKSummary />
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <MaterialCommunityIcons name="close" size={24} />
+            <MaterialCommunityIcons
+              name="close"
+              size={24}
+              color={theme.colors.text.muted}
+            />
           </TouchableOpacity>
         </View>
       </View>

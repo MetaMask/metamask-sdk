@@ -1,4 +1,4 @@
-import { lightTheme } from '@metamask/design-tokens';
+import { darkTheme, lightTheme } from '@metamask/design-tokens';
 import React, { useContext, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
@@ -40,7 +40,7 @@ export const WithPreferences = ({
         rippleEffectEnabled: preferences.rippleEffectEnabled,
       }}
     >
-      <ThemeContext.Provider value={lightTheme}>
+      <ThemeContext.Provider value={darkTheme}>
         <ToastContextWrapper>{children}</ToastContextWrapper>
       </ThemeContext.Provider>
     </PaperProvider>

@@ -1,7 +1,8 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { getNetworkByHexChainId } from '../../../utils/networks';
+import { Text } from '@metamask/sdk-ui';
 
 export interface AccountBalanceProps {
   decimals?: number;
