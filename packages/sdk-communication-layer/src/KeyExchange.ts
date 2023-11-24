@@ -28,7 +28,7 @@ export class KeyExchange extends EventEmitter2 {
 
   private myPublicKey: string;
 
-  private step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
+  private step: KeyExchangeMessageType;
 
   private context: string;
 
@@ -48,6 +48,7 @@ export class KeyExchange extends EventEmitter2 {
     this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
     this.debug = logging?.keyExchangeLayer === true;
+    this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
 
     if (otherPublicKey) {
       this.setOtherPublicKey(otherPublicKey);
@@ -80,6 +81,8 @@ export class KeyExchange extends EventEmitter2 {
       // return;
     }
 
+    this.emit(EventType.KEY_INFO, message.type);
+
     if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYN) {
       // TODO check for either NONE or ACK
       this.checkStep([
@@ -100,8 +103,7 @@ export class KeyExchange extends EventEmitter2 {
         pubkey: this.myPublicKey,
       });
 
-      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_ACK;
-      this.emit(EventType.KEY_INFO, this.step);
+      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
       // TODO currently key exchange start from both side so step may be on both SYNACK or ACK.
       this.checkStep([
@@ -122,7 +124,7 @@ export class KeyExchange extends EventEmitter2 {
       });
       this.keysExchanged = true;
       // Reset step value for next exchange.
-      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
+      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
       this.emit(EventType.KEYS_EXCHANGED);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
       if (this.debug) {
@@ -137,7 +139,7 @@ export class KeyExchange extends EventEmitter2 {
       ]);
       this.keysExchanged = true;
       // Reset step value for next exchange.
-      this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
+      this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
       this.emit(EventType.KEYS_EXCHANGED);
     }
   }
@@ -153,7 +155,7 @@ export class KeyExchange extends EventEmitter2 {
         `KeyExchange::${this.context}::clean reset handshake state`,
       );
     }
-    this.step = KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
+    this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
     this.emit(EventType.KEY_INFO, this.step);
     this.keysExchanged = false;
     // Do not uncomment next line otherwise it breaks old sdk compatibility.
@@ -215,13 +217,18 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     this.clean();
-    this.step = KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK;
+    this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
     this.emit(EventType.KEY_INFO, this.step);
     // From v0.2.0, we Always send the public key because exchange can be restarted at any time.
     this.communicationLayer.sendMessage({
       type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
       pubkey: this.myPublicKey,
     });
+  }
+
+  setStep(step: KeyExchangeMessageType): void {
+    this.step = step;
+    this.emit(EventType.KEY_INFO, step);
   }
 
   checkStep(stepList: string[]): void {
