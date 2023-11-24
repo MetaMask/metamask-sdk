@@ -47,20 +47,6 @@ describe('setupDappMetadata', () => {
     expect(instance.dappMetadata).toStrictEqual(instance.options.dappMetadata);
   });
 
-  it('should set base64Icon to faviconBase64Icon if it does not start with http:// or https://', async () => {
-    instance.options.dappMetadata = {
-      iconUrl: 'ftp://example.com/favicon.ico',
-      url: 'https://example.com',
-    };
-
-    await setupDappMetadata(instance);
-
-    expect(instance.dappMetadata?.base64Icon).toBe('faviconBase64Icon');
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Invalid dappMetadata.iconUrl: URL must start with http:// or https://',
-    );
-  });
-
   it('should set iconUrl to undenied if it does not start with http:// or https:// and favicon is undefined', async () => {
     instance.options.dappMetadata = {
       iconUrl: 'ftp://example.com/favicon.ico',
@@ -93,14 +79,21 @@ describe('setupDappMetadata', () => {
     );
   });
 
-  it('should set base64Icon to the extracted favicon if iconUrl and base64Icon are not provided', async () => {
+  it('should set iconUrl to the extracted favicon if iconUrl and base64Icon are not provided', async () => {
     instance.options.dappMetadata = {
       url: 'https://example.com',
     };
 
+    global.window = {
+      location: {
+        protocol: 'https:',
+        host: 'example.com/',
+      },
+    } as any;
+
     await setupDappMetadata(instance);
 
-    expect(instance.dappMetadata?.base64Icon).toBe('faviconBase64Icon');
+    expect(instance.dappMetadata?.iconUrl).toBe('https://example.com/favicon');
   });
 
   it('should not throw an error if dappMetadata is not provided', () => {
