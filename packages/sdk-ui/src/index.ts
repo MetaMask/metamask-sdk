@@ -27,6 +27,7 @@ import { ToastContext } from './design-system/components/Toast';
 import { PreviewScreen } from './screens/preview/preview';
 import { useTheme } from './theme';
 import { SDKStatus, SDKStatusProps } from './components/sdk-status/sdk-status';
+import { KeyExchangeStatus } from './components/keyexchange-status/keyexchange-status';
 
 const {
   Avatar,
@@ -78,6 +79,7 @@ export {
   SDKConfigProps,
   SDKStatus,
   SDKStatusProps,
+  KeyExchangeStatus,
   Tag,
   TagUrl,
   Text,

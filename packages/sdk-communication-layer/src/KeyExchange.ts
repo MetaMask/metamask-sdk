@@ -28,7 +28,8 @@ export class KeyExchange extends EventEmitter2 {
 
   private myPublicKey: string;
 
-  private step: KeyExchangeMessageType;
+  private step: KeyExchangeMessageType =
+    KeyExchangeMessageType.KEY_HANDSHAKE_NONE;
 
   private context: string;
 
@@ -48,7 +49,6 @@ export class KeyExchange extends EventEmitter2 {
     this.communicationLayer = communicationLayer;
     this.myPublicKey = this.myECIES.getPublicKey();
     this.debug = logging?.keyExchangeLayer === true;
-    this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
 
     if (otherPublicKey) {
       this.setOtherPublicKey(otherPublicKey);

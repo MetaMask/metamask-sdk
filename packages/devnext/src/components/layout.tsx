@@ -1,4 +1,8 @@
-import { FloatingMetaMaskButton, SDKConfigCard } from '@metamask/sdk-ui';
+import {
+  FloatingMetaMaskButton,
+  KeyExchangeStatus,
+  SDKConfigCard,
+} from '@metamask/sdk-ui';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
@@ -19,6 +23,7 @@ export const Layout = ({ children }: LayoutProps) => {
       />
       {children}
       <FloatingMetaMaskButton distance={{ bottom: 40 }} />
+      <KeyExchangeStatus bottom={40} />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import {
 } from '@metamask/sdk';
 import { RPCMethodCache } from '@metamask/sdk-communication-layer';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
 import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
 import { useHandleConnectEvent } from './EventsHandlers/useHandleConnectEvent';
@@ -30,6 +30,7 @@ export interface EventHandlerProps {
   setTrigger: React.Dispatch<React.SetStateAction<number>>;
   setRPCHistory: React.Dispatch<React.SetStateAction<RPCMethodCache>>;
   debug?: boolean;
+  synced?: boolean;
   chainId?: string;
   activeProvider?: SDKProvider;
   sdk?: MetaMaskSDK;
@@ -51,6 +52,7 @@ export interface SDKState {
   account?: string;
   status?: ServiceStatus;
   rpcHistory?: RPCMethodCache;
+  syncing?: boolean;
 }
 
 const initProps: SDKState = {
@@ -119,6 +121,15 @@ const MetaMaskProviderClient = ({
   const onSDKStatusEvent = useHandleSDKStatusEvent(eventHandlerProps);
 
   const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
+
+  const syncing = useMemo( () => {
+    const keyInfo = sdk?._getKeyInfo();
+    if(debug) {
+      console.log(`[MetamaskProvider] keyInfo connected=${connected} key=${keyInfo?.step} exchanged=${keyInfo?.keysExchanged}`, )
+    }
+
+    return connected && keyInfo?.step === 'none' && !keyInfo?.keysExchanged;
+  }, [status, chainId, account, balance, balanceProcessing, extensionActive]);
 
   useEffect(() => {
     if (account) {
@@ -243,6 +254,7 @@ const MetaMaskProviderClient = ({
         chainId,
         error,
         status,
+        syncing,
       }}
     >
       {children}

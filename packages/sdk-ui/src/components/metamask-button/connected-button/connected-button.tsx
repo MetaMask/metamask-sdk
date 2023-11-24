@@ -7,7 +7,8 @@ import Avatar, {
   AvatarVariant,
 } from '../../../design-system/components/Avatars/Avatar';
 import { AccountBalance } from '../account-balance/account-balance';
-import { Text, useTheme } from '@metamask/sdk-ui';
+import Text from '../../../design-system/components/Texts/Text';
+import { useTheme } from '../../../theme';
 
 const styles = StyleSheet.create({
   container: {

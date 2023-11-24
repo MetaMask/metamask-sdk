@@ -11,7 +11,7 @@ import {
   ToastContext,
   ToastVariants,
 } from '../../design-system/components/Toast';
-import { Text } from '@metamask/sdk-ui';
+import Text from '../../design-system/components/Texts/Text';
 
 const sizeMap = {
   xs: 12,

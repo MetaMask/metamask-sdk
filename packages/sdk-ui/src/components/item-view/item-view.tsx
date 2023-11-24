@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { useTheme } from '../../theme';
-import { Text } from '@metamask/sdk-ui';
+import Text from '../../design-system/components/Texts/Text';
 import { Theme } from '@metamask/design-tokens';
 
 export interface ItemViewProps {

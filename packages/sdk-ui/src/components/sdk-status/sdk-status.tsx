@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { ItemView } from '../item-view/item-view';
-import { Text } from '@metamask/sdk-ui';
+import Text from '../../design-system/components/Texts/Text';
 
 const styles = StyleSheet.create({
   container: {},

@@ -5,8 +5,9 @@ import { View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Text from '../../design-system/components/Texts/Text';
 
-import { Button } from '@metamask/sdk-ui';
-import { ButtonVariants } from '../../design-system/components/Buttons/Button';
+import Button, {
+  ButtonVariants,
+} from '../../design-system/components/Buttons/Button';
 import { ItemView } from '../item-view/item-view'; // Ensure this is also refactored for React Native
 
 export interface SDKConfigProps {

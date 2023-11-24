@@ -10,7 +10,7 @@ import { IconOriginal } from '../../icons/IconOriginal';
 import { IconSimplified } from '../../icons/IconsSimplified';
 import { MetaMaskButtonProps } from '../../metamask-button/metamask-button';
 import { useSDK } from '@metamask/sdk-react';
-import { Text } from '@metamask/sdk-ui';
+import Text from '../../../design-system/components/Texts/Text';
 
 export interface ConnectButtonProps {
   icon: MetaMaskButtonProps['icon'];
