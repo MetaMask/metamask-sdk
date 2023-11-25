@@ -6,7 +6,7 @@ import {
   SDKProvider,
   ServiceStatus,
 } from '@metamask/sdk';
-import { RPCMethodCache } from '@metamask/sdk-communication-layer';
+import { ConnectionStatus, RPCMethodCache, RPCMethodResult } from '@metamask/sdk-communication-layer';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
@@ -75,6 +75,7 @@ const MetaMaskProviderClient = ({
 }) => {
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
+  const [lastRpcId, setLastRpcId] = useState<string>('');
   const [ready, setReady] = useState<boolean>(false);
   const [readOnlyCalls, setReadOnlyCalls] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
@@ -123,17 +124,30 @@ const MetaMaskProviderClient = ({
   const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
 
   const syncing = useMemo( () => {
+    const socketDisconnected = status?.connectionStatus === ConnectionStatus.DISCONNECTED
+
     // Syncing if rpc calls have been unprocessed
     let pendingRpcs = false;
     for(const rpcId in rpcHistory) {
       const rpc = rpcHistory[rpcId];
       if(!rpc.result && !rpc.error) {
         pendingRpcs = true;
+        if(socketDisconnected) {
+          console.warn(`[MetamaskProvider] socket disconnected but rpc ${rpcId} not processed yet`);
+          // TODO should we force the error has timeout here?
+        }
         break;
       }
     }
 
     return pendingRpcs;
+  }, [rpcHistory, status]);
+
+  useEffect(() => {
+    const lastRpc = rpcHistory[lastRpcId];
+    if(balanceProcessing && lastRpc.method === 'eth_getBalance' && lastRpc.result) {
+      console.warn(`[MetamaskProvider] BBBBBBBBBBBBBBBB balance not updated`);
+    }
   }, [rpcHistory]);
 
   useEffect(() => {
@@ -214,7 +228,14 @@ const MetaMaskProviderClient = ({
     activeProvider.on('chainChanged', onChainChanged);
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
-    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, () => {
+    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, (rpc: RPCMethodResult) => {
+      const completed = rpc.result || rpc.error;
+      if(!completed) {
+        // Only update lastRpcId to keep track of last answered rpc id
+        setLastRpcId(rpc.id);
+      } else if(rpc.id === lastRpcId) {
+        setLastRpcId(''); // Reset lastRpcId
+      }
       // hack to force a react re-render when the RPC cache is updated
       const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
       setRPCHistory(temp);

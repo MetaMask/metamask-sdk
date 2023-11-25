@@ -104,9 +104,10 @@ export class KeyExchange extends EventEmitter2 {
 
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
-      // TODO currently key exchange start from both side so step may be on both SYNACK or NONE.
+      // TODO currently key exchange start from both side so step may be on both SYNACK or NONE or ACK.
       this.checkStep([
         KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
+        KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
         KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
       ]);
 

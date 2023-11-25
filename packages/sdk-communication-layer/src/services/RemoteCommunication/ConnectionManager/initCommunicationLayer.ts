@@ -126,10 +126,10 @@ export function initCommunicationLayer({
     },
     [EventType.CHANNEL_CREATED]: handleChannelCreatedEvent(instance),
     [EventType.CLIENTS_WAITING]: handleClientsWaitingEvent(instance),
-    [EventType.RPC_UPDATE]: () => {
+    [EventType.RPC_UPDATE]: (rpc) => {
       // TODO use a separate function to isolate unit tests
       // propagate RPC_UPDATE event to the SDK
-      instance.emit(EventType.RPC_UPDATE);
+      instance.emit(EventType.RPC_UPDATE, rpc);
     },
   };
 

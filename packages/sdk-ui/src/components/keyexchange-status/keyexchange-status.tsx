@@ -59,7 +59,7 @@ export const KeyExchangeStatus = ({
   bottom = 0,
   left = 0,
 }: KeyExchangeStatusProps) => {
-  const { status, syncing } = useSDK();
+  const { status, syncing, rpcHistory } = useSDK();
   const [visible, setVisible] = React.useState(true);
   const theme = useTheme();
   const styles = useMemo(
@@ -108,6 +108,13 @@ export const KeyExchangeStatus = ({
           <View style={styles.viewRow}>
             <Text>Step:</Text>
             <Text>{status?.keyInfo?.step.toString()}</Text>
+          </View>
+          <View>
+            {Object.values(rpcHistory ?? {})
+              .filter((rpc) => !(rpc.result || rpc.error))
+              .map((rpc, index) => (
+                <Text key={`rpc${index}`}>{rpc.method}</Text>
+              ))}
           </View>
         </ScrollView>
       )}

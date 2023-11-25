@@ -46,6 +46,7 @@ export interface SocketServiceState {
   communicationServerUrl: string;
   debug?: boolean;
   rpcMethodTracker: RPCMethodCache;
+  lastRpcId?: string;
   hasPlaintext: boolean;
   socket?: Socket;
   setupChannelListeners?: boolean;
@@ -53,6 +54,7 @@ export interface SocketServiceState {
 }
 
 export interface RPCMethodResult {
+  id: string;
   timestamp: number; // timestamp of last request
   method: string;
   result?: unknown;
@@ -76,6 +78,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
      */
     clientsPaused: false,
     manualDisconnect: false,
+    lastRpcId: undefined,
     rpcMethodTracker: {},
     hasPlaintext: false,
     communicationServerUrl: '',
