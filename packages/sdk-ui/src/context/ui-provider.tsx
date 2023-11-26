@@ -1,7 +1,7 @@
 import { darkTheme, lightTheme } from '@metamask/design-tokens';
 import React, { useContext, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { PaperProvider } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast, {
   ToastContext,
@@ -32,10 +32,9 @@ export const WithPreferences = ({
   children: React.ReactNode;
 }) => {
   const preferences = usePreferences();
-  console.log(`WithPreferences::lightTheme`, lightTheme);
   return (
     <PaperProvider
-      // theme={preferences.theme}
+      theme={preferences.darkMode ? MD3DarkTheme : MD3LightTheme}
       settings={{
         rippleEffectEnabled: preferences.rippleEffectEnabled,
       }}
