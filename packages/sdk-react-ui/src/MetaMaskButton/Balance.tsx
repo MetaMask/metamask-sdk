@@ -9,7 +9,7 @@ import {
 const Balance = ({ theme }: { theme: string }) => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { data, isError, isLoading } = useBalance({
+  const { isError, isLoading } = useBalance({
     address: address,
     chainId: chain?.id,
     enabled: isConnected,
