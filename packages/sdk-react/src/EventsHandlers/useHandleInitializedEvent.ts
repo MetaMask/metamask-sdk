@@ -14,7 +14,6 @@ export const useHandleInitializedEvent = ({
       console.debug(`MetaMaskProvider::provider on '_initialized' event.`);
     }
     setConnecting(false);
-    setAccount(activeProvider?.selectedAddress || undefined);
     setConnected(true);
     setError(undefined);
   }, [
