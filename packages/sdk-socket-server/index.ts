@@ -6,7 +6,9 @@ import { app, analytics } from './api-config';
 import configureSocketIO from './socket-config';
 import { cleanupAndExit } from './utils';
 
-const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+export const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+export const isDevelopmentServer: boolean =
+  process.env.ENVIRONMENT === 'development';
 
 const server = http.createServer(app);
 configureSocketIO(server); // configure socket.io server

@@ -1,12 +1,12 @@
 # Debug SDK Socket Server Locally
 
-This guide provides instructions for setting up and debugging the SDK socket server locally, as well as using Docker and Ngrok for broader testing, including integration with MetaMask Mobile app.
+This guide provides instructions for setting up and debugging the SDK socket server locally, as well as using Docker Compose for broader testing, including integration with MetaMask Mobile app.
 
 ## Prerequisites
 
 - Node.js and Yarn installed
-- Docker installed (for Docker-based setup)
-- Ngrok account and CLI tool installed
+- Docker and Docker Compose installed (for Docker-based setup)
+- Ngrok account and CLI tool installed (for external access testing)
 
 ## Local Setup
 
@@ -37,25 +37,30 @@ To expose your local server to the internet, particularly for testing with mobil
 3. **Configure Your DApp**:
    - Set the `communicationServerUrl` in your DApp's SDK options to your local IP or `localhost` with port 4000. For example: `communicationServerUrl: "http://{yourLocalIP | localhost}:4000"`
 
-## Debugging with Docker and Ngrok
+## Debugging with Docker Compose
 
-For a more isolated environment, you can debug the SDK socket server using Docker and Ngrok.
+You can use Docker Compose to run the SDK socket server in either a development or production environment.
 
-### Docker Setup
+### Running in Development Mode
 
-1. **Build the Docker Image**:
+1. **Start in Development Mode**:
+   - Use the command: `yarn start:docker:dev`
+   - This command sets up the environment for development and starts the server along with any other necessary services, like Redis.
 
-   - Build the image for socket.io: `docker build -t socket-test .`
+### Running in Production Mode
 
-2. **Run the Docker Container**:
-   - Start the container: `docker run -dp 4000:4000 socket-test`
+1. **Start in Production Mode**:
+   - Use the command: `yarn start:docker`
+   - This command sets up the environment for production. It's optimized for performance and stability.
 
 ### Ngrok Configuration
 
-Follow the same Ngrok setup as mentioned in the Local Setup section above to expose your Docker-based server.
+Follow the same Ngrok setup as mentioned in the Local Setup section above to expose your Docker Compose-based server.
 
 ## Additional Notes
 
-- **Logs and Monitoring**: Monitor the logs for any error messages or warnings during startup or operation. This can provide valuable insights into the behavior of the server.
-- **Security Considerations**: When exposing your local server using Ngrok, be aware that it is accessible publicly. Ensure that you do not expose sensitive data or endpoints.
-- **Troubleshooting**: If you encounter issues, verify your environment settings, check for common networking issues, and ensure that all required services are running.
+- **Environment-Specific Configuration**: The development mode includes additional debugging tools and settings, while the production mode is streamlined for performance.
+- **Redis Setup**: Ensure that Redis is properly configured and running when using Docker Compose.
+- **Logs and Monitoring**: Monitor the logs for any error messages or warnings during startup or operation of the server.
+- **Security Considerations**: When using Ngrok, be aware that your server is publicly accessible. Ensure that you do not expose sensitive data or endpoints.
+- **Troubleshooting**: If you encounter issues, verify your Docker Compose and Ngrok configurations. Check for network connectivity issues and ensure that all containers are running as expected.

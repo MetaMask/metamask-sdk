@@ -4,16 +4,15 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
-import { LRUCache } from 'lru-cache';
+import Redis from 'ioredis';
 import Analytics from 'analytics-node';
+import { isDevelopment, isDevelopmentServer } from '.';
 
-const isDevelopment: boolean = process.env.NODE_ENV === 'development';
-const isDevelopmentServer: boolean = process.env.ENVIRONMENT === 'development';
-
-const userIdHashCache = new LRUCache<string, string>({
-  max: 5000,
-  ttl: 1000 * 60 * 60 * 24,
-});
+// Initialize Redis client
+// Provide a default URL if REDIS_URL is not set
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+export const redis = new Redis(redisUrl);
+const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
 
 const app = express();
 
@@ -23,6 +22,15 @@ app.use(cors());
 app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
+
+async function inspectRedis(key?: string) {
+  if (key) {
+    const value = await redis.get(key);
+    console.log(`DEBUG> Redis Update - Key: ${key}, Value: ${value}`);
+    return;
+  }
+  return;
+}
 
 const analytics = new Analytics(
   isDevelopment || isDevelopmentServer
@@ -40,7 +48,7 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
-app.post('/debug', (_req, res) => {
+app.post('/debug', async (_req, res) => {
   try {
     const { body } = _req;
 
@@ -53,30 +61,72 @@ app.post('/debug', (_req, res) => {
     }
 
     const id: string = body.id || 'socket.io-server';
-    let userIdHash: string | undefined = userIdHashCache.get(id);
+    let userIdHash = await redis.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
-      userIdHashCache.set(id, userIdHash);
+      await redis.set(id, userIdHash, 'EX', THIRTY_DAYS_IN_SECONDS);
     }
 
-    const event: {
-      userId: string;
-      event: string;
-      properties: {
-        userId: string;
-        [key: string]: string | undefined; // This line adds an index signature
+    if (isDevelopment) {
+      inspectRedis(id);
+    }
+
+    let userInfo;
+    const cachedUserInfo = await redis.get(userIdHash);
+
+    if (cachedUserInfo) {
+      userInfo = JSON.parse(cachedUserInfo);
+    } else {
+      // Initial userInfo setup
+      userInfo = {
+        url: '',
+        title: '',
+        platform: '',
+        source: '',
+        sdkVersion: '',
       };
-    } = {
+    }
+
+    // If 'sdk_connect_request_started', update userInfo in Redis
+    if (body.event === 'sdk_connect_request_started') {
+      userInfo = {
+        url: body.url || '',
+        title: body.title || '',
+        platform: body.platform || '',
+        source: body.source || '',
+        sdkVersion: body.sdkVersion || '',
+      };
+      await redis.set(
+        userIdHash,
+        JSON.stringify(userInfo),
+        'EX',
+        THIRTY_DAYS_IN_SECONDS,
+      );
+    }
+
+    if (isDevelopment) {
+      inspectRedis(userIdHash);
+    }
+
+    const event = {
       userId: userIdHash,
       event: body.event,
       properties: {
         userId: userIdHash,
+        ...body.properties,
+        // Apply stored user info if available
+        url: userInfo.url || body.originationInfo?.url,
+        title: userInfo.title || body.originationInfo?.title,
+        platform: userInfo.platform || body.originationInfo?.platform,
+        sdkVersion:
+          userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
+        source: userInfo.source || body.originationInfo?.source || '',
       },
     };
 
     // Define properties to be excluded
-    const propertiesToExclude: string[] = ['icon'];
+    const propertiesToExclude: string[] = ['icon', 'originationInfo', 'id'];
 
     for (const property in body) {
       if (

@@ -1,5 +1,6 @@
 import os from 'os';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { isDevelopment } from '.';
 
 let rateLimitPoints = 10;
 let rateLimitMessagePoints = 100;
@@ -37,9 +38,11 @@ const resetRateLimits = (): void => {
     rateLimitMessagePoints = initialRateLimitMessagePoints;
   }
 
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
+  if (isDevelopment) {
+    console.log(
+      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+    );
+  }
 };
 
 const increaseRateLimits = (cpuUsagePercentMin: number): void => {
@@ -86,9 +89,11 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
     duration: 1,
   });
 
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
+  if (isDevelopment) {
+    console.log(
+      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+    );
+  }
 };
 
 export {
