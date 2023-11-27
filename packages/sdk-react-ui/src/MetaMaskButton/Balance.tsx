@@ -1,10 +1,10 @@
-import React from 'react';
+import { useSDK } from '@metamask/sdk-react';
+import React, { useMemo } from 'react';
 import {
-  useNetwork,
   useAccount,
   useBalance,
+  useNetwork,
 } from '../hooks/MetaMaskWagmiHooks';
-import { getBalance } from './utils';
 
 const Balance = ({ theme }: { theme: string }) => {
   const { address, isConnected } = useAccount();
@@ -14,8 +14,25 @@ const Balance = ({ theme }: { theme: string }) => {
     chainId: chain?.id,
     enabled: isConnected,
   });
+  const { balance } = useSDK();
+  const decimals = 2;
 
-  const balance = getBalance({ data, isError, isLoading });
+  const formattedBalance = useMemo(() => {
+    if (!balance) {
+      return `0.${'0'.repeat(decimals)}`;
+    }
+    // Convert the hexadecimal balance to a decimal number
+    const balanceInWei = parseInt(balance, 16);
+
+    // Assuming the balance is in Wei (for Ethereum), convert it to Ether.
+    // 1 Ether = 1e18 Wei
+    const balanceInEther = balanceInWei / 1e18;
+
+    // Format the number
+    return balanceInEther.toFixed(decimals);
+  }, [balance, decimals]);
+
+  // const balance = getBalance({ data, isError, isLoading });
 
   if (!balance || isLoading || isError) return null;
 
@@ -29,7 +46,7 @@ const Balance = ({ theme }: { theme: string }) => {
           theme === 'light' ? 'tw-bg-neutral-200' : 'tw-bg-neutral-400'
         } tw-p-1.5 tw-rounded`}
       >
-        {balance}
+        {formattedBalance}
       </span>
     </div>
   );
