@@ -42,7 +42,8 @@
     "lru-cache": "^10.0.0",
     "rate-limiter-flexible": "^2.3.8",
     "rimraf": "^4.4.0",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
