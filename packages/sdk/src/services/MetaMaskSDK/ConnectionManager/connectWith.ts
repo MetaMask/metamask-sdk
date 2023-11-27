@@ -25,6 +25,6 @@ export async function connectWith({
 
   return instance.activeProvider.request({
     method: RPC_METHODS.METAMASK_CONNECTWITH,
-    params: rpc,
+    params: [rpc],
   });
 }

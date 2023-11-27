@@ -229,8 +229,6 @@ const initializeMobileProvider = ({
               method.toLowerCase() ===
               RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase()
             ) {
-              const [temp] = args;
-              const { params } = temp;
               const accounts = (await sdk.getProvider()?.request({
                 method: RPC_METHODS.ETH_REQUESTACCOUNTS,
                 params: [],
@@ -239,7 +237,10 @@ const initializeMobileProvider = ({
                 throw new Error(`SDK state invalid -- undefined accounts`);
               }
 
-              const { rpc } = params;
+              const [initialMethod] = args;
+              console.log(`connectWith:: initialMethod`, initialMethod);
+              const { params } = initialMethod;
+              const [rpc] = params;
               console.warn(`FIXME:: handle CONNECT_WITH`, rpc);
 
               if (
