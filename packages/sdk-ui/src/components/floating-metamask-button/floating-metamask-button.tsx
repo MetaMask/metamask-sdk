@@ -70,7 +70,6 @@ export const FloatingMetaMaskButton = ({
   };
 
   const handlePress = (e: GestureResponderEvent) => {
-    console.log(`pressed ${active}`);
     e.preventDefault();
   };
 

@@ -48,18 +48,8 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
           {!extensionActive && (
             <>
               <ItemView
-                label="Socket Server"
-                value={serviceStatus?.channelConfig?.channelId}
-              />
-              <ItemView
                 label="ChannelId"
                 value={serviceStatus?.channelConfig?.channelId}
-              />
-              <ItemView
-                label="Expiration"
-                value={
-                  serviceStatus?.channelConfig?.validUntil.toString() ?? ''
-                }
               />
             </>
           )}

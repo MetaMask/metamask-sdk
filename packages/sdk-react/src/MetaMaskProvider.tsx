@@ -110,6 +110,7 @@ const MetaMaskProviderClient = ({
 
   const onConnecting = useHandleOnConnectingEvent(eventHandlerProps);
 
+  // FIXME calling directly useHandleInitializedEvent skip the parameter of the event.
   const onInitialized = useHandleInitializedEvent(eventHandlerProps);
 
   const onConnect = useHandleConnectEvent(eventHandlerProps);
@@ -274,6 +275,7 @@ const MetaMaskProviderClient = ({
     };
   }, [sdk, ready]);
 
+  console.log(`account is ${account} chainId is ${chainId} balance is ${balance}`);
   return (
     <SDKContext.Provider
       value={{

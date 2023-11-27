@@ -41,7 +41,7 @@ const getStyles = ({ theme }: { theme: Theme }) =>
       borderColor: '#eaeaea',
     },
     listItem: {
-      backgroundColor: '#f9f9f9',
+      backgroundColor: theme.colors.background.default,
       borderBottomColor: '#ddd',
       borderBottomWidth: 1,
       padding: 10,
