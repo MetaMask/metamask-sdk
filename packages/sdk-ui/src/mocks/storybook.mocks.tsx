@@ -42,6 +42,10 @@ export const sdkProviderArgTypes: ArgTypes<Partial<SDKState>> = {
     options: KeyExchangeMessageType,
     defaultValue: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
   },
+  rpcHistory: {
+    control: 'object',
+    defaultValue: {},
+  },
   extensionActive: { control: 'boolean' },
 };
 
@@ -54,6 +58,7 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
     chainId,
     readOnlyCalls,
     extensionActive,
+    rpcHistory,
     keyExchangeStep,
   } = sc.args;
 
@@ -79,6 +84,7 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
         connecting,
         account,
         chainId,
+        rpcHistory,
         status,
       }}
     >

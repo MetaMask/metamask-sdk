@@ -12,6 +12,7 @@ import { ActivityIndicator, IconButton } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Text from '../../design-system/components/Texts/Text';
 import { useTheme } from '../../theme';
+import { ConnectionStatus } from '@metamask/sdk-communication-layer';
 
 const getStyles = ({
   theme,
@@ -50,22 +51,26 @@ const getStyles = ({
     },
   });
 
-export interface KeyExchangeStatusProps {
+export interface SDKDebugPanelProps {
   bottom?: number;
   left?: number;
 }
 
-export const KeyExchangeStatus = ({
-  bottom = 0,
-  left = 0,
-}: KeyExchangeStatusProps) => {
-  const { status, syncing, rpcHistory } = useSDK();
+export const SDKDebugPanel = ({ bottom = 0, left = 0 }: SDKDebugPanelProps) => {
+  const { status, sdk, syncing, rpcHistory } = useSDK();
   const [visible, setVisible] = React.useState(true);
   const theme = useTheme();
   const styles = useMemo(
     () => getStyles({ theme, bottom, left }),
     [theme, bottom, left],
   );
+
+  const paused = useMemo(() => {
+    return (
+      status?.connectionStatus === ConnectionStatus.DISCONNECTED &&
+      sdk?._getRemoteConnection()?.isPaused()
+    );
+  }, [sdk, status]);
 
   const renderIcon = () => {
     return (
@@ -91,7 +96,7 @@ export const KeyExchangeStatus = ({
         <ScrollView>
           <View style={styles.viewRow}>
             <Text>Connection:</Text>
-            <Text>{status?.connectionStatus?.toString()}</Text>
+            <Text>{paused ? ` PAUSED ` : status?.connectionStatus}</Text>
           </View>
           <View style={styles.viewRow}>
             <Text>KeysExchanged:</Text>
@@ -102,16 +107,18 @@ export const KeyExchangeStatus = ({
                   : theme.colors.warning.default,
               }}
             >
-              {status?.keyInfo?.keysExchanged.toString()}
+              {status?.keyInfo?.keysExchanged}
             </Text>
           </View>
           <View style={styles.viewRow}>
             <Text>Step:</Text>
-            <Text>{status?.keyInfo?.step.toString()}</Text>
+            <Text>{status?.keyInfo?.step}</Text>
           </View>
           <View>
             {Object.values(rpcHistory ?? {})
-              .filter((rpc) => !(rpc.result || rpc.error))
+              .filter(
+                (rpc) => rpc.result === undefined && rpc.error === undefined,
+              )
               .map((rpc, index) => (
                 <Text key={`rpc${index}`}>{rpc.method}</Text>
               ))}

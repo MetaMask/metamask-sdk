@@ -14,6 +14,7 @@ import {
 import { ThemeContext } from '../theme';
 import { LanguageProvider } from './language-provider';
 import { PreferencesProvider, usePreferences } from './preferences-provider';
+import { Platform } from 'react-native';
 
 export const WithToasts = ({ children }: { children: React.ReactNode }) => {
   const { toastRef } = useContext(ToastContext);
@@ -36,7 +37,8 @@ export const WithPreferences = ({
     <PaperProvider
       theme={preferences.darkMode ? MD3DarkTheme : MD3LightTheme}
       settings={{
-        rippleEffectEnabled: preferences.rippleEffectEnabled,
+        rippleEffectEnabled:
+          Platform.OS === 'web' ? false : preferences.rippleEffectEnabled,
       }}
     >
       <ThemeContext.Provider

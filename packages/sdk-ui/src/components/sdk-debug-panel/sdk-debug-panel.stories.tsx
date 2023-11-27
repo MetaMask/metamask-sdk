@@ -5,20 +5,15 @@ import {
   SdkContextDecorator,
   sdkProviderArgTypes,
 } from '../../mocks/storybook.mocks';
-import {
-  KeyExchangeStatus,
-  KeyExchangeStatusProps,
-} from './keyexchange-status';
+import { SDKDebugPanel, SDKDebugPanelProps } from './sdk-debug-panel';
 
-const SDKStatusMeta: Meta<KeyExchangeStatusProps & SDKState> = {
-  component: KeyExchangeStatus,
-  title: 'SDK UI / KeyExchange Status',
+const SDKStatusMeta: Meta<SDKDebugPanelProps & SDKState> = {
+  component: SDKDebugPanel,
+  title: 'SDK UI / SDK Debug Panel',
   argTypes: {
     ...sdkProviderArgTypes,
   },
-  args: {
-    connected: true,
-  },
+  args: {},
   decorators: [SdkContextDecorator],
   parameters: {},
 };
@@ -27,5 +22,5 @@ export default SDKStatusMeta;
 
 export const Primary = {
   args: {},
-  component: (args: KeyExchangeStatusProps) => <KeyExchangeStatus {...args} />,
+  component: (args: SDKDebugPanelProps) => <SDKDebugPanel {...args} />,
 };
