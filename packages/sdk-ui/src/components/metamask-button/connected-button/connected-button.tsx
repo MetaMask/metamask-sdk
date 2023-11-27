@@ -8,8 +8,7 @@ import Avatar, {
 } from '../../../design-system/components/Avatars/Avatar';
 import Text from '../../../design-system/components/Texts/Text';
 import { AccountBalance } from '../account-balance/account-balance';
-
-const textColor = 'black';
+import { useTheme } from '../../../theme';
 
 const styles = StyleSheet.create({
   container: {
@@ -37,11 +36,8 @@ const styles = StyleSheet.create({
   icon: { padding: 5 },
   network: {
     fontWeight: 'bold',
-    color: textColor,
   },
-  address: {
-    color: textColor,
-  },
+  address: {},
 });
 
 export interface ConnectedButtonProps {
@@ -57,6 +53,7 @@ export const ConnectedButton = ({
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
+  const { colors } = useTheme();
   return (
     <View style={[styles.container, containerStyle]}>
       <Avatar
@@ -75,7 +72,7 @@ export const ConnectedButton = ({
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
-        color={textColor}
+        color={colors.text.default}
       />
     </View>
   );

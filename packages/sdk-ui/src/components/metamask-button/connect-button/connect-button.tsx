@@ -29,7 +29,7 @@ export const ConnectButton = ({
   const getIcon = () => {
     if (icon === 'no-icon') {
       return null;
-    } else if (icon === 'original') {
+    } else if (icon === 'simplified') {
       return <IconOriginal />;
     }
 
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     padding: 5,
     flexDirection: 'row',
     paddingRight: 15,
+    gap: 10,
     paddingLeft: 15,
     // backgroundColor: 'red',
     justifyContent: 'center',
@@ -71,7 +72,5 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   icon: { padding: 5 },
-  accountText: {
-    paddingLeft: 10,
-  },
+  accountText: {},
 });

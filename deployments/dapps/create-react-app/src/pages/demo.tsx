@@ -1,6 +1,12 @@
 import React from 'react';
 import { ChainRPC } from '@metamask/sdk-lab';
-import { ItemView, MetaMaskButton, useSDK } from '@metamask/sdk-ui';
+import {
+  ItemView,
+  MetaMaskButton,
+  useSDK,
+  RPCHistoryViewer,
+  SDKDebugPanel,
+} from '@metamask/sdk-ui';
 import { useState } from 'react';
 import { send_eth_signTypedData_v4, send_personal_sign } from '../SignHelpers';
 import './demo.css';
@@ -468,7 +474,8 @@ export const Demo = () => {
           Terminate
         </button>
       </main>
-      {/* <RPCHistoryViewer /> */}
+      <RPCHistoryViewer />
+      <SDKDebugPanel bottom={40} />
     </div>
   );
 };
