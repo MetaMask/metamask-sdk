@@ -17,17 +17,24 @@ import { ItemView } from './components/item-view/item-view';
 import { LanguagePicker } from './components/language-picker/language-picker';
 import { MetaMaskButton } from './components/metamask-button/metamask-button';
 import {
+  RPCHistoryViewer,
+  RPCHistoryViewerProps,
+} from './components/rpc-history-viewer/rpc-history-viewer';
+import {
   SDKConfigCard,
   SDKConfigCardProps,
 } from './components/sdk-config-card/sdk-config-card';
 import { SDKConfig, SDKConfigProps } from './components/sdk-config/sdk-config';
+import {
+  SDKDebugPanel,
+  SDKDebugPanelProps,
+} from './components/sdk-debug-panel/sdk-debug-panel';
+import { SDKStatus, SDKStatusProps } from './components/sdk-status/sdk-status';
 import { UIProvider } from './context/ui-provider';
 import DS from './design-system';
 import { ToastContext } from './design-system/components/Toast';
 import { PreviewScreen } from './screens/preview/preview';
 import { useTheme } from './theme';
-import { SDKStatus, SDKStatusProps } from './components/sdk-status/sdk-status';
-import { KeyExchangeStatus } from './components/keyexchange-status/keyexchange-status';
 
 const {
   Avatar,
@@ -73,13 +80,16 @@ export {
   ListItemSelect,
   MetaMaskButton,
   PreviewScreen,
+  RPCHistoryViewer,
+  RPCHistoryViewerProps,
   SDKConfig,
   SDKConfigCard,
   SDKConfigCardProps,
   SDKConfigProps,
+  SDKDebugPanel,
+  SDKDebugPanelProps,
   SDKStatus,
   SDKStatusProps,
-  KeyExchangeStatus,
   Tag,
   TagUrl,
   Text,

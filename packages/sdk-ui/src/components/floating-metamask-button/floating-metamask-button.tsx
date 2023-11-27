@@ -1,8 +1,14 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet } from 'react-native';
-import { FAB } from 'react-native-paper';
+import {
+  ActivityIndicator,
+  GestureResponderEvent,
+  Platform,
+  StyleSheet,
+} from 'react-native';
+import { Portal, FAB } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FABGroupFix from '../fab-group-fix/FabGroupFix';
 import { IconOriginal } from '../icons/IconOriginal';
 import { MetaMaskModal } from '../metamask-modal/metamask-modal';
 
@@ -23,8 +29,11 @@ const getStyles = ({
       position: Platform.OS === 'web' ? 'fixed' : ('absolute' as any),
       paddingRight: distance?.right,
       paddingBottom: distance?.bottom,
+      zIndex: 999,
     },
-    fabStyle: {},
+    fabStyle: {
+      zIndex: 999,
+    },
   });
 };
 
@@ -59,12 +68,20 @@ export const FloatingMetaMaskButton = ({
     setActive(open);
   };
 
+  const handlePress = (e: GestureResponderEvent) => {
+    console.log(`pressed ${active}`);
+    e.preventDefault();
+  };
+
+  const DynamicFabGroup = Platform.OS === 'web' ? FABGroupFix : FAB.Group;
+
   return (
-    <>
-      <FAB.Group
+    <Portal>
+      <DynamicFabGroup
         open={active}
         visible
         icon={renderIcon}
+        onPress={handlePress}
         fabStyle={styles.fabStyle}
         style={styles.container}
         actions={[
@@ -94,6 +111,6 @@ export const FloatingMetaMaskButton = ({
         onStateChange={handleStateChange}
       />
       <MetaMaskModal modalOpen={modalOpen} onClose={closeModal} />
-    </>
+    </Portal>
   );
 };
