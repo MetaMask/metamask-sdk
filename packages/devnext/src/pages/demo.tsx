@@ -1,10 +1,10 @@
+import { ChainRPC } from '@metamask/sdk-lab';
 import { useSDK } from '@metamask/sdk-react';
+import { MetaMaskButton, SDKStatus, RPCHistoryViewer } from '@metamask/sdk-ui';
 import { ethers } from 'ethers';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
-import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
-import { MetaMaskButton, SDKStatus } from '@metamask/sdk-ui';
 
 const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
@@ -378,10 +378,6 @@ const Demo = () => {
         method: 'personal_sign',
         params: ['hello world', selectedAddress],
       },
-      {
-        method: 'personal_sign',
-        params: ['Another one #3', selectedAddress],
-      },
     ];
 
     setRequesting(true);
@@ -512,7 +508,7 @@ const Demo = () => {
           },
         ],
       };
-      const hexResponse = await sdk?.connectWith({ rpc });
+      const hexResponse = await sdk?.connectWith(rpc);
       // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectWith response:`, hexResponse);
       setResponse(hexResponse);

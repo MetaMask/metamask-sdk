@@ -1,6 +1,6 @@
 import {
   FloatingMetaMaskButton,
-  KeyExchangeStatus,
+  SDKDebugPanel,
   SDKConfigCard,
 } from '@metamask/sdk-ui';
 import { useRouter } from 'next/router';
@@ -21,9 +21,9 @@ export const Layout = ({ children }: LayoutProps) => {
           router.push('/');
         }}
       />
-      {children}
       <FloatingMetaMaskButton distance={{ bottom: 40 }} />
-      <KeyExchangeStatus bottom={40} />
+      {children}
+      <SDKDebugPanel bottom={40} />
     </div>
   );
 };

@@ -85,7 +85,10 @@ export async function handleRpcReplies(
         throw new Error(`Error handling RPC replies for ${rpcId}`);
       }
     } catch (err) {
-      console.warn(`Error rpcId=${message.id} ${method}`, err);
+      console.warn(
+        `[handleRpcReplies] Error rpcId=${message.id} ${method}`,
+        err,
+      );
       throw err;
     }
   }
