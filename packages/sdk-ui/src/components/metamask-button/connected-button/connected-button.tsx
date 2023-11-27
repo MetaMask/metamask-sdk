@@ -6,9 +6,10 @@ import Avatar, {
   AvatarSize,
   AvatarVariant,
 } from '../../../design-system/components/Avatars/Avatar';
-import { AccountBalance } from '../account-balance/account-balance';
 import Text from '../../../design-system/components/Texts/Text';
-import { useTheme } from '../../../theme';
+import { AccountBalance } from '../account-balance/account-balance';
+
+const textColor = 'black';
 
 const styles = StyleSheet.create({
   container: {
@@ -34,8 +35,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E2E2',
   },
   icon: { padding: 5 },
-  network: {},
-  address: {},
+  network: {
+    fontWeight: 'bold',
+    color: textColor,
+  },
+  address: {
+    color: textColor,
+  },
 });
 
 export interface ConnectedButtonProps {
@@ -51,7 +57,6 @@ export const ConnectedButton = ({
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
-  const { colors } = useTheme();
   return (
     <View style={[styles.container, containerStyle]}>
       <Avatar
@@ -66,11 +71,11 @@ export const ConnectedButton = ({
           {address}
         </Text>
       </View>
-      <AccountBalance decimals={2} />
+      <AccountBalance decimals={2} withSymbol={false} />
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
-        color={colors.text.default}
+        color={textColor}
       />
     </View>
   );

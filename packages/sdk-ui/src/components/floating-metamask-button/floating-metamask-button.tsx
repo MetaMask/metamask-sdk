@@ -63,6 +63,7 @@ export const FloatingMetaMaskButton = ({
         return;
       } catch (error) {
         // Ignore connection issue.
+        return;
       }
     }
     setActive(open);
@@ -105,7 +106,10 @@ export const FloatingMetaMaskButton = ({
           {
             label: 'Disconnect',
             icon: 'logout',
-            onPress: () => sdk?.disconnect(),
+            onPress: () => {
+              sdk?.terminate();
+              setActive(false);
+            },
           },
         ]}
         onStateChange={handleStateChange}

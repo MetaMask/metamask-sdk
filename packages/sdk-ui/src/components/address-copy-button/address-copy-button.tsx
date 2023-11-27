@@ -64,10 +64,7 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-  },
+  container: {},
   pressable: {
     display: 'flex',
     justifyContent: 'center',

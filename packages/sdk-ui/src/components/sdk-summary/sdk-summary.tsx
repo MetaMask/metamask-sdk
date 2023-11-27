@@ -30,7 +30,7 @@ export const SDKSummary = () => {
           variant={AvatarVariant.Account}
           accountAddress={account ?? ''}
           type={AvatarAccountType.Blockies}
-          size={AvatarSize.Md}
+          size={AvatarSize.Xl}
         />
         <AddressCopyButton address={account ?? ''} />
         <View style={styles.balanceContainer}>
@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     gap: 0,
-    height: 150,
+    height: 160,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -83,9 +83,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 5,
-    gap: 5,
-    backgroundColor: '#E2E2E2',
   },
   icon: { padding: 5 },
   network: {},
