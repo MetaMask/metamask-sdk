@@ -6,7 +6,7 @@ import {
   Platform,
   StyleSheet,
 } from 'react-native';
-import { Portal, FAB } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FABGroupFix from '../fab-group-fix/FabGroupFix';
 import { IconOriginal } from '../icons/IconOriginal';
@@ -74,10 +74,13 @@ export const FloatingMetaMaskButton = ({
     e.preventDefault();
   };
 
-  const DynamicFabGroup = Platform.OS === 'web' ? FABGroupFix : FAB.Group;
+  // Check for mobile browser because regular FAB.Group has an issue https://github.com/callstack/react-native-paper/issues/4202
+  const isMobileBrowser =
+    Platform.OS === 'web' && /Mobi|Android/i.test(navigator.userAgent);
+  const DynamicFabGroup = isMobileBrowser ? FABGroupFix : FAB.Group;
 
   return (
-    <Portal>
+    <>
       <DynamicFabGroup
         open={active}
         visible
@@ -115,6 +118,6 @@ export const FloatingMetaMaskButton = ({
         onStateChange={handleStateChange}
       />
       <MetaMaskModal modalOpen={modalOpen} onClose={closeModal} />
-    </Portal>
+    </>
   );
 };
