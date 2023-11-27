@@ -37,10 +37,13 @@ export interface SDKConfigProviderProps {
   initialSocketServer?: string;
   initialInfuraKey?: string;
   children: React.ReactNode;
+  debug?: boolean;
 }
 
+const STORAGE_LOCATION = 'appContext';
+
 // FIXME use appropriate children type ( currently linting issue on devnext )
-export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, children }: SDKConfigProviderProps) => {
+export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug, children }: SDKConfigProviderProps) => {
   const [appContext, setAppContext] = useState<SDKConfigContextProps>({ ...initProps, socketServer: initialSocketServer ?? DEFAULT_SERVER_URL, infuraAPIKey: initialInfuraKey });
 
   const syncState = (newState: SDKConfigContextProps) => {
@@ -53,7 +56,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
       queryString.set(key, encodeURIComponent(JSON.stringify(value)));
     }
 
-    localStorage.setItem('appContext', JSON.stringify(newState));
+    localStorage.setItem(STORAGE_LOCATION, JSON.stringify(newState));
     // Update URL without refreshing the page using History API
     const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname
       }?${queryString.toString()}`;
@@ -63,12 +66,20 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
   useEffect(() => {
     // Load context from localStorage and URL (priority to URL)
     const loadContext = () => {
-      const storedContext = localStorage.getItem('appContext') ?? '{}';
-      const initialContext: Partial<SDKConfigContextProps> = storedContext
-        ? JSON.parse(storedContext)
-        : {};
+      const storedContext = localStorage.getItem(STORAGE_LOCATION);
+      const initialContext: Partial<SDKConfigContextProps> = storedContext ? JSON.parse(storedContext)
+        : {
+          infuraAPIKey: initialInfuraKey,
+          socketServer: initialSocketServer,
+        };
 
-      console.log(`[SDKConfigProvider] initialContext`, initialContext);
+        if(!initialContext.infuraAPIKey) {
+          initialContext.infuraAPIKey = initialInfuraKey;
+        }
+
+      if(debug) {
+        console.log(`[SDKConfigProvider] initialContext`, initialContext);
+      }
 
       const urlParams = new URLSearchParams(window.location.search);
       const urlContext = Array.from(urlParams.keys()).reduce((acc, key) => {
@@ -81,7 +92,10 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
         }
         return acc;
       }, {} as Partial<SDKConfigContextProps>);
-      console.log(`[SDKConfigProvider] urlContext`, urlContext);
+
+      if(debug) {
+        console.log(`[SDKConfigProvider] urlContext`, urlContext);
+      }
 
       const computedContext: SDKConfigContextProps = {
         ...initProps,
@@ -89,7 +103,9 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, child
         ...urlContext,
       };
 
-      console.log(`[SDKConfigProvider] computedContext`, computedContext);
+      if(debug) {
+        console.log(`[SDKConfigProvider] computedContext`, computedContext);
+      }
 
       setAppContext(computedContext);
     };
