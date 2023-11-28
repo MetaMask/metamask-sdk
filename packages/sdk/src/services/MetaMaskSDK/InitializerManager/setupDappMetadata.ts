@@ -1,4 +1,3 @@
-import { getBase64FromUrl } from '../../../utils/getBase64FromUrl';
 import { MetaMaskSDK } from '../../../sdk';
 import { extractFavicon } from '../../../utils/extractFavicon';
 
@@ -64,18 +63,9 @@ export async function setupDappMetadata(instance: MetaMaskSDK) {
       !options.dappMetadata.iconUrl &&
       !options.dappMetadata.base64Icon
     ) {
-      try {
-        const faviconUri = await getBase64FromUrl(favicon);
-        if (faviconUri.length < BASE_64_ICON_MAX_LENGTH) {
-          options.dappMetadata.base64Icon = faviconUri;
-        } else {
-          console.warn(
-            'Invalid dappMetadata.base64Icon: Base64-encoded icon string length must be less than 163400 characters',
-          );
-        }
-      } catch (error) {
-        // do nothing
-      }
+      const faviconUrl = `${window.location.protocol}//${window.location.host}${favicon}`;
+
+      options.dappMetadata.iconUrl = faviconUrl;
     }
   }
   // eslint-disable-next-line require-atomic-updates
