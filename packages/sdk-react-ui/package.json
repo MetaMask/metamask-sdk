@@ -116,7 +116,11 @@
       "@metamask/sdk-react>@metamask/sdk-communication-layer>utf-8-validate": false,
       "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>bufferutil": false,
       "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
-      "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>utf-8-validate": false
+      "@metamask/sdk-react>@metamask/sdk>@metamask/sdk-communication-layer>utf-8-validate": false,
+      "@metamask/sdk>@metamask/sdk-communication-layer>bufferutil": false,
+      "@metamask/sdk>@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
+      "@metamask/sdk>@metamask/sdk-communication-layer>utf-8-validate": false,
+      "@metamask/sdk>eciesjs>secp256k1": false
     }
   }
 }
