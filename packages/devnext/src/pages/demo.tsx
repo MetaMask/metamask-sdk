@@ -1,10 +1,11 @@
+import { ChainRPC } from '@metamask/sdk-lab';
 import { useSDK } from '@metamask/sdk-react';
+import { MetaMaskButton, SDKStatus, RPCHistoryViewer } from '@metamask/sdk-ui';
 import { ethers } from 'ethers';
 import Head from 'next/head';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
-import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
-import { MetaMaskButton, SDKStatus } from '@metamask/sdk-ui';
+import { getSignParams } from '../utils/sign-utils';
 
 const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
@@ -80,75 +81,11 @@ const Demo = () => {
   };
 
   const eth_signTypedData_v4 = async () => {
-    const msgParams = JSON.stringify({
-      domain: {
-        // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum?.chainId ?? '', 16),
-        // Give a user friendly name to the specific contract you are signing for.
-        name: 'Ether Mail',
-        // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
-        verifyingContract: '0xCcCCccccCCCCcCCCCCCcCcCccCcCCCcCcccccccC',
-        // Just let's you know the latest version. Definitely make sure the field name is correct.
-        version: '1',
-      },
+    if (!chainId) {
+      throw new Error(`chainId not set`);
+    }
 
-      // Defining the message signing data content.
-      message: {
-        /*
-         - Anything you want. Just a JSON Blob that encodes the data you want to send
-         - No required fields
-         - This is DApp Specific
-         - Be as explicit as possible when building out the message schema.
-        */
-        contents: 'Hello, Bob!',
-        attachedMoneyInEth: 4.2,
-        from: {
-          name: 'Cow',
-          wallets: [
-            '0xCD2a3d9F938E13CD947Ec05AbC7FE734Df8DD826',
-            '0xDeaDbeefdEAdbeefdEadbEEFdeadbeEFdEaDbeeF',
-          ],
-        },
-        to: [
-          {
-            name: 'Bob',
-            wallets: [
-              '0xbBbBBBBbbBBBbbbBbbBbbbbBBbBbbbbBbBbbBBbB',
-              '0xB0BdaBea57B0BDABeA57b0bdABEA57b0BDabEa57',
-              '0xB0B0b0b0b0b0B000000000000000000000000000',
-            ],
-          },
-        ],
-      },
-      // Refers to the keys of the *types* object below.
-      primaryType: 'Mail',
-      types: {
-        // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
-        EIP712Domain: [
-          { name: 'name', type: 'string' },
-          { name: 'version', type: 'string' },
-          { name: 'chainId', type: 'uint256' },
-          { name: 'verifyingContract', type: 'address' },
-        ],
-        // Not an EIP712Domain definition
-        Group: [
-          { name: 'name', type: 'string' },
-          { name: 'members', type: 'Person[]' },
-        ],
-        // Refer to PrimaryType
-        Mail: [
-          { name: 'from', type: 'Person' },
-          { name: 'to', type: 'Person[]' },
-          { name: 'contents', type: 'string' },
-        ],
-        // Not an EIP712Domain definition
-        Person: [
-          { name: 'name', type: 'string' },
-          { name: 'wallets', type: 'address[]' },
-        ],
-      },
-    });
-
+    const msgParams = JSON.stringify(getSignParams({ hexChainId: chainId }));
     const from = window.ethereum?.selectedAddress;
 
     setRequesting(true);
@@ -378,10 +315,6 @@ const Demo = () => {
         method: 'personal_sign',
         params: ['hello world', selectedAddress],
       },
-      {
-        method: 'personal_sign',
-        params: ['Another one #3', selectedAddress],
-      },
     ];
 
     setRequesting(true);
@@ -491,6 +424,69 @@ const Demo = () => {
     } catch (e) {
       console.error(`error`, e);
       setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const connectWith = async ({
+    type,
+  }: {
+    type:
+      | 'PERSONAL_SIGN'
+      | 'ETH_SENDTRANSACTION'
+      | 'ETH_SIGNTYPEDDATA_V4'
+      | 'ETH_CHAINID';
+  }) => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const sendTransactionRpc = {
+        method: 'eth_sendTransaction',
+        params: [
+          {
+            to: '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E', // Required except during contract publications.
+            from: '0xMYACCOUNT', // must match user's active address.
+            value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+          },
+        ],
+      };
+      const personalSignRpc = {
+        method: 'personal_sign',
+        params: ['hello world', '0xMYACCOUNT'],
+      };
+      const signTypeDatav4Rpc = {
+        method: 'eth_signTypedData_v4',
+        params: ['0xMyaccount', getSignParams({ hexChainId: chainId })],
+      };
+
+      let rpc;
+      switch (type) {
+        case 'PERSONAL_SIGN':
+          rpc = personalSignRpc;
+          break;
+        case 'ETH_SENDTRANSACTION':
+          rpc = sendTransactionRpc;
+          break;
+        case 'ETH_SIGNTYPEDDATA_V4':
+          rpc = signTypeDatav4Rpc;
+          break;
+        case 'ETH_CHAINID':
+          rpc = { method: 'eth_chainId', params: [] };
+          break;
+        default:
+          throw new Error(`Unknown type: ${type}`);
+      }
+
+      const hexResponse = await sdk?.connectWith(rpc);
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`connectWith response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('connectWith ERR', err);
+      setRpcError(err);
     } finally {
       setRequesting(false);
     }
@@ -621,6 +617,12 @@ const Demo = () => {
             >
               Connect And Sign
             </button>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
+            >
+              Connect With (personal_sign)
+            </button>
           </>
         )}
 
@@ -645,6 +647,24 @@ const Demo = () => {
               onClick={connectAndSign}
             >
               Connect And Sign
+            </button>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={() => connectWith({ type: 'ETH_SENDTRANSACTION' })}
+            >
+              Connect With (eth_sendTransaction)
+            </button>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
+            >
+              Connect With (personal_sign)
+            </button>
+            <button
+              style={{ padding: 10, margin: 10 }}
+              onClick={() => connectWith({ type: 'ETH_CHAINID' })}
+            >
+              Connect With (eth_chainId)
             </button>
           </div>
         )}
