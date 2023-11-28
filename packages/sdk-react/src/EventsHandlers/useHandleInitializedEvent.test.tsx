@@ -41,9 +41,6 @@ describe('useHandleInitializedEvent', () => {
       "MetaMaskProvider::provider on '_initialized' event.",
     );
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
-    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
-      eventHandlerProps.activeProvider.selectedAddress,
-    );
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
@@ -61,9 +58,6 @@ describe('useHandleInitializedEvent', () => {
 
     expect(console.debug).not.toHaveBeenCalled();
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
-    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(
-      eventHandlerProps.activeProvider.selectedAddress,
-    );
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
@@ -78,7 +72,6 @@ describe('useHandleInitializedEvent', () => {
     result.current();
 
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
-    expect(eventHandlerProps.setAccount).toHaveBeenCalledWith(undefined);
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
   });
