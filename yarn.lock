@@ -7853,6 +7853,7 @@ __metadata:
     "@storybook/react-webpack5": ^7.5.3
     "@svgr/webpack": ^8.1.0
     "@testing-library/react-native": ^12.4.0
+    "@types/color": ^3.0.6
     "@types/enzyme": ^3.10.16
     "@types/lodash": ^4.14.201
     "@types/react": ^18.2.37
@@ -7864,6 +7865,7 @@ __metadata:
     babel-preset-expo: ^9.5.2
     buffer: ^6.0.3
     buffer-browserify: ^0.2.5
+    color: ^4.2.3
     cryptocurrency-icons: ^0.18.1
     enzyme: ^3.11.0
     eslint: ^8.53.0
@@ -12902,6 +12904,31 @@ __metadata:
     "@types/filesystem": "*"
     "@types/har-format": "*"
   checksum: af96fdc79fb019d827fdb6269f831921f8f36215ee05a2624436dd2ad4d84d7be12333cc6f54912fb8bae0ca49cbfde5a78de94723bfbd20d309d2e71e274a1b
+  languageName: node
+  linkType: hard
+
+"@types/color-convert@npm:*":
+  version: 2.0.3
+  resolution: "@types/color-convert@npm:2.0.3"
+  dependencies:
+    "@types/color-name": "*"
+  checksum: bb6649b49a9da85435c0076c0b00183b972ee2ccbebb7f2f20e58843f081616bba054280fad96fe19e8bb998b3494a3f4c105dea6fef31147f92097f2c08f1ca
+  languageName: node
+  linkType: hard
+
+"@types/color-name@npm:*":
+  version: 1.1.3
+  resolution: "@types/color-name@npm:1.1.3"
+  checksum: 9060d16d0bce2cdf562d6da54e18c5f23e80308ccb58b725b9173a028818f27d8e01c8a5cd96952e76f11145a7388ed7d2f450fb4652f4760383834f2e698263
+  languageName: node
+  linkType: hard
+
+"@types/color@npm:^3.0.6":
+  version: 3.0.6
+  resolution: "@types/color@npm:3.0.6"
+  dependencies:
+    "@types/color-convert": "*"
+  checksum: 0f16dcf4e202896d5425019c44a1f99713fca998052ab2fd836cdd38048398a0caf5b79a2efe560e41fca4b9401e8d8f6f02ed541cfea30cca3a8cb1b50b80f7
   languageName: node
   linkType: hard
 
@@ -19764,7 +19791,7 @@ __metadata:
     react-native: ^0.72.4
     react-native-gesture-handler: ^2.12.1
     react-native-jazzicon: ^0.1.2
-    react-native-paper: ^5.10.3
+    react-native-paper: ^5.11.2
     react-native-reanimated: ^3.4.2
     react-native-safe-area-context: ^4.7.2
     react-native-vector-icons: ^10.0.0
@@ -33909,9 +33936,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-paper@npm:^5.10.3, react-native-paper@npm:^5.11.1":
-  version: 5.11.1
-  resolution: "react-native-paper@npm:5.11.1"
+"react-native-paper@npm:^5.11.1, react-native-paper@npm:^5.11.2":
+  version: 5.11.2
+  resolution: "react-native-paper@npm:5.11.2"
   dependencies:
     "@callstack/react-theme-provider": ^3.0.9
     color: ^3.1.2
@@ -33921,7 +33948,7 @@ __metadata:
     react-native: "*"
     react-native-safe-area-context: "*"
     react-native-vector-icons: "*"
-  checksum: 26331e8d54205cb8b379db4e986c69fecbb82a14913974d9e22515025b44705f96af8919c19e8044eddb4545d3cb33174dbc6b9d465f751241fb14d3af877988
+  checksum: 04de666d09b7a5c1a31cd5c996cfdbf314d2a1b686ed53fa247d2bb6b2a577f45953ecb9e09267c17ea1b0f445f2a1727883f1fcb2fd17249253540cd2695329
   languageName: node
   linkType: hard
 
