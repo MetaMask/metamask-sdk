@@ -292,7 +292,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emitServiceStatusEvent();
   }
 
-  private emitServiceStatusEvent() {
+  emitServiceStatusEvent() {
     this.emit(EventType.SERVICE_STATUS, this.getServiceStatus());
   }
 

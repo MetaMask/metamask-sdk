@@ -26,6 +26,7 @@ type CommunicationLayerHandledEvents =
   | EventType.SOCKET_RECONNECT
   | EventType.CHANNEL_CREATED
   | EventType.KEYS_EXCHANGED
+  | EventType.KEY_INFO
   | EventType.AUTHORIZED
   | EventType.MESSAGE
   | EventType.RPC_UPDATE;
@@ -120,12 +121,15 @@ export function initCommunicationLayer({
       instance,
       communicationLayerPreference,
     ),
+    [EventType.KEY_INFO]: () => {
+      instance.emitServiceStatusEvent();
+    },
     [EventType.CHANNEL_CREATED]: handleChannelCreatedEvent(instance),
     [EventType.CLIENTS_WAITING]: handleClientsWaitingEvent(instance),
-    [EventType.RPC_UPDATE]: () => {
+    [EventType.RPC_UPDATE]: (rpc) => {
       // TODO use a separate function to isolate unit tests
       // propagate RPC_UPDATE event to the SDK
-      instance.emit(EventType.RPC_UPDATE);
+      instance.emit(EventType.RPC_UPDATE, rpc);
     },
   };
 

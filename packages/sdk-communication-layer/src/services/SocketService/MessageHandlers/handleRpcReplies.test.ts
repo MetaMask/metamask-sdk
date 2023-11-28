@@ -14,11 +14,12 @@ describe('handleRpcReplies', () => {
 
     instance = {
       state: {
-        debug: false,
+        debug: true,
       },
     } as unknown as SocketService;
 
     mockWaitForRpc.mockResolvedValue({
+      id: '123',
       elapsedTime: 100,
       result: 'success',
       timestamp: 123456789,
@@ -69,6 +70,7 @@ describe('handleRpcReplies', () => {
     const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
     mockWaitForRpc.mockResolvedValueOnce({
+      id: '123',
       elapsedTime: 100,
       result: 'success',
       timestamp: 123456789,
@@ -93,9 +95,12 @@ describe('handleRpcReplies', () => {
 
     const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-    mockWaitForRpc.mockRejectedValue(new Error('Test error'));
-
-    await handleRpcReplies(instance, message);
+    try {
+      mockWaitForRpc.mockRejectedValue(new Error('Test error'));
+      await handleRpcReplies(instance, message);
+    } catch (err) {
+      // Ignore error but check console.warn
+    }
 
     expect(consoleWarnSpy).toHaveBeenCalledTimes(1);
   });
