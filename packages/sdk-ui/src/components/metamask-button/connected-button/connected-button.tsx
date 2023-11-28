@@ -1,13 +1,14 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { Text } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Avatar, {
   AvatarAccountType,
   AvatarSize,
   AvatarVariant,
 } from '../../../design-system/components/Avatars/Avatar';
+import Text from '../../../design-system/components/Texts/Text';
 import { AccountBalance } from '../account-balance/account-balance';
+import { useTheme } from '../../../theme';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E2E2',
   },
   icon: { padding: 5 },
-  network: {},
+  network: {
+    fontWeight: 'bold',
+  },
   address: {},
 });
 
@@ -50,6 +53,7 @@ export const ConnectedButton = ({
   network,
   containerStyle,
 }: ConnectedButtonProps) => {
+  const { colors } = useTheme();
   return (
     <View style={[styles.container, containerStyle]}>
       <Avatar
@@ -59,18 +63,16 @@ export const ConnectedButton = ({
         size={AvatarSize.Md}
       />
       <View style={styles.content}>
-        <Text style={styles.network} variant="titleMedium">
-          {network}
-        </Text>
+        <Text style={styles.network}>{network}</Text>
         <Text ellipsizeMode="middle" numberOfLines={1} style={styles.address}>
           {address}
         </Text>
       </View>
-      <AccountBalance decimals={2} />
+      <AccountBalance decimals={2} withSymbol={false} />
       <MaterialIcons
         name={active ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
-        color="black"
+        color={colors.text.default}
       />
     </View>
   );

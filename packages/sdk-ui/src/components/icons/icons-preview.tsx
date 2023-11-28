@@ -4,7 +4,7 @@ import { IconSimplified } from './IconsSimplified';
 import { IconWrongNetwork } from './IconWrongNetwork';
 import { Image, StyleSheet, View } from 'react-native';
 import images from 'images/image-icons';
-import { Text } from 'react-native-paper';
+import Text from '../../design-system/components/Texts/Text';
 
 const styles = StyleSheet.create({
   container: {

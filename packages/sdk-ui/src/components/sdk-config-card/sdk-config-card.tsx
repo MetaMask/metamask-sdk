@@ -7,6 +7,7 @@ import Text from '../../design-system/components/Texts/Text';
 import { useTheme } from '../../theme';
 import { LanguagePicker } from '../language-picker/language-picker';
 import { SDKConfig, SDKConfigProps } from '../sdk-config/sdk-config';
+import { usePreferences } from '../../context/preferences-provider';
 
 const styles = StyleSheet.create({
   container: {},
@@ -33,6 +34,7 @@ export const SDKConfigCard = ({
   options,
   onHomePress,
 }: SDKConfigCardProps) => {
+  const { darkMode, toggleDarkMode } = usePreferences();
   const [visible, setVisible] = useState(startVisible ?? false);
   const { colors } = useTheme();
 
@@ -45,7 +47,7 @@ export const SDKConfigCard = ({
       <MaterialIcons
         name={visible ? 'keyboard-arrow-down' : 'keyboard-arrow-right'}
         size={24}
-        color="black"
+        color={colors.text.default}
       />
     );
   };
@@ -54,6 +56,11 @@ export const SDKConfigCard = ({
     return (
       <View style={styles.centered}>
         <LanguagePicker />
+        {/* Add toggle Dark/Light mode button */}
+        <IconButton
+          icon={darkMode ? 'theme-light-dark' : 'theme-light-dark'}
+          onPress={toggleDarkMode}
+        />
         <IconButton icon={renderIcon} onPress={() => setVisible(!visible)} />
       </View>
     );

@@ -3,6 +3,7 @@ import { ArgTypes, Story } from '@storybook/react-native';
 import React from 'react';
 import NetworkList from '../utils/networks';
 import MetaMaskSDK, { SDKProvider } from '@metamask/sdk';
+import { KeyExchangeMessageType } from '@metamask/sdk-communication-layer';
 
 export const defaultSDKtArgs: Partial<SDKState> = {
   sdk: {
@@ -36,6 +37,15 @@ export const sdkProviderArgTypes: ArgTypes<Partial<SDKState>> = {
     options: chainIdOptions,
     defaultValue: defaultSDKtArgs.chainId,
   },
+  keyExchangeStep: {
+    control: 'select',
+    options: KeyExchangeMessageType,
+    defaultValue: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+  },
+  rpcHistory: {
+    control: 'object',
+    defaultValue: {},
+  },
   extensionActive: { control: 'boolean' },
 };
 
@@ -48,7 +58,21 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
     chainId,
     readOnlyCalls,
     extensionActive,
+    rpcHistory,
+    keyExchangeStep,
   } = sc.args;
+
+  const status: SDKState['status'] = {
+    keyInfo: {
+      keysExchanged: true,
+      ecies: {
+        private: 'aaa',
+        public: 'bbb',
+        otherPubKey: 'ccc',
+      },
+      step: keyExchangeStep,
+    },
+  };
   console.log('sc.args', sc.args);
   return (
     <SDKContext.Provider
@@ -60,6 +84,8 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
         connecting,
         account,
         chainId,
+        rpcHistory,
+        status,
       }}
     >
       <ThisStory />

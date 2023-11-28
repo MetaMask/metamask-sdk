@@ -1,7 +1,7 @@
-import { lightTheme } from '@metamask/design-tokens';
+import { darkTheme, lightTheme } from '@metamask/design-tokens';
 import React, { useContext, useMemo } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { PaperProvider } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast, {
   ToastContext,
@@ -14,6 +14,7 @@ import {
 import { ThemeContext } from '../theme';
 import { LanguageProvider } from './language-provider';
 import { PreferencesProvider, usePreferences } from './preferences-provider';
+import { Platform } from 'react-native';
 
 export const WithToasts = ({ children }: { children: React.ReactNode }) => {
   const { toastRef } = useContext(ToastContext);
@@ -32,15 +33,17 @@ export const WithPreferences = ({
   children: React.ReactNode;
 }) => {
   const preferences = usePreferences();
-  console.log(`WithPreferences::lightTheme`, lightTheme);
   return (
     <PaperProvider
-      // theme={preferences.theme}
+      theme={preferences.darkMode ? MD3DarkTheme : MD3LightTheme}
       settings={{
-        rippleEffectEnabled: preferences.rippleEffectEnabled,
+        rippleEffectEnabled:
+          Platform.OS === 'web' ? false : preferences.rippleEffectEnabled,
       }}
     >
-      <ThemeContext.Provider value={lightTheme}>
+      <ThemeContext.Provider
+        value={preferences.darkMode ? darkTheme : lightTheme}
+      >
         <ToastContextWrapper>{children}</ToastContextWrapper>
       </ThemeContext.Provider>
     </PaperProvider>
@@ -56,22 +59,26 @@ export const UIProvider = ({
   preferences?: Partial<ThemePreferences & ThemeActions>;
   locale?: string;
 }) => {
+  const [darkMode, setDarkMode] = React.useState(false);
+
   // Set default Preferences
   const activePreferences: ThemePreferences & ThemeActions = useMemo(() => {
     return {
+      darkMode,
       customFontLoaded: true,
       collapsed: false,
-      darkMode: false,
       rippleEffectEnabled: true,
       toggleCustomFont: () => {},
-      toggleDarkMode: () => {},
+      toggleDarkMode: () => {
+        setDarkMode((oldValue) => !oldValue);
+      },
       toggleThemeVersion: () => {},
       toggleRippleEffect: () => {},
       setThemeColor: () => {},
       toggleCollapsed: () => {},
       ...preferences,
     };
-  }, [preferences]);
+  }, [preferences, darkMode]);
 
   return (
     <SafeAreaProvider>
