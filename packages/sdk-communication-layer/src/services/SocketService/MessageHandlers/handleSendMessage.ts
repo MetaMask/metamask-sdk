@@ -44,7 +44,6 @@ export function handleSendMessage(
 
   validateKeyExchange(instance, message);
 
-  // TODO Prevent sending same method multiple time which can sometime happen during initialization
   trackRpcMethod(instance, message);
 
   encryptAndSendMessage(instance, message);

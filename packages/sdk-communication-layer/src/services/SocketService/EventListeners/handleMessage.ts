@@ -198,7 +198,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
           elapsedTime,
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
-        instance.emit(EventType.RPC_UPDATE);
+        instance.emit(EventType.RPC_UPDATE, rpcResult);
 
         if (instance.state.debug) {
           console.debug(

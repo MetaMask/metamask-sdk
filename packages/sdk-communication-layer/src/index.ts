@@ -29,6 +29,7 @@ import { WalletInfo } from './types/WalletInfo';
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { StorageManager, StorageManagerProps } from './types/StorageManager';
 import { TrackingEvents } from './types/TrackingEvent';
+import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 
 export type {
   AutoConnectOptions,
@@ -59,6 +60,7 @@ export {
   MessageType,
   PlatformType,
   RemoteCommunication,
+  KeyExchangeMessageType,
   SendAnalytics,
   SocketService,
   TrackingEvents,
