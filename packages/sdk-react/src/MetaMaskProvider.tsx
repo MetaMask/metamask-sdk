@@ -6,9 +6,9 @@ import {
   SDKProvider,
   ServiceStatus,
 } from '@metamask/sdk';
-import { RPCMethodCache } from '@metamask/sdk-communication-layer';
+import { ConnectionStatus, RPCMethodCache, RPCMethodResult } from '@metamask/sdk-communication-layer';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
 import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
 import { useHandleConnectEvent } from './EventsHandlers/useHandleConnectEvent';
@@ -30,6 +30,7 @@ export interface EventHandlerProps {
   setTrigger: React.Dispatch<React.SetStateAction<number>>;
   setRPCHistory: React.Dispatch<React.SetStateAction<RPCMethodCache>>;
   debug?: boolean;
+  synced?: boolean;
   chainId?: string;
   activeProvider?: SDKProvider;
   sdk?: MetaMaskSDK;
@@ -51,6 +52,7 @@ export interface SDKState {
   account?: string;
   status?: ServiceStatus;
   rpcHistory?: RPCMethodCache;
+  syncing?: boolean;
 }
 
 const initProps: SDKState = {
@@ -73,6 +75,7 @@ const MetaMaskProviderClient = ({
 }) => {
   const [sdk, setSDK] = useState<MetaMaskSDK>();
 
+  const [lastRpcId, setLastRpcId] = useState<string>('');
   const [ready, setReady] = useState<boolean>(false);
   const [readOnlyCalls, setReadOnlyCalls] = useState<boolean>(false);
   const [connecting, setConnecting] = useState<boolean>(false);
@@ -81,6 +84,7 @@ const MetaMaskProviderClient = ({
   const [chainId, setChainId] = useState<string>();
   const [balance, setBalance] = useState<string>();
   const [balanceProcessing, setBalanceProcessing] = useState<boolean>(false);
+  const [balanceQuery, setBalanceQuery] = useState<string>('');
   const [account, setAccount] = useState<string>();
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
@@ -100,12 +104,13 @@ const MetaMaskProviderClient = ({
     setRPCHistory,
     debug,
     chainId,
-    activeProvider: sdk?.getProvider(),
+    activeProvider: undefined,
     sdk,
   };
 
   const onConnecting = useHandleOnConnectingEvent(eventHandlerProps);
 
+  // FIXME calling directly useHandleInitializedEvent skip the parameter of the event.
   const onInitialized = useHandleInitializedEvent(eventHandlerProps);
 
   const onConnect = useHandleConnectEvent(eventHandlerProps);
@@ -120,10 +125,47 @@ const MetaMaskProviderClient = ({
 
   const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
 
+  const syncing = useMemo( () => {
+    const socketDisconnected = status?.connectionStatus === ConnectionStatus.DISCONNECTED
+
+    // Syncing if rpc calls have been unprocessed
+    let pendingRpcs = false;
+    for(const rpcId in rpcHistory) {
+      const rpc = rpcHistory[rpcId];
+      if(rpc.result === undefined && rpc.error === undefined) {
+        pendingRpcs = true;
+        if(socketDisconnected) {
+          console.warn(`[MetamaskProvider] socket disconnected but rpc ${rpcId} not processed yet`);
+          // TODO should we force the error has timeout here?
+        }
+        break;
+      }
+    }
+
+    return pendingRpcs;
+  }, [rpcHistory, status]);
+
   useEffect(() => {
-    if (account) {
+    const currentAddress = provider?.selectedAddress
+    if(currentAddress && currentAddress!= account) {
+      if(debug) {
+        console.debug(`[MetamaskProvider] account changed detected from ${account} to ${currentAddress}`);
+      }
+      setAccount(currentAddress);
+    }
+  }, [rpcHistory]);
+
+  useEffect(() => {
+    // avoid asking balance multiple times on same account/chain
+    const currentBalanceQuery = `${account}${chainId}`;
+
+    if (account?.startsWith('0x') && chainId?.startsWith('0x') && currentBalanceQuery !== balanceQuery) {
       // Retrieve balance of account
       setBalanceProcessing(true);
+      if(debug) {
+        console.log(`[MetamaskProvider] retrieving balance of ${account} on chain ${chainId}`)
+      }
+      setBalanceQuery(currentBalanceQuery);
       sdk
         ?.getProvider()
         .request({
@@ -149,7 +191,7 @@ const MetaMaskProviderClient = ({
     } else {
       setBalance(undefined);
     }
-  }, [account, chainId]);
+  }, [account, chainId, balanceQuery]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -198,7 +240,14 @@ const MetaMaskProviderClient = ({
     activeProvider.on('chainChanged', onChainChanged);
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
-    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, () => {
+    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, (rpc: RPCMethodResult) => {
+      const completed = rpc.result !== undefined || rpc.error !== undefined;
+      if(!completed) {
+        // Only update lastRpcId to keep track of last answered rpc id
+        setLastRpcId(rpc.id);
+      } else if(rpc.id === lastRpcId) {
+        setLastRpcId(''); // Reset lastRpcId
+      }
       // hack to force a react re-render when the RPC cache is updated
       const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
       setRPCHistory(temp);
@@ -243,6 +292,7 @@ const MetaMaskProviderClient = ({
         chainId,
         error,
         status,
+        syncing,
       }}
     >
       {children}

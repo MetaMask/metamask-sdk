@@ -14,7 +14,9 @@ export const useHandleSDKStatusEvent = ({
           _serviceStatus,
         );
       }
-      setStatus(_serviceStatus);
+      // Force trigger rendering
+      const temp = JSON.parse(JSON.stringify(_serviceStatus ?? {}));
+      setStatus(temp);
     },
     [debug, setStatus],
   );
