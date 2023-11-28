@@ -1,15 +1,20 @@
 import { useSDK } from '@metamask/sdk-react';
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { getNetworkByHexChainId } from '../../../utils/networks';
+import Text from '../../../design-system/components/Texts/Text';
+import { useTheme } from '../../../theme';
 
 export interface AccountBalanceProps {
   decimals?: number;
+  withSymbol?: boolean;
 }
 export const AccountBalance: React.FC<AccountBalanceProps> = ({
   decimals = 2,
+  withSymbol = true,
 }) => {
   const { balance, chainId } = useSDK();
+  const { colors } = useTheme();
 
   const network = useMemo(() => {
     return chainId ? getNetworkByHexChainId(chainId) : undefined;
@@ -31,11 +36,16 @@ export const AccountBalance: React.FC<AccountBalanceProps> = ({
   }, [balance, decimals]);
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: colors.background.alternative, padding: 5 },
+      ]}
+    >
       <Text ellipsizeMode="middle" numberOfLines={1}>
         {formattedBalance}
       </Text>
-      <Text>{network?.symbol}</Text>
+      {withSymbol && <Text>{network?.symbol}</Text>}
     </View>
   );
 };

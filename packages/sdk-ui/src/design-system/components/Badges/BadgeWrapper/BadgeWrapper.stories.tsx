@@ -12,6 +12,9 @@ import {
   BadgePosition,
   BadgeWrapperProps,
 } from './BadgeWrapper.types';
+import Avatar from '../../Avatars/Avatar';
+import AvatarAccount from '../../Avatars/Avatar/variants/AvatarAccount';
+import Icon from '../../Icons/Icon';
 
 export default {
   title: 'Component Library/Badges/BadgeWrapper',
@@ -52,6 +55,36 @@ export const Default = (args: BadgeWrapperProps) => {
         >
           <Text variant={TextVariant.BodySM}>{'Some component'}</Text>
         </View>
+      </BadgeWrapper>
+    </View>
+  );
+};
+
+export const WrapAccount = (args: BadgeWrapperProps) => {
+  const badgeProps: BadgeProps = {
+    variant: BadgeVariant.Network,
+    name: SAMPLE_BADGENETWORK_PROPS.name,
+  };
+
+  const BadgeElement = (
+    <Badge
+      {...badgeProps}
+      variant={BadgeVariant.Network}
+      name="Ethereum"
+      imageSource={{
+        uri: 'https://assets.coingecko.com/coins/images/279/small/ethereum.png?1595348880',
+      }}
+    />
+  );
+
+  return (
+    <View style={{ margin: 10 }}>
+      <BadgeWrapper
+        anchorElementShape={args.anchorElementShape}
+        badgePosition={args.badgePosition}
+        badgeElement={BadgeElement}
+      >
+        <AvatarAccount accountAddress="0x123455" />
       </BadgeWrapper>
     </View>
   );

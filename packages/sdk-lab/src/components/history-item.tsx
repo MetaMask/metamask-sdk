@@ -15,6 +15,9 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ entry }) => {
   return (
     <div style={{ marginBottom: '10px' }}>
       <div>
+        <strong>Id:</strong> {entry.id}
+      </div>
+      <div>
         <strong>Method:</strong> {entry.method}
       </div>
       <div style={contentStyle}>

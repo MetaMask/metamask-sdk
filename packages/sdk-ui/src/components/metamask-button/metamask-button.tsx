@@ -1,7 +1,10 @@
 import { useSDK } from '@metamask/sdk-react';
 
+import color from 'color';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
+import { usePreferences } from '../../context/preferences-provider';
+import { useTheme } from '../../theme';
 import { getNetworkByHexChainId } from '../../utils/networks';
 import { MetaMaskModal } from '../metamask-modal/metamask-modal';
 import { ConnectButton } from './connect-button/connect-button';
@@ -18,7 +21,7 @@ const getStyles = () => {
       // center and vertically align
       justifyContent: 'center',
       alignItems: 'center',
-      padding: 10,
+      padding: 5,
     },
   });
 };
@@ -30,26 +33,26 @@ export interface Account {
 
 export interface MetaMaskButtonProps {
   color?: 'blue' | 'white' | 'orange';
-  theme?: 'dark' | 'light';
   shape?: 'rectangle' | 'rounded' | 'rounded-full';
   icon?: 'original' | 'simplified' | 'no-icon';
-  text?: 'Connect with MetaMask' | string;
+  text?: 'Connect MetaMask' | string;
   connectedComponent?: React.ReactNode;
   buttonStyle?: StyleProp<ViewStyle>;
 }
 
 export const MetaMaskButton = ({
-  color,
-  theme = 'dark',
+  color: backgroundColor,
   shape,
   icon,
-  text = 'Connect with MetaMask',
+  text = 'Connect wallet',
   buttonStyle,
 }: // connectedType = 'network-account-balance', // keep for reference and future implementation
 MetaMaskButtonProps) => {
   const { sdk, connected, error, account, chainId } = useSDK();
+  const { colors } = useTheme();
   const styles = useMemo(() => getStyles(), []);
   const [modalOpen, setModalOpen] = useState(false);
+  const { darkMode } = usePreferences();
 
   useEffect(() => {
     console.log('sdk', sdk);
@@ -81,7 +84,6 @@ MetaMaskButtonProps) => {
   };
 
   const getColors = () => {
-    const white010 = '#FCFCFC';
     const orange500 = '#f97316';
     const red500 = '#ef4444';
     const blue500 = '#3b82f6';
@@ -91,14 +93,18 @@ MetaMaskButtonProps) => {
 
     if (!connected && error) {
       bgColor = red500;
-    } else if (connected && theme === 'light') {
-      bgColor = white;
     } else if (connected) {
-      bgColor = white010;
-    } else if (color === 'blue') {
+      bgColor = colors.background.default;
+    } else if (backgroundColor === 'blue') {
       bgColor = blue500;
-    } else if (color === 'white') {
+    } else if (backgroundColor === 'orange') {
+      bgColor = orange500;
+    } else if (backgroundColor === 'white') {
       bgColor = white;
+    }
+
+    if (darkMode) {
+      bgColor = color(bgColor).darken(0.3).hex(); // Darken the color by 30%
     }
 
     return {
@@ -126,7 +132,7 @@ MetaMaskButtonProps) => {
   );
 
   const renderDisconnected = () => (
-    <ConnectButton text={text} icon={icon} color={color} />
+    <ConnectButton text={text} icon={icon} color={backgroundColor} />
   );
 
   return (

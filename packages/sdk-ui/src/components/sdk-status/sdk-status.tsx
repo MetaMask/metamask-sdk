@@ -1,8 +1,9 @@
 import { useSDK } from '@metamask/sdk-react';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { ActivityIndicator } from 'react-native-paper';
 import { ItemView } from '../item-view/item-view';
+import Text from '../../design-system/components/Texts/Text';
 
 const styles = StyleSheet.create({
   container: {},
@@ -47,18 +48,8 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
           {!extensionActive && (
             <>
               <ItemView
-                label="Socket Server"
-                value={serviceStatus?.channelConfig?.channelId}
-              />
-              <ItemView
                 label="ChannelId"
                 value={serviceStatus?.channelConfig?.channelId}
-              />
-              <ItemView
-                label="Expiration"
-                value={
-                  serviceStatus?.channelConfig?.validUntil.toString() ?? ''
-                }
               />
             </>
           )}

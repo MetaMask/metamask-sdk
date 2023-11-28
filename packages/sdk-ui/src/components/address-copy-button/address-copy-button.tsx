@@ -6,11 +6,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { IconButton, Text } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import {
   ToastContext,
   ToastVariants,
 } from '../../design-system/components/Toast';
+import Text from '../../design-system/components/Texts/Text';
 
 const sizeMap = {
   xs: 12,
@@ -63,10 +64,7 @@ export const AddressCopyButton: React.FC<AddressCopyButtonProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    width: '100%',
-  },
+  container: {},
   pressable: {
     display: 'flex',
     justifyContent: 'center',
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
     maxWidth: '100%', // Ensure this does not exceed the parent width
   },
   address: {
-    maxWidth: '90%',
+    maxWidth: 200,
     flexShrink: 1,
   },
 });

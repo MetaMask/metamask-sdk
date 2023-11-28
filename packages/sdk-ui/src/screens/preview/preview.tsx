@@ -119,12 +119,7 @@ export const PreviewScreen = () => {
           />
         </View>
         <View style={styles.componentContainer}>
-          <MetaMaskButton
-            icon="original"
-            shape="rectangle"
-            theme="light"
-            color="white"
-          />
+          <MetaMaskButton icon="original" shape="rectangle" color="white" />
         </View>
       </View>
     </View>

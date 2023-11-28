@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-import Text from '../../design-system/components/Texts/Text';
 import { useTheme } from '../../theme';
+import Text from '../../design-system/components/Texts/Text';
+import { Theme } from '@metamask/design-tokens';
 
 export interface ItemViewProps {
   label: string;
@@ -13,29 +14,31 @@ export interface ItemViewProps {
   contentStyle?: StyleProp<ViewStyle>;
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    padding: 8,
-    border: '1px solid black',
-    borderRadius: 8,
-    margin: 8,
-    // width: '100%',
-  },
-  label: {
-    fontWeight: 'bold',
-  },
-  content: {
-    paddingLeft: 5,
-    paddingTop: 5,
-    wordWrap: 'break-word',
-    whiteSpace: 'pre-wrap',
-    maxWidth: '100%',
-  },
-});
+const getStyles = ({ theme }: { theme: Theme }) =>
+  StyleSheet.create({
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start',
+      padding: 8,
+      backgroundColor: theme.colors.background.default,
+      border: '1px solid black',
+      borderRadius: 8,
+      margin: 8,
+      // width: '100%',
+    },
+    label: {
+      fontWeight: 'bold',
+    },
+    content: {
+      paddingLeft: 5,
+      paddingTop: 5,
+      wordWrap: 'break-word',
+      whiteSpace: 'pre-wrap',
+      maxWidth: '100%',
+    },
+  });
 
 export const ItemView = ({
   label,
@@ -45,7 +48,8 @@ export const ItemView = ({
   containerStyle,
   contentStyle,
 }: ItemViewProps) => {
-  const { colors } = useTheme();
+  const theme = useTheme();
+  const styles = useMemo(() => getStyles({ theme }), [theme]);
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -56,7 +60,9 @@ export const ItemView = ({
         ) : (
           <Text
             style={{
-              color: error ? colors.error.default : colors.text.default,
+              color: error
+                ? theme.colors.error.default
+                : theme.colors.text.default,
             }}
           >
             {value}
