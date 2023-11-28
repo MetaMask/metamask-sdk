@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0]
+### Uncategorized
+- fix: balance not updating on metamask button ([#553](https://github.com/MetaMask/metamask-sdk/pull/553))
+
 ## [0.13.0]
 ### Uncategorized
 - feat: add sdk instance to window scope to prevent double init ([#546](https://github.com/MetaMask/metamask-sdk/pull/546))
@@ -85,7 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.13.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.0...HEAD
+[0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.13.0...@metamask/sdk-react-ui@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.4...@metamask/sdk-react-ui@0.13.0
 [0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.3...@metamask/sdk-react-ui@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.2...@metamask/sdk-react-ui@0.12.3
