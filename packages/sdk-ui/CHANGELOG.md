@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.1.5]
-### Uncategorized
+### Added
 - feat: more cross functional ui components ([#557](https://github.com/MetaMask/metamask-sdk/pull/557))
 
 ## [0.1.4]
-### Uncategorized
+### Added
 - fix: storybook setup ([#547](https://github.com/MetaMask/metamask-sdk/pull/547))
 - fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
 
