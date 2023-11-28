@@ -73,7 +73,7 @@ root.render(
             }}
           />
           <App />
-          <FloatingMetaMaskButton />
+          <FloatingMetaMaskButton distance={{ bottom: 40 }} />
         </WithUI>
       </WithSDKConfig>
     </SDKConfigProvider>

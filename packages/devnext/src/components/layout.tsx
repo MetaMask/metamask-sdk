@@ -1,4 +1,8 @@
-import { FloatingMetaMaskButton, SDKConfigCard } from '@metamask/sdk-ui';
+import {
+  FloatingMetaMaskButton,
+  SDKDebugPanel,
+  SDKConfigCard,
+} from '@metamask/sdk-ui';
 import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
 
@@ -17,8 +21,9 @@ export const Layout = ({ children }: LayoutProps) => {
           router.push('/');
         }}
       />
-      {children}
       <FloatingMetaMaskButton distance={{ bottom: 40 }} />
+      {children}
+      <SDKDebugPanel bottom={40} />
     </div>
   );
 };

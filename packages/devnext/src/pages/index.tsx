@@ -29,15 +29,6 @@ export default function Home() {
         <div style={{ padding: 20 }}>
           <MetaMaskButton />
         </div>
-        <div>
-          {/* <ADD />
-          <PreviewScreen />
-          <Avatar
-            variant={AvatarVariant.Network}
-            name="Ethereum"
-            imageSource={assets.ethereum}
-          /> */}
-        </div>
       </div>
     </div>
   );

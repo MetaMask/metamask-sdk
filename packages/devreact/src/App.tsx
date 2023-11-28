@@ -1,10 +1,11 @@
 import React from 'react';
 import { SDKProvider } from '@metamask/sdk';
-import { useSDK } from '@metamask/sdk-react';
+import { useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import Web from 'web3';
 import './App.css';
 import { MetaMaskButton } from '@metamask/sdk-ui';
+import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
 
 declare global {
   interface Window {
@@ -360,6 +361,7 @@ export const App = () => {
       <p>{`Account balance: ${balance}`}</p>
       <p>{`Last request response: ${response}`}</p>
       <p>{`Connected: ${connected}`}</p>
+      <RPCHistoryViewer />
     </div>
   );
 };
