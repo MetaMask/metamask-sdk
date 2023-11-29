@@ -1,5 +1,6 @@
 import { useSDK, useSDKConfig } from '@metamask/sdk-ui';
-import metamaskSDK from '@web3-onboard/metamask';
+// import metamaskSDK from '@web3-onboard/metamask';
+import metamaskSDK from '../connector/onboard-sdk-connector';
 import { init, useConnectWallet } from '@web3-onboard/react';
 import React from 'react';
 

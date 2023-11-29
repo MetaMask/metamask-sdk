@@ -250,6 +250,59 @@ const Demo = () => {
     });
   };
 
+  const addEthereumChain = async () => {
+    if (!provider) {
+      throw new Error(`invalid ethereum provider`);
+    }
+
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
+
+    try {
+      const response = await provider?.request({
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
+            rpcUrls: ['https://polygon-rpc.com/'],
+          },
+        ],
+      });
+      console.debug(`response`, response);
+      setResponse(response);
+    } catch (e) {
+      console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const changeNetwork = async (hexChainId: string) => {
+    console.debug(`switching to network chainId=${hexChainId}`);
+    setRequesting(true);
+    setRpcError(null);
+    setResponse(''); // reset response first
+
+    try {
+      const response = await provider?.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
+      });
+      console.debug(`response`, response);
+      setResponse(response);
+    } catch (e) {
+      console.log(e);
+      setRpcError(e);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   const testReadOnlyCalls = async () => {
     try {
       await checkBalances();
@@ -543,6 +596,22 @@ const Demo = () => {
 
               <button style={{ padding: 10, margin: 10 }} onClick={testEthers}>
                 testEthers
+              </button>
+
+              <button
+                className={'Button-Normal'}
+                style={{ padding: 10, margin: 10 }}
+                onClick={() => changeNetwork('0x89')}
+              >
+                Switch to Polygon
+              </button>
+
+              <button
+                className={'Button-Normal'}
+                style={{ padding: 10, margin: 10 }}
+                onClick={addEthereumChain}
+              >
+                Add Polygon Chain
               </button>
 
               <button
