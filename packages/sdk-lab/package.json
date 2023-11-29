@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-lab",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "MetaMask SDK lab -- alpha components for sdk development",
   "module": "dist/esm/index.js",
   "types": "dist/esm/src/index.d.ts",

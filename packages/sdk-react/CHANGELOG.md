@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0]
+### Added
+- feat: account reset issue on _init event ([#556](https://github.com/MetaMask/metamask-sdk/pull/556))
+- feat: expose rpc history and keep track of last call ([#555](https://github.com/MetaMask/metamask-sdk/pull/555))
+
 ## [0.13.0]
-### Uncategorized
+### Added
 - fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
 
 ## [0.12.4]
@@ -20,11 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: sdk config context as part of sdk-react ([#529](https://github.com/MetaMask/metamask-sdk/pull/529))
 
 ## [0.12.2]
-### Uncategorized
-- chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
-- chore: trigger release ([#523](https://github.com/MetaMask/metamask-sdk/pull/523))
-- feat: release 39.0.0 ([#520](https://github.com/MetaMask/metamask-sdk/pull/520))
-
 ### Added
 - feat: add processing state when computing balance ([#519](https://github.com/MetaMask/metamask-sdk/pull/519))
 - feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
@@ -116,7 +116,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.0...HEAD
+[0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...@metamask/sdk-react@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...@metamask/sdk-react@0.13.0
 [0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.3...@metamask/sdk-react@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.2...@metamask/sdk-react@0.12.3

@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5]
+### Added
+- feat: more cross functional ui components ([#557](https://github.com/MetaMask/metamask-sdk/pull/557))
+
 ## [0.1.4]
-### Uncategorized
+### Added
 - fix: storybook setup ([#547](https://github.com/MetaMask/metamask-sdk/pull/547))
 - fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
 
@@ -37,7 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.5...HEAD
+[0.1.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.4...@metamask/sdk-ui@0.1.5
 [0.1.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.3...@metamask/sdk-ui@0.1.4
 [0.1.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.2...@metamask/sdk-ui@0.1.3
 [0.1.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.1...@metamask/sdk-ui@0.1.2

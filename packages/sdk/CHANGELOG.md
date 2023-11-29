@@ -6,26 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0]
+### Added
+- feat: new rpc call metamask_connectwith ([#558](https://github.com/MetaMask/metamask-sdk/pull/558))
+- chore: change favicon from base64 format to url ([#550](https://github.com/MetaMask/metamask-sdk/pull/550))
+
 ## [0.13.0]
-### Uncategorized
+### Added
 - feat: add sdk instance to window scope to prevent double init ([#546](https://github.com/MetaMask/metamask-sdk/pull/546))
 - fix: transfer the extracted favicon to base64 format in setupDappMetadata ([#536](https://github.com/MetaMask/metamask-sdk/pull/536))
 
 ## [0.12.4]
-### Uncategorized
+### Added
 - sdk ui release version
 
 ## [0.12.3]
-### Uncategorized
+### Added
 - fix: regex in setupDappMetadata function ([#528](https://github.com/MetaMask/metamask-sdk/pull/528))
 - feat: add the option to add dapp icon in base64 format ([#521](https://github.com/MetaMask/metamask-sdk/pull/521))
 
 ## [0.12.2]
-### Uncategorized
-- chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
-- chore: trigger release ([#523](https://github.com/MetaMask/metamask-sdk/pull/523))
-- feat: release 39.0.0 ([#520](https://github.com/MetaMask/metamask-sdk/pull/520))
-
 ### Added
 - feat: add the option to add iconUrl to the dappMetadata ([#511](https://github.com/MetaMask/metamask-sdk/pull/511))
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
@@ -213,7 +213,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.13.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.0...HEAD
+[0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.13.0...@metamask/sdk@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.4...@metamask/sdk@0.13.0
 [0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.3...@metamask/sdk@0.12.4
 [0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.2...@metamask/sdk@0.12.3
