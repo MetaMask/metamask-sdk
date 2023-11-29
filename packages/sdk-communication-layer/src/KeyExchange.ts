@@ -233,11 +233,13 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   checkStep(stepList: string[]): void {
+    console.warn(
+      `KeyExchange::checkStep() ${this.step} ${Date.now()}`,
+      stepList,
+    );
+
     if (stepList.length > 0 && stepList.indexOf(this.step.toString()) === -1) {
-      // Graceful warning but continue communication
-      console.warn(
-        `[KeyExchange] Wrong Step "${this.step}" not within ${stepList}`,
-      );
+      throw new Error(`Wrong Step "${this.step}" not within ${stepList}`);
     }
   }
 
