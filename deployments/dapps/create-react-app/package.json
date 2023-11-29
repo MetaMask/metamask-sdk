@@ -1,6 +1,6 @@
 {
   "name": "react-dapp-sdk",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
