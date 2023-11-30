@@ -43,7 +43,7 @@
     "test:ci": "yarn workspaces foreach --no-private run test:ci"
   },
   "devDependencies": {
-    "@babel/core": "^7.21.8",
+    "@babel/core": "^7.23.5",
     "@babel/plugin-syntax-flow": "^7.21.4",
     "@babel/plugin-transform-react-jsx": "^7.21.5",
     "@commitlint/cli": "^17.6.7",
