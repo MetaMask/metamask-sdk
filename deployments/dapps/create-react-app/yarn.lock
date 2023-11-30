@@ -5106,9 +5106,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.1"
+"@metamask/sdk-communication-layer@npm:0.13.0":
+  version: 0.13.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.13.0"
   dependencies:
     bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
@@ -5118,13 +5118,13 @@ __metadata:
     socket.io-client: ^4.5.1
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 273340fbe8e677f603c5f4a91d6e2d692f85c9406ea4269da4eff1bade6b5c897b6f76749ba7cde59d10cc8a33a2912d8d1d3355d5fdcaf62b3dfe8d7e1cdaf2
+  checksum: ff2a4880e5bc731e65d2de6cf0707bffd23624be93dd2536c2ff5bb5975d3a238372179285cc7459c6d34a4057a5280a701ff12c5d0c52a539d3e96d59ab81bc
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.14.0, @metamask/sdk-communication-layer@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.14.0"
+"@metamask/sdk-communication-layer@npm:0.14.1, @metamask/sdk-communication-layer@npm:^0.14.0, @metamask/sdk-communication-layer@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@metamask/sdk-communication-layer@npm:0.14.1"
   dependencies:
     bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
@@ -5134,22 +5134,7 @@ __metadata:
     socket.io-client: ^4.5.1
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: c38f20e2e453fad98d9a82beb632becc9246a250bb2846133b29638263939a6b42e862a1dac2bc981ddfa778ff66eb6943ce8b3e722e4ff5e830de6eefb02671
-  languageName: node
-  linkType: hard
-
-"@metamask/sdk-install-modal-web@npm:0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.1"
-  dependencies:
-    "@emotion/react": ^11.10.6
-    "@emotion/styled": ^11.10.6
-    i18next: 22.5.1
-    qr-code-styling: ^1.6.0-rc.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-i18next: ^13.2.2
-  checksum: c93d607a23d74e3b25602f6c13936e4dc4d9c834a86c412dc743369196d79831c6da5e2997207ee3214561c7b367e6e771d47389bbaa7df28b0f21a2d0445b74
+  checksum: c4c2fee023a8138aa176850b904c793f4e4f4aed4f120f9c61ddf8f89ca603001418c7c0a7d2ff2709ac9a1490df5a32727b6d861d9e2727c6759bb252ac2ce8
   languageName: node
   linkType: hard
 
@@ -5168,12 +5153,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@metamask/sdk-react@npm:0.14.0"
+"@metamask/sdk-install-modal-web@npm:0.14.1":
+  version: 0.14.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.14.1"
   dependencies:
-    "@metamask/sdk": ^0.14.0
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    i18next: 22.5.1
+    qr-code-styling: ^1.6.0-rc.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-i18next: ^13.2.2
+  checksum: 9122f3d0395514a4a8c2a4da5d805587b4af5d2112c333ea2dd08fa9c2046aea2f0f91bddade05364653b06899b64a849a902d645307e393c557fd878cffd50b
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-lab@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@metamask/sdk-lab@npm:0.1.5"
+  dependencies:
+    "@fortawesome/fontawesome-svg-core": ^6.4.2
+    "@fortawesome/free-solid-svg-icons": ^6.4.2
+    "@fortawesome/react-fontawesome": ^0.2.0
     "@metamask/sdk-communication-layer": ^0.14.0
+    "@metamask/sdk-react": ^0.14.0
+    "@metamask/sdk-ui": ^0.1.5
+    i18n-js: ^4.3.2
+    i18next: ^23.6.0
+    intl-pluralrules: ^2.0.1
+    next-qrcode: ^2.5.1
+    react-i18next: ^13.3.1
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 7b66331f334b1bf353abadfe53fff270c884e99cdeafeb951fbe5fb4f9fcb35443105f60f9883f1b7c860af99c93de9fbe7fed5ab9a5410c2e9e2c897a4ee53d
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-react@npm:^0.14.0, @metamask/sdk-react@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@metamask/sdk-react@npm:0.14.1"
+  dependencies:
+    "@metamask/sdk": ^0.14.1
+    "@metamask/sdk-communication-layer": ^0.14.1
     "@react-native-async-storage/async-storage": ^1.19.6
     eth-rpc-errors: ^4.0.3
   peerDependencies:
@@ -5185,20 +5207,20 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 46a81f1771821039c19b2da23c24ec348b740ac220354fe9160aafcb24e943f6b5b07f1493873353decaac41d8b117eb0acd72aa0ef891e4b98b3f4434574f87
+  checksum: 3bf58cb97182e1657e2c50ec5749c3cc9890d16d6d8b52da53e5ee9796ea9dcc4da2fc78a7f88b5eb769336dc831d1d82b1813ff442005fa5d2104f847acc2dd
   languageName: node
   linkType: hard
 
-"@metamask/sdk-ui@npm:^0.1.5":
-  version: 0.1.5
-  resolution: "@metamask/sdk-ui@npm:0.1.5"
+"@metamask/sdk-ui@npm:^0.1.5, @metamask/sdk-ui@npm:^0.1.6":
+  version: 0.1.6
+  resolution: "@metamask/sdk-ui@npm:0.1.6"
   dependencies:
     "@metamask/controller-utils": ^5.0.2
     "@metamask/design-tokens": ^1.12.0
     "@metamask/network-controller": ^16.0.0
-    "@metamask/sdk": ^0.14.0
-    "@metamask/sdk-communication-layer": ^0.14.0
-    "@metamask/sdk-react": ^0.14.0
+    "@metamask/sdk": ^0.14.1
+    "@metamask/sdk-communication-layer": ^0.14.1
+    "@metamask/sdk-react": ^0.14.1
     "@react-native-async-storage/async-storage": ^1.19.5
     "@react-navigation/native": ^6.1.9
     "@testing-library/react-native": ^12.4.0
@@ -5228,59 +5250,18 @@ __metadata:
     react-native-svg: ^14.0.0
     react-native-vector-icons: ^10.0.2
     react-native-web: ^0.19.9
-  checksum: dcc47eb7aebbe3579a9e44e9e6f52421ca98e00b137445fc61bd83cbc5d0266f67451cb1b02fbdd816bff60b2c42c8e7ac41da44c7c11c2259276a396399dc13
+  checksum: e91166eb35c5347f3a0bb9b61675092aaa64ba48ff55c2eecc23591d4ee79705da339e5bdcdadea2ba57be8c1685464c6f4895dc6ed9a16c3c5f315fe05bd60d
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.1":
-  version: 0.12.1
-  resolution: "@metamask/sdk@npm:0.12.1"
+"@metamask/sdk@npm:^0.13.0":
+  version: 0.13.0
+  resolution: "@metamask/sdk@npm:0.13.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.1
-    "@metamask/sdk-install-modal-web": 0.12.1
-    "@react-native-async-storage/async-storage": ^1.17.11
-    "@types/dom-screen-wake-lock": ^1.0.0
-    bowser: ^2.9.0
-    cross-fetch: ^4.0.0
-    eciesjs: ^0.3.15
-    eth-rpc-errors: ^4.0.3
-    eventemitter2: ^6.4.7
-    extension-port-stream: ^2.0.1
-    i18next: 22.5.1
-    i18next-browser-languagedetector: ^7.1.0
-    obj-multiplex: ^1.0.0
-    pump: ^3.0.0
-    qrcode-terminal-nooctal: ^0.12.1
-    react-i18next: ^13.2.2
-    react-native-webview: ^11.26.0
-    readable-stream: ^2.3.7
-    rollup-plugin-visualizer: ^5.9.2
-    socket.io-client: ^4.5.1
-    util: ^0.12.4
-    uuid: ^8.3.2
-  peerDependencies:
-    react: ^18.2.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 3b71316670ae9558aed953b8240ed15612e92a7c65c9fd7537a6ec0fc73ead9d7300428163d25974860256d16e6830dba4a1e3307f916d4e38ad8c534838bf74
-  languageName: node
-  linkType: hard
-
-"@metamask/sdk@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@metamask/sdk@npm:0.14.0"
-  dependencies:
-    "@metamask/onboarding": ^1.0.1
-    "@metamask/post-message-stream": ^6.1.0
-    "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.14.0
+    "@metamask/sdk-communication-layer": 0.13.0
     "@metamask/sdk-install-modal-web": 0.13.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
@@ -5310,7 +5291,48 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 1ad84e82046e1b97680c7e510197a82aceb040e9bf260b0c7a8a8e49dff67b5b6fe02dcd4ecd68ac8a0c3b392a944e5a50601bac0ce05623593ea3510591a40f
+  checksum: 9da7b8005ad2800e1a4c0e8d16fefefafd7d132b1d3c45e487c3d09c2af64e6cfe4f1e1e3f2c581c993648623f2752c6807891f17c45f6b1870075cec06f4097
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "@metamask/sdk@npm:0.14.1"
+  dependencies:
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/post-message-stream": ^6.1.0
+    "@metamask/providers": ^10.2.1
+    "@metamask/sdk-communication-layer": 0.14.1
+    "@metamask/sdk-install-modal-web": 0.14.1
+    "@react-native-async-storage/async-storage": ^1.17.11
+    "@types/dom-screen-wake-lock": ^1.0.0
+    bowser: ^2.9.0
+    cross-fetch: ^4.0.0
+    eciesjs: ^0.3.15
+    eth-rpc-errors: ^4.0.3
+    eventemitter2: ^6.4.7
+    extension-port-stream: ^2.0.1
+    i18next: 22.5.1
+    i18next-browser-languagedetector: ^7.1.0
+    obj-multiplex: ^1.0.0
+    pump: ^3.0.0
+    qrcode-terminal-nooctal: ^0.12.1
+    react-i18next: ^13.2.2
+    react-native-webview: ^11.26.0
+    readable-stream: ^2.3.7
+    rollup-plugin-visualizer: ^5.9.2
+    socket.io-client: ^4.5.1
+    util: ^0.12.4
+    uuid: ^8.3.2
+  peerDependencies:
+    react: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-native:
+      optional: true
+  checksum: e18024828ee7e3f4009640fcb928981c39f5783e6165827fe7d5b79999d66a05841413cc9f4b0dd164c9add5a479003a3e283337f4a6cbf7c6d9c68a07eea2ee
   languageName: node
   linkType: hard
 
@@ -6891,13 +6913,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@web3-onboard/metamask@npm:^2.0.2-alpha.2":
-  version: 2.0.2-alpha.2
-  resolution: "@web3-onboard/metamask@npm:2.0.2-alpha.2"
+"@web3-onboard/metamask@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@web3-onboard/metamask@npm:2.0.2"
   dependencies:
-    "@metamask/sdk": ^0.12.1
+    "@metamask/sdk": ^0.13.0
     "@web3-onboard/common": ^2.3.3
-  checksum: 84446a614ee096aa09108213b6df466d1d48b0c49cf92852d1c059a8f508f043d320a119cdc5596209de6225afe3637dd66ace0c52b77a8f5ee957fefd9d559a
+  checksum: b6ee0eaa80edc9979079c8938db6dd2a5f0e07f46befab7ef8606f604c0c31ccab0a1ce9162026372f70dcc1f9f23152dbe8ad497e4d62bc0b0007f03a00b1eb
   languageName: node
   linkType: hard
 
@@ -16931,9 +16953,10 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.14.0
-    "@metamask/sdk-react": ^0.14.0
-    "@metamask/sdk-ui": ^0.1.5
+    "@metamask/sdk": ^0.14.1
+    "@metamask/sdk-lab": ^0.1.5
+    "@metamask/sdk-react": ^0.14.1
+    "@metamask/sdk-ui": ^0.1.6
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0
@@ -16943,7 +16966,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^6.12.0
     "@typescript-eslint/parser": ^6.12.0
     "@web3-onboard/injected-wallets": ^2.10.9
-    "@web3-onboard/metamask": ^2.0.2-alpha.2
+    "@web3-onboard/metamask": ^2.0.2
     "@web3-onboard/react": ^2.8.13
     babel-loader: ^9.1.3
     buffer: ^6.0.3
