@@ -17,7 +17,7 @@ export interface SDKConfigContextProps {
 
 const initProps: SDKConfigContextProps = {
   socketServer: DEFAULT_SERVER_URL,
-  useDeeplink: true,
+  useDeeplink: false,
   checkInstallationImmediately: false,
   debug: true,
   logs: {

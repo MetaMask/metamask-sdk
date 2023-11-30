@@ -9,6 +9,8 @@ export const Layout = ({ children }: LayoutProps) => {
   return (
     <div>
       <SDKConfigCard
+        title="SDK Playground"
+        options={{ showQRCode: true }}
         onHomePress={() => {
           window.location.href = '/';
         }}
