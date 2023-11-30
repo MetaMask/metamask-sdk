@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import {
+  Pressable,
+  StyleProp,
+  StyleSheet,
+  View,
+  ViewStyle,
+} from 'react-native';
 import { IconButton } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -80,9 +86,12 @@ export const SDKConfigCard = ({
     >
       <View style={styles.centered}>
         {renderLeft()}
-        <View style={styles.titleContainer}>
+        <Pressable
+          style={styles.titleContainer}
+          onPress={() => setVisible((v) => !v)}
+        >
           <Text>{title}</Text>
-        </View>
+        </Pressable>
         <View>{renderRight()}</View>
       </View>
       {visible && <SDKConfig {...options} />}
