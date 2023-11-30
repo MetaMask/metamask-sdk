@@ -66,6 +66,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/code-frame@npm:^7.23.5":
+  version: 7.23.5
+  resolution: "@babel/code-frame@npm:7.23.5"
+  dependencies:
+    "@babel/highlight": ^7.23.4
+    chalk: ^2.4.2
+  checksum: d90981fdf56a2824a9b14d19a4c0e8db93633fd488c772624b4e83e0ceac6039a27cd298a247c3214faa952bf803ba23696172ae7e7235f3b97f43ba278c569a
+  languageName: node
+  linkType: hard
+
 "@babel/compat-data@npm:^7.22.20, @babel/compat-data@npm:^7.22.6, @babel/compat-data@npm:^7.22.9":
   version: 7.22.20
   resolution: "@babel/compat-data@npm:7.22.20"
@@ -119,6 +129,18 @@ __metadata:
     "@jridgewell/trace-mapping": ^0.3.17
     jsesc: ^2.5.1
   checksum: 5b2a3ccdc3634f6ea86e0a442722bcd430238369432d31f15b428a4ee8013c2f4f917b5b135bf4fc1d0a3e2f87f10fd4ce5d07955ecc2d3b9400a05c2a481374
+  languageName: node
+  linkType: hard
+
+"@babel/generator@npm:^7.23.5":
+  version: 7.23.5
+  resolution: "@babel/generator@npm:7.23.5"
+  dependencies:
+    "@babel/types": ^7.23.5
+    "@jridgewell/gen-mapping": ^0.3.2
+    "@jridgewell/trace-mapping": ^0.3.17
+    jsesc: ^2.5.1
+  checksum: 845ddda7cf38a3edf4be221cc8a439dee9ea6031355146a1a74047aa8007bc030305b27d8c68ec9e311722c910610bde38c0e13a9ce55225251e7cb7e7f3edc8
   languageName: node
   linkType: hard
 
@@ -214,6 +236,16 @@ __metadata:
     "@babel/template": ^7.22.5
     "@babel/types": ^7.22.5
   checksum: 6b1f6ce1b1f4e513bf2c8385a557ea0dd7fa37971b9002ad19268ca4384bbe90c09681fe4c076013f33deabc63a53b341ed91e792de741b4b35e01c00238177a
+  languageName: node
+  linkType: hard
+
+"@babel/helper-function-name@npm:^7.23.0":
+  version: 7.23.0
+  resolution: "@babel/helper-function-name@npm:7.23.0"
+  dependencies:
+    "@babel/template": ^7.22.15
+    "@babel/types": ^7.23.0
+  checksum: e44542257b2d4634a1f979244eb2a4ad8e6d75eb6761b4cfceb56b562f7db150d134bc538c8e6adca3783e3bc31be949071527aa8e3aab7867d1ad2d84a26e10
   languageName: node
   linkType: hard
 
@@ -335,6 +367,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/helper-string-parser@npm:^7.23.4":
+  version: 7.23.4
+  resolution: "@babel/helper-string-parser@npm:7.23.4"
+  checksum: c0641144cf1a7e7dc93f3d5f16d5327465b6cf5d036b48be61ecba41e1eece161b48f46b7f960951b67f8c3533ce506b16dece576baef4d8b3b49f8c65410f90
+  languageName: node
+  linkType: hard
+
 "@babel/helper-validator-identifier@npm:^7.22.19, @babel/helper-validator-identifier@npm:^7.22.20, @babel/helper-validator-identifier@npm:^7.22.5":
   version: 7.22.20
   resolution: "@babel/helper-validator-identifier@npm:7.22.20"
@@ -382,12 +421,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/highlight@npm:^7.23.4":
+  version: 7.23.4
+  resolution: "@babel/highlight@npm:7.23.4"
+  dependencies:
+    "@babel/helper-validator-identifier": ^7.22.20
+    chalk: ^2.4.2
+    js-tokens: ^4.0.0
+  checksum: 643acecdc235f87d925979a979b539a5d7d1f31ae7db8d89047269082694122d11aa85351304c9c978ceeb6d250591ccadb06c366f358ccee08bb9c122476b89
+  languageName: node
+  linkType: hard
+
 "@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.14.7, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.22.15, @babel/parser@npm:^7.22.16":
   version: 7.22.16
   resolution: "@babel/parser@npm:7.22.16"
   bin:
     parser: ./bin/babel-parser.js
   checksum: 944c756b5bdeb07b9fec16ecef6b3c61aff9d4c4b924abadcf01afa1840a740b8e2357ae00482b5b37daad6d2bfd848c947f27ad65138d687b6fdc924bc59edd
+  languageName: node
+  linkType: hard
+
+"@babel/parser@npm:^7.23.5":
+  version: 7.23.5
+  resolution: "@babel/parser@npm:7.23.5"
+  bin:
+    parser: ./bin/babel-parser.js
+  checksum: ea763629310f71580c4a3ea9d3705195b7ba994ada2cc98f9a584ebfdacf54e92b2735d351672824c2c2b03c7f19206899f4d95650d85ce514a822b19a8734c7
   languageName: node
   linkType: hard
 
@@ -1621,20 +1680,20 @@ __metadata:
   linkType: hard
 
 "@babel/traverse@npm:^7.22.15, @babel/traverse@npm:^7.22.20, @babel/traverse@npm:^7.7.2":
-  version: 7.22.20
-  resolution: "@babel/traverse@npm:7.22.20"
+  version: 7.23.5
+  resolution: "@babel/traverse@npm:7.23.5"
   dependencies:
-    "@babel/code-frame": ^7.22.13
-    "@babel/generator": ^7.22.15
+    "@babel/code-frame": ^7.23.5
+    "@babel/generator": ^7.23.5
     "@babel/helper-environment-visitor": ^7.22.20
-    "@babel/helper-function-name": ^7.22.5
+    "@babel/helper-function-name": ^7.23.0
     "@babel/helper-hoist-variables": ^7.22.5
     "@babel/helper-split-export-declaration": ^7.22.6
-    "@babel/parser": ^7.22.16
-    "@babel/types": ^7.22.19
+    "@babel/parser": ^7.23.5
+    "@babel/types": ^7.23.5
     debug: ^4.1.0
     globals: ^11.1.0
-  checksum: 97da9afa7f8f505ce52c36ac2531129bc4a0e250880aaf9b467dc044f30a5bce2b756c1af4d961958bc225659546e811a7d536ab3d920fd60921087989b841b9
+  checksum: 0558b05360850c3ad6384e85bd55092126a8d5f93e29a8e227dd58fa1f9e1a4c25fd337c07c7ae509f0983e7a2b1e761ffdcfaa77a1e1bedbc867058e1de5a7d
   languageName: node
   linkType: hard
 
@@ -1646,6 +1705,17 @@ __metadata:
     "@babel/helper-validator-identifier": ^7.22.19
     to-fast-properties: ^2.0.0
   checksum: 2d69740e69b55ba36ece0c17d5afb7b7213b34297157df39ef9ba24965aff677c56f014413052ecc5b2fbbf26910c63e5bb24a969df84d7a17153750cf75915e
+  languageName: node
+  linkType: hard
+
+"@babel/types@npm:^7.23.0, @babel/types@npm:^7.23.5":
+  version: 7.23.5
+  resolution: "@babel/types@npm:7.23.5"
+  dependencies:
+    "@babel/helper-string-parser": ^7.23.4
+    "@babel/helper-validator-identifier": ^7.22.20
+    to-fast-properties: ^2.0.0
+  checksum: 3d21774480a459ef13b41c2e32700d927af649e04b70c5d164814d8e04ab584af66a93330602c2925e1a6925c2b829cc153418a613a4e7d79d011be1f29ad4b2
   languageName: node
   linkType: hard
 
@@ -3011,23 +3081,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
+"@metamask/sdk-communication-layer@npm:0.12.3, @metamask/sdk-communication-layer@npm:^0.12.3":
+  version: 0.12.3
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.3"
   dependencies:
+    bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
+    utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 9042d7b38832dfb2c1efa93441ee4f9e8fee76da22a60d860720cdd0091d08dd34e0234269eecdde64c11868d6e2f0d566331815658b313d44aa329f221f390e
+  checksum: 4bdeca91c96ef718d90df4a55f83f1a5632170bb9f81ce8631e182fba8c8fd79a98eb76ac30b9a955620bb762fd3eb288c23bd12ca19632b46ec2c45d287e16d
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.0"
+"@metamask/sdk-install-modal-web@npm:0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.2"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -3036,16 +3108,16 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: 4fd1eb7a108bc1ac123731906aba5930fd4818a40448b94dc0c909bc60376da7d25e95fe163ad7983936f7525c93078b05047d66e1a39a3f6780c56ee5694258
+  checksum: 21b6af3fe1e40e58ca9896ff96dded6e5b65b35e605b2d73ac7455d06fcbe2fa5aa36ff634baa3d5e30771a49910884a5ec5a38d327a273b111115be3accba5b
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-ui@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-react-ui@npm:0.12.0"
+"@metamask/sdk-react-ui@npm:^0.12.2":
+  version: 0.12.4
+  resolution: "@metamask/sdk-react-ui@npm:0.12.4"
   dependencies:
     "@headlessui/react": ^1.6.6
-    "@metamask/sdk-react": 0.12.0
+    "@metamask/sdk-react": 0.12.4
     ethers: ^5.6.9
     mersenne-twister: ^1.1.0
     react-copy-to-clipboard: ^5.1.0
@@ -3055,31 +3127,40 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 7d68aafab02e5fcfd607be96b4e5568d16b0b3fdbf08966ab2f162071c3524f9eb2800e568fbc39550166e389022a792b718c0b3fe237bfe5fd183326fe94803
+  checksum: 04ec2ed7f9046c6ec202f2d1acd4116596d1e1872cc551023709059dbe0b783cb4cbcc1503b948154b4a22608d6b406f6fbf1a0328ad98e41b4f801abddfb685
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-react@npm:0.12.0"
+"@metamask/sdk-react@npm:0.12.4":
+  version: 0.12.4
+  resolution: "@metamask/sdk-react@npm:0.12.4"
   dependencies:
-    "@metamask/sdk": ^0.12.0
+    "@metamask/sdk": ^0.12.4
+    "@metamask/sdk-communication-layer": ^0.12.3
+    "@react-native-async-storage/async-storage": ^1.19.6
+    eth-rpc-errors: ^4.0.3
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 35941f41166929529148c92954fc4ed9caa63d31dac6015f8ba5ce3c930131dda646d61eeb98aa9bb2ace866ec420c780f2483dd3f1047cb23ad169af6de52c9
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: false
+    react-native:
+      optional: true
+  checksum: 0c9f919d80dd1ef6212bfb2e9f3077fa0d4e14cc7be14ebd1470a899ac67f409b918fb0d61221a8ddfdcbf7be7485adac9e3a9492d1f65d3a53ef984c1cd51f5
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk@npm:0.12.0"
+"@metamask/sdk@npm:^0.12.4":
+  version: 0.12.4
+  resolution: "@metamask/sdk@npm:0.12.4"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.0
-    "@metamask/sdk-install-modal-web": 0.12.0
+    "@metamask/sdk-communication-layer": 0.12.3
+    "@metamask/sdk-install-modal-web": 0.12.2
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -3108,7 +3189,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
+  checksum: 7644e7f9fbee8ce106b2c0bcf57d0544c8cd395097c7d5e15f30cae0c977537732f14965da4f03d5a11c85d2b8ed7d9bdcf36f1f179db03b0ce930dd8e544ae6
   languageName: node
   linkType: hard
 
@@ -3382,6 +3463,17 @@ __metadata:
   peerDependencies:
     react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
   checksum: d849e5c8bb08d2130d95cc246749dae820cc1996b6b31defa063a1b67070524d72aed5a0e57ce2fafe3c3726712c09a5a3babaed1358182060ce7cfd8bd2c1a3
+  languageName: node
+  linkType: hard
+
+"@react-native-async-storage/async-storage@npm:^1.19.6":
+  version: 1.21.0
+  resolution: "@react-native-async-storage/async-storage@npm:1.21.0"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.60 <1.0
+  checksum: 969cdeb444a037087b1897553082e148e25c8331055dd0dc142f76deeb4aadd9ed5ec26926ae990b3e9ff088396e74ab557148a2dd2a7db86058051b774f2619
   languageName: node
   linkType: hard
 
@@ -6393,6 +6485,16 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: f75aa87e3d1b99b87a95f60a855e63f70af07b57fb8443e75a2ddfef2e47788d130fdd46e3a78fd7e0c10176082b26dfbed970c5b8632e1cc299cafa0e93ce45
+  languageName: node
+  linkType: hard
+
+"bufferutil@npm:^4.0.8":
+  version: 4.0.8
+  resolution: "bufferutil@npm:4.0.8"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 7e9a46f1867dca72fda350966eb468eca77f4d623407b0650913fadf73d5750d883147d6e5e21c56f9d3b0bdc35d5474e80a600b9f31ec781315b4d2469ef087
   languageName: node
   linkType: hard
 
@@ -14109,7 +14211,7 @@ __metadata:
   resolution: "react-metamask-button@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react-ui": ^0.12.0
+    "@metamask/sdk-react-ui": ^0.12.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^13.5.0
@@ -16344,6 +16446,16 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: 5579350a023c66a2326752b6c8804cc7b39dcd251bb088241da38db994b8d78352e388dcc24ad398ab98385ba3c5ffcadb6b5b14b2637e43f767869055e46ba6
+  languageName: node
+  linkType: hard
+
+"utf-8-validate@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "utf-8-validate@npm:6.0.3"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 
