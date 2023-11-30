@@ -25,6 +25,7 @@ import RootNavigator from './src/RootNavigator';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
+  'No handleCopy function provided for address',
   'Message ignored because invalid key exchange status',
   "MetaMask: 'ethereum._metamask' exposes",
   '`new NativeEventEmitter()` was called with a non-null',
