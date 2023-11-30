@@ -5122,7 +5122,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.14.1, @metamask/sdk-communication-layer@npm:^0.14.1":
+"@metamask/sdk-communication-layer@npm:0.14.1, @metamask/sdk-communication-layer@npm:^0.14.0, @metamask/sdk-communication-layer@npm:^0.14.1":
   version: 0.14.1
   resolution: "@metamask/sdk-communication-layer@npm:0.14.1"
   dependencies:
@@ -5168,7 +5168,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.14.1":
+"@metamask/sdk-lab@npm:^0.1.5":
+  version: 0.1.5
+  resolution: "@metamask/sdk-lab@npm:0.1.5"
+  dependencies:
+    "@fortawesome/fontawesome-svg-core": ^6.4.2
+    "@fortawesome/free-solid-svg-icons": ^6.4.2
+    "@fortawesome/react-fontawesome": ^0.2.0
+    "@metamask/sdk-communication-layer": ^0.14.0
+    "@metamask/sdk-react": ^0.14.0
+    "@metamask/sdk-ui": ^0.1.5
+    i18n-js: ^4.3.2
+    i18next: ^23.6.0
+    intl-pluralrules: ^2.0.1
+    next-qrcode: ^2.5.1
+    react-i18next: ^13.3.1
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 7b66331f334b1bf353abadfe53fff270c884e99cdeafeb951fbe5fb4f9fcb35443105f60f9883f1b7c860af99c93de9fbe7fed5ab9a5410c2e9e2c897a4ee53d
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-react@npm:^0.14.0, @metamask/sdk-react@npm:^0.14.1":
   version: 0.14.1
   resolution: "@metamask/sdk-react@npm:0.14.1"
   dependencies:
@@ -5189,7 +5211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-ui@npm:^0.1.6":
+"@metamask/sdk-ui@npm:^0.1.5, @metamask/sdk-ui@npm:^0.1.6":
   version: 0.1.6
   resolution: "@metamask/sdk-ui@npm:0.1.6"
   dependencies:
@@ -16932,6 +16954,7 @@ __metadata:
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/sdk": ^0.14.1
+    "@metamask/sdk-lab": ^0.1.5
     "@metamask/sdk-react": ^0.14.1
     "@metamask/sdk-ui": ^0.1.6
     "@testing-library/jest-dom": ^5.16.5
