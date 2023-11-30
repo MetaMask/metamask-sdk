@@ -17,6 +17,7 @@ export const Layout = ({ children }: LayoutProps) => {
     <div>
       <SDKConfigCard
         options={{ showQRCode: true }}
+        title={`DevNext`}
         onHomePress={() => {
           router.push('/');
         }}
