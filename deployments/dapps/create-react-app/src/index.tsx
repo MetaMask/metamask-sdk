@@ -25,7 +25,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <App />
-        <FloatingMetaMaskButton />
+        <FloatingMetaMaskButton distance={{ bottom: 40 }} />
       </>
     ),
   },
@@ -34,7 +34,7 @@ const router = createBrowserRouter([
     element: (
       <>
         <Demo />
-        <FloatingMetaMaskButton />
+        <FloatingMetaMaskButton distance={{ bottom: 40 }} />
       </>
     ),
   },
@@ -43,24 +43,6 @@ const router = createBrowserRouter([
     element: <Onboard />,
   },
 ]);
-
-export const WithTest = ({
-  name,
-  children,
-}: {
-  name: string;
-  children: React.ReactNode;
-}) => {
-  const { socketServer } = useSDKConfig();
-
-  return (
-    <>
-      <div>name: {name}</div>
-      <div>server: {socketServer}</div>
-      {children}
-    </>
-  );
-};
 
 const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   const {
@@ -113,9 +95,7 @@ root.render(
               router.navigate('/');
             }}
           />
-          <WithTest name={'test'}>
-            <RouterProvider router={router} />
-          </WithTest>
+          <RouterProvider router={router} />
         </UIProvider>
       </WithSDKConfig>
     </SDKConfigProvider>
