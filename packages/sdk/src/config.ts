@@ -12,6 +12,7 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   wallet_addEthereumChain: true,
   wallet_switchEthereumChain: true,
   metamask_connectSign: true,
+  metamask_connectWith: true,
   metamask_batch: true,
 };
 export const STORAGE_PATH = '.sdk-comm';
