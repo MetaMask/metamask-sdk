@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.14.1]
-### Uncategorized
-- Release 43.0.0 ([#559](https://github.com/MetaMask/metamask-sdk/pull/559))
+### Added
+- Force align package version to sdk
 
 ## [0.13.0]
 ### Added
