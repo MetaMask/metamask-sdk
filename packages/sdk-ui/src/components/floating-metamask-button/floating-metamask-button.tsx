@@ -10,7 +10,10 @@ import { FAB } from 'react-native-paper';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FABGroupFix from '../fab-group-fix/FabGroupFix';
 import { IconOriginal } from '../icons/IconOriginal';
-import { MetaMaskModal } from '../metamask-modal/metamask-modal';
+import {
+  MetaMaskModal,
+  MetaMaskModalProps,
+} from '../metamask-modal/metamask-modal';
 
 export interface FloatingMetaMaskButtonProps {
   distance?: {
@@ -40,9 +43,10 @@ const getStyles = ({
 export const FloatingMetaMaskButton = ({
   distance,
 }: FloatingMetaMaskButtonProps) => {
-  const { sdk, connected, connecting } = useSDK();
+  const { sdk, connected, connecting, provider } = useSDK();
   const [modalOpen, setModalOpen] = useState(false);
   const [active, setActive] = useState(false);
+  const [target, setTarget] = useState<MetaMaskModalProps['target']>('network');
   const styles = useMemo(() => getStyles({ distance }), [distance]);
 
   const renderIcon = ({ color }: { color: string }) => {
@@ -96,14 +100,38 @@ export const FloatingMetaMaskButton = ({
           {
             label: 'Network',
             icon: 'swap-horizontal',
-            onPress: () => setModalOpen(true),
+            onPress: () => {
+              setTarget('network');
+              setModalOpen(true);
+            },
+          },
+          {
+            label: 'Buy ETH',
+            icon: 'swap-horizontal',
+            onPress: () => {
+              provider?.request({
+                method: 'metamask_open',
+                params: [{ target: 'buy' }],
+              });
+            },
+          },
+          {
+            label: 'SWAP',
+            icon: 'swap-horizontal',
+            onPress: () => {
+              setTarget('swap');
+              setModalOpen(true);
+            },
           },
           {
             icon: ({ color }) => (
               <MaterialIcons name="price-change" color={color} size={24} />
             ),
-            label: 'GAS Api',
-            onPress: () => console.log('Pressed notifications'),
+            label: 'Infura GAS Api',
+            onPress: () => {
+              setTarget('gasprice');
+              setModalOpen(true);
+            },
           },
           {
             label: 'Disconnect',
@@ -116,7 +144,11 @@ export const FloatingMetaMaskButton = ({
         ]}
         onStateChange={handleStateChange}
       />
-      <MetaMaskModal modalOpen={modalOpen} onClose={closeModal} />
+      <MetaMaskModal
+        modalOpen={modalOpen}
+        target={target}
+        onClose={closeModal}
+      />
     </>
   );
 };

@@ -13,6 +13,7 @@ export const defaultSDKtArgs: Partial<SDKState> = {
   connecting: false,
   extensionActive: false,
   chainId: '0x1',
+  balance: '11111111111111111',
   account: '0xAAAAA0e296961f476E01184274Ce85ae60184CB0',
 };
 
@@ -31,6 +32,10 @@ export const sdkProviderArgTypes: ArgTypes<Partial<SDKState>> = {
   account: {
     control: 'text',
     defaultValue: defaultSDKtArgs.account,
+  },
+  balance: {
+    control: 'text',
+    defaultValue: defaultSDKtArgs.balance,
   },
   chainId: {
     control: 'select',
@@ -56,6 +61,7 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
     connected,
     connecting,
     chainId,
+    balance,
     readOnlyCalls,
     extensionActive,
     rpcHistory,
@@ -79,6 +85,7 @@ export const SdkContextDecorator = (ThisStory: Story, sc: any) => {
       value={{
         ready,
         extensionActive,
+        balance,
         connected,
         readOnlyCalls,
         connecting,

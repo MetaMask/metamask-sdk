@@ -86,7 +86,7 @@ app.post('/debug', (_req, res) => {
 
     analytics.track(event, function (err, batch) {
       if (isDevelopment) {
-        console.log('DEBUG> Segment batch', batch);
+        // console.log('DEBUG> Segment batch', batch);
       }
 
       if (err) {

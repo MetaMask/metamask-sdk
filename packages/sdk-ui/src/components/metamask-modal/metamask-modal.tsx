@@ -8,9 +8,12 @@ import { SDKSummary } from '../sdk-summary/sdk-summary';
 import { useSDK } from '@metamask/sdk-react';
 import { useTheme } from '../../theme';
 import { Theme } from '@metamask/design-tokens';
+import { SwapPanel } from '../swap-panel/swap-panel';
+import { GasPricePanel } from '../gasprice-panel/gasprice-panel';
 
 export interface MetaMaskModalProps {
   modalOpen: boolean;
+  target?: 'network' | 'swap' | 'gasprice';
   onClose?: () => void;
 }
 
@@ -51,7 +54,11 @@ const getStyles = ({ theme }: { theme: Theme }) => {
   });
 };
 
-export const MetaMaskModal = ({ modalOpen, onClose }: MetaMaskModalProps) => {
+export const MetaMaskModal = ({
+  modalOpen,
+  target = 'network',
+  onClose,
+}: MetaMaskModalProps) => {
   const { toastRef } = useContext(ToastContext);
   const { connected } = useSDK();
   const theme = useTheme();
@@ -65,7 +72,9 @@ export const MetaMaskModal = ({ modalOpen, onClose }: MetaMaskModalProps) => {
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <SDKSummary />
+          {target === 'network' && <SDKSummary />}
+          {target === 'swap' && <SwapPanel />}
+          {target === 'gasprice' && <GasPricePanel />}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
             <MaterialCommunityIcons
               name="close"
