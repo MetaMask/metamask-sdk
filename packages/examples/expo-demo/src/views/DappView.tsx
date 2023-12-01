@@ -4,6 +4,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors } from './colors';
 import { ServiceStatusView } from './service-status-view';
 import { ServiceStatus } from '@metamask/sdk';
+import { ethers } from 'ethers';
 
 export interface DAPPViewProps {}
 
@@ -85,25 +86,22 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   // TODO re-activate with hooks
-  // const testEthers = async () => {
-  //   if (!provider) {
-  //     console.warn('provider is undefined');
-  //     return;
-  //   }
-  //   const web3Provider = new ethers.providers.Web3Provider(
-  //     provider as unknown as ethers.providers.ExternalProvider,
-  //   );
-  //   const signer = web3Provider.getSigner();
-  //   console.debug('signer', signer);
+  const testEthers = async () => {
+    if (!ethereum) {
+      console.warn('provider is undefined');
+      return;
+    }
+    const web3Provider = new ethers.providers.Web3Provider(
+      ethereum as unknown as ethers.providers.ExternalProvider,
+    );
+    const signer = web3Provider.getSigner();
+    console.debug('signer', signer);
 
-  //   // const addr = await signer.getAddress();
-  //   // console.log('addr', addr);
-
-  //   setResponse('');
-  //   const msg = await signer.signMessage('hello world');
-  //   console.debug('msg', msg);
-  //   setResponse(msg);
-  // };
+    setResponse('');
+    const msg = await signer.signMessage('hello world');
+    console.debug('msg', msg);
+    setResponse(msg);
+  };
 
   const sign = async () => {
     const msgParams = JSON.stringify({
@@ -287,7 +285,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
         <>
           <Button title={'Request Accounts'} onPress={connect} />
           <Button title="Sign" onPress={sign} />
-          {/* <Button title="testEthers" onPress={testEthers} /> */}
+          <Button title="testEthers" onPress={testEthers} />
           <Button title="Send transaction" onPress={sendTransaction} />
           <Button title="Add chain" onPress={exampleRequest} />
           <Button title="Batch Calls" onPress={batch} />
