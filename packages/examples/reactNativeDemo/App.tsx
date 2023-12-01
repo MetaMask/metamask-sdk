@@ -5,61 +5,94 @@
  * @format
  */
 
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect} from 'react';
+
 import {
-  AppState,
-  AppStateStatus,
-  Linking,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  MetaMaskProvider,
+  SDKConfigProvider,
+  useSDKConfig,
+} from '@metamask/sdk-react';
+import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 
-import {MetaMaskSDK} from '@metamask/sdk';
-import {LogBox} from 'react-native';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import {AppState, AppStateStatus, Linking, LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DAPPView} from './src/views/DappView';
+import RootNavigator from './src/RootNavigator';
 
-LogBox.ignoreLogs([]); // Ignore log notification by message
+LogBox.ignoreLogs([
+  'Possible Unhandled Promise Rejection',
+  'Message ignored because invalid key exchange status',
+  "MetaMask: 'ethereum._metamask' exposes",
+  '`new NativeEventEmitter()` was called with a non-null',
+]); // Ignore log notification by message
 
 // TODO how to properly make sure we only try to open link when the app is active?
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
 // hence usage of a global variable.
 let canOpenLink = true;
 
-const sdk = new MetaMaskSDK({
-  openDeeplink: (link: string) => {
-    if (canOpenLink) {
-      Linking.openURL(link);
-    }
-  },
-  timer: BackgroundTimer,
-  dappMetadata: {
-    name: 'ReactNativeTS',
-  },
-});
+const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    debug,
+    checkInstallationImmediately,
+  } = useSDKConfig();
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  const [ready, setReady] = React.useState(false);
-  const shouldInit = useRef(true);
+  return (
+    <MetaMaskProvider
+      debug={debug}
+      sdkOptions={{
+        communicationServerUrl: socketServer,
+        enableDebug: true,
+        infuraAPIKey,
+        readonlyRPCMap: {
+          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+        },
+        logging: {
+          developerMode: true,
+          plaintext: true,
+        },
+        openDeeplink: (link: string, _target?: string) => {
+          console.debug(`App::openDeepLink() ${link}`);
+          if (canOpenLink) {
+            Linking.openURL(link);
+          } else {
+            console.debug(
+              'useBlockchainProiver::openDeepLink app is not active - skip link',
+              link,
+            );
+          }
+        },
+        timer: BackgroundTimer,
+        useDeeplink,
+        checkInstallationImmediately,
+        storage: {
+          enabled: true,
+        },
+        dappMetadata: {
+          name: 'devreactnative',
+        },
+        i18nOptions: {
+          enabled: true,
+        },
+      }}>
+      {children}
+    </MetaMaskProvider>
+  );
+};
 
-  // initialize sdk
-  useEffect(() => {
-    if (!shouldInit.current) {
-      return;
-    }
-    shouldInit.current = false;
+export const SafeApp = () => {
+  const navigationRef = useNavigationContainerRef();
 
-    sdk.init().then(() => {
-      setReady(true);
-    });
-  });
+  const handleAppState = (appState: AppStateStatus) => {
+    canOpenLink = appState === 'active';
+    console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
+  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppState);
@@ -69,58 +102,19 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const handleAppState = (appState: AppStateStatus) => {
-    console.debug(`AppState change: ${appState}`);
-    canOpenLink = appState === 'active';
-  };
-
-  const backgroundStyle = {
-    backgroundColor: Colors.lighter,
+  const handleNavReady = () => {
+    console.log('Navigation container ready!');
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={{
-            marginTop: 30,
-            backgroundColor: Colors.white,
-          }}>
-          <Text style={{color: Colors.black, fontSize: 24}}>
-            reactNativeDemo (RN v0.71.7)
-          </Text>
-          {ready ? <DAPPView sdk={sdk} /> : <Text>initializing...</Text>}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SDKConfigProvider
+      initialSocketServer={COMM_SERVER_URL}
+      initialInfuraKey={INFURA_API_KEY}>
+      <WithSDKConfig>
+        <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
+          <RootNavigator />
+        </NavigationContainer>
+      </WithSDKConfig>
+    </SDKConfigProvider>
   );
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+};
