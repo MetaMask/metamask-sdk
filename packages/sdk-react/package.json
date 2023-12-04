@@ -19,6 +19,7 @@
   ],
   "author": "MetaMask",
   "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
   "types": "dist/esm/src/index.d.ts",
   "files": [
     "dist",
@@ -47,7 +48,9 @@
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@react-native-async-storage/async-storage": "^1.19.6",
-    "eth-rpc-errors": "^4.0.3"
+    "eth-rpc-errors": "^4.0.3",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",
