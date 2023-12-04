@@ -7844,7 +7844,11 @@ __metadata:
     ts-node: ^10.9.1
     ts-node-dev: ^2.0.0
     typescript: ^5.2.2
+<<<<<<< HEAD
     uuid: ^9.0.1
+=======
+    uuid: ^8.3.2
+>>>>>>> d5dba9bc (feat: Socket.io to TypeScript (#549))
   languageName: unknown
   linkType: soft
 
