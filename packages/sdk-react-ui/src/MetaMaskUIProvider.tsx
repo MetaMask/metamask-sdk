@@ -64,7 +64,7 @@ const WagmiWrapper = ({
     if (debug) {
       console.debug(`[MetamaskProvider] validConnectors`, { ready, sdk });
     }
-    if (ready && sdk) {
+    if (ready && sdk?.isInitialized()) {
       return [
         new MetaMaskConnector({
           chains: networks,
@@ -74,8 +74,7 @@ const WagmiWrapper = ({
       ];
     }
 
-    return connectors;
-  }, [ready, sdk, networks, debug, connectors]);
+    return connectors;  }, [ready, sdk, networks, debug, connectors]);
 
   const config = createConfig({ publicClient, connectors: validConnectors })
 

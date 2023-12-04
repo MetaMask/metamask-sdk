@@ -1,10 +1,17 @@
 import baseConfig from '../../jest.config.base';
 
+/** @type {import('jest').Config} */
 module.exports = {
   ...baseConfig,
   testEnvironment: 'jsdom',
   coveragePathIgnorePatterns: ['./src/types', './src/index.ts'],
   resolver: '<rootDir>/jest.resolver.js',
+  transformIgnorePatterns: [
+    "node_modules/(?!(uuid)/)"  // Add other packages as needed
+  ],
+  transform: {
+    "^.+\\.[t|j]sx?$": "babel-jest",
+  },
   coverageThreshold: {
     global: {
       branches: 10,

@@ -1,4 +1,4 @@
-import { useSDK } from '@metamask/sdk-react';
+import { useSDK } from '@metamask/sdk-ui';
 import React, { CSSProperties } from 'react';
 import { HistoryItem } from './history-item';
 

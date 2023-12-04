@@ -20,6 +20,7 @@ const nextConfig = withExpo({
     'expo-font',
     'expo-module-core',
     'expo-modules-core',
+    'react-native-jazzicon',
     "@expo/vector-icons",
     '@metamask/sdk-communication-layer',
     '@metamask/sdk',
@@ -34,19 +35,35 @@ const nextConfig = withExpo({
     forceSwcTransforms: true,
   },
   webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      // Make sure the react version used is from our node_modules
-      react: path.resolve(__dirname, './node_modules/react'),
-      'react-native$': require.resolve('react-native-web'),
-      // 'expo-asset': path.resolve(__dirname, './node_modules/expo-asset'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-      'react-native-reanimated': path.resolve(__dirname, './node_modules/react-native-reanimated'),
-      'react-native-paper': path.resolve(__dirname, './node_modules/react-native-paper'),
-      'react-native-gesture-handler': path.resolve(__dirname, './node_modules/react-native-gesture-handler'),
-      'react-native-safe-area-context': path.resolve(__dirname, './node_modules/react-native-safe-area-context'),
+    config.resolve = {
+      ...config.resolve,
+      symlinks: false, // tells webpack to follow the real path of symlinked module instead of the symlink path itself
+      alias: {
+        ...config.resolve.alias,
+        // Make sure the react version used is from our node_modules
+        react: path.resolve(__dirname, './node_modules/react'),
+        'react-native$': require.resolve('react-native-web'),
+        // 'expo-asset': path.resolve(__dirname, './node_modules/expo-asset'),
+        'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
+        'react-native-reanimated': path.resolve(__dirname, './node_modules/react-native-reanimated'),
+        'react-native-paper': path.resolve(__dirname, './node_modules/react-native-paper'),
+        'react-native-gesture-handler': path.resolve(__dirname, './node_modules/react-native-gesture-handler'),
+        'react-native-safe-area-context': path.resolve(__dirname, './node_modules/react-native-safe-area-context'),
+      }
     };
     config.module.rules.push(
+      {
+        test: /\.(js|jsx)$/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-react',
+              { plugins: ['@babel/plugin-proposal-class-properties'] },
+            ],
+          },
+        },
+      },
       {
         test: /\.(js|jsx|mjs)$/,
         include: [
@@ -62,10 +79,17 @@ const nextConfig = withExpo({
         },
       },
       {
-        test: /\.(jpg|png|woff|woff2|eot|ttf|svg)$/,
-        type: 'asset/resource'
+        test: /\.svg$/i,
+        issuer: /\.[jt]sx?$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        // Do not include png / jpg because nextjs optimizes them
+        test: /\.(woff|woff2|eot|ttf)$/,
+        type: 'asset/resource',
       },
     );
+
     // write config to disk for debugging
     fs.writeFileSync('./next.webpack.config.json', JSON.stringify(config.resolve, null, 2));
     console.log(`Wrote webpack config to ./next.webpack.config.json`);

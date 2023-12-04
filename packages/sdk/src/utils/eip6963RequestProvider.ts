@@ -1,3 +1,4 @@
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { METAMASK_EIP_6369_PROVIDER_INFO, UUID_V4_REGEX } from '../constants';
 import { SDKProvider } from '../provider/SDKProvider';
 
@@ -23,7 +24,7 @@ export type EIP6963AnnounceProviderEvent = CustomEvent & {
   detail: EIP6963ProviderDetail;
 };
 
-export function eip6963RequestProvider(): Promise<SDKProvider> {
+export function eip6963RequestProvider(): Promise<MetaMaskInpageProvider> {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error('eip6963RequestProvider timed out'));

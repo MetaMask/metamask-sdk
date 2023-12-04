@@ -14,10 +14,35 @@
     "allowJs": false,
     "skipLibCheck": true,
     "paths": {
-      "@metamask/sdk-ui": ["./src/index"],
+      // "@metamask/sdk-lab": ["./src/index"],
+      // "@metamask/sdk-communication-layer": [
+      //   "../sdk-communication-layer/src"
+      // ],
+      // "@metamask/sdk-install-modal-web": [
+      //   "../sdk-install-modal-web/src"
+      // ],
+      // "@metamask/sdk-react": [
+      //   "../sdk-react/src"
+      // ],
+      // "@metamask/sdk-ui": ["../sdk-ui/src/index"]
     }
   },
-  "include": [
-    "./src/"
+  "include": ["./src/"],
+  "references": [
+    // {
+    //   "path": "../sdk/tsconfig.build.json"
+    // },
+    // {
+    //   "path": "../sdk-react/tsconfig.json"
+    // },
+    // {
+    //   "path": "../sdk-communication-layer/tsconfig.build.json"
+    // },
+    // {
+    //   "path": "../sdk-install-modal-web"
+    // },
+    // {
+    //   "path": "../sdk-ui/tsconfig.json"
+    // },
   ]
 }

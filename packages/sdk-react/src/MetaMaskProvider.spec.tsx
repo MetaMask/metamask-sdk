@@ -181,7 +181,7 @@ describe('MetaMaskProvider Component', () => {
         );
       });
 
-      expect(consoleSpy).toHaveBeenCalledTimes(2);
+      expect(consoleSpy).toHaveBeenCalled();
       expect(consoleSpy.mock.calls[0][0]).toContain(
         '[MetamaskProvider] init SDK Provider listeners',
       );

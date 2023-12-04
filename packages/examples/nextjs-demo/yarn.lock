@@ -418,23 +418,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.12.0"
+"@metamask/sdk-communication-layer@npm:0.12.2, @metamask/sdk-communication-layer@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.12.2"
   dependencies:
+    bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.5
     socket.io-client: ^4.5.1
+    utf-8-validate: ^6.0.3
     uuid: ^8.3.2
-  checksum: 9042d7b38832dfb2c1efa93441ee4f9e8fee76da22a60d860720cdd0091d08dd34e0234269eecdde64c11868d6e2f0d566331815658b313d44aa329f221f390e
+  checksum: 07d0fe3d1bfbe78b5f0df388a0a1a4b907b5ddd2d42cfad89542f854cf7a49f5dc54ed2710d776f0901981fa8d3482cb50eb84ffadfcce41c7707876e5d7fb84
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.12.0"
+"@metamask/sdk-install-modal-web@npm:0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-install-modal-web@npm:0.12.2"
   dependencies:
     "@emotion/react": ^11.10.6
     "@emotion/styled": ^11.10.6
@@ -443,31 +445,33 @@ __metadata:
     react: ^18.2.0
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
-  checksum: 4fd1eb7a108bc1ac123731906aba5930fd4818a40448b94dc0c909bc60376da7d25e95fe163ad7983936f7525c93078b05047d66e1a39a3f6780c56ee5694258
+  checksum: 21b6af3fe1e40e58ca9896ff96dded6e5b65b35e605b2d73ac7455d06fcbe2fa5aa36ff634baa3d5e30771a49910884a5ec5a38d327a273b111115be3accba5b
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk-react@npm:0.12.0"
+"@metamask/sdk-react@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk-react@npm:0.12.2"
   dependencies:
-    "@metamask/sdk": ^0.12.0
+    "@metamask/sdk": ^0.12.2
+    "@metamask/sdk-communication-layer": ^0.12.2
+    eth-rpc-errors: ^4.0.3
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 35941f41166929529148c92954fc4ed9caa63d31dac6015f8ba5ce3c930131dda646d61eeb98aa9bb2ace866ec420c780f2483dd3f1047cb23ad169af6de52c9
+  checksum: ae06c7910382e698756e95fe4bf721f0c4275adac30adde54ea136db32848cb4d77a2dfa779c2aeaf09283e4482051497a91efb508e851f33a93a09a3bd0a560
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "@metamask/sdk@npm:0.12.0"
+"@metamask/sdk@npm:^0.12.2":
+  version: 0.12.2
+  resolution: "@metamask/sdk@npm:0.12.2"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/post-message-stream": ^6.1.0
     "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.12.0
-    "@metamask/sdk-install-modal-web": 0.12.0
+    "@metamask/sdk-communication-layer": 0.12.2
+    "@metamask/sdk-install-modal-web": 0.12.2
     "@react-native-async-storage/async-storage": ^1.17.11
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -496,7 +500,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 124359d7b8bdd58ec263f2d3b7b4f283f20918f1399151c4939129c9cf53a1be902a5539cada7288ccdd225cdfa2ed0df639256bb7396d5c2d4f1baccff3876c
+  checksum: 389791e55a73be9ec00310233fdf92491cebf3efeb97a703dbb4fb91e1bac5fc00af33241b9f11c4c58d5d3cb34192a1bdf16ffad3afd9ab962a39a1b66db2e0
   languageName: node
   linkType: hard
 
@@ -1261,6 +1265,16 @@ __metadata:
   version: 1.1.0
   resolution: "brorand@npm:1.1.0"
   checksum: 8a05c9f3c4b46572dec6ef71012b1946db6cae8c7bb60ccd4b7dd5a84655db49fe043ecc6272e7ef1f69dc53d6730b9e2a3a03a8310509a3d797a618cbee52be
+  languageName: node
+  linkType: hard
+
+"bufferutil@npm:^4.0.8":
+  version: 4.0.8
+  resolution: "bufferutil@npm:4.0.8"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 7e9a46f1867dca72fda350966eb468eca77f4d623407b0650913fadf73d5750d883147d6e5e21c56f9d3b0bdc35d5474e80a600b9f31ec781315b4d2469ef087
   languageName: node
   linkType: hard
 
@@ -3564,7 +3578,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "nextjs-demo@workspace:."
   dependencies:
-    "@metamask/sdk-react": ^0.12.0
+    "@metamask/sdk-react": ^0.12.2
     "@types/node": 20.2.1
     "@types/react": 18.2.6
     "@types/react-dom": 18.2.4
@@ -3608,6 +3622,17 @@ __metadata:
     node-gyp-build-optional: optional.js
     node-gyp-build-test: build-test.js
   checksum: c3676d337b36803bc7792e35bf7fdcda7cdcb7e289b8f9855a5535702a82498eb976842fefcf487258c58005ca32ce3d537fbed91280b04409161dcd7232a882
+  languageName: node
+  linkType: hard
+
+"node-gyp-build@npm:^4.3.0":
+  version: 4.7.0
+  resolution: "node-gyp-build@npm:4.7.0"
+  bin:
+    node-gyp-build: bin.js
+    node-gyp-build-optional: optional.js
+    node-gyp-build-test: build-test.js
+  checksum: 5b0417487c8b30c36e23974f968fe4c166dc9ee0707ec17a74ff6c8265af9ec9e2bab9ca36c5113b828fdb384f405fcd546231c215c721559a776a07b5c0b98b
   languageName: node
   linkType: hard
 
@@ -4874,6 +4899,16 @@ __metadata:
   dependencies:
     punycode: ^2.1.0
   checksum: 7167432de6817fe8e9e0c9684f1d2de2bb688c94388f7569f7dbdb1587c9f4ca2a77962f134ec90be0cc4d004c939ff0d05acc9f34a0db39a3c797dada262633
+  languageName: node
+  linkType: hard
+
+"utf-8-validate@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "utf-8-validate@npm:6.0.3"
+  dependencies:
+    node-gyp: latest
+    node-gyp-build: ^4.3.0
+  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 

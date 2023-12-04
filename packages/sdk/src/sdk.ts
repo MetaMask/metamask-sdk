@@ -25,6 +25,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
+import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -253,6 +254,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       .then(() => {
         if (this.debug) {
           console.debug(`MetaMaskSDK() initialized`);
+          window.mmsdk = this;
         }
       })
       .catch((err) => {
@@ -277,6 +279,10 @@ export class MetaMaskSDK extends EventEmitter2 {
   // msg can be a simple string or ABNF RFC 5234 compliant string.
   async connectAndSign({ msg }: { msg: string }) {
     return connectAndSign({ instance: this, msg });
+  }
+
+  async connectWith(rpc: { method: string; params: any[] }) {
+    return connectWith({ instance: this, rpc });
   }
 
   resume() {

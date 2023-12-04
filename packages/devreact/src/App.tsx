@@ -1,9 +1,11 @@
 import React from 'react';
 import { SDKProvider } from '@metamask/sdk';
-import { useSDK } from '@metamask/sdk-react';
+import { useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import Web from 'web3';
 import './App.css';
+import { MetaMaskButton } from '@metamask/sdk-ui';
+import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
 
 declare global {
   interface Window {
@@ -282,7 +284,9 @@ export const App = () => {
           <div>Waiting for Metamask to link the connection...</div>
         )}
       </div>
-
+      <div style={{ padding: 20 }}>
+        <MetaMaskButton />
+      </div>
       {connected ? (
         <div>
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
@@ -357,6 +361,7 @@ export const App = () => {
       <p>{`Account balance: ${balance}`}</p>
       <p>{`Last request response: ${response}`}</p>
       <p>{`Connected: ${connected}`}</p>
+      <RPCHistoryViewer />
     </div>
   );
 };

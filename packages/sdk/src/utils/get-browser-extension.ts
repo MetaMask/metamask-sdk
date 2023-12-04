@@ -1,4 +1,4 @@
-import { SDKProvider } from '../provider/SDKProvider';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { wrapExtensionProvider } from '../provider/wrapExtensionProvider';
 import { eip6963RequestProvider } from './eip6963RequestProvider';
 
@@ -8,25 +8,18 @@ export async function getBrowserExtension({
 }: {
   mustBeMetaMask: boolean;
   debug?: boolean;
-}): Promise<SDKProvider> {
+}): Promise<MetaMaskInpageProvider> {
   if (typeof window === 'undefined') {
     throw new Error(`window not available`);
   }
 
-  let baseProvider: SDKProvider;
+  let extensionProvider: MetaMaskInpageProvider;
 
   try {
-    baseProvider = await eip6963RequestProvider();
-
-    return wrapExtensionProvider({ provider: baseProvider, debug });
+    extensionProvider = await eip6963RequestProvider();
+    return wrapExtensionProvider({ provider: extensionProvider, debug });
   } catch (e) {
-    const { ethereum } = window as unknown as {
-      ethereum:
-        | (SDKProvider & {
-            isMetaMask: boolean;
-          })
-        | { providers: any[] };
-    };
+    const { ethereum } = window;
 
     if (!ethereum) {
       throw new Error('Ethereum not found in window object');
@@ -45,15 +38,15 @@ export async function getBrowserExtension({
           throw new Error('No suitable provider found');
         }
 
-        return wrapExtensionProvider({
-          provider: provider as SDKProvider,
-          debug,
-        });
+        return wrapExtensionProvider({ provider, debug });
       }
     } else if (mustBeMetaMask && !ethereum.isMetaMask) {
       throw new Error('MetaMask provider not found in Ethereum');
     }
 
-    return wrapExtensionProvider({ provider: ethereum as SDKProvider, debug });
+    return wrapExtensionProvider({
+      provider: ethereum,
+      debug,
+    });
   }
 }

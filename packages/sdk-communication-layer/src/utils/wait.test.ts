@@ -23,6 +23,7 @@ describe('waitForRpc', () => {
 
   it('resolves with the result when the RPC call is successful', async () => {
     const expectedResult: RPCMethodResult = {
+      id: '123',
       timestamp: Date.now(),
       method: 'methodName',
       elapsedTime: 50,
@@ -36,6 +37,7 @@ describe('waitForRpc', () => {
   it('waits for the result to be available and then resolves', async () => {
     // 'expectedResult' should include all properties from 'RPCMethodResult'
     const expectedResult: RPCMethodResult = {
+      id: '123',
       timestamp: Date.now(), // Provide a timestamp
       method: 'testMethod', // Provide a method name
       elapsedTime: 50, // Include the elapsedTime

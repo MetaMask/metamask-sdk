@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1]
+### Added
+- feat: graceful warning instead of throwing keyexchange ([#571](https://github.com/MetaMask/metamask-sdk/pull/571))
+
+## [0.14.0]
+### Added
+- feat: expo keyexchange status and track last rpc id ([#554](https://github.com/MetaMask/metamask-sdk/pull/554))
+
+## [0.13.0]
+### Added
+- Align version with sdk
+
+## [0.12.3]
+### Added
+- feat: add the option to add dapp icon in base64 format ([#521](https://github.com/MetaMask/metamask-sdk/pull/521))
+
+## [0.12.2]
+### Added
+- feat: add the option to add iconUrl to the dappMetadata ([#511](https://github.com/MetaMask/metamask-sdk/pull/511))
+- feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
+
 ## [0.12.1]
 ### Added
 - feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
@@ -112,7 +133,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.14.1...HEAD
+[0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.14.0...@metamask/sdk-communication-layer@0.14.1
+[0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.13.0...@metamask/sdk-communication-layer@0.14.0
+[0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.3...@metamask/sdk-communication-layer@0.13.0
+[0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.2...@metamask/sdk-communication-layer@0.12.3
+[0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.1...@metamask/sdk-communication-layer@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.12.0...@metamask/sdk-communication-layer@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.1...@metamask/sdk-communication-layer@0.12.0
 [0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.11.0...@metamask/sdk-communication-layer@0.11.1

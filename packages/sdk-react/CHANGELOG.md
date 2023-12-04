@@ -6,6 +6,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1]
+### Uncategorized
+- align version with sdk
+
+## [0.14.0]
+### Added
+- feat: account reset issue on _init event ([#556](https://github.com/MetaMask/metamask-sdk/pull/556))
+- feat: expose rpc history and keep track of last call ([#555](https://github.com/MetaMask/metamask-sdk/pull/555))
+
+## [0.13.0]
+### Added
+- fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
+
+## [0.12.4]
+### Added
+- feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
+- feat: add debug and rn compatibility to config provider ([#532](https://github.com/MetaMask/metamask-sdk/pull/532))
+
+## [0.12.3]
+### Uncategorized
+- feat: sdk config context as part of sdk-react ([#529](https://github.com/MetaMask/metamask-sdk/pull/529))
+
+## [0.12.2]
+### Added
+- feat: add processing state when computing balance ([#519](https://github.com/MetaMask/metamask-sdk/pull/519))
+- feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
+- feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
+- fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
+- fix: invalid changelog linter script ([#506](https://github.com/MetaMask/metamask-sdk/pull/506))
+
 ## [0.12.1]
 ### Uncategorized
 - align version with sdk
@@ -90,7 +120,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...HEAD
+[0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.0...@metamask/sdk-react@0.14.1
+[0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...@metamask/sdk-react@0.14.0
+[0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...@metamask/sdk-react@0.13.0
+[0.12.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.3...@metamask/sdk-react@0.12.4
+[0.12.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.2...@metamask/sdk-react@0.12.3
+[0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.1...@metamask/sdk-react@0.12.2
 [0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.0...@metamask/sdk-react@0.12.1
 [0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.11.2...@metamask/sdk-react@0.12.0
 [0.11.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.11.1...@metamask/sdk-react@0.11.2

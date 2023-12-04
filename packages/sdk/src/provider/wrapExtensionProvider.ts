@@ -1,5 +1,5 @@
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RPC_METHODS } from '../config';
-import { SDKProvider } from './SDKProvider';
 
 interface RequestArguments {
   method: string;
@@ -10,11 +10,17 @@ export const wrapExtensionProvider = ({
   provider,
   debug,
 }: {
-  provider: SDKProvider;
+  provider: MetaMaskInpageProvider;
   debug?: boolean;
 }) => {
+  // prevent double wrapping an invalid provider (it could happen with older web3onboard implementions)
+  // TODO remove after web3onboard is updated
+  if ('state' in provider) {
+    throw new Error(`INVALID EXTENSION PROVIDER`);
+  }
+
   return new Proxy(provider, {
-    get(target, propKey: keyof SDKProvider) {
+    get(target, propKey: keyof MetaMaskInpageProvider) {
       if (propKey === 'request') {
         return async function (args: RequestArguments) {
           if (debug) {

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { RPCMethodResult } from '@metamask/sdk-communication-layer';
 import React, { CSSProperties } from 'react';
 
@@ -13,6 +14,9 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ entry }) => {
 
   return (
     <div style={{ marginBottom: '10px' }}>
+      <div>
+        <strong>Id:</strong> {entry.id}
+      </div>
       <div>
         <strong>Method:</strong> {entry.method}
       </div>

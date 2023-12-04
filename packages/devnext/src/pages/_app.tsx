@@ -1,16 +1,18 @@
 import { config } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
-import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
+import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-react';
 import type { AppProps } from 'next/app';
 import {
   SafeAreaProvider,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
 
+import { MetaMaskUIProvider } from '@metamask/sdk-react-ui';
+import { UIProvider } from '@metamask/sdk-ui';
 import React from 'react';
-import { SDKConfigProvider, useSDKConfig } from '@metamask/sdk-lab';
-import '../styles/globals.css';
 import { Layout } from '../components/layout';
+import '../styles/globals.css';
+import '../styles/icons.css';
 
 config.autoAddCss = false;
 
@@ -46,7 +48,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         },
         dappMetadata: {
           name: 'DevNext',
-          url: 'http://devnext.fakeurl.com',
+          url: window.location.protocol + '//' + window.location.host,
         },
         i18nOptions: {
           enabled: true,
@@ -61,11 +63,16 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <SDKConfigProvider>
+      <SDKConfigProvider
+        initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
+        initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}
+      >
         <WithSDKConfig>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <UIProvider>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          </UIProvider>
         </WithSDKConfig>
       </SDKConfigProvider>
     </SafeAreaProvider>

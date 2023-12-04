@@ -1,6 +1,10 @@
-import React, { ReactNode } from 'react';
+import {
+  FloatingMetaMaskButton,
+  SDKDebugPanel,
+  SDKConfigCard,
+} from '@metamask/sdk-ui';
 import { useRouter } from 'next/router';
-import { SDKConfig } from '@metamask/sdk-lab';
+import { ReactNode } from 'react';
 
 export interface LayoutProps {
   children: ReactNode;
@@ -11,12 +15,16 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <div>
-      <SDKConfig
+      <SDKConfigCard
+        options={{ showQRCode: true }}
+        title={`DevNext`}
         onHomePress={() => {
           router.push('/');
         }}
       />
+      <FloatingMetaMaskButton distance={{ bottom: 40 }} />
       {children}
+      <SDKDebugPanel bottom={40} />
     </div>
   );
 };
