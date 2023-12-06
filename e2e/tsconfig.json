@@ -7,7 +7,7 @@
             "expect-webdriverio",
             "@wdio/appium-service",
             "@wdio/mocha-framework",
-            "@types/allure-commandline"
+            // "@types/allure-commandline"
         ],
         "target": "ES6",
         "removeComments": true,
@@ -26,11 +26,17 @@
             "*": [
                 "node_modules/*"
             ]
-        },
+        }
     },
     "include": [
       "test",
       "src",
       "node_modules/@types/mocha/index.d.ts"
-    ]
+    ],
+  "exclude": [
+    "test/fixtures/fixture-helper.js",
+    "test/fixtures/fixture-server.js.js",
+    "test/fixtures/fixture-builder.js",
+    "test/fixtures/utils.js"
+  ]
 }

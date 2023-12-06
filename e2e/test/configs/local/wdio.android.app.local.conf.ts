@@ -17,7 +17,8 @@ config.capabilities = [
     'appium:appActivity': process.env.APP_ACTIVITY,
     'appium:newCommandTimeout': 240,
     'appium:appPackage': process.env.BUNDLE_ID,
-    'appium:noReset': true,
+    'appium:noReset': false,
+    // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
   },
 ];
 
