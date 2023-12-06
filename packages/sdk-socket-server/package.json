@@ -26,7 +26,8 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "yarn build && node dist/index.js",
-    "start:docker": "docker build -t socket-test . && docker run -p 4000:4000 -d socket-test",
+    "start:docker": "docker-compose up --build",
+    "start:docker:dev": "NODE_ENV=development docker-compose up --build",
     "test": "jest",
     "test:ci": "jest --coverage --passWithNoTests"
   },
@@ -37,11 +38,12 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^5.1.1",
+    "ioredis": "^5.3.2",
     "lru-cache": "^10.0.0",
     "rate-limiter-flexible": "^2.3.8",
     "rimraf": "^4.4.0",
     "socket.io": "^4.4.1",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
