@@ -5,6 +5,8 @@ import {
   ScreenPercentage,
 } from './types';
 
+export const Platform = driver.isIOS ? 'IOS' : 'ANDROID';
+
 class Utils {
   static getLocatorPerPlatformAndStrategy(
     locator: MetaMaskElementLocator,
@@ -15,14 +17,7 @@ class Utils {
 
     // In case the locator was not provided for the platform it is running on
     if (platformLocator === undefined) {
-      throw new Error('Platform locator is undefined');
-    }
-
-    if (
-      locator.androidLocator === undefined &&
-      locator.iosLocator === undefined
-    ) {
-      throw new Error('Locator is undefined');
+      throw new Error(`Locator for ${Platform} needs to be provided!`);
     }
 
     if (driver.isIOS && locator.iosLocator !== undefined) {
@@ -36,14 +31,12 @@ class Utils {
 
   static async launchApp(bundleId: string): Promise<void> {
     // Location can be either url for web test dapp or bundleId for native app
-    const platformName = driver.isIOS ? 'IOS' : 'ANDROID';
-    console.log(`Launching ${platformName} DAPP with bundleId: ${bundleId}`);
+    console.log(`Launching ${Platform} DAPP with bundleId: ${bundleId}`);
     await driver.activateApp(bundleId);
   }
 
   static async launchMetaMask(): Promise<void> {
-    const platformName = driver.isIOS ? 'IOS' : 'ANDROID';
-    console.log(`Launching MetaMask on ${platformName}`);
+    console.log(`Launching MetaMask on ${Platform}`);
     const metamaskBundleId = process.env.BUNDLE_ID as string;
     await driver.activateApp(metamaskBundleId);
   }
@@ -53,8 +46,7 @@ class Utils {
    * Not the same as the dappTerminate that cleans a session
    * */
   static async killApp(bundleId: string): Promise<void> {
-    const platformName = driver.isIOS ? 'IOS' : 'ANDROID';
-    console.log(`Terminating ${platformName} DAPP with bundleId: ${bundleId}`);
+    console.log(`Terminating ${Platform} DAPP with bundleId: ${bundleId}`);
     await driver.terminateApp(bundleId);
   }
 
