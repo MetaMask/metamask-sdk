@@ -1,7 +1,7 @@
 # E2E SDK Automation
 
 ### Node version
-`nvm use 16`
+`nvm use 18`
 
 ### Setup:
 
