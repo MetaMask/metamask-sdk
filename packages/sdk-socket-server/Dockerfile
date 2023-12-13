@@ -9,7 +9,11 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
 COPY package.json ./
-RUN yarn install
+COPY yarn.lock ./
+
+# Install all dependencies including devDependencies
+RUN yarn install --frozen-lockfile
+
 COPY . .
 RUN yarn build
 
@@ -18,9 +22,10 @@ FROM node:18-alpine
 
 WORKDIR /app
 COPY --from=builder /app/package.json ./
+COPY --from=builder /app/yarn.lock ./
 
 # If NODE_ENV is development, install all dependencies, else only production dependencies
-RUN if [ "$NODE_ENV" = "development" ]; then yarn install; else yarn install --production; fi
+RUN if [ "$NODE_ENV" = "development" ]; then yarn install --frozen-lockfile; else yarn install --production --frozen-lockfile; fi
 
 COPY --from=builder /app/dist ./dist
 COPY .env ./
