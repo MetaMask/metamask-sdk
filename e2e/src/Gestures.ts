@@ -19,6 +19,16 @@ const Actions = {
   POINTER_UP: 'pointerUp',
 };
 
+const ActionTypes = {
+  POINTER: 'pointer',
+  KEY: 'key',
+};
+
+const ActionSource = {
+  KEYBOARD: 'keyboard',
+  FINDER_1: 'finger1',
+};
+
 export default class Gestures {
   static async swipeByPercentage(from: ScreenPercentage, to: ScreenPercentage) {
     if (driver.isIOS) {
@@ -57,8 +67,8 @@ export default class Gestures {
 
     await driver.performActions([
       {
-        type: 'pointer',
-        id: 'finger1',
+        type: ActionTypes.POINTER,
+        id: ActionSource.FINDER_1,
         actions: [
           { type: 'pause', duration: 1000 },
           {
@@ -84,8 +94,8 @@ export default class Gestures {
   static async tapDeviceKey(key: string): Promise<void> {
     await driver.performActions([
       {
-        type: 'key',
-        id: 'keyboard',
+        type: ActionTypes.KEY,
+        id: ActionSource.KEYBOARD,
         actions: [
           { type: Actions.KEY_DOWN, value: key },
           { type: Actions.PAUSE, duration: 100 },
