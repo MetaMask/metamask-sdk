@@ -5,7 +5,6 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.join(process.cwd(), '.dapps.env') });
 dotenv.config({ path: path.join(process.cwd(), '.env') });
 
-
 export const config: WebdriverIO.Config = {
   runner: 'local',
   capabilities: [],
@@ -13,7 +12,7 @@ export const config: WebdriverIO.Config = {
   services: [],
   specs: ['../../specs/*.spec.ts'],
   mochaOpts: {
-    timeout: 50000,
+    timeout: 120000,
   },
   exclude: [
     // 'path/to/excluded/files'

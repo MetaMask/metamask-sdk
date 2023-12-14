@@ -16,6 +16,42 @@ class AndroidSettingsScreen {
     );
   }
 
+  get openSearchBarButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="com.android.settings:id/search_action_bar"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get searchBarInput(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="com.google.android.settings.intelligence:id/open_search_view_edit_text"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get openingLinksSearchResult(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="android:id/title" and @text="Opening links"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
   get supportedWebAddresses(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
@@ -40,6 +76,18 @@ class AndroidSettingsScreen {
 
   async tapMetaMaskLinksButton(): Promise<void> {
     await (await this.metaMaskQALinksButton).click();
+  }
+
+  async tapOpenSearchBarButton(): Promise<void> {
+    await (await this.openSearchBarButton).click();
+  }
+
+  async tapOpeningLinksSearchResult(): Promise<void> {
+    await (await this.openingLinksSearchResult).click();
+  }
+
+  async fillSearchBarInput(text: string): Promise<void> {
+    await (await this.searchBarInput).setValue(text);
   }
 
   async tapSupportedWebAddresses(): Promise<void> {

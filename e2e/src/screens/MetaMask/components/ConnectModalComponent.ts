@@ -27,9 +27,8 @@ class ConnectModalComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator:
-            'new UiSelector().description("connect-approve-button")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: '//android.widget.Button[@content-desc="connect-button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Connect"',
@@ -43,8 +42,8 @@ class ConnectModalComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().description("connect-cancel-button")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: '//android.widget.Button[@content-desc="cancel-button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Cancel"',
