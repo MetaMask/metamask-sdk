@@ -10,7 +10,7 @@ import { checkFocusAndReconnect } from '../ConnectionManager';
  * @param error The error object that occurred.
  */
 export function handleSocketError(instance: SocketService) {
-  return (error: any) => {
+  return (error: Error) => {
     if (instance.state.debug) {
       console.debug(`SocketService::on 'error' `, error);
     }

@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "strict": true,
+    "outDir": "dist",
     "target": "es6",
     "esModuleInterop": true,
     "module": "ES2020",

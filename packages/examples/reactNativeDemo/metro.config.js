@@ -1,11 +1,15 @@
-/**
- * Metro configuration for React Native
- * https://github.com/facebook/react-native
- *
- * @format
- */
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
+// const path = require('path');
 
-module.exports = {
+/**
+ * Metro configuration
+ * https://facebook.github.io/metro/docs/configuration
+ *
+ * @type {import('metro-config').MetroConfig}
+ */
+const defaultConfig = getDefaultConfig(__dirname);
+
+const config = {
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -17,7 +21,8 @@ module.exports = {
   resolver: {
     extraNodeModules: {
       ...require('node-libs-react-native'),
-      // url: require.resolve('whatwg-url'),
     },
   },
 };
+
+module.exports = mergeConfig(defaultConfig, config);

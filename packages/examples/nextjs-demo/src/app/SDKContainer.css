@@ -1,0 +1,36 @@
+.info-section {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fcdab2;
+    border: 1px solid #947549;
+    border-radius: 5px;
+    text-align: center;
+    word-break: break-word;
+    margin-top: 15px;
+    padding: 15px;
+}
+
+main {
+    width: 100vw;
+}
+
+.button-normal {
+    background-color: #947549;
+    border: 1px solid #947549;
+    color: white;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.button-danger {
+    background-color: red;
+    border: 1px solid red;
+    color: white;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}

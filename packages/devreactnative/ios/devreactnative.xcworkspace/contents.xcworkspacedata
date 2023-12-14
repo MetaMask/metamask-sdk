@@ -7,4 +7,65 @@
    <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
+   <Group
+      location = "group:../node_modules/react-native-vector-icons/Fonts"
+      name = "Fonts">
+      <FileRef
+         location = "group:AntDesign.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Entypo.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:EvilIcons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Feather.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome5_Brands.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome5_Regular.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome5_Solid.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome6_Brands.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome6_Regular.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:FontAwesome6_Solid.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Fontisto.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Foundation.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Ionicons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:MaterialCommunityIcons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:MaterialIcons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Octicons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:SimpleLineIcons.ttf">
+      </FileRef>
+      <FileRef
+         location = "group:Zocial.ttf">
+      </FileRef>
+   </Group>
 </Workspace>

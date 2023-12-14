@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.8.0",
+  "version": "0.14.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -22,6 +22,8 @@
   ],
   "scripts": {
     "build": "rimraf dist && rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc",
+    "build:dev": "rimraf dist && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist",
@@ -38,14 +40,16 @@
     "test:coverage": "jest --coverage",
     "test:ci": "jest --coverage --passWithNoTests",
     "test:dev": "jest",
-    "watch": "rollup -c -w"
+    "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
+    "bufferutil": "^4.0.8",
     "cross-fetch": "^3.1.5",
     "date-fns": "^2.29.3",
     "eciesjs": "^0.3.16",
     "eventemitter2": "^6.4.5",
     "socket.io-client": "^4.5.1",
+    "utf-8-validate": "^6.0.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -80,6 +84,7 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-typescript2": "^0.31.2",
+    "rollup-plugin-visualizer": "^5.9.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^4.3.2"
@@ -94,7 +99,9 @@
       "canvas": true,
       "eciesjs>secp256k1": false,
       "socket.io-client>engine.io-client>ws>bufferutil": false,
-      "socket.io-client>engine.io-client>ws>utf-8-validate": false
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false,
+      "bufferutil": false,
+      "utf-8-validate": false
     }
   }
 }

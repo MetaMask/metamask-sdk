@@ -1,0 +1,46 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es2016",
+    "module": "ESNext", // supports esmodule natively / useful for yarn3 with pnp
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "composite": true,
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@metamask/sdk-ui": [
+        "./src/index"
+      ],
+      "@metamask/sdk-design-system": [
+        "./src/design-system"
+      ],
+      "@assets": [
+        "./assets"
+      ],
+      "react": [
+        "node_modules/@types/react"
+      ]
+    }
+  },
+  "include": [
+    "./src",
+    "./storybook/",
+    "./assets/",
+    "package.json",
+    "./**/*.js"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "./src/**/*.test.tsx",
+    "./src/**/*.test.ts",
+  ]
+}

@@ -1,9 +1,11 @@
 import React from 'react';
 import { SDKProvider } from '@metamask/sdk';
-import { useSDK } from '@metamask/sdk-react';
+import { useSDK } from '@metamask/sdk-ui';
 import { useState } from 'react';
 import Web from 'web3';
 import './App.css';
+import { MetaMaskButton } from '@metamask/sdk-ui';
+import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
 
 declare global {
   interface Window {
@@ -62,15 +64,15 @@ export const App = () => {
     connecting,
     provider,
     chainId,
+    balance,
+    account,
     status: serviceStatus,
   } = useSDK();
-  const [account, setAccount] = useState<string>();
   const [response, setResponse] = useState<unknown>('');
 
   const connect = async () => {
     try {
-      const accounts = (await sdk?.connect()) as string[];
-      setAccount(accounts?.[0]);
+      await sdk?.connect();
     } catch (err) {
       console.warn(`failed to connect..`, err);
     }
@@ -282,7 +284,9 @@ export const App = () => {
           <div>Waiting for Metamask to link the connection...</div>
         )}
       </div>
-
+      <div style={{ padding: 20 }}>
+        <MetaMaskButton />
+      </div>
       {connected ? (
         <div>
           <button style={{ padding: 10, margin: 10 }} onClick={connect}>
@@ -352,17 +356,12 @@ export const App = () => {
         Terminate
       </button>
 
-      {connected && (
-        <div>
-          <>
-            {chainId && `Connected chain: ${chainId}`}
-            <p></p>
-            {account && `Connected account: ${account}`}
-            <p></p>
-            {response && `Last request response: ${response}`}
-          </>
-        </div>
-      )}
+      <p>{`Connected chain: ${chainId}`}</p>
+      <p>{`Connected account: ${account}`}</p>
+      <p>{`Account balance: ${balance}`}</p>
+      <p>{`Last request response: ${response}`}</p>
+      <p>{`Connected: ${connected}`}</p>
+      <RPCHistoryViewer />
     </div>
   );
 };

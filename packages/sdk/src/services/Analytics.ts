@@ -16,7 +16,7 @@ export interface AnalyticsProps {
   };
 }
 
-const constants = {
+export const ANALYTICS_CONSTANTS = {
   DEFAULT_ID: 'sdk',
   NO_VERSION: 'NONE',
 };
@@ -44,9 +44,9 @@ export class Analytics {
 
     SendAnalytics(
       {
-        id: constants.DEFAULT_ID,
+        id: ANALYTICS_CONSTANTS.DEFAULT_ID,
         event,
-        commLayerVersion: constants.NO_VERSION,
+        commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
         originationInfo: this.#metadata,
       },
       this.#serverURL,

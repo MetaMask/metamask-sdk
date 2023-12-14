@@ -1,5 +1,6 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
+import { EventType } from '../../../types/EventType';
 
 /**
  * Tracks the RPC method for the provided message in the `rpcMethodTracker` object.
@@ -17,8 +18,10 @@ export function trackRpcMethod(
   const rpcId = message?.id;
   if (instance.state.isOriginator && rpcId) {
     instance.state.rpcMethodTracker[rpcId] = {
+      id: rpcId,
       timestamp: Date.now(),
       method,
     };
+    instance.emit(EventType.RPC_UPDATE, instance.state.rpcMethodTracker[rpcId]);
   }
 }

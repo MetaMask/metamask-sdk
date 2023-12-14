@@ -1,21 +1,18 @@
-import {ConnectionStatus, EventType, MetaMaskSDK} from '@metamask/sdk';
-import {ethers} from 'ethers';
-import React, {useEffect, useState} from 'react';
+import {useSDK} from '@metamask/sdk-react';
+import React, {useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from './colors';
+import {ServiceStatusView} from './service-status-view';
+import {ServiceStatus} from '@metamask/sdk';
+import {ethers} from 'ethers';
 
-export interface DAPPViewProps {
-  sdk: MetaMaskSDK;
-}
+export interface DAPPViewProps {}
 
-const createStyles = (connectionStatus: ConnectionStatus) => {
+const createStyles = ({connected}: {connected: boolean}) => {
   return StyleSheet.create({
     container: {
       borderWidth: 2,
-      borderColor:
-        connectionStatus === ConnectionStatus.LINKED
-          ? colors.success.default
-          : colors.warning.default,
+      borderColor: connected ? colors.success.default : colors.warning.default,
       padding: 10,
       backgroundColor: colors.background.default,
     },
@@ -43,104 +40,24 @@ const createStyles = (connectionStatus: ConnectionStatus) => {
   });
 };
 
-export const DAPPView = ({sdk}: DAPPViewProps) => {
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
-  const [ethereum] = useState(sdk.getProvider());
+export const DAPPView = (_props: DAPPViewProps) => {
+  const {
+    sdk,
+    provider: ethereum,
+    status,
+    chainId,
+    account,
+    balance,
+    readOnlyCalls,
+    connected,
+  } = useSDK();
   const [response, setResponse] = useState<unknown>('');
-  const [account, setAccount] = useState<string>();
-  const [chain, setChain] = useState<string>();
-  const [balance, setBalance] = useState<string>();
-  const [connected, setConnected] = useState<boolean>(false);
-  const [status, setConnectionStatus] = useState(ConnectionStatus.DISCONNECTED);
-  const styles = createStyles(status);
-
-  const getBalance = async () => {
-    if (!ethereum?.selectedAddress) {
-      return;
-    }
-    const bal =
-      (await provider?.getBalance(ethereum?.selectedAddress)) ??
-      ethers.BigNumber.from(0);
-    setBalance(ethers.utils.formatEther(bal));
-  };
-
-  useEffect(() => {
-    if (!ethereum) {
-      console.warn('invalid provider state');
-      return;
-    }
-
-    try {
-      setProvider(
-        new ethers.providers.Web3Provider(
-          ethereum as unknown as ethers.providers.ExternalProvider,
-        ),
-      );
-
-      console.debug(
-        `useffect ethereum.selectedAddress=${ethereum.selectedAddress}`,
-      );
-      if (ethereum.selectedAddress) {
-        setConnected(true);
-        setAccount(ethereum.selectedAddress);
-      }
-
-      ethereum.on('connect', () => {
-        setConnected(true);
-      });
-
-      ethereum.on('chainChanged', (newChain: unknown) => {
-        console.log('useEffect::ethereum on "chainChanged"', newChain);
-        setChain(newChain as string);
-      });
-
-      ethereum.on('_initialized', () => {
-        console.log(
-          `useEffect::ethereum on "_initialized" ethereum.selectedAddress=${ethereum.selectedAddress} ethereum.chainId=${ethereum.chainId}`,
-        );
-        if (ethereum.selectedAddress) {
-          setAccount(ethereum?.selectedAddress);
-          getBalance();
-        }
-        if (ethereum.chainId) {
-          setChain(ethereum.chainId);
-        }
-      });
-
-      ethereum.on('accountsChanged', (_accounts: unknown) => {
-        const accounts = _accounts as string[];
-        console.log('useEffect::ethereum on "accountsChanged"', accounts);
-        if (accounts.length > 0 && accounts[0] !== account) {
-          setAccount(accounts?.[0]);
-          getBalance();
-        }
-      });
-
-      ethereum.on('disconnect', () => {
-        console.log('useEffect::ethereum on "disconnect"');
-        setConnected(false);
-      });
-
-      sdk.on(
-        EventType.CONNECTION_STATUS,
-        (_connectionStatus: ConnectionStatus) => {
-          setConnectionStatus(_connectionStatus);
-        },
-      );
-    } catch (err) {
-      console.log('errror', err);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const styles = createStyles({connected});
 
   const connect = async () => {
     try {
-      const result = (await ethereum?.request({
-        method: 'eth_requestAccounts',
-      })) as string[];
-      console.log('RESULT', result?.[0]);
-      setConnected(true);
-      setAccount(result?.[0]);
+      const accounts = (await sdk?.connect()) as string[];
+      console.log('accounts', accounts);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -148,6 +65,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
 
   const exampleRequest = async () => {
     try {
+      setResponse('');
       const result = await ethereum?.request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -160,11 +78,32 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
           },
         ],
       });
-      console.log('RESULT', result);
+      console.log('exampleRequest', result);
       setResponse(result);
     } catch (e) {
       console.log('ERROR', e);
     }
+  };
+
+  // TODO re-activate with hooks
+  const testEthers = async () => {
+    if (!ethereum) {
+      console.warn('provider is undefined');
+      return;
+    }
+    const web3Provider = new ethers.providers.Web3Provider(
+      ethereum as unknown as ethers.providers.ExternalProvider,
+    );
+    const signer = web3Provider.getSigner();
+    console.debug('signer', signer);
+
+    // const addr = await signer.getAddress();
+    // console.log('addr', addr);
+
+    setResponse('');
+    const msg = await signer.signMessage('hello world');
+    console.debug('msg', msg);
+    setResponse(msg);
   };
 
   const sign = async () => {
@@ -237,12 +176,14 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       },
     });
 
-    var from = ethereum?.selectedAddress;
+    const from = ethereum?.selectedAddress;
 
-    var params = [from, msgParams];
-    var method = 'eth_signTypedData_v4';
+    const params = [from, msgParams];
+    const method = 'eth_signTypedData_v4';
 
+    setResponse('');
     const resp = await ethereum?.request({method, params});
+    console.debug('sign response', resp);
     setResponse(resp);
   };
 
@@ -255,6 +196,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     };
 
     try {
+      setResponse('');
       // txHash is a hex string
       // As with any RPC call, it may throw an error
       const txHash = await ethereum?.request({
@@ -268,6 +210,62 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
     }
   };
 
+  const testReadOnlyCalls = async () => {
+    try {
+      const chain = await ethereum?.request({
+        method: 'eth_chainId',
+        params: [],
+      });
+      console.log('testReadOnlyCalls: chain', chain);
+
+      const acc1 = '0x8e0E30e296961f476E01184274Ce85ae60184CB0';
+      const b1 = await ethereum?.request({
+        method: 'eth_getBalance',
+        params: [acc1, 'latest'],
+      });
+      const acc2 = '0xA9FBbc6C2E49643F8B58Efc63ED0c1f4937A171E';
+      const b2 = await ethereum?.request({
+        method: 'eth_getBalance',
+        params: [acc2, 'latest'],
+      });
+      console.log(`balance: ${acc1}`, b1);
+      console.log(`balance: ${acc2}`, b2);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const batch = async () => {
+    const selectedAddress = ethereum?.selectedAddress;
+
+    const rpcs = [
+      {
+        method: 'personal_sign',
+        params: ['something to sign 1', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['hello world', selectedAddress],
+      },
+      {
+        method: 'personal_sign',
+        params: ['Another one #3', selectedAddress],
+      },
+    ];
+
+    try {
+      setResponse('');
+      const response = (await ethereum?.request({
+        method: 'metamask_batch',
+        params: rpcs,
+      })) as unknown[];
+      setResponse(response);
+      console.log('response', response);
+    } catch (e) {
+      console.error('error', e);
+    }
+  };
+
   const textStyle = {
     color: colors.text.default,
     margin: 10,
@@ -277,18 +275,25 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
   return (
     <View style={{borderWidth: 2, padding: 5}}>
       <Text style={styles.title}>
-        {sdk._getDappMetadata()?.name} (
+        {sdk?._getDappMetadata()?.name} (
         {connected ? 'connected' : 'disconnected'})
       </Text>
+      <ServiceStatusView serviceStatus={status as ServiceStatus} />
+
+      {readOnlyCalls && (
+        <Button title="Test read-only calls" onPress={testReadOnlyCalls} />
+      )}
 
       {connected ? (
         <>
           <Button title={'Request Accounts'} onPress={connect} />
           <Button title="Sign" onPress={sign} />
+          <Button title="testEthers" onPress={testEthers} />
           <Button title="Send transaction" onPress={sendTransaction} />
           <Button title="Add chain" onPress={exampleRequest} />
+          <Button title="Batch Calls" onPress={batch} />
           <Text style={textStyle}>
-            {chain && `Connected chain: ${chain}\n`}
+            {chainId && `Connected chain: ${chainId}\n`}
             {account && `Connected account: ${account}\n\n`}
             {account && balance && `Balance: ${balance} ETH`}
           </Text>
@@ -303,11 +308,7 @@ export const DAPPView = ({sdk}: DAPPViewProps) => {
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}
         onPress={() => {
-          sdk.terminate();
-          setConnected(false);
-          setAccount(undefined);
-          setBalance(undefined);
-          setChain(undefined);
+          sdk?.terminate();
           setResponse('');
         }}>
         <Text style={styles.buttonText}>Terminate</Text>

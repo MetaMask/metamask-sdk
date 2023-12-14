@@ -5,76 +5,96 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
-import {
-  AppState,
-  AppStateStatus,
-  Button,
-  Linking,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {useEffect} from 'react';
 
-import {DEFAULT_SERVER_URL, MetaMaskSDK} from '@metamask/sdk';
-import {encrypt} from 'eciesjs';
-import {LogBox} from 'react-native';
-import BackgroundTimer from 'react-native-background-timer';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {DAPPView} from './src/views/DappView';
+import {
+  MetaMaskProvider,
+  SDKConfigProvider,
+  useSDKConfig,
+} from '@metamask/sdk-react';
+import {UIProvider} from '@metamask/sdk-ui';
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
-import packageJSON from './package.json';
+
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import {AppState, AppStateStatus, Linking, LogBox} from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
+import RootNavigator from './src/RootNavigator';
 
 LogBox.ignoreLogs([
-  //'Possible Unhandled Promise Rejection'
+  'Possible Unhandled Promise Rejection',
+  'No handleCopy function provided for address',
+  'Message ignored because invalid key exchange status',
+  "MetaMask: 'ethereum._metamask' exposes",
+  '`new NativeEventEmitter()` was called with a non-null',
 ]); // Ignore log notification by message
 
 // TODO how to properly make sure we only try to open link when the app is active?
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
 // hence usage of a global variable.
 let canOpenLink = true;
-const serverUrl = COMM_SERVER_URL ?? DEFAULT_SERVER_URL;
 
-const sdk = new MetaMaskSDK({
-  openDeeplink: (link: string) => {
-    if (canOpenLink) {
-      console.debug(`App::openDeepLink() ${link}`);
-      Linking.openURL(link);
-    } else {
-      console.debug(
-        'useBlockchainProiver::openDeepLink app is not active - skip link',
-        link,
-      );
-    }
-  },
-  // Replace with local socket server for dev debug
-  // Android will probably require https, so use ngrok or edit react_native_config.xml to allow http.
-  communicationServerUrl: serverUrl,
-  checkInstallationOnAllCalls: false,
-  infuraAPIKey: INFURA_API_KEY ?? undefined,
-  timer: BackgroundTimer,
-  enableDebug: true,
-  dappMetadata: {
-    url: 'devreactnative',
-    name: 'devreactnative',
-  },
-  storage: {
-    enabled: true,
-    // storageManager: new StorageManagerRN({debug: true}),
-  },
-  logging: {
-    developerMode: true,
-    plaintext: true,
-  },
-});
+const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    debug,
+    checkInstallationImmediately,
+  } = useSDKConfig();
 
-function App(): JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  const [encryptionTime, setEncryptionTime] = useState<number>();
+  return (
+    <MetaMaskProvider
+      debug={debug}
+      sdkOptions={{
+        communicationServerUrl: socketServer,
+        enableDebug: true,
+        infuraAPIKey,
+        readonlyRPCMap: {
+          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+        },
+        logging: {
+          developerMode: true,
+          plaintext: true,
+        },
+        openDeeplink: (link: string, _target?: string) => {
+          console.debug(`App::openDeepLink() ${link}`);
+          if (canOpenLink) {
+            Linking.openURL(link);
+          } else {
+            console.debug(
+              'useBlockchainProiver::openDeepLink app is not active - skip link',
+              link,
+            );
+          }
+        },
+        timer: BackgroundTimer,
+        useDeeplink,
+        checkInstallationImmediately,
+        storage: {
+          enabled: true,
+        },
+        dappMetadata: {
+          name: 'devreactnative',
+        },
+        i18nOptions: {
+          enabled: true,
+        },
+      }}>
+      {children}
+    </MetaMaskProvider>
+  );
+};
+
+export const SafeApp = () => {
+  const navigationRef = useNavigationContainerRef();
+
+  const handleAppState = (appState: AppStateStatus) => {
+    canOpenLink = appState === 'active';
+    console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
+  };
 
   useEffect(() => {
     const subscription = AppState.addEventListener('change', handleAppState);
@@ -84,87 +104,21 @@ function App(): JSX.Element {
     };
   }, []);
 
-  const handleAppState = (appState: AppStateStatus) => {
-    canOpenLink = appState === 'active';
-    console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
-  };
-
-  const backgroundStyle = {
-    backgroundColor: Colors.lighter,
-  };
-
-  const testEncrypt = async () => {
-    // const privateKey =
-    //   '0x131ded88ca58162376374eecc9f74349eb90a8fc9457466321dd9ce925beca1a';
-    console.debug('begin encryptiion test');
-    const startTime = Date.now();
-
-    const data =
-      '{"type":"originator_info","originatorInfo":{"url":"example.com","title":"React Native Test Dapp","platform":"NonBrowser"}}';
-    const other =
-      '024368ce46b89ec6b5e8c48357474b2a8e26594d00cd59ff14753f8f0051706016';
-    const payload = Buffer.from(data);
-    const encryptedData = encrypt(other, payload);
-    const encryptedString = Buffer.from(encryptedData).toString('base64');
-    console.debug('encrypted: ', encryptedString);
-    const timeSpent = Date.now() - startTime;
-    setEncryptionTime(timeSpent);
-    console.debug(`encryption time: ${timeSpent} ms`);
+  const handleNavReady = () => {
+    console.log('Navigation container ready!');
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          // eslint-disable-next-line react-native/no-inline-styles
-          style={{
-            marginTop: 30,
-            backgroundColor: Colors.white,
-          }}>
-          <Text style={{color: Colors.black, fontSize: 24}}>
-            devreactnative Mobile Dapp Test ( RN{' '}
-            {`v${packageJSON.dependencies['react-native']
-              .trim()
-              .replaceAll('\n', '')}`}
-            )
-          </Text>
-          <Text>ServerUrl: {serverUrl}</Text>
-          <Text>INFURA KEY: {INFURA_API_KEY}</Text>
-          <Button title="TestEncrypt" onPress={testEncrypt} />
-          <Text style={{color: Colors.black}}>
-            {encryptionTime && `Encryption time: ${encryptionTime} ms`}
-          </Text>
-          <DAPPView sdk={sdk} />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SDKConfigProvider
+      initialSocketServer={COMM_SERVER_URL}
+      initialInfuraKey={INFURA_API_KEY}>
+      <WithSDKConfig>
+        <UIProvider>
+          <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
+            <RootNavigator />
+          </NavigationContainer>
+        </UIProvider>
+      </WithSDKConfig>
+    </SDKConfigProvider>
   );
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+};

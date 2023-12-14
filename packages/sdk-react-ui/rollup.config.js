@@ -15,6 +15,7 @@ const packageJson = require('./package.json');
 const config =
   [
     {
+      external: ["react", "react-dom", "react-native"],
       input: 'src/index.ts',
       output: [
         {

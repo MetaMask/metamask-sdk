@@ -12,5 +12,5 @@ export function disableWakeLock(instance: PlatformManager) {
     clearTimeout(state.wakeLockTimer as NodeJS.Timeout);
   }
 
-  state.wakeLock.disable();
+  state.wakeLock.disable('disableWakeLock');
 }

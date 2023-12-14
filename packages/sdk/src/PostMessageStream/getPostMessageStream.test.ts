@@ -26,7 +26,7 @@ describe('getPostMessageStream', () => {
         remoteConnection: undefined,
         debug: false,
       } as any),
-    ).toThrow('Missing remote conenction parameter');
+    ).toThrow('Missing remote connection parameter');
   });
 
   it('should return a new RemoteCommunicationPostMessageStream if all parameters are present', () => {

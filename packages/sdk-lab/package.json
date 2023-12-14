@@ -1,0 +1,93 @@
+{
+  "name": "@metamask/sdk-lab",
+  "version": "0.1.5",
+  "description": "MetaMask SDK lab -- alpha components for sdk development",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/src/index.d.ts",
+  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/metamask-sdk/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "directory": "packages/sdk"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "package.json",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "build": "yarn build:rollup",
+    "build:rollup": "yarn clean && rollup -c --bundleConfigAsCjs",
+    "build:tsc": "tsc",
+    "build:pre-tsc": "echo 'n/a'",
+    "build:post-tsc": "echo 'n/a'",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:eslint": "eslint . --cache \"**/*.{js,ts,tsx}\"",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-lab",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "test": "echo 'n/a'",
+    "test:ci": "echo 'n/a'",
+    "test:coverage": "echo 'n/a'",
+    "allow-scripts": ""
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@metamask/sdk-communication-layer": "workspace:^",
+    "@metamask/sdk-react": "workspace:^",
+    "@metamask/sdk-ui": "workspace:^",
+    "i18n-js": "^4.3.2",
+    "i18next": "^23.6.0",
+    "intl-pluralrules": "^2.0.1",
+    "next-qrcode": "^2.5.1",
+    "react-i18next": "^13.3.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.3",
+    "@babel/plugin-transform-flow-strip-types": "^7.23.3",
+    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "@metamask/auto-changelog": "^3.4.3",
+    "@react-native-community/eslint-config": "^3.2.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/react": "^18.2.37",
+    "@types/react-native": "latest",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "expo": "^49.0.17",
+    "expo-clipboard": "^4.5.0",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^5.0.5",
+    "rollup": "^4.5.0",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-postcss": "^4.0.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "typescript": "^5.2.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
+}

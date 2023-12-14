@@ -46,6 +46,8 @@ export function resume(instance: SocketService) {
   // Always try to recover key exchange from both side (wallet / dapp)
   if (instance.state.keyExchange?.areKeysExchanged()) {
     if (!instance.state.isOriginator) {
+      // this message will be ignored by the dapp if it has restarted and updated keys.
+      // Dapp will then init another key exchange.
       instance.sendMessage({ type: MessageType.READY });
     }
   } else if (!instance.state.isOriginator) {

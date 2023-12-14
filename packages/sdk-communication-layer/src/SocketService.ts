@@ -1,4 +1,3 @@
-/* eslint-disable padding-line-between-statements */
 import { EventEmitter2 } from 'eventemitter2';
 import { io, Socket } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
@@ -47,15 +46,19 @@ export interface SocketServiceState {
   communicationServerUrl: string;
   debug?: boolean;
   rpcMethodTracker: RPCMethodCache;
+  lastRpcId?: string;
   hasPlaintext: boolean;
   socket?: Socket;
+  setupChannelListeners?: boolean;
   keyExchange?: KeyExchange;
 }
 
 export interface RPCMethodResult {
+  id: string;
   timestamp: number; // timestamp of last request
   method: string;
   result?: unknown;
+  error?: unknown;
   elapsedTime?: number; // elapsed time between request and response
 }
 export interface RPCMethodCache {
@@ -75,6 +78,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
      */
     clientsPaused: false,
     manualDisconnect: false,
+    lastRpcId: undefined,
     rpcMethodTracker: {},
     hasPlaintext: false,
     communicationServerUrl: '',
@@ -161,6 +165,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     return keyCheck(this);
   }
 
+  getKeyExchange() {
+    return this.state.keyExchange as KeyExchange;
+  }
+
   sendMessage(message: CommunicationLayerMessage): void {
     return handleSendMessage(this, message);
   }
@@ -179,6 +187,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   resume(): void {
     return resume(this);
+  }
+
+  getRPCMethodTracker() {
+    return this.state.rpcMethodTracker;
   }
 
   disconnect(options?: DisconnectOptions): void {

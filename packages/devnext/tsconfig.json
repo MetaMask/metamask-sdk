@@ -2,7 +2,11 @@
   // "extends": "../../tsconfig.packages.build.json",
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,15 +20,37 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
-      "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
-      "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
-      "@metamask/sdk-react": ["../sdk-react/src"],
-      "@metamask/sdk-react-ui": ["../sdk-react-ui/src"],
-      "@metamask/sdk": ["../sdk/src"]
+      "@metamask/sdk-communication-layer": [
+        "../sdk-communication-layer/src"
+      ],
+      "@metamask/sdk-install-modal-web": [
+        "../sdk-install-modal-web/src"
+      ],
+      "@metamask/sdk-react": [
+        "../sdk-react/src"
+      ],
+      "@metamask/sdk-react-ui": [
+        "../sdk-react-ui/src"
+      ],
+      "@metamask/sdk-ui": [
+        "../sdk-ui/src"
+      ],
+      "@metamask/sdk-lab": [
+        "../sdk-lab/src"
+      ],
+      "@metamask/sdk": [
+        "../sdk/src"
+      ],
+      "react": ["./node_modules/@types/react"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx" ],
+  "exclude": [
+    "node_modules"
+  ],
   "references": [
     {
       "path": "../sdk/tsconfig.build.json"
@@ -37,6 +63,12 @@
     },
     {
       "path": "../sdk-install-modal-web"
+    },
+    {
+      "path": "../sdk-ui/tsconfig.json"
+    },
+    {
+      "path": "../sdk-lab/tsconfig.json"
     }
   ]
 }

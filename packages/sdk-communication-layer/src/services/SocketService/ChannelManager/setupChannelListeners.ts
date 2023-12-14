@@ -1,35 +1,15 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import {
-  handleSocketError,
-  handlePing,
-  handleReconnect,
-  handleReconnectError,
-  handleReconnectFailed,
-  handleDisconnect,
-  handleClientsConnected,
   handleChannelCreated,
-  handlesClientsDisconnected,
-  handleMessage,
+  handleClientsConnected,
   handleClientsWaitingToJoin,
+  handleDisconnect,
   handleKeyInfo,
   handleKeysExchanged,
+  handleMessage,
+  handlesClientsDisconnected,
 } from '../EventListeners';
-
-const socketEventListenerMap = [
-  { event: 'error', handler: handleSocketError },
-  { event: 'ping', handler: handlePing },
-  { event: 'reconnect', handler: handleReconnect },
-  {
-    event: 'reconnect_error',
-    handler: handleReconnectError,
-  },
-  {
-    event: 'reconnect_failed',
-    handler: handleReconnectFailed,
-  },
-  { event: 'disconnect', handler: handleDisconnect },
-];
 
 const channelEventListenerMap = [
   {
@@ -84,10 +64,62 @@ export function setupChannelListeners(
   const { socket } = instance.state;
   const { keyExchange } = instance.state;
 
-  socketEventListenerMap.forEach(({ event, handler }) => {
-    const fullEventName = `${event}-${channelId}`;
-    socket?.on(fullEventName, handler(instance));
-  });
+  if (instance.state.setupChannelListeners) {
+    console.warn(
+      `SocketService::${instance.state.context}::setupChannelListener socket listeners already set up for channel ${channelId}`,
+    );
+  }
+
+  // Only available for the originator -- used for connection recovery
+  if (socket && instance.state.isOriginator) {
+    if (instance.state.debug) {
+      // TODO remove all the handleSocker* functions
+      // They are not required since it is managed via the handleDisconnect function
+      socket?.io.on('error', (error) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=error`,
+          error,
+        );
+        // return handleSocketError(instance)(error);
+      });
+
+      socket?.io.on('reconnect', (attempt) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect`,
+          attempt,
+        );
+      });
+
+      socket?.io.on('reconnect_error', (error) => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_error`,
+          error,
+        );
+        // return handleReconnectError(instance)(error);
+      });
+
+      socket?.io.on('reconnect_failed', () => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_failed`,
+        );
+        // return handleReconnectFailed(instance)();
+      });
+
+      socket?.io.on('ping', () => {
+        console.debug(
+          `SocketService::${instance.state.context}::setupChannelListener socket event=ping`,
+        );
+        // return handlePing(instance)();
+      });
+    }
+
+    socket?.on('disconnect', (reason: string) => {
+      console.log(
+        `MetaMaskSDK socket disconnected '${reason}' begin recovery...`,
+      );
+      return handleDisconnect(instance)(reason);
+    });
+  }
 
   channelEventListenerMap.forEach(({ event, handler }) => {
     const fullEventName = `${event}-${channelId}`;
@@ -97,4 +129,6 @@ export function setupChannelListeners(
   keyExchangeEventListenerMap.forEach(({ event, handler }) => {
     keyExchange?.on(event, handler(instance));
   });
+
+  instance.state.setupChannelListeners = true;
 }

@@ -1,3 +1,5 @@
+@import url('https://fonts.cdnfonts.com/css/euclid-circular-b');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,4 +41,41 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+#header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+}
+
+
+.action-buttons button {
+  padding: 10;
+  background-color: #61dafb;
+}
+
+.action-buttons button.chain {
+  padding: 10;
+  background-color: #6495ED	;
+}
+
+.alternate-row {
+  background-color: #f2f2f2;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: left;
+}
+
+.loading-spinner {
+  color: #007bff; /* Or any color you prefer */
+  font-size: 2rem; /* Adjust the size as needed */
 }

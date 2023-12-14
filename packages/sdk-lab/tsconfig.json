@@ -1,0 +1,48 @@
+{
+  // "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "target": "es2016",
+    "module": "ESNext", // supports esmodule natively / useful for yarn3 with pnp
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react",
+    "composite": true,
+    "strict": true,
+    "allowJs": false,
+    "skipLibCheck": true,
+    "paths": {
+      // "@metamask/sdk-lab": ["./src/index"],
+      // "@metamask/sdk-communication-layer": [
+      //   "../sdk-communication-layer/src"
+      // ],
+      // "@metamask/sdk-install-modal-web": [
+      //   "../sdk-install-modal-web/src"
+      // ],
+      // "@metamask/sdk-react": [
+      //   "../sdk-react/src"
+      // ],
+      // "@metamask/sdk-ui": ["../sdk-ui/src/index"]
+    }
+  },
+  "include": ["./src/"],
+  "references": [
+    // {
+    //   "path": "../sdk/tsconfig.build.json"
+    // },
+    // {
+    //   "path": "../sdk-react/tsconfig.json"
+    // },
+    // {
+    //   "path": "../sdk-communication-layer/tsconfig.build.json"
+    // },
+    // {
+    //   "path": "../sdk-install-modal-web"
+    // },
+    // {
+    //   "path": "../sdk-ui/tsconfig.json"
+    // },
+  ]
+}

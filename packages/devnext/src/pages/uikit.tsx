@@ -1,4 +1,6 @@
 import { MetaMaskButton, useAccount } from '@metamask/sdk-react-ui';
+import { MetaMaskButton as NativeMetamaskButton } from '@metamask/sdk-ui';
+
 import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -26,6 +28,9 @@ export default function UIKitPage() {
         <Link href={'/'}>Index Page</Link>
         <div>
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
+        </div>
+        <div>
+          <NativeMetamaskButton theme={'light'} color="white" />
         </div>
         {isClient && (
           <pre>

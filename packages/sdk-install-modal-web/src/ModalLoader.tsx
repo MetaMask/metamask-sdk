@@ -23,9 +23,11 @@ export class ModalLoader {
   private pendingContainer?: Element;
   private selectContainer?: Element;
   private debug = false;
+  private sdkVersion?: string;
 
-  constructor(debug?: boolean) {
+  constructor({debug, sdkVersion}: {debug?: boolean, sdkVersion?: string}) {
     this.debug = debug ?? false;
+    this.sdkVersion = sdkVersion;
   }
 
   renderInstallModal(props: InstallWidgetProps) {
@@ -40,7 +42,9 @@ export class ModalLoader {
       <InstallModal
         link={props.link}
         onClose={props.onClose}
+        sdkVersion={this.sdkVersion}
         metaMaskInstaller={props.metaMaskInstaller}
+        i18nInstance={props.i18nInstance}
       />,
     );
   }
@@ -55,8 +59,10 @@ export class ModalLoader {
     reactRoot.render(
       <SelectModal
         link={props.link}
+        sdkVersion={this.sdkVersion}
         onClose={props.onClose}
         connectWithExtension={props.connectWithExtension}
+        i18nInstance={props.i18nInstance}
       />,
     );
 
@@ -77,8 +83,10 @@ export class ModalLoader {
       <PendingModal
         onClose={props.onClose}
         onDisconnect={props.onDisconnect}
+        sdkVersion={this.sdkVersion}
         updateOTPValue={props.updateOTPValue}
         displayOTP={props.displayOTP}
+        i18nInstance={props.i18nInstance}
       />,
     );
   }
@@ -87,14 +95,30 @@ export class ModalLoader {
     if (this.debug) {
       console.debug(`ModalLoader: updateOTPValue`, otpValue);
     }
-    const otpNode =
-      this.pendingContainer?.querySelector<HTMLElement>('#sdk-mm-otp-value') ?? document.querySelector<HTMLElement>('#sdk-mm-otp-value');
-    if (otpNode) {
-      otpNode.textContent = otpValue;
-      otpNode.style.display = 'block';
-    } else {
-      console.error(`ModalLoader: updateOTPValue: otpNode not found`, this);
+
+    const tryUpdate = () => {
+      const otpNode =
+      document.getElementById('sdk-mm-otp-value');
+
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: otpNode`, otpNode);
+      }
+
+      if (otpNode) {
+        otpNode.textContent = otpValue;
+        otpNode.style.display = 'block';
+        return true;
+      } else {
+        return false;
+      }
     }
+    // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
+    setTimeout(() => {
+      if(this.debug) {
+        console.debug(`ModalLoader: updateOTPValue: delayed otp update`)
+      }
+      tryUpdate();
+    }, 800);
   };
 
   updateQRCode = (link: string) => {
@@ -102,9 +126,8 @@ export class ModalLoader {
       console.debug(`ModalLoader: updateQRCode`, link);
     }
     // TODO use scoped elem
-    const qrCodeNode = this.selectContainer?.querySelector(
-      '#sdk-qrcode-container',
-    ) ?? document.querySelector('#sdk-qrcode-container');
+    const qrCodeNode =
+      document.getElementById('sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
       // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38

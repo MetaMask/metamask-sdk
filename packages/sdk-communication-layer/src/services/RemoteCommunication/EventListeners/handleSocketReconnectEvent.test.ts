@@ -16,6 +16,7 @@ describe('handleSocketReconnectEvent', () => {
         ready: true,
         debug: false,
       },
+      emitServiceStatusEvent: jest.fn(),
     } as unknown as RemoteCommunication;
   });
 

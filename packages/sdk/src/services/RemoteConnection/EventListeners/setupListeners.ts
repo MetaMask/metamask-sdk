@@ -40,7 +40,10 @@ export function setupListeners(
           state.pendingModal?.updateOTPValue?.('');
         };
 
-        state.pendingModal = options.modals.otp?.({ onDisconnect });
+        state.pendingModal = options.modals.otp?.({
+          i18nInstance: options.i18nInstance,
+          onDisconnect,
+        });
       }
       state.pendingModal?.mount?.();
       state.pendingModal?.updateOTPValue?.(otpAnswer);
@@ -129,8 +132,11 @@ export function setupListeners(
       console.info(`SDK Connection has been terminated`);
     }
     state.pendingModal?.unmount?.();
+    state.installModal?.unmount?.(true);
     state.pendingModal = undefined;
+    state.installModal = undefined;
     state.otpAnswer = undefined;
+    state.connector?.disconnect({ terminate: true });
     state.authorized = false;
 
     const provider = Ethereum.getProvider();

@@ -2364,9 +2364,7 @@
   "ast": {
     "absolutePath": "project:/contracts/Simple.sol",
     "exportedSymbols": {
-      "Simple": [
-        23
-      ]
+      "Simple": [23]
     },
     "id": 24,
     "license": "MIT",
@@ -2374,12 +2372,7 @@
     "nodes": [
       {
         "id": 1,
-        "literals": [
-          "solidity",
-          "^",
-          "0.8",
-          ".6"
-        ],
+        "literals": ["solidity", "^", "0.8", ".6"],
         "nodeType": "PragmaDirective",
         "src": "32:23:0"
       },
@@ -2391,9 +2384,7 @@
         "contractKind": "contract",
         "fullyImplemented": true,
         "id": 23,
-        "linearizedBaseContracts": [
-          23
-        ],
+        "linearizedBaseContracts": [23],
         "name": "Simple",
         "nameLocation": "66:6:0",
         "nodeType": "ContractDefinition",

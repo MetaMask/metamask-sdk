@@ -1,11 +1,15 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
+import { i18n } from 'i18next';
+import packageJson from '../../../package.json';
 
 const sdkWebPendingModal = ({
   debug,
   onDisconnect,
+  i18nInstance,
 }: {
   debug?: boolean;
   onDisconnect?: () => void;
+  i18nInstance: i18n;
 }) => {
   let div: HTMLDivElement | null = null;
   let modalLoader: ModalLoader | null = null;
@@ -52,11 +56,12 @@ const sdkWebPendingModal = ({
       return;
     }
 
-    modalLoader = new ModalLoader(debug);
+    modalLoader = new ModalLoader({ debug, sdkVersion: packageJson.version });
     div = document.createElement('div');
     document.body.appendChild(div);
 
     modalLoader.renderPendingModal({
+      i18nInstance,
       parentElement: div,
       onClose: unmount,
       onDisconnect,

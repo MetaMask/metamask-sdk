@@ -62,6 +62,6 @@ export function onCommunicationLayerMessage(
     handleAuthorizedMessage(instance);
   }
 
-  // TODO should it check if only emiting JSON-RPC message?
+  // TODO should it check if only emitting JSON-RPC message?
   instance.emit(EventType.MESSAGE, message);
 }

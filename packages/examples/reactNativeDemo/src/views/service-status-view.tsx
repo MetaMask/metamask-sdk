@@ -1,9 +1,9 @@
-/* eslint-disable react/react-in-jsx-scope */
-import {ServiceStatus} from '@metamask/sdk';
+import React from 'react';
+import type {ServiceStatus} from '@metamask/sdk';
 import {View, Text} from 'react-native';
 
 export interface ServiceStatusViewProps {
-  serviceStatus: ServiceStatus;
+  serviceStatus?: ServiceStatus;
 }
 
 export const ServiceStatusView = ({serviceStatus}: ServiceStatusViewProps) => {
@@ -16,11 +16,9 @@ export const ServiceStatusView = ({serviceStatus}: ServiceStatusViewProps) => {
         key_exchange_step: {serviceStatus?.keyInfo?.step}
       </Text>
       <Text style={{color: 'black'}}>
-        key_exchanged: {serviceStatus?.keyInfo?.keysExchanged + ''}
+        key_exchanged: {`${serviceStatus?.keyInfo?.keysExchanged}`}
       </Text>
-      <Text style={{color: 'black'}}>
-        Channel: {serviceStatus?.channelConfig?.channelId}
-      </Text>
+      <Text style={{color: 'black'}}>Channel: {serviceStatus?.channelId}</Text>
       <Text style={{color: 'black'}}>{`Expiration: ${
         serviceStatus?.channelConfig?.validUntil ?? ''
       }`}</Text>

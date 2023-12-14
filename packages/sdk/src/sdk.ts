@@ -4,6 +4,8 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import EventEmitter2 from 'eventemitter2';
+import { createInstance, i18n } from 'i18next';
+import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
 import { SDKProvider } from './provider/SDKProvider';
@@ -13,7 +15,9 @@ import {
   resume,
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
+import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
   RemoteConnection,
   RemoteConnectionProps,
@@ -21,7 +25,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
+import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -149,6 +153,14 @@ export interface MetaMaskSDKOptions {
    * A string to track external integrations (e.g. wagmi).
    */
   _source?: string;
+
+  /*
+   * Options for enabling i18n multi-language support on the SDK.
+   */
+  i18nOptions?: {
+    debug?: boolean;
+    enabled?: boolean;
+  };
 }
 
 export class MetaMaskSDK extends EventEmitter2 {
@@ -180,6 +192,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public defaultReadOnlyChainId = `0x1`;
 
+  public i18nInstance: i18n = createInstance();
+
+  public availableLanguages: string[] = ['en'];
+
   constructor(
     options: MetaMaskSDKOptions = {
       storage: {
@@ -189,9 +205,13 @@ export class MetaMaskSDK extends EventEmitter2 {
       forceInjectProvider: false,
       enableDebug: true,
       shouldShimWeb3: true,
+      useDeeplink: false,
       dappMetadata: {
         name: '',
         url: '',
+      },
+      i18nOptions: {
+        enabled: false,
       },
     },
   ) {
@@ -234,6 +254,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       .then(() => {
         if (this.debug) {
           console.debug(`MetaMaskSDK() initialized`);
+          window.mmsdk = this;
         }
       })
       .catch((err) => {
@@ -254,12 +275,26 @@ export class MetaMaskSDK extends EventEmitter2 {
     return connect(this);
   }
 
+  // WARNING: This method only works for MetaMask Mobile v7.10+. It will throw an error otherwise.
+  // msg can be a simple string or ABNF RFC 5234 compliant string.
+  async connectAndSign({ msg }: { msg: string }) {
+    return connectAndSign({ instance: this, msg });
+  }
+
+  async connectWith(rpc: { method: string; params: any[] }) {
+    return connectWith({ instance: this, rpc });
+  }
+
   resume() {
     return resume(this);
   }
 
+  /**
+   * DEPRECATED: use terminate() instead.
+   */
   disconnect() {
-    this.remoteConnection?.disconnect();
+    console.warn(`MetaMaskSDK.disconnect() is deprecated, use terminate()`);
+    this.terminate();
   }
 
   isAuthorized() {
@@ -289,6 +324,14 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     return this.activeProvider;
+  }
+
+  getMobileProvider(): SDKProvider {
+    if (!this.sdkProvider) {
+      throw new Error(`SDK state invalid -- undefined mobile provider`);
+    }
+
+    return this.sdkProvider;
   }
 
   getUniversalLink() {
@@ -339,5 +382,13 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
+  }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
   }
 }
