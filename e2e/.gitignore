@@ -1,0 +1,14 @@
+allure-report
+allure-results
+.idea
+.vscode
+*.sample
+
+.android.env
+.ios.env
+.env
+.dapps.env
+
+browserstack.err
+local.log
+appium.log
