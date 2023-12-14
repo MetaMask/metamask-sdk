@@ -8,6 +8,15 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
+
+# Install Yarn v3.5.1
+RUN corepack enable
+# RUN corepack install yarn@3.5.1
+RUN corepack prepare yarn@3.5.1 --activate
+
+# Verify yarn version
+RUN yarn --version
+
 COPY package.json ./
 COPY yarn.lock ./
 
@@ -21,11 +30,19 @@ RUN yarn build
 FROM node:18-alpine
 
 WORKDIR /app
+
+# Install Yarn v3.5.1
+RUN corepack enable
+# RUN corepack install yarn@3.5.1
+RUN corepack prepare yarn@3.5.1 --activate
+
+# Verify yarn version
+RUN yarn --version
+
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 
-# If NODE_ENV is development, install all dependencies, else only production dependencies
-RUN if [ "$NODE_ENV" = "development" ]; then yarn install --frozen-lockfile; else yarn install --production --frozen-lockfile; fi
+RUN yarn install --frozen-lockfile
 
 COPY --from=builder /app/dist ./dist
 COPY .env ./
