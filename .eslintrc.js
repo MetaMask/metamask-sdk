@@ -1,8 +1,6 @@
 module.exports = {
   root: true,
 
-  sourceType: "module",
-
   extends: ['@metamask/eslint-config'],
 
   overrides: [
