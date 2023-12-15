@@ -1,5 +1,9 @@
 import { MAX_RPC_WAIT_TIME } from '../config';
-import { RPCMethodCache, RPCMethodResult } from '../SocketService';
+import {
+  RPCMethodCache,
+  RPCMethodResult,
+  SocketService,
+} from '../SocketService';
 
 export const wait = (ms: number) => {
   return new Promise((resolve) => {
@@ -29,4 +33,20 @@ export const waitForRpc = async (
     await wait(interval);
   }
   throw new Error(`RPC ${rpcId} timed out`);
+};
+
+export const waitForNextRpcCall = async ({
+  rpcId,
+  instance,
+}: {
+  rpcId: string;
+  instance: SocketService;
+}) => {
+  while (
+    instance.state.lastRpcId === rpcId ||
+    instance.state.lastRpcId === undefined
+  ) {
+    await wait(200);
+  }
+  return instance.state.lastRpcId;
 };

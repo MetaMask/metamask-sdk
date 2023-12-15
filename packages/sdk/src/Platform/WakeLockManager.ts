@@ -14,18 +14,21 @@ export class WakeLockManager {
 
   private _eventsAdded = false;
 
+  private debug: boolean;
+
+  constructor(debug?: boolean) {
+    this.debug = debug ?? false;
+  }
+
   start() {
     this.enabled = false;
-    console.debug(
-      `WakeLockManager::start() hasNativeWakeLock=${hasNativeWakeLock()}`,
-    );
 
     if (hasNativeWakeLock() && !this._eventsAdded) {
       this._eventsAdded = true;
       this._wakeLock = undefined;
-      const handleVisibilityChange = () => {
+      const handleVisibilityChange = async () => {
         if (this._wakeLock !== null && document.visibilityState === 'visible') {
-          this.enable();
+          await this.enable();
         }
       };
       document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -46,6 +49,13 @@ export class WakeLockManager {
       this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4);
 
       this.noSleepVideo.addEventListener('loadedmetadata', () => {
+        if (this.debug) {
+          console.debug(
+            `WakeLockManager::start() video loadedmetadata`,
+            this.noSleepVideo,
+          );
+        }
+
         if (!this.noSleepVideo) {
           return;
         }
@@ -80,35 +90,54 @@ export class WakeLockManager {
     return this.enabled;
   }
 
-  // TODO convert to async function
-  enable() {
+  setDebug(debug: boolean) {
+    if (debug && !this.debug) {
+      console.debug(`WakeLockManager::setDebug() activate debug mode`);
+    }
+    this.debug = debug;
+  }
+
+  async enable() {
     if (this.enabled) {
-      this.disable();
+      this.disable('from_enable');
+    }
+
+    const hasWakelock = hasNativeWakeLock();
+    const oldIos = isOldIOS();
+
+    if (this.debug) {
+      console.debug(
+        `WakeLockManager::enable() hasWakelock=${hasWakelock} isOldIos=${oldIos}`,
+        this.noSleepVideo,
+      );
     }
 
     this.start();
     if (hasNativeWakeLock()) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return navigator.wakeLock
-        .request('screen')
-        .then((wakeLock: any) => {
-          this._wakeLock = wakeLock;
-          this.enabled = true;
-          // console.log('Wake Lock active.');
-          /* this._wakeLock.addEventListener('release', () => {
+      try {
+        const wakeLock = await (navigator as any).wakeLock.request('screen');
+
+        this._wakeLock = wakeLock;
+        this.enabled = true;
+        // console.log('Wake Lock active.');
+        /* this._wakeLock.addEventListener('release', () => {
             // ToDo: Potentially emit an event for the page to observe since
             // Wake Lock releases happen when page visibility changes.
             // (https://web.dev/wakelock/#wake-lock-lifecycle)
             console.log('Wake Lock released.');
           });*/
-        })
-        .catch(() => {
-          this.enabled = false;
-          return false;
-        });
+      } catch (err) {
+        if (this.debug) {
+          console.error(
+            'WakeLockManager::enable() failed to enable wake lock',
+            err,
+          );
+        }
+        this.enabled = false;
+        return false;
+      }
     } else if (isOldIOS()) {
-      this.disable();
+      this.disable('from_enable_old_ios');
       /* console.warn(`
         NoSleep enabled for older iOS devices. This can interrupt
         active or long-running network requests from completing successfully.
@@ -121,40 +150,67 @@ export class WakeLockManager {
         }
       }, 15000);
       this.enabled = true;
-      return Promise.resolve();
+      return true;
     }
 
     if (this.noSleepVideo) {
-      const playPromise = this.noSleepVideo?.play();
+      this.noSleepVideo
+        .play()
+        .then(() => {
+          if (this.debug) {
+            console.debug(
+              `WakeLockManager::enable() video started playing successfully`,
+            );
+          }
+        })
+        .catch((err) => {
+          console.warn(`WakeLockManager::enable() video failed to play`, err);
+        });
       this.enabled = true;
-      return playPromise.then(() => true).catch(() => false);
+      return true;
     }
-    this.enabled = true;
-    return Promise.resolve();
+
+    return false;
   }
 
-  disable() {
+  disable(_context?: string) {
     if (!this.enabled) {
       return;
     }
 
+    if (this.debug) {
+      console.debug(`WakeLockManager::disable() context=${_context}`);
+    }
+
     if (hasNativeWakeLock()) {
       if (this._wakeLock) {
+        if (this.debug) {
+          console.debug(`WakeLockManager::disable() release wake lock`);
+        }
         this._wakeLock.release();
       }
       this._wakeLock = undefined;
     } else if (isOldIOS()) {
       if (this.noSleepTimer) {
-        /* console.warn(`
+        console.warn(`
           NoSleep now disabled for older iOS devices.
-        `);*/
+        `);
         window.clearInterval(this.noSleepTimer as number);
         this.noSleepTimer = undefined;
       }
     } else {
       try {
         if (!this.noSleepVideo) {
+          if (this.debug) {
+            console.debug(
+              `WakeLockManager::disable() noSleepVideo is undefined`,
+            );
+          }
           return;
+        }
+
+        if (this.debug) {
+          console.debug(`WakeLockManager::disable() pause noSleepVideo`);
         }
 
         if (this.noSleepVideo.firstChild) {

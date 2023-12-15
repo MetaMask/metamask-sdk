@@ -5,7 +5,10 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
-import { METAMASK_CONNECT_BASE_URL } from '../../../constants';
+import {
+  METAMASK_CONNECT_BASE_URL,
+  METAMASK_DEEPLINK_BASE,
+} from '../../../constants';
 
 /**
  * Handles the disconnection process for a MetaMask connection based on the current state and provided options.
@@ -32,8 +35,11 @@ export async function connectWithModalInstaller(
         linkParams,
       });
     }
-    const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
-    showInstallModal(state, options, universalLink);
+
+    const installLink = `${
+      state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL
+    }?${linkParams}`;
+    showInstallModal(state, options, installLink);
 
     // Event means browser extension is selected, interrupt gracefully.
     options.sdk.once(

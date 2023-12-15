@@ -64,7 +64,7 @@ const WagmiWrapper = ({
     if (debug) {
       console.debug(`[MetamaskProvider] validConnectors`, { ready, sdk });
     }
-    if (ready && sdk) {
+    if (ready && sdk?.isInitialized()) {
       return [
         new MetaMaskConnector({
           chains: networks,
@@ -74,8 +74,7 @@ const WagmiWrapper = ({
       ];
     }
 
-    return connectors;
-  }, [ready, sdk]);
+    return connectors;  }, [ready, sdk, networks, debug, connectors]);
 
   const config = createConfig({ publicClient, connectors: validConnectors })
 
@@ -85,11 +84,15 @@ const WagmiWrapper = ({
 // Wrap around to make sure the actual provider is only called on client to prevent nextjs issues.
 export const MetaMaskUIProvider = ({
   children,
+  connectors,
+  networks,
   sdkOptions,
   debug,
 }: {
   children: React.ReactNode;
   sdkOptions: MetaMaskSDKOptions;
+  connectors?: Connector[];
+  networks?: Chain[];
   debug?: boolean;
 }) => {
   const [clientSide, setClientSide] = useState(false);
@@ -102,7 +105,7 @@ export const MetaMaskUIProvider = ({
     <>
       {clientSide ? (
         <MetaMaskProvider debug={debug} sdkOptions={sdkOptions}>
-          <WagmiWrapper debug={debug}>
+          <WagmiWrapper debug={debug} connectors={connectors} networks={networks}>
             {children}
           </WagmiWrapper>
         </MetaMaskProvider>

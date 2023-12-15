@@ -5,13 +5,31 @@
   "dependencies": {
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
+    "@metamask/sdk-lab": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
+    "@metamask/sdk-ui": "workspace:^",
+    "@react-native/assets-registry": "^0.74.0",
     "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/node": "^20.9.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "expo-asset": "^8.10.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-native": "^0.72.4",
+    "react-native-device-info": "^10.11.0",
+    "react-native-gesture-handler": "^2.13.4",
+    "react-native-jazzicon": "^0.1.2",
+    "react-native-paper": "^5.11.1",
+    "react-native-reanimated": "^3.5.4",
+    "react-native-safe-area-context": "^4.7.4",
+    "react-native-svg": "^14.0.0",
+    "react-native-svg-web": "^1.0.9",
+    "react-native-vector-icons": "^10.0.2",
+    "react-native-web": "^0.19.9",
     "react-scripts": "5.0.1",
+    "stream-browserify": "^3.0.0",
     "web-vitals": "^2.1.4",
     "web3": "^4.1.1"
   },
@@ -31,12 +49,6 @@
     "test:ci": "jest --coverage --passWithNoTests",
     "allow-scripts": ""
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -50,14 +62,24 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-syntax-jsx": "^7.23.3",
+    "@babel/preset-flow": "^7.23.3",
     "@craco/craco": "^7.1.0",
     "@metamask/eslint-config-typescript": "^12.1.0",
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
+    "@svgr/webpack": "^8.1.0",
+    "@testing-library/react": "^14.1.0",
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/react-native-vector-icons": "^6.4.17",
     "@typescript-eslint/parser": "^6.5.0",
     "craco-babel-loader": "^1.0.4",
     "eslint": "^8.48.0",
+    "expo": "^49.0.18",
+    "file-loader": "^6.2.0",
     "prettier": "^3.0.3",
-    "typescript": "^5.2.2"
+    "react-test-renderer": "^18.2.0",
+    "typescript": "^5.3.2",
+    "url-loader": "^4.1.1"
   }
 }

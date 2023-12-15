@@ -1,4 +1,7 @@
-import { METAMASK_CONNECT_BASE_URL } from '../../../constants';
+import {
+  METAMASK_CONNECT_BASE_URL,
+  METAMASK_DEEPLINK_BASE,
+} from '../../../constants';
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
@@ -48,13 +51,25 @@ export async function startConnection(
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
   }
 
+  // if we are on desktop browser
+  const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
+
   const linkParams = encodeURI(
     `channelId=${channelId}&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}`,
+    }&pubkey=${pubKey}${qrCodeOrigin}`,
   );
-  const universalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
-  state.universalLink = universalLink;
+
+  const qrcodeLink = `${
+    state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL
+  }?${linkParams}`;
+  state.qrcodeLink = qrcodeLink;
+
+  if (state.developerMode) {
+    console.debug(
+      `RemoteConnection::startConnection() qrcodeLink=${qrcodeLink}`,
+    );
+  }
 
   // first handle secure connection
   if (state.platformManager?.isSecure()) {

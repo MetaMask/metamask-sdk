@@ -14,6 +14,7 @@ import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndIns
 import { setupStorageManager } from './setupStorage';
 import { setupInfuraProvider } from './setupInfuraProvider';
 import { setupReadOnlyRPCProviders } from './setupReadOnlyRPCProviders';
+import { initializeI18next } from './initializeI18next';
 
 /**
  * Performs the complete initialization of the MetaMask SDK instance.
@@ -66,6 +67,8 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     runtimeLogging.remoteLayer = true;
     runtimeLogging.serviceLayer = true;
   }
+
+  await initializeI18next(instance);
 
   await setupPlatformManager(instance);
 

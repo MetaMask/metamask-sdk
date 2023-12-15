@@ -28,7 +28,7 @@ jobs:
             ./packages/**/dist
             ./node_modules/.yarn-state.yml
           key: ${{ github.sha }}
-      - uses: MetaMask/action-publish-release@v2
+      - uses: MetaMask/action-publish-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn --immutable
@@ -71,7 +71,7 @@ jobs:
             ./node_modules/.yarn-state.yml
           key: ${{ github.sha }}
       - name: Publish
-        uses: MetaMask/action-npm-publish@v3
+        uses: MetaMask/action-npm-publish@v4
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
         env:

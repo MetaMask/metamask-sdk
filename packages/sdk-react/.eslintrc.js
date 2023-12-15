@@ -8,7 +8,10 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: [path.resolve(__dirname, 'tsconfig.json')],
+    project: [
+      path.resolve(__dirname, 'tsconfig.json'),
+      path.resolve(__dirname, 'tsconfig.test.json'),
+    ],
   },
 
   overrides: [
@@ -53,9 +56,13 @@ module.exports = {
 
   ignorePatterns: [
     '!.prettierrc.js',
+    'babel.config.js',
     '**/.eslintrc.js',
+    'jest.config.ts',
     '**/dist*/',
+    'jest.resolver.js',
     'rollup.config.js',
     'webpack.config.js',
+    '**/coverage/**',
   ],
 };

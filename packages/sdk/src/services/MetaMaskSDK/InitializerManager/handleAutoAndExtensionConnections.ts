@@ -1,6 +1,11 @@
+import {
+  SendAnalytics,
+  TrackingEvents,
+} from '@metamask/sdk-communication-layer';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
+import { ANALYTICS_CONSTANTS } from '../../Analytics';
 
 /**
  * Handles automatic and extension-based connections for MetaMask SDK.
@@ -28,8 +33,32 @@ export async function handleAutoAndExtensionConnections(
       );
     }
 
+    const { remoteConnection } = instance;
+
+    if (remoteConnection) {
+      const {
+        state: { connector },
+      } = remoteConnection;
+
+      const originatorInfo = connector?.state.originatorInfo ?? {};
+      const communicationServerUrl = '';
+
+      const analyticsData = {
+        id: ANALYTICS_CONSTANTS.DEFAULT_ID,
+        event: TrackingEvents.SDK_EXTENSION_UTILIZED,
+        ...originatorInfo,
+        commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
+      };
+
+      SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
+        console.warn(
+          `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
+        );
+      });
+    }
+
     connectWithExtensionProvider(instance).catch((_err) => {
-      console.warn(`Can't connect with MetaMask extension...`);
+      console.warn(`Can't connect with MetaMask extension...`, _err);
       // Clean preferences
       localStorage.removeItem(STORAGE_PROVIDER_TYPE);
     });

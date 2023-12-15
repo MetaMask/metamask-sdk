@@ -23,8 +23,7 @@
     "clean": "yarn clean:reports && rm -rf node_modules",
     "clean:reports": "rm -rf allure-results",
     "clean:build": "tsc --build --clean",
-    "allow-scripts": "",
-    "wdio": "wdio run ./wdio.conf.ts"
+    "allow-scripts": ""
   },
   "dependencies": {
     "@metamask/eslint-config": "^11.1.0",

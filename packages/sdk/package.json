@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.8.0",
+  "version": "0.14.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -23,6 +23,7 @@
   ],
   "scripts": {
     "build": "rm -rf dist && rollup -c --bundleConfigAsCjs",
+    "build:dev": "rimraf dist && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist",
@@ -55,11 +56,15 @@
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",
     "extension-port-stream": "^2.0.1",
+    "i18next": "22.5.1",
+    "i18next-browser-languagedetector": "^7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
-    "qrcode-terminal": "^0.12.0",
+    "qrcode-terminal-nooctal": "^0.12.1",
+    "react-i18next": "^13.2.2",
     "react-native-webview": "^11.26.0",
     "readable-stream": "^2.3.7",
+    "rollup-plugin-visualizer": "^5.9.2",
     "socket.io-client": "^4.5.1",
     "util": "^0.12.4",
     "uuid": "^8.3.2"
@@ -75,7 +80,7 @@
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.1",
-    "@types/dom-screen-wake-lock": "^1.0.0",
+    "@types/dom-screen-wake-lock": "^1.0.2",
     "@types/node": "^20.1.3",
     "@types/pump": "^1.1.1",
     "@types/qrcode-terminal": "^0.12.0",
@@ -91,6 +96,7 @@
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
     "prettier": "^2.3.0",
+    "react": "^18.2.0",
     "rimraf": "^4.4.0",
     "rollup": "^3.21.7",
     "rollup-plugin-jscc": "^2.0.0",
@@ -124,7 +130,10 @@
     "allowScripts": {
       "eciesjs>secp256k1": false,
       "socket.io-client>engine.io-client>ws>bufferutil": false,
-      "socket.io-client>engine.io-client>ws>utf-8-validate": false
+      "socket.io-client>engine.io-client>ws>utf-8-validate": false,
+      "@metamask/sdk-communication-layer>bufferutil": false,
+      "@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
+      "@metamask/sdk-communication-layer>utf-8-validate": false
     }
   }
 }

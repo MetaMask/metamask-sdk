@@ -105,24 +105,42 @@ export function handleMessage(instance: SocketService, channelId: string) {
     }
 
     if (!instance.state.keyExchange?.areKeysExchanged()) {
-      // received encrypted message before keys were exchanged.
-      if (instance.state.isOriginator) {
-        instance.state.keyExchange?.start({
-          isOriginator: instance.state.isOriginator ?? false,
-        });
-      } else {
-        // Request new key exchange
-        instance.sendMessage({
-          type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
-        });
+      // Sometime the keys exchanged status is not updated correctly
+      // check if we can decrypt the message without errors and if so update the status and continue.
+      let canDecrypt = false;
+      try {
+        instance.state.keyExchange?.decryptMessage(message);
+        canDecrypt = true;
+      } catch (err) {
+        // Ignore error.
       }
 
-      //  ignore message and wait for completion.
-      console.warn(
-        `Message ignored because invalid key exchange status`,
-        message,
-      );
-      return;
+      if (canDecrypt) {
+        console.warn(`Invalid key exchange status detected --- updating it.`);
+        instance.state.keyExchange?.setKeysExchanged(true);
+      } else {
+        // received encrypted message before keys were exchanged.
+        if (instance.state.isOriginator) {
+          instance.state.keyExchange?.start({
+            isOriginator: instance.state.isOriginator ?? false,
+          });
+        } else {
+          // Request new key exchange
+          instance.sendMessage({
+            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+          });
+        }
+
+        //  ignore message and wait for completion.
+        console.warn(
+          `Message ignored because invalid key exchange status. step=${
+            instance.state.keyExchange?.getKeyInfo().step
+          }`,
+          instance.state.keyExchange?.getKeyInfo(),
+          message,
+        );
+        return;
+      }
     } else if (message.toString().indexOf('type') !== -1) {
       // Even if keys were exchanged, if the message is not encrypted, emit it.
       // *** instance is not supposed to happen ***
@@ -135,7 +153,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
     const decryptedMessage =
       instance.state.keyExchange?.decryptMessage(message);
-    const messageReceived = JSON.parse(decryptedMessage);
+    const messageReceived = JSON.parse(decryptedMessage ?? '{}');
 
     if (messageReceived?.type === MessageType.PAUSE) {
       /**
@@ -153,6 +171,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
       const rpcMessage = messageReceived.data as {
         id: string;
         result: unknown;
+        error: {
+          code: number;
+          message: string;
+          stack: string;
+        };
       };
       const initialRPCMethod = instance.state.rpcMethodTracker[rpcMessage.id];
       if (initialRPCMethod) {
@@ -166,9 +189,16 @@ export function handleMessage(instance: SocketService, channelId: string) {
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,
+          error: rpcMessage.error
+            ? {
+                code: rpcMessage.error?.code,
+                message: rpcMessage.error?.message,
+              }
+            : undefined,
           elapsedTime,
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
+        instance.emit(EventType.RPC_UPDATE, rpcResult);
 
         if (instance.state.debug) {
           console.debug(

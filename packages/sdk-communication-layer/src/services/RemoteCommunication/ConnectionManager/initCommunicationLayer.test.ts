@@ -135,7 +135,7 @@ describe('initCommunicationLayer', () => {
       instance,
     });
 
-    expect(mockOn).toHaveBeenCalledTimes(9); // because we have 9 events to listen to
+    expect(mockOn).toHaveBeenCalledTimes(11); // because we have 11 events to listen to
   });
 
   it('should pass otherPublicKey to SocketService if provided', () => {

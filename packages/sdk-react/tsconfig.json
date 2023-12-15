@@ -1,10 +1,11 @@
 {
-  // "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "baseUrl": "./",
     "outDir": "dist",
     "strict": true,
     "declaration": true,
     "declarationMap": true,
+    "incremental": true,
     "sourceMap": true,
     "composite": true,
     "target": "ESNext",
@@ -15,5 +16,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/*.spec.tsx", "**/*.test.tsx"]
 }

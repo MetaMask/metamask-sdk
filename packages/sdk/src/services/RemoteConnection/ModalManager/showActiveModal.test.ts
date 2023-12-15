@@ -19,7 +19,8 @@ describe('showActiveModal', () => {
       installModal: {
         mount: mockInstallModalMount,
       },
-      universalLink: 'http://example.com',
+      useDeeplink: false,
+      qrcodeLink: 'http://example.com',
     } as unknown as RemoteConnectionState;
   });
 
@@ -45,12 +46,12 @@ describe('showActiveModal', () => {
     showActiveModal(state);
 
     expect(mockPendingModalMount).not.toHaveBeenCalled();
-    expect(mockInstallModalMount).toHaveBeenCalledWith(state.universalLink);
+    expect(mockInstallModalMount).toHaveBeenCalledWith(state.qrcodeLink);
   });
 
   it('should mount the installModal without universalLink if it is not defined', () => {
     state.pendingModal = undefined;
-    state.universalLink = undefined;
+    state.qrcodeLink = undefined;
 
     showActiveModal(state);
 

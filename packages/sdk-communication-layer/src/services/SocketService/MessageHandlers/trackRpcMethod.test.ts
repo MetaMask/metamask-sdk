@@ -13,6 +13,7 @@ describe('trackRpcMethod', () => {
         isOriginator: true,
         rpcMethodTracker: {},
       },
+      emit: jest.fn(),
     } as unknown as SocketService;
   });
 

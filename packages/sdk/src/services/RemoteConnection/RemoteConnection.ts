@@ -8,6 +8,7 @@ import {
   RemoteCommunication,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -39,12 +40,14 @@ export interface RemoteConnectionProps {
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
+  i18nInstance: i18n;
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
+      i18nInstance: i18n;
       link: string;
       debug?: boolean;
       installer: MetaMaskInstaller;
@@ -55,9 +58,11 @@ export interface RemoteConnectionProps {
       mount?: (link: string) => void;
     };
     otp?: ({
+      i18nInstance,
       debug,
       onDisconnect,
     }: {
+      i18nInstance: i18n;
       debug?: boolean;
       onDisconnect?: () => void;
     }) => {
@@ -70,7 +75,8 @@ export interface RemoteConnectionProps {
 
 export interface RemoteConnectionState {
   connector?: RemoteCommunication;
-  universalLink?: string;
+  qrcodeLink?: string;
+  useDeeplink?: boolean;
   developerMode: boolean;
   analytics?: Analytics;
   authorized: boolean;
@@ -98,7 +104,7 @@ export class RemoteConnection implements ProviderService {
 
   public state: RemoteConnectionState = {
     connector: undefined,
-    universalLink: undefined,
+    qrcodeLink: undefined,
     analytics: undefined,
     developerMode: false,
     authorized: false,
@@ -116,6 +122,7 @@ export class RemoteConnection implements ProviderService {
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.state.developerMode = developerMode;
     this.state.analytics = options.analytics;
+    this.state.useDeeplink = options.sdk.options.useDeeplink;
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;
@@ -147,10 +154,10 @@ export class RemoteConnection implements ProviderService {
   }
 
   getUniversalLink() {
-    if (!this.state.universalLink) {
+    if (!this.state.qrcodeLink) {
       throw new Error('connection not started. run startConnection() first.');
     }
-    return this.state.universalLink;
+    return this.state.qrcodeLink;
   }
 
   getChannelConfig(): ChannelConfig | undefined {

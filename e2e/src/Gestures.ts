@@ -13,6 +13,20 @@ const Actions = {
   KEY_DOWN: 'keyDown',
   KEY_UP: 'keyUp',
   PAUSE: 'pause',
+  PRESS: 'press',
+  POINTER_MOVE: 'pointerMove',
+  POINTER_DOWN: 'pointerDown',
+  POINTER_UP: 'pointerUp',
+};
+
+const ActionTypes = {
+  POINTER: 'pointer',
+  KEY: 'key',
+};
+
+const ActionSource = {
+  KEYBOARD: 'keyboard',
+  FINDER_1: 'finger1',
 };
 
 export default class Gestures {
@@ -34,9 +48,17 @@ export default class Gestures {
     const toPercentage = await Utils.getCoordinatesForDeviceFromPercentage(to);
 
     await browser.touchAction([
-      { action: 'press', x: fromPercentage.x, y: fromPercentage.y },
-      { action: 'wait', ms: 2000 },
-      { action: 'moveTo', x: toPercentage.x, y: toPercentage.y },
+      {
+        action: Actions.PRESS as ActionTypes,
+        x: fromPercentage.x,
+        y: fromPercentage.y,
+      },
+      { action: Actions.WAIT as ActionTypes, ms: 2000 },
+      {
+        action: Actions.MOVE_TO as ActionTypes,
+        x: toPercentage.x,
+        y: toPercentage.y,
+      },
       'release',
     ]);
   }
@@ -53,25 +75,25 @@ export default class Gestures {
 
     await driver.performActions([
       {
-        type: 'pointer',
-        id: 'finger1',
+        type: ActionTypes.POINTER,
+        id: ActionSource.FINDER_1,
         actions: [
           { type: 'pause', duration: 1000 },
           {
-            type: 'pointerMove',
+            type: Actions.POINTER_MOVE,
             duration: 0,
             x: fromPercentage.x,
             y: fromPercentage.y,
           },
-          { type: 'pointerDown', button: 0 },
-          { type: 'pause', duration: 100 },
+          { type: Actions.POINTER_DOWN, button: 0 },
+          { type: Actions.PAUSE, duration: 100 },
           {
-            type: 'pointerMove',
+            type: Actions.POINTER_MOVE,
             duration: 1000,
             x: toPercentage.x,
             y: toPercentage.y,
           },
-          { type: 'pointerUp', button: 0 },
+          { type: Actions.POINTER_UP, button: 0 },
         ],
       },
     ]);
@@ -80,8 +102,8 @@ export default class Gestures {
   static async tapDeviceKey(key: string): Promise<void> {
     await driver.performActions([
       {
-        type: 'key',
-        id: 'keyboard',
+        type: ActionTypes.KEY,
+        id: ActionSource.KEYBOARD,
         actions: [
           { type: Actions.KEY_DOWN, value: key },
           { type: Actions.PAUSE, duration: 100 },

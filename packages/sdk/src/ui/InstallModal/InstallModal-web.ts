@@ -1,6 +1,8 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
+import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import packageJson from '../../../package.json';
 
 const sdkWebInstallModal = ({
   link,
@@ -8,12 +10,14 @@ const sdkWebInstallModal = ({
   installer,
   terminate,
   connectWithExtension,
+  i18nInstance,
 }: {
   link: string;
   debug?: boolean;
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
+  i18nInstance: i18n;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -21,8 +25,8 @@ const sdkWebInstallModal = ({
   if (debug) {
     console.debug(`################## Installing Modal #################`);
     console.debug(`${link}`);
-    console.debug(`npx uri-scheme open ${link} --ios`);
-    console.debug(`npx uri-scheme open ${link} --android`);
+    console.debug(`npx uri-scheme open "${link}" --ios`);
+    console.debug(`npx uri-scheme open "${link}" --android`);
     console.debug(
       `adb shell am start -a android.intent.action.VIEW -d "${link}"`,
     );
@@ -30,7 +34,10 @@ const sdkWebInstallModal = ({
 
   const unmount = (shouldTerminate?: boolean) => {
     if (debug) {
-      console.info('installModal-web unmounting install modal', div);
+      console.info(
+        `installModal-web unmounting install modal -- shouldTerminate=${shouldTerminate}`,
+        div,
+      );
     }
 
     // Remove the node from the DOM
@@ -55,12 +62,13 @@ const sdkWebInstallModal = ({
       return;
     }
 
-    modalLoader = new ModalLoader(debug);
+    modalLoader = new ModalLoader({ debug, sdkVersion: packageJson.version });
     div = document.createElement('div');
     document.body.appendChild(div);
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
       modalLoader.renderSelectModal({
+        i18nInstance,
         parentElement: div,
         connectWithExtension: () => {
           unmount();
@@ -71,6 +79,7 @@ const sdkWebInstallModal = ({
       });
     } else {
       modalLoader.renderInstallModal({
+        i18nInstance,
         parentElement: div,
         link,
         metaMaskInstaller: installer,

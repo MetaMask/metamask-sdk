@@ -62,7 +62,6 @@ export const beforeHook = async () => {
     await goToSettingsAndClearAllConnections();
     return;
   }
-
   await GetStartedScreen.tapGetStarted();
   await WalletSetupScreen.tapImportWithSRP();
   await OptinMetricsScreen.tapAgreeOptinMetrics();

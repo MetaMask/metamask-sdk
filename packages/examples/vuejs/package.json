@@ -9,7 +9,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.7.0",
+    "@metamask/sdk": "^0.12.1",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"
   },
