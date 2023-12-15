@@ -1,13 +1,5 @@
 import { AndroidSelectorStrategies, IOSSelectorStrategies } from './Strategies';
 
-export enum Dapps {
-  UnityDapp = 'unity-dapp',
-  ReactNativeDapp = 'react-native-dapp',
-  CreateReactDapp = 'create-react-dapp',
-  NextDapp = 'nextjs-dapp',
-  IOSNativeDapp = 'ios-native-dapp',
-};
-
 export type BrowserSize = {
   width: number;
   height: number;

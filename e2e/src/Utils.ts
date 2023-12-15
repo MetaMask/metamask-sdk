@@ -3,7 +3,7 @@ import {
   Coordinates,
   MetaMaskElementLocator,
   ScreenPercentage,
-} from './types';
+} from './Types';
 
 export const Platform = driver.isIOS ? 'IOS' : 'ANDROID';
 
