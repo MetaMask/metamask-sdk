@@ -1,6 +1,6 @@
 import Utils from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { WALLET_PASSWORD } from '../src/Constants';
+import { WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
 import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
 import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
@@ -12,10 +12,6 @@ import Gestures from '../src/Gestures';
 import SecurityUpdatesScreen from '../src/screens/MetaMask/SecurityUpdates';
 import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponent';
 import WhatsNewComponent from '../src/screens/MetaMask/components/WhatsNewComponent';
-
-const SRP =
-  process.env.SRP ??
-  'test test test test test test test test test test test test';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
