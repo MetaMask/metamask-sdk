@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "44.0.0",
+  "version": "45.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -21,7 +21,7 @@
     "packages/deve2e"
   ],
   "scripts": {
-    "build": "yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc",
+    "build": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
     "build:clean": "yarn clean && yarn build",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces foreach --no-private run clean",
