@@ -12,8 +12,8 @@ export const NATIVE_OS_APPS = {
 };
 
 export const Platforms = {
-  ANDROID: 'android',
-  IOS: 'ios',
+  ANDROID: 'ANDROID',
+  IOS: 'IOS',
 };
 
 export const PLATFORM = driver.isIOS ? Platforms.IOS : Platforms.ANDROID;

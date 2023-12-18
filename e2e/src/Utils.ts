@@ -14,6 +14,7 @@ import {
 import { FIXTURE_SERVER_PORT, PLATFORM } from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
+  console.log('PLATFORM IS: ', PLATFORM);
   const platformSelector =
     PLATFORM === 'IOS' ? locator.iosSelector : locator.androidSelector;
   if (platformSelector === undefined) {
