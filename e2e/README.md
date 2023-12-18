@@ -35,6 +35,7 @@
 .dapps.env:
 
 - REACT_DAPP_URL=
+- TEST_DAPP_URL=
 
 .env:
 

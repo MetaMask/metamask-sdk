@@ -42,7 +42,7 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const reactDappUrl = process.env.REACT_DAPP_URL ?? '';
+    const testDappUrl = process.env.TEST_DAPP_URL ?? '';
 
     if (driver.isAndroid) {
       await (browserScreen as typeof ChromeBrowserScreen).tapSwitchTabsButton();
@@ -60,7 +60,7 @@ describe('JS SDK Connection', () => {
       await (browserScreen as typeof ChromeBrowserScreen).tapNewTabButton();
     }
 
-    await browserScreen.goToAddress(reactDappUrl);
+    await browserScreen.goToAddress(testDappUrl);
 
     await driver.pause(5000);
 
