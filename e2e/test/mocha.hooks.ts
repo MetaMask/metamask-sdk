@@ -1,6 +1,6 @@
 import Utils from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { NATIVE_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
+import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
 import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
 import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
@@ -29,7 +29,7 @@ export const beforeHook = async () => {
   // Fox animation takes a while to finish
   await driver.pause(5000);
 
-  await Utils.launchApp(NATIVE_APPS.ANDROID.SETTINGS);
+  await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
 
   await AndroidSettingsScreen.tapOpenSearchBarButton();
   await AndroidSettingsScreen.fillSearchBarInput('Opening links');

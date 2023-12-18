@@ -5,7 +5,7 @@ export const Browsers = {
   CHROME: 'com.android.chrome',
 };
 
-export const NATIVE_APPS = {
+export const NATIVE_OS_APPS = {
   ANDROID: {
     SETTINGS: 'com.android.settings',
   },
