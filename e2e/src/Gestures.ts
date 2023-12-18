@@ -48,9 +48,17 @@ export default class Gestures {
     const toPercentage = await Utils.getCoordinatesForDeviceFromPercentage(to);
 
     await browser.touchAction([
-      { action: Actions.PRESS as ActionTypes, x: fromPercentage.x, y: fromPercentage.y },
+      {
+        action: Actions.PRESS as ActionTypes,
+        x: fromPercentage.x,
+        y: fromPercentage.y,
+      },
       { action: Actions.WAIT as ActionTypes, ms: 2000 },
-      { action: Actions.MOVE_TO as ActionTypes, x: toPercentage.x, y: toPercentage.y },
+      {
+        action: Actions.MOVE_TO as ActionTypes,
+        x: toPercentage.x,
+        y: toPercentage.y,
+      },
       'release',
     ]);
   }

@@ -1,4 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio';
+
 import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
@@ -6,8 +7,8 @@ class WhatsNewComponent {
   get closeModalButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().accessibilityId(
-          'whats-new-modal-close-button',
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.ViewGroup[@resource-id="whats-new-modal-close-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "whats-new-modal-close-button"',

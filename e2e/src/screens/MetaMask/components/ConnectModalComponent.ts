@@ -1,39 +1,54 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../../Utils';
-import { AndroidSelector, IOSSelector } from '../../../Selectors';
+import {
+  AndroidSelectorStrategies,
+  IOSSelectorStrategies,
+} from '../../../Strategies';
+import Utils from '../../../Utils';
 
 // TODO
 class ConnectModalComponent {
   get accountApprovalModalContainer(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().xpath(
-          "//*[@resource-id='account-approval-modal-container']",
-        ),
-        iosSelector: IOSSelector.by().predicateString(
-          'name == "account-approval-modal-container"',
-        ),
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: "//*[@resource-id='account-approval-modal-container']",
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+        iosLocator: {
+          locator: 'name == "account-approval-modal-container"',
+          strategy: IOSSelectorStrategies.IOSPredicateString,
+        },
       }),
     );
   }
 
   get connectApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().uiAutomatorAndDescription(
-          'connect-approve-button',
-        ),
-        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: '//android.widget.Button[@content-desc="connect-button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+        iosLocator: {
+          locator: 'label == "Connect"',
+          strategy: IOSSelectorStrategies.IOSPredicateString,
+        },
       }),
     );
   }
 
   get cancelApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().uiAutomatorAndDescription('connect-cancel-button'),
-        iosSelector: IOSSelector.by().predicateString('label == "Cancel"'),
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: '//android.widget.Button[@content-desc="cancel-button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+        iosLocator: {
+          locator: 'label == "Cancel"',
+          strategy: IOSSelectorStrategies.IOSPredicateString,
+        },
       }),
     );
   }

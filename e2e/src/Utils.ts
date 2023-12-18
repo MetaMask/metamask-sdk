@@ -1,9 +1,17 @@
+import ADB from 'appium-adb';
+import { FixtureBuilder } from '../test/fixtures/FixtureBuilder';
+import {
+  loadFixture,
+  startFixtureServer,
+} from '../test/fixtures/FixtureHelper';
+import FixtureServer from '../test/fixtures/FixtureServer';
 import {
   BrowserSize,
   Coordinates,
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
+import { FIXTURE_SERVER_PORT } from './Constants';
 
 export const PLATFORM = driver.isIOS ? 'IOS' : 'ANDROID';
 
@@ -28,6 +36,28 @@ class Utils {
     console.log(`Launching MetaMask on ${PLATFORM}`);
     const metamaskBundleId = process.env.BUNDLE_ID as string;
     await driver.activateApp(metamaskBundleId);
+  }
+
+  /*
+   * Launches MetaMask with a fixture
+   * This means that MM will load in a fully onboarded state
+   *
+   * @param {FixtureServer} fixtureServer - server fixture running in the background
+   * */
+  static async launchMetaMaskWithFixture(
+    fixtureServer: FixtureServer,
+    bundleId: string,
+  ): Promise<void> {
+    const adb = await ADB.createADB({});
+    await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+    const fixture = new FixtureBuilder().build();
+    await startFixtureServer(fixtureServer);
+    await loadFixture(fixtureServer, { fixture });
+    await driver.terminateApp(bundleId);
+    await driver.execute('mobile:activateApp', {
+      appId: bundleId,
+      fixtureServerPort: FIXTURE_SERVER_PORT,
+    });
   }
 
   /*
