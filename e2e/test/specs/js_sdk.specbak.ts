@@ -49,9 +49,11 @@ describe('JS SDK Connection', () => {
       await (
         browserScreen as typeof ChromeBrowserScreen
       ).tapBrowserMoreOptionsButton();
+
       await (
         browserScreen as typeof ChromeBrowserScreen
       ).tapCloseAllTabsButton();
+
       await (
         browserScreen as typeof ChromeBrowserScreen
       ).tapConfirmCloseAllTabsButton();
