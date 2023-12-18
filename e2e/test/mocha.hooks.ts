@@ -1,6 +1,6 @@
 import Utils from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { WALLET_PASSWORD, SRP } from '../src/Constants';
+import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
 import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
 import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
@@ -12,6 +12,8 @@ import Gestures from '../src/Gestures';
 import SecurityUpdatesScreen from '../src/screens/MetaMask/SecurityUpdates';
 import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponent';
 import WhatsNewComponent from '../src/screens/MetaMask/components/WhatsNewComponent';
+import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen';
+import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
@@ -27,6 +29,26 @@ export const beforeHook = async () => {
   // Fox animation takes a while to finish
   await driver.pause(5000);
 
+  await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+
+  await AndroidSettingsScreen.tapOpenSearchBarButton();
+  await AndroidSettingsScreen.fillSearchBarInput('Opening links');
+  await AndroidSettingsScreen.tapOpeningLinksSearchResult();
+
+  const isAddLinksButtonDisabled =
+    await AndroidSettingsOpeningLinksScreen.isAddLinksButtonDisabled();
+
+  await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
+  await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
+
+  if (!isAddLinksButtonDisabled) {
+    await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
+    await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
+    await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+  }
+
+  await Utils.launchMetaMask();
+
   // Checks it is onboarded. If it is and MM is locked, it unlocks it
   if (
     (await LockScreen.isMMLocked()) ||
@@ -40,8 +62,8 @@ export const beforeHook = async () => {
   await WalletSetupScreen.tapImportWithSRP();
   await OptinMetricsScreen.tapAgreeOptinMetrics();
   await TermsOfUseScreen.tapAcceptTermsOfUseCheckbox();
+  await driver.pause(8000); // Waiting for the Terms of Use to be loaded
   await TermsOfUseScreen.tapScrollToBottom();
-  await driver.pause(2000); // Waiting for the Terms of Use to be loaded
   await TermsOfUseScreen.tapAcceptTermsOfUseButton();
   await ImportFromSeedScreen.fillSrpField(SRP);
   await ImportFromSeedScreen.fillFirstPasswordInput(WALLET_PASSWORD);

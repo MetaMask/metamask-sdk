@@ -11,8 +11,9 @@ class WhatsNewComponent {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'whats-new-modal-close-button',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
+          locator:
+            '//android.view.ViewGroup[@resource-id="whats-new-modal-close-button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'name == "whats-new-modal-close-button"',

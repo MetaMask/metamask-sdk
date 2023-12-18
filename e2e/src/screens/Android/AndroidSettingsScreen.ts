@@ -3,14 +3,51 @@ import { ChainablePromiseElement } from 'webdriverio';
 import Gestures from '../../Gestures';
 import { AndroidSelectorStrategies } from '../../Strategies';
 import Utils from '../../Utils';
+import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().text("MetaMask-QA")',
+          locator: `new UiSelector().text("${METAMASK_APP_NAME_ANDROID}")`,
           strategy: AndroidSelectorStrategies.UIAutomator2,
+        },
+      }),
+    );
+  }
+
+  get openSearchBarButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="com.android.settings:id/search_action_bar"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get searchBarInput(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="com.google.android.settings.intelligence:id/open_search_view_edit_text"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get openingLinksSearchResult(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//*[@resource-id="android:id/title" and @text="Opening links"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
       }),
     );
@@ -40,6 +77,18 @@ class AndroidSettingsScreen {
 
   async tapMetaMaskLinksButton(): Promise<void> {
     await (await this.metaMaskQALinksButton).click();
+  }
+
+  async tapOpenSearchBarButton(): Promise<void> {
+    await (await this.openSearchBarButton).click();
+  }
+
+  async tapOpeningLinksSearchResult(): Promise<void> {
+    await (await this.openingLinksSearchResult).click();
+  }
+
+  async fillSearchBarInput(text: string): Promise<void> {
+    await (await this.searchBarInput).setValue(text);
   }
 
   async tapSupportedWebAddresses(): Promise<void> {

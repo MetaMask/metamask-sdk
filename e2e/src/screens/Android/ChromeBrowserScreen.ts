@@ -40,13 +40,81 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
+  get switchTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//android.widget.ImageButton[@content-desc="Switch or close tabs"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get closeAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//android.widget.LinearLayout[@resource-id="com.android.chrome:id/close_all_tabs_menu_id"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get confirmCloseAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator:
+            '//android.widget.Button[@resource-id="com.android.chrome:id/positive_button"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
+  get newTabButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: '//android.widget.ImageView[@content-desc="New tab"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+      }),
+    );
+  }
+
   async goToAddress(address: string): Promise<void> {
     const urlAddressBar = await this.urlAddressBar;
+
     await urlAddressBar.click();
     await urlAddressBar.clearValue();
     await urlAddressBar.setValue(address);
     await Gestures.tapDeviceKey(Key.Enter);
     await driver.pressKeyCode(66);
+  }
+
+  async tapSwitchTabsButton(): Promise<void> {
+    await (await this.switchTabsButton).click();
+  }
+
+  async tapBrowserMoreOptionsButton(): Promise<void> {
+    await (await this.browserMoreOptions).click();
+  }
+
+  async tapCloseAllTabsButton(): Promise<void> {
+    await (await this.closeAllTabsButton).click();
+  }
+
+  async tapConfirmCloseAllTabsButton(): Promise<void> {
+    await (await this.confirmCloseAllTabsButton).click();
+  }
+
+  async tapNewTabButton(): Promise<void> {
+    await (await this.newTabButton).click();
   }
 
   async refreshPage(): Promise<void> {
