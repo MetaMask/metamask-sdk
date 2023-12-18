@@ -3,17 +3,17 @@ export type BrowserSize = {
   height: number;
 };
 
-export type MetaMaskElementSelector = {
-  androidSelector?: string;
-  iosSelector?: string;
-};
-
 export type Coordinates = {
   x: number;
   y: number;
 };
 
 export type ScreenPercentage = Coordinates;
+
+export type MetaMaskElementSelector = {
+  androidSelector?: string;
+  iosSelector?: string;
+};
 
 // Coordinates representing a certain Unity element on screen
 export class UnityDappElement {
