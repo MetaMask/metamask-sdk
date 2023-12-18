@@ -40,6 +40,7 @@ class SignModalComponent {
   }
 
   async tapSignApproval(): Promise<void> {
+    await (await this.signApprovalButton).waitForDisplayed({ timeout: 10000 });
     await (await this.signApprovalButton).click();
   }
 

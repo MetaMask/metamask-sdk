@@ -1,8 +1,4 @@
-import {
-  BROWSER_BUNDLE_ID,
-  Browsers,
-  WALLET_PASSWORD,
-} from '../../src/Constants';
+import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
 import Utils from '../../src/Utils';
 import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
@@ -20,12 +16,10 @@ describe('JS SDK Connection', () => {
   });
 
   beforeEach(async () => {
-    // return;
     await beforeEachHook();
   });
 
   afterEach(async () => {
-    return;
     await afterEachHook();
   });
 
@@ -33,9 +27,8 @@ describe('JS SDK Connection', () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
-    const bundleId = driver.isIOS ? Browsers.SAFARI : Browsers.CHROME;
-    await Utils.killApp(bundleId);
-    await Utils.launchApp(bundleId);
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
@@ -96,16 +89,19 @@ describe('JS SDK Connection', () => {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
     }
 
+    await driver.pause(2000);
+
     await SignModalComponent.tapSignApproval();
+
+    await driver.pause(2000);
   });
 
   it.skip('Connect to the React JS Example Dapp', async () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
-    const bundleId = BROWSER_BUNDLE_ID;
-    await Utils.killApp(bundleId);
-    await Utils.launchApp(bundleId);
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
@@ -113,22 +109,45 @@ describe('JS SDK Connection', () => {
 
     // Get and navigate to the Dapp URL
     const reactDappUrl = process.env.REACT_DAPP_URL ?? '';
+
     await browserScreen.goToAddress(reactDappUrl);
 
-    await CreateReactDappScreen.terminate();
-    await browserScreen.refreshPage();
+    await driver.pause(5000);
 
+    await CreateReactDappScreen.terminate();
+    await driver.pause(1000);
     await CreateReactDappScreen.connect();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
     }
+
+    await driver.pause(5000);
+
     await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
       await ConnectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
+
     await ConnectModalComponent.tapConnectApproval();
-    await driver.pause(2000);
+
+    await CreateReactDappScreen.signTypedDataV4();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await SignModalComponent.tapSignApproval();
+
+    await CreateReactDappScreen.personalSign();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await driver.pause(1000);
+
+    await SignModalComponent.tapSignApproval();
   });
 });

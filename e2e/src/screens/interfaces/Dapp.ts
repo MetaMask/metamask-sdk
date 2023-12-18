@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { UnityDappElement } from '../../Types';
+import { UnityDappElement } from '../../types';
 
 export type Dapp = {
   connectButton:
@@ -9,16 +9,26 @@ export type Dapp = {
 
   connect(): Promise<void>;
 
-  signTypedDataV3Button:
+  signTypedDataV3Button?:
     | ChainablePromiseElement<WebdriverIO.Element>
     | UnityDappElement;
 
-  personalSignButton:
+  signTypedDataV4Button?:
     | ChainablePromiseElement<WebdriverIO.Element>
     | UnityDappElement;
 
-  signTypedDataV3(): Promise<void>;
-  personalSign(): Promise<void>;
+  sendTransactionButton?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
+
+  personalSignButton?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
+
+  signTypedDataV3?(): Promise<void>;
+  signTypedDataV4?(): Promise<void>;
+  personalSign?(): Promise<void>;
+  sendTransaction?(): Promise<void>;
 
   terminateButton:
     | ChainablePromiseElement<WebdriverIO.Element>

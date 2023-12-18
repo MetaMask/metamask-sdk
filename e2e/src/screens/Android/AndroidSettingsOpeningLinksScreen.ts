@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio';
-
+import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
 import Gestures from '../../Gestures';
 import { AndroidSelectorStrategies } from '../../Strategies';
 import Utils from '../../Utils';
@@ -9,8 +9,7 @@ class AndroidSettingsOpeningLinksScreen {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator:
-            '//android.widget.TextView[@resource-id="android:id/title" and @text="MetaMask-QA"]',
+          locator: `//android.widget.TextView[@resource-id="android:id/title" and @text="${METAMASK_APP_NAME_ANDROID}"]`,
           strategy: AndroidSelectorStrategies.Xpath,
         },
       }),
@@ -50,6 +49,7 @@ class AndroidSettingsOpeningLinksScreen {
       }),
     );
   }
+
   get secondSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
@@ -61,6 +61,7 @@ class AndroidSettingsOpeningLinksScreen {
       }),
     );
   }
+
   get thirdSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
@@ -72,6 +73,7 @@ class AndroidSettingsOpeningLinksScreen {
       }),
     );
   }
+
   get forthSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({

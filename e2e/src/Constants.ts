@@ -24,3 +24,6 @@ export const BROWSER_BUNDLE_ID = driver.isIOS
 
 // This comes from the config file, it'll never be undefined otherwise there are no tests to run
 export const METAMASK_BUNDLE_ID = process.env.BUNDLE_ID as string;
+
+export const METAMASK_APP_NAME_ANDROID =
+  METAMASK_BUNDLE_ID === 'io.metamask.qa' ? 'MetaMask-QA' : 'MetaMask';

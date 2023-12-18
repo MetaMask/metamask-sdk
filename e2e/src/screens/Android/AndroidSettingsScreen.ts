@@ -3,13 +3,14 @@ import { ChainablePromiseElement } from 'webdriverio';
 import Gestures from '../../Gestures';
 import { AndroidSelectorStrategies } from '../../Strategies';
 import Utils from '../../Utils';
+import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().text("MetaMask-QA")',
+          locator: `new UiSelector().text("${METAMASK_APP_NAME_ANDROID}")`,
           strategy: AndroidSelectorStrategies.UIAutomator2,
         },
       }),

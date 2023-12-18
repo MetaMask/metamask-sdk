@@ -11,8 +11,8 @@ class CreateReactDappScreen implements Dapp {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().text("Connect")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: '//android.view.View[@text="Connect wallet"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Connect"',
@@ -22,11 +22,41 @@ class CreateReactDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: '//android.widget.TextView[@text="Sign"]',
+          locator: '//android.widget.Button[@text="personal_sign"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+        iosLocator: {
+          locator: 'label == "Sign"',
+          strategy: IOSSelectorStrategies.IOSPredicateString,
+        },
+      }),
+    );
+  }
+
+  get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: '//android.widget.Button[@text="eth_signTypedData_v4"]',
+          strategy: AndroidSelectorStrategies.Xpath,
+        },
+        iosLocator: {
+          locator: 'label == "Sign"',
+          strategy: IOSSelectorStrategies.IOSPredicateString,
+        },
+      }),
+    );
+  }
+
+  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      Utils.getLocatorPerPlatformAndStrategy({
+        androidLocator: {
+          locator: '//android.widget.Button[@text="Send transaction"]',
           strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
@@ -42,8 +72,8 @@ class CreateReactDappScreen implements Dapp {
     return $(
       Utils.getLocatorPerPlatformAndStrategy({
         androidLocator: {
-          locator: 'new UiSelector().text("Terminate")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
+          locator: '//android.widget.Button[@text="Terminate"]',
+          strategy: AndroidSelectorStrategies.Xpath,
         },
         iosLocator: {
           locator: 'label == "Terminate"',
@@ -57,17 +87,20 @@ class CreateReactDappScreen implements Dapp {
     await (await this.connectButton).click();
   }
 
-  async sign(): Promise<void> {
-    await this.scrollToSignButton();
-    await (await this.signButton).click();
+  async signTypedDataV4(): Promise<void> {
+    await (await this.signTypedDataV4Button).click();
+  }
+
+  async personalSign(): Promise<void> {
+    await (await this.personalSignButton).click();
+  }
+
+  async sendTransaction(): Promise<void> {
+    await (await this.sendTransactionButton).click();
   }
 
   async terminate(): Promise<void> {
     await (await this.terminateButton).click();
-  }
-
-  async scrollToSignButton(): Promise<void> {
-    await (await this.signButton).scrollIntoView();
   }
 }
 
