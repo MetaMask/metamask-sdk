@@ -1,22 +1,16 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class SecurityUpdatesScreen {
   get noThanksSecurityUpdates(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: "//*[@resource-id='no-thanks-button']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "No thanks"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="no-thanks-button"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "No thanks"'),
       }),
     );
   }

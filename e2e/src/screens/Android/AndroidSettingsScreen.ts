@@ -1,39 +1,32 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
-import { AndroidSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector } from '../../Selectors';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("MetaMask-QA")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText('MetaMask-QA'),
       }),
     );
   }
 
   get supportedWebAddresses(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Supported web addresses")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText(
+          'Supported web addresses',
+        ),
       }),
     );
   }
 
   get links(): ReturnType<WebdriverIO.Browser['$$']> {
     return $$(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Switch',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath('//android.widget.Switch'),
       }),
     );
   }

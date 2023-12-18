@@ -1,18 +1,17 @@
 import { ChainablePromiseElement, Key } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import Gestures from '../../Gestures';
-import { AndroidSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
+import { AndroidSelector } from '../../Selectors';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().className("android.widget.EditText")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
+          'android.widget.EditText',
+        ),
       }),
     );
   }
@@ -20,22 +19,20 @@ class ChromeBrowserScreen implements MobileBrowser {
   // 3 dots on the top
   get browserMoreOptions(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.ImageButton[@content-desc="More options"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="More options"]',
+        ),
       }),
     );
   }
 
   get refreshButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.ImageButton[@content-desc="Refresh"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="Refresh"]',
+        ),
       }),
     );
   }

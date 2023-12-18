@@ -1,85 +1,69 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class ImportFromSeedScreen {
   get srpInput(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator:
-            "//*[@resource-id='import-from-seed-screen-seed-phrase-input-id']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Enter your Secret Recovery Phrase"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="import-from-seed-screen-seed-phrase-input-id"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Enter your Secret Recovery Phrase"',
+        ),
       }),
     );
   }
 
   get firstPasswordInput() {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="create-password-first-input-field"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "New Password"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="create-password-first-input-field"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "New Password"',
+        ),
       }),
     );
   }
 
   get secondPasswordInput() {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="create-password-second-input-field"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator:
-            'label == "Confirm password" AND value != "Confirm password"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="create-password-second-input-field"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Confirm password" AND value != "Confirm password"',
+        ),
       }),
     );
   }
 
   get biometricsToggle() {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().className("android.widget.Switch")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'name == "login-with-biometrics-switch"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
+          'new UiSelector().className("android.widget.Switch")',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "login-with-biometrics-switch"',
+        ),
       }),
     );
   }
 
   get importButton() {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'import-from-seed-screen-submit-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
-        },
-        iosLocator: {
-          locator:
-            'label == "IMPORT" AND name == "import-from-seed-screen-submit-button-id"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().accessibilityId(
+          'import-from-seed-screen-submit-button-id',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "IMPORT" AND name == "import-from-seed-screen-submit-button-id"',
+        ),
       }),
     );
   }

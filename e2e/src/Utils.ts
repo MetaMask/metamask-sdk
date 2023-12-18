@@ -1,42 +1,31 @@
 import {
   BrowserSize,
   Coordinates,
-  MetaMaskElementLocator,
+  MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
 
-export const Platform = driver.isIOS ? 'IOS' : 'ANDROID';
+export const PLATFORM = driver.isIOS ? 'IOS' : 'ANDROID';
 
-class Utils {
-  static getLocatorPerPlatformAndStrategy(
-    locator: MetaMaskElementLocator,
-  ): string {
-    const platformLocator = driver.isIOS
-      ? locator.iosLocator
-      : locator.androidLocator;
-
-    // In case the locator was not provided for the platform it is running on
-    if (platformLocator === undefined) {
-      throw new Error(`Locator for ${Platform} needs to be provided!`);
-    }
-
-    if (driver.isIOS && locator.iosLocator !== undefined) {
-      return `${platformLocator.strategy}${locator.iosLocator.locator}`;
-    } else if (driver.isAndroid && locator.androidLocator !== undefined) {
-      // Explicitly check for driver.isAndroid in case we want to add web tests
-      return `${platformLocator.strategy}${locator.androidLocator.locator}`;
-    }
-    throw new Error('Platform locator is undefined');
+export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
+  const platformSelector =
+    PLATFORM === 'IOS' ? locator.iosSelector : locator.androidSelector;
+  if (platformSelector === undefined) {
+    throw new Error(`Selector for ${PLATFORM} needs to be provided!`);
   }
 
+  return platformSelector;
+};
+
+class Utils {
   static async launchApp(bundleId: string): Promise<void> {
     // Location can be either url for web test dapp or bundleId for native app
-    console.log(`Launching ${Platform} DAPP with bundleId: ${bundleId}`);
+    console.log(`Launching ${PLATFORM} DAPP with bundleId: ${bundleId}`);
     await driver.activateApp(bundleId);
   }
 
   static async launchMetaMask(): Promise<void> {
-    console.log(`Launching MetaMask on ${Platform}`);
+    console.log(`Launching MetaMask on ${PLATFORM}`);
     const metamaskBundleId = process.env.BUNDLE_ID as string;
     await driver.activateApp(metamaskBundleId);
   }
@@ -46,7 +35,7 @@ class Utils {
    * Not the same as the dappTerminate that cleans a session
    * */
   static async killApp(bundleId: string): Promise<void> {
-    console.log(`Terminating ${Platform} DAPP with bundleId: ${bundleId}`);
+    console.log(`Terminating ${PLATFORM} DAPP with bundleId: ${bundleId}`);
     await driver.terminateApp(bundleId);
   }
 
