@@ -1,15 +1,18 @@
-import { afterEachHook, beforeEachHook, beforeHook } from '../mocha.hooks';
+import {
+  BROWSER_BUNDLE_ID,
+  Browsers,
+  WALLET_PASSWORD,
+} from '../../src/Constants';
 import Utils from '../../src/Utils';
-import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
-import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
 import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
+import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
 import CreateReactDappScreen from '../../src/screens/Dapps/CreateReactDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
-import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
+import LockScreen from '../../src/screens/MetaMask/LockScreen';
 import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
 import SignModalComponent from '../../src/screens/MetaMask/components/SignModalComponent';
-import LockScreen from '../../src/screens/MetaMask/LockScreen';
-import Gestures from '../../src/Gestures';
+import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
+import { afterEachHook, beforeEachHook, beforeHook } from '../mocha.hooks';
 
 describe('JS SDK Connection', () => {
   before(async () => {

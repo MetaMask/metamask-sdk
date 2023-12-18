@@ -1,7 +1,7 @@
 import { ActionTypes } from 'webdriverio';
 
 import Utils from './Utils';
-import { ScreenPercentage } from './Types';
+import { ScreenPercentage } from './types';
 
 const Actions = {
   LONG_PRESS: 'longPress',
