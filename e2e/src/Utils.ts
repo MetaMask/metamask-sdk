@@ -11,9 +11,7 @@ import {
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
-import { FIXTURE_SERVER_PORT } from './Constants';
-
-export const PLATFORM = driver.isIOS ? 'IOS' : 'ANDROID';
+import { FIXTURE_SERVER_PORT, PLATFORM } from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =

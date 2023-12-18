@@ -10,6 +10,14 @@ export const NATIVE_OS_APPS = {
     SETTINGS: 'com.android.settings',
   },
 };
+
+export const Platforms = {
+  ANDROID: 'android',
+  IOS: 'ios',
+};
+
+export const PLATFORM = driver.isIOS ? Platforms.IOS : Platforms.ANDROID;
+
 export const SRP =
   process.env.SRP ??
   'test test test test test test test test test test test test';
