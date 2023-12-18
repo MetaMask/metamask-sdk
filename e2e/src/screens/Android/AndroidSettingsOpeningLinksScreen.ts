@@ -107,8 +107,8 @@ class AndroidSettingsOpeningLinksScreen {
     await (await this.addLinksButton).click();
   }
 
-  async isAddLinksButtonDisabled(): Promise<boolean> {
-    return (await (await this.addLinksButton).isClickable()) === false;
+  async isAddLinksButtonEnabled(): Promise<boolean> {
+    return await (await this.addLinksButton).isEnabled();
   }
 }
 
