@@ -1,6 +1,6 @@
 import { afterEachHook, beforeEachHook, beforeHook } from '../mocha.hooks';
 import Utils from '../../src/Utils';
-import { Browsers, WALLET_PASSWORD } from '../../src/Constants';
+import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
 import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
 import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import CreateReactDappScreen from '../../src/screens/Dapps/CreateReactDappScreen';
@@ -98,7 +98,7 @@ describe('JS SDK Connection', () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
-    const bundleId = driver.isIOS ? Browsers.SAFARI : Browsers.CHROME;
+    const bundleId = BROWSER_BUNDLE_ID;
     await Utils.killApp(bundleId);
     await Utils.launchApp(bundleId);
 

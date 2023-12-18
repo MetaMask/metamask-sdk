@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.2]
+### Uncategorized
+- update: updates Wagmi dependency on `sdk-react-ui` to 1.4.12 ([#588](https://github.com/MetaMask/metamask-sdk/pull/588))
+
 ## [0.14.1]
 
 ## [0.14.0]
@@ -86,7 +90,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...HEAD
+[0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.1...@metamask/sdk-react-ui@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.0...@metamask/sdk-react-ui@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.13.0...@metamask/sdk-react-ui@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.12.4...@metamask/sdk-react-ui@0.13.0

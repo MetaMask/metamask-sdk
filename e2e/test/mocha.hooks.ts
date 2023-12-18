@@ -1,6 +1,6 @@
 import Utils from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { NATIVE_APPS, WALLET_PASSWORD } from '../src/Constants';
+import { NATIVE_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
 import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
 import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
@@ -14,10 +14,6 @@ import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponen
 import WhatsNewComponent from '../src/screens/MetaMask/components/WhatsNewComponent';
 import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen';
 import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
-
-const SRP =
-  process.env.SRP ??
-  'test test test test test test test test test test test test';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
