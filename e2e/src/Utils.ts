@@ -11,12 +11,11 @@ import {
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
-import { FIXTURE_SERVER_PORT, PLATFORM } from './Constants';
+import { FIXTURE_SERVER_PORT, PLATFORM, Platforms } from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
-  console.log('PLATFORM IS: ', PLATFORM);
   const platformSelector =
-    PLATFORM === 'IOS' ? locator.iosSelector : locator.androidSelector;
+    PLATFORM === Platforms.IOS ? locator.iosSelector : locator.androidSelector;
   if (platformSelector === undefined) {
     throw new Error(`Selector for ${PLATFORM} needs to be provided!`);
   }
