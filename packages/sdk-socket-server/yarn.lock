@@ -879,6 +879,7 @@ __metadata:
     "@types/express": ^4.17.20
     "@types/jest": ^29.5.6
     "@types/node": ^20.4.1
+    "@types/socket.io": ^3.0.2
     "@types/supertest": ^2.0.15
     "@types/uuid": ^8.3.1
     "@typescript-eslint/eslint-plugin": ^6.8.0
@@ -1337,6 +1338,15 @@ __metadata:
     "@types/mime": "*"
     "@types/node": "*"
   checksum: 0ff4b3703cf20ba89c9f9e345bc38417860a88e85863c8d6fe274a543220ab7f5f647d307c60a71bb57dc9559f0890a661e8dc771a6ec5ef195d91c8afc4a893
+  languageName: node
+  linkType: hard
+
+"@types/socket.io@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@types/socket.io@npm:3.0.2"
+  dependencies:
+    socket.io: "*"
+  checksum: 168cf77e48b466582bd69d1c25930bb657225e742288d658a03a1e8af254350daa61f9441ec2be0d8354f1dcc747966e4342000bce875549fe54ec03e2fafec3
   languageName: node
   linkType: hard
 
@@ -6513,7 +6523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socket.io@npm:^4.4.1":
+"socket.io@npm:*, socket.io@npm:^4.4.1":
   version: 4.7.2
   resolution: "socket.io@npm:4.7.2"
   dependencies:
