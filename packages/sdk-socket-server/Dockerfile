@@ -21,30 +21,12 @@ COPY package.json ./
 COPY yarn.lock ./
 
 # Install all dependencies including devDependencies
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && npm install typescript -g
 
 COPY . .
+
 RUN yarn build
 
-# Runtime stage
-FROM node:18-alpine
-
-WORKDIR /app
-
-# Install Yarn v3.5.1
-RUN corepack enable
-# RUN corepack install yarn@3.5.1
-RUN corepack prepare yarn@3.5.1 --activate
-
-# Verify yarn version
-RUN yarn --version
-
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/yarn.lock ./
-
-RUN yarn install --frozen-lockfile
-
-COPY --from=builder /app/dist ./dist
 COPY .env ./
 
 EXPOSE 4000
