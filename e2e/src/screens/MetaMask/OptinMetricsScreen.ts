@@ -1,23 +1,17 @@
 import { ChainablePromiseElement } from 'webdriverio';
+
 import Gestures from '../../Gestures';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class OptinMetricsScreen {
   get acceptOptinMetrics(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: "//*[@resource-id='optin-metrics-i-agree-button-id']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "I agree"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="optin-metrics-i-agree-button-id"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "I agree"'),
       }),
     );
   }

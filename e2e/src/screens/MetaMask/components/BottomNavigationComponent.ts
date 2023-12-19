@@ -1,38 +1,31 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../../Strategies';
-import Utils from '../../../Utils';
+import { getSelectorForPlatform } from '../../../Utils';
+import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class BottomNavigationComponent {
   get settingsButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: "//*[@resource-id='tab-bar-item-Setting']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'name == "tab-bar-item-Setting"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="tab-bar-item-Setting"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "tab-bar-item-Setting"',
+        ),
       }),
     );
   }
 
   get walletButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: "//*[@resource-id='tab-bar-item-Wallet']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'name == "tab-bar-item-Wallet"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="tab-bar-item-Wallet"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "tab-bar-item-Wallet"',
+        ),
       }),
     );
   }

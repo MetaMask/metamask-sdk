@@ -1,4 +1,4 @@
-import { UnityDappElement } from '../../types';
+import { UnityDappElement } from '../../Types';
 import Gestures from '../../Gestures';
 import { Dapp } from '../interfaces/Dapp';
 

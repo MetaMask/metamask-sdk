@@ -1,18 +1,17 @@
 import { ChainablePromiseElement, Key } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import Gestures from '../../Gestures';
-import { AndroidSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
+import { AndroidSelector } from '../../Selectors';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().className("android.widget.EditText")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
+          'android.widget.EditText',
+        ),
       }),
     );
   }
@@ -20,33 +19,92 @@ class ChromeBrowserScreen implements MobileBrowser {
   // 3 dots on the top
   get browserMoreOptions(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.ImageButton[@content-desc="More options"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="More options"]',
+        ),
       }),
     );
   }
 
   get refreshButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.ImageButton[@content-desc="Refresh"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="Refresh"]',
+        ),
+      }),
+    );
+  }
+
+  get switchTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="Switch or close tabs"]',
+        ),
+      }),
+    );
+  }
+
+  get closeAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.LinearLayout[@resource-id="com.android.chrome:id/close_all_tabs_menu_id"]',
+        ),
+      }),
+    );
+  }
+
+  get confirmCloseAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="com.android.chrome:id/positive_button"]',
+        ),
+      }),
+    );
+  }
+
+  get newTabButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageView[@content-desc="New tab"]',
+        ),
       }),
     );
   }
 
   async goToAddress(address: string): Promise<void> {
     const urlAddressBar = await this.urlAddressBar;
+
     await urlAddressBar.click();
     await urlAddressBar.clearValue();
     await urlAddressBar.setValue(address);
     await Gestures.tapDeviceKey(Key.Enter);
     await driver.pressKeyCode(66);
+  }
+
+  async tapSwitchTabsButton(): Promise<void> {
+    await (await this.switchTabsButton).click();
+  }
+
+  async tapBrowserMoreOptionsButton(): Promise<void> {
+    await (await this.browserMoreOptions).click();
+  }
+
+  async tapCloseAllTabsButton(): Promise<void> {
+    await (await this.closeAllTabsButton).click();
+  }
+
+  async tapConfirmCloseAllTabsButton(): Promise<void> {
+    await (await this.confirmCloseAllTabsButton).click();
+  }
+
+  async tapNewTabButton(): Promise<void> {
+    await (await this.newTabButton).click();
   }
 
   async refreshPage(): Promise<void> {

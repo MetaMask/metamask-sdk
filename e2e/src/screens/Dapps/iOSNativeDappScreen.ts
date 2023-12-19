@@ -1,57 +1,49 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { IOSSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
+import { IOSSelector } from '../../Selectors';
 
 class IOSNNativeDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "Connect to MetaMask"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Connect to MetaMask"',
+        ),
       }),
     );
   }
 
   get signMenuButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator:
-            'label == "Sign" AND name == "Sign" AND type == "XCUIElementTypeButton"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Sign" AND name == "Sign" AND type == "XCUIElementTypeButton"',
+        ),
       }),
     );
   }
 
   get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "Sign message"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Sign message"',
+        ),
       }),
     );
   }
 
   get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "Terminate"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
       }),
     );
   }
 
   async connect(): Promise<void> {
-    console.log('Im inside dappConnect');
     await (await this.connectButton).click();
   }
 
