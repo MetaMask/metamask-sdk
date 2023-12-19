@@ -1,0 +1,1 @@
+(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[3867],{"./src/utils/regex/index.types.ts":()=>{}}]);

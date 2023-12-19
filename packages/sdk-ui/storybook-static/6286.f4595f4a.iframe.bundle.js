@@ -1,0 +1,1 @@
+(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[6286],{"./src/types/declarations.d.ts":()=>{}}]);
