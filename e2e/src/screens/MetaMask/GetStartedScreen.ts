@@ -1,23 +1,16 @@
 import { ChainablePromiseElement } from 'webdriverio';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
 
 class GetStartedScreen {
   get getStartedButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: "//*[@resource-id='welcome-screen-get-started-button-id']",
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Get started"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="welcome-screen-get-started-button-id"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Get started"'),
       }),
     );
   }

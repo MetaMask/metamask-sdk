@@ -1,22 +1,18 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class WalletSetupScreen {
   get importWithSRP(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'wallet-setup-screen-import-from-seed-button-id',
-          strategy: AndroidSelectorStrategies.AccessibilityID,
-        },
-        iosLocator: {
-          locator: 'label == "Import using Secret Recovery Phrase"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().accessibilityId(
+          'wallet-setup-screen-import-from-seed-button-id',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Import using Secret Recovery Phrase"',
+        ),
       }),
     );
   }
