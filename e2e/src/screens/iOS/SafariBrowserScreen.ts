@@ -1,40 +1,31 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { IOSSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
-import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { driver } from '@wdio/globals';
+import { getSelectorForPlatform } from '../../Utils';
+import { MobileBrowser } from '../interfaces/MobileBrowser';
+import { IOSSelector } from '../../Selectors';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "Address"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString('label == "Address"'),
       }),
     );
   }
 
   get goButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "go"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString('label == "go"'),
       }),
     );
   }
 
   get refreshButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        iosLocator: {
-          locator: 'label == "refresh"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        iosSelector: IOSSelector.by().predicateString('label == "refresh"'),
       }),
     );
   }

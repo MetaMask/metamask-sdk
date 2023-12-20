@@ -9,9 +9,26 @@ export type Dapp = {
 
   connect(): Promise<void>;
 
-  signButton: ChainablePromiseElement<WebdriverIO.Element> | UnityDappElement;
+  signTypedDataV3Button?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
 
-  sign(): Promise<void>;
+  signTypedDataV4Button?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
+
+  sendTransactionButton?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
+
+  personalSignButton?:
+    | ChainablePromiseElement<WebdriverIO.Element>
+    | UnityDappElement;
+
+  signTypedDataV3?(): Promise<void>;
+  signTypedDataV4?(): Promise<void>;
+  personalSign?(): Promise<void>;
+  sendTransaction?(): Promise<void>;
 
   terminateButton:
     | ChainablePromiseElement<WebdriverIO.Element>

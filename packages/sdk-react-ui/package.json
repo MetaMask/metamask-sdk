@@ -19,6 +19,7 @@
   ],
   "author": "MetaMask",
   "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
   "types": "dist/esm/src/index.d.ts",
   "files": [
     "dist",
@@ -84,8 +85,6 @@
     "next": "canary",
     "postcss": "^8.4.12",
     "prettier": "^2.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.8",
     "rollup-plugin-dts": "^4.2.2",

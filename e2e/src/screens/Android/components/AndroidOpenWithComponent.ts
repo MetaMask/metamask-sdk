@@ -1,27 +1,21 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelectorStrategies } from '../../../Strategies';
-import Utils from '../../../Utils';
+import { getSelectorForPlatform } from '../../../Utils';
+import { AndroidSelector } from '../../../Selectors';
 
 class AndroidOpenWithComponent {
   get openWithMetaMaskQA(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("MetaMask-QA")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText('MetaMask-QA'),
       }),
     );
   }
 
   get openWithMetaMask(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("MetaMask")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText('MetaMask'),
       }),
     );
   }

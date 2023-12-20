@@ -1,51 +1,39 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelectorStrategies, IOSSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class ReactNativeDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.TextView[@text="CONNECT"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Connect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="CONNECT"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
     );
   }
 
   get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.TextView[@text="SIGN"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="SIGN"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.TextView[@text="Terminate"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Terminate"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="Terminate"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
       }),
     );
   }

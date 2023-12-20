@@ -1,45 +1,83 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
-import { AndroidSelectorStrategies } from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
+import { AndroidSelector } from '../../Selectors';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("MetaMask-QA")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText(
+          METAMASK_APP_NAME_ANDROID,
+        ),
+      }),
+    );
+  }
+
+  get openSearchBarButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="com.android.settings:id/search_action_bar"]',
+        ),
+      }),
+    );
+  }
+
+  get searchBarInput(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="com.google.android.settings.intelligence:id/open_search_view_edit_text"]',
+        ),
+      }),
+    );
+  }
+
+  get openingLinksSearchResult(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="android:id/title" and @text="Opening links"]',
+        ),
       }),
     );
   }
 
   get supportedWebAddresses(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Supported web addresses")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText(
+          'Supported web addresses',
+        ),
       }),
     );
   }
 
   get links(): ReturnType<WebdriverIO.Browser['$$']> {
     return $$(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Switch',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath('//android.widget.Switch'),
       }),
     );
   }
 
   async tapMetaMaskLinksButton(): Promise<void> {
     await (await this.metaMaskQALinksButton).click();
+  }
+
+  async tapOpenSearchBarButton(): Promise<void> {
+    await (await this.openSearchBarButton).click();
+  }
+
+  async tapOpeningLinksSearchResult(): Promise<void> {
+    await (await this.openingLinksSearchResult).click();
+  }
+
+  async fillSearchBarInput(text: string): Promise<void> {
+    await (await this.searchBarInput).setValue(text);
   }
 
   async tapSupportedWebAddresses(): Promise<void> {

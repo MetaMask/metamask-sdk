@@ -1,55 +1,44 @@
-import { ChainablePromiseElement} from 'webdriverio';
+import { ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class SettingsScreen {
   get securityAndPrivacyButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Security & Privacy")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: '//XCUIElementTypeOther[@name="security-settings"]',
-          strategy: IOSSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector:
+          AndroidSelector.by().uiAutomatorAndText('Security & Privacy'),
+        iosSelector: IOSSelector.by().xpath(
+          '//XCUIElementTypeOther[@name="security-settings"]',
+        ),
       }),
     );
   }
 
   get manageConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="sdk-section"]/android.widget.Button',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: '//XCUIElementTypeButton[@name="Manage connections"]',
-          strategy: IOSSelectorStrategies.Xpath,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="sdk-section"]/android.widget.Button',
+        ),
+        iosSelector: IOSSelector.by().xpath(
+          '//XCUIElementTypeButton[@name="Manage connections"]',
+        ),
       }),
     );
   }
 
   get disconnectAll(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator:
-            '//*[@resource-id="sdk-session-manager"]/android.widget.Button',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Disconnect all"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="sdk-session-manager"]/android.widget.Button',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Disconnect all"',
+        ),
       }),
     );
   }
@@ -57,61 +46,40 @@ class SettingsScreen {
   // Needs Android locator on mobile
   get disconnectButtonList(): ReturnType<WebdriverIO.Browser['$$']> {
     return $$(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Disconnect")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'label == "Disconnect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText(
+          'new UiSelector().text("Disconnect")',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Disconnect"'),
       }),
     );
   }
 
   get acceptClearConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("CLEAR")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'label == "CLEAR"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText('CLEAR'),
+        iosSelector: IOSSelector.by().predicateString('label == "CLEAR"'),
       }),
     );
   }
 
   get cancelClearConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Cancel")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'label == "Cancel"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText('Cancel'),
+        iosSelector: IOSSelector.by().predicateString('label == "Cancel"'),
       }),
     );
   }
 
   get noConnectionsFoundTest(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator:
-            '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
-          strategy: IOSSelectorStrategies.IOSClassChain,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().uiAutomatorAndText(''),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
+        ),
       }),
     );
   }

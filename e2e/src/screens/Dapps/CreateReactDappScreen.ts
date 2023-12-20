@@ -1,38 +1,50 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+
+import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class CreateReactDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Connect")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'label == "Connect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.View[@text="Connect wallet"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.TextView[@text="Sign"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="personal_sign"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+      }),
+    );
+  }
+
+  get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="eth_signTypedData_v4"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+      }),
+    );
+  }
+
+  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="Send transaction"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
@@ -40,15 +52,11 @@ class CreateReactDappScreen implements Dapp {
   // Currently there's no terminate in create-react-dapp
   get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: 'new UiSelector().text("Terminate")',
-          strategy: AndroidSelectorStrategies.UIAutomator2,
-        },
-        iosLocator: {
-          locator: 'label == "Terminate"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="Terminate"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
       }),
     );
   }
@@ -57,17 +65,20 @@ class CreateReactDappScreen implements Dapp {
     await (await this.connectButton).click();
   }
 
-  async sign(): Promise<void> {
-    await this.scrollToSignButton();
-    await (await this.signButton).click();
+  async signTypedDataV4(): Promise<void> {
+    await (await this.signTypedDataV4Button).click();
+  }
+
+  async personalSign(): Promise<void> {
+    await (await this.personalSignButton).click();
+  }
+
+  async sendTransaction(): Promise<void> {
+    await (await this.sendTransactionButton).click();
   }
 
   async terminate(): Promise<void> {
     await (await this.terminateButton).click();
-  }
-
-  async scrollToSignButton(): Promise<void> {
-    await (await this.signButton).scrollIntoView();
   }
 }
 
