@@ -1,33 +1,27 @@
 # Build stage
 FROM node:18-alpine AS builder
 
-# Accept NODE_ENV as a build argument
-ARG NODE_ENV=production
-
-# Set the NODE_ENV environment variable
-ENV NODE_ENV=${NODE_ENV}
-
+# Install build dependencies and build the project
 WORKDIR /app
-
-# Install Yarn v3.5.1
-RUN corepack enable
-# RUN corepack install yarn@3.5.1
-RUN corepack prepare yarn@3.5.1 --activate
-
-# Verify yarn version
-RUN yarn --version
-
 COPY package.json ./
-COPY yarn.lock ./
-
-# Install all dependencies including devDependencies
-RUN yarn install --frozen-lockfile && npm install typescript -g
-
+RUN yarn install
 COPY . .
-
 RUN yarn build
 
+# Runtime stage
+FROM node:18-alpine
+
+# Install runtime dependencies
+WORKDIR /app
+COPY --from=builder /app/package.json ./
+RUN yarn install --production
+
+# Copy built project and .env file from the build stage
+COPY --from=builder /app/dist ./dist
 COPY .env ./
 
+# Expose the server port
 EXPOSE 4000
+
+# Start the server
 CMD ["node", "dist/index.js"]
