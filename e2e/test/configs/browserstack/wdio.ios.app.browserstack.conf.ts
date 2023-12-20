@@ -23,15 +23,13 @@ config.capabilities = [
     // For W3C the appium capabilities need to have an extension prefix
     // http://appium.io/docs/en/writing-running-appium/caps/
     // This is `appium:` for all Appium Capabilities which can be found here
-    'appium:deviceName': 'iPhone 14',
-    'appium:platformVersion': '16.0',
+    'appium:deviceName': 'iPhone 15 Pro Max',
+    'appium:platformVersion': '17.1',
     'appium:automationName': 'XCUITest',
     'appium:app': process.env.APP_PATH,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     'appium:bundleId': 'io.metamask.MetaMask-QA',
-    'appium:udid': process.env.DEVICE_UDID,
-    // "appium:xcodeSigningId": "iPhone Developer",
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
     'appium:language': 'en',

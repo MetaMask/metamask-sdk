@@ -17,7 +17,7 @@
   },
   "scripts": {
     "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
-    "test:ios": "wdio run test/configs/local/wdio.ios.app.local.conf.ts",
+    "test:ios:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",

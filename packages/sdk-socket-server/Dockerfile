@@ -8,21 +8,25 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /app
+
+# Install Yarn v3.5.1
+RUN corepack enable
+# RUN corepack install yarn@3.5.1
+RUN corepack prepare yarn@3.5.1 --activate
+
+# Verify yarn version
+RUN yarn --version
+
 COPY package.json ./
-RUN yarn install
+COPY yarn.lock ./
+
+# Install all dependencies including devDependencies
+RUN yarn install --frozen-lockfile && npm install typescript -g
+
 COPY . .
+
 RUN yarn build
 
-# Runtime stage
-FROM node:18-alpine
-
-WORKDIR /app
-COPY --from=builder /app/package.json ./
-
-# If NODE_ENV is development, install all dependencies, else only production dependencies
-RUN if [ "$NODE_ENV" = "development" ]; then yarn install; else yarn install --production; fi
-
-COPY --from=builder /app/dist ./dist
 COPY .env ./
 
 EXPOSE 4000

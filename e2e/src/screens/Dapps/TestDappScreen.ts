@@ -1,69 +1,51 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+
 import { Dapp } from '../interfaces/Dapp';
 import Gestures from '../../Gestures';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class TestDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@resource-id="connectButton"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Connect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="connectButton"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
     );
   }
 
   get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@resource-id="personalSign"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="personalSign"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get signTypedDataV3Button(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@resource-id="signTypedDataV3"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="signTypedDataV3"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@resource-id="terminateButton"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Disconnect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="terminateButton"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Disconnect"'),
       }),
     );
   }

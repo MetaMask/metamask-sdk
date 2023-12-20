@@ -1,68 +1,50 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+
+import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class CreateReactDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.view.View[@text="Connect wallet"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Connect"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.View[@text="Connect wallet"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
     );
   }
 
   get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@text="personal_sign"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="personal_sign"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@text="eth_signTypedData_v4"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="eth_signTypedData_v4"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@text="Send transaction"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="Send transaction"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
@@ -70,15 +52,11 @@ class CreateReactDappScreen implements Dapp {
   // Currently there's no terminate in create-react-dapp
   get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//android.widget.Button[@text="Terminate"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Terminate"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="Terminate"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
       }),
     );
   }

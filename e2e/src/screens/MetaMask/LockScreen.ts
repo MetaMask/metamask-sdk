@@ -1,53 +1,43 @@
 import { ChainablePromiseElement } from 'webdriverio';
-
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../Strategies';
-import Utils from '../../Utils';
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class LockScreen {
   get passwordInput(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="login-password-input"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'name == "login-password-input"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="login-password-input"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "login-password-input"',
+        ),
       }),
     );
   }
 
   get loginTitle(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="login-title"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Welcome Back!"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="login-title"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "Welcome Back!"',
+        ),
       }),
     );
   }
 
   get unlockButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator: '//*[@resource-id="log-in-button"]/android.widget.Button',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "UNLOCK" AND name == "UNLOCK"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//*[@resource-id="log-in-button"]/android.widget.Button',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'label == "UNLOCK" AND name == "UNLOCK"',
+        ),
       }),
     );
   }

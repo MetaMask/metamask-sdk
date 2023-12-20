@@ -1,40 +1,26 @@
 import { ChainablePromiseElement } from 'webdriverio';
-
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../../Strategies';
-import Utils from '../../../Utils';
+import { getSelectorForPlatform } from '../../../Utils';
+import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class SignModalComponent {
   get signApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator:
-            '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Sign"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
     );
   }
 
   get cancelButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator:
-            '//android.widget.Button[@content-desc="request-signature-cancel-button"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'label == "Cancel"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@content-desc="request-signature-cancel-button"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString('label == "Cancel"'),
       }),
     );
   }

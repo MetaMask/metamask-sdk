@@ -1,24 +1,18 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import {
-  AndroidSelectorStrategies,
-  IOSSelectorStrategies,
-} from '../../../Strategies';
-import Utils from '../../../Utils';
+import { getSelectorForPlatform } from '../../../Utils';
+import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class WhatsNewComponent {
   get closeModalButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
-      Utils.getLocatorPerPlatformAndStrategy({
-        androidLocator: {
-          locator:
-            '//android.view.ViewGroup[@resource-id="whats-new-modal-close-button"]',
-          strategy: AndroidSelectorStrategies.Xpath,
-        },
-        iosLocator: {
-          locator: 'name == "whats-new-modal-close-button"',
-          strategy: IOSSelectorStrategies.IOSPredicateString,
-        },
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.ViewGroup[@resource-id="whats-new-modal-close-button"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "whats-new-modal-close-button"',
+        ),
       }),
     );
   }

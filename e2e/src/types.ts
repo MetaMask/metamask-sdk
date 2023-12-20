@@ -1,13 +1,6 @@
-import { AndroidSelectorStrategies, IOSSelectorStrategies } from './Strategies';
-
 export type BrowserSize = {
   width: number;
   height: number;
-};
-
-type MetaMaskLocatorProps = {
-  locator: string;
-  strategy: AndroidSelectorStrategies | IOSSelectorStrategies;
 };
 
 export type Coordinates = {
@@ -17,9 +10,9 @@ export type Coordinates = {
 
 export type ScreenPercentage = Coordinates;
 
-export type MetaMaskElementLocator = {
-  androidLocator?: MetaMaskLocatorProps;
-  iosLocator?: MetaMaskLocatorProps;
+export type MetaMaskElementSelector = {
+  androidSelector?: string;
+  iosSelector?: string;
 };
 
 // Coordinates representing a certain Unity element on screen
