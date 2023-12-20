@@ -1,38 +1,8 @@
-import { useSDK } from '@metamask/sdk-react';
-import React, { useMemo } from 'react';
-import {
-  useAccount,
-  useBalance,
-  useNetwork,
-} from '../hooks/MetaMaskWagmiHooks';
+import React from 'react';
+import useBalance from '../hooks/useBalance';
 
 const Balance = ({ theme }: { theme: string }) => {
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const { isError, isLoading } = useBalance({
-    address: address,
-    chainId: chain?.id,
-    enabled: isConnected,
-  });
-  const { balance } = useSDK();
-  const decimals = 2;
-
-  const formattedBalance = useMemo(() => {
-    if (!balance) {
-      return `0.${'0'.repeat(decimals)}`;
-    }
-    // Convert the hexadecimal balance to a decimal number
-    const balanceInWei = parseInt(balance, 16);
-
-    // Assuming the balance is in Wei (for Ethereum), convert it to Ether.
-    // 1 Ether = 1e18 Wei
-    const balanceInEther = balanceInWei / 1e18;
-
-    // Format the number
-    return balanceInEther.toFixed(decimals);
-  }, [balance, decimals]);
-
-  // const balance = getBalance({ data, isError, isLoading });
+  const { balance, formattedBalance, isLoading, isError } = useBalance();
 
   if (!balance || isLoading || isError) return null;
 

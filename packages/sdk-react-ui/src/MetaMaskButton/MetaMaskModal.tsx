@@ -6,13 +6,13 @@ import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { Chain } from 'wagmi';
 import {
   useAccount,
-  useBalance,
   useDisconnect,
   useNetwork,
   useSwitchOrAddNetwork,
 } from '../hooks/MetaMaskWagmiHooks';
+import useBalance from '../hooks/useBalance';
 import IconNetwork from './IconNetwork';
-import { getBalance, truncatedAddress } from './utils';
+import { truncatedAddress } from './utils';
 
 export default function Modal({
   isOpen,
@@ -28,13 +28,7 @@ export default function Modal({
   const { switchOrAddNetwork } = useSwitchOrAddNetwork();
   const { chain, chains } = useNetwork();
 
-  const { data, isError, isLoading } = useBalance({
-    address: address,
-    chainId: chain?.id,
-    enabled: isConnected,
-  });
-
-  const balance = getBalance({ data, isError, isLoading });
+  const { formattedBalance, symbol } = useBalance();
 
   const [copied, setCopied] = useState(false);
 
@@ -197,7 +191,9 @@ export default function Modal({
                           )
                         )}
                       </div>
-                      <div className="tw-text-base tw-mt-2">{balance}</div>
+                      <div className="tw-text-base tw-mt-2">
+                        {`${formattedBalance} ${symbol}`}
+                      </div>
                       <button
                         className="tw-text-blue-500 tw-mt-2 tw-text-xs tw-flex tw-content-center tw-justify-center tw-items-center"
                         onClick={disconnectAndClose}
