@@ -1,6 +1,6 @@
-const OpenAI = require('openai');
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import OpenAI from 'openai';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -10,7 +10,7 @@ const openai = new OpenAI({
 const currentDir = __dirname;
 
 // Resolve the path to the 'locales' directory relative to the current script's directory
-const LOCALES_DIR = path.resolve(currentDir, '../locales');
+const LOCALES_DIR = path.resolve(currentDir, '../packages/sdk/src/locales');
 
 // Path to the English JSON file
 const EN_FILE_PATH = path.join(LOCALES_DIR, 'en.json');
@@ -25,23 +25,29 @@ function getI18nFilePaths() {
 
 const I18N_FILES_PATHS = getI18nFilePaths();
 
+// Define a recursive type for the structure of locale files
+type LocaleEntry = {
+  [key: string]: string | LocaleEntry;
+};
+
 // Function to read JSON file
-function readJsonFile(filePath) {
+function readJsonFile(filePath: string) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
 
 // Function to compare and find missing translations
-function findMissingTranslations(enJson, otherJson) {
-  let missingTranslations = {};
+function findMissingTranslations(enJson: LocaleEntry, otherJson: LocaleEntry) {
+  const missingTranslations: LocaleEntry = {};
 
   Object.keys(enJson).forEach((key) => {
     if (typeof enJson[key] === 'object' && enJson[key] !== null) {
       if (!otherJson[key]) {
-        otherJson[key] = {}; // Initialize missing object
+        otherJson[key] = {};
       }
+
       missingTranslations[key] = findMissingTranslations(
-        enJson[key],
-        otherJson[key],
+        enJson[key] as LocaleEntry,
+        otherJson[key] as LocaleEntry,
       );
     } else if (!otherJson[key]) {
       missingTranslations[key] = enJson[key];
@@ -51,12 +57,12 @@ function findMissingTranslations(enJson, otherJson) {
   return missingTranslations;
 }
 
-function getLanguageCode(filePath) {
+function getLanguageCode(filePath: string) {
   return path.basename(filePath, '.json');
 }
 
 // Function to translate text using ChatGPT API
-async function translateText(text, targetLang) {
+async function translateText(text: string, targetLang: string) {
   try {
     const response = await openai.chat.completions.create({
       model: 'gpt-4',
@@ -86,18 +92,31 @@ async function translateText(text, targetLang) {
   }
 }
 
-async function updateTranslations(jsonObject, translations, targetLang) {
+async function updateTranslations(
+  jsonObject: LocaleEntry,
+  translations: LocaleEntry,
+  targetLang: string,
+) {
   for (const key in translations) {
     if (typeof translations[key] === 'object' && translations[key] !== null) {
-      await updateTranslations(jsonObject[key], translations[key], targetLang);
+      await updateTranslations(
+        jsonObject[key] as LocaleEntry,
+        translations[key] as LocaleEntry,
+        targetLang,
+      );
     } else if (typeof translations[key] === 'string') {
-      jsonObject[key] = await translateText(translations[key], targetLang);
+      const t = await translateText(translations[key] as string, targetLang);
+
+      if (t) {
+        jsonObject[key] = t;
+      }
     }
   }
 }
 
 // Main function to update i18n files
 async function updateI18nFiles() {
+  console.log('Updating i18n locales files...');
   const enJson = readJsonFile(EN_FILE_PATH);
 
   for (const filePath of I18N_FILES_PATHS) {
