@@ -3,8 +3,8 @@ require('dotenv').config();
 const os = require('os');
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
-let rateLimitPoints = 10;
-let rateLimitMessagePoints = 100;
+let rateLimitPoints = process.env.RATE_LIMIT_POINTS_MAX;
+let rateLimitMessagePoints = process.env.RATE_LIMIT_MESSAGE_POINTS_MAX;
 const rateLimitPointsMax = process.env.RATE_LIMIT_POINTS_MAX || 100;
 const rateLimitMessagePointsMax =
   process.env.RATE_LIMIT_MESSAGE_POINTS_MAX || 1000;
