@@ -1,6 +1,38 @@
-<div>
-  <a href="/packages/sdk-ui/storybook-static/index.html">storybook-static</a>
-</div>
-<div>
-  <a href="/packages/examples/create-react-app/dist/index.html">CRA</a>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Link Base</title>
+</head>
+
+<body>
+  <div>
+    <a href="packages/sdk-ui/storybook-static/" class="dynamic-link">storybook-static</a>
+  </div>
+  <div>
+    <a href="packages/examples/create-react-app/build/" class="dynamic-link">CRA example</a>
+  </div>
+
+  <script>
+    function updateLinkBases() {
+      var basePath = window.location.href.includes("https://metamask.github.io/metamask-sdk/") ? "/metamask-sdk/" : "/";
+      var links = document.querySelectorAll('.dynamic-link');
+
+      if (basePath !== '/') {
+        links.forEach(function (link) {
+          console.log(link.getAttribute('href'));
+          link.setAttribute('href', basePath + link.getAttribute('href'));
+          // print before / after
+          console.log(link.getAttribute('href'));
+        });
+      }
+    }
+
+    // Update links when the page loads
+    document.addEventListener('DOMContentLoaded', updateLinkBases);
+  </script>
+</body>
+
+</html>
