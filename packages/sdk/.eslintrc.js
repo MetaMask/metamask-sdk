@@ -19,6 +19,7 @@ module.exports = {
     'e2e/',
     'rollup.config.js',
     '**/coverage/**',
+    'src/scripts/i18n-locales-auto-translate.js',
   ],
 
   overrides: [
