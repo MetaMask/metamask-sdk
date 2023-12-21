@@ -1,0 +1,91 @@
+name: Deploy Combined Site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '18'
+
+    - name: Install Dependencies
+      run: yarn install
+
+    - name: Build Playground React App
+      run: |
+        cd deployments/dapps/create-react-app
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build CRA Example
+      run: |
+        cd packages/examples/create-react-app
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build Vue JS Example
+      run: |
+        cd packages/examples/vuejs
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build Pure JS Example
+      run: |
+        cd packages/examples/pure-javascript
+        yarn install
+        cd ../../..
+
+    - name: Build React MetaMask Button
+      run: |
+        cd packages/examples/react-metamask-button
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build React Custom Modal
+      run: |
+        cd packages/examples/react-with-custom-modal
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build Web3 Onboard
+      run: |
+        cd packages/examples/with-web3onboard
+        yarn install
+        yarn build
+        cd ../../..
+
+    - name: Build Storybook Static
+      run: yarn workspace @metamask/sdk-ui build:storybook
+
+
+    # Repeat build steps for other subdirectories
+
+    - name: Combine Deployments
+      run: |
+        cp -r packages/examples/create-react-app/build/* deployments/packages/examples/create-react-app/build/
+        cp -r packages/examples/vuejs/dist/* deployments/packages/examples/vuejs/dist/
+        cp -r packages/examples/ex1/build/* combined-build/ex1
+        cp -r packages/examples/ex2/build/* combined-build/ex2
+        # Repeat for other builds
+
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./deployments

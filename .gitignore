@@ -4,6 +4,8 @@
 *.*-e
 **/.sdk-comm
 
+combined-build/
+
 # Logs
 logs
 *.log
