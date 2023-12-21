@@ -1,4 +1,3 @@
-**/dist
 **/*__GENERATED*
 .vscode
 # sed backup files
@@ -34,6 +33,8 @@ e2e/appium.log
 **/dist-tsc
 **/dist-rollup
 **/*__GENERATED*
+
+!**/vuejs/dist
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
