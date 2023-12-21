@@ -128,7 +128,7 @@ function App() {
   }
 
   const addEthereumChain = async () => {
-    wallet.provider
+    wallet?.provider
       .request({
         method: 'wallet_addEthereumChain',
         params: [
@@ -153,7 +153,7 @@ function App() {
 
   const switchChain = async (hexChainId: string) => {
     try {
-      const result = await wallet.provider.request({
+      const result = await wallet?.provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
       });

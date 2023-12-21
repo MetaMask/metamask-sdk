@@ -17,6 +17,8 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   const { socketServer, useDeeplink, lang, infuraAPIKey, setAppContext } =
     useSDKConfig();
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
+  const localeUrl =
+    typeof window !== 'undefined' ? window.location.href : socketServer;
 
   const updateSocketServer = () => {
     // TODO let user input the actual server
@@ -56,9 +58,9 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
         />
       </View>
       {showQRCode && (
-        <View style={{ alignItems: 'center', padding: 10 }}>
-          <QRCode value={socketServer} size={200} />
-          <Text>{socketServer}</Text>
+        <View style={{ alignItems: 'center', padding: 10, maxWidth: '100%' }}>
+          <QRCode value={localeUrl} size={200} />
+          <Text numberOfLines={3}>{localeUrl}</Text>
         </View>
       )}
     </View>

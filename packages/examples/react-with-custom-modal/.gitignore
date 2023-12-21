@@ -9,7 +9,7 @@
 /coverage
 
 # production
-/build
+# /build # don't uncomment, used for static site deploys
 
 # misc
 .DS_Store

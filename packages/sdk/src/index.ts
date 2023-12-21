@@ -27,18 +27,23 @@ declare global {
   }
 }
 
-export {
+export type {
   CommunicationLayerPreference,
-  ConnectionStatus,
+  RPC_URLS_MAP,
+  MetaMaskSDKOptions,
+  SDKLoggingOptions,
+  ServiceStatus,
+};
+
+export {
   DEFAULT_SERVER_URL,
   EventType,
-  MessageType,
   MetaMaskSDK,
+  SDKProvider,
   PROVIDER_UPDATE_TYPE,
   PlatformType,
-  RPC_URLS_MAP,
-  SDKProvider,
+  ConnectionStatus,
+  MessageType,
 };
-export type { MetaMaskSDKOptions, SDKLoggingOptions, ServiceStatus };
 
 export default MetaMaskSDK;
