@@ -4,7 +4,7 @@
 # set -x
 
 # stop on first error
-set -e
+# set -e
 
 # Make sure to start from base workspace folder
 reldir="$( dirname -- "$0"; )";
