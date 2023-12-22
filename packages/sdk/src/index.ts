@@ -28,7 +28,6 @@ declare global {
 }
 
 export type {
-  CommunicationLayerPreference,
   RPC_URLS_MAP,
   MetaMaskSDKOptions,
   SDKLoggingOptions,
@@ -38,6 +37,7 @@ export type {
 export {
   DEFAULT_SERVER_URL,
   EventType,
+  CommunicationLayerPreference,
   MetaMaskSDK,
   SDKProvider,
   PROVIDER_UPDATE_TYPE,
