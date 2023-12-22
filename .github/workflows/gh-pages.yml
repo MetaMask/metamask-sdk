@@ -24,7 +24,7 @@ jobs:
 
     - name: Build Playground React App
       run: |
-        cd deployments/dapps/create-react-app
+        cd deployments/dapps/sdk-playground
         yarn install
         yarn build
         cd ../../..
