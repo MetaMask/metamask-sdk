@@ -15,12 +15,15 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set up Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: '18'
 
+    - name: Install Yarn 3
+      run: yarn set version berry
+
     - name: Install Dependencies
-      run: yarn install
+      run: yarn --immutable
 
     - name: Build All Static Example Projects
       run: bash ./scripts/build-static-dapps.sh
