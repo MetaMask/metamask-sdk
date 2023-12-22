@@ -145,7 +145,7 @@ echo "SDK React UI version: $sdkReactUiVersion"
 echo "SDK Install Modal Web version: $sdkInstallModalWebVersion"
 
 # Main script execution
-# build_and_consolidate
+build_and_consolidate
 update_index_html "$deployment_dir"
 
 echo "Deployment directory ready!"

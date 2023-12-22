@@ -37,9 +37,6 @@ e2e/appium.log
 **/dist-rollup
 **/*__GENERATED*
 
-!**/vuejs/dist
-!**/with-web3onboard/dist
-
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
