@@ -23,7 +23,7 @@ jobs:
       run: yarn set version berry
 
     - name: Install Dependencies
-      run: yarn --immutable
+      run: yarn
 
     - name: Build All Static Example Projects
       run: bash ./scripts/build-static-dapps.sh
