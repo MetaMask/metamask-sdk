@@ -1,1 +1,0 @@
-(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[4463],{"./src/design-system/components/Checkbox/Checkbox.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);

@@ -1,1 +1,0 @@
-(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[3105],{"./src/design-system/components/Buttons/Button/foundation/ButtonBase/ButtonBase.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);

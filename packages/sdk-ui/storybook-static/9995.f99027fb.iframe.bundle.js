@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[9995],{"./src/design-system/components/Banners/Banner/variants/BannerTip/assets/fox-greeting.png":(module,__unused_webpack_exports,__webpack_require__)=>{module.exports=__webpack_require__.p+"static/media/fox-greeting.4c9fe121.png"}}]);

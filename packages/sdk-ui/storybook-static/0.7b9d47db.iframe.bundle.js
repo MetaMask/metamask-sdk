@@ -1,1 +1,0 @@
-(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[0],{"./src/design-system/constants/storybook.constants.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0}),exports.storybookPropsGroupID=void 0;exports.storybookPropsGroupID="Props"}}]);

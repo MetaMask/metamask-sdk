@@ -1,1 +1,0 @@
-(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[6605],{"./src/design-system/components/Avatars/Avatar/variants/AvatarToken/AvatarToken.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);

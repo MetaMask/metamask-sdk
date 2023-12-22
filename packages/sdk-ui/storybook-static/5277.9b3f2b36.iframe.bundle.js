@@ -1,1 +1,0 @@
-(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[5277],{"./src/design-system/components/List/ListItemMultiSelect/ListItemMultiSelect.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);

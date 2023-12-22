@@ -50,6 +50,7 @@ build_and_consolidate() {
     echo "Combining deployments..."
     # Create necessary directories in deployments
     mkdir -p $deployment_dir/packages/examples/create-react-app/build
+    mkdir -p $deployment_dir/dapps/sdk-playground/build
     mkdir -p $deployment_dir/packages/examples/vuejs/dist
     mkdir -p $deployment_dir/packages/examples/pure-javascript
     mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
@@ -63,6 +64,7 @@ build_and_consolidate() {
     cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
     cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
     cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
+    cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
     cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
 
     # Special handling for pure_javascript

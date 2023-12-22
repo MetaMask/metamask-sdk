@@ -1,4 +1,4 @@
-name: Deploy Combined Site to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -32,4 +32,5 @@ jobs:
       uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        force_orphan: true
         publish_dir: ./deployments
