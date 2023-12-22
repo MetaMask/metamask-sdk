@@ -40,7 +40,10 @@
     "publish:all": "./scripts/publish-all.sh",
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces foreach --no-private run test",
-    "test:ci": "yarn workspaces foreach --no-private run test:ci"
+    "test:ci": "yarn workspaces foreach --no-private run test:ci",
+    "pages": "yarn pages:build && yarn pages:build:serve",
+    "pages:build": "bash ./scripts/build-static-dapps.sh",
+    "pages:build:serve": "yarn serve -l 1234 deployments"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",

@@ -23,7 +23,7 @@ jobs:
       run: yarn install
 
     - name: Build All Static Example Projects
-      run: bash ./scripts/build-statuc-dapps.sh
+      run: bash ./scripts/build-static-dapps.sh
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
