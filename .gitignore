@@ -4,7 +4,7 @@
 *.*-e
 **/.sdk-comm
 
-combined-build/
+deployments/packages
 
 # Logs
 logs
