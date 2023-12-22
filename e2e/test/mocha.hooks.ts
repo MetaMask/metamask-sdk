@@ -29,22 +29,25 @@ export const beforeHook = async () => {
   // Fox animation takes a while to finish
   await driver.pause(5000);
 
-  await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+  if (driver.isAndroid) {
+    await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+    await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
 
-  await AndroidSettingsScreen.tapOpenSearchBarButton();
-  await AndroidSettingsScreen.fillSearchBarInput('Opening links');
-  await AndroidSettingsScreen.tapOpeningLinksSearchResult();
+    await AndroidSettingsScreen.tapOpenSearchBarButton();
+    await AndroidSettingsScreen.fillSearchBarInput('Opening links');
+    await AndroidSettingsScreen.tapOpeningLinksSearchResult();
 
-  const isAddLinksButtonDisabled =
-    await AndroidSettingsOpeningLinksScreen.isAddLinksButtonDisabled();
+    await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
+    await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
 
-  await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
-  await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
+    const isAddLinksButtonEnabled =
+      await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
 
-  if (!isAddLinksButtonDisabled) {
-    await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
-    await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
-    await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+    if (isAddLinksButtonEnabled) {
+      await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
+      await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
+      await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+    }
   }
 
   await Utils.launchMetaMask();

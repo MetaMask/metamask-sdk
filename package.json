@@ -23,6 +23,8 @@
   "scripts": {
     "build": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
     "build:clean": "yarn clean && yarn build",
+    "light-build:": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:pre-tsc && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose --topological --parallel --no-private run build && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:post-tsc",
+    "light-build:clean": "yarn clean && yarn build:light",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces foreach --no-private run clean",
     "postinstall": "patch-package",
@@ -92,6 +94,7 @@
   "packageManager": "yarn@3.5.1",
   "dependencies": {
     "execa": "^5.0.0",
+    "openai": "^4.24.0",
     "ts-node": "^10.9.1"
   },
   "resolutions": {
