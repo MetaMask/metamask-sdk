@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Combined Site to GitHub Pages
 
 on:
   push:
@@ -20,10 +20,10 @@ jobs:
         node-version: '18'
 
     - name: Install Yarn 3
-      run: yarn set version berry
+      run: yarn set version 3.5.1
 
     - name: Install Dependencies
-      run: yarn install --immutable
+      run: yarn --immutable
 
     - name: Build All Static Example Projects
       run: bash ./scripts/build-static-dapps.sh
