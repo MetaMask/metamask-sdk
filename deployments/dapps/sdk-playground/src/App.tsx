@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import './App.css';
 
@@ -11,7 +12,7 @@ interface DemoLinkProps {
 const DemoLink = ({ title, link }: DemoLinkProps) => {
   return (
     <div style={{ padding: 20, border: '1px solid' }}>
-      <a href={link}>{title}</a>
+      <Link to={link}>{title}</Link>
     </div>
   );
 };
