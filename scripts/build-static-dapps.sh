@@ -27,6 +27,8 @@ build_project() {
 build_and_consolidate() {
     echo "Starting build process..."
 
+    yarn build # first build all workspace dependencies
+
     # Build projects
     build_project "deployments/dapps/sdk-playground"
     build_project "packages/examples/create-react-app"
@@ -44,7 +46,7 @@ build_and_consolidate() {
     build_project "packages/examples/with-web3onboard"
 
     echo "Building Storybook Static..."
-    yarn workspace @metamask/sdk-ui build:storybook
+    yarn workspace @metamask/sdk-ui build:storybook # then build storybook
 
     # Combine Deployments
     echo "Combining deployments..."
