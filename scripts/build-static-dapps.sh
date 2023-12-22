@@ -115,7 +115,6 @@ update_index_html() {
     echo "Updated index.html with SDK version info."
 }
 
-
 # Function to extract version from a specified package.json file
 get_version() {
     package_json_path=$1  # Path to the package.json file
