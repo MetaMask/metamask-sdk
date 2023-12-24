@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4000:4000'
+    environment:
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      - cache
+
+  cache:
+    image: redis:latest
+    command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru
+    ports:
+      - '6379:6379'
