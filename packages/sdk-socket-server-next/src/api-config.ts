@@ -27,9 +27,7 @@ async function inspectRedis(key?: string) {
   if (key) {
     const value = await redis.get(key);
     console.log(`DEBUG> Redis Update - Key: ${key}, Value: ${value}`);
-    return;
   }
-  return;
 }
 
 const analytics = new Analytics(
@@ -97,6 +95,7 @@ app.post('/debug', async (_req, res) => {
         source: body.source || '',
         sdkVersion: body.sdkVersion || '',
       };
+
       await redis.set(
         userIdHash,
         JSON.stringify(userInfo),

@@ -12,7 +12,7 @@ import {
 
 const isDevelopment: boolean = process.env.NODE_ENV === 'development';
 
-export default (server: HTTPServer): Server => {
+const sockerServer = (server: HTTPServer): Server => {
   const io = new Server(server, {
     cors: {
       origin: '*',
@@ -175,7 +175,7 @@ export default (server: HTTPServer): Server => {
 
       const room = io.sockets.adapter.rooms.get(id);
       if (isDevelopment) {
-        console.log(`DEBUG> join_channel ${id} room.size=${room && room.size}`);
+        console.log(`DEBUG> join_channel ${id} room.size=${room?.size}`);
       }
 
       if (room && room.size > 2) {
@@ -251,3 +251,5 @@ export default (server: HTTPServer): Server => {
 
   return io;
 };
+
+export default sockerServer;
