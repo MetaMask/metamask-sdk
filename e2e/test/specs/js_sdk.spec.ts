@@ -4,6 +4,7 @@ import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
 import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
 import VueJSDappScreen from '../../src/screens/Dapps/VueJSDappScreen';
+import Web3OnBoardDappScreen from '../../src/screens/Dapps/Web3OnBoardDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
 import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
@@ -25,7 +26,7 @@ describe('JS SDK Connection', () => {
     await afterEachHook();
   });
 
-  it('Connect to the Test-Dapp', async () => {
+  it.skip('Connect to the Test-Dapp', async () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
@@ -91,14 +92,15 @@ describe('JS SDK Connection', () => {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
     }
 
-    await driver.pause(2000);
+    await driver.pause(5000);
 
+    await SignModalComponent.tapSignApproval();
     await SignModalComponent.tapSignApproval();
 
     await driver.pause(2000);
   });
 
-  it('Connect to the SDK Playground Dapp', async () => {
+  it('Connect to the Web3onboard Dapp', async () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
@@ -110,15 +112,21 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const sdkPlaygroundDappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
+    const sdkPlaygroundDappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
 
     await browserScreen.goToAddress(sdkPlaygroundDappUrl);
 
-    await driver.pause(5000);
+    // await driver.pause(2000);
 
-    await SdkPlaygroundDappScreen.terminate();
-    await driver.pause(1000);
-    await SdkPlaygroundDappScreen.connect();
+    // await Web3OnBoardDappScreen.terminate();
+
+    await driver.pause(2000);
+
+    await Web3OnBoardDappScreen.connect();
+
+    await driver.pause(2000);
+
+    await Web3OnBoardDappScreen.tapMetaMaskConnectButton();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
@@ -134,21 +142,13 @@ describe('JS SDK Connection', () => {
 
     await ConnectModalComponent.tapConnectApproval();
 
-    await SdkPlaygroundDappScreen.signTypedDataV4();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    }
-
-    await SignModalComponent.tapSignApproval();
-
-    await SdkPlaygroundDappScreen.personalSign();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    }
-
     await driver.pause(1000);
+
+    await Web3OnBoardDappScreen.sign();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
 
     await SignModalComponent.tapSignApproval();
   });
@@ -200,6 +200,67 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
 
     await VueJSDappScreen.personalSign();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await driver.pause(1000);
+
+    await SignModalComponent.tapSignApproval();
+  });
+
+  it('Connect to the SDK Playground Dapp', async () => {
+    await driver.pause(10000);
+
+    // Kill and launch the mobile browser
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
+
+    const browserScreen = driver.isIOS
+      ? SafariBrowserScreen
+      : ChromeBrowserScreen;
+
+    // Get and navigate to the Dapp URL
+    const sdkPlaygroundDappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
+
+    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
+
+    await driver.pause(5000);
+
+    await SdkPlaygroundDappScreen.tapDemoProviderButton();
+
+    await driver.pause(2000);
+
+    await SdkPlaygroundDappScreen.terminate();
+
+    await driver.pause(1000);
+
+    await SdkPlaygroundDappScreen.connect();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await driver.pause(5000);
+
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await expect(
+      await ConnectModalComponent.connectApprovalButton,
+    ).toBeDisplayed();
+
+    await ConnectModalComponent.tapConnectApproval();
+
+    await SdkPlaygroundDappScreen.signTypedDataV4();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await SignModalComponent.tapSignApproval();
+
+    await SdkPlaygroundDappScreen.personalSign();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();

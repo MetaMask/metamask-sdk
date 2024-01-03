@@ -7,7 +7,7 @@ class SignModalComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
+          '//android.widget.TextView[@text="Sign"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),

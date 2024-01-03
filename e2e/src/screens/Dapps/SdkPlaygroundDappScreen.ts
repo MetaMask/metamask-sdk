@@ -5,6 +5,16 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class SdkPlaygroundDappScreen implements Dapp {
+  get demoProviderButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="Demo Provider"]',
+        ),
+      }),
+    );
+  }
+
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       getSelectorForPlatform({
@@ -85,6 +95,10 @@ class SdkPlaygroundDappScreen implements Dapp {
 
   async sendTransaction(): Promise<void> {
     await (await this.sendTransactionButton).click();
+  }
+
+  async tapDemoProviderButton(): Promise<void> {
+    await (await this.demoProviderButton).click();
   }
 
   async terminate(): Promise<void> {
