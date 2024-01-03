@@ -86,6 +86,8 @@ typings/
 .env.test
 **/.env
 **/.env.test
+# except for the following needed empty file for deployment
+!packages/sdk-socket-server-next/.env
 
 # Mac files
 .DS_Store
