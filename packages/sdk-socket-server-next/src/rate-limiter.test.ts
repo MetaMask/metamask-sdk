@@ -1,10 +1,10 @@
+import os from 'os';
+
 import {
   resetRateLimits,
   increaseRateLimits,
   setLastConnectionErrorTimestamp,
 } from './rate-limiter';
-
-import os from 'os';
 
 jest.mock('os');
 

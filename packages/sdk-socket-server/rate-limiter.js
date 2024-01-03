@@ -1,12 +1,14 @@
-import os from 'os';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
-import { isDevelopment } from '.';
+/* eslint-disable node/no-process-env */
+require('dotenv').config();
+const os = require('os');
+const { RateLimiterMemory } = require('rate-limiter-flexible');
 
-let rateLimitPoints = 10;
-let rateLimitMessagePoints = 100;
-const rateLimitPointsMax = 40;
-const rateLimitMessagePointsMax = 400;
-let lastConnectionErrorTimestamp: number | null = null;
+let rateLimitPoints = process.env.RATE_LIMIT_POINTS_MAX;
+let rateLimitMessagePoints = process.env.RATE_LIMIT_MESSAGE_POINTS_MAX;
+const rateLimitPointsMax = process.env.RATE_LIMIT_POINTS_MAX || 100;
+const rateLimitMessagePointsMax =
+  process.env.RATE_LIMIT_MESSAGE_POINTS_MAX || 1000;
+let lastConnectionErrorTimestamp;
 
 // Store the initial values
 const initialRateLimitPoints = rateLimitPoints;
@@ -18,16 +20,16 @@ let rateLimiter = new RateLimiterMemory({
   duration: 1,
 });
 
-let rateLimiterMessage = new RateLimiterMemory({
+let rateLimiterMesssage = new RateLimiterMemory({
   points: rateLimitMessagePoints,
   duration: 1,
 });
 
-const setLastConnectionErrorTimestamp = (timestamp: number): void => {
+const setLastConnectionErrorTimestamp = (timestamp) => {
   lastConnectionErrorTimestamp = timestamp;
 };
 
-const resetRateLimits = (): void => {
+const resetRateLimits = () => {
   const tenSecondsPassedSinceLastError =
     lastConnectionErrorTimestamp &&
     Date.now() - lastConnectionErrorTimestamp >= 10000;
@@ -38,14 +40,15 @@ const resetRateLimits = (): void => {
     rateLimitMessagePoints = initialRateLimitMessagePoints;
   }
 
-  if (isDevelopment) {
-    console.log(
-      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-    );
-  }
+  console.log(
+    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+  );
 };
 
-const increaseRateLimits = (cpuUsagePercentMin: number): void => {
+const increaseRateLimits = (
+  cpuUsagePercentMin,
+  // freeMemoryPercentMin
+) => {
   // Check the CPU usage
   const cpuLoad = os.loadavg()[0]; // 1 minute load average
   const numCpus = os.cpus().length;
@@ -62,7 +65,10 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   );
 
   // If CPU is not at 100% and there is at least 10% of free memory
-  if (cpuUsagePercent <= cpuUsagePercentMin) {
+  if (
+    cpuUsagePercent <= cpuUsagePercentMin
+    // && freeMemoryPercent >= freeMemoryPercentMin
+  ) {
     // Increase the rate limits by steps of 5 and 10, up to a max of 50 and 500
     rateLimitPoints = Math.min(rateLimitPoints + 5, rateLimitPointsMax);
     rateLimitMessagePoints = Math.min(
@@ -84,21 +90,19 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
     duration: 1,
   });
 
-  rateLimiterMessage = new RateLimiterMemory({
+  rateLimiterMesssage = new RateLimiterMemory({
     points: rateLimitMessagePoints,
     duration: 1,
   });
 
-  if (isDevelopment) {
-    console.log(
-      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-    );
-  }
+  console.log(
+    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+  );
 };
 
-export {
+module.exports = {
   rateLimiter,
-  rateLimiterMessage,
+  rateLimiterMesssage,
   resetRateLimits,
   increaseRateLimits,
   setLastConnectionErrorTimestamp,

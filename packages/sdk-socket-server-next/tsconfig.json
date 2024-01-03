@@ -6,9 +6,14 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src"],
+  "exclude": [
+    "node_modules",
+    "*.spec.ts",
+    "*.test.ts",
+    "*.spec.tsx",
+    "*.test.tsx"
+  ]
 }
