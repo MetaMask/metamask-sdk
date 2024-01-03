@@ -49,5 +49,8 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
   // eslint-disable-next-line require-atomic-updates
   instance.extensionActive = true;
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
-  instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
+
+  if (instance.options.enableAnalytics) {
+    instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
+  }
 }

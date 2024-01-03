@@ -43,7 +43,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   options.logging = options.logging ?? {};
   options.communicationLayerPreference =
     options.communicationLayerPreference ?? CommunicationLayerPreference.SOCKET;
-  options.enableDebug = options.enableDebug ?? true;
+  options.enableAnalytics = options.enableAnalytics ?? true;
   options.injectProvider = options.injectProvider ?? true;
   options.shouldShimWeb3 = options.shouldShimWeb3 ?? true;
   options.useDeeplink = options.useDeeplink ?? false;

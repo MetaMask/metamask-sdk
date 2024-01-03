@@ -10,7 +10,7 @@ describe('SDK', () => {
         name: 'CustonName',
         url: 'http://whateverwewant',
       },
-      enableDebug: false,
+      enableAnalytics: false,
     });
 
     const ethereum = sdk.getProvider();
