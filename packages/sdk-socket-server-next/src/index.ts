@@ -1,7 +1,10 @@
+/* eslint-disable import/first */
+import http from 'http';
 import dotenv from 'dotenv';
+
+// Dotenv must be loaded before importing local files
 dotenv.config();
 
-import http from 'http';
 import { app, analytics } from './api-config';
 import configureSocketIO from './socket-config';
 import { cleanupAndExit } from './utils';
@@ -19,6 +22,7 @@ console.log('INFO> isDevelopment?', isDevelopment);
 process.on('SIGINT', async () => {
   await cleanupAndExit(server, analytics);
 });
+
 process.on('SIGTERM', async () => {
   await cleanupAndExit(server, analytics);
 });
