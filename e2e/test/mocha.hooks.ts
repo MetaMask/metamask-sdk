@@ -75,7 +75,9 @@ export const beforeHook = async () => {
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
   await SecurityUpdatesScreen.tapNoThanksSecurityUpdates();
+  await driver.pause(1000);
   await WelcomeComponent.tapNoThanksButton();
+  await driver.pause(1000);
   await WhatsNewComponent.closeModal();
 };
 

@@ -10,8 +10,8 @@ class WhatsNewComponent {
         androidSelector: AndroidSelector.by().xpath(
           '//android.view.ViewGroup[@resource-id="whats-new-modal-close-button"]',
         ),
-        iosSelector: IOSSelector.by().predicateString(
-          'name == "whats-new-modal-close-button"',
+        iosSelector: IOSSelector.by().accessibilityId(
+          'whats-new-modal-close-button',
         ),
       }),
     );

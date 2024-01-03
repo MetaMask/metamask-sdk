@@ -4,14 +4,16 @@ import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
-class CreateReactDappScreen implements Dapp {
+class SdkPlaygroundDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
           '//android.view.View[@text="Connect wallet"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
+        ),
       }),
     );
   }
@@ -22,7 +24,9 @@ class CreateReactDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="personal_sign"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "personal_sign"`]',
+        ),
       }),
     );
   }
@@ -33,7 +37,9 @@ class CreateReactDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="eth_signTypedData_v4"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "eth_signTypedData_v4"`]',
+        ),
       }),
     );
   }
@@ -44,7 +50,9 @@ class CreateReactDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Send transaction"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "Send transaction"`]',
+        ),
       }),
     );
   }
@@ -56,7 +64,9 @@ class CreateReactDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Terminate"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "Terminate"`]',
+        ),
       }),
     );
   }
@@ -82,5 +92,5 @@ class CreateReactDappScreen implements Dapp {
   }
 }
 
-const createReactDappScreen = new CreateReactDappScreen();
-export default createReactDappScreen;
+const sdkPlaygroundDappScreen = new SdkPlaygroundDappScreen();
+export default sdkPlaygroundDappScreen;

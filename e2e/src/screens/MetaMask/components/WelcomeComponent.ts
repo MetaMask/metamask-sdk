@@ -10,8 +10,8 @@ class WelcomeComponent {
         androidSelector: AndroidSelector.by().xpath(
           "//*[@resource-id='onboarding-wizard-no-thanks-button']",
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
-          '**/XCUIElementTypeOther[`label == "No thanks"`]',
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "onboarding-wizard-no-thanks-button"',
         ),
       }),
     );
@@ -19,6 +19,7 @@ class WelcomeComponent {
 
   async tapNoThanksButton(): Promise<void> {
     await (await this.noThanksButton).click();
+    //* */XCUIElementTypeOther[`name == "Welcome to your wallet!"`]/XCUIElementTypeOther
   }
 }
 

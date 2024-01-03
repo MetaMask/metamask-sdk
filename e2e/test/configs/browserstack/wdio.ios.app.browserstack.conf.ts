@@ -29,7 +29,7 @@ config.capabilities = [
     'appium:app': process.env.APP_PATH,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    'appium:bundleId': 'io.metamask.MetaMask-QA',
+    'appium:bundleId': process.env.BUNDLE_ID,
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
     'appium:language': 'en',

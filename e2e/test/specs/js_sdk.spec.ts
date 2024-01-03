@@ -2,7 +2,8 @@ import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
 import Utils from '../../src/Utils';
 import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
-import CreateReactDappScreen from '../../src/screens/Dapps/CreateReactDappScreen';
+import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
+import VueJSDappScreen from '../../src/screens/Dapps/VueJSDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
 import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
@@ -20,6 +21,7 @@ describe('JS SDK Connection', () => {
   });
 
   afterEach(async () => {
+    return;
     await afterEachHook();
   });
 
@@ -96,7 +98,7 @@ describe('JS SDK Connection', () => {
     await driver.pause(2000);
   });
 
-  it.skip('Connect to the React JS Example Dapp', async () => {
+  it('Connect to the SDK Playground Dapp', async () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
@@ -108,15 +110,15 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const reactDappUrl = process.env.REACT_DAPP_URL ?? '';
+    const sdkPlaygroundDappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(reactDappUrl);
+    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
 
     await driver.pause(5000);
 
-    await CreateReactDappScreen.terminate();
+    await SdkPlaygroundDappScreen.terminate();
     await driver.pause(1000);
-    await CreateReactDappScreen.connect();
+    await SdkPlaygroundDappScreen.connect();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
@@ -132,7 +134,7 @@ describe('JS SDK Connection', () => {
 
     await ConnectModalComponent.tapConnectApproval();
 
-    await CreateReactDappScreen.signTypedDataV4();
+    await SdkPlaygroundDappScreen.signTypedDataV4();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
@@ -140,7 +142,64 @@ describe('JS SDK Connection', () => {
 
     await SignModalComponent.tapSignApproval();
 
-    await CreateReactDappScreen.personalSign();
+    await SdkPlaygroundDappScreen.personalSign();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await driver.pause(1000);
+
+    await SignModalComponent.tapSignApproval();
+  });
+
+  it('Connect to the VueJS Dapp', async () => {
+    await driver.pause(10000);
+
+    // Kill and launch the mobile browser
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
+
+    const browserScreen = driver.isIOS
+      ? SafariBrowserScreen
+      : ChromeBrowserScreen;
+
+    // Get and navigate to the Dapp URL
+    const reactDappUrl = process.env.VUE_JS_DAPP_URL ?? '';
+
+    await browserScreen.goToAddress(reactDappUrl);
+
+    await driver.pause(5000);
+
+    await VueJSDappScreen.terminate();
+
+    await driver.pause(1000);
+
+    await VueJSDappScreen.connect();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await driver.pause(5000);
+
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await expect(
+      await ConnectModalComponent.connectApprovalButton,
+    ).toBeDisplayed();
+
+    await ConnectModalComponent.tapConnectApproval();
+
+    await VueJSDappScreen.signTypedDataV4();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    }
+
+    await SignModalComponent.tapSignApproval();
+
+    await VueJSDappScreen.personalSign();
 
     if (driver.isAndroid) {
       await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
