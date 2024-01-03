@@ -39,6 +39,7 @@ describe('handleAutoAndExtensionConnections', () => {
     instance = {
       debug: false,
       options: {
+        enableAnalytics: true,
         checkInstallationImmediately: false,
       },
       connect: mockConnect,
