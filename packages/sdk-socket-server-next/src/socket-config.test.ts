@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-done-callback */
 import { Server as HTTPServer } from 'http';
 import { Server as IoServer } from 'socket.io';
 import { io as clientIo, Socket } from 'socket.io-client';

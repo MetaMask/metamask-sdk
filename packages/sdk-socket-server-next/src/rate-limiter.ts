@@ -13,11 +13,13 @@ const initialRateLimitPoints = rateLimitPoints;
 const initialRateLimitMessagePoints = rateLimitMessagePoints;
 
 // Create the rate limiters with initial points
+// eslint-disable-next-line import/no-mutable-exports
 let rateLimiter = new RateLimiterMemory({
   points: rateLimitPoints,
   duration: 1,
 });
 
+// eslint-disable-next-line import/no-mutable-exports
 let rateLimiterMessage = new RateLimiterMemory({
   points: rateLimitMessagePoints,
   duration: 1,

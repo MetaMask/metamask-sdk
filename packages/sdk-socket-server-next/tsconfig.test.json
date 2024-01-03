@@ -9,6 +9,6 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["node", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["*.ts"],
+  "include": ["src/"],
   "exclude": ["node_modules"]
 }
