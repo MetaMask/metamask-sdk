@@ -29,7 +29,7 @@ describe('initializeConnector', () => {
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       transports: [],
       _source: 'source',
-      enableDebug: true,
+      enableAnalytics: true,
       platformManager: {
         getPlatformType: jest.fn().mockReturnValue('platformType'),
       },

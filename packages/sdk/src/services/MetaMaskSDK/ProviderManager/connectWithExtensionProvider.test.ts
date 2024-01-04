@@ -31,6 +31,9 @@ describe('connectWithExtensionProvider', () => {
       activeProvider: {
         request: mockRequest,
       },
+      options: {
+        enableAnalytics: true,
+      },
       emit: jest.fn(),
       analytics: {
         send: mockSendAnalyticsEvent,

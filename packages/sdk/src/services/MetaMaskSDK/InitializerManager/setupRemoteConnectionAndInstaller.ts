@@ -34,7 +34,7 @@ export async function setupRemoteConnectionAndInstaller(
     analytics: instance.analytics as Analytics,
     dappMetadata: options.dappMetadata,
     _source: options._source,
-    enableDebug: options.enableDebug ?? true,
+    enableAnalytics: options.enableAnalytics ?? true,
     timer: options.timer,
     sdk: instance,
     platformManager: instance.platformManager as PlatformManager,

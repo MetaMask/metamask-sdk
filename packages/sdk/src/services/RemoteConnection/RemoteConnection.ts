@@ -31,7 +31,7 @@ export interface RemoteConnectionProps {
   communicationLayerPreference: CommunicationLayerPreference;
   dappMetadata?: DappMetadata;
   _source?: string;
-  enableDebug?: boolean;
+  enableAnalytics?: boolean;
   analytics: Analytics;
   sdk: MetaMaskSDK;
   transports?: string[];

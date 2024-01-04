@@ -27,7 +27,7 @@ export function initializeConnector(
     communicationLayerPreference: options.communicationLayerPreference,
     transports: options.transports,
     dappMetadata: { ...options.dappMetadata, source: options._source },
-    analytics: options.enableDebug,
+    analytics: options.enableAnalytics,
     communicationServerUrl: options.communicationServerUrl,
     sdkVersion: packageJson.version,
     context: 'dapp',
