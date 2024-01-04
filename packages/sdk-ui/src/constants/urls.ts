@@ -15,7 +15,7 @@ export const CONNECTING_TO_A_DECEPTIVE_SITE =
   'https://support.metamask.io/hc/en-us/articles/4428045875483--Deceptive-site-ahead-when-trying-to-connect-to-a-site';
 
 // Policies
-export const CONSENSYS_PRIVACY_POLICY = 'https://consensys.net/privacy-policy/';
+export const CONSENSYS_PRIVACY_POLICY = 'https://consensys.io/privacy-policy/';
 
 // Keystone
 export const KEYSTONE_SUPPORT = 'https://keyst.one/mmm';
