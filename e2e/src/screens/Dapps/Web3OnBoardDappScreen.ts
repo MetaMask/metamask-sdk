@@ -11,9 +11,7 @@ class Web3OnBoardDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="connect"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
-          '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
-        ),
+        iosSelector: IOSSelector.by().predicateString('name == "connect"'),
       }),
     );
   }
@@ -24,9 +22,7 @@ class Web3OnBoardDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="MetaMask"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
-          '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
-        ),
+        iosSelector: IOSSelector.by().predicateString('name == "MetaMask"'),
       }),
     );
   }
@@ -50,9 +46,7 @@ class Web3OnBoardDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Test Sign"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
-          '**/XCUIElementTypeButton[`name == "personal_sign"`]',
-        ),
+        iosSelector: IOSSelector.by().predicateString('name == "Test Sign"'),
       }),
     );
   }
