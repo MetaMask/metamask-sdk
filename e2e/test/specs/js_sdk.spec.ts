@@ -30,8 +30,59 @@ describe('JS SDK Connection', () => {
     await afterEachHook();
   });
 
+  it('Connect to the Web3onboard Dapp', async () => {
+    await driver.pause(5000);
+
+    // Kill and launch the mobile browser
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
+
+    const browserScreen = driver.isIOS
+      ? SafariBrowserScreen
+      : ChromeBrowserScreen;
+
+    // Get and navigate to the Dapp URL
+    const sdkPlaygroundDappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
+
+    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
+
+    await Web3OnBoardDappScreen.connect();
+
+    await Web3OnBoardDappScreen.tapMetaMaskConnectButton();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    } else if (driver.isIOS) {
+      await IOSOpenInComponent.tapOpen();
+    }
+
+    await driver.pause(5000);
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await expect(
+      await ConnectModalComponent.connectApprovalButton,
+    ).toBeDisplayed();
+
+    await ConnectModalComponent.tapConnectApproval();
+
+    if (driver.isIOS) {
+      await driver.pause(1000);
+      await Utils.launchApp(BROWSER_BUNDLE_ID);
+    }
+
+    await Web3OnBoardDappScreen.sign();
+
+    if (driver.isAndroid) {
+      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+    } else if (driver.isIOS) {
+      await IOSOpenInComponent.tapOpen();
+    }
+
+    await SignModalComponent.tapSignApproval();
+  });
+
   it('Connect to the SDK Playground Dapp', async () => {
-    await driver.pause(10000);
+    await driver.pause(5000);
 
     // Kill and launch the mobile browser
     await Utils.killApp(BROWSER_BUNDLE_ID);
@@ -140,81 +191,10 @@ describe('JS SDK Connection', () => {
 
     await SendTxModalComponent.reject();
 
-    if (driver.isAndroid) {
-      await SendTxModalComponent.reject();
-    }
-
     if (driver.isIOS) {
       await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
-  });
-
-  it.skip('Connect to the Web3onboard Dapp', async () => {
-    await driver.pause(10000);
-
-    // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
-
-    const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
-
-    // Get and navigate to the Dapp URL
-    const sdkPlaygroundDappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
-
-    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
-
-    await driver.pause(3000);
-
-    await Web3OnBoardDappScreen.connect();
-
-    if (driver.isAndroid) {
-      await Web3OnBoardDappScreen.connect();
-    }
-
-    await driver.pause(2000);
-
-    await Web3OnBoardDappScreen.tapMetaMaskConnectButton();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
-    }
-
-    await driver.pause(5000);
-
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
-
-    await expect(
-      await ConnectModalComponent.connectApprovalButton,
-    ).toBeDisplayed();
-
-    await driver.pause(5000);
-    await ConnectModalComponent.tapConnectApproval();
-
-    if (driver.isIOS) {
-      await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
-    }
-
-    await driver.pause(5000);
-    await Web3OnBoardDappScreen.sign();
-
-    if (driver.isAndroid) {
-      await driver.pause(1000);
-      await Web3OnBoardDappScreen.sign();
-    }
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
-    }
-
-    await SignModalComponent.tapSignApproval();
   });
 
   it.skip('Connect to the Test-Dapp', async () => {

@@ -52,18 +52,38 @@ class Web3OnBoardDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
+    await (
+      await this.connectButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.connectButton).click();
   }
 
   async tapMetaMaskConnectButton(): Promise<void> {
+    await (
+      await this.metaMaskConnectButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.metaMaskConnectButton).click();
   }
 
   async terminate(): Promise<void> {
+    await (
+      await this.terminateButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.terminateButton).click();
   }
 
   async sign(): Promise<void> {
+    await (
+      await this.signButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.signButton).click();
   }
 }
