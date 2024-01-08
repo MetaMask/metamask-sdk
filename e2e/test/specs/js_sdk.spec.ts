@@ -46,11 +46,7 @@ describe('JS SDK Connection', () => {
 
     await browserScreen.goToAddress(sdkPlaygroundDappUrl);
 
-    await driver.pause(5000);
-
     await SdkPlaygroundDappScreen.terminate();
-
-    await driver.pause(3000);
 
     await SdkPlaygroundDappScreen.connect();
 
@@ -105,7 +101,6 @@ describe('JS SDK Connection', () => {
     await SwitchNetworkModalComponent.switchNetwork();
 
     if (driver.isIOS) {
-      await driver.pause(1000);
       await NetworkSwitchedModalComponent.tapGotItButton();
 
       await driver.pause(1000);
@@ -122,14 +117,11 @@ describe('JS SDK Connection', () => {
 
     await SignModalComponent.tapSignApproval();
 
-    await driver.pause(3000);
     await SignModalComponent.tapSignApproval();
 
-    await driver.pause(3000);
     await SignModalComponent.tapSignApproval();
 
     if (driver.isAndroid) {
-      await driver.pause(3000);
       await SignModalComponent.tapSignApproval();
     }
 
@@ -146,9 +138,8 @@ describe('JS SDK Connection', () => {
       await IOSOpenInComponent.tapOpen();
     }
 
-    await driver.pause(2000);
-
     await SendTxModalComponent.reject();
+
     if (driver.isAndroid) {
       await SendTxModalComponent.reject();
     }
@@ -157,8 +148,6 @@ describe('JS SDK Connection', () => {
       await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
-
-    await driver.pause(3000);
   });
 
   it.skip('Connect to the Web3onboard Dapp', async () => {

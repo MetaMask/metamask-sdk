@@ -18,6 +18,11 @@ class WelcomeComponent {
   }
 
   async tapNoThanksButton(): Promise<void> {
+    await (
+      await this.noThanksButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.noThanksButton).click();
     //* */XCUIElementTypeOther[`name == "Welcome to your wallet!"`]/XCUIElementTypeOther
   }

@@ -30,6 +30,11 @@ class SendTxModalComponent {
   }
 
   async reject(): Promise<void> {
+    await (
+      await this.rejectButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.rejectButton).click();
   }
 }

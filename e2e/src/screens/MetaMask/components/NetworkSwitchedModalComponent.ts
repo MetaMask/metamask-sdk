@@ -17,6 +17,11 @@ class NetworkSwitchedModalComponent {
   }
 
   async tapGotItButton(): Promise<void> {
+    await (
+      await this.gotItButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.gotItButton).click();
   }
 }

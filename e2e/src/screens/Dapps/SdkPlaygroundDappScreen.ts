@@ -176,64 +176,129 @@ class SdkPlaygroundDappScreen implements Dapp {
 
   async connect(): Promise<void> {
     await this.scrollToElement(this.connectButton);
+    await (
+      await this.connectButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.connectButton).click();
   }
 
   async tapDropdownSettingsArrowButton(): Promise<void> {
+    await (
+      await this.dropdownSettingsArrowButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.dropdownSettingsArrowButton).click();
   }
 
   async tapToggleDeeplinkButton(): Promise<void> {
+    await (
+      await this.toggleDeeplinkButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.toggleDeeplinkButton).click();
   }
 
   async signTypedDataV4(): Promise<void> {
     await this.scrollToElement(this.signTypedDataV4Button);
+    await (
+      await this.signTypedDataV4Button
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.signTypedDataV4Button).click();
   }
 
   async personalSign(): Promise<void> {
     await this.scrollToElement(this.personalSignButton);
+    await (
+      await this.personalSignButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.personalSignButton).click();
   }
 
   async sendTransaction(): Promise<void> {
     await this.scrollToElement(this.sendTransactionButton);
+    await (
+      await this.sendTransactionButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.sendTransactionButton).click();
   }
 
   async tapDemoProviderButton(): Promise<void> {
     await this.scrollToElement(this.demoProviderButton);
+    await (
+      await this.demoProviderButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.demoProviderButton).click();
   }
 
   async terminate(): Promise<void> {
     await this.scrollToElement(this.terminateButton);
+    await (
+      await this.terminateButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.terminateButton).click();
   }
 
   async switchToGoerliNetwork(): Promise<void> {
     await this.scrollToElement(this.switchToGoerliButton);
+    await (
+      await this.switchToGoerliButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.switchToGoerliButton).click();
   }
 
   async switchToPolygonNetwork(): Promise<void> {
     await this.scrollToElement(this.switchToPolygonButton);
+    await (
+      await this.switchToPolygonButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.switchToPolygonButton).click();
   }
 
   async chainSwitchAndSignAndSendTx(): Promise<void> {
     await this.scrollToElement(this.chainSwitchAndSignAndSendTxButton);
+    await (
+      await this.chainSwitchAndSignAndSendTxButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.chainSwitchAndSignAndSendTxButton).click();
   }
 
   async sendBatchRpcCalls(): Promise<void> {
     await this.scrollToElement(this.sendBatchRpcCallsButton);
+    await (
+      await this.sendBatchRpcCallsButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.sendBatchRpcCallsButton).click();
   }
 
   async chainSwitchAndSignAndSwitchBack(): Promise<void> {
     await this.scrollToElement(this.chainSwitchAndSignAndSwitchBackButton);
+    await (
+      await this.chainSwitchAndSignAndSwitchBackButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.chainSwitchAndSignAndSwitchBackButton).click();
   }
 
