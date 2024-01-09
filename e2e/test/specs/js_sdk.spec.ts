@@ -88,6 +88,10 @@ describe('JS SDK Connection', () => {
     await Utils.killApp(BROWSER_BUNDLE_ID);
     await Utils.launchApp(BROWSER_BUNDLE_ID);
 
+    if (driver.isAndroid) {
+      await driver.setOrientation('PORTRAIT');
+    }
+
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
       : ChromeBrowserScreen;
@@ -145,10 +149,6 @@ describe('JS SDK Connection', () => {
       await IOSOpenInComponent.tapOpen();
     }
 
-    if (driver.isAndroid) {
-      await SwitchNetworkModalComponent.switchNetwork();
-    }
-
     await SwitchNetworkModalComponent.switchNetwork();
 
     if (driver.isIOS) {
@@ -171,10 +171,6 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
 
     await SignModalComponent.tapSignApproval();
-
-    if (driver.isAndroid) {
-      await SignModalComponent.tapSignApproval();
-    }
 
     if (driver.isIOS) {
       await driver.pause(1000);

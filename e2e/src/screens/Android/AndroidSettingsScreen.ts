@@ -40,7 +40,7 @@ class AndroidSettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//*[@resource-id="android:id/title" and @text="Opening links"]',
+          '(//android.widget.TextView[@resource-id="android:id/title"])[2]',
         ),
       }),
     );
@@ -65,14 +65,29 @@ class AndroidSettingsScreen {
   }
 
   async tapMetaMaskLinksButton(): Promise<void> {
+    await (
+      await this.metaMaskQALinksButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.metaMaskQALinksButton).click();
   }
 
   async tapOpenSearchBarButton(): Promise<void> {
+    await (
+      await this.openSearchBarButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.openSearchBarButton).click();
   }
 
   async tapOpeningLinksSearchResult(): Promise<void> {
+    await (
+      await this.openingLinksSearchResult
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.openingLinksSearchResult).click();
   }
 
@@ -81,6 +96,11 @@ class AndroidSettingsScreen {
   }
 
   async tapSupportedWebAddresses(): Promise<void> {
+    await (
+      await this.supportedWebAddresses
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.supportedWebAddresses).click();
   }
 

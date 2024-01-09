@@ -30,10 +30,20 @@ class SwitchNetworkModalComponent {
   }
 
   async switchNetwork(): Promise<void> {
+    await (
+      await this.switchNetworkButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.switchNetworkButton).click();
   }
 
   async cancel(): Promise<void> {
+    await (
+      await this.cancelButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.cancelButton).click();
   }
 }

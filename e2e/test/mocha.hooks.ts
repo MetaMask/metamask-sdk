@@ -32,6 +32,7 @@ export const beforeHook = async () => {
   if (driver.isAndroid) {
     await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
     await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+    await driver.setOrientation('PORTRAIT');
 
     await AndroidSettingsScreen.tapOpenSearchBarButton();
     await AndroidSettingsScreen.fillSearchBarInput('Opening links');

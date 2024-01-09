@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
+    "test:android:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts",
     "test:ios:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts",
     "setup": "yarn install",
     "build": "tsc --build",
