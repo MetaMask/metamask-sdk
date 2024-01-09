@@ -1,24 +1,9 @@
 name: Run E2E Tests
 
 on:
-  workflow_dispatch:
-    inputs:
-      app_path_ios:
-        description: 'Path to iOS App'
-        type: string
-        required: true
-      bundle_id_ios:
-        description: 'Bundle ID for iOS App'
-        type: string
-        required: true
-      app_path_android:
-        description: 'Path to Android App'
-        type: string
-        required: true
-      bundle_id_android:
-        description: 'Bundle ID for Android App'
-        type: string
-        required: true
+  push:
+    branches: [main]
+  pull_request:
 
 jobs:
   e2e-tests:
@@ -38,10 +23,10 @@ jobs:
       # Create .ios.env and .android.env with inputs in the /e2e directory
       - name: Create .ios.env and .android.env
         run: |
-          echo "APP_PATH=${{ github.event.inputs.app_path_ios }}" > e2e/.ios.env
-          echo "BUNDLE_ID=${{ github.event.inputs.bundle_id_ios }}" >> e2e/.ios.env
-          echo "APP_PATH=${{ github.event.inputs.app_path_android }}" > e2e/.android.env
-          echo "BUNDLE_ID=${{ github.event.inputs.bundle_id_android }}" >> e2e/.android.env
+          echo "bs://b89256cdb82d39ad2b6868f743d1f48b63b744a1" > e2e/.ios.env
+          echo "io.metamask.MetaMask-QA" >> e2e/.ios.env
+          echo "bs://0a8158e21e87e7bda6036e0fd69e917e659d5058" > e2e/.android.env
+          echo "io.metamask.qa" >> e2e/.android.env
 
       # Hard code .dapps.env values in the /e2e directory
       - name: Set Dapps Environment Variables
