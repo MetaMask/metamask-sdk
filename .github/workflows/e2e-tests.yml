@@ -5,15 +5,19 @@ on:
     inputs:
       app_path_ios:
         description: 'Path to iOS App'
+        type: string
         required: true
       bundle_id_ios:
         description: 'Bundle ID for iOS App'
+        type: string
         required: true
       app_path_android:
         description: 'Path to Android App'
+        type: string
         required: true
       bundle_id_android:
         description: 'Bundle ID for Android App'
+        type: string
         required: true
 
 jobs:
