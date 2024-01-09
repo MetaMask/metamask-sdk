@@ -1,6 +1,7 @@
 {
   "name": "metamask-sdk-e2e",
   "private": true,
+  "type": "commonjs",
   "devDependencies": {
     "@types/koa": "^2.13.12",
     "@wdio/allure-reporter": "^8.11.0",
