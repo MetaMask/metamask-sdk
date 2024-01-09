@@ -18,9 +18,7 @@ jobs:
           node-version: '18.x'
 
       - name: Install dependencies
-        steps:
-          run: yarn install
-          run: cd e2e && yarn install && cd ..
+        run: yarn install && cd e2e && yarn install && cd ..
 
       # Create .ios.env and .android.env with inputs in the /e2e directory
       - name: Create .ios.env and .android.env
