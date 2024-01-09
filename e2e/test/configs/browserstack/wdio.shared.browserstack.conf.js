@@ -1,5 +1,5 @@
 /* eslint-disable node/no-process-env */
-const { config } = require('../wdio.conf.ts');
+const { config } = require('../wdio.conf');
 
 const username = process.env.BROWSERSTACK_USERNAME;
 const accessKey = process.env.BROWSERSTACK_ACCESS_KEY;
