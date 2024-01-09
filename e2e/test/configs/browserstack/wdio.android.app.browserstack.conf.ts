@@ -1,9 +1,7 @@
+import path from 'path';
 import * as dotenv from 'dotenv';
 
 import config from './wdio.shared.browserstack.conf';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const path = require('path');
 
 dotenv.config({ path: path.join(process.cwd(), '.android.env') });
 
@@ -12,7 +10,7 @@ config.capabilities = [
     // The defaults you need to have in your config
     platformName: 'Android',
     maxInstances: 1,
-    // interactiveDebugging: true,
+    interactiveDebugging: true,
     'appium:deviceName': 'Google Pixel 7',
     'appium:platformVersion': '13.0',
     'appium:automationName': 'UiAutomator2',
@@ -26,4 +24,4 @@ config.capabilities = [
   },
 ];
 
-exports.config = config;
+export { config };
