@@ -1,0 +1,67 @@
+name: Manual E2E Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_path_ios:
+        description: 'Path to iOS App'
+        required: true
+      bundle_id_ios:
+        description: 'Bundle ID for iOS App'
+        required: true
+      app_path_android:
+        description: 'Path to Android App'
+        required: true
+      bundle_id_android:
+        description: 'Bundle ID for Android App'
+        required: true
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+
+      - name: Install dependencies
+        run: yarn install
+
+      # Create .ios.env and .android.env with inputs
+      - name: Create .ios.env and .android.env
+        run: |
+          echo "APP_PATH=${{ github.event.inputs.app_path_ios }}" > .ios.env
+          echo "BUNDLE_ID=${{ github.event.inputs.bundle_id_ios }}" >> .ios.env
+          echo "APP_PATH=${{ github.event.inputs.app_path_android }}" > .android.env
+          echo "BUNDLE_ID=${{ github.event.inputs.bundle_id_android }}" >> .android.env
+
+      # Hard code .dapps.env values
+      - name: Set Dapps Environment Variables
+        run: |
+          echo "TEST_DAPP_URL=https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/test-dapp/" >> .dapps.env
+          echo "SDK_PLAYGROUND_DAPP_URL=https://mmsdk-playground-test.vercel.app/demo" >> .dapps.env
+          echo "CREATE_REACT_APP_DAPP_URL=https://metamask.github.io/metamask-sdk/deployments/45.0.0/packages/examples/create-react-app/build/" >> .dapps.env
+          echo "VUE_JS_DAPP_URL=https://metamask.github.io/metamask-sdk/deployments/45.0.0/packages/examples/vuejs/dist/" >> .dapps.env
+          echo "WEB3_ON_BOARD_DAPP_URL=https://mmsdk-playground-test.vercel.app/onboard" >> .dapps.env
+
+      - name: Run Android E2E tests
+        env:
+          SRP: ${{ secrets.SRP }}
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_API_USERNAME: ${{ secrets.BROWSERSTACK_API_USERNAME }}
+          BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
+        run: yarn test:e2e:android:ci
+
+      - name: Run IOS E2E tests
+        env:
+          SRP: ${{ secrets.SRP }}
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_API_USERNAME: ${{ secrets.BROWSERSTACK_API_USERNAME }}
+          BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
+        run: yarn test:e2e:ios:ci
