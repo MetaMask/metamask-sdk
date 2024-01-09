@@ -1,7 +1,7 @@
 name: Run E2E Tests
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       app_path_ios:
         description: 'Path to iOS App'
