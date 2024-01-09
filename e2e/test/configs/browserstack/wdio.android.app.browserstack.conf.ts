@@ -10,7 +10,6 @@ config.capabilities = [
     // The defaults you need to have in your config
     platformName: 'Android',
     maxInstances: 1,
-    interactiveDebugging: true,
     'appium:deviceName': 'Google Pixel 7',
     'appium:platformVersion': '13.0',
     'appium:automationName': 'UiAutomator2',
