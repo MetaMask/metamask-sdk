@@ -1,7 +1,9 @@
-import path from 'path';
 import * as dotenv from 'dotenv';
 
 import config from './wdio.shared.local.appium.conf';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const path = require('path');
 
 dotenv.config({ path: path.join(process.cwd(), '.android.env') });
 
