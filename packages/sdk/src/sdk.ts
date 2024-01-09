@@ -117,7 +117,7 @@ export interface MetaMaskSDKOptions {
   /**
    * Send anonymous analytics to MetaMask to help us improve the SDK.
    */
-  enableDebug?: boolean;
+  enableAnalytics?: boolean;
 
   /**
    * If MetaMask browser extension is detected, directly use it.
@@ -203,7 +203,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       },
       injectProvider: true,
       forceInjectProvider: false,
-      enableDebug: true,
+      enableAnalytics: true,
       shouldShimWeb3: true,
       useDeeplink: false,
       dappMetadata: {

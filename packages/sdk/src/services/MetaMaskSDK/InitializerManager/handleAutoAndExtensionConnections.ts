@@ -50,11 +50,13 @@ export async function handleAutoAndExtensionConnections(
         commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
       };
 
-      SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
-        console.warn(
-          `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
-        );
-      });
+      if (instance.options.enableAnalytics) {
+        SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
+          console.warn(
+            `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
+          );
+        });
+      }
     }
 
     connectWithExtensionProvider(instance).catch((_err) => {
