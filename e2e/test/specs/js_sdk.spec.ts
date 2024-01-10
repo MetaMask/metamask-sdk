@@ -4,7 +4,6 @@ import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
 import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
-import VueJSDappScreen from '../../src/screens/Dapps/VueJSDappScreen';
 import Web3OnBoardDappScreen from '../../src/screens/Dapps/Web3OnBoardDappScreen';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
 import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
@@ -276,68 +275,5 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
 
     await driver.pause(2000);
-  });
-
-  it.skip('Connect to the VueJS Dapp', async () => {
-    await driver.pause(10000);
-
-    // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
-
-    const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
-
-    // Get and navigate to the Dapp URL
-    const reactDappUrl = process.env.VUE_JS_DAPP_URL ?? '';
-
-    await browserScreen.goToAddress(reactDappUrl);
-
-    await driver.pause(5000);
-
-    await VueJSDappScreen.terminate();
-
-    await driver.pause(1000);
-
-    await VueJSDappScreen.connect();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
-    }
-
-    await driver.pause(5000);
-
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
-
-    await expect(
-      await ConnectModalComponent.connectApprovalButton,
-    ).toBeDisplayed();
-
-    await ConnectModalComponent.tapConnectApproval();
-
-    await VueJSDappScreen.signTypedDataV4();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
-    }
-
-    await SignModalComponent.tapSignApproval();
-
-    await VueJSDappScreen.personalSign();
-
-    if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
-    } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
-    }
-
-    await driver.pause(1000);
-
-    await SignModalComponent.tapSignApproval();
   });
 });
