@@ -4,8 +4,6 @@ import dotenv from 'dotenv';
 import config from './wdio.shared.browserstack.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.android.env') });
-console.log('🟠 ~ process.env.APP_PATH:', process.env.APP_PATH);
-console.log('🟠 ~ process.env.BUNDLE_ID:', process.env.BUNDLE_ID);
 
 config.capabilities = [
   {
