@@ -22,7 +22,6 @@ config.capabilities = [
     // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
     'bstack:options': {
       deviceName: 'Google Pixel 7',
-      device: 'Google Pixel 7',
       osVersion: '13.0',
       realMobile: true,
     },
