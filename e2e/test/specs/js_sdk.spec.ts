@@ -37,6 +37,10 @@ describe('JS SDK Connection', () => {
     await Utils.killApp(BROWSER_BUNDLE_ID);
     await Utils.launchApp(BROWSER_BUNDLE_ID);
 
+    if (driver.isAndroid) {
+      await driver.setOrientation('PORTRAIT');
+    }
+
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
       : ChromeBrowserScreen;
