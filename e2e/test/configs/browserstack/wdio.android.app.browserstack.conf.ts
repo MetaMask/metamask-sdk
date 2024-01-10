@@ -12,7 +12,6 @@ config.capabilities = [
     maxInstances: 1,
     'appium:deviceName': 'Google Pixel 7',
     'appium:platformVersion': '13.0',
-    'appium:platformName': 'android',
     'appium:automationName': 'UiAutomator2',
     'appium:app': process.env.APP_PATH,
     'appium:appActivity': 'io.metamask.MainActivity',
