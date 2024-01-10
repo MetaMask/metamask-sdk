@@ -74,6 +74,7 @@ describe('JS SDK Connection', () => {
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
 
+    await driver.pause(5000);
     await Web3OnBoardDappScreen.sign();
 
     if (driver.isAndroid) {
