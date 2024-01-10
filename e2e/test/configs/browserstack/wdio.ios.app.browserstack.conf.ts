@@ -1,6 +1,5 @@
 import path from 'path';
-import * as dotenv from 'dotenv';
-
+import dotenv from 'dotenv';
 import config from './wdio.shared.browserstack.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.ios.env') });
@@ -29,7 +28,7 @@ config.capabilities = [
     'appium:app': process.env.APP_PATH,
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    'appium:bundleId': 'io.metamask.MetaMask-QA',
+    'appium:bundleId': process.env.BUNDLE_ID,
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
     'appium:language': 'en',

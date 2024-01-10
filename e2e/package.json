@@ -17,6 +17,7 @@
   },
   "scripts": {
     "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
+    "test:android:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts",
     "test:ios:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts",
     "setup": "yarn install",
     "build": "tsc --build",
@@ -44,6 +45,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "koa": "^2.14.2",
     "prettier": "^2.8.8",
-    "webdriverio": "^8.24.6"
+    "webdriverio": "^8.27.0"
   }
 }

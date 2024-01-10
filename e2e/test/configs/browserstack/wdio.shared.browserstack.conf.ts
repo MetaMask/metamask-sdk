@@ -27,6 +27,8 @@ config.commonCapabilities = {
     debug: 'true',
     networkLogs: 'false',
     consoleLogs: 'info',
+    deviceOrientation: 'portrait',
+    screenOrientation: 'locked',
   },
 };
 

@@ -12,7 +12,7 @@ export const config: WebdriverIO.Config = {
   services: [],
   specs: ['../../specs/*.spec.ts'],
   mochaOpts: {
-    timeout: 240000,
+    timeout: 360000,
   },
   exclude: [
     // 'path/to/excluded/files'

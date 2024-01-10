@@ -43,7 +43,9 @@
     "publish:all": "./scripts/publish-all.sh",
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces foreach --no-private run test",
-    "test:ci": "yarn workspaces foreach --no-private run test:ci"
+    "test:ci": "yarn workspaces foreach --no-private run test:ci",
+    "test:e2e:ios:ci": "cd e2e && yarn test:ios:browserstack",
+    "test:e2e:android:ci": "cd e2e && yarn test:android:browserstack"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",

@@ -40,6 +40,11 @@ class ConnectModalComponent {
   }
 
   async tapConnectApproval(): Promise<void> {
+    await (
+      await this.connectApprovalButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.connectApprovalButton).click();
   }
 }

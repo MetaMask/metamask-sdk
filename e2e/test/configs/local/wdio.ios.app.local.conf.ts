@@ -38,4 +38,4 @@ config.capabilities = [
     'appium:settings[customSnapshotTimeout]': 50000,
   },
 ];
-exports.config = config;
+export { config };

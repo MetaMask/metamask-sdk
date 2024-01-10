@@ -80,6 +80,10 @@ class ChromeBrowserScreen implements MobileBrowser {
   async goToAddress(address: string): Promise<void> {
     const urlAddressBar = await this.urlAddressBar;
 
+    await urlAddressBar.waitForDisplayed({
+      timeout: 10000,
+    });
+
     await urlAddressBar.click();
     await urlAddressBar.clearValue();
     await urlAddressBar.setValue(address);
