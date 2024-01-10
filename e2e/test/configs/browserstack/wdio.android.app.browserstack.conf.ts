@@ -11,6 +11,7 @@ config.capabilities = [
     platformName: 'Android',
     maxInstances: 1,
     device: 'Google Pixel 7',
+    os_version: '13.0',
     'appium:deviceName': 'Google Pixel 7',
     'appium:platformVersion': '13.0',
     'appium:automationName': 'UiAutomator2',
