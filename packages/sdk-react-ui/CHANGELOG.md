@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.3]
+### Added
+- fix: 'sdk-react-ui' MetaMaskModal is not showing balance ([#593](https://github.com/MetaMask/metamask-sdk/pull/593))
+
 ## [0.14.2]
-### Uncategorized
+### Added
 - update: updates Wagmi dependency on `sdk-react-ui` to 1.4.12 ([#588](https://github.com/MetaMask/metamask-sdk/pull/588))
 
 ## [0.14.1]
@@ -90,7 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.3...HEAD
+[0.14.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...@metamask/sdk-react-ui@0.14.3
 [0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.1...@metamask/sdk-react-ui@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.0...@metamask/sdk-react-ui@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.13.0...@metamask/sdk-react-ui@0.14.0
