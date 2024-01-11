@@ -48,7 +48,8 @@ const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
       debug={debug}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableAnalytics: true,
+        // TODO: change to enableAnalytics when updating the SDK version
+        enableDebug: true,
         infuraAPIKey,
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',

@@ -32,6 +32,12 @@ class SwitchNetworkModalComponent {
   async switchNetwork(): Promise<void> {
     await (
       await this.switchNetworkButton
+    ).waitForDisplayed({
+      timeout: 5000,
+    });
+
+    await (
+      await this.switchNetworkButton
     ).waitForEnabled({
       timeout: 5000,
     });

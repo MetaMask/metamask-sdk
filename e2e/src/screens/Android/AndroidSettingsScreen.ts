@@ -40,7 +40,7 @@ class AndroidSettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '(//android.widget.TextView[@resource-id="android:id/title"])[2]',
+          '//*[@resource-id="android:id/title" and @text="Opening links"]',
         ),
       }),
     );

@@ -3,6 +3,7 @@ import Utils from '../../src/Utils';
 import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
 import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
+import ReactNativeDemoDappScreen from '../../src/screens/Dapps/ReactNativeDemoDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
 import Web3OnBoardDappScreen from '../../src/screens/Dapps/Web3OnBoardDappScreen';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
@@ -45,9 +46,9 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const sdkPlaygroundDappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
+    const dappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
+    await browserScreen.goToAddress(dappUrl);
 
     await Web3OnBoardDappScreen.connect();
 
@@ -101,9 +102,9 @@ describe('JS SDK Connection', () => {
       : ChromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
-    const sdkPlaygroundDappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
+    const dappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(sdkPlaygroundDappUrl);
+    await browserScreen.goToAddress(dappUrl);
 
     await SdkPlaygroundDappScreen.terminate();
 
@@ -195,6 +196,55 @@ describe('JS SDK Connection', () => {
       await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
+  });
+
+  it('Connect to the ReactNativeDemo Dapp', async () => {
+    await driver.pause(5000);
+
+    await Utils.launchMetaMask();
+
+    await driver.pause(5000);
+
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await NetworkSwitchedModalComponent.tapGotItButton();
+
+    await driver.pause(1000);
+
+    await driver.installApp(process.env.RN_TEST_APP_PATH ?? '');
+
+    await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
+
+    await driver.pause(15000);
+
+    if (driver.isAndroid) {
+      await driver.setOrientation('PORTRAIT');
+    }
+
+    await ReactNativeDemoDappScreen.terminate();
+
+    await ReactNativeDemoDappScreen.connect();
+
+    await driver.pause(5000);
+
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await expect(
+      await ConnectModalComponent.connectApprovalButton,
+    ).toBeDisplayed();
+
+    await ConnectModalComponent.tapConnectApproval();
+
+    if (driver.isIOS) {
+      await driver.pause(1000);
+      await Utils.launchApp(BROWSER_BUNDLE_ID);
+    }
+
+    await driver.pause(5000);
+    await ReactNativeDemoDappScreen.sign();
+
+    await driver.pause(5000);
+    await SignModalComponent.tapSignApproval();
   });
 
   it.skip('Connect to the Test-Dapp', async () => {
