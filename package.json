@@ -61,7 +61,6 @@
     "@metamask/eslint-config-jest": "^8.0.0",
     "@metamask/eslint-config-nodejs": "^8.0.0",
     "@metamask/eslint-config-typescript": "^8.0.0",
-    "@nestjs/cli": "^10.2.1",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.25",
     "@typescript-eslint/eslint-plugin": "^4.28.1",
