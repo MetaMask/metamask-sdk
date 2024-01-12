@@ -1,5 +1,6 @@
 import os from 'os';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { logger } from './logger';
 import { isDevelopment } from '.';
 
 let rateLimitPoints = 10;
@@ -41,8 +42,9 @@ const resetRateLimits = (): void => {
   }
 
   if (isDevelopment) {
-    console.log(
+    logger.info(
       `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+      { rateLimitPoints, rateLimitMessagePoints },
     );
   }
 };
@@ -59,8 +61,9 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   const memoryUsagePercent = ((totalMemory - freeMemory) / totalMemory) * 100;
   const freeMemoryPercent = 100 - memoryUsagePercent;
 
-  console.log(
-    `INFO> CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
+  logger.info(
+    `increase rate limit CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
+    { cpuUsagePercent, freeMemoryPercent },
   );
 
   // If CPU is not at 100% and there is at least 10% of free memory
@@ -92,8 +95,9 @@ const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   });
 
   if (isDevelopment) {
-    console.log(
-      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+    logger.info(
+      `RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+      { rateLimitPoints, rateLimitMessagePoints },
     );
   }
 };

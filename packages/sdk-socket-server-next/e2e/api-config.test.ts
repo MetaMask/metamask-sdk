@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { app } from './api-config';
+import { app } from '../src/api-config';
 
 jest.mock('analytics-node');
 
