@@ -187,6 +187,8 @@ describe('JS SDK Connection', () => {
     }
 
     if (driver.isAndroid) {
+      await driver.pause(5000);
+
       await Utils.launchMetaMask();
 
       await driver.pause(5000);
