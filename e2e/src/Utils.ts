@@ -28,6 +28,10 @@ class Utils {
     // Location can be either url for web test dapp or bundleId for native app
     console.log(`Launching ${PLATFORM} DAPP with bundleId: ${bundleId}`);
     await driver.activateApp(bundleId);
+
+    if (driver.isAndroid) {
+      await driver.setOrientation('PORTRAIT');
+    }
   }
 
   static async launchMetaMask(): Promise<void> {

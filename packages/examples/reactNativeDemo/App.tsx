@@ -7,18 +7,24 @@
 
 import React, {useEffect} from 'react';
 
+import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import {
   MetaMaskProvider,
   SDKConfigProvider,
   useSDKConfig,
 } from '@metamask/sdk-react';
-import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import {AppState, AppStateStatus, Linking, LogBox} from 'react-native';
+import {
+  AppState,
+  AppStateStatus,
+  Linking,
+  LogBox,
+  Platform,
+} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import RootNavigator from './src/RootNavigator';
 
