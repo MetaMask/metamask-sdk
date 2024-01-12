@@ -75,6 +75,7 @@ export const beforeHook = async () => {
   await Gestures.hideKeyboardWithTap();
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
+  await driver.pause(5000);
   await SecurityUpdatesScreen.tapNoThanksSecurityUpdates();
   await driver.pause(1000);
   await WelcomeComponent.tapNoThanksButton();

@@ -2,7 +2,10 @@ import { ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
-import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
+import {
+  IS_RUNNING_IN_BROWSER_STACK,
+  METAMASK_APP_NAME_ANDROID,
+} from '../../Constants';
 import { AndroidSelector } from '../../Selectors';
 
 class AndroidSettingsScreen {
@@ -40,7 +43,9 @@ class AndroidSettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '(//android.widget.TextView[@resource-id="android:id/title"])[2]',
+          IS_RUNNING_IN_BROWSER_STACK
+            ? '(//android.widget.TextView[@resource-id="android:id/title"])[2]'
+            : '//*[@resource-id="android:id/title" and @text="Opening links"]',
         ),
       }),
     );

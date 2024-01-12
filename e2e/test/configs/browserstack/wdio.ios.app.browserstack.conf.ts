@@ -26,6 +26,7 @@ config.capabilities = [
     'appium:platformVersion': '17.1',
     'appium:automationName': 'XCUITest',
     'appium:app': process.env.APP_PATH,
+    'appium:otherApps': [process.env.RN_TEST_APP_PATH ?? ''],
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     'appium:bundleId': process.env.BUNDLE_ID,
