@@ -1,17 +1,18 @@
 /* eslint-disable node/no-process-env */
 import crypto from 'crypto';
-import express from 'express';
+import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import express from 'express';
 import helmet from 'helmet';
-import Redis from 'ioredis';
-import Analytics from 'analytics-node';
+import { createClient } from 'redis';
+import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
 // Initialize Redis client
 // Provide a default URL if REDIS_URL is not set
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-export const redis = new Redis(redisUrl);
+export const redisClient = createClient({ url: redisUrl });
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
 
 const app = express();
@@ -25,8 +26,8 @@ app.disable('x-powered-by');
 
 async function inspectRedis(key?: string) {
   if (key) {
-    const value = await redis.get(key);
-    console.log(`DEBUG> Redis Update - Key: ${key}, Value: ${value}`);
+    const value = await redisClient.get(key);
+    logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
 }
 
@@ -37,7 +38,7 @@ const analytics = new Analytics(
   {
     flushInterval: isDevelopment ? 1000 : 10000,
     errorHandler: (err: Error) => {
-      console.error(`ERROR> Analytics-node flush failed: ${err}`);
+      logger.error(`ERROR> Analytics-node flush failed: ${err}`);
     },
   },
 );
@@ -46,24 +47,34 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
-app.post('/debug', async (_req, res) => {
+// Redirect /debug to /evt for backwards compatibility
+app.post('/debug', (req, _res, next) => {
+  req.url = '/evt'; // Redirect to /evt
+  next(); // Pass control to the next handler (which will be /evt)
+});
+
+app.post('/evt', async (_req, res) => {
   try {
     const { body } = _req;
 
     if (!body.event) {
+      logger.error(`Event is required`);
       return res.status(400).json({ error: 'event is required' });
     }
 
     if (!body.event.startsWith('sdk_')) {
+      logger.error(`Wrong event name: ${body.event}`);
       return res.status(400).json({ error: 'wrong event name' });
     }
 
+    logger.debug(`Received event /debug`, body);
+
     const id: string = body.id || 'socket.io-server';
-    let userIdHash = await redis.get(id);
+    let userIdHash = await redisClient.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
-      await redis.set(id, userIdHash, 'EX', THIRTY_DAYS_IN_SECONDS);
+      await redisClient.set(id, userIdHash, { EX: THIRTY_DAYS_IN_SECONDS });
     }
 
     if (isDevelopment) {
@@ -71,9 +82,10 @@ app.post('/debug', async (_req, res) => {
     }
 
     let userInfo;
-    const cachedUserInfo = await redis.get(userIdHash);
+    const cachedUserInfo = await redisClient.get(userIdHash);
 
     if (cachedUserInfo) {
+      logger.debug(`Cached user info found for ${userIdHash}`, cachedUserInfo);
       userInfo = JSON.parse(cachedUserInfo);
     } else {
       // Initial userInfo setup
@@ -96,12 +108,9 @@ app.post('/debug', async (_req, res) => {
         sdkVersion: body.sdkVersion || '',
       };
 
-      await redis.set(
-        userIdHash,
-        JSON.stringify(userInfo),
-        'EX',
-        THIRTY_DAYS_IN_SECONDS,
-      );
+      await redisClient.set(userIdHash, JSON.stringify(userInfo), {
+        EX: THIRTY_DAYS_IN_SECONDS,
+      });
     }
 
     if (isDevelopment) {
@@ -138,14 +147,14 @@ app.post('/debug', async (_req, res) => {
     }
 
     if (isDevelopment) {
-      console.log('DEBUG> Event object:', event);
+      logger.debug('Event object:', event);
     }
 
     analytics.track(event, function (err: Error) {
-      console.log('INFO> Segment batch');
+      logger.info('Segment batch', { event });
 
       if (err) {
-        console.error('ERROR: Segment error:', err);
+        logger.error('Segment error:', err);
       }
     });
 

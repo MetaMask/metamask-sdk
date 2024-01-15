@@ -1,21 +1,58 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  app:
+  app1:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - NODE_ENV=${NODE_ENV:-production}
     ports:
-      - '4000:4000'
-    environment:
-      - REDIS_URL=redis://cache:6379
+      - '4002:4000'
+    env_file:
+      - .env
+    depends_on:
+      - cache
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4003:4000'
+    env_file:
+      - .env
+    depends_on:
+      - cache
+
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4004:4000'
+    env_file:
+      - .env
     depends_on:
       - cache
 
   cache:
     image: redis:latest
-    command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru
+    command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
       - '6379:6379'
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app1
+      - app2
+      - app3

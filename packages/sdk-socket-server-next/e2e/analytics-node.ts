@@ -1,5 +1,4 @@
 class Analytics {
-  // rome-ignore lint/complexity/noUselessConstructor: <explanation>
   constructor(writeKey: string, options?: object) {
     // Mock constructor
   }
