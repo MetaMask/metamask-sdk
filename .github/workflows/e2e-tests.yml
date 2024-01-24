@@ -3,42 +3,43 @@ name: Run E2E Tests
 on:
   workflow_dispatch:
     inputs:
-      rn_test_app_path_ios:
-        description: 'React Native Test App Path for iOS'
-        type: string
+      rn_test_app_name_ios:
+        description: 'React Native Test App ipa'
         required: true
-      rn_test_app_bundle_id_ios:
-        description: 'React Native Test App Bundle ID for iOS'
-        type: string
+        type: choice
+        options:
+          - 'rn-demo-mm-sdk-0.14.2-v2.ipa'
+          - 'rn-demo-mm-sdk-0.14.2.ipa'
+      rn_test_app_name_android:
+        description: 'React Native Test App apk'
         required: true
-      rn_test_app_path_android:
-        description: 'React Native Test App Path for Android'
-        type: string
+        type: choice
+        options:
+          - 'rn-demo-mm-sdk-0.14.2.apk'
+      wallet_app_name_ios:
+        description: 'MM Wallet iOS ipa name'
         required: true
-      rn_test_app_bundle_id_android:
-        description: 'React Native Test App Bundle ID for Android'
-        type: string
+        type: choice
+        options:
+          - 'SDK_7_14.ipa'
+          - 'SDK_7_13.ipa'
+      wallet_app_name_android:
+        description: 'MM Wallet Android apk name'
         required: true
-      app_path_ios:
-        description: 'Path to iOS App'
-        type: string
-        required: true
-      bundle_id_ios:
-        description: 'Bundle ID for iOS App'
-        type: string
-        required: true
-      app_path_android:
-        description: 'Path to Android App'
-        type: string
-        required: true
-      bundle_id_android:
-        description: 'Bundle ID for Android App'
-        type: string
-        required: true
+        type: choice
+        options:
+          - 'SDK_7_14.apk'
+          - 'SDK_7_13.apk'
 
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
+    env:
+      SRP: ${{ secrets.SRP }}
+      BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+      BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      BROWSERSTACK_API_USERNAME: ${{ secrets.BROWSERSTACK_API_USERNAME }}
+      BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -51,17 +52,44 @@ jobs:
       - name: Install dependencies
         run: yarn install && cd e2e && yarn install && cd ..
 
-      # Create .ios.env and .android.env with inputs in the /e2e directory
-      - name: Create .ios.env and .android.env
+      # Create .ios.env with inputs in the /e2e directory
+      - name: Create .ios.env
         run: |
-          echo "RN_TEST_APP_PATH=${{ inputs.rn_test_app_path_ios }}" > e2e/.ios.env
-          echo "RN_TEST_APP_BUNDLE_ID=${{ inputs.rn_test_app_bundle_id_ios }}" >> e2e/.ios.env
-          echo "RN_TEST_APP_PATH=${{ inputs.rn_test_app_path_android }}" > e2e/.android.env
-          echo "RN_TEST_APP_BUNDLE_ID=${{ inputs.rn_test_app_bundle_id_android }}" >> e2e/.android.env
-          echo "APP_PATH=${{ inputs.app_path_ios }}" > e2e/.ios.env
-          echo "BUNDLE_ID=${{ inputs.bundle_id_ios }}" >> e2e/.ios.env
-          echo "APP_PATH=${{ inputs.app_path_android }}" > e2e/.android.env
-          echo "BUNDLE_ID=${{ inputs.bundle_id_android }}" >> e2e/.android.env
+          response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$url")
+          ios_wallet_app_name="${{ inputs.wallet_app_name_ios }}"
+          ios_rn_app_name="${{ inputs.rn_test_app_name_ios }}"
+
+          # Gets the app_url and custom_id for the wallet app and the react native test app to use in the .ios.env file
+          ios_wallet_app_url=$(echo "$response" | jq -r --arg ios_wallet_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .app_url')
+          ios_wallet_app_bundle_id=$(echo "$response" | jq -r --arg ios_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .custom_id')
+          ios_rn_app_url=$(echo "$response" | jq -r --arg ios_rn_app_name "$ios_rn_app_name" '.[] | select(.app_name == $ios_rn_app_name) | .app_url')
+          ios_rn_app_bundle_id=$(echo "$response" | jq -r --arg ios_rn_app_name "$ios_rn_app_name" '.[] | select(.app_name == $ios_rn_app_name) | .custom_id')
+
+          # Writes to the .ios.env file
+          echo "APP_PATH=$ios_wallet_app_url" >> e2e/.ios.env
+          echo "BUNDLE_ID=$ios_wallet_app_bundle_id" >> e2e/.ios.env
+          echo "RN_TEST_APP_PATH=$ios_rn_app_url" >> e2e/.ios.env
+          echo "RN_TEST_APP_BUNDLE_ID=$ios_rn_app_bundle_id" >> e2e/.ios.env
+
+
+      # Create .android.env with inputs in the /e2e directory
+      - name: Create .android.env
+        run: |
+          response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$url")
+          android_wallet_app_name="${{ inputs.wallet_app_name_android }}"
+          android_rn_app_name="${{ inputs.rn_test_app_name_android }}"
+
+          # Gets the app_url and custom_id for the wallet app and the react native test app to use in the .android.env file
+          android_wallet_app_url=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .app_url')
+          android_wallet_app_bundle_id=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .custom_id')
+          android_rn_app_url=$(echo "$response" | jq -r --arg android_rn_app_name "$android_rn_app_name" '.[] | select(.app_name == $android_rn_app_name) | .app_url')
+          android_rn_app_bundle_id=$(echo "$response" | jq -r --arg android_rn_app_name "$android_rn_app_name" '.[] | select(.app_name == $android_rn_app_name) | .custom_id')
+
+          # Writes to the .android.env file
+          echo "APP_PATH=$android_wallet_app_url" >> e2e/.android.env
+          echo "BUNDLE_ID=$android_wallet_app_bundle_id" >> e2e/.android.env
+          echo "RN_TEST_APP_PATH=$android_rn_app_url" >> e2e/.android.env
+          echo "RN_TEST_APP_BUNDLE_ID=$android_rn_app_bundle_id" >> e2e/.android.env
 
       # Hard code .dapps.env values in the /e2e directory
       - name: Set Dapps Environment Variables
@@ -71,19 +99,7 @@ jobs:
           echo "WEB3_ON_BOARD_DAPP_URL=https://mmsdk-playground-test.vercel.app/onboard" >> e2e/.dapps.env
 
       - name: Run Android E2E tests
-        env:
-          SRP: ${{ secrets.SRP }}
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          BROWSERSTACK_API_USERNAME: ${{ secrets.BROWSERSTACK_API_USERNAME }}
-          BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
         run: yarn test:e2e:android:ci
 
       - name: Run IOS E2E tests
-        env:
-          SRP: ${{ secrets.SRP }}
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
-          BROWSERSTACK_API_USERNAME: ${{ secrets.BROWSERSTACK_API_USERNAME }}
-          BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
         run: yarn test:e2e:ios:ci
