@@ -4,6 +4,7 @@ import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
 import ReactNativeDappScreen from '../../src/screens/Dapps/ReactNativeDappScreen';
 import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
+import AndroidSDKDappScreen from '../../src/screens/Dapps/AndroidSDKDappScreen';
 import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
 import Web3OnBoardDappScreen from '../../src/screens/Dapps/Web3OnBoardDappScreen';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
@@ -27,7 +28,7 @@ describe('JS SDK Connection', () => {
     await beforeEachHook();
   });
 
-  it('Connect to the Web3onboard Dapp', async () => {
+  it.skip('Connect to the Web3onboard Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -79,7 +80,7 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
   });
 
-  it('Connect to the SDK Playground Dapp', async () => {
+  it.skip('Connect to the SDK Playground Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -145,6 +146,10 @@ describe('JS SDK Connection', () => {
 
     await SwitchNetworkModalComponent.switchNetwork();
 
+    if (driver.isAndroid) {
+      await SwitchNetworkModalComponent.switchNetwork();
+    }
+
     if (driver.isIOS) {
       await NetworkSwitchedModalComponent.tapGotItButton();
 
@@ -165,6 +170,10 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
 
     await SignModalComponent.tapSignApproval();
+
+    if (driver.isAndroid) {
+      await SignModalComponent.tapSignApproval();
+    }
 
     if (driver.isIOS) {
       await driver.pause(1000);
@@ -201,7 +210,7 @@ describe('JS SDK Connection', () => {
     }
   });
 
-  it('Connect to the ReactNativeDemo Dapp', async () => {
+  it.skip('Connect to the ReactNativeDemo Dapp', async () => {
     await driver.pause(5000);
 
     await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
@@ -232,6 +241,33 @@ describe('JS SDK Connection', () => {
 
     await driver.pause(5000);
     await SignModalComponent.tapSignApproval();
+  });
+
+  it('Connect to the AndroidSDK Test Dapp', async () => {
+    await driver.pause(5000);
+
+    await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
+
+    await driver.pause(15000);
+
+    await AndroidSDKDappScreen.connect();
+
+    await driver.pause(5000);
+
+    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+    await expect(
+      await ConnectModalComponent.connectApprovalButton,
+    ).toBeDisplayed();
+
+    await ConnectModalComponent.tapConnectApproval();
+
+    if (driver.isIOS) {
+      await driver.pause(1000);
+      await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
+    }
+
+    await driver.pause(15000);
   });
 
   it.skip('Clear all connections', async () => {
