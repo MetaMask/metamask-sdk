@@ -53,9 +53,13 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           console.debug('PROPAGATE chainChanged', chainId);
         }
 
-        instance
-          .getMobileProvider()
-          .emit(EXTENSION_EVENTS.CHAIN_CHANGED, chainId);
+        const hasMobileProvider = Boolean(instance.sdkProvider);
+
+        if (hasMobileProvider) {
+          instance
+            .getMobileProvider()
+            .emit(EXTENSION_EVENTS.CHAIN_CHANGED, chainId);
+        }
       });
 
       metamaskBrowserExtension.on(
@@ -65,9 +69,13 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
             console.debug('PROPAGATE accountsChanged', accounts);
           }
 
-          instance
-            .getMobileProvider()
-            .emit(EXTENSION_EVENTS.ACCOUNTS_CHANGED, accounts);
+          const hasMobileProvider = Boolean(instance.sdkProvider);
+
+          if (hasMobileProvider) {
+            instance
+              .getMobileProvider()
+              .emit(EXTENSION_EVENTS.ACCOUNTS_CHANGED, accounts);
+          }
         },
       );
 
@@ -76,21 +84,34 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           console.debug('PROPAGATE disconnect', error);
         }
 
-        instance.getMobileProvider().emit(EXTENSION_EVENTS.DISCONNECT, error);
+        const hasMobileProvider = Boolean(instance.sdkProvider);
+
+        if (hasMobileProvider) {
+          instance.getMobileProvider().emit(EXTENSION_EVENTS.DISCONNECT, error);
+        }
       });
 
       metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECT, (args) => {
         if (developerMode) {
           console.debug('PROPAGATE connect', args);
         }
-        instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECT, args);
+
+        const hasMobileProvider = Boolean(instance.sdkProvider);
+
+        if (hasMobileProvider) {
+          instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECT, args);
+        }
       });
 
       metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECTED, (args) => {
         if (developerMode) {
           console.debug('PROPAGATE connected', args);
         }
-        instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECTED, args);
+        const hasMobileProvider = Boolean(instance.sdkProvider);
+
+        if (hasMobileProvider) {
+          instance.getMobileProvider().emit(EXTENSION_EVENTS.CONNECTED, args);
+        }
       });
     } catch (err) {
       // Ignore error if metamask extension not found
