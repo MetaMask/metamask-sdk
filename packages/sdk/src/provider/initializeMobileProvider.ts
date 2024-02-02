@@ -51,7 +51,9 @@ const initializeMobileProvider = ({
   const dappInfo = sdk.options.dappMetadata;
   const sdkInfo = `Sdk/Javascript SdkVersion/${
     packageJson.version
-  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
+  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name} dAppTitle/${
+    dappInfo.name
+  }`;
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
