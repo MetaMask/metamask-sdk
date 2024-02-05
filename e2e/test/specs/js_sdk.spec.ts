@@ -28,7 +28,7 @@ describe('JS SDK Connection', () => {
     await beforeEachHook();
   });
 
-  it.skip('Connect to the Web3onboard Dapp', async () => {
+  it('Connect to the Web3onboard Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -80,7 +80,7 @@ describe('JS SDK Connection', () => {
     await SignModalComponent.tapSignApproval();
   });
 
-  it.skip('Connect to the SDK Playground Dapp', async () => {
+  it('Connect to the SDK Playground Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -210,7 +210,7 @@ describe('JS SDK Connection', () => {
     }
   });
 
-  it.skip('Connect to the ReactNativeDemo Dapp', async () => {
+  it('Connect to the ReactNativeDemo Dapp', async () => {
     await driver.pause(5000);
 
     await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
@@ -267,7 +267,37 @@ describe('JS SDK Connection', () => {
       await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
     }
 
-    await driver.pause(15000);
+    await driver.pause(5000);
+
+    await AndroidSDKDappScreen.sign();
+    await AndroidSDKDappScreen.sign2();
+
+    await SignModalComponent.tapSignApproval();
+
+    await AndroidSDKDappScreen.goBack();
+
+    await AndroidSDKDappScreen.batchSigning();
+    await AndroidSDKDappScreen.batchSigning();
+
+    await SignModalComponent.tapSignApproval();
+    await SignModalComponent.tapSignApproval();
+    await SignModalComponent.tapSignApproval();
+
+    await AndroidSDKDappScreen.goBack();
+
+    await AndroidSDKDappScreen.sendTransaction();
+    await AndroidSDKDappScreen.sendTransaction2();
+
+    await SendTxModalComponent.reject();
+
+    await AndroidSDKDappScreen.goBack();
+
+    await AndroidSDKDappScreen.switchChain();
+    await AndroidSDKDappScreen.switchChain2();
+
+    await SwitchNetworkModalComponent.switchNetwork();
+
+    await driver.pause(1000);
   });
 
   it.skip('Clear all connections', async () => {
