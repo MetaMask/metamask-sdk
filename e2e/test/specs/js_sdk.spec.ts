@@ -18,7 +18,7 @@ import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
 import IOSOpenInComponent from '../../src/screens/iOS/components/IOSOpenInComponent';
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
 
-describe('JS SDK Connection', () => {
+describe('JS SDK E2E', () => {
   before(async () => {
     await beforeHook();
   });
