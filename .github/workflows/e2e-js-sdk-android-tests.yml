@@ -1,4 +1,4 @@
-name: Run E2E Tests
+name: Run JS E2E Tests on Android
 
 on:
   workflow_dispatch:
