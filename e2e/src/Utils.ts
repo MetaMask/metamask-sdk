@@ -11,7 +11,7 @@ import {
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
-import { FIXTURE_SERVER_PORT, PLATFORM, Platforms } from './Constants';
+import { FIXTURE_SERVER_PORT, METAMASK_BUNDLE_ID, PLATFORM, Platforms, SDK_TYPE } from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
@@ -21,6 +21,21 @@ export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   }
 
   return platformSelector;
+};
+
+export const getOtherAppsPath = () => {
+  const otherAppsPaths = [];
+  switch (SDK_TYPE) {
+    case 'js':
+      otherAppsPaths.push(process.env.RN_TEST_APP_PATH ?? '');
+      break;
+    case 'android':
+      otherAppsPaths.push(process.env.ANDROID_SDK_TEST_APP_PATH ?? '');
+      break;
+    default:
+      break;
+  }
+  return otherAppsPaths;
 };
 
 class Utils {
@@ -36,8 +51,7 @@ class Utils {
 
   static async launchMetaMask(): Promise<void> {
     console.log(`Launching MetaMask on ${PLATFORM}`);
-    const metamaskBundleId = process.env.BUNDLE_ID as string;
-    await driver.activateApp(metamaskBundleId);
+    await driver.activateApp(METAMASK_BUNDLE_ID);
   }
 
   /*

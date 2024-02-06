@@ -1,5 +1,7 @@
 export const WALLET_PASSWORD = 'asdasdasd';
 
+export const SDK_TYPE = process.env.SDK_TYPE as string;
+
 export const Browsers = {
   SAFARI: 'com.apple.mobilesafari',
   CHROME: 'com.android.chrome',
