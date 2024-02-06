@@ -16,9 +16,13 @@
     "wdio-wait-for": "^3.0.9"
   },
   "scripts": {
-    "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
+    "test:android:jssdk:e2e:browserstack": "SDK_TYPE=js wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts.conf.ts --suite js_sdk",
+    "test:android:androidsdk:e2e:browserstack": "SDK_TYPE=androidsdk wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts.conf.ts --suite android_sdk",
+    "test:ios:jssdk:e2e:browserstack": "SDK_TYPE=js wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite js_sdk",
+
     "test:android:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts",
     "test:ios:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts",
+    "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",
