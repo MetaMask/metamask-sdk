@@ -219,8 +219,6 @@ describe('JS SDK Connection', () => {
 
     await driver.pause(15000);
 
-    await ReactNativeDappScreen.terminate();
-
     await ReactNativeDappScreen.connect();
 
     await driver.pause(5000);
@@ -250,11 +248,11 @@ describe('JS SDK Connection', () => {
 
     await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
 
-    await driver.pause(15000);
+    await driver.pause(5000);
 
     await AndroidSDKDappScreen.connect();
 
-    await driver.pause(5000);
+    await driver.pause(3000);
 
     await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
