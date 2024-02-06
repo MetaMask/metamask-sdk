@@ -157,6 +157,22 @@ describe('JS SDK Connection', () => {
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
 
+    if (driver.isAndroid) {
+      await driver.pause(2000);
+
+      await Utils.launchMetaMask();
+
+      await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+
+      await driver.pause(3000);
+
+      await NetworkSwitchedModalComponent.tapGotItButton();
+
+      await driver.pause(1000);
+
+      await Utils.launchApp(BROWSER_BUNDLE_ID);
+    }
+
     await SdkPlaygroundDappScreen.sendBatchRpcCalls();
 
     if (driver.isAndroid) {
@@ -193,20 +209,6 @@ describe('JS SDK Connection', () => {
     if (driver.isIOS) {
       await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
-    }
-
-    if (driver.isAndroid) {
-      await driver.pause(5000);
-
-      await Utils.launchMetaMask();
-
-      await driver.pause(5000);
-
-      await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
-
-      await NetworkSwitchedModalComponent.tapGotItButton();
-
-      await driver.pause(1000);
     }
   });
 

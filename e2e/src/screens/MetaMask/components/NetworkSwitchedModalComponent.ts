@@ -7,7 +7,7 @@ class NetworkSwitchedModalComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.TextView[@text="Got it"]',
+          '//android.widget.Button[@content-desc="network-education-modal-close-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "network-education-modal-close-button"',
@@ -19,7 +19,7 @@ class NetworkSwitchedModalComponent {
   async tapGotItButton(): Promise<void> {
     await (
       await this.gotItButton
-    ).waitForEnabled({
+    ).waitForDisplayed({
       timeout: 10000,
     });
     await (await this.gotItButton).click();
