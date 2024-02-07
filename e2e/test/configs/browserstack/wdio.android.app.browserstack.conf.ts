@@ -20,7 +20,10 @@ config.capabilities = [
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,
     // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
-    'appium:otherApps': [process.env.RN_TEST_APP_PATH ?? ''],
+    'appium:otherApps': [
+      process.env.ANDROID_SDK_TEST_APP_PATH ?? '',
+      process.env.RN_TEST_APP_PATH ?? '',
+    ],
     'bstack:options': {
       deviceName: 'Google Pixel 7',
       osVersion: '13.0',

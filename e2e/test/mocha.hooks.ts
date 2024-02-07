@@ -41,13 +41,20 @@ export const beforeHook = async () => {
     await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
     await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
 
-    const isAddLinksButtonEnabled =
-      await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
+    await driver.pause(2000);
 
-    if (isAddLinksButtonEnabled) {
-      await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
-      await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
-      await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+    const isAddLinksButtonDisplayed =
+      await AndroidSettingsOpeningLinksScreen.addLinksButton.isDisplayed();
+
+    if (isAddLinksButtonDisplayed) {
+      const isAddLinksButtonEnabled =
+        await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
+
+      if (isAddLinksButtonEnabled) {
+        await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
+        await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
+        await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+      }
     }
   }
 
