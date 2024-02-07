@@ -40,7 +40,8 @@ jobs:
       # Create .ios.env with inputs in the /e2e directory
       - name: Create .ios.env
         run: |
-          response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$url")
+          browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
+          response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
           ios_wallet_app_name="${{ inputs.wallet_app_name_ios }}"
           ios_rn_app_name="${{ inputs.rn_test_app_name_ios }}"
 
