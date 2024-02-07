@@ -8,15 +8,13 @@ on:
         required: true
         type: choice
         options:
-          - 'rn-demo-mm-sdk-0.14.2-v2.ipa'
-          - 'rn-demo-mm-sdk-0.14.2.ipa'
+          - 'RN-demo-0-14-2.ipa'
       wallet_app_name_ios:
         description: 'MM Wallet iOS ipa name'
         required: true
         type: choice
         options:
-          - 'SDK_7_14.ipa'
-          - 'SDK_7_13.ipa'
+          - 'MM-Wallet-7-16.0-RC.ipa'
 
 jobs:
   e2e-tests:

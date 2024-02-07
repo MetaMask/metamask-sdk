@@ -7,14 +7,13 @@ on:
         description: 'Android SDK Native apk'
         type: choice
         options:
-          - 'FILL THIS'
+          - 'Android-SDK-Dapp-0-4-0.apk'
       wallet_app_name_android:
         description: 'MM Wallet Android apk name'
         required: true
         type: choice
         options:
-          - 'SDK_7_14.apk'
-          - 'SDK_7_13.apk'
+          - 'MM-Wallet-7-16.0-RC.apk'
 
 jobs:
   e2e-tests:

@@ -8,14 +8,13 @@ on:
         required: true
         type: choice
         options:
-          - 'rn-demo-mm-sdk-0.14.2.apk'
+          - 'RN-demo-0-14-2.apk'
       wallet_app_name_android:
         description: 'MM Wallet Android apk name'
         required: true
         type: choice
         options:
-          - 'SDK_7_14.apk'
-          - 'SDK_7_13.apk'
+          - 'MM-Wallet-7-16.0-RC.apk'
 
 jobs:
   e2e-tests:
