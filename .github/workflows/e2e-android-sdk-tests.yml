@@ -5,6 +5,7 @@ on:
     inputs:
       android_sdk_native:
         description: 'Android SDK Native apk'
+        required: true
         type: choice
         options:
           - 'Android-SDK-Dapp-0-4-0.apk'
