@@ -47,7 +47,7 @@ jobs:
 
           # Gets the app_url and custom_id for the wallet app and the react native test app to use in the .ios.env file
           ios_wallet_app_url=$(echo "$response" | jq -r --arg ios_wallet_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .app_url')
-          ios_wallet_app_bundle_id=$(echo "$response" | jq -r --arg ios_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .custom_id')
+          ios_wallet_app_bundle_id=$(echo "$response" | jq -r --arg ios_wallet_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .custom_id')
           ios_rn_app_url=$(echo "$response" | jq -r --arg ios_rn_app_name "$ios_rn_app_name" '.[] | select(.app_name == $ios_rn_app_name) | .app_url')
           ios_rn_app_bundle_id=$(echo "$response" | jq -r --arg ios_rn_app_name "$ios_rn_app_name" '.[] | select(.app_name == $ios_rn_app_name) | .custom_id')
 

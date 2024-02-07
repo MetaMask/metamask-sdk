@@ -47,8 +47,11 @@ jobs:
           # Gets the app_url and custom_id for the wallet app, react native and android native test app to use in the .android.env file
           android_wallet_app_url=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .app_url')
           android_wallet_app_bundle_id=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .custom_id')
-          android_native_sdk_url=$(echo "$response" | jq -r --arg android_rn_app_name "$android_native_sdk" '.[] | select(.app_name == $android_native_sdk) | .app_url')
+
+          android_native_sdk_url=$(echo "$response" | jq -r --arg android_native_sdk "$android_native_sdk" '.[] | select(.app_name == $android_native_sdk) | .app_url')
           android_native_sdk_bundle_id=$(echo "$response" | jq -r --arg android_native_sdk "$android_native_sdk" '.[] | select(.app_name == $android_native_sdk) | .custom_id')
+
+
 
           # Writes to the .android.env file
           echo "APP_PATH=$android_wallet_app_url" >> e2e/.android.env
