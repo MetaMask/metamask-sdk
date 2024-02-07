@@ -145,10 +145,6 @@ describe('JS SDK E2E', () => {
 
     await SwitchNetworkModalComponent.switchNetwork();
 
-    if (driver.isAndroid) {
-      await SwitchNetworkModalComponent.switchNetwork();
-    }
-
     if (driver.isIOS) {
       await NetworkSwitchedModalComponent.tapGotItButton();
 
@@ -186,10 +182,6 @@ describe('JS SDK E2E', () => {
 
     await SignModalComponent.tapSignApproval();
 
-    if (driver.isAndroid) {
-      await SignModalComponent.tapSignApproval();
-    }
-
     if (driver.isIOS) {
       await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
@@ -205,8 +197,9 @@ describe('JS SDK E2E', () => {
 
     await SendTxModalComponent.reject();
 
+    await driver.pause(1000);
+
     if (driver.isIOS) {
-      await driver.pause(1000);
       await Utils.launchApp(BROWSER_BUNDLE_ID);
     }
   });
