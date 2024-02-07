@@ -1,6 +1,10 @@
-import { SDK_TYPE } from '../Constants';
-
+/*
+ * Dynamically infers the path of the other apps to be installed on the device
+ * based on the SDK_TYPE environment variable
+ */
 export const getOtherAppsPath = () => {
+  const SDK_TYPE = process.env.SDK_TYPE as string;
+
   const otherAppsPaths = [];
   switch (SDK_TYPE) {
     case 'js':

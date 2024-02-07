@@ -11,7 +11,12 @@ import {
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
-import { FIXTURE_SERVER_PORT, METAMASK_BUNDLE_ID, PLATFORM, Platforms, SDK_TYPE } from './Constants';
+import {
+  FIXTURE_SERVER_PORT,
+  METAMASK_BUNDLE_ID,
+  PLATFORM,
+  Platforms,
+} from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
@@ -21,21 +26,6 @@ export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   }
 
   return platformSelector;
-};
-
-export const getOtherAppsPath = () => {
-  const otherAppsPaths = [];
-  switch (SDK_TYPE) {
-    case 'js':
-      otherAppsPaths.push(process.env.RN_TEST_APP_PATH ?? '');
-      break;
-    case 'android':
-      otherAppsPaths.push(process.env.ANDROID_SDK_TEST_APP_PATH ?? '');
-      break;
-    default:
-      break;
-  }
-  return otherAppsPaths;
 };
 
 class Utils {
