@@ -17,7 +17,7 @@ describe('Android SDK (native) E2E', () => {
     await beforeEachHook();
   });
 
-  it('Connect to the AndroidSDK Test Dapp', async () => {
+  it('Smoke Testing on the AndroidSDK Test Dapp', async () => {
     await driver.pause(5000);
 
     await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
