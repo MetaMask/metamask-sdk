@@ -23,11 +23,9 @@ class SdkPlaygroundDappScreen implements Dapp {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.view.View[@text="Connect wallet"]',
+          '//android.widget.Button[@text="Connect"]',
         ),
-        iosSelector: IOSSelector.by().predicateString(
-          'name == "Connect wallet"',
-        ),
+        iosSelector: IOSSelector.by().predicateString('name == "Connect"'),
       }),
     );
   }
@@ -175,7 +173,6 @@ class SdkPlaygroundDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await this.scrollToElement(this.connectButton);
     await (
       await this.connectButton
     ).waitForEnabled({

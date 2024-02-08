@@ -11,7 +11,12 @@ import {
   MetaMaskElementSelector,
   ScreenPercentage,
 } from './types';
-import { FIXTURE_SERVER_PORT, PLATFORM, Platforms } from './Constants';
+import {
+  FIXTURE_SERVER_PORT,
+  METAMASK_BUNDLE_ID,
+  PLATFORM,
+  Platforms,
+} from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
@@ -36,8 +41,7 @@ class Utils {
 
   static async launchMetaMask(): Promise<void> {
     console.log(`Launching MetaMask on ${PLATFORM}`);
-    const metamaskBundleId = process.env.BUNDLE_ID as string;
-    await driver.activateApp(metamaskBundleId);
+    await driver.activateApp(METAMASK_BUNDLE_ID);
   }
 
   /*
