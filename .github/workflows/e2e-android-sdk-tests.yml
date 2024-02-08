@@ -29,18 +29,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.18.2'
-
-      - name: Install dependencies
-        run: yarn install && cd e2e && yarn install && cd ..
-
       # Create .android.env with inputs in the /e2e directory
       - name: Create .android.env
         working-directory: ./e2e
         run: |
+          jq --version
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
           echo "response: $response"
