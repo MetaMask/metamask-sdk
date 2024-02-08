@@ -39,6 +39,7 @@ jobs:
 
       # Create .android.env with inputs in the /e2e directory
       - name: Create .android.env
+        working-directory: ./e2e
         run: |
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
@@ -57,8 +58,8 @@ jobs:
             echo "BUNDLE_ID=$android_wallet_app_bundle_id"
             echo "ANDROID_SDK_TEST_APP_PATH=$android_native_sdk_url"
             echo "ANDROID_SDK_TEST_BUNDLE_ID=$android_native_sdk_bundle_id"
-          } >> e2e/.android.env
+          } >> .android.env
 
       - name: Run Android SDK E2E tests
+        working-directory: ./e2e
         run: yarn test:android:androidsdk:e2e:browserstack
-
