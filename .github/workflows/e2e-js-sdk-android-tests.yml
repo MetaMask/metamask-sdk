@@ -69,5 +69,6 @@ jobs:
           } >> e2e/.dapps.env
 
       - name: Run JS-SDK Android E2E tests
+        working-directory: ./e2e
         run: yarn test:android:jssdk:e2e:browserstack
 
