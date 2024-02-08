@@ -39,11 +39,13 @@ jobs:
 
       # Create .android.env with inputs in the /e2e directory
       - name: Create .android.env
+        working-directory: ./e2e
         run: |
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
           android_wallet_app_name="${{ inputs.wallet_app_name_android }}"
           android_native_sdk="${{ inputs.android_sdk_native }}"
+          echo "android_wallet_app_name: $android_wallet_app_name"
 
           # Gets the app_url and custom_id for the wallet app, react native and android native test app to use in the .android.env file
           android_wallet_app_url=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .app_url')
@@ -57,7 +59,8 @@ jobs:
             echo "BUNDLE_ID=$android_wallet_app_bundle_id"
             echo "ANDROID_SDK_TEST_APP_PATH=$android_native_sdk_url"
             echo "ANDROID_SDK_TEST_BUNDLE_ID=$android_native_sdk_bundle_id"
-          } >> e2e/.android.env
+          } >> .android.env
+          cat .android.env
 
       - name: Run Android SDK E2E tests
         working-directory: ./e2e
