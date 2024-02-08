@@ -43,6 +43,7 @@ jobs:
         run: |
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
+          echo "response: $response"
           android_wallet_app_name="${{ inputs.wallet_app_name_android }}"
           android_native_sdk="${{ inputs.android_sdk_native }}"
           echo "android_wallet_app_name: $android_wallet_app_name"
