@@ -39,6 +39,7 @@ jobs:
 
       # Create .ios.env with inputs in the /e2e directory
       - name: Create .ios.env
+        working-directory: ./e2e
         run: |
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
@@ -57,16 +58,17 @@ jobs:
             echo "BUNDLE_ID=$ios_wallet_app_bundle_id"
             echo "RN_TEST_APP_PATH=$ios_rn_app_url"
             echo "RN_TEST_APP_BUNDLE_ID=$ios_rn_app_bundle_id"
-          } >> e2e/.ios.env
+          } >> .ios.env
 
       # Hard code .dapps.env values in the /e2e directory
       - name: Set Dapps Environment Variables
+        working-directory: ./e2e
         run: |
           {
             echo "TEST_DAPP_URL=https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/test-dapp/"
             echo "SDK_PLAYGROUND_DAPP_URL=https://mmsdk-playground-test.vercel.app/demo"
             echo "WEB3_ON_BOARD_DAPP_URL=https://mmsdk-playground-test.vercel.app/onboard"
-          } >> e2e/.dapps.env
+          } >> .dapps.env
 
       - name: Run JS-SDK iOS E2E tests
         working-directory: ./e2e
