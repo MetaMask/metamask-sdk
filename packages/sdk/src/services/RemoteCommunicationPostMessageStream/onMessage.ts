@@ -29,10 +29,16 @@ export function onMessage(
     }
 
     if (!message?.name) {
+      if (instance.state.debug) {
+        console.debug(`RCPMS ignore message without name`, message);
+      }
       return;
     }
 
     if (message?.name !== ProviderConstants.PROVIDER) {
+      if (instance.state.debug) {
+        console.debug(`RCPMS ignore message with wrong name`, message);
+      }
       return;
     }
 
