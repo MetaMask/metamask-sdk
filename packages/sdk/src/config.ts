@@ -8,6 +8,8 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   eth_signTypedData: true,
   eth_signTypedData_v3: true,
   eth_signTypedData_v4: true,
+  wallet_requestPermissions: true,
+  wallet_getPermissions: true,
   wallet_watchAsset: true,
   wallet_addEthereumChain: true,
   wallet_switchEthereumChain: true,
