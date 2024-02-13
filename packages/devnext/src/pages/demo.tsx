@@ -50,8 +50,76 @@ const Demo = () => {
     }
   };
 
+  const ethAccounts = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'eth_accounts',
+        params: [],
+      });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`eth_accounts response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('eth_accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const walletRequest = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`wallet_requestPermissions response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('wallet_requestPermissions ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const getPermissions = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'wallet_getPermissions',
+        params: [{ eth_accounts: {} }],
+      });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`wallet_getPermissions response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('wallet_getPermissions ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   const sendTransaction = async () => {
     const selectedAddress = provider?.selectedAddress;
+    // const selectedAddress = '0x8e0e30e296961f476e01184274ce85ae60184cb0'; // account1
 
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
@@ -567,6 +635,24 @@ const Demo = () => {
             <div className="action-buttons">
               <button style={{ padding: 10, margin: 10 }} onClick={connect}>
                 Request Accounts
+              </button>
+
+              <button style={{ padding: 10, margin: 10 }} onClick={ethAccounts}>
+                eth_accounts
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={walletRequest}
+              >
+                wallet_requestPermissions
+              </button>
+
+              <button
+                style={{ padding: 10, margin: 10 }}
+                onClick={getPermissions}
+              >
+                wallet_getPermissions
               </button>
 
               <button
