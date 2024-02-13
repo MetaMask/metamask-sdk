@@ -9,4 +9,9 @@ To use open two terminals connecting to the same or different webservers so you 
 ```bash
 SOCKET_SERVER=http://localhost:4000 yarn debug
 SOCKET_SERVER=http://localhost:4001 yarn debug
+
+# Once connected on multiple server you can interact with orders such as:
+# join <channel>
+# leave <channel>
+# message <channel> <message>
 ```
