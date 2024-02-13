@@ -46,7 +46,7 @@ const config = [
       {
         file: packageJson.browser,
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -87,13 +87,13 @@ const config = [
         name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         file: 'dist/browser/iife/metamask-sdk-communication-layer.js',
         format: 'iife',
         name: 'MetaMaskSDK',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -123,7 +123,7 @@ const config = [
       {
         file: packageJson['react-native'],
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -169,7 +169,7 @@ const config = [
         // This must be set to true if using a different file extension that '.node'
         dlopen: false,
         // Generate sourcemap
-        sourcemap: true,
+        sourcemap: false,
       }),
       typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
