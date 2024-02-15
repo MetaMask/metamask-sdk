@@ -152,12 +152,12 @@ const config = [
       {
         file: packageJson.main,
         format: 'cjs',
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         file: packageJson.module,
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
