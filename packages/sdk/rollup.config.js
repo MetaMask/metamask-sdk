@@ -141,13 +141,13 @@ const config = [
       {
         file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
         inlineDynamicImports: true,
       },
       {
         file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
         inlineDynamicImports: true,
       },
     ],
