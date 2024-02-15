@@ -15,18 +15,18 @@ const config = [
       {
         file: packageJson.module,
         format: 'es',
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         file: packageJson.main,
         format: 'cjs',
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [resolve(), commonjs(), typescript({ sourceMap: true }), terser()],

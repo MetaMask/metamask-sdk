@@ -35,7 +35,7 @@ const config = [
         file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
         inlineDynamicImports: true,
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -71,14 +71,14 @@ const config = [
         file: packageJson.unpkg,
         inlineDynamicImports: true,
         format: 'umd',
-        sourcemap: true,
+        sourcemap: false,
       },
       {
         file: 'dist/browser/iife/metamask-sdk.js',
         format: 'iife',
         name: 'MetaMaskSDK',
         inlineDynamicImports: true,
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -111,7 +111,7 @@ const config = [
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',
         inlineDynamicImports: true,
-        sourcemap: true,
+        sourcemap: false,
       },
     ],
     plugins: [
@@ -160,7 +160,7 @@ const config = [
         // This must be set to true if using a different file extension that '.node'
         dlopen: false,
         // Generate sourcemap
-        sourcemap: true,
+        sourcemap: false,
       }),
       typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
