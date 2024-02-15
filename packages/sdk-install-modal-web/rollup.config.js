@@ -29,7 +29,7 @@ const config = [
         sourcemap: false,
       },
     ],
-    plugins: [resolve(), commonjs(), typescript({ sourceMap: false }), terser()],
+    plugins: [resolve(), commonjs(), typescript({ sourceMap: true }), terser()],
   },
 ];
 
