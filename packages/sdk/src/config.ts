@@ -27,6 +27,7 @@ export const RPC_METHODS = {
   METAMASK_OPEN: 'metamask_open',
   METAMASK_BATCH: 'metamask_batch',
   PERSONAL_SIGN: 'personal_sign',
+  WALLET_REQUESTPERMISSIONS: 'wallet_requestPermissions',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',
   ETH_ACCOUNTS: 'eth_accounts',
   ETH_CHAINID: 'eth_chainId',
