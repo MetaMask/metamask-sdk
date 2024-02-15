@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0]
+### Uncategorized
+- feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
+- consensys.net -> consensys.io ([#605](https://github.com/MetaMask/metamask-sdk/pull/605))
+
 ## [0.1.6]
 ### Added
 - feat: ui quick swap and new rpc call metamask_open ([#572](https://github.com/MetaMask/metamask-sdk/pull/572))
@@ -45,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.6...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.2.0...HEAD
+[0.2.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.6...@metamask/sdk-ui@0.2.0
 [0.1.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.5...@metamask/sdk-ui@0.1.6
 [0.1.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.4...@metamask/sdk-ui@0.1.5
 [0.1.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.3...@metamask/sdk-ui@0.1.4
