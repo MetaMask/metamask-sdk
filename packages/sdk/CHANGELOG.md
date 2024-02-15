@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.15.0]
 ### Added
+- feat: allow connect with request_permissions ([#685](https://github.com/MetaMask/metamask-sdk/pull/685))
 - feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
 
 ## [0.14.3]
