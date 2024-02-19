@@ -51,7 +51,9 @@ const initializeMobileProvider = ({
   const dappInfo = sdk.options.dappMetadata;
   const sdkInfo = `Sdk/Javascript SdkVersion/${
     packageJson.version
-  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
+  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name} dAppTitle/${
+    dappInfo.name
+  }`;
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
@@ -148,6 +150,7 @@ const initializeMobileProvider = ({
 
     const ALLOWED_CONNECT_METHODS = [
       RPC_METHODS.ETH_REQUESTACCOUNTS,
+      RPC_METHODS.WALLET_REQUESTPERMISSIONS,
       RPC_METHODS.METAMASK_CONNECTSIGN,
       RPC_METHODS.METAMASK_CONNECTWITH,
     ];

@@ -20,6 +20,7 @@ export const SendAnalytics = async (
   const serverUrl = socketServerUrl.endsWith('/')
     ? `${socketServerUrl}debug`
     : `${socketServerUrl}/debug`;
+
   const body = JSON.stringify(parameters);
 
   const response = await crossFetch(serverUrl, {

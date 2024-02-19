@@ -20,6 +20,7 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   const localeUrl =
     typeof window !== 'undefined' ? window.location.href : socketServer;
 
+  const currentUrl = location.protocol + '//' + location.host;
   const updateSocketServer = () => {
     // TODO let user input the actual server
     const newServer = isProdServer
@@ -58,9 +59,9 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
         />
       </View>
       {showQRCode && (
-        <View style={{ alignItems: 'center', padding: 10, maxWidth: '100%' }}>
-          <QRCode value={localeUrl} size={200} />
-          <Text numberOfLines={3}>{localeUrl}</Text>
+        <View style={{ alignItems: 'center', padding: 10 }}>
+          <QRCode value={socketServer} size={200} />
+          <Text>{socketServer}</Text>
         </View>
       )}
     </View>

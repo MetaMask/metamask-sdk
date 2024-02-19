@@ -1,5 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
-import { io, Socket } from 'socket.io-client';
+import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
@@ -105,9 +105,10 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.state.communicationServerUrl !== DEFAULT_SERVER_URL &&
       logging?.plaintext === true;
 
-    const options = {
+    const options: Partial<ManagerOptions & SocketOptions> = {
       autoConnect: false,
-      transports: DEFAULT_SOCKET_TRANSPORTS,
+      transports: DEFAULT_SOCKET_TRANSPORTS, // ['polling', 'websocket']
+      withCredentials: true,
     };
 
     if (transports) {

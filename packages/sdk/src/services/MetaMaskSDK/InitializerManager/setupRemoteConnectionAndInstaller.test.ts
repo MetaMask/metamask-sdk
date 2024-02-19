@@ -49,7 +49,7 @@ describe('setupRemoteConnectionAndInstaller', () => {
       analytics: instance.analytics,
       dappMetadata: instance.options.dappMetadata,
       _source: instance.options._source,
-      enableDebug: true,
+      enableAnalytics: true,
       timer: instance.options.timer,
       sdk: instance,
       platformManager: instance.platformManager,

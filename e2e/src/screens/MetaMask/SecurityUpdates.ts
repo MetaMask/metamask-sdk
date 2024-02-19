@@ -16,6 +16,11 @@ class SecurityUpdatesScreen {
   }
 
   async tapNoThanksSecurityUpdates(): Promise<void> {
+    await (
+      await this.noThanksSecurityUpdates
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.noThanksSecurityUpdates).click();
   }
 }

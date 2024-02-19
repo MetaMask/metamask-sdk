@@ -6,8 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.14.1]
+## [0.15.0]
 ### Uncategorized
+- chore: sourcemaps ([#687](https://github.com/MetaMask/metamask-sdk/pull/687))
+- Revert "Release 48.0.0" ([#686](https://github.com/MetaMask/metamask-sdk/pull/686))
+- Release 48.0.0 ([#684](https://github.com/MetaMask/metamask-sdk/pull/684))
+- feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
+- feat: allow connect with request_permissions ([#685](https://github.com/MetaMask/metamask-sdk/pull/685))
+- feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
+
+## [0.14.3]
+### Added
+- feat: Conditionally Invoke getMobileProvider in setupExtensionPreferences Based on if Mobile Provider is Availabile ([#663](https://github.com/MetaMask/metamask-sdk/pull/663))
+- feat: add dAppTitle to Infura Header for Enhanced dApp Identification ([#666](https://github.com/MetaMask/metamask-sdk/pull/666))
+
+## [0.14.2]
+### Added
+- feat: change the 'enableDebug' option to 'enableAnalytics' ([#604](https://github.com/MetaMask/metamask-sdk/pull/604))
+- feat: create an auto-translate script for the internationalization files ([#595](https://github.com/MetaMask/metamask-sdk/pull/595))
+- chore: add expo demo app ([#577](https://github.com/MetaMask/metamask-sdk/pull/577))
+
+## [0.14.1]
+### Added
 - feat: ui quick swap and new rpc call metamask_open ([#572](https://github.com/MetaMask/metamask-sdk/pull/572))
 - fix: connect with not redirecting ([#561](https://github.com/MetaMask/metamask-sdk/pull/561))
 
@@ -218,7 +238,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.15.0...HEAD
+[0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.3...@metamask/sdk@0.15.0
+[0.14.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.2...@metamask/sdk@0.14.3
+[0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.1...@metamask/sdk@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.0...@metamask/sdk@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.13.0...@metamask/sdk@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.12.4...@metamask/sdk@0.13.0

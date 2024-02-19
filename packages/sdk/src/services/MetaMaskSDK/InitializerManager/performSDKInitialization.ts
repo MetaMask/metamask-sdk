@@ -43,7 +43,15 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   options.logging = options.logging ?? {};
   options.communicationLayerPreference =
     options.communicationLayerPreference ?? CommunicationLayerPreference.SOCKET;
-  options.enableDebug = options.enableDebug ?? true;
+
+  // TODO: it need to be removed and it was added for backward compatibility
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (options.enableDebug !== undefined) {
+    console.warn('enableDebug is removed. Please use enableAnalytics instead.');
+  }
+
+  options.enableAnalytics = options.enableAnalytics ?? true;
   options.injectProvider = options.injectProvider ?? true;
   options.shouldShimWeb3 = options.shouldShimWeb3 ?? true;
   options.useDeeplink = options.useDeeplink ?? false;

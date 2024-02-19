@@ -2,7 +2,10 @@ import { ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
-import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
+import {
+  IS_RUNNING_IN_BROWSER_STACK,
+  METAMASK_APP_NAME_ANDROID,
+} from '../../Constants';
 import { AndroidSelector } from '../../Selectors';
 
 class AndroidSettingsScreen {
@@ -40,7 +43,9 @@ class AndroidSettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//*[@resource-id="android:id/title" and @text="Opening links"]',
+          IS_RUNNING_IN_BROWSER_STACK
+            ? '(//android.widget.TextView[@resource-id="android:id/title"])[2]'
+            : '//*[@resource-id="android:id/title" and @text="Opening links"]',
         ),
       }),
     );
@@ -65,14 +70,29 @@ class AndroidSettingsScreen {
   }
 
   async tapMetaMaskLinksButton(): Promise<void> {
+    await (
+      await this.metaMaskQALinksButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.metaMaskQALinksButton).click();
   }
 
   async tapOpenSearchBarButton(): Promise<void> {
+    await (
+      await this.openSearchBarButton
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.openSearchBarButton).click();
   }
 
   async tapOpeningLinksSearchResult(): Promise<void> {
+    await (
+      await this.openingLinksSearchResult
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.openingLinksSearchResult).click();
   }
 
@@ -81,6 +101,11 @@ class AndroidSettingsScreen {
   }
 
   async tapSupportedWebAddresses(): Promise<void> {
+    await (
+      await this.supportedWebAddresses
+    ).waitForEnabled({
+      timeout: 5000,
+    });
     await (await this.supportedWebAddresses).click();
   }
 

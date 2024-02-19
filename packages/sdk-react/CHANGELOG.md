@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.14.1]
+## [0.15.0]
 ### Uncategorized
+- feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
+
+## [0.14.2]
+### Added
+- chore: add expo demo app ([#577](https://github.com/MetaMask/metamask-sdk/pull/577))
+- feat: change default options with useDeeplinks to false ([#576](https://github.com/MetaMask/metamask-sdk/pull/576))
+
+## [0.14.1]
+### Added
 - align version with sdk
 
 ## [0.14.0]
@@ -120,7 +129,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.15.0...HEAD
+[0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.2...@metamask/sdk-react@0.15.0
+[0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...@metamask/sdk-react@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.0...@metamask/sdk-react@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...@metamask/sdk-react@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...@metamask/sdk-react@0.13.0

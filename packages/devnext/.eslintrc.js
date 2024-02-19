@@ -19,9 +19,9 @@ module.exports = {
     'next.config.js',
   ],
   extends: [
-    "next",
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
+    "next",
   ],
   plugins: ['react', '@typescript-eslint', 'prettier'],
   rules: {

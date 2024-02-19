@@ -80,7 +80,9 @@ export function setupListeners(
         );
       }
 
-      state.analytics?.send({ event: TrackingEvents.AUTHORIZED });
+      if (options.enableAnalytics) {
+        state.analytics?.send({ event: TrackingEvents.AUTHORIZED });
+      }
 
       // Force connected state on provider
       // This prevents some rpc method being received in Ethereum before connected state is.
@@ -121,7 +123,9 @@ export function setupListeners(
   state.connector.on(EventType.TERMINATE, () => {
     if (!state.connector?.isAuthorized()) {
       // It means the connection was rejected by the user
-      state.analytics?.send({ event: TrackingEvents.REJECTED });
+      if (options.enableAnalytics) {
+        state.analytics?.send({ event: TrackingEvents.REJECTED });
+      }
     }
 
     if (state.platformManager?.isBrowser()) {

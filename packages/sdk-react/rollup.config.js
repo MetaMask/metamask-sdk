@@ -21,7 +21,7 @@ const config = [
         file: packageJson.module,
         inlineDynamicImports: true,
         format: 'esm',
-        sourcemap: true,
+        sourcemap: false,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
           // Not sure why rollup otherwise adds an extra '../' to the path
 
@@ -33,7 +33,7 @@ const config = [
         file: packageJson.main,
         inlineDynamicImports: true,
         format: 'cjs',
-        sourcemap: true,
+        sourcemap: false,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
           // Not sure why rollup otherwise adds an extra '../' to the path
 

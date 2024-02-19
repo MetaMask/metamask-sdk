@@ -12,7 +12,7 @@ config.services = (config.services ? config.services : []).concat([
         projectName: 'SDK e2e tests',
         buildName: 'SDK e2e PR regression',
       },
-      browserstackLocal: true,
+      browserstackLocal: false,
     },
   ],
 ]);
@@ -27,6 +27,8 @@ config.commonCapabilities = {
     debug: 'true',
     networkLogs: 'false',
     consoleLogs: 'info',
+    deviceOrientation: 'portrait',
+    screenOrientation: 'locked',
   },
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "45.0.0",
+  "version": "48.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -8,6 +8,7 @@
   },
   "workspaces": [
     "packages/sdk-socket-server",
+    "packages/sdk-socket-server-next",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
     "packages/sdk",
@@ -15,15 +16,16 @@
     "packages/sdk-react-ui",
     "packages/sdk-ui",
     "packages/sdk-lab",
+    "packages/devsocket",
     "packages/devreact",
     "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e"
   ],
   "scripts": {
-    "build": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
+    "build": "cd packages/sdk-socket-server && cd ../.. && yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
     "build:clean": "yarn clean && yarn build",
-    "light-build:": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:pre-tsc && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose --topological --parallel --no-private run build && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:post-tsc",
+    "light-build:": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn install && cd packages/sdk-socket-server-next && cd ../.. && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:pre-tsc && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose --topological --parallel --no-private run build && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:post-tsc",
     "light-build:clean": "yarn clean && yarn build:light",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces foreach --no-private run clean",
@@ -45,7 +47,9 @@
     "test:ci": "yarn workspaces foreach --no-private run test:ci",
     "pages": "yarn pages:build && yarn pages:build:serve",
     "pages:build": "bash ./scripts/build-static-dapps.sh",
-    "pages:build:serve": "yarn serve -l 1234 deployments"
+    "pages:build:serve": "yarn serve -l 1234 deployments",
+    "test:e2e:ios:ci": "cd e2e && yarn test:ios:browserstack",
+    "test:e2e:android:ci": "cd e2e && yarn test:android:browserstack"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
