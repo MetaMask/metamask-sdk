@@ -13,15 +13,19 @@ import MetaMaskButton from './MetaMaskButton/MetaMaskButton';
 
 export * from './MetaMaskUIProvider';
 export * from './hooks/MetaMaskWagmiHooks';
+
+export type {
+  SDKConfigProviderProps,
+  SDKState,
+  SDKConfigContextProps
+}
+
 export {
   MetaMaskButton,
   useSDK,
   useSDKConfig,
   SDKConfigProvider,
-  SDKConfigProviderProps,
   MetaMaskProvider,
   SDKContext,
-  SDKState,
   SDKConfigContext,
-  SDKConfigContextProps,
 };

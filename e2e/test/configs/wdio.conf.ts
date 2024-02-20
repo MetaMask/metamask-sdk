@@ -10,7 +10,11 @@ export const config: WebdriverIO.Config = {
   capabilities: [],
 
   services: [],
-  specs: ['../../specs/*.spec.ts'],
+  // specs: ['../../specs/*.spec.ts'],
+  suites: {
+    js_sdk: ['../../specs/js_sdk.spec.ts'],
+    android_sdk: ['../../specs/android_sdk.spec.ts'],
+  },
   mochaOpts: {
     timeout: 360000,
   },

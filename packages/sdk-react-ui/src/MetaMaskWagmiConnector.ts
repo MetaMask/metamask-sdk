@@ -30,11 +30,11 @@ class MetaMaskConnector extends InjectedConnector {
 
   protected shimDisconnectKey = `${this.id}.shimDisconnect`;
 
-  #sdk: MetaMaskSDK;
+  private sdk: MetaMaskSDK;
 
-  #debug = false;
+  private debug = false;
 
-  #provider?: SDKProvider;
+  private provider?: SDKProvider;
 
   constructor({
     chains,
@@ -63,46 +63,46 @@ class MetaMaskConnector extends InjectedConnector {
     super({ chains, options });
 
     if (options_?.debug) {
-      this.#debug = options_.debug;
+      this.debug = options_.debug;
     }
-    this.#sdk = sdk;
+    this.sdk = sdk;
     this.updateProviderListeners();
   }
 
   private updateProviderListeners() {
-    if (this.#provider) {
+    if (this.provider) {
       // Cleanup previous handlers first
-      this.#provider?.removeListener(
+      this.provider?.removeListener(
         'accountsChanged',
         this.onAccountsChanged as any,
       );
-      this.#provider?.removeListener(
+      this.provider?.removeListener(
         'chainChanged',
         this.onChainChanged as any,
       );
-      this.#provider?.removeListener('disconnect', this.onDisconnect as any);
+      this.provider?.removeListener('disconnect', this.onDisconnect as any);
     }
 
     // might need to re-initialize provider if it changed
-    this.#provider = this.#sdk.getProvider();
+    this.provider = this.sdk.getProvider();
 
-    this.#provider?.on('accountsChanged', this.onAccountsChanged as any);
-    this.#provider?.on('chainChanged', this.onChainChanged as any);
-    this.#provider?.on('disconnect', this.onDisconnect as any);
+    this.provider?.on('accountsChanged', this.onAccountsChanged as any);
+    this.provider?.on('chainChanged', this.onChainChanged as any);
+    this.provider?.on('disconnect', this.onDisconnect as any);
   }
 
   async getProvider() {
-    if (!this.#sdk.isInitialized()) {
-      await this.#sdk.init();
+    if (!this.sdk.isInitialized()) {
+      await this.sdk.init();
     }
-    if (!this.#provider) {
-      this.#provider = this.#sdk.getProvider();
+    if (!this.provider) {
+      this.provider = this.sdk.getProvider();
     }
-    return this.#provider as unknown as WindowProvider;
+    return this.provider as unknown as WindowProvider;
   }
 
   async disconnect() {
-    return this.#sdk.terminate();
+    return this.sdk.terminate();
   }
 
   async connect({ chainId }: { chainId?: number } = {}): Promise<{
@@ -114,17 +114,17 @@ class MetaMaskConnector extends InjectedConnector {
     provider: any;
   }> {
     try {
-      const accounts = (await this.#sdk.connect()) as Address[];
+      const accounts = (await this.sdk.connect()) as Address[];
 
       // Get latest provider instance (it may have changed based on user selection)
       this.updateProviderListeners();
 
-      this.#provider = this.#sdk.getProvider();
+      this.provider = this.sdk.getProvider();
       const selectedAccount: Address = accounts?.[0] ?? '0x';
 
-      if (this.#debug) {
+      if (this.debug) {
         console.debug(
-          `MetaMaskConnector::connect() TEST authorization ${Date.now()} authorized=${this.#sdk
+          `MetaMaskConnector::connect() TEST authorization ${Date.now()} authorized=${this.sdk
             ._getConnection()
             ?.isAuthorized()}`,
         );
@@ -132,12 +132,12 @@ class MetaMaskConnector extends InjectedConnector {
 
       // backward compatibility with older wallet (<7.3) version that return accounts before authorization
       if (
-        !this.#sdk.isExtensionActive() &&
-        !this.#sdk._getConnection()?.isAuthorized()
+        !this.sdk.isExtensionActive() &&
+        !this.sdk._getConnection()?.isAuthorized()
       ) {
         const waitForAuthorized = () => {
           return new Promise((resolve) => {
-            this.#sdk
+            this.sdk
               ._getConnection()
               ?.getConnector()
               .once(EventType.AUTHORIZED, () => {
@@ -148,10 +148,10 @@ class MetaMaskConnector extends InjectedConnector {
         await waitForAuthorized();
       }
 
-      let providerChainId: string | null | undefined = this.#provider?.chainId;
+      let providerChainId: string | null | undefined = this.provider?.chainId;
       if (!providerChainId) {
         // request chainId from provider
-        providerChainId = (await this.#provider?.request({
+        providerChainId = (await this.provider?.request({
           method: 'eth_chainId',
           params: [],
         })) as string;
@@ -178,7 +178,7 @@ class MetaMaskConnector extends InjectedConnector {
         isConnected: true,
         account: selectedAccount,
         chain,
-        provider: this.#provider,
+        provider: this.provider,
       };
 
       return connectResponse;

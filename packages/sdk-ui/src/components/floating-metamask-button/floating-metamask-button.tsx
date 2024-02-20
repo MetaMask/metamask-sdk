@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { FAB } from 'react-native-paper';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FABGroupFix from '../fab-group-fix/FabGroupFix';
 import { IconOriginal } from '../icons/IconOriginal';
@@ -92,11 +93,11 @@ export const FloatingMetaMaskButton = ({
         fabStyle={styles.fabStyle}
         style={styles.container}
         actions={[
-          {
-            icon: () => <IconOriginal />,
-            label: 'Open MetaMask',
-            onPress: () => console.log('Pressed notifications'),
-          },
+          // {
+          //   icon: () => <IconOriginal />,
+          //   label: 'Open MetaMask',
+          //   onPress: () => console.log('Pressed notifications'),
+          // },
           {
             label: 'Network',
             icon: 'swap-horizontal',
@@ -105,34 +106,34 @@ export const FloatingMetaMaskButton = ({
               setModalOpen(true);
             },
           },
-          {
-            label: 'Buy ETH',
-            icon: 'swap-horizontal',
-            onPress: () => {
-              provider?.request({
-                method: 'metamask_open',
-                params: [{ target: 'buy' }],
-              });
-            },
-          },
-          {
-            label: 'SWAP',
-            icon: 'swap-horizontal',
-            onPress: () => {
-              setTarget('swap');
-              setModalOpen(true);
-            },
-          },
-          {
-            icon: ({ color }) => (
-              <MaterialIcons name="price-change" color={color} size={24} />
-            ),
-            label: 'Infura GAS Api',
-            onPress: () => {
-              setTarget('gasprice');
-              setModalOpen(true);
-            },
-          },
+          // {
+          //   label: 'Buy ETH',
+          //   icon: 'swap-horizontal',
+          //   onPress: () => {
+          //     provider?.request({
+          //       method: 'metamask_open',
+          //       params: [{ target: 'buy' }],
+          //     });
+          //   },
+          // },
+          // {
+          //   label: 'SWAP',
+          //   icon: 'swap-horizontal',
+          //   onPress: () => {
+          //     setTarget('swap');
+          //     setModalOpen(true);
+          //   },
+          // },
+          // {
+          //   icon: ({ color }) => (
+          //     <MaterialIcons name="price-change" color={color} size={24} />
+          //   ),
+          //   label: 'Infura GAS Api',
+          //   onPress: () => {
+          //     setTarget('gasprice');
+          //     setModalOpen(true);
+          //   },
+          // },
           {
             label: 'Disconnect',
             icon: 'logout',

@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "47.0.0",
+  "version": "48.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -45,6 +45,9 @@
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces foreach --no-private run test",
     "test:ci": "yarn workspaces foreach --no-private run test:ci",
+    "pages": "yarn pages:build && yarn pages:build:serve",
+    "pages:build": "bash ./scripts/build-static-dapps.sh",
+    "pages:build:serve": "yarn serve -l 1234 deployments",
     "test:e2e:ios:ci": "cd e2e && yarn test:ios:browserstack",
     "test:e2e:android:ci": "cd e2e && yarn test:android:browserstack"
   },
@@ -78,6 +81,7 @@
     "patch-package": "^6.4.7",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",
+    "serve": "^14.2.1",
     "ts-jest": "^29.0.3",
     "typescript": "^4.3.5"
   },

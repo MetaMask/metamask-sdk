@@ -17,7 +17,10 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   const { socketServer, useDeeplink, lang, infuraAPIKey, setAppContext } =
     useSDKConfig();
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
+  const localeUrl =
+    typeof window !== 'undefined' ? window.location.href : socketServer;
 
+  const currentUrl = location.protocol + '//' + location.host;
   const updateSocketServer = () => {
     // TODO let user input the actual server
     const newServer = isProdServer
