@@ -2,6 +2,7 @@
   "name": "react-metamask-button",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",

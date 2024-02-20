@@ -1,9 +1,11 @@
-**/dist
 **/*__GENERATED*
 .vscode
 # sed backup files
 *.*-e
 **/.sdk-comm
+
+deployments/
+!deployments/dapps
 
 # Logs
 logs

@@ -1,7 +1,8 @@
 {
-  "name": "react-dapp-sdk",
+  "name": "sdk-playground",
   "version": "0.14.0",
   "private": true,
+  "homepage": "./",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
@@ -31,7 +32,7 @@
     "react-native-vector-icons": "^10.0.2",
     "react-native-web": "^0.19.9",
     "react-router": "^6.18.0",
-    "react-router-dom": "^6.18.0",
+    "react-router-dom": "^6.21.1",
     "react-scripts": "5.0.1",
     "stream-browserify": "^3.0.0",
     "web-vitals": "^2.1.4"

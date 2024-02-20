@@ -59,6 +59,17 @@ const {
   assets,
 } = DS;
 
+export type {
+  SDKConfigProviderProps,
+  SDKState,
+  SDKConfigContextProps,
+  RPCHistoryViewerProps,
+  SDKConfigCardProps,
+  SDKConfigProps,
+  SDKDebugPanelProps,
+  SDKStatusProps,
+};
+
 export {
   AddressCopyButton,
   Avatar,
@@ -81,15 +92,10 @@ export {
   MetaMaskButton,
   PreviewScreen,
   RPCHistoryViewer,
-  RPCHistoryViewerProps,
   SDKConfig,
   SDKConfigCard,
-  SDKConfigCardProps,
-  SDKConfigProps,
   SDKDebugPanel,
-  SDKDebugPanelProps,
   SDKStatus,
-  SDKStatusProps,
   Tag,
   TagUrl,
   Text,
@@ -107,11 +113,8 @@ export {
 export {
   MetaMaskProvider,
   SDKConfigContext,
-  SDKConfigContextProps,
   SDKConfigProvider,
-  SDKConfigProviderProps,
   SDKContext,
-  SDKState,
   useSDK,
   useSDKConfig,
 };

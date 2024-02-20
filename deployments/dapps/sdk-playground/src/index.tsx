@@ -19,30 +19,55 @@ import { Demo } from './pages/demo';
 import { Onboard } from './pages/onboard';
 import reportWebVitals from './reportWebVitals';
 
-const router = createBrowserRouter([
+function getBasePath(url: string) {
+  const parsedUrl = new URL(url);
+  const pathParts = parsedUrl.pathname
+    .split('/')
+    .filter((part) => part.length > 0);
+
+  // Check if the last character of the pathname is a slash
+  const hasTrailingSlash = parsedUrl.pathname.endsWith('/');
+
+  if (pathParts.length === 0 || !hasTrailingSlash) {
+    return '/';
+  } else {
+    return `/${pathParts.join('/')}/`;
+  }
+}
+
+// extract base path from url
+const basePath = getBasePath(window.location.href);
+console.log(`Base path: ${basePath}`);
+
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: (
+        <>
+          <App />
+          <FloatingMetaMaskButton distance={{ bottom: 40 }} />
+        </>
+      ),
+    },
+    {
+      path: '/demo',
+      element: (
+        <>
+          <Demo />
+          <FloatingMetaMaskButton distance={{ bottom: 40 }} />
+        </>
+      ),
+    },
+    {
+      path: '/onboard',
+      element: <Onboard />,
+    },
+  ],
   {
-    path: '/',
-    element: (
-      <>
-        <App />
-        <FloatingMetaMaskButton distance={{ bottom: 40 }} />
-      </>
-    ),
+    basename: basePath,
   },
-  {
-    path: '/demo',
-    element: (
-      <>
-        <Demo />
-        <FloatingMetaMaskButton distance={{ bottom: 40 }} />
-      </>
-    ),
-  },
-  {
-    path: '/onboard',
-    element: <Onboard />,
-  },
-]);
+);
 
 const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   const {
