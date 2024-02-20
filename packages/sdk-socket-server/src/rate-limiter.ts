@@ -1,35 +1,36 @@
-/* eslint-disable node/no-process-env */
-require('dotenv').config();
-const os = require('os');
-const { RateLimiterMemory } = require('rate-limiter-flexible');
+import os from 'os';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
+import { logger } from './logger';
+import { isDevelopment } from '.';
 
-let rateLimitPoints = process.env.RATE_LIMIT_POINTS_MAX;
-let rateLimitMessagePoints = process.env.RATE_LIMIT_MESSAGE_POINTS_MAX;
-const rateLimitPointsMax = process.env.RATE_LIMIT_POINTS_MAX || 100;
-const rateLimitMessagePointsMax =
-  process.env.RATE_LIMIT_MESSAGE_POINTS_MAX || 1000;
-let lastConnectionErrorTimestamp;
+let rateLimitPoints = 10;
+let rateLimitMessagePoints = 100;
+const rateLimitPointsMax = 40;
+const rateLimitMessagePointsMax = 400;
+let lastConnectionErrorTimestamp: number | null = null;
 
 // Store the initial values
 const initialRateLimitPoints = rateLimitPoints;
 const initialRateLimitMessagePoints = rateLimitMessagePoints;
 
 // Create the rate limiters with initial points
+// eslint-disable-next-line import/no-mutable-exports
 let rateLimiter = new RateLimiterMemory({
   points: rateLimitPoints,
   duration: 1,
 });
 
-let rateLimiterMesssage = new RateLimiterMemory({
+// eslint-disable-next-line import/no-mutable-exports
+let rateLimiterMessage = new RateLimiterMemory({
   points: rateLimitMessagePoints,
   duration: 1,
 });
 
-const setLastConnectionErrorTimestamp = (timestamp) => {
+const setLastConnectionErrorTimestamp = (timestamp: number): void => {
   lastConnectionErrorTimestamp = timestamp;
 };
 
-const resetRateLimits = () => {
+const resetRateLimits = (): void => {
   const tenSecondsPassedSinceLastError =
     lastConnectionErrorTimestamp &&
     Date.now() - lastConnectionErrorTimestamp >= 10000;
@@ -40,15 +41,15 @@ const resetRateLimits = () => {
     rateLimitMessagePoints = initialRateLimitMessagePoints;
   }
 
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
+  if (isDevelopment) {
+    logger.info(
+      `DEBUG> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+      { rateLimitPoints, rateLimitMessagePoints },
+    );
+  }
 };
 
-const increaseRateLimits = (
-  cpuUsagePercentMin,
-  // freeMemoryPercentMin
-) => {
+const increaseRateLimits = (cpuUsagePercentMin: number): void => {
   // Check the CPU usage
   const cpuLoad = os.loadavg()[0]; // 1 minute load average
   const numCpus = os.cpus().length;
@@ -60,15 +61,13 @@ const increaseRateLimits = (
   const memoryUsagePercent = ((totalMemory - freeMemory) / totalMemory) * 100;
   const freeMemoryPercent = 100 - memoryUsagePercent;
 
-  console.log(
-    `INFO> CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
+  logger.info(
+    `increase rate limit CPU usage: ${cpuUsagePercent}% - Free memory: ${freeMemoryPercent}%`,
+    { cpuUsagePercent, freeMemoryPercent },
   );
 
   // If CPU is not at 100% and there is at least 10% of free memory
-  if (
-    cpuUsagePercent <= cpuUsagePercentMin
-    // && freeMemoryPercent >= freeMemoryPercentMin
-  ) {
+  if (cpuUsagePercent <= cpuUsagePercentMin) {
     // Increase the rate limits by steps of 5 and 10, up to a max of 50 and 500
     rateLimitPoints = Math.min(rateLimitPoints + 5, rateLimitPointsMax);
     rateLimitMessagePoints = Math.min(
@@ -90,19 +89,22 @@ const increaseRateLimits = (
     duration: 1,
   });
 
-  rateLimiterMesssage = new RateLimiterMemory({
+  rateLimiterMessage = new RateLimiterMemory({
     points: rateLimitMessagePoints,
     duration: 1,
   });
 
-  console.log(
-    `INFO> RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
-  );
+  if (isDevelopment) {
+    logger.info(
+      `RL points: ${rateLimitPoints} - RL message points: ${rateLimitMessagePoints}`,
+      { rateLimitPoints, rateLimitMessagePoints },
+    );
+  }
 };
 
-module.exports = {
+export {
   rateLimiter,
-  rateLimiterMesssage,
+  rateLimiterMessage,
   resetRateLimits,
   increaseRateLimits,
   setLastConnectionErrorTimestamp,
