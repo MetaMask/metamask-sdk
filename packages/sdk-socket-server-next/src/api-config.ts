@@ -4,6 +4,7 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { createClient } from 'redis';
 import { logger } from './logger';
@@ -17,15 +18,25 @@ const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries 
 
 const app = express();
 
+const limiter = rateLimit({
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes).
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Use an external store for consistency across multiple server instances.
+});
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
+// Apply the rate limiting middleware to all requests.
+app.use(limiter);
 
 async function inspectRedis(key?: string) {
-  if (key) {
+  if (key && typeof key === 'string') {
     const value = await redisClient.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
@@ -70,6 +81,11 @@ app.post('/evt', async (_req, res) => {
     logger.debug(`Received event /debug`, body);
 
     const id: string = body.id || 'socket.io-server';
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ status: 'error' });
+    }
+
     let userIdHash = await redisClient.get(id);
 
     if (!userIdHash) {

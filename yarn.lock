@@ -8277,6 +8277,7 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     express: ^4.18.2
+    express-rate-limit: ^7.1.5
     helmet: ^5.1.1
     ioredis: ^5.3.2
     jest: ^29.6.4
@@ -8333,6 +8334,7 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     express: ^4.18.2
+    express-rate-limit: ^7.1.5
     helmet: ^5.1.1
     ioredis: ^5.3.2
     jest: ^29.6.4
@@ -24295,6 +24297,15 @@ __metadata:
   version: 3.1.1
   resolution: "exponential-backoff@npm:3.1.1"
   checksum: 3d21519a4f8207c99f7457287291316306255a328770d320b401114ec8481986e4e467e854cb9914dd965e0a1ca810a23ccb559c642c88f4c7f55c55778a9b48
+  languageName: node
+  linkType: hard
+
+"express-rate-limit@npm:^7.1.5":
+  version: 7.1.5
+  resolution: "express-rate-limit@npm:7.1.5"
+  peerDependencies:
+    express: 4 || 5 || ^5.0.0-beta.1
+  checksum: bdf6ddf4f8c8659d31de6ec1f088b473b2cb4180eb09ae234a279c88744832276e5c1482d530875110c90e314b51a7720bcfb2b3139c1b9e6bf652ba4b59f192
   languageName: node
   linkType: hard
 
