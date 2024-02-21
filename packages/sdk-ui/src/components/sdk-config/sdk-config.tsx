@@ -1,7 +1,7 @@
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import { useSDKConfig } from '@metamask/sdk-react';
 import React from 'react';
-import { View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import Text from '../../design-system/components/Texts/Text';
 
@@ -17,8 +17,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   const { socketServer, useDeeplink, lang, infuraAPIKey, setAppContext } =
     useSDKConfig();
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
-  const localeUrl =
-    typeof window !== 'undefined' ? window.location.href : socketServer;
 
   const currentUrl = location.protocol + '//' + location.host;
   const updateSocketServer = () => {
@@ -34,19 +32,12 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
   };
 
   return (
-    <View style={{ paddingBottom: 10 }}>
+    <View style={styles.container}>
       <ItemView label="Socket Server" value={socketServer} />
       <ItemView label="Infura API Key" value={infuraAPIKey} />
       <ItemView label="Lang" value={lang} />
       <ItemView label="Use DeepLink" value={JSON.stringify(useDeeplink)} />
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          gap: 10,
-          flexWrap: 'wrap',
-        }}
-      >
+      <View style={styles.buttonContainer}>
         <Button
           variant={ButtonVariants.Secondary}
           label={`Use ${isProdServer ? 'DEV' : 'PROD'} socket server`}
@@ -59,11 +50,27 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
         />
       </View>
       {showQRCode && (
-        <View style={{ alignItems: 'center', padding: 10 }}>
-          <QRCode value={socketServer} size={200} />
-          <Text>{socketServer}</Text>
+        <View style={styles.qrCodeContainer}>
+          <QRCode value={currentUrl} size={200} />
+          <Text>{currentUrl}</Text>
         </View>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  qrCodeContainer: {
+    alignItems: 'center',
+    padding: 10,
+  },
+});
