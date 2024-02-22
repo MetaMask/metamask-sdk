@@ -13,6 +13,10 @@ export async function checkInstallation(instance: MetaMaskInstaller) {
   const { state } = instance;
 
   const isInstalled = state.platformManager?.isMetaMaskInstalled();
+  console.log(
+    '🟠 ~ file: checkInstallation.ts:16 ~ checkInstallation ~ isInstalled:',
+    isInstalled,
+  );
 
   if (state.debug) {
     console.log(

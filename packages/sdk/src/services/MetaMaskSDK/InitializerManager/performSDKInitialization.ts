@@ -100,6 +100,9 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   await setupRemoteConnectionAndInstaller(instance, metamaskBrowserExtension);
 
   await initializeProviderAndEventListeners(instance);
+  console.log(
+    '🟠 ~ file: performSDKInitialization.ts:107 ~ performSDKInitialization ~ instance:',
+  );
   await handleAutoAndExtensionConnections(instance, preferExtension);
 
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.INITIALIZED);

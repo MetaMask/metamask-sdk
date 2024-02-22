@@ -1,15 +1,18 @@
 import { ChainRPC } from '@metamask/sdk-lab';
 import { useSDK } from '@metamask/sdk-react';
-import { MetaMaskButton, SDKStatus, RPCHistoryViewer } from '@metamask/sdk-ui';
+import { MetaMaskButton, RPCHistoryViewer, SDKStatus } from '@metamask/sdk-ui';
 import { ethers } from 'ethers';
 import Head from 'next/head';
 import { useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
+import { wagmiContractConfig } from '../contracts/wagmi';
 import { getSignParams } from '../utils/sign-utils';
 
 const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
     useSDK();
+
+  const [tokenId, setTokenId] = useState<string>('');
 
   const [response, setResponse] = useState<unknown>('');
   const [rpcError, setRpcError] = useState<unknown>();
@@ -116,6 +119,48 @@ const Demo = () => {
       setRequesting(false);
     }
   };
+
+  async function mintWagmiContract(tokenId: string) {
+    if (!window.ethereum) {
+      console.error('Ethereum provider (e.g., MetaMask) not found');
+      return;
+    }
+
+    try {
+      const provider = new ethers.providers.Web3Provider(
+        window.ethereum as any,
+      );
+
+      const signer = provider.getSigner();
+
+      const wagmiContract = new ethers.Contract(
+        wagmiContractConfig.address,
+        wagmiContractConfig.abi,
+        signer,
+      );
+
+      // Assuming the mint function in the Wagmi contract takes the tokenId as a parameter
+      // and that it's payable or nonpayable accordingly. Adjust the method call as needed.
+      const method = wagmiContract['mint(uint256)'] as (
+        t: bigint,
+      ) => Promise<any>;
+
+      console.log(wagmiContract);
+
+      console.log(method);
+
+      console.log(` 🔵 🔵 🔵 Minting token ${tokenId}...`);
+
+      const tx = await method(BigInt(tokenId));
+
+      // Wait for the transaction to be confirmed
+      await tx.wait();
+
+      console.log(`Minted token ${tokenId} successfully.`);
+    } catch (error) {
+      console.error('Failed to mint token:', error);
+    }
+  }
 
   const sendTransaction = async () => {
     const selectedAddress = provider?.selectedAddress;
@@ -706,6 +751,28 @@ const Demo = () => {
               >
                 sendTransaction
               </button>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: 10,
+                  margin: 10,
+                }}
+              >
+                <input
+                  onChange={(e) => setTokenId(e.target.value)}
+                  placeholder="token id"
+                  value={tokenId}
+                />
+
+                <button
+                  style={{ padding: 10, margin: 10 }}
+                  onClick={() => mintWagmiContract(tokenId)}
+                >
+                  Mint a wagmi:
+                </button>
+              </div>
 
               <button style={{ padding: 10, margin: 10 }} onClick={addGanache}>
                 Add Local Ganache Chain

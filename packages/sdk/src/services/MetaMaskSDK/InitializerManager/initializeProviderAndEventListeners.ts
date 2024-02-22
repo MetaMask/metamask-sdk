@@ -19,6 +19,9 @@ export async function initializeProviderAndEventListeners(
   instance: MetaMaskSDK,
 ) {
   const { options } = instance;
+  console.log(
+    '🟠 ~ file: initializeProviderAndEventListeners.ts:22 ~ instance:',
+  );
 
   // Inject our provider into window.ethereum
   instance.activeProvider = initializeMobileProvider({

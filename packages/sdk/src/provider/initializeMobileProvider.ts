@@ -320,7 +320,11 @@ const initializeMobileProvider = ({
         setInitializing(false);
 
         return response;
-      } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
+      } else if (METHODS_TO_REDIRECT[method]) {
+        console.log(
+          '🟠 ~ file: initializeMobileProvider.ts:315 ~ METHODS_TO_REDIRECT[method]:',
+          METHODS_TO_REDIRECT[method],
+        );
         // Should be connected to call f ==> redirect to RPCMS
         return f(...args);
       }
@@ -364,6 +368,11 @@ const initializeMobileProvider = ({
   const { request } = ethereum;
   // request<T>(args: RequestArguments): Promise<Maybe<T>>;
   ethereum.request = async (...args) => {
+    console.log(
+      '🟠 ~ file: initializeMobileProvider.ts:381 ~ ethereum.request= ~ args:',
+      args,
+    );
+
     return sendRequest(args?.[0].method, args, request, debug);
   };
 
@@ -372,6 +381,9 @@ const initializeMobileProvider = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore // TODO remove support for deprecated method
   ethereum.send = async (...args) => {
+    console.log(
+      '🟠 ~ file: initializeMobileProvider.ts:392 ~ ethereum.send= ~ args:',
+    );
     return sendRequest(args?.[0] as string, args, send, debug);
   };
 
