@@ -43,13 +43,7 @@ function App() {
   };
 
   const connectAndSign = async () => {
-    if (!account?.isConnected) {
-      await connectAsync({ connector: connectors[0] });
-    }
-
-    await signMessageAsync({
-      message: 'Hello, world!',
-    });
+    await window.ethereum.request({ method: 'metamask_connectSign' }, ['Hey!']);
   };
 
   return (
