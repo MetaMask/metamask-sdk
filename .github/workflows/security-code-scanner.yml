@@ -22,7 +22,7 @@ jobs:
             docs/
             e2e/
             tests/
-            
+            packages/development-tools/
             '**/mocks/'
             '**/__snapshots__/'
             '**/*.test.js*'
