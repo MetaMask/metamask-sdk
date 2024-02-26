@@ -4,7 +4,6 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { createClient } from 'redis';
 import { logger } from './logger';
@@ -18,13 +17,34 @@ const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries 
 
 const app = express();
 
-const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes).
-  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Use an external store for consistency across multiple server instances.
-});
+// FIXME enable correctly
+// let windowMsNum = 1;
+// try {
+//   if (process.env.REDIS_HTTP_WINDOW_MS_NUM) {
+//     windowMsNum = parseInt(process.env.REDIS_HTTP_WINDOW_MS_NUM, 16);
+//   }
+// } catch (err) {
+//   logger.warn(
+//     `Invalid REDIS_HTTP_WINDOW_MS_NUM env: ${process.env.REDIS_HTTP_WINDOW_MS_NUM}`,
+//   );
+// }
+
+// let httpLimit = 10_000_000;
+// try {
+//   if (process.env.REDIS_HTTP_LIMIT) {
+//     httpLimit = parseInt(process.env.REDIS_HTTP_LIMIT, 16);
+//   }
+// } catch (err) {
+//   logger.warn(`Invalid REDIS_HTTP_LIMIT env: ${process.env.REDIS_HTTP_LIMIT}`);
+// }
+
+// const limiter = rateLimit({
+//   windowMs: windowMsNum * 60 * 1000, // 1 minutes
+//   limit: httpLimit, // Limit each IP to 10000000 requests per `window` (here, per 5 minutes).
+//   standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+//   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+//   // store: ... , // Use an external store for consistency across multiple server instances.
+// });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -33,7 +53,7 @@ app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
 // Apply the rate limiting middleware to all requests.
-app.use(limiter);
+// app.use(limiter);
 
 async function inspectRedis(key?: string) {
   if (key && typeof key === 'string') {
