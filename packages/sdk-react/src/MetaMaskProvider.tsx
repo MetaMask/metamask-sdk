@@ -45,6 +45,7 @@ export interface SDKState {
   // Allow querying blockchain while wallet isn't connected
   readOnlyCalls: boolean;
   provider?: SDKProvider;
+  channelId?: string;
   error?: EthereumRpcError<unknown>;
   chainId?: string;
   balance?: string; // hex value in wei
@@ -86,6 +87,7 @@ const MetaMaskProviderClient = ({
   const [balanceProcessing, setBalanceProcessing] = useState<boolean>(false);
   const [balanceQuery, setBalanceQuery] = useState<string>('');
   const [account, setAccount] = useState<string>();
+  const [channelId, setChannelId] = useState<string>();
   const [error, setError] = useState<EthereumRpcError<unknown>>();
   const [provider, setProvider] = useState<SDKProvider>();
   const [status, setStatus] = useState<ServiceStatus>();
@@ -158,6 +160,7 @@ const MetaMaskProviderClient = ({
   useEffect(() => {
     // avoid asking balance multiple times on same account/chain
     const currentBalanceQuery = `${account}${chainId}`;
+    setChannelId(sdk?.getChannelId());
 
     if (account?.startsWith('0x') && chainId?.startsWith('0x') && currentBalanceQuery !== balanceQuery) {
       // Retrieve balance of account
@@ -285,6 +288,7 @@ const MetaMaskProviderClient = ({
         provider,
         rpcHistory,
         connecting,
+        channelId,
         account,
         balance,
         balanceProcessing,

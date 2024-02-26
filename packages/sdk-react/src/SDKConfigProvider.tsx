@@ -66,7 +66,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug
   useEffect(() => {
     // Load context from localStorage and URL (priority to URL)
     const loadContext = () => {
-      const storedContext = localStorage.getItem(STORAGE_LOCATION);
+      const storedContext = localStorage?.getItem(STORAGE_LOCATION);
       const initialContext: Partial<SDKConfigContextProps> = storedContext ? JSON.parse(storedContext)
         : {
           infuraAPIKey: initialInfuraKey,

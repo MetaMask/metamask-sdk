@@ -346,6 +346,22 @@ export class MetaMaskSDK extends EventEmitter2 {
     return universalLink;
   }
 
+  getChannelId() {
+    return this.remoteConnection?.getChannelConfig()?.channelId;
+  }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
+  }
+
+  getWalletStatus() {
+    return this.remoteConnection?.getConnector()?.getConnectionStatus();
+  }
+
   // TODO: remove once reaching sdk 1.0
   // Not exposed. Should only be used during dev.
   _getChannelConfig() {
@@ -382,13 +398,5 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
-  }
-
-  getRPCHistory() {
-    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
-  }
-
-  getVersion() {
-    return packageJson.version;
   }
 }
