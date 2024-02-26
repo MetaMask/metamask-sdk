@@ -17,7 +17,6 @@ const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries 
 
 const app = express();
 
-// FIXME enable correctly
 // let windowMsNum = 1;
 // try {
 //   if (process.env.REDIS_HTTP_WINDOW_MS_NUM) {
