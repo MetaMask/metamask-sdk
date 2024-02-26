@@ -27,7 +27,7 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
     connecting,
     balance,
     balanceProcessing,
-    status: serviceStatus,
+    channelId,
     extensionActive,
     account,
     sdk,
@@ -47,10 +47,7 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
           <ItemView label="SDK Version" value={sdk?.getVersion()} />
           {!extensionActive && (
             <>
-              <ItemView
-                label="ChannelId"
-                value={serviceStatus?.channelConfig?.channelId}
-              />
+              <ItemView label="ChannelId" value={channelId} />
             </>
           )}
           <ItemView label="Connected" value={connected ? 'YES' : 'NO'} />
