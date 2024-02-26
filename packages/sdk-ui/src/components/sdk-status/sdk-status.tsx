@@ -28,6 +28,7 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
     balance,
     balanceProcessing,
     channelId,
+    status,
     extensionActive,
     account,
     sdk,
@@ -48,6 +49,10 @@ export const SDKStatus = ({ response, requesting, error }: SDKStatusProps) => {
           {!extensionActive && (
             <>
               <ItemView label="ChannelId" value={channelId} />
+              <ItemView
+                label="Wallet Status"
+                value={status?.connectionStatus}
+              />
             </>
           )}
           <ItemView label="Connected" value={connected ? 'YES' : 'NO'} />
