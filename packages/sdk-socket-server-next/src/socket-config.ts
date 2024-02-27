@@ -1,11 +1,11 @@
 /* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
-
+// import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { redisClient } from './api-config';
+import { redisCluster } from './api-config';
 import { logger } from './logger';
 import {
   increaseRateLimits,
@@ -22,19 +22,16 @@ export const configureSocketServer = async (
 ): Promise<Server> => {
   const isDevelopment: boolean = process.env.NODE_ENV === 'development';
   const hasRateLimit = process.env.RATE_LIMITER === 'true';
-  const sdkKey = process.env.SDK_STREAM_NAME || 'sdk-key';
+  // const sdkKey = process.env.SDK_STREAM_NAME || 'sdk-key';
   const host = hostname();
-
-  // Establish connection to Redis server
-  await redisClient.connect();
 
   logger.info(
     `Start socket server with rate limiter: ${hasRateLimit} - isDevelopment: ${isDevelopment}`,
   );
 
-  const adapter = createAdapter(redisClient, {
-    streamName: sdkKey,
-  });
+  const subClient = redisCluster.duplicate();
+
+  const adapter = createAdapter(redisCluster, subClient);
 
   const io = new Server(server, {
     adapter,
@@ -52,7 +49,7 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await redisClient.hGet('channels', roomId);
+    const channelOccupancy = await redisCluster.hget('channels', roomId);
     console.log(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -64,7 +61,7 @@ export const configureSocketServer = async (
     }
 
     // Decrement the number of clients in the room
-    const channelOccupancy = await redisClient.hIncrBy('channels', roomId, -1);
+    const channelOccupancy = await redisCluster.hincrby('channels', roomId, -1);
 
     console.log(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -73,7 +70,7 @@ export const configureSocketServer = async (
     if (channelOccupancy <= 0) {
       console.log(`'leave-room' room ${roomId} was deleted`);
       // remove from redis
-      await redisClient.hDel('channels', roomId);
+      await redisCluster.hdel('channels', roomId);
     } else {
       console.log(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
@@ -92,6 +89,8 @@ export const configureSocketServer = async (
       clientIp,
       host,
     });
+
+    logger.debug(`test debug`);
 
     socket.on('create_channel', async (channelId: string) => {
       logger.info('create_channel', { id: channelId, socketId, clientIp });
@@ -137,7 +136,7 @@ export const configureSocketServer = async (
         // socket.broadcast.socketsJoin(channelId);
 
         // Initialize the channel occupancy to 1
-        await redisClient.hSet('channels', channelId, 1);
+        await redisCluster.hset('channels', channelId, 1);
 
         return socket.emit(`channel_created-${channelId}`, channelId);
       } catch (error) {
@@ -250,107 +249,115 @@ export const configureSocketServer = async (
         return;
       }
 
-      const sRedisChannelOccupancy = await redisClient.hGet(
-        'channels',
-        channelId,
-      );
-      let channelOccupancy = 0;
-      logger.debug(
-        `join_channel ${channelId} from ${socketId} sRedisChannelOccupancy=${sRedisChannelOccupancy}`,
-      );
-
-      if (sRedisChannelOccupancy) {
-        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
-      } else {
+      logger.debug(`join_channel ${channelId} from ${socketId}`);
+      try {
+        const sRedisChannelOccupancy = await redisCluster.hget(
+          'channels',
+          channelId,
+        );
         logger.debug(
-          `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
+          `join_channel ${channelId} from ${socketId} sRedisChannelOccupancy=${sRedisChannelOccupancy}`,
         );
-        await redisClient.hSet('channels', channelId, 0);
-      }
-
-      // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
-      const room = io.sockets.adapter.rooms.get(channelId);
-      // roomOccupancy can potentially be 0 instead of 1 if the dapp and wallet were dispatched on different servers
-      // channelOccupancy should be the correct value as it represents the global state accross all servers
-      let roomOccupancy = room?.size ?? 0;
-
-      const isSocketInRoom = room?.has(socketId) ?? false;
-      if (isSocketInRoom) {
-        logger.warn(
-          `Socket ${socketId} already in room ${channelId} channelOccupancy=${channelOccupancy} roomOccupancy=${roomOccupancy}`,
-        );
-        socket.emit(`message-${channelId}`, { error: 'already joined' });
-        return;
-      }
-
-      if (roomOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} room already full`);
-        socket.emit(`message-${channelId}`, { error: 'room already full' });
-        return;
-      }
-
-      if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} redis channel appears full`);
-        socket.emit(`message-${channelId}`, { error: 'room already full' });
-        return;
-      }
-
-      // Join and increment the number of clients in the room
-      socket.join(channelId);
-      channelOccupancy = await redisClient.hIncrBy('channels', channelId, 1);
-      //  Refresh the room occupancy -it should now matches channel occupancy
-      roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
-
-      // There may be -1 discrepency between room and channel occupancy depending if they are connected on the same server or not
-      if (channelOccupancy - roomOccupancy > 1 || channelOccupancy < 0) {
-        // Send warning if anything different than allowed discrepancy
-        logger.warn(
-          `INVALID occupancy room=${roomOccupancy} channel=${channelOccupancy}`,
-        );
-      }
-
-      logger.info(
-        `Client ${socketId} joined channel ${channelId}. Occupancy: ${channelOccupancy}`,
-        {
-          id: channelId,
-          socketId,
-          clientIp,
-          roomOccupancy,
-          channelOccupancy,
-        },
-      );
-
-      if (channelOccupancy < MAX_CLIENTS_PER_ROOM) {
+        let channelOccupancy = 0;
         logger.debug(
-          `emit clients_waiting_to_join-${channelId} - channelCount = ${channelOccupancy}`,
+          `join_channel ${channelId} from ${socketId} sRedisChannelOccupancy=${sRedisChannelOccupancy}`,
         );
 
-        socket.emit(`clients_waiting_to_join-${channelId}`, channelOccupancy);
-        return;
-      }
+        if (sRedisChannelOccupancy) {
+          channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+        } else {
+          logger.debug(
+            `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
+          );
+          await redisCluster.hset('channels', channelId, 0);
+        }
 
-      socket.on('disconnect', async (error) => {
-        logger.info(`disconnect from room ${channelId}`, {
-          id: channelId,
-          socketId,
-          clientIp,
-          error,
+        // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
+        const room = io.sockets.adapter.rooms.get(channelId);
+        // roomOccupancy can potentially be 0 instead of 1 if the dapp and wallet were dispatched on different servers
+        // channelOccupancy should be the correct value as it represents the global state accross all servers
+        let roomOccupancy = room?.size ?? 0;
+
+        const isSocketInRoom = room?.has(socketId) ?? false;
+        if (isSocketInRoom) {
+          logger.warn(
+            `Socket ${socketId} already in room ${channelId} channelOccupancy=${channelOccupancy} roomOccupancy=${roomOccupancy}`,
+          );
+          socket.emit(`message-${channelId}`, { error: 'already joined' });
+          return;
+        }
+
+        if (roomOccupancy >= MAX_CLIENTS_PER_ROOM) {
+          logger.warn(`join_channel ${channelId} room already full`);
+          socket.emit(`message-${channelId}`, { error: 'room already full' });
+          return;
+        }
+
+        if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
+          logger.warn(`join_channel ${channelId} redis channel appears full`);
+          socket.emit(`message-${channelId}`, { error: 'room already full' });
+          return;
+        }
+
+        // Join and increment the number of clients in the room
+        socket.join(channelId);
+        channelOccupancy = await redisCluster.hincrby('channels', channelId, 1);
+        //  Refresh the room occupancy -it should now matches channel occupancy
+        roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
+
+        // There may be -1 discrepency between room and channel occupancy depending if they are connected on the same server or not
+        if (channelOccupancy - roomOccupancy > 1 || channelOccupancy < 0) {
+          // Send warning if anything different than allowed discrepancy
+          logger.warn(
+            `INVALID occupancy room=${roomOccupancy} channel=${channelOccupancy}`,
+          );
+        }
+
+        logger.info(
+          `Client ${socketId} joined channel ${channelId}. Occupancy: ${channelOccupancy}`,
+          {
+            id: channelId,
+            socketId,
+            clientIp,
+            roomOccupancy,
+            channelOccupancy,
+          },
+        );
+
+        if (channelOccupancy < MAX_CLIENTS_PER_ROOM) {
+          logger.debug(
+            `emit clients_waiting_to_join-${channelId} - channelCount = ${channelOccupancy}`,
+          );
+
+          socket.emit(`clients_waiting_to_join-${channelId}`, channelOccupancy);
+          return;
+        }
+
+        socket.on('disconnect', async (error) => {
+          logger.info(`disconnect from room ${channelId}`, {
+            id: channelId,
+            socketId,
+            clientIp,
+            error,
+          });
+
+          // Inform the room of the disconnection
+          socket.broadcast
+            .to(channelId)
+            .emit(`clients_disconnected-${channelId}`, error);
         });
 
-        // Inform the room of the disconnection
-        socket.broadcast
-          .to(channelId)
-          .emit(`clients_disconnected-${channelId}`, error);
-      });
+        if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
+          logger.info(`emitting clients_connected-${channelId}`, channelId);
 
-      if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.info(`emitting clients_connected-${channelId}`, channelId);
-
-        // imform all clients of new arrival and that room is ready
-        socket.broadcast
-          .to(channelId)
-          .emit(`clients_connected-${channelId}`, channelId);
-        socket.emit(`clients_connected-${channelId}`, channelId);
+          // imform all clients of new arrival and that room is ready
+          socket.broadcast
+            .to(channelId)
+            .emit(`clients_connected-${channelId}`, channelId);
+          socket.emit(`clients_connected-${channelId}`, channelId);
+        }
+      } catch (error) {
+        logger.error('ERROR> Error on join_channel', error);
       }
     });
 
@@ -386,7 +393,8 @@ export const configureSocketServer = async (
 
         const room = io.sockets.adapter.rooms.get(channelId);
         const occupancy = room ? room.size : 0;
-        const channelOccupancy = await redisClient.hGet('channels', channelId);
+        const channelOccupancy =
+          (await redisCluster.hget('channels', channelId)) ?? undefined;
 
         logger.info(
           `check_room occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,

@@ -12,6 +12,7 @@ SOCKET_SERVER=http://localhost:4001 yarn debug
 
 # Once connected on multiple server you can interact with orders such as:
 # join <channel>
+# join 804626d4-aecd-400a-9d77-6d9e5ca14f69
 # leave <channel>
 # message <channel> <message>
 ```

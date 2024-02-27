@@ -6,25 +6,55 @@ import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import { createClient } from 'redis';
+import Redis from 'ioredis'; // Import ioredis
 import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
-// Initialize Redis client
-// Provide a default URL if REDIS_URL is not set
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-export const redisClient = createClient({ url: redisUrl });
+// Initialize Redis Cluster client
+// Provide default nodes if REDIS_NODES is not set
+// Example REDIS_NODES format: "redis://host1:6379,redis://host2:6379"
+const redisNodes = process.env.REDIS_NODES
+  ? process.env.REDIS_NODES.split(',')
+  : ['redis://localhost:6379'];
+logger.info('Redis nodes:', redisNodes);
+
+// export const redisCluster = new Redis.Cluster(redisNodes); // Initialize Redis Cluster
+export const redisCluster = new Redis.Cluster(
+  [
+    {
+      host: 'localhost',
+      port: 6380,
+    },
+    {
+      host: 'localhost',
+      port: 6381,
+    },
+  ],
+  {
+    showFriendlyErrorStack: true,
+  },
+); // Initialize Redis Cluster
+redisCluster.on('error', (error) => {
+  logger.error('Redis error:', error);
+});
+
+Redis.Cluster.prototype.valueOf = function () {
+  return this.status;
+};
+
+Redis.Command.prototype.valueOf = function () {
+  return this.name;
+};
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Application specific logging, throwing an error, or other logic here
+});
+
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
+const hasRateLimit = process.env.RATE_LIMITER === 'true';
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes).
-  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Use an external store for consistency across multiple server instances.
-});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,12 +62,44 @@ app.use(cors());
 app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
-// Apply the rate limiting middleware to all requests.
-app.use(limiter);
+
+if (hasRateLimit) {
+  // Conditionally apply the rate limiting middleware to all requests.
+  let windowMin = 1; // every 1minute
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      windowMin = parseInt(
+        process.env.RATE_LIMITER_HTTP_WINDOW_MINUTE ?? '1',
+        10,
+      );
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+  let limit = 100_000; // 100,000 requests per minute by default (unlimited...)
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      limit = parseInt(process.env.RATE_LIMITER_HTTP_LIMIT, 10);
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+
+  const limiterConfig = {
+    windowMs: windowMin * 60 * 1000,
+    limit,
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Use an external store for consistency across multiple server instances.
+  };
+  const limiter = rateLimit(limiterConfig);
+
+  logger.info('Rate limiter enabled', limiterConfig);
+  app.use(limiter);
+}
 
 async function inspectRedis(key?: string) {
   if (key && typeof key === 'string') {
-    const value = await redisClient.get(key);
+    const value = await redisCluster.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
 }
@@ -86,11 +148,16 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ status: 'error' });
     }
 
-    let userIdHash = await redisClient.get(id);
+    let userIdHash = await redisCluster.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
-      await redisClient.set(id, userIdHash, { EX: THIRTY_DAYS_IN_SECONDS });
+      await redisCluster.set(
+        id,
+        userIdHash,
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {
@@ -98,7 +165,7 @@ app.post('/evt', async (_req, res) => {
     }
 
     let userInfo;
-    const cachedUserInfo = await redisClient.get(userIdHash);
+    const cachedUserInfo = await redisCluster.get(userIdHash);
 
     if (cachedUserInfo) {
       logger.debug(`Cached user info found for ${userIdHash}`, cachedUserInfo);
@@ -124,9 +191,12 @@ app.post('/evt', async (_req, res) => {
         sdkVersion: body.sdkVersion || '',
       };
 
-      await redisClient.set(userIdHash, JSON.stringify(userInfo), {
-        EX: THIRTY_DAYS_IN_SECONDS,
-      });
+      await redisCluster.set(
+        userIdHash,
+        JSON.stringify(userInfo),
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {
