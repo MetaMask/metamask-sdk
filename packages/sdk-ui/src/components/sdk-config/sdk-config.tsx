@@ -14,8 +14,14 @@ export interface SDKConfigProps {
   showQRCode?: boolean;
 }
 export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
-  const { socketServer, useDeeplink, lang, infuraAPIKey, setAppContext } =
-    useSDKConfig();
+  const {
+    socketServer,
+    useDeeplink,
+    lang,
+    infuraAPIKey,
+    setAppContext,
+    reset,
+  } = useSDKConfig();
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
 
   const currentUrl = location.protocol + '//' + location.host;
@@ -29,6 +35,10 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
 
   const updateUseDeeplink = () => {
     setAppContext({ useDeeplink: !useDeeplink });
+  };
+
+  const onReset = () => {
+    reset();
   };
 
   return (
@@ -47,6 +57,12 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
           variant={ButtonVariants.Secondary}
           label={`Toggle Deeplink`}
           onPress={updateUseDeeplink}
+        />
+        <Button
+          variant={ButtonVariants.Secondary}
+          label={`Reset`}
+          isDanger={true}
+          onPress={onReset}
         />
       </View>
       {showQRCode && (
