@@ -40,8 +40,36 @@ services:
     depends_on:
       - cache
 
+  redis-master1:
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6380:6379"
+
+  redis-master2:
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6381:6379"
+
+  redis-master3:
+    build:
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6382:6379"
+
+  # cache is used if want to simulate single node redis architecture
   cache:
-    image: redis:latest
+    image: redis:7.2-alpine
     command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
       - '6379:6379'

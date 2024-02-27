@@ -1,0 +1,8 @@
+FROM redis:7.2-alpine
+# Copy the startup script into the container
+COPY redis-setup.sh /usr/local/bin/redis-setup.sh
+# Make sure the script is executable
+RUN chmod +x /usr/local/bin/redis-setup.sh
+
+# Override the entrypoint to use the setup script
+ENTRYPOINT ["redis-setup.sh"]
