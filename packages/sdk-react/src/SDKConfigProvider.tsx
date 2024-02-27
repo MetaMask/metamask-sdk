@@ -30,7 +30,9 @@ const initProps: SDKConfigContextProps = {
 export const SDKConfigContext = createContext({
   ...initProps,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setAppContext: (_: Partial<SDKConfigContextProps>) => { }, // placeholder implemented in the provider.
+  setAppContext: (_: Partial<SDKConfigContextProps>) => {}, // placeholder implemented in the provider.
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  reset: () => {}, // placeholder implemented in the provider.
 });
 
 export interface SDKConfigProviderProps {
@@ -132,9 +134,14 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug
     });
   };
 
+  const reset = () => {
+   updateAppContext({ ...initProps, socketServer: initialSocketServer ?? DEFAULT_SERVER_URL, infuraAPIKey: initialInfuraKey });
+  }
+
   // The context value now includes the state and the function to update it
   const contextValue = {
     ...appContext,
+    reset,
     setAppContext: updateAppContext,
   };
 
