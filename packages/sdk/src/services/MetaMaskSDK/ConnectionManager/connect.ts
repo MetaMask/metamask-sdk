@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 
 /**
@@ -13,15 +14,12 @@ import { MetaMaskSDK } from '../../../sdk';
  */
 export async function connect(instance: MetaMaskSDK) {
   if (!instance._initialized) {
-    if (instance.debug) {
-      console.log(`SDK::connect() provider not ready -- wait for init()`);
-    }
+    logger(`[MetaMaskSDK: connect()] provider not ready -- wait for init()`);
+
     await instance.init();
   }
 
-  if (instance.debug) {
-    console.debug(`SDK::connect()`, instance.activeProvider);
-  }
+  logger(`[MetaMaskSDK: connect()] activeProvider=${instance.activeProvider}`);
 
   if (!instance.activeProvider) {
     throw new Error(`SDK state invalid -- undefined provider`);

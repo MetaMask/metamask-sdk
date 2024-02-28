@@ -1,3 +1,4 @@
+import { loggerRemoteLayer } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
 
@@ -14,11 +15,10 @@ import { EventType } from '../../../types/EventType';
 export function handleChannelCreatedEvent(instance: RemoteCommunication) {
   return (id: string) => {
     const { state } = instance;
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}::on 'channel_created' channelId=${id}`,
-      );
-    }
+    loggerRemoteLayer(
+      `[RemoteCommunication: handleChannelCreatedEvent()] context=${state.context} on 'channel_created' channelId=${id}`,
+    );
+
     instance.emit(EventType.CHANNEL_CREATED, id);
   };
 }

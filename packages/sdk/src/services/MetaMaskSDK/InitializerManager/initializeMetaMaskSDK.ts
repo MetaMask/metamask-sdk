@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 import { performSDKInitialization } from './performSDKInitialization';
 
@@ -14,22 +15,18 @@ import { performSDKInitialization } from './performSDKInitialization';
  */
 export async function initializeMetaMaskSDK(instance: MetaMaskSDK) {
   if (typeof window !== 'undefined' && window.mmsdk?.isInitialized()) {
-    if (instance.debug) {
-      console.info(`SDK::init() already initialized`);
-    }
+    logger(`[MetaMaskSDK: initializeMetaMaskSDK()] already initialized`);
+
     return Promise.resolve(window.mmsdk);
   }
 
   if (instance._initialized) {
-    if (instance.debug) {
-      console.info(`SDK::init() already initialized`);
-    }
+    logger(`[MetaMaskSDK: initializeMetaMaskSDK()] already initialized`);
 
     return instance.sdkInitPromise;
   } else if (instance.sdkInitPromise) {
-    if (instance.debug) {
-      console.info(`SDK::init() already initializing`);
-    }
+    logger(`[MetaMaskSDK: initializeMetaMaskSDK()] already initializing`);
+
     return instance.sdkInitPromise;
   }
 

@@ -1,3 +1,4 @@
+import { loggerRemoteLayer } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
 
@@ -21,12 +22,11 @@ export function setLastActiveDate(
 ) {
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::setLastActiveDate() channel=${state.channelId}`,
-      lastActiveDate,
-    );
-  }
+  loggerRemoteLayer(
+    `[RemoteCommunication: setLastActiveDate()] channel=${state.channelId}`,
+    lastActiveDate,
+  );
+
   const newChannelConfig: ChannelConfig = {
     channelId: state.channelId ?? '',
     validUntil: state.channelConfig?.validUntil ?? 0,

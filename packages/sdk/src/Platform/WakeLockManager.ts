@@ -1,4 +1,5 @@
 // import { WakeLockSentinel } from '../types/WakeLockSentinel';
+import { logger } from '../utils/logger';
 import { hasNativeWakeLock } from '../utils/hasNativeWakeLockSupport';
 import { isOldIOS } from '../utils/isOldIOS';
 import { mp4, webm } from './Media';
@@ -49,12 +50,10 @@ export class WakeLockManager {
       this._addSourceToVideo(this.noSleepVideo, 'mp4', mp4);
 
       this.noSleepVideo.addEventListener('loadedmetadata', () => {
-        if (this.debug) {
-          console.debug(
-            `WakeLockManager::start() video loadedmetadata`,
-            this.noSleepVideo,
-          );
-        }
+        logger(
+          `[WakeLockManager: start()] video loadedmetadata`,
+          this.noSleepVideo,
+        );
 
         if (!this.noSleepVideo) {
           return;
@@ -91,9 +90,8 @@ export class WakeLockManager {
   }
 
   setDebug(debug: boolean) {
-    if (debug && !this.debug) {
-      console.debug(`WakeLockManager::setDebug() activate debug mode`);
-    }
+    logger('[WakeLockManager: setDebug()] activate debug mode');
+
     this.debug = debug;
   }
 
@@ -105,12 +103,10 @@ export class WakeLockManager {
     const hasWakelock = hasNativeWakeLock();
     const oldIos = isOldIOS();
 
-    if (this.debug) {
-      console.debug(
-        `WakeLockManager::enable() hasWakelock=${hasWakelock} isOldIos=${oldIos}`,
-        this.noSleepVideo,
-      );
-    }
+    logger(
+      `[WakeLockManager: enable()] hasWakelock=${hasWakelock} isOldIos=${oldIos}`,
+      this.noSleepVideo,
+    );
 
     this.start();
     if (hasNativeWakeLock()) {
@@ -127,12 +123,7 @@ export class WakeLockManager {
             console.log('Wake Lock released.');
           });*/
       } catch (err) {
-        if (this.debug) {
-          console.error(
-            'WakeLockManager::enable() failed to enable wake lock',
-            err,
-          );
-        }
+        logger('[WakeLockManager: enable()] failed to enable wake lock', err);
         this.enabled = false;
         return false;
       }
@@ -157,14 +148,12 @@ export class WakeLockManager {
       this.noSleepVideo
         .play()
         .then(() => {
-          if (this.debug) {
-            console.debug(
-              `WakeLockManager::enable() video started playing successfully`,
-            );
-          }
+          logger(
+            `[WakeLockManager: enable()] video started playing successfully`,
+          );
         })
         .catch((err) => {
-          console.warn(`WakeLockManager::enable() video failed to play`, err);
+          console.warn(`[WakeLockManager: enable()] video failed to play`, err);
         });
       this.enabled = true;
       return true;
@@ -178,15 +167,12 @@ export class WakeLockManager {
       return;
     }
 
-    if (this.debug) {
-      console.debug(`WakeLockManager::disable() context=${_context}`);
-    }
+    logger(`[WakeLockManager: disable()] context=${_context}`);
 
     if (hasNativeWakeLock()) {
       if (this._wakeLock) {
-        if (this.debug) {
-          console.debug(`WakeLockManager::disable() release wake lock`);
-        }
+        logger(`[WakeLockManager: disable()] release wake lock`);
+
         this._wakeLock.release();
       }
       this._wakeLock = undefined;
@@ -201,17 +187,11 @@ export class WakeLockManager {
     } else {
       try {
         if (!this.noSleepVideo) {
-          if (this.debug) {
-            console.debug(
-              `WakeLockManager::disable() noSleepVideo is undefined`,
-            );
-          }
+          logger(`[WakeLockManager: disable()] noSleepVideo is undefined`);
           return;
         }
 
-        if (this.debug) {
-          console.debug(`WakeLockManager::disable() pause noSleepVideo`);
-        }
+        logger(`[WakeLockManager: disable()] pause noSleepVideo`);
 
         if (this.noSleepVideo.firstChild) {
           this.noSleepVideo.removeChild(this.noSleepVideo.firstChild);

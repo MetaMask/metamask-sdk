@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { wait as waitPromise } from '../../utils/wait';
 
@@ -16,11 +17,7 @@ export async function startInstaller(
   instance: MetaMaskInstaller,
   { wait = false }: { wait: boolean },
 ) {
-  const { state } = instance;
-
-  if (state.debug) {
-    console.debug(`MetamaskInstaller::start() wait=${wait}`);
-  }
+  logger(`[MetamaskInstaller: startInstaller()] wait=${wait}`);
 
   // Give enough time for providers to make connection
   if (wait) {

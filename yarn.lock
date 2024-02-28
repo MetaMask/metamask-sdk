@@ -7980,6 +7980,7 @@ __metadata:
     bufferutil: ^4.0.8
     cross-fetch: ^3.1.5
     date-fns: ^2.29.3
+    debug: ^4.3.4
     eciesjs: ^0.3.16
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
@@ -8206,6 +8207,7 @@ __metadata:
     autoprefixer: ^10.4.4
     babel-jest: ^29.7.0
     babel-loader: ^8.2.5
+    debug: ^4.3.4
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4
@@ -8539,6 +8541,7 @@ __metadata:
     "@typescript-eslint/parser": ^4.26.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
+    debug: ^4.3.4
     eciesjs: ^0.3.15
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
@@ -31245,6 +31248,7 @@ __metadata:
     "@types/node": ^14.14.25
     "@typescript-eslint/eslint-plugin": ^4.28.1
     "@typescript-eslint/parser": ^4.28.1
+    debug: ^4.3.4
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4

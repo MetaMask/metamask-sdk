@@ -19,7 +19,6 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
 
   instance.analytics = new Analytics({
     serverURL: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
-    debug: instance.debug,
     metadata: {
       url: options.dappMetadata.url ?? '',
       title: options.dappMetadata.name ?? '',

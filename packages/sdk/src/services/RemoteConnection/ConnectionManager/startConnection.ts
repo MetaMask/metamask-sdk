@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
@@ -35,12 +36,10 @@ export async function startConnection(
   provider.emit('connecting');
 
   const channelConfig = await state.connector?.originatorSessionConnect();
-  if (state.developerMode) {
-    console.debug(
-      `RemoteConnection::startConnection after startAutoConnect`,
-      channelConfig,
-    );
-  }
+  logger(
+    `[RemoteConnection: startConnection()] after originatorSessionConnect`,
+    channelConfig,
+  );
 
   let channelId = channelConfig?.channelId ?? '';
   let pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
@@ -66,9 +65,7 @@ export async function startConnection(
   state.qrcodeLink = qrcodeLink;
 
   if (state.developerMode) {
-    console.debug(
-      `RemoteConnection::startConnection() qrcodeLink=${qrcodeLink}`,
-    );
+    logger(`[RemoteConnection: startConnection()] qrcodeLink=${qrcodeLink}`);
   }
 
   // first handle secure connection

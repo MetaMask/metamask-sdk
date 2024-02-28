@@ -1,4 +1,5 @@
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 import { EXTENSION_EVENTS, STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
@@ -25,8 +26,6 @@ import { Ethereum } from '../../Ethereum';
 export async function setupExtensionPreferences(instance: MetaMaskSDK) {
   const { options } = instance;
 
-  const developerMode = options.logging?.developerMode === true;
-
   let metamaskBrowserExtension;
   let preferExtension = false;
   let shouldReturn = false;
@@ -42,16 +41,15 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
     try {
       metamaskBrowserExtension = await getBrowserExtension({
         mustBeMetaMask: true,
-        debug: developerMode,
       });
 
       window.extension = metamaskBrowserExtension;
 
       // Propagate browser extension events onto the main provider since some clients only subscribe to the main mobile provider.
       metamaskBrowserExtension.on(EXTENSION_EVENTS.CHAIN_CHANGED, (chainId) => {
-        if (developerMode) {
-          console.debug('PROPAGATE chainChanged', chainId);
-        }
+        logger(
+          `[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE chainChanged chainId=${chainId}`,
+        );
 
         const hasMobileProvider = Boolean(instance.sdkProvider);
 
@@ -65,9 +63,9 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       metamaskBrowserExtension.on(
         EXTENSION_EVENTS.ACCOUNTS_CHANGED,
         (accounts) => {
-          if (developerMode) {
-            console.debug('PROPAGATE accountsChanged', accounts);
-          }
+          logger(
+            `[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE accountsChanged accounts=${accounts}`,
+          );
 
           const hasMobileProvider = Boolean(instance.sdkProvider);
 
@@ -80,9 +78,9 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       );
 
       metamaskBrowserExtension.on(EXTENSION_EVENTS.DISCONNECT, (error) => {
-        if (developerMode) {
-          console.debug('PROPAGATE disconnect', error);
-        }
+        logger(
+          `[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE disconnect error=${error}`,
+        );
 
         const hasMobileProvider = Boolean(instance.sdkProvider);
 
@@ -92,9 +90,9 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       });
 
       metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECT, (args) => {
-        if (developerMode) {
-          console.debug('PROPAGATE connect', args);
-        }
+        logger(
+          `[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE connect args=${args}`,
+        );
 
         const hasMobileProvider = Boolean(instance.sdkProvider);
 
@@ -104,9 +102,11 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
       });
 
       metamaskBrowserExtension.on(EXTENSION_EVENTS.CONNECTED, (args) => {
-        if (developerMode) {
-          console.debug('PROPAGATE connected', args);
-        }
+        logger(
+          '[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE connected',
+          args,
+        );
+
         const hasMobileProvider = Boolean(instance.sdkProvider);
 
         if (hasMobileProvider) {
@@ -127,9 +127,10 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
   }
 
   if (metamaskBrowserExtension && options.extensionOnly) {
-    if (developerMode) {
-      console.warn(`EXTENSION ONLY --- prevent sdk initialization`);
-    }
+    logger(
+      `[MetaMaskSDK: setupExtensionPreferences()] EXTENSION ONLY --- prevent sdk initialization`,
+    );
+
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
     instance.activeProvider = metamaskBrowserExtension as SDKProvider; // TODO should be MetaMaskInPageProvider
     instance.extensionActive = true;

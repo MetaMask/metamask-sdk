@@ -1,5 +1,6 @@
 import { Buffer } from 'buffer';
 import { CommunicationLayerMessage } from '@metamask/sdk-communication-layer';
+import { logger } from '../../utils/logger';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { ProviderConstants } from '../../constants';
 
@@ -12,9 +13,8 @@ export function onMessage(
     /* if (instance.state._origin !== '*' && event.origin !== instance.state._origin) {
     return;
   }*/
-    if (instance.state.debug) {
-      console.debug(`[RCPMS] _onMessage `, message);
-    }
+
+    logger(`[RCPMS: onMessage()] message=${message}`);
 
     const typeOfMsg = typeof message;
 
@@ -29,16 +29,16 @@ export function onMessage(
     }
 
     if (!message?.name) {
-      if (instance.state.debug) {
-        console.debug(`RCPMS ignore message without name`, message);
-      }
+      logger(
+        `[RCPMS: onMessage()] ignore message without name message=${message}`,
+      );
       return;
     }
 
     if (message?.name !== ProviderConstants.PROVIDER) {
-      if (instance.state.debug) {
-        console.debug(`RCPMS ignore message with wrong name`, message);
-      }
+      logger(
+        `[RCPMS: onMessage()] ignore message with wrong name message=${message}`,
+      );
       return;
     }
 
@@ -49,8 +49,6 @@ export function onMessage(
       instance.push(message);
     }
   } catch (err) {
-    if (instance.state.debug) {
-      console.debug(`RCPMS ignore message error`, err);
-    }
+    logger(`[RCPMS: onMessage()] ignore message error err=${err}`);
   }
 }

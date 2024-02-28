@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import debug from 'debug';
 import { ECIES, ECIESProps } from './ECIES';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
@@ -7,6 +8,7 @@ import { InternalEventType } from './types/InternalEventType';
 import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
+import { loggerKeyExchangeLayer } from './utils/logger';
 
 export interface KeyExchangeProps {
   communicationLayer: CommunicationLayer;
@@ -50,6 +52,10 @@ export class KeyExchange extends EventEmitter2 {
     this.myPublicKey = this.myECIES.getPublicKey();
     this.debug = logging?.keyExchangeLayer === true;
 
+    if (logging?.keyExchangeLayer) {
+      debug.enable('KeyExchange:Layer');
+    }
+
     if (otherPublicKey) {
       this.setOtherPublicKey(otherPublicKey);
     }
@@ -63,20 +69,16 @@ export class KeyExchange extends EventEmitter2 {
   public onKeyExchangeMessage(keyExchangeMsg: {
     message: CommunicationLayerMessage;
   }) {
-    if (this.debug) {
-      console.debug(
-        `KeyExchange::${this.context}::onKeyExchangeMessage() keysExchanged=${this.keysExchanged}`,
-        keyExchangeMsg,
-      );
-    }
+    loggerKeyExchangeLayer(
+      `[KeyExchange: onKeyExchangeMessage()] context=${this.context} keysExchanged=${this.keysExchanged}`,
+      keyExchangeMsg,
+    );
 
     const { message } = keyExchangeMsg;
     if (this.keysExchanged) {
-      if (this.debug) {
-        console.log(
-          `KeyExchange::${this.context}::onKeyExchangeMessage received handshake while already exchanged. step=${this.step} otherPubKey=${this.otherPublicKey}`,
-        );
-      }
+      loggerKeyExchangeLayer(
+        `[KeyExchange: onKeyExchangeMessage()] context=${this.context} received handshake while already exchanged. step=${this.step} otherPubKey=${this.otherPublicKey}`,
+      );
       // FIXME check if correct way / when is it really happening?
       // return;
     }
@@ -89,9 +91,10 @@ export class KeyExchange extends EventEmitter2 {
         KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
       ]);
 
-      if (this.debug) {
-        console.debug(`KeyExchange::KEY_HANDSHAKE_SYN`, message);
-      }
+      loggerKeyExchangeLayer(
+        `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_SYN`,
+        message,
+      );
 
       if (message.pubkey) {
         this.setOtherPublicKey(message.pubkey);
@@ -111,9 +114,9 @@ export class KeyExchange extends EventEmitter2 {
         KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
       ]);
 
-      if (this.debug) {
-        console.debug(`KeyExchange::KEY_HANDSHAKE_SYNACK`);
-      }
+      loggerKeyExchangeLayer(
+        `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_SYNACK`,
+      );
 
       if (message.pubkey) {
         this.setOtherPublicKey(message.pubkey);
@@ -127,11 +130,9 @@ export class KeyExchange extends EventEmitter2 {
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.emit(EventType.KEYS_EXCHANGED);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
-      if (this.debug) {
-        console.debug(
-          `KeyExchange::KEY_HANDSHAKE_ACK set keysExchanged to true!`,
-        );
-      }
+      loggerKeyExchangeLayer(
+        `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_ACK set keysExchanged to true!`,
+      );
 
       this.checkStep([
         KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
@@ -150,11 +151,10 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   clean(): void {
-    if (this.debug) {
-      console.debug(
-        `KeyExchange::${this.context}::clean reset handshake state`,
-      );
-    }
+    loggerKeyExchangeLayer(
+      `[KeyExchange: clean()] context=${this.context} reset handshake state`,
+    );
+
     this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_NONE);
     this.emit(EventType.KEY_INFO, this.step);
     this.keysExchanged = false;
@@ -169,11 +169,9 @@ export class KeyExchange extends EventEmitter2 {
     isOriginator: boolean;
     force?: boolean;
   }): void {
-    if (this.debug) {
-      console.debug(
-        `KeyExchange::${this.context}::start isOriginator=${isOriginator} step=${this.step} force=${force} keysExchanged=${this.keysExchanged}`,
-      );
-    }
+    loggerKeyExchangeLayer(
+      `[KeyExchange: start()] context=${this.context} isOriginator=${isOriginator} step=${this.step} force=${force} keysExchanged=${this.keysExchanged}`,
+    );
 
     if (!isOriginator) {
       // force is used to redo keyexchange even if already exchanged.
@@ -183,9 +181,9 @@ export class KeyExchange extends EventEmitter2 {
           type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
         });
         this.clean();
-      } else if (this.debug) {
-        console.debug(
-          `KeyExchange::start don't send KEY_HANDSHAKE_START -- exchange already done.`,
+      } else {
+        loggerKeyExchangeLayer(
+          `[KeyExchange: start()] don't send KEY_HANDSHAKE_START -- exchange already done.`,
         );
       }
 
@@ -199,23 +197,21 @@ export class KeyExchange extends EventEmitter2 {
       !force
     ) {
       // Key exchange can be restarted if the wallet ask for a new key.
-      if (this.debug) {
-        console.debug(
-          `KeyExchange::${this.context}::start -- key exchange already ${
-            this.keysExchanged ? 'done' : 'in progress'
-          } -- aborted.`,
-          this.step,
-        );
-      }
+      loggerKeyExchangeLayer(
+        `[KeyExchange: start()] context=${
+          this.context
+        } -- key exchange already ${
+          this.keysExchanged ? 'done' : 'in progress'
+        } -- aborted.`,
+        this.step,
+      );
       return;
     }
 
-    if (this.debug) {
-      console.debug(
-        `KeyExchange::${this.context}::start -- start key exchange (force=${force}) -- step=${this.step}`,
-        this.step,
-      );
-    }
+    loggerKeyExchangeLayer(
+      `[KeyExchange: start()] context=${this.context} -- start key exchange (force=${force}) -- step=${this.step}`,
+      this.step,
+    );
 
     this.clean();
     // except a SYN_ACK for next step
@@ -236,7 +232,7 @@ export class KeyExchange extends EventEmitter2 {
     if (stepList.length > 0 && stepList.indexOf(this.step.toString()) === -1) {
       // Graceful warning but continue communication
       console.warn(
-        `[KeyExchange] Wrong Step "${this.step}" not within ${stepList}`,
+        `[KeyExchange: checkStep()]  Wrong Step "${this.step}" not within ${stepList}`,
       );
     }
   }
@@ -258,9 +254,8 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   setOtherPublicKey(otherPubKey: string) {
-    if (this.debug) {
-      console.debug(`KeyExchange::setOtherPubKey()`, otherPubKey);
-    }
+    loggerKeyExchangeLayer(`[KeyExchange: setOtherPubKey()]`, otherPubKey);
+
     this.otherPublicKey = otherPubKey;
   }
 

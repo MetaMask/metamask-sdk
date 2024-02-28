@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -27,12 +28,11 @@ export function encryptAndSendMessage(
       ? JSON.stringify(message)
       : undefined,
   };
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::sendMessage()`,
-      messageToSend,
-    );
-  }
+
+  loggerServiceLayer(
+    `[SocketService: encryptAndSendMessage()] context=${instance.state.context}`,
+    messageToSend,
+  );
 
   if (message.type === MessageType.TERMINATE) {
     instance.state.manualDisconnect = true;

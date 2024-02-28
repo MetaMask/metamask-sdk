@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import {
   PlatformManager,
   TEMPORARY_WAKE_LOCK_TIME,
@@ -9,14 +10,16 @@ export function enableWakeLock(instance: PlatformManager) {
   const { state } = instance;
 
   if (state.wakeLockStatus === WakeLockStatus.Disabled) {
-    if (state.debug) {
-      console.debug('WakeLock is disabled');
-    }
+    logger('[PlatfformManager: enableWakeLock()] WakeLock is disabled');
+
     return;
   }
 
   state.wakeLock.enable().catch((err) => {
-    console.error('WakeLock is not supported', err);
+    console.error(
+      '[PlatfformManager: enableWakeLock()] WakeLock is not supported',
+      err,
+    );
   });
 
   const maxTime =

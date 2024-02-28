@@ -6,9 +6,19 @@ import {
   SDKProvider,
   ServiceStatus,
 } from '@metamask/sdk';
-import { ConnectionStatus, RPCMethodCache, RPCMethodResult } from '@metamask/sdk-communication-layer';
+import {
+  ConnectionStatus,
+  RPCMethodCache,
+  RPCMethodResult,
+} from '@metamask/sdk-communication-layer';
 import { EthereumRpcError } from 'eth-rpc-errors';
-import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
 import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
 import { useHandleConnectEvent } from './EventsHandlers/useHandleConnectEvent';
@@ -17,6 +27,8 @@ import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitialized
 import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
+import { logger } from './utils/logger';
+import debugPackage from 'debug';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -95,6 +107,11 @@ const MetaMaskProviderClient = ({
   const [extensionActive, setExtensionActive] = useState<boolean>(false);
   const hasInit = useRef(false);
 
+  useEffect(() => {
+    // Enable debug logs
+    debugPackage.enable('MM_SDK-React');
+  }, [debug]);
+
   const eventHandlerProps: EventHandlerProps = {
     setConnecting,
     setConnected,
@@ -127,17 +144,20 @@ const MetaMaskProviderClient = ({
 
   const onProviderEvent = useHandleProviderEvent(eventHandlerProps);
 
-  const syncing = useMemo( () => {
-    const socketDisconnected = status?.connectionStatus === ConnectionStatus.DISCONNECTED
+  const syncing = useMemo(() => {
+    const socketDisconnected =
+      status?.connectionStatus === ConnectionStatus.DISCONNECTED;
 
     // Syncing if rpc calls have been unprocessed
     let pendingRpcs = false;
-    for(const rpcId in rpcHistory) {
+    for (const rpcId in rpcHistory) {
       const rpc = rpcHistory[rpcId];
-      if(rpc.result === undefined && rpc.error === undefined) {
+      if (rpc.result === undefined && rpc.error === undefined) {
         pendingRpcs = true;
-        if(socketDisconnected) {
-          console.warn(`[MetamaskProvider] socket disconnected but rpc ${rpcId} not processed yet`);
+        if (socketDisconnected) {
+          console.warn(
+            `[MetamaskProvider] socket disconnected but rpc ${rpcId} not processed yet`,
+          );
           // TODO should we force the error has timeout here?
         }
         break;
@@ -148,11 +168,11 @@ const MetaMaskProviderClient = ({
   }, [rpcHistory, status]);
 
   useEffect(() => {
-    const currentAddress = provider?.selectedAddress
-    if(currentAddress && currentAddress!= account) {
-      if(debug) {
-        console.debug(`[MetamaskProvider] account changed detected from ${account} to ${currentAddress}`);
-      }
+    const currentAddress = provider?.selectedAddress;
+    if (currentAddress && currentAddress != account) {
+      logger(
+        `[MetaMaskProviderClient] account changed detected from ${account} to ${currentAddress}`,
+      );
       setAccount(currentAddress);
     }
   }, [rpcHistory]);
@@ -162,12 +182,17 @@ const MetaMaskProviderClient = ({
     const currentBalanceQuery = `${account}${chainId}`;
     setChannelId(sdk?.getChannelId());
 
-    if (account?.startsWith('0x') && chainId?.startsWith('0x') && currentBalanceQuery !== balanceQuery) {
+    if (
+      account?.startsWith('0x') &&
+      chainId?.startsWith('0x') &&
+      currentBalanceQuery !== balanceQuery
+    ) {
       // Retrieve balance of account
       setBalanceProcessing(true);
-      if(debug) {
-        console.log(`[MetamaskProvider] retrieving balance of ${account} on chain ${chainId}`)
-      }
+      logger(
+        `[MetaMaskProviderClient] retrieving balance of ${account} on chain ${chainId}`,
+      );
+
       setBalanceQuery(currentBalanceQuery);
       sdk
         ?.getProvider()
@@ -176,11 +201,10 @@ const MetaMaskProviderClient = ({
           params: [account, 'latest'],
         })
         .then((accountBalance: unknown) => {
-          if (debug) {
-            console.debug(
-              `[MetamaskProvider] balance of ${account} is ${accountBalance}`,
-            );
-          }
+          logger(
+            `[MetaMaskProviderClient] balance of ${account} is ${accountBalance}`,
+          );
+
           setBalance(accountBalance as string);
         })
         .catch((err: any) => {
@@ -188,7 +212,8 @@ const MetaMaskProviderClient = ({
             `[MetamaskProvider] error retrieving balance of ${account}`,
             err,
           );
-        }).finally(() => {
+        })
+        .finally(() => {
           setBalanceProcessing(false);
         });
     } else {
@@ -199,9 +224,8 @@ const MetaMaskProviderClient = ({
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
     if (hasInit.current) {
-      if (debug) {
-        console.debug(`[MetamaskProvider] sdk already initialized`);
-      }
+      logger(`[MetaMaskProviderClient] sdk already initialized`);
+
       return;
     }
 
@@ -223,9 +247,7 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    if (debug) {
-      console.debug(`[MetamaskProvider] init SDK Provider listeners`);
-    }
+    logger(`[MetaMaskProviderClient] init SDK Provider listeners`);
 
     setExtensionActive(sdk.isExtensionActive());
 
@@ -243,18 +265,21 @@ const MetaMaskProviderClient = ({
     activeProvider.on('chainChanged', onChainChanged);
     sdk.on(EventType.SERVICE_STATUS, onSDKStatusEvent);
 
-    sdk._getConnection()?.getConnector().on(EventType.RPC_UPDATE, (rpc: RPCMethodResult) => {
-      const completed = rpc.result !== undefined || rpc.error !== undefined;
-      if(!completed) {
-        // Only update lastRpcId to keep track of last answered rpc id
-        setLastRpcId(rpc.id);
-      } else if(rpc.id === lastRpcId) {
-        setLastRpcId(''); // Reset lastRpcId
-      }
-      // hack to force a react re-render when the RPC cache is updated
-      const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
-      setRPCHistory(temp);
-    })
+    sdk
+      ._getConnection()
+      ?.getConnector()
+      .on(EventType.RPC_UPDATE, (rpc: RPCMethodResult) => {
+        const completed = rpc.result !== undefined || rpc.error !== undefined;
+        if (!completed) {
+          // Only update lastRpcId to keep track of last answered rpc id
+          setLastRpcId(rpc.id);
+        } else if (rpc.id === lastRpcId) {
+          setLastRpcId(''); // Reset lastRpcId
+        }
+        // hack to force a react re-render when the RPC cache is updated
+        const temp = JSON.parse(JSON.stringify(sdk.getRPCHistory() ?? {}));
+        setRPCHistory(temp);
+      });
 
     return () => {
       activeProvider.removeListener('_initialized', onInitialized);

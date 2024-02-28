@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
@@ -55,17 +56,15 @@ export async function handleRpcReplies(
       if (winner.type === PromiseType.RPC_CHECK) {
         const rpcCheck = winner.result;
         // rpcCheck resolved first, handle normally
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::waitForRpc id=${message.id} ${method} ( ${rpcCheck.elapsedTime} ms)`,
-            rpcCheck.result,
-          );
-        }
+        loggerServiceLayer(
+          `[SocketService:handleRpcReplies()] id=${message.id} ${method} ( ${rpcCheck.elapsedTime} ms)`,
+          rpcCheck.result,
+        );
       } else if (winner.type === PromiseType.SKIPPED_RPC) {
         const { result } = winner;
         // set the rpc has timedout and error.
         console.warn(
-          `[handleRpcReplies] RPC METHOD HAS BEEN SKIPPED rpcid=${rpcId} method=${method}`,
+          `[SocketService handleRpcReplies()] RPC METHOD HAS BEEN SKIPPED rpcid=${rpcId} method=${method}`,
           result,
         );
 
@@ -86,7 +85,7 @@ export async function handleRpcReplies(
       }
     } catch (err) {
       console.warn(
-        `[handleRpcReplies] Error rpcId=${message.id} ${method}`,
+        `[SocketService handleRpcReplies()] Error rpcId=${message.id} ${method}`,
         err,
       );
       throw err;

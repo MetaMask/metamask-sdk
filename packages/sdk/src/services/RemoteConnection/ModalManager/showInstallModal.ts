@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import {
   RemoteConnectionProps,
   RemoteConnectionState,
@@ -19,11 +20,10 @@ export function showInstallModal(
     link,
     installer: options.getMetaMaskInstaller(),
     terminate: () => {
-      if (state.developerMode) {
-        console.debug(
-          `RemoteConnection::showInstallModal() terminate connection`,
-        );
-      }
+      logger(
+        `[RemoteConnection: showInstallModal() => terminate()] terminate connection`,
+      );
+
       options.sdk.terminate();
     },
     debug: state.developerMode,

@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
@@ -23,20 +24,16 @@ export function handleMessage(instance: SocketService, channelId: string) {
     message: any;
     error?: any;
   }) => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${
-          instance.state.context
-        }::on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-        message,
-      );
-    }
+    loggerServiceLayer(
+      `[SocketService handleMessage()] context=${
+        instance.state.context
+      } on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+      message,
+    );
 
     if (error) {
-      if (instance.state.debug) {
-        console.debug(`
-      SocketService::${instance.state.context}::on 'message' error=${error}`);
-      }
+      loggerServiceLayer(`
+      [SocketService handleMessage()] context=${instance.state.context}::on 'message' error=${error}`);
 
       throw new Error(error);
     }
@@ -52,12 +49,10 @@ export function handleMessage(instance: SocketService, channelId: string) {
       instance.state.isOriginator &&
       message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_START
     ) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' received HANDSHAKE_START isOriginator=${instance.state.isOriginator}`,
-          message,
-        );
-      }
+      loggerServiceLayer(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' received HANDSHAKE_START isOriginator=${instance.state.isOriginator}`,
+        message,
+      );
 
       instance.state.keyExchange?.start({
         isOriginator: instance.state.isOriginator ?? false,
@@ -68,34 +63,28 @@ export function handleMessage(instance: SocketService, channelId: string) {
 
     // TODO can be removed once session persistence fully vetted.
     if (message?.type === MessageType.PING) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' ping `,
-        );
-      }
+      loggerServiceLayer(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' ping `,
+      );
 
       instance.emit(EventType.MESSAGE, { message: { type: 'ping' } });
       return;
     }
 
-    if (instance.state.debug) {
-      // Special case to manage resetting key exchange when keys are already exchanged
-      console.debug(
-        `SocketService::${instance.state.context}::on 'message' originator=${
-          instance.state.isOriginator
-        }, type=${
-          message?.type
-        }, keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      );
-    }
+    // Special case to manage resetting key exchange when keys are already exchanged
+    loggerServiceLayer(
+      `[SocketService handleMessage()] context=${
+        instance.state.context
+      }::on 'message' originator=${instance.state.isOriginator}, type=${
+        message?.type
+      }, keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    );
 
     if (message?.type?.startsWith('key_handshake')) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' emit KEY_EXCHANGE`,
-          message,
-        );
-      }
+      loggerServiceLayer(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' emit KEY_EXCHANGE`,
+        message,
+      );
 
       instance.emit(InternalEventType.KEY_EXCHANGE, {
         message,
@@ -145,7 +134,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
       // Even if keys were exchanged, if the message is not encrypted, emit it.
       // *** instance is not supposed to happen ***
       console.warn(
-        `SocketService::on 'message' received non encrypted unkwown message`,
+        `[SocketService handleMessage() ::on 'message' received non encrypted unkwown message`,
       );
       instance.emit(EventType.MESSAGE, message);
       return;
@@ -180,12 +169,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
       const initialRPCMethod = instance.state.rpcMethodTracker[rpcMessage.id];
       if (initialRPCMethod) {
         const elapsedTime = Date.now() - initialRPCMethod.timestamp;
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::${instance.state.context}::on 'message' received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${elapsedTime}`,
-            messageReceived,
-          );
-        }
+        loggerServiceLayer(
+          `[SocketService handleMessage()] context=${instance.state.context}::on 'message' received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${elapsedTime}`,
+          messageReceived,
+        );
+
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,
@@ -200,12 +188,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
         instance.emit(EventType.RPC_UPDATE, rpcResult);
 
-        if (instance.state.debug) {
-          console.debug(
-            `HACK (wallet <7.3) update rpcMethodTracker`,
-            rpcResult,
-          );
-        }
+        loggerServiceLayer(
+          `[SocketService handleMessage()] HACK (wallet <7.3) update rpcMethodTracker`,
+          rpcResult,
+        );
+
         // FIXME hack while waiting for mobile release 7.3
         instance.emit(EventType.AUTHORIZED);
       }

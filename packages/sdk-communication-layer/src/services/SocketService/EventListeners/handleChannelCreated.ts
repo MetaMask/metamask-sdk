@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -14,12 +15,10 @@ export function handleChannelCreated(
   channelId: string,
 ) {
   return (id: string) => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${instance.state.context}::setupChannelListener::on 'channel_created-${channelId}'`,
-        id,
-      );
-    }
+    loggerServiceLayer(
+      `[SocketService: handleChannelCreated()] context=${instance.state.context} on 'channel_created-${channelId}'`,
+      id,
+    );
     instance.emit(EventType.CHANNEL_CREATED, id);
   };
 }

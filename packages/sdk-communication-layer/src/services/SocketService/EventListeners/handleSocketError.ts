@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { checkFocusAndReconnect } from '../ConnectionManager';
 
@@ -11,9 +12,10 @@ import { checkFocusAndReconnect } from '../ConnectionManager';
  */
 export function handleSocketError(instance: SocketService) {
   return (error: Error) => {
-    if (instance.state.debug) {
-      console.debug(`SocketService::on 'error' `, error);
-    }
+    loggerServiceLayer(
+      `[SocketService: handleSocketError()] on 'error' `,
+      error,
+    );
 
     checkFocusAndReconnect(instance);
   };

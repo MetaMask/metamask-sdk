@@ -1,4 +1,5 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
 /**
@@ -18,11 +19,9 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
 
   const platformType = state.platformManager?.getPlatformType();
 
-  if (instance?.state.debug) {
-    console.debug(
-      `MetamaskInstaller::redirectToProperInstall() platform=${platformType} state.preferDesktop=${state.preferDesktop}`,
-    );
-  }
+  logger(
+    `[MetamaskInstaller: redirectToProperInstall()] platform=${platformType} state.preferDesktop=${state.preferDesktop}`,
+  );
 
   // If it's running on our mobile in-app browser but communication is still not working
   if (platformType === PlatformType.MetaMaskMobileWebview) {

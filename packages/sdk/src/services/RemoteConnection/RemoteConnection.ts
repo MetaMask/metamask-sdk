@@ -9,6 +9,7 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import { i18n } from 'i18next';
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -196,9 +197,7 @@ export class RemoteConnection implements ProviderService {
   }
 
   disconnect(options?: DisconnectOptions): void {
-    if (this.state.developerMode) {
-      console.debug(`RemoteConnection::disconnect()`, options);
-    }
+    logger(`[RemoteConnection: disconnect()]`, options);
 
     if (options?.terminate) {
       Ethereum.getProvider().handleDisconnect({

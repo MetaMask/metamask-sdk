@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -14,12 +15,10 @@ export function handleKeyHandshake(
   instance: SocketService,
   message: CommunicationLayerMessage,
 ) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::sendMessage()`,
-      message,
-    );
-  }
+  loggerServiceLayer(
+    `[SocketService: handleKeyHandshake()] context=${instance.state.context}`,
+    message,
+  );
 
   instance.state.socket?.emit(EventType.MESSAGE, {
     id: instance.state.channelId,

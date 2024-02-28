@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 
 /**
@@ -7,8 +8,7 @@ import { SocketService } from '../../../SocketService';
  * @param instance The current instance of the SocketService.
  */
 export function resetKeys(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(`SocketService::resetKeys()`);
-  }
+  loggerServiceLayer(`[SocketService: resetKeys()] Resetting keys.`);
+
   instance.state.keyExchange?.resetKeys();
 }

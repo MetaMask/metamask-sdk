@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
@@ -26,14 +27,12 @@ export function handleSendMessage(
     throw new Error('Create a channel first');
   }
 
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${
-        instance.state.context
-      }::sendMessage() areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      message,
-    );
-  }
+  loggerServiceLayer(
+    `[SocketService: handleSendMessage()] context=${
+      instance.state.context
+    } areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    message,
+  );
 
   const isKeyHandshakeMessage = message?.type?.startsWith('key_handshake');
 

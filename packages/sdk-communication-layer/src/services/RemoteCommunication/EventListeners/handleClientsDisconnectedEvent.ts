@@ -1,3 +1,4 @@
+import { loggerRemoteLayer } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -25,11 +26,10 @@ export function handleClientsDisconnectedEvent(
 ) {
   return (channelId: string) => {
     const { state } = instance;
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}]::on 'clients_disconnected' channelId=${channelId}`,
-      );
-    }
+
+    loggerRemoteLayer(
+      `[RemoteCommunication: handleClientsDisconnectedEvent()] context=${state.context} on 'clients_disconnected' channelId=${channelId}`,
+    );
 
     state.clientsConnected = false;
 

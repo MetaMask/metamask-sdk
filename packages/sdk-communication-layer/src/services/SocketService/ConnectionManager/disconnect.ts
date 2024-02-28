@@ -1,3 +1,4 @@
+import { loggerServiceLayer } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 
@@ -15,12 +16,10 @@ export function disconnect(
   instance: SocketService,
   options?: DisconnectOptions,
 ) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::disconnect()`,
-      options,
-    );
-  }
+  loggerServiceLayer(
+    `[SocketService: disconnect()] context=${instance.state.context}`,
+    options,
+  );
 
   if (options?.terminate) {
     instance.state.channelId = options.channelId;

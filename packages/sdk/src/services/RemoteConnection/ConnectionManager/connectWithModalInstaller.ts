@@ -1,4 +1,5 @@
 import { EventType } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { showInstallModal } from '../ModalManager/showInstallModal';
 import {
@@ -28,13 +29,11 @@ export async function connectWithModalInstaller(
       return;
     }
 
-    if (state.developerMode) {
-      console.debug(`connectWithModalInstaller()`, {
-        state,
-        options,
-        linkParams,
-      });
-    }
+    logger(`[RemoteConnection: connectWithModalInstaller()]`, {
+      state,
+      options,
+      linkParams,
+    });
 
     const installLink = `${
       state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL
@@ -46,22 +45,19 @@ export async function connectWithModalInstaller(
       EventType.PROVIDER_UPDATE,
       async (type: PROVIDER_UPDATE_TYPE) => {
         // handle the provider change in initializeProvider
-        if (state.developerMode) {
-          console.debug(
-            `RemoteConnection::startConnection::on 'provider_update' -- resolving startConnection promise`,
-          );
-        }
+        logger(
+          `[RemoteConnection: connectWithModalInstaller()] once provider_update -- resolving startConnection promise`,
+        );
+
         reject(type);
       },
     );
 
     // TODO shouldn't it make more sense to actually wait for full connection and 'authorized' event?
     state.connector.once(EventType.CLIENTS_READY, async () => {
-      if (state.developerMode) {
-        console.debug(
-          `RemoteConnection::startConnection::on 'clients_ready' -- resolving startConnection promise`,
-        );
-      }
+      logger(
+        `[RemoteConnection: connectWithModalInstaller()] once clients_ready -- resolving startConnection promise`,
+      );
 
       // Allow initializeProvider to complete and send the eth_requestAccounts
       resolve();

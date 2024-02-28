@@ -1,3 +1,4 @@
+import { loggerRemoteLayer } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 
@@ -10,9 +11,11 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
  */
 export function resume(instance: RemoteCommunication) {
   const { state } = instance;
-  if (state.debug) {
-    console.debug(`RemoteCommunication::resume() channel=${state.channelId}`);
-  }
+
+  loggerRemoteLayer(
+    `[RemoteCommunication: resume()] channel=${state.channelId}`,
+  );
+
   state.communicationLayer?.resume();
   instance.setConnectionStatus(ConnectionStatus.LINKED);
 }
