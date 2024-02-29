@@ -2,11 +2,14 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
+import * as loggerModule from '../../../utils/logger';
 import { handleAuthorization } from './handleAuthorization';
 
 describe('handleAuthorization', () => {
   let instance: RemoteCommunication;
   let message: CommunicationLayerMessage;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
 
   const mockOnce = jest.fn();
   const mockSendMessage = jest.fn();
@@ -85,19 +88,16 @@ describe('handleAuthorization', () => {
     );
   });
 
-  it('should log debug information if debug is enabled', async () => {
-    instance.state.debug = true;
-    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
+  it('should log debug information', async () => {
     await handleAuthorization(instance, message);
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::${instance.state.context}::sendMessage::handleAuthorization ready=${instance.state.ready} authorized=${instance.state.authorized} method=${message.method}`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: handleAuthorization()] context=testContext ready=true authorized=false method=sampleMethod',
     );
 
-    consoleLogSpy.mockRestore();
-    consoleDebugSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: handleAuthorization()] context=testContext  AFTER SKIP / AUTHORIZED -- sending pending message',
+    );
   });
 
   it('should correctly handle wallet versions like 7.10 vs 7.9', async () => {

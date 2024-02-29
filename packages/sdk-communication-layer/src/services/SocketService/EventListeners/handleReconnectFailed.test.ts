@@ -1,9 +1,10 @@
 import { SocketService } from '../../../SocketService';
+import * as loggerModule from '../../../utils/logger';
 import { handleReconnectFailed } from './handleReconnectFailed';
 
 describe('handleReconnectFailed', () => {
   let instance: SocketService;
-  const mockConsoleDebug = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -13,27 +14,16 @@ describe('handleReconnectFailed', () => {
         debug: false,
       },
     } as unknown as SocketService;
-
-    jest.spyOn(console, 'debug').mockImplementation(mockConsoleDebug);
   });
 
   it('should log a debug message indicating that reconnection attempts have failed when the handler is called and debugging is enabled', () => {
     instance.state.debug = true;
 
-    const handler = handleReconnectFailed(instance);
+    const handler = handleReconnectFailed();
     handler();
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `SocketService::on 'reconnect_failed'`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handleReconnectFailed()] on 'reconnect_failed'",
     );
-  });
-
-  it('should not log a debug message when debugging is disabled', () => {
-    instance.state.debug = false;
-
-    const handler = handleReconnectFailed(instance);
-    handler();
-
-    expect(mockConsoleDebug).not.toHaveBeenCalled();
   });
 });

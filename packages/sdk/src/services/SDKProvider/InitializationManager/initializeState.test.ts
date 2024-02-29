@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SDKProvider } from '../../../provider/SDKProvider';
+import * as loggerModule from '../../../utils/logger';
 import { initializeState } from './initializeState';
 
 describe('initializeState', () => {
   let mockSDKProvider: SDKProvider;
   const mockSuperInitializeState: jest.Mock = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,14 +25,8 @@ describe('initializeState', () => {
     jest.spyOn(console, 'debug').mockImplementation();
     initializeState(mockSDKProvider, mockSuperInitializeState);
 
-    expect(console.debug).not.toHaveBeenCalled();
-
-    mockSDKProvider.state.debug = true;
-
-    initializeState(mockSDKProvider, mockSuperInitializeState);
-
-    expect(console.debug).toHaveBeenCalledWith(
-      'SDKProvider::_initializeState() set state._initialized to false',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SDKProvider: initializeState()] set state._initialized to false',
     );
   });
 

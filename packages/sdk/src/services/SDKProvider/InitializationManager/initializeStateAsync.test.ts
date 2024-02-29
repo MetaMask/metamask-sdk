@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SDKProvider } from '../../../provider/SDKProvider';
+import * as loggerModule from '../../../utils/logger';
 import { initializeStateAsync } from './initializeStateAsync';
 
 describe('initializeStateAsync', () => {
@@ -7,14 +8,13 @@ describe('initializeStateAsync', () => {
   const mockRequest: jest.Mock = jest.fn();
   const mockLogError: jest.Mock = jest.fn();
   const mockInitializeState: jest.Mock = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
-      state: {
-        debug: false,
-      },
+      state: {},
       providerStateRequested: false,
       request: mockRequest,
       _initializeState: mockInitializeState,
@@ -22,19 +22,16 @@ describe('initializeStateAsync', () => {
     } as unknown as SDKProvider;
   });
 
-  it('should log debug information when debug is true', async () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-
-    await initializeStateAsync(mockSDKProvider as SDKProvider);
-    expect(console.debug).not.toHaveBeenCalled();
-
-    // eslint-disable-next-line require-atomic-updates
-    mockSDKProvider.state.debug = true;
-
+  it('should log debug information', async () => {
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
-    expect(console.debug).toHaveBeenCalledWith(
-      `SDKProvider::_initializeStateAsync()`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[SDKProvider: initializeStateAsync()] initialize state async started`,
+    );
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SDKProvider: initializeStateAsync()] state selectedAddress=undefined ',
+      undefined,
     );
   });
 
@@ -128,14 +125,12 @@ describe('initializeStateAsync', () => {
   });
 
   it('should log debug information for different scenarios', async () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-    mockSDKProvider.state.debug = true;
     const mockInitialState = { accounts: [] };
     mockRequest.mockResolvedValue(mockInitialState);
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
 
-    expect(console.debug).toHaveBeenCalledWith(
+    expect(spyLogger).toHaveBeenCalledWith(
       expect.stringContaining("initial state doesn't contain accounts"),
     );
   });

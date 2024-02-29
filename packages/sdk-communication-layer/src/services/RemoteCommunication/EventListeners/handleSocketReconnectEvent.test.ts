@@ -1,11 +1,14 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { clean } from '../ChannelManager';
+import * as loggerModule from '../../../utils/logger';
 import { handleSocketReconnectEvent } from './handleSocketReconnectEvent';
 
 jest.mock('../ChannelManager');
 
 describe('handleSocketReconnectEvent', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
   const mockClean = clean as jest.MockedFunction<typeof clean>;
 
   beforeEach(() => {
@@ -33,13 +36,11 @@ describe('handleSocketReconnectEvent', () => {
   });
 
   it('should log a debug message when debug is true', () => {
-    instance.state.debug = true;
-    const mockConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
     const handler = handleSocketReconnectEvent(instance);
     handler();
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `RemoteCommunication::on 'socket_reconnect' -- reset key exchange status / set ready to false`,
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleSocketReconnectEvent()] on 'socket_reconnect' -- reset key exchange status / set ready to false",
     );
-    mockConsoleDebug.mockRestore();
   });
 });

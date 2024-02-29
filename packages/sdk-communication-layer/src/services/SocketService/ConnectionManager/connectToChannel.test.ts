@@ -2,6 +2,7 @@
 import { setupChannelListeners } from '../ChannelManager';
 import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
+import * as loggerModule from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
 
 jest.mock('../ChannelManager');
@@ -11,6 +12,8 @@ const mockEmit = jest.fn();
 
 describe('connectToChannel', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -66,10 +69,7 @@ describe('connectToChannel', () => {
     }).toThrow('socket already connected');
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    instance.state.debug = true;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
+  it('should log debug information', () => {
     const options = {
       channelId: 'channel123',
       withKeyExchange: true,
@@ -78,11 +78,9 @@ describe('connectToChannel', () => {
 
     connectToChannel({ options, instance });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::someContext::connectToChannel() channelId=channel123 isOriginator=true',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: connectToChannel()] context=someContext channelId=channel123 isOriginator=true',
       'keyExchangeString',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 });

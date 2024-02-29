@@ -1,6 +1,7 @@
 import { Duplex } from 'stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RPC_METHODS } from '../config';
+import * as loggerModule from '../utils/logger';
 import { wrapExtensionProvider } from './wrapExtensionProvider';
 
 jest.mock('stream', () => ({
@@ -33,6 +34,8 @@ function createMockExtensionProvider(): MetaMaskInpageProvider {
 }
 
 describe('wrapExtensionProvider', () => {
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   it('initializes Proxy around SDKProvider', () => {
     const provider = createMockExtensionProvider();
     const wrapped = wrapExtensionProvider({ provider });
@@ -53,14 +56,15 @@ describe('wrapExtensionProvider', () => {
   });
 
   it('logs debug information if debug flag is enabled', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug');
     const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider, debug: true });
+    const wrapped = wrapExtensionProvider({ provider });
 
     await wrapped.request({ method: 'someMethod' });
-    expect(consoleSpy).toHaveBeenCalled();
 
-    consoleSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[wrapExtensionProvider()] Overwriting request method`,
+      { method: 'someMethod' },
+    );
   });
 
   it('handles special method correctly', async () => {

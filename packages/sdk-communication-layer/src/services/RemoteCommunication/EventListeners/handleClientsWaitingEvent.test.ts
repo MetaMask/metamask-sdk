@@ -2,12 +2,15 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
+import * as loggerModule from '../../../utils/logger';
 import { handleClientsWaitingEvent } from './handleClientsWaitingEvent';
 
 jest.useFakeTimers();
 
 describe('handleClientsWaitingEvent', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
   const mockEmit = jest.fn();
   const mockSetConnectionStatus = jest.fn();
 
@@ -38,11 +41,16 @@ describe('handleClientsWaitingEvent', () => {
     jest.useRealTimers();
   });
 
-  it('should log event details if debug is enabled', () => {
+  it('should log event details', () => {
     const handler = handleClientsWaitingEvent(instance);
     handler(5);
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::mockContext::on 'clients_waiting' numberUsers=5 ready=false autoStarted=true`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleClientsWaitingEvent()] context=mockContext on 'clients_waiting' numberUsers=5 ready=false autoStarted=true",
+    );
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleClientsWaitingEvent()] on 'clients_waiting' watch autoStarted=true timeout",
+      { timeout: 4000 },
     );
   });
 

@@ -20,7 +20,6 @@ describe('Ethereum Class', () => {
         connectionStream: stream,
         shouldSendMetadata: false,
         shouldShimWeb3: false,
-        debug: false,
       };
 
       Ethereum.init(props);
@@ -31,7 +30,6 @@ describe('Ethereum Class', () => {
         shouldSetOnWindow: false,
         shouldShimWeb3: false,
         autoRequestAccounts: false,
-        debug: false,
       });
       expect(Ethereum.getInstance()).toBeDefined();
     });

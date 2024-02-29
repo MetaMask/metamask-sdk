@@ -1,9 +1,12 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
+import * as loggerModule from '../../../utils/logger';
 import { resume } from './resume';
 
 describe('resume', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
   const mockResume = jest.fn();
   const mockSetConnectionStatus = jest.fn();
 
@@ -24,17 +27,11 @@ describe('resume', () => {
     } as unknown as RemoteCommunication;
   });
 
-  it('should log channel being resumed when debug is true', () => {
+  it('should log channel info', () => {
     resume(instance);
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::resume() channel=testChannel`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: resume()] channel=testChannel',
     );
-  });
-
-  it('should not log when debug is false', () => {
-    instance.state.debug = false;
-    resume(instance);
-    expect(console.debug).not.toHaveBeenCalled();
   });
 
   it('should call resume on the communication layer', () => {
@@ -56,8 +53,8 @@ describe('resume', () => {
       resume(instance);
     }).not.toThrow();
 
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::resume() channel=testChannel`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: resume()] channel=testChannel',
     );
   });
 
@@ -74,17 +71,17 @@ describe('resume', () => {
     instance.state.channelId = undefined;
 
     resume(instance);
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::resume() channel=undefined`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: resume()] channel=undefined',
     );
   });
 
-  it('should handle when channelId is undefined', () => {
+  it('should log debug info when channelId is undefined', () => {
     instance.state.channelId = undefined;
 
     resume(instance);
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::resume() channel=undefined`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: resume()] channel=undefined',
     );
   });
 });

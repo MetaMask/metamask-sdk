@@ -37,7 +37,7 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
     );
   } catch (err) {
     // ignore error
-    logger(
+    console.warn(
       `[MetaMaskSDK: connectWithExtensionProvider()] can't request accounts error`,
       err,
     );

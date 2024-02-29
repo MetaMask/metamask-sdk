@@ -1,9 +1,13 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import * as loggerModule from '../../../utils/logger';
 import { handlesClientsDisconnected } from './handlesClientsDisconnected';
 
 describe('handlesClientsDisconnected', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+
   const mockConsoleDebug = jest.fn();
   const mockEmit = jest.fn();
   const channelId = 'testChannel';
@@ -36,14 +40,12 @@ describe('handlesClientsDisconnected', () => {
     expect(instance.state.clientsConnected).toBe(false);
   });
 
-  it('should log a debug message when debugging is enabled', () => {
-    instance.state.debug = true;
-
+  it('should log a debug info', () => {
     const handler = handlesClientsDisconnected(instance, channelId);
     handler();
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `SocketService::testContext::setupChannelListener::on 'clients_disconnected-${channelId}'`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handlesClientsDisconnected()] context=testContext on 'clients_disconnected-testChannel'",
     );
   });
 

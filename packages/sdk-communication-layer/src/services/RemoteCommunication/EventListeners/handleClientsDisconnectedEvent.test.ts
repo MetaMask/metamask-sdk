@@ -2,6 +2,7 @@ import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { EventType } from '../../../types/EventType';
+import * as loggerModule from '../../../utils/logger';
 import { handleClientsConnectedEvent } from './handleClientsConnectedEvent';
 
 jest.mock('../../../../package.json', () => ({
@@ -14,6 +15,9 @@ jest.mock('../../../Analytics', () => ({
 
 describe('handleClientsConnectedEvent', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+
   const mockEmit = jest.fn();
   const mockGetKeyInfo = jest.fn();
 
@@ -43,14 +47,14 @@ describe('handleClientsConnectedEvent', () => {
     });
   });
 
-  it('should log event details if debug is enabled', () => {
+  it('should log event details', () => {
     const handler = handleClientsConnectedEvent(
       instance,
       CommunicationLayerPreference.SOCKET,
     );
     handler();
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::on 'clients_connected' channel=testChannel keysExchanged=true`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleClientsConnectedEvent()] on 'clients_connected' channel=testChannel keysExchanged=true",
     );
   });
 

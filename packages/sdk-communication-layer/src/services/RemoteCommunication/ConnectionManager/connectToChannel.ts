@@ -35,7 +35,7 @@ export function connectToChannel({
   if (state.communicationLayer?.isConnected()) {
     // Adding a check on previous connection to prevent reconnecting during dev when HMR is enabled
     loggerRemoteLayer(
-      `[RemoteCommunication: connectToChannel()] context=${state.context} already connected - interrup connection.`,
+      `[RemoteCommunication: connectToChannel()] context=${state.context} already connected - interrupt connection.`,
     );
     return;
   }

@@ -1,9 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { MessageType } from '../../../types/MessageType';
+import * as loggerModule from '../../../utils/logger';
 import { pause } from './pause';
 
 describe('pause', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
   const mockDisconnect = jest.fn();
   const mockAreKeysExchanged = jest.fn();
   const mockSendMessage = jest.fn();
@@ -32,17 +35,12 @@ describe('pause', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     pause(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::someContext::pause()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: pause()] context=someContext',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should set manualDisconnect to true', () => {

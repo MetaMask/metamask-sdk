@@ -1,8 +1,11 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
+import * as loggerModule from '../../../utils/logger';
 import { testStorage } from './testStorage';
 
 describe('testStorage', () => {
   let state: RemoteCommunicationState;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,28 +27,24 @@ describe('testStorage', () => {
   });
 
   it('should log the result', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug');
     await testStorage(state);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'RemoteCommunication.testStorage() res',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: testStorage()] res',
       expect.any(Object),
     );
-    consoleDebugSpy.mockRestore();
   });
 
   it('should handle case when storageManager is not defined', async () => {
     state.storageManager = undefined;
-    const consoleDebugSpy = jest.spyOn(console, 'debug');
 
     const res = await testStorage(state);
 
     expect(res).toBeUndefined();
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'RemoteCommunication.testStorage() res',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: testStorage()] res',
       undefined,
     );
-    consoleDebugSpy.mockRestore();
   });
 });

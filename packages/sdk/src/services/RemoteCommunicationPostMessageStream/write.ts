@@ -71,7 +71,9 @@ export async function write(
 
     if (!socketConnected && isRemoteReady) {
       // Shouldn't happen -- needs to refresh
-      logger(`[RCPMS: _write()] invalid socket status -- shouln't happen`);
+      console.warn(
+        `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
+      );
       return callback();
     }
 

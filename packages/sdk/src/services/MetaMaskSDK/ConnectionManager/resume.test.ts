@@ -1,15 +1,18 @@
 import { MetaMaskSDK } from '../../../sdk';
+import * as loggerModule from '../../../utils/logger';
 import { resume } from './resume';
 
 describe('resume', () => {
   let instance: MetaMaskSDK;
   let mockIsReady: jest.Mock;
   let mockStartConnection: jest.Mock;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsReady = jest.fn();
     mockStartConnection = jest.fn();
+    spyLogger.mockImplementation();
 
     instance = {
       debug: false,
@@ -50,11 +53,12 @@ describe('resume', () => {
     it('should log debug messages when debug is true and getConnector().isReady is false', async () => {
       instance.debug = true;
       mockIsReady.mockReturnValue(false);
-      jest.spyOn(console, 'debug').mockImplementation();
 
       await resume(instance);
 
-      expect(console.debug).toHaveBeenCalledWith('SDK::resume channel');
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[MetaMaskSDK: resume()] channel is not ready -- starting connection',
+      );
     });
   });
 });

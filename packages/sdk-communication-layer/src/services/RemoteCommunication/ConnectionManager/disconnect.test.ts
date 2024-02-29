@@ -3,11 +3,14 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
 import { MessageType } from '../../../types/MessageType';
+import * as loggerModule from '../../../utils/logger';
 import { disconnect } from './disconnect';
 
 describe('disconnect', () => {
   let instance: RemoteCommunication;
   const mockSetConnectionStatus = jest.fn();
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -134,17 +137,12 @@ describe('disconnect', () => {
   });
 
   it('should log debug information if debug is enabled', () => {
-    instance.state.debug = true;
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
     disconnect({ instance });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::disconnect() channel=${instance.state.channelId}`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[RemoteCommunication: disconnect()] channel=${instance.state.channelId}`,
       undefined,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should reset originatorConnectStarted on termination', () => {

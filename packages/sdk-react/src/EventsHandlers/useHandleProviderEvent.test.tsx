@@ -2,6 +2,7 @@ import { EventType, PROVIDER_UPDATE_TYPE } from '@metamask/sdk';
 import { useHandleProviderEvent } from './useHandleProviderEvent';
 import { renderHook } from '@testing-library/react-hooks';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import * as loggerModule from '../utils/logger';
 
 jest.mock('@metamask/sdk', () => ({
   ...jest.requireActual('@metamask/sdk'),
@@ -9,6 +10,8 @@ jest.mock('@metamask/sdk', () => ({
 }));
 
 describe('useHandleProviderEvent', () => {
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   const eventHandlerProps = {
     setConnected: jest.fn(),
     setConnecting: jest.fn(),
@@ -29,12 +32,9 @@ describe('useHandleProviderEvent', () => {
     eventHandlerProps.setError = jest.fn();
     eventHandlerProps.setChainId = jest.fn();
     eventHandlerProps.setAccount = jest.fn();
-
-    console.debug = jest.fn();
   });
 
   it('should handle provider event correctly with debug enabled and TERMINATE type', () => {
-    eventHandlerProps.debug = true;
     const type = PROVIDER_UPDATE_TYPE.TERMINATE;
 
     const { result } = renderHook(() =>
@@ -42,8 +42,8 @@ describe('useHandleProviderEvent', () => {
     );
     result.current(type);
 
-    expect(console.debug).toHaveBeenCalledWith(
-      `MetaMaskProvider::sdk on '${EventType.PROVIDER_UPDATE}' event.`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[MetaMaskProvider: useHandleProviderEvent()] on '${EventType.PROVIDER_UPDATE}' event.`,
       type,
     );
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
@@ -64,22 +64,6 @@ describe('useHandleProviderEvent', () => {
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
-    expect(eventHandlerProps.setTrigger).toHaveBeenCalledWith(
-      expect.any(Function),
-    );
-  });
-
-  it('should handle provider event without debug logs', () => {
-    eventHandlerProps.debug = false;
-    const type = PROVIDER_UPDATE_TYPE.TERMINATE;
-
-    const { result } = renderHook(() =>
-      useHandleProviderEvent(eventHandlerProps),
-    );
-    result.current(type);
-
-    expect(console.debug).not.toHaveBeenCalled();
-    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setTrigger).toHaveBeenCalledWith(
       expect.any(Function),
     );

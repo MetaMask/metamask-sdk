@@ -1,8 +1,11 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
+import * as loggerModule from '../../../utils/logger';
 import { handleSocketDisconnectedEvent } from './handleSocketDisconnectedEvent';
 
 describe('handleSocketDisconnectedEvent', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -10,7 +13,6 @@ describe('handleSocketDisconnectedEvent', () => {
     instance = {
       state: {
         ready: true,
-        debug: false,
       },
     } as unknown as RemoteCommunication;
   });
@@ -22,24 +24,12 @@ describe('handleSocketDisconnectedEvent', () => {
   });
 
   it('should log a debug message when debug is true', () => {
-    instance.state.debug = true;
-    const mockConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
     const handler = handleSocketDisconnectedEvent(instance);
 
     handler();
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `RemoteCommunication::on 'socket_Disconnected' set ready to false`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleSocketDisconnectedEvent()] on 'socket_Disconnected' set ready to false",
     );
-    mockConsoleDebug.mockRestore();
-  });
-
-  it('should not log a debug message when debug is false', () => {
-    instance.state.debug = false;
-    const mockConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
-    const handler = handleSocketDisconnectedEvent(instance);
-    handler();
-    expect(mockConsoleDebug).not.toHaveBeenCalled();
-    mockConsoleDebug.mockRestore();
   });
 });

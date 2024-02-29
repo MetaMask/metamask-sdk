@@ -1,8 +1,11 @@
 import { SocketService } from '../../../SocketService';
+import * as loggerModule from '../../../utils/logger';
 import { disconnect } from './disconnect';
 
 describe('disconnect', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
   const mockDisconnect = jest.fn();
   const mockClean = jest.fn();
 
@@ -29,18 +32,13 @@ describe('disconnect', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     disconnect(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::someContext::disconnect()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: disconnect()] context=someContext',
       undefined,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should handle termination and key exchange clean when provided', () => {

@@ -2,6 +2,7 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
+import * as loggerModule from '../../../utils/logger';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('../../../utils/wait', () => ({
@@ -13,6 +14,8 @@ describe('reconnectSocket', () => {
   const mockConnect = jest.fn();
   const mockEmitInstance = jest.fn();
   const mockEmitSocket = jest.fn();
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -34,18 +37,13 @@ describe('reconnectSocket', () => {
     (wait as jest.Mock).mockResolvedValue(undefined);
   });
 
-  it('should log debug information when debugging is enabled', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', async () => {
     await reconnectSocket(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining('SocketService::connectAgain'),
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: reconnectSocket()] instance.state.socket?.connected=false trying to reconnect after socketio disconnection',
       instance,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should wait for a brief delay', async () => {

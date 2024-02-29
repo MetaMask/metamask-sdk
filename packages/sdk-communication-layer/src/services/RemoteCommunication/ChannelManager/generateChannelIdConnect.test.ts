@@ -2,6 +2,7 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
+import * as loggerModule from '../../../utils/logger';
 import { generateChannelIdConnect } from './generateChannelIdConnect';
 import { clean } from './clean';
 
@@ -9,6 +10,8 @@ jest.mock('./clean');
 
 describe('generateChannelIdConnect', () => {
   let state: RemoteCommunicationState;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
 
   const mockClean = clean as jest.MockedFunction<typeof clean>;
 
@@ -117,20 +120,16 @@ describe('generateChannelIdConnect', () => {
     );
   });
 
-  it('should log debug messages if debug is enabled', () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-
-    state.debug = true;
-
+  it('should log debug messages', () => {
     generateChannelIdConnect(state);
 
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::generateChannelId()`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: generateChannelId()]',
     );
 
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::generateChannelId() channel created`,
-      expect.anything(),
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: generateChannelId()] channel created',
+      { channelId: 'mockChannelId', pubKey: 'mockPublicKey' },
     );
   });
 

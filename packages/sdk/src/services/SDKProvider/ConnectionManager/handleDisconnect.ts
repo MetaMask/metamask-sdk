@@ -28,7 +28,7 @@ export function handleDisconnect({
   const connected = instance.isConnected();
   if (!connected) {
     logger(
-      `[SDKProvider: handleDisconnect()] not connected --- interrup disconnection`,
+      `[SDKProvider: handleDisconnect()] not connected --- interrupt disconnection`,
     );
     return;
   }

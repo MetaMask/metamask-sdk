@@ -1,21 +1,23 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { waitForRpc } from '../../../utils/wait';
+import * as loggerModule from '../../../utils/logger';
 import { handleRpcReplies } from './handleRpcReplies';
 
 jest.mock('../../../utils/wait');
 
 describe('handleRpcReplies', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+
   const mockWaitForRpc = waitForRpc as jest.MockedFunction<typeof waitForRpc>;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     instance = {
-      state: {
-        debug: true,
-      },
+      state: {},
     } as unknown as SocketService;
 
     mockWaitForRpc.mockResolvedValue({
@@ -65,9 +67,6 @@ describe('handleRpcReplies', () => {
     };
 
     instance.state.isOriginator = true;
-    instance.state.debug = true;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
     mockWaitForRpc.mockResolvedValueOnce({
       id: '123',
@@ -79,8 +78,8 @@ describe('handleRpcReplies', () => {
 
     await handleRpcReplies(instance, message);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::waitForRpc id=123 testMethod ( 100 ms)',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService:handleRpcReplies()] id=123 testMethod ( 100 ms)',
       'success',
     );
   });

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SocketService } from '../../../SocketService';
+import * as loggerModule from '../../../utils/logger';
 import { createChannel } from './createChannel';
 import { setupChannelListeners } from './setupChannelListeners';
 
@@ -11,6 +12,8 @@ const mockGetMyPublicKey = jest.fn();
 
 describe('createChannel', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -88,14 +91,11 @@ describe('createChannel', () => {
     expect(result.pubKey).toBe('');
   });
 
-  it('should log the creation process if debug is true', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
+  it('should log debug info', () => {
     createChannel(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::testContext::createChannel()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[SocketService: createChannel()] context=${instance.state.context}`,
     );
-    consoleDebugSpy.mockRestore();
   });
 });

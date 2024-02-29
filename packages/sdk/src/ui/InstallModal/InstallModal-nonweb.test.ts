@@ -1,11 +1,12 @@
+import * as loggerModule from '../../utils/logger';
 import InstallModal from './InstallModal-nonweb';
 
 describe('InstallModal-nonweb', () => {
-  let consoleLogSpy: jest.SpyInstance;
+  let logger: jest.SpyInstance;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
+    logger = jest.spyOn(loggerModule, 'logger').mockImplementation();
   });
 
   it('should log INSTALL MODAL along with the link', () => {
@@ -13,7 +14,9 @@ describe('InstallModal-nonweb', () => {
 
     InstallModal({ link: mockLink });
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('INSTALL MODAL', mockLink);
+    expect(logger).toHaveBeenCalledWith(
+      `[UI: InstallModal-nonweb()] INSTALL MODAL link=${mockLink}`,
+    );
   });
 
   it('should return an object with unmount function', () => {

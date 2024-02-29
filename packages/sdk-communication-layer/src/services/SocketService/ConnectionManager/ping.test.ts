@@ -1,8 +1,10 @@
 import { SocketService } from '../../../SocketService';
+import * as loggerModule from '../../../utils/logger';
 import { ping } from './ping';
 
 describe('ping', () => {
   let instance: SocketService;
+  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
   const mockEmit = jest.fn();
   const mockSendMessage = jest.fn();
   const mockAreKeysExchanged = jest.fn();
@@ -29,16 +31,11 @@ describe('ping', () => {
     } as unknown as SocketService;
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     ping(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining('SocketService::someContext::ping()'),
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: ping()] context=someContext originator=false keysExchanged=undefined',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 });

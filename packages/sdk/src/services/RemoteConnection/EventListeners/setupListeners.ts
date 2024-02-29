@@ -104,6 +104,10 @@ export function setupListeners(
 
       await provider.forceInitializeState();
     } catch (err) {
+      console.log(
+        '🟠 ~ file: setupListeners.ts:107 ~ state.connector.on ~ err:',
+        err,
+      );
       // Ignore error if already initialized.
       // console.debug(`IGNORE ERROR`, err);
     }
