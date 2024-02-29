@@ -4,7 +4,6 @@ import { resetKeys } from './resetKeys';
 
 describe('resetKeys', () => {
   let instance: SocketService;
-  const mockConsoleDebug = jest.spyOn(console, 'debug');
   const mockResetKeys = jest.fn();
 
   const spyLogger = jest.spyOn(logger, 'SocketService');

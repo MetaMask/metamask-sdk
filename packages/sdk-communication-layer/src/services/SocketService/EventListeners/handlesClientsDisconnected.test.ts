@@ -8,7 +8,6 @@ describe('handlesClientsDisconnected', () => {
 
   const spyLogger = jest.spyOn(logger, 'SocketService');
 
-  const mockConsoleDebug = jest.fn();
   const mockEmit = jest.fn();
   const channelId = 'testChannel';
   const mockClean = jest.fn();
@@ -29,8 +28,6 @@ describe('handlesClientsDisconnected', () => {
       },
       emit: mockEmit,
     } as unknown as SocketService;
-
-    jest.spyOn(console, 'debug').mockImplementation(mockConsoleDebug);
   });
 
   it('should update the clientsConnected state to false when handler is called', () => {
