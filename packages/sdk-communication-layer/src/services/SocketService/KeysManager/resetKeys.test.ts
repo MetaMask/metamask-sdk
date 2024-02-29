@@ -1,5 +1,5 @@
 import { SocketService } from '../../../SocketService';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { resetKeys } from './resetKeys';
 
 describe('resetKeys', () => {
@@ -7,7 +7,7 @@ describe('resetKeys', () => {
   const mockConsoleDebug = jest.spyOn(console, 'debug');
   const mockResetKeys = jest.fn();
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();

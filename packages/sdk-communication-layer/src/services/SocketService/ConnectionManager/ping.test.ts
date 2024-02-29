@@ -1,10 +1,10 @@
 import { SocketService } from '../../../SocketService';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { ping } from './ping';
 
 describe('ping', () => {
   let instance: SocketService;
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
   const mockSendMessage = jest.fn();
   const mockAreKeysExchanged = jest.fn();

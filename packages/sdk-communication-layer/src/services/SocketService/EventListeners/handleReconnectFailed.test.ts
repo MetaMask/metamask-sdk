@@ -1,10 +1,10 @@
 import { SocketService } from '../../../SocketService';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleReconnectFailed } from './handleReconnectFailed';
 
 describe('handleReconnectFailed', () => {
   let instance: SocketService;
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();

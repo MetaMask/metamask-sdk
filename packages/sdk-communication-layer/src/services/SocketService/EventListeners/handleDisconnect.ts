@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { checkFocusAndReconnect } from '../ConnectionManager';
@@ -13,7 +13,7 @@ import { checkFocusAndReconnect } from '../ConnectionManager';
  */
 export function handleDisconnect(instance: SocketService) {
   return (reason: string) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleDisconnect()] on 'disconnect' manualDisconnect=${instance.state.manualDisconnect}`,
       reason,
     );

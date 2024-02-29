@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -27,7 +27,7 @@ export function handleClientsDisconnectedEvent(
   return (channelId: string) => {
     const { state } = instance;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleClientsDisconnectedEvent()] context=${state.context} on 'clients_disconnected' channelId=${channelId}`,
     );
 

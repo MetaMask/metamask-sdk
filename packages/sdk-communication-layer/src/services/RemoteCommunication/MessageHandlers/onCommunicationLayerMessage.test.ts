@@ -2,7 +2,7 @@ import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { MessageType } from '../../../types/MessageType';
 import { EventType } from '../../../types/EventType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { onCommunicationLayerMessage } from './onCommunicationLayerMessage';
 import { handleOriginatorInfoMessage } from './handleOriginatorInfoMessage';
 import { handleAuthorizedMessage } from './handleAuthorizedMessage';
@@ -44,7 +44,7 @@ describe('onCommunicationLayerMessage', () => {
   let instance: RemoteCommunication;
   let message: CommunicationLayerMessage;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   const mockHandleOriginatorInfoMessage =
     handleOriginatorInfoMessage as jest.MockedFunction<

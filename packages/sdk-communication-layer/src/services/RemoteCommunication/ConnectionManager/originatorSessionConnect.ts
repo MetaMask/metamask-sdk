@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 
 /**
@@ -16,7 +16,7 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
   const { state } = instance;
 
   if (!state.storageManager) {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: originatorSessionConnect()] no storage manager defined - skip`,
     );
     return undefined;
@@ -25,14 +25,14 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
   const channelConfig = await state.storageManager.getPersistedChannelConfig(
     state.channelId ?? '',
   );
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: originatorSessionConnect()] autoStarted=${state.originatorConnectStarted} channelConfig`,
     channelConfig,
   );
 
   const connected = state.communicationLayer?.isConnected();
   if (connected) {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: originatorSessionConnect()] socket already connected - skip`,
     );
 
@@ -54,7 +54,7 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
       return channelConfig;
     }
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: autoConnect()] Session has expired`,
     );
   }

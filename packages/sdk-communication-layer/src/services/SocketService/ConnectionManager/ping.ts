@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
@@ -13,7 +13,7 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function ping(instance: SocketService) {
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: ping()] context=${instance.state.context} originator=${
       instance.state.isOriginator
     } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,

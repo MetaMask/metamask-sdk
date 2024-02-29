@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 
@@ -12,7 +12,7 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 export function resume(instance: RemoteCommunication) {
   const { state } = instance;
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: resume()] channel=${state.channelId}`,
   );
 

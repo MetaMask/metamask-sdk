@@ -1,13 +1,13 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { validateKeyExchange } from './validateKeyExchange';
 
 describe('validateKeyExchange', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   const mockAreKeysExchanged = jest.fn();
   const testMessage: CommunicationLayerMessage = {

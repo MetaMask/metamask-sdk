@@ -1,9 +1,9 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { clean } from './clean';
 
 describe('clean', () => {
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   let state: RemoteCommunicationState;
 
   beforeEach(() => {

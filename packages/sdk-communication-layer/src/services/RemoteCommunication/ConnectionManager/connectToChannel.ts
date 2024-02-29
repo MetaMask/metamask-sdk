@@ -1,5 +1,5 @@
 import { validate } from 'uuid';
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
 
@@ -22,19 +22,19 @@ export function connectToChannel({
   state: RemoteCommunicationState;
 }) {
   if (!validate(channelId)) {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: connectToChannel()] context=${state.context} invalid channel channelId=${channelId}`,
     );
     throw new Error(`Invalid channel ${channelId}`);
   }
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: connectToChannel()] context=${state.context} channelId=${channelId}`,
   );
 
   if (state.communicationLayer?.isConnected()) {
     // Adding a check on previous connection to prevent reconnecting during dev when HMR is enabled
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: connectToChannel()] context=${state.context} already connected - interrupt connection.`,
     );
     return;

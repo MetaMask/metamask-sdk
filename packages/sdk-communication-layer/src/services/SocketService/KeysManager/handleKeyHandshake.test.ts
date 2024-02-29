@@ -2,13 +2,13 @@ import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleKeyHandshake } from './handleKeyHandshake';
 
 describe('handleKeyHandshake', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
 
   const keyHandshakeMessage: CommunicationLayerMessage = {

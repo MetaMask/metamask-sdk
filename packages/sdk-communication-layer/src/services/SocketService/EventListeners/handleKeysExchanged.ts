@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
@@ -13,7 +13,7 @@ import { ServiceStatus } from '../../../types/ServiceStatus';
  */
 export function handleKeysExchanged(instance: SocketService) {
   return () => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
     );
 

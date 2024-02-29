@@ -2,7 +2,7 @@
 import { setupChannelListeners } from '../ChannelManager';
 import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
 
 jest.mock('../ChannelManager');
@@ -13,7 +13,7 @@ const mockEmit = jest.fn();
 describe('connectToChannel', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();

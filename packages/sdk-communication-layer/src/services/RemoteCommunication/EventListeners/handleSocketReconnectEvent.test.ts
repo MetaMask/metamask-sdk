@@ -1,6 +1,6 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { clean } from '../ChannelManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleSocketReconnectEvent } from './handleSocketReconnectEvent';
 
 jest.mock('../ChannelManager');
@@ -8,7 +8,7 @@ jest.mock('../ChannelManager');
 describe('handleSocketReconnectEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockClean = clean as jest.MockedFunction<typeof clean>;
 
   beforeEach(() => {

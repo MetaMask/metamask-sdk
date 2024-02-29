@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -26,7 +26,7 @@ export function handleClientsConnectedEvent(
   return () => {
     const { state } = instance;
     // Propagate the event to manage different loading states on the ui.
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleClientsConnectedEvent()] on 'clients_connected' channel=${
         state.channelId
       } keysExchanged=${state.communicationLayer?.getKeyInfo()?.keysExchanged}`,

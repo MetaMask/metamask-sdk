@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 
 /**
  * Returns a handler function to handle the 'reconnect' event.
@@ -9,7 +9,7 @@ import { loggerServiceLayer } from '../../../utils/logger';
  */
 export function handleReconnect() {
   return (attempt: number) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleReconnect()] on 'reconnect' attempt=${attempt}`,
     );
   };

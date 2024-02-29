@@ -1,13 +1,13 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { MessageType } from '../../../types/MessageType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 
 describe('encryptAndSendMessage', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   const mockEncryptMessage = jest.fn();
   const mockEmit = jest.fn();

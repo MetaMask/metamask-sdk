@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -17,14 +17,14 @@ export async function handleAuthorization(
   return new Promise((resolve) => {
     const { state } = instance;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleAuthorization()] context=${state.context} ready=${state.ready} authorized=${state.authorized} method=${message.method}`,
     );
 
     // TODO remove after wallet 7.3+ is deployed
     // backward compatibility for wallet <7.3
     if ('7.3'.localeCompare(state.walletInfo?.version || '') === 1) {
-      loggerRemoteLayer(
+      logger.RemoteCommunication(
         `[RemoteCommunication: handleAuthorization()] compatibility hack wallet version > ${state.walletInfo?.version}`,
       );
 
@@ -38,7 +38,7 @@ export async function handleAuthorization(
       resolve();
     } else {
       instance.once(EventType.AUTHORIZED, () => {
-        loggerRemoteLayer(
+        logger.RemoteCommunication(
           `[RemoteCommunication: handleAuthorization()] context=${state.context}  AFTER SKIP / AUTHORIZED -- sending pending message`,
         );
         // only send the message after the clients have awaken.

@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 
 /**
@@ -10,7 +10,9 @@ import { RemoteCommunicationState } from '../../../RemoteCommunication';
 export function clean(state: RemoteCommunicationState) {
   const { context } = state;
 
-  loggerRemoteLayer(`[RemoteCommunication: clean()] context=${context}`);
+  logger.RemoteCommunication(
+    `[RemoteCommunication: clean()] context=${context}`,
+  );
 
   state.channelConfig = undefined;
   state.ready = false;

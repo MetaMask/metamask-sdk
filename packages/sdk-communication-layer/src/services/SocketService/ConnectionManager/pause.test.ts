@@ -1,12 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { MessageType } from '../../../types/MessageType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { pause } from './pause';
 
 describe('pause', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockDisconnect = jest.fn();
   const mockAreKeysExchanged = jest.fn();
   const mockSendMessage = jest.fn();

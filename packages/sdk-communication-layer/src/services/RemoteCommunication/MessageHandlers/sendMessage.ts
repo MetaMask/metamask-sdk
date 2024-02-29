@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -31,7 +31,7 @@ export async function sendMessage(
 ): Promise<void> {
   const { state } = instance;
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: sendMessage()] context=${state.context} paused=${
       state.paused
     } ready=${state.ready} authorized=${
@@ -48,7 +48,7 @@ export async function sendMessage(
     !state.communicationLayer?.isConnected() ||
     !state.clientsConnected
   ) {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: sendMessage()] context=${state.context}  SKIP message waiting for MM mobile readiness.`,
     );
 
@@ -56,7 +56,7 @@ export async function sendMessage(
       instance.once(EventType.CLIENTS_READY, resolve);
     });
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: sendMessage()] context=${state.context}  AFTER SKIP / READY -- sending pending message`,
     );
   }

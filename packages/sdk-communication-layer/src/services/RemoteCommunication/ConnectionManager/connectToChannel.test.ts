@@ -2,13 +2,13 @@ import { v4 as uuid } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
 
 describe('connectToChannel', () => {
   let state: RemoteCommunicationState;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();

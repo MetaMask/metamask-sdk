@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -29,7 +29,7 @@ export function encryptAndSendMessage(
       : undefined,
   };
 
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: encryptAndSendMessage()] context=${instance.state.context}`,
     messageToSend,
   );

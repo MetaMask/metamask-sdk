@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { clean } from './clean';
 
@@ -37,12 +37,12 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
     };
   }
 
-  loggerRemoteLayer(`[RemoteCommunication: generateChannelId()]`);
+  logger.RemoteCommunication(`[RemoteCommunication: generateChannelId()]`);
 
   clean(state);
   const channel = state.communicationLayer.createChannel();
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: generateChannelId()] channel created`,
     channel,
   );

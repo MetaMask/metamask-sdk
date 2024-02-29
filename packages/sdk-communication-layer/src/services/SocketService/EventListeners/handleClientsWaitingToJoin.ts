@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -15,7 +15,7 @@ export function handleClientsWaitingToJoin(
   channelId: string,
 ) {
   return (numberUsers: number) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleClientsWaitingToJoin()] context=${instance.state.context} on 'clients_waiting_to_join-${channelId}'`,
       numberUsers,
     );

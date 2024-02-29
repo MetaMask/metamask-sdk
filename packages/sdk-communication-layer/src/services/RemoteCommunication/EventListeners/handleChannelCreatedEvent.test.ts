@@ -1,12 +1,12 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleChannelCreatedEvent } from './handleChannelCreatedEvent';
 
 describe('handleChannelCreatedEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockEmit = jest.fn();
 
   beforeEach(() => {

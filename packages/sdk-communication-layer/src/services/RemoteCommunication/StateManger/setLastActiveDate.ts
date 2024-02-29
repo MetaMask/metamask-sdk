@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
 
@@ -22,7 +22,7 @@ export function setLastActiveDate(
 ) {
   const { state } = instance;
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: setLastActiveDate()] channel=${state.channelId}`,
     lastActiveDate,
   );

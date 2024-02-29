@@ -1,12 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleKeyInfo } from './handleKeyInfo';
 
 describe('handleKeyInfo', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
 
   beforeEach(() => {

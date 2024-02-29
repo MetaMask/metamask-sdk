@@ -2,7 +2,7 @@ import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { EventType } from '../../../types/EventType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleClientsConnectedEvent } from './handleClientsConnectedEvent';
 
 jest.mock('../../../../package.json', () => ({
@@ -16,7 +16,7 @@ jest.mock('../../../Analytics', () => ({
 describe('handleClientsConnectedEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   const mockEmit = jest.fn();
   const mockGetKeyInfo = jest.fn();

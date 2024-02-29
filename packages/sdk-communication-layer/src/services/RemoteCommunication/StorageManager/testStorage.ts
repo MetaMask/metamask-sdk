@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 
 /**
@@ -20,5 +20,5 @@ export async function testStorage(state: RemoteCommunicationState) {
     state.channelId ?? '',
   );
 
-  loggerRemoteLayer(`[RemoteCommunication: testStorage()] res`, res);
+  logger.RemoteCommunication(`[RemoteCommunication: testStorage()] res`, res);
 }

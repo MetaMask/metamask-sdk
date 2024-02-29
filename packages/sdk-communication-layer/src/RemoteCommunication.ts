@@ -38,7 +38,7 @@ import {
   StorageManagerProps,
 } from './types/StorageManager';
 import { WalletInfo } from './types/WalletInfo';
-import { loggerRemoteLayer } from './utils/logger';
+import { logger } from './utils/logger';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -271,7 +271,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   ping() {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: ping()] channel=${this.state.channelId}`,
     );
 
@@ -279,7 +279,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   keyCheck() {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: keyCheck()] channel=${this.state.channelId}`,
     );
 
@@ -333,7 +333,7 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   pause() {
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: pause()] channel=${this.state.channelId}`,
     );
 

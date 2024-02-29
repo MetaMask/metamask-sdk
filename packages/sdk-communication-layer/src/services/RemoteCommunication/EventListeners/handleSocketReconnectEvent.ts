@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { clean } from '../ChannelManager';
 
@@ -12,7 +12,7 @@ export function handleSocketReconnectEvent(instance: RemoteCommunication) {
   return () => {
     const { state } = instance;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleSocketReconnectEvent()] on 'socket_reconnect' -- reset key exchange status / set ready to false`,
     );
 

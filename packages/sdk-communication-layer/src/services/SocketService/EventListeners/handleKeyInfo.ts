@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -12,7 +12,10 @@ import { EventType } from '../../../types/EventType';
  */
 export function handleKeyInfo(instance: SocketService) {
   return (event: any) => {
-    loggerServiceLayer(`[SocketService: handleKeyInfo()] on 'KEY_INFO'`, event);
+    logger.SocketService(
+      `[SocketService: handleKeyInfo()] on 'KEY_INFO'`,
+      event,
+    );
 
     instance.emit(EventType.KEY_INFO, event);
   };

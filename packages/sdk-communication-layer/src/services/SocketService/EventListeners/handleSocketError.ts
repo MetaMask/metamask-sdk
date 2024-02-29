@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { checkFocusAndReconnect } from '../ConnectionManager';
 
@@ -12,7 +12,7 @@ import { checkFocusAndReconnect } from '../ConnectionManager';
  */
 export function handleSocketError(instance: SocketService) {
   return (error: Error) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleSocketError()] on 'error' `,
       error,
     );

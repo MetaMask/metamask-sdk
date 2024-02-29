@@ -1,13 +1,13 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { setLastActiveDate } from './setLastActiveDate';
 
 describe('setLastActiveDate', () => {
   let instance: RemoteCommunication;
   let lastActiveDate: Date;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();

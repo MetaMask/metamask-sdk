@@ -5,7 +5,7 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { setLastActiveDate } from '../StateManger';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleKeysExchangedEvent } from './handleKeysExchangedEvent';
 
 jest.mock('../../../Analytics', () => {
@@ -18,7 +18,7 @@ jest.mock('../StateManger');
 describe('handleKeysExchangedEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   const mockSetConnectionStatus = jest.fn();
   const mockSendMessage = jest.fn();

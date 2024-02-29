@@ -1,11 +1,11 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleSocketDisconnectedEvent } from './handleSocketDisconnectedEvent';
 
 describe('handleSocketDisconnectedEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();

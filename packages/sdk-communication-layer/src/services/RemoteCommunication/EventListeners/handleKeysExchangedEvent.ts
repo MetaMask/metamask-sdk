@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -41,7 +41,7 @@ export function handleKeysExchangedEvent(
   }) => {
     const { state } = instance;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleKeysExchangedEvent()] context=${state.context} on commLayer.'keys_exchanged' channel=${state.channelId}`,
       message,
     );

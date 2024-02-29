@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import {
@@ -56,7 +56,7 @@ export function setupChannelListeners(
   instance: SocketService,
   channelId: string,
 ) {
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: setupChannelListener()] context=${instance.state.context} setting socket listeners for channel ${channelId}...`,
   );
 
@@ -75,7 +75,7 @@ export function setupChannelListeners(
       // TODO remove all the handleSocker* functions
       // They are not required since it is managed via the handleDisconnect function
       socket?.io.on('error', (error) => {
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=error`,
           error,
         );
@@ -83,14 +83,14 @@ export function setupChannelListeners(
       });
 
       socket?.io.on('reconnect', (attempt) => {
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect`,
           attempt,
         );
       });
 
       socket?.io.on('reconnect_error', (error) => {
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect_error`,
           error,
         );
@@ -98,14 +98,14 @@ export function setupChannelListeners(
       });
 
       socket?.io.on('reconnect_failed', () => {
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect_failed`,
         );
         // return handleReconnectFailed(instance)();
       });
 
       socket?.io.on('ping', () => {
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=ping`,
         );
         // return handlePing(instance)();
@@ -113,7 +113,7 @@ export function setupChannelListeners(
     }
 
     socket?.on('disconnect', (reason: string) => {
-      loggerServiceLayer(
+      logger.SocketService(
         `[SocketService: setupChannelListener()] on 'disconnect' -- MetaMaskSDK socket disconnected '${reason}' begin recovery...`,
       );
 

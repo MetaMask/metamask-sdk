@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -34,7 +34,7 @@ export function onCommunicationLayerMessage(
 ) {
   const { state } = instance;
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: onCommunicationLayerMessage()] context=${
       state.context
     } on 'message' typeof=${typeof message}`,

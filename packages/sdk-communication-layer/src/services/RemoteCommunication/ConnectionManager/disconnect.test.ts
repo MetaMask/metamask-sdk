@@ -3,14 +3,14 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
 import { MessageType } from '../../../types/MessageType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { disconnect } from './disconnect';
 
 describe('disconnect', () => {
   let instance: RemoteCommunication;
   const mockSetConnectionStatus = jest.fn();
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();

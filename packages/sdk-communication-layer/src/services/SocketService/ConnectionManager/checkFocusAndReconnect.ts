@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { reconnectSocket } from './reconnectSocket';
 
@@ -14,7 +14,7 @@ export function checkFocusAndReconnect(instance: SocketService) {
     return;
   }
 
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: checkFocusAndReconnect()] hasFocus=${document.hasFocus()}`,
     instance,
   );
@@ -22,7 +22,7 @@ export function checkFocusAndReconnect(instance: SocketService) {
   if (document.hasFocus()) {
     reconnectSocket(instance)
       .then((success) => {
-        loggerServiceLayer(
+        logger.SocketService(
           `SocketService::checkFocus reconnectSocket success=${success}`,
           instance,
         );

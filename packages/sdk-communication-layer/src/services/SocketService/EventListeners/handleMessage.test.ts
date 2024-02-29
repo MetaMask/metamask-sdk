@@ -4,7 +4,7 @@ import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
 import * as ChannelManager from '../ChannelManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleMessage } from './handleMessage';
 
 jest.mock('../ChannelManager');
@@ -14,7 +14,7 @@ const msgToDeEncrypt = 'encryptedMessage';
 describe('handleMessage', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   const mockCheckSameId = ChannelManager.checkSameId as jest.Mock;
   const mockEmit = jest.fn();

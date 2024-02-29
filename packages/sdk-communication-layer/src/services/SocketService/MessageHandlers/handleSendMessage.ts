@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
@@ -27,7 +27,7 @@ export function handleSendMessage(
     throw new Error('Create a channel first');
   }
 
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: handleSendMessage()] context=${
       instance.state.context
     } areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,

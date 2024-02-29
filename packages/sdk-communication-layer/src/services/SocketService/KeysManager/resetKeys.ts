@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 
 /**
@@ -8,7 +8,7 @@ import { SocketService } from '../../../SocketService';
  * @param instance The current instance of the SocketService.
  */
 export function resetKeys(instance: SocketService) {
-  loggerServiceLayer(`[SocketService: resetKeys()] Resetting keys.`);
+  logger.SocketService(`[SocketService: resetKeys()] Resetting keys.`);
 
   instance.state.keyExchange?.resetKeys();
 }

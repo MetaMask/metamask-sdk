@@ -3,7 +3,7 @@ import { CommunicationLayerPreference } from '../../../types/CommunicationLayerP
 import { EventType } from '../../../types/EventType';
 import { SendAnalytics } from '../../../Analytics';
 import packageJson from '../../../../package.json';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleClientsConnectedEvent } from './handleClientsConnectedEvent';
 
 jest.mock('../../../Analytics', () => ({
@@ -15,7 +15,7 @@ describe('handleClientsConnectedEvent', () => {
   const mockEmit = jest.fn();
   const mockGetKeyInfo = jest.fn();
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   jest.spyOn(console, 'error').mockImplementation();
 

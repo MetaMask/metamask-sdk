@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 
@@ -16,7 +16,7 @@ export function disconnect(
   instance: SocketService,
   options?: DisconnectOptions,
 ) {
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: disconnect()] context=${instance.state.context}`,
     options,
   );

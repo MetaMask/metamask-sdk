@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { setupChannelListeners } from './setupChannelListeners';
@@ -18,7 +18,7 @@ import { setupChannelListeners } from './setupChannelListeners';
  * instance, or an empty string if not available.
  */
 export function createChannel(instance: SocketService) {
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: createChannel()] context=${instance.state.context}`,
   );
 

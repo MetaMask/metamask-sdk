@@ -2,7 +2,7 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleClientsWaitingEvent } from './handleClientsWaitingEvent';
 
 jest.useFakeTimers();
@@ -10,7 +10,7 @@ jest.useFakeTimers();
 describe('handleClientsWaitingEvent', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockEmit = jest.fn();
   const mockSetConnectionStatus = jest.fn();
 

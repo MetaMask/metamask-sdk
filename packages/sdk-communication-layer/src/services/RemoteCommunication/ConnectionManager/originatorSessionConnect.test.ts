@@ -1,11 +1,11 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { originatorSessionConnect } from './originatorSessionConnect';
 
 describe('originatorSessionConnect', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockIsConnected = jest.fn();
   const mockGetPersistedChannelConfig = jest.fn();
   const mockConnectToChannel = jest.fn();

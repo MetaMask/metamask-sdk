@@ -2,7 +2,7 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('../../../utils/wait', () => ({
@@ -15,7 +15,7 @@ describe('reconnectSocket', () => {
   const mockEmitInstance = jest.fn();
   const mockEmitSocket = jest.fn();
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();

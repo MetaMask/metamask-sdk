@@ -1,12 +1,12 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { resume } from './resume';
 
 describe('resume', () => {
   let instance: RemoteCommunication;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockResume = jest.fn();
   const mockSetConnectionStatus = jest.fn();
 

@@ -1,7 +1,7 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { waitForRpc } from '../../../utils/wait';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleRpcReplies } from './handleRpcReplies';
 
 jest.mock('../../../utils/wait');
@@ -9,7 +9,7 @@ jest.mock('../../../utils/wait');
 describe('handleRpcReplies', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   const mockWaitForRpc = waitForRpc as jest.MockedFunction<typeof waitForRpc>;
 

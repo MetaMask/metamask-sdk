@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -18,7 +18,7 @@ export function handlesClientsDisconnected(
 ) {
   return () => {
     instance.state.clientsConnected = false;
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}'`,
     );
 

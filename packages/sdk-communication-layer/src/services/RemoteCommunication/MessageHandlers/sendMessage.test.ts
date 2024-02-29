@@ -3,7 +3,7 @@ import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMess
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
 import { handleAuthorization } from '../ConnectionManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { sendMessage } from './sendMessage';
 
 jest.mock('../ConnectionManager');
@@ -12,7 +12,7 @@ describe('sendMessage', () => {
   let instance: RemoteCommunication;
   let message: CommunicationLayerMessage;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockHandleAuthorization = handleAuthorization as jest.Mock;
   const mockOnce = jest.fn(
     (_: EventType, callback: (data: unknown) => void) => {

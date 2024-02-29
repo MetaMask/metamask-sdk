@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
@@ -21,7 +21,7 @@ export function handleClientsWaitingEvent(instance: RemoteCommunication) {
   return (numberUsers: number) => {
     const { state } = instance;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleClientsWaitingEvent()] context=${state.context} on 'clients_waiting' numberUsers=${numberUsers} ready=${state.ready} autoStarted=${state.originatorConnectStarted}`,
     );
 
@@ -29,14 +29,14 @@ export function handleClientsWaitingEvent(instance: RemoteCommunication) {
 
     instance.emit(EventType.CLIENTS_WAITING, numberUsers);
     if (state.originatorConnectStarted) {
-      loggerRemoteLayer(
+      logger.RemoteCommunication(
         `[RemoteCommunication: handleClientsWaitingEvent()] on 'clients_waiting' watch autoStarted=${state.originatorConnectStarted} timeout`,
         state.autoConnectOptions,
       );
 
       const timeout = state.autoConnectOptions?.timeout || 3000;
       const timeoutId = setTimeout(() => {
-        loggerRemoteLayer(
+        logger.RemoteCommunication(
           `[RemoteCommunication: handleClientsWaitingEvent()] setTimeout(${timeout}) terminate channelConfig`,
           state.autoConnectOptions,
         );

@@ -1,4 +1,4 @@
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
 import { PlatformType } from '../../../types/PlatformType';
@@ -38,7 +38,7 @@ export function handleAuthorizedEvent(instance: RemoteCommunication) {
     // bacward compatibility for wallet <7.3
     const compareValue = '7.3'.localeCompare(state.walletInfo?.version || '');
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleAuthorizedEvent()] HACK 'authorized' version=${state.walletInfo?.version} compareValue=${compareValue}`,
     );
 
@@ -53,7 +53,7 @@ export function handleAuthorizedEvent(instance: RemoteCommunication) {
       state.platformType === PlatformType.ReactNative ||
       state.platformType === PlatformType.MetaMaskMobileWebview;
 
-    loggerRemoteLayer(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleAuthorizedEvent()] HACK 'authorized' platform=${state.platformType} secure=${isSecurePlatform} channel=${state.channelId} walletVersion=${state.walletInfo?.version}`,
     );
 

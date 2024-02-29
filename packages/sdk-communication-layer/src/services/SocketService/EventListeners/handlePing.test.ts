@@ -1,8 +1,8 @@
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handlePing } from './handlePing';
 
 describe('handlePing', () => {
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();

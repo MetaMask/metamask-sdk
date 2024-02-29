@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -16,7 +16,7 @@ export function handleClientsConnected(
   channelId: string,
 ) {
   return async (_id: string) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleClientsConnected()] context=${
         instance.state.context
       } on 'clients_connected-${channelId}'  resumed=${
@@ -38,7 +38,7 @@ export function handleClientsConnected(
     if (instance.state.resumed) {
       if (!instance.state.isOriginator) {
         // should ask to redo a key exchange because it wasn't paused.
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService: handleClientsConnected()] context=${
             instance.state.context
           } 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
@@ -51,12 +51,12 @@ export function handleClientsConnected(
       // resumed switched when connection resume.
       instance.state.resumed = false;
     } else if (instance.state.clientsPaused) {
-      loggerServiceLayer(
+      logger.SocketService(
         `[SocketService: handleClientsConnected()] 'clients_connected' skip sending originatorInfo on pause`,
       );
     } else if (!instance.state.isOriginator) {
       // Reconnect scenario --- maybe web dapp got refreshed
-      loggerServiceLayer(
+      logger.SocketService(
         `[SocketService: handleClientsConnected()] context=${
           instance.state.context
         } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,

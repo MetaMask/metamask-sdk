@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
@@ -56,7 +56,7 @@ export async function handleRpcReplies(
       if (winner.type === PromiseType.RPC_CHECK) {
         const rpcCheck = winner.result;
         // rpcCheck resolved first, handle normally
-        loggerServiceLayer(
+        logger.SocketService(
           `[SocketService:handleRpcReplies()] id=${message.id} ${method} ( ${rpcCheck.elapsedTime} ms)`,
           rpcCheck.result,
         );

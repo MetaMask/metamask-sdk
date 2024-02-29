@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -15,7 +15,7 @@ export function handleChannelCreated(
   channelId: string,
 ) {
   return (id: string) => {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: handleChannelCreated()] context=${instance.state.context} on 'channel_created-${channelId}'`,
       id,
     );

@@ -1,6 +1,6 @@
 import { SocketService } from '../../../SocketService';
 import { checkFocusAndReconnect } from '../ConnectionManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { handleSocketError } from './handleSocketError';
 
 jest.mock('../ConnectionManager');
@@ -8,7 +8,7 @@ jest.mock('../ConnectionManager');
 describe('handleSocketError', () => {
   let instance: SocketService;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerServiceLayer');
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const error = new Error('Test error');
 
   beforeEach(() => {

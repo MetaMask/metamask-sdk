@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 
 /**
  * Returns a handler function to handle the 'ping' event.
@@ -8,6 +8,6 @@ import { loggerServiceLayer } from '../../../utils/logger';
  */
 export function handlePing() {
   return () => {
-    loggerServiceLayer(`[SocketService: handlePing()] on 'ping'`);
+    logger.SocketService(`[SocketService: handlePing()] on 'ping'`);
   };
 }

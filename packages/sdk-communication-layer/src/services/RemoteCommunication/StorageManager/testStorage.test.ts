@@ -1,11 +1,11 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { testStorage } from './testStorage';
 
 describe('testStorage', () => {
   let state: RemoteCommunicationState;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();

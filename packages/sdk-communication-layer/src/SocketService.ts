@@ -22,7 +22,7 @@ import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { loggerServiceLayer } from './utils/logger';
+import { logger } from './utils/logger';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -122,7 +122,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       options.transports = transports;
     }
 
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: constructor()] Socket IO url: ${this.state.communicationServerUrl}`,
     );
 

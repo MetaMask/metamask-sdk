@@ -2,7 +2,7 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
-import * as loggerModule from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { generateChannelIdConnect } from './generateChannelIdConnect';
 import { clean } from './clean';
 
@@ -11,7 +11,7 @@ jest.mock('./clean');
 describe('generateChannelIdConnect', () => {
   let state: RemoteCommunicationState;
 
-  const spyLogger = jest.spyOn(loggerModule, 'loggerRemoteLayer');
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   const mockClean = clean as jest.MockedFunction<typeof clean>;
 

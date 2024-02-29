@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { loggerRemoteLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
@@ -21,7 +21,7 @@ export function disconnect({
 }) {
   const { state } = instance;
 
-  loggerRemoteLayer(
+  logger.RemoteCommunication(
     `[RemoteCommunication: disconnect()] channel=${state.channelId}`,
     options,
   );

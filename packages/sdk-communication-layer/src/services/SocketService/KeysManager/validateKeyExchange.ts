@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 
@@ -15,7 +15,7 @@ export function validateKeyExchange(
   message: CommunicationLayerMessage,
 ) {
   if (!instance.state.keyExchange?.areKeysExchanged()) {
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: validateKeyExchange()] context=${instance.state.context} ERROR keys not exchanged`,
       message,
     );

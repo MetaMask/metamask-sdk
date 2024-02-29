@@ -8,7 +8,7 @@ import { InternalEventType } from './types/InternalEventType';
 import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { loggerKeyExchangeLayer } from './utils/logger';
+import { logger } from './utils/logger';
 
 export interface KeyExchangeProps {
   communicationLayer: CommunicationLayer;
@@ -69,14 +69,14 @@ export class KeyExchange extends EventEmitter2 {
   public onKeyExchangeMessage(keyExchangeMsg: {
     message: CommunicationLayerMessage;
   }) {
-    loggerKeyExchangeLayer(
+    logger.KeyExchange(
       `[KeyExchange: onKeyExchangeMessage()] context=${this.context} keysExchanged=${this.keysExchanged}`,
       keyExchangeMsg,
     );
 
     const { message } = keyExchangeMsg;
     if (this.keysExchanged) {
-      loggerKeyExchangeLayer(
+      logger.KeyExchange(
         `[KeyExchange: onKeyExchangeMessage()] context=${this.context} received handshake while already exchanged. step=${this.step} otherPubKey=${this.otherPublicKey}`,
       );
       // FIXME check if correct way / when is it really happening?
@@ -91,7 +91,7 @@ export class KeyExchange extends EventEmitter2 {
         KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
       ]);
 
-      loggerKeyExchangeLayer(
+      logger.KeyExchange(
         `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_SYN`,
         message,
       );
@@ -114,7 +114,7 @@ export class KeyExchange extends EventEmitter2 {
         KeyExchangeMessageType.KEY_HANDSHAKE_NONE,
       ]);
 
-      loggerKeyExchangeLayer(
+      logger.KeyExchange(
         `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_SYNACK`,
       );
 
@@ -130,7 +130,7 @@ export class KeyExchange extends EventEmitter2 {
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
       this.emit(EventType.KEYS_EXCHANGED);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_ACK) {
-      loggerKeyExchangeLayer(
+      logger.KeyExchange(
         `[KeyExchange: onKeyExchangeMessage()] KEY_HANDSHAKE_ACK set keysExchanged to true!`,
       );
 
@@ -151,7 +151,7 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   clean(): void {
-    loggerKeyExchangeLayer(
+    logger.KeyExchange(
       `[KeyExchange: clean()] context=${this.context} reset handshake state`,
     );
 
@@ -169,7 +169,7 @@ export class KeyExchange extends EventEmitter2 {
     isOriginator: boolean;
     force?: boolean;
   }): void {
-    loggerKeyExchangeLayer(
+    logger.KeyExchange(
       `[KeyExchange: start()] context=${this.context} isOriginator=${isOriginator} step=${this.step} force=${force} keysExchanged=${this.keysExchanged}`,
     );
 
@@ -182,7 +182,7 @@ export class KeyExchange extends EventEmitter2 {
         });
         this.clean();
       } else {
-        loggerKeyExchangeLayer(
+        logger.KeyExchange(
           `[KeyExchange: start()] don't send KEY_HANDSHAKE_START -- exchange already done.`,
         );
       }
@@ -197,7 +197,7 @@ export class KeyExchange extends EventEmitter2 {
       !force
     ) {
       // Key exchange can be restarted if the wallet ask for a new key.
-      loggerKeyExchangeLayer(
+      logger.KeyExchange(
         `[KeyExchange: start()] context=${
           this.context
         } -- key exchange already ${
@@ -208,7 +208,7 @@ export class KeyExchange extends EventEmitter2 {
       return;
     }
 
-    loggerKeyExchangeLayer(
+    logger.KeyExchange(
       `[KeyExchange: start()] context=${this.context} -- start key exchange (force=${force}) -- step=${this.step}`,
       this.step,
     );
@@ -254,7 +254,7 @@ export class KeyExchange extends EventEmitter2 {
   }
 
   setOtherPublicKey(otherPubKey: string) {
-    loggerKeyExchangeLayer(`[KeyExchange: setOtherPubKey()]`, otherPubKey);
+    logger.KeyExchange(`[KeyExchange: setOtherPubKey()]`, otherPubKey);
 
     this.otherPublicKey = otherPubKey;
   }

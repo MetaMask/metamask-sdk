@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
@@ -24,7 +24,7 @@ export function connectToChannel({
 }) {
   const { channelId, withKeyExchange, isOriginator } = options;
 
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: connectToChannel()] context=${instance.state.context} channelId=${channelId} isOriginator=${isOriginator}`,
     instance.state.keyExchange?.toString(),
   );

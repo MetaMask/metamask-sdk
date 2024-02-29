@@ -1,4 +1,4 @@
-import { loggerServiceLayer } from '../../../utils/logger';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
@@ -14,7 +14,7 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function resume(instance: SocketService) {
-  loggerServiceLayer(
+  logger.SocketService(
     `[SocketService: resume()] context=${instance.state.context} connected=${
       instance.state.socket?.connected
     } manualDisconnect=${instance.state.manualDisconnect} resumed=${
@@ -23,11 +23,11 @@ export function resume(instance: SocketService) {
   );
 
   if (instance.state.socket?.connected) {
-    loggerServiceLayer(`[SocketService: resume()] already connected.`);
+    logger.SocketService(`[SocketService: resume()] already connected.`);
   } else {
     instance.state.socket?.connect();
 
-    loggerServiceLayer(
+    logger.SocketService(
       `[SocketService: resume()] after connecting socket --> connected=${instance.state.socket?.connected}`,
     );
 
