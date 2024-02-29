@@ -1,6 +1,16 @@
 version: '3.9'
 
 services:
+
+  app:
+    image: node:latest
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: yarn debug:redis
+    # ports:
+    #   - "4000:4000"
+
   app1:
     build:
       context: .
@@ -40,8 +50,57 @@ services:
     depends_on:
       - cache
 
+  redis-master1:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.redis
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6380
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6380:6380"
+
+  redis-master2:
+    image: redis:7.2-alpine
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.redis
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6381
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6381:6381"
+
+  redis-master3:
+    image: redis:7.2-alpine
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.redis
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6382
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6382:6382"
+
+  redis-cluster-init:
+    image: redis:7.2-alpine
+    volumes:
+      - ./init-redis-cluster.sh:/usr/local/bin/init-redis-cluster.sh
+    depends_on:
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    entrypoint: ["/bin/sh", "/usr/local/bin/init-redis-cluster.sh"]
+    # environment:
+    #   - "REDISCLI_AUTH=yourpassword" # Optional: Include if your Redis nodes are password-protected
+    # To connect and debug the cluster use
+    # docker run -it --network  sdk-socket-server-next_default  --rm redis redis-cli -c -p 6379 -h redis-master1
+    # set mykey "Hello, Redis Cluster!"
+
+  # cache is used if want to simulate single node redis architecture
   cache:
-    image: redis:latest
+    image: redis:7.2-alpine
     command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
       - '6379:6379'

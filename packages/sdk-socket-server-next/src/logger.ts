@@ -23,14 +23,15 @@ const customFormat = format.printf((ti) => {
   }
   let msg = `${printTsLevel}: `;
 
-  const extras = args
-    ?.map((arg: unknown) => {
-      if (typeof arg === 'object' && arg !== null) {
-        return JSON.stringify(args);
-      }
-      return arg;
-    })
-    .join(' ');
+  const extras =
+    args
+      ?.map((arg: unknown) => {
+        if (typeof arg === 'object' && arg !== null) {
+          return JSON.stringify(args);
+        }
+        return arg;
+      })
+      .join(' ') ?? '';
 
   if (isDevelopment) {
     const searchContext = message;
