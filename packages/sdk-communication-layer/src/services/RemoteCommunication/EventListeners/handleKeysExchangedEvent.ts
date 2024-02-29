@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -40,12 +41,10 @@ export function handleKeysExchangedEvent(
   }) => {
     const { state } = instance;
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}::on commLayer.'keys_exchanged' channel=${state.channelId}`,
-        message,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleKeysExchangedEvent()] context=${state.context} on commLayer.'keys_exchanged' channel=${state.channelId}`,
+      message,
+    );
 
     if (state.communicationLayer?.getKeyInfo()?.keysExchanged) {
       instance.setConnectionStatus(ConnectionStatus.LINKED);

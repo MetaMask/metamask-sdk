@@ -1,4 +1,5 @@
 import { EventEmitter2 } from 'eventemitter2';
+import debug from 'debug';
 import packageJson from '../package.json';
 import { ECIESProps } from './ECIES';
 import {
@@ -37,6 +38,7 @@ import {
   StorageManagerProps,
 } from './types/StorageManager';
 import { WalletInfo } from './types/WalletInfo';
+import { logger } from './utils/logger';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -156,6 +158,11 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.storageOptions = storage;
     this.state.autoConnectOptions = autoConnect;
     this.state.debug = logging?.remoteLayer === true;
+
+    if (logging?.remoteLayer === true) {
+      debug.enable('RemoteCommunication:Layer');
+    }
+
     this.state.logging = logging;
 
     if (storage?.storageManager) {
@@ -264,21 +271,17 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   ping() {
-    if (this.state.debug) {
-      console.debug(
-        `RemoteCommunication::ping() channel=${this.state.channelId}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: ping()] channel=${this.state.channelId}`,
+    );
 
     this.state.communicationLayer?.ping();
   }
 
   keyCheck() {
-    if (this.state.debug) {
-      console.debug(
-        `RemoteCommunication::keyCheck() channel=${this.state.channelId}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: keyCheck()] channel=${this.state.channelId}`,
+    );
 
     this.state.communicationLayer?.keyCheck();
   }
@@ -330,11 +333,10 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   pause() {
-    if (this.state.debug) {
-      console.debug(
-        `RemoteCommunication::pause() channel=${this.state.channelId}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: pause()] channel=${this.state.channelId}`,
+    );
+
     this.state.communicationLayer?.pause();
     this.setConnectionStatus(ConnectionStatus.PAUSED);
   }

@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
 import { PlatformType } from '../../../types/PlatformType';
@@ -37,11 +38,9 @@ export function handleAuthorizedEvent(instance: RemoteCommunication) {
     // bacward compatibility for wallet <7.3
     const compareValue = '7.3'.localeCompare(state.walletInfo?.version || '');
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication HACK 'authorized' version=${state.walletInfo?.version} compareValue=${compareValue}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleAuthorizedEvent()] HACK 'authorized' version=${state.walletInfo?.version} compareValue=${compareValue}`,
+    );
 
     // FIXME remove this hack pending wallet release 7.3+
     if (compareValue !== 1) {
@@ -54,11 +53,9 @@ export function handleAuthorizedEvent(instance: RemoteCommunication) {
       state.platformType === PlatformType.ReactNative ||
       state.platformType === PlatformType.MetaMaskMobileWebview;
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication HACK 'authorized' platform=${state.platformType} secure=${isSecurePlatform} channel=${state.channelId} walletVersion=${state.walletInfo?.version}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleAuthorizedEvent()] HACK 'authorized' platform=${state.platformType} secure=${isSecurePlatform} channel=${state.channelId} walletVersion=${state.walletInfo?.version}`,
+    );
 
     if (isSecurePlatform) {
       // Propagate authorized event.

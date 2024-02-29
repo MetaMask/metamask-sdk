@@ -1,5 +1,6 @@
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { wait as waitPromise } from '../../utils/wait';
+import * as loggerModule from '../../utils/logger';
 import { startInstaller } from './startInstaller';
 
 jest.mock('../../utils/wait', () => ({
@@ -9,6 +10,7 @@ jest.mock('../../utils/wait', () => ({
 describe('startInstaller', () => {
   let instance: MetaMaskInstaller;
   const mockCheckInstallation = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -21,14 +23,11 @@ describe('startInstaller', () => {
     } as unknown as MetaMaskInstaller;
   });
 
-  it('should log debug message when debug is enabled', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug message', async () => {
     await startInstaller(instance, { wait: false });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'MetamaskInstaller::start() wait=false',
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[MetamaskInstaller: startInstaller()] wait=${false}`,
     );
   });
 

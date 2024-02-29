@@ -1,5 +1,5 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import { logger } from '../../utils/logger';
 import { Ethereum } from '../Ethereum';
 
 /**
@@ -12,10 +12,11 @@ import { Ethereum } from '../Ethereum';
  * @param instance The MetaMaskInstaller instance used for debugging purposes.
  * @returns Promise<void> This function returns a promise that resolves to void.
  */
-export async function startDesktopOnboarding(instance: MetaMaskInstaller) {
-  if (instance?.state.debug) {
-    console.debug(`MetamaskInstaller::startDesktopOnboarding()`);
-  }
+export async function startDesktopOnboarding() {
+  logger(
+    `[MetamaskInstaller: startDesktopOnboarding() starting desktop onboarding`,
+  );
+
   Ethereum.destroy();
   delete window.ethereum;
   const onboardingExtension = new MetaMaskOnboarding();

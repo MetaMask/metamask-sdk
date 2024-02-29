@@ -1,10 +1,14 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { handleChannelCreated } from './handleChannelCreated';
 
 describe('handleChannelCreated', () => {
   let instance: SocketService;
+
   const channelId = 'sampleChannelId';
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
 
   beforeEach(() => {
@@ -24,19 +28,14 @@ describe('handleChannelCreated', () => {
     expect(typeof handler).toBe('function');
   });
 
-  it('should log debug information when debugging is enabled and the handler is called', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     const handler = handleChannelCreated(instance, channelId);
     handler('someId');
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `SocketService::${instance.state.context}::setupChannelListener::on 'channel_created-${channelId}'`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handleChannelCreated()] context=someContext on 'channel_created-sampleChannelId'",
       'someId',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should emit CHANNEL_CREATED event with the passed ID when the handler is called', () => {

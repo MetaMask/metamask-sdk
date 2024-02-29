@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../../config';
 import {
@@ -22,68 +23,57 @@ export async function write(
   const authorized = instance.state.remote?.isAuthorized();
   const { method: targetMethod, data } = extractMethod(chunk);
 
-  if (instance.state.debug) {
-    console.debug(
-      `RPCMS::_write method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
-      chunk,
-    );
-  }
+  logger(
+    `[RCPMS: write()] method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
+    chunk,
+  );
 
   if (!channelId) {
     // ignore initial metamask_getProviderState() call from ethereum.init()
-    if (
-      instance.state.debug &&
-      targetMethod !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
-    ) {
-      console.warn(`RPCMS::_write Invalid channel id -- undefined`);
+    if (targetMethod !== RPC_METHODS.METAMASK_GETPROVIDERSTATE) {
+      logger(`[RCPMS: write()] Invalid channel id -- undefined`);
     }
 
     return callback();
   }
 
-  if (instance.state.debug) {
-    console.debug(
-      `RPCMS::_write remote.isPaused()=${instance.state.remote?.isPaused()} authorized=${authorized} ready=${isRemoteReady} socketConnected=${socketConnected}`,
-      chunk,
-    );
-  }
+  logger(
+    `[RCPMS: write()] remote.isPaused()=${instance.state.remote?.isPaused()} authorized=${authorized} ready=${isRemoteReady} socketConnected=${socketConnected}`,
+    chunk,
+  );
 
   try {
     instance.state.remote
       ?.sendMessage(data?.data)
       .then(() => {
-        if (instance.state.debug) {
-          console.debug(`RCPMS::_write ${targetMethod} sent successfully`);
-        }
+        logger(`[RCPMS: _write()] ${targetMethod} sent successfully`);
       })
       .catch((err: unknown) => {
-        console.error('RCPMS::_write error sending message', err);
+        logger(`[RCPMS: _write()] error sending message`, err);
       });
 
     if (!instance.state.platformManager?.isSecure()) {
       // Redirect early if nodejs or browser...
-      if (instance.state.debug) {
-        console.log(
-          `RCPMS::_write unsecure platform for method ${targetMethod} -- return callback`,
-        );
-      }
+      logger(
+        `[RCPMS: _write()] unsecure platform for method ${targetMethod} -- return callback`,
+      );
       return callback();
     }
 
     if (!socketConnected && !isRemoteReady) {
       // Invalid connection status
-      if (instance.state.debug) {
-        console.debug(
-          `RCPMS::_write invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}\n\n`,
-        );
-      }
+      logger(
+        `[RCPMS: _write()] invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}`,
+      );
 
       return callback();
     }
 
     if (!socketConnected && isRemoteReady) {
       // Shouldn't happen -- needs to refresh
-      console.warn(`RCPMS::_write invalid socket status -- shouln't happen`);
+      console.warn(
+        `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
+      );
       return callback();
     }
 
@@ -95,12 +85,9 @@ export async function write(
     );
 
     if (METHODS_TO_REDIRECT[targetMethod]) {
-      if (instance.state.debug) {
-        console.debug(
-          `RCPMS::_write redirect link for '${targetMethod}' socketConnected=${socketConnected}`,
-          `connect?${urlParams}`,
-        );
-      }
+      logger(
+        `[RCPMS: _write()] redirect link for '${targetMethod}' socketConnected=${socketConnected} connect?${urlParams}`,
+      );
 
       // Use otp to re-enable host approval
       instance.state.platformManager?.openDeeplink(
@@ -109,11 +96,9 @@ export async function write(
         '_self',
       );
     } else if (instance.state.remote?.isPaused()) {
-      if (instance.state.debug) {
-        console.debug(
-          `RCPMS::_write MM is PAUSED! deeplink with connect! targetMethod=${targetMethod}`,
-        );
-      }
+      logger(
+        `[RCPMS: _write()] MM is PAUSED! deeplink with connect! targetMethod=${targetMethod}`,
+      );
 
       instance.state.platformManager?.openDeeplink(
         `${METAMASK_CONNECT_BASE_URL}?redirect=true&${urlParams}`,
@@ -123,14 +108,11 @@ export async function write(
     } else {
       // Already connected with custom rpc method (don't need redirect) - send message without opening metamask mobile.
       // instance only happens when metamask was opened in last 30seconds.
-      console.debug(
-        `RCPMS::_write method ${targetMethod} doesn't need redirect.`,
-      );
+      logger(`[RCPMS: _write()] method ${targetMethod} doesn't need redirect.`);
     }
   } catch (err) {
-    if (instance.state.debug) {
-      console.error('RCPMS::_write error', err);
-    }
+    logger(`[RCPMS: _write()] error sending message`, err);
+
     return callback(
       new Error('RemoteCommunicationPostMessageStream - disconnected'),
     );

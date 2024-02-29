@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
@@ -23,12 +24,10 @@ export function connectToChannel({
 }) {
   const { channelId, withKeyExchange, isOriginator } = options;
 
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::connectToChannel() channelId=${channelId} isOriginator=${isOriginator}`,
-      instance.state.keyExchange?.toString(),
-    );
-  }
+  logger.SocketService(
+    `[SocketService: connectToChannel()] context=${instance.state.context} channelId=${channelId} isOriginator=${isOriginator}`,
+    instance.state.keyExchange?.toString(),
+  );
 
   if (instance.state.socket?.connected) {
     throw new Error(`socket already connected`);

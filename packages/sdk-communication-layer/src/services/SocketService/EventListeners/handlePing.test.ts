@@ -1,37 +1,19 @@
-import { SocketService } from '../../../SocketService';
+import { logger } from '../../../utils/logger';
 import { handlePing } from './handlePing';
 
 describe('handlePing', () => {
-  let instance: SocketService;
-  const mockConsoleDebug = jest.fn();
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    instance = {
-      state: {
-        debug: false,
-      },
-    } as unknown as SocketService;
-
-    jest.spyOn(console, 'debug').mockImplementation(mockConsoleDebug);
   });
 
-  it('should log a debug message when the handler is called and debugging is enabled', () => {
-    instance.state.debug = true;
-
-    const handler = handlePing(instance);
+  it('should log a debug message when the handler is called', () => {
+    const handler = handlePing();
     handler();
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(`SocketService::on 'ping'`);
-  });
-
-  it('should not log a debug message when debugging is disabled', () => {
-    instance.state.debug = false;
-
-    const handler = handlePing(instance);
-    handler();
-
-    expect(mockConsoleDebug).not.toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handlePing()] on 'ping'",
+    );
   });
 });

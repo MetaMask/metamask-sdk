@@ -1,4 +1,5 @@
 import { EventType } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
@@ -25,11 +26,9 @@ export function terminate(instance: MetaMaskSDK) {
   if (instance.extensionActive) {
     localStorage.removeItem(STORAGE_PROVIDER_TYPE);
     if (instance.options.extensionOnly) {
-      if (instance.debug) {
-        console.warn(
-          `SDK::terminate() extensionOnly --- prevent switching providers`,
-        );
-      }
+      logger(
+        `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
+      );
 
       return;
     }
@@ -42,9 +41,9 @@ export function terminate(instance: MetaMaskSDK) {
   }
 
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
-  if (instance.debug) {
-    console.debug(`SDK::terminate()`, instance.remoteConnection);
-  }
+  logger(
+    `[MetaMaskSDK: terminate()] remoteConnection=${instance.remoteConnection}`,
+  );
 
   // Only disconnect if the connection is active
   instance.remoteConnection?.disconnect({

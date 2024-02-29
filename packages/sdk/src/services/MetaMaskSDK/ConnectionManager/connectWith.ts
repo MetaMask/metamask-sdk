@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RPC_METHODS } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 
@@ -9,15 +10,14 @@ export async function connectWith({
   rpc: { method: string; params: any[] };
 }) {
   if (!instance._initialized) {
-    if (instance.debug) {
-      console.log(`SDK::connectWith() provider not ready -- wait for init()`);
-    }
+    logger(
+      `[MetaMaskSDK: connectWith()] provider not ready -- wait for init()`,
+    );
+
     await instance.init();
   }
 
-  if (instance.debug) {
-    console.debug(`SDK::connectWith() method: ${rpc.method}`, rpc);
-  }
+  logger(`[MetaMaskSDK: connectWith()] method: ${rpc.method} rpc=${rpc}`);
 
   if (!instance.activeProvider) {
     throw new Error(`SDK state invalid -- undefined provider`);

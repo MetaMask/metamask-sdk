@@ -79,7 +79,7 @@ export class PlatformManager {
   }
 
   isMetaMaskInstalled() {
-    return isMetaMaskInstalled(this);
+    return isMetaMaskInstalled();
   }
 
   isDesktopWeb() {

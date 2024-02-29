@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleOnConnectingEvent = ({
   debug,
@@ -8,9 +9,10 @@ export const useHandleOnConnectingEvent = ({
   setError,
 }: EventHandlerProps) => {
   return useCallback(() => {
-    if (debug) {
-      console.debug(`MetaMaskProvider::provider on 'connecting' event.`);
-    }
+    logger(
+      `[MetaMaskProvider: useHandleOnConnectingEvent()] on 'connecting' event.`,
+    );
+
     setConnected(false);
     setConnecting(true);
     setError(undefined);

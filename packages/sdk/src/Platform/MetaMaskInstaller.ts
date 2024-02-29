@@ -54,7 +54,7 @@ export class MetaMaskInstaller {
   }
 
   startDesktopOnboarding() {
-    return startDesktopOnboarding(this);
+    return startDesktopOnboarding();
   }
 
   async redirectToProperInstall() {

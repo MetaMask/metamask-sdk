@@ -1,9 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { handleClientsWaitingToJoin } from './handleClientsWaitingToJoin';
 
 describe('handleClientsWaitingToJoin', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const channelId = 'sampleChannelId';
   const mockEmit = jest.fn();
 
@@ -20,20 +23,13 @@ describe('handleClientsWaitingToJoin', () => {
   });
 
   it('should log debug information when debugging is enabled and the handler is called', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
     const handler = handleClientsWaitingToJoin(instance, channelId);
     handler(5);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `SocketService::${instance.state.context}::setupChannelListener::on 'clients_waiting_to_join-${channelId}'`,
-      ),
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[SocketService: handleClientsWaitingToJoin()] context=${instance.state.context} on 'clients_waiting_to_join-${channelId}'`,
       5,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should emit CLIENTS_WAITING event with the number of waiting users', () => {

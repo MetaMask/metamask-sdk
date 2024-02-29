@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
 /**
@@ -31,18 +32,16 @@ export function handleChainChanged({
     networkVersion?: string;
   }) => void;
 }) {
-  const { state } = instance;
-
-  if (state.debug) {
-    console.debug(
-      `SDKProvider::_handleChainChanged chainId=${chainId} networkVersion=${networkVersion}`,
-    );
-  }
+  logger(
+    `[SDKProvider: handleChainChanged()] chainId=${chainId} networkVersion=${networkVersion}`,
+  );
 
   // FIXME on RN IOS networkVersion is sometime missing? why?
   let forcedNetworkVersion = networkVersion;
   if (!networkVersion) {
-    console.info(`forced network version to prevent provider error`);
+    logger(
+      `[SDKProvider: handleChainChanged()] forced network version to prevent provider error`,
+    );
     forcedNetworkVersion = '1';
   }
 

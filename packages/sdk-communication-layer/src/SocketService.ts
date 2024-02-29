@@ -1,5 +1,6 @@
 import { EventEmitter2 } from 'eventemitter2';
 import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
+import debug from 'debug';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
@@ -21,6 +22,7 @@ import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
+import { logger } from './utils/logger';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -100,6 +102,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.state.context = context;
     this.state.communicationLayerPreference = communicationLayerPreference;
     this.state.debug = logging?.serviceLayer === true;
+
+    if (logging?.serviceLayer === true) {
+      debug.enable('SocketService:Layer');
+    }
+
     this.state.communicationServerUrl = communicationServerUrl;
     this.state.hasPlaintext =
       this.state.communicationServerUrl !== DEFAULT_SERVER_URL &&
@@ -115,11 +122,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       options.transports = transports;
     }
 
-    if (this.state.debug) {
-      console.debug(
-        `SocketService::constructor() Socket IO url: ${this.state.communicationServerUrl}`,
-      );
-    }
+    logger.SocketService(
+      `[SocketService: constructor()] Socket IO url: ${this.state.communicationServerUrl}`,
+    );
 
     this.state.socket = io(communicationServerUrl, options);
 

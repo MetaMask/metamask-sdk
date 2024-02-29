@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { clean } from './clean';
 
@@ -36,19 +37,15 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
     };
   }
 
-  if (state.debug) {
-    console.debug(`RemoteCommunication::generateChannelId()`);
-  }
+  logger.RemoteCommunication(`[RemoteCommunication: generateChannelId()]`);
 
   clean(state);
   const channel = state.communicationLayer.createChannel();
 
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::generateChannelId() channel created`,
-      channel,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: generateChannelId()] channel created`,
+    channel,
+  );
 
   const channelConfig = {
     channelId: channel.channelId,

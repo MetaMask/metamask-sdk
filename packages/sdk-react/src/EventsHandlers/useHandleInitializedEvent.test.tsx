@@ -2,8 +2,11 @@ import { renderHook } from '@testing-library/react-hooks';
 import { useHandleInitializedEvent } from './useHandleInitializedEvent';
 import { EventHandlerProps } from '../MetaMaskProvider';
 import { SDKProvider } from '@metamask/sdk';
+import * as loggerModule from '../utils/logger';
 
 describe('useHandleInitializedEvent', () => {
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   const eventHandlerProps = {
     setConnected: jest.fn(),
     setError: jest.fn(),
@@ -22,12 +25,9 @@ describe('useHandleInitializedEvent', () => {
     eventHandlerProps.setConnecting = jest.fn();
     eventHandlerProps.debug = true;
     eventHandlerProps.activeProvider = {} as SDKProvider;
-
-    console.debug = jest.fn();
   });
 
   it('should handle initialized event correctly with debug enabled', () => {
-    eventHandlerProps.debug = true;
     eventHandlerProps.activeProvider = {
       selectedAddress: '0x12345Abcdef',
     } as unknown as SDKProvider;
@@ -37,26 +37,10 @@ describe('useHandleInitializedEvent', () => {
     );
     result.current();
 
-    expect(console.debug).toHaveBeenCalledWith(
-      "MetaMaskProvider::provider on '_initialized' event.",
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[MetaMaskProvider: useHandleInitializedEvent()] on '_initialized' event.",
     );
-    expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
-    expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
-    expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);
-  });
 
-  it('should handle initialized event without debug logs', () => {
-    eventHandlerProps.debug = false;
-    eventHandlerProps.activeProvider = {
-      selectedAddress: '0x12345Abcdef',
-    } as unknown as SDKProvider;
-
-    const { result } = renderHook(() =>
-      useHandleInitializedEvent(eventHandlerProps),
-    );
-    result.current();
-
-    expect(console.debug).not.toHaveBeenCalled();
     expect(eventHandlerProps.setConnecting).toHaveBeenCalledWith(false);
     expect(eventHandlerProps.setConnected).toHaveBeenCalledWith(true);
     expect(eventHandlerProps.setError).toHaveBeenCalledWith(undefined);

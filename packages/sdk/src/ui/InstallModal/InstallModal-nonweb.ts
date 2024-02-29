@@ -1,5 +1,7 @@
+import { logger } from '../../utils/logger';
+
 const InstallModal = ({ link }: { link: string; debug?: boolean }) => {
-  console.log('INSTALL MODAL', link);
+  logger(`[UI: InstallModal-nonweb()] INSTALL MODAL link=${link}`);
   return {
     unmount: () => undefined,
   };

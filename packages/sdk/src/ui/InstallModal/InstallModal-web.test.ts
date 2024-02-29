@@ -1,5 +1,6 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import { i18n } from 'i18next';
+import * as loggerModule from '../../utils/logger';
 import sdkWebInstallModal from './InstallModal-web';
 
 jest.mock('@metamask/sdk-install-modal-web');
@@ -8,7 +9,8 @@ jest.mock('i18next', () => ({
 }));
 
 describe('sdkWebInstallModal', () => {
-  let consoleDebugSpy: jest.SpyInstance;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   let documentSpy: jest.SpyInstance;
   let mockI18n: i18n = {
     t: jest.fn((key) => key),
@@ -26,8 +28,6 @@ describe('sdkWebInstallModal', () => {
     jest.clearAllMocks();
 
     mockModalLoader.mockImplementation(() => modalLoaderMock as any);
-
-    consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
     mockI18n = {
       t: jest.fn((key) => key),
@@ -61,7 +61,7 @@ describe('sdkWebInstallModal', () => {
     expect(global.document.body.appendChild).toHaveBeenCalled();
   });
 
-  it('should log debug information if debug is true', () => {
+  it('should log debug information', () => {
     sdkWebInstallModal({
       link: 'http://example.com',
       debug: true,
@@ -69,7 +69,7 @@ describe('sdkWebInstallModal', () => {
       i18nInstance: mockI18n,
     });
 
-    expect(consoleDebugSpy).toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should call renderSelectModal if window.extension exists', () => {
@@ -179,9 +179,7 @@ describe('sdkWebInstallModal', () => {
       expect(divMock.parentNode.removeChild).toHaveBeenCalledWith(divMock);
     });
 
-    it('should log debug information if debug is true', () => {
-      const consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
-
+    it('should log debug information', () => {
       const { unmount } = sdkWebInstallModal({
         link: 'http://example.com',
         debug: true,
@@ -191,7 +189,7 @@ describe('sdkWebInstallModal', () => {
 
       unmount();
 
-      expect(consoleInfoSpy).toHaveBeenCalled();
+      expect(spyLogger).toHaveBeenCalled();
     });
 
     it('should call terminate if shouldTerminate is true', () => {

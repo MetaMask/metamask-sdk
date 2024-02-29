@@ -1,5 +1,6 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import * as loggerModule from '../../utils/logger';
 import { redirectToProperInstall } from './redirectToProperInstall';
 
 describe('redirectToProperInstall', () => {
@@ -7,6 +8,7 @@ describe('redirectToProperInstall', () => {
   const mockGetPlatformType = jest.fn();
   const mockStartConnection = jest.fn();
   const mockStartDesktopOnboarding = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,14 +26,12 @@ describe('redirectToProperInstall', () => {
     } as unknown as MetaMaskInstaller;
   });
 
-  it('should log debug message when debug is enabled', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
+  it('should log debug message', async () => {
     mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    instance.state.debug = true;
 
     await redirectToProperInstall(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should return false if platform is MetaMaskMobileWebview', async () => {

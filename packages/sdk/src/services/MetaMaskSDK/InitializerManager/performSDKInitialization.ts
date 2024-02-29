@@ -2,6 +2,8 @@ import {
   CommunicationLayerPreference,
   EventType,
 } from '@metamask/sdk-communication-layer';
+import debug from 'debug';
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
@@ -48,6 +50,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (options.enableDebug !== undefined) {
+    debug.enable('MM_SDK');
     console.warn('enableDebug is removed. Please use enableAnalytics instead.');
   }
 
@@ -61,8 +64,14 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
 
   const developerMode = options.logging?.developerMode === true;
   instance.debug = options.logging?.sdk || developerMode;
+
   if (instance.debug) {
-    console.debug(`SDK::_doInit() now`, instance.options);
+    debug.enable('MM_SDK');
+
+    logger(
+      '[MetaMaskSDK: performSDKInitialization()] options',
+      instance.options,
+    );
   }
 
   // Make sure to enable all logs if developer mode is on

@@ -2,10 +2,13 @@ import { v4 as uuid } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
+import { logger } from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
 
 describe('connectToChannel', () => {
   let state: RemoteCommunicationState;
+
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -32,19 +35,16 @@ describe('connectToChannel', () => {
 
   it('should debug log if the channel is already connected', () => {
     const channelId = uuid();
+
     state.communicationLayer = {
       isConnected: jest.fn(() => true),
     } as unknown as CommunicationLayer;
 
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
     connectToChannel({ channelId, state });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::TestContext::connectToChannel() already connected - interrup connection.`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: connectToChannel()] context=TestContext already connected - interrupt connection.',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should connect to a valid channel', () => {
@@ -100,19 +100,14 @@ describe('connectToChannel', () => {
     });
   });
 
-  it('should debug log a valid channelId if debug is enabled', () => {
+  it('should debug log a valid channelId', () => {
     const channelId = uuid();
-    state.debug = true;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
     connectToChannel({ channelId, state });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::${state.context}::connectToChannel() channelId=${channelId}`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[RemoteCommunication: connectToChannel()] context=TestContext channelId=${channelId}`,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should set the new channelId in the state', () => {

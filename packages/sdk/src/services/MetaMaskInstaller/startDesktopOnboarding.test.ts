@@ -1,6 +1,6 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { Ethereum } from '../Ethereum';
+import * as loggerModule from '../../utils/logger';
 import { startDesktopOnboarding } from './startDesktopOnboarding';
 
 jest.mock('@metamask/onboarding');
@@ -12,8 +12,7 @@ jest.mock('../Ethereum', () => ({
 }));
 
 describe('startDesktopOnboarding', () => {
-  let instance: MetaMaskInstaller;
-
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
   const mockMetaMaskOnboarding = MetaMaskOnboarding as jest.MockedClass<
     typeof MetaMaskOnboarding
   >;
@@ -30,36 +29,27 @@ describe('startDesktopOnboarding', () => {
         } as unknown as MetaMaskOnboarding),
     );
 
-    instance = {
-      state: {
-        debug: false,
-      },
-    } as unknown as MetaMaskInstaller;
-
     global.window = {
       ethereum: {},
     } as any;
   });
 
   it('should log debug message when debug is enabled', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
+    await startDesktopOnboarding();
 
-    await startDesktopOnboarding(instance);
-
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'MetamaskInstaller::startDesktopOnboarding()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[MetamaskInstaller: startDesktopOnboarding() starting desktop onboarding',
     );
   });
 
   it('should call Ethereum.destroy', async () => {
-    await startDesktopOnboarding(instance);
+    await startDesktopOnboarding();
 
     expect(Ethereum.destroy).toHaveBeenCalled();
   });
 
   it('should delete window.ethereum', async () => {
-    await startDesktopOnboarding(instance);
+    await startDesktopOnboarding();
 
     expect((window as any).ethereum).toBeUndefined();
   });
@@ -67,7 +57,7 @@ describe('startDesktopOnboarding', () => {
   it('should call MetaMaskOnboarding.startOnboarding', async () => {
     mockStartOnboarding.mockImplementation();
 
-    await startDesktopOnboarding(instance);
+    await startDesktopOnboarding();
 
     expect(mockStartOnboarding).toHaveBeenCalled();
   });

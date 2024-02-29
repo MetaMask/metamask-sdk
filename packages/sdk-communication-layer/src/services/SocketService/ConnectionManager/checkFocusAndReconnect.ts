@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { reconnectSocket } from './reconnectSocket';
 
@@ -13,22 +14,18 @@ export function checkFocusAndReconnect(instance: SocketService) {
     return;
   }
 
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::checkFocus hasFocus=${document.hasFocus()}`,
-      instance,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: checkFocusAndReconnect()] hasFocus=${document.hasFocus()}`,
+    instance,
+  );
 
   if (document.hasFocus()) {
     reconnectSocket(instance)
       .then((success) => {
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::checkFocus reconnectSocket success=${success}`,
-            instance,
-          );
-        }
+        logger.SocketService(
+          `SocketService::checkFocus reconnectSocket success=${success}`,
+          instance,
+        );
       })
       .catch((err) => {
         console.error(

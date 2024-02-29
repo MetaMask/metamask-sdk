@@ -1,4 +1,5 @@
 import { BaseProvider } from '@metamask/providers';
+import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
 /**
@@ -25,7 +26,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
      *
      */
     instance.state = {
-      debug: false,
       autoRequestAccounts: false,
       providerStateRequested: false,
     };
@@ -33,16 +33,14 @@ export async function initializeStateAsync(instance: SDKProvider) {
 
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(`SDKProvider::_initializeStateAsync()`);
-  }
+  logger(
+    `[SDKProvider: initializeStateAsync()] initialize state async started`,
+  );
 
   if (state.providerStateRequested) {
-    if (state.debug) {
-      console.debug(
-        `SDKProvider::_initializeStateAsync() initialization already in progress`,
-      );
-    }
+    logger(
+      `[SDKProvider: initializeStateAsync()] initialization already in progress`,
+    );
   } else {
     state.providerStateRequested = true;
     // Replace super.initialState logic to automatically request account if not found in providerstate.
@@ -62,34 +60,26 @@ export async function initializeStateAsync(instance: SDKProvider) {
       return;
     }
 
-    if (state.debug) {
-      console.debug(
-        `SDKProvider::_initializeStateAsync state selectedAddress=${instance.selectedAddress} `,
-        initialState,
-      );
-    }
+    logger(
+      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.selectedAddress} `,
+      initialState,
+    );
 
     if (initialState?.accounts?.length === 0) {
-      if (state.debug) {
-        console.debug(
-          `SDKProvider::_initializeStateAsync initial state doesn't contain accounts`,
-        );
-      }
+      logger(
+        `[SDKProvider: initializeStateAsync()] initial state doesn't contain accounts`,
+      );
 
       if (instance.selectedAddress) {
-        if (state.debug) {
-          console.debug(
-            `SDKProvider::_initializeStateAsync using instance.selectedAddress instead`,
-          );
-        }
+        logger(
+          `[SDKProvider: initializeStateAsync()] using instance.selectedAddress instead`,
+        );
 
         initialState.accounts = [instance.selectedAddress];
       } else {
-        if (state.debug) {
-          console.debug(
-            `SDKProvider::_initializeStateAsync Fetch accounts remotely.`,
-          );
-        }
+        logger(
+          `[SDKProvider: initializeStateAsync()] Fetch accounts remotely.`,
+        );
 
         const accounts = (await instance.request({
           method: 'eth_requestAccounts',

@@ -26,6 +26,7 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
+import { logger } from './utils/logger';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -252,13 +253,14 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
-        if (this.debug) {
-          console.debug(`MetaMaskSDK() initialized`);
-          window.mmsdk = this;
-        }
+        logger(`[MetaMaskSDK: constructor()]: initialized`);
+        window.mmsdk = this;
       })
       .catch((err) => {
-        console.error(`MetaMaskSDK error during initialization`, err);
+        console.error(
+          `[MetaMaskSDK: constructor()] error during initialization`,
+          err,
+        );
       });
   }
 

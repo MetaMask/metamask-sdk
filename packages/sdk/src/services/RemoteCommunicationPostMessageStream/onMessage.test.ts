@@ -1,9 +1,11 @@
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { ProviderConstants } from '../../constants';
+import * as loggerModule from '../../utils/logger';
 import { onMessage } from './onMessage';
 
 describe('onMessage', () => {
   let instance: jest.Mocked<RemoteCommunicationPostMessageStream>;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -22,14 +24,10 @@ describe('onMessage', () => {
       data: {},
     };
 
-    instance.state.debug = true;
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
     onMessage(instance, message);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      '[RCPMS] _onMessage ',
-      message,
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[RCPMS: onMessage()] message=${message}`,
     );
   });
 

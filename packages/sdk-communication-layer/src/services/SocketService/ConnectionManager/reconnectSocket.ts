@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
@@ -11,12 +12,10 @@ import { wait } from '../../../utils/wait';
  * @param instance The current instance of the SocketService.
  */
 export const reconnectSocket = async (instance: SocketService) => {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::connectAgain instance.state.socket?.connected=${instance.state.socket?.connected} trying to reconnect after socketio disconnection`,
-      instance,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: reconnectSocket()] instance.state.socket?.connected=${instance.state.socket?.connected} trying to reconnect after socketio disconnection`,
+    instance,
+  );
 
   // Add delay to prevent IOS error
   // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
