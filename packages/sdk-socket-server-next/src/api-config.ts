@@ -39,6 +39,10 @@ if (redisNodes.length === 0) {
 // export const redisCluster = new Redis.Cluster(redisNodes); // Initialize Redis Cluster
 export const pubClient = new Redis.Cluster(redisNodes, {
   showFriendlyErrorStack: true,
+  redisOptions: {
+    tls: {},
+    password: process.env.REDIS_PASSWORD || 'redis',
+  },
 }); // Initialize Redis Cluster
 pubClient.on('error', (error) => {
   logger.error('Redis error:', error);
