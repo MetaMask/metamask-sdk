@@ -17,6 +17,8 @@ import {
 
 export const MAX_CLIENTS_PER_ROOM = 2;
 
+export const MISSING_CONTEXT = "___MISSING_CONTEXT___";
+
 export const configureSocketServer = async (
   server: HTTPServer,
 ): Promise<Server> => {
@@ -97,7 +99,7 @@ export const configureSocketServer = async (
     });
 
     socket.on('create_channel', async (channelId: string, context: string) => {
-      let from = context ?? '???';
+      let from = context ?? MISSING_CONTEXT;
       if (context === 'metamask-mobile') {
         from = 'wallet';
       } else if (context === 'dapp') {
@@ -188,7 +190,7 @@ export const configureSocketServer = async (
         plaintext: string;
       }) => {
         const { id, message, context, plaintext } = msg;
-        let from = context ?? '???';
+        let from = context ?? MISSING_CONTEXT;
         if (context === 'metamask-mobile') {
           from = 'wallet';
         } else if (context === 'dapp') {
@@ -258,7 +260,7 @@ export const configureSocketServer = async (
     );
 
     socket.on('join_channel', async (channelId: string, context: string) => {
-      let from = context ?? '???';
+      let from = context ?? MISSING_CONTEXT;
       if (context === 'metamask-mobile') {
         from = 'wallet';
       } else if (context === 'dapp') {
