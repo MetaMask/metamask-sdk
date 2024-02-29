@@ -1,11 +1,11 @@
 /* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { redisClient } from './api-config';
+import { pubClient } from './api-config';
 import { logger } from './logger';
 import {
   increaseRateLimits,
@@ -17,26 +17,25 @@ import {
 
 export const MAX_CLIENTS_PER_ROOM = 2;
 
-export const MISSING_CONTEXT = "___MISSING_CONTEXT___";
+export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
 
 export const configureSocketServer = async (
   server: HTTPServer,
 ): Promise<Server> => {
   const isDevelopment: boolean = process.env.NODE_ENV === 'development';
   const hasRateLimit = process.env.RATE_LIMITER === 'true';
-  const sdkKey = process.env.SDK_STREAM_NAME || 'sdk-key';
   const host = hostname();
 
   // Establish connection to Redis server
-  await redisClient.connect();
+  await pubClient.connect();
 
   logger.info(
     `Start socket server with rate limiter: ${hasRateLimit} - isDevelopment: ${isDevelopment}`,
   );
 
-  const adapter = createAdapter(redisClient, {
-    streamName: sdkKey,
-  });
+  const subClient = pubClient.duplicate();
+
+  const adapter = createAdapter(pubClient, subClient);
 
   const io = new Server(server, {
     adapter,
@@ -54,7 +53,7 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await redisClient.hGet('channels', roomId);
+    const channelOccupancy = await pubClient.hget('channels', roomId);
     console.log(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -67,7 +66,7 @@ export const configureSocketServer = async (
     }
 
     // Decrement the number of clients in the room
-    const channelOccupancy = await redisClient.hIncrBy('channels', roomId, -1);
+    const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
 
     console.log(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -76,7 +75,7 @@ export const configureSocketServer = async (
     if (channelOccupancy <= 0) {
       console.log(`'leave-room' room ${roomId} was deleted`);
       // remove from redis
-      await redisClient.hDel('channels', roomId);
+      await pubClient.hdel('channels', roomId);
     } else {
       console.log(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
@@ -169,7 +168,7 @@ export const configureSocketServer = async (
         // socket.broadcast.socketsJoin(channelId);
 
         // Initialize the channel occupancy to 1
-        await redisClient.hSet('channels', channelId, 1);
+        await pubClient.hset('channels', channelId, 1);
 
         return socket.emit(`channel_created-${channelId}`, channelId);
       } catch (error) {
@@ -284,7 +283,7 @@ export const configureSocketServer = async (
         return;
       }
 
-      const sRedisChannelOccupancy = await redisClient.hGet(
+      const sRedisChannelOccupancy = await pubClient.hget(
         'channels',
         channelId,
       );
@@ -302,7 +301,7 @@ export const configureSocketServer = async (
         logger.debug(
           `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
         );
-        await redisClient.hSet('channels', channelId, 0);
+        await pubClient.hset('channels', channelId, 0);
       }
 
       // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -336,7 +335,7 @@ export const configureSocketServer = async (
 
       // Join and increment the number of clients in the room
       socket.join(channelId);
-      channelOccupancy = await redisClient.hIncrBy('channels', channelId, 1);
+      channelOccupancy = await pubClient.hincrby('channels', channelId, 1);
       //  Refresh the room occupancy -it should now matches channel occupancy
       roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
 
@@ -427,7 +426,8 @@ export const configureSocketServer = async (
 
         const room = io.sockets.adapter.rooms.get(channelId);
         const occupancy = room ? room.size : 0;
-        const channelOccupancy = await redisClient.hGet('channels', channelId);
+        const channelOccupancy =
+          (await pubClient.hget('channels', channelId)) ?? undefined;
 
         logger.info(
           `check_room occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,

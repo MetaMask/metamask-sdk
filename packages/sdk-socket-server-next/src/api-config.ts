@@ -6,16 +6,43 @@ import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import { createClient } from 'redis';
+import Redis from 'ioredis'; // Import ioredis
 import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
-// Initialize Redis client
-// Provide a default URL if REDIS_URL is not set
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-export const redisClient = createClient({ url: redisUrl });
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
 const hasRateLimit = process.env.RATE_LIMITER === 'true';
+
+// Initialize Redis Cluster client
+let redisNodes: {
+  host: string;
+  port: number;
+}[] = [];
+
+if (process.env.REDIS_NODES) {
+  // format: REDIS_NODES=redis://rediscluster-redis-cluster-0.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379,redis://rediscluster-redis-cluster-1.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379,redis://rediscluster-redis-cluster-2.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379
+  redisNodes = process.env.REDIS_NODES.split(',').map((node) => {
+    const [host, port] = node.replace('redis://', '').split(':');
+    return {
+      host,
+      port: parseInt(port, 10),
+    };
+  });
+}
+logger.info('Redis nodes:', redisNodes);
+
+if (redisNodes.length === 0) {
+  logger.error('No Redis nodes found');
+  process.exit(1);
+}
+
+// export const redisCluster = new Redis.Cluster(redisNodes); // Initialize Redis Cluster
+export const pubClient = new Redis.Cluster(redisNodes, {
+  showFriendlyErrorStack: true,
+}); // Initialize Redis Cluster
+pubClient.on('error', (error) => {
+  logger.error('Redis error:', error);
+});
 
 const app = express();
 
@@ -62,7 +89,7 @@ if (hasRateLimit) {
 
 async function inspectRedis(key?: string) {
   if (key && typeof key === 'string') {
-    const value = await redisClient.get(key);
+    const value = await pubClient.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
 }
@@ -111,11 +138,16 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ status: 'error' });
     }
 
-    let userIdHash = await redisClient.get(id);
+    let userIdHash = await pubClient.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
-      await redisClient.set(id, userIdHash, { EX: THIRTY_DAYS_IN_SECONDS });
+      await pubClient.set(
+        id,
+        userIdHash,
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {
@@ -123,7 +155,7 @@ app.post('/evt', async (_req, res) => {
     }
 
     let userInfo;
-    const cachedUserInfo = await redisClient.get(userIdHash);
+    const cachedUserInfo = await pubClient.get(userIdHash);
 
     if (cachedUserInfo) {
       logger.debug(`Cached user info found for ${userIdHash}`, cachedUserInfo);
@@ -149,9 +181,12 @@ app.post('/evt', async (_req, res) => {
         sdkVersion: body.sdkVersion || '',
       };
 
-      await redisClient.set(userIdHash, JSON.stringify(userInfo), {
-        EX: THIRTY_DAYS_IN_SECONDS,
-      });
+      await pubClient.set(
+        userIdHash,
+        JSON.stringify(userInfo),
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {

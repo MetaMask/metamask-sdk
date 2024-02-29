@@ -28,6 +28,10 @@ process.on('SIGTERM', async () => {
   await cleanupAndExit(server, analytics);
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 configureSocketServer(server)
   .then((ioServer) => {
     logger.info(

@@ -19,6 +19,7 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
     "debug": "NODE_ENV=development ts-node --transpile-only src/index.ts",
+    "debug:redis": "NODE_ENV=development ts-node --transpile-only src/redis-check.ts",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "yarn auto-changelog validate",
     "lint:eslint": "eslint .",
