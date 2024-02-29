@@ -15,16 +15,9 @@ import { isDevelopment, isDevelopmentServer } from '.';
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 export const redisClient = createClient({ url: redisUrl });
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
+const hasRateLimit = process.env.RATE_LIMITER === 'true';
 
 const app = express();
-
-const limiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 5 minutes).
-  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Use an external store for consistency across multiple server instances.
-});
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -32,8 +25,40 @@ app.use(cors());
 app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
-// Apply the rate limiting middleware to all requests.
-app.use(limiter);
+
+if (hasRateLimit) {
+  // Conditionally apply the rate limiting middleware to all requests.
+  let windowMin = 1; // every 1minute
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      windowMin = parseInt(
+        process.env.RATE_LIMITER_HTTP_WINDOW_MINUTE ?? '1',
+        10,
+      );
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+  let limit = 100_000; // 100,000 requests per minute by default (unlimited...)
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      limit = parseInt(process.env.RATE_LIMITER_HTTP_LIMIT, 10);
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+
+  const limiterConfig = {
+    windowMs: windowMin * 60 * 1000,
+    limit,
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Use an external store for consistency across multiple server instances.
+  };
+  const limiter = rateLimit(limiterConfig);
+
+  logger.info('Rate limiter enabled', limiterConfig);
+  app.use(limiter);
+}
 
 async function inspectRedis(key?: string) {
   if (key && typeof key === 'string') {

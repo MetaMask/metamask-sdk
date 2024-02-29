@@ -8283,6 +8283,7 @@ __metadata:
     helmet: ^5.1.1
     ioredis: ^5.3.2
     jest: ^29.6.4
+    logform: ^2.6.0
     lru-cache: ^10.0.0
     nodemon: ^3.0.2
     prettier: ^2.8.8
@@ -30757,7 +30758,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"logform@npm:^2.3.2, logform@npm:^2.4.0":
+"logform@npm:^2.3.2, logform@npm:^2.4.0, logform@npm:^2.6.0":
   version: 2.6.0
   resolution: "logform@npm:2.6.0"
   dependencies:
