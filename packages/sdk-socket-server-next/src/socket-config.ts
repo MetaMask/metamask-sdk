@@ -60,6 +60,7 @@ export const configureSocketServer = async (
 
   io.of('/').adapter.on('leave-room', async (roomId, socketId) => {
     if (!validate(roomId)) {
+      // Ignore invalid room IDs
       return;
     }
 
@@ -78,6 +79,8 @@ export const configureSocketServer = async (
       console.log(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
       );
+      // Inform the room of the disconnection
+      io.to(roomId).emit(`clients_disconnected-${roomId}`);
     }
   });
 
@@ -93,8 +96,13 @@ export const configureSocketServer = async (
       host,
     });
 
-    socket.on('create_channel', async (channelId: string) => {
-      logger.info('create_channel', { id: channelId, socketId, clientIp });
+    socket.on('create_channel', async (channelId: string, context: string) => {
+      let from = context ?? '???';
+      if (context === 'metamask-mobile') {
+        from = 'wallet';
+      } else if (context === 'dapp') {
+        from = 'dapp';
+      }
 
       try {
         if (hasRateLimit) {
@@ -102,7 +110,14 @@ export const configureSocketServer = async (
         }
 
         if (!validate(channelId)) {
-          logger.info(`ERROR > create_channel id = ${channelId} invalid`);
+          logger.error(
+            `create_channel  from=${from} id = ${channelId} invalid`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
+          );
           return socket.emit(`message-${channelId}`, {
             error: 'must specify a valid id',
           });
@@ -111,7 +126,12 @@ export const configureSocketServer = async (
         const room = io.sockets.adapter.rooms.get(channelId);
         if (!channelId) {
           logger.error(
-            `ERROR > create_channel id = ${channelId} not specified`,
+            `create_channel from=${from} id = ${channelId} not specified`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
           );
           return socket.emit(`message-${channelId}`, {
             error: 'must specify an id',
@@ -120,7 +140,12 @@ export const configureSocketServer = async (
 
         if (room) {
           logger.error(
-            `ERROR > create_channel id = ${channelId} room already created`,
+            `create_channel from=${from} id = ${channelId} room already created`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
           );
           return socket.emit(`message-${channelId}`, {
             error: 'room already created',
@@ -131,7 +156,12 @@ export const configureSocketServer = async (
           resetRateLimits();
         }
 
-        logger.debug(`joining channel ${channelId} + emit channel_created`);
+        logger.info(`create_channel from=${from}`, {
+          id: channelId,
+          socketId,
+          clientIp,
+        });
+
         // Make sure to join both so that disconnection events are handled properl
         socket.join(channelId);
         // socket.broadcast.socketsJoin(channelId);
@@ -143,7 +173,7 @@ export const configureSocketServer = async (
       } catch (error) {
         setLastConnectionErrorTimestamp(Date.now());
         // increaseRateLimits(90);
-        logger.error('ERROR> Error on create_channel', error);
+        logger.error(`ERROR> Error on create_channel from=${from}`, error);
         // emit an error message back to the client, if appropriate
         return socket.emit(`error`, { error: (error as Error).message });
       }
@@ -158,40 +188,35 @@ export const configureSocketServer = async (
         plaintext: string;
       }) => {
         const { id, message, context, plaintext } = msg;
-        const isMobile = context === 'metamask-mobile';
+        let from = context ?? '???';
+        if (context === 'metamask-mobile') {
+          from = 'wallet';
+        } else if (context === 'dapp') {
+          from = 'dapp';
+        }
 
-        logger.debug(`received message`, msg);
+        // logger.debug(`received message`, msg);
         try {
           if (hasRateLimit) {
             await rateLimiterMessage.consume(socket.handshake.address);
-          }
-
-          const logContext: {
-            id: string;
-            message?: string;
-            plaintext?: string;
-            context?: string;
-          } = {
-            id,
-            context,
-          };
-
-          if (isDevelopment) {
-            logContext.plaintext = plaintext;
           }
 
           if (hasRateLimit) {
             resetRateLimits();
           }
 
-          logger.info(
-            `message-${id} received from { ${isMobile ? 'wallet' : 'dapp'} }`,
-            { ...logContext, socketId, clientIp },
-          );
-
-          if (isDevelopment) {
-            logger.debug(`message context`, JSON.stringify(context));
+          let formatted = plaintext;
+          const protocol =
+            typeof message === 'object' ? message : '__ENCRYPTED__';
+          if (isDevelopment && formatted) {
+            formatted = JSON.stringify(JSON.parse(plaintext), null, 2);
           }
+
+          logger.info(
+            `message-${id} received from=${from}`,
+            formatted,
+            protocol,
+          );
 
           return socket.broadcast.to(id).emit(`message-${id}`, { id, message });
         } catch (error) {
@@ -232,12 +257,19 @@ export const configureSocketServer = async (
       },
     );
 
-    socket.on('join_channel', async (channelId: string) => {
+    socket.on('join_channel', async (channelId: string, context: string) => {
+      let from = context ?? '???';
+      if (context === 'metamask-mobile') {
+        from = 'wallet';
+      } else if (context === 'dapp') {
+        from = 'dapp';
+      }
+
       if (hasRateLimit) {
         try {
           await rateLimiter.consume(socket.handshake.address);
         } catch (e) {
-          logger.error('ERROR> Error while consuming rate limiter:', e);
+          logger.error('Error while consuming rate limiter:', e);
           return;
         }
       }
@@ -255,9 +287,12 @@ export const configureSocketServer = async (
         channelId,
       );
       let channelOccupancy = 0;
-      logger.debug(
-        `join_channel ${channelId} from ${socketId} sRedisChannelOccupancy=${sRedisChannelOccupancy}`,
-      );
+      logger.debug(`join_channel from=${from} ${channelId}`, {
+        context,
+        socketId,
+        channelOccupancy,
+        sRedisChannelOccupancy,
+      });
 
       if (sRedisChannelOccupancy) {
         channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
@@ -284,13 +319,15 @@ export const configureSocketServer = async (
       }
 
       if (roomOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} room already full`);
+        logger.warn(`join_channel from=${from} ${channelId} room already full`);
         socket.emit(`message-${channelId}`, { error: 'room already full' });
         return;
       }
 
       if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} redis channel appears full`);
+        logger.warn(
+          `join_channel from=${from} ${channelId} redis channel appears full`,
+        );
         socket.emit(`message-${channelId}`, { error: 'room already full' });
         return;
       }
@@ -310,7 +347,7 @@ export const configureSocketServer = async (
       }
 
       logger.info(
-        `Client ${socketId} joined channel ${channelId}. Occupancy: ${channelOccupancy}`,
+        `join_channel from=${from} ${channelId}. Occupancy: ${channelOccupancy}`,
         {
           id: channelId,
           socketId,
@@ -330,12 +367,14 @@ export const configureSocketServer = async (
       }
 
       socket.on('disconnect', async (error) => {
-        logger.info(`disconnect from room ${channelId}`, {
-          id: channelId,
-          socketId,
-          clientIp,
-          error,
-        });
+        logger.info(
+          `disconnect event from=${from} room ${channelId} ${error}`,
+          {
+            id: channelId,
+            socketId,
+            clientIp,
+          },
+        );
 
         // Inform the room of the disconnection
         socket.broadcast

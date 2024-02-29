@@ -44,6 +44,7 @@
     "express-rate-limit": "^7.1.5",
     "helmet": "^5.1.1",
     "ioredis": "^5.3.2",
+    "logform": "^2.6.0",
     "lru-cache": "^10.0.0",
     "rate-limiter-flexible": "^2.3.8",
     "redis": "^4.6.12",
