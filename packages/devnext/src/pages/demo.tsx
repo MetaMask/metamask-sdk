@@ -621,7 +621,7 @@ const Demo = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main style={{ paddingBottom: 50 }}>
+      <main style={{ paddingBottom: 100 }}>
         <div style={{ padding: 20 }}>
           <MetaMaskButton />
         </div>
@@ -962,6 +962,11 @@ const Demo = () => {
           </div>
         </div>
       </main>
+      
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       <RPCHistoryViewer />
     </>
   );
