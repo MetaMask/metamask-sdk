@@ -4,6 +4,7 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { createClient } from 'redis';
 import { logger } from './logger';
@@ -14,6 +15,7 @@ import { isDevelopment, isDevelopmentServer } from '.';
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 export const redisClient = createClient({ url: redisUrl });
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
+const hasRateLimit = process.env.RATE_LIMITER === 'true';
 
 const app = express();
 
@@ -24,8 +26,42 @@ app.options('*', cors());
 app.use(helmet());
 app.disable('x-powered-by');
 
+if (hasRateLimit) {
+  // Conditionally apply the rate limiting middleware to all requests.
+  let windowMin = 1; // every 1minute
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      windowMin = parseInt(
+        process.env.RATE_LIMITER_HTTP_WINDOW_MINUTE ?? '1',
+        10,
+      );
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+  let limit = 100_000; // 100,000 requests per minute by default (unlimited...)
+  try {
+    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
+      limit = parseInt(process.env.RATE_LIMITER_HTTP_LIMIT, 10);
+    }
+  } catch (error) {
+    // Ignore parsing errors
+  }
+
+  const limiterConfig = {
+    windowMs: windowMin * 60 * 1000,
+    limit,
+    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+    // store: ... , // Use an external store for consistency across multiple server instances.
+  };
+  const limiter = rateLimit(limiterConfig);
+
+  logger.info('Rate limiter enabled', limiterConfig);
+  app.use(limiter);
+}
+
 async function inspectRedis(key?: string) {
-  if (key) {
+  if (key && typeof key === 'string') {
     const value = await redisClient.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
@@ -70,6 +106,11 @@ app.post('/evt', async (_req, res) => {
     logger.debug(`Received event /debug`, body);
 
     const id: string = body.id || 'socket.io-server';
+
+    if (typeof id !== 'string') {
+      return res.status(400).json({ status: 'error' });
+    }
+
     let userIdHash = await redisClient.get(id);
 
     if (!userIdHash) {

@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteConnectionState } from '../RemoteConnection';
 
 /**
@@ -8,9 +9,7 @@ import { RemoteConnectionState } from '../RemoteConnection';
  */
 export function showActiveModal(state: RemoteConnectionState): void {
   if (state.authorized) {
-    if (state.developerMode) {
-      console.debug(`RemoteConnection::showActiveModal() already authorized`);
-    }
+    logger(`[RemoteConnection: showActiveModal()] already authorized`);
     return;
   }
 

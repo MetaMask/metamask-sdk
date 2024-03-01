@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { setupChannelListeners } from './setupChannelListeners';
@@ -17,9 +18,9 @@ import { setupChannelListeners } from './setupChannelListeners';
  * instance, or an empty string if not available.
  */
 export function createChannel(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(`SocketService::${instance.state.context}::createChannel()`);
-  }
+  logger.SocketService(
+    `[SocketService: createChannel()] context=${instance.state.context}`,
+  );
 
   if (!instance.state.socket?.connected) {
     instance.state.socket?.connect();

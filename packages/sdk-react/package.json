@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.14.2",
+  "version": "0.15.0",
   "description": "A react component and react hooks to connect and use MetaMask",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -48,6 +48,7 @@
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@react-native-async-storage/async-storage": "^1.19.6",
+    "debug": "^4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0"

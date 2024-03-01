@@ -656,7 +656,6 @@ const Demo = () => {
                   <button style={{ padding: 10, margin: 10 }} onClick={connect}>
                     Request Accounts
                   </button>
-
                   <button
                     style={{ padding: 10, margin: 10 }}
                     onClick={ethAccounts}
@@ -765,6 +764,24 @@ const Demo = () => {
                     }}
                   >
                     Switch to mainnet
+                  </button>
+                  
+                  <button style={{ padding: 10, margin: 10 }} onClick={ethAccounts}>
+                    eth_accounts
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={walletRequest}
+                  >
+                    wallet_requestPermissions
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={getPermissions}
+                  >
+                    wallet_getPermissions
                   </button>
 
                   <h2 style={{ textAlign: 'center' }}>Batch Tests</h2>

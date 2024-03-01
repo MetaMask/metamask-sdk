@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 
 /**
@@ -15,31 +16,26 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
   const { state } = instance;
 
   if (!state.storageManager) {
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::connect() no storage manager defined - skip`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: originatorSessionConnect()] no storage manager defined - skip`,
+    );
     return undefined;
   }
 
   const channelConfig = await state.storageManager.getPersistedChannelConfig(
     state.channelId ?? '',
   );
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::connect() autoStarted=${state.originatorConnectStarted} channelConfig`,
-      channelConfig,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: originatorSessionConnect()] autoStarted=${state.originatorConnectStarted} channelConfig`,
+    channelConfig,
+  );
 
   const connected = state.communicationLayer?.isConnected();
   if (connected) {
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::connect() socket already connected - skip`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: originatorSessionConnect()] socket already connected - skip`,
+    );
+
     return channelConfig;
   }
 
@@ -56,9 +52,11 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
         isOriginator: true,
       });
       return channelConfig;
-    } else if (state.debug) {
-      console.log(`RemoteCommunication::autoConnect Session has expired`);
     }
+
+    logger.RemoteCommunication(
+      `[RemoteCommunication: autoConnect()] Session has expired`,
+    );
   }
   state.originatorConnectStarted = false;
   return undefined;

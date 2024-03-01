@@ -2,6 +2,7 @@ import {
   SendAnalytics,
   TrackingEvents,
 } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
@@ -27,11 +28,9 @@ export async function handleAutoAndExtensionConnections(
   const { options } = instance;
 
   if (preferExtension) {
-    if (instance.debug) {
-      console.debug(
-        `SDK::performSDKInitialization) preferExtension is detected -- connect with it.`,
-      );
-    }
+    logger(
+      `[MetaMaskSDK: handleAutoAndExtensionConnections()] preferExtension is detected -- connect with it.`,
+    );
 
     const { remoteConnection } = instance;
 
@@ -66,22 +65,20 @@ export async function handleAutoAndExtensionConnections(
     });
   } else if (options.checkInstallationImmediately) {
     if (instance.platformManager?.isDesktopWeb()) {
-      if (instance.debug) {
-        console.debug(
-          `SDK::performSDKInitialization) checkInstallationImmediately`,
-        );
-      }
+      logger(
+        `[MetaMaskSDK: handleAutoAndExtensionConnections()] checkInstallationImmediately`,
+      );
 
       // Don't block /await initialization on autoconnect
       instance.connect().catch((_err) => {
         // ignore error on autoconnect
-        if (instance.debug) {
-          console.warn(`error during autoconnect`, _err);
-        }
+        logger(
+          `[MetaMaskSDK: handleAutoAndExtensionConnections()] checkInstallationImmediately --- IGNORED --- error on autoconnect _err=${_err}`,
+        );
       });
     } else {
       console.warn(
-        `SDK::performSDKInitialization) checkInstallationImmediately --- IGNORED --- only for web desktop`,
+        `[handleAutoAndExtensionConnections()] checkInstallationImmediately --- IGNORED --- only for web desktop`,
       );
     }
   }

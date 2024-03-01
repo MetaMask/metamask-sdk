@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SDKProvider } from '../../../provider/SDKProvider';
+import * as loggerModule from '../../../utils/logger';
 import { handleChainChanged } from './handleChainChanged';
 
 describe('handleChainChanged', () => {
   let mockSDKProvider: SDKProvider;
   const superHandleChainChanged: jest.Mock = jest.fn();
   const mockEmit: jest.Mock = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -20,23 +22,20 @@ describe('handleChainChanged', () => {
   });
 
   it('should log debug information when debug is true', () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-    handleChainChanged({
-      instance: mockSDKProvider,
-      chainId: '1',
-      superHandleChainChanged,
-    });
-    expect(console.debug).not.toHaveBeenCalled();
-
-    mockSDKProvider.state.debug = true;
     handleChainChanged({
       instance: mockSDKProvider,
       chainId: '1',
       superHandleChainChanged,
     });
 
-    expect(console.debug).toHaveBeenCalledWith(
-      'SDKProvider::_handleChainChanged chainId=1 networkVersion=undefined',
+    handleChainChanged({
+      instance: mockSDKProvider,
+      chainId: '1',
+      superHandleChainChanged,
+    });
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[SDKProvider: handleChainChanged()] chainId=${1} networkVersion=${undefined}`,
     );
   });
 

@@ -1,5 +1,6 @@
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import React, { createContext, useEffect, useState } from 'react';
+import { logger } from './utils/logger';
 
 export interface SDKConfigContextProps {
   socketServer: string;
@@ -30,7 +31,9 @@ const initProps: SDKConfigContextProps = {
 export const SDKConfigContext = createContext({
   ...initProps,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setAppContext: (_: Partial<SDKConfigContextProps>) => { }, // placeholder implemented in the provider.
+  setAppContext: (_: Partial<SDKConfigContextProps>) => {}, // placeholder implemented in the provider.
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  reset: () => {}, // placeholder implemented in the provider.
 });
 
 export interface SDKConfigProviderProps {
@@ -43,8 +46,16 @@ export interface SDKConfigProviderProps {
 const STORAGE_LOCATION = 'appContext';
 
 // FIXME use appropriate children type ( currently linting issue on devnext )
-export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug, children }: SDKConfigProviderProps) => {
-  const [appContext, setAppContext] = useState<SDKConfigContextProps>({ ...initProps, socketServer: initialSocketServer ?? DEFAULT_SERVER_URL, infuraAPIKey: initialInfuraKey });
+export const SDKConfigProvider = ({
+  initialSocketServer,
+  initialInfuraKey,
+  children,
+}: SDKConfigProviderProps) => {
+  const [appContext, setAppContext] = useState<SDKConfigContextProps>({
+    ...initProps,
+    socketServer: initialSocketServer ?? DEFAULT_SERVER_URL,
+    infuraAPIKey: initialInfuraKey,
+  });
 
   const syncState = (newState: SDKConfigContextProps) => {
     if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
@@ -58,44 +69,43 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug
 
     localStorage.setItem(STORAGE_LOCATION, JSON.stringify(newState));
     // Update URL without refreshing the page using History API
-    const newurl = `${window.location.protocol}//${window.location.host}${window.location.pathname
-      }?${queryString.toString()}`;
+    const newurl = `${window.location.protocol}//${window.location.host}${
+      window.location.pathname
+    }?${queryString.toString()}`;
     window.history.pushState({ path: newurl }, '', newurl);
   };
 
   useEffect(() => {
     // Load context from localStorage and URL (priority to URL)
     const loadContext = () => {
-      const storedContext = localStorage.getItem(STORAGE_LOCATION);
-      const initialContext: Partial<SDKConfigContextProps> = storedContext ? JSON.parse(storedContext)
+      const storedContext = localStorage?.getItem(STORAGE_LOCATION);
+      const initialContext: Partial<SDKConfigContextProps> = storedContext
+        ? JSON.parse(storedContext)
         : {
-          infuraAPIKey: initialInfuraKey,
-          socketServer: initialSocketServer,
-        };
+            infuraAPIKey: initialInfuraKey,
+            socketServer: initialSocketServer,
+          };
 
-        if(!initialContext.infuraAPIKey) {
-          initialContext.infuraAPIKey = initialInfuraKey;
-        }
-
-      if(debug) {
-        console.log(`[SDKConfigProvider] initialContext`, initialContext);
+      if (!initialContext.infuraAPIKey) {
+        initialContext.infuraAPIKey = initialInfuraKey;
       }
+
+      logger(`[SDKConfigProvider] initialContext`, initialContext);
 
       const urlParams = new URLSearchParams(window.location.search);
       const urlContext = Array.from(urlParams.keys()).reduce((acc, key) => {
         try {
           // We need to assert that acc conforms to Partial<CustomContext>
-          (acc as Partial<SDKConfigContextProps>)[key as keyof Partial<SDKConfigContextProps>] =
-            JSON.parse(decodeURIComponent(urlParams.get(key) || ''));
+          (acc as Partial<SDKConfigContextProps>)[
+            key as keyof Partial<SDKConfigContextProps>
+          ] = JSON.parse(decodeURIComponent(urlParams.get(key) || ''));
         } catch (e) {
           console.error(`Error parsing URL param ${key}`, e);
         }
         return acc;
       }, {} as Partial<SDKConfigContextProps>);
 
-      if(debug) {
-        console.log(`[SDKConfigProvider] urlContext`, urlContext);
-      }
+      logger(`[SDKConfigProvider] urlContext`, urlContext);
 
       const computedContext: SDKConfigContextProps = {
         ...initProps,
@@ -103,9 +113,7 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug
         ...urlContext,
       };
 
-      if(debug) {
-        console.log(`[SDKConfigProvider] computedContext`, computedContext);
-      }
+      logger(`[SDKConfigProvider] computedContext`, computedContext);
 
       setAppContext(computedContext);
     };
@@ -121,20 +129,33 @@ export const SDKConfigProvider = ({ initialSocketServer, initialInfuraKey, debug
       syncState(updatedContext);
 
       setTimeout(() => {
-        if(typeof window !== 'undefined' && typeof window.location !== 'undefined' && typeof window.location.reload !== 'undefined') {
+        if (
+          typeof window !== 'undefined' &&
+          typeof window.location !== 'undefined' &&
+          typeof window.location.reload !== 'undefined'
+        ) {
           // Reload window with changes
           window.location.reload();
         } else {
-          console.warn(`[SDKConfigProvider] updateAppContext not implemented`)
+          console.warn(`[SDKConfigProvider] updateAppContext not implemented`);
         }
       }, 100);
       return updatedContext;
     });
   };
 
+  const reset = () => {
+    updateAppContext({
+      ...initProps,
+      socketServer: initialSocketServer ?? DEFAULT_SERVER_URL,
+      infuraAPIKey: initialInfuraKey,
+    });
+  };
+
   // The context value now includes the state and the function to update it
   const contextValue = {
     ...appContext,
+    reset,
     setAppContext: updateAppContext,
   };
 

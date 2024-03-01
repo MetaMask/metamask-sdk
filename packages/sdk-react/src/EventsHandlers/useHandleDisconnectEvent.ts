@@ -1,6 +1,7 @@
 import { EthereumRpcError } from 'eth-rpc-errors';
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleDisconnectEvent = ({
   debug,
@@ -10,12 +11,11 @@ export const useHandleDisconnectEvent = ({
 }: EventHandlerProps) => {
   return useCallback(
     (reason: unknown) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'disconnect' event.`,
-          reason,
-        );
-      }
+      logger(
+        `[MetaMaskProvider: useHandleDisconnectEvent()] on 'disconnect' event.`,
+        reason,
+      );
+
       setConnecting(false);
       setConnected(false);
       setError(reason as EthereumRpcError<unknown>);

@@ -1,4 +1,5 @@
 import { generate } from 'qrcode-terminal-nooctal';
+import * as loggerModule from '../../utils/logger';
 import InstallModal from './InstallModal-nodejs';
 
 jest.mock('qrcode-terminal-nooctal', () => ({
@@ -6,12 +7,12 @@ jest.mock('qrcode-terminal-nooctal', () => ({
 }));
 
 describe('InstallModal-nodejs', () => {
-  let consoleLogSpy: jest.SpyInstance;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   const mockGenerate = generate as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
 
     global.document = {
       createElement: jest.fn(),
@@ -33,18 +34,13 @@ describe('InstallModal-nodejs', () => {
     );
   });
 
-  it('should log the QR code to the console', () => {
-    InstallModal({ link: 'http://example.com' });
+  it('should log the QR code link', () => {
+    const link = 'http://example.com';
+    InstallModal({ link });
 
-    expect(consoleLogSpy).toHaveBeenCalledWith('Mocked QR Code');
-  });
-
-  it('should log the QR code URL to the console', () => {
-    const mockLink = 'http://example.com';
-
-    InstallModal({ link: mockLink });
-
-    expect(consoleLogSpy).toHaveBeenCalledWith('qrcode url: ', mockLink);
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[UI: InstallModal-nodejs()] qrcode url: ${link}`,
+    );
   });
 
   it('should return an object with unmount function', () => {

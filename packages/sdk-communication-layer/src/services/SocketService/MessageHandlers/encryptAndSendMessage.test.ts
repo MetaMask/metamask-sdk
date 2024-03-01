@@ -1,13 +1,17 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { MessageType } from '../../../types/MessageType';
+import { logger } from '../../../utils/logger';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 
 describe('encryptAndSendMessage', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
+
   const mockEncryptMessage = jest.fn();
   const mockEmit = jest.fn();
-  const mockConsoleDebug = jest.spyOn(console, 'debug');
+
   const testMessage: CommunicationLayerMessage = {
     type: MessageType.PAUSE,
     data: {},
@@ -61,10 +65,20 @@ describe('encryptAndSendMessage', () => {
     );
   });
 
-  it('should log debug message if debugging is enabled', () => {
-    instance.state.debug = true;
+  it('should log debug info', () => {
+    const messageToSend = {
+      id: instance.state.channelId,
+      context: instance.state.context,
+      message: 'encryptedMessage',
+      plaintext: undefined,
+    };
+
     encryptAndSendMessage(instance, testMessage);
-    expect(mockConsoleDebug).toHaveBeenCalled();
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: encryptAndSendMessage()] context=testContext',
+      messageToSend,
+    );
   });
 
   it('should set manualDisconnect if message type is TERMINATE', () => {

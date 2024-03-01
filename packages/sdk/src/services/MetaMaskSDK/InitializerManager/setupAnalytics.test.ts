@@ -51,14 +51,13 @@ describe('setupAnalytics', () => {
       name: 'DApp Name',
     };
     instance.options._source = 'custom-source';
-    instance.debug = true;
+
     mockGetPlatformType.mockReturnValue('web');
 
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
       serverURL: 'https://custom.server.url',
-      debug: true,
       metadata: {
         url: 'https://dapp.url',
         title: 'DApp Name',

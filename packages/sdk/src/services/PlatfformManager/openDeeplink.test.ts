@@ -3,10 +3,12 @@ import {
   PlatformManager,
   LINK_OPEN_DELAY,
 } from '../../Platform/PlatfformManager';
+import * as loggerModule from '../../utils/logger';
 import { openDeeplink } from './openDeeplink';
 
 describe('openDeeplink', () => {
   let instance: jest.Mocked<PlatformManager>;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -23,15 +25,47 @@ describe('openDeeplink', () => {
     } as unknown as jest.Mocked<PlatformManager>;
   });
 
-  it('should console debug when state.debug is true', () => {
-    instance.state.debug = true;
-    jest.spyOn(console, 'debug').mockImplementation(() => {
-      // do nothing
-    });
+  it('should open a universal link when state.useDeeplink is false', () => {
+    global.window = { open: jest.fn() } as any;
 
     openDeeplink(instance, 'universalLink', 'deeplink');
 
-    expect(console.debug).toHaveBeenCalledTimes(2);
+    expect(global.window.open).toHaveBeenCalledWith('universalLink', '_blank');
+  });
+
+  it('should close the window after LINK_OPEN_DELAY', () => {
+    const mockWin = { close: jest.fn() };
+    global.window = {
+      open: jest.fn().mockReturnValue(mockWin),
+    } as any;
+
+    openDeeplink(instance, 'universalLink', 'deeplink');
+
+    jest.advanceTimersByTime(LINK_OPEN_DELAY);
+
+    expect(mockWin.close).toHaveBeenCalled();
+  });
+
+  it('should log debug info', () => {
+    global.window = {
+      open: jest.fn().mockImplementation(() => {
+        throw new Error('failure');
+      }),
+    } as any;
+
+    openDeeplink(instance, 'universalLink', 'deeplink');
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[PlatfformManager: openDeeplink()] universalLink --> universalLink',
+    );
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[PlatfformManager: openDeeplink()] deepLink --> deeplink',
+    );
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[PlatfformManager: openDeeplink()] open link now useDeepLink=false link=universalLink',
+    );
   });
 
   it('should call enableWakeLock when instance.isBrowser() is true', () => {
@@ -62,27 +96,6 @@ describe('openDeeplink', () => {
     expect(global.window.open).toHaveBeenCalledWith('deeplink', '_blank');
   });
 
-  it('should open a universal link when state.useDeeplink is false', () => {
-    global.window = { open: jest.fn() } as any;
-
-    openDeeplink(instance, 'universalLink', 'deeplink');
-
-    expect(global.window.open).toHaveBeenCalledWith('universalLink', '_blank');
-  });
-
-  it('should close the window after LINK_OPEN_DELAY', () => {
-    const mockWin = { close: jest.fn() };
-    global.window = {
-      open: jest.fn().mockReturnValue(mockWin),
-    } as any;
-
-    openDeeplink(instance, 'universalLink', 'deeplink');
-
-    jest.advanceTimersByTime(LINK_OPEN_DELAY);
-
-    expect(mockWin.close).toHaveBeenCalled();
-  });
-
   it('should log an error if opening the link fails', () => {
     jest.spyOn(console, 'log').mockImplementation(() => {
       // do nothing
@@ -97,7 +110,7 @@ describe('openDeeplink', () => {
     openDeeplink(instance, 'universalLink', 'deeplink');
 
     expect(console.log).toHaveBeenCalledWith(
-      `Platform::openDeepLink() can't open link`,
+      "[PlatfformManager: openDeeplink()] can't open link",
       new Error('failure'),
     );
   });

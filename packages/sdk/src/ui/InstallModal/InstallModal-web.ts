@@ -1,6 +1,7 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 
 import { i18n } from 'i18next';
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import packageJson from '../../../package.json';
 
@@ -22,23 +23,27 @@ const sdkWebInstallModal = ({
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
 
-  if (debug) {
-    console.debug(`################## Installing Modal #################`);
-    console.debug(`${link}`);
-    console.debug(`npx uri-scheme open "${link}" --ios`);
-    console.debug(`npx uri-scheme open "${link}" --android`);
-    console.debug(
-      `adb shell am start -a android.intent.action.VIEW -d "${link}"`,
-    );
-  }
+  logger(
+    `[UI: InstallModal-web: sdkWebInstallModal()] ################## Installing Modal #################`,
+  );
+  logger(`[UI: InstallModal-web: sdkWebInstallModal()] link=${link}`);
+  logger(
+    `[UI: InstallModal-web: sdkWebInstallModal()] npx uri-scheme open "${link}" --ios`,
+  );
+
+  logger(
+    `[UI: InstallModal-web: sdkWebInstallModal()] npx uri-scheme open "${link}" --android`,
+  );
+
+  logger(
+    `[UI: InstallModal-web: sdkWebInstallModal()] adb shell am start -a android.intent.action.VIEW -d "${link}"`,
+  );
 
   const unmount = (shouldTerminate?: boolean) => {
-    if (debug) {
-      console.info(
-        `installModal-web unmounting install modal -- shouldTerminate=${shouldTerminate}`,
-        div,
-      );
-    }
+    logger(
+      `[UI: InstallModal-web: sdkWebInstallModal()] installModal-web unmounting install modal -- shouldTerminate=${shouldTerminate}`,
+      div,
+    );
 
     // Remove the node from the DOM
     if (div?.parentNode) {
@@ -52,9 +57,10 @@ const sdkWebInstallModal = ({
   };
 
   const mount = (qrcodeLink: string) => {
-    if (debug) {
-      console.info('installModal-web mounting install modal', div);
-    }
+    logger(
+      '[UI: InstallModal-web: sdkWebInstallModal()] installModal-web mounting install modal',
+      div,
+    );
 
     if (div) {
       div.style.display = 'block';
