@@ -50,6 +50,8 @@ pids
 coverage
 *.lcov
 
+bundle_stats
+
 # nyc test coverage
 .nyc_output
 
