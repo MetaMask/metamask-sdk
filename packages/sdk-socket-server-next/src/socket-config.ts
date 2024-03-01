@@ -26,9 +26,6 @@ export const configureSocketServer = async (
   const hasRateLimit = process.env.RATE_LIMITER === 'true';
   const host = hostname();
 
-  // Establish connection to Redis server
-  await pubClient.connect();
-
   logger.info(
     `Start socket server with rate limiter: ${hasRateLimit} - isDevelopment: ${isDevelopment}`,
   );

@@ -44,14 +44,20 @@ You can use Docker Compose to run the SDK socket server in either a development 
 ### Running in Development Mode
 
 1. **Start in Development Mode**:
-   - Use the command: `yarn start:docker:dev`
-   - This command sets up the environment for development and starts the server along with any other necessary services, like Redis.
+   - Use the command: `yarn docker:redis:check`
+   - This command sets up a local redis cluster and connect to it to make sure everything is working.
 
 ### Running in Production Mode
 
 1. **Start in Production Mode**:
    - Use the command: `yarn start:docker`
    - This command sets up the environment for production. It's optimized for performance and stability.
+
+### Run local Redis cluster setup
+
+1. **Start Redis Cluster**:
+   - Use the command: `yarn start:redis`
+   - This command sets up the Redis cluster with 3 nodes.
 
 ### Ngrok Configuration
 

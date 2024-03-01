@@ -38,9 +38,11 @@ configureSocketServer(server)
       `socker.io server started development=${isDevelopment} adminUI=${withAdminUI}`,
     );
 
-    if (isDevelopmentServer && withAdminUI) {
+    if (withAdminUI) {
+      logger.info(`Starting socket.io admin ui`);
       instrument(ioServer, {
         auth: false,
+        namespaceName: 'admin',
         mode: 'development',
       });
     }

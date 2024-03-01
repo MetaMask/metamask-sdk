@@ -6,7 +6,7 @@ import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import Redis from 'ioredis'; // Import ioredis
+import { Cluster, ClusterOptions, Redis } from 'ioredis';
 import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
@@ -36,17 +36,59 @@ if (redisNodes.length === 0) {
   process.exit(1);
 }
 
-// export const redisCluster = new Redis.Cluster(redisNodes); // Initialize Redis Cluster
-export const pubClient = new Redis.Cluster(redisNodes, {
-  showFriendlyErrorStack: true,
+const redisCluster = process.env.REDIS_CLUSTER === 'true';
+let redisClient: Cluster | Redis | undefined;
+const redisClusterOptions: ClusterOptions = {
+  // slotsRefreshTimeout: 2000,
   redisOptions: {
-    tls: {},
-    password: process.env.REDIS_PASSWORD || 'redis',
+    // tls: {}, // WARN: enabling tls would fail the client if not setup with correct params
+    password: process.env.REDIS_PASSWORD,
   },
-}); // Initialize Redis Cluster
-pubClient.on('error', (error) => {
-  logger.error('Redis error:', error);
-});
+};
+
+export const getRedisClient = () => {
+  if (!redisClient) {
+    if (redisCluster) {
+      logger.info('Connecting to Redis Cluster');
+      redisClient = new Cluster(redisNodes, redisClusterOptions);
+    } else {
+      logger.info('Connecting to single Redis node');
+      redisClient = new Redis(redisNodes[0]);
+    }
+  }
+
+  redisClient.on('error', (error) => {
+    logger.error('Redis error:', error);
+  });
+
+  redisClient.on('connect', () => {
+    logger.info('Connected to Redis Cluster successfully');
+  });
+
+  redisClient.on('close', () => {
+    logger.info('Disconnected from Redis Cluster');
+  });
+
+  redisClient.on('reconnecting', () => {
+    logger.info('Reconnecting to Redis Cluster');
+  });
+
+  redisClient.on('end', () => {
+    logger.info('Redis Cluster connection ended');
+  });
+
+  redisClient.on('wait', () => {
+    logger.info('Redis Cluster waiting for connection');
+  });
+
+  redisClient.on('select', (node) => {
+    logger.info('Redis Cluster selected node:', node);
+  });
+
+  return redisClient;
+};
+
+export const pubClient = getRedisClient();
 
 const app = express();
 
