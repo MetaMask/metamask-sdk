@@ -626,11 +626,7 @@ const Demo = () => {
           <MetaMaskButton />
         </div>
         <div
-          style={
-            !connecting
-              ? { display: 'flex' }
-              : { display: 'flex', flexDirection: 'column' }
-          }
+          style={{ display: 'flex', flexDirection: !connected ? "column" : "row-reverse" }}
         >
           <div
             style={
@@ -786,29 +782,31 @@ const Demo = () => {
 
                   <h2 style={{ textAlign: 'center' }}>Batch Tests</h2>
                   <hr></hr>
-                  <button
-                    style={{ padding: 10, margin: 10 }}
-                    className="chain"
-                    onClick={handleChainRPCs}
-                  >
-                    Chain RPC Calls
-                  </button>
+                  <div className="action-group">
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={handleChainRPCs}
+                    >
+                      Chain RPC Calls
+                    </button>
 
-                  <button
-                    style={{ padding: 10, margin: 10 }}
-                    className="chain"
-                    onClick={chainSwitchAndSignAndBack}
-                  >
-                    Chain Switch + sign + switch back
-                  </button>
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={chainSwitchAndSignAndBack}
+                    >
+                      Chain Switch + sign + switch back
+                    </button>
 
-                  <button
-                    style={{ padding: 10, margin: 10 }}
-                    className="chain"
-                    onClick={chainTransactions}
-                  >
-                    Chain sendTransaction + personal_sign + sendTransaction
-                  </button>
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={chainTransactions}
+                    >
+                      Chain sendTransaction + personal_sign + sendTransaction
+                    </button>
+                  </div>
                 </div>
               </>
             )}
@@ -816,14 +814,7 @@ const Demo = () => {
               <>
                 <h2 style={{ textAlign: 'center' }}>Connect Methods</h2>
                 <hr></hr>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
+                <div className="action-group">
                   <button
                     style={{
                       padding: 10,
@@ -862,14 +853,7 @@ const Demo = () => {
               <div>
                 <h2 style={{ textAlign: 'center' }}>Connect Methods</h2>
                 <hr></hr>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
+                <div className="action-group">
                   <button
                     style={{
                       padding: 10,
@@ -928,14 +912,7 @@ const Demo = () => {
               <div>
                 <h2 style={{ textAlign: 'center' }}>Read-only Call Tests</h2>
                 <hr></hr>
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    width: '100%',
-                  }}
-                >
+                <div className="action-group">
                   <button
                     style={{
                       padding: 10,
