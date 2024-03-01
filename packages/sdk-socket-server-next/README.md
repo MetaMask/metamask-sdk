@@ -17,9 +17,16 @@ This guide provides instructions for setting up and debugging the SDK socket ser
    - Copy the sample environment file: `cp .env.sample .env`
    - Adjust the `.env` file with the correct settings as per your project requirements.
 
-2. **Start the SDK Server**:
+2. **Start the REDIS cluster**:
    - For standard development, use: `yarn start`
    - For debugging with more verbose output, use: `yarn debug`
+
+3. **Check cluster status**:
+   - Use the command: `yarn docker:redis:check`
+   - This command sets up a local redis cluster and connect to it to make sure everything is working.
+
+4. **Start the SDK Socket Server via docker**:
+    - Use the command: `yarn docker:debug`
 
 ### Using Ngrok for External Access
 
@@ -36,28 +43,6 @@ To expose your local server to the internet, particularly for testing with mobil
 
 3. **Configure Your DApp**:
    - Set the `communicationServerUrl` in your DApp's SDK options to your local IP or `localhost` with port 4000. For example: `communicationServerUrl: "http://{yourLocalIP | localhost}:4000"`
-
-## Debugging with Docker Compose
-
-You can use Docker Compose to run the SDK socket server in either a development or production environment.
-
-### Running in Development Mode
-
-1. **Start in Development Mode**:
-   - Use the command: `yarn docker:redis:check`
-   - This command sets up a local redis cluster and connect to it to make sure everything is working.
-
-### Running in Production Mode
-
-1. **Start in Production Mode**:
-   - Use the command: `yarn start:docker`
-   - This command sets up the environment for production. It's optimized for performance and stability.
-
-### Run local Redis cluster setup
-
-1. **Start Redis Cluster**:
-   - Use the command: `yarn start:redis`
-   - This command sets up the Redis cluster with 3 nodes.
 
 ### Ngrok Configuration
 
