@@ -28,15 +28,21 @@ process.on('SIGTERM', async () => {
   await cleanupAndExit(server, analytics);
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 configureSocketServer(server)
   .then((ioServer) => {
     logger.info(
       `socker.io server started development=${isDevelopment} adminUI=${withAdminUI}`,
     );
 
-    if (isDevelopmentServer && withAdminUI) {
+    if (withAdminUI) {
+      logger.info(`Starting socket.io admin ui`);
       instrument(ioServer, {
         auth: false,
+        namespaceName: 'admin',
         mode: 'development',
       });
     }

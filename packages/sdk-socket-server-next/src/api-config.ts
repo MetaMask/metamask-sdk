@@ -6,16 +6,89 @@ import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import { createClient } from 'redis';
+import { Cluster, ClusterOptions, Redis } from 'ioredis';
 import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
-// Initialize Redis client
-// Provide a default URL if REDIS_URL is not set
-const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-export const redisClient = createClient({ url: redisUrl });
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
 const hasRateLimit = process.env.RATE_LIMITER === 'true';
+
+// Initialize Redis Cluster client
+let redisNodes: {
+  host: string;
+  port: number;
+}[] = [];
+
+if (process.env.REDIS_NODES) {
+  // format: REDIS_NODES=redis://rediscluster-redis-cluster-0.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379,redis://rediscluster-redis-cluster-1.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379,redis://rediscluster-redis-cluster-2.rediscluster-redis-cluster-headless.redis.svc.cluster.local:6379
+  redisNodes = process.env.REDIS_NODES.split(',').map((node) => {
+    const [host, port] = node.replace('redis://', '').split(':');
+    return {
+      host,
+      port: parseInt(port, 10),
+    };
+  });
+}
+logger.info('Redis nodes:', redisNodes);
+
+if (redisNodes.length === 0) {
+  logger.error('No Redis nodes found');
+  process.exit(1);
+}
+
+const redisCluster = process.env.REDIS_CLUSTER === 'true';
+let redisClient: Cluster | Redis | undefined;
+const redisClusterOptions: ClusterOptions = {
+  // slotsRefreshTimeout: 2000,
+  redisOptions: {
+    // tls: {}, // WARN: enabling tls would fail the client if not setup with correct params
+    password: process.env.REDIS_PASSWORD,
+  },
+};
+
+export const getRedisClient = () => {
+  if (!redisClient) {
+    if (redisCluster) {
+      logger.info('Connecting to Redis Cluster');
+      redisClient = new Cluster(redisNodes, redisClusterOptions);
+    } else {
+      logger.info('Connecting to single Redis node');
+      redisClient = new Redis(redisNodes[0]);
+    }
+  }
+
+  redisClient.on('error', (error) => {
+    logger.error('Redis error:', error);
+  });
+
+  redisClient.on('connect', () => {
+    logger.info('Connected to Redis Cluster successfully');
+  });
+
+  redisClient.on('close', () => {
+    logger.info('Disconnected from Redis Cluster');
+  });
+
+  redisClient.on('reconnecting', () => {
+    logger.info('Reconnecting to Redis Cluster');
+  });
+
+  redisClient.on('end', () => {
+    logger.info('Redis Cluster connection ended');
+  });
+
+  redisClient.on('wait', () => {
+    logger.info('Redis Cluster waiting for connection');
+  });
+
+  redisClient.on('select', (node) => {
+    logger.info('Redis Cluster selected node:', node);
+  });
+
+  return redisClient;
+};
+
+export const pubClient = getRedisClient();
 
 const app = express();
 
@@ -62,7 +135,7 @@ if (hasRateLimit) {
 
 async function inspectRedis(key?: string) {
   if (key && typeof key === 'string') {
-    const value = await redisClient.get(key);
+    const value = await pubClient.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
 }
@@ -111,11 +184,16 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ status: 'error' });
     }
 
-    let userIdHash = await redisClient.get(id);
+    let userIdHash = await pubClient.get(id);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(id).digest('hex');
-      await redisClient.set(id, userIdHash, { EX: THIRTY_DAYS_IN_SECONDS });
+      await pubClient.set(
+        id,
+        userIdHash,
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {
@@ -123,7 +201,7 @@ app.post('/evt', async (_req, res) => {
     }
 
     let userInfo;
-    const cachedUserInfo = await redisClient.get(userIdHash);
+    const cachedUserInfo = await pubClient.get(userIdHash);
 
     if (cachedUserInfo) {
       logger.debug(`Cached user info found for ${userIdHash}`, cachedUserInfo);
@@ -149,9 +227,12 @@ app.post('/evt', async (_req, res) => {
         sdkVersion: body.sdkVersion || '',
       };
 
-      await redisClient.set(userIdHash, JSON.stringify(userInfo), {
-        EX: THIRTY_DAYS_IN_SECONDS,
-      });
+      await pubClient.set(
+        userIdHash,
+        JSON.stringify(userInfo),
+        'EX',
+        THIRTY_DAYS_IN_SECONDS.toString(),
+      );
     }
 
     if (isDevelopment) {
