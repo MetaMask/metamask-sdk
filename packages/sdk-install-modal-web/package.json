@@ -27,6 +27,7 @@
     "build:watch": "webpack-cli --watch",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "size": "size-limit",
     "build:release": "yarn version && webpack-cli --mode production",
     "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
@@ -61,6 +62,7 @@
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.1",
     "@rollup/plugin-typescript": "^11.1.1",
+    "@size-limit/preset-big-lib": "^11.0.2",
     "@types/prettier": "^2",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
@@ -80,6 +82,7 @@
     "rollup": "^3.21.7",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-typescript2": "^0.34.1",
+    "size-limit": "^11.0.2",
     "typescript": "^5.0.2"
   },
   "publishConfig": {
