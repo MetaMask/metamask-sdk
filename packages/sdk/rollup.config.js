@@ -8,6 +8,8 @@ import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
+import sizes from 'rollup-plugin-sizes';
+import external from 'rollup-plugin-peer-deps-external';
 
 const packageJson = require('./package.json');
 
@@ -39,6 +41,7 @@ const config = [
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -52,6 +55,7 @@ const config = [
       globals(),
       builtins({ crypto: true }),
       json(),
+      isDev && sizes(),
       terser(),
       // Visualize the bundle to analyze its composition and size
       isDev &&
@@ -82,6 +86,7 @@ const config = [
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -95,6 +100,7 @@ const config = [
       globals(),
       builtins({ crypto: true }),
       json(),
+      isDev && sizes(),
       terser(),
       // Visualize the bundle to analyze its composition and size
       isDev &&
@@ -115,6 +121,7 @@ const config = [
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
@@ -127,6 +134,7 @@ const config = [
         preferBuiltins: true,
       }),
       json(),
+      isDev && sizes(),
       terser(),
       isDev &&
         visualizer({
@@ -152,6 +160,7 @@ const config = [
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _NODEJS: 1 },
       }),
@@ -170,6 +179,7 @@ const config = [
       }),
       commonjs({ transformMixedEsModules: true }),
       json(),
+      isDev && sizes(),
       terser(),
       isDev &&
         visualizer({

@@ -1,4 +1,4 @@
-import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
+import { DEFAULT_SERVER_URL } from '@metamask/sdk';
 import React, { createContext, useEffect, useState } from 'react';
 import { logger } from './utils/logger';
 

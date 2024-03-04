@@ -7,6 +7,8 @@ import {
   MessageType,
   PlatformType,
   ServiceStatus,
+  RPCMethodResult,
+  RPCMethodCache,
 } from '@metamask/sdk-communication-layer';
 import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
@@ -44,6 +46,8 @@ export {
   PlatformType,
   ConnectionStatus,
   MessageType,
+  RPCMethodResult,
+  RPCMethodCache,
 };
 
 export default MetaMaskSDK;

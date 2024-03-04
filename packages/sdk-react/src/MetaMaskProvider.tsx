@@ -1,16 +1,14 @@
 'use client';
 import {
+  ConnectionStatus,
   EventType,
   MetaMaskSDK,
   MetaMaskSDKOptions,
   SDKProvider,
   ServiceStatus,
-} from '@metamask/sdk';
-import {
-  ConnectionStatus,
-  RPCMethodCache,
   RPCMethodResult,
-} from '@metamask/sdk-communication-layer';
+  RPCMethodCache,
+} from '@metamask/sdk';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, {
   createContext,

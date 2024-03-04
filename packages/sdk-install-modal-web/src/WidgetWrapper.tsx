@@ -1,7 +1,20 @@
-import styled from '@emotion/styled';
-import resetStyles from './helpers/Reset';
+import React from 'react';
+import './resetStyles.css';
 
-export const WidgetWrapper = styled.div`
-  ${resetStyles}
-  font-family: Roboto,sans-serif;
-`
+const widgetWrapperStyle = {
+  fontFamily: 'Roboto, sans-serif',
+};
+
+export const WidgetWrapper = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className: string;
+}) => {
+  return (
+    <div style={widgetWrapperStyle} className={className}>
+      {children}
+    </div>
+  );
+};
