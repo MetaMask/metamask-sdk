@@ -8178,6 +8178,8 @@ __metadata:
   peerDependenciesMeta:
     react:
       optional: false
+    react-dom:
+      optional: false
     react-native:
       optional: true
   languageName: unknown
@@ -8532,6 +8534,8 @@ __metadata:
     react-native: "*"
   peerDependenciesMeta:
     react:
+      optional: true
+    react-dom:
       optional: true
     react-native:
       optional: true
