@@ -160,7 +160,6 @@ const config = [
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _NODEJS: 1 },
       }),
