@@ -4,6 +4,7 @@ import {
   TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import { logger } from '../utils/logger';
+import packageJson from '../../../../package.json';
 
 export interface AnalyticsProps {
   serverURL: string;
@@ -43,6 +44,7 @@ export class Analytics {
       {
         id: ANALYTICS_CONSTANTS.DEFAULT_ID,
         event,
+        sdkVersion: packageJson.version,
         commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
         originationInfo: this.#metadata,
       },
