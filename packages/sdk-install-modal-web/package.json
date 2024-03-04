@@ -41,7 +41,7 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "webpack-dev-server",
     "test": "echo \"Running tests for version $npm_package_version...\"",
-    "test:ci": "jest --coverage --passWithNoTests",
+    "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },

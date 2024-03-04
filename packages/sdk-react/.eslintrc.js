@@ -62,6 +62,7 @@ module.exports = {
     '**/dist*/',
     'jest.resolver.js',
     'rollup.config.js',
+    'jest-preload.js',
     'webpack.config.js',
     '**/coverage/**',
   ],
