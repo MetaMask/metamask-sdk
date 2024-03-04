@@ -5,6 +5,7 @@ import terser from '@rollup/plugin-terser';
 import sizes from 'rollup-plugin-sizes';
 import { visualizer } from 'rollup-plugin-visualizer';
 import external from 'rollup-plugin-peer-deps-external';
+import postcss from 'rollup-plugin-postcss';
 
 // Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
@@ -16,7 +17,13 @@ const packageJson = require('./package.json');
  */
 const config = [
   {
-    external: ['react', 'react-dom', 'react-native'],
+    external: [
+      'react',
+      'react-dom',
+      'react-native',
+      'react-i18next',
+      'i18next',
+    ],
     input: 'src/index.ts',
     output: [
       {
@@ -41,6 +48,18 @@ const config = [
       resolve(),
       commonjs(),
       typescript({ sourceMap: false }),
+      postcss({
+        // Extract CSS to the same location as the JS file
+        extract: true,
+        // Use Sass compiler
+        plugins: [],
+        // Enable source maps
+        sourceMap: true,
+        // Enable CSS modules if needed
+        modules: true,
+        // Use additional plugins like `autoprefixer`
+        // plugins: [require('autoprefixer')]
+      }),
       isDev && sizes(),
       terser(),
       isDev &&
