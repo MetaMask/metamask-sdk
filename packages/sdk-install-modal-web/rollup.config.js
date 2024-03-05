@@ -17,13 +17,7 @@ const packageJson = require('./package.json');
  */
 const config = [
   {
-    external: [
-      'react',
-      'react-dom',
-      'react-native',
-      'react-i18next',
-      'i18next',
-    ],
+    external: ['react', 'react-dom', 'react-native', 'i18next'],
     input: 'src/index.ts',
     output: [
       {

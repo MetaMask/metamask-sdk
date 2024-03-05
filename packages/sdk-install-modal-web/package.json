@@ -75,7 +75,6 @@
     "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.2.2",
     "rimraf": "^5.0.0",
     "rollup": "^3.21.7",
     "rollup-plugin-peer-deps-external": "^2.2.4",
@@ -90,7 +89,6 @@
     "i18next": "22.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-i18next": "^13.2.2",
     "react-native": "*"
   },
   "peerDependenciesMeta": {

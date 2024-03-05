@@ -63,7 +63,6 @@
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "qrcode-terminal-nooctal": "^0.12.1",
-    "react-i18next": "^13.2.2",
     "react-native-webview": "^11.26.0",
     "readable-stream": "^3.5.0",
     "rollup-plugin-visualizer": "^5.9.2",
@@ -116,6 +115,11 @@
     "ts-node": "^10.9.1",
     "tslib": "latest",
     "typescript": "^4.3.2"
+  },
+  "optionalDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-native": "*"
   },
   "peerDependencies": {
     "react": "^18.2.0",
