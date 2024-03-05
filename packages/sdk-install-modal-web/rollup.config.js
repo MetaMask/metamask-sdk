@@ -23,25 +23,25 @@ const config = [
       {
         file: packageJson.module,
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: packageJson.main,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
       external(),
       resolve(),
       commonjs(),
-      typescript({ sourceMap: false }),
+      typescript(),
       postcss({
         // Extract CSS to the same location as the JS file
         extract: true,
