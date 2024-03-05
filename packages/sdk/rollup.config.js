@@ -9,7 +9,6 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import sizes from 'rollup-plugin-sizes';
-import external from 'rollup-plugin-peer-deps-external';
 
 const packageJson = require('./package.json');
 
@@ -21,8 +20,18 @@ const baseExternalDeps = ['@react-native-async-storage/async-storage'];
 
 // Dependencies for rollup to consider as external
 const listDepForRollup = [...baseExternalDeps];
-const webExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
-const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
+const webExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-dom',
+];
+const rnExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-native',
+];
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -41,7 +50,6 @@ const config = [
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -86,7 +94,6 @@ const config = [
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -121,7 +128,6 @@ const config = [
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
@@ -160,7 +166,6 @@ const config = [
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _NODEJS: 1 },
       }),

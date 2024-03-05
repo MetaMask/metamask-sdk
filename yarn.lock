@@ -8513,6 +8513,7 @@ __metadata:
     pump: ^3.0.0
     qrcode-terminal-nooctal: ^0.12.1
     react: ^18.2.0
+    react-dom: 18.2.0
     react-i18next: ^13.2.2
     react-native-webview: ^11.26.0
     readable-stream: ^3.5.0
@@ -8537,7 +8538,7 @@ __metadata:
     uuid: ^8.3.2
   peerDependencies:
     react: ^18.2.0
-    react-dom: 18.2.0
+    react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
     react:
