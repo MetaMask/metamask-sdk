@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0]
+### Added
+- feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
+- feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
+
 ## [0.15.0]
-### Uncategorized
+### Added
 - feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
 
 ## [0.14.3]
@@ -98,7 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.15.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.16.0...HEAD
+[0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.15.0...@metamask/sdk-react-ui@0.16.0
 [0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.3...@metamask/sdk-react-ui@0.15.0
 [0.14.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...@metamask/sdk-react-ui@0.14.3
 [0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.1...@metamask/sdk-react-ui@0.14.2

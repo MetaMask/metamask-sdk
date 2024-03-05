@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.16.0]
+### Added
+- feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
+- chore: reduce the bundle size ([#725](https://github.com/MetaMask/metamask-sdk/pull/725))
+- chore: use the 'debug' package as the new logger ([#716](https://github.com/MetaMask/metamask-sdk/pull/716))
+- Fix/sdk config provider ([#714](https://github.com/MetaMask/metamask-sdk/pull/714))
+- feat: expose channel id via hook + expose wallet status via sdk instance ([#704](https://github.com/MetaMask/metamask-sdk/pull/704))
+- feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
+
 ## [0.15.0]
-### Uncategorized
+### Added
 - feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
 
 ## [0.14.2]
@@ -129,7 +138,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.15.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.16.0...HEAD
+[0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.15.0...@metamask/sdk-react@0.16.0
 [0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.2...@metamask/sdk-react@0.15.0
 [0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...@metamask/sdk-react@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.0...@metamask/sdk-react@0.14.1
