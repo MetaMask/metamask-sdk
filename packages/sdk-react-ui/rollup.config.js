@@ -20,13 +20,13 @@ const config = [
         file: packageJson.module,
         inlineDynamicImports: true,
         format: 'esm',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: packageJson.main,
         inlineDynamicImports: true,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [

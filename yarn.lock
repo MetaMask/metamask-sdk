@@ -7884,7 +7884,6 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
-    "@rollup/plugin-alias": ^5.1.0
     "@rollup/plugin-commonjs": ^25.0.0
     "@rollup/plugin-json": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.2
@@ -7912,14 +7911,11 @@ __metadata:
     prettier: ^2.3.0
     rimraf: ^3.0.2
     rollup: ^3.21.7
-    rollup-plugin-buble: ^0.19.8
     rollup-plugin-jscc: ^2.0.0
     rollup-plugin-natives: ^0.7.5
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
-    rollup-plugin-node-polyfills: ^0.2.1
     rollup-plugin-peer-deps-external: ^2.2.4
-    rollup-plugin-polyfill-node: ^0.13.0
     rollup-plugin-sizes: ^1.0.6
     rollup-plugin-typescript2: ^0.31.2
     rollup-plugin-visualizer: ^5.9.2
@@ -8002,6 +7998,13 @@ __metadata:
     react-dom: ^18.2.0
     react-i18next: ^13.2.2
     react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -8177,6 +8180,8 @@ __metadata:
     react-native: "*"
   peerDependenciesMeta:
     react:
+      optional: false
+    react-dom:
       optional: false
     react-native:
       optional: true
@@ -8496,7 +8501,7 @@ __metadata:
     eventemitter2: ^6.4.7
     extension-port-stream: ^2.0.1
     i18next: 22.5.1
-    i18next-browser-languagedetector: ^7.1.0
+    i18next-browser-languagedetector: 7.1.0
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     obj-multiplex: ^1.0.0
@@ -8504,7 +8509,7 @@ __metadata:
     pump: ^3.0.0
     qrcode-terminal-nooctal: ^0.12.1
     react: ^18.2.0
-    react-i18next: ^13.2.2
+    react-dom: 18.2.0
     react-native-webview: ^11.26.0
     readable-stream: ^3.5.0
     rimraf: ^4.4.0
@@ -8513,7 +8518,6 @@ __metadata:
     rollup-plugin-natives: ^0.7.5
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
-    rollup-plugin-peer-deps-external: ^2.2.4
     rollup-plugin-polyfill-node: ^0.11.0
     rollup-plugin-sizes: ^1.0.6
     rollup-plugin-typescript2: ^0.31.2
@@ -8528,10 +8532,12 @@ __metadata:
     uuid: ^8.3.2
   peerDependencies:
     react: ^18.2.0
-    react-dom: 18.2.0
+    react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
     react:
+      optional: true
+    react-dom:
       optional: true
     react-native:
       optional: true
@@ -10732,20 +10738,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-alias@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@rollup/plugin-alias@npm:5.1.0"
-  dependencies:
-    slash: ^4.0.0
-  peerDependencies:
-    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-  checksum: e9f0a27b0f6f166c4c72757a2ecf23411dcc6da22ae2e020ddf30fa95526c8ab36ad372ed994dde806de4dcc47b2f1305138b953764a8f879c85fd725ac2a493
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-babel@npm:^5.2.0":
   version: 5.3.1
   resolution: "@rollup/plugin-babel@npm:5.3.1"
@@ -10865,22 +10857,6 @@ __metadata:
     rollup:
       optional: true
   checksum: d8458b11af3447710ce200fe2886faff07bb054e1269a4f06f5f3c1a1b83019b6ce7761badfa116ca96fbb9c49f16b94ad02d1a72c2fb64dc68cb7dd81331cb7
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-inject@npm:^5.0.4":
-  version: 5.0.5
-  resolution: "@rollup/plugin-inject@npm:5.0.5"
-  dependencies:
-    "@rollup/pluginutils": ^5.0.1
-    estree-walker: ^2.0.2
-    magic-string: ^0.30.3
-  peerDependencies:
-    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-  checksum: 22cb772fd6f7178308b2ece95cdde5f8615f6257197832166294552a7e4c0d3976dc996cbfa6470af3151d8b86c00091aa93da5f4db6ec563f11b6db29fd1b63
   languageName: node
   linkType: hard
 
@@ -16721,15 +16697,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-dynamic-import@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "acorn-dynamic-import@npm:4.0.0"
-  peerDependencies:
-    acorn: ^6.0.0
-  checksum: ef7298e632e9d107b2be06b47d607de94d7213ca2417fced02af76b0c71e13074d98924e270c7bfec421c1049ed9001a97ed4d0f28020d9cfa1aae16ca20664a
-  languageName: node
-  linkType: hard
-
 "acorn-globals@npm:^6.0.0":
   version: 6.0.0
   resolution: "acorn-globals@npm:6.0.0"
@@ -16759,7 +16726,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-jsx@npm:^5.0.1, acorn-jsx@npm:^5.3.1, acorn-jsx@npm:^5.3.2":
+"acorn-jsx@npm:^5.3.1, acorn-jsx@npm:^5.3.2":
   version: 5.3.2
   resolution: "acorn-jsx@npm:5.3.2"
   peerDependencies:
@@ -16788,15 +16755,6 @@ __metadata:
   bin:
     acorn: bin/acorn
   checksum: f51392a4d25c7705fadb890f784c59cde4ac1c5452ccd569fa59bd2191b7951b4a6398348ab7ea08a54f0bc0a56c13776710f4e1bae9de441e4d33e2015ad1e0
-  languageName: node
-  linkType: hard
-
-"acorn@npm:^6.1.1":
-  version: 6.4.2
-  resolution: "acorn@npm:6.4.2"
-  bin:
-    acorn: bin/acorn
-  checksum: 44b07053729db7f44d28343eed32247ed56dc4a6ec6dff2b743141ecd6b861406bbc1c20bf9d4f143ea7dd08add5dc8c290582756539bc03a8db605050ce2fb4
   languageName: node
   linkType: hard
 
@@ -18892,24 +18850,6 @@ __metadata:
   bin:
     btoa: bin/btoa.js
   checksum: afbf004fb1b1d530e053ffa66ef5bd3878b101c59d808ac947fcff96810b4452abba2b54be687adadea2ba9efc7af48b04228742789bf824ef93f103767e690c
-  languageName: node
-  linkType: hard
-
-"buble@npm:^0.19.8":
-  version: 0.19.8
-  resolution: "buble@npm:0.19.8"
-  dependencies:
-    acorn: ^6.1.1
-    acorn-dynamic-import: ^4.0.0
-    acorn-jsx: ^5.0.1
-    chalk: ^2.4.2
-    magic-string: ^0.25.3
-    minimist: ^1.2.0
-    os-homedir: ^2.0.0
-    regexpu-core: ^4.5.4
-  bin:
-    buble: ./bin/buble
-  checksum: 87d02523d4861e9e013264b2a6718e55b2a0c45cc2efe0da9ca1abcb4e17e052a1af49334b2b7527a6b1e0ba06806de0dd88d1326710bf603de07241dd2d05ee
   languageName: node
   linkType: hard
 
@@ -26706,7 +26646,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-browser-languagedetector@npm:^7.1.0":
+"i18next-browser-languagedetector@npm:7.1.0, i18next-browser-languagedetector@npm:^7.1.0":
   version: 7.1.0
   resolution: "i18next-browser-languagedetector@npm:7.1.0"
   dependencies:
@@ -31211,7 +31151,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.25.0, magic-string@npm:^0.25.1, magic-string@npm:^0.25.3, magic-string@npm:^0.25.7, magic-string@npm:^0.25.9":
+"magic-string@npm:^0.25.0, magic-string@npm:^0.25.1, magic-string@npm:^0.25.7, magic-string@npm:^0.25.9":
   version: 0.25.9
   resolution: "magic-string@npm:0.25.9"
   dependencies:
@@ -33795,13 +33735,6 @@ __metadata:
   version: 1.0.2
   resolution: "os-homedir@npm:1.0.2"
   checksum: af609f5a7ab72de2f6ca9be6d6b91a599777afc122ac5cad47e126c1f67c176fe9b52516b9eeca1ff6ca0ab8587fe66208bc85e40a3940125f03cdb91408e9d2
-  languageName: node
-  linkType: hard
-
-"os-homedir@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "os-homedir@npm:2.0.0"
-  checksum: 8cdffa0f78df03e93f9f19e303bea24fab16d677d01a06af7bd439143673b2b17b931199e756b9a7524e8c87223cecd8e413352aa459e5209776eab7d2089936
   languageName: node
   linkType: hard
 
@@ -37297,15 +37230,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerate-unicode-properties@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "regenerate-unicode-properties@npm:9.0.0"
-  dependencies:
-    regenerate: ^1.4.2
-  checksum: 62df21c274259a68c6fa1373e5ddb4d6f6374ad72c08dd488b7802880bc1c3b6de716303ec56c9f793a73d01815e9d81f03a8fbe3f32bc0f7fdf8d70d4841b64
-  languageName: node
-  linkType: hard
-
 "regenerate@npm:^1.4.2":
   version: 1.4.2
   resolution: "regenerate@npm:1.4.2"
@@ -37381,20 +37305,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regexpu-core@npm:^4.5.4":
-  version: 4.8.0
-  resolution: "regexpu-core@npm:4.8.0"
-  dependencies:
-    regenerate: ^1.4.2
-    regenerate-unicode-properties: ^9.0.0
-    regjsgen: ^0.5.2
-    regjsparser: ^0.7.0
-    unicode-match-property-ecmascript: ^2.0.0
-    unicode-match-property-value-ecmascript: ^2.0.0
-  checksum: df92e3e6482409f0a0de162ca1b4e17897e9b0b0687caead6804f04e9b89847e47abbfd0bfc62f52a0b833acf764ea5bdb7b707bb088034824a675ee95d31dec
-  languageName: node
-  linkType: hard
-
 "regexpu-core@npm:^5.3.1":
   version: 5.3.2
   resolution: "regexpu-core@npm:5.3.2"
@@ -37432,24 +37342,6 @@ __metadata:
   dependencies:
     rc: ^1.0.1
   checksum: 6d223da41b04e1824f5faa63905c6f2e43b216589d72794111573f017352b790aef42cd1f826463062f89d804abb2027e3d9665d2a9a0426a11eedd04d470af3
-  languageName: node
-  linkType: hard
-
-"regjsgen@npm:^0.5.2":
-  version: 0.5.2
-  resolution: "regjsgen@npm:0.5.2"
-  checksum: 87c83d8488affae2493a823904de1a29a1867a07433c5e1142ad749b5606c5589b305fe35bfcc0972cf5a3b0d66b1f7999009e541be39a5d42c6041c59e2fb52
-  languageName: node
-  linkType: hard
-
-"regjsparser@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "regjsparser@npm:0.7.0"
-  dependencies:
-    jsesc: ~0.5.0
-  bin:
-    regjsparser: bin/parser
-  checksum: fefff9adcab47650817d2c492aac774f11a44b824a4a814e466ebc76313e03e79c50d2babde7e04888296f6ec0fd094e3eeeafa8122c60184de92cdb30636a57
   languageName: node
   linkType: hard
 
@@ -37885,16 +37777,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-buble@npm:^0.19.8":
-  version: 0.19.8
-  resolution: "rollup-plugin-buble@npm:0.19.8"
-  dependencies:
-    buble: ^0.19.8
-    rollup-pluginutils: ^2.3.3
-  checksum: 0affacf8b2ecf1bc0b8a70b2d2ab1def0ab79dd546957ab1564468cda21dfbb3492c572ead9a34039430b1d42c52fdd82b10a2f835d01775ffe77de4cd5d7a0d
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-copy-assets@npm:^2.0.3":
   version: 2.0.3
   resolution: "rollup-plugin-copy-assets@npm:2.0.3"
@@ -37954,17 +37836,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-inject@npm:^3.0.0":
-  version: 3.0.2
-  resolution: "rollup-plugin-inject@npm:3.0.2"
-  dependencies:
-    estree-walker: ^0.6.1
-    magic-string: ^0.25.3
-    rollup-pluginutils: ^2.8.1
-  checksum: a014972c80fe34b8c8154056fa2533a8440066a31de831e3793fc21b15d108d92c22d8f7f472397bd5783d7c5e04d8cbf112fb72c5a26e997726e4eb090edad1
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-jscc@npm:^2.0.0":
   version: 2.0.0
   resolution: "rollup-plugin-jscc@npm:2.0.0"
@@ -38016,15 +37887,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-node-polyfills@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "rollup-plugin-node-polyfills@npm:0.2.1"
-  dependencies:
-    rollup-plugin-inject: ^3.0.0
-  checksum: e84645212c443aca3cfae2ba69f01c6d8c5c250f0bf651416b69a4572b60aae9da7cdd687de3ab9b903f7a1ab96b06b71f0c4927d1b02a37485360d2b563937b
-  languageName: node
-  linkType: hard
-
 "rollup-plugin-peer-deps-external@npm:^2.2.4":
   version: 2.2.4
   resolution: "rollup-plugin-peer-deps-external@npm:2.2.4"
@@ -38042,17 +37904,6 @@ __metadata:
   peerDependencies:
     rollup: ^1.20.0 || ^2.0.0 || ^3.0.0
   checksum: 059657c718154964c7b2e9140aa884fb1602a2f9348124f942d3ce4e5640fcf92733cd9096c77d7ff99842b3a07b7e237126b5b185d678f7f523aaf0d949e67b
-  languageName: node
-  linkType: hard
-
-"rollup-plugin-polyfill-node@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "rollup-plugin-polyfill-node@npm:0.13.0"
-  dependencies:
-    "@rollup/plugin-inject": ^5.0.4
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0 || ^3.0.0 || ^4.0.0
-  checksum: 73c5b9086955afa108c940c13205fab4cece149d020a3faa696c5711bbb391d11aecd4c913ad2cc5ac24f9d43a4969ad8d087d085dd8d423dece45b6be4039bb
   languageName: node
   linkType: hard
 
@@ -38212,7 +38063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-pluginutils@npm:^2.0.1, rollup-pluginutils@npm:^2.3.1, rollup-pluginutils@npm:^2.3.3, rollup-pluginutils@npm:^2.8.1, rollup-pluginutils@npm:^2.8.2":
+"rollup-pluginutils@npm:^2.0.1, rollup-pluginutils@npm:^2.3.1, rollup-pluginutils@npm:^2.8.2":
   version: 2.8.2
   resolution: "rollup-pluginutils@npm:2.8.2"
   dependencies:
@@ -41757,7 +41608,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unicode-match-property-value-ecmascript@npm:^2.0.0, unicode-match-property-value-ecmascript@npm:^2.1.0":
+"unicode-match-property-value-ecmascript@npm:^2.1.0":
   version: 2.1.0
   resolution: "unicode-match-property-value-ecmascript@npm:2.1.0"
   checksum: 8d6f5f586b9ce1ed0e84a37df6b42fdba1317a05b5df0c249962bd5da89528771e2d149837cad11aa26bcb84c35355cb9f58a10c3d41fa3b899181ece6c85220

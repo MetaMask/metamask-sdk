@@ -254,7 +254,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     this.init()
       .then(() => {
         logger(`[MetaMaskSDK: constructor()]: initialized`);
-        window.mmsdk = this;
+        if (typeof window !== 'undefined') {
+          window.mmsdk = this;
+        }
       })
       .catch((err) => {
         console.error(

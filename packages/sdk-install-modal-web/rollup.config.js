@@ -17,37 +17,31 @@ const packageJson = require('./package.json');
  */
 const config = [
   {
-    external: [
-      'react',
-      'react-dom',
-      'react-native',
-      'react-i18next',
-      'i18next',
-    ],
+    external: ['react', 'react-dom', 'react-native', 'i18next'],
     input: 'src/index.ts',
     output: [
       {
         file: packageJson.module,
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: packageJson.main,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
       external(),
       resolve(),
       commonjs(),
-      typescript({ sourceMap: false }),
+      typescript(),
       postcss({
         // Extract CSS to the same location as the JS file
         extract: true,

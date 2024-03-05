@@ -59,11 +59,10 @@
     "eventemitter2": "^6.4.7",
     "extension-port-stream": "^2.0.1",
     "i18next": "22.5.1",
-    "i18next-browser-languagedetector": "^7.1.0",
+    "i18next-browser-languagedetector": "7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "qrcode-terminal-nooctal": "^0.12.1",
-    "react-i18next": "^13.2.2",
     "react-native-webview": "^11.26.0",
     "readable-stream": "^3.5.0",
     "rollup-plugin-visualizer": "^5.9.2",
@@ -100,13 +99,13 @@
     "jest-environment-jsdom": "^29.3.1",
     "prettier": "^2.3.0",
     "react": "^18.2.0",
+    "react-dom": "18.2.0",
     "rimraf": "^4.4.0",
     "rollup": "^3.21.7",
     "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-natives": "^0.7.5",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-polyfill-node": "^0.11.0",
     "rollup-plugin-sizes": "^1.0.6",
     "rollup-plugin-typescript2": "^0.31.2",
@@ -118,11 +117,14 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "18.2.0",
+    "react-dom": "^18.2.0",
     "react-native": "*"
   },
   "peerDependenciesMeta": {
     "react": {
+      "optional": true
+    },
+    "react-dom": {
       "optional": true
     },
     "react-native": {

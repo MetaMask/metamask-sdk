@@ -9,7 +9,6 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import sizes from 'rollup-plugin-sizes';
-import external from 'rollup-plugin-peer-deps-external';
 
 const packageJson = require('./package.json');
 
@@ -21,8 +20,18 @@ const baseExternalDeps = ['@react-native-async-storage/async-storage'];
 
 // Dependencies for rollup to consider as external
 const listDepForRollup = [...baseExternalDeps];
-const webExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
-const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
+const webExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-dom',
+];
+const rnExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-native',
+];
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -37,11 +46,10 @@ const config = [
         file: 'dist/browser/es/metamask-sdk.js',
         format: 'es',
         inlineDynamicImports: true,
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -75,18 +83,17 @@ const config = [
         file: packageJson.unpkg,
         inlineDynamicImports: true,
         format: 'umd',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: 'dist/browser/iife/metamask-sdk.js',
         format: 'iife',
         name: 'MetaMaskSDK',
         inlineDynamicImports: true,
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -117,11 +124,10 @@ const config = [
         file: 'dist/react-native/es/metamask-sdk.js',
         format: 'es',
         inlineDynamicImports: true,
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
@@ -149,18 +155,17 @@ const config = [
       {
         file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
         inlineDynamicImports: true,
       },
       {
         file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
         inlineDynamicImports: true,
       },
     ],
     plugins: [
-      external(),
       jscc({
         values: { _NODEJS: 1 },
       }),
@@ -169,7 +174,7 @@ const config = [
         // This must be set to true if using a different file extension that '.node'
         dlopen: false,
         // Generate sourcemap
-        sourcemap: false,
+        sourcemap: true,
       }),
       typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({

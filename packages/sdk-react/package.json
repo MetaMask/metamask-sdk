@@ -110,6 +110,9 @@
     "react": {
       "optional": false
     },
+    "react-dom": {
+      "optional": false
+    },
     "react-native": {
       "optional": true
     }
