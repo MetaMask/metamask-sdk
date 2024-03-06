@@ -14,6 +14,7 @@ module.exports = {
     'rollup.config.js',
     '**/coverage/**',
     'postcss.config.js',
+    'jest-preload.js',
   ],
 
   parserOptions: {

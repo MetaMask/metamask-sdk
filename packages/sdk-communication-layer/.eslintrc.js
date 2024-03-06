@@ -18,6 +18,7 @@ module.exports = {
     '**/dist*/',
     'e2e/',
     'rollup.config.js',
+    'jest-preload.js',
   ],
 
   overrides: [
