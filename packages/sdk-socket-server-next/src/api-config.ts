@@ -81,6 +81,7 @@ export const getRedisClient = () => {
       const redisClusterOptions: ClusterOptions = {
         dnsLookup: (address, callback) => callback(null, address),
         slotsRefreshTimeout: 2000,
+        showFriendlyErrorStack: true,
         slotsRefreshInterval: 4000,
         clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
         enableAutoPipelining: true,
