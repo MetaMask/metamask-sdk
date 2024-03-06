@@ -8,6 +8,23 @@ export const mainMenuChoicesTypes = {
   QUIT: 'quit'
 }
 
+export const batchRequestTypes = {
+  PERSONAL_SIGN_3: 'personalSign3',
+  PERSONAL_SIGN_SEND_TRANSACTION: 'personalSignSendTransaction',
+  SWITCH_CHAIN_SEND_TRANSACTION: 'switchChainSendTransaction',
+}
+
+export const operationsMenuTypes = {
+  SEND_TRANSACTION: 'sendTransaction',
+  SWITCH_ETHEREUM_CHAIN_SEPOLIA: 'switchEthereumChainSepolia',
+  SWITCH_ETHEREUM_CHAIN_POLYGON: 'switchEthereumChainPolygon',
+  ADD_ETHEREUM_CHAIN: 'addEthereumChain',
+  REQUEST_PERMISSIONS: 'requestPermissions',
+  PERSONAL_SIGN: 'personalSign',
+  BATCH_REQUEST: 'batchRequest',
+  BACK: 'back',
+}
+
 export const sessionExists = fs.existsSync('.sdk-comm');
 export const mainMenuChoices = [
   {
@@ -35,17 +52,6 @@ export const mainMenuChoices = [
   },
   new Separator('\n ------- \n'),
 ];
-
-export const operationsMenuTypes = {
-  SEND_TRANSACTION: 'sendTransaction',
-  SWITCH_ETHEREUM_CHAIN_SEPOLIA: 'switchEthereumChainSepolia',
-  SWITCH_ETHEREUM_CHAIN_POLYGON: 'switchEthereumChainPolygon',
-  ADD_ETHEREUM_CHAIN: 'addEthereumChain',
-  REQUEST_PERMISSIONS: 'requestPermissions',
-  PERSONAL_SIGN: 'personalSign',
-  BATCH_REQUEST: 'batchRequest',
-  BACK: 'back',
-}
 
 export const operationMenuChoices = [
     {
@@ -92,12 +98,6 @@ export const operationMenuChoices = [
     },
   new Separator('\n ------- \n'),
 ];
-
-export const batchRequestTypes = {
-  PERSONAL_SIGN_3: 'personalSign3',
-  PERSONAL_SIGN_SEND_TRANSACTION: 'personalSignSendTransaction',
-  SWITCH_CHAIN_SEND_TRANSACTION: 'switchChainSendTransaction',
-}
 
 export const batchRequestOperationChoices = [
   {

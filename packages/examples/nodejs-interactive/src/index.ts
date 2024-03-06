@@ -1,15 +1,15 @@
 import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
 import select from '@inquirer/select';
 import * as fs from 'fs';
-import chalk from 'chalk';
+import qrcode from 'qrcode-terminal';
 import {
   batchRequestOperationChoices, batchRequestTypes,
   mainMenuChoices,
   mainMenuChoicesTypes, operationMenuChoices,
   operationsMenuTypes,
-} from './menus';
-import { batchRequests, chains, personalSignRequest, sendTransactionRequest, switchEthereumChain } from './rpcRequests';
-import qrcode from 'qrcode-terminal';
+} from './Menus';
+import { batchRequests, personalSignRequest, sendTransactionRequest, switchEthereumChain } from './RpcRequests';
+import { chains } from './Constants';
 
 
 const options: MetaMaskSDKOptions = {
@@ -17,7 +17,7 @@ const options: MetaMaskSDKOptions = {
   dappMetadata: {
     name: 'NodeJS example',
     url:  'https://metamask.io',
-    iconUrl: 'https://github.com/christopherferreira9/test-assets/blob/61f81895a19a9997438dadc2b938e9e4b2f410c3/icons/nodeJs.png'
+    iconUrl: 'https://github.com/christopherferreira9/test-assets/blob/61f81895a19a9997438dadc2b938e9e4b2f410c3/icons/nodeJs.png?raw=true'
   },
   logging: {
     sdk: false,
