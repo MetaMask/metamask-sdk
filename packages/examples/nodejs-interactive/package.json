@@ -1,0 +1,29 @@
+{
+  "name": "sdk-nodejs-example",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist .sdk-comm",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "allow-scripts": "echo 'n/a'"
+  },
+  "dependencies": {
+    "@inquirer/checkbox": "^2.1.0",
+    "@inquirer/select": "^2.0.0",
+    "@metamask/sdk": "^0.16.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.1",
+    "@types/qrcode-terminal": "^0.12.2",
+    "ts-node": "^10.9.1",
+    "tsc": "^2.0.4",
+    "typescript": "^5.1.6"
+  }
+}
