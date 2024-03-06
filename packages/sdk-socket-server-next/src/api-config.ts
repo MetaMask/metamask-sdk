@@ -6,7 +6,7 @@ import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
-import { Cluster, ClusterOptions, Redis } from 'ioredis';
+import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
 import { logger } from './logger';
 import { isDevelopment, isDevelopmentServer } from '.';
 
@@ -37,19 +37,61 @@ if (redisNodes.length === 0) {
 }
 
 const redisCluster = process.env.REDIS_CLUSTER === 'true';
+const redisTLS = process.env.REDIS_TLS === 'true';
+
 let redisClient: Cluster | Redis | undefined;
-const redisClusterOptions: ClusterOptions = {
-  // slotsRefreshTimeout: 2000,
-  redisOptions: {
-    // tls: {}, // WARN: enabling tls would fail the client if not setup with correct params
-    password: process.env.REDIS_PASSWORD,
-  },
+
+export const getRedisOptions = (
+  isTls: boolean,
+  password: string | undefined,
+): RedisOptions => {
+  const tlsOptions = {
+    tls: {
+      checkServerIdentity: (/* host, cert*/) => {
+        return undefined;
+      },
+    },
+  };
+
+  return {
+    ...(password && { password }),
+    ...(isTls && tlsOptions),
+    connectTimeout: 30000,
+    maxRetriesPerRequest: 4,
+    retryStrategy: (times) => Math.min(times * 30, 1000),
+    reconnectOnError: (error) => {
+      // eslint-disable-next-line require-unicode-regexp
+      const targetErrors = [/READONLY/, /ETIMEDOUT/];
+      return targetErrors.some((targetError) =>
+        targetError.test(error.message),
+      );
+    },
+  };
 };
 
 export const getRedisClient = () => {
   if (!redisClient) {
     if (redisCluster) {
-      logger.info('Connecting to Redis Cluster');
+      logger.info('Connecting to Redis Cluster...');
+
+      const redisOptions = getRedisOptions(
+        redisTLS,
+        process.env.REDIS_PASSWORD,
+      );
+      const redisClusterOptions: ClusterOptions = {
+        dnsLookup: (address, callback) => callback(null, address),
+        slotsRefreshTimeout: 2000,
+        slotsRefreshInterval: 4000,
+        clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
+        enableAutoPipelining: true,
+        redisOptions,
+      };
+
+      logger.debug(
+        'Redis Cluster options:',
+        JSON.stringify(redisClusterOptions, null, 2),
+      );
+
       redisClient = new Cluster(redisNodes, redisClusterOptions);
     } else {
       logger.info('Connecting to single Redis node');
