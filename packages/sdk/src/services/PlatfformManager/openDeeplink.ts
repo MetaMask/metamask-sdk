@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import {
   LINK_OPEN_DELAY,
   PlatformManager,
@@ -11,10 +12,10 @@ export function openDeeplink(
 ) {
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(`Platform::openDeepLink universalLink --> ${universalLink}`);
-    console.debug(`Platform::openDeepLink deepLink --> ${deeplink}`);
-  }
+  logger(
+    `[PlatfformManager: openDeeplink()] universalLink --> ${universalLink}`,
+  );
+  logger(`[PlatfformManager: openDeeplink()] deepLink --> ${deeplink}`);
 
   if (instance.isBrowser()) {
     instance.enableWakeLock();
@@ -29,12 +30,11 @@ export function openDeeplink(
       return;
     }
 
-    if (state.debug) {
-      console.warn(
-        `Platform::openDeepLink() open link now useDeepLink=${state.useDeeplink}`,
-        state.useDeeplink ? deeplink : universalLink,
-      );
-    }
+    logger(
+      `[PlatfformManager: openDeeplink()] open link now useDeepLink=${
+        state.useDeeplink
+      } link=${state.useDeeplink ? deeplink : universalLink}`,
+    );
 
     // It should only open after we can acknowledge that the rpc call that triggered the deeplink has been sent
     // TODO how can we know that the rpc call has been sent?
@@ -48,7 +48,7 @@ export function openDeeplink(
       setTimeout(() => win?.close?.(), LINK_OPEN_DELAY);
     }
   } catch (err) {
-    console.log(`Platform::openDeepLink() can't open link`, err);
+    console.log(`[PlatfformManager: openDeeplink()] can't open link`, err);
   }
 
   // console.log('Please setup the openDeeplink parameter');

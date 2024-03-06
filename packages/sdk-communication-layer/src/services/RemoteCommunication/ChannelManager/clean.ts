@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 
 /**
@@ -7,10 +8,11 @@ import { RemoteCommunicationState } from '../../../RemoteCommunication';
  * @returns void
  */
 export function clean(state: RemoteCommunicationState) {
-  const { debug, context } = state;
-  if (debug) {
-    console.debug(`RemoteCommunication::${context}::clean()`);
-  }
+  const { context } = state;
+
+  logger.RemoteCommunication(
+    `[RemoteCommunication: clean()] context=${context}`,
+  );
 
   state.channelConfig = undefined;
   state.ready = false;

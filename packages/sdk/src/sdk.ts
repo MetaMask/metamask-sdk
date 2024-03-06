@@ -26,6 +26,7 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
+import { logger } from './utils/logger';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -252,13 +253,16 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
-        if (this.debug) {
-          console.debug(`MetaMaskSDK() initialized`);
+        logger(`[MetaMaskSDK: constructor()]: initialized`);
+        if (typeof window !== 'undefined') {
           window.mmsdk = this;
         }
       })
       .catch((err) => {
-        console.error(`MetaMaskSDK error during initialization`, err);
+        console.error(
+          `[MetaMaskSDK: constructor()] error during initialization`,
+          err,
+        );
       });
   }
 
@@ -346,6 +350,22 @@ export class MetaMaskSDK extends EventEmitter2 {
     return universalLink;
   }
 
+  getChannelId() {
+    return this.remoteConnection?.getChannelConfig()?.channelId;
+  }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
+  }
+
+  getWalletStatus() {
+    return this.remoteConnection?.getConnector()?.getConnectionStatus();
+  }
+
   // TODO: remove once reaching sdk 1.0
   // Not exposed. Should only be used during dev.
   _getChannelConfig() {
@@ -382,13 +402,5 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
-  }
-
-  getRPCHistory() {
-    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
-  }
-
-  getVersion() {
-    return packageJson.version;
   }
 }

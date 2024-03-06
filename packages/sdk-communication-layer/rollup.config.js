@@ -9,14 +9,14 @@ import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 import packageJson from './package.json'; // Ensure this path is correct
+import sizes from 'rollup-plugin-sizes';
+import external from 'rollup-plugin-peer-deps-external';
 
 // Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
 
 // Base external dependencies across different builds
-const baseExternalDeps = [
-  '@react-native-async-storage/async-storage',
-];
+const baseExternalDeps = ['@react-native-async-storage/async-storage'];
 
 // Dependencies for rollup to consider as external
 const listDepForRollup = [
@@ -46,10 +46,11 @@ const config = [
       {
         file: packageJson.browser,
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
+      external(),
       // Replace macros in your source code with environment-specific variables
       jscc({
         values: { _WEB: 1 },
@@ -69,12 +70,14 @@ const config = [
       builtins({ crypto: true }), // Includes Node.js built-ins like 'crypto'
       // Convert .json files to ES6 modules
       json(),
+      isDev && sizes(), // Log the size of the bundle
       // Minify the bundle
       terser(),
       // Visualize the bundle to analyze its composition and size
-      isDev && visualizer({
-        filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   // Browser builds (UMD, IIFE)
@@ -87,16 +90,17 @@ const config = [
         name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: 'dist/browser/iife/metamask-sdk-communication-layer.js',
         format: 'iife',
         name: 'MetaMaskSDK',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _WEB: 1 },
       }),
@@ -110,10 +114,12 @@ const config = [
       globals(),
       builtins({ crypto: true }),
       json(),
+      isDev && sizes(), // Log the size of the bundle
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   {
@@ -123,10 +129,11 @@ const config = [
       {
         file: packageJson['react-native'],
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
@@ -139,10 +146,12 @@ const config = [
         preferBuiltins: true,
       }),
       json(),
+      isDev && sizes(), // Log the size of the bundle
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   {
@@ -152,15 +161,16 @@ const config = [
       {
         file: packageJson.main,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
       },
       {
         file: packageJson.module,
         format: 'es',
-        sourcemap: false,
+        sourcemap: true,
       },
     ],
     plugins: [
+      external(),
       jscc({
         values: { _NODEJS: 1 },
       }),
@@ -169,7 +179,7 @@ const config = [
         // This must be set to true if using a different file extension that '.node'
         dlopen: false,
         // Generate sourcemap
-        sourcemap: false,
+        sourcemap: true,
       }),
       typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
@@ -179,10 +189,12 @@ const config = [
       }),
       commonjs({ transformMixedEsModules: true }),
       json(),
+      isDev && sizes(), // Log the size of the bundle
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/node-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/node-stats-${packageJson.version}.html`,
+        }),
     ],
   },
 ];

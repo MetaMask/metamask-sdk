@@ -53,7 +53,6 @@ describe('getPostMessageStream', () => {
       name: ProviderConstants.CONTENT_SCRIPT,
       remote: fakeConnector,
       platformManager: fakePlatformManager,
-      debug: false,
     });
   });
 });

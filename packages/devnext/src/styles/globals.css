@@ -49,6 +49,12 @@
   color: white;
 }
 
+.action-group {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
 
 .action-buttons button {
   padding: 10;

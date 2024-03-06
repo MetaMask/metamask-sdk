@@ -1,6 +1,24 @@
 version: '3.9'
 
 services:
+
+  # This service is used to debug the redis cluster
+  check-redis:
+    image: node:latest
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: yarn debug:redis
+
+  appdev:
+    image: node:latest
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: yarn debug
+    ports:
+      - '4000:4000'
+
   app1:
     build:
       context: .
@@ -40,8 +58,43 @@ services:
     depends_on:
       - cache
 
+  redis-master1:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6380:6379"
+
+  redis-master2:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6381:6379"
+
+  redis-master3:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6382:6379"
+
+  redis-cluster-init:
+    image: redis:7.2-alpine
+    volumes:
+      - ./init-redis-cluster.sh:/usr/local/bin/init-redis-cluster.sh
+    depends_on:
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    entrypoint: ["/bin/sh", "/usr/local/bin/init-redis-cluster.sh"]
+
+  # cache is used if want to simulate single node redis architecture
   cache:
-    image: redis:latest
+    image: redis:7.2-alpine
     command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
       - '6379:6379'

@@ -1,7 +1,21 @@
+const path = require('path');
+
 module.exports = {
   root: true,
+  extends: ['@metamask/eslint-config-typescript', '../../.eslintrc.js'],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: [path.resolve(__dirname, 'tsconfig.eslint.json')],
+  },
 
-  extends: ['@metamask/eslint-config'],
+  ignorePatterns: [
+    '.prettierrc.js',
+    '**/.eslintrc.js',
+    '**/jest.config.ts',
+    '**/dist*/',
+    'e2e/',
+    'rollup.config.js',
+  ],
 
   overrides: [
     {
@@ -20,28 +34,22 @@ module.exports = {
       },
     },
 
-    {
-      files: ['**/*.test.ts', '**/*.test.js'],
-      extends: ['@metamask/eslint-config-jest'],
-      rules: {
-        '@typescript-eslint/no-shadow': [
-          'error',
-          { allow: ['describe', 'expect', 'it'] },
-        ],
-      },
-    },
+    // {
+    //   files: ['**/*.test.ts', '**/*.test.js'],
+    //   extends: ['@metamask/eslint-config-jest'],
+    //   rules: {
+    //     '@typescript-eslint/no-shadow': [
+    //       'error',
+    //       { allow: ['describe', 'expect', 'it'] },
+    //     ],
+    //   },
+    // },
   ],
 
   rules: {
     'import/no-named-as-default': 0,
+    '@typescript-eslint/no-useless-constructor': 0,
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
   },
-
-  ignorePatterns: [
-    '!.prettierrc.js',
-    '**/!.eslintrc.js',
-    '**/dist*/',
-    'rollup.config.js',
-  ],
 };

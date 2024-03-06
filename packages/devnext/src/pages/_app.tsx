@@ -66,6 +66,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SDKConfigProvider
         initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
         initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}
+        debug={true}
       >
         <WithSDKConfig>
           <UIProvider>

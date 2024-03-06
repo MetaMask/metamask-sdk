@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
 import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
+import { logger } from '../utils/logger';
 import { SDKProvider } from '../provider/SDKProvider';
 
 export interface EthereumProps {
@@ -7,7 +8,6 @@ export interface EthereumProps {
   connectionStream: Duplex;
   shouldSendMetadata?: boolean;
   shouldShimWeb3: boolean;
-  debug: boolean;
 }
 
 export class Ethereum {
@@ -15,30 +15,25 @@ export class Ethereum {
 
   private provider: SDKProvider;
 
-  private debug = false;
-
   private constructor({
     shouldSetOnWindow,
     connectionStream,
     shouldSendMetadata = false,
     shouldShimWeb3,
-    debug = false,
   }: EthereumProps) {
-    this.debug = debug;
     const provider = new SDKProvider({
       connectionStream,
       shouldSendMetadata,
       shouldSetOnWindow,
       shouldShimWeb3,
       autoRequestAccounts: false,
-      debug,
     });
 
-    this.debug = debug;
     const proxiedProvieer = new Proxy(provider, {
       // some common libraries, e.g. web3@1.x, can confict with our API.
       deleteProperty: () => true,
     });
+
     this.provider = proxiedProvieer;
 
     if (shouldSetOnWindow && typeof window !== 'undefined') {
@@ -57,9 +52,8 @@ export class Ethereum {
         selectedAddress: this.provider.selectedAddress,
         networkVersion: this.provider.networkVersion,
       };
-      if (this.debug) {
-        console.info(`Ethereum provider initialized`, info);
-      }
+
+      logger(`[Ethereum: constructor()] provider initialized info=${info}`);
     });
   }
 
@@ -69,9 +63,8 @@ export class Ethereum {
    * @param props
    */
   static init(props: EthereumProps) {
-    if (props.debug) {
-      console.debug(`Ethereum::init()`);
-    }
+    logger(`[Ethereum: init()] Initializing Ethereum service`);
+
     this.instance = new Ethereum(props);
     return this.instance?.provider;
   }

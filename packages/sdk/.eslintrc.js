@@ -15,6 +15,8 @@ module.exports = {
     '.prettierrc.js',
     '**/.eslintrc.js',
     'jest.config.ts',
+    'jest-preload.js',
+    'bundle-size.js',
     '**/dist*/',
     'e2e/',
     'rollup.config.js',

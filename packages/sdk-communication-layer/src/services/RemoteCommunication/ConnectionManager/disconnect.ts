@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
@@ -20,12 +21,10 @@ export function disconnect({
 }) {
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::disconnect() channel=${state.channelId}`,
-      options,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: disconnect()] channel=${state.channelId}`,
+    options,
+  );
 
   state.ready = false;
   state.paused = false;

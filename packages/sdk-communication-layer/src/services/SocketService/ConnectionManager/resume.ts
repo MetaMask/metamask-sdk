@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
@@ -13,27 +14,22 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function resume(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::resume() connected=${
-        instance.state.socket?.connected
-      } manualDisconnect=${instance.state.manualDisconnect} resumed=${
-        instance.state.resumed
-      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: resume()] context=${instance.state.context} connected=${
+      instance.state.socket?.connected
+    } manualDisconnect=${instance.state.manualDisconnect} resumed=${
+      instance.state.resumed
+    } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+  );
 
   if (instance.state.socket?.connected) {
-    if (instance.state.debug) {
-      console.debug(`SocketService::resume() already connected.`);
-    }
+    logger.SocketService(`[SocketService: resume()] already connected.`);
   } else {
     instance.state.socket?.connect();
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::resume() after connecting socket --> connected=${instance.state.socket?.connected}`,
-      );
-    }
+
+    logger.SocketService(
+      `[SocketService: resume()] after connecting socket --> connected=${instance.state.socket?.connected}`,
+    );
 
     // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
     instance.state.socket?.emit(

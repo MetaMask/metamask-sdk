@@ -3,6 +3,7 @@ import {
   EventType,
   PlatformType,
 } from '@metamask/sdk-communication-layer';
+import { logger } from '../utils/logger';
 import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
@@ -44,7 +45,6 @@ const initializeMobileProvider = ({
     platformManager,
     communicationLayerPreference,
     remoteConnection,
-    debug,
   });
 
   const platformType = platformManager.getPlatformType();
@@ -71,7 +71,6 @@ const initializeMobileProvider = ({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
     shouldShimWeb3,
-    debug,
   });
 
   let initializationOngoing = false;
@@ -100,11 +99,9 @@ const initializeMobileProvider = ({
         loop = getInitializing();
       }
 
-      if (debug) {
-        console.debug(
-          `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
-        );
-      }
+      logger(
+        `[initializeMobileProvider: sendRequest()] initial method completed -- prevent installation and call provider`,
+      );
       // Previous init has completed, meaning we can safely interrup and call the provider.
       return f(...args);
     }
@@ -127,8 +124,8 @@ const initializeMobileProvider = ({
     }
 
     if (debugRequest) {
-      console.debug(
-        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
+      logger(
+        `[initializeMobileProvider: sendRequest()] method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
 
@@ -169,16 +166,13 @@ const initializeMobileProvider = ({
         });
 
         if (debugRequest) {
-          console.log(
-            `initializeProvider::ReadOnlyRPCResponse`,
-            readOnlyResponse,
-          );
+          logger(`initializeProvider::ReadOnlyRPCResponse ${readOnlyResponse}`);
         }
         return readOnlyResponse;
       } catch (err) {
         // Log error and fallback to mobile provider
         console.warn(
-          `initializeProvider::sendRequest() method=${method} readOnlyRPCRequest failed:`,
+          `[initializeMobileProvider: sendRequest()] method=${method} readOnlyRPCRequest failed:`,
           err,
         );
       }
@@ -203,11 +197,9 @@ const initializeMobileProvider = ({
           setInitializing(false);
 
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
-            if (debug) {
-              console.debug(
-                `initializeProvider extension provider detect: re-create ${method} on the active provider`,
-              );
-            }
+            logger(
+              `[initializeMobileProvider: sendRequest()] extension provider detect: re-create ${method} on the active provider`,
+            );
 
             // Special case for metamask_connectSign, split the request in 2 parts (connect + sign)
             if (
@@ -267,11 +259,9 @@ const initializeMobileProvider = ({
             });
           }
 
-          if (debug) {
-            console.debug(
-              `initializeProvider failed to start installer: ${installError}`,
-            );
-          }
+          logger(
+            `[initializeMobileProvider: sendRequest()] failed to start installer: ${installError}`,
+          );
 
           throw installError;
         }
@@ -290,12 +280,9 @@ const initializeMobileProvider = ({
             sdk.once(
               EventType.PROVIDER_UPDATE,
               (type: PROVIDER_UPDATE_TYPE) => {
-                if (debug) {
-                  console.debug(
-                    `initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`,
-                    type,
-                  );
-                }
+                logger(
+                  `[initializeMobileProvider: sendRequest()] PROVIDER_UPDATE --- remote provider request interupted type=${type}`,
+                );
 
                 if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
                   reject(EventType.PROVIDER_UPDATE);
@@ -327,11 +314,9 @@ const initializeMobileProvider = ({
 
       if (sdk.isExtensionActive()) {
         // It means there was a switch of provider while waiting for initialization -- redirect to the extension.
-        if (debug) {
-          console.debug(
-            `initializeProvider::sendRequest() EXTENSION active - redirect request '${method}' to it`,
-          );
-        }
+        logger(
+          `[initializeMobileProvider: sendRequest()] EXTENSION active - redirect request '${method}' to it`,
+        );
 
         // redirect to extension
         return await sdk.getProvider()?.request({
@@ -340,23 +325,18 @@ const initializeMobileProvider = ({
         });
       }
 
-      if (debug) {
-        console.debug(
-          `initializeProvider::sendRequest() method=${method} --- skip --- not connected/installed`,
-        );
-      }
+      logger(
+        `[initializeMobileProvider: sendRequest()] method=${method} --- skip --- not connected/installed`,
+      );
       throw new Error(
         'MetaMask is not connected/installed, please call eth_requestAccounts to connect first.',
       );
     }
 
     const rpcResponse = await f(...args);
-    if (debug) {
-      console.debug(
-        `initializeProvider::sendRequest() method=${method} rpcResponse:`,
-        rpcResponse,
-      );
-    }
+    logger(
+      `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
+    );
     return rpcResponse;
   };
 
@@ -375,9 +355,7 @@ const initializeMobileProvider = ({
     return sendRequest(args?.[0] as string, args, send, debug);
   };
 
-  if (debug) {
-    console.debug(`initializeProvider metamaskStream.start()`);
-  }
+  logger(`[initializeMobileProvider: sendRequest()] metamaskStream.start()`);
   metamaskStream.start();
   return ethereum;
 };

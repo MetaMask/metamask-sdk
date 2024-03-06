@@ -4,6 +4,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import * as loggerModule from '../../../utils/logger';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 import { startConnection } from './startConnection';
@@ -32,6 +33,7 @@ describe('startConnection', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
 
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
   const mockOriginatorSessionConnect = jest.fn();
   const mockGenerateChannelIdConnect = jest.fn();
   const mockGetKeyInfo = jest.fn();
@@ -76,13 +78,12 @@ describe('startConnection', () => {
     );
   });
 
-  it('should handle developer mode debug logs', async () => {
-    state.developerMode = true;
+  it('should log debug info', async () => {
     mockOriginatorSessionConnect.mockResolvedValue({});
 
     await startConnection(state, options);
 
-    expect(console.debug).toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should establish socket connection by emitting connecting', async () => {

@@ -1,5 +1,7 @@
 import { Buffer } from 'buffer';
 import { decrypt, encrypt, PrivateKey } from 'eciesjs';
+import debug from 'debug';
+import { logger } from './utils/logger';
 
 /**
  * These properties are optional and should only be used during development for debugging purposes.
@@ -22,11 +24,9 @@ export class ECIES {
 
   private enabled = true;
 
-  private debug = false;
-
   constructor(props?: ECIESProps) {
     if (props?.debug) {
-      this.debug = props.debug;
+      debug.enable('Ecies:Layer');
     }
 
     if (props?.pkey) {
@@ -35,14 +35,16 @@ export class ECIES {
       this.ecies = new PrivateKey();
     }
 
-    if (this.debug) {
-      console.info(`[ECIES] initialized secret: `, this.ecies.toHex());
-      console.info(
-        `[ECIES] initialized public: `,
-        this.ecies.publicKey.toHex(),
-      );
-      console.info(`[ECIES] init with`, this);
-    }
+    logger.Ecies(
+      `[ECIES constructor()] initialized secret: `,
+      this.ecies.toHex(),
+    );
+
+    logger.Ecies(
+      `[ECIES constructor()] initialized public: `,
+      this.ecies.publicKey.toHex(),
+    );
+    logger.Ecies(`[ECIES constructor()] init with`, this);
   }
 
   /**
@@ -74,22 +76,15 @@ export class ECIES {
     let encryptedString = data;
     if (this.enabled) {
       try {
-        if (this.debug) {
-          console.debug(
-            `ECIES::encrypt() using otherPublicKey`,
-            otherPublicKey,
-          );
-        }
+        logger.Ecies(`[ECIES: encrypt()] using otherPublicKey`, otherPublicKey);
         const payload = Buffer.from(data);
         const encryptedData = encrypt(otherPublicKey, payload);
         encryptedString = Buffer.from(encryptedData).toString('base64');
       } catch (err) {
-        if (this.debug) {
-          console.error(`error encrypt:`, err);
-          console.error(`private: `, this.ecies.toHex());
-          console.error('data: ', data);
-          console.error(`otherkey: `, otherPublicKey);
-        }
+        logger.Ecies(`[ECIES: encrypt()] error encrypt:`, err);
+        logger.Ecies(`[ECIES: encrypt()] private: `, this.ecies.toHex());
+        logger.Ecies('[ECIES: encrypt()] data: ', data);
+        logger.Ecies(`[ECIES: encrypt()] otherkey: `, otherPublicKey);
         throw err;
       }
     }
@@ -106,22 +101,15 @@ export class ECIES {
     let decryptedString = encryptedData;
     if (this.enabled) {
       try {
-        if (this.debug) {
-          console.debug(
-            `ECIES::decrypt() using privateKey`,
-            this.ecies.toHex(),
-          );
-        }
+        logger.Ecies(`[ECIES: decrypt()] using privateKey`, this.ecies.toHex());
         const payload = Buffer.from(encryptedData.toString(), 'base64');
         const decrypted = decrypt(this.ecies.toHex(), payload);
 
         decryptedString = decrypted.toString();
       } catch (error) {
-        if (this.debug) {
-          console.error(`error decrypt`, error);
-          console.error(`private: `, this.ecies.toHex());
-          console.error(`encryptedData: `, encryptedData);
-        }
+        logger.Ecies(`[ECIES: decrypt()] error decrypt`, error);
+        logger.Ecies(`[ECIES: decrypt()] private: `, this.ecies.toHex());
+        logger.Ecies(`[ECIES: decrypt()] encryptedData: `, encryptedData);
         throw error;
       }
     }
@@ -137,6 +125,6 @@ export class ECIES {
   }
 
   toString() {
-    console.debug(`ECIES::toString()`, this.getKeyInfo());
+    logger.Ecies(`[ECIES: toString()]`, this.getKeyInfo());
   }
 }

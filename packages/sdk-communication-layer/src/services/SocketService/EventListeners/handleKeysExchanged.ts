@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
@@ -12,11 +13,9 @@ import { ServiceStatus } from '../../../types/ServiceStatus';
  */
 export function handleKeysExchanged(instance: SocketService) {
   return () => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      );
-    }
+    logger.SocketService(
+      `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    );
 
     // Propagate key exchange event
     instance.emit(EventType.KEYS_EXCHANGED, {

@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "A react component and react hooks to connect and use MetaMask",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -42,12 +42,12 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage --passWithNoTests"
+    "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js"
   },
   "dependencies": {
     "@metamask/sdk": "workspace:^",
-    "@metamask/sdk-communication-layer": "workspace:^",
     "@react-native-async-storage/async-storage": "^1.19.6",
+    "debug": "^4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0"
@@ -108,6 +108,9 @@
   },
   "peerDependenciesMeta": {
     "react": {
+      "optional": false
+    },
+    "react-dom": {
       "optional": false
     },
     "react-native": {

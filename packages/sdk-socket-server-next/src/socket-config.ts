@@ -1,11 +1,11 @@
 /* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
-import { createAdapter } from '@socket.io/redis-streams-adapter';
+import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { redisClient } from './api-config';
+import { pubClient } from './api-config';
 import { logger } from './logger';
 import {
   increaseRateLimits,
@@ -17,24 +17,22 @@ import {
 
 export const MAX_CLIENTS_PER_ROOM = 2;
 
+export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
+
 export const configureSocketServer = async (
   server: HTTPServer,
 ): Promise<Server> => {
   const isDevelopment: boolean = process.env.NODE_ENV === 'development';
   const hasRateLimit = process.env.RATE_LIMITER === 'true';
-  const sdkKey = process.env.SDK_STREAM_NAME || 'sdk-key';
   const host = hostname();
-
-  // Establish connection to Redis server
-  await redisClient.connect();
 
   logger.info(
     `Start socket server with rate limiter: ${hasRateLimit} - isDevelopment: ${isDevelopment}`,
   );
 
-  const adapter = createAdapter(redisClient, {
-    streamName: sdkKey,
-  });
+  const subClient = pubClient.duplicate();
+
+  const adapter = createAdapter(pubClient, subClient);
 
   const io = new Server(server, {
     adapter,
@@ -52,7 +50,7 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await redisClient.hGet('channels', roomId);
+    const channelOccupancy = await pubClient.hget('channels', roomId);
     console.log(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -60,11 +58,12 @@ export const configureSocketServer = async (
 
   io.of('/').adapter.on('leave-room', async (roomId, socketId) => {
     if (!validate(roomId)) {
+      // Ignore invalid room IDs
       return;
     }
 
     // Decrement the number of clients in the room
-    const channelOccupancy = await redisClient.hIncrBy('channels', roomId, -1);
+    const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
 
     console.log(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -73,11 +72,13 @@ export const configureSocketServer = async (
     if (channelOccupancy <= 0) {
       console.log(`'leave-room' room ${roomId} was deleted`);
       // remove from redis
-      await redisClient.hDel('channels', roomId);
+      await pubClient.hdel('channels', roomId);
     } else {
       console.log(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
       );
+      // Inform the room of the disconnection
+      io.to(roomId).emit(`clients_disconnected-${roomId}`);
     }
   });
 
@@ -93,8 +94,13 @@ export const configureSocketServer = async (
       host,
     });
 
-    socket.on('create_channel', async (channelId: string) => {
-      logger.info('create_channel', { id: channelId, socketId, clientIp });
+    socket.on('create_channel', async (channelId: string, context: string) => {
+      let from = context ?? MISSING_CONTEXT;
+      if (context === 'metamask-mobile') {
+        from = 'wallet';
+      } else if (context === 'dapp') {
+        from = 'dapp';
+      }
 
       try {
         if (hasRateLimit) {
@@ -102,7 +108,14 @@ export const configureSocketServer = async (
         }
 
         if (!validate(channelId)) {
-          logger.info(`ERROR > create_channel id = ${channelId} invalid`);
+          logger.error(
+            `create_channel  from=${from} id = ${channelId} invalid`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
+          );
           return socket.emit(`message-${channelId}`, {
             error: 'must specify a valid id',
           });
@@ -111,7 +124,12 @@ export const configureSocketServer = async (
         const room = io.sockets.adapter.rooms.get(channelId);
         if (!channelId) {
           logger.error(
-            `ERROR > create_channel id = ${channelId} not specified`,
+            `create_channel from=${from} id = ${channelId} not specified`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
           );
           return socket.emit(`message-${channelId}`, {
             error: 'must specify an id',
@@ -120,7 +138,12 @@ export const configureSocketServer = async (
 
         if (room) {
           logger.error(
-            `ERROR > create_channel id = ${channelId} room already created`,
+            `create_channel from=${from} id = ${channelId} room already created`,
+            {
+              id: channelId,
+              socketId,
+              clientIp,
+            },
           );
           return socket.emit(`message-${channelId}`, {
             error: 'room already created',
@@ -131,19 +154,24 @@ export const configureSocketServer = async (
           resetRateLimits();
         }
 
-        logger.debug(`joining channel ${channelId} + emit channel_created`);
+        logger.info(`create_channel from=${from}`, {
+          id: channelId,
+          socketId,
+          clientIp,
+        });
+
         // Make sure to join both so that disconnection events are handled properl
         socket.join(channelId);
         // socket.broadcast.socketsJoin(channelId);
 
         // Initialize the channel occupancy to 1
-        await redisClient.hSet('channels', channelId, 1);
+        await pubClient.hset('channels', channelId, 1);
 
         return socket.emit(`channel_created-${channelId}`, channelId);
       } catch (error) {
         setLastConnectionErrorTimestamp(Date.now());
         // increaseRateLimits(90);
-        logger.error('ERROR> Error on create_channel', error);
+        logger.error(`ERROR> Error on create_channel from=${from}`, error);
         // emit an error message back to the client, if appropriate
         return socket.emit(`error`, { error: (error as Error).message });
       }
@@ -158,40 +186,35 @@ export const configureSocketServer = async (
         plaintext: string;
       }) => {
         const { id, message, context, plaintext } = msg;
-        const isMobile = context === 'metamask-mobile';
+        let from = context ?? MISSING_CONTEXT;
+        if (context === 'metamask-mobile') {
+          from = 'wallet';
+        } else if (context === 'dapp') {
+          from = 'dapp';
+        }
 
-        logger.debug(`received message`, msg);
+        // logger.debug(`received message`, msg);
         try {
           if (hasRateLimit) {
             await rateLimiterMessage.consume(socket.handshake.address);
-          }
-
-          const logContext: {
-            id: string;
-            message?: string;
-            plaintext?: string;
-            context?: string;
-          } = {
-            id,
-            context,
-          };
-
-          if (isDevelopment) {
-            logContext.plaintext = plaintext;
           }
 
           if (hasRateLimit) {
             resetRateLimits();
           }
 
-          logger.info(
-            `message-${id} received from { ${isMobile ? 'wallet' : 'dapp'} }`,
-            { ...logContext, socketId, clientIp },
-          );
-
-          if (isDevelopment) {
-            logger.debug(`message context`, JSON.stringify(context));
+          let formatted = plaintext;
+          const protocol =
+            typeof message === 'object' ? message : '__ENCRYPTED__';
+          if (isDevelopment && formatted) {
+            formatted = JSON.stringify(JSON.parse(plaintext), null, 2);
           }
+
+          logger.info(
+            `message-${id} received from=${from}`,
+            formatted,
+            protocol,
+          );
 
           return socket.broadcast.to(id).emit(`message-${id}`, { id, message });
         } catch (error) {
@@ -232,12 +255,19 @@ export const configureSocketServer = async (
       },
     );
 
-    socket.on('join_channel', async (channelId: string) => {
+    socket.on('join_channel', async (channelId: string, context: string) => {
+      let from = context ?? MISSING_CONTEXT;
+      if (context === 'metamask-mobile') {
+        from = 'wallet';
+      } else if (context === 'dapp') {
+        from = 'dapp';
+      }
+
       if (hasRateLimit) {
         try {
           await rateLimiter.consume(socket.handshake.address);
         } catch (e) {
-          logger.error('ERROR> Error while consuming rate limiter:', e);
+          logger.error('Error while consuming rate limiter:', e);
           return;
         }
       }
@@ -250,14 +280,17 @@ export const configureSocketServer = async (
         return;
       }
 
-      const sRedisChannelOccupancy = await redisClient.hGet(
+      const sRedisChannelOccupancy = await pubClient.hget(
         'channels',
         channelId,
       );
       let channelOccupancy = 0;
-      logger.debug(
-        `join_channel ${channelId} from ${socketId} sRedisChannelOccupancy=${sRedisChannelOccupancy}`,
-      );
+      logger.debug(`join_channel from=${from} ${channelId}`, {
+        context,
+        socketId,
+        channelOccupancy,
+        sRedisChannelOccupancy,
+      });
 
       if (sRedisChannelOccupancy) {
         channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
@@ -265,7 +298,7 @@ export const configureSocketServer = async (
         logger.debug(
           `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
         );
-        await redisClient.hSet('channels', channelId, 0);
+        await pubClient.hset('channels', channelId, 0);
       }
 
       // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -284,20 +317,22 @@ export const configureSocketServer = async (
       }
 
       if (roomOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} room already full`);
+        logger.warn(`join_channel from=${from} ${channelId} room already full`);
         socket.emit(`message-${channelId}`, { error: 'room already full' });
         return;
       }
 
       if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
-        logger.warn(`join_channel ${channelId} redis channel appears full`);
+        logger.warn(
+          `join_channel from=${from} ${channelId} redis channel appears full`,
+        );
         socket.emit(`message-${channelId}`, { error: 'room already full' });
         return;
       }
 
       // Join and increment the number of clients in the room
       socket.join(channelId);
-      channelOccupancy = await redisClient.hIncrBy('channels', channelId, 1);
+      channelOccupancy = await pubClient.hincrby('channels', channelId, 1);
       //  Refresh the room occupancy -it should now matches channel occupancy
       roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
 
@@ -310,7 +345,7 @@ export const configureSocketServer = async (
       }
 
       logger.info(
-        `Client ${socketId} joined channel ${channelId}. Occupancy: ${channelOccupancy}`,
+        `join_channel from=${from} ${channelId}. Occupancy: ${channelOccupancy}`,
         {
           id: channelId,
           socketId,
@@ -330,12 +365,14 @@ export const configureSocketServer = async (
       }
 
       socket.on('disconnect', async (error) => {
-        logger.info(`disconnect from room ${channelId}`, {
-          id: channelId,
-          socketId,
-          clientIp,
-          error,
-        });
+        logger.info(
+          `disconnect event from=${from} room ${channelId} ${error}`,
+          {
+            id: channelId,
+            socketId,
+            clientIp,
+          },
+        );
 
         // Inform the room of the disconnection
         socket.broadcast
@@ -386,7 +423,8 @@ export const configureSocketServer = async (
 
         const room = io.sockets.adapter.rooms.get(channelId);
         const occupancy = room ? room.size : 0;
-        const channelOccupancy = await redisClient.hGet('channels', channelId);
+        const channelOccupancy =
+          (await pubClient.hget('channels', channelId)) ?? undefined;
 
         logger.info(
           `check_room occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,

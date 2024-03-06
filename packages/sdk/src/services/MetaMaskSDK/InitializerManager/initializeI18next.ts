@@ -1,5 +1,4 @@
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { initReactI18next } from 'react-i18next';
 import en from '../../../locales/en.json';
 import es from '../../../locales/es.json';
 import fr from '../../../locales/fr.json';
@@ -27,51 +26,48 @@ export async function initializeI18next(instance: MetaMaskSDK) {
 
   const isEnabled = i18nOptions.enabled;
 
-  await instance.i18nInstance
-    .use(initReactI18next)
-    .use(LanguageDetector)
-    .init({
-      debug: i18nOptions.debug ?? false,
-      compatibilityJSON: 'v3',
-      fallbackLng: 'en',
-      interpolation: {
-        escapeValue: false,
-      },
-      resources: isEnabled
-        ? {
-            en: {
-              translation: en,
-            },
-            es: {
-              translation: es,
-            },
-            it: {
-              translation: it,
-            },
-            fr: {
-              translation: fr,
-            },
-            pt: {
-              translation: pt,
-            },
-            tr: {
-              translation: tr,
-            },
-            he: {
-              translation: he,
-            },
-          }
-        : {
-            en: {
-              translation: en,
-            },
+  await instance.i18nInstance.use(LanguageDetector).init({
+    debug: i18nOptions.debug ?? false,
+    compatibilityJSON: 'v3',
+    fallbackLng: 'en',
+    interpolation: {
+      escapeValue: false,
+    },
+    resources: isEnabled
+      ? {
+          en: {
+            translation: en,
           },
-      detection: {
-        order: ['localStorage', 'navigator'],
-        lookupLocalStorage: 'MetaMaskSDKLng',
-        caches: ['localStorage'],
-      },
-    });
+          es: {
+            translation: es,
+          },
+          it: {
+            translation: it,
+          },
+          fr: {
+            translation: fr,
+          },
+          pt: {
+            translation: pt,
+          },
+          tr: {
+            translation: tr,
+          },
+          he: {
+            translation: he,
+          },
+        }
+      : {
+          en: {
+            translation: en,
+          },
+        },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      lookupLocalStorage: 'MetaMaskSDKLng',
+      caches: ['localStorage'],
+    },
+  });
 
   instance.availableLanguages = Object.keys(
     instance.i18nInstance.services.resourceStore.data ?? {},

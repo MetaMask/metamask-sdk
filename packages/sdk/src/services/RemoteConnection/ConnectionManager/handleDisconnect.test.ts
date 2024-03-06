@@ -2,6 +2,7 @@
 import { DisconnectOptions } from '@metamask/sdk-communication-layer';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnectionState } from '../RemoteConnection';
+import * as loggerModule from '../../../utils/logger';
 import { handleDisconnect } from './handleDisconnect';
 
 jest.mock('../../Ethereum', () => ({
@@ -17,6 +18,7 @@ describe('handleDisconnect', () => {
   let options: DisconnectOptions;
   const mockDisconnect = jest.fn();
   const mockUnmount = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     state = {
@@ -36,19 +38,12 @@ describe('handleDisconnect', () => {
   });
 
   it('should log debug message when developerMode is true', async () => {
-    const consoleSpy = jest.spyOn(console, 'debug').mockImplementation(() => {
-      // do nothing
-    });
-    state.developerMode = true;
-
     await handleDisconnect(state, options);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'RemoteConnection::disconnect()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[RemoteConnection: disconnect()]`,
       options,
     );
-
-    consoleSpy.mockRestore();
   });
 
   it('should call handleDisconnect on Ethereum provider when options.terminate is true', async () => {

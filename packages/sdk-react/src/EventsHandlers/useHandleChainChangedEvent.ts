@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleChainChangedEvent = ({
   debug,
@@ -10,12 +11,11 @@ export const useHandleChainChangedEvent = ({
 }: EventHandlerProps) => {
   return useCallback(
     (networkVersionOrChainId: any) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'chainChanged' event.`,
-          networkVersionOrChainId,
-        );
-      }
+      logger(
+        `[MetaMaskProvider: useHandleChainChangedEvent()] on 'chainChanged' event.`,
+        networkVersionOrChainId,
+      );
+
       // check if networkVersion has correct format
       if (
         typeof networkVersionOrChainId === 'object' &&

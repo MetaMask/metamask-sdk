@@ -1,12 +1,15 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import * as ConnectionManager from '../ConnectionManager';
+import { logger } from '../../../utils/logger';
 import { handleDisconnect } from './handleDisconnect';
 
 jest.mock('../ConnectionManager');
 
 describe('handleDisconnect', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
   const checkFocusAndReconnect =
     ConnectionManager.checkFocusAndReconnect as jest.Mock;
@@ -24,20 +27,13 @@ describe('handleDisconnect', () => {
   });
 
   it('should log debug information when debugging is enabled and the handler is called', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
     const handler = handleDisconnect(instance);
     handler('someReason');
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `SocketService::on 'disconnect' manualDisconnect=${instance.state.manualDisconnect}`,
-      ),
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handleDisconnect()] on 'disconnect' manualDisconnect=false",
       'someReason',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should emit SOCKET_DISCONNECTED event and attempt to reconnect when disconnection was not manual', () => {

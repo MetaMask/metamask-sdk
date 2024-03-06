@@ -15,6 +15,7 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   wallet_switchEthereumChain: true,
   metamask_connectSign: true,
   metamask_connectWith: true,
+  personal_ecRecover: true,
   metamask_batch: true,
   metamask_open: true,
 };

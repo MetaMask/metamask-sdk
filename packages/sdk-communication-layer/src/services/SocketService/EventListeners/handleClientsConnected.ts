@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -15,19 +16,17 @@ export function handleClientsConnected(
   channelId: string,
 ) {
   return async (_id: string) => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${
-          instance.state.context
-        }::setupChannelListener::on 'clients_connected-${channelId}'  resumed=${
-          instance.state.resumed
-        }  clientsPaused=${
-          instance.state.clientsPaused
-        } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} isOriginator=${
-          instance.state.isOriginator
-        }`,
-      );
-    }
+    logger.SocketService(
+      `[SocketService: handleClientsConnected()] context=${
+        instance.state.context
+      } on 'clients_connected-${channelId}'  resumed=${
+        instance.state.resumed
+      }  clientsPaused=${
+        instance.state.clientsPaused
+      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} isOriginator=${
+        instance.state.isOriginator
+      }`,
+    );
 
     // Inform other layer of clients reconnection
     instance.emit(EventType.CLIENTS_CONNECTED, {
@@ -39,13 +38,11 @@ export function handleClientsConnected(
     if (instance.state.resumed) {
       if (!instance.state.isOriginator) {
         // should ask to redo a key exchange because it wasn't paused.
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::${
-              instance.state.context
-            }::on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
-          );
-        }
+        logger.SocketService(
+          `[SocketService: handleClientsConnected()] context=${
+            instance.state.context
+          } 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
+        );
 
         instance.state.keyExchange?.start({
           isOriginator: instance.state.isOriginator ?? false,
@@ -54,18 +51,16 @@ export function handleClientsConnected(
       // resumed switched when connection resume.
       instance.state.resumed = false;
     } else if (instance.state.clientsPaused) {
-      console.debug(
-        `SocketService::on 'clients_connected' skip sending originatorInfo on pause`,
+      logger.SocketService(
+        `[SocketService: handleClientsConnected()] 'clients_connected' skip sending originatorInfo on pause`,
       );
     } else if (!instance.state.isOriginator) {
       // Reconnect scenario --- maybe web dapp got refreshed
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${
-            instance.state.context
-          }::on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
-        );
-      }
+      logger.SocketService(
+        `[SocketService: handleClientsConnected()] context=${
+          instance.state.context
+        } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
+      );
 
       // Add delay in case exchange was already initiated by dapp.
       // Always request key exchange from wallet since it looks like a reconnection.

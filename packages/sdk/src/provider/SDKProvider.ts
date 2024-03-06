@@ -1,5 +1,6 @@
 import { Duplex } from 'stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
+import { logger } from '../utils/logger';
 import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
 import { handleDisconnect } from '../services/SDKProvider/ConnectionManager/handleDisconnect';
 import { initializeState } from '../services/SDKProvider/InitializationManager/initializeState';
@@ -25,18 +26,15 @@ export interface SDKProviderProps {
    * Whether the window.web3 shim should be set.
    */
   shouldShimWeb3?: boolean;
-  debug?: boolean;
 }
 
 interface SDKProviderState {
-  debug: boolean;
   autoRequestAccounts: boolean;
   providerStateRequested: boolean;
 }
 
 export class SDKProvider extends MetaMaskInpageProvider {
   public state: SDKProviderState = {
-    debug: false,
     autoRequestAccounts: false,
     providerStateRequested: false,
   };
@@ -44,7 +42,6 @@ export class SDKProvider extends MetaMaskInpageProvider {
   constructor({
     connectionStream,
     shouldSendMetadata,
-    debug = false,
     autoRequestAccounts = false,
   }: SDKProviderProps) {
     super(connectionStream, {
@@ -53,28 +50,23 @@ export class SDKProvider extends MetaMaskInpageProvider {
       shouldSendMetadata,
     });
 
-    if (debug) {
-      console.debug(
-        `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
-      );
-    }
+    logger(
+      `[SDKProvider: constructor()] autoRequestAccounts=${autoRequestAccounts}`,
+    );
     this.state.autoRequestAccounts = autoRequestAccounts;
-    this.state.debug = debug;
   }
 
   async forceInitializeState() {
-    if (this.state.debug) {
-      console.debug(
-        `SDKProvider::forceInitializeState() autoRequestAccounts=${this.state.autoRequestAccounts}`,
-      );
-    }
+    logger(
+      `[SDKProvider: forceInitializeState()] autoRequestAccounts=${this.state.autoRequestAccounts}`,
+    );
+
     return this._initializeStateAsync();
   }
 
   _setConnected() {
-    if (this.state.debug) {
-      console.debug(`SDKProvider::_setConnected()`);
-    }
+    logger(`[SDKProvider: _setConnected()] Setting connected state`);
+
     this._state.isConnected = true;
   }
 

@@ -1,4 +1,5 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
+import { logger } from '../utils/logger';
 import { RPC_METHODS } from '../config';
 
 interface RequestArguments {
@@ -8,10 +9,8 @@ interface RequestArguments {
 
 export const wrapExtensionProvider = ({
   provider,
-  debug,
 }: {
   provider: MetaMaskInpageProvider;
-  debug?: boolean;
 }) => {
   // prevent double wrapping an invalid provider (it could happen with older web3onboard implementions)
   // TODO remove after web3onboard is updated
@@ -23,12 +22,7 @@ export const wrapExtensionProvider = ({
     get(target, propKey: keyof MetaMaskInpageProvider) {
       if (propKey === 'request') {
         return async function (args: RequestArguments) {
-          if (debug) {
-            console.debug(
-              '[wrapExtensionProvider] Overwriting request method, args:',
-              args,
-            );
-          }
+          logger(`[wrapExtensionProvider()] Overwriting request method`, args);
 
           const { method, params } = args;
           // special method handling

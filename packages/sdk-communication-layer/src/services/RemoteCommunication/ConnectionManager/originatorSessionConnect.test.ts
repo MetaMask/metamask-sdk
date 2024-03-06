@@ -1,8 +1,11 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
+import { logger } from '../../../utils/logger';
 import { originatorSessionConnect } from './originatorSessionConnect';
 
 describe('originatorSessionConnect', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockIsConnected = jest.fn();
   const mockGetPersistedChannelConfig = jest.fn();
   const mockConnectToChannel = jest.fn();
@@ -31,8 +34,8 @@ describe('originatorSessionConnect', () => {
     delete instance.state.storageManager;
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.debug).toHaveBeenCalledWith(
-      'RemoteCommunication::connect() no storage manager defined - skip',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: originatorSessionConnect()] no storage manager defined - skip',
     );
   });
 
@@ -40,8 +43,8 @@ describe('originatorSessionConnect', () => {
     mockIsConnected.mockReturnValueOnce(true);
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.debug).toHaveBeenCalledWith(
-      'RemoteCommunication::connect() socket already connected - skip',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: originatorSessionConnect()] socket already connected - skip',
     );
   });
 
@@ -69,8 +72,8 @@ describe('originatorSessionConnect', () => {
 
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.log).toHaveBeenCalledWith(
-      'RemoteCommunication::autoConnect Session has expired',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: autoConnect()] Session has expired',
     );
   });
 

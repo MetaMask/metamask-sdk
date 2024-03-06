@@ -2,8 +2,6 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
-// import builtins from 'rollup-plugin-node-builtins';
-// import globals from 'rollup-plugin-node-globals';
 import external from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser';
 
@@ -21,7 +19,7 @@ const config = [
         file: packageJson.module,
         inlineDynamicImports: true,
         format: 'esm',
-        sourcemap: false,
+        sourcemap: true,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
           // Not sure why rollup otherwise adds an extra '../' to the path
 
@@ -33,7 +31,7 @@ const config = [
         file: packageJson.main,
         inlineDynamicImports: true,
         format: 'cjs',
-        sourcemap: false,
+        sourcemap: true,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
           // Not sure why rollup otherwise adds an extra '../' to the path
 
@@ -49,8 +47,6 @@ const config = [
         browser: true,
       }),
       commonjs(),
-      // globals(),
-      // builtins({ crypto: true }),
       json(),
       terser(),
     ],

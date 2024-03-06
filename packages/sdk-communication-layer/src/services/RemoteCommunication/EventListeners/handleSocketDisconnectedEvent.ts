@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 
 /**
@@ -10,11 +11,9 @@ export function handleSocketDisconnectedEvent(instance: RemoteCommunication) {
   return () => {
     const { state } = instance;
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::on 'socket_Disconnected' set ready to false`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleSocketDisconnectedEvent()] on 'socket_Disconnected' set ready to false`,
+    );
     state.ready = false;
   };
 }

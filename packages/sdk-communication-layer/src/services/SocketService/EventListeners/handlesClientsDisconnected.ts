@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -17,11 +18,9 @@ export function handlesClientsDisconnected(
 ) {
   return () => {
     instance.state.clientsConnected = false;
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${instance.state.context}::setupChannelListener::on 'clients_disconnected-${channelId}'`,
-      );
-    }
+    logger.SocketService(
+      `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}'`,
+    );
 
     if (instance.state.isOriginator && !instance.state.clientsPaused) {
       // If it wasn't paused - need to reset keys.

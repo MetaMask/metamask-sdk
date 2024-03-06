@@ -3,6 +3,7 @@ import { CommunicationLayerPreference } from '../../../types/CommunicationLayerP
 import { EventType } from '../../../types/EventType';
 import { SendAnalytics } from '../../../Analytics';
 import packageJson from '../../../../package.json';
+import { logger } from '../../../utils/logger';
 import { handleClientsConnectedEvent } from './handleClientsConnectedEvent';
 
 jest.mock('../../../Analytics', () => ({
@@ -14,8 +15,8 @@ describe('handleClientsConnectedEvent', () => {
   const mockEmit = jest.fn();
   const mockGetKeyInfo = jest.fn();
 
-  // Mock console.debug and console.error
-  jest.spyOn(console, 'debug').mockImplementation();
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
+
   jest.spyOn(console, 'error').mockImplementation();
 
   beforeEach(() => {
@@ -43,14 +44,15 @@ describe('handleClientsConnectedEvent', () => {
     });
   });
 
-  it('should log the event details if debugging is enabled', () => {
+  it('should log the event details', () => {
     const handler = handleClientsConnectedEvent(
       instance,
       CommunicationLayerPreference.SOCKET,
     );
     handler();
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::on 'clients_connected' channel=testChannel keysExchanged=true`,
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleClientsConnectedEvent()] on 'clients_connected' channel=testChannel keysExchanged=true",
     );
   });
 
@@ -103,16 +105,6 @@ describe('handleClientsConnectedEvent', () => {
       'Cannot send analytics',
       expect.any(Error),
     );
-  });
-
-  it('should not log event details if debugging is disabled', () => {
-    instance.state.debug = false;
-    const handler = handleClientsConnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
-    handler();
-    expect(console.debug).not.toHaveBeenCalled();
   });
 
   it('should not send analytics data if analytics tracking is disabled', async () => {
