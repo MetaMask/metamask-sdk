@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.3.0]
-### Uncategorized
+### Added
 - feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
 - Fix/sdk config provider ([#714](https://github.com/MetaMask/metamask-sdk/pull/714))
 - feat: expose channel id via hook + expose wallet status via sdk instance ([#704](https://github.com/MetaMask/metamask-sdk/pull/704))
@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
 
 ## [0.2.0]
-### Uncategorized
+### Added
 - Revert "Release 48.0.0" ([#686](https://github.com/MetaMask/metamask-sdk/pull/686))
 - Release 48.0.0 ([#684](https://github.com/MetaMask/metamask-sdk/pull/684))
 - feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
