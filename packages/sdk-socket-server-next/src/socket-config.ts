@@ -32,6 +32,14 @@ export const configureSocketServer = async (
 
   const subClient = pubClient.duplicate();
 
+  subClient.on('error', (error) => {
+    logger.error('Redis subClient error:', error);
+  });
+
+  subClient.on('ready', () => {
+    logger.info('Redis subClient ready');
+  });
+
   const adapter = createAdapter(pubClient, subClient);
 
   const io = new Server(server, {
