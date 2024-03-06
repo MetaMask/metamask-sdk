@@ -4,7 +4,7 @@ import {
   TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import { logger } from '../utils/logger';
-import packageJson from '../../../../package.json';
+import packageJson from '../../package.json';
 
 export interface AnalyticsProps {
   serverURL: string;
