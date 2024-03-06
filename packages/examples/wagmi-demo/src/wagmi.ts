@@ -7,6 +7,7 @@ export const config = createConfig({
   connectors: [
     metaMask({
       infuraAPIKey: process.env.INFURA_API_KEY,
+      useDeeplink: false,
       dappMetadata: {
         name: 'Wagmi-Demo',
         url: 'https://wagmi.io',

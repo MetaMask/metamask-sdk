@@ -7,11 +7,19 @@ import {
   useSwitchChain,
   useSignMessage,
   useSendTransaction,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  BaseError,
+  useChainId,
 } from 'wagmi';
 import { ethers } from 'ethers';
+import { FormEvent, useState } from 'react';
+import { parseAbi } from 'viem';
 
 function App() {
   const account = useAccount();
+  const chainId = useChainId();
+
   const {
     connectors,
     connect,
@@ -22,6 +30,23 @@ function App() {
   const { chains, switchChain, error: switchChainError } = useSwitchChain();
   const { signMessage, error: signError, signMessageAsync } = useSignMessage();
   const { sendTransaction, error: txError } = useSendTransaction();
+  const [tokenId, setTokenId] = useState('');
+
+  const { data: hash, error, isPending, writeContract } = useWriteContract();
+
+  const handleWriteContract = () => {
+    writeContract({
+      address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
+      abi: parseAbi(['function mint(uint256 tokenId)']),
+      functionName: 'mint',
+      args: [BigInt(tokenId)],
+    });
+  };
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   // Example send transaction function
   const sendTx = async () => {
@@ -72,11 +97,9 @@ function App() {
             <button
               style={{ ...styles.button, backgroundColor: 'orange' }}
               key={connectors[0].id}
-              onClick={() =>
-                connect({
-                  connector: connectors[0],
-                })
-              }
+              onClick={() => {
+                connect({ connector: connectors[0], chainId });
+              }}
             >
               Connect To {connectors[0].name}
             </button>
@@ -137,6 +160,34 @@ function App() {
           </div>
 
           <div style={styles.info}>
+            <h2 style={styles.title}>Write Contract</h2>
+            {error && (
+              <div>
+                Error: {(error as BaseError).shortMessage || error.message}
+              </div>
+            )}
+            <input
+              name="tokenId"
+              placeholder="Add Your Token ID..."
+              type="number"
+              onChange={(e) => setTokenId(e.target.value)}
+              style={styles.input} // Apply the input style here
+            />
+            <button
+              style={{
+                ...styles.button,
+                backgroundColor: 'green',
+              }}
+              disabled={isPending}
+              onClick={handleWriteContract}
+            >
+              {isPending ? 'Confirming...' : 'Mint'}
+            </button>
+            {isConfirming && <h3>Waiting for confirmation...</h3>}
+            {isConfirmed && <h3>Transaction confirmed.</h3>}
+          </div>
+
+          <div style={styles.info}>
             <h2 style={styles.title}>Sign Message</h2>
             <div>{signError?.message}</div>
             <button
@@ -168,6 +219,16 @@ const styles = {
     width: '50%',
     fontSize: '16px',
     fontWeight: 'bold',
+  },
+  input: {
+    // Added style for input
+    padding: '10px',
+    margin: '10px 0',
+    border: '1px solid #ddd',
+    backgroundColor: '#f9f9f9',
+    color: '#000',
+    borderRadius: '5px',
+    width: 'calc(20%)', // Adjust width to account for padding and border
   },
   info: {
     marginBottom: '20px',
