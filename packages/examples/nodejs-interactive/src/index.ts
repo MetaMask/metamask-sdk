@@ -25,7 +25,7 @@ const options: MetaMaskSDKOptions = {
   dappMetadata: {
     name: 'NodeJS example',
     url:  'https://metamask.io',
-    iconUrl: 'https://github.com/christopherferreira9/test-assets/blob/61f81895a19a9997438dadc2b938e9e4b2f410c3/icons/nodeJs.png?raw=true'
+    iconUrl: 'https://avatars.githubusercontent.com/u/9950313?s=200&v=4'
   },
   logging: {
     sdk: false,
