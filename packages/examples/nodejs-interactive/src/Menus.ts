@@ -31,7 +31,7 @@ export const mainMenuChoices = [
   {
     name: mainMenuChoicesTypes.CREATE_SESSION,
     value: mainMenuChoicesTypes.CREATE_SESSION,
-    description: 'Deletes a session if it exists and creates a new one',
+    description: 'Creates a new session',
     disabled: sessionExists,
   },
   {
@@ -95,7 +95,6 @@ export const operationMenuChoices = [
       name: mainMenuChoicesTypes.TERMINATE,
       value: mainMenuChoicesTypes.TERMINATE,
       description: 'deletes the session if it exists',
-      disabled: !sessionExists,
     },
     {
       name: mainMenuChoicesTypes.QUIT,

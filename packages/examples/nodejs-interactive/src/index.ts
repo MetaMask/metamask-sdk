@@ -19,6 +19,7 @@ import {
 } from './RpcRequests';
 import { chains } from './Constants';
 
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
@@ -34,7 +35,9 @@ const options: MetaMaskSDKOptions = {
   infuraAPIKey: process.env.INFURA_API_KEY || '',
   modals: {
     install: ({ link }) => {
-      qrcode.generate(link, { small: true }, (qr) => console.log(qr));
+      qrcode.generate(link, { small: true }, (qr) => {
+        console.log(`\n\n${qr}\n\n`);
+      });
       return {};
     },
     otp: () => {
@@ -57,15 +60,21 @@ let ethereum: SDKProvider;
 
 const attachListeners = (ethereum: SDKProvider) => {
   ethereum.on('chainChanged', (chainId) => {
-    console.log(`chainChanged: ${chainId}`);
+    if (LOG_LEVEL === 'debug') {
+      console.log(`chainChanged: ${chainId}`);
+    }
   });
 
   ethereum.on('accountsChanged', (accounts) => {
-    console.log(`accountsChanged: ${accounts}`);
+    if (LOG_LEVEL === 'debug') {
+      console.log(`accountsChanged: ${accounts}`);
+    }
   });
 
   ethereum.on('disconnect', (error) => {
-    console.log(`disconnect: ${error}`);
+    if (LOG_LEVEL === 'debug') {
+      console.log(`disconnect: ${error}`);
+    }
   });
 };
 
@@ -236,14 +245,9 @@ const presentAndSelectOperationsMenu = async () => {
 }
 
 const createSession = async () => {
-  console.log('Creating or resuming a Session');
-  const accounts =  sdk.connect().then((accounts) => {
-    console.log('connect request accounts', accounts);
-  }).catch((e) => {
-    console.log(`Error on bootstrap: ${e.message}`);
-    process.exit(1);
-  });
-
+  console.log('\nCreating or resuming a Session\n\n');
+  const accounts = await sdk.connect();
+  console.log(`Connected accounts ${accounts}`);
 
   ethereum = sdk.getProvider();
   attachListeners(ethereum);

@@ -28,10 +28,10 @@ export const chains = {
   } as Chain,
   POLYGON: {
     chainId: '0x89',
-    chainName: 'Polygon',
+    chainName: 'Polygon Mainnet',
     blockExplorerUrls: ['https://polygonscan.com'],
     nativeCurrency: { symbol: 'MATIC', decimals: 18 },
-    rpcUrls: ['https://polygon-mainnet.infura.io/v3/'],
+    rpcUrls: ['https://polygon-rpc.com/'],
   } as Chain,
   MAINNET: {
     chainId: '0x1',
