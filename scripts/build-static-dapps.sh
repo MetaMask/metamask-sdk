@@ -161,7 +161,7 @@ update_index_html "$deployment_dir"
 
 echo "Creating index.html in the root directory..."
 # use html meta tag to redirect to the latest release
-echo "<meta http-equiv=\"refresh\" content=\"0; url=$deployment_dir/index.html\">" > index.html
+echo "<meta http-equiv=\"refresh\" content=\"0; url=$$version/index.html\">" > deployments/index.html
 # print content from index.html for debugging
 cat index.html
 
