@@ -1,12 +1,8 @@
-import {
-  SendAnalytics,
-  TrackingEvents,
-} from '@metamask/sdk-communication-layer';
-import { logger } from '../../../utils/logger';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
+import { logger } from '../../../utils/logger';
 import { connectWithExtensionProvider } from '../ProviderManager';
-import { ANALYTICS_CONSTANTS } from '../../Analytics';
 
 /**
  * Handles automatic and extension-based connections for MetaMask SDK.
@@ -32,31 +28,9 @@ export async function handleAutoAndExtensionConnections(
       `[MetaMaskSDK: handleAutoAndExtensionConnections()] preferExtension is detected -- connect with it.`,
     );
 
-    const { remoteConnection } = instance;
-
-    if (remoteConnection) {
-      const {
-        state: { connector },
-      } = remoteConnection;
-
-      const originatorInfo = connector?.state.originatorInfo ?? {};
-      const communicationServerUrl = '';
-
-      const analyticsData = {
-        id: ANALYTICS_CONSTANTS.DEFAULT_ID,
-        event: TrackingEvents.SDK_EXTENSION_UTILIZED,
-        ...originatorInfo,
-        commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
-      };
-
-      if (instance.options.enableAnalytics) {
-        SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
-          console.warn(
-            `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
-          );
-        });
-      }
-    }
+    instance.analytics?.send({
+      event: TrackingEvents.SDK_EXTENSION_UTILIZED,
+    });
 
     connectWithExtensionProvider(instance).catch((_err) => {
       console.warn(`Can't connect with MetaMask extension...`, _err);

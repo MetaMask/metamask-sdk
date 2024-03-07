@@ -1,4 +1,4 @@
-import { SendAnalytics } from './Analytics';
+import { SendAnalytics, AnalyticsProps } from './Analytics';
 import { ECIES, ECIESProps } from './ECIES';
 import {
   RemoteCommunication,
@@ -48,6 +48,7 @@ export type {
   StorageManager,
   StorageManagerProps,
   WalletInfo,
+  AnalyticsProps,
 };
 
 export {

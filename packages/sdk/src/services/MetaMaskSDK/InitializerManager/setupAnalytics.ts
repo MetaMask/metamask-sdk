@@ -18,8 +18,8 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
   const platformType = instance.platformManager?.getPlatformType();
 
   instance.analytics = new Analytics({
-    serverURL: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
-    metadata: {
+    serverUrl: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+    originatorInfo: {
       url: options.dappMetadata.url ?? '',
       title: options.dappMetadata.name ?? '',
       platform: platformType ?? '',

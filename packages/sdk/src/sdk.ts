@@ -322,9 +322,10 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   // Return the active ethereum provider object
-  getProvider(): SDKProvider {
+  getProvider(): SDKProvider | null {
     if (!this.activeProvider) {
-      throw new Error(`SDK state invalid -- undefined provider`);
+      console.warn(`MetaMaskSDK: No active provider found`);
+      return null;
     }
 
     return this.activeProvider;
