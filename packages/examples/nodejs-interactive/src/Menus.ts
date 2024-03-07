@@ -22,6 +22,7 @@ export const operationsMenuTypes = {
   REQUEST_PERMISSIONS: 'requestPermissions',
   PERSONAL_SIGN: 'personalSign',
   BATCH_REQUEST: 'batchRequest',
+  BLOCK_NUMBER: 'blockNumber',
   BACK: 'back',
 }
 
@@ -79,6 +80,11 @@ export const operationMenuChoices = [
       name: operationsMenuTypes.PERSONAL_SIGN,
       value: operationsMenuTypes.PERSONAL_SIGN,
       description: 'Calls personalSign',
+    },
+    {
+      name: operationsMenuTypes.BLOCK_NUMBER,
+      value: operationsMenuTypes.BLOCK_NUMBER,
+      description: 'Calls blockNumber via Infura direct call is infuraApiKey is set',
     },
     {
       name: operationsMenuTypes.BATCH_REQUEST,

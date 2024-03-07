@@ -2,13 +2,21 @@ import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
 import select from '@inquirer/select';
 import * as fs from 'fs';
 import qrcode from 'qrcode-terminal';
+import 'dotenv/config';
 import {
   batchRequestOperationChoices, batchRequestTypes,
   mainMenuChoices,
   mainMenuChoicesTypes, operationMenuChoices,
   operationsMenuTypes,
 } from './Menus';
-import { batchRequests, personalSignRequest, sendTransactionRequest, switchEthereumChain } from './RpcRequests';
+import {
+  addPolygonChain,
+  batchRequests,
+  getBlockNumber,
+  personalSignRequest,
+  sendTransactionRequest,
+  switchEthereumChain,
+} from './RpcRequests';
 import { chains } from './Constants';
 
 
@@ -23,6 +31,7 @@ const options: MetaMaskSDKOptions = {
     sdk: false,
   },
   checkInstallationImmediately: false,
+  infuraAPIKey: process.env.INFURA_API_KEY || '',
   modals: {
     install: ({ link }) => {
       qrcode.generate(link, { small: true }, (qr) => console.log(qr));
@@ -120,8 +129,20 @@ const presentBatchRequestMenu = async () => {
     case batchRequestTypes.SWITCH_CHAIN_SEND_TRANSACTION:
       let switchChainSendTransactionBatchRequestRPCs = [];
 
-      const newChainId = ethereum.chainId === chains.GOERLI ? chains.MAINNET : chains.GOERLI;
-      switchChainSendTransactionBatchRequestRPCs.push(switchEthereumChain(newChainId));
+      if (ethereum.chainId === chains.SEPOLIA.chainId) {
+        console.log(`Active chain is Sepolia already. Switching to mainnet first to then do the proper batch`);
+        try {
+          let switchChainResult = await ethereum.request(
+            switchEthereumChain(chains.MAINNET.chainId)
+          );
+          console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
+        } catch (e) {
+          console.log(`\nError: ${e.message}\n\n`);
+          return;
+        }
+      }
+
+      switchChainSendTransactionBatchRequestRPCs.push(switchEthereumChain(chains.SEPOLIA.chainId));
       switchChainSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.selectedAddress));
 
       try {
@@ -166,9 +187,19 @@ const presentAndSelectOperationsMenu = async () => {
     case operationsMenuTypes.SWITCH_ETHEREUM_CHAIN_SEPOLIA:
       try {
         const switchChainResult = await ethereum.request(
-          switchEthereumChain(chains.SEPOLIA)
+          switchEthereumChain(chains.SEPOLIA.chainId)
         );
         console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
+      } catch (e) {
+        console.log(`\nError: ${e.message}\n\n`);
+      }
+      break;
+    case operationsMenuTypes.ADD_ETHEREUM_CHAIN:
+      try {
+        const addChainResult = await ethereum.request(
+          addPolygonChain()
+        );
+        console.log(`\nAdd chain result: ${addChainResult}\n\n`);
       } catch (e) {
         console.log(`\nError: ${e.message}\n\n`);
       }
@@ -176,9 +207,18 @@ const presentAndSelectOperationsMenu = async () => {
     case operationsMenuTypes.SWITCH_ETHEREUM_CHAIN_POLYGON:
       try {
         const switchChainResult = await ethereum.request(
-          switchEthereumChain(chains.POLYGON)
+          switchEthereumChain(chains.POLYGON.chainId)
         );
         console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
+      } catch (e) {
+        console.log(`\nError: ${e.message}\n\n`);
+      }
+      break;
+    case operationsMenuTypes.BLOCK_NUMBER:
+      try {
+        const blockNumber = await ethereum.request(getBlockNumber());
+        const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura direct calls' : 'MetaMask (Wallet) provider';
+        console.log(`\nBlock number from ${gotFrom}: ${blockNumber}\n\n`);
       } catch (e) {
         console.log(`\nError: ${e.message}\n\n`);
       }
@@ -197,8 +237,13 @@ const presentAndSelectOperationsMenu = async () => {
 
 const createSession = async () => {
   console.log('Creating or resuming a Session');
-  const accounts = await sdk.connect();
-  console.log('connect request accounts', accounts);
+  const accounts =  sdk.connect().then((accounts) => {
+    console.log('connect request accounts', accounts);
+  }).catch((e) => {
+    console.log(`Error on bootstrap: ${e.message}`);
+    process.exit(1);
+  });
+
 
   ethereum = sdk.getProvider();
   attachListeners(ethereum);

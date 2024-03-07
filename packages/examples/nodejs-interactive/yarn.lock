@@ -941,6 +941,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.4.5":
+  version: 16.4.5
+  resolution: "dotenv@npm:16.4.5"
+  checksum: 301a12c3d44fd49888b74eb9ccf9f07a1f5df43f489e7fcb89647a2edcd84c42d6bc349dc8df099cd18f07c35c7b04685c1a4f3e6a6a9e6b30f8d48c15b7f49c
+  languageName: node
+  linkType: hard
+
 "eastasianwidth@npm:^0.2.0":
   version: 0.2.0
   resolution: "eastasianwidth@npm:0.2.0"
@@ -2182,6 +2189,7 @@ __metadata:
     "@metamask/sdk": ^0.16.0
     "@types/node": ^20.4.1
     "@types/qrcode-terminal": ^0.12.2
+    dotenv: ^16.4.5
     qrcode-terminal: ^0.12.0
     ts-node: ^10.9.1
     tsc: ^2.0.4
