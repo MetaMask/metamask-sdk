@@ -1,16 +1,16 @@
 {
   "name": "sdk-playground",
-  "version": "0.14.0",
+  "version": "0.16.0",
   "private": true,
   "homepage": "./",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@metamask/sdk": "^0.14.1",
+    "@metamask/sdk": "^0.16.0",
     "@metamask/sdk-lab": "^0.1.5",
-    "@metamask/sdk-react": "^0.14.1",
-    "@metamask/sdk-ui": "^0.1.6",
+    "@metamask/sdk-react": "^0.16.0",
+    "@metamask/sdk-ui": "^0.3.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -20,6 +20,7 @@
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "next-qrcode": "^2.5.1",
+    "process": "^0.11.10",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native-device-info": "^10.11.0",
@@ -35,6 +36,7 @@
     "react-router-dom": "^6.21.1",
     "react-scripts": "5.0.1",
     "stream-browserify": "^3.0.0",
+    "vm-browserify": "^1.1.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
