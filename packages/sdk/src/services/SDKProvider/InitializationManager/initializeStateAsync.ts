@@ -28,6 +28,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     instance.state = {
       autoRequestAccounts: false,
       providerStateRequested: false,
+      chainId: '',
     };
   }
 
@@ -61,7 +62,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     }
 
     logger(
-      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.selectedAddress} `,
+      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.getSelectedAddress()} `,
       initialState,
     );
 
@@ -70,12 +71,12 @@ export async function initializeStateAsync(instance: SDKProvider) {
         `[SDKProvider: initializeStateAsync()] initial state doesn't contain accounts`,
       );
 
-      if (instance.selectedAddress) {
+      if (instance.getSelectedAddress()) {
         logger(
           `[SDKProvider: initializeStateAsync()] using instance.selectedAddress instead`,
         );
 
-        initialState.accounts = [instance.selectedAddress];
+        initialState.accounts = [instance.getSelectedAddress() as string];
       } else {
         logger(
           `[SDKProvider: initializeStateAsync()] Fetch accounts remotely.`,

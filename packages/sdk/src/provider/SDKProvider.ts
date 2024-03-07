@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { logger } from '../utils/logger';
 import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
@@ -31,12 +31,16 @@ export interface SDKProviderProps {
 interface SDKProviderState {
   autoRequestAccounts: boolean;
   providerStateRequested: boolean;
+  chainId: string;
+  networkVersion?: string;
 }
 
 export class SDKProvider extends MetaMaskInpageProvider {
   public state: SDKProviderState = {
     autoRequestAccounts: false,
     providerStateRequested: false,
+    chainId: '',
+    networkVersion: '',
   };
 
   constructor({
@@ -54,6 +58,18 @@ export class SDKProvider extends MetaMaskInpageProvider {
       `[SDKProvider: constructor()] autoRequestAccounts=${autoRequestAccounts}`,
     );
     this.state.autoRequestAccounts = autoRequestAccounts;
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    this.request({ method: 'eth_chainId' }).then((chainId) => {
+      console.log('chainId =>', chainId);
+      this.state.chainId = chainId as string;
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    this.request({ method: 'net_version' }).then((networkVersion) => {
+      console.log('networkVersion =>', networkVersion);
+      this.state.networkVersion = networkVersion as string;
+    });
   }
 
   async forceInitializeState() {
@@ -76,6 +92,31 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
   getSDKProviderState() {
     return this.state;
+  }
+
+  getSelectedAddress() {
+    // Send request using ethereum.request API
+    const { accounts } = this._state;
+    console.log(
+      '🟠 ~ file: SDKProvider.ts:84 ~ SDKProvider ~ getSelectedAddress ~ accounts:',
+      accounts,
+    );
+
+    // Check if accounts are available
+    if (!accounts || accounts.length === 0) {
+      console.log('No accounts found');
+      return null;
+    }
+    // Return the first account as the selected address
+    return accounts[0] || '';
+  }
+
+  getChainId() {
+    return this.state.chainId;
+  }
+
+  getNetworkVersion() {
+    return this.state.networkVersion;
   }
 
   setSDKProviderState(state: Partial<SDKProviderState>) {
@@ -117,6 +158,9 @@ export class SDKProvider extends MetaMaskInpageProvider {
     chainId,
     networkVersion,
   }: { chainId?: string; networkVersion?: string } = {}) {
+    this.state.chainId = chainId as string;
+    this.state.networkVersion = networkVersion as string;
+
     handleChainChanged({
       instance: this,
       chainId,

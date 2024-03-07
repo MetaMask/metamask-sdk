@@ -109,10 +109,15 @@ const initializeMobileProvider = ({
     const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
-    let { selectedAddress, chainId } = Ethereum.getProvider();
 
-    selectedAddress = selectedAddress ?? cachedAccountAddress;
-    chainId = chainId ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
+    const provider = Ethereum.getProvider();
+
+    let selectedAddress: string | null = null;
+    let chainId: string | null = null;
+
+    selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
+    chainId =
+      provider.getChainId() ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {

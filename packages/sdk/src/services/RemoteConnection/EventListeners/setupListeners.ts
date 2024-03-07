@@ -1,4 +1,4 @@
-import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
+import { RequestArguments } from '@metamask/providers';
 import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
