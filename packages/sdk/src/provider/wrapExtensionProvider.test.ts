@@ -2,6 +2,7 @@ import { Duplex } from 'stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RPC_METHODS } from '../config';
 import * as loggerModule from '../utils/logger';
+import { MetaMaskSDK } from '../sdk';
 import { wrapExtensionProvider } from './wrapExtensionProvider';
 
 jest.mock('stream', () => ({
@@ -35,16 +36,17 @@ function createMockExtensionProvider(): MetaMaskInpageProvider {
 
 describe('wrapExtensionProvider', () => {
   const spyLogger = jest.spyOn(loggerModule, 'logger');
+  const sdkInstance = { state: {} } as unknown as MetaMaskSDK;
 
   it('initializes Proxy around SDKProvider', () => {
     const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     expect(typeof wrapped).toBe('object');
   });
 
   it('calls the original request method', async () => {
     const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     const mockRequest = jest.fn();
     provider.request = mockRequest;
 
@@ -57,7 +59,7 @@ describe('wrapExtensionProvider', () => {
 
   it('logs debug information if debug flag is enabled', async () => {
     const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
 
     await wrapped.request({ method: 'someMethod' });
 
@@ -69,7 +71,7 @@ describe('wrapExtensionProvider', () => {
 
   it('handles special method correctly', async () => {
     const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     const mockRequest = jest.fn().mockResolvedValue('response');
     provider.request = mockRequest;
 

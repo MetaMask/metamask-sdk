@@ -49,7 +49,17 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
     ? `${targetUrl}debug`
     : `${targetUrl}/debug`;
 
-  const body = JSON.stringify(parameters);
+  const flatParams: {
+    [key: string]: unknown;
+  } = { ...parameters, params: undefined };
+  // remove params from the event and append each property to the object instead
+  if (parameters.params) {
+    for (const [key, value] of Object.entries(parameters.params)) {
+      flatParams[key] = value;
+    }
+  }
+
+  const body = JSON.stringify(flatParams);
 
   logger.RemoteCommunication(
     `[sendBufferedEvents] Sending ${analyticsBuffer.length} analytics events to ${serverUrl}`,
