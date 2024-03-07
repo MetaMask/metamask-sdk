@@ -8,7 +8,7 @@ import {
   mainMenuChoices,
   mainMenuChoicesTypes, operationMenuChoices,
   operationsMenuTypes,
-} from './Menus';
+} from './menus';
 import {
   addPolygonChain,
   batchRequests,
@@ -16,8 +16,8 @@ import {
   personalSignRequest,
   sendTransactionRequest,
   switchEthereumChain,
-} from './RpcRequests';
-import { chains } from './Constants';
+} from './rpcRequests';
+import { chains } from './constants';
 
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 

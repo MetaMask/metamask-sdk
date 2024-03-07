@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer';
-import { RpcRequest, chains } from './Constants';
+import { RpcRequest, chains } from './constants';
 
 export const sendTransactionRequest = (selectedAddress: string, amount: string = '0x5AF3107A4000'): RpcRequest => {
   const to = '0x0000000000000000000000000000000000000000';
