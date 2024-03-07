@@ -626,7 +626,10 @@ const Demo = () => {
           <MetaMaskButton />
         </div>
         <div
-          style={{ display: 'flex', flexDirection: !connected ? "column" : "row-reverse" }}
+          style={{
+            display: 'flex',
+            flexDirection: !connected ? 'column' : 'row-reverse',
+          }}
         >
           <div
             style={
@@ -761,8 +764,11 @@ const Demo = () => {
                   >
                     Switch to mainnet
                   </button>
-                  
-                  <button style={{ padding: 10, margin: 10 }} onClick={ethAccounts}>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={ethAccounts}
+                  >
                     eth_accounts
                   </button>
 
@@ -939,7 +945,7 @@ const Demo = () => {
           </div>
         </div>
       </main>
-      
+
       <br></br>
       <br></br>
       <br></br>
