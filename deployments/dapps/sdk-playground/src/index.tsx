@@ -119,6 +119,7 @@ root.render(
             onHomePress={() => {
               router.navigate('/');
             }}
+            options={{ showQRCode: true }}
           />
           <RouterProvider router={router} />
         </UIProvider>
