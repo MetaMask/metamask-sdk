@@ -24,7 +24,7 @@ const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
   dappMetadata: {
-    name: 'NodeJS example',
+    name: 'NodeJS Interactive example',
     url:  'https://metamask.io',
     iconUrl: 'https://avatars.githubusercontent.com/u/9950313?s=200&v=4'
   },
