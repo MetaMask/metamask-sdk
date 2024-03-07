@@ -51,7 +51,9 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
 
   const flatParams: {
     [key: string]: unknown;
-  } = { ...parameters, params: undefined };
+  } = { ...parameters };
+  delete flatParams.params;
+
   // remove params from the event and append each property to the object instead
   if (parameters.params) {
     for (const [key, value] of Object.entries(parameters.params)) {
