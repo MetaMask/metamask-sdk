@@ -394,7 +394,6 @@ export function toDataUrl(address: string) {
   if (address && cache) {
     return cache;
   }
-  console.log('🟠 ~ file: blockies.ts:395 ~ toDataUrl ~ address:', address);
 
   const opts = buildOpts({ seed: address.toLowerCase() });
 

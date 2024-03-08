@@ -93,8 +93,10 @@ const nextConfig = withExpo({
         },
       },
       {
+        // This rule addresses an issue where .mjs files from @metamask/providers aren't correctly processed,
+        // leading to runtime errors. By setting `type: 'javascript/auto'`, we ensure webpack treats these
+        // files as JavaScript modules, preventing the 'Class extends value #<Object> is not a constructor or null' error.
         test: /\.mjs$/,
-        // Use a regex to match the specific path of the @metamask/providers package
         include: /node_modules\/@metamask\/providers/,
         type: 'javascript/auto',
       },
