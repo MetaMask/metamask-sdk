@@ -8532,10 +8532,14 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
+    "@metamask/json-rpc-engine": ^7.3.2
+    "@metamask/json-rpc-middleware-stream": ^6.0.2
+    "@metamask/object-multiplex": ^2.0.0
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
+    "@metamask/utils": ^8.3.0
     "@react-native-async-storage/async-storage": ^1.17.11
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-json": ^6.0.0
@@ -8551,6 +8555,7 @@ __metadata:
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
     debug: ^4.3.4
+    detect-browser: ^5.2.0
     eciesjs: ^0.3.15
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0

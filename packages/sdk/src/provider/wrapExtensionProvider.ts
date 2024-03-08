@@ -46,8 +46,8 @@ export const wrapExtensionProvider = ({
               responses.push(response);
             }
 
-            return responses;
-          }
+            return target.request(args);
+          };
 
           return target.request(args);
         };

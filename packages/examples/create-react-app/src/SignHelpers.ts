@@ -91,7 +91,6 @@ export const send_eth_signTypedData_v4 = async (
 export const send_personal_sign = async (provider: SDKProvider) => {
   try {
     const from = provider.getSelectedAddress();
-
     const message = 'Hello World from the Create React dapp!';
     const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
