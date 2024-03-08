@@ -1,4 +1,5 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
+import { MetaMaskSDK } from '../sdk';
 import { wrapExtensionProvider } from '../provider/wrapExtensionProvider';
 import { MetaMaskSDK } from '../sdk';
 import { eip6963RequestProvider } from './eip6963RequestProvider';

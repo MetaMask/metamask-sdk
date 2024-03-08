@@ -47,7 +47,7 @@ export const wrapExtensionProvider = ({
             }
 
             return target.request(args);
-          };
+          }
 
           return target.request(args);
         };

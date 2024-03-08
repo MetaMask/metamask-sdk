@@ -238,6 +238,7 @@ const MetaMaskProviderClient = ({
       setReady(true);
       setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
+
   }, [sdkOptions]);
 
   useEffect(() => {
@@ -245,11 +246,15 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    logger(`[MetaMaskProviderClient] init SDK Provider listeners`);
+    logger(`[MetaMaskProviderClient] init SDK Provider listeners`, sdk);
 
     setExtensionActive(sdk.isExtensionActive());
 
     const activeProvider = sdk.getProvider();
+    if(!activeProvider) {
+      console.warn(`[MetaMaskProviderClient] activeProvider is undefined.`);
+      return;
+    }
     setConnected(activeProvider.isConnected());
     setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
@@ -286,6 +291,7 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('disconnect', onDisconnect);
       activeProvider.removeListener('accountsChanged', onAccountsChanged);
       activeProvider.removeListener('chainChanged', onChainChanged);
+      setReady(false);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
   }, [trigger, sdk, ready]);
