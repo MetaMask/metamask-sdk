@@ -5,7 +5,8 @@ import { send_eth_signTypedData_v4, send_personal_sign } from './SignHelpers';
 
 export const App = () => {
   const [response, setResponse] = useState<unknown>('');
-  const { sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
+  const { sdk, connected, connecting, provider, chainId, account, balance } =
+    useSDK();
 
   const languages = sdk?.availableLanguages ?? ['en'];
 
@@ -31,7 +32,7 @@ export const App = () => {
   const connectAndSign = async () => {
     try {
       const signResult = await sdk?.connectAndSign({
-        msg: 'Connect + Sign message'
+        msg: 'Connect + Sign message',
       });
       setResponse(signResult);
     } catch (err) {
@@ -48,28 +49,31 @@ export const App = () => {
   };
 
   const readOnlyCalls = async () => {
-     if(!sdk?.hasReadOnlyRPCCalls() && !provider){
-         setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
-         return;
-     }
-     try {
-       const result = await provider.request({
-         method: 'eth_blockNumber',
-         params: [],
-       });
-       const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
-       setResponse(`(${gotFrom}) ${result}`);
-     } catch (e) {
-       console.log(`error getting the blockNumber`, e);
-       setResponse('error getting the blockNumber');
-     }
+    if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
+      setResponse(
+        'readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options',
+      );
+      return;
+    }
+    try {
+      const result = await provider.request({
+        method: 'eth_blockNumber',
+        params: [],
+      });
+      const gotFrom = sdk.hasReadOnlyRPCCalls()
+        ? 'infura'
+        : 'MetaMask provider';
+      setResponse(`(${gotFrom}) ${result}`);
+    } catch (e) {
+      console.log(`error getting the blockNumber`, e);
+      setResponse('error getting the blockNumber');
+    }
   };
 
   const addEthereumChain = () => {
     if (!provider) {
       throw new Error(`invalid ethereum provider`);
     }
-
 
     provider
       .request({
@@ -92,7 +96,7 @@ export const App = () => {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: provider?.selectedAddress, // must match user's active address.
+      from: provider?.getSelectedAddress(), // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
@@ -115,7 +119,10 @@ export const App = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_eth_signTypedData_v4(provider, provider.chainId);
+    const result = await send_eth_signTypedData_v4(
+      provider,
+      provider.getChainId(),
+    );
     setResponse(result);
   };
 
@@ -148,7 +155,7 @@ export const App = () => {
   return (
     <div className="App">
       <h1>Create-React-App Example</h1>
-      <div className={"Info-Status"}>
+      <div className={'Info-Status'}>
         <p>{`Connected chain: ${chainId}`}</p>
         <p>{`Connected account: ${account}`}</p>
         <p>{`Account balance: ${balance}`}</p>
@@ -178,7 +185,11 @@ export const App = () => {
 
       {connected ? (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Request Accounts
           </button>
 
@@ -206,7 +217,7 @@ export const App = () => {
             Send transaction
           </button>
 
-          { provider?.chainId === '0x1' ? (
+          {provider?.getChainId() === '0x1' ? (
             <button
               className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}
@@ -250,10 +261,18 @@ export const App = () => {
         </div>
       ) : (
         <div>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connect}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connect}
+          >
             Connect
           </button>
-          <button className={'Button-Normal'} style={{ padding: 10, margin: 10 }} onClick={connectAndSign}>
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
+            onClick={connectAndSign}
+          >
             Connect w/ Sign
           </button>
         </div>

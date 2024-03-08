@@ -39,11 +39,9 @@ export function handleDisconnect({
   );
 
   if (terminate) {
-    instance.chainId = null;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._state.accounts = null;
-    instance.selectedAddress = null;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._state.isUnlocked = false;

@@ -41,7 +41,6 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
     try {
       metamaskBrowserExtension = await getBrowserExtension({
         mustBeMetaMask: true,
-        sdkInstance: instance,
       });
 
       window.extension = metamaskBrowserExtension;

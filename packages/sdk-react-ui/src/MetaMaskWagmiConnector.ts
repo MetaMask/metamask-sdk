@@ -76,10 +76,7 @@ class MetaMaskConnector extends InjectedConnector {
         'accountsChanged',
         this.onAccountsChanged as any,
       );
-      this.provider?.removeListener(
-        'chainChanged',
-        this.onChainChanged as any,
-      );
+      this.provider?.removeListener('chainChanged', this.onChainChanged as any);
       this.provider?.removeListener('disconnect', this.onDisconnect as any);
     }
 
@@ -148,7 +145,8 @@ class MetaMaskConnector extends InjectedConnector {
         await waitForAuthorized();
       }
 
-      let providerChainId: string | null | undefined = this.provider?.chainId;
+      let providerChainId: string | null | undefined =
+        this.provider?.getChainId();
       if (!providerChainId) {
         // request chainId from provider
         providerChainId = (await this.provider?.request({

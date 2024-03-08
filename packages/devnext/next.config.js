@@ -21,7 +21,7 @@ const nextConfig = withExpo({
     'expo-module-core',
     'expo-modules-core',
     'react-native-jazzicon',
-    "@expo/vector-icons",
+    '@expo/vector-icons',
     '@metamask/sdk-communication-layer',
     '@metamask/sdk',
     '@metamask/sdk-install-modal-web',
@@ -45,11 +45,23 @@ const nextConfig = withExpo({
         'react-native$': require.resolve('react-native-web'),
         // 'expo-asset': path.resolve(__dirname, './node_modules/expo-asset'),
         'react-dom': path.resolve(__dirname, './node_modules/react-dom'),
-        'react-native-reanimated': path.resolve(__dirname, './node_modules/react-native-reanimated'),
-        'react-native-paper': path.resolve(__dirname, './node_modules/react-native-paper'),
-        'react-native-gesture-handler': path.resolve(__dirname, './node_modules/react-native-gesture-handler'),
-        'react-native-safe-area-context': path.resolve(__dirname, './node_modules/react-native-safe-area-context'),
-      }
+        'react-native-reanimated': path.resolve(
+          __dirname,
+          './node_modules/react-native-reanimated',
+        ),
+        'react-native-paper': path.resolve(
+          __dirname,
+          './node_modules/react-native-paper',
+        ),
+        'react-native-gesture-handler': path.resolve(
+          __dirname,
+          './node_modules/react-native-gesture-handler',
+        ),
+        'react-native-safe-area-context': path.resolve(
+          __dirname,
+          './node_modules/react-native-safe-area-context',
+        ),
+      },
     };
     config.module.rules.push(
       {
@@ -68,7 +80,9 @@ const nextConfig = withExpo({
         test: /\.(js|jsx|mjs)$/,
         include: [
           // Add the path to the problematic module
-          path.resolve('../../packages/sdk-ui/node_modules/@react-native/assets-registry/registry.js'),
+          path.resolve(
+            '../../packages/sdk-ui/node_modules/@react-native/assets-registry/registry.js',
+          ),
           // Add other React Native modules if needed
         ],
         use: {
@@ -77,6 +91,12 @@ const nextConfig = withExpo({
             presets: ['@babel/preset-react', '@babel/preset-flow'],
           },
         },
+      },
+      {
+        test: /\.mjs$/,
+        // Use a regex to match the specific path of the @metamask/providers package
+        include: /node_modules\/@metamask\/providers/,
+        type: 'javascript/auto',
       },
       {
         test: /\.svg$/i,
@@ -91,10 +111,13 @@ const nextConfig = withExpo({
     );
 
     // write config to disk for debugging
-    fs.writeFileSync('./next.webpack.config.json', JSON.stringify(config.resolve, null, 2));
+    fs.writeFileSync(
+      './next.webpack.config.json',
+      JSON.stringify(config.resolve, null, 2),
+    );
     console.log(`Wrote webpack config to ./next.webpack.config.json`);
     return config;
-  }
+  },
 });
 
 module.exports = nextConfig;

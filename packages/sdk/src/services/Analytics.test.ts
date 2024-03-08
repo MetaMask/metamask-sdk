@@ -1,26 +1,16 @@
 import {
   SendAnalytics,
   TrackingEvents,
-  AnalyticsProps,
 } from '@metamask/sdk-communication-layer';
 import * as loggerModule from '../utils/logger';
-import { Analytics } from './Analytics';
-// Replace with your actual import path
+import { Analytics, AnalyticsProps } from './Analytics'; // Replace with your actual import path
+
 jest.mock('@metamask/sdk-communication-layer');
 
 const mockSendAnalytics = SendAnalytics as jest.Mock;
-interface Props {
-  serverUrl: string;
-  originatorInfo: AnalyticsProps['originationInfo'];
-  enabled?: boolean;
-}
 
 describe('Analytics', () => {
-  let props: {
-    serverUrl: string;
-    originatorInfo: AnalyticsProps['originationInfo'];
-    enabled?: boolean;
-  };
+  let props: AnalyticsProps;
   const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
@@ -29,12 +19,12 @@ describe('Analytics', () => {
     mockSendAnalytics.mockResolvedValue(undefined);
 
     props = {
-      serverUrl: 'https://custom.server.url',
-      originatorInfo: {
-        url: 'https://dapp.url',
-        title: 'DApp Name',
+      serverURL: 'https://test.server.url',
+      metadata: {
+        url: 'https://test.url',
+        title: 'Test Title',
         platform: 'web',
-        source: 'custom-source',
+        source: 'test-source',
       },
     };
   });
@@ -46,7 +36,7 @@ describe('Analytics', () => {
     });
 
     it('should initialize with custom values', () => {
-      const customProps: Props = {
+      const customProps: AnalyticsProps = {
         ...props,
         enabled: true,
       };
@@ -64,7 +54,7 @@ describe('Analytics', () => {
         expect.objectContaining({
           event,
         }),
-        props.serverUrl,
+        props.serverURL,
       );
     });
 

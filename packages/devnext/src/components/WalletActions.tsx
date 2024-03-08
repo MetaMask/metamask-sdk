@@ -59,7 +59,7 @@ export const WalletActions = () => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: parseInt(window.ethereum?.chainId ?? '', 16),
+        chainId: parseInt(window.ethereum?.getChainId() ?? '', 16),
         // Give a user friendly name to the specific contract you are signing for.
         name: 'Ether Mail',
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -125,7 +125,7 @@ export const WalletActions = () => {
       },
     });
 
-    const from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.getSelectedAddress();
 
     console.debug(`sign from: ${from}`);
     try {

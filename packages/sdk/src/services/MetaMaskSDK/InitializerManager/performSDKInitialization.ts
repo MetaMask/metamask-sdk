@@ -83,7 +83,6 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     runtimeLogging.keyExchangeLayer = true;
     runtimeLogging.remoteLayer = true;
     runtimeLogging.serviceLayer = true;
-    runtimeLogging.plaintext = true;
   }
 
   await initializeI18next(instance);

@@ -16,7 +16,10 @@ const packageJson = require('./package.json');
 const isDev = process.env.NODE_ENV === 'dev';
 
 // Base external dependencies across different builds
-const baseExternalDeps = ['@react-native-async-storage/async-storage'];
+const baseExternalDeps = [
+  '@react-native-async-storage/async-storage',
+  'extension-port-stream',
+];
 
 // Dependencies for rollup to consider as external
 const listDepForRollup = [...baseExternalDeps];
@@ -59,7 +62,9 @@ const config = [
         preferBuiltins: false,
         exportConditions: ['browser'],
       }),
-      commonjs({ transformMixedEsModules: true }),
+      commonjs({
+        transformMixedEsModules: true,
+      }),
       globals(),
       builtins({ crypto: true }),
       json(),

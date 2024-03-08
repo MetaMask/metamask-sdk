@@ -72,22 +72,16 @@ describe('MetaMaskSDK', () => {
       expect(sdk.getProvider()).toBe(mockProvider);
     });
 
-    it('should log warn message when getting undefined provider', () => {
-      const spyConsoleWarn = jest.spyOn(console, 'warn');
-      sdk.getProvider();
-
-      expect(spyConsoleWarn).toHaveBeenCalledWith(
-        'MetaMaskSDK: No active provider found',
+    it('should throw error when getting undefined provider', () => {
+      expect(() => sdk.getProvider()).toThrow(
+        'SDK state invalid -- undefined provider',
       );
     });
 
-    it('should log warn message if SDK is not initialized when calling getProvider', () => {
-      const spyConsoleWarn = jest.spyOn(console, 'warn');
-
+    it('should throw error if SDK is not initialized when calling getProvider', () => {
       sdk.activeProvider = undefined;
-      sdk.getProvider();
-      expect(spyConsoleWarn).toHaveBeenCalledWith(
-        'MetaMaskSDK: No active provider found',
+      expect(() => sdk.getProvider()).toThrow(
+        'SDK state invalid -- undefined provider',
       );
     });
   });

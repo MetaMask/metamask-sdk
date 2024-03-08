@@ -47,12 +47,6 @@ describe('handleSendMessage', () => {
           areKeysExchanged: jest.fn().mockReturnValue(true),
         },
       },
-      remote: {
-        state: {
-          analytics: true,
-          sdkVersion: '1.0.0',
-        },
-      },
     } as unknown as SocketService;
   });
 

@@ -166,7 +166,7 @@ const MetaMaskProviderClient = ({
   }, [rpcHistory, status]);
 
   useEffect(() => {
-    const currentAddress = provider?.selectedAddress;
+    const currentAddress = provider?.getSelectedAddress();
     if (currentAddress && currentAddress != account) {
       logger(
         `[MetaMaskProviderClient] account changed detected from ${account} to ${currentAddress}`,
@@ -238,7 +238,6 @@ const MetaMaskProviderClient = ({
       setReady(true);
       setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
-
   }, [sdkOptions]);
 
   useEffect(() => {
@@ -246,19 +245,15 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    logger(`[MetaMaskProviderClient] init SDK Provider listeners`, sdk);
+    logger(`[MetaMaskProviderClient] init SDK Provider listeners`);
 
     setExtensionActive(sdk.isExtensionActive());
 
     const activeProvider = sdk.getProvider();
-    if(!activeProvider) {
-      console.warn(`[MetaMaskProviderClient] activeProvider is undefined.`);
-      return;
-    }
     setConnected(activeProvider.isConnected());
-    setAccount(activeProvider.selectedAddress || undefined);
+    setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
-    setChainId(activeProvider.chainId || undefined);
+    setChainId(activeProvider.getChainId() || undefined);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);
@@ -291,7 +286,6 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('disconnect', onDisconnect);
       activeProvider.removeListener('accountsChanged', onAccountsChanged);
       activeProvider.removeListener('chainChanged', onChainChanged);
-      setReady(false);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
   }, [trigger, sdk, ready]);

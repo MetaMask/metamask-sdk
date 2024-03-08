@@ -23,7 +23,6 @@ import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { logger } from './utils/logger';
-import { RemoteCommunication } from './RemoteCommunication';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -33,7 +32,6 @@ export interface SocketServiceProps {
   communicationServerUrl: string;
   context: string;
   ecies?: ECIESProps;
-  remote: RemoteCommunication;
   logging?: CommunicationLayerLoggingOptions;
 }
 
@@ -54,7 +52,6 @@ export interface SocketServiceState {
   hasPlaintext: boolean;
   socket?: Socket;
   setupChannelListeners?: boolean;
-  analytics?: boolean;
   keyExchange?: KeyExchange;
 }
 
@@ -89,8 +86,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl: '',
   };
 
-  remote: RemoteCommunication;
-
   constructor({
     otherPublicKey,
     reconnect,
@@ -99,7 +94,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl,
     context,
     ecies,
-    remote,
     logging,
   }: SocketServiceProps) {
     super();
@@ -108,7 +102,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.state.context = context;
     this.state.communicationLayerPreference = communicationLayerPreference;
     this.state.debug = logging?.serviceLayer === true;
-    this.remote = remote;
 
     if (logging?.serviceLayer === true) {
       debug.enable('SocketService:Layer');

@@ -33,8 +33,9 @@ describe('setupAnalytics', () => {
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
-      serverUrl: DEFAULT_SERVER_URL,
-      originatorInfo: {
+      serverURL: DEFAULT_SERVER_URL,
+      debug: undefined,
+      metadata: {
         url: '',
         title: '',
         platform: '',
@@ -56,8 +57,8 @@ describe('setupAnalytics', () => {
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
-      serverUrl: 'https://custom.server.url',
-      originatorInfo: {
+      serverURL: 'https://custom.server.url',
+      metadata: {
         url: 'https://dapp.url',
         title: 'DApp Name',
         platform: 'web',
