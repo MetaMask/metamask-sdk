@@ -1,20 +1,8 @@
-import { Duplex } from 'stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RPC_METHODS } from '../config';
 import * as loggerModule from '../utils/logger';
+import { MetaMaskSDK } from '../sdk';
 import { wrapExtensionProvider } from './wrapExtensionProvider';
-
-jest.mock('stream', () => ({
-  Duplex: class MockDuplex {
-    write() {
-      // Intentionally empty for testing
-    }
-
-    read() {
-      // Intentionally empty for testing
-    }
-  },
-}));
 
 jest.mock('@metamask/providers', () => {
   return {
@@ -27,24 +15,37 @@ jest.mock('@metamask/providers', () => {
   };
 });
 
-function createMockExtensionProvider(): MetaMaskInpageProvider {
-  const defaultConnectionStream = new Duplex();
-
-  return new MetaMaskInpageProvider(defaultConnectionStream);
-}
-
 describe('wrapExtensionProvider', () => {
+  let sdkInstance: MetaMaskSDK;
+  let mockExtensionProvider: MetaMaskInpageProvider;
   const spyLogger = jest.spyOn(loggerModule, 'logger');
 
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    sdkInstance = {
+      options: {
+        dappMetadata: {},
+      },
+      platformManager: {
+        getPlatformType: jest.fn(),
+      },
+    } as unknown as MetaMaskSDK;
+
+    mockExtensionProvider = {
+      request: jest.fn(),
+    } as unknown as MetaMaskInpageProvider;
+  });
+
   it('initializes Proxy around SDKProvider', () => {
-    const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const provider = mockExtensionProvider;
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     expect(typeof wrapped).toBe('object');
   });
 
   it('calls the original request method', async () => {
-    const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const provider = mockExtensionProvider;
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     const mockRequest = jest.fn();
     provider.request = mockRequest;
 
@@ -56,8 +57,8 @@ describe('wrapExtensionProvider', () => {
   });
 
   it('logs debug information if debug flag is enabled', async () => {
-    const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const provider = mockExtensionProvider;
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
 
     await wrapped.request({ method: 'someMethod' });
 
@@ -68,8 +69,8 @@ describe('wrapExtensionProvider', () => {
   });
 
   it('handles special method correctly', async () => {
-    const provider = createMockExtensionProvider();
-    const wrapped = wrapExtensionProvider({ provider });
+    const provider = mockExtensionProvider;
+    const wrapped = wrapExtensionProvider({ provider, sdkInstance });
     const mockRequest = jest.fn().mockResolvedValue('response');
     provider.request = mockRequest;
 

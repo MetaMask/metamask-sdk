@@ -2,6 +2,7 @@ import {
   CommunicationLayerPreference,
   EventType,
   PlatformType,
+  TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import { logger } from '../utils/logger';
 import packageJson from '../../package.json';
@@ -158,6 +159,10 @@ const initializeMobileProvider = ({
     if (rpcEndpoint && isReadOnlyMethod) {
       try {
         const params = args?.[0]?.params;
+        sdk.analytics?.send({
+          event: TrackingEvents.SDK_RPC_REQUEST,
+          params: { method, from: 'readonly' },
+        });
         const readOnlyResponse = await rpcRequestHandler({
           rpcEndpoint,
           sdkInfo,

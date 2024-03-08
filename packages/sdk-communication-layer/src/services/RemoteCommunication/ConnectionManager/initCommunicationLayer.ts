@@ -74,6 +74,7 @@ export function initCommunicationLayer({
         context: state.context,
         ecies,
         logging: state.logging,
+        remote: instance,
       });
       break;
     default:
