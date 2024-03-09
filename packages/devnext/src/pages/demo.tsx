@@ -626,6 +626,7 @@ const Demo = () => {
           <MetaMaskButton />
         </div>
         <div
+          id="demo"
           style={{
             display: 'flex',
             flexDirection: !connected ? 'column' : 'row-reverse',
