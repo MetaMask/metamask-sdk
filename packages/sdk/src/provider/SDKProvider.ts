@@ -65,7 +65,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         this.state.chainId = chainId as string;
       })
       .catch((error) => {
-        console.error('Error =>', error);
+        throw error;
       });
 
     this.request({ method: 'net_version' })
@@ -74,7 +74,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         this.state.networkVersion = networkVersion as string;
       })
       .catch((error) => {
-        console.error('Error =>', error);
+        throw error;
       });
   }
 
