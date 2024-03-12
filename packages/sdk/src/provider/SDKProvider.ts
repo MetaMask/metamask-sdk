@@ -59,17 +59,23 @@ export class SDKProvider extends MetaMaskInpageProvider {
     );
     this.state.autoRequestAccounts = autoRequestAccounts;
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.request({ method: 'eth_chainId' }).then((chainId) => {
-      console.log('chainId =>', chainId);
-      this.state.chainId = chainId as string;
-    });
+    this.request({ method: 'eth_chainId' })
+      .then((chainId) => {
+        console.log('chainId =>', chainId);
+        this.state.chainId = chainId as string;
+      })
+      .catch((error) => {
+        console.error('Error =>', error);
+      });
 
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.request({ method: 'net_version' }).then((networkVersion) => {
-      console.log('networkVersion =>', networkVersion);
-      this.state.networkVersion = networkVersion as string;
-    });
+    this.request({ method: 'net_version' })
+      .then((networkVersion) => {
+        console.log('networkVersion =>', networkVersion);
+        this.state.networkVersion = networkVersion as string;
+      })
+      .catch((error) => {
+        console.error('Error =>', error);
+      });
   }
 
   async forceInitializeState() {
