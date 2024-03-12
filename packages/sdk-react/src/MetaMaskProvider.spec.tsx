@@ -27,6 +27,8 @@ describe('MetaMaskProvider Component', () => {
   const mockProviderOn = jest.fn();
   const mockIsConnected = jest.fn().mockReturnValue(true);
   const mockRequest = jest.fn();
+  const mockGetChainId = jest.fn()
+  const mockGetSelectedAddress = jest.fn()
 
   const dummyChild = <div>Test Child</div>;
   let sdkOptions: MetaMaskSDKOptions = {
@@ -48,6 +50,8 @@ describe('MetaMaskProvider Component', () => {
           init: initMock,
           isExtensionActive: mockIsExtensionActive,
           getProvider: jest.fn().mockReturnValue({
+            getSelectedAddress: mockGetSelectedAddress,
+            getChainId: mockGetChainId,
             isConnected: mockIsConnected,
             selectedAddress: '0xYourAddress',
             on: mockProviderOn,

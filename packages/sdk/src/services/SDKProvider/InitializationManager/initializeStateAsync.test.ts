@@ -8,12 +8,14 @@ describe('initializeStateAsync', () => {
   const mockRequest: jest.Mock = jest.fn();
   const mockLogError: jest.Mock = jest.fn();
   const mockInitializeState: jest.Mock = jest.fn();
+  const mockGetSelectedAddress = jest.fn();
   const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
+      getSelectedAddress: mockGetSelectedAddress,
       state: {},
       providerStateRequested: false,
       request: mockRequest,
@@ -92,7 +94,9 @@ describe('initializeStateAsync', () => {
 
   it('should use instance.selectedAddress when initialState does not contain accounts', async () => {
     const mockInitialState = { accounts: [] };
-    mockSDKProvider.selectedAddress = 'selectedAddress';
+
+    mockGetSelectedAddress.mockImplementation(() => 'selectedAddress');
+
     mockRequest.mockResolvedValue(mockInitialState);
 
     await initializeStateAsync(mockSDKProvider as SDKProvider);
