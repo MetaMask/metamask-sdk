@@ -2,20 +2,19 @@ import {
   CommunicationLayerPreference,
   EventType,
   PlatformType,
-  TrackingEvents,
 } from '@metamask/sdk-communication-layer';
-import { logger } from '../utils/logger';
 import packageJson from '../../package.json';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
-import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
+import { logger } from '../utils/logger';
 import { wait } from '../utils/wait';
 
 const initializeMobileProvider = ({
@@ -164,10 +163,12 @@ const initializeMobileProvider = ({
     if (rpcEndpoint && isReadOnlyMethod) {
       try {
         const params = args?.[0]?.params;
-        sdk.analytics?.send({
-          event: TrackingEvents.SDK_RPC_REQUEST,
-          params: { method, from: 'readonly' },
-        });
+
+        // TODO: decide if we want external provider tracking
+        // sdk.analytics?.send({
+        //   event: TrackingEvents.SDK_RPC_REQUEST,
+        //   params: { method, from: 'readonly' },
+        // });
         const readOnlyResponse = await rpcRequestHandler({
           rpcEndpoint,
           sdkInfo,
