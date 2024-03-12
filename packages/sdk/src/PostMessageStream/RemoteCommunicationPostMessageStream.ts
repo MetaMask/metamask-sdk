@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import {
   CommunicationLayerMessage,
   EventType,

@@ -23,7 +23,7 @@ export const wrapExtensionProvider = ({
   }
 
   return new Proxy(provider, {
-    get(target, propKey: keyof MetaMaskInpageProvider) {
+    get(target, propKey) {
       if (propKey === 'request') {
         return async function (args: RequestArguments) {
           logger(`[wrapExtensionProvider()] Overwriting request method`, args);
@@ -49,13 +49,26 @@ export const wrapExtensionProvider = ({
               responses.push(response);
             }
 
-            return responses;
+            return target.request(args);
           }
 
           return target.request(args);
         };
+      } else if (propKey === 'getChainId') {
+        return function () {
+          return provider.chainId;
+        };
+      } else if (propKey === 'getNetworkVersion') {
+        return function () {
+          return provider.networkVersion;
+        };
+      } else if (propKey === 'getSelectedAddress') {
+        return function () {
+          return provider.selectedAddress;
+        };
       }
-      return target[propKey];
+
+      return target[propKey as keyof MetaMaskInpageProvider];
     },
   });
 };

@@ -29,9 +29,9 @@ export const useHandleProviderEvent = ({
         setError(undefined);
         // Extract chainId and account from provider
         const extensionProvider = sdk?.getProvider();
-        const extensionChainId = extensionProvider?.chainId || undefined;
+        const extensionChainId = extensionProvider?.getChainId() || undefined;
         const extensionAccount =
-          extensionProvider?.selectedAddress || undefined;
+          extensionProvider?.getSelectedAddress() || undefined;
         logger(
           `[MetaMaskProvider: useHandleProviderEvent()] extensionProvider chainId=${extensionChainId} selectedAddress=${extensionAccount}`,
         );

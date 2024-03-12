@@ -118,7 +118,7 @@ const Demo = () => {
   };
 
   const sendTransaction = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
     // const selectedAddress = '0x8e0e30e296961f476e01184274ce85ae60184cb0'; // account1
 
     const to = '0x0000000000000000000000000000000000000000';
@@ -154,7 +154,7 @@ const Demo = () => {
     }
 
     const msgParams = JSON.stringify(getSignParams({ hexChainId: chainId }));
-    const from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.getSelectedAddress();
 
     setRequesting(true);
     setRpcError(null);
@@ -184,7 +184,7 @@ const Demo = () => {
   };
 
   const personalSign = async () => {
-    const from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.getSelectedAddress();
     setRequesting(true);
     setRpcError(null);
     setResponse(''); // reset response first
@@ -425,7 +425,7 @@ const Demo = () => {
   };
 
   const handleChainRPCs = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const rpcs: ChainRPC[] = [
       {
@@ -458,7 +458,7 @@ const Demo = () => {
   };
 
   const chainSwitchAndSignAndBack = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const initChainId = chainId;
     const targetChainId = initChainId === '0x5' ? '0xe704' : '0x5';
@@ -508,7 +508,7 @@ const Demo = () => {
   };
 
   const chainTransactions = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.

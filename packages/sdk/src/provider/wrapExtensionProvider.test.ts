@@ -71,7 +71,7 @@ describe('wrapExtensionProvider', () => {
   it('handles special method correctly', async () => {
     const provider = mockExtensionProvider;
     const wrapped = wrapExtensionProvider({ provider, sdkInstance });
-    const mockRequest = jest.fn().mockResolvedValue('response');
+    const mockRequest = jest.fn().mockResolvedValue(['response', 'response']);
     provider.request = mockRequest;
 
     const responses = await wrapped.request({

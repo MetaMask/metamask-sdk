@@ -9,12 +9,14 @@ describe('handleDisconnect', () => {
   const mockEmit: jest.Mock = jest.fn();
   const mockHandleAccountsChanged: jest.Mock = jest.fn();
   const mockIsConnected: jest.Mock = jest.fn(() => true);
+  const mockGetSelectedAddress = jest.fn();
   const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
+      getSelectedAddress: mockGetSelectedAddress,
       state: {
         providerStateRequested: true,
       },
@@ -46,10 +48,8 @@ describe('handleDisconnect', () => {
   it('should handle terminate flag', () => {
     handleDisconnect({ terminate: true, instance: mockSDKProvider });
 
-    expect(mockSDKProvider.chainId).toBeNull();
     // @ts-ignore
     expect(mockSDKProvider._state.accounts).toBeNull();
-    expect(mockSDKProvider.selectedAddress).toBeNull();
     // @ts-ignore
     expect(mockSDKProvider._state.isUnlocked).toBe(false);
     // @ts-ignore

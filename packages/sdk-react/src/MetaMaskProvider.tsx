@@ -163,7 +163,7 @@ const MetaMaskProviderClient = ({
   }, [rpcHistory, status]);
 
   useEffect(() => {
-    const currentAddress = provider?.selectedAddress;
+    const currentAddress = provider?.getSelectedAddress();
     if (currentAddress && currentAddress != account) {
       logger(
         `[MetaMaskProviderClient] account changed detected from ${account} to ${currentAddress}`,
@@ -251,9 +251,9 @@ const MetaMaskProviderClient = ({
       return;
     }
     setConnected(activeProvider.isConnected());
-    setAccount(activeProvider.selectedAddress || undefined);
+    setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
-    setChainId(activeProvider.chainId || undefined);
+    setChainId(activeProvider.getChainId() || undefined);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);
