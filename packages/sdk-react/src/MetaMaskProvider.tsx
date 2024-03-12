@@ -291,7 +291,6 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('disconnect', onDisconnect);
       activeProvider.removeListener('accountsChanged', onAccountsChanged);
       activeProvider.removeListener('chainChanged', onChainChanged);
-      setReady(false);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
   }, [trigger, sdk, ready]);
