@@ -3,19 +3,17 @@ import {
   ConnectionStatus,
   EventType,
   MetaMaskSDK,
-  MetaMaskSDKOptions,
-  SDKProvider,
-  ServiceStatus,
-  RPCMethodResult,
-  RPCMethodCache,
+  MetaMaskSDKOptions, RPCMethodCache, RPCMethodResult, SDKProvider,
+  ServiceStatus
 } from '@metamask/sdk';
+import debugPackage from 'debug';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, {
   createContext,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
 import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
@@ -26,7 +24,6 @@ import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnecti
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
 import { logger } from './utils/logger';
-import debugPackage from 'debug';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -192,9 +189,7 @@ const MetaMaskProviderClient = ({
       );
 
       setBalanceQuery(currentBalanceQuery);
-      sdk
-        ?.getProvider()
-        .request({
+      provider?.request({
           method: 'eth_getBalance',
           params: [account, 'latest'],
         })
@@ -217,7 +212,7 @@ const MetaMaskProviderClient = ({
     } else {
       setBalance(undefined);
     }
-  }, [account, chainId, balanceQuery]);
+  }, [account, provider, chainId, balanceQuery]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -291,7 +286,6 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('disconnect', onDisconnect);
       activeProvider.removeListener('accountsChanged', onAccountsChanged);
       activeProvider.removeListener('chainChanged', onChainChanged);
-      setReady(false);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
     };
   }, [trigger, sdk, ready]);

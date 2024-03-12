@@ -19,6 +19,11 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   metamask_batch: true,
   metamask_open: true,
 };
+
+export const lcAnalyticsRPCs = Object.keys(METHODS_TO_REDIRECT).map((method) =>
+  method.toLowerCase(),
+);
+
 export const STORAGE_PATH = '.sdk-comm';
 export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const RPC_METHODS = {
