@@ -85,3 +85,15 @@ table th, table td {
   color: #007bff; /* Or any color you prefer */
   font-size: 2rem; /* Adjust the size as needed */
 }
+
+@media (max-width:961px)  { 
+  /* includes following devices */
+  /* smartphones, iPhone, portrait 480x320 phones */ 
+  /* portrait e-readers (Nook/Kindle), smaller tablets @ 600 or @ 640 wide. */ 
+  /* portrait tablets, portrait iPad, landscape e-readers, landscape 800x480 or 854x480 phones */ 
+  /* tablet, landscape iPad, lo-res laptops ands desktops */ 
+  #demo {
+    /* always enforce column layout on mobile */
+    flex-direction: column !important;
+  }
+}
