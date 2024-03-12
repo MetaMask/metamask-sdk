@@ -1,6 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { RPC_METHODS } from '../config';
+import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
 
@@ -30,10 +30,12 @@ export const wrapExtensionProvider = ({
 
           const { method, params } = args;
 
-          sdkInstance.analytics?.send({
-            event: TrackingEvents.SDK_RPC_REQUEST,
-            params: { method, from: 'extension' },
-          });
+          if (lcAnalyticsRPCs.includes(method.toLowerCase())) {
+            sdkInstance.analytics?.send({
+              event: TrackingEvents.SDK_RPC_REQUEST,
+              params: { method, from: 'extension' },
+            });
+          }
 
           // special method handling
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
