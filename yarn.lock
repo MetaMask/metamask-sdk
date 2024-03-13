@@ -8238,10 +8238,13 @@ __metadata:
     tailwindcss: ^3.1.4
     typescript: ^4.7.4
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
     react:
       optional: false
     react-dom:
@@ -8382,7 +8385,7 @@ __metadata:
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
-    "@react-native-async-storage/async-storage": ^1.19.5
+    "@react-native-async-storage/async-storage": ^1.19.6
     "@react-native-community/eslint-config": ^3.2.0
     "@react-navigation/native": ^6.1.9
     "@rollup/plugin-babel": ^6.0.4
@@ -8466,6 +8469,7 @@ __metadata:
     typescript: ^5.2.2
     url-loader: ^4.1.1
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: ^0.72.4
@@ -8536,7 +8540,7 @@ __metadata:
     "@metamask/providers": ^15.0.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
-    "@react-native-async-storage/async-storage": ^1.17.11
+    "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-json": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.2
@@ -8592,10 +8596,13 @@ __metadata:
     util: ^0.12.4
     uuid: ^8.3.2
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
     react:
       optional: true
     react-dom:
@@ -10123,25 +10130,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.19.5":
-  version: 1.19.5
-  resolution: "@react-native-async-storage/async-storage@npm:1.19.5"
-  dependencies:
-    merge-options: ^3.0.4
-  peerDependencies:
-    react-native: ^0.0.0-0 || 0.60 - 0.72 || 1000.0.0
-  checksum: c0e9b58c8fcd2f14bfcf089d65a291cf795f391f5b3c84aaf0a04d9acdee47f99c26f0fa2ac63309097e6a4d2d08c823dce65af60b989659916e2be4a7b1d529
-  languageName: node
-  linkType: hard
-
 "@react-native-async-storage/async-storage@npm:^1.19.6":
-  version: 1.19.6
-  resolution: "@react-native-async-storage/async-storage@npm:1.19.6"
+  version: 1.22.3
+  resolution: "@react-native-async-storage/async-storage@npm:1.22.3"
   dependencies:
     merge-options: ^3.0.4
   peerDependencies:
     react-native: ^0.0.0-0 || >=0.60 <1.0
-  checksum: ecddc192a03854a0cca046379e971958300cad05d1558331d8dadeb56518feff34ab47aca666b5045946ec5c42efd21b774286d121e4034043cdba814dfb2a96
+  checksum: bbf0f49c4441361d24f5c7a236862757d1addb7332d4c11ed7238b7023e882d2280290059602d9099cee094f60aeb11aad3f2017652ab6e143544e61dccadb73
   languageName: node
   linkType: hard
 
