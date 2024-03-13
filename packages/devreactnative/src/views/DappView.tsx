@@ -108,7 +108,9 @@ export const DAPPView = (_props: DAPPViewProps) => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: ethereum?.chainId ? parseInt(ethereum.chainId, 16) : 1,
+        chainId: ethereum?.getChainId()
+          ? parseInt(ethereum.getChainId(), 16)
+          : 1,
         // Give a user friendly name to the specific contract you are signing for.
         name: 'Ether Mail',
         // If name isn't enough add verifying contract to make sure you are establishing contracts with the proper entity
@@ -174,7 +176,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
       },
     });
 
-    const from = ethereum?.selectedAddress;
+    const from = ethereum?.getSelectedAddress();
 
     const params = [from, msgParams];
     const method = 'eth_signTypedData_v4';
@@ -189,7 +191,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: ethereum?.selectedAddress, // must match user's active address.
+      from: ethereum?.getSelectedAddress(), // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
@@ -234,7 +236,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   const batch = async () => {
-    const selectedAddress = ethereum?.selectedAddress;
+    const selectedAddress = ethereum?.getSelectedAddress();
 
     const rpcs = [
       {
