@@ -107,7 +107,8 @@ export class SDKProvider extends MetaMaskInpageProvider {
       console.log('No accounts found');
       return null;
     }
-    return accounts[0] || '';
+
+    return accounts[0]?.toLowerCase() || '';
   }
 
   getChainId() {
