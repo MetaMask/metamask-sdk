@@ -139,7 +139,7 @@ export default {
         this.account = res[0];
         console.log('request accounts', res);
         this.lastResponse = '';
-        this.chainId = this.provider.chainId;
+        this.chainId = this.provider.getChainId();
       } catch (e) {
         console.log('request accounts ERR', e);
       }
@@ -251,7 +251,7 @@ export default {
     },
     async personal_sign() {
       try {
-        const from = this.provider.selectedAddress;
+        const from = this.provider.getSelectedAddress();
         const message = 'Hello World from the VueJS Example dapp!';
         const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
@@ -270,7 +270,7 @@ export default {
       const to = '0x0000000000000000000000000000000000000000';
       const transactionParameters = {
         to, // Required except during contract publications.
-        from: this.provider.selectedAddress, // must match user's active address.
+        from: this.provider.getSelectedAddress(), // must match user's active address.
         value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
       };
 
@@ -325,7 +325,7 @@ export default {
       window.location.reload();
     },
     async batchCalls() {
-      if (!this.provider?.selectedAddress) {
+      if (!this.provider?.getSelectedAddress()) {
         this.lastResponse = 'Please connect first';
         console.warn(`batchCalls: selectedAddress is not set`);
         return;
@@ -341,7 +341,7 @@ export default {
           params: [
             {
               to: '0x0000000000000000000000000000000000000000', // Required except during contract publications.
-              from: this.provider?.selectedAddress, // must match user's active address.
+              from: this.provider?.getSelectedAddress(), // must match user's active address.
               value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
             },
           ],

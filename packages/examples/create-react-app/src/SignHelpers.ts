@@ -63,7 +63,7 @@ export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: 
     },
   });
 
-  let from = provider?.selectedAddress;
+  let from = provider?.getSelectedAddress();
 
   console.debug(`sign from: ${from}`);
   try {
@@ -87,7 +87,7 @@ export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: 
 
 export const send_personal_sign = async (provider: SDKProvider) => {
   try {
-    const from = provider.selectedAddress;
+    const from = provider.getSelectedAddress();
     const message = 'Hello World from the Create React dapp!';
     const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
