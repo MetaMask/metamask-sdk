@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.2]
+### Added
+- fix: normalize uppercase account addresses in SDKProvider, to resolve MaxListenersExceededWarning ([#766](https://github.com/MetaMask/metamask-sdk/pull/766))
+
 ## [0.17.1]
 ### Added
 - fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
@@ -149,7 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.2...HEAD
+[0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.1...@metamask/sdk-react@0.17.2
 [0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.0...@metamask/sdk-react@0.17.1
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.16.0...@metamask/sdk-react@0.17.0
 [0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.15.0...@metamask/sdk-react@0.16.0

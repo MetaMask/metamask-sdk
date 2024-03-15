@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.2]
+### Added
+- feat: separately handle extension connectWith ([#767](https://github.com/MetaMask/metamask-sdk/pull/767))
+- fix: normalize uppercase account addresses in SDKProvider, to resolve MaxListenersExceededWarning ([#766](https://github.com/MetaMask/metamask-sdk/pull/766))
+
 ## [0.17.1]
 ### Added
 - fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
@@ -262,7 +267,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...HEAD
+[0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.1...@metamask/sdk@0.17.2
 [0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.0...@metamask/sdk@0.17.1
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.16.0...@metamask/sdk@0.17.0
 [0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.15.0...@metamask/sdk@0.16.0
