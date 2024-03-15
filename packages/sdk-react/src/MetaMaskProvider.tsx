@@ -163,11 +163,13 @@ const MetaMaskProviderClient = ({
   }, [rpcHistory, status]);
 
   useEffect(() => {
-    const currentAddress = provider?.getSelectedAddress();
-    if (currentAddress && currentAddress != account) {
+    const currentAddress = provider?.getSelectedAddress()
+
+    if (currentAddress && currentAddress != account?.toLowerCase()) {
       logger(
         `[MetaMaskProviderClient] account changed detected from ${account} to ${currentAddress}`,
       );
+
       setAccount(currentAddress);
     }
   }, [rpcHistory]);
