@@ -88,7 +88,7 @@ const start = async (startType) => {
 
   const signResponse = await ethereum.request({
     method: 'eth_signTypedData_v3',
-    params: [ethereum.selectedAddress, JSON.stringify(msgParams)],
+    params: [ethereum.getSelectedAddress(), JSON.stringify(msgParams)],
   });
 
   console.log('eth_signTypedData_v3 response', signResponse);
