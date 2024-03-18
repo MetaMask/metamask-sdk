@@ -1,5 +1,4 @@
-export const DEFAULT_SERVER_URL =
-  'https://metamask-sdk-socket.metafi.codefi.network/';
+export const DEFAULT_SERVER_URL = 'https://metamask-sdk.api.cx.metamask.io/';
 export const DEFAULT_SOCKET_TRANSPORTS = ['websocket'];
 export const MIN_IN_MS = 1000 * 60;
 export const HOUR_IN_MS = MIN_IN_MS * 60;
