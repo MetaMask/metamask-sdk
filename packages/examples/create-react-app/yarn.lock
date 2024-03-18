@@ -2452,11 +2452,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.17.1":
-  version: 0.17.1
-  resolution: "@metamask/sdk-react@npm:0.17.1"
+"@metamask/sdk-react@npm:^0.17.2":
+  version: 0.17.2
+  resolution: "@metamask/sdk-react@npm:0.17.2"
   dependencies:
-    "@metamask/sdk": ^0.17.1
+    "@metamask/sdk": ^0.17.2
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -2475,13 +2475,13 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 6a82f4d8e258eac93ccc4071a602282509e7e0b9106b7075d241c521960af5ecf0424daa82b2f99e010741c4d64dd5603273e4ff405cfb9168da318ee871671a
+  checksum: 97f1907dcc11793a3ecc9ba1499d4aefbd8dd540001ff10c715f7ab8588f948cb976fdb8d81ff95191b647931992d665be28ce4333fbbfddef7d09fdbbd8c6c7
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.17.1":
-  version: 0.17.1
-  resolution: "@metamask/sdk@npm:0.17.1"
+"@metamask/sdk@npm:^0.17.2":
+  version: 0.17.2
+  resolution: "@metamask/sdk@npm:0.17.2"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
@@ -2519,7 +2519,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: d61c0ba5a7dd9eb848d1a7fe7eccc287260a859ae420dd01bea92d6ba77ad321a2092bc591e30906ca38497a6f577ad4cf481c282b60510421df373010563b78
+  checksum: 900b175c1297d46ef0b4bf15a71db172db75f50f8303e4711b00edd3e9af5a077f74fdf0654833f9d65f09adc26d2e030b435d4d2945a50bfafd955948ff6719
   languageName: node
   linkType: hard
 
@@ -10528,7 +10528,7 @@ __metadata:
   resolution: "mm-sdk-cra@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react": ^0.17.1
+    "@metamask/sdk-react": ^0.17.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0

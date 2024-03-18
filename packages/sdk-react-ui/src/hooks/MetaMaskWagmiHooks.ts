@@ -101,6 +101,7 @@ export const useSwitchOrAddNetwork = () => {
     }
 
     setIsLoading(false);
+
     return response;
   };
 
