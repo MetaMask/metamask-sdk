@@ -35,7 +35,7 @@ describe('SDK Comm Server', () => {
     const platform = 'jest';
     // const communicationServerUrl = 'http://localhost:4000/';
     const communicationServerUrl =
-      'https://metamask-sdk-socket.metafi.codefi.network/';
+      'https://metamask-sdk.api.cx.metamask.io/';
 
     const waitForReady = async (): Promise<void> => {
       return new Promise<void>((resolve) => {
