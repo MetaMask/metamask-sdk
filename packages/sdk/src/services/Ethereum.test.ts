@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { SDKProvider } from '../provider/SDKProvider';
 import { Ethereum } from './Ethereum';
 
@@ -22,7 +22,7 @@ describe('Ethereum Class', () => {
         shouldShimWeb3: false,
       };
 
-      Ethereum.init(props);
+      Ethereum.init(props as any);
 
       expect(mockSDKProvider).toHaveBeenCalledWith({
         connectionStream: stream,
@@ -55,7 +55,7 @@ describe('Ethereum Class', () => {
         debug: false,
       };
 
-      Ethereum.init(props);
+      Ethereum.init(props as any);
       expect(Ethereum.getProvider()).toBeDefined();
     });
 

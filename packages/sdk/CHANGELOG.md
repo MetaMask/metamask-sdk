@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.17.2]
+### Added
+- feat: separately handle extension connectWith ([#767](https://github.com/MetaMask/metamask-sdk/pull/767))
+- fix: normalize uppercase account addresses in SDKProvider, to resolve MaxListenersExceededWarning ([#766](https://github.com/MetaMask/metamask-sdk/pull/766))
+
+## [0.17.1]
+### Added
+- fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
+- fix: invalid provider state to undefined instead of null ([#758](https://github.com/MetaMask/metamask-sdk/pull/758))
+
+## [0.17.0]
+### Added
+- feat: update the "@metamask/providers" package to version 15.0.0 ([#752](https://github.com/MetaMask/metamask-sdk/pull/752))
+- feat: restrict rpc method analytics ([#755](https://github.com/MetaMask/metamask-sdk/pull/755))
+- feat: rpc event tracking ([#745](https://github.com/MetaMask/metamask-sdk/pull/745))
+- refactor(sdk): update blockedDomainCheck to remove regex ([#740](https://github.com/MetaMask/metamask-sdk/pull/740))
+- chore: disable logs when running unit tests in CI ([#727](https://github.com/MetaMask/metamask-sdk/pull/727))
+
 ## [0.16.0]
 ### Added
 - feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
@@ -249,7 +267,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.16.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...HEAD
+[0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.1...@metamask/sdk@0.17.2
+[0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.0...@metamask/sdk@0.17.1
+[0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.16.0...@metamask/sdk@0.17.0
 [0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.15.0...@metamask/sdk@0.16.0
 [0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.3...@metamask/sdk@0.15.0
 [0.14.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.14.2...@metamask/sdk@0.14.3

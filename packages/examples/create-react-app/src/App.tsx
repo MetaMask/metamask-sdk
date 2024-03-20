@@ -92,7 +92,7 @@ export const App = () => {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: provider?.selectedAddress, // must match user's active address.
+      from: provider?.getSelectedAddress(), // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
@@ -115,7 +115,7 @@ export const App = () => {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_eth_signTypedData_v4(provider, provider.chainId);
+    const result = await send_eth_signTypedData_v4(provider, provider.getChainId());
     setResponse(result);
   };
 
@@ -206,7 +206,7 @@ export const App = () => {
             Send transaction
           </button>
 
-          { provider?.chainId === '0x1' ? (
+          { provider?.getChainId() === '0x1' ? (
             <button
               className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}

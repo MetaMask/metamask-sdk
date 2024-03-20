@@ -115,7 +115,15 @@ update_index_html() {
     fi
 
     rm "$deployment_dir/version_info.html"
+    # Last pass to make sure to replae RELEASE_VERSION_PLACEHOLDER with the actual version
+    if [[ "$(uname)" == "Darwin" ]]; then
+        sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
+    else
+        sed -i "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
+    fi
+
     cp "$deployment_dir/index.html" "$deployment_dir/release.html"
+
     echo "Updated index.html with SDK version info."
 }
 
@@ -150,6 +158,12 @@ echo "SDK Install Modal Web version: $sdkInstallModalWebVersion"
 # Main script execution
 build_and_consolidate
 update_index_html "$deployment_dir"
+
+echo "Creating index.html in the root directory..."
+# use html meta tag to redirect to the latest release
+echo "<meta http-equiv=\"refresh\" content=\"0; url=$$version/index.html\">" > deployments/index.html
+# print content from index.html for debugging
+cat index.html
 
 echo "Deployment directory ready!"
 

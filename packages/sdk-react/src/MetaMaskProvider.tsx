@@ -3,19 +3,17 @@ import {
   ConnectionStatus,
   EventType,
   MetaMaskSDK,
-  MetaMaskSDKOptions,
-  SDKProvider,
-  ServiceStatus,
-  RPCMethodResult,
-  RPCMethodCache,
+  MetaMaskSDKOptions, RPCMethodCache, RPCMethodResult, SDKProvider,
+  ServiceStatus
 } from '@metamask/sdk';
+import debugPackage from 'debug';
 import { EthereumRpcError } from 'eth-rpc-errors';
 import React, {
   createContext,
   useEffect,
   useMemo,
   useRef,
-  useState,
+  useState
 } from 'react';
 import { useHandleAccountsChangedEvent } from './EventsHandlers/useHandleAccountsChangedEvent';
 import { useHandleChainChangedEvent } from './EventsHandlers/useHandleChainChangedEvent';
@@ -26,7 +24,6 @@ import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnecti
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
 import { logger } from './utils/logger';
-import debugPackage from 'debug';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -166,11 +163,13 @@ const MetaMaskProviderClient = ({
   }, [rpcHistory, status]);
 
   useEffect(() => {
-    const currentAddress = provider?.selectedAddress;
-    if (currentAddress && currentAddress != account) {
+    const currentAddress = provider?.getSelectedAddress()
+
+    if (currentAddress && currentAddress != account?.toLowerCase()) {
       logger(
         `[MetaMaskProviderClient] account changed detected from ${account} to ${currentAddress}`,
       );
+
       setAccount(currentAddress);
     }
   }, [rpcHistory]);
@@ -192,9 +191,7 @@ const MetaMaskProviderClient = ({
       );
 
       setBalanceQuery(currentBalanceQuery);
-      sdk
-        ?.getProvider()
-        .request({
+      provider?.request({
           method: 'eth_getBalance',
           params: [account, 'latest'],
         })
@@ -217,7 +214,7 @@ const MetaMaskProviderClient = ({
     } else {
       setBalance(undefined);
     }
-  }, [account, chainId, balanceQuery]);
+  }, [account, provider, chainId, balanceQuery]);
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -238,6 +235,7 @@ const MetaMaskProviderClient = ({
       setReady(true);
       setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
     });
+
   }, [sdkOptions]);
 
   useEffect(() => {
@@ -245,15 +243,19 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    logger(`[MetaMaskProviderClient] init SDK Provider listeners`);
+    logger(`[MetaMaskProviderClient] init SDK Provider listeners`, sdk);
 
     setExtensionActive(sdk.isExtensionActive());
 
     const activeProvider = sdk.getProvider();
+    if(!activeProvider) {
+      console.warn(`[MetaMaskProviderClient] activeProvider is undefined.`);
+      return;
+    }
     setConnected(activeProvider.isConnected());
-    setAccount(activeProvider.selectedAddress || undefined);
+    setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
-    setChainId(activeProvider.chainId || undefined);
+    setChainId(activeProvider.getChainId() || undefined);
 
     activeProvider.on('_initialized', onInitialized);
     activeProvider.on('connecting', onConnecting);

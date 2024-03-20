@@ -113,3 +113,4 @@ packages/examples/nodejs/.sdk-comm
 **/!.yarn/versions
 packages/devnext/next.webpack.config.json
 packages/devreact/webpack.config.json
+.tool-versions

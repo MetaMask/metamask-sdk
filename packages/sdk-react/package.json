@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.16.0",
+  "version": "0.17.2",
   "description": "A react component and react hooks to connect and use MetaMask",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -46,7 +46,6 @@
   },
   "dependencies": {
     "@metamask/sdk": "workspace:^",
-    "@react-native-async-storage/async-storage": "^1.19.6",
     "debug": "^4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",
@@ -62,6 +61,7 @@
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
+    "@react-native-async-storage/async-storage": "^1.19.6",
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
@@ -102,11 +102,15 @@
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.19.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "*"
   },
   "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
     "react": {
       "optional": false
     },

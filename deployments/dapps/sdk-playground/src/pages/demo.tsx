@@ -57,6 +57,31 @@ export const Demo = () => {
     }
   };
 
+  const walletRequest = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      console.debug(`wallet_requestPermissions response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('wallet_requestPermissions ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   const readOnlyCalls = async () => {
     if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
       setResponse(
@@ -419,6 +444,14 @@ export const Demo = () => {
               onClick={connect}
             >
               Request Accounts
+            </button>
+
+            <button
+              className={'Button-Normal'}
+              style={{ padding: 10, margin: 10 }}
+              onClick={walletRequest}
+            >
+              wallet_requestPermissions
             </button>
 
             <button
