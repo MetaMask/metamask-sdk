@@ -192,7 +192,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
               commLayerVersion: packageJson.version,
               walletVersion: instance.remote.state.walletInfo?.version,
               params: {
-                method: message.method,
+                method: initialRPCMethod.method,
                 from: 'mobile',
               },
             },
