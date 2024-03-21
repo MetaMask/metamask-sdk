@@ -1,5 +1,5 @@
 {
-  "name": "wagmi-demo",
+  "name": "wagmi-demo-next",
   "private": true,
   "version": "0.0.0",
   "scripts": {
@@ -10,6 +10,7 @@
     "allow-scripts": ""
   },
   "dependencies": {
+    "@metamask/sdk": "^0.18.0",
     "@tanstack/react-query": "5.0.5",
     "ethers": "^6.10.0",
     "next": "13.5.3",

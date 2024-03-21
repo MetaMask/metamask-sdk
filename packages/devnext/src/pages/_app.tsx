@@ -37,8 +37,8 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         logging: {
           developerMode: true,
           sdk: true,
-          remoteLayer: false,
-          serviceLayer: false,
+          remoteLayer: true,
+          serviceLayer: true,
           plaintext: true,
         },
         useDeeplink,

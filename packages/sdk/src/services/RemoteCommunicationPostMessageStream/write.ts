@@ -110,6 +110,8 @@ export async function write(
       // instance only happens when metamask was opened in last 30seconds.
       logger(`[RCPMS: _write()] method ${targetMethod} doesn't need redirect.`);
     }
+
+
   } catch (err) {
     logger(`[RCPMS: _write()] error sending message`, err);
 

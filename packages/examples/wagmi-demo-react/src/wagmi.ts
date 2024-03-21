@@ -1,7 +1,8 @@
 import { del, get, set } from 'idb-keyval'
-import { http, createConfig } from 'wagmi'
+import { createConfig, http } from 'wagmi'
 import { celo, mainnet, optimism, sepolia } from 'wagmi/chains'
-import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors'
+import { coinbaseWallet, walletConnect } from 'wagmi/connectors'
+import { metaMask } from './mmsdk'
 
 // biome-ignore lint/correctness/noUnusedVariables: <explanation>
 const indexedDBStorage = {
