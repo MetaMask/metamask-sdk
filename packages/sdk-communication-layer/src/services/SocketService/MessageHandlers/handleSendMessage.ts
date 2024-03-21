@@ -66,6 +66,7 @@ export function handleSendMessage(
   if (instance.remote.state.analytics) {
     // Only logs specific RPCs
     if (
+      instance.remote.state.isOriginator &&
       message.method &&
       lcLogguedRPCs.includes(message.method.toLowerCase())
     ) {
