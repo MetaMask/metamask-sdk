@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.1]
+### Added
+- fix: add correct param to sdk_rpc_request_received ([#781](https://github.com/MetaMask/metamask-sdk/pull/781))
+- feat: add rpc received event ([#780](https://github.com/MetaMask/metamask-sdk/pull/780))
+- feat: store account between refresh ([#779](https://github.com/MetaMask/metamask-sdk/pull/779))
+
 ## [0.18.0]
 ### Added
 - feat: update prod socket server url ([#774](https://github.com/MetaMask/metamask-sdk/pull/774))
@@ -167,7 +173,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.1...HEAD
+[0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.0...@metamask/sdk-communication-layer@0.18.1
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.17.0...@metamask/sdk-communication-layer@0.18.0
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.16.0...@metamask/sdk-communication-layer@0.17.0
 [0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.15.0...@metamask/sdk-communication-layer@0.16.0
