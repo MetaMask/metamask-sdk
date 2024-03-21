@@ -13,6 +13,7 @@ export const lcLogguedRPCs = [
   'eth_sendTransaction',
   'eth_signTypedData',
   'eth_signTransaction',
+  'personal_sign',
   'wallet_requestPermissions',
   'wallet_switchEthereumChain',
   'eth_signTypedData_v3',

@@ -10,6 +10,7 @@ export enum TrackingEvents {
   DISCONNECTED = 'sdk_disconnected',
   SDK_USE_EXTENSION = 'sdk_use_extension',
   SDK_RPC_REQUEST = 'sdk_rpc_request',
+  SDK_RPC_REQUEST_RECEIVED = 'sdk_rpc_request_received',
   SDK_EXTENSION_UTILIZED = 'sdk_extension_utilized',
   SDK_USE_INAPP_BROWSER = 'sdk_use_inapp_browser',
 }
