@@ -373,8 +373,6 @@ const Demo = () => {
 
   const testReadOnlyCalls = async () => {
     try {
-      await checkBalances();
-
       // Following code can only work after the sdk has connected once and saved initial accounts+chainid.
       console.log(`Testing sdk accounts+chainid caching...`);
       const chain = await provider?.request({
@@ -388,6 +386,8 @@ const Demo = () => {
         params: [],
       });
       console.log(`accounts`, accounts);
+
+      await checkBalances();
     } catch (err) {
       console.error(`testReadOnlyCalls error`, err);
     }
