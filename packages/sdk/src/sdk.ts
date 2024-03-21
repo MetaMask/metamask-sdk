@@ -253,7 +253,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
-        logger(`[MetaMaskSDK: constructor()]: initialized`);
+        logger(`[MetaMaskSDK: constructor()]: initialized successfully.`);
         if (typeof window !== 'undefined') {
           window.mmsdk = this;
         }

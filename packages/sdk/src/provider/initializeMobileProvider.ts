@@ -4,7 +4,12 @@ import {
   PlatformType,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import {
+  METHODS_TO_REDIRECT,
+  RPC_METHODS,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_DAPP_CHAINID,
+} from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
@@ -58,6 +63,41 @@ const initializeMobileProvider = ({
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
+  const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
+  // check if localStorage is available
+  if (hasLocalStoage) {
+    const cachedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
+    if (cachedAddress) {
+      try {
+        const parsed = JSON.parse(cachedAddress);
+        if (parsed) {
+          cachedAccountAddress = parsed;
+        }
+      } catch (err) {
+        console.error(
+          `[initializeMobileProvider] failed to parse cached accounts: ${err}`,
+        );
+      }
+    }
+
+    const cachedChain = localStorage.getItem(STORAGE_DAPP_CHAINID);
+    if (cachedChain) {
+      try {
+        const parsed = JSON.parse(cachedChain);
+        if (parsed) {
+          cachedChainId = parsed;
+        }
+      } catch (err) {
+        console.error(
+          `[initializeMobileProvider] failed to parse cached chainId: ${err}`,
+        );
+      }
+    }
+  }
+
+  logger(
+    `[initializeMobileProvider] cachedAccountAddress: ${cachedAccountAddress}, cachedChainId: ${cachedChainId}`,
+  );
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -118,16 +158,30 @@ const initializeMobileProvider = ({
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
     chainId =
-      provider.getChainId() ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
+      (provider.getChainId() || cachedChainId) ?? sdk.defaultReadOnlyChainId;
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
-      cachedAccountAddress = selectedAddress;
+      if (hasLocalStoage && selectedAddress !== cachedAccountAddress) {
+        cachedAccountAddress = selectedAddress;
+        localStorage.setItem(
+          STORAGE_DAPP_SELECTED_ADDRESS,
+          JSON.stringify(selectedAddress),
+        );
+      }
     }
 
     if (chainId) {
       cachedChainId = chainId;
+      if (hasLocalStoage) {
+        localStorage.setItem(STORAGE_DAPP_CHAINID, JSON.stringify(chainId));
+      }
     }
+
+    logger('[initializeMobileProvider: sendRequest()]', {
+      selectedAddress,
+      chainId,
+    });
 
     if (debugRequest) {
       logger(

@@ -53,7 +53,7 @@ export class Ethereum {
         networkVersion: this.provider.getNetworkVersion(),
       };
 
-      logger(`[Ethereum: constructor()] provider initialized info=${info}`);
+      logger(`[Ethereum: constructor()] provider initialized`, info);
     });
   }
 
