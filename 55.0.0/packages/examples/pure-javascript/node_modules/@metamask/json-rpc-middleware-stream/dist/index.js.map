@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;;;;AAAA,8EAAsD;AAG7C,6BAHF,4BAAkB,CAGE;AAF3B,sFAA8D;AAEjC,iCAFtB,gCAAsB,CAEsB","sourcesContent":["import createEngineStream from './createEngineStream';\nimport createStreamMiddleware from './createStreamMiddleware';\n\nexport { createEngineStream, createStreamMiddleware };\n"]}

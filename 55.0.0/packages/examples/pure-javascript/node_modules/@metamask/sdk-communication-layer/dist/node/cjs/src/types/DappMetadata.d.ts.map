@@ -1,0 +1,1 @@
+{"version":3,"file":"DappMetadata.d.ts","sourceRoot":"","sources":["../../../../../src/types/DappMetadata.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,YAAY;IAC3B,GAAG,CAAC,EAAE,MAAM,CAAC;IACb,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,OAAO,CAAC,EAAE,MAAM,CAAC;IACjB,UAAU,CAAC,EAAE,MAAM,CAAC;CACrB;AAED,MAAM,WAAW,sBAAuB,SAAQ,YAAY;IAC1D,MAAM,CAAC,EAAE,MAAM,CAAC;CACjB"}

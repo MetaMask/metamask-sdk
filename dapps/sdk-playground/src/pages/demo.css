@@ -1,0 +1,91 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+.Button-Normal {
+  background-color: blueviolet;
+  border: 1px solid blueviolet;
+  color: white;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Button-Danger {
+  background-color: red;
+  border-color: red;
+  color: white;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.Info-Status {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 2rem;
+  border-radius: 5px;
+  border: 1px solid blueviolet;
+  background-color: aliceblue;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+
+#header {
+  background-color: aliceblue;
+  padding: 20px;
+  color: black;
+  border: 1px solid blueviolet;
+}
+
+
+.action-buttons button {
+  padding: 10;
+  background-color: #61dafb;
+}
+
+.action-buttons button.chain {
+  padding: 10;
+  background-color: #6495ED	;
+}
+
+.alternate-row {
+  background-color: #f2f2f2;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
