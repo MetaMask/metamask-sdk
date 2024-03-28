@@ -118,7 +118,7 @@ const Demo = () => {
   };
 
   const sendTransaction = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
     // const selectedAddress = '0x8e0e30e296961f476e01184274ce85ae60184cb0'; // account1
 
     const to = '0x0000000000000000000000000000000000000000';
@@ -154,7 +154,7 @@ const Demo = () => {
     }
 
     const msgParams = JSON.stringify(getSignParams({ hexChainId: chainId }));
-    const from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.getSelectedAddress();
 
     setRequesting(true);
     setRpcError(null);
@@ -184,7 +184,7 @@ const Demo = () => {
   };
 
   const personalSign = async () => {
-    const from = window.ethereum?.selectedAddress;
+    const from = window.ethereum?.getSelectedAddress();
     setRequesting(true);
     setRpcError(null);
     setResponse(''); // reset response first
@@ -373,8 +373,6 @@ const Demo = () => {
 
   const testReadOnlyCalls = async () => {
     try {
-      await checkBalances();
-
       // Following code can only work after the sdk has connected once and saved initial accounts+chainid.
       console.log(`Testing sdk accounts+chainid caching...`);
       const chain = await provider?.request({
@@ -388,6 +386,8 @@ const Demo = () => {
         params: [],
       });
       console.log(`accounts`, accounts);
+
+      await checkBalances();
     } catch (err) {
       console.error(`testReadOnlyCalls error`, err);
     }
@@ -425,7 +425,7 @@ const Demo = () => {
   };
 
   const handleChainRPCs = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const rpcs: ChainRPC[] = [
       {
@@ -458,7 +458,7 @@ const Demo = () => {
   };
 
   const chainSwitchAndSignAndBack = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const initChainId = chainId;
     const targetChainId = initChainId === '0x5' ? '0xe704' : '0x5';
@@ -508,7 +508,7 @@ const Demo = () => {
   };
 
   const chainTransactions = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
@@ -626,7 +626,11 @@ const Demo = () => {
           <MetaMaskButton />
         </div>
         <div
-          style={{ display: 'flex', flexDirection: !connected ? "column" : "row-reverse" }}
+          id="demo"
+          style={{
+            display: 'flex',
+            flexDirection: !connected ? 'column' : 'row-reverse',
+          }}
         >
           <div
             style={
@@ -761,8 +765,11 @@ const Demo = () => {
                   >
                     Switch to mainnet
                   </button>
-                  
-                  <button style={{ padding: 10, margin: 10 }} onClick={ethAccounts}>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={ethAccounts}
+                  >
                     eth_accounts
                   </button>
 
@@ -939,7 +946,7 @@ const Demo = () => {
           </div>
         </div>
       </main>
-      
+
       <br></br>
       <br></br>
       <br></br>

@@ -31,6 +31,11 @@ module.exports = {
         ({ constructor }) => constructor && constructor.name === 'ModuleScopePlugin'
       );
 
+      webpackConfig.plugins.push(
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+        })
+      );
       // Inject __DEV__ which is required by some modules
       webpackConfig.plugins.push(
         new webpack.DefinePlugin({
@@ -42,6 +47,7 @@ module.exports = {
         ...webpackConfig.resolve,
         alias: {
           ...webpackConfig.resolve.alias,
+          process: "process/browser",
           'react': require.resolve('react'),
           // 'react-dom': require.resolve('react-dom'),
           'react-native$': require.resolve('react-native-web'),
@@ -52,7 +58,8 @@ module.exports = {
         },
         fallback: {
           "crypto": require.resolve("crypto-browserify"),
-          "stream": require.resolve("stream-browserify")
+          "stream": require.resolve("stream-browserify"),
+          "vm": require.resolve("vm-browserify"),
         },
       };
       webpackConfig.module.rules.push(
@@ -91,6 +98,6 @@ module.exports = {
         includes: packagesToTranspile,
         excludes: [/node_modules/],
       }
-    }
+    },
   ]
 };

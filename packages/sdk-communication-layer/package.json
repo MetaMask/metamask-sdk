@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.16.0",
+  "version": "0.18.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -100,7 +100,7 @@
     "cross-fetch": "^3.1.5",
     "eciesjs": "^0.3.16",
     "eventemitter2": "^6.4.7",
-    "readable-stream": "^3.5.0",
+    "readable-stream": "^3.6.2",
     "socket.io-client": "^4.5.1"
   },
   "publishConfig": {

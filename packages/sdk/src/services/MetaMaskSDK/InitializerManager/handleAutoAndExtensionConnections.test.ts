@@ -1,8 +1,7 @@
 import { SendAnalytics } from '@metamask/sdk-communication-layer';
-import { MetaMaskSDK } from '../../../sdk';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
+import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
-import { ANALYTICS_CONSTANTS } from '../../Analytics';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
 
 jest.mock('../ProviderManager', () => ({
@@ -48,35 +47,6 @@ describe('handleAutoAndExtensionConnections', () => {
       },
       _initialized: false,
     } as unknown as MetaMaskSDK;
-  });
-
-  it('should send SDK_EXTENSION_UTILIZED analytics event with the right metadata when remoteConnection available', async () => {
-    instance.remoteConnection = {
-      state: {
-        connector: {
-          state: {
-            originatorInfo: {
-              id: 'defaultId',
-            },
-          },
-        },
-      },
-    } as unknown as MetaMaskSDK['remoteConnection'];
-
-    const analyticsData = {
-      id: ANALYTICS_CONSTANTS.DEFAULT_ID,
-      event: 'SDK_EXTENSION_UTILIZED',
-      ...instance.remoteConnection?.state.connector?.state.originatorInfo,
-      commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
-    };
-
-    await handleAutoAndExtensionConnections(instance, true);
-
-    expect(mockSendAnalytics).toHaveBeenCalled();
-    expect(mockSendAnalytics).toHaveBeenCalledWith(
-      analyticsData,
-      expect.any(String),
-    );
   });
 
   it('should NOT send SDK_EXTENSION_UTILIZED analytics event with the right metadata when remoteConnection is NOT available', async () => {

@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
 import { logger } from '../utils/logger';
 import { SDKProvider } from '../provider/SDKProvider';
@@ -46,14 +46,14 @@ export class Ethereum {
 
     this.provider.on('_initialized', () => {
       const info = {
-        chainId: this.provider.chainId,
+        chainId: this.provider.getChainId(),
         isConnected: this.provider.isConnected(),
         isMetaNask: this.provider.isMetaMask,
-        selectedAddress: this.provider.selectedAddress,
-        networkVersion: this.provider.networkVersion,
+        selectedAddress: this.provider.getSelectedAddress(),
+        networkVersion: this.provider.getNetworkVersion(),
       };
 
-      logger(`[Ethereum: constructor()] provider initialized info=${info}`);
+      logger(`[Ethereum: constructor()] provider initialized`, info);
     });
   }
 

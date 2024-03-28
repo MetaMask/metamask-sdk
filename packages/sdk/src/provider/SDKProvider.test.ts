@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { handleDisconnect } from '../services/SDKProvider/ConnectionManager/handleDisconnect';
 import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
 import { initializeStateAsync } from '../services/SDKProvider/InitializationManager/initializeStateAsync';

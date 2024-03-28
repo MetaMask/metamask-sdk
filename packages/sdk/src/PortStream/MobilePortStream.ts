@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { onMessage } from '../services/MobilePortStream/onMessage';
 import { write } from '../services/MobilePortStream/write';
 

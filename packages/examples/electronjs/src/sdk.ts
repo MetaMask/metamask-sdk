@@ -126,7 +126,7 @@ const connect = async () => {
       updateDOM(accountsDOM, account);
       connectButtonDOM.textContent = 'Connected';
       qrCodeDOM.style.display = 'none';
-      chainId = ethereum.chainId;
+      chainId = ethereum.getChainId();
       updateDOM(chainDOM, chainId);
       signButtonDOM.style.display = 'inline';
       signTypedDataButtonDOM.style.display = 'inline';
@@ -141,7 +141,7 @@ const connect = async () => {
 
 // Personal Sign
 const personal_sign = async () => {
-  const from = ethereum.selectedAddress;
+  const from = ethereum.getSelectedAddress();
   const message = 'Hello World from the Electron Example dapp!';
   const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
   ethereum.request({
@@ -156,7 +156,7 @@ const personal_sign = async () => {
 
 // eth_signTypedData_v4
 const eth_signTypedData_v4 = async () => {
-  let from = ethereum.selectedAddress;
+  let from = ethereum.getSelectedAddress();
   try {
     if (!from) {
       alert(
@@ -165,7 +165,7 @@ const eth_signTypedData_v4 = async () => {
       return;
     }
 
-    msgParams.domain.chainId = ethereum.chainId;
+    msgParams.domain.chainId = ethereum.getChainId();
     const params = [from, JSON.stringify(msgParams)];
     const method = 'eth_signTypedData_v4';
     console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
@@ -180,7 +180,7 @@ const eth_signTypedData_v4 = async () => {
 
 // Chain Switch
 const switchChain = async () => {
-  const currentChainId = ethereum.chainId;
+  const currentChainId = ethereum.getChainId();
   const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1';
   await ethereum.request({
     method: 'wallet_switchEthereumChain',

@@ -1,4 +1,4 @@
-import { BaseProvider } from '@metamask/providers';
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
@@ -28,6 +28,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     instance.state = {
       autoRequestAccounts: false,
       providerStateRequested: false,
+      chainId: '',
     };
   }
 
@@ -44,11 +45,11 @@ export async function initializeStateAsync(instance: SDKProvider) {
   } else {
     state.providerStateRequested = true;
     // Replace super.initialState logic to automatically request account if not found in providerstate.
-    let initialState: Parameters<BaseProvider['_initializeState']>[0];
+    let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
     try {
       initialState = (await instance.request({
         method: 'metamask_getProviderState',
-      })) as Parameters<BaseProvider['_initializeState']>[0];
+      })) as Parameters<MetaMaskInpageProvider['_initializeState']>[0];
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -61,7 +62,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     }
 
     logger(
-      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.selectedAddress} `,
+      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.getSelectedAddress()} `,
       initialState,
     );
 
@@ -70,12 +71,12 @@ export async function initializeStateAsync(instance: SDKProvider) {
         `[SDKProvider: initializeStateAsync()] initial state doesn't contain accounts`,
       );
 
-      if (instance.selectedAddress) {
+      if (instance.getSelectedAddress()) {
         logger(
           `[SDKProvider: initializeStateAsync()] using instance.selectedAddress instead`,
         );
 
-        initialState.accounts = [instance.selectedAddress];
+        initialState.accounts = [instance.getSelectedAddress() as string];
       } else {
         logger(
           `[SDKProvider: initializeStateAsync()] Fetch accounts remotely.`,

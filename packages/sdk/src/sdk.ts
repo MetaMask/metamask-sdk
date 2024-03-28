@@ -253,7 +253,7 @@ export class MetaMaskSDK extends EventEmitter2 {
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
-        logger(`[MetaMaskSDK: constructor()]: initialized`);
+        logger(`[MetaMaskSDK: constructor()]: initialized successfully.`);
         if (typeof window !== 'undefined') {
           window.mmsdk = this;
         }
@@ -322,9 +322,10 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   // Return the active ethereum provider object
-  getProvider(): SDKProvider {
+  getProvider(): SDKProvider | undefined {
     if (!this.activeProvider) {
-      throw new Error(`SDK state invalid -- undefined provider`);
+      console.warn(`MetaMaskSDK: No active provider found`);
+      return undefined;
     }
 
     return this.activeProvider;

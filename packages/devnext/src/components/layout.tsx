@@ -22,7 +22,13 @@ export const Layout = ({ children }: LayoutProps) => {
           router.push('/');
         }}
       />
-      <FloatingMetaMaskButton distance={{ bottom: 40 }} />
+      <FloatingMetaMaskButton
+        distance={{ bottom: 40 }}
+        buy={true}
+        gasprice={true}
+        network={true}
+        swap={true}
+      />
       {children}
       <SDKDebugPanel bottom={40} />
     </div>
