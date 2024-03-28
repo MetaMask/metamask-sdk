@@ -107,7 +107,7 @@ const presentBatchRequestMenu = async () => {
     case batchRequestTypes.PERSONAL_SIGN_3:
       let personalSignBatchRequestRPCs = [];
       for (let i = 0; i < 3; i++) {
-        personalSignBatchRequestRPCs.push(personalSignRequest(ethereum.selectedAddress));
+        personalSignBatchRequestRPCs.push(personalSignRequest(ethereum.getSelectedAddress()));
       }
 
       try {
@@ -123,8 +123,8 @@ const presentBatchRequestMenu = async () => {
     case batchRequestTypes.PERSONAL_SIGN_SEND_TRANSACTION:
       let personalSignSendTransactionBatchRequestRPCs = [];
 
-      personalSignSendTransactionBatchRequestRPCs.push(personalSignRequest(ethereum.selectedAddress));
-      personalSignSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.selectedAddress));
+      personalSignSendTransactionBatchRequestRPCs.push(personalSignRequest(ethereum.getSelectedAddress()));
+      personalSignSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.getSelectedAddress()));
       try {
         let batchResult = await ethereum.request(
           batchRequests(personalSignSendTransactionBatchRequestRPCs)
@@ -138,7 +138,7 @@ const presentBatchRequestMenu = async () => {
     case batchRequestTypes.SWITCH_CHAIN_SEND_TRANSACTION:
       let switchChainSendTransactionBatchRequestRPCs = [];
 
-      if (ethereum.chainId === chains.SEPOLIA.chainId) {
+      if (ethereum.getChainId() === chains.SEPOLIA.chainId) {
         console.log(`Active chain is Sepolia already. Switching to mainnet first to then do the proper batch`);
         try {
           let switchChainResult = await ethereum.request(
@@ -152,7 +152,7 @@ const presentBatchRequestMenu = async () => {
       }
 
       switchChainSendTransactionBatchRequestRPCs.push(switchEthereumChain(chains.SEPOLIA.chainId));
-      switchChainSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.selectedAddress));
+      switchChainSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.getSelectedAddress()));
 
       try {
         let batchResult = await ethereum.request(
@@ -176,7 +176,7 @@ const presentAndSelectOperationsMenu = async () => {
     case operationsMenuTypes.SEND_TRANSACTION:
       try {
         const sendTransactionResult = await ethereum.request(
-          sendTransactionRequest(ethereum.selectedAddress)
+          sendTransactionRequest(ethereum.getSelectedAddress())
         );
         console.log(`\nTransaction result: ${sendTransactionResult}\n\n`);
       } catch (e) {
@@ -186,7 +186,7 @@ const presentAndSelectOperationsMenu = async () => {
     case operationsMenuTypes.PERSONAL_SIGN:
       try {
         const personalSignResult = await ethereum.request(
-          personalSignRequest(ethereum.selectedAddress)
+          personalSignRequest(ethereum.getSelectedAddress())
         );
         console.log(`\nPersonalSign result: ${personalSignResult}\n\n`);
       } catch (e) {

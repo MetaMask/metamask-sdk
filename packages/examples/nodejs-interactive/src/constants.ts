@@ -12,13 +12,6 @@ export interface Chain {
 }
 
 export const chains: {[name: string]: Chain} = {
-  GOERLI: {
-    chainId: '0x5',
-    chainName: 'Goerli',
-    blockExplorerUrls: ['https://goerli.etherscan.io'],
-    nativeCurrency: { symbol: 'ETH', decimals: 18 },
-    rpcUrls: ['https://goerli.infura.io/v3/'],
-  },
   SEPOLIA: {
     chainId: '0xaa36a7',
     chainName: 'Sepolia',
