@@ -187,7 +187,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
           SendAnalytics(
             {
               id: instance.remote.state.channelId ?? '',
-              event: TrackingEvents.SDK_RPC_REQUEST_RECEIVED,
+              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
               sdkVersion: instance.remote.state.sdkVersion,
               commLayerVersion: packageJson.version,
               walletVersion: instance.remote.state.walletInfo?.version,
@@ -214,14 +214,6 @@ export function handleMessage(instance: SocketService, channelId: string) {
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
         instance.emit(EventType.RPC_UPDATE, rpcResult);
-
-        logger.SocketService(
-          `[SocketService handleMessage()] HACK (wallet <7.3) update rpcMethodTracker`,
-          rpcResult,
-        );
-
-        // FIXME hack while waiting for mobile release 7.3
-        instance.emit(EventType.AUTHORIZED);
       }
     }
 
