@@ -1,5 +1,6 @@
 import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
+import { RPC_METHODS } from '../../../config';
 
 /**
  * Asynchronously connects to MetaMask and requests account access.
@@ -26,7 +27,7 @@ export async function connect(instance: MetaMaskSDK) {
   }
 
   return instance.activeProvider.request({
-    method: 'eth_requestAccounts',
+    method: RPC_METHODS.ETH_REQUESTACCOUNTS,
     params: [],
   });
 }
