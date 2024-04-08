@@ -34,7 +34,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
         },
-        preferDesktop: true,
+        preferDesktop: false,
         logging: {
           developerMode: true,
           sdk: true,
