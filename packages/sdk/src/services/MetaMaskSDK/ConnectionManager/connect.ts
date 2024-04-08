@@ -26,6 +26,15 @@ export async function connect(instance: MetaMaskSDK) {
     throw new Error(`SDK state invalid -- undefined provider`);
   }
 
+  // TODO: enable once MetaMask Mobile v7.21 is out in store.
+  // return instance.activeProvider.request({
+  //   method: RPC_METHODS.WALLET_REQUESTPERMISSIONS,
+  //   params: [
+  //     {
+  //       eth_accounts: {},
+  //     },
+  //   ],
+  // });
   return instance.activeProvider.request({
     method: RPC_METHODS.ETH_REQUESTACCOUNTS,
     params: [],
