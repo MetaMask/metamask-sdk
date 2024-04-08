@@ -27,6 +27,7 @@ export async function connect(instance: MetaMaskSDK) {
   }
 
   // TODO: enable once MetaMask Mobile v7.21 is out in store.
+  // It would still work on older wallet but the connection modal may be trigger twice.
   // return instance.activeProvider.request({
   //   method: RPC_METHODS.WALLET_REQUESTPERMISSIONS,
   //   params: [
