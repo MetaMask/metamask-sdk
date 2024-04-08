@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.3]
+### Uncategorized
+- fix: issue preventing opting out of analytics ([#794](https://github.com/MetaMask/metamask-sdk/pull/794))
+
 ## [0.18.2]
 ### Added
 - fix: update the EIP_6369 provider info ([#788](https://github.com/MetaMask/metamask-sdk/pull/788))
@@ -279,7 +283,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.3...HEAD
+[0.18.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.2...@metamask/sdk@0.18.3
 [0.18.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.1...@metamask/sdk@0.18.2
 [0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.0...@metamask/sdk@0.18.1
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...@metamask/sdk@0.18.0
