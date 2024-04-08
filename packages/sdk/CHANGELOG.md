@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.18.3]
-### Uncategorized
+### Added
 - fix: issue preventing opting out of analytics ([#794](https://github.com/MetaMask/metamask-sdk/pull/794))
 
 ## [0.18.2]
