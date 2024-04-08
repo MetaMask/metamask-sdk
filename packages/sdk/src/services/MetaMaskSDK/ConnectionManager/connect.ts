@@ -26,6 +26,16 @@ export async function connect(instance: MetaMaskSDK) {
     throw new Error(`SDK state invalid -- undefined provider`);
   }
 
+  // TODO: enable once MetaMask Mobile v7.21 is out in store.
+  // It would still work on older wallet but the connection modal may be trigger twice.
+  // return instance.activeProvider.request({
+  //   method: RPC_METHODS.WALLET_REQUESTPERMISSIONS,
+  //   params: [
+  //     {
+  //       eth_accounts: {},
+  //     },
+  //   ],
+  // });
   return instance.activeProvider.request({
     method: RPC_METHODS.ETH_REQUESTACCOUNTS,
     params: [],
