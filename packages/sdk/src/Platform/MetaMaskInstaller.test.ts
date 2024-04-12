@@ -9,7 +9,6 @@ describe('MetaMaskInstaller', () => {
 
   beforeEach(() => {
     installer = new MetaMaskInstaller({
-      preferDesktop: true,
       remote: mockProviderService,
       platformManager: mockPlatformManager,
       debug: false,
@@ -17,7 +16,6 @@ describe('MetaMaskInstaller', () => {
   });
 
   it('should properly initialize', () => {
-    expect(installer.state.preferDesktop).toBe(true);
     expect(installer.state.remote).toBe(mockProviderService);
     expect(installer.state.platformManager).toBe(mockPlatformManager);
     expect(installer.state.debug).toBe(false);

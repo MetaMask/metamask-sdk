@@ -58,24 +58,6 @@ export class SDKProvider extends MetaMaskInpageProvider {
       `[SDKProvider: constructor()] autoRequestAccounts=${autoRequestAccounts}`,
     );
     this.state.autoRequestAccounts = autoRequestAccounts;
-
-    this.request({ method: 'eth_chainId' })
-      .then((chainId) => {
-        console.log('chainId =>', chainId);
-        this.state.chainId = chainId as string;
-      })
-      .catch((error) => {
-        throw error;
-      });
-
-    this.request({ method: 'net_version' })
-      .then((networkVersion) => {
-        console.log('networkVersion =>', networkVersion);
-        this.state.networkVersion = networkVersion as string;
-      })
-      .catch((error) => {
-        throw error;
-      });
   }
 
   async forceInitializeState() {
