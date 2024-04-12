@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
 ## [0.18.2]
 ### Added
 - feat: sdk done event on dapp side ([#789](https://github.com/MetaMask/metamask-sdk/pull/789))
@@ -177,7 +182,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.4...HEAD
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.2...@metamask/sdk-communication-layer@0.18.4
 [0.18.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.1...@metamask/sdk-communication-layer@0.18.2
 [0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.0...@metamask/sdk-communication-layer@0.18.1
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.17.0...@metamask/sdk-communication-layer@0.18.0

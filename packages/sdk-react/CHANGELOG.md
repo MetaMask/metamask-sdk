@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
 ## [0.18.0]
 ### Added
 - feat: update the examples apps to the latest sdk version '0.17.2' ([#773](https://github.com/MetaMask/metamask-sdk/pull/773))
@@ -157,7 +162,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.4...HEAD
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.0...@metamask/sdk-react@0.18.4
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.2...@metamask/sdk-react@0.18.0
 [0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.1...@metamask/sdk-react@0.17.2
 [0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.0...@metamask/sdk-react@0.17.1
