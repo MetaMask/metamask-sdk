@@ -11,6 +11,7 @@ describe('connect', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     instance = {
+      isExtensionActive: jest.fn(),
       _initialized: false,
       debug: false,
       init: jest.fn().mockResolvedValue(true),
