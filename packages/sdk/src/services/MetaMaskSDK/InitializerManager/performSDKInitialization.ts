@@ -97,6 +97,9 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     await setupExtensionPreferences(instance);
 
   if (shouldReturn) {
+    logger(
+      '[MetaMaskSDK: performSDKInitialization()] shouldReturn=true --- prevent sdk initialization',
+    );
     return;
   }
 

@@ -44,8 +44,6 @@ describe('redirectToProperInstall', () => {
 
   it('should start desktop onboarding if platform is DesktopWeb and preferDesktop is true', async () => {
     mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    instance.state.preferDesktop = true;
-
     const result = await redirectToProperInstall(instance);
 
     expect(mockStartDesktopOnboarding).toHaveBeenCalled();

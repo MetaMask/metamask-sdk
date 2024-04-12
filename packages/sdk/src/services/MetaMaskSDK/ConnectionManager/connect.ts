@@ -21,7 +21,7 @@ export async function connect(instance: MetaMaskSDK) {
   }
 
   logger(
-    `[MetaMaskSDK: connect()] isExtensionActive=${instance.isExtensionActive} activeProvider`,
+    `[MetaMaskSDK: connect()] isExtensionActive=${instance.isExtensionActive()} activeProvider`,
     instance.activeProvider,
   );
 

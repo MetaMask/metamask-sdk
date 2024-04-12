@@ -184,7 +184,7 @@ const Demo = () => {
   };
 
   const personalSign = async () => {
-    const from = window.ethereum?.getSelectedAddress();
+    const from = provider?.getSelectedAddress();
     setRequesting(true);
     setRpcError(null);
     setResponse(''); // reset response first
