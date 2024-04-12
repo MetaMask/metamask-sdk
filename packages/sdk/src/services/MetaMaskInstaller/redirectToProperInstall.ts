@@ -32,7 +32,7 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
   if (platformType === PlatformType.DesktopWeb) {
     state.isInstalling = true;
     // If no extension is detected -- start desktop onboarding
-    if (!window.extension) {
+    if (typeof window !== 'undefined' && !window.extension) {
       await instance.startDesktopOnboarding();
       return false;
     }

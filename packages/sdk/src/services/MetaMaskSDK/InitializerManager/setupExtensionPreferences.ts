@@ -135,6 +135,7 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
     instance.activeProvider = metamaskBrowserExtension as SDKProvider; // TODO should be MetaMaskInPageProvider
     instance.extensionActive = true;
+    instance.extension = metamaskBrowserExtension;
     instance._initialized = true;
 
     shouldReturn = true;

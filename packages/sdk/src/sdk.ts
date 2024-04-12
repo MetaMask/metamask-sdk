@@ -185,6 +185,8 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public extensionActive = false;
 
+  public extension: MetaMaskInpageProvider | undefined;
+
   public _initialized = false;
 
   public sdkInitPromise?: Promise<void> | undefined = undefined;
