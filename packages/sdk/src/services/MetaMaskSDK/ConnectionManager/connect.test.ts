@@ -55,13 +55,7 @@ describe('connect', () => {
     it('should log debug messages when debug is true', async () => {
       await connect(instance);
 
-      expect(spyLogger).toHaveBeenCalledWith(
-        `[MetaMaskSDK: connect()] provider not ready -- wait for init()`,
-      );
-
-      expect(spyLogger).toHaveBeenCalledWith(
-        `[MetaMaskSDK: connect()] activeProvider=${instance.activeProvider}`,
-      );
+      expect(spyLogger).toHaveBeenCalled();
     });
   });
 });

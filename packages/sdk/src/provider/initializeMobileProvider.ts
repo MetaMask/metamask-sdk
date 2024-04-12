@@ -157,8 +157,7 @@ const initializeMobileProvider = ({
     let chainId: string | null = null;
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
-    chainId =
-      (provider.getChainId() || cachedChainId) ?? sdk.defaultReadOnlyChainId;
+    chainId = provider.getChainId() || cachedChainId;
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {

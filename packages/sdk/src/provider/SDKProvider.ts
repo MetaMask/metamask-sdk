@@ -104,7 +104,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
     const { accounts } = this._state;
 
     if (!accounts || accounts.length === 0) {
-      console.log('No accounts found');
+      logger('[SDKProvider: getSelectedAddress] No accounts found');
       return null;
     }
 
