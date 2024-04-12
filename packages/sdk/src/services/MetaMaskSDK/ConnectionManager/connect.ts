@@ -20,7 +20,10 @@ export async function connect(instance: MetaMaskSDK) {
     await instance.init();
   }
 
-  logger(`[MetaMaskSDK: connect()] activeProvider=${instance.activeProvider}`);
+  logger(
+    `[MetaMaskSDK: connect()] isExtensionActive=${instance.isExtensionActive} activeProvider`,
+    instance.activeProvider,
+  );
 
   if (!instance.activeProvider) {
     throw new Error(`SDK state invalid -- undefined provider`);

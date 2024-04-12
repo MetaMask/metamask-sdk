@@ -3,6 +3,8 @@ import {
   DappMetadata,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import debug from 'debug';
+
 import EventEmitter2 from 'eventemitter2';
 import { createInstance, i18n } from 'i18next';
 import packageJson from '../package.json';
@@ -16,6 +18,7 @@ import {
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
 import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
+import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
@@ -25,7 +28,6 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 import { logger } from './utils/logger';
 
 export interface MetaMaskSDKOptions {
@@ -183,7 +185,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public _initialized = false;
 
-  public sdkInitPromise?: Promise<void>;
+  public sdkInitPromise?: Promise<void> | undefined = undefined;
 
   public debug = false;
 
@@ -217,7 +219,15 @@ export class MetaMaskSDK extends EventEmitter2 {
     },
   ) {
     super();
+    debug.disable(); // initially disabled
 
+    const developerMode = options.logging?.developerMode === true;
+    const debugEnabled = options.logging?.sdk || developerMode;
+
+    if (debugEnabled) {
+      debug.enable('MM_SDK');
+    }
+    logger(`[MetaMaskSDK: constructor()]: begin.`);
     this.setMaxListeners(50);
 
     if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
