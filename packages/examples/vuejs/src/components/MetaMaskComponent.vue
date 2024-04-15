@@ -24,29 +24,29 @@
     <button class="action-button" @click="onConnectAndSign">
       Connect w/ sign
     </button>
-    <button class="action-button" @click="eth_signTypedData_v4">
+    <button class="action-button" v-if="this.connected" @click="eth_signTypedData_v4">
       eth_signTypedData_v4
     </button>
-    <button class="action-button" @click="personal_sign">personal_sign</button>
-    <button class="action-button" @click="sendTransaction">
+    <button class="action-button" v-if="this.connected" @click="personal_sign">personal_sign</button>
+    <button class="action-button" v-if="this.connected" @click="sendTransaction">
       Send transaction
     </button>
     <button
-      v-if="this.chainId === '0x1'"
+      v-if="this.connected"
       class="action-button"
-      @click="switchChain('0x5')"
+      @click="switchChain('0xaa36a7')"
     >
-      Switch to Goerli
+      Switch to Sepolia
     </button>
-    <button v-else class="action-button" @click="switchChain('0x1')">
+    <button class="action-button" v-if="this.connected" @click="switchChain('0x1')">
       Switch to Mainnet
     </button>
-    <button class="action-button" @click="addEthereumChain">Add Polygon</button>
-    <button class="action-button" @click="switchChain('0x89')">
+    <button class="action-button" v-if="this.connected" @click="addEthereumChain">Add Polygon</button>
+    <button class="action-button" v-if="this.connected" @click="switchChain('0x89')">
       Switch to Polygon
     </button>
     <button class="action-button" @click="readOnlyCalls">readOnlyCalls</button>
-    <button class="action-button" @click="batchCalls">batch</button>
+    <button class="action-button" v-if="this.connected" @click="batchCalls">batch</button>
     <p></p>
     <button class="action-button-danger" @click="terminate">TERMINATE</button>
   </div>
@@ -76,55 +76,25 @@ export default {
         url: window.location.href,
         name: 'MetaMask VueJS Example Dapp',
       },
-      // useDeeplink: true,
       enableAnalytics: true,
       checkInstallationImmediately: false,
       logging: {
         developerMode: true,
+        sdk: true
       },
       i18nOptions: {
         enabled: true,
       },
     });
   },
-  async mounted() {
-    // Init SDK
-    await this.sdk?.init().then(() => {
-      this.provider = this.sdk?.getProvider();
-      // Chain changed
-      this.provider?.on('chainChanged', (chain) => {
-        console.log(`App::Chain changed:'`, chain);
-        this.chainId = chain;
-      });
-
-      // Accounts changed
-      this.provider?.on('accountsChanged', (accounts) => {
-        console.log(`App::Accounts changed:'`, accounts);
-        this.account = accounts[0];
-      });
-
-      // Connected event
-      this.provider?.on('connect', (_connectInfo) => {
-        console.log(`App::connect`, _connectInfo);
-        this.onConnect();
-        this.connected = true;
-      });
-
-      // Disconnect event
-      this.provider?.on('disconnect', (error) => {
-        console.log(`App::disconnect`, error);
-        this.connected = false;
-      });
-
-      this.availableLanguages = this.sdk?.availableLanguages ?? ['en'];
-    });
-  },
+  async mounted() {},
   methods: {
     async onConnectAndSign() {
       try {
         const signResult = await this.sdk?.connectAndSign({
           msg: 'Connect + Sign message',
         });
+        console.log('signResult', signResult)
         this.lastResponse = signResult;
       } catch (err) {
         console.warn(`failed to connect..`, err);
@@ -132,14 +102,37 @@ export default {
     },
     async onConnect() {
       try {
-        const res = await this.provider.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        });
-        this.account = res[0];
-        console.log('request accounts', res);
+        await this.sdk?.connect();
         this.lastResponse = '';
+        this.provider = this.sdk?.getProvider();
         this.chainId = this.provider.getChainId();
+        this.account = this.provider.getSelectedAddress();
+        // Chain changed
+        this.provider?.on('chainChanged', (chain) => {
+          console.log(`App::Chain changed:'`, chain);
+          this.chainId = chain;
+        });
+
+        // Accounts changed
+        this.provider?.on('accountsChanged', (accounts) => {
+          console.log(`App::Accounts changed:'`, accounts);
+          this.account = accounts[0];
+        });
+
+        // Connected event
+        this.provider?.on('connect', (_connectInfo) => {
+          console.log(`App::connect`, _connectInfo);
+          this.onConnect();
+          this.connected = true;
+        });
+
+        // Disconnect event
+        this.provider?.on('disconnect', (error) => {
+          console.log(`App::disconnect`, error);
+          this.connected = false;
+        });
+
+        this.availableLanguages = this.sdk?.availableLanguages ?? ['en'];
       } catch (e) {
         console.log('request accounts ERR', e);
       }
@@ -390,16 +383,13 @@ export default {
 }
 
 .info-status {
-  margin-left: auto;
-  margin-right: auto;
   width: 90%;
   background-color: #c2ffc2;
   border: 1px solid darkolivegreen;
   border-radius: 5px;
   text-align: center;
-  margin-bottom: 20px;
   word-wrap: break-word;
-  margin-top: 10px;
+  margin: 10px auto 20px;
 }
 
 .metamask-container {

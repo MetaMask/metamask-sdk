@@ -1674,9 +1674,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.17.0"
+"@metamask/sdk-communication-layer@npm:0.18.4":
+  version: 0.18.4
+  resolution: "@metamask/sdk-communication-layer@npm:0.18.4"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -1689,7 +1689,7 @@ __metadata:
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 50d4caabfa9bbefa9afc475e7060bcc292f2f630d53b75cab9c9be86440069616b29ffc451356350579b76f6ba2aa9e3c1c13831de41550e82a6e47bdc9eaa50
+  checksum: c14b1c56d79912cbfa7b1f1d71d05f042583ed5ac2f8a047e4d8e6dcab5083ed71911d3794f1f16be404d325500c49bbc06dcda7c9d555ec289f18da816b79ef
   languageName: node
   linkType: hard
 
@@ -1715,13 +1715,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.17.2":
-  version: 0.17.2
-  resolution: "@metamask/sdk@npm:0.17.2"
+"@metamask/sdk@npm:^0.18.4":
+  version: 0.18.4
+  resolution: "@metamask/sdk@npm:0.18.4"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
-    "@metamask/sdk-communication-layer": 0.17.0
+    "@metamask/sdk-communication-layer": 0.18.4
     "@metamask/sdk-install-modal-web": 0.17.0
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
@@ -1755,7 +1755,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 900b175c1297d46ef0b4bf15a71db172db75f50f8303e4711b00edd3e9af5a077f74fdf0654833f9d65f09adc26d2e030b435d4d2945a50bfafd955948ff6719
+  checksum: 0c0e30e916be324f9eb10bafc880087252afe46f3474009c3ff05d504122e4ee29af90b0e50ca0c17ca8cff1a9ee1361961121aa77d0a89dcbbf3449fe7bd5e9
   languageName: node
   linkType: hard
 
@@ -6721,7 +6721,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.12.16
     "@babel/eslint-parser": ^7.12.16
-    "@metamask/sdk": ^0.17.2
+    "@metamask/sdk": ^0.18.4
     "@vue/cli-plugin-babel": ~5.0.0
     "@vue/cli-plugin-eslint": ~5.0.0
     "@vue/cli-service": ~5.0.0
