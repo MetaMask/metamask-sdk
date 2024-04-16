@@ -60,6 +60,7 @@ describe('setupAnalytics', () => {
       originatorInfo: {
         url: 'https://dapp.url',
         title: 'DApp Name',
+        dappId: 'DApp Name',
         platform: 'web',
         source: 'custom-source',
       },
