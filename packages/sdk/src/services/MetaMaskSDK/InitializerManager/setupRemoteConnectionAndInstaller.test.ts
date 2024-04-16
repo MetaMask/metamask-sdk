@@ -67,6 +67,7 @@ describe('setupRemoteConnectionAndInstaller', () => {
         ...instance.options.modals,
         onPendingModalDisconnect: expect.any(Function),
       },
+      preferDesktop: false,
     });
 
     expect(MetaMaskInstaller).toHaveBeenCalledWith(
@@ -90,6 +91,7 @@ describe('setupRemoteConnectionAndInstaller', () => {
     expect(MetaMaskInstaller).toHaveBeenCalledWith({
       remote: instance.remoteConnection,
       platformManager: instance.platformManager,
+      preferDesktop: false,
       debug: instance.debug,
     });
   });

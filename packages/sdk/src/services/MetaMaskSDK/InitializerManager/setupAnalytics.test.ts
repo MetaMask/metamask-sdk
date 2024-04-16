@@ -34,11 +34,13 @@ describe('setupAnalytics', () => {
 
     expect(Analytics).toHaveBeenCalledWith({
       serverUrl: DEFAULT_SERVER_URL,
+      enabled: undefined,
       originatorInfo: {
         url: '',
         title: '',
         platform: '',
         source: '',
+        dappId: 'unkown',
       },
     });
   });
@@ -56,10 +58,12 @@ describe('setupAnalytics', () => {
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
+      enabled: undefined,
       serverUrl: 'https://custom.server.url',
       originatorInfo: {
         url: 'https://dapp.url',
         title: 'DApp Name',
+        dappId: 'DApp Name',
         platform: 'web',
         source: 'custom-source',
       },

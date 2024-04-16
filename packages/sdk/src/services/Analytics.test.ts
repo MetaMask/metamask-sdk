@@ -35,6 +35,7 @@ describe('Analytics', () => {
         title: 'DApp Name',
         platform: 'web',
         source: 'custom-source',
+        dappId: 'dapp-id',
       },
     };
   });

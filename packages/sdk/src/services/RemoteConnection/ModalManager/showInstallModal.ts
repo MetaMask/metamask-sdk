@@ -18,6 +18,7 @@ export function showInstallModal(
   state.installModal = options.modals.install?.({
     i18nInstance: options.sdk.i18nInstance,
     link,
+    preferDesktop: state.preferDesktop,
     installer: options.getMetaMaskInstaller(),
     terminate: () => {
       logger(

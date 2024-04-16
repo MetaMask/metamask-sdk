@@ -41,6 +41,7 @@ export interface RemoteConnectionProps {
   ecies?: ECIESProps;
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
+  preferDesktop?: boolean;
   i18nInstance: i18n;
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
@@ -51,6 +52,7 @@ export interface RemoteConnectionProps {
       i18nInstance: i18n;
       link: string;
       debug?: boolean;
+      preferDesktop?: boolean;
       installer: MetaMaskInstaller;
       terminate?: () => void;
       connectWithExtension?: () => void;
@@ -82,6 +84,7 @@ export interface RemoteConnectionState {
   analytics?: Analytics;
   authorized: boolean;
   reconnection: boolean;
+  preferDesktop?: boolean;
   communicationLayerPreference?: CommunicationLayerPreference;
   platformManager?: PlatformManager;
   pendingModal?: {
@@ -110,6 +113,7 @@ export class RemoteConnection implements ProviderService {
     developerMode: false,
     authorized: false,
     reconnection: false,
+    preferDesktop: false,
     communicationLayerPreference: undefined,
     platformManager: undefined,
     pendingModal: undefined,
@@ -123,6 +127,7 @@ export class RemoteConnection implements ProviderService {
       options.logging?.developerMode === true || options.logging?.sdk === true;
     this.state.developerMode = developerMode;
     this.state.analytics = options.analytics;
+    this.state.preferDesktop = options.preferDesktop ?? false;
     this.state.useDeeplink = options.sdk.options.useDeeplink;
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;

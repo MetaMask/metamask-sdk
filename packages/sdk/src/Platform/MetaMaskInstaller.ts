@@ -9,6 +9,7 @@ import { PlatformManager } from './PlatfformManager';
 // ethereum.on('disconnect', handler: (error: ProviderRpcError) => void);
 
 interface InstallerProps {
+  preferDesktop: boolean;
   remote: ProviderService;
   platformManager: PlatformManager;
   debug?: boolean;
@@ -18,6 +19,7 @@ interface MetaMaskInstallerState {
   isInstalling: boolean;
   hasInstalled: boolean;
   resendRequest: any;
+  preferDesktop: boolean;
   platformManager: PlatformManager | null;
   remote: ProviderService | null;
   debug: boolean;
@@ -33,6 +35,7 @@ export class MetaMaskInstaller {
     isInstalling: false,
     hasInstalled: false,
     resendRequest: null,
+    preferDesktop: false,
     platformManager: null,
     remote: null,
     debug: false,
@@ -40,10 +43,12 @@ export class MetaMaskInstaller {
 
   public constructor({
     remote,
+    preferDesktop,
     platformManager,
     debug = false,
   }: InstallerProps) {
     this.state.remote = remote;
+    this.state.preferDesktop = preferDesktop;
     this.state.platformManager = platformManager;
     this.state.debug = debug;
   }

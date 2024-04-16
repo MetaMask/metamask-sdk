@@ -28,6 +28,7 @@ export async function setupRemoteConnectionAndInstaller(
 
   instance.remoteConnection = new RemoteConnection({
     i18nInstance: instance.i18nInstance,
+    preferDesktop: options.preferDesktop ?? false,
     communicationLayerPreference:
       options.communicationLayerPreference ??
       CommunicationLayerPreference.SOCKET,
@@ -63,6 +64,7 @@ export async function setupRemoteConnectionAndInstaller(
 
   instance.installer = new MetaMaskInstaller({
     remote: instance.remoteConnection,
+    preferDesktop: options.preferDesktop ?? false,
     platformManager: instance.platformManager as PlatformManager,
     debug: instance.debug,
   });
