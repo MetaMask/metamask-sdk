@@ -62,12 +62,7 @@ describe('setupAnalytics', () => {
       serverUrl: 'https://custom.server.url',
       originatorInfo: {
         url: 'https://dapp.url',
-        title:
-          typeof window === 'undefined'
-            ? instance.options.dappMetadata?.name ??
-              instance.options.dappMetadata?.url ??
-              'unkown'
-            : window.location.hostname,
+        title: 'DApp Name',
         dappId: 'DApp Name',
         platform: 'web',
         source: 'custom-source',

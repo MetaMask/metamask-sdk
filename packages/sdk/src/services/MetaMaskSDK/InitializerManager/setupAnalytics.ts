@@ -23,12 +23,12 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
     originatorInfo: {
       url: options.dappMetadata.url ?? '',
       title: options.dappMetadata.name ?? '',
-      platform: platformType ?? '',
-      source: options._source ?? '',
       dappId:
         typeof window === 'undefined'
           ? options.dappMetadata?.name ?? options.dappMetadata?.url ?? 'unkown'
           : window.location.hostname,
+      platform: platformType ?? '',
+      source: options._source ?? '',
     },
   });
 }
