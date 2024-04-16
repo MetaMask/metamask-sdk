@@ -13,6 +13,7 @@ export const lcLogguedRPCs = [
   'eth_sendTransaction',
   'eth_signTypedData',
   'eth_signTransaction',
+  'personal_sign',
   'wallet_requestPermissions',
   'wallet_switchEthereumChain',
   'eth_signTypedData_v3',
@@ -66,6 +67,7 @@ export function handleSendMessage(
   if (instance.remote.state.analytics) {
     // Only logs specific RPCs
     if (
+      instance.remote.state.isOriginator &&
       message.method &&
       lcLogguedRPCs.includes(message.method.toLowerCase())
     ) {

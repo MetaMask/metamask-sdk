@@ -65,14 +65,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   const developerMode = options.logging?.developerMode === true;
   instance.debug = options.logging?.sdk || developerMode;
 
-  if (instance.debug) {
-    debug.enable('MM_SDK');
-
-    logger(
-      '[MetaMaskSDK: performSDKInitialization()] options',
-      instance.options,
-    );
-  }
+  logger('[MetaMaskSDK: performSDKInitialization()] options', instance.options);
 
   // Make sure to enable all logs if developer mode is on
   const runtimeLogging = { ...options.logging };
@@ -104,6 +97,9 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     await setupExtensionPreferences(instance);
 
   if (shouldReturn) {
+    logger(
+      '[MetaMaskSDK: performSDKInitialization()] shouldReturn=true --- prevent sdk initialization',
+    );
     return;
   }
 

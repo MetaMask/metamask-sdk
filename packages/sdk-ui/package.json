@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-ui",
-  "version": "0.3.0",
+  "version": "0.4.1",
   "description": "MetaMask SDK cross-platform ui library",
   "module": "dist/esm/index.js",
   "types": "dist/esm/dist/src/index.d.ts",

@@ -66,6 +66,13 @@ export const wrapExtensionProvider = ({
         return function () {
           return provider.selectedAddress;
         };
+      } else if (propKey === 'isConnected') {
+        return function () {
+          // TODO: allowed because of issue on inpavge provider
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return provider._state.isConnected;
+        };
       }
 
       return target[propKey as keyof MetaMaskInpageProvider];

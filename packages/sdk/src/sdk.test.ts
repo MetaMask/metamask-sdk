@@ -194,18 +194,6 @@ describe('MetaMaskSDK', () => {
 
       expect(sdk.activeProvider).toBeUndefined();
     });
-
-    it('should have a desktop preference when preferDesktop is true', () => {
-      sdk = new MetaMaskSDK({
-        preferDesktop: true,
-        dappMetadata: {
-          name: 'Test DApp',
-          url: 'http://test-dapp.com',
-        },
-      });
-
-      expect(sdk.options.preferDesktop).toBe(true);
-    });
   });
 
   describe('State Management', () => {

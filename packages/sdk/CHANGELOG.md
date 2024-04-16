@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.18.3]
+### Added
+- fix: issue preventing opting out of analytics ([#794](https://github.com/MetaMask/metamask-sdk/pull/794))
+
+## [0.18.2]
+### Added
+- fix: update the EIP_6369 provider info ([#788](https://github.com/MetaMask/metamask-sdk/pull/788))
+
+## [0.18.1]
+### Added
+- feat: store account between refresh ([#779](https://github.com/MetaMask/metamask-sdk/pull/779))
+
+## [0.18.0]
+### Added
+- feat: update prod socket server url ([#774](https://github.com/MetaMask/metamask-sdk/pull/774))
+
 ## [0.17.2]
 ### Added
 - feat: separately handle extension connectWith ([#767](https://github.com/MetaMask/metamask-sdk/pull/767))
@@ -267,7 +288,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.4...HEAD
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.3...@metamask/sdk@0.18.4
+[0.18.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.2...@metamask/sdk@0.18.3
+[0.18.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.1...@metamask/sdk@0.18.2
+[0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.0...@metamask/sdk@0.18.1
+[0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...@metamask/sdk@0.18.0
 [0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.1...@metamask/sdk@0.17.2
 [0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.0...@metamask/sdk@0.17.1
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.16.0...@metamask/sdk@0.17.0

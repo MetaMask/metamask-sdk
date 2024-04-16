@@ -5,9 +5,10 @@ import {
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
 import {
-  LOCAL_STORAGE_CACHE_KEYS,
   METHODS_TO_REDIRECT,
   RPC_METHODS,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_DAPP_CHAINID,
 } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
@@ -43,13 +44,6 @@ const initializeMobileProvider = ({
   remoteConnection?: RemoteConnection;
   debug: boolean;
 }) => {
-  const isLocalStorageAvailable =
-    typeof window !== 'undefined' && window.localStorage;
-
-  logger(
-    `[initializeMobileProvider] isLocalStorageAvailable=${isLocalStorageAvailable}`,
-  );
-
   // Setup stream for content script communication
   const metamaskStream = getPostMessageStream({
     name: ProviderConstants.INPAGE,
@@ -67,20 +61,42 @@ const initializeMobileProvider = ({
     dappInfo.name
   }`;
 
-  let cachedAccountAddress: string | null = isLocalStorageAvailable
-    ? localStorage.getItem(LOCAL_STORAGE_CACHE_KEYS.SELECTED_ADDRESS) || null
-    : null;
+  let cachedAccountAddress: string | null = null;
+  let cachedChainId: string | null = null;
+  const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
+  // check if localStorage is available
+  if (hasLocalStoage) {
+    const cachedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
+    if (cachedAddress) {
+      try {
+        const parsed = JSON.parse(cachedAddress);
+        if (parsed) {
+          cachedAccountAddress = parsed;
+        }
+      } catch (err) {
+        console.error(
+          `[initializeMobileProvider] failed to parse cached accounts: ${err}`,
+        );
+      }
+    }
 
-  let cachedChainId: string | null = isLocalStorageAvailable
-    ? localStorage.getItem(LOCAL_STORAGE_CACHE_KEYS.CHAIN_ID) || null
-    : null;
+    const cachedChain = localStorage.getItem(STORAGE_DAPP_CHAINID);
+    if (cachedChain) {
+      try {
+        const parsed = JSON.parse(cachedChain);
+        if (parsed) {
+          cachedChainId = parsed;
+        }
+      } catch (err) {
+        console.error(
+          `[initializeMobileProvider] failed to parse cached chainId: ${err}`,
+        );
+      }
+    }
+  }
 
   logger(
-    `[initializeMobileProvider] cachedAccountAddress=${cachedAccountAddress} cachedChainId=${cachedChainId}`,
-  );
-
-  logger(
-    `[initializeMobileProvider] communicationLayerPreference=${communicationLayerPreference} injectProvider=${injectProvider} shouldShimWeb3=${shouldShimWeb3} platformType=${platformType} checkInstallationOnAllCalls=${checkInstallationOnAllCalls}`,
+    `[initializeMobileProvider] cachedAccountAddress: ${cachedAccountAddress}, cachedChainId: ${cachedChainId}`,
   );
 
   // Initialize provider object (window.ethereum)
@@ -141,41 +157,30 @@ const initializeMobileProvider = ({
     let chainId: string | null = null;
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
-    chainId =
-      provider.getChainId() ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
+    chainId = provider.getChainId() || cachedChainId;
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
-      cachedAccountAddress = selectedAddress;
-      logger(
-        `[initializeMobileProvider: sendRequest()] set selectedAddress=${selectedAddress} to cachedAccountAddress`,
-      );
-
-      if (isLocalStorageAvailable) {
+      if (hasLocalStoage && selectedAddress !== cachedAccountAddress) {
+        cachedAccountAddress = selectedAddress;
         localStorage.setItem(
-          LOCAL_STORAGE_CACHE_KEYS.SELECTED_ADDRESS,
-          selectedAddress,
-        );
-
-        logger(
-          `[initializeMobileProvider: sendRequest()] set selectedAddress=${selectedAddress} to localStorage`,
+          STORAGE_DAPP_SELECTED_ADDRESS,
+          JSON.stringify(selectedAddress),
         );
       }
     }
 
     if (chainId) {
       cachedChainId = chainId;
-      logger(
-        `[initializeMobileProvider: sendRequest()] set chainId=${chainId} to cachedChainId`,
-      );
-
-      if (isLocalStorageAvailable) {
-        logger(
-          `[initializeMobileProvider: sendRequest()] set chainId=${chainId} to localStorage`,
-        );
-        localStorage.setItem(LOCAL_STORAGE_CACHE_KEYS.CHAIN_ID, chainId);
+      if (hasLocalStoage) {
+        localStorage.setItem(STORAGE_DAPP_CHAINID, JSON.stringify(chainId));
       }
     }
+
+    logger('[initializeMobileProvider: sendRequest()]', {
+      selectedAddress,
+      chainId,
+    });
 
     if (debugRequest) {
       logger(

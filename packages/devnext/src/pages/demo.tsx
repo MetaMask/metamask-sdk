@@ -21,7 +21,6 @@ const Demo = () => {
       setResponse('');
 
       const accounts = await sdk?.connect();
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
       setResponse(accounts);
     } catch (err) {
@@ -39,7 +38,6 @@ const Demo = () => {
       setResponse('');
 
       const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectAndSign response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -60,7 +58,6 @@ const Demo = () => {
         method: 'eth_accounts',
         params: [],
       });
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`eth_accounts response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -85,7 +82,6 @@ const Demo = () => {
           },
         ],
       });
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`wallet_requestPermissions response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -106,7 +102,6 @@ const Demo = () => {
         method: 'wallet_getPermissions',
         params: [{ eth_accounts: {} }],
       });
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`wallet_getPermissions response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -154,7 +149,7 @@ const Demo = () => {
     }
 
     const msgParams = JSON.stringify(getSignParams({ hexChainId: chainId }));
-    const from = window.ethereum?.getSelectedAddress();
+    const from = provider?.getSelectedAddress();
 
     setRequesting(true);
     setRpcError(null);
@@ -184,7 +179,7 @@ const Demo = () => {
   };
 
   const personalSign = async () => {
-    const from = window.ethereum?.getSelectedAddress();
+    const from = provider?.getSelectedAddress();
     setRequesting(true);
     setRpcError(null);
     setResponse(''); // reset response first
@@ -373,8 +368,6 @@ const Demo = () => {
 
   const testReadOnlyCalls = async () => {
     try {
-      await checkBalances();
-
       // Following code can only work after the sdk has connected once and saved initial accounts+chainid.
       console.log(`Testing sdk accounts+chainid caching...`);
       const chain = await provider?.request({
@@ -388,6 +381,8 @@ const Demo = () => {
         params: [],
       });
       console.log(`accounts`, accounts);
+
+      await checkBalances();
     } catch (err) {
       console.error(`testReadOnlyCalls error`, err);
     }
@@ -602,7 +597,7 @@ const Demo = () => {
       }
 
       const hexResponse = await sdk?.connectWith(rpc);
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      // const accounts = provider?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectWith response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {

@@ -5,6 +5,10 @@ import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
 import { checkSameId } from '../ChannelManager';
+import { lcLogguedRPCs } from '../MessageHandlers';
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+import packageJson from '../../../../package.json';
 
 /**
  * Returns a handler function to handle incoming messages.
@@ -167,6 +171,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
         };
       };
       const initialRPCMethod = instance.state.rpcMethodTracker[rpcMessage.id];
+
       if (initialRPCMethod) {
         const elapsedTime = Date.now() - initialRPCMethod.timestamp;
         logger.SocketService(
@@ -174,6 +179,28 @@ export function handleMessage(instance: SocketService, channelId: string) {
           messageReceived,
         );
 
+        // send ack_received tracking message
+        if (
+          instance.remote.state.analytics &&
+          lcLogguedRPCs.includes(initialRPCMethod.method.toLowerCase())
+        ) {
+          SendAnalytics(
+            {
+              id: instance.remote.state.channelId ?? '',
+              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+              sdkVersion: instance.remote.state.sdkVersion,
+              commLayerVersion: packageJson.version,
+              walletVersion: instance.remote.state.walletInfo?.version,
+              params: {
+                method: initialRPCMethod.method,
+                from: 'mobile',
+              },
+            },
+            instance.remote.state.communicationServerUrl,
+          ).catch((err) => {
+            console.error(`Cannot send analytics`, err);
+          });
+        }
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,
@@ -187,14 +214,6 @@ export function handleMessage(instance: SocketService, channelId: string) {
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
         instance.emit(EventType.RPC_UPDATE, rpcResult);
-
-        logger.SocketService(
-          `[SocketService handleMessage()] HACK (wallet <7.3) update rpcMethodTracker`,
-          rpcResult,
-        );
-
-        // FIXME hack while waiting for mobile release 7.3
-        instance.emit(EventType.AUTHORIZED);
       }
     }
 

@@ -5,6 +5,7 @@ import { EXTENSION_EVENTS, STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { getBrowserExtension } from '../../../utils/get-browser-extension';
 import { Ethereum } from '../../Ethereum';
+import { wrapExtensionProvider } from '../../../provider/wrapExtensionProvider';
 
 /**
  * Sets up the extension preferences for the MetaMask SDK instance.
@@ -121,7 +122,11 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
     Ethereum.destroy();
   } else if (instance.platformManager?.isMetaMaskMobileWebView()) {
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_INAPP_BROWSER });
-    instance.activeProvider = window.ethereum;
+    // TODO: Remove Force wrapping inpage provider until it implements latest provider interface
+    instance.activeProvider = wrapExtensionProvider({
+      provider: window.ethereum as any,
+      sdkInstance: instance,
+    }) as SDKProvider;
     instance._initialized = true;
 
     shouldReturn = true;
@@ -135,6 +140,7 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
     instance.activeProvider = metamaskBrowserExtension as SDKProvider; // TODO should be MetaMaskInPageProvider
     instance.extensionActive = true;
+    instance.extension = metamaskBrowserExtension;
     instance._initialized = true;
 
     shouldReturn = true;
