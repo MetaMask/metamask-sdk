@@ -89,7 +89,7 @@ const sdkWebInstallModal = ({
       modalLoader.renderInstallModal({
         i18nInstance,
         parentElement: div,
-        preferDesktop,
+        preferDesktop: preferDesktop ?? false,
         link,
         metaMaskInstaller: installer,
         onClose: unmount,
