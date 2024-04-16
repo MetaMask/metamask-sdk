@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.5]
+### Uncategorized
+- feat: update 'sdk-react' to be in '0.18.5' ([#810](https://github.com/MetaMask/metamask-sdk/pull/810))
+
 ## [0.18.4]
 ### Added
 - fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
@@ -116,7 +120,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.5...HEAD
+[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.4...@metamask/sdk-react-ui@0.18.5
 [0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.0...@metamask/sdk-react-ui@0.18.4
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.17.0...@metamask/sdk-react-ui@0.18.0
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.16.0...@metamask/sdk-react-ui@0.17.0
