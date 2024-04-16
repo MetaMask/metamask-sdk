@@ -12,6 +12,7 @@ describe('MetaMaskInstaller', () => {
       remote: mockProviderService,
       platformManager: mockPlatformManager,
       debug: false,
+      preferDesktop: false,
     });
   });
 

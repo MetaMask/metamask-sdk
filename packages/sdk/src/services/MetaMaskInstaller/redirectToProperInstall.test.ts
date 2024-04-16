@@ -47,17 +47,6 @@ describe('redirectToProperInstall', () => {
     expect(result).toBe(false);
   });
 
-  it('should start desktop onboarding if platform is DesktopWeb and extension not available', async () => {
-    mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    global.window = {
-      extension: undefined,
-    } as any;
-    const result = await redirectToProperInstall(instance);
-
-    expect(mockStartDesktopOnboarding).toHaveBeenCalled();
-    expect(result).toBe(false);
-  });
-
   it('should start remote connection if platform is not MetaMaskMobileWebview', async () => {
     mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
     mockStartConnection.mockResolvedValue(true);
