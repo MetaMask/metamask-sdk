@@ -10,10 +10,11 @@
   "scripts": {
     "build": "tsc",
     "start": "yarn build && electron ./dist/src/main.js",
+    "debug": "DEBUG=true yarn build && electron ./dist/src/main.js",
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "^0.17.2",
+    "@metamask/sdk": "^0.18.5",
     "qrcode": "^1.5.3",
     "typescript": "^5.1.6"
   }
