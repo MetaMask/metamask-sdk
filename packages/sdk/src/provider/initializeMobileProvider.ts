@@ -63,9 +63,9 @@ const initializeMobileProvider = ({
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
-  const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
+  const hasLocalStorage = typeof window !== 'undefined' && window.localStorage;
   // check if localStorage is available
-  if (hasLocalStoage) {
+  if (hasLocalStorage) {
     const cachedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
     if (cachedAddress) {
       try {
@@ -161,7 +161,7 @@ const initializeMobileProvider = ({
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
-      if (hasLocalStoage && selectedAddress !== cachedAccountAddress) {
+      if (hasLocalStorage && selectedAddress !== cachedAccountAddress) {
         cachedAccountAddress = selectedAddress;
         localStorage.setItem(
           STORAGE_DAPP_SELECTED_ADDRESS,
@@ -172,7 +172,7 @@ const initializeMobileProvider = ({
 
     if (chainId) {
       cachedChainId = chainId;
-      if (hasLocalStoage) {
+      if (hasLocalStorage) {
         localStorage.setItem(STORAGE_DAPP_CHAINID, JSON.stringify(chainId));
       }
     }

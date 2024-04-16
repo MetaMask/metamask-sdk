@@ -3,24 +3,20 @@ import {
   type MetaMaskSDK,
   type MetaMaskSDKOptions,
   type SDKProvider,
-} from '@metamask/sdk'
+} from '@metamask/sdk';
+import { ChainNotConfiguredError, createConnector } from '@wagmi/core';
+import type { Evaluate, ExactPartial, Omit } from '@wagmi/core/internal';
 import {
-  ChainNotConfiguredError,
-  createConnector,
-  normalizeChainId,
-} from '@wagmi/core'
-import type { Evaluate, ExactPartial, Omit } from '@wagmi/core/internal'
-import {
-  type Address,
-  type ProviderConnectInfo,
-  type ProviderRpcError,
   ResourceUnavailableRpcError,
   RpcError,
   SwitchChainError,
   UserRejectedRequestError,
   getAddress,
   numberToHex,
-} from 'viem'
+  type Address,
+  type ProviderConnectInfo,
+  type ProviderRpcError,
+} from 'viem';
 
 export type MetaMaskParameters = Evaluate<
   ExactPartial<
@@ -52,62 +48,68 @@ export function metaMask(parameters: MetaMaskParameters = {}) {
     name: 'MetaMask',
     type: metaMask.type,
     async setup() {
-      if (!sdkImport) {
-        // Only load once
-        sdkImport = import('@metamask/sdk') as any
-      }
+      const cacheSelectedAddress =  window.localStorage?.getItem('MMSDK_cached_address') as string
+      const trimmed = cacheSelectedAddress.slice(1, -1);
 
-      const sdkModule = await sdkImport
-      if (!sdkModule) {
-        throw new Error('MetaMask SDK not found')
-      }
-
-      if (!parameters || !parameters.dappMetadata) {
-        throw new Error('dappMetadata is required and must be provided.')
-      }
-
-      sdk = new sdkModule.MetaMaskSDK({
-        ...parameters,
-        dappMetadata: parameters.dappMetadata,
-        _source: 'wagmi',
-        readonlyRPCMap: Object.fromEntries(
-          config.chains.map((chain) => [
-            chain.id,
-            chain.rpcUrls.default.http[0]!,
-          ]),
-        ),
-      })
-      await sdk.init()
-
-      sdk?.getProvider()?.on('connect', this.onConnect.bind(this) as Listener)
-    },
-    async connect({ chainId } = {}) {
       const provider = await this.getProvider()
 
-      let accounts: readonly Address[] | null = null
+            console.log("🟠 ~ file: mmsdk.ts:95 ~ connect ~ cacheSelectedAddress:", trimmed)
+            sdk.activeProvider?._setAccounts([trimmed] as string[])
+      if (provider)
+        provider.on('connect', this.onConnect.bind(this) as Listener)
+    },
+    async connect({ chainId, isReconnecting } = {}) {
+    console.log("🟠 ~ file: metaMask.ts:56 ~ connect ~ isReconnecting:", isReconnecting)
+    const isMobileBrowser = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    console.log("🟠 ~ file: metaMask.ts:58 ~ connect ~ isMobileBrowser:", isMobileBrowser)
 
-      try {
-        accounts = (await sdk.connect()) as Address[]
 
-        if (!accounts?.length) {
-          const requestedAccounts = (await sdk.connect()) as string[]
+    console.log("🟠 ~ file: metaMask.ts:61 ~ connect ~ isReconnecting && isMobileBrowser:", isReconnecting && isMobileBrowser)
+    const provider = await this.getProvider()
+
+    let accounts: readonly Address[] | null = null
+
+    try {
+      console.log("🟠 ~ file: metaMask.ts:67 ~ connect ~ isReconnecting && isMobileBrowser:", isReconnecting && isMobileBrowser)
+
+      // if(isReconnecting && isMobileBrowser) {
+      //     this.disconnect()
+      //   }
+
+        if (!accounts) {
+          console.log("🟠 ~ file: metaMask.ts:91 ~ connect ~ !accounts:", !accounts)
+          const cacheSelectedAddress =  window.localStorage?.getItem('MMSDK_cached_address') as string
+
+          if (cacheSelectedAddress) {
+            const trimmed = cacheSelectedAddress.slice(1, -1);
+            console.log("🟠 ~ file: mmsdk.ts:95 ~ connect ~ cacheSelectedAddress:", trimmed)
+            sdk.activeProvider?._setAccounts([trimmed] as string[])
+          }
+
+          const requestedAccounts = (isReconnecting && isMobileBrowser) ? (await this.getAccounts()) : (await sdk.connect()) as string[]
+
+          console.log("🟠 ~ file: metaMask.ts:93 ~ connect ~ !accounts:", !accounts)
           accounts = requestedAccounts.map((x) => getAddress(x))
+          await sdk.connect()
         }
 
         provider.removeListener(
           'connect',
           this.onConnect.bind(this) as Listener,
         )
+        console.log("🟠 ~ file: metaMask.ts:101 ~ connect ~ provider:")
         provider.on(
           'accountsChanged',
           this.onAccountsChanged.bind(this) as Listener,
         )
+        console.log("🟠 ~ file: metaMask.ts:106 ~ connect ~ provider:")
         provider.on('chainChanged', this.onChainChanged as Listener)
+        console.log("🟠 ~ file: metaMask.ts:108 ~ connect ~ provider:")
         provider.on('disconnect', this.onDisconnect.bind(this) as Listener)
-
+        console.log("🟠 ~ file: metaMask.ts:110 ~ connect ~ provider:")
+      if(!isMobileBrowser){
         // Backward compatibility with older wallet (<7.3) version that return accounts before authorization
         if (!sdk.isExtensionActive() && !sdk._getConnection()?.isAuthorized()) {
-          // @ts-ignore
           function waitForAuthorized() {
             return new Promise((resolve) => {
               const connection = sdk._getConnection()
@@ -117,18 +119,24 @@ export function metaMask(parameters: MetaMaskParameters = {}) {
           }
           await waitForAuthorized()
         }
+      }
 
         // Switch to chain if provided
-        let currentChainId = await this.getChainId()
+        let currentChainId = 1
+        console.log("🟠 ~ file: metaMask.ts:126 ~ connect ~ currentChainId:", currentChainId)
+
         if (chainId && currentChainId !== chainId) {
+          console.log("🟠 ~ file: metaMask.ts:129 ~ connect ~ currentChainId:", currentChainId)
           const chain = await this.switchChain!({ chainId }).catch((error) => {
             if (error.code === UserRejectedRequestError.code) throw error
             return { id: currentChainId }
           })
           currentChainId = chain?.id ?? currentChainId
         }
+        console.log("🟠 ~ file: metaMask.ts:136 ~ connect ~ currentChainId:", currentChainId)
 
         await config.storage?.removeItem('metaMaskSDK.disconnected')
+        console.log("🟠 ~ file: metaMask.ts:139 ~ connect ~ currentChainId:", currentChainId)
 
         return { accounts, chainId: currentChainId }
       } catch (err) {
@@ -168,13 +176,34 @@ export function metaMask(parameters: MetaMaskParameters = {}) {
       const chainId =
         provider.getChainId() ??
         (await provider?.request({ method: 'eth_chainId' }))
-      return normalizeChainId(chainId)
+      return Number(chainId)
     },
     async getProvider() {
       if (!sdk) {
-        throw new Error(
-          'MetaMask SDK provider is not available. Ensure the MetaMask SDK is initialized and connected.',
-        )
+        if (!sdkImport) sdkImport = import('@metamask/sdk') as any
+
+        const sdkModule = await sdkImport
+
+        if (!sdkModule) throw new Error('MetaMask SDK not found')
+        if (!parameters || !parameters.dappMetadata)
+          throw new Error('dappMetadata is required and must be provided.')
+
+        sdk = new sdkModule.MetaMaskSDK({
+          ...parameters,
+          logging:{
+            sdk: true,
+            remoteLayer: true
+          },
+          dappMetadata: parameters.dappMetadata,
+          _source: 'wagmi',
+          readonlyRPCMap: Object.fromEntries(
+            config.chains.map((chain) => [
+              chain.id,
+              chain.rpcUrls.default.http[0]!,
+            ]),
+          ),
+        })
+        await sdk.init()
       }
 
       return sdk.getProvider()!
@@ -225,7 +254,7 @@ export function metaMask(parameters: MetaMaskParameters = {}) {
           try {
             const { default: blockExplorer, ...blockExplorers } =
               chain.blockExplorers ?? {}
-            let blockExplorerUrls: string[] = []
+            let blockExplorerUrls
             if (blockExplorer)
               blockExplorerUrls = [
                 blockExplorer.url,
@@ -278,14 +307,14 @@ export function metaMask(parameters: MetaMaskParameters = {}) {
         })
     },
     onChainChanged(chain) {
-      const chainId = normalizeChainId(chain)
+      const chainId = Number(chain)
       config.emitter.emit('change', { chainId })
     },
     async onConnect(connectInfo) {
       const accounts = await this.getAccounts()
       if (accounts.length === 0) return
 
-      const chainId = normalizeChainId(connectInfo.chainId)
+      const chainId = Number(connectInfo.chainId)
       config.emitter.emit('connect', { accounts, chainId })
 
       const provider = await this.getProvider()
