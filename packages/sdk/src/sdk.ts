@@ -75,7 +75,6 @@ export interface MetaMaskSDKOptions {
 
   /**
    * If true, the SDK will prefer the desktop version of MetaMask over the mobile version.
-   * @deprecated use `extensionOnly` instead
    */
   preferDesktop?: boolean;
 
@@ -260,13 +259,6 @@ export class MetaMaskSDK extends EventEmitter2 {
         throw new Error(`Invalid defaultReadOnlyChainId, must start with '0x'`);
       }
       this.defaultReadOnlyChainId = options.defaultReadOnlyChainId.toString();
-    }
-
-    // Remove deprecated options
-    if (options.preferDesktop) {
-      console.warn(
-        `The 'preferDesktop' option is deprecated. Use 'extensionOnly' instead.`,
-      );
     }
 
     this.options = options;
