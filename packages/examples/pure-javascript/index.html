@@ -11,18 +11,18 @@
   });
 </script>
 <script>
+  let provider;
+
   function connect() {
-    ethereum
-      .request({
-        method: 'eth_requestAccounts',
-        params: [],
+    sdk.connect()
+      .then((res) => {
+        provider = sdk.getProvider();
       })
-      .then((res) => console.log('request accounts', res))
       .catch((e) => console.log('request accounts ERR', e));
   }
 
   function addEthereumChain() {
-    ethereum
+    provider
       .request({
         method: 'wallet_addEthereumChain',
         params: [

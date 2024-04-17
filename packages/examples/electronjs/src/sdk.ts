@@ -12,7 +12,7 @@ const sdk = new MetaMaskSDK({
   },
   dappMetadata: {
     name: 'Electron Test Dapp',
-    url: 'https://metamask.io/sdk/',
+    url: 'https://www.electronjs.org/',
   },
   modals: {
     install: ({ link }) => {
@@ -94,7 +94,6 @@ const msgParams = {
   },
 };
 
-
 // DOM Elements
 const qrCodeDOM = document.getElementById('qrCode');
 const otpDOM = document.getElementById('otp');
@@ -109,31 +108,43 @@ const responseDOM = document.getElementById('response');
 const accountsDOM = document.getElementById('account');
 const chainDOM = document.getElementById('chain');
 
+const toggleButtons = () => {
+  if (signButtonDOM.style.display === 'none') {
+    signButtonDOM.style.display = 'inline';
+    signTypedDataButtonDOM.style.display = 'inline';
+    addPolygonDOM.style.display = 'inline';
+    switchPolygonDOM.style.display = 'inline';
+    switchChainDOM.style.display = 'inline';
+  } else {
+    signButtonDOM.style.display = 'none';
+    signTypedDataButtonDOM.style.display = 'none';
+    addPolygonDOM.style.display = 'none';
+    switchPolygonDOM.style.display = 'none';
+    switchChainDOM.style.display = 'none';
+  }
+}
+
 // App State
 let account = ''
 let chainId = ''
 let response = ''
-let ethereum: SDKProvider;
-
+let provider: SDKProvider;
 
 // SDK Functions
 
 // Connect
 const connect = async () => {
-  await ethereum.request({ method: 'eth_requestAccounts' })
-    .then((accounts) => {
-      account = accounts?.[0];
-      updateDOM(accountsDOM, account);
-      connectButtonDOM.textContent = 'Connected';
-      qrCodeDOM.style.display = 'none';
-      chainId = ethereum.getChainId();
-      updateDOM(chainDOM, chainId);
-      signButtonDOM.style.display = 'inline';
-      signTypedDataButtonDOM.style.display = 'inline';
-      addPolygonDOM.style.display = 'inline';
-      switchPolygonDOM.style.display = 'inline';
-      switchChainDOM.style.display = 'inline';
-    })
+  await sdk.connect().then((accounts) => {
+    provider = sdk.getProvider();
+    account = accounts?.[0];
+    setEventListeners();
+    updateDOM(accountsDOM, account);
+    connectButtonDOM.textContent = 'Connected';
+    qrCodeDOM.style.display = 'none';
+    chainId = provider.getChainId();
+    updateDOM(chainDOM, chainId);
+    toggleButtons();
+  })
     .catch((error) => {
       console.error(error);
     });
@@ -141,10 +152,10 @@ const connect = async () => {
 
 // Personal Sign
 const personal_sign = async () => {
-  const from = ethereum.getSelectedAddress();
+  const from = provider.getSelectedAddress();
   const message = 'Hello World from the Electron Example dapp!';
   const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
-  ethereum.request({
+  provider.request({
     method: 'personal_sign',
     params: [hexMessage, from, 'Example password'],
   }).then((result) => {
@@ -156,7 +167,7 @@ const personal_sign = async () => {
 
 // eth_signTypedData_v4
 const eth_signTypedData_v4 = async () => {
-  let from = ethereum.getSelectedAddress();
+  let from = provider.getSelectedAddress();
   try {
     if (!from) {
       alert(
@@ -165,12 +176,12 @@ const eth_signTypedData_v4 = async () => {
       return;
     }
 
-    msgParams.domain.chainId = ethereum.getChainId();
+    msgParams.domain.chainId = provider.getChainId();
     const params = [from, JSON.stringify(msgParams)];
     const method = 'eth_signTypedData_v4';
     console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
     console.debug(`sign params`, params);
-    const result = await ethereum?.request({ method, params });
+    const result = await provider?.request({ method, params });
     updateDOM(responseDOM, result.toString());
   } catch (e) {
     console.log(e);
@@ -180,9 +191,9 @@ const eth_signTypedData_v4 = async () => {
 
 // Chain Switch
 const switchChain = async () => {
-  const currentChainId = ethereum.getChainId();
-  const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1';
-  await ethereum.request({
+  const currentChainId = provider.getChainId();
+  const chainToSwitchTo = currentChainId === '0x1' ? '0xaa36a7' : '0x1';
+  await provider.request({
     method: 'wallet_switchEthereumChain',
     params: [{ chainId: chainToSwitchTo }],
   });
@@ -191,7 +202,7 @@ const switchChain = async () => {
 // Switch to Polygon
 const switchToPolygon = async () => {
   const chainToSwitchTo = '0x89';
-  await ethereum.request({
+  await provider.request({
     method: 'wallet_switchEthereumChain',
     params: [{ chainId: chainToSwitchTo }],
   });
@@ -199,7 +210,7 @@ const switchToPolygon = async () => {
 
 // Add Polygon Chain
 const addPolygonChain = async () => {
-  ethereum
+  provider
     .request({
       method: 'wallet_addEthereumChain',
       params: [
@@ -220,11 +231,7 @@ const addPolygonChain = async () => {
 const terminate = () => {
   sdk.terminate();
   connectButtonDOM.textContent = 'Connect';
-  signButtonDOM.style.display = 'none';
-  signTypedDataButtonDOM.style.display = 'none';
-  switchChainDOM.style.display = 'none';
-  addPolygonDOM.style.display = 'none';
-  switchPolygonDOM.style.display = 'none';
+  toggleButtons()
   accountsDOM.innerText = '';
   chainDOM.innerText = '';
   qrCodeDOM.innerText = '';
@@ -246,9 +253,6 @@ terminateButtonDOM.addEventListener('click', terminate);
 
 // Entry point
 window.onload = async () => {
-  await sdk.init();
-  ethereum = sdk.getProvider();
-  setEventListeners();
   if(hasSessionStored()) {
     connectButtonDOM.innerText = 'Reconnecting...';
     await connect();
@@ -256,15 +260,15 @@ window.onload = async () => {
 }
 
 const setEventListeners = () => {
-  ethereum.on('chainChanged', (chain: string) => {
+  provider.on('chainChanged', (chain: string) => {
     console.log(`chainChanged ${chain}`);
     chainId = chain;
     updateDOM(chainDOM, chain);
   });
 
-  ethereum.on('accountsChanged', (accounts: string[]) => {
+  provider.on('accountsChanged', (accounts: string[]) => {
     if (accounts.length === 0) {
-      updateDOM(accountsDOM, 'Accounts disconnected!')
+      updateDOM(accountsDOM, 'MetaMask is disconnected!');
       return;
     }
     console.log(`accountsChanged ${accounts}`);
@@ -272,7 +276,7 @@ const setEventListeners = () => {
     updateDOM(accountsDOM, accounts[0]);
   });
 
-  ethereum.on('connect', () => {
+  provider.on('connect', () => {
     qrCodeDOM.innerText = '';
     signButtonDOM.style.display = 'inline';
     if (account !== '') {
