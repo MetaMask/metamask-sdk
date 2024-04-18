@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.6]
+### Added
+- fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
+
 ## [0.18.5]
-### Uncategorized
+### Added
 - feat: update 'sdk-react' to be in '0.18.5' ([#810](https://github.com/MetaMask/metamask-sdk/pull/810))
 
 ## [0.18.4]
@@ -120,7 +124,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.6...HEAD
+[0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.5...@metamask/sdk-react-ui@0.18.6
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.4...@metamask/sdk-react-ui@0.18.5
 [0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.0...@metamask/sdk-react-ui@0.18.4
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.17.0...@metamask/sdk-react-ui@0.18.0
