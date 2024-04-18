@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.18.6]
+### Added
+- fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
+
 ## [0.18.5]
-### Uncategorized
+### Added
 - fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
 - fix: inpage provider support ([#806](https://github.com/MetaMask/metamask-sdk/pull/806))
 
@@ -293,7 +297,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.6...HEAD
+[0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.5...@metamask/sdk@0.18.6
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.4...@metamask/sdk@0.18.5
 [0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.3...@metamask/sdk@0.18.4
 [0.18.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.2...@metamask/sdk@0.18.3
