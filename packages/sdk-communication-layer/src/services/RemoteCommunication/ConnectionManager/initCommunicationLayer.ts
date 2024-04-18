@@ -99,7 +99,7 @@ export function initCommunicationLayer({
     dappId:
       typeof window === 'undefined'
         ? state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'unkown'
-        : window.location.hostname,
+        : window?.location?.hostname,
     icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
     platform: state.platformType,
     apiVersion: packageJson.version,

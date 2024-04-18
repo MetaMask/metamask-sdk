@@ -6,7 +6,12 @@
  */
 import 'node-libs-expo/globals';
 import 'react-native-url-polyfill/auto';
-import 'react-native-get-random-values';
+// import 'react-native-get-random-values';
+// crypto-shim.ts
+import * as crypto from 'expo-crypto';
+global.crypto = { ...global.crypto, ...crypto };
+
+console.log(global.crypto.getRandomValues(new Uint8Array(1)))
 
 import React, { useEffect } from 'react';
 

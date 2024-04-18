@@ -26,7 +26,7 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
       dappId:
         typeof window === 'undefined'
           ? options.dappMetadata?.name ?? options.dappMetadata?.url ?? 'unkown'
-          : window.location.hostname,
+          : window?.location?.hostname,
       platform: platformType ?? '',
       source: options._source ?? '',
     },
