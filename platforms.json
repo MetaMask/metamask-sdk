@@ -1,18 +1,18 @@
 {
     "@metamask/sdk": {
-        "stable": "0.18.4"
+        "stable": "0.18.5"
     },
     "@metamask/sdk-react": {
-        "stable": "0.18.4"
+        "stable": "0.18.5"
     },
     "@metamask/sdk-install-modal-web": {
-        "stable": "0.17.0"
+        "stable": "0.18.5"
     },
     "@metamask/sdk-communication-layer": {
-        "stable": "0.18.4"
+        "stable": "0.18.5"
     },
     "@metamask/sdk-react-ui": {
-        "stable": "0.18.4"
+        "stable": "0.18.5"
     },
     "@metamask/sdk-ui": {
         "stable": "0.4.1"
