@@ -1,7 +1,7 @@
 import os from 'os';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { logger } from './logger';
-import { isDevelopment } from '.';
+import { isDevelopment } from './config';
 
 let rateLimitPoints = 10;
 let rateLimitMessagePoints = 100;
