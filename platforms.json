@@ -24,9 +24,9 @@
         "stable": "2.0.0"
     },
     "metamask-ios-sdk": {
-        "stable": "0.6.0"
+        "stable": "0.6.1"
     },
     "metamask-android-sdk": {
-        "stable": "0.5.3"
+        "stable": "0.5.4"
     }
 }
