@@ -1,9 +1,8 @@
-import { init } from 'i18next';
-import { logger } from '../../../utils/logger';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../../constants';
+import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
