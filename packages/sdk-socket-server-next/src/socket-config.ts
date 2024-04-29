@@ -16,8 +16,6 @@ import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
 import { ACKParams, handleAck } from './protocol/handleAck';
 
-export const MAX_CLIENTS_PER_ROOM = 2;
-
 export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
 
 export type ClientType = 'dapp' | 'wallet';

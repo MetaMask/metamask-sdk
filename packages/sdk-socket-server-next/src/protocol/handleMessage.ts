@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { isDevelopment } from '..';
 import { pubClient } from '../api-config';
+import { config, isDevelopment } from '../config';
 import { logger } from '../logger';
 import {
   increaseRateLimits,
@@ -30,8 +30,6 @@ export type QueuedMessage = {
   message: string;
   timestamp: number;
 };
-
-const MSG_EXPIRY_1HOUR = 60 * 60 * 1000;
 
 export const handleMessage = async ({
   socket,
@@ -108,7 +106,7 @@ export const handleMessage = async ({
       };
       logger.debug(`persisting message in queue ${queueKey}`, persistedMsg);
       await pubClient.rpush(queueKey, JSON.stringify(persistedMsg));
-      await pubClient.expire(queueKey, MSG_EXPIRY_1HOUR);
+      await pubClient.expire(queueKey, config.msgExpiry);
     }
 
     logger.info(

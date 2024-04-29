@@ -1,13 +1,10 @@
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from '../api-config';
+import { MAX_CLIENTS_PER_ROOM, config } from '../config';
 import { logger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
-import {
-  ClientType,
-  MAX_CLIENTS_PER_ROOM,
-  MISSING_CONTEXT,
-} from '../socket-config';
+import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
 
 export type JoinChannelParams = {
@@ -19,8 +16,6 @@ export type JoinChannelParams = {
   hasRateLimit: boolean;
   callback?: (error: string | null, result?: unknown) => void;
 };
-
-export const ONE_WEEK = 7 * 24 * 60 * 60;
 
 export type ChannelConfig = {
   clients: Record<ClientType, string>;
@@ -104,7 +99,7 @@ export const handleJoinChannel = async ({
 
       await pubClient.setex(
         channelConfigKey,
-        ONE_WEEK,
+        config.channelExpiry,
         JSON.stringify(channelConfig),
       ); // 1 week expiration
     }
