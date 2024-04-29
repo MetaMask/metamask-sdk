@@ -29,7 +29,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableAnalytics: true,
+        enableAnalytics: false,
         preferDesktop: false,
         infuraAPIKey,
         readonlyRPCMap: {
@@ -38,9 +38,9 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         extensionOnly: false,
         logging: {
           developerMode: true,
+          remoteLayer: true,
+          serviceLayer: true,
           sdk: true,
-          remoteLayer: false,
-          serviceLayer: false,
           plaintext: true,
         },
         useDeeplink,

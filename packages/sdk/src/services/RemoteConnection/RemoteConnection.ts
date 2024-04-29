@@ -20,7 +20,7 @@ import { Analytics } from '../Analytics';
 import { Ethereum } from '../Ethereum';
 import { ProviderService } from '../ProviderService';
 import { initializeConnector } from './ConnectionInitializer';
-import { startConnection } from './ConnectionManager';
+import { startConnection, StartConnectionExtras } from './ConnectionManager';
 import { setupListeners } from './EventListeners';
 import { showActiveModal } from './ModalManager';
 
@@ -151,8 +151,8 @@ export class RemoteConnection implements ProviderService {
    * This will start the installer or pending modal and resolve once it is displayed.
    * It doesn't wait for the actual connection to be authorized.
    */
-  async startConnection(): Promise<void> {
-    return startConnection(this.state, this.options);
+  async startConnection(extras?: StartConnectionExtras): Promise<void> {
+    return startConnection(this.state, this.options, extras);
   }
 
   showActiveModal() {

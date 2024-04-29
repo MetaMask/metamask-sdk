@@ -28,8 +28,15 @@ export function setLastActiveDate(
   );
 
   const newChannelConfig: ChannelConfig = {
+    ...state.channelConfig,
     channelId: state.channelId ?? '',
     validUntil: state.channelConfig?.validUntil ?? 0,
+    relayPersistence: state.relayPersistence,
+    localKey:
+      state.communicationLayer?.state.keyExchange?.getKeyInfo().ecies.private,
+    otherKey:
+      state.communicationLayer?.state.keyExchange?.getKeyInfo().ecies
+        .otherPubKey,
     lastActive: lastActiveDate.getTime(),
   };
   state.storageManager?.persistChannelConfig(newChannelConfig);

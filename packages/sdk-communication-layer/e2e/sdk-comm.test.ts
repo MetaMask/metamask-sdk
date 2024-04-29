@@ -98,7 +98,7 @@ describe('SDK Comm Server', () => {
       context: 'mm',
     });
 
-    mmRemote.connectToChannel(channelId);
+    mmRemote.connectToChannel({ channelId });
 
     await waitForReady();
 

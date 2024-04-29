@@ -129,6 +129,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         }
       | undefined,
   ): void {
+    logger('[SDKProvider: _initializeState()]', initialState);
     return initializeState(
       this,
       super._initializeState.bind(this),

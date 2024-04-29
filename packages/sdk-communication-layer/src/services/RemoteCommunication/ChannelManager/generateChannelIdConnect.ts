@@ -1,6 +1,5 @@
-import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
-import { clean } from './clean';
+import { logger } from '../../../utils/logger';
 
 /**
  * Generates a new channel ID for the communication layer or reuses an existing one.
@@ -26,6 +25,7 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
     );
 
     state.channelConfig = {
+      ...state.channelConfig,
       channelId: state.channelId,
       validUntil: Date.now() + state.sessionDuration,
     };
@@ -38,8 +38,6 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
   }
 
   logger.RemoteCommunication(`[RemoteCommunication: generateChannelId()]`);
-
-  clean(state);
   const channel = state.communicationLayer.createChannel();
 
   logger.RemoteCommunication(
@@ -48,13 +46,12 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
   );
 
   const channelConfig = {
+    ...state.channelConfig,
     channelId: channel.channelId,
     validUntil: Date.now() + state.sessionDuration,
   };
   state.channelId = channel.channelId;
   state.channelConfig = channelConfig;
-  // save current channel config
-  state.storageManager?.persistChannelConfig(channelConfig);
 
   return { channelId: state.channelId, pubKey: channel.pubKey };
 }

@@ -51,6 +51,15 @@ export function handleSendMessage(
     message,
   );
 
+  console.log(
+    `AAAA [SocketService: handleSendMessage()] context=${
+      instance.state.context
+    } relayPersistence=${
+      instance.remote.state.relayPersistence
+    } areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    message,
+  );
+
   const isKeyHandshakeMessage = message?.type?.startsWith('key_handshake');
 
   if (isKeyHandshakeMessage) {

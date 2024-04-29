@@ -108,5 +108,14 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   await initializeProviderAndEventListeners(instance);
   await handleAutoAndExtensionConnections(instance, preferExtension);
 
+  try {
+    await instance.remoteConnection?.startConnection({ initialCheck: true });
+  } catch (err) {
+    console.error(
+      `[MetaMaskSDK: setupRemoteConnectionAndInstaller()] Error while checking installation`,
+      err,
+    );
+  }
+
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.INITIALIZED);
 }

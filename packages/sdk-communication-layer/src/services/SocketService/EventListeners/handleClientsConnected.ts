@@ -16,10 +16,25 @@ export function handleClientsConnected(
   channelId: string,
 ) {
   return async (_id: string) => {
+    const relayPersistence =
+      instance.remote.state.channelConfig?.relayPersistence ?? false;
+
+    console.log(
+      `AAAA [SocketService: handleClientsConnected()] context=${
+        instance.state.context
+      } on 'clients_connected-${channelId}' relayPersistence=${relayPersistence} resumed=${
+        instance.state.resumed
+      }  clientsPaused=${
+        instance.state.clientsPaused
+      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} isOriginator=${
+        instance.state.isOriginator
+      }`,
+    );
+
     logger.SocketService(
       `[SocketService: handleClientsConnected()] context=${
         instance.state.context
-      } on 'clients_connected-${channelId}'  resumed=${
+      } on 'clients_connected-${channelId}' relayPersistence=${relayPersistence} resumed=${
         instance.state.resumed
       }  clientsPaused=${
         instance.state.clientsPaused
@@ -56,17 +71,24 @@ export function handleClientsConnected(
       );
     } else if (!instance.state.isOriginator) {
       // Reconnect scenario --- maybe web dapp got refreshed
+      const force = !relayPersistence;
+      console.log(
+        `[SocketService: handleClientsConnected()] context=${
+          instance.state.context
+        } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- force=${force} -- backward compatibility`,
+      );
+
       logger.SocketService(
         `[SocketService: handleClientsConnected()] context=${
           instance.state.context
-        } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- backward compatibility`,
+        } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- force=${force} -- backward compatibility`,
       );
 
       // Add delay in case exchange was already initiated by dapp.
       // Always request key exchange from wallet since it looks like a reconnection.
       instance.state.keyExchange?.start({
         isOriginator: instance.state.isOriginator ?? false,
-        force: true,
+        force,
       });
     }
 
