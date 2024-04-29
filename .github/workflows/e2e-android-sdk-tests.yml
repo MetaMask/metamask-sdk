@@ -1,20 +1,16 @@
 name: Run Android SDK E2E Tests
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       android_sdk_native:
-        description: 'Android SDK Native apk'
         required: true
-        type: choice
-        options:
-          - 'Android-SDK-Dapp-0-4-0.apk'
-      wallet_app_name_android:
-        description: 'MM Wallet Android apk name'
+        default: 'AndroidSDK.apk'
+        type: string
+      android-wallet-name:
         required: true
-        type: choice
-        options:
-          - 'MM-Wallet-7-16.0-RC.apk'
+        default: 'MM-QA-Wallet-Latest.apk'
+        type: string
 
 jobs:
   e2e-tests:
@@ -43,7 +39,7 @@ jobs:
         run: |
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
-          android_wallet_app_name="${{ inputs.wallet_app_name_android }}"
+          android_wallet_app_name="${{ inputs.android-wallet-name }}"
           android_native_sdk="${{ inputs.android_sdk_native }}"
 
           # Gets the app_url and custom_id for the wallet app, react native and android native test app to use in the .android.env file

@@ -2,17 +2,18 @@ name: Run JS E2E Tests on iOS & Android
 
 on:
   workflow_call:
-    android-wallet-name:
-      required: true
-      default: 'MM-QA-Wallet-Latest.apk'
-      type: string
-    ios-wallet-name:
-      required: true
-      default: 'MM-QA-Wallet-Latest.ipa'
-      type: string
+    inputs:
+      android-wallet-name:
+        required: true
+        default: 'MM-QA-Wallet-Latest.apk'
+        type: string
+      ios-wallet-name:
+        required: true
+        default: 'MM-QA-Wallet-Latest.ipa'
+        type: string
 
 jobs:
-  e2e-tests-js-ios:
+  e2e-tests-js-sdk:
     runs-on: ubuntu-latest
     env:
       SRP: ${{ secrets.SRP }}
@@ -22,6 +23,12 @@ jobs:
       BROWSERSTACK_API_PASSWORD: ${{ secrets.BROWSERSTACK_API_PASSWORD }}
 
     steps:
+      - name: 'BrowserStack Local Tunnel Setup'
+        uses: browserstack/github-actions/setup-local@master
+        with:
+         local-testing: start
+         local-identifier: random
+
       - name: Checkout Repository
         uses: actions/checkout@v3
 
@@ -62,13 +69,20 @@ jobs:
           {
             echo "APP_PATH=$android_wallet_app_url"
             echo "BUNDLE_ID=$android_wallet_app_bundle_id"
-          } >> .ios.env
+          } >> .android.env
+
+      - name: Set Dapps Environment Variables
+        working-directory: ./e2e
+        run: |
+          {
+            echo "DEVNEXT_URL=http://localhost:3333"
+          } >> .dapps.env
 
       - name: Start the Devnext dapp
         working-directory: ./packages/devnext
         run: |
           yarn dev &
-          sleep 10
+          sleep 20
 
       - name: Run JS-SDK iOS E2E tests
         working-directory: ./e2e
@@ -81,5 +95,10 @@ jobs:
       - name: Stop the Devnext dapp
         run: |
           kill $(lsof -t -i:3333)
+
+      - name: 'BrowserStackLocal Stop'
+        uses: browserstack/github-actions/setup-local@master
+        with:
+          local-testing: stop
 
 

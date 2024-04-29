@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, reopened, labeled, unlabeled, synchronize]
 
 jobs:
   check-workflows:
@@ -32,6 +33,10 @@ jobs:
     uses: ./.github/workflows/sonar-cloud.yml
     secrets:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  e2e-tests:
+    if: ${{ github.event.label.name == 'Run E2E' }}
+    uses: ./.github/workflows/e2e-js-sdk-tests.yml
 
   is-release:
     name: Determine whether this is a release merge commit

@@ -21,7 +21,7 @@ class ConnectModalComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="connect-button"]',
+          '//android.widget.Button[@resource-id="connect-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
@@ -32,7 +32,7 @@ class ConnectModalComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="cancel-button"]',
+          '//android.widget.Button[@resource-id="cancel-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Cancel"'),
       }),
