@@ -7,7 +7,6 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "workspaces": [
-    "packages/sdk-socket-server",
     "packages/sdk-socket-server-next",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
