@@ -21,7 +21,8 @@ config.capabilities = [
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,
     // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
-    'appium:otherApps': getOtherAppsPath(),
+    // Removing ReactNative tests for now
+    // 'appium:otherApps': getOtherAppsPath(),
     'bstack:options': {
       deviceName: 'Google Pixel 7',
       osVersion: '13.0',
