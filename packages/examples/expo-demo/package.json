@@ -16,7 +16,6 @@
     "ethers": "5.7.2",
     "expo": "~49.0.9",
     "expo-crypto": "~12.4.1",
-    "expo-router": "^2.0.0",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
     "node-libs-expo": "^0.0.3",
