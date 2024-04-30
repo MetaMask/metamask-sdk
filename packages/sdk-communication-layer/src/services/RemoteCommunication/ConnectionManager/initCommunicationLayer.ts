@@ -97,9 +97,9 @@ export function initCommunicationLayer({
     title,
     source: state.dappMetadata?.source,
     dappId:
-      typeof window === 'undefined'
+      typeof window === 'undefined' || typeof window.location === 'undefined'
         ? state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'unkown'
-        : window?.location?.hostname,
+        : window.location.hostname,
     icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
     platform: state.platformType,
     apiVersion: packageJson.version,
