@@ -11,11 +11,7 @@ import { logger } from './logger';
 import { extractMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
 import { cleanupAndExit } from './utils';
-
-export const isDevelopment: boolean = process.env.NODE_ENV === 'development';
-export const isDevelopmentServer: boolean =
-  process.env.ENVIRONMENT === 'development';
-export const withAdminUI: boolean = process.env.ADMIN_UI === 'true';
+import { isDevelopment, withAdminUI } from './config';
 
 const server = http.createServer(app);
 

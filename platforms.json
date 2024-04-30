@@ -1,0 +1,32 @@
+{
+    "@metamask/sdk": {
+        "stable": "0.18.6"
+    },
+    "@metamask/sdk-react": {
+        "stable": "0.18.6"
+    },
+    "@metamask/sdk-install-modal-web": {
+        "stable": "0.18.5"
+    },
+    "@metamask/sdk-communication-layer": {
+        "stable": "0.18.5"
+    },
+    "@metamask/sdk-react-ui": {
+        "stable": "0.18.6"
+    },
+    "@metamask/sdk-ui": {
+        "stable": "0.4.1"
+    },
+    "@metamask/sdk-lab": {
+        "stable": "0.1.5"
+    },
+    "metamask-unity-sdk": {
+        "stable": "2.0.0"
+    },
+    "metamask-ios-sdk": {
+        "stable": "0.6.1"
+    },
+    "metamask-android-sdk": {
+        "stable": "0.5.4"
+    }
+}
