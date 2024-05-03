@@ -122,7 +122,9 @@ export function handleMessage(instance: SocketService, channelId: string) {
       }
 
       if (canDecrypt) {
-        console.warn(`Invalid key exchange status detected --- updating it.`);
+        logger.SocketService(
+          `Invalid key exchange status detected --- updating it.`,
+        );
         instance.state.keyExchange?.setKeysExchanged(true);
       } else {
         // received encrypted message before keys were exchanged.
