@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import { instrument } from '@socket.io/admin-ui';
+import packageJson from '../package.json';
 import { analytics, app } from './api-config';
 import { logger } from './logger';
 import { extractMetrics } from './metrics';
@@ -48,6 +49,10 @@ configureSocketServer(server)
       res.set('Content-Type', 'text/plain');
       const metrics = extractMetrics({ ioServer });
       res.send(metrics);
+    });
+
+    app.get('/version', (_req, res) => {
+      res.send({ version: packageJson.version });
     });
 
     const port: number = Number(process.env.PORT) || 4000;
