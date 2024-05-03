@@ -140,7 +140,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
         }
 
         //  ignore message and wait for completion.
-        console.warn(
+        logger.SocketService(
           `Message ignored because invalid key exchange status. step=${
             instance.state.keyExchange?.getKeyInfo().step
           }`,
