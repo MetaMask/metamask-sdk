@@ -8,6 +8,7 @@ import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { logger } from './utils/logger';
+import { PROTOCOL_VERSION } from './config';
 
 export interface KeyExchangeProps {
   communicationLayer: SocketService;
@@ -226,6 +227,7 @@ export class KeyExchange extends EventEmitter2 {
           this.communicationLayer.sendMessage({
             type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
             pubkey: this.myPublicKey,
+            v: PROTOCOL_VERSION,
           });
           // Ignore completion --- already consider keys exchanged completed in case mobile to mobile and the client was disconnected
           // We need to be able to send the walletInfo onto the relayer.
@@ -276,6 +278,7 @@ export class KeyExchange extends EventEmitter2 {
     this.communicationLayer.sendMessage({
       type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
       pubkey: this.myPublicKey,
+      v: PROTOCOL_VERSION,
     });
   }
 
