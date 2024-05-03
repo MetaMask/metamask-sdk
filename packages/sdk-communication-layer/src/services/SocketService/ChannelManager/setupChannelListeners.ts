@@ -108,7 +108,7 @@ export function setupChannelListeners(
 
       socket?.io.on('ping', () => {
         logger.SocketService(
-          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=ping`,
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket`,
         );
         // return handlePing(instance)();
       });

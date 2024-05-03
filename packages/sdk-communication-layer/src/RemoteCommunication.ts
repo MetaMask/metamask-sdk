@@ -202,6 +202,10 @@ export class RemoteCommunication extends EventEmitter2 {
       `[RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
     );
 
+    console.log(
+      `AAAA [RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
+    );
+
     this.initCommunicationLayer({
       communicationLayerPreference,
       otherPublicKey,
