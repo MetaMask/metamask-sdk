@@ -202,7 +202,7 @@ export class KeyExchange extends EventEmitter2 {
     const { relayPersistence, protocolVersion } =
       this.communicationLayer.remote.state;
 
-    const v2Protocol = protocolVersion >= 1;
+    const v2Protocol = protocolVersion >= 2;
 
     if (relayPersistence) {
       logger.KeyExchange(
@@ -219,10 +219,18 @@ export class KeyExchange extends EventEmitter2 {
       `[KeyExchange: start()] context=${this.context} protocolVersion=${protocolVersion} isOriginator=${isOriginator} step=${this.step} force=${force} relayPersistence=${relayPersistence} keysExchanged=${this.keysExchanged}`,
     );
 
+    console.log(
+      `AAAA [KeyExchange: start()] context=${this.context} v2Protocol=${v2Protocol} protocolVersion=${protocolVersion} isOriginator=${isOriginator} step=${this.step} force=${force} relayPersistence=${relayPersistence} keysExchanged=${this.keysExchanged}`,
+    );
+
     if (!isOriginator) {
       // force is used to redo keyexchange even if already exchanged.
       if (!this.keysExchanged || force === true) {
         if (v2Protocol) {
+          console.log(
+            `AAAA [KeyExchange: start()] v2Protocol=${v2Protocol} KEY_HANDSHAKE_SYNACK`,
+          );
+
           // Ask to start exchange only if not already in progress
           this.communicationLayer.sendMessage({
             type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
@@ -233,6 +241,10 @@ export class KeyExchange extends EventEmitter2 {
           // We need to be able to send the walletInfo onto the relayer.
           // TODO: this.keysExchanged = true;
         } else {
+          console.log(
+            `AAAA [KeyExchange: start()] v2Protocol=${v2Protocol} KEY_HANDSHAKE_START`,
+          );
+
           // Ask to start exchange only if not already in progress
           this.communicationLayer.sendMessage({
             type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
