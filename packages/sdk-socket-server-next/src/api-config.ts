@@ -258,6 +258,7 @@ app.post('/evt', async (_req, res) => {
         platform: '',
         source: '',
         sdkVersion: '',
+        dappId: '',
       };
     }
 
@@ -269,6 +270,7 @@ app.post('/evt', async (_req, res) => {
         platform: body.platform || '',
         source: body.source || '',
         sdkVersion: body.sdkVersion || '',
+        dappId: body.dappId || '',
       };
 
       await pubClient.set(
@@ -300,12 +302,7 @@ app.post('/evt', async (_req, res) => {
     };
 
     // Define properties to be excluded
-    const propertiesToExclude: string[] = [
-      'icon',
-      'originationInfo',
-      'id',
-      'dappId',
-    ];
+    const propertiesToExclude: string[] = ['icon', 'originationInfo', 'id'];
 
     for (const property in body) {
       if (
