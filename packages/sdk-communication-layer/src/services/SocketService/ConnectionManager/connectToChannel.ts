@@ -69,10 +69,13 @@ export function connectToChannel({
       context: `${instance.state.context}_connectToChannel`,
       clientType: isOriginator ? 'dapp' : 'wallet',
     },
-    (error: string | null, result?: { ready: boolean }) => {
+    (
+      error: string | null,
+      result?: { ready: boolean; persistence: boolean },
+    ) => {
       if (error === 'error_terminated') {
         instance.emit(EventType.TERMINATE);
-      } else if (typeof result === 'object' && result.ready) {
+      } else if (typeof result === 'object' && result.persistence) {
         // check that keys are available first, if not there was an issue with storage
         console.debug(
           `CONNECT_TO_CHANNL Channel config localKey=${channelConfig?.localKey} otherKey=${channelConfig?.otherKey}`,
