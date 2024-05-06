@@ -300,7 +300,12 @@ app.post('/evt', async (_req, res) => {
     };
 
     // Define properties to be excluded
-    const propertiesToExclude: string[] = ['icon', 'originationInfo', 'id'];
+    const propertiesToExclude: string[] = [
+      'icon',
+      'originationInfo',
+      'id',
+      'dappId',
+    ];
 
     for (const property in body) {
       if (
@@ -313,11 +318,11 @@ app.post('/evt', async (_req, res) => {
     }
 
     if (isDevelopment) {
-      // logger.debug('Event object:', event);
+      logger.debug('Event object:', event);
     }
 
     analytics.track(event, function (err: Error) {
-      // logger.info('Segment batch', { event });
+      logger.info('Segment batch', { event });
 
       if (err) {
         logger.error('Segment error:', err);
