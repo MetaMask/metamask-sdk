@@ -28,13 +28,6 @@ export function handleMessage(instance: SocketService, channelId: string) {
     const { id, ackId, message, error } = rawMsg;
     const relayPersistence = instance.remote.state.relayPersistence ?? false;
 
-    console.log(
-      `AAAA [SocketService: handleMessage()] relayPersistence=${relayPersistence} context=${
-        instance.state.context
-      } on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      rawMsg,
-    );
-
     logger.SocketService(
       `[SocketService handleMessage()]  relayPersistence=${relayPersistence}  context=${
         instance.state.context

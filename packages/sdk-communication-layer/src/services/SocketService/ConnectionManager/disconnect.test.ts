@@ -54,7 +54,7 @@ describe('disconnect', () => {
   });
 
   it('should reset rpcMethodTracker', () => {
-    disconnect(instance);
+    disconnect(instance, { terminate: true });
 
     expect(instance.state.rpcMethodTracker).toStrictEqual({});
   });

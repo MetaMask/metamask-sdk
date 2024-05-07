@@ -30,10 +30,7 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
       validUntil: Date.now() + state.sessionDuration,
     };
 
-    state.storageManager?.persistChannelConfig(
-      state.channelConfig,
-      'generateChannelIdConnect',
-    );
+    state.storageManager?.persistChannelConfig(state.channelConfig);
 
     return {
       channelId: state.channelId,

@@ -32,6 +32,9 @@ describe('SocketService', () => {
     communicationLayerPreference: CommunicationLayerPreference.SOCKET,
     communicationServerUrl: 'http://some-url.com',
     context: {},
+    remote: {
+      state: {},
+    },
   } as SocketServiceProps;
 
   beforeEach(() => {
@@ -67,7 +70,6 @@ describe('SocketService', () => {
     expect(connectToChannel).toHaveBeenCalledWith({
       options: {
         ...mockOptions,
-        isOriginator: false,
         withKeyExchange: false,
       },
       instance: socketService,

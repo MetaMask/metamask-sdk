@@ -19,18 +19,6 @@ export function handleClientsConnected(
     const relayPersistence =
       instance.remote.state.channelConfig?.relayPersistence ?? false;
 
-    console.log(
-      `AAAA [SocketService: handleClientsConnected()] context=${
-        instance.state.context
-      } on 'clients_connected-${channelId}' relayPersistence=${relayPersistence} resumed=${
-        instance.state.resumed
-      }  clientsPaused=${
-        instance.state.clientsPaused
-      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} isOriginator=${
-        instance.state.isOriginator
-      }`,
-    );
-
     logger.SocketService(
       `[SocketService: handleClientsConnected()] context=${
         instance.state.context

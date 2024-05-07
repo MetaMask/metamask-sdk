@@ -39,10 +39,8 @@ export async function initializeStateAsync(instance: SDKProvider) {
   }
 
   const { state } = instance;
-
-  logger(
-    `[SDKProvider: initializeStateAsync()] initialize state async started`,
-  );
+  // Replace super.initialState logic to automatically request account if not found in providerstate.
+  let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
 
   if (state.providerStateRequested) {
     logger(
@@ -50,9 +48,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
     );
   } else {
     state.providerStateRequested = true;
-
-    // Replace super.initialState logic to automatically request account if not found in providerstate.
-    let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
 
     let rawCachedChainId: null | string = null;
     let rawSelectedAddress: null | string = null;
@@ -80,7 +75,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
     );
 
     if (relayPersistence) {
-      console.log(`BBBBBBBB`, rawCachedChainId, rawSelectedAddress);
       if (rawCachedChainId && rawSelectedAddress) {
         initialState = {
           accounts: [JSON.parse(rawSelectedAddress) as string],
@@ -88,7 +82,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
           isUnlocked: false,
         };
 
-        console.log(`AAAAAAAAAAAA`, initialState);
         useCache = true;
       } else {
         try {
@@ -108,21 +101,8 @@ export async function initializeStateAsync(instance: SDKProvider) {
       }
     }
 
-    logger(
-      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.getSelectedAddress()} `,
-      initialState,
-    );
-
     if (initialState?.accounts?.length === 0) {
-      logger(
-        `[SDKProvider: initializeStateAsync()] initial state doesn't contain accounts`,
-      );
-
       if (instance.getSelectedAddress()) {
-        logger(
-          `[SDKProvider: initializeStateAsync()] using instance.selectedAddress instead`,
-        );
-
         initialState.accounts = [instance.getSelectedAddress() as string];
       } else {
         logger(
@@ -137,7 +117,6 @@ export async function initializeStateAsync(instance: SDKProvider) {
       }
     }
 
-    console.log(`AAAAAAAAAAAA`, initialState);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._initializeState(initialState);

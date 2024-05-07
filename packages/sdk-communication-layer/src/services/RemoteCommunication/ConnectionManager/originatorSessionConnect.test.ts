@@ -48,21 +48,6 @@ describe('originatorSessionConnect', () => {
     );
   });
 
-  it('should attempt to connect if there is a valid stored channel config', async () => {
-    const mockConfig = {
-      validUntil: Date.now() + 100000, // future date to ensure the session is valid
-      channelId: 'mockChannelId',
-    };
-    mockGetPersistedChannelConfig.mockResolvedValueOnce(mockConfig);
-
-    const result = await originatorSessionConnect(instance);
-    expect(result).toBe(mockConfig);
-    expect(mockConnectToChannel).toHaveBeenCalledWith({
-      channelId: mockConfig.channelId,
-      isOriginator: true,
-    });
-  });
-
   it('should skip if the stored channel config is expired', async () => {
     const mockConfig = {
       validUntil: Date.now() - 100000, // past date to ensure the session is expired

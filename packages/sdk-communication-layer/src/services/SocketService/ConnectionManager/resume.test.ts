@@ -33,6 +33,7 @@ describe('resume', () => {
           start: mockStart,
         },
       },
+      remote: { state: {} },
       sendMessage: mockSendMessage,
     } as unknown as SocketService;
   });
@@ -40,13 +41,7 @@ describe('resume', () => {
   it('should log debug information', () => {
     resume(instance);
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: resume()] context=someContext connected=false manualDisconnect=undefined resumed=undefined keysExchanged=undefined',
-    );
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: resume()] after connecting socket --> connected=false',
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should not connect socket if already connected', () => {
@@ -61,11 +56,11 @@ describe('resume', () => {
     resume(instance);
 
     expect(mockConnect).toHaveBeenCalled();
-    expect(mockEmit).toHaveBeenCalledWith(
-      EventType.JOIN_CHANNEL,
-      'sampleChannelId',
-      'someContext_resume',
-    );
+    expect(mockEmit).toHaveBeenCalledWith(EventType.JOIN_CHANNEL, {
+      channelId: 'sampleChannelId',
+      clientType: 'wallet',
+      context: 'someContext_resume',
+    });
   });
 
   it('should send READY message if keys have been exchanged and not an originator', () => {

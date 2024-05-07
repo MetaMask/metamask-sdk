@@ -1,6 +1,6 @@
 import packageJson from '../package.json';
 import { RemoteCommunication } from './RemoteCommunication';
-import { CommunicationLayer } from './types/CommunicationLayer';
+import { SocketService } from './SocketService';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { EventType } from './types/EventType';
@@ -74,7 +74,7 @@ describe('RemoteCommunication', () => {
     it('should return communicationLayer isConnected state', () => {
       remoteCommunicationInstance.state.communicationLayer = {
         isConnected: jest.fn().mockReturnValue(true),
-      } as unknown as CommunicationLayer;
+      } as unknown as SocketService;
       expect(remoteCommunicationInstance.isConnected()).toBe(true);
     });
   });
@@ -105,7 +105,7 @@ describe('RemoteCommunication', () => {
 
   describe('getCommunicationLayer', () => {
     it('should return the communicationLayer state', () => {
-      const mockCommLayer = {} as unknown as CommunicationLayer;
+      const mockCommLayer = {} as unknown as SocketService;
       remoteCommunicationInstance.state.communicationLayer = mockCommLayer;
       expect(remoteCommunicationInstance.getCommunicationLayer()).toBe(
         mockCommLayer,
@@ -118,7 +118,7 @@ describe('RemoteCommunication', () => {
       const pingMock = jest.fn();
       remoteCommunicationInstance.state.communicationLayer = {
         ping: pingMock,
-      } as unknown as CommunicationLayer;
+      } as unknown as SocketService;
       remoteCommunicationInstance.state.debug = true;
       remoteCommunicationInstance.ping();
       expect(pingMock).toHaveBeenCalled();
@@ -130,7 +130,7 @@ describe('RemoteCommunication', () => {
       const keyCheckMock = jest.fn();
       remoteCommunicationInstance.state.communicationLayer = {
         keyCheck: keyCheckMock,
-      } as unknown as CommunicationLayer;
+      } as unknown as SocketService;
       remoteCommunicationInstance.state.debug = true;
       remoteCommunicationInstance.keyCheck();
       expect(keyCheckMock).toHaveBeenCalled();
