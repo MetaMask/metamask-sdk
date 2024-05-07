@@ -46,9 +46,13 @@ export function connectToChannel({
     withKeyExchange,
   });
   const newChannelConfig: ChannelConfig = {
+    ...state.channelConfig,
     channelId,
     validUntil: Date.now() + state.sessionDuration,
   };
   state.channelConfig = newChannelConfig;
-  state.storageManager?.persistChannelConfig(newChannelConfig);
+  state.storageManager?.persistChannelConfig(
+    newChannelConfig,
+    'connectToChannel',
+  );
 }

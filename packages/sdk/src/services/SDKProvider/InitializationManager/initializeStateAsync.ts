@@ -70,13 +70,17 @@ export async function initializeStateAsync(instance: SDKProvider) {
           .relayPersistence ?? false;
     }
 
-    logger('[SDKProvider: initializeStateAsync()] relayPersistence', {
-      relayPersistence,
-      rawCachedChainId,
-      rawSelectedAddress,
-    });
+    logger(
+      `[SDKProvider: initializeStateAsync()] relayPersistence=${relayPersistence}`,
+      {
+        relayPersistence,
+        rawCachedChainId,
+        rawSelectedAddress,
+      },
+    );
 
     if (relayPersistence) {
+      console.log(`BBBBBBBB`, rawCachedChainId, rawSelectedAddress);
       if (rawCachedChainId && rawSelectedAddress) {
         initialState = {
           accounts: [JSON.parse(rawSelectedAddress) as string],
@@ -84,6 +88,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
           isUnlocked: false,
         };
 
+        console.log(`AAAAAAAAAAAA`, initialState);
         useCache = true;
       } else {
         try {
@@ -132,6 +137,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
       }
     }
 
+    console.log(`AAAAAAAAAAAA`, initialState);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._initializeState(initialState);

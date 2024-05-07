@@ -8,7 +8,10 @@ export interface StorageManagerProps {
   storageManager?: StorageManager;
 }
 export interface StorageManager {
-  persistChannelConfig(channelConfig: ChannelConfig): Promise<void>;
+  persistChannelConfig(
+    channelConfig: ChannelConfig,
+    context?: string,
+  ): Promise<void>;
   getPersistedChannelConfig(
     channelId: string,
   ): Promise<ChannelConfig | undefined>;

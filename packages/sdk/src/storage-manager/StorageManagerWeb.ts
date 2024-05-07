@@ -18,11 +18,14 @@ export class StorageManagerWeb implements StorageManager {
     this.enabled = enabled;
   }
 
-  public async persistChannelConfig(channelConfig: ChannelConfig) {
+  public async persistChannelConfig(
+    channelConfig: ChannelConfig,
+    context?: string,
+  ) {
     const payload = JSON.stringify(channelConfig);
 
     logger(
-      `[StorageManagerWeb: persistChannelConfig()] enabled=${this.enabled}`,
+      `[StorageManagerWeb: persistChannelConfig()] context=${context} enabled=${this.enabled}`,
       channelConfig,
     );
 
