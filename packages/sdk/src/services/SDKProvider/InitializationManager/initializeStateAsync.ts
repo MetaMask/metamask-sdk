@@ -66,9 +66,8 @@ export async function initializeStateAsync(instance: SDKProvider) {
       rawCachedChainId = localStorage.getItem(STORAGE_DAPP_CHAINID);
       rawSelectedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
       relayPersistence =
-        JSON.parse(
-          localStorage.getItem('.sdk-comm') ?? '{relayPersistence: false}',
-        ).relayPersistence ?? false;
+        JSON.parse(localStorage.getItem('.sdk-comm') ?? '{}')
+          .relayPersistence ?? false;
     }
 
     if (relayPersistence) {
