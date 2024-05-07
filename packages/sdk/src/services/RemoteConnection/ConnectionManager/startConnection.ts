@@ -53,6 +53,11 @@ export async function startConnection(
     return Promise.resolve();
   }
 
+  if (initialCheck && !channelConfig?.relayPersistence) {
+    // Prevent autoconnect when new sdk --> old wallet.
+    return Promise.resolve();
+  }
+
   if (!channelConfig && !initialCheck) {
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';

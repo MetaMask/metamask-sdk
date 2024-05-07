@@ -6,6 +6,8 @@ import {
   STORAGE_DAPP_SELECTED_ADDRESS,
 } from '../../../config';
 
+const hasLocalStorage = typeof localStorage !== 'undefined';
+
 /**
  * Asynchronously initializes the state of an SDKProvider instance.
  *
@@ -52,34 +54,47 @@ export async function initializeStateAsync(instance: SDKProvider) {
     // Replace super.initialState logic to automatically request account if not found in providerstate.
     let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
 
-    // Try to initialize optimistacally with cached value which would be updated once wallet is fully connected.
-    const rawCachedChainId = localStorage.getItem(STORAGE_DAPP_CHAINID);
-    const rawSelectedAddress = localStorage.getItem(
-      STORAGE_DAPP_SELECTED_ADDRESS,
-    );
-    let useCache = false;
-    if (rawCachedChainId && rawSelectedAddress) {
-      initialState = {
-        accounts: [JSON.parse(rawSelectedAddress) as string],
-        chainId: JSON.parse(rawCachedChainId) as string,
-        isUnlocked: false,
-      };
+    let rawCachedChainId: null | string = null;
+    let rawSelectedAddress: null | string = null;
+    let relayPersistence = true;
 
-      useCache = true;
-    } else {
-      try {
-        initialState = (await instance.request({
-          method: 'metamask_getProviderState',
-        })) as Parameters<MetaMaskInpageProvider['_initializeState']>[0];
-      } catch (error) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        instance._log.error(
-          'MetaMask: Failed to get initial state. Please report this bug.',
-          error,
-        );
-        state.providerStateRequested = false;
-        return;
+    let useCache = false;
+    // FIXME: currently set for backward compatibility so new sdk don't autoconnect with old wallet
+    // Only use cache if relayPersistence is enabled for current channel.
+    if (hasLocalStorage) {
+      // Try to initialize optimistacally with cached value which would be updated once wallet is fully connected.
+      rawCachedChainId = localStorage.getItem(STORAGE_DAPP_CHAINID);
+      rawSelectedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
+      relayPersistence =
+        JSON.parse(
+          localStorage.getItem('.sdk-comm') ?? '{relayPersistence: false}',
+        ).relayPersistence ?? false;
+    }
+
+    if (relayPersistence) {
+      if (rawCachedChainId && rawSelectedAddress) {
+        initialState = {
+          accounts: [JSON.parse(rawSelectedAddress) as string],
+          chainId: JSON.parse(rawCachedChainId) as string,
+          isUnlocked: false,
+        };
+
+        useCache = true;
+      } else {
+        try {
+          initialState = (await instance.request({
+            method: 'metamask_getProviderState',
+          })) as Parameters<MetaMaskInpageProvider['_initializeState']>[0];
+        } catch (error) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          instance._log.error(
+            'MetaMask: Failed to get initial state. Please report this bug.',
+            error,
+          );
+          state.providerStateRequested = false;
+          return;
+        }
       }
     }
 
