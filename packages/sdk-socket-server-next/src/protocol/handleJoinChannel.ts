@@ -212,6 +212,7 @@ export const handleJoinChannel = async ({
     if (channelConfig?.ready && clientType) {
       callback?.(null, {
         ready: channelConfig?.ready,
+        persistence: channelConfig?.persistence,
       });
 
       setTimeout(async () => {
