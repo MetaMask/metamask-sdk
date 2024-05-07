@@ -19,6 +19,7 @@ import {
 import { AppState, AppStateStatus, Linking, LogBox } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import { DemoScreen } from './src/screens/DemoScreen';
+import { StorageManagerRN } from './src/StorageManagerRN';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -71,6 +72,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         checkInstallationImmediately,
         storage: {
           enabled: true,
+          storageManager: new StorageManagerRN()
         },
         dappMetadata: {
           name: 'expo-demo',
@@ -85,7 +87,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default function App() {
+export default  function App() {
   const handleAppState = (appState: AppStateStatus) => {
     canOpenLink = appState === 'active';
     console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
@@ -99,10 +101,6 @@ export default function App() {
     };
   }, []);
 
-  const handleNavReady = () => {
-    console.log('Navigation container ready!');
-  };
-
   return (
     <SDKConfigProvider
       initialSocketServer={COMM_SERVER_URL}
@@ -114,3 +112,4 @@ export default function App() {
     </SDKConfigProvider>
   );
 }
+
