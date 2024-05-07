@@ -56,7 +56,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
 
     let rawCachedChainId: null | string = null;
     let rawSelectedAddress: null | string = null;
-    let relayPersistence = true;
+    let relayPersistence = false;
 
     let useCache = false;
     // FIXME: currently set for backward compatibility so new sdk don't autoconnect with old wallet
@@ -69,6 +69,12 @@ export async function initializeStateAsync(instance: SDKProvider) {
         JSON.parse(localStorage.getItem('.sdk-comm') ?? '{}')
           .relayPersistence ?? false;
     }
+
+    logger('[SDKProvider: initializeStateAsync()] relayPersistence', {
+      relayPersistence,
+      rawCachedChainId,
+      rawSelectedAddress,
+    });
 
     if (relayPersistence) {
       if (rawCachedChainId && rawSelectedAddress) {
