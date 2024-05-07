@@ -48,6 +48,7 @@ describe('startConnection', () => {
         originatorSessionConnect: mockOriginatorSessionConnect,
         getKeyInfo: mockGetKeyInfo,
         generateChannelIdConnect: mockGenerateChannelIdConnect,
+        isConnected: jest.fn(() => true),
       },
       developerMode: false,
       platformManager: {
