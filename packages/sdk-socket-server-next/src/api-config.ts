@@ -295,6 +295,7 @@ app.post('/evt', async (_req, res) => {
         url: userInfo.url || body.originationInfo?.url,
         title: userInfo.title || body.originationInfo?.title,
         platform: userInfo.platform || body.originationInfo?.platform,
+        dappId: userInfo.dappId || body.originationInfo?.dappId || '',
         sdkVersion:
           userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
         source: userInfo.source || body.originationInfo?.source || '',
