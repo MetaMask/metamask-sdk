@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.19.0]
-### Uncategorized
+### Added
 - feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk.git/pull/823))
 
 ## [0.18.6]
