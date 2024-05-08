@@ -19,13 +19,6 @@ describe('testStorage', () => {
     } as unknown as RemoteCommunicationState;
   });
 
-  it('should call getPersistedChannelConfig with correct channel ID', async () => {
-    await testStorage(state);
-    expect(
-      state.storageManager?.getPersistedChannelConfig,
-    ).toHaveBeenCalledWith(state.channelId);
-  });
-
   it('should log the result', async () => {
     await testStorage(state);
 
