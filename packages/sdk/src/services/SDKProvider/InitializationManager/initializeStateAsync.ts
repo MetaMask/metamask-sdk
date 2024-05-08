@@ -6,7 +6,8 @@ import {
   STORAGE_DAPP_SELECTED_ADDRESS,
 } from '../../../config';
 
-const hasLocalStorage = typeof localStorage !== 'undefined';
+const hasLocalStorage =
+  typeof window !== 'undefined' && typeof localStorage !== 'undefined';
 
 /**
  * Asynchronously initializes the state of an SDKProvider instance.

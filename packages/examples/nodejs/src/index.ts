@@ -5,6 +5,7 @@ const qrcode = require('qrcode-terminal');
 
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
+  communicationServerUrl: 'http://192.168.50.10:4000',
   dappMetadata: {
     name: 'NodeJS example',
   },
