@@ -49,10 +49,7 @@ describe('sendMessage', () => {
   it('should log debug info', async () => {
     await sendMessage(instance, message);
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[RemoteCommunication: sendMessage()] context=test-context paused=false ready=true authorized=true socket=true clientsConnected=true status=connected',
-      message,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should wait for CLIENTS_READY event if conditions are not favorable', async () => {

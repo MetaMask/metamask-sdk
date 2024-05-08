@@ -258,6 +258,7 @@ app.post('/evt', async (_req, res) => {
         platform: '',
         source: '',
         sdkVersion: '',
+        dappId: '',
       };
     }
 
@@ -269,6 +270,7 @@ app.post('/evt', async (_req, res) => {
         platform: body.platform || '',
         source: body.source || '',
         sdkVersion: body.sdkVersion || '',
+        dappId: body.dappId || '',
       };
 
       await pubClient.set(
@@ -293,6 +295,7 @@ app.post('/evt', async (_req, res) => {
         url: userInfo.url || body.originationInfo?.url,
         title: userInfo.title || body.originationInfo?.title,
         platform: userInfo.platform || body.originationInfo?.platform,
+        dappId: userInfo.dappId || body.originationInfo?.dappId || '',
         sdkVersion:
           userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
         source: userInfo.source || body.originationInfo?.source || '',
@@ -313,11 +316,11 @@ app.post('/evt', async (_req, res) => {
     }
 
     if (isDevelopment) {
-      // logger.debug('Event object:', event);
+      logger.debug('Event object:', event);
     }
 
     analytics.track(event, function (err: Error) {
-      // logger.info('Segment batch', { event });
+      logger.info('Segment batch', { event });
 
       if (err) {
         logger.error('Segment error:', err);

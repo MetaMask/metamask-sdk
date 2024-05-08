@@ -17,6 +17,21 @@ export function handleKeysExchanged(instance: SocketService) {
       `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
     );
 
+    // Persist the new channel config
+    const { channelConfig } = instance.remote.state;
+
+    if (channelConfig) {
+      const eciesState = instance.getKeyExchange().getKeyInfo().ecies;
+      channelConfig.localKey = eciesState.private;
+      channelConfig.otherKey = eciesState.otherPubKey;
+      instance.remote.state.channelConfig = channelConfig;
+      instance.remote.state.storageManager
+        ?.persistChannelConfig(channelConfig)
+        .catch((error) => {
+          console.error(`Error persisting channel config`, error);
+        });
+    }
+
     // Propagate key exchange event
     instance.emit(EventType.KEYS_EXCHANGED, {
       keysExchanged: instance.state.keyExchange?.areKeysExchanged(),

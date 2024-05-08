@@ -34,7 +34,9 @@ export async function sendMessage(
   logger.RemoteCommunication(
     `[RemoteCommunication: sendMessage()] context=${state.context} paused=${
       state.paused
-    } ready=${state.ready} authorized=${
+    } ready=${state.ready} relayPersistence=${
+      state.relayPersistence
+    } authorized=${
       state.authorized
     } socket=${state.communicationLayer?.isConnected()} clientsConnected=${
       state.clientsConnected
@@ -43,10 +45,10 @@ export async function sendMessage(
   );
 
   if (
-    state.paused ||
-    !state.ready ||
-    !state.communicationLayer?.isConnected() ||
-    !state.clientsConnected
+    !state.relayPersistence && // Ignore status change when relay persistence is available
+    (!state.ready ||
+      !state.communicationLayer?.isConnected() ||
+      !state.clientsConnected)
   ) {
     logger.RemoteCommunication(
       `[RemoteCommunication: sendMessage()] context=${state.context}  SKIP message waiting for MM mobile readiness.`,

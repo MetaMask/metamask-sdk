@@ -115,7 +115,10 @@ export const configureSocketServer = async (
       'create_channel',
       (
         channelIdOrParams: string | SocketJoinChannelParams,
-        callback: (error: string | null, result?: unknown) => void,
+        callbackOrContext:
+          | string
+          | ((error: string | null, result?: unknown) => void),
+        callback?: (error: string | null, result?: unknown) => void,
       ) => {
         const params: JoinChannelParams = {
           channelId: 'temp', // default value to be overwritten
@@ -126,11 +129,18 @@ export const configureSocketServer = async (
         };
 
         if (typeof channelIdOrParams === 'string') {
+          // old protocol support
           params.channelId = channelIdOrParams;
+          params.context = callbackOrContext as string;
+          params.callback = callback;
         } else {
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.callback = callbackOrContext as (
+            error: string | null,
+            result?: unknown,
+          ) => void;
         }
 
         handleJoinChannel(params).catch((error) => {
@@ -225,25 +235,32 @@ export const configureSocketServer = async (
       'join_channel',
       (
         channelIdOrParams: string | SocketJoinChannelParams,
+        callbackOrContext:
+          | string
+          | ((error: string | null, result?: unknown) => void),
         callback?: (error: string | null, result?: unknown) => void,
       ) => {
         const params: JoinChannelParams = {
           channelId: 'temp', // default value to be overwritten
           socket,
+          callback,
           io,
           hasRateLimit,
-          callback,
         };
 
-        console.log(`join_channel callback=${typeof callback}`);
-
         if (typeof channelIdOrParams === 'string') {
-          // backward compatibility
+          // old protocol support
           params.channelId = channelIdOrParams;
+          params.context = callbackOrContext as string;
+          params.callback = callback;
         } else {
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.callback = callbackOrContext as (
+            error: string | null,
+            result?: unknown,
+          ) => void;
         }
 
         handleJoinChannel(params).catch((error) => {

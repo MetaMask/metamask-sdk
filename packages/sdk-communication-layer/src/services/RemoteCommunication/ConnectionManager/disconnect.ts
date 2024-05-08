@@ -32,16 +32,17 @@ export function disconnect({
   if (options?.terminate) {
     // remove channel config from persistence layer and close active connections.
     state.storageManager?.terminate(state.channelId ?? '');
-
-    if (
-      state.communicationLayer?.getKeyInfo().keysExchanged &&
-      options?.sendMessage
-    ) {
-      state.communicationLayer?.sendMessage({
-        type: MessageType.TERMINATE,
-      });
+    instance.state.terminated = true;
+    if (options.sendMessage) {
+      // Prevent sending terminate in loop
+      if (state.communicationLayer?.getKeyInfo().keysExchanged) {
+        state.communicationLayer?.sendMessage({
+          type: MessageType.TERMINATE,
+        });
+      }
     }
 
+    state.relayPersistence = false;
     state.channelId = uuidv4();
     options.channelId = state.channelId;
     state.channelConfig = undefined;

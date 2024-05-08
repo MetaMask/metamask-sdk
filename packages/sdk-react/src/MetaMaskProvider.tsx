@@ -234,6 +234,8 @@ const MetaMaskProviderClient = ({
       setSDK(_sdk);
       setReady(true);
       setReadOnlyCalls(_sdk.hasReadOnlyRPCCalls());
+    }).catch((err) => {
+      console.error(`[MetaMaskProviderClient] error initializing SDK`, err);
     });
 
   }, [sdkOptions]);

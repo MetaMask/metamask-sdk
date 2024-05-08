@@ -1,9 +1,10 @@
+import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
 import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
-import debug from 'debug';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
+import { RemoteCommunication } from './RemoteCommunication';
 import { createChannel } from './services/SocketService/ChannelManager';
 import {
   connectToChannel,
@@ -23,7 +24,6 @@ import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { logger } from './utils/logger';
-import { RemoteCommunication } from './RemoteCommunication';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -106,10 +106,12 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
     this.state.resumed = reconnect;
     this.state.context = context;
+    this.state.isOriginator = remote.state.isOriginator;
     this.state.communicationLayerPreference = communicationLayerPreference;
     this.state.debug = logging?.serviceLayer === true;
     this.remote = remote;
 
+    console.log(`SocketService: constructor()`, logging);
     if (logging?.serviceLayer === true) {
       debug.enable('SocketService:Layer');
     }
@@ -157,13 +159,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   connectToChannel({
     channelId,
-    isOriginator = false,
     withKeyExchange = false,
   }: ConnectToChannelOptions): void {
     return connectToChannel({
       options: {
         channelId,
-        isOriginator,
         withKeyExchange,
       },
       instance: this,

@@ -20,8 +20,8 @@ export async function initializeProviderAndEventListeners(
 ) {
   const { options } = instance;
 
-  // Inject our provider into window.ethereum
-  instance.activeProvider = initializeMobileProvider({
+  // Create a local copy of the provider setup options
+  const providerOptions = {
     communicationLayerPreference:
       options.communicationLayerPreference ??
       CommunicationLayerPreference.SOCKET,
@@ -33,7 +33,13 @@ export async function initializeProviderAndEventListeners(
     installer: instance.installer as MetaMaskInstaller,
     remoteConnection: instance.remoteConnection,
     debug: instance.debug,
-  });
+  };
+
+  // Inject our provider into window.ethereum
+  const provider = await initializeMobileProvider(providerOptions);
+
+  // eslint-disable-next-line require-atomic-updates
+  instance.activeProvider = provider;
 
   initEventListeners(instance);
 }

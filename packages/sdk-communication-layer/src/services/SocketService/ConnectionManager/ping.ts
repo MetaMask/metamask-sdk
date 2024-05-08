@@ -39,6 +39,7 @@ export function ping(instance: SocketService) {
   instance.state.socket?.emit(EventType.MESSAGE, {
     id: instance.state.channelId,
     context: instance.state.context,
+    clientType: instance.remote.state.isOriginator ? 'dapp' : 'wallet',
     message: {
       type: MessageType.PING,
     },

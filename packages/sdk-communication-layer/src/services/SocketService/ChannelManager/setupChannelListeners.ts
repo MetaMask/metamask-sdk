@@ -11,6 +11,7 @@ import {
   handleMessage,
   handlesClientsDisconnected,
 } from '../EventListeners';
+import { handleChannelConfig } from '../EventListeners/handleChannelConfig';
 
 const channelEventListenerMap = [
   {
@@ -25,6 +26,7 @@ const channelEventListenerMap = [
     event: 'clients_disconnected',
     handler: handlesClientsDisconnected,
   },
+  { event: 'config', handler: handleChannelConfig },
   { event: 'message', handler: handleMessage },
   {
     event: 'clients_waiting_to_join',
@@ -106,7 +108,7 @@ export function setupChannelListeners(
 
       socket?.io.on('ping', () => {
         logger.SocketService(
-          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=ping`,
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket`,
         );
         // return handlePing(instance)();
       });

@@ -12,6 +12,15 @@ import { wait } from '../../../utils/wait';
  * @param instance The current instance of the SocketService.
  */
 export const reconnectSocket = async (instance: SocketService) => {
+  if (instance.remote.state.terminated) {
+    // Make sure the connection wasn't terminated, no need to reconnect automatically if it was.
+    logger.SocketService(
+      `[SocketService: reconnectSocket()] instance.remote.state.terminated=${instance.remote.state.terminated} socket already terminated`,
+      instance,
+    );
+    return false;
+  }
+
   logger.SocketService(
     `[SocketService: reconnectSocket()] instance.state.socket?.connected=${instance.state.socket?.connected} trying to reconnect after socketio disconnection`,
     instance,
@@ -26,11 +35,11 @@ export const reconnectSocket = async (instance: SocketService) => {
     instance.state.socket?.connect();
 
     instance.emit(EventType.SOCKET_RECONNECT);
-    instance.state.socket?.emit(
-      EventType.JOIN_CHANNEL,
-      instance.state.channelId,
-      `${instance.state.context}connect_again`,
-    );
+    instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
+      channelId: instance.state.channelId,
+      context: `${instance.state.context}connect_again`,
+      clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
+    });
   }
 
   // wait again to make sure socket status is updated.

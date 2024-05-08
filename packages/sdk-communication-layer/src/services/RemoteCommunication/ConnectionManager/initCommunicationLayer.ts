@@ -6,6 +6,7 @@ import { DEFAULT_SERVER_URL } from '../../../config';
 import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { EventType } from '../../../types/EventType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
+import { logger } from '../../../utils/logger';
 import {
   handleAuthorizedEvent,
   handleChannelCreatedEvent,
@@ -17,6 +18,7 @@ import {
   handleSocketDisconnectedEvent,
   handleSocketReconnectEvent,
 } from '../EventListeners';
+import { handleFullPersistenceEvent } from '../EventListeners/handleFullPersistenceEvent';
 
 type CommunicationLayerHandledEvents =
   | EventType.CLIENTS_CONNECTED
@@ -26,6 +28,7 @@ type CommunicationLayerHandledEvents =
   | EventType.SOCKET_RECONNECT
   | EventType.CHANNEL_CREATED
   | EventType.KEYS_EXCHANGED
+  | EventType.CHANNEL_PERSISTENCE
   | EventType.KEY_INFO
   | EventType.AUTHORIZED
   | EventType.MESSAGE
@@ -62,6 +65,10 @@ export function initCommunicationLayer({
 }) {
   const { state } = instance;
   // state.communicationLayer?.removeAllListeners();
+  logger.RemoteCommunication(
+    `[initCommunicationLayer()] `,
+    JSON.stringify(state, null, 2),
+  );
 
   switch (communicationLayerPreference) {
     case CommunicationLayerPreference.SOCKET:
@@ -92,14 +99,16 @@ export function initCommunicationLayer({
     title = state.dappMetadata.name;
   }
 
+  const dappId =
+    typeof window !== 'undefined' && typeof window.location !== 'undefined'
+      ? window.location.hostname
+      : state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'unkown';
+
   const originatorInfo: OriginatorInfo = {
     url,
     title,
     source: state.dappMetadata?.source,
-    dappId:
-      typeof window === 'undefined' || typeof window.location === 'undefined'
-        ? state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'unkown'
-        : window.location.hostname,
+    dappId,
     icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
     platform: state.platformType,
     apiVersion: packageJson.version,
@@ -112,6 +121,7 @@ export function initCommunicationLayer({
     // TODO AUTHORIZED listeners is only added for backward compatibility with wallet < 7.3
     [EventType.AUTHORIZED]: handleAuthorizedEvent(instance),
     [EventType.MESSAGE]: handleMessageEvent(instance),
+    [EventType.CHANNEL_PERSISTENCE]: handleFullPersistenceEvent(instance),
     [EventType.CLIENTS_CONNECTED]: handleClientsConnectedEvent(
       instance,
       communicationLayerPreference,
@@ -127,7 +137,8 @@ export function initCommunicationLayer({
       communicationLayerPreference,
     ),
     [EventType.KEY_INFO]: () => {
-      instance.emitServiceStatusEvent();
+      // Skip handling KEY_INFO event, not required anymore
+      // instance.emitServiceStatusEvent();
     },
     [EventType.CHANNEL_CREATED]: handleChannelCreatedEvent(instance),
     [EventType.CLIENTS_WAITING]: handleClientsWaitingEvent(instance),

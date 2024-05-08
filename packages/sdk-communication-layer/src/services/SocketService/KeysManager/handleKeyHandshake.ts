@@ -23,6 +23,7 @@ export function handleKeyHandshake(
   instance.state.socket?.emit(EventType.MESSAGE, {
     id: instance.state.channelId,
     context: instance.state.context,
+    clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
     message,
   });
 }
