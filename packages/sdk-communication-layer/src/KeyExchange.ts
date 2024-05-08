@@ -290,7 +290,6 @@ export class KeyExchange extends EventEmitter2 {
     localKey: string;
     otherKey: string;
   }) {
-    console.warn(`[KeyExchange: setRelayPersistence()] localKey`, localKey);
     this.otherPublicKey = otherKey;
     this.myECIES = new ECIES({ privateKey: localKey, debug: this.debug });
     this.keysExchanged = true;

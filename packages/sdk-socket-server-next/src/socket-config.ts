@@ -128,6 +128,13 @@ export const configureSocketServer = async (
           hasRateLimit,
         };
 
+        logger.debug(`join_channel`, JSON.stringify(channelIdOrParams));
+
+        if (!channelIdOrParams) {
+          logger.error(`channelIdOrParams is missing`);
+          return;
+        }
+
         if (typeof channelIdOrParams === 'string') {
           // old protocol support
           params.channelId = channelIdOrParams;
@@ -247,6 +254,13 @@ export const configureSocketServer = async (
           io,
           hasRateLimit,
         };
+
+        logger.debug(`join_channel`, JSON.stringify(channelIdOrParams));
+
+        if (!channelIdOrParams) {
+          logger.error(`channelIdOrParams is missing`);
+          return;
+        }
 
         if (typeof channelIdOrParams === 'string') {
           // old protocol support

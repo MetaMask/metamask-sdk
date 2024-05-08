@@ -46,7 +46,6 @@ export function connectToChannel({
       channelConfig.otherKey &&
       channelConfig?.otherKey?.length > 0
     ) {
-      console.warn(`Setting relay persistence`, channelConfig);
       // Update key exchange status with persisted keys
       instance.state.keyExchange?.setRelayPersistence({
         localKey: channelConfig.localKey,
@@ -76,12 +75,6 @@ export function connectToChannel({
       if (error === 'error_terminated') {
         instance.emit(EventType.TERMINATE);
       } else if (typeof result === 'object' && result.persistence) {
-        // check that keys are available first, if not there was an issue with storage
-        console.debug(
-          `CONNECT_TO_CHANNL Channel config localKey=${channelConfig?.localKey} otherKey=${channelConfig?.otherKey}`,
-          channelConfig,
-        );
-
         // Inform that this channel supports full session persistence
         instance.emit(EventType.CHANNEL_PERSISTENCE);
       }

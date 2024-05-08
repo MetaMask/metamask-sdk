@@ -341,11 +341,8 @@ export class RemoteCommunication extends EventEmitter2 {
     this.emitServiceStatusEvent({ context: 'setConnectionStatus' });
   }
 
-  emitServiceStatusEvent({ context }: { context?: string } = {}) {
+  emitServiceStatusEvent(_: { context?: string } = {}) {
     // only emit if there was a change in the service status
-    console.log(
-      `[RemoteCommunication: emitServiceStatusEvent()] context=${context}`,
-    );
     this.emit(EventType.SERVICE_STATUS, this.getServiceStatus());
   }
 
