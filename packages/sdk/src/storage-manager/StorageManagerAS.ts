@@ -59,6 +59,7 @@ export class StorageManagerAS implements StorageManager {
     let payload;
 
     try {
+      // check if file exists first
       payload = await AsyncStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
       return payload ? JSON.parse(payload) : [];
     } catch (error) {
@@ -140,5 +141,7 @@ export class StorageManagerAS implements StorageManager {
     logger(`[StorageManagerAS: terminate()] enabled=${this.enabled}`);
 
     await AsyncStorage.removeItem(STORAGE_PATH);
+    await AsyncStorage.removeItem(STORAGE_DAPP_CHAINID);
+    await AsyncStorage.removeItem(STORAGE_DAPP_SELECTED_ADDRESS);
   }
 }
