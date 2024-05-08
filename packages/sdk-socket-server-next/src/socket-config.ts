@@ -128,6 +128,7 @@ export const configureSocketServer = async (
           hasRateLimit,
         };
 
+        logger.debug(`join_channel`, JSON.stringify(channelIdOrParams));
         if (typeof channelIdOrParams === 'string') {
           // old protocol support
           params.channelId = channelIdOrParams;
@@ -248,6 +249,7 @@ export const configureSocketServer = async (
           hasRateLimit,
         };
 
+        logger.debug(`join_channel`, JSON.stringify(channelIdOrParams));
         if (typeof channelIdOrParams === 'string') {
           // old protocol support
           params.channelId = channelIdOrParams;
