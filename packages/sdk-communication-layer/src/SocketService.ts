@@ -111,7 +111,6 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.state.debug = logging?.serviceLayer === true;
     this.remote = remote;
 
-    console.log(`SocketService: constructor()`, logging);
     if (logging?.serviceLayer === true) {
       debug.enable('SocketService:Layer');
     }
