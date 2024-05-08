@@ -73,6 +73,9 @@ export class StorageManagerNode implements StorageManager {
       const rawChainId = fs
         .readFileSync(STORAGE_DAPP_CHAINID)
         .toString('utf-8');
+      if (rawChainId.indexOf('0x') === -1) {
+        return undefined;
+      }
       return rawChainId;
     } catch (error) {
       console.error(

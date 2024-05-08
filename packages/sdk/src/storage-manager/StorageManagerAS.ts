@@ -74,7 +74,10 @@ export class StorageManagerAS implements StorageManager {
     try {
       const chainId =
         (await AsyncStorage.getItem(STORAGE_DAPP_CHAINID)) ?? undefined;
-      return chainId;
+      if (chainId?.indexOf('0x') !== -1) {
+        return chainId;
+      }
+      return undefined;
     } catch (error) {
       console.error(
         `[StorageManagerAS: getCachedChainId()] Error getting cached chainId`,
