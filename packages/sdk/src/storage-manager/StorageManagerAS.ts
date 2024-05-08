@@ -7,7 +7,11 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import { logger } from '../utils/logger';
-import { STORAGE_PATH } from '../config';
+import {
+  STORAGE_DAPP_CHAINID,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_PATH,
+} from '../config';
 
 export class StorageManagerAS implements StorageManager {
   private enabled = false;
@@ -32,6 +36,68 @@ export class StorageManagerAS implements StorageManager {
     );
 
     await AsyncStorage.setItem(STORAGE_PATH, payload);
+  }
+
+  public async persistAccounts(accounts: string[], context?: string) {
+    logger(
+      `[StorageManagerAS: persistAccounts()] context=${context} enabled=${this.enabled}`,
+      accounts,
+    );
+
+    try {
+      const payload = JSON.stringify(accounts);
+      await AsyncStorage.setItem(STORAGE_DAPP_SELECTED_ADDRESS, payload);
+    } catch (error) {
+      console.error(
+        `[StorageManagerAS: persistAccounts()] Error persisting accounts`,
+        error,
+      );
+    }
+  }
+
+  public async getCachedAccounts(): Promise<string[]> {
+    let payload;
+
+    try {
+      payload = await AsyncStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
+      return payload ? JSON.parse(payload) : [];
+    } catch (error) {
+      console.error(
+        `[StorageManagerAS: getCachedAccounts()] Error getting cached accounts`,
+        error,
+      );
+      return [];
+    }
+  }
+
+  public async getCachedChainId(): Promise<string | undefined> {
+    try {
+      const chainId =
+        (await AsyncStorage.getItem(STORAGE_DAPP_CHAINID)) ?? undefined;
+      return chainId;
+    } catch (error) {
+      console.error(
+        `[StorageManagerAS: getCachedChainId()] Error getting cached chainId`,
+        error,
+      );
+      return undefined;
+    }
+  }
+
+  public async persistChainId(chainId: string, context?: string) {
+    logger(
+      `[StorageManagerAS: persistChainId()] context=${context} enabled=${this.enabled}`,
+      chainId,
+    );
+
+    try {
+      await AsyncStorage.setItem(STORAGE_DAPP_CHAINID, chainId);
+    } catch (error) {
+      console.error(
+        `[StorageManagerAS: persistChainId()] Error persisting chainId`,
+        error,
+      );
+    }
   }
 
   public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {

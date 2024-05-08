@@ -7,8 +7,6 @@ import {
 
 /* #if _NODEJS
 import { StorageManagerNode as SMDyn } from './StorageManagerNode';
-//#elif _WEB
-import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
 //#else */
 import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 // #endif

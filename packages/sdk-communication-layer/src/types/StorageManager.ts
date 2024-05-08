@@ -12,8 +12,10 @@ export interface StorageManager {
     channelConfig: ChannelConfig,
     context?: string,
   ): Promise<void>;
-  getPersistedChannelConfig(
-    channelId: string,
-  ): Promise<ChannelConfig | undefined>;
+  persistAccounts(accounts: string[], context?: string): Promise<void>;
+  getCachedAccounts(): Promise<string[]>;
+  getCachedChainId(): Promise<string | undefined>;
+  persistChainId(chainId: string, context?: string): Promise<void>;
+  getPersistedChannelConfig(): Promise<ChannelConfig | undefined>;
   terminate(channelId: string): Promise<void>;
 }

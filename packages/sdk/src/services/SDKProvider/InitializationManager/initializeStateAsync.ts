@@ -1,13 +1,7 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
-import {
-  STORAGE_DAPP_CHAINID,
-  STORAGE_DAPP_SELECTED_ADDRESS,
-} from '../../../config';
-
-const hasLocalStorage =
-  typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+import { getStorageManager } from '../../../storage-manager/getStorageManager';
+import { logger } from '../../../utils/logger';
 
 /**
  * Asynchronously initializes the state of an SDKProvider instance.
@@ -50,36 +44,40 @@ export async function initializeStateAsync(instance: SDKProvider) {
   } else {
     state.providerStateRequested = true;
 
-    let rawCachedChainId: null | string = null;
-    let rawSelectedAddress: null | string = null;
+    let cachedChainId: undefined | string;
+    let cachedSelectedAddress: null | string = null;
     let relayPersistence = false;
 
     let useCache = false;
+    const storageManager = getStorageManager({ enabled: true });
+
     // FIXME: currently set for backward compatibility so new sdk don't autoconnect with old wallet
     // Only use cache if relayPersistence is enabled for current channel.
-    if (hasLocalStorage) {
+    if (storageManager) {
       // Try to initialize optimistacally with cached value which would be updated once wallet is fully connected.
-      rawCachedChainId = localStorage.getItem(STORAGE_DAPP_CHAINID);
-      rawSelectedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
-      relayPersistence =
-        JSON.parse(localStorage.getItem('.sdk-comm') ?? '{}')
-          .relayPersistence ?? false;
+      const channelConfig = await storageManager.getPersistedChannelConfig();
+      relayPersistence = channelConfig?.relayPersistence ?? false;
+      cachedChainId = await storageManager.getCachedChainId();
+      const cachedAccounts = await storageManager.getCachedAccounts();
+      if (cachedAccounts.length > 0) {
+        cachedSelectedAddress = cachedAccounts[0];
+      }
     }
 
     logger(
       `[SDKProvider: initializeStateAsync()] relayPersistence=${relayPersistence}`,
       {
         relayPersistence,
-        rawCachedChainId,
-        rawSelectedAddress,
+        cachedChainId,
+        cachedSelectedAddress,
       },
     );
 
     if (relayPersistence) {
-      if (rawCachedChainId && rawSelectedAddress) {
+      if (cachedChainId && cachedSelectedAddress) {
         initialState = {
-          accounts: [JSON.parse(rawSelectedAddress) as string],
-          chainId: JSON.parse(rawCachedChainId) as string,
+          accounts: [cachedSelectedAddress],
+          chainId: cachedChainId,
           isUnlocked: false,
         };
 
