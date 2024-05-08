@@ -46,6 +46,9 @@ export class StorageManagerNode implements StorageManager {
 
   public async getCachedAccounts(): Promise<string[]> {
     try {
+      if (!fs.existsSync(STORAGE_DAPP_SELECTED_ADDRESS)) {
+        return [];
+      }
       const rawAccounts = fs
         .readFileSync(STORAGE_DAPP_SELECTED_ADDRESS)
         .toString('utf-8');
@@ -70,9 +73,16 @@ export class StorageManagerNode implements StorageManager {
 
   public async getCachedChainId(): Promise<string | undefined> {
     try {
+      // check if file exists first
+      if (!fs.existsSync(STORAGE_DAPP_CHAINID)) {
+        return undefined;
+      }
       const rawChainId = fs
         .readFileSync(STORAGE_DAPP_CHAINID)
         .toString('utf-8');
+      if (rawChainId.indexOf('0x') === -1) {
+        return undefined;
+      }
       return rawChainId;
     } catch (error) {
       console.error(
@@ -113,6 +123,14 @@ export class StorageManagerNode implements StorageManager {
 
     if (fs.existsSync(STORAGE_PATH)) {
       fs.unlinkSync(STORAGE_PATH);
+    }
+
+    if (fs.existsSync(STORAGE_DAPP_SELECTED_ADDRESS)) {
+      fs.unlinkSync(STORAGE_DAPP_SELECTED_ADDRESS);
+    }
+
+    if (fs.existsSync(STORAGE_DAPP_CHAINID)) {
+      fs.unlinkSync(STORAGE_DAPP_CHAINID);
     }
   }
 }
