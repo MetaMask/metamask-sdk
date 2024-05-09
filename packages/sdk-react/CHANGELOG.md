@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.2]
+### Uncategorized
+- skip version because of publishing issue
+
+
 ## [0.20.1]
 ### Uncategorized
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
@@ -186,7 +191,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.2...HEAD
+[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.1...@metamask/sdk-react@0.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.0...@metamask/sdk-react@0.20.1
 [0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.19.0...@metamask/sdk-react@0.20.0
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.6...@metamask/sdk-react@0.19.0
