@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.20.0]
-### Added
-- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
-
 ## [0.19.0]
 ### Added
 - feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
@@ -178,8 +174,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.0...HEAD
-[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.19.0...@metamask/sdk-react@0.20.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.19.0...HEAD
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.6...@metamask/sdk-react@0.19.0
 [0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.5...@metamask/sdk-react@0.18.6
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.4...@metamask/sdk-react@0.18.5
