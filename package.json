@@ -1,10 +1,10 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "61.0.0",
+  "version": "62.0.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
+    "url": "https://github.com/MetaMask/metamask-sdk"
   },
   "workspaces": [
     "packages/sdk-socket-server-next",
