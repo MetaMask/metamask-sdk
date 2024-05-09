@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk"
+    "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "author": "",
   "main": "dist/src/index.js",

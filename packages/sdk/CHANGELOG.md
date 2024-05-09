@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.20.0]
-### Added
-- feat: track done event on extension analytics ([#834](https://github.com/MetaMask/metamask-sdk/pull/834))
-
 ## [0.19.0]
 ### Added
 - feat: remove rn dependencies  ([#830](https://github.com/MetaMask/metamask-sdk/pull/830))
@@ -307,8 +303,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.0...HEAD
-[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.19.0...@metamask/sdk@0.20.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.19.0...HEAD
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.6...@metamask/sdk@0.19.0
 [0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.5...@metamask/sdk@0.18.6
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.4...@metamask/sdk@0.18.5
