@@ -51,18 +51,22 @@ export const wrapExtensionProvider = ({
             }
 
             const resp = await target.request(args);
-            sdkInstance.analytics?.send({
-              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-              params: { method, from: 'extension' },
-            });
+            if (trackEvent) {
+              sdkInstance.analytics?.send({
+                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+                params: { method, from: 'extension' },
+              });
+            }
             return resp;
           }
 
           const resp = await target.request(args);
-          sdkInstance.analytics?.send({
-            event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-            params: { method, from: 'extension' },
-          });
+          if (trackEvent) {
+            sdkInstance.analytics?.send({
+              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+              params: { method, from: 'extension' },
+            });
+          }
           return resp;
         };
       } else if (propKey === 'getChainId') {
