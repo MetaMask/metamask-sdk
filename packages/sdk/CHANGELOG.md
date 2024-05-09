@@ -8,11 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.20.1]
 ### Uncategorized
-- feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
-- Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
-- Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
-- Revert "feat: release 62.0.0" ([#837](https://github.com/MetaMask/metamask-sdk/pull/837))
-- feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
+- skip version because of publishing issue
 
 ## [0.20.0]
 ### Added
