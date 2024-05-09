@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.2]
+### Uncategorized
+- feat: force trigger change ([#843](https://github.com/MetaMask/metamask-sdk/pull/843))
+- feat: force reset new version ([#842](https://github.com/MetaMask/metamask-sdk/pull/842))
+- Release 62.0.0 ([#841](https://github.com/MetaMask/metamask-sdk/pull/841))
+
 ## [0.20.1]
 ### Uncategorized
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
@@ -203,7 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@2.20.2...HEAD
+[2.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.1...@metamask/sdk-communication-layer@2.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.0...@metamask/sdk-communication-layer@0.20.1
 [0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.19.0...@metamask/sdk-communication-layer@0.20.0
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.5...@metamask/sdk-communication-layer@0.19.0

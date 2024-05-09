@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.2]
+### Uncategorized
+- feat: force trigger change ([#843](https://github.com/MetaMask/metamask-sdk/pull/843))
+- feat: force reset new version ([#842](https://github.com/MetaMask/metamask-sdk/pull/842))
+- Release 62.0.0 ([#841](https://github.com/MetaMask/metamask-sdk/pull/841))
+
 ## [0.20.1]
 ### Uncategorized
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
@@ -120,7 +126,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@2.20.2...HEAD
+[2.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.1...@metamask/sdk-install-modal-web@2.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.0...@metamask/sdk-install-modal-web@0.20.1
 [0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.18.5...@metamask/sdk-install-modal-web@0.20.0
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.17.0...@metamask/sdk-install-modal-web@0.18.5

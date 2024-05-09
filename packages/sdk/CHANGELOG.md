@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.20.2]
+### Uncategorized
+- feat: force trigger change ([#843](https://github.com/MetaMask/metamask-sdk/pull/843))
+- feat: force reset new version ([#842](https://github.com/MetaMask/metamask-sdk/pull/842))
+- Release 62.0.0 ([#841](https://github.com/MetaMask/metamask-sdk/pull/841))
+- feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
+- Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
+- Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
+- Revert "feat: release 62.0.0" ([#837](https://github.com/MetaMask/metamask-sdk/pull/837))
+- feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
+
 ## [0.20.1]
 ### Uncategorized
 - skip version because of publishing issue
@@ -311,7 +322,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@2.20.2...HEAD
+[2.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.1...@metamask/sdk@2.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.0...@metamask/sdk@0.20.1
 [0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.19.0...@metamask/sdk@0.20.0
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.6...@metamask/sdk@0.19.0
