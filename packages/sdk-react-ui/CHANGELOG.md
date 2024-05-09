@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0]
+### Uncategorized
+- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
+
 ## [0.18.6]
 ### Added
 - fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
@@ -86,9 +90,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0]
 ### Added
-- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
-- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
-- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk.git/pull/437))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
+- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk/pull/437))
 
 ## [0.10.1]
 ### Added
@@ -124,7 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.6...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.0...HEAD
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.6...@metamask/sdk-react-ui@0.20.0
 [0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.5...@metamask/sdk-react-ui@0.18.6
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.4...@metamask/sdk-react-ui@0.18.5
 [0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.0...@metamask/sdk-react-ui@0.18.4

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0]
+### Uncategorized
+- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
+
 ## [0.19.0]
 ### Added
 - feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
@@ -191,7 +195,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.19.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.0...HEAD
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.19.0...@metamask/sdk-communication-layer@0.20.0
 [0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.5...@metamask/sdk-communication-layer@0.19.0
 [0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.4...@metamask/sdk-communication-layer@0.18.5
 [0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.2...@metamask/sdk-communication-layer@0.18.4
