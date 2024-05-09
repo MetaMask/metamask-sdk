@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.20.0]
-### Uncategorized
+### Added
 - feat: track done event on extension analytics ([#834](https://github.com/MetaMask/metamask-sdk.git/pull/834))
 
 ## [0.19.0]
