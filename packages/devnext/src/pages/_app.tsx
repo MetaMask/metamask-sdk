@@ -29,7 +29,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableAnalytics: false,
+        enableAnalytics: true,
         preferDesktop: false,
         infuraAPIKey,
         readonlyRPCMap: {
