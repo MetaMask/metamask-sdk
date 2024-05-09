@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.20.0]
-### Uncategorized
+### Added
 - feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
 
 ## [0.18.5]

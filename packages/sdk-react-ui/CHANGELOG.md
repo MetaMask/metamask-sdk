@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.20.0]
-### Uncategorized
-- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
-
 ## [0.18.6]
 ### Added
 - fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
