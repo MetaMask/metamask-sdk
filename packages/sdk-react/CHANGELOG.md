@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.20.2]
 ### Uncategorized
-- feat: force trigger change ([#843](https://github.com/MetaMask/metamask-sdk/pull/843))
-- Release 62.0.0 ([#841](https://github.com/MetaMask/metamask-sdk/pull/841))
+- skip version because of publishing issue
+
 
 ## [0.20.1]
 ### Uncategorized
