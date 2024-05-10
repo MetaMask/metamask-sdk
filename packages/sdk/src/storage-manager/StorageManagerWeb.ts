@@ -4,8 +4,12 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import {
+  STORAGE_DAPP_CHAINID,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_PATH,
+} from '../config';
 import { logger } from '../utils/logger';
-import { STORAGE_DAPP_CHAINID, STORAGE_DAPP_SELECTED_ADDRESS, STORAGE_PATH } from '../config';
 
 export class StorageManagerWeb implements StorageManager {
   private enabled = false;
