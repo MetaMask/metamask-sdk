@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.20.3]
-### Uncategorized
+### Added
 - feat: re-enable jscc web ([#845](https://github.com/MetaMask/metamask-sdk/pull/845))
 
 ## [0.20.2]
