@@ -5,11 +5,9 @@ on:
     inputs:
       android-wallet-name:
         required: true
-        default: 'MM-QA-Wallet-Latest.apk'
         type: string
       ios-wallet-name:
         required: true
-        default: 'MM-QA-Wallet-Latest.ipa'
         type: string
 
 jobs:

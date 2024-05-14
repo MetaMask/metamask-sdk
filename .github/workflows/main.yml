@@ -37,6 +37,9 @@ jobs:
   e2e-tests:
     if: ${{ github.event.label.name == 'Run E2E' }}
     uses: ./.github/workflows/e2e-js-sdk-tests.yml
+    with:
+      android-wallet-name: 'MM-QA-Wallet-Latest.apk'
+      ios-wallet-name: 'MM-QA-Wallet-Latest.ipa'
 
   is-release:
     name: Determine whether this is a release merge commit
