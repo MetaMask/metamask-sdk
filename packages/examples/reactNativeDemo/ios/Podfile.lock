@@ -379,6 +379,8 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.10.0):
     - React-Core
+  - react-native-meta-mask-react-native-sdk (1.0.0):
+    - React
   - react-native-randombytes (3.6.1):
     - React-Core
   - react-native-safe-area-context (4.7.4):
@@ -565,6 +567,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-background-timer (from `../node_modules/react-native-background-timer`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - "react-native-meta-mask-react-native-sdk (from `../node_modules/@metamask/sdk-react-native`)"
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -658,6 +661,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-background-timer"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-meta-mask-react-native-sdk:
+    :path: "../node_modules/@metamask/sdk-react-native"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -749,6 +754,7 @@ SPEC CHECKSUMS:
   React-logger: 8edc785c47c8686c7962199a307015e2ce9a0e4f
   react-native-background-timer: 17ea5e06803401a379ebf1f20505b793ac44d0fe
   react-native-get-random-values: 384787fd76976f5aec9465aff6fa9e9129af1e74
+  react-native-meta-mask-react-native-sdk: 56954ca24c6fae55b994535e5d64348778d6dad0
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: 2cd91d532de12acdb0a9cbc8d43ac72a8e4c897c
   React-NativeModulesApple: b6868ee904013a7923128892ee4a032498a1024a
@@ -779,6 +785,6 @@ SPEC CHECKSUMS:
   Yoga: 4c3aa327e4a6a23eeacd71f61c81df1bcdf677d5
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: c04dc48f0cdeda95b894a678ba4180b98d217587
+PODFILE CHECKSUM: 4026143e22ee32b6f38bc5861854d12a7d26f2f2
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

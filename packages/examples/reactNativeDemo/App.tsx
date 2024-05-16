@@ -5,14 +5,14 @@
  * @format
  */
 
-import React, {useEffect} from 'react';
-
 import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
 import {
   MetaMaskProvider,
   SDKConfigProvider,
   useSDKConfig,
 } from '@metamask/sdk-react';
+import * as RN_SDK from '@metamask/sdk-react-native';
+import React, {useEffect} from 'react';
 
 import {
   NavigationContainer,
@@ -23,10 +23,22 @@ import {
   AppStateStatus,
   Linking,
   LogBox,
-  Platform,
+  NativeModules,
 } from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import RootNavigator from './src/RootNavigator';
+
+if (!NativeModules.MetaMaskReactNativeSdk) {
+  console.debug(
+    '❌ MetaMaskReactNativeSdk not found. Check native module linking.',
+  );
+} else {
+  console.debug('✅ MetaMaskReactNativeSdk found:');
+}
+
+RN_SDK.sampleMethod('TEST INPUT', 10, (output: any) => {
+  console.debug('🟠 ~ sampleMethod Output =>', output);
+});
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',

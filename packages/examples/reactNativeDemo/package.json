@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android --port=4095",
-    "ios": "react-native run-ios --port=4095 --simulator 'iPhone 13 Pro'",
+    "ios": "react-native run-ios --reset-cache --port=4095 --simulator 'iPhone 13 Pro'",
     "ios:device": "react-native run-ios --port=4095 --device",
     "start": "react-native start --port=4095",
     "lint": "yarn lint:eslint",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@metamask/sdk-react": "^0.18.5",
+    "@metamask/sdk-react-native": "file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",

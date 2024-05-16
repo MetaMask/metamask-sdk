@@ -1,11 +1,10 @@
-import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import typescript from 'rollup-plugin-typescript2';
 import json from '@rollup/plugin-json';
-import jscc from 'rollup-plugin-jscc';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
-import { visualizer } from 'rollup-plugin-visualizer';
 import sizes from 'rollup-plugin-sizes';
+import typescript from '@rollup/plugin-typescript';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
