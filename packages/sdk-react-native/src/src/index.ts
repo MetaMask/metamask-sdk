@@ -8,6 +8,7 @@ import {
 
 export * from './MetaMaskHooks';
 
+
 export type {
   SDKConfigProviderProps,
   SDKState,

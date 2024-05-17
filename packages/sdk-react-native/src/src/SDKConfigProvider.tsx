@@ -1,7 +1,7 @@
-// TODO: Remove this line
-import { DEFAULT_SERVER_URL } from '@metamask/sdk';
 import React, { createContext, useEffect, useState } from 'react';
 import { logger } from './utils/logger';
+
+const DEFAULT_SERVER_URL = 'https://metamask-sdk.api.cx.metamask.io/';
 
 export interface SDKConfigContextProps {
   socketServer: string;
