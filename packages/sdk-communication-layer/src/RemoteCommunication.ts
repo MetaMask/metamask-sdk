@@ -1,7 +1,8 @@
-import { EventEmitter2 } from 'eventemitter2';
 import debug from 'debug';
+import { EventEmitter2 } from 'eventemitter2';
 import packageJson from '../package.json';
 import { ECIESProps } from './ECIES';
+import { SocketService } from './SocketService';
 import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
@@ -22,7 +23,6 @@ import { sendMessage } from './services/RemoteCommunication/MessageHandlers';
 import { testStorage } from './services/RemoteCommunication/StorageManager';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { ChannelConfig } from './types/ChannelConfig';
-import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
@@ -46,7 +46,10 @@ export interface RemoteCommunicationProps {
   platformType: PlatformType | MetaMaskMobile;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
+  protocolVersion?: number;
+  privateKey?: string;
   reconnect?: boolean;
+  relayPersistence?: boolean; // Used by wallet to start the connection with relayPersistence and avoid the key exchange.
   dappMetadata?: DappMetadataWithSource;
   walletInfo?: WalletInfo;
   transports?: string[];
@@ -65,14 +68,19 @@ export interface RemoteCommunicationState {
   authorized: boolean;
   isOriginator: boolean;
   paused: boolean;
+  relayPersistence?: boolean;
   otherPublicKey?: string;
+  protocolVersion: number;
+  privateKey?: string;
+  terminated: boolean;
   transports?: string[];
   platformType: PlatformType | MetaMaskMobile;
   analytics: boolean;
   channelId?: string;
   channelConfig?: ChannelConfig;
   walletInfo?: WalletInfo;
-  communicationLayer?: CommunicationLayer;
+  persist?: boolean;
+  communicationLayer?: SocketService;
   originatorInfo?: OriginatorInfo;
   originatorInfoSent: boolean;
   reconnection: boolean;
@@ -97,6 +105,8 @@ export class RemoteCommunication extends EventEmitter2 {
     // flag turned on once the connection has been authorized on the wallet.
     authorized: false,
     isOriginator: false,
+    terminated: false,
+    protocolVersion: 1,
     paused: false,
     platformType: 'metamask-mobile',
     analytics: false,
@@ -104,6 +114,7 @@ export class RemoteCommunication extends EventEmitter2 {
     originatorInfoSent: false,
     communicationServerUrl: DEFAULT_SERVER_URL,
     context: '',
+    persist: false,
     // Keep track if the other side is connected to the socket
     clientsConnected: false,
     sessionDuration: DEFAULT_SESSION_TIMEOUT_MS,
@@ -124,8 +135,10 @@ export class RemoteCommunication extends EventEmitter2 {
     reconnect,
     walletInfo,
     dappMetadata,
+    protocolVersion,
     transports,
     context,
+    relayPersistence,
     ecies,
     analytics = false,
     storage,
@@ -144,9 +157,12 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.transports = transports;
     this.state.platformType = platformType;
     this.state.analytics = analytics;
+    this.state.protocolVersion = protocolVersion ?? 1;
     this.state.isOriginator = !otherPublicKey;
+    this.state.relayPersistence = relayPersistence;
     this.state.communicationServerUrl = communicationServerUrl;
     this.state.context = context;
+    this.state.terminated = false;
     this.state.sdkVersion = sdkVersion;
 
     this.setMaxListeners(50);
@@ -159,8 +175,21 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.autoConnectOptions = autoConnect;
     this.state.debug = logging?.remoteLayer === true;
 
+    // Enable loggers early
     if (logging?.remoteLayer === true) {
       debug.enable('RemoteCommunication:Layer');
+    }
+
+    if (logging?.serviceLayer === true) {
+      debug.enable('SocketService:Layer');
+    }
+
+    if (logging?.eciesLayer === true) {
+      debug.enable('ECIES:Layer');
+    }
+
+    if (logging?.keyExchangeLayer === true) {
+      debug.enable('KeyExchange:Layer');
     }
 
     this.state.logging = logging;
@@ -168,6 +197,10 @@ export class RemoteCommunication extends EventEmitter2 {
     if (storage?.storageManager) {
       this.state.storageManager = storage.storageManager;
     }
+
+    logger.RemoteCommunication(
+      `[RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
+    );
 
     this.initCommunicationLayer({
       communicationLayerPreference,
@@ -177,7 +210,7 @@ export class RemoteCommunication extends EventEmitter2 {
       communicationServerUrl,
     });
 
-    this.emitServiceStatusEvent();
+    this.emitServiceStatusEvent({ context: 'constructor' });
   }
 
   private initCommunicationLayer({
@@ -220,7 +253,13 @@ export class RemoteCommunication extends EventEmitter2 {
     return clean(this.state);
   }
 
-  connectToChannel(channelId: string, withKeyExchange?: boolean) {
+  connectToChannel({
+    channelId,
+    withKeyExchange,
+  }: {
+    channelId: string;
+    withKeyExchange?: boolean;
+  }) {
     return connectToChannel({
       channelId,
       withKeyExchange,
@@ -278,6 +317,13 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.communicationLayer?.ping();
   }
 
+  testLogger() {
+    logger.RemoteCommunication(`testLogger() channel=${this.state.channelId}`);
+    logger.SocketService(`testLogger() channel=${this.state.channelId}`);
+    logger.Ecies(`testLogger() channel=${this.state.channelId}`);
+    logger.KeyExchange(`testLogger() channel=${this.state.channelId}`);
+  }
+
   keyCheck() {
     logger.RemoteCommunication(
       `[RemoteCommunication: keyCheck()] channel=${this.state.channelId}`,
@@ -292,10 +338,11 @@ export class RemoteCommunication extends EventEmitter2 {
     }
     this.state._connectionStatus = connectionStatus;
     this.emit(EventType.CONNECTION_STATUS, connectionStatus);
-    this.emitServiceStatusEvent();
+    this.emitServiceStatusEvent({ context: 'setConnectionStatus' });
   }
 
-  emitServiceStatusEvent() {
+  emitServiceStatusEvent(_: { context?: string } = {}) {
+    // only emit if there was a change in the service status
     this.emit(EventType.SERVICE_STATUS, this.getServiceStatus());
   }
 
@@ -343,6 +390,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   getVersion() {
     return packageJson.version;
+  }
+
+  hasRelayPersistence() {
+    return this.state.relayPersistence ?? false;
   }
 
   resume() {

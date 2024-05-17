@@ -26,6 +26,7 @@ describe('handlesClientsDisconnected', () => {
           clean: mockClean,
         },
       },
+      remote: { state: {} },
       emit: mockEmit,
     } as unknown as SocketService;
   });

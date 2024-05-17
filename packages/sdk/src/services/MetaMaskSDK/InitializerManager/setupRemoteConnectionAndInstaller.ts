@@ -1,9 +1,9 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { MetaMaskInstaller } from '../../../Platform/MetaMaskInstaller';
-import { MetaMaskSDK } from '../../../sdk';
-import { RemoteConnection } from '../../RemoteConnection';
-import { Analytics } from '../../Analytics';
 import { PlatformManager } from '../../../Platform/PlatfformManager';
+import { MetaMaskSDK } from '../../../sdk';
+import { Analytics } from '../../Analytics';
+import { RemoteConnection } from '../../RemoteConnection';
 import { connectWithExtensionProvider } from '../ProviderManager';
 
 /**

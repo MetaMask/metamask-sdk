@@ -10,6 +10,8 @@ export const CHANNEL_MAX_WAITING_TIME = 3 * 1000; // 3 seconds
 
 export const MAX_RPC_WAIT_TIME = 5 * 60 * 1000; // 5 minutes
 
+export const PROTOCOL_VERSION = 2;
+
 export const RPC_METHODS = {
   METAMASK_GETPROVIDERSTATE: 'metamask_getProviderState',
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',

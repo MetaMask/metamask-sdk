@@ -22,6 +22,13 @@ export function handlesClientsDisconnected(
       `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}'`,
     );
 
+    if (instance.remote.state.relayPersistence) {
+      logger.SocketService(
+        `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}' - relayPersistence enabled, skipping key exchange cleanup.`,
+      );
+      return;
+    }
+
     if (instance.state.isOriginator && !instance.state.clientsPaused) {
       // If it wasn't paused - need to reset keys.
       instance.state.keyExchange?.clean();

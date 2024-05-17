@@ -14,12 +14,19 @@ export function validateKeyExchange(
   instance: SocketService,
   message: CommunicationLayerMessage,
 ) {
-  if (!instance.state.keyExchange?.areKeysExchanged()) {
+  if (
+    !instance.state.keyExchange?.areKeysExchanged() &&
+    !instance.remote.state.relayPersistence
+  ) {
     logger.SocketService(
       `[SocketService: validateKeyExchange()] context=${instance.state.context} ERROR keys not exchanged`,
       message,
     );
 
+    console.error(
+      `[SocketService: validateKeyExchange()] ERROR keys not exchanged`,
+      message,
+    );
     throw new Error('Keys not exchanged BBB');
   }
 }

@@ -3781,6 +3781,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/json-rpc-middleware-stream@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "@metamask/json-rpc-middleware-stream@npm:6.0.2"
+  dependencies:
+    "@metamask/json-rpc-engine": ^7.3.2
+    "@metamask/safe-event-emitter": ^3.0.0
+    "@metamask/utils": ^8.3.0
+    readable-stream: ^3.6.2
+  checksum: e831041b03e9f48f584f4425188f72b58974f95b60429c9fe8b5561da69c6bbfad2f2b2199acdff06ee718967214b65c05604d4f85f3287186619683487f1060
+  languageName: node
+  linkType: hard
+
 "@metamask/network-controller@npm:^16.0.0":
   version: 16.0.0
   resolution: "@metamask/network-controller@npm:16.0.0"
@@ -3811,6 +3823,16 @@ __metadata:
     once: ^1.4.0
     readable-stream: ^2.3.3
   checksum: 4a2b48fc0e1a8f536edbab9f37b637cd91102538ad76ce07bdfad99b90d98b34585a0e5afa62ca9c1d550a0016347568ff0d635e5bf8cfa266d049e1c0ebedc8
+  languageName: node
+  linkType: hard
+
+"@metamask/object-multiplex@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@metamask/object-multiplex@npm:2.0.0"
+  dependencies:
+    once: ^1.4.0
+    readable-stream: ^3.6.2
+  checksum: 54baea752a3ac7c2742c376512e00d4902d383e9da8787574d3b21eb0081523309e24e3915a98f3ae0341d65712b6832d2eb7eeb862f4ef0da1ead52dcde5387
   languageName: node
   linkType: hard
 
@@ -3850,6 +3872,26 @@ __metadata:
     pump: ^3.0.0
     webextension-polyfill-ts: ^0.25.0
   checksum: e88b2db8c4673cc6a7e47d9f0531df3fac73f05f8e9ff6d02c3420dfb3c7a82335d9c44876f2d472c44eac36d66491d2022be4f39600bee561d5de8ad59c5b07
+  languageName: node
+  linkType: hard
+
+"@metamask/providers@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "@metamask/providers@npm:15.0.0"
+  dependencies:
+    "@metamask/json-rpc-engine": ^7.3.2
+    "@metamask/json-rpc-middleware-stream": ^6.0.2
+    "@metamask/object-multiplex": ^2.0.0
+    "@metamask/rpc-errors": ^6.2.1
+    "@metamask/safe-event-emitter": ^3.0.0
+    "@metamask/utils": ^8.3.0
+    detect-browser: ^5.2.0
+    extension-port-stream: ^3.0.0
+    fast-deep-equal: ^3.1.3
+    is-stream: ^2.0.0
+    readable-stream: ^3.6.2
+    webextension-polyfill: ^0.10.0
+  checksum: 42571450e79d69d943384f557f6a61e0f73101d49804fb6e8075d791959f76c42b8ff626f711d434674792d77aead6cb8a32b04a3dcd53598c8aff24cbb1ad25
   languageName: node
   linkType: hard
 
@@ -3909,9 +3951,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.16.0, @metamask/sdk-communication-layer@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.16.0"
+"@metamask/sdk-communication-layer@npm:0.18.5, @metamask/sdk-communication-layer@npm:^0.18.4":
+  version: 0.18.5
+  resolution: "@metamask/sdk-communication-layer@npm:0.18.5"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -3922,9 +3964,9 @@ __metadata:
     cross-fetch: ^3.1.5
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.7
-    readable-stream: ^3.5.0
+    readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: e151d9cdb8cf037669ea6c6aa2fc05834308680516b6047505870885cacd0d489f4f2338ab5b2cb54fd556de0f14412c8300e31e12a9537fa2dba211c0e513a0
+  checksum: 7d8e632e0d8b95a093272a941adcf8b40d257a3b285dac0821c60a8ff36d1915a4998f0950bc3a7bd89dc9f15b0c00034e7d5a71a590218d1e5bdccc9224a2b5
   languageName: node
   linkType: hard
 
@@ -3958,9 +4000,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.16.0":
-  version: 0.16.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.16.0"
+"@metamask/sdk-install-modal-web@npm:0.18.5":
+  version: 0.18.5
+  resolution: "@metamask/sdk-install-modal-web@npm:0.18.5"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -3976,7 +4018,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: a465080786041fa3a95fd0ee4d7353d0c7699302dff6711bb76bef529c5d0cec37b35533660f17c38498588ee53e8a26789ee6e4ba848b0ddbed4da3406d9295
+  checksum: 57fd8dc802ef0d2949c34df6387abf3633bfb0da03cbce570735060991337835a8846694216bfe14d2764fa21cf0d70fc14cecb442b02f8e468f3560acc7b8e7
   languageName: node
   linkType: hard
 
@@ -4025,28 +4067,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "@metamask/sdk-react@npm:0.16.0"
+"@metamask/sdk-react@npm:^0.18.4, @metamask/sdk-react@npm:^0.18.6":
+  version: 0.18.6
+  resolution: "@metamask/sdk-react@npm:0.18.6"
   dependencies:
-    "@metamask/sdk": ^0.16.0
-    "@react-native-async-storage/async-storage": ^1.19.6
+    "@metamask/sdk": ^0.18.6
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
     react:
       optional: false
     react-dom:
       optional: false
     react-native:
       optional: true
-  checksum: bad5f3db9851368d8a97df4ac1101467f7602296ad3c75631c0099073b24d076d5c29381e8071ca99b779dbfa6f5049e34866009969284f0d5ce67a9048ceb00
+  checksum: 8661d52274196d05a715968c9a5ed0a661f82874051dfaf88ed9c76b6d139864071fe7ccc5d27209ede2b14b5e666338acb94dba0e5183839048228c6df873d8
   languageName: node
   linkType: hard
 
@@ -4093,17 +4137,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-ui@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@metamask/sdk-ui@npm:0.3.0"
+"@metamask/sdk-ui@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "@metamask/sdk-ui@npm:0.4.1"
   dependencies:
     "@metamask/controller-utils": ^5.0.2
     "@metamask/design-tokens": ^1.12.0
     "@metamask/network-controller": ^16.0.0
-    "@metamask/sdk": ^0.16.0
-    "@metamask/sdk-communication-layer": ^0.16.0
-    "@metamask/sdk-react": ^0.16.0
-    "@react-native-async-storage/async-storage": ^1.19.5
+    "@metamask/sdk": ^0.18.4
+    "@metamask/sdk-communication-layer": ^0.18.4
+    "@metamask/sdk-react": ^0.18.4
     "@react-navigation/native": ^6.1.9
     "@testing-library/react-native": ^12.4.0
     babel-preset-expo: ^9.5.2
@@ -4120,6 +4163,7 @@ __metadata:
     react-native-qrcode-svg: ^6.2.0
     react-redux: ^8.1.3
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: ^0.72.4
@@ -4132,7 +4176,7 @@ __metadata:
     react-native-svg: ^14.0.0
     react-native-vector-icons: ^10.0.2
     react-native-web: ^0.19.9
-  checksum: a97d4a0ffa96b2f8aed1dcd3bfd3702efd3964687d6856d0137d5bcad7e6406d7f96e1570e9ac030339552c75fef1e1368516e4aeacc0deb4a0e4cce13b4ca0f
+  checksum: f922d5a440d7f12de618ac7943eeaba40eff8fd2d02eed877df033609c652a20d2c05187e3f8f7f10972f8c91626f04a808ac5aa3fd013a830a271549fa88338
   languageName: node
   linkType: hard
 
@@ -4218,16 +4262,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "@metamask/sdk@npm:0.16.0"
+"@metamask/sdk@npm:^0.18.4, @metamask/sdk@npm:^0.18.6":
+  version: 0.18.6
+  resolution: "@metamask/sdk@npm:0.18.6"
   dependencies:
     "@metamask/onboarding": ^1.0.1
-    "@metamask/post-message-stream": ^6.1.0
-    "@metamask/providers": ^10.2.1
-    "@metamask/sdk-communication-layer": 0.16.0
-    "@metamask/sdk-install-modal-web": 0.16.0
-    "@react-native-async-storage/async-storage": ^1.17.11
+    "@metamask/providers": ^15.0.0
+    "@metamask/sdk-communication-layer": 0.18.5
+    "@metamask/sdk-install-modal-web": 0.18.5
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
@@ -4235,30 +4277,32 @@ __metadata:
     eciesjs: ^0.3.15
     eth-rpc-errors: ^4.0.3
     eventemitter2: ^6.4.7
-    extension-port-stream: ^2.0.1
     i18next: 22.5.1
     i18next-browser-languagedetector: 7.1.0
     obj-multiplex: ^1.0.0
     pump: ^3.0.0
     qrcode-terminal-nooctal: ^0.12.1
     react-native-webview: ^11.26.0
-    readable-stream: ^3.5.0
+    readable-stream: ^3.6.2
     rollup-plugin-visualizer: ^5.9.2
     socket.io-client: ^4.5.1
     util: ^0.12.4
     uuid: ^8.3.2
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
     react:
       optional: true
     react-dom:
       optional: true
     react-native:
       optional: true
-  checksum: 1f445ba216fbf360f957cad20475b006d52b9715140e93bccf9b462558b1308a5fb3f1ad3b7e924b365f4090756e8806e6e34eb6baf4c1ca2b509f6327b57a0b
+  checksum: 936ce46f32cdba4dbc3dc892a245e85fbd7ff73c75b5625f2faa30b771b6d0ff2223c5021629361d0e2c8c45f22227f322444df9f6eaf4a961c61b9f06333200
   languageName: node
   linkType: hard
 
@@ -6035,6 +6079,15 @@ __metadata:
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"
   checksum: 0e994ad2aa6575f94670d8a2149afe94465de9cedaaaac364e7fb43a40c3691c980ff74899f682f4ca58fa96b4cbd7421a015d3a6defe43a442117d7821a2f36
+  languageName: node
+  linkType: hard
+
+"abort-controller@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "abort-controller@npm:3.0.0"
+  dependencies:
+    event-target-shim: ^5.0.0
+  checksum: 170bdba9b47b7e65906a28c8ce4f38a7a369d78e2271706f020849c1bfe0ee2067d4261df8bbb66eb84f79208fd5b710df759d64191db58cfba7ce8ef9c54b75
   languageName: node
   linkType: hard
 
@@ -10149,6 +10202,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"event-target-shim@npm:^5.0.0":
+  version: 5.0.1
+  resolution: "event-target-shim@npm:5.0.1"
+  checksum: 1ffe3bb22a6d51bdeb6bf6f7cf97d2ff4a74b017ad12284cc9e6a279e727dc30a5de6bb613e5596ff4dc3e517841339ad09a7eec44266eccb1aa201a30448166
+  languageName: node
+  linkType: hard
+
 "eventemitter2@npm:^6.4.5, eventemitter2@npm:^6.4.7":
   version: 6.4.9
   resolution: "eventemitter2@npm:6.4.9"
@@ -10163,7 +10223,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^3.2.0":
+"events@npm:^3.2.0, events@npm:^3.3.0":
   version: 3.3.0
   resolution: "events@npm:3.3.0"
   checksum: f6f487ad2198aa41d878fa31452f1a3c00958f46e9019286ff4787c84aac329332ab45c9cdc8c445928fc6d7ded294b9e005a7fce9426488518017831b272780
@@ -10291,6 +10351,16 @@ __metadata:
   dependencies:
     webextension-polyfill: ">=0.10.0 <1.0"
   checksum: aee8bbeb2ed6f69a62f58a89580e0e9002dadb11062edbaedb7bb04cfc5a5e0b0d3980bfeaa1c3ee7e08dec7e5fac26e25497fc2f82000db7653442bd5eca157
+  languageName: node
+  linkType: hard
+
+"extension-port-stream@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "extension-port-stream@npm:3.0.0"
+  dependencies:
+    readable-stream: ^3.6.2 || ^4.4.2
+    webextension-polyfill: ">=0.10.0 <1.0"
+  checksum: 4f51d2258a96154c2d916a8a5425636a2b0817763e9277f7dc378d08b6f050c90d185dbde4313d27cf66ad99d4b3116479f9f699c40358c64cccfa524d2b55bf
   languageName: node
   linkType: hard
 
@@ -16702,7 +16772,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^3.0.6, readable-stream@npm:^3.5.0, readable-stream@npm:^3.6.0":
+"readable-stream@npm:^3.0.6, readable-stream@npm:^3.5.0, readable-stream@npm:^3.6.0, readable-stream@npm:^3.6.2":
   version: 3.6.2
   resolution: "readable-stream@npm:3.6.2"
   dependencies:
@@ -16710,6 +16780,19 @@ __metadata:
     string_decoder: ^1.1.1
     util-deprecate: ^1.0.1
   checksum: bdcbe6c22e846b6af075e32cf8f4751c2576238c5043169a1c221c92ee2878458a816a4ea33f4c67623c0b6827c8a400409bfb3cf0bf3381392d0b1dfb52ac8d
+  languageName: node
+  linkType: hard
+
+"readable-stream@npm:^3.6.2 || ^4.4.2":
+  version: 4.5.2
+  resolution: "readable-stream@npm:4.5.2"
+  dependencies:
+    abort-controller: ^3.0.0
+    buffer: ^6.0.3
+    events: ^3.3.0
+    process: ^0.11.10
+    string_decoder: ^1.3.0
+  checksum: c4030ccff010b83e4f33289c535f7830190773e274b3fcb6e2541475070bdfd69c98001c3b0cb78763fc00c8b62f514d96c2b10a8bd35d5ce45203a25fa1d33a
   languageName: node
   linkType: hard
 
@@ -17355,10 +17438,10 @@ __metadata:
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk": ^0.16.0
+    "@metamask/sdk": ^0.18.6
     "@metamask/sdk-lab": ^0.1.5
-    "@metamask/sdk-react": ^0.16.0
-    "@metamask/sdk-ui": ^0.3.0
+    "@metamask/sdk-react": ^0.18.6
+    "@metamask/sdk-ui": ^0.4.1
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0
@@ -18081,7 +18164,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string_decoder@npm:^1.1.1":
+"string_decoder@npm:^1.1.1, string_decoder@npm:^1.3.0":
   version: 1.3.0
   resolution: "string_decoder@npm:1.3.0"
   dependencies:
@@ -19310,7 +19393,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webextension-polyfill@npm:>=0.10.0 <1.0":
+"webextension-polyfill@npm:>=0.10.0 <1.0, webextension-polyfill@npm:^0.10.0":
   version: 0.10.0
   resolution: "webextension-polyfill@npm:0.10.0"
   checksum: 4a59036bda571360c2c0b2fb03fe1dc244f233946bcf9a6766f677956c40fd14d270aaa69cdba95e4ac521014afbe4008bfa5959d0ac39f91c990eb206587f91

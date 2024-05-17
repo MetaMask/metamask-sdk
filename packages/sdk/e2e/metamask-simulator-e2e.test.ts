@@ -113,7 +113,7 @@ describe('MetaMask Simulator', () => {
       }
     });
 
-    mmRemote.connectToChannel(channelId);
+    mmRemote.connectToChannel({ channelId} );
 
     await waitForDisconnect();
     mmRemote.disconnect();

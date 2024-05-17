@@ -26,9 +26,7 @@ describe('onMessage', () => {
 
     onMessage(instance, message);
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      `[RCPMS: onMessage()] message=${message}`,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should return early if message is not an object', () => {

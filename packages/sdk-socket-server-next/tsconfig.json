@@ -4,8 +4,10 @@
     "module": "commonjs",
     "outDir": "dist",
     "strict": true,
+    "rootDir": ".",
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*.ts"],

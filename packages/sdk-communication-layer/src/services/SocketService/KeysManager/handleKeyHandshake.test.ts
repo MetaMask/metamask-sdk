@@ -45,6 +45,7 @@ describe('handleKeyHandshake', () => {
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       id: instance.state.channelId,
+      clientType: 'wallet',
       context: instance.state.context,
       message: keyHandshakeMessage,
     });

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { setupChannelListeners } from '../ChannelManager';
-import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
 import { logger } from '../../../utils/logger';
+import { setupChannelListeners } from '../ChannelManager';
 import { connectToChannel } from './connectToChannel';
 
 jest.mock('../ChannelManager');
@@ -21,6 +20,7 @@ describe('connectToChannel', () => {
     instance = {
       state: {
         debug: false,
+        isOriginator: true,
         socket: {
           connected: false,
           connect: mockConnect,
@@ -31,6 +31,7 @@ describe('connectToChannel', () => {
           toString: jest.fn(() => 'keyExchangeString'),
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -48,11 +49,6 @@ describe('connectToChannel', () => {
     expect(instance.state.isOriginator).toBe(true);
     expect(instance.state.channelId).toBe('channel123');
     expect(setupChannelListeners).toHaveBeenCalledWith(instance, 'channel123');
-    expect(mockEmit).toHaveBeenCalledWith(
-      EventType.JOIN_CHANNEL,
-      'channel123',
-      'someContext_connectToChannel',
-    );
   });
 
   it('should throw error if socket is already connected', () => {

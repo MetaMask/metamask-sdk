@@ -23,6 +23,7 @@ export function encryptAndSendMessage(
   const messageToSend = {
     id: instance.state.channelId,
     context: instance.state.context,
+    clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
     message: encryptedMessage,
     plaintext: instance.state.hasPlaintext
       ? JSON.stringify(message)

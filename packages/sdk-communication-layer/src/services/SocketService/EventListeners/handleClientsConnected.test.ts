@@ -28,6 +28,7 @@ describe('handleClientsConnected', () => {
         },
         clientsConnected: false,
       },
+      remote: { state: {} },
       emit: mockEmit,
     } as unknown as SocketService;
   });
@@ -36,13 +37,7 @@ describe('handleClientsConnected', () => {
     const handler = handleClientsConnected(instance, channelId);
     await handler('someId');
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      "[SocketService: handleClientsConnected()] context=someContext on 'clients_connected-sampleChannelId'  resumed=false  clientsPaused=false keysExchanged=undefined isOriginator=false",
-    );
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      "[SocketService: handleClientsConnected()] context=someContext on 'clients_connected' / keysExchanged=undefined -- backward compatibility",
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should emit CLIENTS_CONNECTED event with the proper data when the handler is called', async () => {

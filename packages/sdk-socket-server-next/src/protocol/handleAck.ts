@@ -19,17 +19,23 @@ export const handleAck = async ({
   clientType,
 }: ACKParams) => {
   const queueKey = `queue:${channelId}:${clientType}`;
+  let messages: any[] = [];
   try {
     // Retrieve all messages to find and remove the specified one
-    const messages = await pubClient.lrange(queueKey, 0, -1);
+    messages = await pubClient.lrange(queueKey, 0, -1);
     logger.debug(
       `Messages in ${clientType} queue: ${messages.length}`,
       messages,
     );
     const index = messages.findIndex((msg) => {
-      const parsed = JSON.parse(msg) as QueuedMessage;
-      console.log(`parsed.ackId: ${parsed.ackId}, ackId: ${ackId}`);
-      return parsed.ackId === ackId;
+      try {
+        const parsed = JSON.parse(msg) as QueuedMessage;
+        logger.debug(`Parsed ackId: ${parsed.ackId}, Target ackId: ${ackId}`);
+        return parsed.ackId === ackId;
+      } catch (e) {
+        logger.error('Error parsing message', msg, e);
+        return false;
+      }
     });
     if (index === -1) {
       logger.warn(`Message ${ackId} not found in ${clientType} queue.`);

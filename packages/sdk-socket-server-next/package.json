@@ -12,7 +12,7 @@
     "url": "https://github.com/MetaMask/metamask-sdk.git"
   },
   "author": "",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "build": "tsc",
     "build:post-tsc": "echo 'N/A'",

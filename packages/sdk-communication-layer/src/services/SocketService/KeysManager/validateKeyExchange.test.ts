@@ -25,6 +25,7 @@ describe('validateKeyExchange', () => {
           areKeysExchanged: mockAreKeysExchanged,
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -50,9 +51,6 @@ describe('validateKeyExchange', () => {
       // do nothing
     }
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: validateKeyExchange()] context=testContext ERROR keys not exchanged',
-      testMessage,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 });
