@@ -1,16 +1,16 @@
-# react-native-meta-mask-react-native-sdk
+# metamask-sdk-react-native
 
 ## Getting started
 
-`$ npm install react-native-meta-mask-react-native-sdk --save`
+`$ npm install metamask-sdk-react-native --save`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-meta-mask-react-native-sdk`
+`$ react-native link metamask-sdk-react-native`
 
 ## Usage
 ```javascript
-import MetaMaskReactNativeSdk from 'react-native-meta-mask-react-native-sdk';
+import MetaMaskReactNativeSdk from 'metamask-sdk-react-native';
 
 // TODO: What to do with the module?
 MetaMaskReactNativeSdk;

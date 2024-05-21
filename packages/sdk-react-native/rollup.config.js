@@ -34,8 +34,8 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/es/index.js',
-        format: 'es',
+        file: 'dist/esm/index.js',
+        format: 'esm',
         inlineDynamicImports: true,
         sourcemap: true,
       },

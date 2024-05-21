@@ -8123,6 +8123,61 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@metamask/sdk-react-native@workspace:packages/sdk-react-native":
+  version: 0.0.0-use.local
+  resolution: "@metamask/sdk-react-native@workspace:packages/sdk-react-native"
+  dependencies:
+    "@lavamoat/allow-scripts": ^2.3.1
+    "@metamask/auto-changelog": ^3.1.0
+    "@metamask/eslint-config": ^6.0.0
+    "@metamask/eslint-config-nodejs": ^6.0.0
+    "@metamask/eslint-config-typescript": ^6.0.0
+    "@react-native-async-storage/async-storage": ^1.19.6
+    "@rollup/plugin-commonjs": ^25.0.7
+    "@rollup/plugin-json": ^6.1.0
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.1
+    "@rollup/plugin-typescript": ^11.1.6
+    "@types/react": ^18.2.38
+    "@types/react-native": ^0.72.4
+    "@typescript-eslint/eslint-plugin": ^4.26.0
+    "@typescript-eslint/parser": ^4.26.0
+    eslint: ^7.30.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-import: ^2.23.4
+    eslint-plugin-jest: ^24.4.0
+    eslint-plugin-jsdoc: ^36.1.0
+    eslint-plugin-node: ^11.1.0
+    eslint-plugin-prettier: ^3.4.0
+    eth-rpc-errors: ^4.0.3
+    jest: ^29.7.0
+    jest-environment-jsdom: ^29.7.0
+    react-native: ^0.72.4
+    rimraf: ^5.0.0
+    rollup: ^3.21.7
+    rollup-plugin-jscc: ^2.0.0
+    rollup-plugin-peer-deps-external: ^2.2.4
+    rollup-plugin-postcss: ^4.0.2
+    rollup-plugin-sizes: ^1.0.6
+    rollup-plugin-typescript2: ^0.36.0
+    rollup-plugin-visualizer: ^5.12.0
+    typescript: ^4.7.4
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
+    react:
+      optional: false
+    react-dom:
+      optional: false
+    react-native:
+      optional: true
+  languageName: unknown
+  linkType: soft
+
 "@metamask/sdk-react-ui@workspace:^, @metamask/sdk-react-ui@workspace:packages/sdk-react-ui":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-react-ui@workspace:packages/sdk-react-ui"
@@ -10898,6 +10953,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/plugin-json@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@rollup/plugin-json@npm:6.1.0"
+  dependencies:
+    "@rollup/pluginutils": ^5.1.0
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: cc018d20c80242a2b8b44fae61a968049cf31bb8406218187cc7cda35747616594e79452dd65722e7da6dd825b392e90d4599d43cd4461a02fefa2865945164e
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-node-resolve@npm:^11.2.1":
   version: 11.2.1
   resolution: "@rollup/plugin-node-resolve@npm:11.2.1"
@@ -11048,6 +11117,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rollup/plugin-typescript@npm:^11.1.6":
+  version: 11.1.6
+  resolution: "@rollup/plugin-typescript@npm:11.1.6"
+  dependencies:
+    "@rollup/pluginutils": ^5.1.0
+    resolve: ^1.22.1
+  peerDependencies:
+    rollup: ^2.14.0||^3.0.0||^4.0.0
+    tslib: "*"
+    typescript: ">=3.7.0"
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+    tslib:
+      optional: true
+  checksum: 3f5b981f4d9c9501be1f16396f7b6d4ae584cb1b61e9f0bed66f98245fb77f249caea2b9b5f222f933b46fd9043c1f2664a7445aefa386c1ffbb4f0b80fc6004
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-typescript@npm:^8.3.3":
   version: 8.5.0
   resolution: "@rollup/plugin-typescript@npm:8.5.0"
@@ -11101,6 +11189,22 @@ __metadata:
     rollup:
       optional: true
   checksum: edea15e543bebc7dcac3b0ac8bc7b8e8e6dbd46e2864dbe5dd28072de1fbd5b0e10d545a610c0edaa178e8a7ac432e2a2a52e547ece1308471412caba47db8ce
+  languageName: node
+  linkType: hard
+
+"@rollup/pluginutils@npm:^5.1.0":
+  version: 5.1.0
+  resolution: "@rollup/pluginutils@npm:5.1.0"
+  dependencies:
+    "@types/estree": ^1.0.0
+    estree-walker: ^2.0.2
+    picomatch: ^2.3.1
+  peerDependencies:
+    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
+  peerDependenciesMeta:
+    rollup:
+      optional: true
+  checksum: 3cc5a6d91452a6eabbfd1ae79b4dd1f1e809d2eecda6e175deb784e75b0911f47e9ecce73f8dd315d6a8b3f362582c91d3c0f66908b6ced69345b3cbe28f8ce8
   languageName: node
   linkType: hard
 
@@ -14819,6 +14923,16 @@ __metadata:
     "@react-native/virtualized-lists": ^0.72.4
     "@types/react": "*"
   checksum: 6fc6c847e451cd572e337e38c7c99817f9131d9a67c28be6c5aae2f45ee705c7498f4c25f0a2b8b3a3330c6c52d961c6fd9060063f3dbb587207470ed2d7d66b
+  languageName: node
+  linkType: hard
+
+"@types/react-native@npm:^0.72.4":
+  version: 0.72.8
+  resolution: "@types/react-native@npm:0.72.8"
+  dependencies:
+    "@react-native/virtualized-lists": ^0.72.4
+    "@types/react": "*"
+  checksum: a9fdf0a11ed42f800eb646d038702d3652d0732aa017ecd8203fb2aee77a782fa7ef388433e5cfcb6ab658a1642e1286698fecedcbc379547e4aeefa681ed685
   languageName: node
   linkType: hard
 
