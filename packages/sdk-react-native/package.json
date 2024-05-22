@@ -1,7 +1,7 @@
 {
   "name": "@metamask/sdk-react-native",
   "title": "MetaMask - ReactNative SDK",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "TODO",
   "main": "dist/esm/index.js",
   "homepage": "https://github.com/MetaMask/metamask-sdk",

@@ -31,19 +31,25 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
     override fun getName(): String {
         return "MetaMaskReactNativeSdk"
     }
+
     @ReactMethod
     fun initialize(options: ReadableMap) {
         val dappName = options.getString("dappName") ?: ""
         val dappURL = options.getString("dappUrl") ?: ""
         val dappIconUrl = options.getString("dappIconUrl") ?: ""
-        val infuraAPIKey = options.getString("infuraAPIKey") ?: ""
+        val infuraAPIKey = options.getString("infuraAPIKey")
 
         val dappMetadata = DappMetadata(name = dappName, url = dappURL, iconUrl = dappIconUrl)
-        val sdkOptions = SDKOptions(infuraAPIKey)
+        var sdkOptions: SDKOptions? = null
+
+        infuraAPIKey?.let { key ->
+            sdkOptions = SDKOptions(key)
+        }
 
         val eth = Ethereum(context, dappMetadata, sdkOptions)
         ethereum = EthereumFlow(eth)
     }
+
     @ReactMethod
     fun connect(promise: Promise) {
         ethereum?.let { eth ->
