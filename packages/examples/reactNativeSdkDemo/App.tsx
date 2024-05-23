@@ -40,15 +40,16 @@ LogBox.ignoreLogs([
 let canOpenLink = true;
 
 const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
-  const {dappName, dappUrl, dappIconUrl, dappScheme} = useSDKConfig();
+  // const {dappName, dappUrl, dappIconUrl, dappScheme} = useSDKConfig();
 
   return (
     <MetaMaskProvider
       sdkOptions={{
-        dappName,
-        dappUrl,
-        dappIconUrl,
-        dappScheme,
+        dappName: 'Test Dapp',
+        dappUrl: 'https://metamask.github.io/test-dapp/',
+        dappIconUrl: 'https://metamask.github.io/test-dapp/logos/logo.png',
+        dappScheme: 'testdapp',
+        infuraAPIKey: 'd4f7e3f7e4b84f0b8f7f7f7f7e4b84f0',
       }}>
       {children}
     </MetaMaskProvider>

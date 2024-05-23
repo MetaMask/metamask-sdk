@@ -22,7 +22,7 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from '../../package.json';
 import {DAPPView} from '../views/DappView';
 
-export function DemoScreen(): JSX.Element {
+export function DemoScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
   const {sdk} = useSDK();

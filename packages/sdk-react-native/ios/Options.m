@@ -1,32 +1,21 @@
-//
-//  Options.m
-//  MetaMaskNativeSDK
-//
+#import "Options.h"
 
-#import <Foundation/Foundation.h>
-#import <React/RCTConvert.h>
-#import "MetaMaskReactNativeSdk-Bridging-Header.h"
+@implementation Options
 
-@interface RCTConvert (Options)
-
-+ (Options *)Options:(id)json;
+- (instancetype)initWithDappName:(NSString *)dappName
+                         dappUrl:(NSString *)dappUrl
+                     dappIconUrl:(NSString *)dappIconUrl
+                      dappScheme:(NSString *)dappScheme
+                    infuraAPIKey:(NSString *)infuraAPIKey {
+    self = [super init];
+    if (self) {
+        _dappName = dappName;
+        _dappUrl = dappUrl;
+        _dappIconUrl = dappIconUrl;
+        _dappScheme = dappScheme;
+        _infuraAPIKey = infuraAPIKey;
+    }
+    return self;
+}
 
 @end
-
-@implementation RCTConvert (Options)
-
-+ (Options *)Options:(id)json {
-    NSDictionary *optionsData = [self NSDictionary:json];
-    NSString *dappName = optionsData[@"dappName"];
-    NSString *dappUrl = optionsData[@"dappUrl"];
-    NSString *dappIconUrl = optionsData[@"dappIconUrl"];
-    NSString *dappScheme = optionsData[@"dappScheme"];
-    NSString *infuraAPIKey = optionsData[@"infuraAPIKey"];
-
-    Options *options = [[Options alloc] initWithDappName:dappName
-                                                 dappUrl:dappUrl
-                                             dappIconUrl:dappIconUrl
-                                              dappScheme:dappScheme
-                                            infuraAPIKey:infuraAPIKey];
-    return options;
-}

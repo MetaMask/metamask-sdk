@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { Linking, NativeModules } from 'react-native';
 const { MetaMaskReactNativeSdk } = NativeModules;
 
 export interface RequestArguments {
@@ -83,5 +83,22 @@ export const getChainId = (): Promise<string> => {
  * @returns A Promise that resolves with the selected address.
  */
 export const getSelectedAddress = (): Promise<string> => {
+  console.log("🟠 ~ file: NativePackageMethods.ts:86 ~ getSelectedAddress ~ getSelectedAddress:",)
   return MetaMaskReactNativeSdk.selectedAddress();
 };
+
+export const terminate = async (): Promise<void> => {
+  return MetaMaskReactNativeSdk.clearSession();
+};
+
+
+export function setupDeeplinkHandling() {
+  const handleOpenURL = (event: any) => {
+    // Handle the URL event here
+    console.log('Received URL:', event.url);
+    MetaMaskReactNativeSdk.handleDeepLink(event.url);
+  };
+
+  // Add event listener for URL events
+  Linking.addEventListener('url', handleOpenURL);
+}

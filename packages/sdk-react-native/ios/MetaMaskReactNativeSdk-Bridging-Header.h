@@ -1,2 +1,5 @@
-#import <React/RCTBridgeModule.h>
-#import <React/RCTViewManager.h>
+#import "React/RCTBridgeModule.h"
+#import "Options.h"
+#import "EthereumRequestObjC.h"
+#import "RCTConvert+Options.h"
+#import "RCTConvert+EthereumRequestObjC.h"

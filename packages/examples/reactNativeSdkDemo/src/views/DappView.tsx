@@ -49,8 +49,10 @@ export const DAPPView = (_props: DAPPViewProps) => {
 
   const connect = async () => {
     try {
-      const accounts = (await sdk?.connect()) as string[];
-      console.log('accounts', accounts);
+      console.log('Calling Connect....');
+
+      const res = (await sdk?.connect()) as string;
+      console.log('account', res);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -327,10 +329,12 @@ export const DAPPView = (_props: DAPPViewProps) => {
       <TouchableOpacity
         style={[styles.button, styles.removeButton]}
         onPress={() => {
-          sdk?.disconnect();
+          // Terminating will reset the connection state and clear the session
+          // So it will require the user to connect again
+          sdk?.terminate();
           setResponse('');
         }}>
-        <Text style={styles.buttonText}>Disconnect</Text>
+        <Text style={styles.buttonText}>Terminate</Text>
       </TouchableOpacity>
     </View>
   );

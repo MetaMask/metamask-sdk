@@ -67,6 +67,22 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
     }
 
     @ReactMethod
+    fun clearSession(promise: Promise) {
+        ethereum?.let { eth ->
+            scope.launch {
+                try {
+                    val result = withContext(Dispatchers.IO) {
+                        eth.clearSession()
+                    }
+                    handleResult(result, promise)
+                } catch (e: Exception) {
+                    promise.reject(e.toString(), e)
+                }
+            }
+        }
+    }
+
+    @ReactMethod
     fun connectAndSign(message: String, promise: Promise) {
         ethereum?.let { eth ->
             scope.launch {

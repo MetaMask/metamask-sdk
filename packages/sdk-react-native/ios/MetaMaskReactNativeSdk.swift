@@ -34,12 +34,12 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
     )
   }
 
-  @objc func disconnect() {
-      metaMaskSDK.disconnect()
+  @objc func disconnect(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+      resolve(metaMaskSDK.disconnect())
   }
 
-  @objc func clearSession() {
-      metaMaskSDK.clearSession()
+  @objc func clearSession(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+      resolve(metaMaskSDK.clearSession())
   }
 
   @objc func handleDeepLink(_ url: String) {

@@ -12,10 +12,11 @@ import {
   connect,
   connectAndSign,
   connectWith,
-  disconnect,
   getChainId,
   getSelectedAddress,
-  request
+  request,
+  setupDeeplinkHandling,
+  terminate
 } from './NativePackageMethods';
 const { MetaMaskReactNativeSdk } = NativeModules;
 
@@ -45,7 +46,7 @@ export interface SDKState {
     connect: () => Promise<string | undefined>;
     connectAndSign: (message: string) => Promise<string | undefined>;
     connectWith: (req: RequestArguments) => Promise<string | undefined>;
-    disconnect: () => Promise<void>;
+    terminate: () => Promise<void>;
     request: <Type>(req: RequestArguments) => Promise<Type>;
     batchRequest: (requests: RequestArguments[]) => Promise<unknown[]>;
     getChainId: () => Promise<string | undefined>;
@@ -137,9 +138,9 @@ const MetaMaskProviderClient = ({
     }
   }
 
-  const handleDisconnect = async () => {
+  const handleTerminate = async () => {
     try {
-    await disconnect()
+    await terminate()
     console.log("🟠 ~ file: MetaMaskProvider.tsx:131 ~ handleDisconnect ~ res:", )
 
     setAccount(undefined);
@@ -155,32 +156,16 @@ const MetaMaskProviderClient = ({
 
 
   useEffect(() => {
-
-    const onInit = async () => {
-    const selectedAddress = await getSelectedAddress()
-    const currentChainId = await getChainId()
-
-    if (selectedAddress) {
-      setAccount(selectedAddress);
-    }
-
-    if (currentChainId) {
-      setChainId(currentChainId);
-    }
-    }
-
-    onInit()
-  }, []);
-
-
-  useEffect(() => {
     // Prevent sdk double rendering with StrictMode
     if (hasInit.current) {
       return;
     }
 
+    // TODO: create one function that handles the deeplink and the init
     console.log("🟠 ~ file: MetaMaskProvider.tsx:171 ~ useEffect ~ initialize with:", sdkOptions)
     MetaMaskReactNativeSdk.initialize(sdkOptions);
+    setupDeeplinkHandling()
+
     hasInit.current = true;
 
     setReady(true);
@@ -193,8 +178,8 @@ const MetaMaskProviderClient = ({
     }
 
     const onReady = async () => {
-      const selectedAddress = await getSelectedAddress();
-      const currentChainId = await getChainId();
+      const selectedAddress = await getSelectedAddress()
+      const currentChainId = await getChainId()
 
       // TODO: change to connect to the native sdk
       setConnected(!!selectedAddress);
@@ -212,7 +197,7 @@ const MetaMaskProviderClient = ({
           connect: handleConnect,
           connectAndSign: handleConnectAndSign,
           connectWith: handleConnectWith,
-          disconnect: handleDisconnect,
+          terminate: handleTerminate,
           request,
           batchRequest,
           getChainId,
