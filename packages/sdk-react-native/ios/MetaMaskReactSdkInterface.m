@@ -8,8 +8,10 @@ RCT_EXTERN_METHOD(initialize:(NSDictionary *)options)
 RCT_EXTERN_METHOD(disconnect:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
 
-RCT_EXTERN_METHOD(handleDeepLink:(NSString *)url)
+RCT_EXTERN_METHOD(clearSession:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject)                  
 
+RCT_EXTERN_METHOD(handleDeepLink:(NSString *)url)
 
 RCT_EXTERN_METHOD(chainId:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject)
