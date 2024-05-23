@@ -1,5 +1,6 @@
-#import "React/RCTBridgeModule.h"
+//
+//  Use this file to import your target's public headers that you would like to expose to Swift.
+//
+
 #import "Options.h"
 #import "EthereumRequestObjC.h"
-#import "RCTConvert+Options.h"
-#import "RCTConvert+EthereumRequestObjC.h"

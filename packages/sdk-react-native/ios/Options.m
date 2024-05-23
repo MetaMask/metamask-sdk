@@ -1,21 +1,28 @@
+//
+//  Options.m
+//  MetaMaskNativeSDK
+//
+
 #import "Options.h"
+#import <React/RCTLog.h>
 
 @implementation Options
 
-- (instancetype)initWithDappName:(NSString *)dappName
-                         dappUrl:(NSString *)dappUrl
-                     dappIconUrl:(NSString *)dappIconUrl
-                      dappScheme:(NSString *)dappScheme
-                    infuraAPIKey:(NSString *)infuraAPIKey {
-    self = [super init];
-    if (self) {
-        _dappName = dappName;
-        _dappUrl = dappUrl;
-        _dappIconUrl = dappIconUrl;
-        _dappScheme = dappScheme;
-        _infuraAPIKey = infuraAPIKey;
-    }
-    return self;
+@synthesize dappName = _dappName;
+@synthesize dappUrl = _dappUrl;
+@synthesize dappIconUrl = _dappIconUrl;
+@synthesize dappScheme = _dappScheme;
+@synthesize infuraAPIKey = _infuraAPIKey;
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
+  if (self = [super init]) {
+    _dappName = dictionary[@"dappName"];
+    _dappUrl = dictionary[@"dappUrl"];
+    _dappIconUrl = dictionary[@"dappIconUrl"];
+    _dappScheme = dictionary[@"dappScheme"];
+    _infuraAPIKey = dictionary[@"infuraAPIKey"];
+  }
+  return self;
 }
 
 @end

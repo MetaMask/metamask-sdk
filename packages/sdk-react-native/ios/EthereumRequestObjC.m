@@ -1,14 +1,22 @@
+//
+//  EthereumRequestObjC.m
+//  MetaMaskNativeSDK
+//
+
 #import "EthereumRequestObjC.h"
+#import <React/RCTLog.h>
 
 @implementation EthereumRequestObjC
 
-- (instancetype)initWithMethod:(NSString *)method params:(id)params {
-    self = [super init];
-    if (self) {
-        _method = method;
-        _params = params;
-    }
-    return self;
+@synthesize method = _method;
+@synthesize params = _params;
+
+- (instancetype)initWithDictionary:(NSDictionary *)dictionary {
+  if (self = [super init]) {
+    _method = dictionary[@"method"];
+    _params = dictionary[@"params"];
+  }
+  return self;
 }
 
 @end
