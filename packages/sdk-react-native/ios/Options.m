@@ -1,8 +1,3 @@
-//
-//  Options.m
-//  MetaMaskNativeSDK
-//
-
 #import "Options.h"
 #import <React/RCTLog.h>
 

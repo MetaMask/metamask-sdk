@@ -1,8 +1,3 @@
-//
-//  MetaMaskSDKWrapper.swift
-//  MetaMaskNativeSDK
-//
-
 import Foundation
 import React
 import metamask_ios_sdk

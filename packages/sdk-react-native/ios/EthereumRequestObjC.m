@@ -1,8 +1,3 @@
-//
-//  EthereumRequestObjC.m
-//  MetaMaskNativeSDK
-//
-
 #import "EthereumRequestObjC.h"
 #import <React/RCTLog.h>
 
