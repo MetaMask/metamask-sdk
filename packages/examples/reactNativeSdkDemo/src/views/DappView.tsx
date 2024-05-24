@@ -58,6 +58,43 @@ export const DAPPView = (_props: DAPPViewProps) => {
     }
   };
 
+  const connectWithChainSwitch = async () => {
+    try {
+      console.log('Calling ConnectWith....');
+
+      const addChainRPC = {
+        method: 'wallet_addEthereumChain',
+        params: [
+          {
+            chainId: '0x89',
+            chainName: 'Polygon',
+            blockExplorerUrls: ['https://polygonscan.com'],
+            nativeCurrency: {symbol: 'MATIC', decimals: 18},
+            rpcUrls: ['https://polygon-rpc.com/'],
+          },
+        ],
+      };
+
+
+      const res = (await sdk?.connectWith(addChainRPC)) as string;
+      console.log('connectWith result:', res);
+    } catch (e) {
+      console.log('ERROR', e);
+    }
+  };
+
+  const connectAndSign = async () => {
+    try {
+      const signResult = await sdk?.connectAndSign({
+        msg: 'Connect + Sign message'
+      });
+      console.log('connectAndSign result:', signResult);
+      setResponse(signResult);
+    } catch (err) {
+      console.warn(`failed to connect..`, err);
+    }
+  };
+
   const addPolygonChainRequest = async () => {
     try {
       setResponse('');
@@ -258,7 +295,8 @@ export const DAPPView = (_props: DAPPViewProps) => {
       })) as unknown[];
 
       setResponse(res);
-      console.log('response', res);
+      console.log(res);
+      console.log('batchResponse', res);
     } catch (e) {
       console.error('error', e);
     }
@@ -338,6 +376,8 @@ export const DAPPView = (_props: DAPPViewProps) => {
             marginVertical: 12,
           }}>
           <Button color={'green'} title={'Connect'} onPress={connect} />
+          <Button color={'green'} title={'ConnectWithAddChain (to Polygon)'} onPress={connectWithChainSwitch} />
+          <Button color={'green'} title={'ConnectAndSign'} onPress={connectAndSign} />
         </View>
       )}
 
