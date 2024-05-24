@@ -4,28 +4,15 @@
  *
  * @format
  */
-
 import {INFURA_API_KEY} from '@env';
-import {
-  MetaMaskProvider,
-  SDKConfigProvider,
-  useSDKConfig,
-} from '@metamask/sdk-react-native';
-import React, {useEffect} from 'react';
+import {MetaMaskProvider, SDKConfigProvider} from '@metamask/sdk-react-native';
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import {AppState, AppStateStatus, LogBox, NativeModules} from 'react-native';
+import React, {useEffect} from 'react';
+import {AppState, AppStateStatus, LogBox} from 'react-native';
 import RootNavigator from './src/RootNavigator';
-
-if (!NativeModules.MetaMaskReactNativeSdk) {
-  console.debug(
-    '❌ MetaMaskReactNativeSdk not found. Check native module linking.',
-  );
-} else {
-  console.debug('✅ MetaMaskReactNativeSdk found:');
-}
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -38,23 +25,6 @@ LogBox.ignoreLogs([
 // current problem is that sdk declaration is outside of the react scope so I cannot directly verify the state
 // hence usage of a global variable.
 let canOpenLink = true;
-
-const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
-  // const {dappName, dappUrl, dappIconUrl, dappScheme} = useSDKConfig();
-
-  return (
-    <MetaMaskProvider
-      sdkOptions={{
-        dappName: 'Test Dapp',
-        dappUrl: 'https://metamask.github.io/test-dapp/',
-        dappIconUrl: 'https://metamask.github.io/test-dapp/logos/logo.png',
-        dappScheme: 'testdapp',
-        infuraAPIKey: 'd4f7e3f7e4b84f0b8f7f7f7f7e4b84f0',
-      }}>
-      {children}
-    </MetaMaskProvider>
-  );
-};
 
 export const SafeApp = () => {
   const navigationRef = useNavigationContainerRef();
@@ -78,11 +48,19 @@ export const SafeApp = () => {
 
   return (
     <SDKConfigProvider initialInfuraKey={INFURA_API_KEY}>
-      <WithSDKConfig>
+      <MetaMaskProvider
+        sdkOptions={{
+          dappMetadata: {
+            name: 'Test Dapp',
+            url: 'https://metamask.github.io/test-dapp/',
+            iconUrl: 'https://metamask.github.io/test-dapp/logos/logo.png',
+            scheme: 'testdapp',
+          },
+        }}>
         <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
           <RootNavigator />
         </NavigationContainer>
-      </WithSDKConfig>
+      </MetaMaskProvider>
     </SDKConfigProvider>
   );
 };

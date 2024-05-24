@@ -1,5 +1,14 @@
 import { Linking, NativeModules } from 'react-native';
+import { MetaMaskSDKOptions } from './MetaMaskProvider';
 const { MetaMaskReactNativeSdk } = NativeModules;
+
+interface MetaMaskSDKNativeModuleOptions {
+  dappName: string;
+  dappUrl: string;
+  dappIconUrl: string;
+  dappScheme: string;
+  infuraAPIKey: string;
+}
 
 export interface RequestArguments {
   /** The RPC method to request. */
@@ -83,7 +92,6 @@ export const getChainId = (): Promise<string> => {
  * @returns A Promise that resolves with the selected address.
  */
 export const getSelectedAddress = (): Promise<string> => {
-  console.log("🟠 ~ file: NativePackageMethods.ts:86 ~ getSelectedAddress ~ getSelectedAddress:",)
   return MetaMaskReactNativeSdk.selectedAddress();
 };
 
@@ -101,4 +109,18 @@ export function setupDeeplinkHandling() {
 
   // Add event listener for URL events
   Linking.addEventListener('url', handleOpenURL);
+}
+
+
+export function initializeSDK(sdkOptions: MetaMaskSDKOptions) {
+  const options: MetaMaskSDKNativeModuleOptions = {
+    dappName: sdkOptions.dappMetadata.name,
+    dappUrl: sdkOptions.dappMetadata.url,
+    dappIconUrl: sdkOptions.dappMetadata.iconUrl,
+    dappScheme: sdkOptions.dappMetadata.scheme,
+    infuraAPIKey: sdkOptions.infuraAPIKey,
+  };
+
+  MetaMaskReactNativeSdk.initialize(options);
+  setupDeeplinkHandling();
 }

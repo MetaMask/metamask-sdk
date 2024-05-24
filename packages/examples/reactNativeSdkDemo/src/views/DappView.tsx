@@ -87,14 +87,38 @@ export const DAPPView = (_props: DAPPViewProps) => {
     setResponse(''); // reset response first
 
     try {
-      const response = await sdk?.request({
+      const res = await sdk?.request({
         method: 'wallet_switchEthereumChain',
         params: [{chainId: hexChainId}], // chainId must be in hexadecimal numbers
       });
 
-      console.debug('response', response);
+      console.debug('response', res);
 
-      setResponse(response);
+      setResponse(res);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const sendTransaction = async () => {
+    const to = '0x0000000000000000000000000000000000000000';
+    const from = await sdk?.getSelectedAddress();
+    const transactionParameters = {
+      to, // Required except during contract publications.
+      from: from, // must match user's active address.
+      value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
+    };
+
+    try {
+      setResponse('');
+      // txHash is a hex string
+      // As with any RPC call, it may throw an error
+      const txHash = await sdk?.request({
+        method: 'eth_sendTransaction',
+        params: [transactionParameters],
+      });
+
+      setResponse(txHash);
     } catch (e) {
       console.log(e);
     }
@@ -102,11 +126,6 @@ export const DAPPView = (_props: DAPPViewProps) => {
 
   const sign = async () => {
     const currentChainId = await sdk?.getChainId();
-
-    console.log(
-      '🟠 ~ file: DappView.tsx:89 ~ sign ~ currentChainId:',
-      currentChainId,
-    );
 
     const msgParams = JSON.stringify({
       domain: {
@@ -188,27 +207,27 @@ export const DAPPView = (_props: DAPPViewProps) => {
     setResponse(resp);
   };
 
-  const sendTransaction = async () => {
-    const to = '0x0000000000000000000000000000000000000000';
+  const personalSign = async () => {
     const from = await sdk?.getSelectedAddress();
-    const transactionParameters = {
-      to, // Required except during contract publications.
-      from: from, // must match user's active address.
-      value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
-    };
-
+    setResponse(''); // reset response first
+    console.debug(`sign from: ${from}`);
     try {
-      setResponse('');
-      // txHash is a hex string
-      // As with any RPC call, it may throw an error
-      const txHash = await sdk?.request({
-        method: 'eth_sendTransaction',
-        params: [transactionParameters],
-      });
+      if (!from || from === null) {
+        console.error(
+          'Invalid account -- please connect using eth_requestAccounts first',
+        );
+        return;
+      }
 
-      setResponse(txHash);
+      const params = ['hello world', from];
+      const method = 'personal_sign';
+      console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
+      console.debug('sign params', params);
+      const resp = await sdk?.request({method, params});
+      setResponse(resp);
+      console.debug('sign response', resp);
     } catch (e) {
-      console.log(e);
+      console.error('an error occured', e);
     }
   };
 
@@ -280,7 +299,8 @@ export const DAPPView = (_props: DAPPViewProps) => {
       {connected ? (
         <>
           <Button title={'Request Accounts'} onPress={connect} />
-          <Button title="Sign" onPress={sign} />
+          <Button title="eth_signTypedData_v4" onPress={sign} />
+          <Button title="Personal Sign" onPress={personalSign} />
           <Button title="Batch Sign Calls" onPress={batch} />
           <Button title="Send Transaction" onPress={sendTransaction} />
           <Button
@@ -289,7 +309,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
           />
           <View
             style={{
-              marginVertical: 14,
+              marginVertical: 5,
             }}>
             <Button
               color={'#702963'}

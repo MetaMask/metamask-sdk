@@ -2,18 +2,22 @@ import React, { createContext, useEffect, useState } from 'react';
 import { logger } from './utils/logger';
 
 export interface SDKConfigContextProps {
-  dappName: string;
-  dappUrl: string;
-  dappIconUrl: string;
-  dappScheme: string;
+  dappMetadata: {
+    name: string;
+    url: string;
+    iconUrl: string;
+    scheme: string;
+  }
   infuraAPIKey?: string;
 }
 
 const initProps: SDKConfigContextProps = {
-  dappName: 'My DApp',
-  dappUrl: 'https://mydapp.com',
-  dappIconUrl: 'https://mydapp.com/icon',
-  dappScheme: 'mydapp',
+  dappMetadata: {
+    name: 'My DApp',
+    url: 'https://mydapp.com',
+    iconUrl: 'https://mydapp.com/icon',
+    scheme: 'mydapp',
+  },
 };
 
 export const SDKConfigContext = createContext({

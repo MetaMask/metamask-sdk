@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState
 } from 'react';
-import { NativeModules } from 'react-native';
 import {
   RequestArguments,
   batchRequest,
@@ -14,11 +13,11 @@ import {
   connectWith,
   getChainId,
   getSelectedAddress,
+  initializeSDK,
   request,
-  setupDeeplinkHandling,
   terminate
 } from './NativePackageMethods';
-const { MetaMaskReactNativeSdk } = NativeModules;
+
 
 
 export interface EventHandlerProps {
@@ -54,12 +53,14 @@ export interface SDKState {
   };
 }
 
-// TODO: change this to the actual sdk params after implementing the native sdk
+
 export interface MetaMaskSDKOptions {
-  dappName: string;
-  dappUrl: string;
-  dappIconUrl: string;
-  dappScheme: string;
+  dappMetadata: {
+    name: string;
+    url: string;
+    iconUrl: string;
+    scheme: string;
+  }
   infuraAPIKey: string;
 }
 
@@ -90,8 +91,6 @@ const MetaMaskProviderClient = ({
 
     const res = await connect()
 
-    console.log("🟠 ~ file: MetaMaskProvider.tsx:131 ~ handleConnect ~ res:", res)
-
     const selectedAddress = await getSelectedAddress()
     const currentChainId = await getChainId()
 
@@ -112,7 +111,6 @@ const MetaMaskProviderClient = ({
     setConnecting(true);
 
     const res = await connectAndSign(message)
-    console.log("🟠 ~ file: MetaMaskProvider.tsx:131 ~ handleConnectAndSign ~ res:", res)
 
     setConnected(true);
     setConnecting(false);
@@ -127,7 +125,6 @@ const MetaMaskProviderClient = ({
     setConnecting(true);
 
     const res = await connectWith(req)
-    console.log("🟠 ~ file: MetaMaskProvider.tsx:131 ~ handleConnectWith ~ res:", res)
 
     setConnected(true);
     setConnecting(false);
@@ -141,7 +138,6 @@ const MetaMaskProviderClient = ({
   const handleTerminate = async () => {
     try {
     await terminate()
-    console.log("🟠 ~ file: MetaMaskProvider.tsx:131 ~ handleDisconnect ~ res:", )
 
     setAccount(undefined);
     setChainId(undefined);
@@ -161,10 +157,7 @@ const MetaMaskProviderClient = ({
       return;
     }
 
-    // TODO: create one function that handles the deeplink and the init
-    console.log("🟠 ~ file: MetaMaskProvider.tsx:171 ~ useEffect ~ initialize with:", sdkOptions)
-    MetaMaskReactNativeSdk.initialize(sdkOptions);
-    setupDeeplinkHandling()
+    initializeSDK(sdkOptions);
 
     hasInit.current = true;
 
@@ -181,7 +174,6 @@ const MetaMaskProviderClient = ({
       const selectedAddress = await getSelectedAddress()
       const currentChainId = await getChainId()
 
-      // TODO: change to connect to the native sdk
       setConnected(!!selectedAddress);
       setAccount(selectedAddress || undefined);
       setChainId(currentChainId || undefined);
@@ -243,3 +235,5 @@ export const MetaMaskProvider = ({
 };
 
 export default MetaMaskProvider;
+
+
