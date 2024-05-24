@@ -1,5 +1,6 @@
 package io.metamask.reactnativesdk
 
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
@@ -9,8 +10,6 @@ import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.bridge.ReadableMap
 import com.facebook.react.bridge.ReadableType
 import com.facebook.react.bridge.WritableArray
-import com.facebook.react.bridge.Arguments
-
 import io.metamask.androidsdk.DappMetadata
 
 import io.metamask.androidsdk.Ethereum
@@ -28,14 +27,15 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
     private val context = reactContext
     private var ethereum: EthereumFlow? = null
     private val scope = CoroutineScope(Dispatchers.Main)
+
     override fun getName(): String {
         return "MetaMaskReactNativeSdk"
     }
 
     @ReactMethod
     fun initialize(options: ReadableMap) {
-        val dappName = options.getString("dappName") ?: ""
-        val dappURL = options.getString("dappUrl") ?: ""
+        val dappName = options.getString("dappName") ?: throw IllegalArgumentException("dappName is required")
+        val dappURL = options.getString("dappUrl") ?: throw IllegalArgumentException("dappUrl is required")
         val dappIconUrl = options.getString("dappIconUrl") ?: ""
         val infuraAPIKey = options.getString("infuraAPIKey")
 
@@ -50,114 +50,94 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
         ethereum = EthereumFlow(eth)
     }
 
-    @ReactMethod
-    fun connect(promise: Promise) {
+    private fun launchWithEthereum(promise: Promise, block: suspend (EthereumFlow) -> Unit) {
         ethereum?.let { eth ->
             scope.launch {
                 try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.connect()
-                    }
-                    handleResult(result, promise)
+                    block(eth)
                 } catch (e: Exception) {
                     promise.reject(e.toString(), e)
                 }
             }
+        } ?: promise.reject("Ethereum instance is null", "SDK_NOT_INITIALISED")
+    }
+
+    @ReactMethod
+    fun connect(promise: Promise) {
+        launchWithEthereum(promise) { eth ->
+            val result = withContext(Dispatchers.IO) {
+                eth.connect()
+            }
+            handleResult(result, promise)
+        }
+    }
+
+    @ReactMethod
+    fun disconnect(promise: Promise) {
+        launchWithEthereum(promise) { eth ->
+            withContext(Dispatchers.IO) {
+                eth.disconnect(false)
+            }
+            promise.resolve(true)
         }
     }
 
     @ReactMethod
     fun clearSession(promise: Promise) {
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.clearSession()
-                    }
-                    handleResult(result, promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
+        launchWithEthereum(promise) { eth ->
+            withContext(Dispatchers.IO) {
+                eth.disconnect(true)
             }
+            promise.resolve(true)
         }
     }
 
     @ReactMethod
     fun connectAndSign(message: String, promise: Promise) {
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.connectSign(message)
-                    }
-                    handleResult(result, promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
+        launchWithEthereum(promise) { eth ->
+            val result = withContext(Dispatchers.IO) {
+                eth.connectSign(message)
             }
+            handleResult(result, promise)
         }
     }
 
     @ReactMethod
     fun connectWith(map: ReadableMap, promise: Promise) {
         val req = ethereumRequest(map)
-
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.connectWith(req)
-                    }
-                    handleResult(result, promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
+        launchWithEthereum(promise) { eth ->
+            val result = withContext(Dispatchers.IO) {
+                eth.connectWith(req)
             }
+            handleResult(result, promise)
         }
     }
 
     @ReactMethod
     fun request(map: ReadableMap, promise: Promise) {
         val req = ethereumRequest(map)
-
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.sendRequest(req)
-                    }
-                    handleResult(result, promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
+        launchWithEthereum(promise) { eth ->
+            val result = withContext(Dispatchers.IO) {
+                eth.sendRequest(req)
             }
+            handleResult(result, promise)
         }
     }
 
     @ReactMethod
     fun batchRequest(reqArray: ReadableArray, promise: Promise) {
         val ethereumRequests = mutableListOf<EthereumRequest>()
-
         for (i in 0 until reqArray.size()) {
             val req = reqArray.getMap(i)
-
             val method = req.getString("method") ?: throw IllegalArgumentException("Method is required")
             val params: Any? = req.getDynamic("params").asAny()
-
-            ethereumRequests.add(EthereumRequest(method=method, params=params))
+            ethereumRequests.add(EthereumRequest(method = method, params = params))
         }
-
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.sendRequestBatch(ethereumRequests)
-                    }
-                    handleResult(result, promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
+        launchWithEthereum(promise) { eth ->
+            val result = withContext(Dispatchers.IO) {
+                eth.sendRequestBatch(ethereumRequests)
             }
+            handleResult(result, promise)
         }
     }
 
@@ -165,30 +145,14 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
     fun chainId(promise: Promise) {
         ethereum?.let { eth ->
             promise.resolve(eth.chainId)
-        }
+        } ?: promise.reject("Ethereum instance is null")
     }
 
     @ReactMethod
     fun selectedAddress(promise: Promise) {
         ethereum?.let { eth ->
             promise.resolve(eth.selectedAddress)
-        }
-    }
-
-    @ReactMethod
-    fun disconnect(promise: Promise) {
-        ethereum?.let { eth ->
-            scope.launch {
-                try {
-                    val result = withContext(Dispatchers.IO) {
-                        eth.disconnect(true)
-                    }
-                    handleResult(Result.Success.Item(""), promise)
-                } catch (e: Exception) {
-                    promise.reject(e.toString(), e)
-                }
-            }
-        }
+        } ?: promise.reject("Ethereum instance is null")
     }
 
     private fun ethereumRequest(request: ReadableMap): EthereumRequest {
@@ -209,25 +173,19 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
             else -> throw IllegalArgumentException("Unsupported type")
         }
     }
+
     private fun handleResult(result: Result, promise: Promise) {
         when (result) {
-            is Result.Success.Item -> {
-                promise.resolve(result.value)
-            }
+            is Result.Success.Item -> promise.resolve(result.value)
             is Result.Success.Items -> {
-                val list = result.value
                 val writableArray: WritableArray = Arguments.createArray()
-                for (item in list) {
+                for (item in result.value) {
                     writableArray.pushString(item)
                 }
                 promise.resolve(writableArray)
             }
-            is Result.Success.ItemMap -> {
-                promise.resolve(result.value)
-            }
-            is Result.Error -> {
-                promise.reject(result.error.message, result.error.message)
-            }
+            is Result.Success.ItemMap -> promise.resolve(result.value)
+            is Result.Error -> promise.reject(result.error.message, result.error.message)
         }
     }
 }

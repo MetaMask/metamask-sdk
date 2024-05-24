@@ -101,18 +101,13 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   const sign = async () => {
-    const b = await sdk?.getSelectedAddress();
-
-    console.log(
-      '🟠 ~ file: DappView.tsx:92 ~ sign ~ sdk?.getSelectedAddress():',
-      b,
-    );
-
     const currentChainId = await sdk?.getChainId();
+
     console.log(
       '🟠 ~ file: DappView.tsx:89 ~ sign ~ currentChainId:',
       currentChainId,
     );
+
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
