@@ -3,6 +3,8 @@ import {useSDK} from '@metamask/sdk-react-native';
 import React, {useState} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from './colors';
+import {NativeModules} from 'react-native';
+const {MetaMaskReactNativeSdk} = NativeModules;
 
 export interface DAPPViewProps {}
 
@@ -268,31 +270,27 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   const batch = async () => {
-    const selectedAddress = await provider?.getSelectedAddress();
-
-    const rpcs = [
-      {
-        method: 'personal_sign',
-        params: ['something to sign 1', selectedAddress],
-      },
-      {
-        method: 'personal_sign',
-        params: ['hello world', selectedAddress],
-      },
-      {
-        method: 'personal_sign',
-        params: ['Another one #3', selectedAddress],
-      },
-    ];
-
     try {
       setResponse('');
 
       console.log('Calling batch request....');
-      const res = (await provider?.request({
-        method: 'metamask_batch',
-        params: rpcs,
-      })) as unknown[];
+      const address = await provider?.getSelectedAddress();
+      const req1 = {
+        method: 'personal_sign',
+        params: ['Hello world', address],
+      };
+      const req2 = {
+        method: 'personal_sign',
+        params: ['Sending happiness', address],
+      };
+      const req3 = {
+        method: 'personal_sign',
+        params: ['Bye world', address],
+      };
+      const batchRequest = [req1, req2, req3];
+
+      const res = (await provider?.batchRequest(batchRequest)) as unknown[];
+
       console.log('batch res ==>', res);
 
       setResponse(res);

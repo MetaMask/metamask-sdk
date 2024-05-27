@@ -1,10 +1,15 @@
+//
+//  MetaMaskReactNativeSdk.swift
+//  MetaMaskReactNativeSdk
+//
+
 import Foundation
 import React
 import metamask_ios_sdk
 
 @objc(MetaMaskReactNativeSdk)
 class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
-  private var metaMaskSDK: MetaMaskSDK!
+  private var metaMaskSDK: MetaMaskSDK?
 
   static func moduleName() -> String! {
       return "MetaMaskReactNativeSdk"
@@ -47,12 +52,11 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
   }
 
   @objc func disconnect(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-      metaMaskSDK.disconnect()
-      resolve(true)
+    metaMaskSDK?.disconnect()
+    resolve(true)
   }
-
-  @objc func clearSession(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-      metaMaskSDK.clearSession()
+   @objc func clearSession(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
+      metaMaskSDK?.clearSession()
       resolve(true)
   }
 
@@ -60,30 +64,22 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
     guard let url = URL(string: url) else {
       return
     }
-    metaMaskSDK.handleUrl(url)
+    metaMaskSDK?.handleUrl(url)
   }
 
   @objc func chainId(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-    resolve(metaMaskSDK.chainId)
+    resolve(metaMaskSDK?.chainId)
   }
 
   @objc func selectedAddress(_ resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-    resolve(metaMaskSDK.account)
+    resolve(metaMaskSDK?.account)
   }
 
   @objc func connect(_ resolve: @escaping RCTPromiseResolveBlock,
                      reject: @escaping RCTPromiseRejectBlock) {
-    guard metaMaskSDK != nil else {
-      let error = RequestError(from: [
-        "code": -101,
-        "message": "SDK not initialised. Call initialize first."
-    ])
-      reject("ERROR_CONNECT", error.message, error)
-      return
-    }
 
     Task {
-      let result = await metaMaskSDK.connect()
+      let result = await metaMaskSDK?.connect()
 
       switch result {
       case .success(let account):
@@ -92,12 +88,13 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
       case .failure(let error):
         reject("ERROR_CONNECT", error.localizedDescription, error)
         return
+      default:
+        reject("ERROR_CONNECT", "Something went wrong", nil)
       }
     }
   }
 
   @objc func connectAndSign(_ message: String, resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
-
     Task {
       let result = await metaMaskSDK?.connectAndSign(message: message)
 
@@ -124,7 +121,6 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
 
     Task {
       do {
-
         let jsonData = try JSONSerialization.data(withJSONObject: request.params as Any, options: [])
         let ethereumRequest = EthereumRequest(
                             method: request.method,
@@ -149,7 +145,9 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
 
   @objc func request(_ ethRequest: [String: Any], resolve: @escaping RCTPromiseResolveBlock, reject: @escaping RCTPromiseRejectBlock) {
 
-    guard let request = EthereumRequestObjC(dictionary: ethRequest) else {
+    guard
+      let method = ethRequest["method"] as? String,
+      let params = ethRequest["params"] else {
       let error = NSError(domain: "ERROR_REQUEST", code: 500, userInfo: [NSLocalizedDescriptionKey: "Request method received undefined request"])
       reject("ERROR_REQUEST", error.localizedDescription, error)
       return
@@ -157,10 +155,10 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
 
     Task {
       do {
-        let jsonData = try JSONSerialization.data(withJSONObject: request.params as Any, options: [])
+        let jsonData = try JSONSerialization.data(withJSONObject: params, options: [])
 
         let ethereumRequest = EthereumRequest(
-                            method: request.method,
+                            method: method,
                             params: jsonData
                         )
         let result = await metaMaskSDK?.request(ethereumRequest)
