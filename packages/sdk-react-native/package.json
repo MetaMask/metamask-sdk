@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "description": "TODO",
   "main": "dist/esm/index.js",
+  "types": "dist/esm/src/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk",
   "files": [
     "README.md",

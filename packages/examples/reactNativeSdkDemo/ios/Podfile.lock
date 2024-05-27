@@ -7,14 +7,14 @@ PODS:
   - hermes-engine (0.74.1):
     - hermes-engine/Pre-built (= 0.74.1)
   - hermes-engine/Pre-built (0.74.1)
-  - metamask-ios-sdk (0.6.3):
+  - metamask-ios-sdk (0.6.4):
     - Socket.IO-Client-Swift (~> 16.1.0)
     - Starscream (= 4.0.6)
   - metamask-sdk-react-native (0.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
-    - metamask-ios-sdk (~> 0.6.3)
+    - metamask-ios-sdk (~> 0.6.4)
     - RCT-Folly (= 2024.01.01.00)
     - RCTRequired
     - RCTTypeSafety
@@ -1510,7 +1510,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   metamask-ios-sdk:
-    :commit: 5bff8f8a985098a5a0b05c51b5ea192aec654c30
+    :commit: 94b22f6e2d6db56bfc851cb52f440c7fe8aea2f1
     :git: https://github.com/MetaMask/metamask-ios-sdk.git
 
 SPEC CHECKSUMS:
@@ -1520,8 +1520,8 @@ SPEC CHECKSUMS:
   fmt: 4c2741a687cc09f0634a2e2c72a838b99f1ff120
   glog: c5d68082e772fa1c511173d6b30a9de2c05a69a2
   hermes-engine: 16b8530de1b383cdada1476cf52d1b52f0692cbc
-  metamask-ios-sdk: 17958f43e30d5a5d3a07e53cc8d1a41b0b32da2a
-  metamask-sdk-react-native: 282c65ade8cd698283fd97c111f322526e183d47
+  metamask-ios-sdk: 00b13ecc25b8da923b0d0da3c33ea20b4126b7ba
+  metamask-sdk-react-native: ed994f78e8b721af22ccc53dba5ce65582f92a52
   RCT-Folly: 02617c592a293bd6d418e0a88ff4ee1f88329b47
   RCTDeprecation: efb313d8126259e9294dc4ee0002f44a6f676aba
   RCTRequired: f49ea29cece52aee20db633ae7edc4b271435562

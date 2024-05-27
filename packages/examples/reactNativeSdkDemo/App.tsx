@@ -53,7 +53,8 @@ export const SafeApp = () => {
           dappMetadata: {
             name: 'Test Dapp',
             url: 'https://metamask.github.io/test-dapp/',
-            iconUrl: 'https://metamask.github.io/test-dapp/logos/logo.png',
+            iconUrl:
+              'https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png',
             scheme: 'testdapp',
           },
         }}>

@@ -1,4 +1,3 @@
-import { EthereumRpcError } from 'eth-rpc-errors';
 import React, {
   createContext,
   useEffect,
@@ -35,18 +34,20 @@ export interface SDKState {
   connected: boolean;
   connecting: boolean;
   channelId?: string;
-  error?: EthereumRpcError<unknown>;
   chainId?: string;
-  balance?: string; // hex value in wei
-  balanceProcessing?: boolean;
   account?: string;
-  syncing?: boolean;
   sdk?: {
     connect: () => Promise<string | undefined>;
-    connectAndSign: (message: string) => Promise<string | undefined>;
+    connectAndSign: ({
+      msg,
+    }: {
+      msg: string;
+    }) => Promise<string | undefined>;
     connectWith: (req: RequestArguments) => Promise<string | undefined>;
     terminate: () => Promise<void>;
-    request: <Type>(req: RequestArguments) => Promise<Type>;
+  };
+  provider?: {
+    request: (req: RequestArguments) => Promise<unknown>;
     batchRequest: (requests: RequestArguments[]) => Promise<unknown[]>;
     getChainId: () => Promise<string | undefined>;
     getSelectedAddress: () => Promise<string | undefined>;
@@ -85,67 +86,77 @@ const MetaMaskProviderClient = ({
   const [chainId, setChainId] = useState<string>();
   const [account, setAccount] = useState<string>();
 
+  const syncAccountAndChianId = async () => {
+    const selectedAddress = await getSelectedAddress()
+    const currentChainId = await getChainId()
+
+    setAccount(selectedAddress || undefined);
+    setChainId(currentChainId || undefined);
+  }
+
   const handleConnect = async () => {
-    try {
     setConnecting(true);
 
     const res = await connect()
 
-    const selectedAddress = await getSelectedAddress()
-    const currentChainId = await getChainId()
+    await syncAccountAndChianId()
 
-    setAccount(selectedAddress);
-    setChainId(currentChainId);
     setConnected(true);
     setConnecting(false);
 
     return res;
-    } catch (error) {
-      console.error('Error:', error);
-    }
   }
 
 
-  const handleConnectAndSign = async (message:string) => {
-    try {
+  const handleConnectAndSign = async ({
+    msg
+  }:{
+    msg: string
+  }) => {
     setConnecting(true);
 
-    const res = await connectAndSign(message)
+    const res = await connectAndSign(msg)
+    await syncAccountAndChianId()
 
     setConnected(true);
     setConnecting(false);
     return res;
-    } catch (error) {
-      console.error('Error:', error);
-    }
   }
 
   const handleConnectWith = async (req: RequestArguments) => {
-    try {
     setConnecting(true);
 
     const res = await connectWith(req)
 
+    await syncAccountAndChianId()
+
     setConnected(true);
     setConnecting(false);
 
     return res;
-    } catch (error) {
-      console.error('Error:', error);
-    }
   }
 
   const handleTerminate = async () => {
-    try {
     await terminate()
 
     setAccount(undefined);
     setChainId(undefined);
     setConnected(false);
     setConnecting(false);
-    } catch (error) {
-      console.error('Error:', error);
-    }
+  }
+
+  const handleRequest = async (req: RequestArguments) => {
+    const res = await request(req)
+    await syncAccountAndChianId()
+
+    return res;
+  }
+
+const handleBatchRequest = async (requests: RequestArguments[]) => {
+    const res = await batchRequest(requests)
+    await syncAccountAndChianId()
+
+    return res;
   }
 
   const hasInit = useRef(false);
@@ -185,15 +196,17 @@ const MetaMaskProviderClient = ({
   return (
     <SDKContext.Provider
       value={{
-        sdk : {
+        sdk: {
           connect: handleConnect,
           connectAndSign: handleConnectAndSign,
           connectWith: handleConnectWith,
           terminate: handleTerminate,
-          request,
-          batchRequest,
-          getChainId,
+        },
+        provider: {
+          request: handleRequest,
+          batchRequest: handleBatchRequest,
           getSelectedAddress,
+          getChainId,
         },
         ready,
         connected,

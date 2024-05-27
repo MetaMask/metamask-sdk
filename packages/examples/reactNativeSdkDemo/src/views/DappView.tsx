@@ -42,7 +42,7 @@ const createStyles = ({connected}: {connected: boolean}) => {
 };
 
 export const DAPPView = (_props: DAPPViewProps) => {
-  const {sdk, chainId, account, connected} = useSDK();
+  const {sdk, provider, chainId, account, connected} = useSDK();
 
   const [response, setResponse] = useState<unknown>('');
   const styles = createStyles({connected});
@@ -75,7 +75,6 @@ export const DAPPView = (_props: DAPPViewProps) => {
         ],
       };
 
-
       const res = (await sdk?.connectWith(addChainRPC)) as string;
       console.log('connectWith result:', res);
     } catch (e) {
@@ -86,19 +85,19 @@ export const DAPPView = (_props: DAPPViewProps) => {
   const connectAndSign = async () => {
     try {
       const signResult = await sdk?.connectAndSign({
-        msg: 'Connect + Sign message'
+        msg: 'Connect + Sign message',
       });
       console.log('connectAndSign result:', signResult);
       setResponse(signResult);
     } catch (err) {
-      console.warn(`failed to connect..`, err);
+      console.warn('failed to connect..', err);
     }
   };
 
   const addPolygonChainRequest = async () => {
     try {
       setResponse('');
-      const result = await sdk?.request({
+      const result = await provider?.request({
         method: 'wallet_addEthereumChain',
         params: [
           {
@@ -124,7 +123,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
     setResponse(''); // reset response first
 
     try {
-      const res = await sdk?.request({
+      const res = await provider?.request({
         method: 'wallet_switchEthereumChain',
         params: [{chainId: hexChainId}], // chainId must be in hexadecimal numbers
       });
@@ -139,7 +138,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
 
   const sendTransaction = async () => {
     const to = '0x0000000000000000000000000000000000000000';
-    const from = await sdk?.getSelectedAddress();
+    const from = await provider?.getSelectedAddress();
     const transactionParameters = {
       to, // Required except during contract publications.
       from: from, // must match user's active address.
@@ -150,7 +149,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
       setResponse('');
       // txHash is a hex string
       // As with any RPC call, it may throw an error
-      const txHash = await sdk?.request({
+      const txHash = await provider?.request({
         method: 'eth_sendTransaction',
         params: [transactionParameters],
       });
@@ -162,7 +161,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   const sign = async () => {
-    const currentChainId = await sdk?.getChainId();
+    const currentChainId = await provider?.getChainId();
 
     const msgParams = JSON.stringify({
       domain: {
@@ -233,19 +232,19 @@ export const DAPPView = (_props: DAPPViewProps) => {
       },
     });
 
-    const from = await sdk?.getSelectedAddress();
+    const from = await provider?.getSelectedAddress();
 
     const params = [from, msgParams];
     const method = 'eth_signTypedData_v4';
 
     setResponse('');
-    const resp = await sdk?.request({method, params});
+    const resp = await provider?.request({method, params});
     console.debug('sign response', resp);
     setResponse(resp);
   };
 
   const personalSign = async () => {
-    const from = await sdk?.getSelectedAddress();
+    const from = await provider?.getSelectedAddress();
     setResponse(''); // reset response first
     console.debug(`sign from: ${from}`);
     try {
@@ -260,16 +259,16 @@ export const DAPPView = (_props: DAPPViewProps) => {
       const method = 'personal_sign';
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
       console.debug('sign params', params);
-      const resp = await sdk?.request({method, params});
+      const resp = await provider?.request({method, params});
       setResponse(resp);
       console.debug('sign response', resp);
     } catch (e) {
-      console.error('an error occured', e);
+      console.error('an error occurred', e);
     }
   };
 
   const batch = async () => {
-    const selectedAddress = await sdk?.getSelectedAddress();
+    const selectedAddress = await provider?.getSelectedAddress();
 
     const rpcs = [
       {
@@ -289,13 +288,14 @@ export const DAPPView = (_props: DAPPViewProps) => {
     try {
       setResponse('');
 
-      const res = (await sdk?.request({
+      console.log('Calling batch request....');
+      const res = (await provider?.request({
         method: 'metamask_batch',
         params: rpcs,
       })) as unknown[];
+      console.log('batch res ==>', res);
 
       setResponse(res);
-      console.log(res);
       console.log('batchResponse', res);
     } catch (e) {
       console.error('error', e);
@@ -376,8 +376,16 @@ export const DAPPView = (_props: DAPPViewProps) => {
             marginVertical: 12,
           }}>
           <Button color={'green'} title={'Connect'} onPress={connect} />
-          <Button color={'green'} title={'ConnectWithAddChain (to Polygon)'} onPress={connectWithChainSwitch} />
-          <Button color={'green'} title={'ConnectAndSign'} onPress={connectAndSign} />
+          <Button
+            color={'green'}
+            title={'ConnectWithAddChain (to Polygon)'}
+            onPress={connectWithChainSwitch}
+          />
+          <Button
+            color={'green'}
+            title={'ConnectAndSign'}
+            onPress={connectAndSign}
+          />
         </View>
       )}
 

@@ -53,7 +53,7 @@ export const connectWith = async (req: RequestArguments): Promise<string> => {
  * @returns A Promise that resolves with the result of the RPC method,
  * or rejects if an error is encountered.
  */
-export const request = async <Type>(req: RequestArguments): Promise<Type> => {
+export const request = async (req: RequestArguments): Promise<unknown> => {
   return MetaMaskReactNativeSdk.request(req);
 };
 
@@ -65,7 +65,7 @@ export const request = async <Type>(req: RequestArguments): Promise<Type> => {
  * or rejects if an error is encountered.
  */
 export const batchRequest = async (requests: RequestArguments[]): Promise<unknown[]> => {
-  return MetaMaskReactNativeSdk.request(requests);
+  return MetaMaskReactNativeSdk.batchRequest(requests);
 };
 
 /**
@@ -95,11 +95,19 @@ export const getSelectedAddress = (): Promise<string> => {
   return MetaMaskReactNativeSdk.selectedAddress();
 };
 
+/**
+ * Terminates the current session with MetaMask.
+ *
+ * @returns A Promise that resolves when the session is cleared.
+ */
 export const terminate = async (): Promise<void> => {
   return MetaMaskReactNativeSdk.clearSession();
 };
 
-
+/**
+ * Sets up deep link handling for MetaMask.
+ * Listens for URL events and passes them to the MetaMask SDK.
+ */
 export function setupDeeplinkHandling() {
   const handleOpenURL = (event: any) => {
     // Handle the URL event here
@@ -111,7 +119,11 @@ export function setupDeeplinkHandling() {
   Linking.addEventListener('url', handleOpenURL);
 }
 
-
+/**
+ * Initializes the MetaMask SDK with the provided options and sets up deep link handling.
+ *
+ * @param sdkOptions - The options for initializing the SDK.
+ */
 export function initializeSDK(sdkOptions: MetaMaskSDKOptions) {
   const options: MetaMaskSDKNativeModuleOptions = {
     dappName: sdkOptions.dappMetadata.name,
