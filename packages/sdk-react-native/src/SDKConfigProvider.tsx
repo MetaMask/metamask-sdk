@@ -7,7 +7,7 @@ export interface SDKConfigContextProps {
     url: string;
     iconUrl: string;
     scheme: string;
-  }
+  };
   infuraAPIKey?: string;
 }
 
@@ -23,9 +23,13 @@ const initProps: SDKConfigContextProps = {
 export const SDKConfigContext = createContext({
   ...initProps,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setAppContext: (_: Partial<SDKConfigContextProps>) => {}, // placeholder implemented in the provider.
+  setAppContext: (_: Partial<SDKConfigContextProps>) => {
+    // placeholder implemented in the provider.
+  }, // placeholder implemented in the provider.
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  reset: () => {}, // placeholder implemented in the provider.
+  reset: () => {
+    // placeholder implemented in the provider.
+  }, // placeholder implemented in the provider.
 });
 
 export interface SDKConfigProviderProps {
@@ -58,17 +62,22 @@ export const SDKConfigProvider = ({
       queryString.set(key, encodeURIComponent(JSON.stringify(value)));
     }
 
+    // eslint-disable-next-line no-undef
     localStorage.setItem(STORAGE_LOCATION, JSON.stringify(newState));
     // Update URL without refreshing the page using History API
+    // eslint-disable-next-line no-undef
     const newurl = `${window.location.protocol}//${window.location.host}${
+      // eslint-disable-next-line no-undef
       window.location.pathname
     }?${queryString.toString()}`;
+    // eslint-disable-next-line no-undef
     window.history.pushState({ path: newurl }, '', newurl);
   };
 
   useEffect(() => {
     // Load context from localStorage and URL (priority to URL)
     const loadContext = () => {
+      // eslint-disable-next-line no-undef
       const storedContext = localStorage?.getItem(STORAGE_LOCATION);
       const initialContext: Partial<SDKConfigContextProps> = storedContext
         ? JSON.parse(storedContext)
@@ -83,6 +92,7 @@ export const SDKConfigProvider = ({
 
       logger(`[SDKConfigProvider] initialContext`, initialContext);
 
+      // eslint-disable-next-line no-undef
       const urlParams = new URLSearchParams(window.location.search);
       const urlContext = Array.from(urlParams.keys()).reduce((acc, key) => {
         try {
@@ -122,10 +132,13 @@ export const SDKConfigProvider = ({
       setTimeout(() => {
         if (
           typeof window !== 'undefined' &&
+          // eslint-disable-next-line no-undef
           typeof window.location !== 'undefined' &&
+          // eslint-disable-next-line no-undef
           typeof window.location.reload !== 'undefined'
         ) {
           // Reload window with changes
+          // eslint-disable-next-line no-undef
           window.location.reload();
         } else {
           console.warn(`[SDKConfigProvider] updateAppContext not implemented`);

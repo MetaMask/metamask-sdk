@@ -8,11 +8,23 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: [
-      path.resolve(__dirname, 'tsconfig.json'),
-      path.resolve(__dirname, 'tsconfig.test.json'),
-    ],
+    project: [path.resolve(__dirname, 'tsconfig.json')],
   },
+
+  ignorePatterns: [
+    '.prettierrc.js',
+    'babel.config.js',
+    '**/.eslintrc.js',
+    'jest.config.ts',
+    '**/dist*/',
+    '**/android/',
+    '**/ios/',
+    'jest.resolver.js',
+    'rollup.config.js',
+    'jest-preload.js',
+    'webpack.config.js',
+    '**/coverage/**',
+  ],
 
   overrides: [
     {
@@ -35,37 +47,11 @@ module.exports = {
         '@typescript-eslint/no-shadow': ['error'],
       },
     },
-
     {
-      files: ['**/*.test.ts', '**/*.test.js'],
-      extends: ['@metamask/eslint-config-jest'],
+      files: ['**/*.d.ts'],
       rules: {
-        '@typescript-eslint/no-shadow': [
-          'error',
-          { allow: ['describe', 'expect', 'it'] },
-        ],
+        'import/unambiguous': 'off',
       },
     },
-  ],
-
-  rules: {
-    'import/no-named-as-default': 0,
-    'no-shadow': 'off',
-    '@typescript-eslint/no-shadow': ['error'],
-  },
-
-  ignorePatterns: [
-    '!.prettierrc.js',
-    'babel.config.js',
-    '**/.eslintrc.js',
-    'jest.config.ts',
-    '**/dist*/',
-    '**/android/',
-    '**/ios/',
-    'jest.resolver.js',
-    'rollup.config.js',
-    'jest-preload.js',
-    'webpack.config.js',
-    '**/coverage/**',
   ],
 };

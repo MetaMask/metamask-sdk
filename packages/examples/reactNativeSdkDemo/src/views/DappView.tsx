@@ -234,15 +234,19 @@ export const DAPPView = (_props: DAPPViewProps) => {
       },
     });
 
-    const from = await provider?.getSelectedAddress();
+    try {
+      const from = await provider?.getSelectedAddress();
 
-    const params = [from, msgParams];
-    const method = 'eth_signTypedData_v4';
+      const params = [from, msgParams];
+      const method = 'eth_signTypedData_v4';
 
-    setResponse('');
-    const resp = await provider?.request({method, params});
-    console.debug('sign response', resp);
-    setResponse(resp);
+      setResponse('');
+      const resp = await provider?.request({method, params});
+      console.debug('sign response', resp);
+      setResponse(resp);
+    } catch (error) {
+      console.error('an error occurred', error);
+    }
   };
 
   const personalSign = async () => {

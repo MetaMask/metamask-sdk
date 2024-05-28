@@ -1,5 +1,6 @@
 import { Linking, NativeModules } from 'react-native';
 import { MetaMaskSDKOptions } from './MetaMaskProvider';
+
 const { MetaMaskReactNativeSdk } = NativeModules;
 
 interface MetaMaskSDKNativeModuleOptions {
@@ -64,7 +65,9 @@ export const request = async (req: RequestArguments): Promise<unknown> => {
  * @returns A Promise that resolves with an array of results from the RPC methods,
  * or rejects if an error is encountered.
  */
-export const batchRequest = async (requests: RequestArguments[]): Promise<unknown[]> => {
+export const batchRequest = async (
+  requests: RequestArguments[],
+): Promise<unknown[]> => {
   return MetaMaskReactNativeSdk.batchRequest(requests);
 };
 

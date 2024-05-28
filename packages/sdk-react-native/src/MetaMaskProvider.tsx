@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   RequestArguments,
   batchRequest,
@@ -14,10 +9,9 @@ import {
   getSelectedAddress,
   initializeSDK,
   request,
-  terminate
+  terminate,
 } from './NativePackageMethods';
-
-
+import { Alert } from 'react-native';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -38,11 +32,7 @@ export interface SDKState {
   account?: string;
   sdk?: {
     connect: () => Promise<string | undefined>;
-    connectAndSign: ({
-      msg,
-    }: {
-      msg: string;
-    }) => Promise<string | undefined>;
+    connectAndSign: ({ msg }: { msg: string }) => Promise<string | undefined>;
     connectWith: (req: RequestArguments) => Promise<string | undefined>;
     terminate: () => Promise<void>;
   };
@@ -54,14 +44,13 @@ export interface SDKState {
   };
 }
 
-
 export interface MetaMaskSDKOptions {
   dappMetadata: {
     name: string;
     url: string;
     iconUrl: string;
     scheme: string;
-  }
+  };
   infuraAPIKey: string;
 }
 
@@ -87,80 +76,99 @@ const MetaMaskProviderClient = ({
   const [account, setAccount] = useState<string>();
 
   const syncAccountAndChianId = async () => {
-    const selectedAddress = await getSelectedAddress()
-    const currentChainId = await getChainId()
+    const selectedAddress = await getSelectedAddress();
+    const currentChainId = await getChainId();
 
     setAccount(selectedAddress || undefined);
     setChainId(currentChainId || undefined);
-  }
+  };
 
   const handleConnect = async () => {
     setConnecting(true);
 
-    const res = await connect()
+    const res = await connect();
 
-    await syncAccountAndChianId()
+    await syncAccountAndChianId();
 
     setConnected(true);
     setConnecting(false);
 
     return res;
-  }
+  };
 
-
-  const handleConnectAndSign = async ({
-    msg
-  }:{
-    msg: string
-  }) => {
+  const handleConnectAndSign = async ({ msg }: { msg: string }) => {
     setConnecting(true);
 
-    const res = await connectAndSign(msg)
-    await syncAccountAndChianId()
+    const res = await connectAndSign(msg);
+    await syncAccountAndChianId();
 
     setConnected(true);
     setConnecting(false);
     return res;
-  }
+  };
 
   const handleConnectWith = async (req: RequestArguments) => {
     setConnecting(true);
 
-    const res = await connectWith(req)
+    const res = await connectWith(req);
 
-    await syncAccountAndChianId()
+    await syncAccountAndChianId();
 
     setConnected(true);
     setConnecting(false);
 
     return res;
-  }
+  };
 
   const handleTerminate = async () => {
-    await terminate()
+    await terminate();
 
     setAccount(undefined);
     setChainId(undefined);
     setConnected(false);
     setConnecting(false);
-  }
+  };
 
   const handleRequest = async (req: RequestArguments) => {
-    const res = await request(req)
-    await syncAccountAndChianId()
+    try {
+
+
+    const res = await request(req);
 
     return res;
-  }
+  } catch (error: any) {
+    const isAccountOrChainIdError = error.message === 'The selected account or chain has changed. Please try again.'
 
-const handleBatchRequest = async (requests: RequestArguments[]) => {
-    const res = await batchRequest(requests)
-    await syncAccountAndChianId()
+    if (isAccountOrChainIdError) {
+      Alert.alert('Error', 'The selected account or chain has changed. Please try again.')
+    }
 
-    return res;
+    throw error;
+  } finally {
+    await syncAccountAndChianId();
   }
+  };
+
+  const handleBatchRequest = async (requests: RequestArguments[]) => {
+    try {
+      const res = await batchRequest(requests);
+      await syncAccountAndChianId();
+
+      return res;
+    } catch (error: any) {
+      const isAccountOrChainIdError = error.message === 'The selected account or chain has changed. Please try again.'
+
+      if (isAccountOrChainIdError) {
+        Alert.alert('Error', 'The selected account or chain has changed. Please try again.')
+      }
+
+      throw error;
+    } finally {
+      await syncAccountAndChianId();
+    }
+  };
 
   const hasInit = useRef(false);
-
 
   useEffect(() => {
     // Prevent sdk double rendering with StrictMode
@@ -175,22 +183,21 @@ const handleBatchRequest = async (requests: RequestArguments[]) => {
     setReady(true);
   }, [sdkOptions]);
 
-
   useEffect(() => {
     if (!ready) {
       return;
     }
 
     const onReady = async () => {
-      const selectedAddress = await getSelectedAddress()
-      const currentChainId = await getChainId()
+      const selectedAddress = await getSelectedAddress();
+      const currentChainId = await getChainId();
 
-      setConnected(!!selectedAddress);
+      setConnected(Boolean(selectedAddress));
       setAccount(selectedAddress || undefined);
       setChainId(currentChainId || undefined);
-    }
+    };
 
-    onReady()
+    onReady();
   }, [ready]);
 
   return (
@@ -237,7 +244,7 @@ export const MetaMaskProvider = ({
   return (
     <>
       {clientSide ? (
-        <MetaMaskProviderClient  sdkOptions={sdkOptions}>
+        <MetaMaskProviderClient sdkOptions={sdkOptions}>
           {children}
         </MetaMaskProviderClient>
       ) : (
@@ -248,5 +255,3 @@ export const MetaMaskProvider = ({
 };
 
 export default MetaMaskProvider;
-
-

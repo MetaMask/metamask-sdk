@@ -54,12 +54,12 @@ import { MetaMaskProvider } from '@metamask/sdk-react-native';
 
 const sdkOptions = {
   dappMetadata: {
-    name: "Demo React Native App",
-    url: "https://yourdapp.com",
-    iconUrl: "https://yourdapp.com/icon.png",
-    scheme: "yourappscheme",
+    name: 'Demo React Native App',
+    url: 'https://yourdapp.com',
+    iconUrl: 'https://yourdapp.com/icon.png',
+    scheme: 'yourappscheme',
   },
-  infuraAPIKey: "YOUR_INFURA_API_KEY",
+  infuraAPIKey: 'YOUR_INFURA_API_KEY',
 };
 
 const Root = () => (
@@ -107,13 +107,13 @@ export default App;
 
 ### SDK Options
 
-| Option               | Type   | Description                                      |
-|----------------------|--------|--------------------------------------------------|
-| `dappMetadata.name`  | string | Name of your dApp                                |
-| `dappMetadata.url`   | string | URL of your dApp                                 |
-| `dappMetadata.iconUrl` | string | URL of the icon of your dApp                      |
-| `dappMetadata.scheme` | string | Custom scheme for your React Native app          |
-| `infuraAPIKey`       | string | Your Infura API key                              |
+| Option                 | Type   | Description                             |
+| ---------------------- | ------ | --------------------------------------- |
+| `dappMetadata.name`    | string | Name of your dApp                       |
+| `dappMetadata.url`     | string | URL of your dApp                        |
+| `dappMetadata.iconUrl` | string | URL of the icon of your dApp            |
+| `dappMetadata.scheme`  | string | Custom scheme for your React Native app |
+| `infuraAPIKey`         | string | Your Infura API key                     |
 
 ### SDK Methods
 
