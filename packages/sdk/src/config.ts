@@ -58,8 +58,8 @@ export const rpcWithAccountParam = [
 
 export const STORAGE_PATH = '.sdk-comm';
 export const STORAGE_PROVIDER_TYPE = 'providerType';
-export const STORAGE_DAPP_SELECTED_ADDRESS = 'MMSDK_cached_address';
-export const STORAGE_DAPP_CHAINID = 'MMSDK_cached_chainId';
+export const STORAGE_DAPP_SELECTED_ADDRESS = '.MMSDK_cached_address';
+export const STORAGE_DAPP_CHAINID = '.MMSDK_cached_chainId';
 
 export const EXTENSION_EVENTS = {
   CHAIN_CHANGED: 'chainChanged',

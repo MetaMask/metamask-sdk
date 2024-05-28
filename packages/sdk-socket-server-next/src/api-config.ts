@@ -7,11 +7,15 @@ import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
+import {
+  config,
+  hasRateLimit,
+  isDevelopment,
+  isDevelopmentServer,
+  redisCluster,
+  redisTLS,
+} from './config';
 import { logger } from './logger';
-import { isDevelopment, isDevelopmentServer } from '.';
-
-const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
-const hasRateLimit = process.env.RATE_LIMITER === 'true';
 
 // Initialize Redis Cluster client
 let redisNodes: {
@@ -35,9 +39,6 @@ if (redisNodes.length === 0) {
   logger.error('No Redis nodes found');
   process.exit(1);
 }
-
-const redisCluster = process.env.REDIS_CLUSTER === 'true';
-const redisTLS = process.env.REDIS_TLS === 'true';
 
 let redisClient: Cluster | Redis | undefined;
 
@@ -235,7 +236,7 @@ app.post('/evt', async (_req, res) => {
         id,
         userIdHash,
         'EX',
-        THIRTY_DAYS_IN_SECONDS.toString(),
+        config.channelExpiry.toString(),
       );
     }
 
@@ -257,6 +258,7 @@ app.post('/evt', async (_req, res) => {
         platform: '',
         source: '',
         sdkVersion: '',
+        dappId: '',
       };
     }
 
@@ -268,13 +270,14 @@ app.post('/evt', async (_req, res) => {
         platform: body.platform || '',
         source: body.source || '',
         sdkVersion: body.sdkVersion || '',
+        dappId: body.dappId || '',
       };
 
       await pubClient.set(
         userIdHash,
         JSON.stringify(userInfo),
         'EX',
-        THIRTY_DAYS_IN_SECONDS.toString(),
+        config.channelExpiry.toString(),
       );
     }
 
@@ -292,6 +295,7 @@ app.post('/evt', async (_req, res) => {
         url: userInfo.url || body.originationInfo?.url,
         title: userInfo.title || body.originationInfo?.title,
         platform: userInfo.platform || body.originationInfo?.platform,
+        dappId: userInfo.dappId || body.originationInfo?.dappId || '',
         sdkVersion:
           userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
         source: userInfo.source || body.originationInfo?.source || '',
@@ -329,4 +333,4 @@ app.post('/evt', async (_req, res) => {
   }
 });
 
-export { app, analytics };
+export { analytics, app };

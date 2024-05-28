@@ -58,7 +58,7 @@ export const mainCommunication = async () => {
     },
   });
 
-  mmRemote.connectToChannel(channelId);
+  mmRemote.connectToChannel({ channelId });
 
   await waitForReady();
 

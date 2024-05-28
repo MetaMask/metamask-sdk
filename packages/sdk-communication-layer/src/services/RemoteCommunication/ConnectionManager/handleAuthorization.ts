@@ -33,7 +33,7 @@ export async function handleAuthorization(
       return;
     }
 
-    if (!state.isOriginator || state.authorized) {
+    if (!state.isOriginator || state.authorized || state.relayPersistence) {
       state.communicationLayer?.sendMessage(message);
       resolve();
     } else {

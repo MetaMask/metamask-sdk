@@ -30,7 +30,8 @@ export const wrapExtensionProvider = ({
 
           const { method, params } = args;
 
-          if (lcAnalyticsRPCs.includes(method.toLowerCase())) {
+          const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
+          if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
               params: { method, from: 'extension' },
@@ -49,10 +50,24 @@ export const wrapExtensionProvider = ({
               responses.push(response);
             }
 
-            return target.request(args);
+            const resp = await target.request(args);
+            if (trackEvent) {
+              sdkInstance.analytics?.send({
+                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+                params: { method, from: 'extension' },
+              });
+            }
+            return resp;
           }
 
-          return target.request(args);
+          const resp = await target.request(args);
+          if (trackEvent) {
+            sdkInstance.analytics?.send({
+              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+              params: { method, from: 'extension' },
+            });
+          }
+          return resp;
         };
       } else if (propKey === 'getChainId') {
         return function () {

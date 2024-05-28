@@ -31,14 +31,16 @@ export function handleClientsDisconnectedEvent(
       `[RemoteCommunication: handleClientsDisconnectedEvent()] context=${state.context} on 'clients_disconnected' channelId=${channelId}`,
     );
 
-    state.clientsConnected = false;
+    // Ignore status change when relay persistence is available
+    if (!state.relayPersistence) {
+      state.clientsConnected = false;
+      state.ready = false;
+      state.authorized = false;
+    }
 
     // Propagate the disconnect event to clients.
     instance.emit(EventType.CLIENTS_DISCONNECTED, state.channelId);
     instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-
-    state.ready = false;
-    state.authorized = false;
 
     if (state.analytics && state.channelId) {
       SendAnalytics(

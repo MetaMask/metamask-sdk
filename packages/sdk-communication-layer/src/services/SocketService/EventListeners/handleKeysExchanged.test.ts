@@ -20,6 +20,9 @@ describe('handleKeysExchanged', () => {
           areKeysExchanged: jest.fn().mockReturnValue(true),
         },
       },
+      remote: {
+        state: {},
+      },
       emit: mockEmit,
       getKeyInfo: mockGetKeyInfo,
     } as unknown as SocketService;

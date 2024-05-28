@@ -19,6 +19,6 @@ export function handleSocketReconnectEvent(instance: RemoteCommunication) {
     state.ready = false;
     state.authorized = false;
     clean(state);
-    instance.emitServiceStatusEvent();
+    instance.emitServiceStatusEvent({ context: 'socket_reconnect' });
   };
 }

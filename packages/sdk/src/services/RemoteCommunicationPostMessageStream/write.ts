@@ -81,7 +81,7 @@ export async function write(
     const pubKey = instance.state.remote?.getKeyInfo()?.ecies.public ?? '';
 
     const urlParams = encodeURI(
-      `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d`,
+      `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2`,
     );
 
     if (METHODS_TO_REDIRECT[targetMethod]) {

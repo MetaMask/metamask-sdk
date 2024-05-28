@@ -16,9 +16,7 @@ import { RemoteCommunicationState } from '../../../RemoteCommunication';
  * @param lastActiveDate The date to set as the last active date.
  */
 export async function testStorage(state: RemoteCommunicationState) {
-  const res = await state.storageManager?.getPersistedChannelConfig(
-    state.channelId ?? '',
-  );
+  const res = await state.storageManager?.getPersistedChannelConfig();
 
   logger.RemoteCommunication(`[RemoteCommunication: testStorage()] res`, res);
 }

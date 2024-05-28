@@ -28,16 +28,6 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
     return false;
   }
 
-  // If is not installed and is Extension, start Extension onboarding
-  if (platformType === PlatformType.DesktopWeb) {
-    state.isInstalling = true;
-    // If no extension is detected -- start desktop onboarding
-    if (typeof window !== 'undefined' && !window.extension) {
-      await instance.startDesktopOnboarding();
-      return false;
-    }
-  }
-
   // If is not installed, start remote connection
   state.isInstalling = true;
   try {

@@ -60,7 +60,7 @@ const remote = new RemoteCommunicationLib({
   otherPublicKey,
 });
 
-remote.connectToChannel(channelId);
+remote.connectToChannel({ channelId });
 
 remote.on(MessageType.CLIENTS_READY, () => {
   this.setState({ connected: true });

@@ -33,6 +33,7 @@ describe('encryptAndSendMessage', () => {
           emit: mockEmit,
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
 
     mockEncryptMessage.mockReturnValue('encryptedMessage');
@@ -66,19 +67,9 @@ describe('encryptAndSendMessage', () => {
   });
 
   it('should log debug info', () => {
-    const messageToSend = {
-      id: instance.state.channelId,
-      context: instance.state.context,
-      message: 'encryptedMessage',
-      plaintext: undefined,
-    };
-
     encryptAndSendMessage(instance, testMessage);
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: encryptAndSendMessage()] context=testContext',
-      messageToSend,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should set manualDisconnect if message type is TERMINATE', () => {

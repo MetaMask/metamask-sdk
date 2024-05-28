@@ -4,16 +4,11 @@ import {
   PlatformType,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../package.json';
-import {
-  METHODS_TO_REDIRECT,
-  RPC_METHODS,
-  STORAGE_DAPP_SELECTED_ADDRESS,
-  STORAGE_DAPP_CHAINID,
-} from '../config';
-import { ProviderConstants } from '../constants';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
@@ -23,7 +18,7 @@ import { logger } from '../utils/logger';
 import { wait } from '../utils/wait';
 import { extensionConnectWithOverwrite } from './extensionConnectWithOverwrite';
 
-const initializeMobileProvider = ({
+const initializeMobileProvider = async ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
   injectProvider,
@@ -63,35 +58,30 @@ const initializeMobileProvider = ({
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
-  const hasLocalStorage = typeof window !== 'undefined' && window.localStorage;
+  const storageManager = sdk.options.storage?.storageManager;
+
   // check if localStorage is available
-  if (hasLocalStorage) {
-    const cachedAddress = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
-    if (cachedAddress) {
-      try {
-        const parsed = JSON.parse(cachedAddress);
-        if (parsed) {
-          cachedAccountAddress = parsed;
-        }
-      } catch (err) {
-        console.error(
-          `[initializeMobileProvider] failed to parse cached accounts: ${err}`,
-        );
+  if (storageManager) {
+    try {
+      const cachedAddresses = await storageManager.getCachedAccounts();
+      if (cachedAddresses.length > 0) {
+        cachedAccountAddress = cachedAddresses[0];
       }
+    } catch (err) {
+      console.error(
+        `[initializeMobileProvider] failed to get cached addresses: ${err}`,
+      );
     }
 
-    const cachedChain = localStorage.getItem(STORAGE_DAPP_CHAINID);
-    if (cachedChain) {
-      try {
-        const parsed = JSON.parse(cachedChain);
-        if (parsed) {
-          cachedChainId = parsed;
-        }
-      } catch (err) {
-        console.error(
-          `[initializeMobileProvider] failed to parse cached chainId: ${err}`,
-        );
+    try {
+      const cachedChain = await storageManager.getCachedChainId();
+      if (cachedChain) {
+        cachedChainId = cachedChain;
       }
+    } catch (err) {
+      console.error(
+        `[initializeMobileProvider] failed to parse cached chainId: ${err}`,
+      );
     }
   }
 
@@ -161,19 +151,23 @@ const initializeMobileProvider = ({
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
-      if (hasLocalStorage && selectedAddress !== cachedAccountAddress) {
-        cachedAccountAddress = selectedAddress;
-        localStorage.setItem(
-          STORAGE_DAPP_SELECTED_ADDRESS,
-          JSON.stringify(selectedAddress),
-        );
+      if (storageManager && selectedAddress !== cachedAccountAddress) {
+        storageManager.persistAccounts([selectedAddress]).catch((err) => {
+          console.error(
+            `[initializeMobileProvider] failed to persist account: ${err}`,
+          );
+        });
       }
     }
 
     if (chainId) {
       cachedChainId = chainId;
-      if (hasLocalStorage) {
-        localStorage.setItem(STORAGE_DAPP_CHAINID, JSON.stringify(chainId));
+      if (storageManager) {
+        storageManager.persistChainId(chainId).catch((err) => {
+          console.error(
+            `[initializeMobileProvider] failed to persist chainId: ${err}`,
+          );
+        });
       }
     }
 

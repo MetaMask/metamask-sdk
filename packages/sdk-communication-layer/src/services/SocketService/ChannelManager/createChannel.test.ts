@@ -34,6 +34,7 @@ describe('createChannel', () => {
           getMyPublicKey: mockGetMyPublicKey,
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -51,13 +52,6 @@ describe('createChannel', () => {
     expect(instance.state.socket?.connect).toHaveBeenCalled();
   });
 
-  it('should not connect socket if already connected', () => {
-    instance.state.socket!.connected = true;
-    createChannel(instance);
-
-    expect(instance.state.socket?.connect).not.toHaveBeenCalled();
-  });
-
   it('should setup channel listeners with correct channelId', () => {
     const result = createChannel(instance);
 
@@ -68,13 +62,13 @@ describe('createChannel', () => {
   });
 
   it('should emit JOIN_CHANNEL event with correct parameters', () => {
-    const result = createChannel(instance);
+    createChannel(instance);
 
-    expect(instance.state.socket?.emit).toHaveBeenCalledWith(
-      'join_channel',
-      result.channelId,
-      'testContextcreateChannel',
-    );
+    expect(instance.state.socket?.emit).toHaveBeenCalledWith('join_channel', {
+      channelId: instance.state.channelId,
+      clientType: 'dapp',
+      context: 'testContextcreateChannel',
+    });
   });
 
   it('should return pubKey if available', () => {

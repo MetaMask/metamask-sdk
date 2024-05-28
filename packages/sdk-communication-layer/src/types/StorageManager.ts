@@ -8,9 +8,14 @@ export interface StorageManagerProps {
   storageManager?: StorageManager;
 }
 export interface StorageManager {
-  persistChannelConfig(channelConfig: ChannelConfig): Promise<void>;
-  getPersistedChannelConfig(
-    channelId: string,
-  ): Promise<ChannelConfig | undefined>;
+  persistChannelConfig(
+    channelConfig: ChannelConfig,
+    context?: string,
+  ): Promise<void>;
+  persistAccounts(accounts: string[], context?: string): Promise<void>;
+  getCachedAccounts(): Promise<string[]>;
+  getCachedChainId(): Promise<string | undefined>;
+  persistChainId(chainId: string, context?: string): Promise<void>;
+  getPersistedChannelConfig(): Promise<ChannelConfig | undefined>;
   terminate(channelId: string): Promise<void>;
 }

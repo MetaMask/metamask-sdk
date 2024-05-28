@@ -1,8 +1,8 @@
-import { logger } from '../../../utils/logger';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../../constants';
+import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
@@ -11,6 +11,10 @@ import {
 } from '../RemoteConnection';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
+
+export interface StartConnectionExtras {
+  initialCheck?: boolean;
+}
 
 /**
  * Initiates the connection process to MetaMask, choosing the appropriate connection method based on state and options.
@@ -22,6 +26,7 @@ import { connectWithModalInstaller } from './connectWithModalInstaller';
 export async function startConnection(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
+  { initialCheck }: StartConnectionExtras = {},
 ): Promise<void> {
   if (!state.connector) {
     throw new Error('no connector defined');
@@ -37,24 +42,59 @@ export async function startConnection(
 
   const channelConfig = await state.connector?.originatorSessionConnect();
   logger(
-    `[RemoteConnection: startConnection()] after originatorSessionConnect`,
+    `[RemoteConnection: startConnection()] after originatorSessionConnect initialCheck=${initialCheck}`,
     channelConfig,
   );
 
   let channelId = channelConfig?.channelId ?? '';
   let pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
 
-  if (!channelConfig) {
+  if (initialCheck && !channelConfig) {
+    return Promise.resolve();
+  }
+
+  if (initialCheck && !channelConfig?.relayPersistence) {
+    // Prevent autoconnect when new sdk --> old wallet.
+    return Promise.resolve();
+  }
+
+  if (!channelConfig && !initialCheck) {
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
+  }
+
+  if (initialCheck && channelConfig?.channelId) {
+    if (!state.connector?.isConnected()) {
+      logger(
+        `[RemoteConnection: startConnection()] reconnecting to channel initialCheck=${initialCheck}`,
+        channelConfig,
+      );
+
+      state.connector?.connectToChannel({
+        channelId,
+      });
+    }
+    // Add condition to handle full relay persistence
+    return Promise.resolve();
+  }
+
+  if (channelConfig && !state.connector?.isConnected()) {
+    logger(
+      `[RemoteConnection: startConnection()] reconnecting to channel`,
+      channelConfig,
+    );
+
+    state.connector?.connectToChannel({
+      channelId,
+    });
   }
 
   // if we are on desktop browser
   const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
 
   const linkParams = encodeURI(
-    `channelId=${channelId}&comm=${
+    `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
     }&pubkey=${pubKey}${qrCodeOrigin}`,
   );

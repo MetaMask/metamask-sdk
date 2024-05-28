@@ -1,8 +1,9 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import { ConnectionStatus } from '../../../types/ConnectionStatus';
+import { SocketService } from '../../../SocketService';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
-import { StorageManager } from '../../../types/StorageManager';
+import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
+import { StorageManager } from '../../../types/StorageManager';
 import { logger } from '../../../utils/logger';
 import { disconnect } from './disconnect';
 
@@ -25,6 +26,7 @@ describe('disconnect', () => {
         debug: false,
         channelId: 'sampleChannelId',
       },
+      remote: { state: {} },
       setConnectionStatus: mockSetConnectionStatus,
     } as unknown as RemoteCommunication;
   });
@@ -45,7 +47,7 @@ describe('disconnect', () => {
     instance.state.communicationLayer = {
       ...instance.state.communicationLayer,
       getKeyInfo: jest.fn(() => ({ keysExchanged: true })),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     const options = {
       terminate: true,

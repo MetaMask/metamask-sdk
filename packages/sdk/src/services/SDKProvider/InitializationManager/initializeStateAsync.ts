@@ -1,6 +1,7 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
+import { getStorageManager } from '../../../storage-manager/getStorageManager';
+import { logger } from '../../../utils/logger';
 
 /**
  * Asynchronously initializes the state of an SDKProvider instance.
@@ -33,10 +34,8 @@ export async function initializeStateAsync(instance: SDKProvider) {
   }
 
   const { state } = instance;
-
-  logger(
-    `[SDKProvider: initializeStateAsync()] initialize state async started`,
-  );
+  // Replace super.initialState logic to automatically request account if not found in providerstate.
+  let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
 
   if (state.providerStateRequested) {
     logger(
@@ -44,38 +43,65 @@ export async function initializeStateAsync(instance: SDKProvider) {
     );
   } else {
     state.providerStateRequested = true;
-    // Replace super.initialState logic to automatically request account if not found in providerstate.
-    let initialState: Parameters<MetaMaskInpageProvider['_initializeState']>[0];
-    try {
-      initialState = (await instance.request({
-        method: 'metamask_getProviderState',
-      })) as Parameters<MetaMaskInpageProvider['_initializeState']>[0];
-    } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      instance._log.error(
-        'MetaMask: Failed to get initial state. Please report this bug.',
-        error,
-      );
-      state.providerStateRequested = false;
-      return;
+
+    let cachedChainId: undefined | string;
+    let cachedSelectedAddress: null | string = null;
+    let relayPersistence = false;
+
+    let useCache = false;
+    const storageManager = getStorageManager({ enabled: true });
+
+    // FIXME: currently set for backward compatibility so new sdk don't autoconnect with old wallet
+    // Only use cache if relayPersistence is enabled for current channel.
+    if (storageManager) {
+      // Try to initialize optimistacally with cached value which would be updated once wallet is fully connected.
+      const channelConfig = await storageManager.getPersistedChannelConfig();
+      relayPersistence = channelConfig?.relayPersistence ?? false;
+      cachedChainId = await storageManager.getCachedChainId();
+      const cachedAccounts = await storageManager.getCachedAccounts();
+      if (cachedAccounts.length > 0) {
+        cachedSelectedAddress = cachedAccounts[0];
+      }
     }
 
     logger(
-      `[SDKProvider: initializeStateAsync()] state selectedAddress=${instance.getSelectedAddress()} `,
-      initialState,
+      `[SDKProvider: initializeStateAsync()] relayPersistence=${relayPersistence}`,
+      {
+        relayPersistence,
+        cachedChainId,
+        cachedSelectedAddress,
+      },
     );
 
+    if (relayPersistence) {
+      if (cachedChainId && cachedSelectedAddress) {
+        initialState = {
+          accounts: [cachedSelectedAddress],
+          chainId: cachedChainId,
+          isUnlocked: false,
+        };
+
+        useCache = true;
+      } else {
+        try {
+          initialState = (await instance.request({
+            method: 'metamask_getProviderState',
+          })) as Parameters<MetaMaskInpageProvider['_initializeState']>[0];
+        } catch (error) {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          instance._log.error(
+            'MetaMask: Failed to get initial state. Please report this bug.',
+            error,
+          );
+          state.providerStateRequested = false;
+          return;
+        }
+      }
+    }
+
     if (initialState?.accounts?.length === 0) {
-      logger(
-        `[SDKProvider: initializeStateAsync()] initial state doesn't contain accounts`,
-      );
-
       if (instance.getSelectedAddress()) {
-        logger(
-          `[SDKProvider: initializeStateAsync()] using instance.selectedAddress instead`,
-        );
-
         initialState.accounts = [instance.getSelectedAddress() as string];
       } else {
         logger(
@@ -94,5 +120,13 @@ export async function initializeStateAsync(instance: SDKProvider) {
     // @ts-ignore
     instance._initializeState(initialState);
     state.providerStateRequested = false;
+
+    if (useCache) {
+      // Force isConnected to true to avoid unnecessary request to metamask.
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      instance._state.isConnected = true;
+      instance.emit('connect', { chainId: initialState?.chainId });
+    }
   }
 }

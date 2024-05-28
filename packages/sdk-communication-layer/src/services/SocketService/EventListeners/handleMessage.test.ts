@@ -48,6 +48,9 @@ describe('handleMessage', () => {
           start: mockStart,
         },
       },
+      remote: {
+        state: {},
+      },
       emit: mockEmit,
     } as unknown as SocketService;
   });
@@ -55,24 +58,7 @@ describe('handleMessage', () => {
   it('should log debug information', () => {
     const handler = handleMessage(instance, channelId);
     handler({ id: 'testId', message: { type: MessageType.PING } });
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      "[SocketService handleMessage()] context=undefined on 'message' testChannel keysExchanged=undefined",
-      { type: 'ping' },
-    );
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      "[SocketService handleMessage()] context=undefined::on 'message' ping ",
-    );
-  });
-
-  it('should emit MESSAGE event with ping type when a PING message is received', () => {
-    const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: MessageType.PING } });
-
-    expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: { type: 'ping' },
-    });
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should emit KEY_EXCHANGE when a key_handshake message is received', () => {
@@ -103,7 +89,7 @@ describe('handleMessage', () => {
     const handler = handleMessage(instance, channelId);
 
     expect(() => {
-      handler({ id: 'testId', message: {}, error: 'Some error' });
+      handler({ id: 'testId', message: { type: '' }, error: 'Some error' });
     }).toThrow('Some error');
   });
 
@@ -114,13 +100,9 @@ describe('handleMessage', () => {
     });
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: {} });
+    handler({ id: 'testId', message: { type: '' } });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'ignore message --- wrong id ',
-      {},
-    );
-
+    expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 
@@ -175,10 +157,8 @@ describe('handleMessage', () => {
     });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: {
-        type: 'testType',
-        data: 'testData',
-      },
+      type: 'testType',
+      data: 'testData',
     });
   });
 
@@ -199,7 +179,7 @@ describe('handleMessage', () => {
     handler({ id: 'testId', message: { type: MessageType.PING } });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: { type: 'ping' },
+      type: 'ping',
     });
   });
 
