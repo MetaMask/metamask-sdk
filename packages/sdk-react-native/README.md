@@ -59,7 +59,7 @@ const sdkOptions = {
     iconUrl: 'https://yourdapp.com/icon.png',
     scheme: 'yourappscheme',
   },
-  infuraAPIKey: 'YOUR_INFURA_API_KEY',
+  infuraAPIKey: 'YOUR_INFURA_API_KEY', // Optional
 };
 
 const Root = () => (
@@ -107,13 +107,13 @@ export default App;
 
 ### SDK Options
 
-| Option                 | Type   | Description                             |
-| ---------------------- | ------ | --------------------------------------- |
-| `dappMetadata.name`    | string | Name of your dApp                       |
-| `dappMetadata.url`     | string | URL of your dApp                        |
-| `dappMetadata.iconUrl` | string | URL of the icon of your dApp            |
-| `dappMetadata.scheme`  | string | Custom scheme for your React Native app |
-| `infuraAPIKey`         | string | Your Infura API key                     |
+| Option                 | Type   | Description                             | Mandatory |
+| ---------------------- | ------ | --------------------------------------- | --------- |
+| `dappMetadata.name`    | string | Name of your dApp                       | Yes       |
+| `dappMetadata.url`     | string | URL of your dApp                        | Yes       |
+| `dappMetadata.iconUrl` | string | URL of the icon of your dApp            | No        |
+| `dappMetadata.scheme`  | string | Custom scheme for your React Native app | Yes       |
+| `infuraAPIKey`         | string | Your Infura API key                     | No        |
 
 ### SDK Methods
 

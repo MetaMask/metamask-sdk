@@ -8,7 +8,7 @@ interface MetaMaskSDKNativeModuleOptions {
   dappUrl: string;
   dappIconUrl: string;
   dappScheme: string;
-  infuraAPIKey: string;
+  infuraAPIKey?: string;
 }
 
 export interface RequestArguments {

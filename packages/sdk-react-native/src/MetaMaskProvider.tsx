@@ -51,7 +51,7 @@ export interface MetaMaskSDKOptions {
     iconUrl: string;
     scheme: string;
   };
-  infuraAPIKey: string;
+  infuraAPIKey?: string;
 }
 
 const initProps: SDKState = {
