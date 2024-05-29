@@ -114,7 +114,6 @@ export const terminate = async (): Promise<void> => {
 export function setupDeeplinkHandling() {
   const handleOpenURL = (event: any) => {
     // Handle the URL event here
-    console.log('Received URL:', event.url);
     MetaMaskReactNativeSdk.handleDeepLink(event.url);
   };
 

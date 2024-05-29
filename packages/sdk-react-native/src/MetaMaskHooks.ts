@@ -6,7 +6,7 @@ export const useSDK = () => {
   const context = useContext(SDKContext);
 
   if (context === undefined) {
-    throw new Error('SDK context is missing, must be within provide');
+    throw new Error('SDK context is missing, must be within provider');
   }
   return context;
 };
