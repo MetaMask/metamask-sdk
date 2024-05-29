@@ -9,7 +9,6 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "^0.18.4",
     "@tanstack/query-sync-storage-persister": "5.0.5",
     "@tanstack/react-query": ">=5.0.0",
     "@tanstack/react-query-persist-client": "5.0.5",
@@ -17,7 +16,7 @@
     "react": ">=18",
     "react-dom": ">=18",
     "viem": "2.0.3",
-    "wagmi": "2.5.20"
+    "wagmi": "2.9.7"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.0.5",
