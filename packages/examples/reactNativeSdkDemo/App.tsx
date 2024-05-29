@@ -26,7 +26,7 @@ LogBox.ignoreLogs([
 // hence usage of a global variable.
 let canOpenLink = true;
 
-export const SafeApp = () => {
+const SafeApp = () => {
   const navigationRef = useNavigationContainerRef();
 
   const handleAppState = (appState: AppStateStatus) => {
@@ -65,3 +65,5 @@ export const SafeApp = () => {
     </SDKConfigProvider>
   );
 };
+
+export default SafeApp;

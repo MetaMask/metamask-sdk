@@ -1,10 +1,9 @@
 #import "AppDelegate.h"
-#import <React/RCTBundleURLProvider.h>
 #import <React/RCTBridge.h>
 #import <React/RCTLinkingManager.h>
+#import <React/RCTBundleURLProvider.h>
 
 @implementation AppDelegate
-
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
 {
   return [RCTLinkingManager application:app openURL:url options:options];
@@ -21,11 +20,6 @@
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-{
-  return [self bundleURL];
-}
-
-- (NSURL *)bundleURL
 {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
