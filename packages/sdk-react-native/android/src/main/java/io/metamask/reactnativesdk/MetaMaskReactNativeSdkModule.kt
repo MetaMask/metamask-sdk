@@ -160,7 +160,6 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
     }
 
     private fun ethereumRequest(request: ReadableMap): EthereumRequest {
-        val id = request.getString("id") ?: ""
         val method = request.getString("method") ?: ""
         val params: Any? = request.getDynamic("params").asAny()
         return EthereumRequest(method = method, params = params)
