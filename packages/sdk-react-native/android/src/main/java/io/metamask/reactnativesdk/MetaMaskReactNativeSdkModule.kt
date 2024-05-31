@@ -143,16 +143,20 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
 
     @ReactMethod
     fun chainId(promise: Promise) {
-        ethereum?.let { eth ->
-            promise.resolve(eth.chainId)
-        } ?: promise.reject("Ethereum instance is null")
+        launchWithEthereum(promise) { eth ->
+            eth.ethereumState.collect { state ->
+                promise.resolve(state.chainId)
+            }
+        }
     }
 
     @ReactMethod
     fun selectedAddress(promise: Promise) {
-        ethereum?.let { eth ->
-            promise.resolve(eth.selectedAddress)
-        } ?: promise.reject("Ethereum instance is null")
+        launchWithEthereum(promise) { eth ->
+            eth.ethereumState.collect { state ->
+                promise.resolve(state.selectedAddress)
+            }
+        }
     }
 
     private fun ethereumRequest(request: ReadableMap): EthereumRequest {

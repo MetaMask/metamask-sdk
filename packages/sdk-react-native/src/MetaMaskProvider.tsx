@@ -140,7 +140,10 @@ const MetaMaskProviderClient = ({
     const isAccountOrChainIdError = error.message === 'The selected account or chain has changed. Please try again.'
 
     if (isAccountOrChainIdError) {
-      Alert.alert('Error', 'The selected account or chain has changed. Please try again.')
+      Alert.alert(
+      'Action Required',
+    'The selected account or chain has changed. Please try again now.',
+      );
     }
 
     throw error;

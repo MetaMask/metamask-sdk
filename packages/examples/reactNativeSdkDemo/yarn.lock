@@ -2501,7 +2501,7 @@ __metadata:
 
 "@metamask/sdk-react-native@file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native::locator=reactNativeSdkDemo%40workspace%3A.":
   version: 0.1.0
-  resolution: "@metamask/sdk-react-native@file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native#/Users/omri/Projects/metamask-sdk/packages/sdk-react-native::hash=61a60b&locator=reactNativeSdkDemo%40workspace%3A."
+  resolution: "@metamask/sdk-react-native@file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native#/Users/omri/Projects/metamask-sdk/packages/sdk-react-native::hash=d654a1&locator=reactNativeSdkDemo%40workspace%3A."
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2515,7 +2515,7 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 506890c0e4009e6a0b60d00cb725acf7d1f83f9b42b45272e90ca1ae62448d5b744339820c97976fc0d336981aacdfb8a3bb9b2fdb10850fcd97d255787a7499
+  checksum: c818a1a27221ce06b352da6dd0985335ea2112f4fc66043dfad8731047d3f6c3546a80965355524eb7221d8c1d7ff374588c2626311ad01927804d693d7c9bab
   languageName: node
   linkType: hard
 
