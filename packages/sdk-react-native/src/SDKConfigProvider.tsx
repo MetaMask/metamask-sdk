@@ -1,5 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, useEffect, useState } from 'react';
 
 export interface SDKConfigContextProps {
   dappMetadata: {
@@ -73,12 +73,10 @@ export const SDKConfigProvider = ({
           initialContext.infuraAPIKey = initialInfuraKey;
         }
 
-
         const computedContext: SDKConfigContextProps = {
           ...initProps,
           ...initialContext,
         };
-
 
         setAppContext(computedContext);
       } catch (error) {
@@ -86,13 +84,17 @@ export const SDKConfigProvider = ({
       }
     };
 
-    loadContext();
+    loadContext().catch((error) => {
+      console.error('Error loading context from AsyncStorage:', error);
+    });
   }, []);
 
   const updateAppContext = (newProps: Partial<SDKConfigContextProps>) => {
     setAppContext((current) => {
       const updatedContext = { ...current, ...newProps };
-      syncState(updatedContext);
+      syncState(updatedContext).catch((error) => {
+        console.error('Error syncing state to AsyncStorage:', error);
+      });
 
       setTimeout(() => {
         console.log('[SDKConfigProvider] Context updated', updatedContext);

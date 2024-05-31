@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
+import { Alert } from 'react-native';
 import {
   RequestArguments,
   batchRequest,
@@ -11,7 +12,6 @@ import {
   request,
   terminate,
 } from './NativePackageMethods';
-import { Alert } from 'react-native';
 
 export interface EventHandlerProps {
   setConnecting: React.Dispatch<React.SetStateAction<boolean>>;
@@ -131,25 +131,25 @@ const MetaMaskProviderClient = ({
 
   const handleRequest = async (req: RequestArguments) => {
     try {
+      const res = await request(req);
 
+      return res;
+    } catch (error: any) {
+      const isAccountOrChainIdError =
+        error.message ===
+        'The selected account or chain has changed. Please try again.';
 
-    const res = await request(req);
+      if (isAccountOrChainIdError) {
+        Alert.alert(
+          'Action Required',
+          'The selected account or chain has changed. Please try again.',
+        );
+      }
 
-    return res;
-  } catch (error: any) {
-    const isAccountOrChainIdError = error.message === 'The selected account or chain has changed. Please try again.'
-
-    if (isAccountOrChainIdError) {
-      Alert.alert(
-      'Action Required',
-    'The selected account or chain has changed. Please try again.',
-      );
+      throw error;
+    } finally {
+      await syncAccountAndChianId();
     }
-
-    throw error;
-  } finally {
-    await syncAccountAndChianId();
-  }
   };
 
   const handleBatchRequest = async (requests: RequestArguments[]) => {
@@ -159,10 +159,15 @@ const MetaMaskProviderClient = ({
 
       return res;
     } catch (error: any) {
-      const isAccountOrChainIdError = error.message === 'The selected account or chain has changed. Please try again.'
+      const isAccountOrChainIdError =
+        error.message ===
+        'The selected account or chain has changed. Please try again.';
 
       if (isAccountOrChainIdError) {
-        Alert.alert('Error', 'The selected account or chain has changed. Please try again.')
+        Alert.alert(
+          'Error',
+          'The selected account or chain has changed. Please try again.',
+        );
       }
 
       throw error;
@@ -200,7 +205,9 @@ const MetaMaskProviderClient = ({
       setChainId(currentChainId || undefined);
     };
 
-    onReady();
+    onReady().catch((error) => {
+      console.error('MetaMaskProviderClient:: Error onReady =>', error);
+    });
   }, [ready]);
 
   return (

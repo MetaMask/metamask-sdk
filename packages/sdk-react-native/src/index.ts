@@ -8,13 +8,6 @@ import {
 
 export * from './MetaMaskHooks';
 
+export type { SDKConfigContextProps, SDKConfigProviderProps, SDKState };
 
-export type {
-  SDKConfigContextProps, SDKConfigProviderProps,
-  SDKState
-};
-
-  export {
-    MetaMaskProvider, SDKConfigContext, SDKConfigProvider, SDKContext
-  };
-
+export { MetaMaskProvider, SDKConfigContext, SDKConfigProvider, SDKContext };

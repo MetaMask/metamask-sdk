@@ -39,6 +39,7 @@ yarn add @metamask/sdk-react-native
    - In the `URL Schemes` field, add your custom scheme (e.g., `yourappscheme`).
 
 4. Update your `Podfile` to include the following lines:
+
 ```ruby
 # This is required in order to install the "metamask-ios-sdk" pod
 use_frameworks!
