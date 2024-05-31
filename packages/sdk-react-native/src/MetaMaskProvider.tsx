@@ -142,7 +142,7 @@ const MetaMaskProviderClient = ({
     if (isAccountOrChainIdError) {
       Alert.alert(
       'Action Required',
-    'The selected account or chain has changed. Please try again now.',
+    'The selected account or chain has changed. Please try again.',
       );
     }
 
