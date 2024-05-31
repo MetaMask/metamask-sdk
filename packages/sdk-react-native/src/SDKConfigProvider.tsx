@@ -15,7 +15,8 @@ const initProps: SDKConfigContextProps = {
   dappMetadata: {
     name: 'My DApp',
     url: 'https://mydapp.com',
-    iconUrl: 'https://mydapp.com/icon',
+    iconUrl:
+      'https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png',
     scheme: 'mydapp',
   },
 };
