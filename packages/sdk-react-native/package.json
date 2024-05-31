@@ -34,8 +34,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/github_account/metamask-sdk-react-native.git",
-    "baseUrl": "https://github.com/github_account/metamask-sdk-react-native"
+    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "directory": "packages/sdk-react-native"
   },
   "keywords": [
     "react-native"
@@ -103,5 +103,6 @@
     "react-native": {
       "optional": true
     }
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
