@@ -66,7 +66,7 @@ const sdkOptions = {
     iconUrl: 'https://yourdapp.com/icon.png',
     scheme: 'yourappscheme',
   },
-  infuraAPIKey: 'YOUR_INFURA_API_KEY', // Optional
+  infuraAPIKey: 'YOUR_INFURA_API_KEY', // Optional, but highly recommended for a better user experience
 };
 
 const Root = () => (
