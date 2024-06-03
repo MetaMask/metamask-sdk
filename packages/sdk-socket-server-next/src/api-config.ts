@@ -54,8 +54,7 @@ export const getRedisOptions = (
     },
   };
 
-  return {
-    ...(password && { password }),
+  const options: RedisOptions = {
     ...(isTls && tlsOptions),
     connectTimeout: 30000,
     maxRetriesPerRequest: 4,
@@ -68,6 +67,10 @@ export const getRedisOptions = (
       );
     },
   };
+  if (password) {
+    options.password = password;
+  }
+  return options;
 };
 
 export const getRedisClient = () => {
