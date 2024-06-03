@@ -13,8 +13,7 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'N/A'",
     "allow-scripts": "",
-    "prepack": "../../scripts/prepack.sh",
-    "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh"
+    "prepack": "../../scripts/prepack.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
