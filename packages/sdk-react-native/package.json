@@ -7,11 +7,12 @@
   "types": "dist/esm/src/index.d.ts",
   "homepage": "https://github.com/MetaMask/metamask-sdk",
   "files": [
-    "README.md",
+    "dist",
     "android",
-    "dist/es/index.js",
     "ios",
-    "metamask-sdk-react-native.podspec"
+    "metamask-sdk-react-native.podspec",
+    "package.json",
+    "README.md"
   ],
   "scripts": {
     "allow-scripts": "",
@@ -38,12 +39,11 @@
     "directory": "packages/sdk-react-native"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "typescript",
+    "metamask"
   ],
-  "author": {
-    "name": "MetaMask",
-    "email": "sdk@metamask.io"
-  },
+  "author": "MetaMask",
   "license": "Copyright ConsenSys Software Inc. 2022. All rights reserved.",
   "licenseFilename": "LICENSE",
   "readmeFilename": "README.md",
@@ -103,5 +103,9 @@
     "react-native": {
       "optional": true
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
