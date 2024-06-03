@@ -1,8 +1,8 @@
 {
   "name": "wagmi-demo-next",
   "private": true,
-  "version": "0.0.0",
   "scripts": {
+    "analyze": "ANALYZE=true next build",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -10,26 +10,23 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@tanstack/react-query": "5.0.5",
-    "ethers": "^6.10.0",
+    "@next/bundle-analyzer": "^14.2.3",
+    "@tanstack/react-query": ">=5.35.1",
     "next": "13.5.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "viem": "2.0.3",
-    "wagmi": "2.9.7"
+    "react": ">=18.3.1",
+    "react-dom": ">=18.3.1",
+    "viem": "2.*",
+    "wagmi": "2.9.8"
   },
   "devDependencies": {
-    "@types/node": "^20.7.2",
-    "@types/react": "^18.2.22",
-    "@types/react-dom": "^18.2.7",
-    "bufferutil": "^4.0.7",
+    "@types/node": "^20.12.10",
+    "@types/react": ">=18.3.1",
+    "@types/react-dom": ">=18.3.0",
+    "bufferutil": "^4.0.8",
     "encoding": "^0.1.13",
     "lokijs": "^1.5.12",
-    "pino-pretty": "^10.2.0",
+    "pino-pretty": "^10.3.1",
     "supports-color": "^9.4.0",
-    "typescript": "^5.2.2",
     "utf-8-validate": "^6.0.3"
-  },
-  "main": "index.js",
-  "license": "MIT"
+  }
 }

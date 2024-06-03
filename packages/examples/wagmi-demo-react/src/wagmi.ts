@@ -1,7 +1,7 @@
 import { del, get, set } from 'idb-keyval'
 import { createConfig, http } from 'wagmi'
 import { celo, mainnet, optimism, sepolia } from 'wagmi/chains'
-import { coinbaseWallet, walletConnect, metaMask } from 'wagmi/connectors'
+import { coinbaseWallet, metaMask } from 'wagmi/connectors'
 
 // biome-ignore lint/correctness/noUnusedVariables: <explanation>
 const indexedDBStorage = {
@@ -17,27 +17,17 @@ const indexedDBStorage = {
 }
 
 export const config = createConfig({
-
+  multiInjectedProviderDiscovery: false,
   chains: [mainnet, sepolia, optimism, celo],
   connectors: [
+    coinbaseWallet(),
     metaMask({
       dappMetadata: {
-        name: 'Wagmi - Vite React Playground',
-      },
-      logging: {
-        sdk: true,
-        remoteLayer: true,
-        keyExchangeLayer: true,
-        serviceLayer: true,
-        developerMode: true,
-      },
-      // infuraAPIKey: '8853e8cc66144fc88ae7a53b484aaa76',
-      useDeeplink: true,
+        name: 'Wagmi',
+        url: 'https://wagmi.io',
+        iconUrl: 'https://wagmi.io/favicon.ico',
+      }
     }),
-    walletConnect({
-      projectId: "017a80231854c3b1c56df7bb46bba859",
-    }),
-    coinbaseWallet({ appName: 'Vite React Playground', darkMode: true }),
   ],
   transports: {
     [mainnet.id]: http(),

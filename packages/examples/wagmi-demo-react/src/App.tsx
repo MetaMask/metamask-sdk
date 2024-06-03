@@ -1,7 +1,7 @@
-import { FormEvent } from 'react'
-import { Hex, parseAbi, parseEther } from 'viem'
+import type { FormEvent } from 'react'
+import { type Hex, parseAbi, parseEther } from 'viem'
 import {
-  BaseError,
+  type BaseError,
   useAccount,
   useAccountEffect,
   useBalance,
@@ -12,7 +12,6 @@ import {
   useConnectorClient,
   useDisconnect,
   useEnsName,
-  useGasPrice,
   useReadContract,
   useReadContracts,
   useSendTransaction,
@@ -22,17 +21,17 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from 'wagmi'
-import { mainnet, optimism } from 'wagmi/chains'
+import { optimism } from 'wagmi/chains'
 
 import { wagmiContractConfig } from './contracts'
 
 function App() {
   useAccountEffect({
-    onConnect(data) {
-      console.log('onConnect', data)
+    onConnect(_data) {
+      // console.log('onConnect', data)
     },
     onDisconnect() {
-      console.log('onDisconnect')
+      // console.log('onDisconnect')
     },
   })
 
@@ -194,13 +193,6 @@ function Connections() {
 
 function Balance() {
   const { address } = useAccount()
-  const {
-    data: gasPrice,
-    error: gasPriceError,
-    refetch: refetchGasPrice,
-  } = useGasPrice({
-    chainId: mainnet.id, 
-  })
 
   const { data: default_ } = useBalance({ address })
   const { data: account_ } = useBalance({ address })
@@ -212,14 +204,6 @@ function Balance() {
   return (
     <div>
       <h2>Balance</h2>
-
-      <button onClick={() => {
-        refetchGasPrice()
-      }}>
-        Get GasPrice
-      </button>
-
-      <div>Gas Price: {gasPrice?.toString()}</div>
 
       <div>Balance (Default Chain): {default_?.formatted}</div>
       <div>Balance (Account Chain): {account_?.formatted}</div>
