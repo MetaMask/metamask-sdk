@@ -265,8 +265,21 @@ export const configureSocketServer = async (
         if (typeof channelIdOrParams === 'string') {
           // old protocol support
           params.channelId = channelIdOrParams;
-          params.context = callbackOrContext as string;
-          params.callback = callback;
+
+          if (typeof callbackOrContext === 'string') {
+            params.context = callbackOrContext as string;
+            params.callback = callback;
+          } else if (typeof callbackOrContext === 'function') {
+            params.context = MISSING_CONTEXT;
+            params.callback = callbackOrContext as (
+              error: string | null,
+              result?: unknown,
+            ) => void;
+          } else {
+            logger.debug(
+              `missing callback typeof callbackOrContext=${typeof callbackOrContext}, typeof callback=${typeof callback}`,
+            );
+          }
         } else {
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
