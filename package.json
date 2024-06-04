@@ -7,20 +7,7 @@
     "url": "https://github.com/MetaMask/metamask-sdk"
   },
   "workspaces": [
-    "packages/sdk-socket-server-next",
-    "packages/sdk-install-modal-web",
-    "packages/sdk-communication-layer",
-    "packages/sdk",
-    "packages/sdk-react",
-    "packages/sdk-react-native",
-    "packages/sdk-react-ui",
-    "packages/sdk-ui",
-    "packages/sdk-lab",
-    "packages/devsocket",
-    "packages/devreact",
-    "packages/devreactnative",
-    "packages/devnext",
-    "packages/deve2e"
+    "packages/*"
   ],
   "scripts": {
     "build": "yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
