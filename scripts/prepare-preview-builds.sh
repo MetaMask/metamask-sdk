@@ -35,7 +35,5 @@ while IFS=$'\t' read -r location name; do
   prepare-preview-manifest "$location/package.json"
 done < <(yarn workspaces list --no-private --json | jq --slurp --raw-output 'map(select(.location != ".")) | map([.location, .name]) | map(@tsv) | .[]')
 
-echo "Clean Cache..."
-yarn cache clean
 echo "Installing dependencies..."
 yarn install --no-immutable
