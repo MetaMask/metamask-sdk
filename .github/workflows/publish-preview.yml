@@ -1,9 +1,7 @@
 name: Publish a preview build
-
 on:
   issue_comment:
     types: created
-
 jobs:
   is-fork-pull-request:
     name: Determine whether this issue comment was on a pull request from a fork
@@ -19,7 +17,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
-
   publish-preview:
     name: Publish build preview
     needs: is-fork-pull-request
@@ -50,7 +47,6 @@ jobs:
         run: yarn publish-previews
         env:
           YARN_NPM_AUTH_TOKEN: ${{ secrets.PUBLISH_PREVIEW_NPM_TOKEN }}
-          SKIP_PREPACK: true
       - name: Generate preview build message
         run: yarn ts-node scripts/generate-preview-build-message.ts
       - name: Post build preview in comment
