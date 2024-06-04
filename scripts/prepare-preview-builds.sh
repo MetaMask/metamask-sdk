@@ -38,4 +38,4 @@ done < <(yarn workspaces list --no-private --json | jq --slurp --raw-output 'map
 echo "Clean Cache..."
 yarn cache clean
 echo "Installing dependencies..."
-yarn install --no-immutable --no-cache
+yarn install --no-immutable
