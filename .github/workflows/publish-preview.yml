@@ -42,7 +42,6 @@ jobs:
         id: commit-sha
         run: echo "COMMIT_SHA=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
       - run: yarn prepare-preview-builds @metamask-previews ${{ steps.commit-sha.outputs.COMMIT_SHA }}
-      - run: yarn --no-immutable
       - run: yarn build
       - name: Publish preview build
         run: yarn publish-previews
