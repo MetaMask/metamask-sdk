@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.4]
+### Added
+- feat: create a new SDK for React Native ([#859](https://github.com/MetaMask/metamask-sdk/pull/859))
+
 ## [0.20.3]
 ### Added
 - feat: re-enable jscc web ([#845](https://github.com/MetaMask/metamask-sdk/pull/845))
@@ -319,7 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.4...HEAD
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.3...@metamask/sdk@0.20.4
 [0.20.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.2...@metamask/sdk@0.20.3
 [0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.1...@metamask/sdk@0.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.0...@metamask/sdk@0.20.1
