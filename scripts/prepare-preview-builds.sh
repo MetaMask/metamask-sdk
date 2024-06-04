@@ -36,4 +36,5 @@ while IFS=$'\t' read -r location name; do
 done < <(yarn workspaces list --no-private --json | jq --slurp --raw-output 'map(select(.location != ".")) | map([.location, .name]) | map(@tsv) | .[]')
 
 echo "Installing dependencies..."
-yarn install
+yarn cache clean
+yarn install --no-immutable
