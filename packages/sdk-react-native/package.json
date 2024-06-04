@@ -24,7 +24,7 @@
     "clean": "rimraf dist",
     "dev": "rollup -c -w",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react-native",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
