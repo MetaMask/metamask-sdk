@@ -16,7 +16,7 @@ if has("devDependencies") then
   .devDependencies |= with_entries(
     if .value | startswith("workspace:") then
       .key |= sub("@metamask/"; "@metamask-previews/") |
-      .value |= sub("workspace:\\^"; "workspace:\*")
+      .value |= sub("workspace:\\^"; "workspace:*")
     else
       .
     end
@@ -29,7 +29,7 @@ if has("peerDependencies") then
   .peerDependencies |= with_entries(
     if .value | startswith("workspace:") then
       .key |= sub("@metamask/"; "@metamask-previews/") |
-      .value |= sub("workspace:\\^"; "workspace:\*")
+      .value |= sub("workspace:\\^"; "workspace:*")
     else
       .
     end
@@ -42,7 +42,7 @@ if has("dependencies") then
   .dependencies |= with_entries(
     if .value | startswith("workspace:") then
       .key |= sub("@metamask/"; "@metamask-previews/") |
-      .value |= sub("workspace:\\^"; "workspace:\*")
+      .value |= sub("workspace:\\^"; "workspace:*")
     else
       .
     end
