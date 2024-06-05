@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.4]
+### Added
+- chore: update prepare-preview-builds CI job ([#869](https://github.com/MetaMask/metamask-sdk/pull/869))
+
 ## [0.20.2]
-### Uncategorized
+### Added
 - skip version because of publishing issue
 
 ## [0.20.1]
@@ -124,7 +128,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.4...HEAD
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.2...@metamask/sdk-install-modal-web@0.20.4
 [0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.1...@metamask/sdk-install-modal-web@0.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.0...@metamask/sdk-install-modal-web@0.20.1
 [0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.18.5...@metamask/sdk-install-modal-web@0.20.0
