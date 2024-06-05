@@ -1,5 +1,5 @@
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
-import { useSDK, useSDKConfig } from '@metamask/sdk-react';
+import { useSDKConfig } from '@metamask/sdk-react';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
@@ -22,9 +22,7 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
     setAppContext,
     reset,
   } = useSDKConfig();
-  const {
-    sdk: { dappMetadata },
-  } = useSDK();
+
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
 
   const currentUrl = location.protocol + '//' + location.host;
@@ -48,7 +46,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
     <View style={styles.container}>
       <ItemView label="Socket Server" value={socketServer} />
       <ItemView label="Infura API Key" value={infuraAPIKey} />
-      <ItemView label="Dapp URL" value={dappMetadata?.url} />
       <ItemView label="Lang" value={lang} />
       <ItemView label="Use DeepLink" value={JSON.stringify(useDeeplink)} />
       <View style={styles.buttonContainer}>

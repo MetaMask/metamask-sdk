@@ -68,8 +68,3 @@ export const EXTENSION_EVENTS = {
   CONNECT: 'connect',
   CONNECTED: 'connected',
 };
-
-export const LOCAL_STORAGE_CACHE_KEYS = {
-  SELECTED_ADDRESS: 'MM_SDK_SELECTED_ADDRESS',
-  CHAIN_ID: 'MM_SDK_CHAIN_ID',
-};

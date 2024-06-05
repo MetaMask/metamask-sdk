@@ -74,18 +74,6 @@ export class SDKProvider extends MetaMaskInpageProvider {
     this._state.isConnected = true;
   }
 
-  _setAccounts(accounts: string[]) {
-    logger(`[SDKProvider: _setAccounts()] Setting accounts=${accounts}`);
-
-    this._state.accounts = accounts;
-  }
-
-  _setChainId(chainId: string) {
-    logger(`[SDKProvider: _setChainId()] Setting chainId=${chainId}`);
-
-    this.state.chainId = chainId;
-  }
-
   getState() {
     return this._state;
   }
