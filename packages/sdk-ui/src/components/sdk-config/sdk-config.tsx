@@ -22,6 +22,7 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
     setAppContext,
     reset,
   } = useSDKConfig();
+
   const isProdServer = socketServer === DEFAULT_SERVER_URL;
 
   const currentUrl = location.protocol + '//' + location.host;
