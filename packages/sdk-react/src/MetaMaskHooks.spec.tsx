@@ -1,12 +1,27 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { useSDK } from './MetaMaskHooks';
+import { useSDK, useSDKConfig } from './MetaMaskHooks';
 import { SDKContext } from './MetaMaskProvider';
+import { SDKConfigProvider } from './SDKConfigProvider';
 
+// TestComponent for useSDK
 function TestComponent() {
   const { account } = useSDK();
   return <div>{account}</div>;
+}
+
+// TestComponent for useSDKConfig
+function TestConfigComponent() {
+  const { socketServer, infuraAPIKey, useDeeplink, checkInstallationImmediately } = useSDKConfig();
+  return (
+    <div>
+      <div>{socketServer}</div>
+      <div>{infuraAPIKey}</div>
+      <div>{useDeeplink ? 'true' : 'false'}</div>
+      <div>{checkInstallationImmediately ? 'true' : 'false'}</div>
+    </div>
+  );
 }
 
 describe('useSDK', () => {
@@ -60,4 +75,33 @@ describe('useSDK', () => {
       render(<TestComponent />);
     }).toThrow('SDK context is missing, must be within provide');
   });
+});
+
+describe('useSDKConfig', () => {
+  let dummyConfigValue = {
+    socketServer: 'wss://example.com',
+    infuraAPIKey: 'testInfuraAPIKey',
+    useDeeplink: true,
+    checkInstallationImmediately: true,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    dummyConfigValue = {
+      socketServer: 'wss://example.com',
+      infuraAPIKey: 'testInfuraAPIKey',
+      useDeeplink: true,
+      checkInstallationImmediately: true,
+    };
+  });
+
+  it('should throw an error if used outside of the SDKConfigContext', () => {
+    jest.spyOn(React, 'useContext').mockImplementation(() => {
+      return undefined;
+    });
+
+    expect(() => {
+      render(<TestConfigComponent />);
+    }).toThrow('useSDKConfig must be used within a SDKConfigContext');
+  })
 });
