@@ -60,12 +60,19 @@ export const wrapExtensionProvider = ({
             return resp;
           }
 
-          const resp = await target.request(args);
-          if (trackEvent) {
-            sdkInstance.analytics?.send({
-              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-              params: { method, from: 'extension' },
-            });
+          let resp;
+          try {
+            resp = await target.request(args);
+            return resp;
+          } catch (error) {
+            // Ignore user rejected request
+          } finally {
+            if (trackEvent) {
+              sdkInstance.analytics?.send({
+                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+                params: { method, from: 'extension' },
+              });
+            }
           }
           return resp;
         };
