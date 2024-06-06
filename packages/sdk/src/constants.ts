@@ -8,6 +8,8 @@ export const ErrorMessages = {
   MANUAL_DISCONNECT: 'manual-disconnect',
 };
 
+export const DEFAULT_SDK_SOURCE = 'direct';
+
 export const METAMASK_CONNECT_BASE_URL = 'https://metamask.app.link/connect';
 
 export const METAMASK_DEEPLINK_BASE = 'metamask://connect';
