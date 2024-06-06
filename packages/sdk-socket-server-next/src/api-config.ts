@@ -301,7 +301,7 @@ app.post('/evt', async (_req, res) => {
         dappId: userInfo.dappId || body.originationInfo?.dappId || '',
         sdkVersion:
           userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
-        source: userInfo.source || body.originationInfo?.source || '',
+        source: userInfo.source || body.originationInfo?.source || 'direct',
       },
     };
 
@@ -323,7 +323,11 @@ app.post('/evt', async (_req, res) => {
     }
 
     analytics.track(event, function (err: Error) {
-      logger.info('Segment batch', { event });
+      if (isDevelopment) {
+        logger.info('Segment batch', JSON.stringify({ event }, null, 2));
+      } else {
+        logger.info('Segment batch', { event });
+      }
 
       if (err) {
         logger.error('Segment error:', err);
