@@ -46,7 +46,7 @@ export const handleJoinChannel = async ({
     }
 
     logger.debug(
-      `join_channel ${channelId} context=${context} clientType=${clientType} callback=${typeof callback}`,
+      `join_channel channelId=${channelId} context=${context} clientType=${clientType} callback=${typeof callback}`,
     );
 
     if (hasRateLimit) {

@@ -18,7 +18,9 @@ export const retrieveMessages = async ({
       .filter((msg) => msg.message);
     return messages;
   } catch (error) {
-    logger.error(`Error retrieving messages: ${error}`);
+    logger.error(
+      `Error retrieving messages for channelId=${channelId}: ${error}`,
+    );
     return [];
   }
 };

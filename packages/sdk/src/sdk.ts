@@ -11,6 +11,7 @@ import { createInstance, i18n } from 'i18next';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
+import { DEFAULT_SDK_SOURCE } from './constants';
 import { SDKProvider } from './provider/SDKProvider';
 import { Analytics } from './services/Analytics';
 import {
@@ -216,6 +217,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         name: '',
         url: '',
       },
+      _source: DEFAULT_SDK_SOURCE,
       i18nOptions: {
         enabled: false,
       },
@@ -262,6 +264,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this.options = options;
+    if (!this.options._source) {
+      options._source = DEFAULT_SDK_SOURCE;
+    }
 
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
