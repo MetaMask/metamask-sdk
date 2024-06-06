@@ -1,9 +1,8 @@
 'use client'
 
-import type { FormEvent } from 'react'
-import { type Hex, parseAbi, parseEther } from 'viem'
+import { useState, type FormEvent } from 'react'
+import { parseAbi, parseEther, type Hex } from 'viem'
 import {
-  type BaseError,
   useAccount,
   useAccountEffect,
   useBalance,
@@ -18,10 +17,12 @@ import {
   useReadContracts,
   useSendTransaction,
   useSignMessage,
+  useSimulateContract,
   useSwitchAccount,
   useSwitchChain,
   useWaitForTransactionReceipt,
   useWriteContract,
+  type BaseError,
 } from 'wagmi'
 import { switchChain } from 'wagmi/actions'
 import { optimism, sepolia } from 'wagmi/chains'
@@ -338,44 +339,66 @@ function ReadContracts() {
   )
 }
 
+function useMintToken(tokenId: string) {
+  const { data } = useSimulateContract({
+    address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
+    abi: parseAbi(['function mint(uint256 tokenId)']),
+    functionName: 'mint',
+    args: [BigInt(tokenId)],
+  });
+
+  const { data: hash, error, isPending, writeContractAsync } = useWriteContract()
+
+  return {
+    writeContractAsync: () => writeContractAsync(data!.request),
+    hash,
+    error,
+    isPending,
+  }
+}
+
 function WriteContract() {
-  const { data: hash, error, isPending, writeContract } = useWriteContract()
+  const [tokenId, setTokenId] = useState<string>('');
+
+  const {
+    writeContractAsync: mintToken,
+    hash,
+    error,
+    isPending,
+  } = useMintToken(tokenId);
+
 
   async function submit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const tokenId = formData.get('tokenId') as string
-    writeContract({
-      address: '0xFBA3912Ca04dd458c843e2EE08967fC04f3579c2',
-      abi: parseAbi(['function mint(uint256 tokenId)']),
-      functionName: 'mint',
-      args: [BigInt(tokenId)],
-    })
+    e.preventDefault();
+
+    await mintToken();
   }
 
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
-    useWaitForTransactionReceipt({
-      hash,
-    })
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
+    hash,
+  });
 
   return (
     <div>
       <h2>Write Contract</h2>
       <form onSubmit={submit}>
-        <input name="tokenId" placeholder="Token ID" required />
-        <button disabled={isPending} type="submit">
-          {isPending ? 'Confirming...' : 'Mint'}
+        <input name="tokenId" placeholder="Token ID" required onChange={
+          (e) => setTokenId(e.target.value)
+        } />
+        <button disabled={isPending || isConfirming} type="submit">
+          {(isConfirming || isPending) ? 'Confirming...' : 'Mint'}
         </button>
       </form>
       {hash && <div>Transaction Hash: {hash}</div>}
-      {isConfirming && 'Waiting for confirmation...'}
-      {isConfirmed && 'Transaction confirmed.'}
+      {isConfirming && 'Waiting for confirmation... 🔁'}
+      {isConfirmed && 'Transaction confirmed ✅'}
       {error && (
         <div>Error: {(error as BaseError).shortMessage || error.message}</div>
       )}
     </div>
-  )
+  );
 }
+
 
 function Repro() {
   const chainId = useChainId()
