@@ -120,7 +120,11 @@ export const handleMessage = async ({
       .emit(`message-${channelId}`, { id: channelId, ackId, message });
 
     if (keyExchangeAck && channelConfig?.persistence) {
-      console.warn(`channelConfig updated`, channelConfig);
+      logger.info(
+        `channelConfig updated on channelId=${channelId}`,
+        channelConfig,
+      );
+
       // broadcast that the channel supports relayPersistence
       socket.broadcast
         .to(channelId)

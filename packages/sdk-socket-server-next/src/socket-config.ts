@@ -61,19 +61,19 @@ export const configureSocketServer = async (
   });
 
   io.of('/').adapter.on('join-room', async (roomId, socketId) => {
-    console.log(`'join-room' socket ${socketId} has joined room ${roomId}`);
+    logger.debug(`'join-room' socket ${socketId} has joined room ${roomId}`);
     if (!validate(roomId)) {
       return;
     }
 
     const channelOccupancy = await pubClient.hincrby('channels', roomId, 1);
-    console.log(
+    logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
   });
 
   io.of('/').adapter.on('leave-room', async (roomId, socketId) => {
-    console.log(`'leave-room' socket ${socketId} has left room ${roomId}`);
+    logger.debug(`'leave-room' socket ${socketId} has left room ${roomId}`);
     if (!validate(roomId)) {
       // Ignore invalid room IDs
       return;
@@ -82,16 +82,16 @@ export const configureSocketServer = async (
     // Decrement the number of clients in the room
     const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
 
-    console.log(
+    logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
 
     if (channelOccupancy <= 0) {
-      console.log(`'leave-room' room ${roomId} was deleted`);
+      logger.debug(`'leave-room' room ${roomId} was deleted`);
       // remove from redis
       await pubClient.hdel('channels', roomId);
     } else {
-      console.log(
+      logger.info(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
       );
       // Inform the room of the disconnection
@@ -128,19 +128,22 @@ export const configureSocketServer = async (
           hasRateLimit,
         };
 
-        logger.debug(`join_channel`, JSON.stringify(channelIdOrParams));
-
         if (!channelIdOrParams) {
           logger.error(`channelIdOrParams is missing`);
           return;
         }
 
         if (typeof channelIdOrParams === 'string') {
+          logger.debug(`join_channel channelId=${channelIdOrParams}`);
           // old protocol support
           params.channelId = channelIdOrParams;
           params.context = callbackOrContext as string;
           params.callback = callback;
         } else {
+          logger.debug(
+            `join_channel channelId=${channelIdOrParams.channelId}`,
+            JSON.stringify(channelIdOrParams),
+          );
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
