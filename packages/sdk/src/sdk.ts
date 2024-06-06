@@ -11,6 +11,7 @@ import { createInstance, i18n } from 'i18next';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
+import { DEFAULT_SDK_SOURCE } from './constants';
 import { SDKProvider } from './provider/SDKProvider';
 import { Analytics } from './services/Analytics';
 import {
@@ -30,7 +31,6 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { logger } from './utils/logger';
-import { ALLOWED_SDK_SOURCES, DEFAULT_SDK_SOURCE } from './constants';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -265,14 +265,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
     this.options = options;
     if (!this.options._source) {
-      options._source = DEFAULT_SDK_SOURCE;
-    } else if (
-      options._source &&
-      ALLOWED_SDK_SOURCES.indexOf(options._source) === -1
-    ) {
-      console.warn(
-        `Invalid _source provided: ${options._source}. This value cannot be overwritten.`,
-      );
       options._source = DEFAULT_SDK_SOURCE;
     }
 

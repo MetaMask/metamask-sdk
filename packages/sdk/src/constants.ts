@@ -9,7 +9,6 @@ export const ErrorMessages = {
 };
 
 export const DEFAULT_SDK_SOURCE = 'direct';
-export const ALLOWED_SDK_SOURCES = ['direct', 'wagmi', 'web3-onboard'];
 
 export const METAMASK_CONNECT_BASE_URL = 'https://metamask.app.link/connect';
 
