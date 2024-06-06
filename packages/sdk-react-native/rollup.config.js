@@ -34,7 +34,7 @@ const config = [
     input: 'src/index.ts',
     output: [
       {
-        file: 'dist/esm/index.js',
+        file: packageJson.module,
         format: 'esm',
         inlineDynamicImports: true,
         sourcemap: true,
