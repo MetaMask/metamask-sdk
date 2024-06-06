@@ -27,7 +27,6 @@ export const config = createConfig({
   multiInjectedProviderDiscovery: false,
   chains: [mainnet, sepolia, optimism, celo],
   connectors: [
-    coinbaseWallet(),
     metaMask({
       dappMetadata: {
         name: 'Wagmi',
