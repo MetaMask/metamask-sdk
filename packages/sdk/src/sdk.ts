@@ -30,6 +30,7 @@ import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
 import { logger } from './utils/logger';
+import { DEFAULT_SDK_SOURCE } from './constants';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -216,6 +217,7 @@ export class MetaMaskSDK extends EventEmitter2 {
         name: '',
         url: '',
       },
+      _source: DEFAULT_SDK_SOURCE,
       i18nOptions: {
         enabled: false,
       },
@@ -262,6 +264,9 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this.options = options;
+    if (!this.options._source) {
+      options._source = DEFAULT_SDK_SOURCE;
+    }
 
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
