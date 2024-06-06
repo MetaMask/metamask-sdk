@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.5]
+### Uncategorized
+- fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk.git/pull/871))
+
 ## [0.20.4]
 ### Added
 - chore: update prepare-preview-builds CI job ([#869](https://github.com/MetaMask/metamask-sdk/pull/869))
@@ -210,9 +214,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.5]
 ### Added
-- [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
+- [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...HEAD
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.4...@metamask/sdk-communication-layer@0.20.5
 [0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.2...@metamask/sdk-communication-layer@0.20.4
 [0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.1...@metamask/sdk-communication-layer@0.20.2
 [0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.0...@metamask/sdk-communication-layer@0.20.1
