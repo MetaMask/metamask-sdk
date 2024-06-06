@@ -74,5 +74,6 @@ To avoid issues with deep links on iOS, utilize universal links in your dApp. Th
 So we don't recommend setting the MetaMaskSDK `useDeeplink` option to `true`.
 
 ### Example dApp with Wagmi Integration
+Explore our comprehensive example of a dApp integrated with Wagmi to see the implementation in action. Check out our Wagmi Example dApp by following the link below:
 
-Coming Soon...
+[Wagmi Example dApp](https://github.com/MetaMask/metamask-sdk/tree/main/packages/examples/wagmi-demo-react)
