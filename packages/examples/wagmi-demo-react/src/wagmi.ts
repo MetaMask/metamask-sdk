@@ -1,6 +1,6 @@
 import { createConfig, http } from 'wagmi'
 import { celo, mainnet, optimism, sepolia } from 'wagmi/chains'
-import { coinbaseWallet, metaMask } from 'wagmi/connectors'
+import { metaMask } from 'wagmi/connectors'
 
 
 export const config = createConfig({
