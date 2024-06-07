@@ -12,6 +12,19 @@ on:
         default: 'MM-QA-Wallet-Latest.apk'
         type: string
 
+  workflow_dispatch:
+    inputs:
+      android_sdk_native:
+        required: true
+        default: 'AndroidSDK.apk'
+        description: 'The BrowserStack app name for the Android SDK test app'
+        type: string
+      android-wallet-name:
+        required: true
+        default: 'MM-QA-Wallet-Latest.apk'
+        description: The BrrowserStack app name for the MetaMask Android wallet app (QA Build)
+        type: string
+
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest

@@ -14,6 +14,8 @@ import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponen
 import WhatsNewComponent from '../src/screens/MetaMask/components/WhatsNewComponent';
 import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen';
 import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
+import WalletReadyScreen from '../src/screens/MetaMask/WalletReadyScreen';
+import EnableSmartTransactionsComponent from '../src/screens/MetaMask/components/EnableSmartTransactionsComponent';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
@@ -83,11 +85,15 @@ export const beforeHook = async () => {
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
   await driver.pause(5000);
+  await WalletReadyScreen.tapDoneButton();
   await SecurityUpdatesScreen.tapNoThanksSecurityUpdates();
   await driver.pause(1000);
   await WelcomeComponent.tapNoThanksButton();
   await driver.pause(1000);
-  await WhatsNewComponent.closeModal();
+  await EnableSmartTransactionsComponent.tapDontEnableSmartTransactions();
+  await driver.pause(1000);
+  // Removed when smart transactions were added
+  // await WhatsNewComponent.closeModal();
 };
 
 export const beforeEachHook = async () => {
@@ -95,6 +101,8 @@ export const beforeEachHook = async () => {
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 };
 
+
+// Skipping for now
 export const afterEachHook = async () => {
   await Utils.launchMetaMask();
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
