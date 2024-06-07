@@ -10,6 +10,17 @@ on:
         required: true
         type: string
 
+  workflow_dispatch:
+    inputs:
+      android-wallet-name:
+        required: true
+        description: 'The BrowserStack app name for the MetaMask Android wallet app (QA Build)'
+        type: string
+      ios-wallet-name:
+        required: true
+        description: 'The BrowserStack app name for the MetaMask iOS wallet app (QA Build)'
+        type: string
+
 jobs:
   e2e-tests-js-sdk:
     runs-on: ubuntu-latest
