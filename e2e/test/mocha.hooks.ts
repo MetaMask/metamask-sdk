@@ -92,8 +92,7 @@ export const beforeHook = async () => {
   await driver.pause(1000);
   await EnableSmartTransactionsComponent.tapDontEnableSmartTransactions();
   await driver.pause(1000);
-  // Removed when smart transactions were added
-  // await WhatsNewComponent.closeModal();
+  await WhatsNewComponent.closeModal();
 };
 
 export const beforeEachHook = async () => {
