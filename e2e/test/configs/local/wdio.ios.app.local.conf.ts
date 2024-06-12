@@ -1,6 +1,7 @@
 import path from 'path';
 import * as dotenv from 'dotenv';
 
+import type { Capabilities } from '@wdio/types';
 import config from './wdio.shared.local.appium.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.ios.env') });
@@ -37,9 +38,8 @@ config.capabilities = [
     'appium:noReset': false,
     'appium:language': 'en',
     'appium:fullReset': true,
-    // @ts-ignore
     'appium:settings[snapshotMaxDepth]': 62,
     'appium:settings[customSnapshotTimeout]': 50000,
-  },
+  } as Capabilities.RemoteCapability,
 ];
 export { config };
