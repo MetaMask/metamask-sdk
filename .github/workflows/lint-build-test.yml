@@ -156,8 +156,7 @@ jobs:
       - name: Download coverage artifact
         uses: actions/download-artifact@v3
         with:
-          pattern: coverage-*
-          merge-multiple: true
+          name: coverage
       - name: Upload coverage results
         uses: codecov/codecov-action@6d798873df2b1b8e5846dba6fb86631229fbcb17
         with:
