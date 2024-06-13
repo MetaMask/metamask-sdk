@@ -23,6 +23,8 @@ jobs:
     name: Lint, build, and test
     needs: check-workflows
     uses: ./.github/workflows/lint-build-test.yml
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   is-release:
     name: Determine whether this is a release merge commit
