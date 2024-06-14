@@ -25,7 +25,7 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 4000
 
 # Start the server
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
 #  CMD ["sh", "-c", "DEBUG= node dist/index.js"]
 
 # Start the server with DEBUG mode enabled

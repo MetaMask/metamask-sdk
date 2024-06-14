@@ -20,7 +20,7 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
   const platformType = state.platformManager?.getPlatformType();
 
   logger(
-    `[MetamaskInstaller: redirectToProperInstall()] platform=${platformType} state.preferDesktop=${state.preferDesktop}`,
+    `[MetamaskInstaller: redirectToProperInstall()] platform=${platformType}`,
   );
 
   // If it's running on our mobile in-app browser but communication is still not working
@@ -28,27 +28,14 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
     return false;
   }
 
-  // If is not installed and is Extension, start Extension onboarding
-  if (platformType === PlatformType.DesktopWeb) {
-    state.isInstalling = true;
-    if (state.preferDesktop) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      instance.startDesktopOnboarding();
-      return false;
-    }
-  }
-
   // If is not installed, start remote connection
   state.isInstalling = true;
   try {
     await state.remote?.startConnection();
 
-    // eslint-disable-next-line require-atomic-updates
     state.isInstalling = false;
-    // eslint-disable-next-line require-atomic-updates
     state.hasInstalled = true;
   } catch (err) {
-    // eslint-disable-next-line require-atomic-updates
     state.isInstalling = false;
     throw err;
   }

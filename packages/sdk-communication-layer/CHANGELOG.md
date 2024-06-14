@@ -6,6 +6,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.5]
+### Uncategorized
+- fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk.git/pull/871))
+
+## [0.20.4]
+### Added
+- chore: update prepare-preview-builds CI job ([#869](https://github.com/MetaMask/metamask-sdk/pull/869))
+- fix: crossfetch version not matching comm layer ([#860](https://github.com/MetaMask/metamask-sdk/pull/860))
+
+## [0.20.2]
+### Added
+- skip version because of publishing issue
+
+## [0.20.1]
+### Uncategorized
+- feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
+- Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
+- Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
+- Revert "feat: release 62.0.0" ([#837](https://github.com/MetaMask/metamask-sdk/pull/837))
+- feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
+
+## [0.20.0]
+### Added
+- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
+
+## [0.19.0]
+### Added
+- feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
+- feat: update the 'expo-demo' example dapp ([#824](https://github.com/MetaMask/metamask-sdk/pull/824))
+
+## [0.18.5]
+### Uncategorized
+- fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
+
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.18.2]
+### Added
+- feat: sdk done event on dapp side ([#789](https://github.com/MetaMask/metamask-sdk/pull/789))
+
 ## [0.18.1]
 ### Added
 - fix: add correct param to sdk_rpc_request_received ([#781](https://github.com/MetaMask/metamask-sdk/pull/781))
@@ -85,9 +128,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0]
 ### Added
-- build: optimize rollup output by env ([#450](https://github.com/MetaMask/metamask-sdk.git/pull/450))
-- fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk.git/pull/446))
-- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
+- build: optimize rollup output by env ([#450](https://github.com/MetaMask/metamask-sdk/pull/450))
+- fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk/pull/446))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
 
 ## [0.10.1]
 ### Added
@@ -171,9 +214,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.5]
 ### Added
-- [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
+- [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...HEAD
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.4...@metamask/sdk-communication-layer@0.20.5
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.2...@metamask/sdk-communication-layer@0.20.4
+[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.1...@metamask/sdk-communication-layer@0.20.2
+[0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.0...@metamask/sdk-communication-layer@0.20.1
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.19.0...@metamask/sdk-communication-layer@0.20.0
+[0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.5...@metamask/sdk-communication-layer@0.19.0
+[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.4...@metamask/sdk-communication-layer@0.18.5
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.2...@metamask/sdk-communication-layer@0.18.4
+[0.18.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.1...@metamask/sdk-communication-layer@0.18.2
 [0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.18.0...@metamask/sdk-communication-layer@0.18.1
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.17.0...@metamask/sdk-communication-layer@0.18.0
 [0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.16.0...@metamask/sdk-communication-layer@0.17.0

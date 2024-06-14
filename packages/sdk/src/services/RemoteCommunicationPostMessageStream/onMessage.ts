@@ -14,7 +14,7 @@ export function onMessage(
     return;
   }*/
 
-    logger(`[RCPMS: onMessage()] message=${message}`);
+    logger(`[RCPMS: onMessage()] message`, message);
 
     const typeOfMsg = typeof message;
 

@@ -1,6 +1,5 @@
 import winston, { format } from 'winston';
-
-const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+import { isDevelopment } from './config';
 
 const customFormat = format.printf((ti) => {
   const { level, message, timestamp } = ti;

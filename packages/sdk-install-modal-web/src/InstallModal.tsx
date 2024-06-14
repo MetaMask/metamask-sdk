@@ -16,6 +16,7 @@ export interface InstallModalProps {
   onClose: () => void;
   link: string;
   sdkVersion?: string;
+  preferDesktop: boolean;
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
@@ -23,7 +24,7 @@ export interface InstallModalProps {
 }
 
 export const InstallModal = (props: InstallModalProps) => {
-  const [tab, setTab] = useState<number>(2);
+  const [tab, setTab] = useState<number>(props.preferDesktop ? 1 : 2);
   const qrCodeContainer = useRef<HTMLDivElement>(null);
   const { sdkVersion } = props;
 

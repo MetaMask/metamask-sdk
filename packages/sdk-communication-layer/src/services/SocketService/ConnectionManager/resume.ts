@@ -32,11 +32,11 @@ export function resume(instance: SocketService) {
     );
 
     // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
-    instance.state.socket?.emit(
-      EventType.JOIN_CHANNEL,
-      instance.state.channelId,
-      `${instance.state.context}_resume`,
-    );
+    instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
+      channelId: instance.state.channelId,
+      context: `${instance.state.context}_resume`,
+      clientType: instance.remote.state.isOriginator ? 'dapp' : 'wallet',
+    });
   }
 
   // Always try to recover key exchange from both side (wallet / dapp)

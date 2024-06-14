@@ -42,7 +42,7 @@ export function eip6963RequestProvider(): Promise<MetaMaskInpageProvider> {
 
         const isValid =
           UUID_V4_REGEX.test(uuid) &&
-          name === METAMASK_EIP_6369_PROVIDER_INFO.NAME &&
+          (name as string).startsWith(METAMASK_EIP_6369_PROVIDER_INFO.NAME) &&
           rdns === METAMASK_EIP_6369_PROVIDER_INFO.RDNS;
 
         if (isValid) {

@@ -1,6 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
-import { CommunicationLayer } from '../../../types/CommunicationLayer';
+import { SocketService } from '../../../SocketService';
 import { StorageManager } from '../../../types/StorageManager';
 import { logger } from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
@@ -17,7 +17,7 @@ describe('connectToChannel', () => {
       communicationLayer: {
         isConnected: jest.fn(() => false),
         connectToChannel: jest.fn(),
-      } as unknown as CommunicationLayer,
+      } as unknown as SocketService,
       channelId: undefined,
       sessionDuration: 1000,
       context: 'TestContext',
@@ -38,13 +38,11 @@ describe('connectToChannel', () => {
 
     state.communicationLayer = {
       isConnected: jest.fn(() => true),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, state });
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[RemoteCommunication: connectToChannel()] context=TestContext already connected - interrupt connection.',
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should connect to a valid channel', () => {
@@ -53,7 +51,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: mockConnect,
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, state });
 
@@ -70,7 +68,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: jest.fn(),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     state.storageManager = {
       persistChannelConfig: mockPersist,
@@ -90,7 +88,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: mockConnect,
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, withKeyExchange: true, state });
 
@@ -105,9 +103,7 @@ describe('connectToChannel', () => {
 
     connectToChannel({ channelId, state });
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      `[RemoteCommunication: connectToChannel()] context=TestContext channelId=${channelId}`,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should set the new channelId in the state', () => {

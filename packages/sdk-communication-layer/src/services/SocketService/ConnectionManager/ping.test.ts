@@ -27,6 +27,7 @@ describe('ping', () => {
           emit: mockEmit,
         },
       },
+      remote: { state: {} },
       sendMessage: mockSendMessage,
     } as unknown as SocketService;
   });

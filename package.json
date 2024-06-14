@@ -1,18 +1,18 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "55.0.0",
+  "version": "69.0.0",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git"
+    "url": "https://github.com/MetaMask/metamask-sdk"
   },
   "workspaces": [
-    "packages/sdk-socket-server",
     "packages/sdk-socket-server-next",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
     "packages/sdk",
     "packages/sdk-react",
+    "packages/sdk-react-native",
     "packages/sdk-react-ui",
     "packages/sdk-ui",
     "packages/sdk-lab",
@@ -23,9 +23,9 @@
     "packages/deve2e"
   ],
   "scripts": {
-    "build": "cd packages/sdk-socket-server && cd ../.. && yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
+    "build": "yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
     "build:clean": "yarn clean && yarn build",
-    "light-build": "cd packages/sdk-socket-server && yarn install && cd ../.. && yarn install && cd packages/sdk-socket-server-next && cd ../.. && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:pre-tsc && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose --topological --parallel --no-private run build && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:post-tsc",
+    "light-build": "yarn install && cd packages/sdk-socket-server-next && cd ../.. && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:pre-tsc && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose --topological --parallel --no-private run build && yarn workspaces foreach --exclude @metamask/sdk-ui --verbose run build:post-tsc",
     "light-build:clean": "yarn clean && yarn light-build",
     "build:tsc": "tsc --build --force tsconfig.json",
     "clean": "yarn workspaces foreach --no-private run clean",
@@ -39,8 +39,8 @@
     "lint:misc": "yarn workspaces foreach --no-private run lint:misc",
     "child-workspace-package-names-as-json": "ts-node scripts/child-workspace-package-names-as-json.ts",
     "prepack": "./scripts/prepack.sh",
-    "prepare-preview-builds": "yarn workspaces foreach --no-private --parallel run prepare-manifest:preview",
-    "publish-previews": "yarn workspaces foreach --no-private --parallel run publish:preview",
+    "prepare-preview-builds": "./scripts/prepare-preview-builds.sh",
+    "publish-previews": "yarn workspaces foreach --parallel --verbose run publish:preview",
     "publish:all": "./scripts/publish-all.sh",
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
     "test": "yarn workspaces foreach --no-private run test",

@@ -67,11 +67,11 @@ describe('setupRemoteConnectionAndInstaller', () => {
         ...instance.options.modals,
         onPendingModalDisconnect: expect.any(Function),
       },
+      preferDesktop: false,
     });
 
     expect(MetaMaskInstaller).toHaveBeenCalledWith(
       expect.objectContaining({
-        preferDesktop: false,
         remote: instance.remoteConnection,
         platformManager: instance.platformManager,
         debug: instance.debug,
@@ -89,9 +89,9 @@ describe('setupRemoteConnectionAndInstaller', () => {
     );
 
     expect(MetaMaskInstaller).toHaveBeenCalledWith({
-      preferDesktop: false,
       remote: instance.remoteConnection,
       platformManager: instance.platformManager,
+      preferDesktop: false,
       debug: instance.debug,
     });
   });
@@ -143,26 +143,6 @@ describe('setupRemoteConnectionAndInstaller', () => {
     expect(RemoteConnection).toHaveBeenCalledWith(
       expect.objectContaining({
         connectWithExtensionProvider: expect.any(Function),
-      }),
-    );
-  });
-
-  it('should use provided preferDesktop', async () => {
-    instance.options = { preferDesktop: true } as unknown as MetaMaskSDKOptions;
-
-    await setupRemoteConnectionAndInstaller(instance, undefined);
-    expect(MetaMaskInstaller).toHaveBeenCalledWith(
-      expect.objectContaining({
-        preferDesktop: true,
-      }),
-    );
-  });
-
-  it('should use default preferDesktop if not provided', async () => {
-    await setupRemoteConnectionAndInstaller(instance, undefined);
-    expect(MetaMaskInstaller).toHaveBeenCalledWith(
-      expect.objectContaining({
-        preferDesktop: false,
       }),
     );
   });

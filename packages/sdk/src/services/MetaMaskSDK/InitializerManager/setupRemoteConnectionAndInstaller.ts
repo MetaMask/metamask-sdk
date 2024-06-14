@@ -1,9 +1,9 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { MetaMaskInstaller } from '../../../Platform/MetaMaskInstaller';
-import { MetaMaskSDK } from '../../../sdk';
-import { RemoteConnection } from '../../RemoteConnection';
-import { Analytics } from '../../Analytics';
 import { PlatformManager } from '../../../Platform/PlatfformManager';
+import { MetaMaskSDK } from '../../../sdk';
+import { Analytics } from '../../Analytics';
+import { RemoteConnection } from '../../RemoteConnection';
 import { connectWithExtensionProvider } from '../ProviderManager';
 
 /**
@@ -28,6 +28,7 @@ export async function setupRemoteConnectionAndInstaller(
 
   instance.remoteConnection = new RemoteConnection({
     i18nInstance: instance.i18nInstance,
+    preferDesktop: options.preferDesktop ?? false,
     communicationLayerPreference:
       options.communicationLayerPreference ??
       CommunicationLayerPreference.SOCKET,
@@ -62,8 +63,8 @@ export async function setupRemoteConnectionAndInstaller(
   });
 
   instance.installer = new MetaMaskInstaller({
-    preferDesktop: options.preferDesktop ?? false,
     remote: instance.remoteConnection,
+    preferDesktop: options.preferDesktop ?? false,
     platformManager: instance.platformManager as PlatformManager,
     debug: instance.debug,
   });

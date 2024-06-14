@@ -38,7 +38,10 @@ describe('handleKeysExchangedEvent', () => {
         walletInfo: { version: '1.0' },
         communicationLayer: {
           sendMessage: mockSendMessage,
-          getKeyInfo: () => ({ keysExchanged: true }),
+          getKeyInfo: () => ({
+            keysExchanged: true,
+            ecies: { public: '', private: '' },
+          }),
         },
         communicationServerUrl: 'mockUrl',
       },

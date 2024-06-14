@@ -1,5 +1,6 @@
 import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
+import { RPC_METHODS } from '../../../config';
 
 /**
  * Asynchronously connects to MetaMask and requests account access.
@@ -19,14 +20,27 @@ export async function connect(instance: MetaMaskSDK) {
     await instance.init();
   }
 
-  logger(`[MetaMaskSDK: connect()] activeProvider=${instance.activeProvider}`);
+  logger(
+    `[MetaMaskSDK: connect()] isExtensionActive=${instance.isExtensionActive()} activeProvider`,
+    instance.activeProvider,
+  );
 
   if (!instance.activeProvider) {
     throw new Error(`SDK state invalid -- undefined provider`);
   }
 
+  // TODO: enable once MetaMask Mobile v7.21 is out in store.
+  // It would still work on older wallet but the connection modal may be trigger twice.
+  // return instance.activeProvider.request({
+  //   method: RPC_METHODS.WALLET_REQUESTPERMISSIONS,
+  //   params: [
+  //     {
+  //       eth_accounts: {},
+  //     },
+  //   ],
+  // });
   return instance.activeProvider.request({
-    method: 'eth_requestAccounts',
+    method: RPC_METHODS.ETH_REQUESTACCOUNTS,
     params: [],
   });
 }

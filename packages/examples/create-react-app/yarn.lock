@@ -2411,9 +2411,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.17.0"
+"@metamask/sdk-communication-layer@npm:0.18.5":
+  version: 0.18.5
+  resolution: "@metamask/sdk-communication-layer@npm:0.18.5"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -2426,13 +2426,13 @@ __metadata:
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 50d4caabfa9bbefa9afc475e7060bcc292f2f630d53b75cab9c9be86440069616b29ffc451356350579b76f6ba2aa9e3c1c13831de41550e82a6e47bdc9eaa50
+  checksum: 7d8e632e0d8b95a093272a941adcf8b40d257a3b285dac0821c60a8ff36d1915a4998f0950bc3a7bd89dc9f15b0c00034e7d5a71a590218d1e5bdccc9224a2b5
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.17.0"
+"@metamask/sdk-install-modal-web@npm:0.18.5":
+  version: 0.18.5
+  resolution: "@metamask/sdk-install-modal-web@npm:0.18.5"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -2448,15 +2448,15 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 35e5018661c10b04ab371be36a6d7252c2373813866277074d369362b22b9e68e2ee20f7935609fd508cce17c55474d958fd0122238c04fc40411a6077996a6d
+  checksum: 57fd8dc802ef0d2949c34df6387abf3633bfb0da03cbce570735060991337835a8846694216bfe14d2764fa21cf0d70fc14cecb442b02f8e468f3560acc7b8e7
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.17.2":
-  version: 0.17.2
-  resolution: "@metamask/sdk-react@npm:0.17.2"
+"@metamask/sdk-react@npm:^0.18.6":
+  version: 0.18.6
+  resolution: "@metamask/sdk-react@npm:0.18.6"
   dependencies:
-    "@metamask/sdk": ^0.17.2
+    "@metamask/sdk": ^0.18.6
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -2475,18 +2475,18 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 97f1907dcc11793a3ecc9ba1499d4aefbd8dd540001ff10c715f7ab8588f948cb976fdb8d81ff95191b647931992d665be28ce4333fbbfddef7d09fdbbd8c6c7
+  checksum: 8661d52274196d05a715968c9a5ed0a661f82874051dfaf88ed9c76b6d139864071fe7ccc5d27209ede2b14b5e666338acb94dba0e5183839048228c6df873d8
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.17.2":
-  version: 0.17.2
-  resolution: "@metamask/sdk@npm:0.17.2"
+"@metamask/sdk@npm:^0.18.6":
+  version: 0.18.6
+  resolution: "@metamask/sdk@npm:0.18.6"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
-    "@metamask/sdk-communication-layer": 0.17.0
-    "@metamask/sdk-install-modal-web": 0.17.0
+    "@metamask/sdk-communication-layer": 0.18.5
+    "@metamask/sdk-install-modal-web": 0.18.5
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
@@ -2519,7 +2519,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 900b175c1297d46ef0b4bf15a71db172db75f50f8303e4711b00edd3e9af5a077f74fdf0654833f9d65f09adc26d2e030b435d4d2945a50bfafd955948ff6719
+  checksum: 936ce46f32cdba4dbc3dc892a245e85fbd7ff73c75b5625f2faa30b771b6d0ff2223c5021629361d0e2c8c45f22227f322444df9f6eaf4a961c61b9f06333200
   languageName: node
   linkType: hard
 
@@ -10528,7 +10528,7 @@ __metadata:
   resolution: "mm-sdk-cra@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react": ^0.17.2
+    "@metamask/sdk-react": ^0.18.6
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0

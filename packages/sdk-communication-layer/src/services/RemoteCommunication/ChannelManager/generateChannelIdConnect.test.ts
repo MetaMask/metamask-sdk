@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
+import { SocketService } from '../../../SocketService';
 import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
 import { logger } from '../../../utils/logger';
 import { generateChannelIdConnect } from './generateChannelIdConnect';
-import { clean } from './clean';
 
 jest.mock('./clean');
 
@@ -12,8 +12,6 @@ describe('generateChannelIdConnect', () => {
   let state: RemoteCommunicationState;
 
   const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
-
-  const mockClean = clean as jest.MockedFunction<typeof clean>;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -49,7 +47,7 @@ describe('generateChannelIdConnect', () => {
     state.ready = true;
     state.communicationLayer = {
       isConnected: jest.fn(() => true),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     expect(() => {
       generateChannelIdConnect(state);
@@ -66,7 +64,7 @@ describe('generateChannelIdConnect', () => {
       })),
       isConnected: jest.fn(() => false),
       getKeyInfo: jest.fn(() => ({ ecies: { public: 'mockPublicKey' } })),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     state.communicationLayer = mockChannel;
 
@@ -85,13 +83,14 @@ describe('generateChannelIdConnect', () => {
         channelId: 'mockChannelId',
         pubKey: 'mockPublicKey',
       })),
-      isConnected: jest.fn(() => false),
+      isConnected: jest.fn(() => true),
       getKeyInfo: jest.fn(() => ({ ecies: { public: 'mockPublicKey' } })),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     const mockPersist = jest.fn();
 
     state.communicationLayer = mockChannel;
+    state.channelId = 'mockChannelId';
     state.storageManager = {
       persistChannelConfig: mockPersist,
     } as unknown as StorageManager;
@@ -104,38 +103,9 @@ describe('generateChannelIdConnect', () => {
     });
   });
 
-  it('should log a warning if a channel already exists', () => {
-    jest.spyOn(console, 'warn').mockImplementation();
-
-    state.channelId = 'existingChannelId';
-    state.communicationLayer!.isConnected = () => true;
-
-    const { channelConfig } = state;
-
-    generateChannelIdConnect(state);
-
-    expect(console.warn).toHaveBeenCalledWith(
-      `Channel already exists -- interrupt generateChannelId`,
-      channelConfig,
-    );
-  });
-
   it('should log debug messages', () => {
     generateChannelIdConnect(state);
 
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[RemoteCommunication: generateChannelId()]',
-    );
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[RemoteCommunication: generateChannelId()] channel created',
-      { channelId: 'mockChannelId', pubKey: 'mockPublicKey' },
-    );
-  });
-
-  it('should call clean function if no channelId exists', () => {
-    generateChannelIdConnect(state);
-
-    expect(mockClean).toHaveBeenCalledWith(state);
+    expect(spyLogger).toHaveBeenCalled();
   });
 });

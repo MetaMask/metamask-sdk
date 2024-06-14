@@ -29,7 +29,7 @@ export function connectToChannel({
   }
 
   logger.RemoteCommunication(
-    `[RemoteCommunication: connectToChannel()] context=${state.context} channelId=${channelId}`,
+    `[RemoteCommunication: connectToChannel()] context=${state.context} channelId=${channelId} withKeyExchange=${withKeyExchange}`,
   );
 
   if (state.communicationLayer?.isConnected()) {
@@ -46,6 +46,7 @@ export function connectToChannel({
     withKeyExchange,
   });
   const newChannelConfig: ChannelConfig = {
+    ...state.channelConfig,
     channelId,
     validUntil: Date.now() + state.sessionDuration,
   };

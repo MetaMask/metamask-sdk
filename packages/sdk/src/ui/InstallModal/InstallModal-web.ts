@@ -11,10 +11,12 @@ const sdkWebInstallModal = ({
   installer,
   terminate,
   connectWithExtension,
+  preferDesktop,
   i18nInstance,
 }: {
   link: string;
   debug?: boolean;
+  preferDesktop?: boolean;
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
@@ -87,6 +89,7 @@ const sdkWebInstallModal = ({
       modalLoader.renderInstallModal({
         i18nInstance,
         parentElement: div,
+        preferDesktop: preferDesktop ?? false,
         link,
         metaMaskInstaller: installer,
         onClose: unmount,

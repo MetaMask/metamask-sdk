@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.5]
+### Added
+- align version with sdk package
+- chore: create wagmi demo dapp ([#669](https://github.com/MetaMask/metamask-sdk.git/pull/669))
+
+## [0.4.2]
+### Uncategorized
+- feat: force change ([#848](https://github.com/MetaMask/metamask-sdk/pull/848))
+
+## [0.4.1]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.4.0]
+### Added
+- feat: allow custom actions in MetaMask floating button ([#768](https://github.com/MetaMask/metamask-sdk/pull/768))
+- fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
+
 ## [0.3.0]
 ### Added
 - feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
@@ -60,7 +79,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.3.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.20.5...HEAD
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.2...@metamask/sdk-ui@0.20.5
+[0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.1...@metamask/sdk-ui@0.4.2
+[0.4.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.0...@metamask/sdk-ui@0.4.1
+[0.4.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.3.0...@metamask/sdk-ui@0.4.0
 [0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.2.0...@metamask/sdk-ui@0.3.0
 [0.2.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.6...@metamask/sdk-ui@0.2.0
 [0.1.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.5...@metamask/sdk-ui@0.1.6

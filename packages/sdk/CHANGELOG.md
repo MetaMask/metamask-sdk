@@ -6,6 +6,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.5]
+### Uncategorized
+- fix: extension events ([#877](https://github.com/MetaMask/metamask-sdk.git/pull/877))
+- feat: set default sdk source ([#875](https://github.com/MetaMask/metamask-sdk.git/pull/875))
+
+## [0.20.4]
+### Added
+- feat: create a new SDK for React Native ([#859](https://github.com/MetaMask/metamask-sdk/pull/859))
+
+## [0.20.3]
+### Added
+- feat: re-enable jscc web ([#845](https://github.com/MetaMask/metamask-sdk/pull/845))
+
+## [0.20.2]
+### Added
+- skip version because of publishing issue
+
+## [0.20.1]
+### Uncategorized
+- skip version because of publishing issue
+
+## [0.20.0]
+### Added
+- feat: track done event on extension analytics ([#834](https://github.com/MetaMask/metamask-sdk/pull/834))
+
+## [0.19.0]
+### Added
+- feat: remove rn dependencies  ([#830](https://github.com/MetaMask/metamask-sdk/pull/830))
+- feat: storage manager ([#829](https://github.com/MetaMask/metamask-sdk/pull/829))
+- feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
+
+## [0.18.6]
+### Added
+- fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
+
+## [0.18.5]
+### Added
+- fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
+- fix: inpage provider support ([#806](https://github.com/MetaMask/metamask-sdk/pull/806))
+
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.18.3]
+### Added
+- fix: issue preventing opting out of analytics ([#794](https://github.com/MetaMask/metamask-sdk/pull/794))
+
+## [0.18.2]
+### Added
+- fix: update the EIP_6369 provider info ([#788](https://github.com/MetaMask/metamask-sdk/pull/788))
+
 ## [0.18.1]
 ### Added
 - feat: store account between refresh ([#779](https://github.com/MetaMask/metamask-sdk/pull/779))
@@ -120,12 +173,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0]
 ### Added
-- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
-- fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk.git/pull/446))
-- feat: detect qrcode origin on wallet ([#443](https://github.com/MetaMask/metamask-sdk.git/pull/443))
-- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
-- fix: add metadata to the sdk_extension_utilized analytics event ([#433](https://github.com/MetaMask/metamask-sdk.git/pull/433))
-- feat: chaining of rpc calls ([#434](https://github.com/MetaMask/metamask-sdk.git/pull/434))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk/pull/447))
+- fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk/pull/446))
+- feat: detect qrcode origin on wallet ([#443](https://github.com/MetaMask/metamask-sdk/pull/443))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
+- fix: add metadata to the sdk_extension_utilized analytics event ([#433](https://github.com/MetaMask/metamask-sdk/pull/433))
+- feat: chaining of rpc calls ([#434](https://github.com/MetaMask/metamask-sdk/pull/434))
 
 ## [0.10.1]
 ### Added
@@ -275,7 +328,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.5...HEAD
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.4...@metamask/sdk@0.20.5
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.3...@metamask/sdk@0.20.4
+[0.20.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.2...@metamask/sdk@0.20.3
+[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.1...@metamask/sdk@0.20.2
+[0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.0...@metamask/sdk@0.20.1
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.19.0...@metamask/sdk@0.20.0
+[0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.6...@metamask/sdk@0.19.0
+[0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.5...@metamask/sdk@0.18.6
+[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.4...@metamask/sdk@0.18.5
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.3...@metamask/sdk@0.18.4
+[0.18.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.2...@metamask/sdk@0.18.3
+[0.18.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.1...@metamask/sdk@0.18.2
 [0.18.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.18.0...@metamask/sdk@0.18.1
 [0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.2...@metamask/sdk@0.18.0
 [0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.17.1...@metamask/sdk@0.17.2

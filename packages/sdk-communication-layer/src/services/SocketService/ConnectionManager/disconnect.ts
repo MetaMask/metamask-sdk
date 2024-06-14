@@ -24,9 +24,9 @@ export function disconnect(
   if (options?.terminate) {
     instance.state.channelId = options.channelId;
     instance.state.keyExchange?.clean();
+    // Reset rpcMethodTracker
+    instance.state.rpcMethodTracker = {};
   }
-  // Reset rpcMethodTracker
-  instance.state.rpcMethodTracker = {};
   instance.state.manualDisconnect = true;
   instance.state.socket?.disconnect();
 }

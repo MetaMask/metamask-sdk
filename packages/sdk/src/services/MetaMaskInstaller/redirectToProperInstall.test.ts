@@ -13,6 +13,11 @@ describe('redirectToProperInstall', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Mock window.extension as needed, e.g., setting it to undefined or an object
+    global.window = {
+      extension: jest.fn(),
+    } as any;
+
     instance = {
       state: {
         platformManager: { getPlatformType: mockGetPlatformType },
@@ -39,16 +44,6 @@ describe('redirectToProperInstall', () => {
 
     const result = await redirectToProperInstall(instance);
 
-    expect(result).toBe(false);
-  });
-
-  it('should start desktop onboarding if platform is DesktopWeb and preferDesktop is true', async () => {
-    mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
-    instance.state.preferDesktop = true;
-
-    const result = await redirectToProperInstall(instance);
-
-    expect(mockStartDesktopOnboarding).toHaveBeenCalled();
     expect(result).toBe(false);
   });
 

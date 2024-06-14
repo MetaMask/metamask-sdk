@@ -4,8 +4,12 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import {
+  STORAGE_DAPP_CHAINID,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_PATH,
+} from '../config';
 import { logger } from '../utils/logger';
-import { STORAGE_PATH } from '../config';
 
 export class StorageManagerWeb implements StorageManager {
   private enabled = false;
@@ -59,6 +63,54 @@ export class StorageManagerWeb implements StorageManager {
       );
       // Ignore errors
       return undefined;
+    }
+  }
+
+  public async persistAccounts(accounts: string[]) {
+    logger(
+      `[StorageManagerWeb: persistAccounts()] enabled=${this.enabled}`,
+      accounts,
+    );
+
+    const payload = JSON.stringify(accounts);
+    localStorage.setItem(STORAGE_DAPP_SELECTED_ADDRESS, payload);
+  }
+
+  public async getCachedAccounts(): Promise<string[]> {
+    try {
+      const rawAccounts = localStorage.getItem(STORAGE_DAPP_SELECTED_ADDRESS);
+      if (!rawAccounts) {
+        return [];
+      }
+      return JSON.parse(rawAccounts) as string[];
+    } catch (error) {
+      console.error(
+        `[StorageManagerWeb: getCachedAccounts()] Error reading cached accounts`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  public async persistChainId(chainId: string) {
+    logger(
+      `[StorageManagerWeb: persistChainId()] enabled=${this.enabled}`,
+      chainId,
+    );
+
+    localStorage.setItem(STORAGE_DAPP_CHAINID, chainId);
+  }
+
+  public async getCachedChainId(): Promise<string | undefined> {
+    try {
+      const chainId = localStorage.getItem(STORAGE_DAPP_CHAINID);
+      return chainId ?? undefined;
+    } catch (error) {
+      console.error(
+        `[StorageManagerWeb: getCachedChainId()] Error reading cached chainId`,
+        error,
+      );
+      throw error;
     }
   }
 

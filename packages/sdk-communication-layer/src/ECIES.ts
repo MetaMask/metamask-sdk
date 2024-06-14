@@ -8,7 +8,7 @@ import { logger } from './utils/logger';
  */
 export interface ECIESProps {
   debug?: boolean;
-  pkey?: string;
+  privateKey?: string;
 }
 
 /**
@@ -29,8 +29,8 @@ export class ECIES {
       debug.enable('Ecies:Layer');
     }
 
-    if (props?.pkey) {
-      this.ecies = PrivateKey.fromHex(props.pkey);
+    if (props?.privateKey) {
+      this.ecies = PrivateKey.fromHex(props.privateKey);
     } else {
       this.ecies = new PrivateKey();
     }
