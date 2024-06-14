@@ -1,25 +1,20 @@
-import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
-import select from '@inquirer/select';
 import * as fs from 'fs';
+import { ConnectionStatus, MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
 import qrcode from 'qrcode-terminal';
 import 'dotenv/config';
+import { chains, ConnectType, connectType, foxLogo, RpcRequest } from './constants';
 import {
-  batchRequestOperationChoices, batchRequestTypes,
-  mainMenuChoices,
-  mainMenuChoicesTypes, operationMenuChoices,
-  operationsMenuTypes,
-} from './menus';
-import {
-  addPolygonChain,
+  addEthereumChain, balanceOf,
   batchRequests,
   getBlockNumber,
   personalSignRequest,
   sendTransactionRequest,
   switchEthereumChain,
+  walletRequestPermissions,
 } from './rpcRequests';
-import { chains } from './constants';
+const term = require('terminal-kit').terminal;
 
-const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
+const EVENT_AMOUNT = process.env.EVENT_AMOUNT;
 
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
@@ -31,11 +26,13 @@ const options: MetaMaskSDKOptions = {
   logging: {
     sdk: false,
   },
+  enableAnalytics: true,
   checkInstallationImmediately: false,
   infuraAPIKey: process.env.INFURA_API_KEY || '',
   modals: {
     install: ({ link }) => {
       qrcode.generate(link, { small: true }, (qr) => {
+        term.clear()
         console.log(`\n\n${qr}\n\n`);
       });
       return {};
@@ -56,225 +53,255 @@ const options: MetaMaskSDKOptions = {
 };
 
 const sdk = new MetaMaskSDK(options);
-let ethereum: SDKProvider;
+
+let provider: SDKProvider;
+let currentChainId: string;
+let selectedAddress: string;
+let balance: string = '';
+
+let shouldExit = false;
+let sessionExists = fs.existsSync('.sdk-comm');
+
+let latestResult = '';
+let events = [];
+
+const addEvent = (event: string) => {
+  if (events.length > parseInt(EVENT_AMOUNT)) {
+    events.shift();
+  }
+  events.push(event);
+}
 
 const attachListeners = (ethereum: SDKProvider) => {
-  ethereum.on('chainChanged', (chainId) => {
-    if (LOG_LEVEL === 'debug') {
-      console.log(`chainChanged: ${chainId}`);
-    }
+  ethereum.on('chainChanged', (chainId: string) => {
+    addEvent(`chainChanged:: ${chainId}\n`);
+
+    currentChainId = chainId;
+    renderTable()
   });
 
-  ethereum.on('accountsChanged', (accounts) => {
-    if (LOG_LEVEL === 'debug') {
-      console.log(`accountsChanged: ${accounts}`);
-    }
+  ethereum.on('accountsChanged', async (accounts) => {
+    addEvent(`accountsChanged:: ${accounts[0]}\n`);
+
+    selectedAddress = accounts[0];
+    updateBalance().then(() => {
+      renderTable()
+    })
   });
 
-  ethereum.on('disconnect', (error) => {
-    if (LOG_LEVEL === 'debug') {
-      console.log(`disconnect: ${error}`);
-    }
+  ethereum.on('connect', async () => {
+    provider = sdk.getProvider();
+    selectedAddress = provider.getSelectedAddress();
+    currentChainId = provider.getChainId();
+    updateBalance().then(() => {
+      renderTable()
+    })
   });
 };
 
-const presentAndSelectMainMenu = async () => {
-  const mainMenuChoice = await select({
-    message: 'Select an option to get started',
-    choices: mainMenuChoices,
+const getEventsAsString = () => {
+  let eventsString = '';
+  events.forEach(event => {
+    eventsString += event;
   });
 
-  switch (mainMenuChoice) {
-    case mainMenuChoicesTypes.CREATE_SESSION:
-      await createSession();
-      break;
-    case mainMenuChoicesTypes.RESUME_SESSION:
-      await createSession();
-      break;
-    case mainMenuChoicesTypes.TERMINATE:
-      await terminateSession()
-      process.exit();
+  return eventsString;
+}
+
+const renderTable = () => {
+  term.clear();
+  drawTable()
+}
+
+const updateBalance = async () => {
+  if (!selectedAddress) return;
+
+  try {
+    const balanceResult = await provider.request(balanceOf(selectedAddress));
+    balance = balanceResult.toString();
+  } catch (error: any) {
+    latestResult = `Error: ${error.message}`;
   }
 }
 
-const presentBatchRequestMenu = async () => {
-  const batchRequestMenuChoices = await select({
-    message: 'Select batch requests',
-    choices: batchRequestOperationChoices,
-  });
-
-  switch (batchRequestMenuChoices) {
-    case batchRequestTypes.PERSONAL_SIGN_3:
-      let personalSignBatchRequestRPCs = [];
-      for (let i = 0; i < 3; i++) {
-        personalSignBatchRequestRPCs.push(personalSignRequest(ethereum.getSelectedAddress()));
-      }
-
-      try {
-        let batchResult = await ethereum.request(
-          batchRequests(personalSignBatchRequestRPCs)
-        );
-        console.log(`\nBatch result: ${batchResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-
+const connect = async (type: ConnectType) => {
+  switch (type) {
+    case connectType.CONNECT_AND_SIGN:
+      await sdk.connectAndSign({ msg: 'Connect & Sign message' });
       break;
-    case batchRequestTypes.PERSONAL_SIGN_SEND_TRANSACTION:
-      let personalSignSendTransactionBatchRequestRPCs = [];
-
-      personalSignSendTransactionBatchRequestRPCs.push(personalSignRequest(ethereum.getSelectedAddress()));
-      personalSignSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.getSelectedAddress()));
-      try {
-        let batchResult = await ethereum.request(
-          batchRequests(personalSignSendTransactionBatchRequestRPCs)
-        );
-        console.log(`\nBatch result: ${batchResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-
+    case connectType.CONNECT_WITH_CHAIN_SWITCH:
+      await sdk.connectWith(switchEthereumChain(chains.LINEA.chainId));
       break;
-    case batchRequestTypes.SWITCH_CHAIN_SEND_TRANSACTION:
-      let switchChainSendTransactionBatchRequestRPCs = [];
+    case connectType.CONNECT:
+      await sdk.connect();
+      break;
+    case connectType.CONNECT_WITH_ADD_CHAIN:
+      await sdk.connectWith(addEthereumChain(chains.POLYGON));
+      break;
+    default:
+      return;
+  }
 
-      if (ethereum.getChainId() === chains.SEPOLIA.chainId) {
-        console.log(`Active chain is Sepolia already. Switching to mainnet first to then do the proper batch`);
-        try {
-          let switchChainResult = await ethereum.request(
-            switchEthereumChain(chains.MAINNET.chainId)
-          );
-          console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
-        } catch (e) {
-          console.log(`\nError: ${e.message}\n\n`);
-          return;
+  provider = sdk.getProvider();
+  selectedAddress = provider.getSelectedAddress();
+  currentChainId = provider.getChainId();
+
+  await updateBalance()
+  attachListeners(provider);
+  sessionExists = true;
+  renderTable();
+}
+
+const terminateSDK = () => {
+  sdk.terminate()
+  sessionExists = false;
+  latestResult = ''
+  renderTable();
+}
+
+const makeAndCallRPCRequest = async (rpc: RpcRequest) => {
+  try {
+    renderTable();
+    const response = await provider.request(rpc);
+    latestResult = JSON.stringify(response, null, 2);
+    renderTable()
+  } catch (e) {
+    latestResult = `^RError in ${rpc.method}: \n^W${e.message}\n`
+    renderTable()
+  }
+}
+
+const getMenuOptions = () => {
+  return [
+    { key: '1', label: 'Connect', action: async () => await connect(connectType.CONNECT) },
+    { key: '2', label: 'Connect & Sign', action: async () => await connect(connectType.CONNECT_AND_SIGN) },
+    { key: '3', label: 'Connect w/ SwitchChain (to Linea)', action: async () => await connect(connectType.CONNECT_WITH_CHAIN_SWITCH) },
+    { key: 'T', label: 'Terminate', action: () => terminateSDK() },
+    { key: 'Q', label: 'Quit', action: () => shouldExit = true },
+  ];
+};
+
+const getConnectedMenuOptions = () => {
+  return [
+    { key: '1', label: 'wallet_requestPermissions', action: async () => {
+        await makeAndCallRPCRequest(walletRequestPermissions())
+      }
+    },
+    { key: '2', label: 'personal_sign', action: async () => {
+        await makeAndCallRPCRequest(personalSignRequest(selectedAddress))
+      }
+    },
+    { key: '3', label: 'eth_sendTransaction', action: async () => {
+        await makeAndCallRPCRequest(sendTransactionRequest(selectedAddress))
+      }
+    },
+    { key: '4', label: 'wallet_switchEthereumChain -> Polygon', action: async () => {
+        await makeAndCallRPCRequest(switchEthereumChain(chains.POLYGON.chainId))
+      }
+    },
+    { key: '5', label: 'wallet_switchEthereumChain -> Sepolia', action: async () => {
+        await makeAndCallRPCRequest(switchEthereumChain(chains.SEPOLIA.chainId))
+      }
+    },
+    { key: '6', label: 'wallet_switchEthereumChain -> Mainnet', action: async () => {
+        await makeAndCallRPCRequest(switchEthereumChain(chains.MAINNET.chainId))
+      }
+    },
+    { key: '7', label: 'wallet_addEthereumChain -> Polygon', action: async () => {
+        await makeAndCallRPCRequest(addEthereumChain(chains.POLYGON))
+      }
+    },
+    { key: '8', label: 'eth_blockNumber (readOnlyCall)', action: async () => {
+        await makeAndCallRPCRequest(getBlockNumber())
+      }
+    },
+    { key: '9', label: 'metamask_batch: personal_sign, personal_sign, personal_sign', action: async () => {
+        const rpcs = [];
+        for (let i = 0; i <= 2; i++) {
+          rpcs.push(personalSignRequest(selectedAddress, `Batch message #${i+1}`))
         }
+        await makeAndCallRPCRequest(batchRequests(rpcs))
       }
+    },
+    { key: '10', label: 'metamask_batch: switchChain, personal_sign, switchChain', action: async () => {
+        const rpcs = [];
+        const originalChain = currentChainId;
+        const nextChain = currentChainId === '0x1' ? chains.LINEA.chainId : chains.MAINNET.chainId;
 
-      switchChainSendTransactionBatchRequestRPCs.push(switchEthereumChain(chains.SEPOLIA.chainId));
-      switchChainSendTransactionBatchRequestRPCs.push(sendTransactionRequest(ethereum.getSelectedAddress()));
+        rpcs.push(switchEthereumChain(nextChain))
+        rpcs.push(personalSignRequest(selectedAddress))
+        rpcs.push(switchEthereumChain(originalChain))
 
-      try {
-        let batchResult = await ethereum.request(
-          batchRequests(switchChainSendTransactionBatchRequestRPCs)
-        );
-        console.log(`\nBatch result: ${batchResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
+        await makeAndCallRPCRequest(batchRequests(rpcs))
       }
-      break;
-  }
-}
-
-const presentAndSelectOperationsMenu = async () => {
-  const operationsMenuChoice = await select({
-    message: 'Select an operation',
-    choices: operationMenuChoices,
-  });
-
-  switch (operationsMenuChoice) {
-    case operationsMenuTypes.SEND_TRANSACTION:
-      try {
-        const sendTransactionResult = await ethereum.request(
-          sendTransactionRequest(ethereum.getSelectedAddress())
-        );
-        console.log(`\nTransaction result: ${sendTransactionResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.PERSONAL_SIGN:
-      try {
-        const personalSignResult = await ethereum.request(
-          personalSignRequest(ethereum.getSelectedAddress())
-        );
-        console.log(`\nPersonalSign result: ${personalSignResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.SWITCH_ETHEREUM_CHAIN_SEPOLIA:
-      try {
-        const switchChainResult = await ethereum.request(
-          switchEthereumChain(chains.SEPOLIA.chainId)
-        );
-        console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.ADD_ETHEREUM_CHAIN:
-      try {
-        const addChainResult = await ethereum.request(
-          addPolygonChain()
-        );
-        console.log(`\nAdd chain result: ${addChainResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.SWITCH_ETHEREUM_CHAIN_POLYGON:
-      try {
-        const switchChainResult = await ethereum.request(
-          switchEthereumChain(chains.POLYGON.chainId)
-        );
-        console.log(`\nSwitch chain result: ${switchChainResult}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.BLOCK_NUMBER:
-      try {
-        const blockNumber = await ethereum.request(getBlockNumber());
-        const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura direct calls' : 'MetaMask (Wallet) provider';
-        console.log(`\nBlock number from ${gotFrom}: ${blockNumber}\n\n`);
-      } catch (e) {
-        console.log(`\nError: ${e.message}\n\n`);
-      }
-      break;
-    case operationsMenuTypes.BATCH_REQUEST:
-      await presentBatchRequestMenu();
-      break;
-    case mainMenuChoicesTypes.TERMINATE:
-      await terminateSession()
-      break;
-    case mainMenuChoicesTypes.QUIT:
-      console.log(`quitting...`);
-      process.exit();
-  }
-}
-
-const createSession = async () => {
-  console.log('\nCreating or resuming a Session\n\n');
-  const accounts = await sdk.connect();
-  console.log(`Connected accounts ${accounts}`);
-
-  ethereum = sdk.getProvider();
-  attachListeners(ethereum);
-}
-
-const terminateSession = async () => {
-  console.log('Terminating the session...');
-  sdk.terminate();
-
-  if (fs.existsSync('.sdk-comm')) {
-    fs.unlinkSync('.sdk-comm');
-  }
-}
-
-const start = async () => {
-  let shouldFinish = false;
-
-  while (!shouldFinish) {
-    await presentAndSelectMainMenu();
-
-    let fileExists = fs.existsSync('.sdk-comm');
-    while (fileExists) {
-      await presentAndSelectOperationsMenu();
-    }
-  }
+    },
+    { key: 'T', label: 'Terminate', action: () => terminateSDK() },
+    { key: 'Q', label: 'Quit', action: () => shouldExit = true },
+  ];
 };
 
-start().catch((err) => {
-  console.error(err);
+const getDisplayMenu = () => {
+  return sessionExists ? getConnectedMenuOptions() : getMenuOptions();
+}
+
+const drawTable = () => {
+  // Generate the options string
+  let optionsString = 'Options:\n';
+  optionsString += '^C-------------------\n'
+  getDisplayMenu().forEach(option => {
+    optionsString += `^G${option.key}) ^W${option.label}\n`;
+  });
+
+  term.table([
+    [foxLogo, `CurrentChain: \n^G${currentChainId ?? ''}\n\nAccount: \n^G${selectedAddress ?? ''}\n\nBalance: ^G${balance}\n\nSessionExists: \n^G${sessionExists}\n\n`, 'Events'],
+    [optionsString, `Latest result: \n^G${latestResult}`, getEventsAsString()],
+  ], {
+    hasBorder: true,
+    borderAttr: { color: 'blue' } ,
+    contentHasMarkup: true,
+    textAttr: { bgColor: 'default' },
+    firstCellTextAttr: { bgColor: '' },
+    firstRowTextAttr: { bgColor: '' },
+    firstColumnTextAttr: { bgColor: '' },
+    checkerEvenCellTextAttr: { bgColor: '' },
+    fit: true,
+    // expandToHeight: true,
+  });
+}
+
+async  function main() {
+  term.fullscreen();
+  term.clear();
+  term.cyan('Interactive Node.js Example Dapp\n');
+  if (sessionExists) {
+    await sdk.sdkInitPromise;
+    attachListeners(sdk.getProvider())
+  }
+  term.colorRgb(255, 255, 0);
+
+  while (!shouldExit) {
+    drawTable()
+
+    // Await user input
+    const choice = await term.inputField().promise;
+
+    // Handle user input
+    const selectedOption = getDisplayMenu().find(option => option.key === choice.trim());
+    term.clear();
+
+    if (selectedOption) {
+      selectedOption.action();
+    } else {
+      term.red('\nInvalid choice. Please select a valid option.\n');
+    }
+  }
+
+  term.cyan('\n\nExiting...\n\n');
+  process.exit();
+}
+
+// Run the main function
+main().catch(err => {
+  term.red(`\nAn error occurred: ${err.message}\n`);
+  process.exit(1);
 });

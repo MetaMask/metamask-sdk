@@ -1,3 +1,32 @@
+export const foxLogo = '                                   \n' +
+  ' **==                         =+** \n' +
+  ' ****+===                 ===+**** \n' +
+  '********=====---------=====********\n' +
+  '**********+===-------===+**********\n' +
+  '*************=-------=*************\n' +
+  ' *************+-----+************* \n' +
+  ' ***********+==-----==+*********** \n' +
+  ' ********+======----=====+******** \n' +
+  '  *+==--========---========--==+*  \n' +
+  '  ------========---========------  \n' +
+  ' --------==+#*==---==##+==-------- \n' +
+  '----------=---==---==---=----------\n' +
+  '---========----=---=----========---\n' +
+  '===============+++++===============\n' +
+  '============-::#####-:-=========== \n' +
+  ' =========-::::-----::::-========= \n' +
+  ' =====      -----------      ===== \n' +
+  '                                   '
+
+export const connectType = {
+  CONNECT_AND_SIGN: 'CONNECT_AND_SIGN',
+  CONNECT_WITH_CHAIN_SWITCH: 'CONNECT_WITH_CHAIN_SWITCH',
+  CONNECT_WITH_ADD_CHAIN: 'CONNECT_WITH_ADD_CHAIN',
+  CONNECT: 'CONNECT'
+} as const;
+
+export type ConnectType = (typeof connectType)[keyof typeof connectType];
+
 export interface RpcRequest {
   method: string;
   params: any[];
@@ -33,5 +62,11 @@ export const chains: {[name: string]: Chain} = {
     nativeCurrency: { symbol: 'ETH', decimals: 18 },
     rpcUrls: ['https://mainnet.infura.io/v3/'],
   },
+  LINEA: {
+    chainId: '0xe708',
+    chainName: 'Linea',
+    blockExplorerUrls: ['https://lineascan.build/'],
+    nativeCurrency: { symbol: 'ETH', decimals: 18 },
+    rpcUrls: ['https://linea.infura.io/v3/'],
+  },
 }
-

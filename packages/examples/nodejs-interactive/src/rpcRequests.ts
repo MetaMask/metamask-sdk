@@ -1,5 +1,5 @@
+import { Chain, RpcRequest } from './constants';
 import { Buffer } from 'buffer';
-import { RpcRequest, chains } from './constants';
 
 export const sendTransactionRequest = (selectedAddress: string, amount: string = '0x5AF3107A4000'): RpcRequest => {
   const to = '0x0000000000000000000000000000000000000000';
@@ -15,7 +15,7 @@ export const sendTransactionRequest = (selectedAddress: string, amount: string =
   }
 }
 
-export const personalSignRequest = (selectedAddress: string, message: string = 'Hello World!'): RpcRequest => {
+export const personalSignRequest = (selectedAddress: string, message: string = 'Hello form the NodeJS Interactive Example Dapp'): RpcRequest => {
   const from = selectedAddress;
   const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
@@ -32,10 +32,10 @@ export const switchEthereumChain = (hexChainId: string): RpcRequest => {
   };
 }
 
-export const addPolygonChain = (): RpcRequest => {
+export const addEthereumChain = (chain: Chain): RpcRequest => {
   return {
     method: 'wallet_addEthereumChain',
-    params: [chains.POLYGON],
+    params: [chain],
   }
 }
 
@@ -50,5 +50,23 @@ export const getBlockNumber = (): RpcRequest => {
   return {
     method: 'eth_blockNumber',
     params: [],
+  }
+}
+
+export const walletRequestPermissions = (): RpcRequest => {
+  return {
+    method: 'wallet_requestPermissions',
+    params: [
+      {
+        eth_accounts: {},
+      },
+    ],
+  }
+}
+
+export const balanceOf = (selectedAddress: string): RpcRequest => {
+  return {
+    method: 'eth_getBalance',
+    params: [selectedAddress, 'latest'],
   }
 }

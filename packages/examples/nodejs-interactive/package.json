@@ -1,13 +1,11 @@
 {
-  "name": "sdk-nodejs-example",
+  "name": "sdk-nodejs-interactive-example",
   "version": "1.0.0",
   "description": "",
   "license": "ISC",
   "author": "",
   "private": true,
-  "main": "index.js",
   "scripts": {
-    "start:debug": "LOG_LEVEL=debug ts-node src/index.ts",
     "start": "ts-node src/index.ts",
     "build": "tsc",
     "clean": "rm -rf dist .sdk-comm",
@@ -15,15 +13,15 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@inquirer/checkbox": "^2.1.0",
-    "@inquirer/select": "^2.0.0",
-    "@metamask/sdk": "^0.18.1",
+    "@metamask/sdk": "^0.20.5",
     "dotenv": "^16.4.5",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "terminal-kit": "^3.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
     "@types/qrcode-terminal": "^0.12.2",
+    "@types/terminal-kit": "^2.5.6",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^5.1.6"
