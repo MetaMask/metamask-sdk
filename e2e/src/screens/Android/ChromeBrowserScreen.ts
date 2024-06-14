@@ -1,9 +1,9 @@
-import { ChainablePromiseElement, Key } from 'webdriverio';
+import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
-import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { AndroidSelector } from '../../Selectors';
+import { Dapp } from '../interfaces/Dapp';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -77,7 +77,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  async goToAddress(address: string): Promise<void> {
+  async goToAddress(address: string, pageObject: Dapp): Promise<void> {
     const urlAddressBar = await this.urlAddressBar;
 
     await urlAddressBar.waitForDisplayed({
@@ -87,8 +87,17 @@ class ChromeBrowserScreen implements MobileBrowser {
     await urlAddressBar.click();
     await urlAddressBar.clearValue();
     await urlAddressBar.setValue(address);
-    await Gestures.tapDeviceKey(Key.Enter);
     await driver.pressKeyCode(66);
+
+    const connectButton =
+      pageObject.connectButton as unknown as ChainablePromiseElement<Element>;
+
+    // Tries to find the connect button 5 times for 10 seconds
+    let retries = 0;
+    if (!(await connectButton.isDisplayed()) && retries < 5) {
+      await driver.pause(2000);
+      retries += 1;
+    }
   }
 
   async tapSwitchTabsButton(): Promise<void> {
@@ -115,6 +124,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     await (await this.browserMoreOptions).click();
     await (await this.refreshButton).click();
     await driver.pause(500); // Wait for the page to refresh
+
   }
 }
 

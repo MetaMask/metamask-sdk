@@ -10,8 +10,9 @@ class WalletReadyScreen {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="onboarding-success-done-button"]',
         ),
-        // TODO: Add iOS selector
-        iosSelector: IOSSelector.by().predicateString('label == "No thanks"'),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "onboarding-success-done-button"',
+        ),
       }),
     );
   }
