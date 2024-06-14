@@ -46,8 +46,11 @@ class SafariBrowserScreen implements MobileBrowser {
     const connectButton =
       pageObject.connectButton as unknown as ChainablePromiseElement<Element>;
 
-    while (!(await connectButton.isDisplayed())) {
-      await driver.pause(1000);
+    // Tries to find the connect button 5 times for 10 seconds
+    let retries = 0;
+    if (!(await connectButton.isDisplayed()) && retries < 5) {
+      await driver.pause(2000);
+      retries += 1;
     }
   }
 }

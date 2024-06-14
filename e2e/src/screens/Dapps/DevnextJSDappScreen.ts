@@ -11,7 +11,9 @@ class DevnextDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.TextView[@text="Connect wallet"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "Connect wallet"',
+        ),
       }),
     );
   }

@@ -8,10 +8,9 @@ class EnableSmartTransactionsComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.view.View[@text="Don\'t enable enhanced protection"]',
+          '//android.view.View[@text="Enable"]',
         ),
-        // TODO: Add iOS selector
-        iosSelector: IOSSelector.by().predicateString('label == "No thanks"'),
+        iosSelector: IOSSelector.by().predicateString('name == "Enable"'),
       }),
     );
   }
