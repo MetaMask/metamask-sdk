@@ -1,4 +1,5 @@
 import ADB from 'appium-adb';
+import { driver } from '@wdio/globals';
 import { FixtureBuilder } from '../test/fixtures/FixtureBuilder';
 import {
   loadFixture,
@@ -54,16 +55,33 @@ class Utils {
     fixtureServer: FixtureServer,
     bundleId: string,
   ): Promise<void> {
-    const adb = await ADB.createADB({});
-    await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+    // Little helper to activate the app for the platform. This is helpful
+    // since the Android driver expects a key named appId and iOS expects a key
+    // named bundleId
+    const activateAppForPlatform = async () => {
+      if (PLATFORM === Platforms.IOS) {
+        await driver.execute('mobile:activateApp', {
+          bundleId,
+          fixtureServerPort: FIXTURE_SERVER_PORT,
+        });
+        return;
+      }
+
+      await driver.execute('mobile:activateApp', {
+        appId: bundleId,
+        fixtureServerPort: FIXTURE_SERVER_PORT,
+      });
+    };
+
+    if (PLATFORM === Platforms.ANDROID) {
+      const adb = await ADB.createADB({});
+      await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+    }
     const fixture = new FixtureBuilder().build();
     await startFixtureServer(fixtureServer);
     await loadFixture(fixtureServer, { fixture });
     await driver.terminateApp(bundleId);
-    await driver.execute('mobile:activateApp', {
-      appId: bundleId,
-      fixtureServerPort: FIXTURE_SERVER_PORT,
-    });
+    await activateAppForPlatform();
   }
 
   /*
