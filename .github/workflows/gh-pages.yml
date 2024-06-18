@@ -1,0 +1,41 @@
+name: Deploy to GitHub Pages
+permissions:
+  contents: write
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install Yarn 3
+      run: yarn set version 3.5.1
+
+    - name: Install Dependencies
+      run: yarn --immutable
+
+    - name: Build All Static Example Projects
+      run: bash ./scripts/build-static-dapps.sh
+
+    - name: Deploy dapps
+      uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        force_orphan: true
+        keep_files: true  # Important to keep the rest of the files deployed previously
+        publish_dir: ./deployments
+

@@ -21,7 +21,6 @@ const Demo = () => {
       setResponse('');
 
       const accounts = await sdk?.connect();
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connect:: accounts result`, accounts);
       setResponse(accounts);
     } catch (err) {
@@ -39,7 +38,6 @@ const Demo = () => {
       setResponse('');
 
       const hexResponse = await sdk?.connectAndSign({ msg: 'hello world' });
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectAndSign response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -50,8 +48,73 @@ const Demo = () => {
     }
   };
 
+  const ethAccounts = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'eth_accounts',
+        params: [],
+      });
+      console.debug(`eth_accounts response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('eth_accounts ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const walletRequest = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'wallet_requestPermissions',
+        params: [
+          {
+            eth_accounts: {},
+          },
+        ],
+      });
+      console.debug(`wallet_requestPermissions response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('wallet_requestPermissions ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  const getPermissions = async () => {
+    try {
+      setRpcError(null);
+      setRequesting(true);
+      setResponse('');
+
+      const hexResponse = await provider?.request({
+        method: 'wallet_getPermissions',
+        params: [{ eth_accounts: {} }],
+      });
+      console.debug(`wallet_getPermissions response:`, hexResponse);
+      setResponse(hexResponse);
+    } catch (err) {
+      console.log('wallet_getPermissions ERR', err);
+      setRpcError(err);
+    } finally {
+      setRequesting(false);
+    }
+  };
+
   const sendTransaction = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
+    // const selectedAddress = '0x8e0e30e296961f476e01184274ce85ae60184cb0'; // account1
 
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
@@ -86,7 +149,7 @@ const Demo = () => {
     }
 
     const msgParams = JSON.stringify(getSignParams({ hexChainId: chainId }));
-    const from = window.ethereum?.selectedAddress;
+    const from = provider?.getSelectedAddress();
 
     setRequesting(true);
     setRpcError(null);
@@ -116,7 +179,7 @@ const Demo = () => {
   };
 
   const personalSign = async () => {
-    const from = window.ethereum?.selectedAddress;
+    const from = provider?.getSelectedAddress();
     setRequesting(true);
     setRpcError(null);
     setResponse(''); // reset response first
@@ -305,8 +368,6 @@ const Demo = () => {
 
   const testReadOnlyCalls = async () => {
     try {
-      await checkBalances();
-
       // Following code can only work after the sdk has connected once and saved initial accounts+chainid.
       console.log(`Testing sdk accounts+chainid caching...`);
       const chain = await provider?.request({
@@ -320,6 +381,8 @@ const Demo = () => {
         params: [],
       });
       console.log(`accounts`, accounts);
+
+      await checkBalances();
     } catch (err) {
       console.error(`testReadOnlyCalls error`, err);
     }
@@ -357,7 +420,7 @@ const Demo = () => {
   };
 
   const handleChainRPCs = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const rpcs: ChainRPC[] = [
       {
@@ -390,7 +453,7 @@ const Demo = () => {
   };
 
   const chainSwitchAndSignAndBack = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
 
     const initChainId = chainId;
     const targetChainId = initChainId === '0x5' ? '0xe704' : '0x5';
@@ -440,7 +503,7 @@ const Demo = () => {
   };
 
   const chainTransactions = async () => {
-    const selectedAddress = provider?.selectedAddress;
+    const selectedAddress = provider?.getSelectedAddress();
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
@@ -534,7 +597,7 @@ const Demo = () => {
       }
 
       const hexResponse = await sdk?.connectWith(rpc);
-      // const accounts = window.ethereum?.request({method: 'eth_requestAccounts', params: []});
+      // const accounts = provider?.request({method: 'eth_requestAccounts', params: []});
       console.debug(`connectWith response:`, hexResponse);
       setResponse(hexResponse);
     } catch (err) {
@@ -553,198 +616,336 @@ const Demo = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main style={{ paddingBottom: 50 }}>
-        <SDKStatus
-          requesting={requesting}
-          response={response}
-          error={rpcError}
-        />
+      <main style={{ paddingBottom: 100 }}>
         <div style={{ padding: 20 }}>
           <MetaMaskButton />
         </div>
-        {connected && (
-          <>
-            <div className="action-buttons">
-              <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-                Request Accounts
-              </button>
+        <div
+          id="demo"
+          style={{
+            display: 'flex',
+            flexDirection: !connected ? 'column' : 'row-reverse',
+          }}
+        >
+          <div
+            style={
+              !connecting
+                ? connected
+                  ? { minWidth: '50%' }
+                  : {}
+                : { marginBottom: '20px', marginTop: '20px' }
+            }
+          >
+            <SDKStatus
+              requesting={requesting}
+              response={response}
+              error={rpcError}
+            />
+          </div>
+          <div style={!connected ? { width: '100%' } : {}}>
+            {connected && (
+              <>
+                <h2 style={{ textAlign: 'center' }}>Test Actions</h2>
+                <hr></hr>
+                <div className="action-buttons">
+                  <button style={{ padding: 10, margin: 10 }} onClick={connect}>
+                    Request Accounts
+                  </button>
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={ethAccounts}
+                  >
+                    eth_accounts
+                  </button>
 
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={walletRequest}
+                  >
+                    wallet_requestPermissions
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={getPermissions}
+                  >
+                    wallet_getPermissions
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={interactEthers}
+                  >
+                    ping (ethers)
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={eth_signTypedData_v4}
+                  >
+                    eth_signTypedData_v4
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={personalSign}
+                  >
+                    personal_sign
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={testPayload}
+                  >
+                    testPayload
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={testEthers}
+                  >
+                    testEthers
+                  </button>
+
+                  <button
+                    className={'Button-Normal'}
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={() => changeNetwork('0x89')}
+                  >
+                    Switch to Polygon
+                  </button>
+
+                  <button
+                    className={'Button-Normal'}
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={addEthereumChain}
+                  >
+                    Add Polygon Chain
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={sendTransaction}
+                  >
+                    sendTransaction
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={addGanache}
+                  >
+                    Add Local Ganache Chain
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={async () => {
+                      await provider?.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0xe704' }],
+                      });
+                    }}
+                  >
+                    Switch to linea
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={async () => {
+                      await provider?.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: '0x1' }],
+                      });
+                    }}
+                  >
+                    Switch to mainnet
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={ethAccounts}
+                  >
+                    eth_accounts
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={walletRequest}
+                  >
+                    wallet_requestPermissions
+                  </button>
+
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={getPermissions}
+                  >
+                    wallet_getPermissions
+                  </button>
+
+                  <h2 style={{ textAlign: 'center' }}>Batch Tests</h2>
+                  <hr></hr>
+                  <div className="action-group">
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={handleChainRPCs}
+                    >
+                      Chain RPC Calls
+                    </button>
+
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={chainSwitchAndSignAndBack}
+                    >
+                      Chain Switch + sign + switch back
+                    </button>
+
+                    <button
+                      style={{ padding: 10, margin: 10 }}
+                      className="chain"
+                      onClick={chainTransactions}
+                    >
+                      Chain sendTransaction + personal_sign + sendTransaction
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+            {connecting && (
+              <>
+                <h2 style={{ textAlign: 'center' }}>Connect Methods</h2>
+                <hr></hr>
+                <div className="action-group">
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={connect}
+                  >
+                    Connect
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={connectAndSign}
+                  >
+                    Connect And Sign
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
+                  >
+                    Connect With (personal_sign)
+                  </button>
+                </div>
+              </>
+            )}
+
+            {!connecting && !connected && (
+              <div>
+                <h2 style={{ textAlign: 'center' }}>Connect Methods</h2>
+                <hr></hr>
+                <div className="action-group">
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={connect}
+                  >
+                    Connect
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={connectAndSign}
+                  >
+                    Connect And Sign
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={() => connectWith({ type: 'ETH_SENDTRANSACTION' })}
+                  >
+                    Connect With (eth_sendTransaction)
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
+                  >
+                    Connect With (personal_sign)
+                  </button>
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: 'rgb(249, 115, 22)',
+                    }}
+                    onClick={() => connectWith({ type: 'ETH_CHAINID' })}
+                  >
+                    Connect With (eth_chainId)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {!connecting && readOnlyCalls && (
+              <div>
+                <h2 style={{ textAlign: 'center' }}>Read-only Call Tests</h2>
+                <hr></hr>
+                <div className="action-group">
+                  <button
+                    style={{
+                      padding: 10,
+                      margin: 10,
+                      backgroundColor: '#FFFFCC',
+                    }}
+                    onClick={testReadOnlyCalls}
+                  >
+                    testReadOnlyCalls
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <hr></hr>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
               <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={interactEthers}
+                style={{ padding: 10, margin: 10, backgroundColor: 'red' }}
+                onClick={terminate}
               >
-                ping (ethers)
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={eth_signTypedData_v4}
-              >
-                eth_signTypedData_v4
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={personalSign}
-              >
-                personal_sign
-              </button>
-
-              <button style={{ padding: 10, margin: 10 }} onClick={testPayload}>
-                testPayload
-              </button>
-
-              <button style={{ padding: 10, margin: 10 }} onClick={testEthers}>
-                testEthers
-              </button>
-
-              <button
-                className={'Button-Normal'}
-                style={{ padding: 10, margin: 10 }}
-                onClick={() => changeNetwork('0x89')}
-              >
-                Switch to Polygon
-              </button>
-
-              <button
-                className={'Button-Normal'}
-                style={{ padding: 10, margin: 10 }}
-                onClick={addEthereumChain}
-              >
-                Add Polygon Chain
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={sendTransaction}
-              >
-                sendTransaction
-              </button>
-
-              <button style={{ padding: 10, margin: 10 }} onClick={addGanache}>
-                Add Local Ganache Chain
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={async () => {
-                  await provider?.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0xe704' }],
-                  });
-                }}
-              >
-                Switch to linea
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                onClick={async () => {
-                  await provider?.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x1' }],
-                  });
-                }}
-              >
-                Switch to mainnet
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                className="chain"
-                onClick={handleChainRPCs}
-              >
-                Chain RPC Calls
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                className="chain"
-                onClick={chainSwitchAndSignAndBack}
-              >
-                Chain Switch + sign + switch back
-              </button>
-
-              <button
-                style={{ padding: 10, margin: 10 }}
-                className="chain"
-                onClick={chainTransactions}
-              >
-                Chain sendTransaction + personal_sign + sendTransaction
+                Terminate
               </button>
             </div>
-          </>
-        )}
-        {connecting && (
-          <>
-            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-              Connect
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={connectAndSign}
-            >
-              Connect And Sign
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
-            >
-              Connect With (personal_sign)
-            </button>
-          </>
-        )}
-
-        {!connecting && readOnlyCalls && (
-          <div>
-            <button
-              style={{ padding: 10, margin: 10, backgroundColor: '#FFFFCC' }}
-              onClick={testReadOnlyCalls}
-            >
-              testReadOnlyCalls
-            </button>
           </div>
-        )}
-
-        {!connecting && !connected && (
-          <div>
-            <button style={{ padding: 10, margin: 10 }} onClick={connect}>
-              Connect
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={connectAndSign}
-            >
-              Connect And Sign
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={() => connectWith({ type: 'ETH_SENDTRANSACTION' })}
-            >
-              Connect With (eth_sendTransaction)
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={() => connectWith({ type: 'PERSONAL_SIGN' })}
-            >
-              Connect With (personal_sign)
-            </button>
-            <button
-              style={{ padding: 10, margin: 10 }}
-              onClick={() => connectWith({ type: 'ETH_CHAINID' })}
-            >
-              Connect With (eth_chainId)
-            </button>
-          </div>
-        )}
-
-        <button
-          style={{ padding: 10, margin: 10, backgroundColor: 'red' }}
-          onClick={terminate}
-        >
-          Terminate
-        </button>
+        </div>
       </main>
+
+      <br></br>
+      <br></br>
+      <br></br>
+      <br></br>
       <RPCHistoryViewer />
     </>
   );

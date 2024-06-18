@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RPC_METHODS } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 
@@ -20,17 +21,16 @@ export async function connectAndSign({
   msg: string;
 }) {
   if (!instance._initialized) {
-    if (instance.debug) {
-      console.log(
-        `SDK::connectAndSign() provider not ready -- wait for init()`,
-      );
-    }
+    logger(
+      `[MetaMaskSDK: connectAndSign()] provider not ready -- wait for init()`,
+    );
+
     await instance.init();
   }
 
-  if (instance.debug) {
-    console.debug(`SDK::connectAndSign() msg: ${msg}`, instance.activeProvider);
-  }
+  logger(
+    `[MetaMaskSDK: connectAndSign()] activeProvider=${instance.activeProvider}`,
+  );
 
   if (!instance.activeProvider) {
     throw new Error(`SDK state invalid -- undefined provider`);

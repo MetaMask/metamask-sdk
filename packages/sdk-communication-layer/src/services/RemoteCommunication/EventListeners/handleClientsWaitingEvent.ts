@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
@@ -20,31 +21,25 @@ export function handleClientsWaitingEvent(instance: RemoteCommunication) {
   return (numberUsers: number) => {
     const { state } = instance;
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}::on 'clients_waiting' numberUsers=${numberUsers} ready=${state.ready} autoStarted=${state.originatorConnectStarted}`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleClientsWaitingEvent()] context=${state.context} on 'clients_waiting' numberUsers=${numberUsers} ready=${state.ready} autoStarted=${state.originatorConnectStarted}`,
+    );
 
     instance.setConnectionStatus(ConnectionStatus.WAITING);
 
     instance.emit(EventType.CLIENTS_WAITING, numberUsers);
     if (state.originatorConnectStarted) {
-      if (state.debug) {
-        console.debug(
-          `RemoteCommunication::on 'clients_waiting' watch autoStarted=${state.originatorConnectStarted} timeout`,
-          state.autoConnectOptions,
-        );
-      }
+      logger.RemoteCommunication(
+        `[RemoteCommunication: handleClientsWaitingEvent()] on 'clients_waiting' watch autoStarted=${state.originatorConnectStarted} timeout`,
+        state.autoConnectOptions,
+      );
 
       const timeout = state.autoConnectOptions?.timeout || 3000;
       const timeoutId = setTimeout(() => {
-        if (state.debug) {
-          console.debug(
-            `RemoteCommunication::on setTimeout(${timeout}) terminate channelConfig`,
-            state.autoConnectOptions,
-          );
-        }
+        logger.RemoteCommunication(
+          `[RemoteCommunication: handleClientsWaitingEvent()] setTimeout(${timeout}) terminate channelConfig`,
+          state.autoConnectOptions,
+        );
         // Cleanup previous channelId
         // state.storageManager?.terminate();
         state.originatorConnectStarted = false;

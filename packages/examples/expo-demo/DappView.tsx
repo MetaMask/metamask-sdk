@@ -88,12 +88,12 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     try {
       console.debug(
         `useffect ethereum.selectedAddress=${
-          sdk.getProvider()?.selectedAddress
+          sdk.getProvider()?.getSelectedAddress()
         }`,
       );
-      if (sdk.getProvider()?.selectedAddress) {
+      if (sdk.getProvider()?.getSelectedAddress()) {
         setConnected(true);
-        setAccount(sdk.getProvider()?.selectedAddress as string);
+        setAccount(sdk.getProvider()?.getSelectedAddress() as string);
       }
 
       sdk.getProvider()?.on('connect', () => {
@@ -108,14 +108,14 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
       sdk.getProvider()?.on('_initialized', () => {
         console.log(
           `useEffect::ethereum on "_initialized" ethereum.selectedAddress=${
-            sdk.getProvider()?.selectedAddress
-          } ethereum.chainId=${sdk.getProvider()?.chainId}`,
+            sdk.getProvider()?.getSelectedAddress()
+          } ethereum.chainId=${sdk.getProvider()?.getChainId()}`,
         );
-        if (sdk.getProvider()?.selectedAddress) {
-          setAccount(sdk.getProvider()?.selectedAddress as string);
+        if (sdk.getProvider()?.getSelectedAddress()) {
+          setAccount(sdk.getProvider()?.getSelectedAddress() as string);
         }
-        if (sdk.getProvider()?.chainId) {
-          setChain(sdk.getProvider()?.chainId as string);
+        if (sdk.getProvider()?.getChainId()) {
+          setChain(sdk.getProvider()?.getChainId() as string);
         }
       });
 
@@ -182,8 +182,8 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     const msgParams = JSON.stringify({
       domain: {
         // Defining the chain aka Rinkeby testnet or Ethereum Main Net
-        chainId: sdk.getProvider()?.chainId
-          ? parseInt(sdk.getProvider()?.chainId || '', 16)
+        chainId: sdk.getProvider()?.getChainId()
+          ? parseInt(sdk.getProvider()?.getChainId() || '', 16)
           : 1,
         // Give a user friendly name to the specific contract you are signing for.
         name: 'Ether Mail',
@@ -250,7 +250,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
       },
     });
 
-    var from = sdk.getProvider()?.selectedAddress;
+    var from = sdk.getProvider()?.getSelectedAddress();
 
     var params = [from, msgParams];
     var method = 'eth_signTypedData_v4';
@@ -263,7 +263,7 @@ export const DAPPView = ({ sdk }: DAPPViewProps) => {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: sdk.getProvider()?.selectedAddress, // must match user's active address.
+      from: sdk.getProvider()?.getSelectedAddress(), // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 

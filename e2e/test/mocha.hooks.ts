@@ -32,6 +32,7 @@ export const beforeHook = async () => {
   if (driver.isAndroid) {
     await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
     await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+    await driver.setOrientation('PORTRAIT');
 
     await AndroidSettingsScreen.tapOpenSearchBarButton();
     await AndroidSettingsScreen.fillSearchBarInput('Opening links');
@@ -40,13 +41,20 @@ export const beforeHook = async () => {
     await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
     await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
 
-    const isAddLinksButtonEnabled =
-      await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
+    await driver.pause(2000);
 
-    if (isAddLinksButtonEnabled) {
-      await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
-      await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
-      await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+    const isAddLinksButtonDisplayed =
+      await AndroidSettingsOpeningLinksScreen.addLinksButton.isDisplayed();
+
+    if (isAddLinksButtonDisplayed) {
+      const isAddLinksButtonEnabled =
+        await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
+
+      if (isAddLinksButtonEnabled) {
+        await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
+        await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
+        await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+      }
     }
   }
 
@@ -74,8 +82,11 @@ export const beforeHook = async () => {
   await Gestures.hideKeyboardWithTap();
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
+  await driver.pause(5000);
   await SecurityUpdatesScreen.tapNoThanksSecurityUpdates();
+  await driver.pause(1000);
   await WelcomeComponent.tapNoThanksButton();
+  await driver.pause(1000);
   await WhatsNewComponent.closeModal();
 };
 

@@ -1,4 +1,5 @@
 import { ethErrors } from 'eth-rpc-errors';
+import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
 /**
@@ -26,27 +27,21 @@ export function handleDisconnect({
 
   const connected = instance.isConnected();
   if (!connected) {
-    if (state.debug) {
-      console.debug(
-        `SDKProvider::handleDisconnect() not connected --- interrup disconnection`,
-      );
-    }
+    logger(
+      `[SDKProvider: handleDisconnect()] not connected --- interrupt disconnection`,
+    );
     return;
   }
 
-  if (state.debug) {
-    console.debug(
-      `SDKProvider::handleDisconnect() cleaning up provider state terminate=${terminate}`,
-      instance,
-    );
-  }
+  logger(
+    `[SDKProvider: handleDisconnect()] cleaning up provider state terminate=${terminate}`,
+    instance,
+  );
 
   if (terminate) {
-    instance.chainId = null;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._state.accounts = null;
-    instance.selectedAddress = null;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     instance._state.isUnlocked = false;

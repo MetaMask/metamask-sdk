@@ -2,6 +2,7 @@
   "name": "metamasksdk_vuejs",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -9,7 +10,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.12.1",
+    "@metamask/sdk": "^0.18.5",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"
   },

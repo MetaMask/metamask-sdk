@@ -1,9 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { handleClientsConnected } from './handleClientsConnected';
 
 describe('handleClientsConnected', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const channelId = 'sampleChannelId';
   const mockEmit = jest.fn();
   const mockStart = jest.fn();
@@ -25,24 +28,16 @@ describe('handleClientsConnected', () => {
         },
         clientsConnected: false,
       },
+      remote: { state: {} },
       emit: mockEmit,
     } as unknown as SocketService;
   });
 
-  it('should log debug information when debugging is enabled and the handler is called', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', async () => {
     const handler = handleClientsConnected(instance, channelId);
     await handler('someId');
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `SocketService::${instance.state.context}::setupChannelListener::on 'clients_connected-${channelId}'`,
-      ),
-    );
-
-    consoleDebugSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should emit CLIENTS_CONNECTED event with the proper data when the handler is called', async () => {

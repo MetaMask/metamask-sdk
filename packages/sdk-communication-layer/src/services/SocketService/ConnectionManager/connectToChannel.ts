@@ -1,6 +1,7 @@
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { setupChannelListeners } from '../ChannelManager';
 
 /**
@@ -21,19 +22,39 @@ export function connectToChannel({
   options: ConnectToChannelOptions;
   instance: SocketService;
 }) {
-  const { channelId, withKeyExchange, isOriginator } = options;
+  const { channelId, withKeyExchange } = options;
+  const isOriginator = instance.state.isOriginator ?? false;
 
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::connectToChannel() channelId=${channelId} isOriginator=${isOriginator}`,
-      instance.state.keyExchange?.toString(),
-    );
-  }
+  logger.SocketService(
+    `[SocketService: connectToChannel()] context=${instance.state.context} channelId=${channelId} isOriginator=${isOriginator}`,
+    instance.state.keyExchange?.toString(),
+  );
 
   if (instance.state.socket?.connected) {
+    console.error(
+      `[SocketService: connectToChannel()] socket already connected`,
+    );
     throw new Error(`socket already connected`);
   }
 
+  const { channelConfig } = instance.remote.state;
+
+  if (isOriginator && channelConfig?.relayPersistence) {
+    if (
+      channelConfig.localKey &&
+      channelConfig?.localKey?.length > 0 &&
+      channelConfig.otherKey &&
+      channelConfig?.otherKey?.length > 0
+    ) {
+      // Update key exchange status with persisted keys
+      instance.state.keyExchange?.setRelayPersistence({
+        localKey: channelConfig.localKey,
+        otherKey: channelConfig.otherKey,
+      });
+    } else {
+      console.warn(`Missing keys in relay persistence`, channelConfig);
+    }
+  }
   instance.state.manualDisconnect = false;
   instance.state.socket?.connect();
   instance.state.withKeyExchange = withKeyExchange;
@@ -42,7 +63,21 @@ export function connectToChannel({
   setupChannelListeners(instance, channelId);
   instance.state.socket?.emit(
     EventType.JOIN_CHANNEL,
-    channelId,
-    `${instance.state.context}_connectToChannel`,
+    {
+      channelId,
+      context: `${instance.state.context}_connectToChannel`,
+      clientType: isOriginator ? 'dapp' : 'wallet',
+    },
+    (
+      error: string | null,
+      result?: { ready: boolean; persistence: boolean },
+    ) => {
+      if (error === 'error_terminated') {
+        instance.emit(EventType.TERMINATE);
+      } else if (typeof result === 'object' && result.persistence) {
+        // Inform that this channel supports full session persistence
+        instance.emit(EventType.CHANNEL_PERSISTENCE);
+      }
+    },
   );
 }

@@ -18,11 +18,15 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
   const platformType = instance.platformManager?.getPlatformType();
 
   instance.analytics = new Analytics({
-    serverURL: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
-    debug: instance.debug,
-    metadata: {
+    serverUrl: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+    enabled: options.enableAnalytics,
+    originatorInfo: {
       url: options.dappMetadata.url ?? '',
       title: options.dappMetadata.name ?? '',
+      dappId:
+        typeof window === 'undefined' || typeof window.location === 'undefined'
+          ? options.dappMetadata?.name ?? options.dappMetadata?.url ?? 'unkown'
+          : window.location.hostname,
       platform: platformType ?? '',
       source: options._source ?? '',
     },

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Link Base</title>
+</head>
+
+<body>
+  <!-- REPLACE_SDK_INFO_HEADER -->
+  <div>
+    <a href="dapps/sdk-playground/build/" class="dynamic-link">SDK Playground</a>
+  </div>
+  <div>
+    <a href="packages/examples/create-react-app/build/" class="dynamic-link">CRA example</a>
+  </div>
+  <div>
+    <a href="packages/examples/vuejs/dist/" class="dynamic-link">VUE JS example</a>
+  </div>
+  <div>
+    <a href="packages/examples/pure-javascript/" class="dynamic-link">PURE JS example</a>
+  </div>
+  <div>
+    <a href="packages/examples/react-metamask-button/build/" class="dynamic-link">React MetaMask Button</a>
+  </div>
+  <div>
+    <a href="packages/examples/react-with-custom-modal/build/" class="dynamic-link">React Custom Modal</a>
+  </div>
+  <div>
+    <a href="packages/examples/with-web3onboard/dist/" class="dynamic-link">Web3 Onboard</a>
+  </div>
+  <div>
+    <a href="packages/sdk-ui/storybook-static/" class="dynamic-link">storybook-static</a>
+  </div>
+
+  <script>
+    function updateLinkBases() {
+      var basePath = window.location.href.includes("https://metamask.github.io/metamask-sdk/") ? "/metamask-sdk/deployments/RELEASE_VERSION_PLACEHOLDER/" : "/";
+      var links = document.querySelectorAll('.dynamic-link');
+
+      if (basePath !== '/') {
+        links.forEach(function (link) {
+          console.log(link.getAttribute('href'));
+          link.setAttribute('href', basePath + link.getAttribute('href'));
+          // print before / after
+          console.log(link.getAttribute('href'));
+        });
+      }
+    }
+
+    // Update links when the page loads
+    document.addEventListener('DOMContentLoaded', updateLinkBases);
+  </script>
+</body>
+
+</html>

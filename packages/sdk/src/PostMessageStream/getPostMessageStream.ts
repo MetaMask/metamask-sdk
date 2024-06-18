@@ -11,13 +11,11 @@ export interface GetPostMessageStreamProps {
   remoteConnection?: RemoteConnection;
   platformManager: PlatformManager;
   communicationLayerPreference: CommunicationLayerPreference;
-  debug: boolean;
 }
 
 export const getPostMessageStream = ({
   name,
   remoteConnection,
-  debug,
 }: GetPostMessageStreamProps): PostMessageStream => {
   if (!remoteConnection || !remoteConnection?.getConnector()) {
     throw new Error(`Missing remote connection parameter`);
@@ -27,6 +25,5 @@ export const getPostMessageStream = ({
     name,
     remote: remoteConnection?.getConnector(),
     platformManager: remoteConnection?.getPlatformManager(),
-    debug,
   });
 };

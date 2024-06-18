@@ -1,4 +1,4 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import {
   CommunicationLayerMessage,
   EventType,
@@ -14,7 +14,6 @@ interface RemoteCommunicationPostMessageStreamState {
   _name: any;
   remote: RemoteCommunication | null;
   platformManager: PlatformManager | null;
-  debug: boolean;
 }
 
 export class RemoteCommunicationPostMessageStream
@@ -25,26 +24,22 @@ export class RemoteCommunicationPostMessageStream
     _name: null,
     remote: null,
     platformManager: null,
-    debug: false,
   };
 
   constructor({
     name,
     remote,
     platformManager,
-    debug,
   }: {
     name: ProviderConstants;
     remote: RemoteCommunication;
     platformManager: PlatformManager;
-    debug: boolean;
   }) {
     super({
       objectMode: true,
     });
     this.state._name = name;
     this.state.remote = remote;
-    this.state.debug = debug;
     this.state.platformManager = platformManager;
 
     this._onMessage = this._onMessage.bind(this);

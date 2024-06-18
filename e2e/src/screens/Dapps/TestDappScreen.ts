@@ -12,7 +12,7 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="connectButton"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
+        iosSelector: IOSSelector.by().predicateString('name == "CONNECT"'),
       }),
     );
   }
@@ -23,7 +23,9 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="personalSign"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "SIGN"`][2]',
+        ),
       }),
     );
   }
@@ -34,7 +36,9 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="signTypedDataV3"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
+        iosSelector: IOSSelector.by().iosClassChain(
+          '**/XCUIElementTypeButton[`name == "SIGN"`][4]',
+        ),
       }),
     );
   }
@@ -45,13 +49,12 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="terminateButton"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('label == "Disconnect"'),
+        iosSelector: IOSSelector.by().predicateString('name == "DISCONNECT"'),
       }),
     );
   }
 
   async connect(): Promise<void> {
-    await this.scrollToConnectButton();
     await (await this.connectButton).click();
   }
 
@@ -66,26 +69,7 @@ class TestDappScreen implements Dapp {
   }
 
   async terminate(): Promise<void> {
-    await this.scrollToTerminateButton();
     await (await this.terminateButton).click();
-  }
-
-  async scrollToConnectButton(): Promise<void> {
-    let isButtonDisplayed = await (await this.connectButton).isDisplayed();
-
-    while (!isButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-      isButtonDisplayed = await (await this.connectButton).isDisplayed();
-    }
-  }
-
-  async scrollToTerminateButton(): Promise<void> {
-    let isButtonDisplayed = await (await this.terminateButton).isDisplayed();
-
-    while (!isButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-      isButtonDisplayed = await (await this.terminateButton).isDisplayed();
-    }
   }
 
   async scrollToSignTypedDataV3Button(): Promise<void> {
@@ -94,7 +78,12 @@ class TestDappScreen implements Dapp {
     ).isDisplayed();
 
     while (!isButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      if (driver.isAndroid) {
+        await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      } else {
+        await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
+      }
+
       isButtonDisplayed = await (
         await this.signTypedDataV3Button
       ).isDisplayed();
@@ -105,7 +94,12 @@ class TestDappScreen implements Dapp {
     let isButtonDisplayed = await (await this.personalSignButton).isDisplayed();
 
     while (!isButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      if (driver.isAndroid) {
+        await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      } else {
+        await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
+      }
+
       isButtonDisplayed = await (await this.personalSignButton).isDisplayed();
     }
   }

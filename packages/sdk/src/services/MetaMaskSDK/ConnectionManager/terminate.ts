@@ -1,7 +1,14 @@
 import { EventType } from '@metamask/sdk-communication-layer';
-import { STORAGE_PROVIDER_TYPE } from '../../../config';
+import { logger } from '../../../utils/logger';
+import {
+  STORAGE_DAPP_CHAINID,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_PROVIDER_TYPE,
+} from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
+
+const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
 
 /**
  * Terminates the MetaMask connection, switching back to the injected provider if connected via extension.
@@ -20,17 +27,19 @@ export function terminate(instance: MetaMaskSDK) {
     return;
   }
 
+  if (hasLocalStoage) {
+    window.localStorage.removeItem(STORAGE_PROVIDER_TYPE);
+    window.localStorage.removeItem(STORAGE_DAPP_CHAINID);
+    window.localStorage.removeItem(STORAGE_DAPP_SELECTED_ADDRESS);
+  }
+
   // check if connected with extension provider
   // if it is, disconnect from it and switch back to injected provider
   if (instance.extensionActive) {
-    localStorage.removeItem(STORAGE_PROVIDER_TYPE);
     if (instance.options.extensionOnly) {
-      if (instance.debug) {
-        console.warn(
-          `SDK::terminate() extensionOnly --- prevent switching providers`,
-        );
-      }
-
+      logger(
+        `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
+      );
       return;
     }
     // Re-use default extension provider as default
@@ -42,9 +51,9 @@ export function terminate(instance: MetaMaskSDK) {
   }
 
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
-  if (instance.debug) {
-    console.debug(`SDK::terminate()`, instance.remoteConnection);
-  }
+  logger(
+    `[MetaMaskSDK: terminate()] remoteConnection=${instance.remoteConnection}`,
+  );
 
   // Only disconnect if the connection is active
   instance.remoteConnection?.disconnect({

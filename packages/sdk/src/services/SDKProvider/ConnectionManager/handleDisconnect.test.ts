@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ethErrors } from 'eth-rpc-errors';
 import { SDKProvider } from '../../../provider/SDKProvider';
+import * as loggerModule from '../../../utils/logger';
 import { handleDisconnect } from './handleDisconnect';
 
 describe('handleDisconnect', () => {
@@ -8,13 +9,15 @@ describe('handleDisconnect', () => {
   const mockEmit: jest.Mock = jest.fn();
   const mockHandleAccountsChanged: jest.Mock = jest.fn();
   const mockIsConnected: jest.Mock = jest.fn(() => true);
+  const mockGetSelectedAddress = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
 
     mockSDKProvider = {
+      getSelectedAddress: mockGetSelectedAddress,
       state: {
-        debug: false,
         providerStateRequested: true,
       },
       _state: {
@@ -32,18 +35,12 @@ describe('handleDisconnect', () => {
     } as unknown as SDKProvider;
   });
 
-  it('should log debug information when debug is true', () => {
+  it('should log debug information', () => {
     jest.spyOn(console, 'debug').mockImplementation();
     handleDisconnect({ terminate: false, instance: mockSDKProvider });
 
-    expect(console.debug).not.toHaveBeenCalled();
-
-    mockSDKProvider.state.debug = true;
-
-    handleDisconnect({ terminate: false, instance: mockSDKProvider });
-
-    expect(console.debug).toHaveBeenCalledWith(
-      'SDKProvider::handleDisconnect() cleaning up provider state terminate=false',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SDKProvider: handleDisconnect()] cleaning up provider state terminate=false',
       mockSDKProvider,
     );
   });
@@ -51,10 +48,8 @@ describe('handleDisconnect', () => {
   it('should handle terminate flag', () => {
     handleDisconnect({ terminate: true, instance: mockSDKProvider });
 
-    expect(mockSDKProvider.chainId).toBeNull();
     // @ts-ignore
     expect(mockSDKProvider._state.accounts).toBeNull();
-    expect(mockSDKProvider.selectedAddress).toBeNull();
     // @ts-ignore
     expect(mockSDKProvider._state.isUnlocked).toBe(false);
     // @ts-ignore
@@ -91,40 +86,30 @@ describe('handleDisconnect', () => {
     expect(mockHandleAccountsChanged).toHaveBeenCalledWith([]);
   });
 
-  it('should interrupt disconnection and log when not connected and debug is true', () => {
+  it('should interrupt disconnection and log when not connected', () => {
     mockIsConnected.mockReturnValueOnce(false);
-    mockSDKProvider.state.debug = true;
-    const spyConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
 
     handleDisconnect({ terminate: false, instance: mockSDKProvider });
 
-    expect(spyConsoleDebug).toHaveBeenCalledWith(
-      'SDKProvider::handleDisconnect() not connected --- interrup disconnection',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SDKProvider: handleDisconnect()] not connected --- interrupt disconnection',
     );
 
     expect(mockSDKProvider.chainId).toBe('someChainId');
     // @ts-ignore
     expect(mockSDKProvider._state.isConnected).toBe(true);
     expect(mockEmit).not.toHaveBeenCalled();
-
-    spyConsoleDebug.mockRestore();
   });
 
-  it('should interrupt disconnection and not log when not connected and debug is false', () => {
+  it('should interrupt disconnection', () => {
     mockIsConnected.mockReturnValueOnce(false);
-    mockSDKProvider.state.debug = false;
-    const spyConsoleDebug = jest.spyOn(console, 'debug').mockImplementation();
 
     handleDisconnect({ terminate: false, instance: mockSDKProvider });
-
-    expect(spyConsoleDebug).not.toHaveBeenCalled();
 
     expect(mockSDKProvider.chainId).toBe('someChainId');
     // @ts-ignore
     expect(mockSDKProvider._state.isConnected).toBe(true);
     expect(mockEmit).not.toHaveBeenCalled();
-
-    spyConsoleDebug.mockRestore();
   });
 
   it('should not interrupt disconnection when connected', () => {

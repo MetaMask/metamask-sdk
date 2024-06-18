@@ -1,6 +1,7 @@
 import { EventType, ServiceStatus } from '@metamask/sdk';
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleSDKStatusEvent = ({
   debug,
@@ -8,18 +9,16 @@ export const useHandleSDKStatusEvent = ({
 }: EventHandlerProps) => {
   return useCallback(
     (_serviceStatus: ServiceStatus) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::sdk on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`,
-          _serviceStatus,
-        );
-      }
+      logger(
+        `[MetaMaskProvider: useHandleSDKStatusEvent()] on '${EventType.SERVICE_STATUS}/${_serviceStatus.connectionStatus}' event.`,
+        _serviceStatus,
+      );
 
       try {
         // Force trigger rendering
         const temp = JSON.parse(JSON.stringify(_serviceStatus ?? {}));
         setStatus(temp);
-      } catch(err) {
+      } catch (err) {
         console.error(err);
       }
     },

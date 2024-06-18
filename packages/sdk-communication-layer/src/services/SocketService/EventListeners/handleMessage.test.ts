@@ -4,6 +4,7 @@ import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
 import * as ChannelManager from '../ChannelManager';
+import { logger } from '../../../utils/logger';
 import { handleMessage } from './handleMessage';
 
 jest.mock('../ChannelManager');
@@ -12,6 +13,8 @@ const msgToDeEncrypt = 'encryptedMessage';
 
 describe('handleMessage', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   const mockCheckSameId = ChannelManager.checkSameId as jest.Mock;
   const mockEmit = jest.fn();
@@ -45,34 +48,17 @@ describe('handleMessage', () => {
           start: mockStart,
         },
       },
+      remote: {
+        state: {},
+      },
       emit: mockEmit,
     } as unknown as SocketService;
   });
 
-  it('should log debug information when debugging is enabled and the handler is called', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     const handler = handleMessage(instance, channelId);
     handler({ id: 'testId', message: { type: MessageType.PING } });
-
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `SocketService::${
-        instance.state.context
-      }::on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      { type: MessageType.PING },
-    );
-
-    consoleDebugSpy.mockRestore();
-  });
-
-  it('should emit MESSAGE event with ping type when a PING message is received', () => {
-    const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: MessageType.PING } });
-
-    expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: { type: 'ping' },
-    });
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should emit KEY_EXCHANGE when a key_handshake message is received', () => {
@@ -87,7 +73,7 @@ describe('handleMessage', () => {
 
   it('should emit the decrypted MESSAGE when keys are exchanged', () => {
     mockAreKeysExchanged.mockReturnValueOnce(true);
-    mockDecryptMessage.mockReturnValueOnce(
+    mockDecryptMessage.mockReturnValue(
       JSON.stringify({ type: MessageType.PAUSE }),
     );
 
@@ -103,7 +89,7 @@ describe('handleMessage', () => {
     const handler = handleMessage(instance, channelId);
 
     expect(() => {
-      handler({ id: 'testId', message: {}, error: 'Some error' });
+      handler({ id: 'testId', message: { type: '' }, error: 'Some error' });
     }).toThrow('Some error');
   });
 
@@ -114,13 +100,9 @@ describe('handleMessage', () => {
     });
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: {} });
+    handler({ id: 'testId', message: { type: '' } });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'ignore message --- wrong id ',
-      {},
-    );
-
+    expect(consoleErrorSpy).toHaveBeenCalled();
     consoleErrorSpy.mockRestore();
   });
 
@@ -158,7 +140,7 @@ describe('handleMessage', () => {
 
   it('should emit non-encrypted unknown message', () => {
     mockAreKeysExchanged.mockReturnValueOnce(true);
-    mockDecryptMessage.mockReturnValueOnce(
+    mockDecryptMessage.mockReturnValue(
       JSON.stringify({
         type: 'testType',
         data: 'testData',
@@ -175,16 +157,14 @@ describe('handleMessage', () => {
     });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: {
-        type: 'testType',
-        data: 'testData',
-      },
+      type: 'testType',
+      data: 'testData',
     });
   });
 
   it('should set clientsPaused to true if a decrypted PAUSE message is received', () => {
     mockAreKeysExchanged.mockReturnValueOnce(true);
-    mockDecryptMessage.mockReturnValueOnce(
+    mockDecryptMessage.mockReturnValue(
       JSON.stringify({ type: MessageType.PAUSE }),
     );
 
@@ -199,7 +179,7 @@ describe('handleMessage', () => {
     handler({ id: 'testId', message: { type: MessageType.PING } });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
-      message: { type: 'ping' },
+      type: 'ping',
     });
   });
 
@@ -215,7 +195,7 @@ describe('handleMessage', () => {
 
   it('should emit a decrypted message after successful decryption', () => {
     mockAreKeysExchanged.mockReturnValueOnce(true);
-    mockDecryptMessage.mockReturnValueOnce(
+    mockDecryptMessage.mockReturnValue(
       JSON.stringify({ type: 'testType', data: 'testData' }),
     );
 
@@ -225,16 +205,5 @@ describe('handleMessage', () => {
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       message: { type: 'testType', data: 'testData' },
     });
-  });
-
-  it('should start key exchange if an encrypted message is received before keys are exchanged and is an originator', () => {
-    mockAreKeysExchanged.mockReturnValueOnce(false);
-    instance.state.isOriginator = true;
-
-    const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: msgToDeEncrypt });
-
-    // TODO proper error handling
-    expect(true).toBe(true);
   });
 });

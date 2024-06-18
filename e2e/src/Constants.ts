@@ -42,3 +42,6 @@ export const WDIO_ANDROID_UI_AUTOMATOR = 'android=';
 export const WDIO_XPATH = '';
 export const WDIO_ACCESSIBILITY_ID = '~';
 export const WDIO_RESOURCE_ID = 'id:';
+
+const APP_PATH = process.env.APP_PATH as string;
+export const IS_RUNNING_IN_BROWSER_STACK = APP_PATH.startsWith('bs://');

@@ -54,7 +54,7 @@ describe('performSDKInitialization', () => {
     expect(instance.options).toStrictEqual({
       logging: {},
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
-      enableDebug: true,
+      enableAnalytics: true,
       injectProvider: true,
       shouldShimWeb3: true,
       useDeeplink: false,

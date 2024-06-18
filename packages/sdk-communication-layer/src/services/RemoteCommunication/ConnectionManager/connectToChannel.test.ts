@@ -1,11 +1,14 @@
 import { v4 as uuid } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
-import { CommunicationLayer } from '../../../types/CommunicationLayer';
+import { SocketService } from '../../../SocketService';
 import { StorageManager } from '../../../types/StorageManager';
+import { logger } from '../../../utils/logger';
 import { connectToChannel } from './connectToChannel';
 
 describe('connectToChannel', () => {
   let state: RemoteCommunicationState;
+
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -14,7 +17,7 @@ describe('connectToChannel', () => {
       communicationLayer: {
         isConnected: jest.fn(() => false),
         connectToChannel: jest.fn(),
-      } as unknown as CommunicationLayer,
+      } as unknown as SocketService,
       channelId: undefined,
       sessionDuration: 1000,
       context: 'TestContext',
@@ -32,19 +35,14 @@ describe('connectToChannel', () => {
 
   it('should debug log if the channel is already connected', () => {
     const channelId = uuid();
+
     state.communicationLayer = {
       isConnected: jest.fn(() => true),
-    } as unknown as CommunicationLayer;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, state });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::TestContext::connectToChannel() already connected - interrup connection.`,
-    );
-
-    consoleDebugSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should connect to a valid channel', () => {
@@ -53,7 +51,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: mockConnect,
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, state });
 
@@ -70,7 +68,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: jest.fn(),
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     state.storageManager = {
       persistChannelConfig: mockPersist,
@@ -90,7 +88,7 @@ describe('connectToChannel', () => {
     state.communicationLayer = {
       isConnected: jest.fn(() => false),
       connectToChannel: mockConnect,
-    } as unknown as CommunicationLayer;
+    } as unknown as SocketService;
 
     connectToChannel({ channelId, withKeyExchange: true, state });
 
@@ -100,19 +98,12 @@ describe('connectToChannel', () => {
     });
   });
 
-  it('should debug log a valid channelId if debug is enabled', () => {
+  it('should debug log a valid channelId', () => {
     const channelId = uuid();
-    state.debug = true;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
     connectToChannel({ channelId, state });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::${state.context}::connectToChannel() channelId=${channelId}`,
-    );
-
-    consoleDebugSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should set the new channelId in the state', () => {

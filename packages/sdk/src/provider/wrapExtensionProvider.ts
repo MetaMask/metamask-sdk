@@ -1,5 +1,8 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { RPC_METHODS } from '../config';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
+import { MetaMaskSDK } from '../sdk';
+import { logger } from '../utils/logger';
 
 interface RequestArguments {
   method: string;
@@ -8,10 +11,10 @@ interface RequestArguments {
 
 export const wrapExtensionProvider = ({
   provider,
-  debug,
+  sdkInstance,
 }: {
   provider: MetaMaskInpageProvider;
-  debug?: boolean;
+  sdkInstance: MetaMaskSDK;
 }) => {
   // prevent double wrapping an invalid provider (it could happen with older web3onboard implementions)
   // TODO remove after web3onboard is updated
@@ -20,17 +23,21 @@ export const wrapExtensionProvider = ({
   }
 
   return new Proxy(provider, {
-    get(target, propKey: keyof MetaMaskInpageProvider) {
+    get(target, propKey) {
       if (propKey === 'request') {
         return async function (args: RequestArguments) {
-          if (debug) {
-            console.debug(
-              '[wrapExtensionProvider] Overwriting request method, args:',
-              args,
-            );
-          }
+          logger(`[wrapExtensionProvider()] Overwriting request method`, args);
 
           const { method, params } = args;
+
+          const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
+          if (trackEvent) {
+            sdkInstance.analytics?.send({
+              event: TrackingEvents.SDK_RPC_REQUEST,
+              params: { method, from: 'extension' },
+            });
+          }
+
           // special method handling
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
             // params is a list of RPCs to call
@@ -43,13 +50,54 @@ export const wrapExtensionProvider = ({
               responses.push(response);
             }
 
-            return responses;
+            const resp = await target.request(args);
+            if (trackEvent) {
+              sdkInstance.analytics?.send({
+                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+                params: { method, from: 'extension' },
+              });
+            }
+            return resp;
           }
 
-          return target.request(args);
+          let resp;
+          try {
+            resp = await target.request(args);
+            return resp;
+          } catch (error) {
+            // Ignore user rejected request
+          } finally {
+            if (trackEvent) {
+              sdkInstance.analytics?.send({
+                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+                params: { method, from: 'extension' },
+              });
+            }
+          }
+          return resp;
+        };
+      } else if (propKey === 'getChainId') {
+        return function () {
+          return provider.chainId;
+        };
+      } else if (propKey === 'getNetworkVersion') {
+        return function () {
+          return provider.networkVersion;
+        };
+      } else if (propKey === 'getSelectedAddress') {
+        return function () {
+          return provider.selectedAddress;
+        };
+      } else if (propKey === 'isConnected') {
+        return function () {
+          // TODO: allowed because of issue on inpavge provider
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return provider._state.isConnected;
         };
       }
-      return target[propKey];
+
+      return target[propKey as keyof MetaMaskInpageProvider];
     },
   });
 };

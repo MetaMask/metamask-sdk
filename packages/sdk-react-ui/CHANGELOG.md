@@ -6,8 +6,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.14.2]
+## [0.20.4]
+### Added
+- feat: create a new SDK for React Native ([#859](https://github.com/MetaMask/metamask-sdk/pull/859))
+
+## [0.20.3]
 ### Uncategorized
+- feat: force change ([#848](https://github.com/MetaMask/metamask-sdk/pull/848))
+
+## [0.20.2]
+### Uncategorized
+- skip version because of publishing issue
+
+## [0.20.1]
+### Uncategorized
+- feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
+- Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
+- Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
+- Revert "feat: release 62.0.0" ([#837](https://github.com/MetaMask/metamask-sdk/pull/837))
+- feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
+
+## [0.20.0]
+### Added
+- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
+
+## [0.18.6]
+### Added
+- fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
+
+## [0.18.5]
+### Added
+- feat: update 'sdk-react' to be in '0.18.5' ([#810](https://github.com/MetaMask/metamask-sdk/pull/810))
+
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.18.0]
+### Added
+- feat: update the examples apps to the latest sdk version '0.17.2' ([#773](https://github.com/MetaMask/metamask-sdk/pull/773))
+
+## [0.17.0]
+### Added
+- feat: update the "@metamask/providers" package to version 15.0.0 ([#752](https://github.com/MetaMask/metamask-sdk/pull/752))
+
+## [0.16.0]
+### Added
+- feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
+- feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
+
+## [0.15.0]
+### Added
+- feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
+
+## [0.14.3]
+### Added
+- fix: 'sdk-react-ui' MetaMaskModal is not showing balance ([#593](https://github.com/MetaMask/metamask-sdk/pull/593))
+
+## [0.14.2]
+### Added
 - update: updates Wagmi dependency on `sdk-react-ui` to 1.4.12 ([#588](https://github.com/MetaMask/metamask-sdk/pull/588))
 
 ## [0.14.1]
@@ -52,9 +110,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0]
 ### Added
-- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
-- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
-- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk.git/pull/437))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
+- feat: add 'tw-' prefix to tailwind classes in the sdk-react-ui package ([#437](https://github.com/MetaMask/metamask-sdk/pull/437))
 
 ## [0.10.1]
 ### Added
@@ -90,7 +148,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.4...HEAD
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.3...@metamask/sdk-react-ui@0.20.4
+[0.20.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.2...@metamask/sdk-react-ui@0.20.3
+[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.1...@metamask/sdk-react-ui@0.20.2
+[0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.0...@metamask/sdk-react-ui@0.20.1
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.6...@metamask/sdk-react-ui@0.20.0
+[0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.5...@metamask/sdk-react-ui@0.18.6
+[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.4...@metamask/sdk-react-ui@0.18.5
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.18.0...@metamask/sdk-react-ui@0.18.4
+[0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.17.0...@metamask/sdk-react-ui@0.18.0
+[0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.16.0...@metamask/sdk-react-ui@0.17.0
+[0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.15.0...@metamask/sdk-react-ui@0.16.0
+[0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.3...@metamask/sdk-react-ui@0.15.0
+[0.14.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.2...@metamask/sdk-react-ui@0.14.3
 [0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.1...@metamask/sdk-react-ui@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.14.0...@metamask/sdk-react-ui@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.13.0...@metamask/sdk-react-ui@0.14.0

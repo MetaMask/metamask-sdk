@@ -7,7 +7,7 @@ class SignModalComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
+          '//android.widget.TextView[@text="Sign"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Sign"'),
       }),
@@ -26,7 +26,17 @@ class SignModalComponent {
   }
 
   async tapSignApproval(): Promise<void> {
-    await (await this.signApprovalButton).waitForDisplayed({ timeout: 10000 });
+    await (
+      await this.signApprovalButton
+    ).waitForDisplayed({
+      timeout: 5000,
+    });
+
+    await (
+      await this.signApprovalButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
     await (await this.signApprovalButton).click();
   }
 

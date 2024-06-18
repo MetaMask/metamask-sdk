@@ -2,6 +2,7 @@ import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { MessageType } from '../../../types/MessageType';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { onCommunicationLayerMessage } from './onCommunicationLayerMessage';
 import { handleOriginatorInfoMessage } from './handleOriginatorInfoMessage';
 import { handleAuthorizedMessage } from './handleAuthorizedMessage';
@@ -43,6 +44,8 @@ describe('onCommunicationLayerMessage', () => {
   let instance: RemoteCommunication;
   let message: CommunicationLayerMessage;
 
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
+
   const mockHandleOriginatorInfoMessage =
     handleOriginatorInfoMessage as jest.MockedFunction<
       typeof handleOriginatorInfoMessage
@@ -63,12 +66,14 @@ describe('onCommunicationLayerMessage', () => {
   });
 
   it('should log the message if debug mode is enabled', () => {
-    instance.state.debug = true;
-    const consoleDebugSpy = jest.spyOn(console, 'debug');
     message = { type: MessageType.READY }; // Any arbitrary message type
+
     onCommunicationLayerMessage(message, instance);
-    expect(consoleDebugSpy).toHaveBeenCalled();
-    consoleDebugSpy.mockRestore();
+
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: onCommunicationLayerMessage()] context=test-context on 'message' typeof=object",
+      message,
+    );
   });
 
   it('should set the ready status to true', () => {

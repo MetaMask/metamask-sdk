@@ -2,6 +2,7 @@ import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
+import * as loggerModule from '../../../utils/logger';
 import { connectWithExtensionProvider } from './connectWithExtensionProvider';
 
 jest.mock('../../../sdk');
@@ -11,7 +12,7 @@ describe('connectWithExtensionProvider', () => {
   const mockRequest: jest.Mock = jest.fn(
     () => new Promise((resolve) => setTimeout(resolve, 0)),
   );
-
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
   const mockSendAnalyticsEvent = jest.fn();
 
   const mockLocalStorage = {
@@ -30,6 +31,9 @@ describe('connectWithExtensionProvider', () => {
       sdkProvider: null,
       activeProvider: {
         request: mockRequest,
+      },
+      options: {
+        enableAnalytics: true,
       },
       emit: jest.fn(),
       analytics: {
@@ -70,23 +74,22 @@ describe('connectWithExtensionProvider', () => {
 
     await connectWithExtensionProvider(instance);
 
-    expect(consoleWarnSpy).toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      `[MetaMaskSDK: connectWithExtensionProvider()] can't request accounts error`,
+      new Error('Some error'),
+    );
   });
 
-  it('should log debug information if instance.debug is true', async () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.debug = true;
-
+  it('should log debug information', async () => {
     await connectWithExtensionProvider(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SDK::connectWithExtensionProvider()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[MetaMaskSDK: connectWithExtensionProvider()] ',
       instance,
     );
 
-    expect(consoleDebugSpy).toHaveBeenLastCalledWith(
-      'SDK::connectWithExtensionProvider() accounts',
-      undefined,
+    expect(spyLogger).toHaveBeenLastCalledWith(
+      '[MetaMaskSDK: connectWithExtensionProvider()] accounts=undefined',
     );
   });
 

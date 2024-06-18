@@ -1,12 +1,13 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { handleChannelCreatedEvent } from './handleChannelCreatedEvent';
 
 describe('handleChannelCreatedEvent', () => {
   let instance: RemoteCommunication;
-  const mockEmit = jest.fn();
 
-  jest.spyOn(console, 'debug').mockImplementation();
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
+  const mockEmit = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -28,17 +29,10 @@ describe('handleChannelCreatedEvent', () => {
     const channelId = 'sampleChannelId';
     const handler = handleChannelCreatedEvent(instance);
     handler(channelId);
-    expect(console.debug).toHaveBeenCalledWith(
-      `RemoteCommunication::testContext::on 'channel_created' channelId=${channelId}`,
-    );
-  });
 
-  it('should not log the event details if debugging is disabled', () => {
-    instance.state.debug = false;
-    const channelId = 'sampleChannelId';
-    const handler = handleChannelCreatedEvent(instance);
-    handler(channelId);
-    expect(console.debug).not.toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[RemoteCommunication: handleChannelCreatedEvent()] context=testContext on 'channel_created' channelId=sampleChannelId",
+    );
   });
 
   it('should emit CHANNEL_CREATED event with the channel ID', () => {

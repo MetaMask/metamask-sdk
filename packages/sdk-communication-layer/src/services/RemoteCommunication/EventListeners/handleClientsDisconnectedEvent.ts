@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -25,20 +26,21 @@ export function handleClientsDisconnectedEvent(
 ) {
   return (channelId: string) => {
     const { state } = instance;
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}]::on 'clients_disconnected' channelId=${channelId}`,
-      );
-    }
 
-    state.clientsConnected = false;
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleClientsDisconnectedEvent()] context=${state.context} on 'clients_disconnected' channelId=${channelId}`,
+    );
+
+    // Ignore status change when relay persistence is available
+    if (!state.relayPersistence) {
+      state.clientsConnected = false;
+      state.ready = false;
+      state.authorized = false;
+    }
 
     // Propagate the disconnect event to clients.
     instance.emit(EventType.CLIENTS_DISCONNECTED, state.channelId);
     instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-
-    state.ready = false;
-    state.authorized = false;
 
     if (state.analytics && state.channelId) {
       SendAnalytics(

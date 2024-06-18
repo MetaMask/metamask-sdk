@@ -1,15 +1,14 @@
-import { PlatformManager } from '../../Platform/PlatfformManager';
 import { Ethereum } from '../Ethereum';
+import * as loggerModule from '../../utils/logger';
 import { isMetaMaskInstalled } from './isMetaMaskInstalled';
 
 jest.mock('../Ethereum');
 
 describe('isMetaMaskInstalled', () => {
-  let instance: jest.Mocked<PlatformManager>;
-
   const mockEthereumGetProvider = Ethereum.getProvider as jest.MockedFunction<
     typeof Ethereum.getProvider
   >;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -19,22 +18,15 @@ describe('isMetaMaskInstalled', () => {
       isConnected: () => false,
     } as any);
 
-    instance = {
-      state: {
-        debug: false,
-      },
-    } as unknown as jest.Mocked<PlatformManager>;
-
     global.window = {} as any;
   });
 
-  it('should console debug when state.debug is true', () => {
-    instance.state.debug = true;
-    jest.spyOn(console, 'debug').mockImplementation();
+  it('should console debug', () => {
+    isMetaMaskInstalled();
 
-    isMetaMaskInstalled(instance);
-
-    expect(console.debug).toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[PlatfformManager: isMetaMaskInstalled()] isMetaMask=${false} isConnected=${false}`,
+    );
   });
 
   it('should return true when Ethereum.getProvider isMetaMask and isConnected are true', () => {
@@ -43,7 +35,7 @@ describe('isMetaMaskInstalled', () => {
       isConnected: () => true,
     } as any);
 
-    expect(isMetaMaskInstalled(instance)).toBe(true);
+    expect(isMetaMaskInstalled()).toBe(true);
   });
 
   it('should return false when Ethereum.getProvider isMetaMask is false', () => {
@@ -52,7 +44,7 @@ describe('isMetaMaskInstalled', () => {
       isConnected: () => true,
     } as any);
 
-    expect(isMetaMaskInstalled(instance)).toBe(false);
+    expect(isMetaMaskInstalled()).toBe(false);
   });
 
   it('should return false when Ethereum.getProvider isConnected is false', () => {
@@ -61,7 +53,7 @@ describe('isMetaMaskInstalled', () => {
       isConnected: () => false,
     } as any);
 
-    expect(isMetaMaskInstalled(instance)).toBe(false);
+    expect(isMetaMaskInstalled()).toBe(false);
   });
 
   it('should return true when window.ethereum isMetaMask and isConnected are true', () => {
@@ -76,12 +68,12 @@ describe('isMetaMaskInstalled', () => {
       },
     } as any;
 
-    expect(isMetaMaskInstalled(instance)).toBe(true);
+    expect(isMetaMaskInstalled()).toBe(true);
   });
 
   it('should return false when neither Ethereum.getProvider nor window.ethereum exists', () => {
     global.window = {} as any;
 
-    expect(isMetaMaskInstalled(instance)).toBe(false);
+    expect(isMetaMaskInstalled()).toBe(false);
   });
 });

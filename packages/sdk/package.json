@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.14.1",
+  "version": "0.20.5",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "url": "https://github.com/MetaMask/metamask-sdk",
     "directory": "packages/sdk"
   },
   "main": "dist/node/cjs/metamask-sdk.js",
@@ -27,43 +27,40 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf ./dist",
+    "size": "node bundle-size && size-limit",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "prepack": "../../scripts/prepack.sh",
-    "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh",
     "publish:preview": "yarn npm publish --tag preview",
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage --passWithNoTests",
+    "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js",
     "test:dev": "jest -c ./jest.config.ts --detectOpenHandles",
     "watch": "rollup -c -w"
   },
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
-    "@metamask/post-message-stream": "^6.1.0",
-    "@metamask/providers": "^10.2.1",
+    "@metamask/providers": "^15.0.0",
     "@metamask/sdk-communication-layer": "workspace:*",
     "@metamask/sdk-install-modal-web": "workspace:*",
-    "@react-native-async-storage/async-storage": "^1.17.11",
     "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
     "cross-fetch": "^4.0.0",
+    "debug": "^4.3.4",
     "eciesjs": "^0.3.15",
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",
-    "extension-port-stream": "^2.0.1",
     "i18next": "22.5.1",
-    "i18next-browser-languagedetector": "^7.1.0",
+    "i18next-browser-languagedetector": "7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "qrcode-terminal-nooctal": "^0.12.1",
-    "react-i18next": "^13.2.2",
     "react-native-webview": "^11.26.0",
-    "readable-stream": "^2.3.7",
+    "readable-stream": "^3.6.2",
     "rollup-plugin-visualizer": "^5.9.2",
     "socket.io-client": "^4.5.1",
     "util": "^0.12.4",
@@ -76,10 +73,12 @@
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
-    "@rollup/plugin-commonjs": "^25.0.0",
+    "@react-native-async-storage/async-storage": "^1.19.6",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.1",
+    "@size-limit/preset-big-lib": "^11.0.2",
     "@types/dom-screen-wake-lock": "^1.0.2",
     "@types/node": "^20.1.3",
     "@types/pump": "^1.1.1",
@@ -97,6 +96,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "prettier": "^2.3.0",
     "react": "^18.2.0",
+    "react-dom": "18.2.0",
     "rimraf": "^4.4.0",
     "rollup": "^3.21.7",
     "rollup-plugin-jscc": "^2.0.0",
@@ -104,7 +104,9 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-polyfill-node": "^0.11.0",
+    "rollup-plugin-sizes": "^1.0.6",
     "rollup-plugin-typescript2": "^0.31.2",
+    "size-limit": "^11.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "tslib": "latest",
@@ -112,13 +114,13 @@
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-native": "*"
+    "react-dom": "^18.2.0"
   },
   "peerDependenciesMeta": {
     "react": {
       "optional": true
     },
-    "react-native": {
+    "react-dom": {
       "optional": true
     }
   },

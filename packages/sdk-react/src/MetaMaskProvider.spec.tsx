@@ -9,10 +9,13 @@ import {
 } from '@metamask/sdk';
 import MetaMaskProvider, { SDKContext } from './MetaMaskProvider';
 import { EthereumRpcError } from 'eth-rpc-errors';
+import * as loggerModule from './utils/logger';
 
 jest.mock('@metamask/sdk');
 
 describe('MetaMaskProvider Component', () => {
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
+
   const mockMetaMaskSDK = MetaMaskSDK as jest.MockedClass<typeof MetaMaskSDK>;
   const initMock = jest.fn().mockResolvedValue(true);
 
@@ -24,6 +27,8 @@ describe('MetaMaskProvider Component', () => {
   const mockProviderOn = jest.fn();
   const mockIsConnected = jest.fn().mockReturnValue(true);
   const mockRequest = jest.fn();
+  const mockGetChainId = jest.fn()
+  const mockGetSelectedAddress = jest.fn()
 
   const dummyChild = <div>Test Child</div>;
   let sdkOptions: MetaMaskSDKOptions = {
@@ -45,12 +50,15 @@ describe('MetaMaskProvider Component', () => {
           init: initMock,
           isExtensionActive: mockIsExtensionActive,
           getProvider: jest.fn().mockReturnValue({
+            getSelectedAddress: mockGetSelectedAddress,
+            getChainId: mockGetChainId,
             isConnected: mockIsConnected,
             selectedAddress: '0xYourAddress',
             on: mockProviderOn,
             removeListener: mockProviderRemoveListener,
             request: mockRequest,
           }),
+          getChannelId: jest.fn().mockReturnValue('MOCKED_channelId'),
           _getConnection: jest.fn(),
         } as unknown as MetaMaskSDK),
     );
@@ -168,9 +176,8 @@ describe('MetaMaskProvider Component', () => {
 
       expect(initMock).toHaveBeenCalledTimes(1);
     });
-    it('should print debug logs when debug is true', async () => {
-      const consoleSpy = jest.spyOn(console, 'debug').mockImplementation();
 
+    it('should print debug logs', async () => {
       await act(async () => {
         render(
           <MetaMaskProvider
@@ -181,12 +188,10 @@ describe('MetaMaskProvider Component', () => {
         );
       });
 
-      expect(consoleSpy).toHaveBeenCalled();
-      expect(consoleSpy.mock.calls[0][0]).toContain(
-        '[MetamaskProvider] init SDK Provider listeners',
+      expect(spyLogger).toHaveBeenCalled();
+      expect(spyLogger.mock.calls[0][0]).toContain(
+        '[MetaMaskProviderClient] init SDK Provider listeners',
       );
-
-      consoleSpy.mockRestore();
     });
 
     it('should not print debug logs when debug is false or undefined', () => {

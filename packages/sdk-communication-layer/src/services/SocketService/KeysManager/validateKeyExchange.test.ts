@@ -1,11 +1,14 @@
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
+import { logger } from '../../../utils/logger';
 import { validateKeyExchange } from './validateKeyExchange';
 
 describe('validateKeyExchange', () => {
   let instance: SocketService;
-  const mockConsoleDebug = jest.spyOn(console, 'debug');
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
+
   const mockAreKeysExchanged = jest.fn();
   const testMessage: CommunicationLayerMessage = {
     type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
@@ -17,12 +20,12 @@ describe('validateKeyExchange', () => {
 
     instance = {
       state: {
-        debug: false,
         context: 'testContext',
         keyExchange: {
           areKeysExchanged: mockAreKeysExchanged,
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -48,9 +51,6 @@ describe('validateKeyExchange', () => {
       // do nothing
     }
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `SocketService::testContext::sendMessage() ERROR keys not exchanged`,
-      testMessage,
-    );
+    expect(spyLogger).toHaveBeenCalled();
   });
 });

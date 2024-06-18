@@ -1,7 +1,9 @@
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
+import { logger } from '../../../utils/logger';
 import { clean } from './clean';
 
 describe('clean', () => {
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   let state: RemoteCommunicationState;
 
   beforeEach(() => {
@@ -27,23 +29,11 @@ describe('clean', () => {
     expect(state.originatorConnectStarted).toBe(false);
   });
 
-  it('should log a debug message if debug is true', () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-
-    state.debug = true;
-
+  it('should log a debug message', () => {
     clean(state);
 
-    expect(console.debug).toHaveBeenCalledWith(
-      'RemoteCommunication::test::clean()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: clean()] context=test',
     );
-  });
-
-  it('should not log a debug message if debug is false', () => {
-    jest.spyOn(console, 'debug').mockImplementation();
-
-    clean(state);
-
-    expect(console.debug).not.toHaveBeenCalled();
   });
 });

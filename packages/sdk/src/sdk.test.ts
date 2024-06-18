@@ -72,16 +72,22 @@ describe('MetaMaskSDK', () => {
       expect(sdk.getProvider()).toBe(mockProvider);
     });
 
-    it('should throw error when getting undefined provider', () => {
-      expect(() => sdk.getProvider()).toThrow(
-        'SDK state invalid -- undefined provider',
+    it('should log warn message when getting undefined provider', () => {
+      const spyConsoleWarn = jest.spyOn(console, 'warn');
+      sdk.getProvider();
+
+      expect(spyConsoleWarn).toHaveBeenCalledWith(
+        'MetaMaskSDK: No active provider found',
       );
     });
 
-    it('should throw error if SDK is not initialized when calling getProvider', () => {
+    it('should log warn message if SDK is not initialized when calling getProvider', () => {
+      const spyConsoleWarn = jest.spyOn(console, 'warn');
+
       sdk.activeProvider = undefined;
-      expect(() => sdk.getProvider()).toThrow(
-        'SDK state invalid -- undefined provider',
+      sdk.getProvider();
+      expect(spyConsoleWarn).toHaveBeenCalledWith(
+        'MetaMaskSDK: No active provider found',
       );
     });
   });
@@ -187,18 +193,6 @@ describe('MetaMaskSDK', () => {
       });
 
       expect(sdk.activeProvider).toBeUndefined();
-    });
-
-    it('should have a desktop preference when preferDesktop is true', () => {
-      sdk = new MetaMaskSDK({
-        preferDesktop: true,
-        dappMetadata: {
-          name: 'Test DApp',
-          url: 'http://test-dapp.com',
-        },
-      });
-
-      expect(sdk.options.preferDesktop).toBe(true);
     });
   });
 

@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 
@@ -17,10 +18,15 @@ export function handlesClientsDisconnected(
 ) {
   return () => {
     instance.state.clientsConnected = false;
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${instance.state.context}::setupChannelListener::on 'clients_disconnected-${channelId}'`,
+    logger.SocketService(
+      `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}'`,
+    );
+
+    if (instance.remote.state.relayPersistence) {
+      logger.SocketService(
+        `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}' - relayPersistence enabled, skipping key exchange cleanup.`,
       );
+      return;
     }
 
     if (instance.state.isOriginator && !instance.state.clientsPaused) {

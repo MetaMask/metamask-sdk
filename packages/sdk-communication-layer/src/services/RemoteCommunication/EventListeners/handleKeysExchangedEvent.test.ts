@@ -5,6 +5,7 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { setLastActiveDate } from '../StateManger';
+import { logger } from '../../../utils/logger';
 import { handleKeysExchangedEvent } from './handleKeysExchangedEvent';
 
 jest.mock('../../../Analytics', () => {
@@ -17,10 +18,11 @@ jest.mock('../StateManger');
 describe('handleKeysExchangedEvent', () => {
   let instance: RemoteCommunication;
 
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
+
   const mockSetConnectionStatus = jest.fn();
   const mockSendMessage = jest.fn();
 
-  jest.spyOn(console, 'debug').mockImplementation();
   jest.spyOn(console, 'error').mockImplementation();
 
   beforeEach(() => {
@@ -36,7 +38,10 @@ describe('handleKeysExchangedEvent', () => {
         walletInfo: { version: '1.0' },
         communicationLayer: {
           sendMessage: mockSendMessage,
-          getKeyInfo: () => ({ keysExchanged: true }),
+          getKeyInfo: () => ({
+            keysExchanged: true,
+            ecies: { public: '', private: '' },
+          }),
         },
         communicationServerUrl: 'mockUrl',
       },
@@ -44,7 +49,7 @@ describe('handleKeysExchangedEvent', () => {
     } as unknown as RemoteCommunication;
   });
 
-  it('should log diagnostic information when debug is enabled', () => {
+  it('should log diagnostic information', () => {
     const handler = handleKeysExchangedEvent(
       instance,
       CommunicationLayerPreference.SOCKET,
@@ -54,7 +59,8 @@ describe('handleKeysExchangedEvent', () => {
       originatorInfo: {} as OriginatorInfo,
       originator: {} as OriginatorInfo,
     });
-    expect(console.debug).toHaveBeenCalled();
+
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should update the instance connection status to LINKED', () => {

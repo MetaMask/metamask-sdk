@@ -17,10 +17,11 @@ config.capabilities = [
     'appium:appActivity': process.env.APP_ACTIVITY,
     'appium:newCommandTimeout': 360,
     'appium:appPackage': process.env.BUNDLE_ID,
+    'appium:otherApps': process.env.RN_TEST_APP_PATH ?? '',
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,
     // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
   },
 ];
 
-exports.config = config;
+export { config };

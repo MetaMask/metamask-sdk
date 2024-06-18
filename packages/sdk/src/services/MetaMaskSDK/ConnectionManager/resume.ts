@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 
 /**
@@ -12,11 +13,13 @@ import { MetaMaskSDK } from '../../../sdk';
  */
 export async function resume(instance: MetaMaskSDK) {
   if (!instance.remoteConnection?.getConnector()?.isReady()) {
-    if (instance.debug) {
-      console.debug(`SDK::resume channel`);
-    }
+    logger(
+      `[MetaMaskSDK: resume()] channel is not ready -- starting connection`,
+    );
+
     instance.remoteConnection?.startConnection();
-  } else if (instance.debug) {
-    console.debug(`SDK::resume channel is ready`);
+    return;
   }
+
+  logger(`[MetaMaskSDK: resume()] channel is ready`);
 }

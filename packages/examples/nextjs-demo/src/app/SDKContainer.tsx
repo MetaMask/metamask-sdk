@@ -83,9 +83,9 @@ export default function SDKContainer() {
 
     // activeProvider is mapped to window.ethereum.
     console.debug(`App::useEffect setup active provider listeners`);
-    if (window.ethereum?.selectedAddress) {
+    if (window.ethereum?.getSelectedAddress()) {
       console.debug(`App::useEffect setting account from window.ethereum `);
-      setAccount(window.ethereum?.selectedAddress);
+      setAccount(window.ethereum?.getSelectedAddress() ?? '');
       setConnected(true);
     } else {
       setConnected(false);
@@ -100,12 +100,12 @@ export default function SDKContainer() {
     const onInitialized = () => {
       console.debug(`App::useEffect on _initialized`);
       setConnected(true);
-      if (window.ethereum?.selectedAddress) {
-        setAccount(window.ethereum?.selectedAddress);
+      if (window.ethereum?.getSelectedAddress()) {
+        setAccount(window.ethereum?.getSelectedAddress() ?? '');
       }
 
-      if (window.ethereum?.chainId) {
-        setChain(window.ethereum.chainId);
+      if (window.ethereum?.getChainId()) {
+        setChain(window.ethereum.getChainId());
       }
     };
 
@@ -203,20 +203,20 @@ export default function SDKContainer() {
         msg: 'Connect + Sign message'
       });
       setResponse(signResult);
-      setAccount(window.ethereum?.selectedAddress ?? '');
+      setAccount(window.ethereum?.getSelectedAddress() ?? '');
       setConnected(true);
-      setChain(window.ethereum?.chainId ?? '');
+      setChain(window.ethereum?.getChainId() ?? '');
     } catch (err) {
       console.warn(`failed to connect..`, err);
     }
   };
 
   const eth_signTypedData_v4 = async () => {
-    if (!activeProvider || !activeProvider.chainId) {
+    if (!activeProvider || !activeProvider.getChainId()) {
       setResponse(`invalid ethereum provider`);
       return;
     }
-    const result = await send_eth_signTypedData_v4(activeProvider, activeProvider.chainId);
+    const result = await send_eth_signTypedData_v4(activeProvider, activeProvider.getChainId());
     setResponse(result);
   };
 
@@ -233,7 +233,7 @@ export default function SDKContainer() {
     const to = '0x0000000000000000000000000000000000000000';
     const transactionParameters = {
       to, // Required except during contract publications.
-      from: activeProvider?.selectedAddress, // must match user's active address.
+      from: activeProvider?.getSelectedAddress(), // must match user's active address.
       value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
     };
 
@@ -390,7 +390,7 @@ export default function SDKContainer() {
                 Send Transaction
               </button>
 
-              { activeProvider?.chainId === '0x1' ? (
+              { activeProvider?.getChainId() === '0x1' ? (
                 <button
                   className={'button-normal'}
                   style={{ padding: 10, margin: 10 }}

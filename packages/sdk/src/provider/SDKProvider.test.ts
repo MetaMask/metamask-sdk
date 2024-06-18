@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { handleDisconnect } from '../services/SDKProvider/ConnectionManager/handleDisconnect';
 import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
 import { initializeStateAsync } from '../services/SDKProvider/InitializationManager/initializeStateAsync';
@@ -40,7 +40,6 @@ describe('SDKProvider', () => {
   const sdkProviderProps: SDKProviderProps = {
     connectionStream: mockStream,
     shouldSendMetadata: false,
-    debug: true,
     autoRequestAccounts: false,
   };
 
@@ -49,10 +48,6 @@ describe('SDKProvider', () => {
   });
 
   describe('Initialization', () => {
-    it('should set debug mode correctly', () => {
-      expect(provider.state.debug).toBe(true);
-    });
-
     it('should set autoRequestAccounts correctly', () => {
       expect(provider.state.autoRequestAccounts).toBe(false);
     });

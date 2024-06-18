@@ -29,16 +29,18 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableDebug: true,
+        enableAnalytics: true,
+        preferDesktop: false,
         infuraAPIKey,
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
         },
+        extensionOnly: false,
         logging: {
           developerMode: true,
+          remoteLayer: true,
+          serviceLayer: true,
           sdk: true,
-          remoteLayer: false,
-          serviceLayer: false,
           plaintext: true,
         },
         useDeeplink,
@@ -66,6 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SDKConfigProvider
         initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
         initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}
+        debug={true}
       >
         <WithSDKConfig>
           <UIProvider>

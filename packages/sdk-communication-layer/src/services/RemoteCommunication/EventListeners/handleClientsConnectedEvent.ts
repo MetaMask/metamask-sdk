@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -25,15 +26,11 @@ export function handleClientsConnectedEvent(
   return () => {
     const { state } = instance;
     // Propagate the event to manage different loading states on the ui.
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::on 'clients_connected' channel=${
-          state.channelId
-        } keysExchanged=${
-          state.communicationLayer?.getKeyInfo()?.keysExchanged
-        }`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleClientsConnectedEvent()] on 'clients_connected' channel=${
+        state.channelId
+      } keysExchanged=${state.communicationLayer?.getKeyInfo()?.keysExchanged}`,
+    );
 
     if (state.analytics) {
       const requestEvent = state.isOriginator

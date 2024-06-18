@@ -1,21 +1,18 @@
+import * as loggerModule from '../../utils/logger';
 import PendingModal from './pendingModal-nodejs';
 
 describe('PendingModal', () => {
-  let consoleLogSpy: jest.SpyInstance;
-  let consoleInfoSpy: jest.SpyInstance;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
-    consoleInfoSpy = jest.spyOn(console, 'info').mockImplementation();
   });
 
   it('should log initial message upon invocation', () => {
     PendingModal();
 
-    expect(consoleLogSpy).toHaveBeenCalledWith(
-      'Please open the MetaMask wallet app and confirm the connection. Thank you!',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!',
     );
   });
 
@@ -36,8 +33,8 @@ describe('PendingModal', () => {
 
     result.updateOTPValue(otpValue);
 
-    expect(consoleInfoSpy).toHaveBeenCalledWith(
-      `Choose the following value on your metamask mobile wallet: ${otpValue}`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[UI: pendingModal-nodejs: PendingModal()] Choose the following value on your metamask mobile wallet: 123456',
     );
   });
 
@@ -46,7 +43,9 @@ describe('PendingModal', () => {
 
     result.updateOTPValue('');
 
-    expect(consoleInfoSpy).not.toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!',
+    );
   });
 
   describe('mount()', () => {
@@ -55,8 +54,8 @@ describe('PendingModal', () => {
 
       result.mount();
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        'Please open the MetaMask wallet app and confirm the connection. Thank you!',
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!',
       );
     });
   });
@@ -67,8 +66,8 @@ describe('PendingModal', () => {
 
       result.unmount();
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        'Please open the MetaMask wallet app and confirm the connection. Thank you!',
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!',
       );
     });
   });
@@ -80,8 +79,8 @@ describe('PendingModal', () => {
 
       result.updateOTPValue(otpValue);
 
-      expect(consoleInfoSpy).toHaveBeenCalledWith(
-        `Choose the following value on your metamask mobile wallet: ${otpValue}`,
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[UI: pendingModal-nodejs: PendingModal()] Choose the following value on your metamask mobile wallet: 123456',
       );
     });
 
@@ -90,7 +89,9 @@ describe('PendingModal', () => {
 
       result.updateOTPValue('');
 
-      expect(consoleInfoSpy).not.toHaveBeenCalled();
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!',
+      );
     });
   });
 });

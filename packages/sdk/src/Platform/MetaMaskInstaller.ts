@@ -42,19 +42,19 @@ export class MetaMaskInstaller {
   };
 
   public constructor({
-    preferDesktop,
     remote,
+    preferDesktop,
     platformManager,
     debug = false,
   }: InstallerProps) {
-    this.state.preferDesktop = preferDesktop;
     this.state.remote = remote;
+    this.state.preferDesktop = preferDesktop;
     this.state.platformManager = platformManager;
     this.state.debug = debug;
   }
 
   startDesktopOnboarding() {
-    return startDesktopOnboarding(this);
+    return startDesktopOnboarding();
   }
 
   async redirectToProperInstall() {

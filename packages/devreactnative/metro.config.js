@@ -71,7 +71,7 @@ const config = {
     }),
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },
-  watchFolders: [sdkRootPath],
+  watchFolders: [sdkRootPath+'/packages/'],
   resolver: {
     extraNodeModules: {
       ...extraNodeModules,

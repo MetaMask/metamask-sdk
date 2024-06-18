@@ -7,6 +7,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import * as loggerModule from '../../../utils/logger';
 import { initializeConnector } from './initializeConnector';
 
 jest.mock('@metamask/sdk-communication-layer');
@@ -15,6 +16,7 @@ describe('initializeConnector', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
   const mockRemoteCommunication = RemoteCommunication as unknown as jest.Mock;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -29,7 +31,7 @@ describe('initializeConnector', () => {
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       transports: [],
       _source: 'source',
-      enableDebug: true,
+      enableAnalytics: true,
       platformManager: {
         getPlatformType: jest.fn().mockReturnValue('platformType'),
       },
@@ -78,13 +80,12 @@ describe('initializeConnector', () => {
     );
   });
 
-  it('should print debug messages when developerMode is true', () => {
-    state.developerMode = true;
-    jest.spyOn(console, 'debug').mockImplementation();
-
+  it('should print debug messages', () => {
     initializeConnector(state, options);
 
-    expect(console.debug).toHaveBeenCalled();
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[RemoteConnection: initializeConnector()] initialize connector`,
+    );
   });
 
   it('should handle when platformManager.getPlatformType() returns undefined', () => {

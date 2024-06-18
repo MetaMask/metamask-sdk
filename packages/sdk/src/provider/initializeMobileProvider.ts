@@ -14,9 +14,11 @@ import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
+import { logger } from '../utils/logger';
 import { wait } from '../utils/wait';
+import { extensionConnectWithOverwrite } from './extensionConnectWithOverwrite';
 
-const initializeMobileProvider = ({
+const initializeMobileProvider = async ({
   checkInstallationOnAllCalls = false,
   communicationLayerPreference,
   injectProvider,
@@ -44,17 +46,48 @@ const initializeMobileProvider = ({
     platformManager,
     communicationLayerPreference,
     remoteConnection,
-    debug,
   });
 
   const platformType = platformManager.getPlatformType();
   const dappInfo = sdk.options.dappMetadata;
   const sdkInfo = `Sdk/Javascript SdkVersion/${
     packageJson.version
-  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name}`;
+  } Platform/${platformType} dApp/${dappInfo.url ?? dappInfo.name} dAppTitle/${
+    dappInfo.name
+  }`;
 
   let cachedAccountAddress: string | null = null;
   let cachedChainId: string | null = null;
+  const storageManager = sdk.options.storage?.storageManager;
+
+  // check if localStorage is available
+  if (storageManager) {
+    try {
+      const cachedAddresses = await storageManager.getCachedAccounts();
+      if (cachedAddresses.length > 0) {
+        cachedAccountAddress = cachedAddresses[0];
+      }
+    } catch (err) {
+      console.error(
+        `[initializeMobileProvider] failed to get cached addresses: ${err}`,
+      );
+    }
+
+    try {
+      const cachedChain = await storageManager.getCachedChainId();
+      if (cachedChain) {
+        cachedChainId = cachedChain;
+      }
+    } catch (err) {
+      console.error(
+        `[initializeMobileProvider] failed to parse cached chainId: ${err}`,
+      );
+    }
+  }
+
+  logger(
+    `[initializeMobileProvider] cachedAccountAddress: ${cachedAccountAddress}, cachedChainId: ${cachedChainId}`,
+  );
 
   // Initialize provider object (window.ethereum)
   const shouldSetOnWindow = !(
@@ -69,7 +102,6 @@ const initializeMobileProvider = ({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
     shouldShimWeb3,
-    debug,
   });
 
   let initializationOngoing = false;
@@ -98,11 +130,9 @@ const initializeMobileProvider = ({
         loop = getInitializing();
       }
 
-      if (debug) {
-        console.debug(
-          `initializeProvider::sendRequest() initial method completed -- prevent installation and call provider`,
-        );
-      }
+      logger(
+        `[initializeMobileProvider: sendRequest()] initial method completed -- prevent installation and call provider`,
+      );
       // Previous init has completed, meaning we can safely interrup and call the provider.
       return f(...args);
     }
@@ -110,23 +140,45 @@ const initializeMobileProvider = ({
     const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
-    let { selectedAddress, chainId } = Ethereum.getProvider();
 
-    selectedAddress = selectedAddress ?? cachedAccountAddress;
-    chainId = chainId ?? cachedChainId ?? sdk.defaultReadOnlyChainId;
+    const provider = Ethereum.getProvider();
+
+    let selectedAddress: string | null = null;
+    let chainId: string | null = null;
+
+    selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
+    chainId = provider.getChainId() || cachedChainId;
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
-      cachedAccountAddress = selectedAddress;
+      if (storageManager && selectedAddress !== cachedAccountAddress) {
+        storageManager.persistAccounts([selectedAddress]).catch((err) => {
+          console.error(
+            `[initializeMobileProvider] failed to persist account: ${err}`,
+          );
+        });
+      }
     }
 
     if (chainId) {
       cachedChainId = chainId;
+      if (storageManager) {
+        storageManager.persistChainId(chainId).catch((err) => {
+          console.error(
+            `[initializeMobileProvider] failed to persist chainId: ${err}`,
+          );
+        });
+      }
     }
 
+    logger('[initializeMobileProvider: sendRequest()]', {
+      selectedAddress,
+      chainId,
+    });
+
     if (debugRequest) {
-      console.debug(
-        `initializeProvider::sendRequest() method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
+      logger(
+        `[initializeMobileProvider: sendRequest()] method=${method} ongoing=${initializationOngoing} selectedAddress=${selectedAddress} isInstalled=${isInstalled} checkInstallationOnAllCalls=${checkInstallationOnAllCalls} socketConnected=${socketConnected}`,
       );
     }
 
@@ -148,6 +200,7 @@ const initializeMobileProvider = ({
 
     const ALLOWED_CONNECT_METHODS = [
       RPC_METHODS.ETH_REQUESTACCOUNTS,
+      RPC_METHODS.WALLET_REQUESTPERMISSIONS,
       RPC_METHODS.METAMASK_CONNECTSIGN,
       RPC_METHODS.METAMASK_CONNECTWITH,
     ];
@@ -158,6 +211,12 @@ const initializeMobileProvider = ({
     if (rpcEndpoint && isReadOnlyMethod) {
       try {
         const params = args?.[0]?.params;
+
+        // TODO: decide if we want external provider tracking
+        // sdk.analytics?.send({
+        //   event: TrackingEvents.SDK_RPC_REQUEST,
+        //   params: { method, from: 'readonly' },
+        // });
         const readOnlyResponse = await rpcRequestHandler({
           rpcEndpoint,
           sdkInfo,
@@ -166,16 +225,13 @@ const initializeMobileProvider = ({
         });
 
         if (debugRequest) {
-          console.log(
-            `initializeProvider::ReadOnlyRPCResponse`,
-            readOnlyResponse,
-          );
+          logger(`initializeProvider::ReadOnlyRPCResponse ${readOnlyResponse}`);
         }
         return readOnlyResponse;
       } catch (err) {
         // Log error and fallback to mobile provider
         console.warn(
-          `initializeProvider::sendRequest() method=${method} readOnlyRPCRequest failed:`,
+          `[initializeMobileProvider: sendRequest()] method=${method} readOnlyRPCRequest failed:`,
           err,
         );
       }
@@ -185,6 +241,8 @@ const initializeMobileProvider = ({
       (!isInstalled || (isInstalled && !socketConnected)) &&
       method !== RPC_METHODS.METAMASK_GETPROVIDERSTATE
     ) {
+      const params = args?.[0]?.params || [];
+
       if (
         ALLOWED_CONNECT_METHODS.indexOf(method) !== -1 ||
         checkInstallationOnAllCalls
@@ -200,19 +258,15 @@ const initializeMobileProvider = ({
           setInitializing(false);
 
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
-            if (debug) {
-              console.debug(
-                `initializeProvider extension provider detect: re-create ${method} on the active provider`,
-              );
-            }
+            logger(
+              `[initializeMobileProvider: sendRequest()] extension provider detect: re-create ${method} on the active provider`,
+            );
 
             // Special case for metamask_connectSign, split the request in 2 parts (connect + sign)
             if (
               method.toLowerCase() ===
               RPC_METHODS.METAMASK_CONNECTSIGN.toLowerCase()
             ) {
-              const [temp] = args;
-              const { params } = temp;
               const accounts = (await sdk.getProvider()?.request({
                 method: RPC_METHODS.ETH_REQUESTACCOUNTS,
                 params: [],
@@ -229,46 +283,29 @@ const initializeMobileProvider = ({
               method.toLowerCase() ===
               RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase()
             ) {
-              const accounts = (await sdk.getProvider()?.request({
-                method: RPC_METHODS.ETH_REQUESTACCOUNTS,
-                params: [],
-              })) as string[];
-              if (!accounts.length) {
-                throw new Error(`SDK state invalid -- undefined accounts`);
-              }
-
-              const [initialMethod] = args;
-              console.log(`connectWith:: initialMethod`, initialMethod);
-              const { params } = initialMethod;
               const [rpc] = params;
-              console.warn(`FIXME:: handle CONNECT_WITH`, rpc);
-
-              if (
-                rpc.method?.toLowerCase() ===
-                RPC_METHODS.PERSONAL_SIGN.toLowerCase()
-              ) {
-                const connectedRpc = {
-                  method: rpc.method,
-                  params: [rpc.params[0], accounts[0]],
-                };
-                console.log(`connectWith:: connectedRpc`, connectedRpc);
-                return await sdk.getProvider()?.request(connectedRpc);
-              }
-              console.warn(`FIXME:: handle CONNECT_WITH`, rpc);
+              // Overwrite rpc method with correct account information
+              return await extensionConnectWithOverwrite({
+                method: rpc.method,
+                sdk,
+                params: rpc.params,
+              });
             }
 
+            logger(
+              `[initializeMobileProvider: sendRequest()] sending '${method}' on active provider`,
+              params,
+            );
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
               method,
-              params: args,
+              params,
             });
           }
 
-          if (debug) {
-            console.debug(
-              `initializeProvider failed to start installer: ${installError}`,
-            );
-          }
+          logger(
+            `[initializeMobileProvider: sendRequest()] failed to start installer: ${installError}`,
+          );
 
           throw installError;
         }
@@ -287,12 +324,9 @@ const initializeMobileProvider = ({
             sdk.once(
               EventType.PROVIDER_UPDATE,
               (type: PROVIDER_UPDATE_TYPE) => {
-                if (debug) {
-                  console.debug(
-                    `initializeProvider::sendRequest() PROVIDER_UPDATE --- remote provider request interupted`,
-                    type,
-                  );
-                }
+                logger(
+                  `[initializeMobileProvider: sendRequest()] PROVIDER_UPDATE --- remote provider request interupted type=${type}`,
+                );
 
                 if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
                   reject(EventType.PROVIDER_UPDATE);
@@ -308,7 +342,7 @@ const initializeMobileProvider = ({
             // Re-create the query on the active provider
             return await sdk.getProvider()?.request({
               method,
-              params: args,
+              params,
             });
           }
           throw err;
@@ -324,36 +358,31 @@ const initializeMobileProvider = ({
 
       if (sdk.isExtensionActive()) {
         // It means there was a switch of provider while waiting for initialization -- redirect to the extension.
-        if (debug) {
-          console.debug(
-            `initializeProvider::sendRequest() EXTENSION active - redirect request '${method}' to it`,
-          );
-        }
+        logger(
+          `[initializeMobileProvider: sendRequest()] EXTENSION active - redirect request '${method}' to it`,
+          args,
+          params,
+        );
 
         // redirect to extension
         return await sdk.getProvider()?.request({
           method,
-          params: args,
+          params,
         });
       }
 
-      if (debug) {
-        console.debug(
-          `initializeProvider::sendRequest() method=${method} --- skip --- not connected/installed`,
-        );
-      }
+      logger(
+        `[initializeMobileProvider: sendRequest()] method=${method} --- skip --- not connected/installed`,
+      );
       throw new Error(
         'MetaMask is not connected/installed, please call eth_requestAccounts to connect first.',
       );
     }
 
     const rpcResponse = await f(...args);
-    if (debug) {
-      console.debug(
-        `initializeProvider::sendRequest() method=${method} rpcResponse:`,
-        rpcResponse,
-      );
-    }
+    logger(
+      `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
+    );
     return rpcResponse;
   };
 
@@ -372,9 +401,7 @@ const initializeMobileProvider = ({
     return sendRequest(args?.[0] as string, args, send, debug);
   };
 
-  if (debug) {
-    console.debug(`initializeProvider metamaskStream.start()`);
-  }
+  logger(`[initializeMobileProvider: sendRequest()] metamaskStream.start()`);
   metamaskStream.start();
   return ethereum;
 };

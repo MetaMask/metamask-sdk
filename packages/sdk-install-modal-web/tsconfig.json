@@ -13,6 +13,7 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "Node",
     "jsx": "react",
     "composite": true,
     "skipLibCheck": true

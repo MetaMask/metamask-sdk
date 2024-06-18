@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
@@ -30,47 +31,43 @@ export async function sendMessage(
 ): Promise<void> {
   const { state } = instance;
 
-  if (state.debug) {
-    console.log(
-      `RemoteCommunication::${state.context}::sendMessage paused=${
-        state.paused
-      } ready=${state.ready} authorized=${
-        state.authorized
-      } socket=${state.communicationLayer?.isConnected()} clientsConnected=${
-        state.clientsConnected
-      } status=${state._connectionStatus}`,
-      message,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: sendMessage()] context=${state.context} paused=${
+      state.paused
+    } ready=${state.ready} relayPersistence=${
+      state.relayPersistence
+    } authorized=${
+      state.authorized
+    } socket=${state.communicationLayer?.isConnected()} clientsConnected=${
+      state.clientsConnected
+    } status=${state._connectionStatus}`,
+    message,
+  );
 
   if (
-    state.paused ||
-    !state.ready ||
-    !state.communicationLayer?.isConnected() ||
-    !state.clientsConnected
+    !state.relayPersistence && // Ignore status change when relay persistence is available
+    (!state.ready ||
+      !state.communicationLayer?.isConnected() ||
+      !state.clientsConnected)
   ) {
-    if (state.debug) {
-      console.log(
-        `RemoteCommunication::${state.context}::sendMessage  SKIP message waiting for MM mobile readiness.`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: sendMessage()] context=${state.context}  SKIP message waiting for MM mobile readiness.`,
+    );
 
     await new Promise<void>((resolve) => {
       instance.once(EventType.CLIENTS_READY, resolve);
     });
 
-    if (state.debug) {
-      console.log(
-        `RemoteCommunication::${state.context}::sendMessage  AFTER SKIP / READY -- sending pending message`,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: sendMessage()] context=${state.context}  AFTER SKIP / READY -- sending pending message`,
+    );
   }
 
   try {
     await handleAuthorization(instance, message);
   } catch (err) {
     console.error(
-      `RemoteCommunication::${state.context}::sendMessage  ERROR`,
+      `[RemoteCommunication: sendMessage()] context=${state.context}  ERROR`,
       err,
     );
     throw err;

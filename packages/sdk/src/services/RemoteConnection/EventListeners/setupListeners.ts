@@ -1,5 +1,6 @@
-import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
+import { RequestArguments } from '@metamask/providers';
 import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnection, RemoteConnectionState } from '../RemoteConnection';
 
@@ -25,14 +26,16 @@ export function setupListeners(
         return;
       }
 
-      if (state.developerMode) {
-        console.debug(`RemoteConnection::on 'OTP' `, otpAnswer);
-      }
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.OTP] 'OTP' `,
+        otpAnswer,
+      );
+
       state.otpAnswer = otpAnswer;
       if (!state.pendingModal) {
-        if (state.developerMode) {
-          console.debug(`RemoteConnection::on 'OTP' init pending modal`);
-        }
+        logger(
+          `[RemoteConnection: setupListeners() => EventType.OTP] 'OTP' init pending modal`,
+        );
 
         const onDisconnect = () => {
           options.modals.onPendingModalDisconnect?.();
@@ -54,17 +57,18 @@ export function setupListeners(
   state.connector.on(
     EventType.SDK_RPC_CALL,
     async (requestParams: RequestArguments) => {
-      if (state.developerMode) {
-        console.debug(
-          `RemoteConnection::on 'sdk_rpc_call' requestParam`,
-          requestParams,
-        );
-      }
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.SDK_RPC_CALL] 'sdk_rpc_call' requestParam`,
+        requestParams,
+      );
+
       const provider = Ethereum.getProvider();
       const result = await provider.request(requestParams);
-      if (state.developerMode) {
-        console.debug(`RemoteConnection::on 'sdk_rpc_call' result`, result);
-      }
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.SDK_RPC_CALL] 'sdk_rpc_call' result`,
+        result,
+      );
+
       // Close opened modals
       state.pendingModal?.unmount?.();
     },
@@ -72,15 +76,15 @@ export function setupListeners(
 
   state.connector.on(EventType.AUTHORIZED, async () => {
     try {
-      if (state.developerMode) {
-        console.debug(
-          `RemoteConnection::on 'authorized' closing modals`,
-          state.pendingModal,
-          state.installModal,
-        );
-      }
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.AUTHORIZED] 'authorized' closing modals`,
+        state.pendingModal,
+        state.installModal,
+      );
 
-      state.analytics?.send({ event: TrackingEvents.AUTHORIZED });
+      if (options.enableAnalytics) {
+        state.analytics?.send({ event: TrackingEvents.AUTHORIZED });
+      }
 
       // Force connected state on provider
       // This prevents some rpc method being received in Ethereum before connected state is.
@@ -93,23 +97,26 @@ export function setupListeners(
       state.otpAnswer = undefined;
       state.authorized = true;
 
-      if (state.developerMode) {
-        console.debug(
-          `RCPMS::on 'authorized' provider.state`,
-          provider.getState(),
-        );
-      }
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.AUTHORIZED] 'authorized' provider.state`,
+        provider.getState(),
+      );
+
       await provider.forceInitializeState();
     } catch (err) {
+      console.log(
+        '🟠 ~ file: setupListeners.ts:107 ~ state.connector.on ~ err:',
+        err,
+      );
       // Ignore error if already initialized.
       // console.debug(`IGNORE ERROR`, err);
     }
   });
 
   state.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
-    if (state.developerMode) {
-      console.debug(`[RCPMS] received '${EventType.CLIENTS_DISCONNECTED}'`);
-    }
+    logger(
+      `[RemoteConnection: setupListeners() => EventType.CLIENTS_DISCONNECTED] received '${EventType.CLIENTS_DISCONNECTED}'`,
+    );
 
     if (!state.platformManager?.isSecure()) {
       const provider = Ethereum.getProvider();
@@ -121,7 +128,9 @@ export function setupListeners(
   state.connector.on(EventType.TERMINATE, () => {
     if (!state.connector?.isAuthorized()) {
       // It means the connection was rejected by the user
-      state.analytics?.send({ event: TrackingEvents.REJECTED });
+      if (options.enableAnalytics) {
+        state.analytics?.send({ event: TrackingEvents.REJECTED });
+      }
     }
 
     if (state.platformManager?.isBrowser()) {

@@ -6,8 +6,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.14.1]
+## [0.20.5]
 ### Uncategorized
+- chore: add unit tests to the sdk-react package ([#868](https://github.com/MetaMask/metamask-sdk.git/pull/868))
+
+## [0.20.4]
+### Added
+- feat: create a new SDK for React Native ([#859](https://github.com/MetaMask/metamask-sdk/pull/859))
+
+## [0.20.3]
+### Added
+- feat: force change ([#848](https://github.com/MetaMask/metamask-sdk/pull/848))
+
+## [0.20.2]
+### Added
+- skip version because of publishing issue
+
+
+## [0.20.1]
+### Uncategorized
+- feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
+- Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
+- Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
+- Revert "feat: release 62.0.0" ([#837](https://github.com/MetaMask/metamask-sdk/pull/837))
+- feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
+
+## [0.20.0]
+### Added
+- feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
+
+## [0.19.0]
+### Added
+- feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
+
+## [0.18.6]
+### Added
+- fix: improve the validation of 'dappId' param in the 'setupAnalytics' function ([#817](https://github.com/MetaMask/metamask-sdk/pull/817))
+
+## [0.18.5]
+### Added
+- feat: update 'sdk-react' to be in '0.18.5' ([#810](https://github.com/MetaMask/metamask-sdk/pull/810))
+
+## [0.18.4]
+### Added
+- fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
+- feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
+
+## [0.18.0]
+### Added
+- feat: update the examples apps to the latest sdk version '0.17.2' ([#773](https://github.com/MetaMask/metamask-sdk/pull/773))
+
+## [0.17.2]
+### Added
+- fix: normalize uppercase account addresses in SDKProvider, to resolve MaxListenersExceededWarning ([#766](https://github.com/MetaMask/metamask-sdk/pull/766))
+
+## [0.17.1]
+### Added
+- fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
+
+## [0.17.0]
+### Added
+- feat: update the "@metamask/providers" package to version 15.0.0 ([#752](https://github.com/MetaMask/metamask-sdk/pull/752))
+- feat: restrict rpc method analytics ([#755](https://github.com/MetaMask/metamask-sdk/pull/755))
+- feat: rpc event tracking ([#745](https://github.com/MetaMask/metamask-sdk/pull/745))
+- chore: disable logs when running unit tests in CI ([#727](https://github.com/MetaMask/metamask-sdk/pull/727))
+
+## [0.16.0]
+### Added
+- feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
+- chore: reduce the bundle size ([#725](https://github.com/MetaMask/metamask-sdk/pull/725))
+- chore: use the 'debug' package as the new logger ([#716](https://github.com/MetaMask/metamask-sdk/pull/716))
+- Fix/sdk config provider ([#714](https://github.com/MetaMask/metamask-sdk/pull/714))
+- feat: expose channel id via hook + expose wallet status via sdk instance ([#704](https://github.com/MetaMask/metamask-sdk/pull/704))
+- feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
+
+## [0.15.0]
+### Added
+- feat: disable sourcemaps ([#678](https://github.com/MetaMask/metamask-sdk/pull/678))
+
+## [0.14.2]
+### Added
+- chore: add expo demo app ([#577](https://github.com/MetaMask/metamask-sdk/pull/577))
+- feat: change default options with useDeeplinks to false ([#576](https://github.com/MetaMask/metamask-sdk/pull/576))
+
+## [0.14.1]
+### Added
 - align version with sdk
 
 ## [0.14.0]
@@ -56,11 +139,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.11.0]
 ### Added
-- fix: setChainId cause a build error ([#452](https://github.com/MetaMask/metamask-sdk.git/pull/452))
-- fix: chainId is undefined on first connection with extension ([#445](https://github.com/MetaMask/metamask-sdk.git/pull/445))
-- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk.git/pull/447))
-- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk.git/pull/440))
-- fix: account balance not updating when chain changes ([#435](https://github.com/MetaMask/metamask-sdk.git/pull/435))
+- fix: setChainId cause a build error ([#452](https://github.com/MetaMask/metamask-sdk/pull/452))
+- fix: chainId is undefined on first connection with extension ([#445](https://github.com/MetaMask/metamask-sdk/pull/445))
+- feat: enable wagmi config as option ([#447](https://github.com/MetaMask/metamask-sdk/pull/447))
+- feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
+- fix: account balance not updating when chain changes ([#435](https://github.com/MetaMask/metamask-sdk/pull/435))
 
 ## [0.10.1]
 ### Added
@@ -120,7 +203,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.5...HEAD
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.4...@metamask/sdk-react@0.20.5
+[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.3...@metamask/sdk-react@0.20.4
+[0.20.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.2...@metamask/sdk-react@0.20.3
+[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.1...@metamask/sdk-react@0.20.2
+[0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.0...@metamask/sdk-react@0.20.1
+[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.19.0...@metamask/sdk-react@0.20.0
+[0.19.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.6...@metamask/sdk-react@0.19.0
+[0.18.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.5...@metamask/sdk-react@0.18.6
+[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.4...@metamask/sdk-react@0.18.5
+[0.18.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.18.0...@metamask/sdk-react@0.18.4
+[0.18.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.2...@metamask/sdk-react@0.18.0
+[0.17.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.1...@metamask/sdk-react@0.17.2
+[0.17.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.17.0...@metamask/sdk-react@0.17.1
+[0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.16.0...@metamask/sdk-react@0.17.0
+[0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.15.0...@metamask/sdk-react@0.16.0
+[0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.2...@metamask/sdk-react@0.15.0
+[0.14.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.1...@metamask/sdk-react@0.14.2
 [0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.14.0...@metamask/sdk-react@0.14.1
 [0.14.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.13.0...@metamask/sdk-react@0.14.0
 [0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.12.4...@metamask/sdk-react@0.13.0

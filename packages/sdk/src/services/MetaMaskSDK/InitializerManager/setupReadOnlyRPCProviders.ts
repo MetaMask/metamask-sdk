@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 
 export interface RPC_URLS_MAP {
@@ -5,7 +6,7 @@ export interface RPC_URLS_MAP {
 }
 
 export const setupReadOnlyRPCProviders = async (instance: MetaMaskSDK) => {
-  const { options, debug } = instance;
+  const { options } = instance;
   const { readonlyRPCMap } = options;
 
   if (!readonlyRPCMap) {
@@ -13,12 +14,10 @@ export const setupReadOnlyRPCProviders = async (instance: MetaMaskSDK) => {
   }
 
   try {
-    if (debug) {
-      console.debug(
-        `[setupReadOnlyRPCProviders] Readonly RCP Setup`,
-        instance.options.readonlyRPCMap,
-      );
-    }
+    logger(
+      `[MetaMaskSDK: setupReadOnlyRPCProviders()] Setting up Readonly RPC Providers`,
+      readonlyRPCMap,
+    );
 
     instance.setReadOnlyRPCCalls(true);
   } catch (err) {

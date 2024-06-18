@@ -1,9 +1,12 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { handleKeysExchanged } from './handleKeysExchanged';
 
 describe('handleKeysExchanged', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
   const mockGetKeyInfo = jest.fn();
 
@@ -12,11 +15,13 @@ describe('handleKeysExchanged', () => {
 
     instance = {
       state: {
-        debug: false,
         isOriginator: false,
         keyExchange: {
           areKeysExchanged: jest.fn().mockReturnValue(true),
         },
+      },
+      remote: {
+        state: {},
       },
       emit: mockEmit,
       getKeyInfo: mockGetKeyInfo,
@@ -24,16 +29,12 @@ describe('handleKeysExchanged', () => {
   });
 
   it('should log debug information when debugging is enabled and the handler is called', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
     const handler = handleKeysExchanged(instance);
     handler();
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `SocketService::on 'keys_exchanged' keyschanged=true`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      "[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=true",
     );
-    consoleDebugSpy.mockRestore();
   });
 
   it('should emit KEYS_EXCHANGED event with the keys exchanged status and isOriginator', () => {

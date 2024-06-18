@@ -13,15 +13,14 @@
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'N/A'",
     "allow-scripts": "",
-    "prepack": "../../scripts/prepack.sh",
-    "prepare-manifest:preview": "../../scripts/prepare-preview-manifest.sh"
+    "prepack": "../../scripts/prepack.sh"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@metamask/design-tokens": "^1.12.0",
-    "@metamask/providers": "^10.2.1",
+    "@metamask/providers": "^15.0.0",
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-install-modal-web": "workspace:^",

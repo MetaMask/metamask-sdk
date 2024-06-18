@@ -3,6 +3,7 @@ import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMess
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
 import { handleAuthorization } from '../ConnectionManager';
+import { logger } from '../../../utils/logger';
 import { sendMessage } from './sendMessage';
 
 jest.mock('../ConnectionManager');
@@ -11,6 +12,7 @@ describe('sendMessage', () => {
   let instance: RemoteCommunication;
   let message: CommunicationLayerMessage;
 
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockHandleAuthorization = handleAuthorization as jest.Mock;
   const mockOnce = jest.fn(
     (_: EventType, callback: (data: unknown) => void) => {
@@ -44,12 +46,10 @@ describe('sendMessage', () => {
     } as unknown as CommunicationLayerMessage;
   });
 
-  it('should log if debug mode is enabled', async () => {
-    instance.state.debug = true;
-    const consoleLogSpy = jest.spyOn(console, 'log');
+  it('should log debug info', async () => {
     await sendMessage(instance, message);
-    expect(consoleLogSpy).toHaveBeenCalled();
-    consoleLogSpy.mockRestore();
+
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should wait for CLIENTS_READY event if conditions are not favorable', async () => {

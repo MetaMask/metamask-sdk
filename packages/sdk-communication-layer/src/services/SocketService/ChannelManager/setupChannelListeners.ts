@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import {
@@ -10,6 +11,7 @@ import {
   handleMessage,
   handlesClientsDisconnected,
 } from '../EventListeners';
+import { handleChannelConfig } from '../EventListeners/handleChannelConfig';
 
 const channelEventListenerMap = [
   {
@@ -24,6 +26,7 @@ const channelEventListenerMap = [
     event: 'clients_disconnected',
     handler: handlesClientsDisconnected,
   },
+  { event: 'config', handler: handleChannelConfig },
   { event: 'message', handler: handleMessage },
   {
     event: 'clients_waiting_to_join',
@@ -55,18 +58,16 @@ export function setupChannelListeners(
   instance: SocketService,
   channelId: string,
 ) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::setupChannelListener setting socket listeners for channel ${channelId}...`,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: setupChannelListener()] context=${instance.state.context} setting socket listeners for channel ${channelId}...`,
+  );
 
   const { socket } = instance.state;
   const { keyExchange } = instance.state;
 
   if (instance.state.setupChannelListeners) {
     console.warn(
-      `SocketService::${instance.state.context}::setupChannelListener socket listeners already set up for channel ${channelId}`,
+      `[SocketService: setupChannelListener()] context=${instance.state.context} socket listeners already set up for channel ${channelId}`,
     );
   }
 
@@ -76,47 +77,48 @@ export function setupChannelListeners(
       // TODO remove all the handleSocker* functions
       // They are not required since it is managed via the handleDisconnect function
       socket?.io.on('error', (error) => {
-        console.debug(
-          `SocketService::${instance.state.context}::setupChannelListener socket event=error`,
+        logger.SocketService(
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=error`,
           error,
         );
         // return handleSocketError(instance)(error);
       });
 
       socket?.io.on('reconnect', (attempt) => {
-        console.debug(
-          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect`,
+        logger.SocketService(
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect`,
           attempt,
         );
       });
 
       socket?.io.on('reconnect_error', (error) => {
-        console.debug(
-          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_error`,
+        logger.SocketService(
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect_error`,
           error,
         );
         // return handleReconnectError(instance)(error);
       });
 
       socket?.io.on('reconnect_failed', () => {
-        console.debug(
-          `SocketService::${instance.state.context}::setupChannelListener socket event=reconnect_failed`,
+        logger.SocketService(
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect_failed`,
         );
         // return handleReconnectFailed(instance)();
       });
 
       socket?.io.on('ping', () => {
-        console.debug(
-          `SocketService::${instance.state.context}::setupChannelListener socket event=ping`,
+        logger.SocketService(
+          `[SocketService: setupChannelListener()] context=${instance.state.context} socket`,
         );
         // return handlePing(instance)();
       });
     }
 
     socket?.on('disconnect', (reason: string) => {
-      console.log(
-        `MetaMaskSDK socket disconnected '${reason}' begin recovery...`,
+      logger.SocketService(
+        `[SocketService: setupChannelListener()] on 'disconnect' -- MetaMaskSDK socket disconnected '${reason}' begin recovery...`,
       );
+
       return handleDisconnect(instance)(reason);
     });
   }

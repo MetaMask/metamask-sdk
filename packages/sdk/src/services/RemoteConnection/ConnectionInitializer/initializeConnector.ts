@@ -1,4 +1,5 @@
 import { RemoteCommunication } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import {
   RemoteConnectionProps,
@@ -16,18 +17,14 @@ export function initializeConnector(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
 ) {
-  if (state.developerMode) {
-    console.debug(
-      `RemoteConnection::initializeConnector() intialize connector`,
-    );
-  }
+  logger(`[RemoteConnection: initializeConnector()] initialize connector`);
 
   state.connector = new RemoteCommunication({
     platformType: options.platformManager.getPlatformType(),
     communicationLayerPreference: options.communicationLayerPreference,
     transports: options.transports,
     dappMetadata: { ...options.dappMetadata, source: options._source },
-    analytics: options.enableDebug,
+    analytics: options.enableAnalytics,
     communicationServerUrl: options.communicationServerUrl,
     sdkVersion: packageJson.version,
     context: 'dapp',
@@ -37,12 +34,10 @@ export function initializeConnector(
   });
 
   if (options.timer) {
-    if (state.developerMode) {
-      console.debug(
-        `RemoteConnection::setup reset background timer`,
-        options.timer,
-      );
-    }
+    logger(
+      `[RemoteConnection: initializeConnector()] reset background timer`,
+      options.timer,
+    );
 
     options.timer?.stopBackgroundTimer?.();
     options.timer?.runBackgroundTimer?.(() => {
