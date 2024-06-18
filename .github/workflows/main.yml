@@ -31,7 +31,7 @@ jobs:
     needs: lint-build-test
     uses: ./.github/workflows/sonar-cloud.yml
     secrets:
-        SONAR_TOKEN: ${{ secrets.sonar_token }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   is-release:
     name: Determine whether this is a release merge commit
