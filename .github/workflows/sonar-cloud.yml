@@ -6,7 +6,7 @@ on:
       SONAR_TOKEN:
         description: SonarCloud token
         required: false
-        
+
 jobs:
   sonarcloud-scan:
     runs-on: ubuntu-latest
