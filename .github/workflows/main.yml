@@ -26,6 +26,13 @@ jobs:
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
+  sonarcloud-scan:
+    name: Run SonarCloud Scan
+    needs: lint-build-test
+    uses: ./.github/workflows/sonar-cloud.yml
+    secrets:
+        SONAR_TOKEN: ${{ secrets.sonar_token }}
+
   is-release:
     name: Determine whether this is a release merge commit
     needs: lint-build-test
