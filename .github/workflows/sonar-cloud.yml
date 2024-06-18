@@ -2,11 +2,11 @@ name: Run SonarCloud Scan
 
 on:
   workflow_call:
-  secrets:
-    SONAR_TOKEN:
-      description: SonarCloud token
-      required: false
-
+    secrets:
+      SONAR_TOKEN:
+        description: SonarCloud token
+        required: false
+        
 jobs:
   sonarcloud-scan:
     runs-on: ubuntu-latest
