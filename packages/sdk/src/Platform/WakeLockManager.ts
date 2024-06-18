@@ -5,17 +5,17 @@ import { isOldIOS } from '../utils/isOldIOS';
 import { mp4, webm } from './Media';
 
 export class WakeLockManager {
-  private enabled = false;
+  public enabled = false;
 
-  private _wakeLock?: any;
+  public _wakeLock?: any;
 
-  private noSleepTimer?: number | ReturnType<typeof setInterval>;
+  public noSleepTimer?: number | ReturnType<typeof setInterval>;
 
-  private noSleepVideo?: HTMLVideoElement;
+  public noSleepVideo?: HTMLVideoElement;
 
-  private _eventsAdded = false;
+  public _eventsAdded = false;
 
-  private debug: boolean;
+  public debug: boolean;
 
   constructor(debug?: boolean) {
     this.debug = debug ?? false;

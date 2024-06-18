@@ -1,6 +1,15 @@
+import { checkInstallation } from '../services/MetaMaskInstaller/checkInstallation';
+import { redirectToProperInstall } from '../services/MetaMaskInstaller/redirectToProperInstall';
+import { startDesktopOnboarding } from '../services/MetaMaskInstaller/startDesktopOnboarding';
+import { startInstaller } from '../services/MetaMaskInstaller/startInstaller';
 import { ProviderService } from '../services/ProviderService';
 import { MetaMaskInstaller } from './MetaMaskInstaller';
 import { PlatformManager } from './PlatfformManager';
+
+jest.mock('../services/MetaMaskInstaller/checkInstallation');
+jest.mock('../services/MetaMaskInstaller/redirectToProperInstall');
+jest.mock('../services/MetaMaskInstaller/startDesktopOnboarding');
+jest.mock('../services/MetaMaskInstaller/startInstaller');
 
 describe('MetaMaskInstaller', () => {
   let mockPlatformManager: jest.Mocked<PlatformManager>;
@@ -8,6 +17,9 @@ describe('MetaMaskInstaller', () => {
   let installer: MetaMaskInstaller;
 
   beforeEach(() => {
+    mockPlatformManager = {} as jest.Mocked<PlatformManager>;
+    mockProviderService = {} as jest.Mocked<ProviderService>;
+
     installer = new MetaMaskInstaller({
       remote: mockProviderService,
       platformManager: mockPlatformManager,
@@ -20,41 +32,39 @@ describe('MetaMaskInstaller', () => {
     expect(installer.state.remote).toBe(mockProviderService);
     expect(installer.state.platformManager).toBe(mockPlatformManager);
     expect(installer.state.debug).toBe(false);
+    expect(installer.state.preferDesktop).toBe(false);
+    expect(installer.state.isInstalling).toBe(false);
+    expect(installer.state.hasInstalled).toBe(false);
+    expect(installer.state.resendRequest).toBeNull();
   });
 
   it('should start desktop onboarding', async () => {
-    const startDesktopOnboardingMock = jest.fn();
-    installer.startDesktopOnboarding = startDesktopOnboardingMock;
-
     await installer.startDesktopOnboarding();
 
-    expect(startDesktopOnboardingMock).toHaveBeenCalled();
+    expect(startDesktopOnboarding).toHaveBeenCalled();
   });
 
   it('should redirect to proper install', async () => {
-    const redirectToProperInstallMock = jest.fn();
-    installer.redirectToProperInstall = redirectToProperInstallMock;
-
     await installer.redirectToProperInstall();
 
-    expect(redirectToProperInstallMock).toHaveBeenCalled();
+    expect(redirectToProperInstall).toHaveBeenCalledWith(installer);
   });
 
   it('should check installation', async () => {
-    const checkInstallationMock = jest.fn();
-    installer.checkInstallation = checkInstallationMock;
-
     await installer.checkInstallation();
 
-    expect(checkInstallationMock).toHaveBeenCalled();
+    expect(checkInstallation).toHaveBeenCalledWith(installer);
   });
 
-  it('should start installer', async () => {
-    const startInstallerMock = jest.fn();
-    installer.start = startInstallerMock;
-
+  it('should start installer with wait set to false', async () => {
     await installer.start({ wait: false });
 
-    expect(startInstallerMock).toHaveBeenCalledWith({ wait: false });
+    expect(startInstaller).toHaveBeenCalledWith(installer, { wait: false });
+  });
+
+  it('should start installer with wait set to true', async () => {
+    await installer.start({ wait: true });
+
+    expect(startInstaller).toHaveBeenCalledWith(installer, { wait: true });
   });
 });
