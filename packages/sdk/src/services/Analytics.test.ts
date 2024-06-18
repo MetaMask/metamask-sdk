@@ -1,15 +1,27 @@
 import {
   SendAnalytics,
   TrackingEvents,
+  AnalyticsProps,
 } from '@metamask/sdk-communication-layer';
-import { Analytics, AnalyticsProps } from './Analytics'; // Replace with your actual import path
-
+import * as loggerModule from '../utils/logger';
+import { Analytics } from './Analytics';
+// Replace with your actual import path
 jest.mock('@metamask/sdk-communication-layer');
 
 const mockSendAnalytics = SendAnalytics as jest.Mock;
+interface Props {
+  serverUrl: string;
+  originatorInfo: AnalyticsProps['originationInfo'];
+  enabled?: boolean;
+}
 
 describe('Analytics', () => {
-  let props: AnalyticsProps;
+  let props: {
+    serverUrl: string;
+    originatorInfo: AnalyticsProps['originationInfo'];
+    enabled?: boolean;
+  };
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -17,13 +29,13 @@ describe('Analytics', () => {
     mockSendAnalytics.mockResolvedValue(undefined);
 
     props = {
-      serverURL: 'https://test.server.url',
-      debug: false,
-      metadata: {
-        url: 'https://test.url',
-        title: 'Test Title',
+      serverUrl: 'https://custom.server.url',
+      originatorInfo: {
+        url: 'https://dapp.url',
+        title: 'DApp Name',
         platform: 'web',
-        source: 'test-source',
+        source: 'custom-source',
+        dappId: 'dapp-id',
       },
     };
   });
@@ -35,10 +47,9 @@ describe('Analytics', () => {
     });
 
     it('should initialize with custom values', () => {
-      const customProps: AnalyticsProps = {
+      const customProps: Props = {
         ...props,
         enabled: true,
-        debug: true,
       };
       const analytics = new Analytics(customProps);
       expect(analytics).toBeDefined();
@@ -54,7 +65,7 @@ describe('Analytics', () => {
         expect.objectContaining({
           event,
         }),
-        props.serverURL,
+        props.serverUrl,
       );
     });
 
@@ -67,27 +78,16 @@ describe('Analytics', () => {
 
     describe('Error Handling', () => {
       it('should log error when debug is true', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
         mockSendAnalytics.mockRejectedValue(new Error('Send failed'));
 
-        const analytics = new Analytics({ ...props, debug: true });
+        const analytics = new Analytics({ ...props });
         const event: TrackingEvents = TrackingEvents.AUTHORIZED;
 
         await analytics.send({ event });
 
-        expect(consoleSpy).toHaveBeenCalled();
-      });
-
-      it('should not log error when debug is false', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-        mockSendAnalytics.mockRejectedValue(new Error('Send failed'));
-
-        const analytics = new Analytics({ ...props, debug: false });
-        const event: TrackingEvents = TrackingEvents.AUTHORIZED;
-
-        await analytics.send({ event });
-
-        expect(consoleSpy).not.toHaveBeenCalled();
+        expect(spyLogger).toHaveBeenCalledWith(
+          '[Analytics: send()] error: Error: Send failed',
+        );
       });
     });
   });

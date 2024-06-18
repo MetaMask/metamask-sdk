@@ -1,11 +1,8 @@
-import {
-  SendAnalytics,
-  TrackingEvents,
-} from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
+import { logger } from '../../../utils/logger';
 import { connectWithExtensionProvider } from '../ProviderManager';
-import { ANALYTICS_CONSTANTS } from '../../Analytics';
 
 /**
  * Handles automatic and extension-based connections for MetaMask SDK.
@@ -27,35 +24,13 @@ export async function handleAutoAndExtensionConnections(
   const { options } = instance;
 
   if (preferExtension) {
-    if (instance.debug) {
-      console.debug(
-        `SDK::performSDKInitialization) preferExtension is detected -- connect with it.`,
-      );
-    }
+    logger(
+      `[MetaMaskSDK: handleAutoAndExtensionConnections()] preferExtension is detected -- connect with it.`,
+    );
 
-    const { remoteConnection } = instance;
-
-    if (remoteConnection) {
-      const {
-        state: { connector },
-      } = remoteConnection;
-
-      const originatorInfo = connector?.state.originatorInfo ?? {};
-      const communicationServerUrl = '';
-
-      const analyticsData = {
-        id: ANALYTICS_CONSTANTS.DEFAULT_ID,
-        event: TrackingEvents.SDK_EXTENSION_UTILIZED,
-        ...originatorInfo,
-        commLayerVersion: ANALYTICS_CONSTANTS.NO_VERSION,
-      };
-
-      SendAnalytics(analyticsData, communicationServerUrl).catch((_err) => {
-        console.warn(
-          `Can't send the SDK_EXTENSION_UTILIZED analytics event...`,
-        );
-      });
-    }
+    instance.analytics?.send({
+      event: TrackingEvents.SDK_EXTENSION_UTILIZED,
+    });
 
     connectWithExtensionProvider(instance).catch((_err) => {
       console.warn(`Can't connect with MetaMask extension...`, _err);
@@ -64,22 +39,20 @@ export async function handleAutoAndExtensionConnections(
     });
   } else if (options.checkInstallationImmediately) {
     if (instance.platformManager?.isDesktopWeb()) {
-      if (instance.debug) {
-        console.debug(
-          `SDK::performSDKInitialization) checkInstallationImmediately`,
-        );
-      }
+      logger(
+        `[MetaMaskSDK: handleAutoAndExtensionConnections()] checkInstallationImmediately`,
+      );
 
       // Don't block /await initialization on autoconnect
       instance.connect().catch((_err) => {
         // ignore error on autoconnect
-        if (instance.debug) {
-          console.warn(`error during autoconnect`, _err);
-        }
+        logger(
+          `[MetaMaskSDK: handleAutoAndExtensionConnections()] checkInstallationImmediately --- IGNORED --- error on autoconnect _err=${_err}`,
+        );
       });
     } else {
       console.warn(
-        `SDK::performSDKInitialization) checkInstallationImmediately --- IGNORED --- only for web desktop`,
+        `[handleAutoAndExtensionConnections()] checkInstallationImmediately --- IGNORED --- only for web desktop`,
       );
     }
   }

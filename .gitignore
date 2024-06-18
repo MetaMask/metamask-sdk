@@ -1,9 +1,11 @@
-**/dist
 **/*__GENERATED*
 .vscode
 # sed backup files
 *.*-e
 **/.sdk-comm
+
+deployments/
+!deployments/dapps
 
 # Logs
 logs
@@ -48,6 +50,8 @@ pids
 coverage
 *.lcov
 
+bundle_stats
+
 # nyc test coverage
 .nyc_output
 
@@ -84,6 +88,8 @@ typings/
 # dotenv environment variables file
 .env
 .env.test
+**/.env
+**/.env.test
 
 # Mac files
 .DS_Store
@@ -107,3 +113,6 @@ packages/examples/nodejs/.sdk-comm
 **/!.yarn/versions
 packages/devnext/next.webpack.config.json
 packages/devreact/webpack.config.json
+.tool-versions
+packages/examples/nodejs/.MMSDK_cached_address
+packages/examples/nodejs/.MMSDK_cached_chainId

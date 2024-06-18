@@ -2,6 +2,7 @@
   "name": "react-metamask-button",
   "version": "0.1.0",
   "private": true,
+  "homepage": "./",
   "scripts": {
     "build": "react-scripts build",
     "eject": "react-scripts eject",
@@ -28,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@metamask/sdk-react-ui": "^0.12.2",
+    "@metamask/sdk-react-ui": "^0.17.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",

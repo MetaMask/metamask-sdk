@@ -4,6 +4,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import * as loggerModule from '../../../utils/logger';
 import { setupListeners } from './setupListeners';
 
 jest.mock('../../Ethereum', () => ({
@@ -21,6 +22,7 @@ jest.mock('../../Ethereum', () => ({
 describe('setupListeners', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   const mockConnectorOn = jest.fn();
   const mockOnPendingModalDisconnect = jest.fn();
@@ -36,6 +38,8 @@ describe('setupListeners', () => {
     jest.clearAllMocks();
 
     mockIsAuthorized.mockReturnValue(true);
+
+    spyLogger.mockImplementation();
 
     state = {
       connector: {
@@ -238,6 +242,7 @@ describe('setupListeners', () => {
 
   it('should handle error in AUTHORIZED event', async () => {
     const mockProvider = {
+      getState: jest.fn(),
       _setConnected: jest.fn(),
       forceInitializeState: jest
         .fn()

@@ -1,6 +1,8 @@
+import { logger } from '../../utils/logger';
+
 const PendingModal = () => {
-  console.log(
-    `Please open the MetaMask wallet app and confirm the connection. Thank you!`,
+  logger(
+    `[UI: pendingModal-nodejs: PendingModal()] Please open the MetaMask wallet app and confirm the connection. Thank you!`,
   );
 
   return {
@@ -9,8 +11,8 @@ const PendingModal = () => {
     },
     updateOTPValue: (otpValue: string) => {
       if (otpValue !== '') {
-        console.info(
-          `Choose the following value on your metamask mobile wallet: ${otpValue}`,
+        logger(
+          `[UI: pendingModal-nodejs: PendingModal()] Choose the following value on your metamask mobile wallet: ${otpValue}`,
         );
       }
     },

@@ -1,5 +1,4 @@
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { initReactI18next } from 'react-i18next';
 import { MetaMaskSDK } from '../../../sdk';
 import { initializeI18next } from './initializeI18next';
 
@@ -7,10 +6,6 @@ jest.mock('../../../sdk');
 jest.mock('i18next', () => ({
   use: jest.fn().mockReturnThis(),
   init: jest.fn(),
-}));
-
-jest.mock('react-i18next', () => ({
-  initReactI18next: jest.fn(),
 }));
 
 jest.mock('i18next-browser-languagedetector', () => jest.fn());
@@ -53,7 +48,6 @@ describe('initializeI18next', () => {
   it('should call i18n.use and i18n.init with correct arguments', async () => {
     await initializeI18next(mockMetaMaskSDKInstance);
 
-    expect(mockI18nUse).toHaveBeenCalledWith(initReactI18next);
     expect(mockI18nUse).toHaveBeenCalledWith(LanguageDetector);
     expect(mockI18nInit).toHaveBeenCalledWith(
       expect.objectContaining({

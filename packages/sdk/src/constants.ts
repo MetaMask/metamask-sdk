@@ -8,12 +8,14 @@ export const ErrorMessages = {
   MANUAL_DISCONNECT: 'manual-disconnect',
 };
 
+export const DEFAULT_SDK_SOURCE = 'direct';
+
 export const METAMASK_CONNECT_BASE_URL = 'https://metamask.app.link/connect';
 
 export const METAMASK_DEEPLINK_BASE = 'metamask://connect';
 
 export const METAMASK_EIP_6369_PROVIDER_INFO = {
-  NAME: 'MetaMask Main',
+  NAME: 'MetaMask',
   RDNS: 'io.metamask',
 };
 

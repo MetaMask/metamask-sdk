@@ -1,3 +1,4 @@
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
 /**
@@ -14,11 +15,7 @@ export async function checkInstallation(instance: MetaMaskInstaller) {
 
   const isInstalled = state.platformManager?.isMetaMaskInstalled();
 
-  if (state.debug) {
-    console.log(
-      `MetamaskInstaller::checkInstallation() isInstalled=${isInstalled}`,
-    );
-  }
+  logger(`[MetamaskInstaller: checkInstallation()] isInstalled=${isInstalled}`);
 
   // No need to do anything
   if (isInstalled) {

@@ -2,6 +2,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import * as loggerModule from '../../../utils/logger';
 import { showInstallModal } from './showInstallModal';
 
 describe('showInstallModal', () => {
@@ -9,6 +10,7 @@ describe('showInstallModal', () => {
   let options: RemoteConnectionProps;
   const mockInstallModalMount = jest.fn();
   const mockModalsInstall = jest.fn();
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -59,14 +61,6 @@ describe('showInstallModal', () => {
   it('should terminate the connection and possibly log the termination', () => {
     const link = 'http://example.com/terminate';
 
-    const mockConsoleDebug = jest
-      .spyOn(console, 'debug')
-      .mockImplementation(() => {
-        // do nothing
-      });
-
-    state.developerMode = true;
-
     showInstallModal(state, options, link);
 
     const terminateCall = mockModalsInstall.mock.calls[0][0]
@@ -74,23 +68,10 @@ describe('showInstallModal', () => {
 
     terminateCall();
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      'RemoteConnection::showInstallModal() terminate connection',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteConnection: showInstallModal() => terminate()] terminate connection',
     );
     expect(options.sdk.terminate).toHaveBeenCalledTimes(1);
-
-    mockConsoleDebug.mockClear();
-
-    state.developerMode = false;
-
-    showInstallModal(state, options, link);
-
-    terminateCall();
-
-    expect(mockConsoleDebug).not.toHaveBeenCalled();
-    expect(options.sdk.terminate).toHaveBeenCalledTimes(2);
-
-    mockConsoleDebug.mockRestore();
   });
 
   it('should call connectWithExtensionProvider and return false', () => {

@@ -13,6 +13,8 @@ module.exports = {
     'dist',
     'rollup.config.js',
     '**/coverage/**',
+    'postcss.config.js',
+    'jest-preload.js',
   ],
 
   parserOptions: {

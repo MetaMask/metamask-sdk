@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 
@@ -13,13 +14,19 @@ export function validateKeyExchange(
   instance: SocketService,
   message: CommunicationLayerMessage,
 ) {
-  if (!instance.state.keyExchange?.areKeysExchanged()) {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${instance.state.context}::sendMessage() ERROR keys not exchanged`,
-        message,
-      );
-    }
+  if (
+    !instance.state.keyExchange?.areKeysExchanged() &&
+    !instance.remote.state.relayPersistence
+  ) {
+    logger.SocketService(
+      `[SocketService: validateKeyExchange()] context=${instance.state.context} ERROR keys not exchanged`,
+      message,
+    );
+
+    console.error(
+      `[SocketService: validateKeyExchange()] ERROR keys not exchanged`,
+      message,
+    );
     throw new Error('Keys not exchanged BBB');
   }
 }

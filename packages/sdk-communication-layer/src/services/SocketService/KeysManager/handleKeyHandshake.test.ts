@@ -2,11 +2,13 @@ import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { EventType } from '../../../types/EventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
+import { logger } from '../../../utils/logger';
 import { handleKeyHandshake } from './handleKeyHandshake';
 
 describe('handleKeyHandshake', () => {
   let instance: SocketService;
-  const mockConsoleDebug = jest.fn();
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockEmit = jest.fn();
 
   const keyHandshakeMessage: CommunicationLayerMessage = {
@@ -27,17 +29,13 @@ describe('handleKeyHandshake', () => {
         },
       },
     } as unknown as SocketService;
-
-    jest.spyOn(console, 'debug').mockImplementation(mockConsoleDebug);
   });
 
-  it('should log the message when debugging is enabled', () => {
-    instance.state.debug = true;
-
+  it('should log the message', () => {
     handleKeyHandshake(instance, keyHandshakeMessage);
 
-    expect(mockConsoleDebug).toHaveBeenCalledWith(
-      `SocketService::${instance.state.context}::sendMessage()`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: handleKeyHandshake()] context=testContext',
       keyHandshakeMessage,
     );
   });
@@ -47,6 +45,7 @@ describe('handleKeyHandshake', () => {
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       id: instance.state.channelId,
+      clientType: 'wallet',
       context: instance.state.context,
       message: keyHandshakeMessage,
     });

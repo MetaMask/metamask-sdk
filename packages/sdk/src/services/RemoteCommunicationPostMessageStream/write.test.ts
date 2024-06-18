@@ -1,6 +1,7 @@
 import { Ethereum } from '../Ethereum'; // Adjust the import based on your project structure
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream'; // Adjust the import based on your project structure
 import { METHODS_TO_REDIRECT } from '../../config';
+import * as loggerModule from '../../utils/logger'; // Adjust the import based on your project structure
 import { write } from './write'; // Adjust the import based on your project structure
 import { extractMethod } from './extractMethod';
 
@@ -8,6 +9,7 @@ jest.mock('./extractMethod');
 jest.mock('../Ethereum');
 
 describe('write function', () => {
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
   const mockExtractMethod = extractMethod as jest.Mock;
   const mockEthereum = Ethereum.getProvider as jest.Mock;
   const mockIsReady = jest.fn();
@@ -95,31 +97,10 @@ describe('write function', () => {
       expect(callback).toHaveBeenCalledWith();
     });
 
-    it('should not warn when method is METAMASK_GETPROVIDERSTATE', async () => {
-      mockExtractMethod.mockReturnValue({
-        method: 'metamask_getProviderState',
-      });
-      mockGetChannelId.mockReturnValue(undefined);
-      mockRemoteCommunicationPostMessageStream.state.debug = true;
-
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-      await write(
-        mockRemoteCommunicationPostMessageStream,
-        { jsonrpc: '2.0', method: 'metamask_getProviderState' },
-        'utf8',
-        callback,
-      );
-
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
-    });
-
-    it('should warn when method is not METAMASK_GETPROVIDERSTATE', async () => {
+    it('should log when method is not METAMASK_GETPROVIDERSTATE', async () => {
       mockExtractMethod.mockReturnValue({});
 
       mockGetChannelId.mockReturnValue(undefined);
-      mockRemoteCommunicationPostMessageStream.state.debug = true;
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
       await write(
         mockRemoteCommunicationPostMessageStream,
@@ -128,8 +109,8 @@ describe('write function', () => {
         callback,
       );
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'RPCMS::_write Invalid channel id -- undefined',
+      expect(spyLogger).toHaveBeenCalledWith(
+        '[RCPMS: write()] Invalid channel id -- undefined',
       );
     });
   });
@@ -158,7 +139,6 @@ describe('write function', () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(false);
       mockGetChannelId.mockReturnValue('some_channel_id');
-
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
 
       await write(
@@ -169,33 +149,14 @@ describe('write function', () => {
       );
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        "RCPMS::_write invalid socket status -- shouln't happen",
+        `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
       );
-    });
-
-    it('should not warn if both ready and socketConnected are true', async () => {
-      mockIsReady.mockReturnValue(true);
-      mockIsConnected.mockReturnValue(true);
-      mockRemoteCommunicationPostMessageStream.state.debug = true;
-
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-      await write(
-        mockRemoteCommunicationPostMessageStream,
-        { jsonrpc: '2.0', method: 'some_method' },
-        'utf8',
-        callback,
-      );
-
-      expect(consoleWarnSpy).not.toHaveBeenCalled();
     });
 
     it('should debug log if both ready and socketConnected are true', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
 
-      const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
       await write(
         mockRemoteCommunicationPostMessageStream,
         { jsonrpc: '2.0', method: 'some_method' },
@@ -203,8 +164,8 @@ describe('write function', () => {
         callback,
       );
 
-      expect(consoleDebugSpy).toHaveBeenCalledWith(
-        "RCPMS::_write method metamask_getProviderState doesn't need redirect.",
+      expect(spyLogger).toHaveBeenCalledWith(
+        `[RCPMS: _write()] method metamask_getProviderState doesn't need redirect.`,
       );
     });
   });
@@ -231,8 +192,8 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?channelId=some_channel_id&pubkey=&comm=socket&t=d',
-        'metamask://connect?channelId=some_channel_id&pubkey=&comm=socket&t=d',
+        'https://metamask.app.link/connect?channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
+        'metamask://connect?channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
         '_self',
       );
     });
@@ -249,8 +210,8 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d',
-        'metamask://connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d',
+        'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
+        'metamask://connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
         '_self',
       );
     });
@@ -275,8 +236,6 @@ describe('write function', () => {
     it('should log debug messages if debug is enabled', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
-      mockRemoteCommunicationPostMessageStream.state.debug = true;
-      const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
 
       await write(
         mockRemoteCommunicationPostMessageStream,
@@ -285,23 +244,7 @@ describe('write function', () => {
         callback,
       );
 
-      expect(consoleDebugSpy).toHaveBeenCalled();
-    });
-
-    it('should not log debug messages if debug is disabled', async () => {
-      mockIsReady.mockReturnValue(true);
-      mockIsConnected.mockReturnValue(true);
-      mockRemoteCommunicationPostMessageStream.state.debug = false;
-      const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
-      await write(
-        mockRemoteCommunicationPostMessageStream,
-        { jsonrpc: '2.0', method: 'some_method' },
-        'utf8',
-        callback,
-      );
-
-      expect(consoleDebugSpy).not.toHaveBeenCalled();
+      expect(spyLogger).toHaveBeenCalled();
     });
   });
 });

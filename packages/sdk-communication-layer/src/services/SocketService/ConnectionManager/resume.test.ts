@@ -2,10 +2,13 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
+import { logger } from '../../../utils/logger';
 import { resume } from './resume';
 
 describe('resume', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockConnect = jest.fn();
   const mockEmit = jest.fn();
   const mockSendMessage = jest.fn();
@@ -17,7 +20,6 @@ describe('resume', () => {
 
     instance = {
       state: {
-        debug: false,
         context: 'someContext',
         isOriginator: false,
         channelId: 'sampleChannelId',
@@ -31,21 +33,15 @@ describe('resume', () => {
           start: mockStart,
         },
       },
+      remote: { state: {} },
       sendMessage: mockSendMessage,
     } as unknown as SocketService;
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
-
+  it('should log debug information', () => {
     resume(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      expect.stringContaining('SocketService::someContext::resume()'),
-    );
-
-    consoleDebugSpy.mockRestore();
+    expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should not connect socket if already connected', () => {
@@ -60,15 +56,15 @@ describe('resume', () => {
     resume(instance);
 
     expect(mockConnect).toHaveBeenCalled();
-    expect(mockEmit).toHaveBeenCalledWith(
-      EventType.JOIN_CHANNEL,
-      'sampleChannelId',
-      'someContext_resume',
-    );
+    expect(mockEmit).toHaveBeenCalledWith(EventType.JOIN_CHANNEL, {
+      channelId: 'sampleChannelId',
+      clientType: 'wallet',
+      context: 'someContext_resume',
+    });
   });
 
   it('should send READY message if keys have been exchanged and not an originator', () => {
-    mockAreKeysExchanged.mockReturnValueOnce(true);
+    mockAreKeysExchanged.mockReturnValue(true);
 
     resume(instance);
 
@@ -78,7 +74,7 @@ describe('resume', () => {
   it('should not send READY message if an originator, but initiate key exchange', () => {
     instance.state.isOriginator = true;
 
-    mockAreKeysExchanged.mockReturnValueOnce(true);
+    mockAreKeysExchanged.mockReturnValue(true);
 
     resume(instance);
 
@@ -86,7 +82,7 @@ describe('resume', () => {
   });
 
   it('should start key exchange if keys are not exchanged and not an originator', () => {
-    mockAreKeysExchanged.mockReturnValueOnce(false);
+    mockAreKeysExchanged.mockReturnValue(false);
 
     resume(instance);
 

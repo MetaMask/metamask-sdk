@@ -1,10 +1,13 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
+import { logger } from '../../../utils/logger';
 import { setLastActiveDate } from './setLastActiveDate';
 
 describe('setLastActiveDate', () => {
   let instance: RemoteCommunication;
   let lastActiveDate: Date;
+
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -25,18 +28,13 @@ describe('setLastActiveDate', () => {
     lastActiveDate = new Date('2023-01-01T12:00:00Z');
   });
 
-  it('should log if debug mode is enabled', () => {
-    instance.state.debug = true;
-    const consoleDebugSpy = jest.spyOn(console, 'debug');
-
+  it('should log debug info', () => {
     setLastActiveDate(instance, lastActiveDate);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      `RemoteCommunication::setLastActiveDate() channel=${instance.state.channelId}`,
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: setLastActiveDate()] channel=test-channel-id',
       lastActiveDate,
     );
-
-    consoleDebugSpy.mockRestore();
   });
 
   it('should set the lastActive attribute correctly', () => {

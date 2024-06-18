@@ -1,10 +1,12 @@
 import { SocketService } from '../../../SocketService';
+import { logger } from '../../../utils/logger';
 import { resetKeys } from './resetKeys';
 
 describe('resetKeys', () => {
   let instance: SocketService;
-  const mockConsoleDebug = jest.spyOn(console, 'debug');
   const mockResetKeys = jest.fn();
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -24,14 +26,11 @@ describe('resetKeys', () => {
     expect(mockResetKeys).toHaveBeenCalled();
   });
 
-  it('should not log debug message if debugging is disabled', () => {
-    resetKeys(instance);
-    expect(mockConsoleDebug).not.toHaveBeenCalled();
-  });
-
-  it('should log debug message if debugging is enabled', () => {
+  it('should log debug message', () => {
     instance.state.debug = true;
     resetKeys(instance);
-    expect(mockConsoleDebug).toHaveBeenCalledWith('SocketService::resetKeys()');
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: resetKeys()] Resetting keys.',
+    );
   });
 });

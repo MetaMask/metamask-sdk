@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 
@@ -15,19 +16,17 @@ export function disconnect(
   instance: SocketService,
   options?: DisconnectOptions,
 ) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::disconnect()`,
-      options,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: disconnect()] context=${instance.state.context}`,
+    options,
+  );
 
   if (options?.terminate) {
     instance.state.channelId = options.channelId;
     instance.state.keyExchange?.clean();
+    // Reset rpcMethodTracker
+    instance.state.rpcMethodTracker = {};
   }
-  // Reset rpcMethodTracker
-  instance.state.rpcMethodTracker = {};
   instance.state.manualDisconnect = true;
   instance.state.socket?.disconnect();
 }

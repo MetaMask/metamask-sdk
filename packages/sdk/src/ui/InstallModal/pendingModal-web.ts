@@ -1,23 +1,25 @@
 import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import { i18n } from 'i18next';
 import packageJson from '../../../package.json';
+import { logger } from '../../utils/logger';
 
 const sdkWebPendingModal = ({
-  debug,
   onDisconnect,
   i18nInstance,
+  debug,
 }: {
-  debug?: boolean;
   onDisconnect?: () => void;
   i18nInstance: i18n;
+  debug?: boolean;
 }) => {
   let div: HTMLDivElement | null = null;
   let modalLoader: ModalLoader | null = null;
 
   const unmount = () => {
-    if (debug) {
-      console.log(`pendingModal-web unmount`, div);
-    }
+    logger(
+      `[UI: pendingModal-web: sdkWebPendingModal()] pendingModal-web unmount`,
+      div,
+    );
 
     // Remove the node from the DOM
     if (div?.parentNode) {
@@ -29,9 +31,10 @@ const sdkWebPendingModal = ({
   };
 
   const updateOTPValue = (otpValue: string) => {
-    if (debug) {
-      console.log(`pendingModal-web updateOTPValue`, otpValue);
-    }
+    logger(
+      `[UI: pendingModal-web: sdkWebPendingModal()] pendingModal-web updateOTPValue`,
+      otpValue,
+    );
 
     if (modalLoader) {
       modalLoader.updateOTPValue(otpValue);
@@ -47,9 +50,10 @@ const sdkWebPendingModal = ({
       displayOTP: true,
     },
   ) => {
-    if (debug) {
-      console.log(`pendingModal-web mount`, div);
-    }
+    logger(
+      `[UI: pendingModal-web: sdkWebPendingModal()] pendingModal-web mount`,
+      div,
+    );
 
     if (div) {
       div.style.display = 'block';

@@ -41,6 +41,7 @@ export class ModalLoader {
     reactRoot.render(
       <InstallModal
         link={props.link}
+        preferDesktop={props.preferDesktop}
         onClose={props.onClose}
         sdkVersion={this.sdkVersion}
         metaMaskInstaller={props.metaMaskInstaller}

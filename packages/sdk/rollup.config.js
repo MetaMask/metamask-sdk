@@ -8,6 +8,7 @@ import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
+import sizes from 'rollup-plugin-sizes';
 
 const packageJson = require('./package.json');
 
@@ -17,14 +18,23 @@ const isDev = process.env.NODE_ENV === 'dev';
 // Base external dependencies across different builds
 const baseExternalDeps = [
   '@react-native-async-storage/async-storage',
+  'extension-port-stream',
 ];
 
 // Dependencies for rollup to consider as external
-const listDepForRollup = [
-  ...baseExternalDeps,
+const listDepForRollup = [...baseExternalDeps];
+const webExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-dom',
 ];
-const webExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
-const rnExternalDeps = [...listDepForRollup, 'qrcode-terminal-nooctal'];
+const rnExternalDeps = [
+  ...listDepForRollup,
+  'qrcode-terminal-nooctal',
+  'react',
+  'react-native',
+];
 
 /**
  * @type {import('rollup').RollupOptions}
@@ -52,15 +62,19 @@ const config = [
         preferBuiltins: false,
         exportConditions: ['browser'],
       }),
-      commonjs({ transformMixedEsModules: true }),
+      commonjs({
+        transformMixedEsModules: true,
+      }),
       globals(),
       builtins({ crypto: true }),
       json(),
+      isDev && sizes(),
       terser(),
       // Visualize the bundle to analyze its composition and size
-      isDev && visualizer({
-        filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   // Browser builds (UMD, IIFE)
@@ -98,11 +112,13 @@ const config = [
       globals(),
       builtins({ crypto: true }),
       json(),
+      isDev && sizes(),
       terser(),
       // Visualize the bundle to analyze its composition and size
-      isDev && visualizer({
-        filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   {
@@ -120,7 +136,7 @@ const config = [
       jscc({
         values: { _REACTNATIVE: 1 },
       }),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: './tsconfig.json' }),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
@@ -129,10 +145,12 @@ const config = [
         preferBuiltins: true,
       }),
       json(),
+      isDev && sizes(),
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
+        }),
     ],
   },
   {
@@ -163,18 +181,20 @@ const config = [
         // Generate sourcemap
         sourcemap: true,
       }),
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: './tsconfig.json' }),
       nodeResolve({
         browser: false,
         preferBuiltins: true,
-        exportConditions: ['node']
+        exportConditions: ['node'],
       }),
       commonjs({ transformMixedEsModules: true }),
       json(),
+      isDev && sizes(),
       terser(),
-      isDev && visualizer({
-        filename: `bundle_stats/node-stats-${packageJson.version}.html`,
-      }),
+      isDev &&
+        visualizer({
+          filename: `bundle_stats/node-stats-${packageJson.version}.html`,
+        }),
     ],
   },
 ];

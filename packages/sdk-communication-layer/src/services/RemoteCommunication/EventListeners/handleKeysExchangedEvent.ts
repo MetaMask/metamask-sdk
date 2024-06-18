@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -7,6 +8,8 @@ import { MessageType } from '../../../types/MessageType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { TrackingEvents } from '../../../types/TrackingEvent';
 import { setLastActiveDate } from '../StateManger';
+import { ChannelConfig } from '../../../types/ChannelConfig';
+import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 
 /**
  * Creates and returns an event handler function for the "keys_exchanged" event. This handler is responsible for managing the state and operations associated with the key exchange process within a `RemoteCommunication` instance.
@@ -40,14 +43,26 @@ export function handleKeysExchangedEvent(
   }) => {
     const { state } = instance;
 
-    if (state.debug) {
-      console.debug(
-        `RemoteCommunication::${state.context}::on commLayer.'keys_exchanged' channel=${state.channelId}`,
-        message,
-      );
-    }
+    logger.RemoteCommunication(
+      `[RemoteCommunication: handleKeysExchangedEvent()] context=${state.context} on commLayer.'keys_exchanged' channel=${state.channelId}`,
+      message,
+    );
 
     if (state.communicationLayer?.getKeyInfo()?.keysExchanged) {
+      // Update channelConfig with the new keys
+      const channelConfig: ChannelConfig = {
+        ...state.channelConfig,
+        channelId: state.channelId ?? '',
+        validUntil:
+          state.channelConfig?.validUntil || DEFAULT_SESSION_TIMEOUT_MS,
+        localKey: state.communicationLayer.getKeyInfo().ecies.private,
+        otherKey: state.communicationLayer.getKeyInfo().ecies.otherPubKey,
+      };
+      state.storageManager
+        ?.persistChannelConfig(channelConfig)
+        .catch((error) => {
+          console.error(`Error persisting channel config`, error);
+        });
       instance.setConnectionStatus(ConnectionStatus.LINKED);
     }
 

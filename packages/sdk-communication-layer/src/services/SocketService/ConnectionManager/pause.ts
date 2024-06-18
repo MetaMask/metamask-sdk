@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { MessageType } from '../../../types/MessageType';
 
@@ -9,9 +10,10 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function pause(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(`SocketService::${instance.state.context}::pause()`);
-  }
+  logger.SocketService(
+    `[SocketService: pause()] context=${instance.state.context}`,
+  );
+
   instance.state.manualDisconnect = true;
   if (instance.state.keyExchange?.areKeysExchanged()) {
     instance.sendMessage({ type: MessageType.PAUSE });

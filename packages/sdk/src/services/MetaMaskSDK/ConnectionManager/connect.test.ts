@@ -1,14 +1,17 @@
 import { MetaMaskSDK } from '../../../sdk';
+import * as loggerModule from '../../../utils/logger';
 import { connect } from './connect';
 
 jest.mock('../../../sdk');
 
 describe('connect', () => {
   let instance: MetaMaskSDK;
+  const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   beforeEach(() => {
     jest.clearAllMocks();
     instance = {
+      isExtensionActive: jest.fn(),
       _initialized: false,
       debug: false,
       init: jest.fn().mockResolvedValue(true),
@@ -51,20 +54,9 @@ describe('connect', () => {
 
   describe('Debug Mode', () => {
     it('should log debug messages when debug is true', async () => {
-      instance.debug = true;
-      jest.spyOn(console, 'log').mockImplementation();
-      jest.spyOn(console, 'debug').mockImplementation();
-
       await connect(instance);
 
-      expect(console.log).toHaveBeenCalledWith(
-        'SDK::connect() provider not ready -- wait for init()',
-      );
-
-      expect(console.debug).toHaveBeenCalledWith(
-        'SDK::connect()',
-        instance.activeProvider,
-      );
+      expect(spyLogger).toHaveBeenCalled();
     });
   });
 });

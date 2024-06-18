@@ -1,7 +1,7 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 const path = require('path');
-const exclusionList = require('metro-config/src/defaults/exclusionList')
-const escape = require('escape-string-regexp')
+const exclusionList = require('metro-config/src/defaults/exclusionList');
+const escape = require('escape-string-regexp');
 
 const sdkRootPath = path.resolve(__dirname, '../../');
 const uiRoot = sdkRootPath + '/packages/sdk-ui';
@@ -18,19 +18,22 @@ const modules = [
   'react-native-svg',
   'react-native-vector-icons',
   'react-native-safe-area-context',
-]
+];
 
 const extraNodeModules = modules.reduce((acc, name) => {
-  acc[name] = path.join(__dirname, 'node_modules', name)
-  return acc
+  acc[name] = path.join(__dirname, 'node_modules', name);
+  return acc;
 }, {});
 
-
 // Create the first blacklist regular expressions array
-const blacklistRE1 = modules.map(m => new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`));
+const blacklistRE1 = modules.map(
+  m => new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`),
+);
 
 // Create the second blacklist regular expressions array
-const blacklistRE2 = modules.map(m => new RegExp(`^${escape(path.join(hooksRoot, 'node_modules', m))}\\/.*$`));
+const blacklistRE2 = modules.map(
+  m => new RegExp(`^${escape(path.join(hooksRoot, 'node_modules', m))}\\/.*$`),
+);
 
 // Combine the two arrays
 const combinedBlacklistRE = [...blacklistRE1, ...blacklistRE2];
@@ -38,12 +41,11 @@ const combinedBlacklistRE = [...blacklistRE1, ...blacklistRE2];
 // Create a single exclusion list using the combined array
 const finalBlacklistRE = exclusionList(combinedBlacklistRE);
 
-
-console.log(`modules: `, modules)
-console.log(`###################`)
-console.log(`extraNodeModules`, extraNodeModules)
-console.log(`###################`)
-console.log(`finalBlacklistRE`, finalBlacklistRE)
+console.log(`modules: `, modules);
+console.log(`###################`);
+console.log(`extraNodeModules`, extraNodeModules);
+console.log(`###################`);
+console.log(`finalBlacklistRE`, finalBlacklistRE);
 
 /**
  * Metro configuration
@@ -52,7 +54,7 @@ console.log(`finalBlacklistRE`, finalBlacklistRE)
  * @type {import('metro-config').MetroConfig}
  */
 const defaultConfig = getDefaultConfig(__dirname);
-const { assetExts, sourceExts } = defaultConfig.resolver ?? {};
+const {assetExts, sourceExts} = defaultConfig.resolver ?? {};
 /**
  * Metro configuration
  * https://facebook.github.io/metro/docs/configuration
@@ -69,7 +71,7 @@ const config = {
     }),
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },
-  watchFolders: [sdkRootPath],
+  watchFolders: [sdkRootPath+'/packages/'],
   resolver: {
     extraNodeModules: {
       ...extraNodeModules,
@@ -77,7 +79,7 @@ const config = {
       // crypto: require.resolve('react-native-quick-crypto'),
       // url: require.resolve('whatwg-url'),
     },
-    assetExts: assetExts.filter((ext) => ext !== 'svg'),
+    assetExts: assetExts.filter(ext => ext !== 'svg'),
     sourceExts: [...sourceExts, 'svg'],
     blacklistRE: finalBlacklistRE,
     // nodeModulesPaths: [

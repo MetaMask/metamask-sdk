@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
 
@@ -21,15 +22,21 @@ export function setLastActiveDate(
 ) {
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::setLastActiveDate() channel=${state.channelId}`,
-      lastActiveDate,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: setLastActiveDate()] channel=${state.channelId}`,
+    lastActiveDate,
+  );
+
   const newChannelConfig: ChannelConfig = {
+    ...state.channelConfig,
     channelId: state.channelId ?? '',
     validUntil: state.channelConfig?.validUntil ?? 0,
+    relayPersistence: state.relayPersistence,
+    localKey:
+      state.communicationLayer?.state.keyExchange?.getKeyInfo().ecies.private,
+    otherKey:
+      state.communicationLayer?.state.keyExchange?.getKeyInfo().ecies
+        .otherPubKey,
     lastActive: lastActiveDate.getTime(),
   };
   state.storageManager?.persistChannelConfig(newChannelConfig);

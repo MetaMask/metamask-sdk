@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleAccountsChangedEvent = ({
   debug,
@@ -10,12 +11,11 @@ export const useHandleAccountsChangedEvent = ({
 }: EventHandlerProps) => {
   return useCallback(
     (newAccounts: any) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'accountsChanged' event.`,
-          newAccounts,
-        );
-      }
+      logger(
+        `[MetaMaskProvider: useHandleAccountsChangedEvent()] on 'accountsChanged' event.`,
+        newAccounts,
+      );
+
       setAccount((newAccounts as string[])?.[0]);
       setConnected(true);
       setConnecting(false);

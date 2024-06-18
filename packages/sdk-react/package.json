@@ -1,14 +1,14 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.14.0",
+  "version": "0.20.5",
   "description": "A react component and react hooks to connect and use MetaMask",
-  "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
+  "homepage": "https://github.com/MetaMask/metamask-sdk",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MetaMask/metamask-sdk.git",
+    "url": "https://github.com/MetaMask/metamask-sdk",
     "directory": "packages/sdk-react"
   },
   "keywords": [
@@ -19,6 +19,7 @@
   ],
   "author": "MetaMask",
   "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
   "types": "dist/esm/src/index.d.ts",
   "files": [
     "dist",
@@ -41,13 +42,14 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:ci": "jest --coverage --passWithNoTests"
+    "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js"
   },
   "dependencies": {
     "@metamask/sdk": "workspace:^",
-    "@metamask/sdk-communication-layer": "workspace:^",
-    "@react-native-async-storage/async-storage": "^1.19.6",
-    "eth-rpc-errors": "^4.0.3"
+    "debug": "^4.3.4",
+    "eth-rpc-errors": "^4.0.3",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",
@@ -59,6 +61,7 @@
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
+    "@react-native-async-storage/async-storage": "^1.19.6",
     "@rollup/plugin-commonjs": "^22.0.1",
     "@rollup/plugin-json": "^6.0.1",
     "@rollup/plugin-node-resolve": "^13.3.0",
@@ -99,12 +102,19 @@
     "typescript": "^4.7.4"
   },
   "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.19.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "*"
   },
   "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
     "react": {
+      "optional": false
+    },
+    "react-dom": {
       "optional": false
     },
     "react-native": {

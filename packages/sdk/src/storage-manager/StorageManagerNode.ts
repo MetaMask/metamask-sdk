@@ -5,37 +5,92 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-import { STORAGE_PATH } from '../config';
+import {
+  STORAGE_DAPP_CHAINID,
+  STORAGE_DAPP_SELECTED_ADDRESS,
+  STORAGE_PATH,
+} from '../config';
+import { logger } from '../utils/logger';
 
 export class StorageManagerNode implements StorageManager {
-  private debug = false;
-
   private enabled = false;
 
   constructor(
-    { debug, enabled }: StorageManagerProps | undefined = {
-      debug: false,
+    { enabled }: StorageManagerProps | undefined = {
       enabled: false,
     },
   ) {
-    if (debug) {
-      this.debug = debug;
-    }
-
     this.enabled = enabled;
   }
 
   public async persistChannelConfig(channelConfig: ChannelConfig) {
     const payload = JSON.stringify(channelConfig);
 
-    if (this.debug) {
-      console.debug(
-        `StorageManagerNode::persistChannelConfig() enabled=${this.enabled}`,
-        channelConfig,
-      );
-    }
+    logger(
+      `[StorageManagerNode: persistChannelConfig()] enabled=${this.enabled}`,
+      channelConfig,
+    );
 
     fs.writeFileSync(STORAGE_PATH, payload);
+  }
+
+  public async persistAccounts(accounts: string[]) {
+    logger(
+      `[StorageManagerNode: persistAccounts()] enabled=${this.enabled}`,
+      accounts,
+    );
+
+    const payload = JSON.stringify(accounts);
+    fs.writeFileSync(STORAGE_DAPP_SELECTED_ADDRESS, payload);
+  }
+
+  public async getCachedAccounts(): Promise<string[]> {
+    try {
+      if (!fs.existsSync(STORAGE_DAPP_SELECTED_ADDRESS)) {
+        return [];
+      }
+      const rawAccounts = fs
+        .readFileSync(STORAGE_DAPP_SELECTED_ADDRESS)
+        .toString('utf-8');
+      return JSON.parse(rawAccounts) as string[];
+    } catch (error) {
+      console.error(
+        `[StorageManagerNode: getCachedAccounts()] Error reading cached accounts`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  public async persistChainId(chainId: string) {
+    logger(
+      `[StorageManagerNode: persistChainId()] enabled=${this.enabled}`,
+      chainId,
+    );
+
+    fs.writeFileSync(STORAGE_DAPP_CHAINID, chainId);
+  }
+
+  public async getCachedChainId(): Promise<string | undefined> {
+    try {
+      // check if file exists first
+      if (!fs.existsSync(STORAGE_DAPP_CHAINID)) {
+        return undefined;
+      }
+      const rawChainId = fs
+        .readFileSync(STORAGE_DAPP_CHAINID)
+        .toString('utf-8');
+      if (rawChainId.indexOf('0x') === -1) {
+        return undefined;
+      }
+      return rawChainId;
+    } catch (error) {
+      console.error(
+        `[StorageManagerNode: getCachedChainId()] Error reading cached chainId`,
+        error,
+      );
+      throw error;
+    }
   }
 
   public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {
@@ -44,12 +99,10 @@ export class StorageManagerNode implements StorageManager {
     }
 
     const payload = fs.readFileSync(STORAGE_PATH).toString('utf-8');
-    if (this.debug) {
-      console.debug(
-        `StorageManagerNode::getPersistedChannelConfig() enabled=${this.enabled}`,
-        payload,
-      );
-    }
+    logger(
+      `[StorageManagerNode: getPersistedChannelConfig()] enabled=${this.enabled}`,
+      payload,
+    );
 
     if (!payload) {
       return Promise.resolve(undefined);
@@ -57,23 +110,27 @@ export class StorageManagerNode implements StorageManager {
 
     const channelConfig = JSON.parse(payload) as ChannelConfig;
     // Make sure the date is parsed correctly
-    if (this.debug) {
-      console.debug(
-        `StorageManagerNode::getPersisChannel() channelConfig`,
-        channelConfig,
-      );
-    }
+    logger(
+      `[StorageManagerNode: getPersisChannel()] channelConfig`,
+      channelConfig,
+    );
 
     return Promise.resolve(channelConfig);
   }
 
   public async terminate(): Promise<void> {
-    if (this.debug) {
-      console.debug(`StorageManagerNode::terminate() enabled=${this.enabled}`);
-    }
+    logger(`[StorageManagerNode: terminate()] enabled=${this.enabled}`);
 
     if (fs.existsSync(STORAGE_PATH)) {
       fs.unlinkSync(STORAGE_PATH);
+    }
+
+    if (fs.existsSync(STORAGE_DAPP_SELECTED_ADDRESS)) {
+      fs.unlinkSync(STORAGE_DAPP_SELECTED_ADDRESS);
+    }
+
+    if (fs.existsSync(STORAGE_DAPP_CHAINID)) {
+      fs.unlinkSync(STORAGE_DAPP_CHAINID);
     }
   }
 }

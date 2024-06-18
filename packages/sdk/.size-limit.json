@@ -1,0 +1,6 @@
+[
+  {
+    "path": "./dist/browser/es/metamask-sdk.js",
+    "limit": "100000 ms"
+  }
+]

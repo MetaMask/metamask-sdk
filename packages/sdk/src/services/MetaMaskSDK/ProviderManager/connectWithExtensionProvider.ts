@@ -1,4 +1,5 @@
 import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
+import { logger } from '../../../utils/logger';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
@@ -17,9 +18,7 @@ import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
  * @returns {Promise<void>} A Promise that resolves when the connection has been established or an error has been caught.
  */
 export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
-  if (instance.debug) {
-    console.debug(`SDK::connectWithExtensionProvider()`, instance);
-  }
+  logger(`[MetaMaskSDK: connectWithExtensionProvider()] `, instance);
 
   // save a copy of the instance before it gets overwritten
   instance.sdkProvider = instance.activeProvider;
@@ -32,13 +31,14 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
     const accounts = await window.extension?.request({
       method: 'eth_requestAccounts',
     });
-    if (instance.debug) {
-      console.debug(`SDK::connectWithExtensionProvider() accounts`, accounts);
-    }
+
+    logger(
+      `[MetaMaskSDK: connectWithExtensionProvider()] accounts=${accounts}`,
+    );
   } catch (err) {
     // ignore error
     console.warn(
-      `SDK::connectWithExtensionProvider() can't request accounts error`,
+      `[MetaMaskSDK: connectWithExtensionProvider()] can't request accounts error`,
       err,
     );
     return;
@@ -49,5 +49,8 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
   // eslint-disable-next-line require-atomic-updates
   instance.extensionActive = true;
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
-  instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
+
+  if (instance.options.enableAnalytics) {
+    instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });
+  }
 }

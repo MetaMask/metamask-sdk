@@ -4,7 +4,7 @@ import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('./reconnectSocket');
 
-const mockHasFocus = jest.fn(() => false);
+const mockHasFocus = jest.fn();
 const mockAddEventListener = jest.fn();
 
 describe('checkFocusAndReconnect', () => {
@@ -12,6 +12,8 @@ describe('checkFocusAndReconnect', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockHasFocus.mockReturnValue(false);
 
     global.document = {
       hasFocus: mockHasFocus,
@@ -22,9 +24,7 @@ describe('checkFocusAndReconnect', () => {
     } as unknown as Window & typeof globalThis;
 
     instance = {
-      state: {
-        debug: false,
-      },
+      state: {},
     } as SocketService;
 
     (reconnectSocket as jest.Mock).mockResolvedValue(true);
@@ -35,7 +35,7 @@ describe('checkFocusAndReconnect', () => {
   });
 
   it('should immediately attempt reconnection if document has focus', () => {
-    mockHasFocus.mockReturnValueOnce(true);
+    mockHasFocus.mockReturnValue(true);
 
     checkFocusAndReconnect(instance);
 

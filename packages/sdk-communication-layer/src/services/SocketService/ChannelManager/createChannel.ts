@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { logger } from '../../../utils/logger';
 import { setupChannelListeners } from './setupChannelListeners';
 
 /**
@@ -17,24 +18,27 @@ import { setupChannelListeners } from './setupChannelListeners';
  * instance, or an empty string if not available.
  */
 export function createChannel(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(`SocketService::${instance.state.context}::createChannel()`);
+  logger.SocketService(
+    `[SocketService: createChannel()] context=${instance.state.context}`,
+  );
+
+  if (instance.state.socket?.connected) {
+    console.error(`[SocketService: createChannel()] socket already connected`);
+    throw new Error(`socket already connected`);
   }
 
-  if (!instance.state.socket?.connected) {
-    instance.state.socket?.connect();
-  }
-
+  console.log(`create channel`, instance.state.socket);
+  instance.state.socket?.connect();
   instance.state.manualDisconnect = false;
   instance.state.isOriginator = true;
   const channelId = uuidv4();
   instance.state.channelId = channelId;
   setupChannelListeners(instance, channelId);
-  instance.state.socket?.emit(
-    EventType.JOIN_CHANNEL,
+  instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
     channelId,
-    `${instance.state.context}createChannel`,
-  );
+    context: `${instance.state.context}createChannel`,
+    clientType: 'dapp', // only dapp can create channel
+  });
   return {
     channelId,
     pubKey: instance.state.keyExchange?.getMyPublicKey() || '',

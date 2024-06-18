@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
@@ -20,12 +21,10 @@ export function disconnect({
 }) {
   const { state } = instance;
 
-  if (state.debug) {
-    console.debug(
-      `RemoteCommunication::disconnect() channel=${state.channelId}`,
-      options,
-    );
-  }
+  logger.RemoteCommunication(
+    `[RemoteCommunication: disconnect()] channel=${state.channelId}`,
+    options,
+  );
 
   state.ready = false;
   state.paused = false;
@@ -33,16 +32,17 @@ export function disconnect({
   if (options?.terminate) {
     // remove channel config from persistence layer and close active connections.
     state.storageManager?.terminate(state.channelId ?? '');
-
-    if (
-      state.communicationLayer?.getKeyInfo().keysExchanged &&
-      options?.sendMessage
-    ) {
-      state.communicationLayer?.sendMessage({
-        type: MessageType.TERMINATE,
-      });
+    instance.state.terminated = true;
+    if (options.sendMessage) {
+      // Prevent sending terminate in loop
+      if (state.communicationLayer?.getKeyInfo().keysExchanged) {
+        state.communicationLayer?.sendMessage({
+          type: MessageType.TERMINATE,
+        });
+      }
     }
 
+    state.relayPersistence = false;
     state.channelId = uuidv4();
     options.channelId = state.channelId;
     state.channelConfig = undefined;

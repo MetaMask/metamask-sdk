@@ -2,6 +2,8 @@ import {
   CommunicationLayerPreference,
   EventType,
 } from '@metamask/sdk-communication-layer';
+import debug from 'debug';
+import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
@@ -43,7 +45,16 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   options.logging = options.logging ?? {};
   options.communicationLayerPreference =
     options.communicationLayerPreference ?? CommunicationLayerPreference.SOCKET;
-  options.enableDebug = options.enableDebug ?? true;
+
+  // TODO: it need to be removed and it was added for backward compatibility
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  if (options.enableDebug !== undefined) {
+    debug.enable('MM_SDK');
+    console.warn('enableDebug is removed. Please use enableAnalytics instead.');
+  }
+
+  options.enableAnalytics = options.enableAnalytics ?? true;
   options.injectProvider = options.injectProvider ?? true;
   options.shouldShimWeb3 = options.shouldShimWeb3 ?? true;
   options.useDeeplink = options.useDeeplink ?? false;
@@ -53,9 +64,8 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
 
   const developerMode = options.logging?.developerMode === true;
   instance.debug = options.logging?.sdk || developerMode;
-  if (instance.debug) {
-    console.debug(`SDK::_doInit() now`, instance.options);
-  }
+
+  logger('[MetaMaskSDK: performSDKInitialization()] options', instance.options);
 
   // Make sure to enable all logs if developer mode is on
   const runtimeLogging = { ...options.logging };
@@ -66,6 +76,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     runtimeLogging.keyExchangeLayer = true;
     runtimeLogging.remoteLayer = true;
     runtimeLogging.serviceLayer = true;
+    runtimeLogging.plaintext = true;
   }
 
   await initializeI18next(instance);
@@ -86,6 +97,9 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     await setupExtensionPreferences(instance);
 
   if (shouldReturn) {
+    logger(
+      '[MetaMaskSDK: performSDKInitialization()] shouldReturn=true --- prevent sdk initialization',
+    );
     return;
   }
 
@@ -93,6 +107,15 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
 
   await initializeProviderAndEventListeners(instance);
   await handleAutoAndExtensionConnections(instance, preferExtension);
+
+  try {
+    await instance.remoteConnection?.startConnection({ initialCheck: true });
+  } catch (err) {
+    console.error(
+      `[MetaMaskSDK: setupRemoteConnectionAndInstaller()] Error while checking installation`,
+      err,
+    );
+  }
 
   instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.INITIALIZED);
 }

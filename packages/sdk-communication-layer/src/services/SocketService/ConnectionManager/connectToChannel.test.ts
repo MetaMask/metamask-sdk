@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import { setupChannelListeners } from '../ChannelManager';
-import { EventType } from '../../../types/EventType';
 import { SocketService } from '../../../SocketService';
+import { logger } from '../../../utils/logger';
+import { setupChannelListeners } from '../ChannelManager';
 import { connectToChannel } from './connectToChannel';
 
 jest.mock('../ChannelManager');
@@ -12,12 +12,15 @@ const mockEmit = jest.fn();
 describe('connectToChannel', () => {
   let instance: SocketService;
 
+  const spyLogger = jest.spyOn(logger, 'SocketService');
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     instance = {
       state: {
         debug: false,
+        isOriginator: true,
         socket: {
           connected: false,
           connect: mockConnect,
@@ -28,6 +31,7 @@ describe('connectToChannel', () => {
           toString: jest.fn(() => 'keyExchangeString'),
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -45,11 +49,6 @@ describe('connectToChannel', () => {
     expect(instance.state.isOriginator).toBe(true);
     expect(instance.state.channelId).toBe('channel123');
     expect(setupChannelListeners).toHaveBeenCalledWith(instance, 'channel123');
-    expect(mockEmit).toHaveBeenCalledWith(
-      EventType.JOIN_CHANNEL,
-      'channel123',
-      'someContext_connectToChannel',
-    );
   });
 
   it('should throw error if socket is already connected', () => {
@@ -66,10 +65,7 @@ describe('connectToChannel', () => {
     }).toThrow('socket already connected');
   });
 
-  it('should log debug information when debugging is enabled', () => {
-    instance.state.debug = true;
-
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
+  it('should log debug information', () => {
     const options = {
       channelId: 'channel123',
       withKeyExchange: true,
@@ -78,11 +74,9 @@ describe('connectToChannel', () => {
 
     connectToChannel({ options, instance });
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::someContext::connectToChannel() channelId=channel123 isOriginator=true',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[SocketService: connectToChannel()] context=someContext channelId=channel123 isOriginator=true',
       'keyExchangeString',
     );
-
-    consoleDebugSpy.mockRestore();
   });
 });

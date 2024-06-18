@@ -25,6 +25,7 @@ import RootNavigator from './src/RootNavigator';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
+  'No handleCopy function provided for address',
   'Message ignored because invalid key exchange status',
   "MetaMask: 'ethereum._metamask' exposes",
   '`new NativeEventEmitter()` was called with a non-null',
@@ -49,7 +50,7 @@ const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
       debug={debug}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableDebug: true,
+        enableAnalytics: true,
         infuraAPIKey,
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',

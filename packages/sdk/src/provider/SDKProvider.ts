@@ -1,5 +1,6 @@
-import { Duplex } from 'stream';
+import { Duplex } from 'readable-stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
+import { logger } from '../utils/logger';
 import { handleChainChanged } from '../services/SDKProvider/ChainManager/handleChainChanged';
 import { handleDisconnect } from '../services/SDKProvider/ConnectionManager/handleDisconnect';
 import { initializeState } from '../services/SDKProvider/InitializationManager/initializeState';
@@ -25,26 +26,26 @@ export interface SDKProviderProps {
    * Whether the window.web3 shim should be set.
    */
   shouldShimWeb3?: boolean;
-  debug?: boolean;
 }
 
 interface SDKProviderState {
-  debug: boolean;
   autoRequestAccounts: boolean;
   providerStateRequested: boolean;
+  chainId: string;
+  networkVersion?: string;
 }
 
 export class SDKProvider extends MetaMaskInpageProvider {
   public state: SDKProviderState = {
-    debug: false,
     autoRequestAccounts: false,
     providerStateRequested: false,
+    chainId: '',
+    networkVersion: '',
   };
 
   constructor({
     connectionStream,
     shouldSendMetadata,
-    debug = false,
     autoRequestAccounts = false,
   }: SDKProviderProps) {
     super(connectionStream, {
@@ -53,28 +54,23 @@ export class SDKProvider extends MetaMaskInpageProvider {
       shouldSendMetadata,
     });
 
-    if (debug) {
-      console.debug(
-        `SDKProvider::constructor debug=${debug} autoRequestAccounts=${autoRequestAccounts}`,
-      );
-    }
+    logger(
+      `[SDKProvider: constructor()] autoRequestAccounts=${autoRequestAccounts}`,
+    );
     this.state.autoRequestAccounts = autoRequestAccounts;
-    this.state.debug = debug;
   }
 
   async forceInitializeState() {
-    if (this.state.debug) {
-      console.debug(
-        `SDKProvider::forceInitializeState() autoRequestAccounts=${this.state.autoRequestAccounts}`,
-      );
-    }
+    logger(
+      `[SDKProvider: forceInitializeState()] autoRequestAccounts=${this.state.autoRequestAccounts}`,
+    );
+
     return this._initializeStateAsync();
   }
 
   _setConnected() {
-    if (this.state.debug) {
-      console.debug(`SDKProvider::_setConnected()`);
-    }
+    logger(`[SDKProvider: _setConnected()] Setting connected state`);
+
     this._state.isConnected = true;
   }
 
@@ -84,6 +80,25 @@ export class SDKProvider extends MetaMaskInpageProvider {
 
   getSDKProviderState() {
     return this.state;
+  }
+
+  getSelectedAddress() {
+    const { accounts } = this._state;
+
+    if (!accounts || accounts.length === 0) {
+      logger('[SDKProvider: getSelectedAddress] No accounts found');
+      return null;
+    }
+
+    return accounts[0]?.toLowerCase() || '';
+  }
+
+  getChainId() {
+    return this.state.chainId;
+  }
+
+  getNetworkVersion() {
+    return this.state.networkVersion;
   }
 
   setSDKProviderState(state: Partial<SDKProviderState>) {
@@ -114,6 +129,7 @@ export class SDKProvider extends MetaMaskInpageProvider {
         }
       | undefined,
   ): void {
+    logger('[SDKProvider: _initializeState()]', initialState);
     return initializeState(
       this,
       super._initializeState.bind(this),
@@ -125,6 +141,9 @@ export class SDKProvider extends MetaMaskInpageProvider {
     chainId,
     networkVersion,
   }: { chainId?: string; networkVersion?: string } = {}) {
+    this.state.chainId = chainId as string;
+    this.state.networkVersion = networkVersion as string;
+
     handleChainChanged({
       instance: this,
       chainId,

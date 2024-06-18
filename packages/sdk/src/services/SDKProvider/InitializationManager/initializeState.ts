@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
 type InitializeStateArgs = Parameters<SDKProvider['_initializeState']>[0];
@@ -19,13 +20,7 @@ export function initializeState(
   superInitializeState: (initialState: InitializeStateArgs) => void,
   initialState?: InitializeStateArgs | undefined,
 ): void {
-  const { state } = instance;
-
-  if (state.debug) {
-    console.debug(
-      `SDKProvider::_initializeState() set state._initialized to false`,
-    );
-  }
+  logger(`[SDKProvider: initializeState()] set state._initialized to false`);
 
   // Force re-initialize without error.
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

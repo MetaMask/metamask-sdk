@@ -1,9 +1,27 @@
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
+import packageJson from '../../../../package.json';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 import { handleRpcReplies } from './handleRpcReplies';
 import { trackRpcMethod } from './trackRpcMethod';
+
+export const lcLogguedRPCs = [
+  'eth_sendTransaction',
+  'eth_signTypedData',
+  'eth_signTransaction',
+  'personal_sign',
+  'wallet_requestPermissions',
+  'wallet_switchEthereumChain',
+  'eth_signTypedData_v3',
+  'eth_signTypedData_v4',
+  'metamask_connectSign',
+  'metamask_connectWith',
+  'metamask_batch',
+].map((method) => method.toLowerCase());
 
 /**
  * Handles sending a message using the SocketService instance.
@@ -26,14 +44,12 @@ export function handleSendMessage(
     throw new Error('Create a channel first');
   }
 
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${
-        instance.state.context
-      }::sendMessage() areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      message,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: handleSendMessage()] context=${
+      instance.state.context
+    } areKeysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    message,
+  );
 
   const isKeyHandshakeMessage = message?.type?.startsWith('key_handshake');
 
@@ -47,6 +63,32 @@ export function handleSendMessage(
   trackRpcMethod(instance, message);
 
   encryptAndSendMessage(instance, message);
+
+  if (instance.remote.state.analytics) {
+    // Only logs specific RPCs
+    if (
+      instance.remote.state.isOriginator &&
+      message.method &&
+      lcLogguedRPCs.includes(message.method.toLowerCase())
+    ) {
+      SendAnalytics(
+        {
+          id: instance.remote.state.channelId ?? '',
+          event: TrackingEvents.SDK_RPC_REQUEST,
+          sdkVersion: instance.remote.state.sdkVersion,
+          commLayerVersion: packageJson.version,
+          walletVersion: instance.remote.state.walletInfo?.version,
+          params: {
+            method: message.method,
+            from: 'mobile',
+          },
+        },
+        instance.remote.state.communicationServerUrl,
+      ).catch((err) => {
+        console.error(`Cannot send analytics`, err);
+      });
+    }
+  }
 
   // Only makes sense on originator side.
   // wait for reply when eth_requestAccounts is sent.

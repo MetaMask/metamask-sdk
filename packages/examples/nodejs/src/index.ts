@@ -5,6 +5,7 @@ const qrcode = require('qrcode-terminal');
 
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
+  communicationServerUrl: 'http://192.168.50.10:4000',
   dappMetadata: {
     name: 'NodeJS example',
   },
@@ -88,7 +89,7 @@ const start = async (startType) => {
 
   const signResponse = await ethereum.request({
     method: 'eth_signTypedData_v3',
-    params: [ethereum.selectedAddress, JSON.stringify(msgParams)],
+    params: [ethereum.getSelectedAddress(), JSON.stringify(msgParams)],
   });
 
   console.log('eth_signTypedData_v3 response', signResponse);

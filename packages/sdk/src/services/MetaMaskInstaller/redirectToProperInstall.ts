@@ -1,4 +1,5 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
+import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 
 /**
@@ -18,25 +19,13 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
 
   const platformType = state.platformManager?.getPlatformType();
 
-  if (instance?.state.debug) {
-    console.debug(
-      `MetamaskInstaller::redirectToProperInstall() platform=${platformType} state.preferDesktop=${state.preferDesktop}`,
-    );
-  }
+  logger(
+    `[MetamaskInstaller: redirectToProperInstall()] platform=${platformType}`,
+  );
 
   // If it's running on our mobile in-app browser but communication is still not working
   if (platformType === PlatformType.MetaMaskMobileWebview) {
     return false;
-  }
-
-  // If is not installed and is Extension, start Extension onboarding
-  if (platformType === PlatformType.DesktopWeb) {
-    state.isInstalling = true;
-    if (state.preferDesktop) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      instance.startDesktopOnboarding();
-      return false;
-    }
   }
 
   // If is not installed, start remote connection
@@ -44,12 +33,9 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
   try {
     await state.remote?.startConnection();
 
-    // eslint-disable-next-line require-atomic-updates
     state.isInstalling = false;
-    // eslint-disable-next-line require-atomic-updates
     state.hasInstalled = true;
   } catch (err) {
-    // eslint-disable-next-line require-atomic-updates
     state.isInstalling = false;
     throw err;
   }

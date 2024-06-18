@@ -33,13 +33,14 @@ describe('setupAnalytics', () => {
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
-      serverURL: DEFAULT_SERVER_URL,
-      debug: undefined,
-      metadata: {
+      serverUrl: DEFAULT_SERVER_URL,
+      enabled: undefined,
+      originatorInfo: {
         url: '',
         title: '',
         platform: '',
         source: '',
+        dappId: 'unkown',
       },
     });
   });
@@ -51,17 +52,18 @@ describe('setupAnalytics', () => {
       name: 'DApp Name',
     };
     instance.options._source = 'custom-source';
-    instance.debug = true;
+
     mockGetPlatformType.mockReturnValue('web');
 
     await setupAnalytics(instance);
 
     expect(Analytics).toHaveBeenCalledWith({
-      serverURL: 'https://custom.server.url',
-      debug: true,
-      metadata: {
+      enabled: undefined,
+      serverUrl: 'https://custom.server.url',
+      originatorInfo: {
         url: 'https://dapp.url',
         title: 'DApp Name',
+        dappId: 'DApp Name',
         platform: 'web',
         source: 'custom-source',
       },

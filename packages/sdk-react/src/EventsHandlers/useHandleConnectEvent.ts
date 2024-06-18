@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { EventHandlerProps } from '../MetaMaskProvider';
+import { logger } from '../utils/logger';
 
 export const useHandleConnectEvent = ({
   debug,
@@ -11,12 +12,11 @@ export const useHandleConnectEvent = ({
 }: EventHandlerProps) => {
   return useCallback(
     (connectParam: unknown) => {
-      if (debug) {
-        console.debug(
-          `MetaMaskProvider::provider on 'connect' event.`,
-          connectParam,
-        );
-      }
+      logger(
+        `[MetaMaskProvider: useHandleConnectEvent()] on 'connect' event.`,
+        connectParam,
+      );
+
       const currentChainId = (connectParam as { chainId: string }).chainId;
 
       setConnecting(false);

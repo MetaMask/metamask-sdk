@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
@@ -12,23 +13,21 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function ping(instance: SocketService) {
-  if (instance.state.debug) {
-    console.debug(
-      `SocketService::${instance.state.context}::ping() originator=${
-        instance.state.isOriginator
-      } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-    );
-  }
+  logger.SocketService(
+    `[SocketService: ping()] context=${instance.state.context} originator=${
+      instance.state.isOriginator
+    } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+  );
 
   if (instance.state.isOriginator) {
     if (instance.state.keyExchange?.areKeysExchanged()) {
       console.warn(
-        `SocketService::${instance.state.context}::ping() sending READY message`,
+        `[SocketService:ping()] context=${instance.state.context} sending READY message`,
       );
       instance.sendMessage({ type: MessageType.READY });
     } else {
       console.warn(
-        `SocketService::${instance.state.context}::ping() starting key exchange`,
+        `[SocketService: ping()] context=${instance.state.context} starting key exchange`,
       );
 
       instance.state.keyExchange?.start({
@@ -40,6 +39,7 @@ export function ping(instance: SocketService) {
   instance.state.socket?.emit(EventType.MESSAGE, {
     id: instance.state.channelId,
     context: instance.state.context,
+    clientType: instance.remote.state.isOriginator ? 'dapp' : 'wallet',
     message: {
       type: MessageType.PING,
     },

@@ -1,9 +1,14 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
 import { checkSameId } from '../ChannelManager';
+import { lcLogguedRPCs } from '../MessageHandlers';
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+import packageJson from '../../../../package.json';
 
 /**
  * Returns a handler function to handle incoming messages.
@@ -14,29 +19,25 @@ import { checkSameId } from '../ChannelManager';
  * @returns {Function} A handler function for incoming messages.
  */
 export function handleMessage(instance: SocketService, channelId: string) {
-  return ({
-    id,
-    message,
-    error,
-  }: {
+  return (rawMsg: {
     id: string;
-    message: any;
+    ackId?: string;
+    message: string | { type: string; [key: string]: any };
     error?: any;
   }) => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::${
-          instance.state.context
-        }::on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-        message,
-      );
-    }
+    const { id, ackId, message, error } = rawMsg;
+    const relayPersistence = instance.remote.state.relayPersistence ?? false;
+
+    logger.SocketService(
+      `[SocketService handleMessage()]  relayPersistence=${relayPersistence}  context=${
+        instance.state.context
+      } on 'message' ${channelId} keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+      rawMsg,
+    );
 
     if (error) {
-      if (instance.state.debug) {
-        console.debug(`
-      SocketService::${instance.state.context}::on 'message' error=${error}`);
-      }
+      logger.SocketService(`
+      [SocketService handleMessage()] context=${instance.state.context}::on 'message' error=${error}`);
 
       throw new Error(error);
     }
@@ -48,16 +49,24 @@ export function handleMessage(instance: SocketService, channelId: string) {
       return;
     }
 
+    const isEncryptedMessage = typeof message === 'string';
+
     if (
-      instance.state.isOriginator &&
+      !isEncryptedMessage &&
       message?.type === KeyExchangeMessageType.KEY_HANDSHAKE_START
     ) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' received HANDSHAKE_START isOriginator=${instance.state.isOriginator}`,
+      if (relayPersistence) {
+        console.warn(
+          `[SocketService handleMessage()] Ignoring key exchange message because relay persistence is activated`,
           message,
         );
+        return;
       }
+
+      logger.SocketService(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' received HANDSHAKE_START isOriginator=${instance.state.isOriginator}`,
+        message,
+      );
 
       instance.state.keyExchange?.start({
         isOriginator: instance.state.isOriginator ?? false,
@@ -66,36 +75,19 @@ export function handleMessage(instance: SocketService, channelId: string) {
       return;
     }
 
-    // TODO can be removed once session persistence fully vetted.
-    if (message?.type === MessageType.PING) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' ping `,
-        );
-      }
-
-      instance.emit(EventType.MESSAGE, { message: { type: 'ping' } });
-      return;
-    }
-
-    if (instance.state.debug) {
-      // Special case to manage resetting key exchange when keys are already exchanged
-      console.debug(
-        `SocketService::${instance.state.context}::on 'message' originator=${
-          instance.state.isOriginator
-        }, type=${
-          message?.type
-        }, keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      );
-    }
-
-    if (message?.type?.startsWith('key_handshake')) {
-      if (instance.state.debug) {
-        console.debug(
-          `SocketService::${instance.state.context}::on 'message' emit KEY_EXCHANGE`,
+    if (!isEncryptedMessage && message?.type?.startsWith('key_handshake')) {
+      if (relayPersistence) {
+        console.warn(
+          `[SocketService handleMessage()] Ignoring key exchange message because relay persistence is activated`,
           message,
         );
+        return;
       }
+
+      logger.SocketService(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' emit KEY_EXCHANGE`,
+        message,
+      );
 
       instance.emit(InternalEventType.KEY_EXCHANGE, {
         message,
@@ -104,19 +96,28 @@ export function handleMessage(instance: SocketService, channelId: string) {
       return;
     }
 
-    if (!instance.state.keyExchange?.areKeysExchanged()) {
+    if (isEncryptedMessage && !instance.state.keyExchange?.areKeysExchanged()) {
       // Sometime the keys exchanged status is not updated correctly
       // check if we can decrypt the message without errors and if so update the status and continue.
       let canDecrypt = false;
       try {
+        logger.SocketService(
+          `[SocketService handleMessage()] context=${instance.state.context}::on 'message' trying to decrypt message`,
+        );
         instance.state.keyExchange?.decryptMessage(message);
         canDecrypt = true;
       } catch (err) {
         // Ignore error.
+        logger.SocketService(
+          `[SocketService handleMessage()] context=${instance.state.context}::on 'message' error`,
+          err,
+        );
       }
 
       if (canDecrypt) {
-        console.warn(`Invalid key exchange status detected --- updating it.`);
+        logger.SocketService(
+          `Invalid key exchange status detected --- updating it.`,
+        );
         instance.state.keyExchange?.setKeysExchanged(true);
       } else {
         // received encrypted message before keys were exchanged.
@@ -132,7 +133,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
         }
 
         //  ignore message and wait for completion.
-        console.warn(
+        logger.SocketService(
           `Message ignored because invalid key exchange status. step=${
             instance.state.keyExchange?.getKeyInfo().step
           }`,
@@ -141,11 +142,20 @@ export function handleMessage(instance: SocketService, channelId: string) {
         );
         return;
       }
-    } else if (message.toString().indexOf('type') !== -1) {
+    } else if (!isEncryptedMessage && message?.type) {
       // Even if keys were exchanged, if the message is not encrypted, emit it.
       // *** instance is not supposed to happen ***
       console.warn(
-        `SocketService::on 'message' received non encrypted unkwown message`,
+        `[SocketService handleMessage() ::on 'message' received non encrypted unkwown message`,
+      );
+      instance.emit(EventType.MESSAGE, message);
+      return;
+    }
+
+    if (!isEncryptedMessage) {
+      console.warn(
+        `[SocketService handleMessage() ::on 'message' received unkwown message`,
+        message,
       );
       instance.emit(EventType.MESSAGE, message);
       return;
@@ -154,6 +164,19 @@ export function handleMessage(instance: SocketService, channelId: string) {
     const decryptedMessage =
       instance.state.keyExchange?.decryptMessage(message);
     const messageReceived = JSON.parse(decryptedMessage ?? '{}');
+
+    // Acknowledge that the message was received and decryoted
+    if (ackId && ackId?.length > 0) {
+      logger.SocketService(
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' ackid=${ackId} channelId=${id}`,
+      );
+
+      instance.state.socket?.emit(EventType.MESSAGE_ACK, {
+        ackId,
+        channelId: id,
+        clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
+      });
+    }
 
     if (messageReceived?.type === MessageType.PAUSE) {
       /**
@@ -178,13 +201,35 @@ export function handleMessage(instance: SocketService, channelId: string) {
         };
       };
       const initialRPCMethod = instance.state.rpcMethodTracker[rpcMessage.id];
+
       if (initialRPCMethod) {
         const elapsedTime = Date.now() - initialRPCMethod.timestamp;
-        if (instance.state.debug) {
-          console.debug(
-            `SocketService::${instance.state.context}::on 'message' received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${elapsedTime}`,
-            messageReceived,
-          );
+        logger.SocketService(
+          `[SocketService handleMessage()] context=${instance.state.context}::on 'message' received answer for id=${rpcMessage.id} method=${initialRPCMethod.method} responseTime=${elapsedTime}`,
+          messageReceived,
+        );
+
+        // send ack_received tracking message
+        if (
+          instance.remote.state.analytics &&
+          lcLogguedRPCs.includes(initialRPCMethod.method.toLowerCase())
+        ) {
+          SendAnalytics(
+            {
+              id: instance.remote.state.channelId ?? '',
+              event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+              sdkVersion: instance.remote.state.sdkVersion,
+              commLayerVersion: packageJson.version,
+              walletVersion: instance.remote.state.walletInfo?.version,
+              params: {
+                method: initialRPCMethod.method,
+                from: 'mobile',
+              },
+            },
+            instance.remote.state.communicationServerUrl,
+          ).catch((err) => {
+            console.error(`Cannot send analytics`, err);
+          });
         }
         const rpcResult = {
           ...initialRPCMethod,
@@ -199,15 +244,6 @@ export function handleMessage(instance: SocketService, channelId: string) {
         };
         instance.state.rpcMethodTracker[rpcMessage.id] = rpcResult;
         instance.emit(EventType.RPC_UPDATE, rpcResult);
-
-        if (instance.state.debug) {
-          console.debug(
-            `HACK (wallet <7.3) update rpcMethodTracker`,
-            rpcResult,
-          );
-        }
-        // FIXME hack while waiting for mobile release 7.3
-        instance.emit(EventType.AUTHORIZED);
       }
     }
 

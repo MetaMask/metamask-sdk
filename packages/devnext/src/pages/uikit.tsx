@@ -1,4 +1,5 @@
 import { MetaMaskButton, useAccount } from '@metamask/sdk-react-ui';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { MetaMaskButton as NativeMetamaskButton } from '@metamask/sdk-ui';
 
 import Head from 'next/head';
@@ -30,7 +31,8 @@ export default function UIKitPage() {
           <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         </div>
         <div>
-          <NativeMetamaskButton theme={'light'} color="white" />
+          {/* Disabled as the two buttons conflicts */}
+          {/* <NativeMetamaskButton theme={'light'} color="white" /> */}
         </div>
         {isClient && (
           <pre>

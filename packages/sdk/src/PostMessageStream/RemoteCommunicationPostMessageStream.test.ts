@@ -22,7 +22,6 @@ describe('RemoteCommunicationPostMessageStream', () => {
       name: ProviderConstants.PROVIDER,
       remote: mockRemoteCommunication,
       platformManager: mockPlatformManager,
-      debug: false,
     });
   });
 
@@ -30,7 +29,6 @@ describe('RemoteCommunicationPostMessageStream', () => {
     expect(instance.state._name).toBe(ProviderConstants.PROVIDER);
     expect(instance.state.remote).toBe(mockRemoteCommunication);
     expect(instance.state.platformManager).toBe(mockPlatformManager);
-    expect(instance.state.debug).toBe(false);
     expect(mockRemoteCommunication.on).toHaveBeenCalledWith(
       EventType.MESSAGE,
       expect.any(Function),

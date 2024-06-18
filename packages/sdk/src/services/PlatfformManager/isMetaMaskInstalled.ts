@@ -1,16 +1,13 @@
-import { PlatformManager } from '../../Platform/PlatfformManager';
+import { logger } from '../../utils/logger';
 import { Ethereum } from '../Ethereum';
 
-export function isMetaMaskInstalled(instance: PlatformManager) {
-  const { state } = instance;
-
+export function isMetaMaskInstalled() {
   const eth = Ethereum.getProvider() || window?.ethereum;
-  if (state.debug) {
-    console.debug(
-      `Platform::isMetaMaskInstalled isMetaMask=${
-        eth?.isMetaMask
-      } isConnected=${eth?.isConnected()}`,
-    );
-  }
+  logger(
+    `[PlatfformManager: isMetaMaskInstalled()] isMetaMask=${
+      eth?.isMetaMask
+    } isConnected=${eth?.isConnected()}`,
+  );
+
   return eth?.isMetaMask && eth?.isConnected();
 }

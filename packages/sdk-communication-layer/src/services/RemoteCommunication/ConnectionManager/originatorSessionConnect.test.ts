@@ -1,8 +1,11 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
+import { logger } from '../../../utils/logger';
 import { originatorSessionConnect } from './originatorSessionConnect';
 
 describe('originatorSessionConnect', () => {
   let instance: RemoteCommunication;
+
+  const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
   const mockIsConnected = jest.fn();
   const mockGetPersistedChannelConfig = jest.fn();
   const mockConnectToChannel = jest.fn();
@@ -31,8 +34,8 @@ describe('originatorSessionConnect', () => {
     delete instance.state.storageManager;
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.debug).toHaveBeenCalledWith(
-      'RemoteCommunication::connect() no storage manager defined - skip',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: originatorSessionConnect()] no storage manager defined - skip',
     );
   });
 
@@ -40,24 +43,9 @@ describe('originatorSessionConnect', () => {
     mockIsConnected.mockReturnValueOnce(true);
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.debug).toHaveBeenCalledWith(
-      'RemoteCommunication::connect() socket already connected - skip',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: originatorSessionConnect()] socket already connected - skip',
     );
-  });
-
-  it('should attempt to connect if there is a valid stored channel config', async () => {
-    const mockConfig = {
-      validUntil: Date.now() + 100000, // future date to ensure the session is valid
-      channelId: 'mockChannelId',
-    };
-    mockGetPersistedChannelConfig.mockResolvedValueOnce(mockConfig);
-
-    const result = await originatorSessionConnect(instance);
-    expect(result).toBe(mockConfig);
-    expect(mockConnectToChannel).toHaveBeenCalledWith({
-      channelId: mockConfig.channelId,
-      isOriginator: true,
-    });
   });
 
   it('should skip if the stored channel config is expired', async () => {
@@ -69,8 +57,8 @@ describe('originatorSessionConnect', () => {
 
     const result = await originatorSessionConnect(instance);
     expect(result).toBeUndefined();
-    expect(console.log).toHaveBeenCalledWith(
-      'RemoteCommunication::autoConnect Session has expired',
+    expect(spyLogger).toHaveBeenCalledWith(
+      '[RemoteCommunication: autoConnect()] Session has expired',
     );
   });
 

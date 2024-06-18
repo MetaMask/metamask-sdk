@@ -1,13 +1,17 @@
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
   DappMetadata,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import debug from 'debug';
+
 import EventEmitter2 from 'eventemitter2';
 import { createInstance, i18n } from 'i18next';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
+import { DEFAULT_SDK_SOURCE } from './constants';
 import { SDKProvider } from './provider/SDKProvider';
 import { Analytics } from './services/Analytics';
 import {
@@ -16,6 +20,7 @@ import {
   terminate,
 } from './services/MetaMaskSDK/ConnectionManager';
 import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
+import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
@@ -25,7 +30,7 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { WakeLockStatus } from './types/WakeLockStatus';
-import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
+import { logger } from './utils/logger';
 
 export interface MetaMaskSDKOptions {
   /**
@@ -117,7 +122,7 @@ export interface MetaMaskSDKOptions {
   /**
    * Send anonymous analytics to MetaMask to help us improve the SDK.
    */
-  enableDebug?: boolean;
+  enableAnalytics?: boolean;
 
   /**
    * If MetaMask browser extension is detected, directly use it.
@@ -180,9 +185,11 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public extensionActive = false;
 
+  public extension: MetaMaskInpageProvider | undefined;
+
   public _initialized = false;
 
-  public sdkInitPromise?: Promise<void>;
+  public sdkInitPromise?: Promise<void> | undefined = undefined;
 
   public debug = false;
 
@@ -203,20 +210,29 @@ export class MetaMaskSDK extends EventEmitter2 {
       },
       injectProvider: true,
       forceInjectProvider: false,
-      enableDebug: true,
+      enableAnalytics: true,
       shouldShimWeb3: true,
       useDeeplink: false,
       dappMetadata: {
         name: '',
         url: '',
       },
+      _source: DEFAULT_SDK_SOURCE,
       i18nOptions: {
         enabled: false,
       },
     },
   ) {
     super();
+    debug.disable(); // initially disabled
 
+    const developerMode = options.logging?.developerMode === true;
+    const debugEnabled = options.logging?.sdk || developerMode;
+
+    if (debugEnabled) {
+      debug.enable('MM_SDK');
+    }
+    logger(`[MetaMaskSDK: constructor()]: begin.`);
     this.setMaxListeners(50);
 
     if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
@@ -248,17 +264,23 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     this.options = options;
+    if (!this.options._source) {
+      options._source = DEFAULT_SDK_SOURCE;
+    }
 
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
-        if (this.debug) {
-          console.debug(`MetaMaskSDK() initialized`);
+        logger(`[MetaMaskSDK: constructor()]: initialized successfully.`);
+        if (typeof window !== 'undefined') {
           window.mmsdk = this;
         }
       })
       .catch((err) => {
-        console.error(`MetaMaskSDK error during initialization`, err);
+        console.error(
+          `[MetaMaskSDK: constructor()] error during initialization`,
+          err,
+        );
       });
   }
 
@@ -318,9 +340,10 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   // Return the active ethereum provider object
-  getProvider(): SDKProvider {
+  getProvider(): SDKProvider | undefined {
     if (!this.activeProvider) {
-      throw new Error(`SDK state invalid -- undefined provider`);
+      console.warn(`MetaMaskSDK: No active provider found`);
+      return undefined;
     }
 
     return this.activeProvider;
@@ -344,6 +367,22 @@ export class MetaMaskSDK extends EventEmitter2 {
     }
 
     return universalLink;
+  }
+
+  getChannelId() {
+    return this.remoteConnection?.getChannelConfig()?.channelId;
+  }
+
+  getRPCHistory() {
+    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
+  }
+
+  getVersion() {
+    return packageJson.version;
+  }
+
+  getWalletStatus() {
+    return this.remoteConnection?.getConnector()?.getConnectionStatus();
   }
 
   // TODO: remove once reaching sdk 1.0
@@ -382,13 +421,5 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
-  }
-
-  getRPCHistory() {
-    return this.remoteConnection?.getConnector()?.getRPCMethodTracker();
-  }
-
-  getVersion() {
-    return packageJson.version;
   }
 }

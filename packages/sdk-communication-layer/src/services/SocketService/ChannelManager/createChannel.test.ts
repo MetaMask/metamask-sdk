@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SocketService } from '../../../SocketService';
+import { logger } from '../../../utils/logger';
 import { createChannel } from './createChannel';
 import { setupChannelListeners } from './setupChannelListeners';
 
@@ -11,6 +12,8 @@ const mockGetMyPublicKey = jest.fn();
 
 describe('createChannel', () => {
   let instance: SocketService;
+
+  const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -31,6 +34,7 @@ describe('createChannel', () => {
           getMyPublicKey: mockGetMyPublicKey,
         },
       },
+      remote: { state: {} },
     } as unknown as SocketService;
   });
 
@@ -48,13 +52,6 @@ describe('createChannel', () => {
     expect(instance.state.socket?.connect).toHaveBeenCalled();
   });
 
-  it('should not connect socket if already connected', () => {
-    instance.state.socket!.connected = true;
-    createChannel(instance);
-
-    expect(instance.state.socket?.connect).not.toHaveBeenCalled();
-  });
-
   it('should setup channel listeners with correct channelId', () => {
     const result = createChannel(instance);
 
@@ -65,13 +62,13 @@ describe('createChannel', () => {
   });
 
   it('should emit JOIN_CHANNEL event with correct parameters', () => {
-    const result = createChannel(instance);
+    createChannel(instance);
 
-    expect(instance.state.socket?.emit).toHaveBeenCalledWith(
-      'join_channel',
-      result.channelId,
-      'testContextcreateChannel',
-    );
+    expect(instance.state.socket?.emit).toHaveBeenCalledWith('join_channel', {
+      channelId: instance.state.channelId,
+      clientType: 'dapp',
+      context: 'testContextcreateChannel',
+    });
   });
 
   it('should return pubKey if available', () => {
@@ -88,14 +85,11 @@ describe('createChannel', () => {
     expect(result.pubKey).toBe('');
   });
 
-  it('should log the creation process if debug is true', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-    instance.state.debug = true;
+  it('should log debug info', () => {
     createChannel(instance);
 
-    expect(consoleDebugSpy).toHaveBeenCalledWith(
-      'SocketService::testContext::createChannel()',
+    expect(spyLogger).toHaveBeenCalledWith(
+      `[SocketService: createChannel()] context=${instance.state.context}`,
     );
-    consoleDebugSpy.mockRestore();
   });
 });

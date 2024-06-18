@@ -7,6 +7,8 @@ import {
   MessageType,
   PlatformType,
   ServiceStatus,
+  RPCMethodResult,
+  RPCMethodCache,
 } from '@metamask/sdk-communication-layer';
 import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
@@ -27,18 +29,25 @@ declare global {
   }
 }
 
+export type {
+  RPC_URLS_MAP,
+  MetaMaskSDKOptions,
+  SDKLoggingOptions,
+  ServiceStatus,
+};
+
 export {
-  CommunicationLayerPreference,
-  ConnectionStatus,
   DEFAULT_SERVER_URL,
   EventType,
-  MessageType,
+  CommunicationLayerPreference,
   MetaMaskSDK,
+  SDKProvider,
   PROVIDER_UPDATE_TYPE,
   PlatformType,
-  RPC_URLS_MAP,
-  SDKProvider,
+  ConnectionStatus,
+  MessageType,
+  RPCMethodResult,
+  RPCMethodCache,
 };
-export type { MetaMaskSDKOptions, SDKLoggingOptions, ServiceStatus };
 
 export default MetaMaskSDK;

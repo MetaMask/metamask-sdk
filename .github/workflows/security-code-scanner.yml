@@ -1,0 +1,34 @@
+name: 'MetaMask Security Code Scanner'
+
+on:
+  push:
+    branches: ['main']
+  pull_request:
+    branches: ['main']
+
+jobs:
+  run-security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: MetaMask Security Code Scanner
+        uses: MetaMask/Security-Code-Scanner@main
+        with:
+          repo: ${{ github.repository }}
+          paths_ignored: |
+            docs/
+            e2e/
+            tests/
+            packages/development-tools/
+            '**/mocks/'
+            '**/__snapshots__/'
+            '**/*.test.js*'
+            '**/*.test.ts*'
+            '**/jest.environment.js'
+            '**/jest.config.js'
+            node_modules
+          project_metrics_token: ${{secrets.SECURITY_SCAN_METRICS_TOKEN}}
+          slack_webhook: ${{ secrets.APPSEC_BOT_SLACK_WEBHOOK }}

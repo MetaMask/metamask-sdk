@@ -1,8 +1,10 @@
+import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
-import { io, Socket } from 'socket.io-client';
+import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
+import { RemoteCommunication } from './RemoteCommunication';
 import { createChannel } from './services/SocketService/ChannelManager';
 import {
   connectToChannel,
@@ -21,6 +23,7 @@ import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
+import { logger } from './utils/logger';
 
 export interface SocketServiceProps {
   communicationLayerPreference: CommunicationLayerPreference;
@@ -30,6 +33,7 @@ export interface SocketServiceProps {
   communicationServerUrl: string;
   context: string;
   ecies?: ECIESProps;
+  remote: RemoteCommunication;
   logging?: CommunicationLayerLoggingOptions;
 }
 
@@ -50,6 +54,7 @@ export interface SocketServiceState {
   hasPlaintext: boolean;
   socket?: Socket;
   setupChannelListeners?: boolean;
+  analytics?: boolean;
   keyExchange?: KeyExchange;
 }
 
@@ -84,6 +89,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl: '',
   };
 
+  remote: RemoteCommunication;
+
   constructor({
     otherPublicKey,
     reconnect,
@@ -92,33 +99,40 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl,
     context,
     ecies,
+    remote,
     logging,
   }: SocketServiceProps) {
     super();
 
     this.state.resumed = reconnect;
     this.state.context = context;
+    this.state.isOriginator = remote.state.isOriginator;
     this.state.communicationLayerPreference = communicationLayerPreference;
     this.state.debug = logging?.serviceLayer === true;
+    this.remote = remote;
+
+    if (logging?.serviceLayer === true) {
+      debug.enable('SocketService:Layer');
+    }
+
     this.state.communicationServerUrl = communicationServerUrl;
     this.state.hasPlaintext =
       this.state.communicationServerUrl !== DEFAULT_SERVER_URL &&
       logging?.plaintext === true;
 
-    const options = {
+    const options: Partial<ManagerOptions & SocketOptions> = {
       autoConnect: false,
-      transports: DEFAULT_SOCKET_TRANSPORTS,
+      transports: DEFAULT_SOCKET_TRANSPORTS, // ['polling', 'websocket']
+      withCredentials: true,
     };
 
     if (transports) {
       options.transports = transports;
     }
 
-    if (this.state.debug) {
-      console.debug(
-        `SocketService::constructor() Socket IO url: ${this.state.communicationServerUrl}`,
-      );
-    }
+    logger.SocketService(
+      `[SocketService: constructor()] Socket IO url: ${this.state.communicationServerUrl}`,
+    );
 
     this.state.socket = io(communicationServerUrl, options);
 
@@ -144,13 +158,11 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
 
   connectToChannel({
     channelId,
-    isOriginator = false,
     withKeyExchange = false,
   }: ConnectToChannelOptions): void {
     return connectToChannel({
       options: {
         channelId,
-        isOriginator,
         withKeyExchange,
       },
       instance: this,

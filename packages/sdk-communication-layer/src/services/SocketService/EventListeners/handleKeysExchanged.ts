@@ -1,3 +1,4 @@
+import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
@@ -12,10 +13,23 @@ import { ServiceStatus } from '../../../types/ServiceStatus';
  */
 export function handleKeysExchanged(instance: SocketService) {
   return () => {
-    if (instance.state.debug) {
-      console.debug(
-        `SocketService::on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
-      );
+    logger.SocketService(
+      `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    );
+
+    // Persist the new channel config
+    const { channelConfig } = instance.remote.state;
+
+    if (channelConfig) {
+      const eciesState = instance.getKeyExchange().getKeyInfo().ecies;
+      channelConfig.localKey = eciesState.private;
+      channelConfig.otherKey = eciesState.otherPubKey;
+      instance.remote.state.channelConfig = channelConfig;
+      instance.remote.state.storageManager
+        ?.persistChannelConfig(channelConfig)
+        .catch((error) => {
+          console.error(`Error persisting channel config`, error);
+        });
     }
 
     // Propagate key exchange event

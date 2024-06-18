@@ -1,5 +1,5 @@
 import { useSDK } from '@metamask/sdk-react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
@@ -13,13 +13,50 @@ import Button, {
   ButtonVariants,
 } from '../../design-system/components/Buttons/Button';
 import { IconName } from '../../design-system/components/Icons/Icon';
+import { useTheme } from '../../theme';
+import { Theme } from '../../theme/models';
 import { AddressCopyButton } from '../address-copy-button/address-copy-button';
 import { AccountBalance } from '../metamask-button/account-balance/account-balance';
 import NetworkSelector from '../network-selector/network-selector';
 
+const getStyles = ({}: { theme: Theme }) =>
+  StyleSheet.create({
+    container: {
+      display: 'flex',
+      width: '100%',
+      flex: 1,
+      padding: 5,
+      flexDirection: 'column',
+      paddingRight: 15,
+      paddingLeft: 15,
+      gap: 0,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    header: {
+      width: '100%',
+      gap: 0,
+      height: 160,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerContent: {},
+    balanceContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    icon: { padding: 5 },
+    network: {},
+    address: {},
+  });
+
 export interface SDKSummaryProps {}
-export const SDKSummary = () => {
+export const SDKSummary = ({}: SDKSummaryProps) => {
   const { t } = useTranslation('sdk-summary');
+  const theme = useTheme();
+  const styles = useMemo(() => getStyles({ theme }), [theme]);
 
   const { account, connected, balanceProcessing, sdk } = useSDK();
 
@@ -56,35 +93,3 @@ export const SDKSummary = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    width: '100%',
-    flex: 1,
-    padding: 5,
-    flexDirection: 'column',
-    paddingRight: 15,
-    paddingLeft: 15,
-    gap: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  header: {
-    width: '100%',
-    gap: 0,
-    height: 160,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerContent: {},
-  balanceContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: { padding: 5 },
-  network: {},
-  address: {},
-});
