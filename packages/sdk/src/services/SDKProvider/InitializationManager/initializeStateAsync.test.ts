@@ -1,15 +1,24 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { SDKProvider } from '../../../provider/SDKProvider';
+import * as StorageManagerModule from '../../../storage-manager/getStorageManager';
 import * as loggerModule from '../../../utils/logger';
 import { initializeStateAsync } from './initializeStateAsync';
 
+jest.mock('../../../utils/logger', () => ({
+  logger: jest.fn(),
+}));
+
 describe('initializeStateAsync', () => {
   let mockSDKProvider: SDKProvider;
-  const mockRequest: jest.Mock = jest.fn();
-  const mockLogError: jest.Mock = jest.fn();
-  const mockInitializeState: jest.Mock = jest.fn();
+  const mockRequest = jest.fn();
+  const mockLogError = jest.fn();
+  const mockInitializeState = jest.fn();
   const mockGetSelectedAddress = jest.fn();
   const spyLogger = jest.spyOn(loggerModule, 'logger');
+
+  const spyGetStorageManager = jest.spyOn(
+    StorageManagerModule,
+    'getStorageManager',
+  );
 
   const localStorageMock = (() => {
     let store: Record<string, string> = {};
@@ -40,10 +49,11 @@ describe('initializeStateAsync', () => {
     mockSDKProvider = {
       getSelectedAddress: mockGetSelectedAddress,
       state: {},
-      providerStateRequested: false,
+      _state: {},
       request: mockRequest,
       _initializeState: mockInitializeState,
       _log: { error: mockLogError },
+      emit: jest.fn(),
     } as unknown as SDKProvider;
   });
 
@@ -65,5 +75,126 @@ describe('initializeStateAsync', () => {
     expect(mockRequest).not.toHaveBeenCalled();
   });
 
-  // FIXME - test case is incomplete - need redo after protocol v2
+  it('should fetch initial provider state', async () => {
+    spyGetStorageManager.mockReturnValue({
+      getPersistedChannelConfig: jest
+        .fn()
+        .mockResolvedValue({ relayPersistence: true }),
+      getCachedChainId: jest.fn().mockResolvedValue(undefined),
+      getCachedAccounts: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    mockRequest.mockResolvedValue({
+      accounts: [],
+      chainId: '0x1',
+      isUnlocked: true,
+    });
+
+    await initializeStateAsync(mockSDKProvider as SDKProvider);
+
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: 'metamask_getProviderState',
+    });
+    expect(mockInitializeState).toHaveBeenCalled();
+  });
+
+  it('should handle missing accounts and fetch them', async () => {
+    spyGetStorageManager.mockReturnValue({
+      getPersistedChannelConfig: jest
+        .fn()
+        .mockResolvedValue({ relayPersistence: true }),
+      getCachedChainId: jest.fn().mockResolvedValue('0x1'),
+      getCachedAccounts: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    mockRequest.mockResolvedValue({
+      accounts: [],
+      chainId: '0x1',
+      isUnlocked: true,
+    });
+
+    mockGetSelectedAddress.mockReturnValue('0xABC');
+    await initializeStateAsync(mockSDKProvider as SDKProvider);
+
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: 'metamask_getProviderState',
+    });
+
+    expect(mockInitializeState).toHaveBeenCalledWith({
+      accounts: ['0xABC'],
+      chainId: '0x1',
+      isUnlocked: true,
+    });
+  });
+
+  it('should request accounts if not found in initial state or selected address', async () => {
+    spyGetStorageManager.mockReturnValue({
+      getPersistedChannelConfig: jest
+        .fn()
+        .mockResolvedValue({ relayPersistence: true }),
+      getCachedChainId: jest.fn().mockResolvedValue('0x1'),
+      getCachedAccounts: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    mockRequest.mockResolvedValue({
+      accounts: [],
+      chainId: '0x1',
+      isUnlocked: true,
+    });
+
+    mockGetSelectedAddress.mockReturnValue(null);
+    mockRequest.mockResolvedValueOnce(['0xDEF']);
+
+    await initializeStateAsync(mockSDKProvider as SDKProvider);
+
+    expect(mockRequest).toHaveBeenCalledWith({
+      method: 'metamask_getProviderState',
+    });
+
+    expect(mockInitializeState).toHaveBeenCalledWith(['0xDEF']);
+  });
+
+  it('should handle errors gracefully', async () => {
+    spyGetStorageManager.mockReturnValue({
+      getPersistedChannelConfig: jest
+        .fn()
+        .mockResolvedValue({ relayPersistence: true }),
+      getCachedChainId: jest.fn().mockResolvedValue('0x1'),
+      getCachedAccounts: jest.fn().mockResolvedValue([]),
+    } as any);
+
+    mockRequest.mockRejectedValueOnce(
+      new Error('Failed to fetch provider state'),
+    );
+
+    await initializeStateAsync(mockSDKProvider as SDKProvider);
+
+    expect(mockLogError).toHaveBeenCalledWith(
+      'MetaMask: Failed to get initial state. Please report this bug.',
+      expect.any(Error),
+    );
+    expect(mockInitializeState).not.toHaveBeenCalled();
+  });
+
+  it('should use cache if relayPersistence is enabled', async () => {
+    spyGetStorageManager.mockReturnValue({
+      getPersistedChannelConfig: jest
+        .fn()
+        .mockResolvedValue({ relayPersistence: true }),
+      getCachedChainId: jest.fn().mockResolvedValue('0x1'),
+      getCachedAccounts: jest.fn().mockResolvedValue(['0xABC']),
+    } as any);
+
+    await initializeStateAsync(mockSDKProvider as SDKProvider);
+
+    expect(mockInitializeState).toHaveBeenCalledWith({
+      accounts: ['0xABC'],
+      chainId: '0x1',
+      isUnlocked: false,
+    });
+
+    expect(mockSDKProvider.emit).toHaveBeenCalledWith('connect', {
+      chainId: '0x1',
+    });
+  });
 });

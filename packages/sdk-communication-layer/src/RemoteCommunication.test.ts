@@ -1,14 +1,25 @@
 import packageJson from '../package.json';
 import { RemoteCommunication } from './RemoteCommunication';
 import { SocketService } from './SocketService';
+import { clean } from './services/RemoteCommunication/ChannelManager';
+import { resume } from './services/RemoteCommunication/ConnectionManager';
+import { sendMessage } from './services/RemoteCommunication/MessageHandlers';
+import { testStorage } from './services/RemoteCommunication/StorageManager';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
 import { EventType } from './types/EventType';
+import { logger } from './utils/logger';
 
+jest.mock('./services/RemoteCommunication/ChannelManager');
+jest.mock('./services/RemoteCommunication/MessageHandlers');
+jest.mock('./services/RemoteCommunication/StorageManager');
 jest.mock('./services/RemoteCommunication/ConnectionManager');
+jest.mock('./utils/logger');
 
 describe('RemoteCommunication', () => {
   let remoteCommunicationInstance: RemoteCommunication;
+  const mockChannelId = 'mockChannelId';
+  const mockMessage = { type: 'test', data: 'message' };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -155,7 +166,7 @@ describe('RemoteCommunication', () => {
         keyInfo: undefined,
         connectionStatus: ConnectionStatus.DISCONNECTED,
         channelConfig: undefined,
-        channelId: 'mockChannelId',
+        channelId: mockChannelId,
       };
 
       remoteCommunicationInstance.state.originatorInfo =
@@ -174,6 +185,140 @@ describe('RemoteCommunication', () => {
       expect(remoteCommunicationInstance.getServiceStatus()).toStrictEqual(
         mockServiceStatus,
       );
+    });
+  });
+
+  describe('clean', () => {
+    it('should call clean with the current state', () => {
+      remoteCommunicationInstance.clean();
+      expect(clean).toHaveBeenCalledWith(remoteCommunicationInstance.state);
+    });
+  });
+
+  describe('sendMessage', () => {
+    it('should call sendMessage with the provided message', async () => {
+      await remoteCommunicationInstance.sendMessage(mockMessage as any);
+      expect(sendMessage).toHaveBeenCalledWith(
+        remoteCommunicationInstance,
+        mockMessage,
+      );
+    });
+  });
+
+  describe('testStorage', () => {
+    it('should call testStorage with the current state', async () => {
+      await remoteCommunicationInstance.testStorage();
+      expect(testStorage).toHaveBeenCalledWith(
+        remoteCommunicationInstance.state,
+      );
+    });
+  });
+
+  describe('getChannelConfig', () => {
+    it('should return the channelConfig state', () => {
+      const mockChannelConfig = { id: mockChannelId };
+      remoteCommunicationInstance.state.channelConfig =
+        mockChannelConfig as any;
+
+      expect(remoteCommunicationInstance.getChannelConfig()).toBe(
+        mockChannelConfig,
+      );
+    });
+  });
+
+  describe('resetKeys', () => {
+    it('should call resetKeys on the communicationLayer if defined', () => {
+      const resetKeysMock = jest.fn();
+      remoteCommunicationInstance.state.communicationLayer = {
+        resetKeys: resetKeysMock,
+      } as unknown as SocketService;
+      remoteCommunicationInstance.resetKeys();
+      expect(resetKeysMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('setOtherPublicKey', () => {
+    it('should call setOtherPublicKey on the key exchange if different', () => {
+      const setOtherPublicKeyMock = jest.fn();
+      const getOtherPublicKeyMock = jest.fn().mockReturnValue('oldKey');
+      remoteCommunicationInstance.state.communicationLayer = {
+        getKeyExchange: () => ({
+          getOtherPublicKey: getOtherPublicKeyMock,
+          setOtherPublicKey: setOtherPublicKeyMock,
+        }),
+      } as unknown as SocketService;
+      remoteCommunicationInstance.setOtherPublicKey('newKey');
+      expect(setOtherPublicKeyMock).toHaveBeenCalledWith('newKey');
+    });
+
+    it('should throw an error if key exchange is not initialized', () => {
+      remoteCommunicationInstance.state.communicationLayer = {
+        getKeyExchange: () => undefined,
+      } as unknown as SocketService;
+
+      expect(() =>
+        remoteCommunicationInstance.setOtherPublicKey('newKey'),
+      ).toThrow('KeyExchange is not initialized.');
+    });
+  });
+
+  describe('pause', () => {
+    it('should call pause on the communicationLayer and set connection status to PAUSED', () => {
+      const pauseMock = jest.fn();
+      const getKeyInfoMock = jest.fn().mockReturnValue({ key: 'key' });
+      const loggerSpy = jest.spyOn(logger, 'RemoteCommunication');
+      remoteCommunicationInstance.state.communicationLayer = {
+        getKeyInfo: getKeyInfoMock,
+        pause: pauseMock,
+      } as unknown as SocketService;
+      remoteCommunicationInstance.pause();
+      expect(pauseMock).toHaveBeenCalled();
+      expect(remoteCommunicationInstance.state._connectionStatus).toBe(
+        ConnectionStatus.PAUSED,
+      );
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        `[RemoteCommunication: pause()] channel=${remoteCommunicationInstance.state.channelId}`,
+      );
+    });
+  });
+
+  describe('hasRelayPersistence', () => {
+    it('should return the relayPersistence state', () => {
+      expect(remoteCommunicationInstance.hasRelayPersistence()).toBe(false);
+      remoteCommunicationInstance.state.relayPersistence = true;
+      expect(remoteCommunicationInstance.hasRelayPersistence()).toBe(true);
+    });
+  });
+
+  describe('resume', () => {
+    it('should call resume with the current instance', async () => {
+      await remoteCommunicationInstance.resume();
+      expect(resume).toHaveBeenCalledWith(remoteCommunicationInstance);
+    });
+  });
+
+  describe('getChannelId', () => {
+    it('should return the channelId state', () => {
+      remoteCommunicationInstance.state.channelId = mockChannelId;
+      expect(remoteCommunicationInstance.getChannelId()).toBe(mockChannelId);
+    });
+  });
+
+  describe('getRPCMethodTracker', () => {
+    it('should return the RPC method tracker from the communication layer if defined', () => {
+      const mockRPCMethodTracker = { track: jest.fn() };
+      remoteCommunicationInstance.state.communicationLayer = {
+        getRPCMethodTracker: () => mockRPCMethodTracker,
+      } as unknown as SocketService;
+
+      expect(remoteCommunicationInstance.getRPCMethodTracker()).toBe(
+        mockRPCMethodTracker,
+      );
+    });
+
+    it('should return undefined if communication layer is not defined', () => {
+      expect(remoteCommunicationInstance.getRPCMethodTracker()).toBeUndefined();
     });
   });
 });

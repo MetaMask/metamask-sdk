@@ -1,6 +1,8 @@
 import { RPCMethodCache, RPCMethodResult } from '../SocketService';
 import { MAX_RPC_WAIT_TIME } from '../config';
-import { waitForRpc } from './wait';
+import { waitForRpc, wait } from './wait';
+
+// wait.test.ts or add to your existing test file
 
 jest.mock('../config', () => ({
   MAX_RPC_WAIT_TIME: 1000, // Adjust this value to match your tests
@@ -63,5 +65,26 @@ describe('waitForRpc', () => {
       error = e as Error; // Cast the caught object as an Error to ensure type safety
     }
     expect(error).toBeDefined();
+  });
+});
+
+describe('wait', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should resolves after the specified time', async () => {
+    const ms = 1000;
+    const waitPromise = wait(ms);
+
+    jest.runAllTimers(); // Run all pending timers
+
+    await waitPromise.then((res) => {
+      expect(res).toBeUndefined();
+    });
   });
 });
