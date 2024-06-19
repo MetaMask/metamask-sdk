@@ -1,0 +1,27 @@
+name: Run SonarCloud Scan
+
+on:
+  workflow_call:
+    secrets:
+      SONAR_TOKEN:
+        description: SonarCloud token
+        required: true
+
+jobs:
+  sonarcloud-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      # Leaving the test artifact fetching as a reference for when we implement the coverage report
+      # - uses: actions/download-artifact@v4
+        # with:
+          # path: coverage
+          # pattern: tests-artifacts-*
+          # merge-multiple: true
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@4b4d7634dab97dcee0b75763a54a6dc92a9e6bc1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
