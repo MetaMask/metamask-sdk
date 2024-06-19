@@ -1,12 +1,17 @@
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import packageJson from '../package.json';
 import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
-import { RemoteConnection } from './services/RemoteConnection';
 import { Analytics } from './services/Analytics';
+import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
+import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
+import { RemoteConnection } from './services/RemoteConnection';
 
 jest.mock('./services/MetaMaskSDK/InitializerManager');
 jest.mock('./services/MetaMaskSDK/ConnectionManager');
 jest.mock('./services/RemoteConnection');
+jest.mock('./services/MetaMaskSDK/ConnectionManager/connectAndSign');
+jest.mock('./services/MetaMaskSDK/ConnectionManager/connectWith');
 
 describe('MetaMaskSDK', () => {
   let sdk: MetaMaskSDK;
@@ -62,6 +67,18 @@ describe('MetaMaskSDK', () => {
       await sdk.terminate();
       expect(terminateSpy).toHaveBeenCalled();
     });
+
+    it('should connect and sign', async () => {
+      const msg = 'test message';
+      await sdk.connectAndSign({ msg });
+      expect(connectAndSign).toHaveBeenCalledWith({ instance: sdk, msg });
+    });
+
+    it('should connect with RPC method', async () => {
+      const rpc = { method: 'test_method', params: [] };
+      await sdk.connectWith(rpc);
+      expect(connectWith).toHaveBeenCalledWith({ instance: sdk, rpc });
+    });
   });
 
   describe('Provider Handling', () => {
@@ -81,13 +98,17 @@ describe('MetaMaskSDK', () => {
       );
     });
 
-    it('should log warn message if SDK is not initialized when calling getProvider', () => {
-      const spyConsoleWarn = jest.spyOn(console, 'warn');
+    it('should get mobile provider', () => {
+      const mockProvider = {};
 
-      sdk.activeProvider = undefined;
-      sdk.getProvider();
-      expect(spyConsoleWarn).toHaveBeenCalledWith(
-        'MetaMaskSDK: No active provider found',
+      sdk.sdkProvider = mockProvider as SDKProvider;
+      expect(sdk.getMobileProvider()).toBe(mockProvider);
+    });
+
+    it('should throw error if mobile provider is undefined', () => {
+      sdk.sdkProvider = undefined;
+      expect(() => sdk.getMobileProvider()).toThrow(
+        'SDK state invalid -- undefined mobile provider',
       );
     });
   });
@@ -263,6 +284,62 @@ describe('MetaMaskSDK', () => {
 
     it('should get connection', () => {
       expect(sdk._getConnection()).toBe(sdk.remoteConnection);
+    });
+
+    it('should set read-only RPC calls', () => {
+      sdk.setReadOnlyRPCCalls(true);
+      expect(sdk.hasReadOnlyRPCCalls()).toBe(true);
+
+      sdk.setReadOnlyRPCCalls(false);
+      expect(sdk.hasReadOnlyRPCCalls()).toBe(false);
+    });
+
+    it('should get channel ID', () => {
+      const mockChannelId = 'mockChannelId';
+      sdk.remoteConnection = {
+        getChannelConfig: jest
+          .fn()
+          .mockReturnValue({ channelId: mockChannelId }),
+      } as unknown as RemoteConnection;
+      expect(sdk.getChannelId()).toBe(mockChannelId);
+    });
+
+    it('should get RPC history', () => {
+      const mockRPCHistory = {};
+      sdk.remoteConnection = {
+        getConnector: jest.fn().mockReturnValue({
+          getRPCMethodTracker: jest.fn().mockReturnValue(mockRPCHistory),
+        }),
+      } as unknown as RemoteConnection;
+      expect(sdk.getRPCHistory()).toBe(mockRPCHistory);
+    });
+
+    it('should get SDK version', () => {
+      expect(sdk.getVersion()).toBe(packageJson.version);
+    });
+
+    it('should get wallet status', () => {
+      const mockStatus = 'connected';
+      sdk.remoteConnection = {
+        getConnector: jest.fn().mockReturnValue({
+          getConnectionStatus: jest.fn().mockReturnValue(mockStatus),
+        }),
+      } as unknown as RemoteConnection;
+      expect(sdk.getWalletStatus()).toBe(mockStatus);
+    });
+  });
+
+  describe('Deprecated Methods', () => {
+    it('should log warning and call terminate when disconnect is called', () => {
+      const consoleWarnSpy = jest.spyOn(console, 'warn');
+      const terminateSpy = jest.spyOn(sdk, 'terminate');
+
+      sdk.disconnect();
+
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'MetaMaskSDK.disconnect() is deprecated, use terminate()',
+      );
+      expect(terminateSpy).toHaveBeenCalled();
     });
   });
 });
