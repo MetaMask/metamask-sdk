@@ -5,7 +5,7 @@ on:
     secrets:
       SONAR_TOKEN:
         description: SonarCloud token
-        required: false
+        required: true
 
 jobs:
   sonarcloud-scan:
