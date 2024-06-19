@@ -105,7 +105,7 @@ export function initCommunicationLayer({
       : state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'unkown';
 
   if (!dappId) {
-    dappId = 'unkown-hostname';
+    dappId = 'n/a';
   }
 
   const originatorInfo: OriginatorInfo = {
