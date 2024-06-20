@@ -41,6 +41,7 @@ jobs:
       android-wallet-name: 'MM-QA-Wallet-Latest.apk'
       ios-wallet-name: 'MM-QA-Wallet-Latest.ipa'
 
+
   is-release:
     name: Determine whether this is a release merge commit
     needs: lint-build-test
