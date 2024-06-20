@@ -2,6 +2,7 @@ import { EventType } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import * as loggerModule from '../../../utils/logger';
+import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { terminate } from './terminate';
 
 describe('terminate', () => {
@@ -59,12 +60,13 @@ describe('terminate', () => {
       });
 
       // TODO re-enable once we can mock window object or external storage provider
-      // it('should remove extension provider', () => {
-      //   terminate(instance);
-      //   expect(localStorageMock.removeItem).toHaveBeenCalledWith(
-      //     STORAGE_PROVIDER_TYPE,
-      //   );
-      // });
+      // eslint-disable-next-line jest/no-disabled-tests
+      it.skip('should remove extension provider', () => {
+        terminate(instance);
+        expect(localStorageMock.removeItem).toHaveBeenCalledWith(
+          STORAGE_PROVIDER_TYPE,
+        );
+      });
 
       it('should switch back to default provider', () => {
         terminate(instance);
