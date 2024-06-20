@@ -18,6 +18,7 @@
     "packages/sdk-lab",
     "packages/devsocket",
     "packages/devreact",
+    "packages/devexpo",
     "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e"
