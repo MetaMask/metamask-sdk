@@ -43,7 +43,8 @@ const sdkWebInstallModal = ({
 
   const unmount = (shouldTerminate?: boolean) => {
     logger(
-      `[UI: InstallModal-web: sdkWebInstallModal()] installModal-web unmounting install modal -- shouldTerminate=${shouldTerminate}`,
+      `[UI: InstallModal-web: sdkWebInstallModal()] installModal-web unmounting install modal -- shouldTerminate:`,
+      shouldTerminate,
       div,
     );
 

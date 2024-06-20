@@ -25,6 +25,7 @@ export function showInstallModal(
         `[RemoteConnection: showInstallModal() => terminate()] terminate connection`,
       );
 
+      // Terminate with specific error code
       options.sdk.terminate();
     },
     debug: state.developerMode,
