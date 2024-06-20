@@ -9,7 +9,7 @@ import styles from './styles';
 import SDKVersion from './components/SDKVersion';
 
 export interface SelectModalProps {
-  onClose: () => void;
+  onClose: (shouldTerminate?: boolean) => void;
   link: string;
   sdkVersion?: string;
   connectWithExtension: () => void;
@@ -25,11 +25,11 @@ export const SelectModal = (props: SelectModalProps) => {
 
   return (
     <WidgetWrapper className="select-modal">
-      <div style={styles.backdrop} onClick={props.onClose}></div>
+      <div style={styles.backdrop} onClick={() => props.onClose(true)}></div>
       <div style={styles.modal}>
         <div style={styles.closeButtonContainer}>
           <div style={styles.right}>
-            <span style={styles.closeButton} onClick={props.onClose}>
+            <span style={styles.closeButton} onClick={() => props.onClose(true)}>
               <CloseButton />
             </span>
           </div>

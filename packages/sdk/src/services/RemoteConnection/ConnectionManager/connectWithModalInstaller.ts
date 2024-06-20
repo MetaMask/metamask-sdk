@@ -49,6 +49,14 @@ export async function connectWithModalInstaller(
           `[RemoteConnection: connectWithModalInstaller()] once provider_update -- resolving startConnection promise`,
         );
 
+        if (type === PROVIDER_UPDATE_TYPE.TERMINATE) {
+          const rejected = {
+            code: 4001,
+            message: 'User rejected the request.',
+          };
+          reject(rejected);
+          return;
+        }
         reject(type);
       },
     );
