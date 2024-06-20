@@ -108,6 +108,9 @@ export async function startConnection(
     logger(`[RemoteConnection: startConnection()] qrcodeLink=${qrcodeLink}`);
   }
 
+  // emit qrcode url link
+  provider.emit('display_uri', qrcodeLink);
+
   // first handle secure connection
   if (state.platformManager?.isSecure()) {
     // FIXME do we also need to wait for event on secure platform? ready / authorized
