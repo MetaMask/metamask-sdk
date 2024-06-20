@@ -101,14 +101,10 @@ export function initCommunicationLayer({
 
   const defaultDappId =
     state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'n/a';
-  let dappId =
+  const dappId =
     typeof window !== 'undefined' && typeof window.location !== 'undefined'
       ? window.location.hostname ?? defaultDappId
       : defaultDappId;
-
-  if (!dappId) {
-    dappId = 'n/a';
-  }
 
   const originatorInfo: OriginatorInfo = {
     url,
