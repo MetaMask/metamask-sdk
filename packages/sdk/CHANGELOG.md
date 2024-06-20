@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.26.0]
 ### Added
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
+- feat: close modal with error 4001 ([#898](https://github.com/MetaMask/metamask-sdk.git/pull/898))
 - feat: emit url event ([#901](https://github.com/MetaMask/metamask-sdk.git/pull/901))
 - chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk.git/pull/888))
 
