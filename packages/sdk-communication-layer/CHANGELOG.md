@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.0]
+### Added
+- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
+- feat: update dev rn / expo and empty dappid ([#897](https://github.com/MetaMask/metamask-sdk.git/pull/897))
+- feat: prevent empty dappid ([#891](https://github.com/MetaMask/metamask-sdk.git/pull/891))
+- chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk.git/pull/888))
+
 ## [0.20.5]
 ### Uncategorized
 - fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk.git/pull/871))
@@ -216,7 +223,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.0...HEAD
+[0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...@metamask/sdk-communication-layer@0.26.0
 [0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.4...@metamask/sdk-communication-layer@0.20.5
 [0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.2...@metamask/sdk-communication-layer@0.20.4
 [0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.1...@metamask/sdk-communication-layer@0.20.2
