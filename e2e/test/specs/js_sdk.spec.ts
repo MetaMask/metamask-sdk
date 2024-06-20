@@ -54,6 +54,7 @@ describe('JS SDK E2E', () => {
     }
 
     await driver.pause(5000);
+
     await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
