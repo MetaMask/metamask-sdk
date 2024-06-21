@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.26.1]
-### Uncategorized
-- feat: cleanup leaking console logs ([#907](https://github.com/MetaMask/metamask-sdk/pull/907))
+### Added
+- feat: wallet_revokePermissions on terminate  ([#907](https://github.com/MetaMask/metamask-sdk/pull/907))
 
 ## [0.26.0]
 ### Added
