@@ -1,5 +1,6 @@
 import { EventType } from '@metamask/sdk-communication-layer';
 import {
+  RPC_METHODS,
   STORAGE_DAPP_CHAINID,
   STORAGE_DAPP_SELECTED_ADDRESS,
   STORAGE_PROVIDER_TYPE,
@@ -36,15 +37,24 @@ export function terminate(instance: MetaMaskSDK) {
   // check if connected with extension provider
   // if it is, disconnect from it and switch back to injected provider
   if (instance.extensionActive) {
+    // Revoke permissions
+    instance.activeProvider
+      ?.request({
+        method: RPC_METHODS.WALLET_REVOKEPERMISSIONS,
+        params: [{ eth_accounts: {} }],
+      })
+      .catch((error) => {
+        logger(
+          `[MetaMaskSDK: terminate()] wallet_revokePermissions error: ${error}`,
+        );
+      });
+
     if (instance.options.extensionOnly) {
       logger(
         `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
       );
       return;
     }
-
-    // Optional: could Call wallet_revokePermissions to revoke the permissions granted to the dapp but it makes the experience awkward
-    // as the user has to manually deselect the account from the list. Choose to not implement for now.
 
     // Re-use default extension provider as default
     instance.activeProvider = instance.sdkProvider;
