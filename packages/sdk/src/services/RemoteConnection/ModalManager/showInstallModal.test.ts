@@ -34,7 +34,7 @@ describe('showInstallModal', () => {
       },
       getMetaMaskInstaller: jest.fn(),
       sdk: {
-        terminate: jest.fn(),
+        terminate: jest.fn().mockResolvedValue(undefined),
       },
       connectWithExtensionProvider: jest.fn(),
     } as unknown as RemoteConnectionProps;
@@ -58,15 +58,15 @@ describe('showInstallModal', () => {
     expect(mockInstallModalMount).toHaveBeenCalledTimes(1);
   });
 
-  it('should terminate the connection and possibly log the termination', () => {
+  it('should terminate the connection and possibly log the termination', async () => {
     const link = 'http://example.com/terminate';
 
     showInstallModal(state, options, link);
 
     const terminateCall = mockModalsInstall.mock.calls[0][0]
-      .terminate as () => void;
+      .terminate as () => Promise<void>;
 
-    terminateCall();
+    await terminateCall();
 
     expect(spyLogger).toHaveBeenCalledWith(
       '[RemoteConnection: showInstallModal() => terminate()] terminate connection',

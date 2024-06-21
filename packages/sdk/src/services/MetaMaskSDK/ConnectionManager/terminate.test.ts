@@ -44,8 +44,8 @@ describe('terminate', () => {
   describe('when in MetaMask Mobile WebView', () => {
     beforeEach(() => mockIsMetaMaskMobileWebView.mockReturnValue(true));
 
-    it('should do nothing', () => {
-      terminate(instance);
+    it('should do nothing', async () => {
+      await terminate(instance);
       expect(mockDisconnect).not.toHaveBeenCalled();
       expect(mockEmit).not.toHaveBeenCalled();
     });
@@ -61,35 +61,35 @@ describe('terminate', () => {
 
       // TODO re-enable once we can mock window object or external storage provider
       // eslint-disable-next-line jest/no-disabled-tests
-      it.skip('should remove extension provider', () => {
-        terminate(instance);
+      it.skip('should remove extension provider', async () => {
+        await terminate(instance);
         expect(localStorageMock.removeItem).toHaveBeenCalledWith(
           STORAGE_PROVIDER_TYPE,
         );
       });
 
-      it('should switch back to default provider', () => {
-        terminate(instance);
+      it('should switch back to default provider', async () => {
+        await terminate(instance);
         expect(instance.activeProvider).toBe(instance.sdkProvider);
         expect((global.window as any).ethereum).toBe(instance.activeProvider);
       });
 
-      it('should set extensionActive to false', () => {
-        terminate(instance);
+      it('should set extensionActive to false', async () => {
+        await terminate(instance);
         expect(instance.extensionActive).toBe(false);
       });
 
-      it('should emit PROVIDER_UPDATE with TERMINATE', () => {
-        terminate(instance);
+      it('should emit PROVIDER_UPDATE with TERMINATE', async () => {
+        await terminate(instance);
         expect(mockEmit).toHaveBeenCalledWith(
           EventType.PROVIDER_UPDATE,
           PROVIDER_UPDATE_TYPE.TERMINATE,
         );
       });
 
-      it('should not switch providers if extensionOnly option is true', () => {
+      it('should not switch providers if extensionOnly option is true', async () => {
         instance.options.extensionOnly = true;
-        terminate(instance);
+        await terminate(instance);
         expect(mockEmit).not.toHaveBeenCalled();
       });
     });
@@ -99,24 +99,24 @@ describe('terminate', () => {
         instance.extensionActive = false;
       });
 
-      it('should emit PROVIDER_UPDATE with TERMINATE', () => {
-        terminate(instance);
+      it('should emit PROVIDER_UPDATE with TERMINATE', async () => {
+        await terminate(instance);
         expect(mockEmit).toHaveBeenCalledWith(
           EventType.PROVIDER_UPDATE,
           PROVIDER_UPDATE_TYPE.TERMINATE,
         );
       });
 
-      it('should log debug messages', () => {
-        terminate(instance);
+      it('should log debug messages', async () => {
+        await terminate(instance);
 
         expect(spyLogger).toHaveBeenCalledWith(
           `[MetaMaskSDK: terminate()] remoteConnection=${instance.remoteConnection}`,
         );
       });
 
-      it('should disconnect remote connection', () => {
-        terminate(instance);
+      it('should disconnect remote connection', async () => {
+        await terminate(instance);
         expect(mockDisconnect).toHaveBeenCalledWith({
           terminate: true,
           sendMessage: true,

@@ -1,12 +1,13 @@
 import { EventType } from '@metamask/sdk-communication-layer';
-import { logger } from '../../../utils/logger';
 import {
+  RPC_METHODS,
   STORAGE_DAPP_CHAINID,
   STORAGE_DAPP_SELECTED_ADDRESS,
   STORAGE_PROVIDER_TYPE,
 } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
+import { logger } from '../../../utils/logger';
 
 const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
 
@@ -21,7 +22,7 @@ const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
  * @returns void
  * @emits EventType.PROVIDER_UPDATE with payload PROVIDER_UPDATE_TYPE.TERMINATE when the provider is updated.
  */
-export function terminate(instance: MetaMaskSDK) {
+export async function terminate(instance: MetaMaskSDK) {
   // nothing to do on inapp browser.
   if (instance.platformManager?.isMetaMaskMobileWebView()) {
     return;
@@ -36,12 +37,23 @@ export function terminate(instance: MetaMaskSDK) {
   // check if connected with extension provider
   // if it is, disconnect from it and switch back to injected provider
   if (instance.extensionActive) {
+    try {
+      // Revoke permissions
+      await instance.activeProvider?.request({
+        method: RPC_METHODS.WALLET_REVOKEPERMISSIONS,
+        params: [{ eth_accounts: {} }],
+      });
+    } catch (error) {
+      logger(`[MetaMaskSDK: terminate()] error revoking permissions`, error);
+    }
+
     if (instance.options.extensionOnly) {
       logger(
         `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
       );
       return;
     }
+
     // Re-use default extension provider as default
     instance.activeProvider = instance.sdkProvider;
     window.ethereum = instance.activeProvider;

@@ -330,12 +330,11 @@ describe('MetaMaskSDK', () => {
   });
 
   describe('Deprecated Methods', () => {
-    it('should log warning and call terminate when disconnect is called', () => {
+    it('should log warning and call terminate when disconnect is called', async () => {
       const consoleWarnSpy = jest.spyOn(console, 'warn');
       const terminateSpy = jest.spyOn(sdk, 'terminate');
 
-      sdk.disconnect();
-
+      await sdk.disconnect();
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         'MetaMaskSDK.disconnect() is deprecated, use terminate()',
       );
