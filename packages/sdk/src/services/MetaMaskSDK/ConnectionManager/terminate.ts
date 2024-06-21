@@ -1,5 +1,4 @@
 import { EventType } from '@metamask/sdk-communication-layer';
-import { logger } from '../../../utils/logger';
 import {
   STORAGE_DAPP_CHAINID,
   STORAGE_DAPP_SELECTED_ADDRESS,
@@ -7,6 +6,7 @@ import {
 } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
+import { logger } from '../../../utils/logger';
 
 const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
 
@@ -42,6 +42,10 @@ export function terminate(instance: MetaMaskSDK) {
       );
       return;
     }
+
+    // Optional: could Call wallet_revokePermissions to revoke the permissions granted to the dapp but it makes the experience awkward
+    // as the user has to manually deselect the account from the list. Choose to not implement for now.
+
     // Re-use default extension provider as default
     instance.activeProvider = instance.sdkProvider;
     window.ethereum = instance.activeProvider;

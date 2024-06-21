@@ -6,6 +6,7 @@ export const RPC_METHODS = {
   METAMASK_BATCH: 'metamask_batch',
   PERSONAL_SIGN: 'personal_sign',
   WALLET_REQUESTPERMISSIONS: 'wallet_requestPermissions',
+  WALLET_REVOKEPERMISSIONS: 'wallet_revokePermissions',
   WALLET_GETPERMISSIONS: 'wallet_getPermissions',
   WALLET_WATCHASSET: 'wallet_watchAsset',
   WALLET_ADDETHEREUMCHAIN: 'wallet_addEthereumChain',
