@@ -9,6 +9,9 @@ on:
       ios-wallet-name:
         required: true
         type: string
+      webdapp-url:
+        required: true
+        type: string
 
   workflow_dispatch:
     inputs:
@@ -19,6 +22,10 @@ on:
       ios-wallet-name:
         required: true
         description: 'The BrowserStack app name for the MetaMask iOS wallet app (QA Build)'
+        type: string
+      webdapp-url:
+        required: true
+        description: 'From the CI deploy'
         type: string
 
 jobs:
@@ -33,7 +40,7 @@ jobs:
 
     steps:
       - name: 'BrowserStack Local Tunnel Setup'
-        uses: browserstack/github-actions/setup-local@master
+        uses: browserstack/github-actions/setup-local@091a1cfc5a170370a5a30f906be08adfb123dd9f
         with:
          local-testing: start
          local-identifier: random
@@ -106,7 +113,7 @@ jobs:
           kill $(lsof -t -i:3333)
 
       - name: 'BrowserStackLocal Stop'
-        uses: browserstack/github-actions/setup-local@master
+        uses: browserstack/github-actions/setup-local@091a1cfc5a170370a5a30f906be08adfb123dd9f
         with:
           local-testing: stop
 
