@@ -71,10 +71,16 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
 
           const hasMobileProvider = Boolean(instance.sdkProvider);
 
+          const isExtensionActive = Boolean(instance.extensionActive);
+
           if (hasMobileProvider) {
             instance
               .getMobileProvider()
               .emit(EXTENSION_EVENTS.ACCOUNTS_CHANGED, accounts);
+          }
+
+          if (isExtensionActive && (accounts as string[])?.length === 0) {
+            instance.terminate();
           }
         },
       );
