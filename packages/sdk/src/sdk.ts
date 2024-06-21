@@ -316,7 +316,7 @@ export class MetaMaskSDK extends EventEmitter2 {
    */
   disconnect() {
     console.warn(`MetaMaskSDK.disconnect() is deprecated, use terminate()`);
-    this.terminate();
+    return this.terminate();
   }
 
   isAuthorized() {

@@ -26,7 +26,9 @@ export function showInstallModal(
       );
 
       // Terminate with specific error code
-      options.sdk.terminate();
+      options.sdk.terminate().catch((err) => {
+        console.warn(`[MMSDK] failed to terminate connection`, err);
+      });
     },
     debug: state.developerMode,
     connectWithExtension: () => {

@@ -27,7 +27,6 @@ export function createChannel(instance: SocketService) {
     throw new Error(`socket already connected`);
   }
 
-  console.log(`create channel`, instance.state.socket);
   instance.state.socket?.connect();
   instance.state.manualDisconnect = false;
   instance.state.isOriginator = true;
