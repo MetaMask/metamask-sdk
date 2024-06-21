@@ -6,17 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.1]
+### Added
+- feat: wallet_revokePermissions on terminate  ([#907](https://github.com/MetaMask/metamask-sdk/pull/907))
+
 ## [0.26.0]
 ### Added
-- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
-- feat: close modal with error 4001 ([#898](https://github.com/MetaMask/metamask-sdk.git/pull/898))
-- feat: emit url event ([#901](https://github.com/MetaMask/metamask-sdk.git/pull/901))
-- chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk.git/pull/888))
+- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
+- feat: close modal with error 4001 ([#898](https://github.com/MetaMask/metamask-sdk/pull/898))
+- feat: emit url event ([#901](https://github.com/MetaMask/metamask-sdk/pull/901))
+- chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk/pull/888))
 
 ## [0.20.5]
 ### Uncategorized
-- fix: extension events ([#877](https://github.com/MetaMask/metamask-sdk.git/pull/877))
-- feat: set default sdk source ([#875](https://github.com/MetaMask/metamask-sdk.git/pull/875))
+- fix: extension events ([#877](https://github.com/MetaMask/metamask-sdk/pull/877))
+- feat: set default sdk source ([#875](https://github.com/MetaMask/metamask-sdk/pull/875))
 
 ## [0.20.4]
 ### Added
@@ -335,7 +339,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.1...HEAD
+[0.26.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.0...@metamask/sdk@0.26.1
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.5...@metamask/sdk@0.26.0
 [0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.4...@metamask/sdk@0.20.5
 [0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.3...@metamask/sdk@0.20.4
