@@ -80,7 +80,12 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           }
 
           if (isExtensionActive && (accounts as string[])?.length === 0) {
-            instance.terminate();
+            instance.terminate().catch((error) => {
+              logger(
+                `[MetaMaskSDK: setupExtensionPreferences()] Error terminating`,
+                error,
+              );
+            });
           }
         },
       );
