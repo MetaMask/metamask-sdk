@@ -22,7 +22,7 @@ const hasLocalStoage = typeof window !== 'undefined' && window.localStorage;
  * @returns void
  * @emits EventType.PROVIDER_UPDATE with payload PROVIDER_UPDATE_TYPE.TERMINATE when the provider is updated.
  */
-export function terminate(instance: MetaMaskSDK) {
+export async function terminate(instance: MetaMaskSDK) {
   // nothing to do on inapp browser.
   if (instance.platformManager?.isMetaMaskMobileWebView()) {
     return;
@@ -37,17 +37,15 @@ export function terminate(instance: MetaMaskSDK) {
   // check if connected with extension provider
   // if it is, disconnect from it and switch back to injected provider
   if (instance.extensionActive) {
-    // Revoke permissions
-    instance.activeProvider
-      ?.request({
+    try {
+      // Revoke permissions
+      await instance.activeProvider?.request({
         method: RPC_METHODS.WALLET_REVOKEPERMISSIONS,
         params: [{ eth_accounts: {} }],
-      })
-      .catch((error) => {
-        logger(
-          `[MetaMaskSDK: terminate()] wallet_revokePermissions error: ${error}`,
-        );
       });
+    } catch (error) {
+      logger(`[MetaMaskSDK: terminate()] error revoking permissions`, error);
+    }
 
     if (instance.options.extensionOnly) {
       logger(
