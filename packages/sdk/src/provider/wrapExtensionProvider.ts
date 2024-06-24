@@ -159,16 +159,24 @@ export const wrapExtensionProvider = ({
           return resp;
         };
       } else if (propKey === 'getChainId') {
-        return () => provider.chainId;
+        return function () {
+          return provider.chainId;
+        };
       } else if (propKey === 'getNetworkVersion') {
-        return () => provider.networkVersion;
+        return function () {
+          return provider.networkVersion;
+        };
       } else if (propKey === 'getSelectedAddress') {
-        return () => provider.selectedAddress;
+        return function () {
+          return provider.selectedAddress;
+        };
       } else if (propKey === 'isConnected') {
-        // TODO: allowed because of issue on inpavge provider
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        return () => provider._state.isConnected;
+        return function () {
+          // TODO: allowed because of issue on inpavge provider
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          return provider._state.isConnected;
+        };
       }
 
       return target[propKey as keyof MetaMaskInpageProvider];
