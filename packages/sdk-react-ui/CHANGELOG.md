@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.2]
+### Added
+- chore: terminate on 'ACCOUNTS_CHANGED' event when accounts are zero ([#909](https://github.com/MetaMask/metamask-sdk/pull/909))
+
 ## [0.26.0]
 ### Uncategorized
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
@@ -152,7 +156,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.2...HEAD
+[0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.0...@metamask/sdk-react-ui@0.26.2
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.4...@metamask/sdk-react-ui@0.26.0
 [0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.3...@metamask/sdk-react-ui@0.20.4
 [0.20.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.2...@metamask/sdk-react-ui@0.20.3
