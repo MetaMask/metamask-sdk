@@ -3,8 +3,11 @@ import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
+import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod';
+import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
+import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
 
-interface RequestArguments {
+export interface RequestArguments {
   method: string;
   params?: any[];
 }
@@ -16,10 +19,8 @@ export const wrapExtensionProvider = ({
   provider: MetaMaskInpageProvider;
   sdkInstance: MetaMaskSDK;
 }) => {
-  // prevent double wrapping an invalid provider (it could happen with older web3onboard implementions)
-  // TODO remove after web3onboard is updated
   if ('state' in provider) {
-    throw new Error(`INVALID EXTENSION PROVIDER`);
+    throw new Error('INVALID EXTENSION PROVIDER');
   }
 
   return new Proxy(provider, {
@@ -29,8 +30,8 @@ export const wrapExtensionProvider = ({
           logger(`[wrapExtensionProvider()] Overwriting request method`, args);
 
           const { method, params } = args;
-
           const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
+
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
@@ -38,26 +39,31 @@ export const wrapExtensionProvider = ({
             });
           }
 
-          // special method handling
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
-            // params is a list of RPCs to call
-            const responses = [];
-            for (const rpc of params) {
-              const response = await provider?.request({
-                method: rpc.method,
-                params: rpc.params,
-              });
-              responses.push(response);
-            }
+            return handleBatchMethod({
+              params,
+              target,
+              args,
+              trackEvent,
+              sdkInstance,
+              provider,
+            });
+          }
 
-            const resp = await target.request(args);
-            if (trackEvent) {
-              sdkInstance.analytics?.send({
-                event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-                params: { method, from: 'extension' },
-              });
-            }
-            return resp;
+          if (
+            method.toLowerCase() ===
+              RPC_METHODS.METAMASK_CONNECTSIGN.toLowerCase() &&
+            Array.isArray(params)
+          ) {
+            return handleConnectSignMethod({ target, params });
+          }
+
+          if (
+            method.toLowerCase() ===
+              RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase() &&
+            Array.isArray(params)
+          ) {
+            return handleConnectWithMethod({ target, params });
           }
 
           let resp;
