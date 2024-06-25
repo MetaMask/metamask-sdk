@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.3]
+### Added
+- fix: update the 'request' method wrapper logic in 'wrapExtensionProvider' to handle connectAndSign issues ([#913](https://github.com/MetaMask/metamask-sdk/pull/913))
+
 ## [0.26.2]
 ### Added
 - chore: terminate on 'ACCOUNTS_CHANGED' event when accounts are zero ([#909](https://github.com/MetaMask/metamask-sdk/pull/909))
@@ -343,7 +347,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.3...HEAD
+[0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.2...@metamask/sdk@0.26.3
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.1...@metamask/sdk@0.26.2
 [0.26.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.0...@metamask/sdk@0.26.1
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.20.5...@metamask/sdk@0.26.0
