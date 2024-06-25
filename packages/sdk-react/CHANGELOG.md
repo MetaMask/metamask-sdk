@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.2]
+### Added
+- chore: terminate on 'ACCOUNTS_CHANGED' event when accounts are zero ([#909](https://github.com/MetaMask/metamask-sdk/pull/909))
+
 ## [0.26.1]
 
 ## [0.26.0]
@@ -209,7 +213,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.2...HEAD
+[0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.1...@metamask/sdk-react@0.26.2
 [0.26.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.0...@metamask/sdk-react@0.26.1
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.5...@metamask/sdk-react@0.26.0
 [0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.20.4...@metamask/sdk-react@0.20.5
