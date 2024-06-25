@@ -1,10 +1,13 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { lcAnalyticsRPCs, RPC_METHODS, rpcWithAccountParam } from '../config';
+import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
+import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod';
+import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
+import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
 
-interface RequestArguments {
+export interface RequestArguments {
   method: string;
   params?: any[];
 }
@@ -19,92 +22,6 @@ export const wrapExtensionProvider = ({
   if ('state' in provider) {
     throw new Error('INVALID EXTENSION PROVIDER');
   }
-
-  const handleBatchMethod = async (
-    params: any[],
-    target: any,
-    args: RequestArguments,
-    trackEvent: boolean,
-  ) => {
-    // params is a list of RPCs to call
-    const responses = [];
-    for (const rpc of params) {
-      const response = await provider?.request({
-        method: rpc.method,
-        params: rpc.params,
-      });
-      responses.push(response);
-    }
-
-    const resp = await target.request(args);
-    if (trackEvent) {
-      sdkInstance.analytics?.send({
-        event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-        params: { method: args.method, from: 'extension' },
-      });
-    }
-    return resp;
-  };
-
-  const handleConnectSignMethod = async (target: any, params: any[]) => {
-    const accounts = (await target.request({
-      method: RPC_METHODS.ETH_REQUESTACCOUNTS,
-      params: [],
-    })) as string[];
-
-    if (!accounts.length) {
-      throw new Error('SDK state invalid -- undefined accounts');
-    }
-
-    return await target.request({
-      method: RPC_METHODS.PERSONAL_SIGN,
-      params: [params[0], accounts[0]],
-    });
-  };
-
-  const handleConnectWithMethod = async (target: any, params: any[]) => {
-    const [rpc] = params;
-    const currentRpcMethod = rpc.method;
-    const currentRpcParams = rpc.params;
-    const accounts = (await target.request({
-      method: RPC_METHODS.ETH_REQUESTACCOUNTS,
-      params: [],
-    })) as string[];
-
-    if (!accounts.length) {
-      throw new Error('SDK state invalid -- undefined accounts');
-    }
-
-    if (
-      currentRpcMethod?.toLowerCase() ===
-      RPC_METHODS.PERSONAL_SIGN.toLowerCase()
-    ) {
-      return await target.request({
-        method: currentRpcMethod,
-        params: [currentRpcParams[0], accounts[0]],
-      });
-    } else if (
-      currentRpcMethod?.toLowerCase() ===
-      RPC_METHODS.ETH_SENDTRANSACTION.toLowerCase()
-    ) {
-      return await target.request({
-        method: currentRpcMethod,
-        params: [{ ...currentRpcParams[0], from: accounts[0] }],
-      });
-    }
-
-    if (rpcWithAccountParam.includes(currentRpcMethod.toLowerCase())) {
-      console.warn(
-        `MetaMaskSDK connectWith method=${currentRpcMethod} -- not handled by the extension -- call separately`,
-      );
-      return accounts;
-    }
-
-    return await target.request({
-      method: currentRpcMethod,
-      params: currentRpcParams,
-    });
-  };
 
   return new Proxy(provider, {
     get(target, propKey) {
@@ -123,7 +40,14 @@ export const wrapExtensionProvider = ({
           }
 
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
-            return handleBatchMethod(params, target, args, trackEvent);
+            return handleBatchMethod({
+              params,
+              target,
+              args,
+              trackEvent,
+              sdkInstance,
+              provider,
+            });
           }
 
           if (
@@ -131,7 +55,7 @@ export const wrapExtensionProvider = ({
               RPC_METHODS.METAMASK_CONNECTSIGN.toLowerCase() &&
             Array.isArray(params)
           ) {
-            return handleConnectSignMethod(target, params);
+            return handleConnectSignMethod({ target, params });
           }
 
           if (
@@ -139,7 +63,7 @@ export const wrapExtensionProvider = ({
               RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase() &&
             Array.isArray(params)
           ) {
-            return handleConnectWithMethod(target, params);
+            return handleConnectWithMethod({ target, params });
           }
 
           let resp;
