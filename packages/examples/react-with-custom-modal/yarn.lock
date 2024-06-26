@@ -2411,9 +2411,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.17.0"
+"@metamask/sdk-communication-layer@npm:0.26.2":
+  version: 0.26.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.26.2"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -2421,18 +2421,18 @@ __metadata:
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
   peerDependencies:
-    cross-fetch: ^3.1.5
+    cross-fetch: ^4.0.0
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 50d4caabfa9bbefa9afc475e7060bcc292f2f630d53b75cab9c9be86440069616b29ffc451356350579b76f6ba2aa9e3c1c13831de41550e82a6e47bdc9eaa50
+  checksum: 0b5cd9a96aa5e3cb922753252865fb0c006647888c0e25e0806d413fa95bfc43cda59008150715fd56cd3c2fb84cc94a1c36f3cd812b2998a80fb31be28bf7f1
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.17.0"
+"@metamask/sdk-install-modal-web@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.26.0"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -2448,15 +2448,15 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 35e5018661c10b04ab371be36a6d7252c2373813866277074d369362b22b9e68e2ee20f7935609fd508cce17c55474d958fd0122238c04fc40411a6077996a6d
+  checksum: 780c3c9beef06ef3dc4bbfe5462fe79af767a1509b21db10b153038e2e0fdf1c71a92e757b4ce26fbf547b8b0ae2f7a2e8693c5f31ad7488a6cb98ae8eef3075
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.17.2":
-  version: 0.17.2
-  resolution: "@metamask/sdk-react@npm:0.17.2"
+"@metamask/sdk-react@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk-react@npm:0.26.3"
   dependencies:
-    "@metamask/sdk": ^0.17.2
+    "@metamask/sdk": ^0.26.3
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -2475,18 +2475,18 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 97f1907dcc11793a3ecc9ba1499d4aefbd8dd540001ff10c715f7ab8588f948cb976fdb8d81ff95191b647931992d665be28ce4333fbbfddef7d09fdbbd8c6c7
+  checksum: 5c6a3207a4df54b81f19de6faec69cf12cb79cc6bf211b488443eb20d52d43b33e0b668772761a51b0c27e5a37add43b64e114367a1c7419ae875bb57f48468c
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.17.2":
-  version: 0.17.2
-  resolution: "@metamask/sdk@npm:0.17.2"
+"@metamask/sdk@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk@npm:0.26.3"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
-    "@metamask/sdk-communication-layer": 0.17.0
-    "@metamask/sdk-install-modal-web": 0.17.0
+    "@metamask/sdk-communication-layer": 0.26.2
+    "@metamask/sdk-install-modal-web": 0.26.0
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
@@ -2506,20 +2506,14 @@ __metadata:
     util: ^0.12.4
     uuid: ^8.3.2
   peerDependencies:
-    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-native: "*"
   peerDependenciesMeta:
-    "@react-native-async-storage/async-storage":
-      optional: true
     react:
       optional: true
     react-dom:
       optional: true
-    react-native:
-      optional: true
-  checksum: 900b175c1297d46ef0b4bf15a71db172db75f50f8303e4711b00edd3e9af5a077f74fdf0654833f9d65f09adc26d2e030b435d4d2945a50bfafd955948ff6719
+  checksum: 0e3fdc29b17a7f9d127e24a5853b8514a8dd4f99d86165372e73c7e3497e5c8a3e7381339697e512139d2c237dc9bed2906b1a451626f9eb2ae664ccd2e743df
   languageName: node
   linkType: hard
 
@@ -12472,7 +12466,7 @@ __metadata:
   resolution: "react-with-custom-modal@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react": ^0.17.2
+    "@metamask/sdk-react": ^0.26.3
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@testing-library/user-event": ^13.5.0

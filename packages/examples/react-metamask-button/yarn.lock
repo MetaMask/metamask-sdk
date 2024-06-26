@@ -2932,9 +2932,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.17.0"
+"@metamask/sdk-communication-layer@npm:0.26.2":
+  version: 0.26.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.26.2"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -2942,18 +2942,18 @@ __metadata:
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
   peerDependencies:
-    cross-fetch: ^3.1.5
+    cross-fetch: ^4.0.0
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 50d4caabfa9bbefa9afc475e7060bcc292f2f630d53b75cab9c9be86440069616b29ffc451356350579b76f6ba2aa9e3c1c13831de41550e82a6e47bdc9eaa50
+  checksum: 0b5cd9a96aa5e3cb922753252865fb0c006647888c0e25e0806d413fa95bfc43cda59008150715fd56cd3c2fb84cc94a1c36f3cd812b2998a80fb31be28bf7f1
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-install-modal-web@npm:0.17.0"
+"@metamask/sdk-install-modal-web@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.26.0"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -2969,17 +2969,17 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 35e5018661c10b04ab371be36a6d7252c2373813866277074d369362b22b9e68e2ee20f7935609fd508cce17c55474d958fd0122238c04fc40411a6077996a6d
+  checksum: 780c3c9beef06ef3dc4bbfe5462fe79af767a1509b21db10b153038e2e0fdf1c71a92e757b4ce26fbf547b8b0ae2f7a2e8693c5f31ad7488a6cb98ae8eef3075
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-ui@npm:^0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-react-ui@npm:0.17.0"
+"@metamask/sdk-react-ui@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk-react-ui@npm:0.26.3"
   dependencies:
     "@headlessui/react": ^1.6.6
-    "@metamask/sdk": ^0.17.0
-    "@metamask/sdk-react": 0.17.0
+    "@metamask/sdk": ^0.26.3
+    "@metamask/sdk-react": 0.26.3
     ethers: ^5.6.9
     mersenne-twister: ^1.1.0
     react-copy-to-clipboard: ^5.1.0
@@ -2989,43 +2989,45 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 8622f9970b6e99c25c7e7428f42dec820d2b306ea50af8fe2dde748e3aebbc0bac5bca00e42961197ec2ee853753ee13fdca3bc5d821d0d7424d8161a1874edd
+  checksum: d559447091d63bbb93127f5739abfce35946342ea0be3fb30c62ca8b3b6a03a3ab7dd68a933da2e8e43747510a384833a93b0a9235e8b26615e2f176d4710263
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@metamask/sdk-react@npm:0.17.0"
+"@metamask/sdk-react@npm:0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk-react@npm:0.26.3"
   dependencies:
-    "@metamask/sdk": ^0.17.0
-    "@react-native-async-storage/async-storage": ^1.19.6
+    "@metamask/sdk": ^0.26.3
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
   peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
+    "@react-native-async-storage/async-storage":
+      optional: true
     react:
       optional: false
     react-dom:
       optional: false
     react-native:
       optional: true
-  checksum: 60ec2ac8612442a5de6c2ff87d2981d282f4a80d89d6fd24b4a9944283207e121e01cc88d7bca8c0b225593a06f7b513a3691574f49201f1e6f0d6e41c681ad3
+  checksum: 5c6a3207a4df54b81f19de6faec69cf12cb79cc6bf211b488443eb20d52d43b33e0b668772761a51b0c27e5a37add43b64e114367a1c7419ae875bb57f48468c
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.17.0":
-  version: 0.17.1
-  resolution: "@metamask/sdk@npm:0.17.1"
+"@metamask/sdk@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk@npm:0.26.3"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
-    "@metamask/sdk-communication-layer": 0.17.0
-    "@metamask/sdk-install-modal-web": 0.17.0
+    "@metamask/sdk-communication-layer": 0.26.2
+    "@metamask/sdk-install-modal-web": 0.26.0
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
@@ -3045,20 +3047,14 @@ __metadata:
     util: ^0.12.4
     uuid: ^8.3.2
   peerDependencies:
-    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-native: "*"
   peerDependenciesMeta:
-    "@react-native-async-storage/async-storage":
-      optional: true
     react:
       optional: true
     react-dom:
       optional: true
-    react-native:
-      optional: true
-  checksum: d61c0ba5a7dd9eb848d1a7fe7eccc287260a859ae420dd01bea92d6ba77ad321a2092bc591e30906ca38497a6f577ad4cf481c282b60510421df373010563b78
+  checksum: 0e3fdc29b17a7f9d127e24a5853b8514a8dd4f99d86165372e73c7e3497e5c8a3e7381339697e512139d2c237dc9bed2906b1a451626f9eb2ae664ccd2e743df
   languageName: node
   linkType: hard
 
@@ -3526,17 +3522,6 @@ __metadata:
     webpack-plugin-serve:
       optional: true
   checksum: a82eced9519f4dcac424acae719f819ab4150bfcf2874ac7daaf25a4f1c409e3d8b9d693fea0c686c24d520a5473756df32da90d8b89739670f8f8084c600bb4
-  languageName: node
-  linkType: hard
-
-"@react-native-async-storage/async-storage@npm:^1.19.6":
-  version: 1.21.0
-  resolution: "@react-native-async-storage/async-storage@npm:1.21.0"
-  dependencies:
-    merge-options: ^3.0.4
-  peerDependencies:
-    react-native: ^0.0.0-0 || >=0.60 <1.0
-  checksum: 969cdeb444a037087b1897553082e148e25c8331055dd0dc142f76deeb4aadd9ed5ec26926ae990b3e9ff088396e74ab557148a2dd2a7db86058051b774f2619
   languageName: node
   linkType: hard
 
@@ -10717,13 +10702,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-plain-obj@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "is-plain-obj@npm:2.1.0"
-  checksum: cec9100678b0a9fe0248a81743041ed990c2d4c99f893d935545cfbc42876cbe86d207f3b895700c690ad2fa520e568c44afc1605044b535a7820c1d40e38daa
-  languageName: node
-  linkType: hard
-
 "is-plain-obj@npm:^3.0.0":
   version: 3.0.0
   resolution: "is-plain-obj@npm:3.0.0"
@@ -12490,15 +12468,6 @@ __metadata:
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
   checksum: 5abc259d2ae25bb06d19ce2b94a21632583c74e2a9109ee1ba7fd147aa7362b380d971e0251069f8b3eb7d48c21ac839e21fa177b335e82c76ec172e30c31a26
-  languageName: node
-  linkType: hard
-
-"merge-options@npm:^3.0.4":
-  version: 3.0.4
-  resolution: "merge-options@npm:3.0.4"
-  dependencies:
-    is-plain-obj: ^2.1.0
-  checksum: d86ddb3dd6e85d558dbf25dc944f3527b6bacb944db3fdda6e84a3f59c4e4b85231095f58b835758b9a57708342dee0f8de0dffa352974a48221487fe9f4584f
   languageName: node
   linkType: hard
 
@@ -15090,7 +15059,7 @@ __metadata:
   resolution: "react-metamask-button@workspace:."
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/sdk-react-ui": ^0.17.0
+    "@metamask/sdk-react-ui": ^0.26.3
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.3.0
     "@testing-library/user-event": ^13.5.0
