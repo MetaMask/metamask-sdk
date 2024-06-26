@@ -39,12 +39,6 @@ export interface MetaMaskSDKOptions {
   infuraAPIKey?: string;
 
   /**
-   * Allow sending read-only rpc calls before the user has connected to the wallet.
-   * The value will be automatically updated to the wallet chainId once connected.
-   */
-  defaultReadOnlyChainId?: number | `0x${string}`;
-
-  /**
    * A map of RPC URLs to use for read-only requests.
    */
   readonlyRPCMap?: RPC_URLS_MAP;
@@ -197,8 +191,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private readonlyRPCCalls = false;
 
-  public defaultReadOnlyChainId = `0x1`;
-
   public i18nInstance: i18n = createInstance();
 
   public availableLanguages: string[] = ['en'];
@@ -247,20 +239,6 @@ export class MetaMaskSDK extends EventEmitter2 {
           `You must provide dAppMetadata option (name and/or url)`,
         );
       }
-    }
-
-    if (options.defaultReadOnlyChainId) {
-      if (typeof options.defaultReadOnlyChainId === 'number') {
-        this.defaultReadOnlyChainId = `0x${options.defaultReadOnlyChainId.toString(
-          16,
-        )}`; // convert to hex string
-      } else if (
-        typeof options.defaultReadOnlyChainId === 'string' &&
-        !options.defaultReadOnlyChainId.startsWith('0x')
-      ) {
-        throw new Error(`Invalid defaultReadOnlyChainId, must start with '0x'`);
-      }
-      this.defaultReadOnlyChainId = options.defaultReadOnlyChainId.toString();
     }
 
     this.options = options;
