@@ -70,8 +70,6 @@ export const wrapExtensionProvider = ({
           try {
             resp = await target.request(args);
             return resp;
-          } catch (error) {
-            // Ignore user rejected request
           } finally {
             if (trackEvent) {
               sdkInstance.analytics?.send({
@@ -80,7 +78,6 @@ export const wrapExtensionProvider = ({
               });
             }
           }
-          return resp;
         };
       } else if (propKey === 'getChainId') {
         return function () {
