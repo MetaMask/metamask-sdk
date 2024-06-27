@@ -3825,6 +3825,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.23.2":
+  version: 7.24.7
+  resolution: "@babel/runtime@npm:7.24.7"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: d17f29eed6f848ac15cdf4202a910b741facfb0419a9d79e5c7fa37df6362fc3227f1cc2e248cc6db5e53ddffb4caa6686c488e6e80ce3d29c36a4e74c8734ea
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.0.0, @babel/template@npm:^7.22.15":
   version: 7.22.15
   resolution: "@babel/template@npm:7.22.15"
@@ -8860,7 +8869,7 @@ __metadata:
     ts-jest: ^29.0.3
     ts-node: ^10.9.1
     typescript: ^4.3.2
-    utf-8-validate: ^6.0.3
+    utf-8-validate: ^5.0.2
     uuid: ^8.3.2
   peerDependencies:
     cross-fetch: ^4.0.0
@@ -8910,14 +8919,13 @@ __metadata:
     eslint-plugin-node: ^11.1.0
     eslint-plugin-prettier: ^3.4.0
     eslint-plugin-react: ^7.32.2
-    i18next: 22.5.1
+    i18next: 23.11.5
     jest: ^29.6.4
     postcss: ^8.4.35
     prettier: ^2.8.8
     qr-code-styling: ^1.6.0-rc.1
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-i18next: ^13.2.2
     rimraf: ^5.0.0
     rollup: ^3.21.7
     rollup-plugin-peer-deps-external: ^2.2.4
@@ -8928,10 +8936,9 @@ __metadata:
     size-limit: ^11.0.2
     typescript: ^5.0.2
   peerDependencies:
-    i18next: 22.5.1
+    i18next: 23.2.3
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-i18next: ^13.2.2
     react-native: "*"
   peerDependenciesMeta:
     react:
@@ -9436,7 +9443,7 @@ __metadata:
     eslint-plugin-prettier: ^3.4.0
     eth-rpc-errors: ^4.0.3
     eventemitter2: ^6.4.7
-    i18next: 22.5.1
+    i18next: 23.11.5
     i18next-browser-languagedetector: 7.1.0
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
@@ -23841,7 +23848,7 @@ __metadata:
     react-native-web: ^0.19.7
     tailwindcss: ^3.3.5
     typescript: 5.0.2
-    utf-8-validate: ^6.0.3
+    utf-8-validate: ^5.0.2
     viem: ^1.8.1
     web3: ^4.1.1
   languageName: unknown
@@ -29795,6 +29802,15 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.20.6
   checksum: 175f8ab7fac2abcee147b00cc2d8e7d4fa9b05cdc227f02cac841fc2fd9545ed4a6d88774f594f8ad12dc944e4d34cc8e88aa00c8b9947baef9e859d93abd305
+  languageName: node
+  linkType: hard
+
+"i18next@npm:23.11.5":
+  version: 23.11.5
+  resolution: "i18next@npm:23.11.5"
+  dependencies:
+    "@babel/runtime": ^7.23.2
+  checksum: e9ec83703af59205af81f10929fd420314c0c976d1f4c42a191dc4d13f1284d13517105325286772571292953839c7183baa92e9bb43f41efe87dbc50c9aed1c
   languageName: node
   linkType: hard
 
@@ -46675,16 +46691,6 @@ __metadata:
     node-gyp: latest
     node-gyp-build: ^4.3.0
   checksum: 5579350a023c66a2326752b6c8804cc7b39dcd251bb088241da38db994b8d78352e388dcc24ad398ab98385ba3c5ffcadb6b5b14b2637e43f767869055e46ba6
-  languageName: node
-  linkType: hard
-
-"utf-8-validate@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "utf-8-validate@npm:6.0.3"
-  dependencies:
-    node-gyp: latest
-    node-gyp-build: ^4.3.0
-  checksum: 5e21383c81ff7469c1912119ca69d07202d944c73ddd8a54b84dddcc546b939054e5101c78c294e494d206fe93bd43428adc635a0660816b3ec9c8ec89286ac4
   languageName: node
   linkType: hard
 
