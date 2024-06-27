@@ -46,7 +46,7 @@
     "bufferutil": "^4.0.8",
     "date-fns": "^2.29.3",
     "debug": "^4.3.4",
-    "utf-8-validate": "^6.0.3",
+    "utf-8-validate": "^5.0.2",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

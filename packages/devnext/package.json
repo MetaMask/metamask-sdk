@@ -51,7 +51,7 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "^0.19.7",
     "typescript": "5.0.2",
-    "utf-8-validate": "^6.0.3",
+    "utf-8-validate": "^5.0.2",
     "viem": "^1.8.1",
     "web3": "^4.1.1"
   },
