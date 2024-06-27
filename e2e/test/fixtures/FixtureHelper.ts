@@ -33,13 +33,15 @@ export const loadFixture = async (
 // Start the fixture server
 export const startFixtureServer = async (fixtureServer: FixtureServer) => {
   if (await isFixtureServerStarted()) {
-    console.log('The fixture server has already been started');
+    console.log(
+      `The fixture server has already been started @ ${FIXTURE_SERVER_URL}`,
+    );
     return;
   }
 
   try {
     await fixtureServer.start();
-    console.log('The fixture server is started');
+    console.log(`The fixture server is started @ ${FIXTURE_SERVER_URL}`);
   } catch (err) {
     console.log('Fixture server error:', err);
   }
