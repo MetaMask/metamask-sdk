@@ -15,7 +15,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.18.5",
+    "@metamask/sdk": "^0.26.3",
     "qrcode-terminal": "^0.12.0"
   },
   "devDependencies": {

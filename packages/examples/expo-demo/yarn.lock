@@ -2886,9 +2886,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.18.5":
-  version: 0.18.5
-  resolution: "@metamask/sdk-communication-layer@npm:0.18.5"
+"@metamask/sdk-communication-layer@npm:0.26.2":
+  version: 0.26.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.26.2"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -2896,18 +2896,18 @@ __metadata:
     utf-8-validate: ^6.0.3
     uuid: ^8.3.2
   peerDependencies:
-    cross-fetch: ^3.1.5
+    cross-fetch: ^4.0.0
     eciesjs: ^0.3.16
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 7d8e632e0d8b95a093272a941adcf8b40d257a3b285dac0821c60a8ff36d1915a4998f0950bc3a7bd89dc9f15b0c00034e7d5a71a590218d1e5bdccc9224a2b5
+  checksum: 0b5cd9a96aa5e3cb922753252865fb0c006647888c0e25e0806d413fa95bfc43cda59008150715fd56cd3c2fb84cc94a1c36f3cd812b2998a80fb31be28bf7f1
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.18.5":
-  version: 0.18.5
-  resolution: "@metamask/sdk-install-modal-web@npm:0.18.5"
+"@metamask/sdk-install-modal-web@npm:0.26.0":
+  version: 0.26.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.26.0"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -2923,15 +2923,15 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 57fd8dc802ef0d2949c34df6387abf3633bfb0da03cbce570735060991337835a8846694216bfe14d2764fa21cf0d70fc14cecb442b02f8e468f3560acc7b8e7
+  checksum: 780c3c9beef06ef3dc4bbfe5462fe79af767a1509b21db10b153038e2e0fdf1c71a92e757b4ce26fbf547b8b0ae2f7a2e8693c5f31ad7488a6cb98ae8eef3075
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.18.6":
-  version: 0.18.6
-  resolution: "@metamask/sdk-react@npm:0.18.6"
+"@metamask/sdk-react@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk-react@npm:0.26.3"
   dependencies:
-    "@metamask/sdk": ^0.18.6
+    "@metamask/sdk": ^0.26.3
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -2950,18 +2950,18 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 8661d52274196d05a715968c9a5ed0a661f82874051dfaf88ed9c76b6d139864071fe7ccc5d27209ede2b14b5e666338acb94dba0e5183839048228c6df873d8
+  checksum: 5c6a3207a4df54b81f19de6faec69cf12cb79cc6bf211b488443eb20d52d43b33e0b668772761a51b0c27e5a37add43b64e114367a1c7419ae875bb57f48468c
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.18.6":
-  version: 0.18.6
-  resolution: "@metamask/sdk@npm:0.18.6"
+"@metamask/sdk@npm:^0.26.3":
+  version: 0.26.3
+  resolution: "@metamask/sdk@npm:0.26.3"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^15.0.0
-    "@metamask/sdk-communication-layer": 0.18.5
-    "@metamask/sdk-install-modal-web": 0.18.5
+    "@metamask/sdk-communication-layer": 0.26.2
+    "@metamask/sdk-install-modal-web": 0.26.0
     "@types/dom-screen-wake-lock": ^1.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
@@ -2981,20 +2981,14 @@ __metadata:
     util: ^0.12.4
     uuid: ^8.3.2
   peerDependencies:
-    "@react-native-async-storage/async-storage": ^1.19.6
     react: ^18.2.0
     react-dom: ^18.2.0
-    react-native: "*"
   peerDependenciesMeta:
-    "@react-native-async-storage/async-storage":
-      optional: true
     react:
       optional: true
     react-dom:
       optional: true
-    react-native:
-      optional: true
-  checksum: 936ce46f32cdba4dbc3dc892a245e85fbd7ff73c75b5625f2faa30b771b6d0ff2223c5021629361d0e2c8c45f22227f322444df9f6eaf4a961c61b9f06333200
+  checksum: 0e3fdc29b17a7f9d127e24a5853b8514a8dd4f99d86165372e73c7e3497e5c8a3e7381339697e512139d2c237dc9bed2906b1a451626f9eb2ae664ccd2e743df
   languageName: node
   linkType: hard
 
@@ -5795,7 +5789,7 @@ __metadata:
   resolution: "expo-demo@workspace:."
   dependencies:
     "@babel/core": ^7.20.0
-    "@metamask/sdk-react": ^0.18.6
+    "@metamask/sdk-react": ^0.26.3
     "@react-native-async-storage/async-storage": 1.18.2
     "@types/react": ~18.2.45
     "@types/react-native-background-timer": ^2.0.2

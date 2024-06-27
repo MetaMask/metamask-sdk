@@ -14,7 +14,7 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "^0.18.5",
+    "@metamask/sdk": "^0.26.3",
     "qrcode": "^1.5.3",
     "typescript": "^5.1.6"
   }
