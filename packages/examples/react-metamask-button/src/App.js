@@ -21,6 +21,10 @@ function AppReady() {
   return (
     <div className="App">
       <header className="App-header">
+        <span>
+        <p>This is example dapp is currently flagged as a work in progress due to a recently found bug. Please be advised.
+        </p>
+        </span>
         <MetaMaskButton theme={'light'} color="white"></MetaMaskButton>
         {isConnected && (
           <>
