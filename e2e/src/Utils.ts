@@ -58,30 +58,46 @@ class Utils {
     // Little helper to activate the app for the platform. This is helpful
     // since the Android driver expects a key named appId and iOS expects a key
     // named bundleId
-    const activateAppForPlatform = async () => {
-      if (PLATFORM === Platforms.IOS) {
-        await driver.execute('mobile:activateApp', {
+    if (PLATFORM === Platforms.ANDROID) {
+      console.log('Android test detected. Reversing TCP ports...');
+      const adb = new ADB({
+        adbHost: 'localhost',
+        adbPort: 5037,
+      });
+      // const adb = await ADB.createADB({});
+      await driver.pause(5000);
+      await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+      await driver.pause(5000);
+    }
+
+    const fixture = new FixtureBuilder().build();
+    await startFixtureServer(fixtureServer);
+    await loadFixture(fixtureServer, { fixture });
+
+    console.log('Terminating app');
+    await driver.terminateApp(bundleId);
+
+    console.log('app is terminated, cooling down for 2s');
+    await driver.pause(5000);
+
+    console.log(`Re-launching MetaMask on ${PLATFORM}...`);
+    if (PLATFORM === Platforms.IOS) {
+      await driver.executeScript('mobile:launchApp', [
+        {
           bundleId,
           fixtureServerPort: FIXTURE_SERVER_PORT,
-        });
-        return;
-      }
-
+        },
+      ]);
+    } else {
       await driver.execute('mobile:activateApp', {
         appId: bundleId,
         fixtureServerPort: FIXTURE_SERVER_PORT,
       });
-    };
-
-    if (PLATFORM === Platforms.ANDROID) {
-      const adb = await ADB.createADB({});
-      await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+      console.log('Launched Android MetaMask with fixture');
     }
-    const fixture = new FixtureBuilder().build();
-    await startFixtureServer(fixtureServer);
-    await loadFixture(fixtureServer, { fixture });
-    await driver.terminateApp(bundleId);
-    await activateAppForPlatform();
+
+    console.log('sleeping');
+    await driver.pause(10000);
   }
 
   /*
