@@ -1,4 +1,4 @@
-export const WALLET_PASSWORD = 'asdasdasd';
+export const WALLET_PASSWORD = '12345678';
 
 export const Browsers = {
   SAFARI: 'com.apple.mobilesafari',
@@ -47,4 +47,4 @@ export const FIXTURE_SERVER_HOST = IS_RUNNING_IN_BROWSER_STACK
   : 'localhost';
 
 export const FIXTURE_SERVER_PORT = 12345;
-export const FIXTURE_SERVER_URL = `http://${FIXTURE_SERVER_HOST}:12345/state.json`;
+export const FIXTURE_SERVER_URL = `http://${FIXTURE_SERVER_HOST}:${FIXTURE_SERVER_PORT}/state.json`;
