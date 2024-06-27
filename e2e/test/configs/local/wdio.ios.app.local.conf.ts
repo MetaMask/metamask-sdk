@@ -29,10 +29,12 @@ config.capabilities = [
     // @ts-ignore
     'appium:bundleId': process.env.BUNDLE_ID ?? '',
     'appium:udid': process.env.DEVICE_UDID ?? '',
+    /*
     'appium:otherApps': [
       process.env.ANDROID_SDK_TEST_APP_PATH ?? '',
       process.env.RN_TEST_APP_PATH ?? '',
     ],
+     */
     // "appium:xcodeSigningId": "iPhone Developer",
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
