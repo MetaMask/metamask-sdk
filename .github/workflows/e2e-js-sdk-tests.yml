@@ -92,6 +92,7 @@ jobs:
         run: |
           {
             echo "DEVNEXT_URL=http://localhost:3333"
+            echo "WEBDAPP_URL=${{ inputs.webdapp-url }}"
           } >> .dapps.env
 
       - name: Start the Devnext dapp

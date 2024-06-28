@@ -11,7 +11,7 @@ import ImportFromSeedScreen from '../src/screens/MetaMask/ImportFromSeedScreen';
 import Gestures from '../src/Gestures';
 import SecurityUpdatesScreen from '../src/screens/MetaMask/SecurityUpdates';
 import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponent';
-import WhatsNewComponent from '../src/screens/MetaMask/components/WhatsNewComponent';
+import MetaMetricsComponent from '../src/screens/MetaMask/components/MetaMetricsComponent';
 import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen';
 import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
 import WalletReadyScreen from '../src/screens/MetaMask/WalletReadyScreen';
@@ -27,37 +27,41 @@ const goToSettingsAndClearAllConnections = async () => {
   }
 };
 
+const setAndroidDefaultLinks = async () => {
+  await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+  await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+  await driver.setOrientation('PORTRAIT');
+
+  await AndroidSettingsScreen.tapOpenSearchBarButton();
+  await AndroidSettingsScreen.fillSearchBarInput('Opening links');
+  await AndroidSettingsScreen.tapOpeningLinksSearchResult();
+
+  await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
+  await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
+
+  await driver.pause(2000);
+
+  const isAddLinksButtonDisplayed =
+    await AndroidSettingsOpeningLinksScreen.addLinksButton.isDisplayed();
+
+  if (isAddLinksButtonDisplayed) {
+    const isAddLinksButtonEnabled =
+      await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
+
+    if (isAddLinksButtonEnabled) {
+      await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
+      await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
+      await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
+    }
+  }
+};
+
 export const beforeHook = async () => {
   // Fox animation takes a while to finish
   await driver.pause(5000);
 
   if (driver.isAndroid) {
-    await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
-    await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
-    await driver.setOrientation('PORTRAIT');
-
-    await AndroidSettingsScreen.tapOpenSearchBarButton();
-    await AndroidSettingsScreen.fillSearchBarInput('Opening links');
-    await AndroidSettingsScreen.tapOpeningLinksSearchResult();
-
-    await AndroidSettingsOpeningLinksScreen.scrollToMetaMaskAppOption();
-    await AndroidSettingsOpeningLinksScreen.tapMetaMaskAppOption();
-
-    await driver.pause(2000);
-
-    const isAddLinksButtonDisplayed =
-      await AndroidSettingsOpeningLinksScreen.addLinksButton.isDisplayed();
-
-    if (isAddLinksButtonDisplayed) {
-      const isAddLinksButtonEnabled =
-        await AndroidSettingsOpeningLinksScreen.isAddLinksButtonEnabled();
-
-      if (isAddLinksButtonEnabled) {
-        await AndroidSettingsOpeningLinksScreen.tapAddLinksButton();
-        await AndroidSettingsOpeningLinksScreen.selectAllMetaMaskSupportedLinks();
-        await AndroidSettingsOpeningLinksScreen.tapAddMetaMaskSupportedLinks();
-      }
-    }
+    await setAndroidDefaultLinks();
   }
 
   await Utils.launchMetaMask();
@@ -84,22 +88,25 @@ export const beforeHook = async () => {
   await Gestures.hideKeyboardWithTap();
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
-  await driver.pause(5000);
   await WalletReadyScreen.tapDoneButton();
+
+  // Waiting for the wallet to be ready. Because the initial loading popups
+  // are very inconsistent we try to get them to show up before continuing
+  await driver.pause(2000);
   await SecurityUpdatesScreen.tapNoThanksSecurityUpdates();
-  await driver.pause(1000);
+  await driver.pause(2000);
   await WelcomeComponent.tapNoThanksButton();
+  await driver.pause(2000);
+  await EnableSmartTransactionsComponent.tapEnableSmartTransactions();
   await driver.pause(1000);
-  await EnableSmartTransactionsComponent.tapDontEnableSmartTransactions();
-  await driver.pause(1000);
-  await WhatsNewComponent.closeModal();
+  await MetaMetricsComponent.tapAgreeToMetaMetrics();
+  // await WhatsNewComponent.closeModal();
 };
 
 export const beforeEachHook = async () => {
   await Utils.launchMetaMask();
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 };
-
 
 // Skipping for now
 export const afterEachHook = async () => {
