@@ -47,6 +47,7 @@ describe('JS SDK E2E', () => {
     await driver.pause(5000);
   });
 
+  // Tests from the first iteration are now being skipped
   it.skip('Connect to the Web3onboard Dapp', async () => {
     await driver.pause(5000);
 

@@ -35,8 +35,9 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   build-deploy-test-dapp:
-    uses: ./.github/workflows/build-deploy-test-dapp.yml
+    name: Build, deploy, and test dapp
     needs: lint-build-test
+    uses: ./.github/workflows/build-deploy-test-dapp.yml
     with:
       s3_prefix: /${{ github.sha }}
       # TODO Change this
