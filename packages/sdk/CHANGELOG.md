@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.4]
+### Added
+- chore: removes the 'defaultReadOnlyChainId' option from the SDK options ([#919](https://github.com/MetaMask/metamask-sdk/pull/919))
+- chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
+- chore: update the 'request' method in the 'wrapExtensionProvider' to throw an error when RPC calls fail ([#917](https://github.com/MetaMask/metamask-sdk/pull/917))
+
 ## [0.26.3]
 ### Added
 - fix: update the 'request' method wrapper logic in 'wrapExtensionProvider' to handle connectAndSign issues ([#913](https://github.com/MetaMask/metamask-sdk/pull/913))
@@ -26,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk/pull/888))
 
 ## [0.20.5]
-### Uncategorized
+### Added
 - fix: extension events ([#877](https://github.com/MetaMask/metamask-sdk/pull/877))
 - feat: set default sdk source ([#875](https://github.com/MetaMask/metamask-sdk/pull/875))
 
@@ -43,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - skip version because of publishing issue
 
 ## [0.20.1]
-### Uncategorized
+### Added
 - skip version because of publishing issue
 
 ## [0.20.0]
@@ -183,7 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: sdk option openDeepLink with dynamic url  ([#464](https://github.com/MetaMask/metamask-sdk/pull/464))
 
 ## [0.11.2]
-### Uncategorized
+### Added
 - align version with sdk-react* packages
 
 ## [0.11.1]
@@ -216,7 +222,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: modal cleanup and otp selection ([#402](https://github.com/MetaMask/metamask-sdk/pull/402))
 
 ## [0.8.0]
-### Uncategorized
+### Added
 - feat: remove npm dependency warnings for peers packages
 - feat: enable infura http headers for analytics ([#387](https://github.com/MetaMask/metamask-sdk/pull/387))
 - feat: cache selected account and selected chain ([#385](https://github.com/MetaMask/metamask-sdk/pull/385))
@@ -295,7 +301,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix: invalid modal state ([#213](https://github.com/MetaMask/metamask-sdk/pull/213))
 
 ## [0.5.1]
-### Uncategorized
+### Added
 - Revert "Release 12.0.0" ([#210](https://github.com/MetaMask/metamask-sdk/pull/210))
 - Release 12.0.0 ([#208](https://github.com/MetaMask/metamask-sdk/pull/208))
 - feat: optimize modal rendering and re-use existing node ([#206](https://github.com/MetaMask/metamask-sdk/pull/206))
@@ -347,7 +353,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.4...HEAD
+[0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.3...@metamask/sdk@0.26.4
 [0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.2...@metamask/sdk@0.26.3
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.1...@metamask/sdk@0.26.2
 [0.26.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.0...@metamask/sdk@0.26.1
