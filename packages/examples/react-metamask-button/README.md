@@ -1,3 +1,4 @@
+[comment]: <>  (TODO: Remove once we fix this issue)
 # This is example dapp is currently flagged as a work in progress due to a recently found bug. Please be advised.
 
 

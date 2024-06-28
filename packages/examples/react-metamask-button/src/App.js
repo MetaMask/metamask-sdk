@@ -22,6 +22,7 @@ function AppReady() {
     <div className="App">
       <header className="App-header">
         <span>
+          { /* TODO: Remove once we fix this issue */ }
         <p>This is example dapp is currently flagged as a work in progress due to a recently found bug. Please be advised.
         </p>
         </span>
