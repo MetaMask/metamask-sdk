@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.4]
+### Added
+- chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
+
 ## [0.26.0]
-### Uncategorized
+### Added
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
 
 ## [0.20.4]
@@ -19,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - skip version because of publishing issue
 
 ## [0.20.1]
-### Uncategorized
+### Added
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
 - Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
 - Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
@@ -31,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
 
 ## [0.18.5]
-### Uncategorized
+### Added
 - fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
 
 ## [0.17.0]
@@ -132,7 +136,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.4...HEAD
+[0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.0...@metamask/sdk-install-modal-web@0.26.4
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.4...@metamask/sdk-install-modal-web@0.26.0
 [0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.2...@metamask/sdk-install-modal-web@0.20.4
 [0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.1...@metamask/sdk-install-modal-web@0.20.2

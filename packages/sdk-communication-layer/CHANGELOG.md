@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.4]
+### Added
+- chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
+
 ## [0.26.2]
 ### Added
 - feat: cleanup leaking console logs ([#907](https://github.com/MetaMask/metamask-sdk/pull/907))
@@ -18,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk.git/pull/888))
 
 ## [0.20.5]
-### Uncategorized
+### Added
 - fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk.git/pull/871))
 
 ## [0.20.4]
@@ -31,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - skip version because of publishing issue
 
 ## [0.20.1]
-### Uncategorized
+### Added
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
 - Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
 - Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
@@ -48,7 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: update the 'expo-demo' example dapp ([#824](https://github.com/MetaMask/metamask-sdk/pull/824))
 
 ## [0.18.5]
-### Uncategorized
+### Added
 - fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
 
 ## [0.18.4]
@@ -156,11 +160,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix typos ([#401](https://github.com/MetaMask/metamask-sdk/pull/401))
 
 ## [0.8.0]
-### Uncategorized
+### Added
 - feat: adds contact form to npm packages ([#382](https://github.com/MetaMask/metamask-sdk/pull/382))
 
 ## [0.7.1]
-### Uncategorized
+### Added
 - fix: sdk connection request event ([#364](https://github.com/MetaMask/metamask-sdk/pull/364))
 
 ## [0.7.0]
@@ -227,7 +231,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...HEAD
+[0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.2...@metamask/sdk-communication-layer@0.26.4
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.0...@metamask/sdk-communication-layer@0.26.2
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...@metamask/sdk-communication-layer@0.26.0
 [0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.4...@metamask/sdk-communication-layer@0.20.5

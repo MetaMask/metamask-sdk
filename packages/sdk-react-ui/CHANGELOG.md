@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.4]
+### Added
+- chore: removes the 'defaultReadOnlyChainId' option from the SDK options ([#919](https://github.com/MetaMask/metamask-sdk/pull/919))
+- chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
+- chore: update the 'request' method in the 'wrapExtensionProvider' to throw an error when RPC calls fail ([#917](https://github.com/MetaMask/metamask-sdk/pull/917))
+
 ## [0.26.3]
 ### Added
 - fix: update the 'request' method wrapper logic in 'wrapExtensionProvider' to handle connectAndSign issues ([#913](https://github.com/MetaMask/metamask-sdk/pull/913))
@@ -15,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - chore: terminate on 'ACCOUNTS_CHANGED' event when accounts are zero ([#909](https://github.com/MetaMask/metamask-sdk/pull/909))
 
 ## [0.26.0]
-### Uncategorized
+### Added
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
 
 ## [0.20.4]
@@ -23,15 +29,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: create a new SDK for React Native ([#859](https://github.com/MetaMask/metamask-sdk/pull/859))
 
 ## [0.20.3]
-### Uncategorized
+### Added
 - feat: force change ([#848](https://github.com/MetaMask/metamask-sdk/pull/848))
 
 ## [0.20.2]
-### Uncategorized
+### Added
 - skip version because of publishing issue
 
 ## [0.20.1]
-### Uncategorized
+### Added
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
 - Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
 - Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
@@ -160,7 +166,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.4...HEAD
+[0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.3...@metamask/sdk-react-ui@0.26.4
 [0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.2...@metamask/sdk-react-ui@0.26.3
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.0...@metamask/sdk-react-ui@0.26.2
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.20.4...@metamask/sdk-react-ui@0.26.0
