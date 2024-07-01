@@ -25,7 +25,7 @@ on:
         type: string
       webdapp-url:
         required: true
-        description: 'From the CI deploy'
+        description: 'From the CI deploy or local exposed URL of the web dapp to test against'
         type: string
 
 jobs:
@@ -73,7 +73,6 @@ jobs:
           ios_wallet_app_bundle_id=$(echo "$response" | jq -r --arg ios_wallet_app_name "$ios_wallet_app_name" '.[] | select(.app_name == $ios_wallet_app_name) | .custom_id')
           android_wallet_app_url=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .app_url')
           android_wallet_app_bundle_id=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .custom_id')
-
 
           # Writes to the .ios.env file
           {
