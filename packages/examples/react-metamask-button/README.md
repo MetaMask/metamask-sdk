@@ -1,3 +1,7 @@
+[comment]: <>  (TODO: Remove once we fix this issue)
+# This is example dapp is currently flagged as a work in progress due to a recently found bug. Please be advised.
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
