@@ -1,5 +1,5 @@
 # Pure JavaScript SDK example
-  **You must use a local HTTP server to serve index.html. Don't opening index.html with browser directly, the Metamast sdk will fail to detect Metamask extension**
+  **You must use a local HTTP server to serve index.html. Don't open the file `index.html` with a browser directly, otherwise the Metamast SDK will fail to detect Metamask extension**
   
   Here are the steps to run with node [http-server](https://github.com/http-party/http-server).
   1. install nodejs
