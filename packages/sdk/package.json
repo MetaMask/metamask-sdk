@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@metamask/onboarding": "^1.0.1",
-    "@metamask/providers": "^15.0.0",
+    "@metamask/providers": "16.1.0",
     "@metamask/sdk-communication-layer": "workspace:*",
     "@metamask/sdk-install-modal-web": "workspace:*",
     "@types/dom-screen-wake-lock": "^1.0.0",

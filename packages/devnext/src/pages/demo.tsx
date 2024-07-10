@@ -468,7 +468,7 @@ const Demo = () => {
         params: [
           {
             to: '0x0000000000000000000000000000000000000000', // Required except during contract publications.
-            from: provider?.selectedAddress, // must match user's active address.
+            from: provider?.getSelectedAddress(), // must match user's active address.
             value: '0x5AF3107A4000', // Only required to send ether to the recipient from the initiating external account.
           },
         ],

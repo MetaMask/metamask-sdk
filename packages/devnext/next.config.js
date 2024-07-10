@@ -101,6 +101,22 @@ const nextConfig = withExpo({
         type: 'javascript/auto',
       },
       {
+        // This rule addresses an issue where .mjs files from @metamask/providers aren't correctly processed,
+        // leading to runtime errors. By setting `type: 'javascript/auto'`, we ensure webpack treats these
+        // files as JavaScript modules, preventing the 'Class extends value #<Object> is not a constructor or null' error.
+        test: /\.mjs$/,
+        include: /node_modules\/@metamask\/json-rpc-engine/,
+        type: 'javascript/auto',
+      },
+      {
+        // This rule addresses an issue where .mjs files from @metamask/providers aren't correctly processed,
+        // leading to runtime errors. By setting `type: 'javascript/auto'`, we ensure webpack treats these
+        // files as JavaScript modules, preventing the 'Class extends value #<Object> is not a constructor or null' error.
+        test: /\.mjs$/,
+        include: /node_modules\/@metamask\/json-rpc-middleware-stream/,
+        type: 'javascript/auto',
+      },
+      {
         test: /\.svg$/i,
         issuer: /\.[jt]sx?$/,
         use: ['@svgr/webpack'],

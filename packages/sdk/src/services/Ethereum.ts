@@ -1,7 +1,7 @@
-import { Duplex } from 'readable-stream';
 import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
-import { logger } from '../utils/logger';
+import { Duplex } from 'readable-stream';
 import { SDKProvider } from '../provider/SDKProvider';
+import { logger } from '../utils/logger';
 
 export interface EthereumProps {
   shouldSetOnWindow: boolean;
@@ -37,7 +37,7 @@ export class Ethereum {
     this.provider = proxiedProvieer;
 
     if (shouldSetOnWindow && typeof window !== 'undefined') {
-      setGlobalProvider(this.provider);
+      setGlobalProvider(provider);
     }
 
     if (shouldShimWeb3 && typeof window !== 'undefined') {
