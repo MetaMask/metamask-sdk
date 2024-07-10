@@ -8943,7 +8943,7 @@ __metadata:
     size-limit: ^11.0.2
     typescript: ^5.0.2
   peerDependencies:
-    i18next: 23.2.3
+    i18next: 23.11.5
     react: ^18.2.0
     react-dom: ^18.2.0
     react-native: "*"
