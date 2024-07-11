@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.5]
+### Added
+- chore: update the '@metamask/providers' package to version '16.1.0'
+- chore: update the 'babel' packages ([#939](https://github.com/MetaMask/metamask-sdk/pull/939))
+
 ## [0.26.4]
 ### Added
 - chore: removes the 'defaultReadOnlyChainId' option from the SDK options ([#919](https://github.com/MetaMask/metamask-sdk/pull/919))
@@ -223,7 +228,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.5...HEAD
+[0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.4...@metamask/sdk-react@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.3...@metamask/sdk-react@0.26.4
 [0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.2...@metamask/sdk-react@0.26.3
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.1...@metamask/sdk-react@0.26.2
