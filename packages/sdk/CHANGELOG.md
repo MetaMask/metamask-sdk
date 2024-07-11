@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.26.5]
+### Added
+- chore: update the '@metamask/providers' package to version '16.1.0'
+
 ## [0.26.4]
 ### Added
 - chore: removes the 'defaultReadOnlyChainId' option from the SDK options ([#919](https://github.com/MetaMask/metamask-sdk/pull/919))
@@ -353,7 +357,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.5...HEAD
+[0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.4...@metamask/sdk@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.3...@metamask/sdk@0.26.4
 [0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.2...@metamask/sdk@0.26.3
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.1...@metamask/sdk@0.26.2
