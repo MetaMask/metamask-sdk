@@ -38,14 +38,6 @@ yarn add @metamask/sdk-react-native
    - Under `URL Types`, click the `+` button to add a new URL type.
    - In the `URL Schemes` field, add your custom scheme (e.g., `yourappscheme`).
 
-4. Update your `Podfile` to include the following lines:
-
-```ruby
-# This is required in order to install the "metamask-ios-sdk" pod
-use_frameworks!
-pod 'metamask-ios-sdk', :git => 'https://github.com/MetaMask/metamask-ios-sdk.git'
-```
-
 4. Install CocoaPods dependencies:
 
 ```sh

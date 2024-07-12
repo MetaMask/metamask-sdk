@@ -15,11 +15,11 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.5)
   - hermes-engine/Pre-built (0.72.5)
   - libevent (2.1.12)
-  - metamask-ios-sdk (0.6.5):
+  - metamask-ios-sdk (0.7.1):
     - Socket.IO-Client-Swift (~> 16.1.0)
     - Starscream (= 4.0.6)
-  - metamask-sdk-react-native (0.3.1):
-    - metamask-ios-sdk (~> 0.6.5)
+  - metamask-sdk-react-native (0.3.2):
+    - metamask-ios-sdk (~> 0.7.1)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RCT-Folly (2021.07.22.00):
@@ -474,7 +474,6 @@ DEPENDENCIES:
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
-  - metamask-ios-sdk (from `https://github.com/MetaMask/metamask-ios-sdk.git`)
   - "metamask-sdk-react-native (from `../node_modules/@metamask/sdk-react-native`)"
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
@@ -526,6 +525,7 @@ SPEC REPOS:
   trunk:
     - fmt
     - libevent
+    - metamask-ios-sdk
     - Socket.IO-Client-Swift
     - SocketRocket
     - Starscream
@@ -544,8 +544,6 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-2023-08-07-RNv0.72.4-813b2def12bc9df02654b3e3653ae4a68d0572e0
-  metamask-ios-sdk:
-    :git: https://github.com/MetaMask/metamask-ios-sdk.git
   metamask-sdk-react-native:
     :path: "../node_modules/@metamask/sdk-react-native"
   RCT-Folly:
@@ -637,11 +635,6 @@ EXTERNAL SOURCES:
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
-CHECKOUT OPTIONS:
-  metamask-ios-sdk:
-    :commit: 5311140a69a5763cb8c2fe7914b7d8638d9fd3de
-    :git: https://github.com/MetaMask/metamask-ios-sdk.git
-
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
@@ -651,8 +644,8 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: f6cf92a471053245614d9d8097736f6337d5b86c
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  metamask-ios-sdk: 02ec17493be44fa88f502e247dea581751a56705
-  metamask-sdk-react-native: 455a78a153c8340fbe155a3beec5b2641c94160c
+  metamask-ios-sdk: f6c2f86c64950a266f28a169436fd3b30be4d7cf
+  metamask-sdk-react-native: 59b7b55c9fe47745e7d67603fbb0bb4080186f8c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: df81ab637d35fac9e6eb94611cfd20f0feb05455
   RCTTypeSafety: 4636e4a36c7c2df332bda6d59b19b41c443d4287
@@ -701,6 +694,6 @@ SPEC CHECKSUMS:
   Starscream: fb2c4510bebf908c62bd383bcf05e673720e91fd
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
 
-PODFILE CHECKSUM: 855231a8a491cf8ab9045612f72c1b8cab34db4d
+PODFILE CHECKSUM: abb585280b7f51c39812de1363f4025ecc70ec83
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.12.1
