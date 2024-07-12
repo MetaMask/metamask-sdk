@@ -16,9 +16,6 @@ end
 
 target 'reactNativeSdkDemo' do
   config = use_native_modules!
-  # This is required in order to install the "metamask-ios-sdk" pod
-  use_frameworks!
-  pod 'metamask-ios-sdk', :git => 'https://github.com/MetaMask/metamask-ios-sdk.git'
 
   # Flags change depending on the env values.
   flags = get_default_flags()
