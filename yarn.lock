@@ -5391,17 +5391,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@lavamoat/aa@npm:^3.1.1":
-  version: 3.1.2
-  resolution: "@lavamoat/aa@npm:3.1.2"
-  dependencies:
-    resolve: ^1.20.0
-  bin:
-    lavamoat-ls: src/cli.js
-  checksum: e580278f2119e26b968105b1ba61d9285537b2577b2f2a256c12d4e623bc544eb7664989855b90e7b2aee6ed23222179423a0c9009f67995ded85678e132332f
-  languageName: node
-  linkType: hard
-
 "@lavamoat/aa@npm:^4.2.0":
   version: 4.2.0
   resolution: "@lavamoat/aa@npm:4.2.0"
@@ -5410,21 +5399,6 @@ __metadata:
   bin:
     lavamoat-ls: src/cli.js
   checksum: bfc21f7d3f3310c1faddbb08f69d5f4cb23b819f85aceccfa516d3e8abcc8bcd547cf5d0ecf44fe195b8d7e61cc0566ebc564e532f1250d70b57a9db18d9a983
-  languageName: node
-  linkType: hard
-
-"@lavamoat/allow-scripts@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "@lavamoat/allow-scripts@npm:2.3.1"
-  dependencies:
-    "@lavamoat/aa": ^3.1.1
-    "@npmcli/run-script": ^6.0.0
-    bin-links: 4.0.1
-    npm-normalize-package-bin: ^3.0.0
-    yargs: ^16.2.0
-  bin:
-    allow-scripts: src/cli.js
-  checksum: 334612c1ecd357f0143542837ba9982b16e884e4091083b7f437ddc48e79071e3e5503bc3eaa65adf5aa84e4e3021abc074438dd202a72b80ad6fff785caad69
   languageName: node
   linkType: hard
 
@@ -5978,7 +5952,7 @@ __metadata:
   resolution: "@metamask/sdk-communication-layer@workspace:packages/sdk-communication-layer"
   dependencies:
     "@jest/globals": ^29.3.1
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": 3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
@@ -6054,7 +6028,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": 3.1.0
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.2
@@ -6161,7 +6135,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-react-native@workspace:packages/sdk-react-native"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
@@ -6219,7 +6193,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.23.5
     "@headlessui/react": ^1.6.6
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
@@ -6278,7 +6252,7 @@ __metadata:
     "@babel/preset-env": ^7.23.6
     "@babel/preset-react": ^7.23.3
     "@babel/preset-typescript": ^7.23.3
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
@@ -6348,7 +6322,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-socket-server-scale@workspace:packages/sdk-socket-server-next"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config-jest": ^12.1.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -6564,7 +6538,7 @@ __metadata:
   resolution: "@metamask/sdk@workspace:packages/sdk"
   dependencies:
     "@jest/globals": ^29.3.1
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": 3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
@@ -7237,15 +7211,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@npmcli/promise-spawn@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "@npmcli/promise-spawn@npm:6.0.2"
-  dependencies:
-    which: ^3.0.0
-  checksum: aa725780c13e1f97ab32ed7bcb5a207a3fb988e1d7ecdc3d22a549a22c8034740366b351c4dde4b011bcffcd8c4a7be6083d9cf7bc7e897b88837150de018528
-  languageName: node
-  linkType: hard
-
 "@npmcli/promise-spawn@npm:^7.0.0":
   version: 7.0.2
   resolution: "@npmcli/promise-spawn@npm:7.0.2"
@@ -7265,19 +7230,6 @@ __metadata:
     node-gyp: ^10.0.0
     which: ^4.0.0
   checksum: c44d6874cffb0a2f6d947e230083b605b6f253450e24aa185ef28391dc366b10807cd4ca113fe367057b8b5310add36391894f9d782af15424830658ee386dfb
-  languageName: node
-  linkType: hard
-
-"@npmcli/run-script@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "@npmcli/run-script@npm:6.0.2"
-  dependencies:
-    "@npmcli/node-gyp": ^3.0.0
-    "@npmcli/promise-spawn": ^6.0.0
-    node-gyp: ^9.0.0
-    read-package-json-fast: ^3.0.0
-    which: ^3.0.0
-  checksum: 7a671d7dbeae376496e1c6242f02384928617dc66cd22881b2387272205c3668f8490ec2da4ad63e1abf979efdd2bdf4ea0926601d78578e07d83cfb233b3a1a
   languageName: node
   linkType: hard
 
@@ -16874,18 +16826,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bin-links@npm:4.0.1":
-  version: 4.0.1
-  resolution: "bin-links@npm:4.0.1"
-  dependencies:
-    cmd-shim: ^6.0.0
-    npm-normalize-package-bin: ^3.0.0
-    read-cmd-shim: ^4.0.0
-    write-file-atomic: ^5.0.0
-  checksum: a806561750039bcd7d4234efe5c0b8b7ba0ea8495086740b0da6395abe311e2cdb75f8324787354193f652d2ac5ab038c4ca926ed7bcc6ce9bc2001607741104
-  languageName: node
-  linkType: hard
-
 "bin-links@npm:4.0.3":
   version: 4.0.3
   resolution: "bin-links@npm:4.0.3"
@@ -19877,7 +19817,7 @@ __metadata:
     "@fortawesome/fontawesome-svg-core": ^6.4.2
     "@fortawesome/free-solid-svg-icons": ^6.4.2
     "@fortawesome/react-fontawesome": ^0.2.0
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/design-tokens": ^1.12.0
     "@metamask/providers": 16.1.0
     "@metamask/sdk": "workspace:^"
@@ -20045,7 +19985,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "devsocket@workspace:packages/devsocket"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
+    "@lavamoat/allow-scripts": ^3.0.4
     "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config-jest": ^12.1.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -31189,7 +31129,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-gyp@npm:^9.0.0, node-gyp@npm:latest":
+"node-gyp@npm:latest":
   version: 9.4.0
   resolution: "node-gyp@npm:9.4.0"
   dependencies:
@@ -35293,16 +35233,6 @@ __metadata:
   version: 4.0.0
   resolution: "read-cmd-shim@npm:4.0.0"
   checksum: 2fb5a8a38984088476f559b17c6a73324a5db4e77e210ae0aab6270480fd85c355fc990d1c79102e25e555a8201606ed12844d6e3cd9f35d6a1518791184e05b
-  languageName: node
-  linkType: hard
-
-"read-package-json-fast@npm:^3.0.0":
-  version: 3.0.2
-  resolution: "read-package-json-fast@npm:3.0.2"
-  dependencies:
-    json-parse-even-better-errors: ^3.0.0
-    npm-normalize-package-bin: ^3.0.0
-  checksum: 8d406869f045f1d76e2a99865a8fd1c1af9c1dc06200b94d2b07eef87ed734b22703a8d72e1cd36ea36cc48e22020bdd187f88243c7dd0563f72114d38c17072
   languageName: node
   linkType: hard
 
