@@ -304,6 +304,36 @@ export const DAPPView = (_props: DAPPViewProps) => {
     }
   };
 
+  const batchWithSwitchChain = async () => {
+    try {
+      setResponse('');
+
+      console.log('Calling batch request....');
+      const address = await provider?.getSelectedAddress();
+
+      const req1 = {
+        method: 'wallet_switchEthereumChain',
+        params: [{chainId: '0x89'}], // chainId must be in hexadecimal numbers
+      };
+
+      const req2 = {
+        method: 'personal_sign',
+        params: ['Hello world', address],
+      };
+
+      const batchRequest = [req1, req2];
+
+      const res = (await provider?.batchRequest(batchRequest)) as unknown[];
+
+      console.log('batch res ==>', res);
+
+      setResponse(res);
+      console.log('batchResponse', res);
+    } catch (e) {
+      console.error('error', e);
+    }
+  };
+
   const textStyle = {
     color: colors.text.default,
     fontSize: 16,
@@ -342,6 +372,10 @@ export const DAPPView = (_props: DAPPViewProps) => {
           <Button title="eth_signTypedData_v4" onPress={sign} />
           <Button title="Personal Sign" onPress={personalSign} />
           <Button title="Batch Sign Calls" onPress={batch} />
+          <Button
+            title="Batch With Switch Chain"
+            onPress={batchWithSwitchChain}
+          />
           <Button title="Send Transaction" onPress={sendTransaction} />
           <Button
             title="Add The Polygon Chain"

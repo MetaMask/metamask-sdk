@@ -21,6 +21,7 @@
     "build:tsc": "tsc",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "build:dev": "rm -rf .rollup.cache && yarn build && cd .. && cd examples/reactNativeSdkDemo && rm -rf node_modules && rm -rf .yarn && yarn && cd ios && pod install --repo-update && cd ..",
     "clean": "rimraf dist",
     "dev": "rollup -c -w",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
