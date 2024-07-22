@@ -53,11 +53,13 @@ export function openDeeplink(
       // For whatever reason, links with a target of "_blank" don't suffer
       // from this problem, and programmatically clicking a detached link
       // element with the same attributes also avoids the issue.
-      const link = document.createElement("a");
-      link.href = universalLink;
-      link.target = "_self";
-      link.rel = "noreferrer noopener";
-      link.click();
+      if (typeof document !== 'undefined') {
+        const link = document.createElement("a");
+        link.href = universalLink;
+        link.target = "_self";
+        link.rel = "noreferrer noopener";
+        link.click();
+      }
     }
   } catch (err) {
     console.log(`[PlatfformManager: openDeeplink()] can't open link`, err);
