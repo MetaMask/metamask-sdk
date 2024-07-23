@@ -1,7 +1,5 @@
 import { logger } from '../../utils/logger';
-import {
-  PlatformManager,
-} from '../../Platform/PlatfformManager';
+import { PlatformManager } from '../../Platform/PlatfformManager';
 
 export function openDeeplink(
   instance: PlatformManager,
@@ -43,7 +41,7 @@ export function openDeeplink(
         // It avoid the browser to display a blank page
         window.location.href = deeplink;
       }
-    } else {
+    } else if (typeof document !== 'undefined') {
       // Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
       // Using 'window.open' causes issues on iOS in non-Safari browsers and
       // WebViews where a blank tab is left behind after connecting.
@@ -53,13 +51,11 @@ export function openDeeplink(
       // For whatever reason, links with a target of "_blank" don't suffer
       // from this problem, and programmatically clicking a detached link
       // element with the same attributes also avoids the issue.
-      if (typeof document !== 'undefined') {
-        const link = document.createElement("a");
-        link.href = universalLink;
-        link.target = "_self";
-        link.rel = "noreferrer noopener";
-        link.click();
-      }
+      const link = document.createElement('a');
+      link.href = universalLink;
+      link.target = '_self';
+      link.rel = 'noreferrer noopener';
+      link.click();
     }
   } catch (err) {
     console.log(`[PlatfformManager: openDeeplink()] can't open link`, err);
