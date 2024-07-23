@@ -1,8 +1,5 @@
 import { jest } from '@jest/globals';
-import {
-  PlatformManager,
-  LINK_OPEN_DELAY,
-} from '../../Platform/PlatfformManager';
+import { PlatformManager } from '../../Platform/PlatfformManager';
 import * as loggerModule from '../../utils/logger';
 import { openDeeplink } from './openDeeplink';
 
@@ -26,33 +23,23 @@ describe('openDeeplink', () => {
   });
 
   it('should open a universal link when state.useDeeplink is false', () => {
-    global.window = { open: jest.fn() } as any;
+    const link = {
+      click: jest.fn(),
+      href: undefined,
+      target: undefined,
+      rel: undefined,
+    };
+    global.document = { createElement: jest.fn().mockReturnValue(link) } as any;
 
     openDeeplink(instance, 'universalLink', 'deeplink');
 
-    expect(global.window.open).toHaveBeenCalledWith('universalLink', '_blank');
-  });
-
-  it('should close the window after LINK_OPEN_DELAY', () => {
-    const mockWin = { close: jest.fn() };
-    global.window = {
-      open: jest.fn().mockReturnValue(mockWin),
-    } as any;
-
-    openDeeplink(instance, 'universalLink', 'deeplink');
-
-    jest.advanceTimersByTime(LINK_OPEN_DELAY);
-
-    expect(mockWin.close).toHaveBeenCalled();
+    expect(link.href).toStrictEqual('universalLink');
+    expect(link.target).toStrictEqual('_self');
+    expect(link.rel).toStrictEqual('noreferrer noopener');
+    expect(link.click).toHaveBeenCalled();
   });
 
   it('should log debug info', () => {
-    global.window = {
-      open: jest.fn().mockImplementation(() => {
-        throw new Error('failure');
-      }),
-    } as any;
-
     openDeeplink(instance, 'universalLink', 'deeplink');
 
     expect(spyLogger).toHaveBeenCalledWith(
@@ -89,11 +76,11 @@ describe('openDeeplink', () => {
 
   it('should open a deep link when state.useDeeplink is true', () => {
     instance.state.useDeeplink = true;
-    global.window = { open: jest.fn() } as any;
+    global.window = { location: { href: undefined } } as any;
 
     openDeeplink(instance, 'universalLink', 'deeplink');
 
-    expect(global.window.open).toHaveBeenCalledWith('deeplink', '_blank');
+    expect(global.window.location.href).toStrictEqual('deeplink');
   });
 
   it('should log an error if opening the link fails', () => {
@@ -101,8 +88,8 @@ describe('openDeeplink', () => {
       // do nothing
     });
 
-    global.window = {
-      open: jest.fn().mockImplementation(() => {
+    global.document = {
+      createElement: jest.fn().mockImplementation(() => {
         throw new Error('failure');
       }),
     } as any;
