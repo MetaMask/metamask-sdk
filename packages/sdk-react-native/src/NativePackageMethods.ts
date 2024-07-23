@@ -1,4 +1,4 @@
-import { Linking, NativeModules } from 'react-native';
+import { Linking, NativeModules, Platform } from 'react-native';
 import { MetaMaskSDKOptions } from './MetaMaskProvider';
 
 const { MetaMaskReactNativeSdk } = NativeModules;
@@ -118,7 +118,9 @@ export function setupDeeplinkHandling() {
   };
 
   // Add event listener for URL events
-  Linking.addEventListener('url', handleOpenURL);
+  if (Platform.OS === 'ios') {
+    Linking.addEventListener('url', handleOpenURL);
+  }
 }
 
 /**
