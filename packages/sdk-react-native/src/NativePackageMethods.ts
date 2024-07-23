@@ -112,13 +112,13 @@ export const terminate = async (): Promise<void> => {
  * Listens for URL events and passes them to the MetaMask SDK.
  */
 export function setupDeeplinkHandling() {
-  const handleOpenURL = (event: any) => {
-    // Handle the URL event here
-    MetaMaskReactNativeSdk.handleDeepLink(event.url);
-  };
-
-  // Add event listener for URL events
   if (Platform.OS === 'ios') {
+    const handleOpenURL = (event: any) => {
+      // Handle the URL event here
+      MetaMaskReactNativeSdk.handleDeepLink(event.url);
+    };
+
+    // Add event listener for URL events
     Linking.addEventListener('url', handleOpenURL);
   }
 }
