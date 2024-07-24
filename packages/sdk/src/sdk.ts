@@ -205,6 +205,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       enableAnalytics: true,
       shouldShimWeb3: true,
       useDeeplink: false,
+      extensionOnly: true,
       dappMetadata: {
         name: '',
         url: '',
