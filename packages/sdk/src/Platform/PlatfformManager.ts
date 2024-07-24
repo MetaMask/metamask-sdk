@@ -10,7 +10,6 @@ import { WakeLockManager } from './WakeLockManager';
 
 export const TEMPORARY_WAKE_LOCK_TIME = 2000;
 export const UNTIL_RESPONSE_WAKE_LOCK_TIME = 40000;
-export const LINK_OPEN_DELAY = 500;
 
 interface PlatformProps {
   useDeepLink: boolean;
