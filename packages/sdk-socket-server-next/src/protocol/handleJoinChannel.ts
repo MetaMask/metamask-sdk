@@ -119,6 +119,7 @@ export const handleJoinChannel = async ({
         `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
       await pubClient.hset('channels', channelId, 0);
+      await pubClient.expire('channels', config.channelExpiry); // Set TTL for the hash
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet

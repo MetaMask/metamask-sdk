@@ -86,17 +86,8 @@ export const configureSocketServer = async (
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
 
-    if (channelOccupancy <= 0) {
-      logger.debug(`'leave-room' room ${roomId} was deleted`);
-      // remove from redis
-      await pubClient.hdel('channels', roomId);
-    } else {
-      logger.info(
-        `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
-      );
-      // Inform the room of the disconnection
-      io.to(roomId).emit(`clients_disconnected-${roomId}`);
-    }
+    // Inform the room of the disconnection
+    io.to(roomId).emit(`clients_disconnected-${roomId}`);
   });
 
   io.on('connection', (socket: Socket) => {
