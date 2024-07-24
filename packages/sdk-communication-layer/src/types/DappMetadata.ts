@@ -3,6 +3,7 @@ export interface DappMetadata {
   name?: string;
   iconUrl?: string;
   base64Icon?: string;
+  connector?: string;
 }
 
 export interface DappMetadataWithSource extends DappMetadata {

@@ -6,4 +6,5 @@ export interface OriginatorInfo {
   icon?: string;
   source?: string;
   apiVersion?: string;
+  connector?: string;
 }

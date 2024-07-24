@@ -114,6 +114,7 @@ export function initCommunicationLayer({
     icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
     platform: state.platformType,
     apiVersion: packageJson.version,
+    connector: state.dappMetadata?.connector,
   };
   state.originatorInfo = originatorInfo;
 
