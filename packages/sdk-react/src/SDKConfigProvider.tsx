@@ -6,6 +6,7 @@ export interface SDKConfigContextProps {
   socketServer: string;
   useDeeplink?: boolean;
   infuraAPIKey?: string;
+  extensionOnly?: boolean;
   checkInstallationImmediately: boolean;
   debug: boolean;
   logs: {
@@ -19,6 +20,7 @@ export interface SDKConfigContextProps {
 const initProps: SDKConfigContextProps = {
   socketServer: DEFAULT_SERVER_URL,
   useDeeplink: false,
+  extensionOnly: true,
   checkInstallationImmediately: false,
   debug: true,
   logs: {
