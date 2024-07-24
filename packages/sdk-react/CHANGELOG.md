@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0]
+### Added
+- feat: sets extensionOnly default to true ([#956](https://github.com/MetaMask/metamask-sdk/pull/956))
+- chore: bump .change files ([#957](https://github.com/MetaMask/metamask-sdk/pull/957))
+- feat: improve open deeplink on IOS Chrome ([#948](https://github.com/MetaMask/metamask-sdk/pull/948))
+
 ## [0.26.5]
 ### Added
 - chore: update the '@metamask/providers' package to version '16.1.0'
@@ -228,7 +234,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.27.0...HEAD
+[0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.5...@metamask/sdk-react@0.27.0
 [0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.4...@metamask/sdk-react@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.3...@metamask/sdk-react@0.26.4
 [0.26.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.2...@metamask/sdk-react@0.26.3
