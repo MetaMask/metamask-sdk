@@ -455,7 +455,7 @@ PODS:
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
     - React-RCTImage
-  - RNSVG (15.4.0):
+  - RNSVG (14.2.0):
     - React-Core
   - RNVectorIcons (10.1.0):
     - RCT-Folly (= 2021.07.22.00)
@@ -687,13 +687,13 @@ SPEC CHECKSUMS:
   RNGestureHandler: ee924bd0024545efc4bc88c1e856f24b785d2ca2
   RNReanimated: fc537c9a29e55eb01c620f29b39554cfd68eef35
   RNScreens: 396c07678c1c35614bc5feba74a56df387bf1965
-  RNSVG: cb24fb322de8c1ebf59904e7aca0447bb8dbed5a
+  RNSVG: 963a95f1f5d512a13d11ffd50d351c87fb5c6890
   RNVectorIcons: 084c5c365eca594f94fda0192d8a380b2b40f9b5
   Socket.IO-Client-Swift: ee4b8f80a3db18dd7f32b266ddf273310609443c
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Starscream: fb2c4510bebf908c62bd383bcf05e673720e91fd
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
 
-PODFILE CHECKSUM: 91313d2e3fe4b2b5f11263bf30b986492f81c279
+PODFILE CHECKSUM: abb585280b7f51c39812de1363f4025ecc70ec83
 
 COCOAPODS: 1.15.2
