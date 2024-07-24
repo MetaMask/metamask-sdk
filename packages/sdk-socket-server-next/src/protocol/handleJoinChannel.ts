@@ -108,15 +108,22 @@ export const handleJoinChannel = async ({
 
     const sRedisChannelOccupancy = await pubClient.hget('channels', channelId);
     let channelOccupancy = 0;
+    const now = Date.now();
+
     logger.debug(
       `join_channel from=${from} ${channelId} context=${context} clientType=${clientType} occupancy=${sRedisChannelOccupancy}`,
     );
 
-    const now = Date.now();
-
     if (sRedisChannelOccupancy) {
-      const channelData = JSON.parse(sRedisChannelOccupancy);
-      channelOccupancy = channelData.occupancy;
+      let channelData;
+      try {
+        channelData = JSON.parse(sRedisChannelOccupancy);
+        channelOccupancy = channelData.occupancy;
+      } catch (error) {
+        // Fallback to the old format
+        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+        channelData = { occupancy: channelOccupancy, timestamp: now };
+      }
     } else {
       logger.debug(
         `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
