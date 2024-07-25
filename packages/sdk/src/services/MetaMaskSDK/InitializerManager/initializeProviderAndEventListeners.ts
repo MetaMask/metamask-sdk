@@ -30,6 +30,7 @@ export async function initializeProviderAndEventListeners(
     checkInstallationOnAllCalls: options.checkInstallationOnAllCalls as boolean,
     injectProvider: options.injectProvider ?? true,
     shouldShimWeb3: options.shouldShimWeb3 ?? true,
+    extensionOnly: options.extensionOnly ?? true,
     installer: instance.installer as MetaMaskInstaller,
     remoteConnection: instance.remoteConnection,
     debug: instance.debug,
