@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.27.0]
+### Added
+- feat: adds `connector` analytical property ([#947](https://github.com/MetaMask/metamask-sdk/pull/947))
+
 ## [0.26.4]
 ### Added
 - chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
@@ -231,7 +235,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...HEAD
+[0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...@metamask/sdk-communication-layer@0.27.0
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.2...@metamask/sdk-communication-layer@0.26.4
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.0...@metamask/sdk-communication-layer@0.26.2
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.20.5...@metamask/sdk-communication-layer@0.26.0
