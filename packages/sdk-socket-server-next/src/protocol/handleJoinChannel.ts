@@ -108,17 +108,33 @@ export const handleJoinChannel = async ({
 
     const sRedisChannelOccupancy = await pubClient.hget('channels', channelId);
     let channelOccupancy = 0;
+    const now = Date.now();
+
     logger.debug(
       `join_channel from=${from} ${channelId} context=${context} clientType=${clientType} occupancy=${sRedisChannelOccupancy}`,
     );
 
     if (sRedisChannelOccupancy) {
-      channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+      let channelData;
+      try {
+        channelData = JSON.parse(sRedisChannelOccupancy);
+        channelOccupancy = channelData.occupancy;
+      } catch (error) {
+        // Fallback to the old format
+        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+        channelData = { occupancy: channelOccupancy, timestamp: now };
+      }
     } else {
       logger.debug(
         `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
-      await pubClient.hset('channels', channelId, 0);
+
+      await pubClient.hset(
+        'channels',
+        channelId,
+        JSON.stringify({ occupancy: 0, timestamp: now }),
+      );
+      await pubClient.expire('channels', config.channelExpiry); // Set TTL for the hash
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -157,6 +173,13 @@ export const handleJoinChannel = async ({
     );
     //  Refresh the room occupancy -it should now matches channel occupancy
     roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
+
+    // Update the hash with the new occupancy and timestamp
+    await pubClient.hset(
+      'channels',
+      channelId,
+      JSON.stringify({ occupancy: channelOccupancy, timestamp: now }),
+    );
 
     // There may be -1 discrepency between room and channel occupancy depending if they are connected on the same server or not
     if (channelOccupancy - roomOccupancy > 1 || channelOccupancy < 0) {
