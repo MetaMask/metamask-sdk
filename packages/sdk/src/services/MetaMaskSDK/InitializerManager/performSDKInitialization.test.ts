@@ -61,6 +61,7 @@ describe('performSDKInitialization', () => {
       storage: {
         enabled: true,
       },
+      extensionOnly: true,
     });
 
     expect(setupPlatformManager).toHaveBeenCalledWith(instance);
