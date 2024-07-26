@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.5]
+### Added
+- feat: update iOS and Android SDKs to latest versions in 'sdk-react-native' ([#966](https://github.com/MetaMask/metamask-sdk/pull/966))
+- chore: ensure 'setupDeeplinkHandling' is running only on iOS ([#953](https://github.com/MetaMask/metamask-sdk/pull/953))
+- chore: (sdk-react-native) ensure URL event listener is only added on iOS  ([#952](https://github.com/MetaMask/metamask-sdk/pull/952))
+
 ## [0.3.4]
 ### Added
 - chore: update the 'metamask-ios-sdk' version to '0.7.3' in the 'sdk-react-native' package ([#944](https://github.com/MetaMask/metamask-sdk/pull/944))
@@ -36,7 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.5...HEAD
+[0.3.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.4...@metamask/sdk-react-native@0.3.5
 [0.3.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.3...@metamask/sdk-react-native@0.3.4
 [0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.2...@metamask/sdk-react-native@0.3.3
 [0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.1...@metamask/sdk-react-native@0.3.2
