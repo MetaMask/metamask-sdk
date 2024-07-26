@@ -1,10 +1,10 @@
 # MetaMask SDK
-
+npm i @metamask/sdk
 [![codecov](https://codecov.io/gh/MetaMask/metamask-sdk/graph/badge.svg?token=6B3Z3724OO)](https://codecov.io/gh/MetaMask/metamask-sdk)
-
+0x84e8277c938102f42FC2D9625Fc75049A86c99Ae
 MetaMask SDK enables developers to easily connect their dapps with the MetaMask browser extension
 and MetaMask Mobile.
-
+Abdulhafez 
 It supports the following dapp platforms:
 
 - [Javascript-based apps](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/)
@@ -46,7 +46,7 @@ Install the SDK:
 ```bash
 yarn add @metamask/sdk
 ```
-
+0x84e8277c938102f42FC2D9625Fc75049A86c99Ae
 or
 
 ```bash
@@ -93,7 +93,7 @@ for more information.
 See the [Electron example](./packages/examples/electronjs/README.md) and read the documentation for
 [using the SDK with Electron](https://docs.metamask.io/wallet/how-to/connect/set-up-sdk/javascript/electron/)
 for more information.
-
+0x84e8277c938102f42FC2D9625Fc75049A86c99Ae
 ## SDK options
 
 See the full list of [JavaScript SDK options](https://docs.metamask.io/wallet/reference/sdk-js-options/).
@@ -106,3 +106,4 @@ To contribute to MetaMask SDK, see the [contribution guidelines](./docs/contribu
 
 Fill out [this form](https://fq1an8d8ib2.typeform.com/to/sC7eK5F1) for a complimentary design
 optimization workshop.
+bdalhafzslah382@gmail.com 
