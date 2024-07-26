@@ -115,14 +115,12 @@ export const handleJoinChannel = async ({
     );
 
     if (sRedisChannelOccupancy) {
-      let channelData;
       try {
-        channelData = JSON.parse(sRedisChannelOccupancy);
+        const channelData = JSON.parse(sRedisChannelOccupancy);
         channelOccupancy = channelData.occupancy;
       } catch (error) {
         // Fallback to the old format
         channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
-        channelData = { occupancy: channelOccupancy, timestamp: now };
       }
     } else {
       logger.debug(
@@ -167,10 +165,10 @@ export const handleJoinChannel = async ({
     //   return;
     // }
 
-    channelOccupancy = parseInt(
-      (await pubClient.hget('channels', channelId)) ?? '1',
-      10,
-    );
+    channelOccupancy = sRedisChannelOccupancy
+      ? parseInt(sRedisChannelOccupancy, 10)
+      : 1;
+
     //  Refresh the room occupancy -it should now matches channel occupancy
     roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
 

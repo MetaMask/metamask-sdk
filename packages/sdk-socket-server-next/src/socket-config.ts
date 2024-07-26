@@ -66,7 +66,27 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, 1);
+    const sRedisChannelOccupancy = await pubClient.hget('channels', roomId);
+    let channelOccupancy = 0;
+    const now = Date.now();
+
+    // Decrement the number of clients in the room
+    if (sRedisChannelOccupancy) {
+      try {
+        const channelData = JSON.parse(sRedisChannelOccupancy);
+        channelOccupancy = channelData.occupancy;
+      } catch (error) {
+        // Fallback to the old format
+        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+      }
+    }
+
+    await pubClient.hset(
+      'channels',
+      roomId,
+      JSON.stringify({ occupancy: channelOccupancy + 1, timestamp: now }),
+    );
+
     logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -79,8 +99,26 @@ export const configureSocketServer = async (
       return;
     }
 
+    const sRedisChannelOccupancy = await pubClient.hget('channels', roomId);
+    let channelOccupancy = 0;
+    const now = Date.now();
+
     // Decrement the number of clients in the room
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
+    if (sRedisChannelOccupancy) {
+      try {
+        const channelData = JSON.parse(sRedisChannelOccupancy);
+        channelOccupancy = channelData.occupancy;
+      } catch (error) {
+        // Fallback to the old format
+        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
+      }
+    }
+
+    await pubClient.hset(
+      'channels',
+      roomId,
+      JSON.stringify({ occupancy: channelOccupancy - 1, timestamp: now }),
+    );
 
     logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -308,7 +346,7 @@ export const configureSocketServer = async (
         channelId: string,
         callback: (
           error: Error | null,
-          result?: { occupancy: number; channelOccupancy?: string },
+          result?: { occupancy: number; channelOccupancy?: number },
         ) => void,
       ) => {
         handleCheckRoom({ channelId, io, socket, callback }).catch((error) => {
