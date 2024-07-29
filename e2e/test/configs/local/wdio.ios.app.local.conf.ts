@@ -1,6 +1,7 @@
 import path from 'path';
 import * as dotenv from 'dotenv';
 
+import type { Capabilities } from '@wdio/types';
 import config from './wdio.shared.local.appium.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.ios.env') });
@@ -28,18 +29,19 @@ config.capabilities = [
     // @ts-ignore
     'appium:bundleId': process.env.BUNDLE_ID ?? '',
     'appium:udid': process.env.DEVICE_UDID ?? '',
+    /*
     'appium:otherApps': [
       process.env.ANDROID_SDK_TEST_APP_PATH ?? '',
       process.env.RN_TEST_APP_PATH ?? '',
     ],
+     */
     // "appium:xcodeSigningId": "iPhone Developer",
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
     'appium:language': 'en',
     'appium:fullReset': true,
-    // @ts-ignore
     'appium:settings[snapshotMaxDepth]': 62,
     'appium:settings[customSnapshotTimeout]': 50000,
-  },
+  } as Capabilities.RemoteCapability,
 ];
 export { config };

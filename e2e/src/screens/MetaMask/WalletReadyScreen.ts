@@ -1,0 +1,31 @@
+import { ChainablePromiseElement } from 'webdriverio';
+
+import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '../../Selectors';
+
+class WalletReadyScreen {
+  get doneButton(): ChainablePromiseElement<WebdriverIO.Element> {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@resource-id="onboarding-success-done-button"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "onboarding-success-done-button"',
+        ),
+      }),
+    );
+  }
+
+  async tapDoneButton(): Promise<void> {
+    await (
+      await this.doneButton
+    ).waitForEnabled({
+      timeout: 10000,
+    });
+    await (await this.doneButton).click();
+  }
+}
+
+const walletReadyScreen = new WalletReadyScreen();
+export default walletReadyScreen;

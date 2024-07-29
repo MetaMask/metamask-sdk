@@ -17,6 +17,7 @@ describe('Fixture test', () => {
   });
 
   it('should wait', async () => {
+    console.log('Dummy waiting for 50 seconds');
     await driver.pause(50000);
   });
 });
