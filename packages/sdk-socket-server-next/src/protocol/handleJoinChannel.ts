@@ -115,13 +115,8 @@ export const handleJoinChannel = async ({
     );
 
     if (sRedisChannelOccupancy) {
-      try {
-        const channelData = JSON.parse(sRedisChannelOccupancy);
-        channelOccupancy = channelData.occupancy;
-      } catch (error) {
-        // Fallback to the old format
-        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
-      }
+      const channelData = JSON.parse(sRedisChannelOccupancy);
+      channelOccupancy = channelData.occupancy;
     } else {
       logger.debug(
         `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
@@ -165,9 +160,13 @@ export const handleJoinChannel = async ({
     //   return;
     // }
 
-    channelOccupancy = sRedisChannelOccupancy
-      ? parseInt(sRedisChannelOccupancy, 10)
-      : 1;
+    if (sRedisChannelOccupancy) {
+      try {
+        channelOccupancy = JSON.parse(sRedisChannelOccupancy).occupancy;
+      } catch (error) {
+        channelOccupancy = parseInt(sRedisChannelOccupancy, 10) || 1;
+      }
+    }
 
     //  Refresh the room occupancy -it should now matches channel occupancy
     roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
@@ -220,7 +219,7 @@ export const handleJoinChannel = async ({
         .emit(`clients_disconnected-${channelId}`, error);
     });
 
-    if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
+    if (channelOccupancy >= MAX_CLIENTS_PER_ROOM - 1) {
       logger.info(`emitting clients_connected-${channelId}`, channelId);
 
       // imform all clients of new arrival and that room is ready
