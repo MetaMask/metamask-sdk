@@ -1,0 +1,1 @@
+{"version":3,"file":"InstallModal-web.d.ts","sourceRoot":"","sources":["../../../../../../src/ui/InstallModal/InstallModal-web.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,IAAI,EAAE,MAAM,SAAS,CAAC;AAE/B,OAAO,EAAE,iBAAiB,EAAE,MAAM,kCAAkC,CAAC;AAGrE,QAAA,MAAM,kBAAkB;UAShB,MAAM;;;eAGD,iBAAiB;uBACV,IAAI;kCACO,IAAI;kBACnB,IAAI;;wBAuCS,MAAM;gCAlBE,OAAO;CA0D3C,CAAC;AAEF,eAAe,kBAAkB,CAAC"}

@@ -1,0 +1,1 @@
+(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[2903],{"./src/design-system/components/Form/Label/__snapshots__/Label.test.tsx.snap":(__unused_webpack_module,exports)=>{exports["Label should render default settings correctly 1"]='\n<Text\n  testID="label"\n  variant="sBodyMD"\n>\n  Sample Label Text\n</Text>\n'}}]);

@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('../public/Fonts/FontAwesome.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MaterialIcons';
+  src: url('../public/Fonts/MaterialIcons.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MaterialCommunityIcons';
+  src: url('../public/Fonts/MaterialCommunityIcons.ttf') format('truetype');
+}
+@import url('https://fonts.cdnfonts.com/css/euclid-circular-b');

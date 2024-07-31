@@ -1,0 +1,1 @@
+{"version":3,"file":"SDKUIOptions.d.ts","sourceRoot":"","sources":["../../../../../src/types/SDKUIOptions.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,YAAY;IAC3B,SAAS,CAAC,EAAE,CAAC,MAAM,EAAE;QAAE,IAAI,EAAE,MAAM,CAAA;KAAE,KAAK,IAAI,CAAC;IAC/C,OAAO,CAAC,EAAE,MAAM,IAAI,CAAC;CACtB"}

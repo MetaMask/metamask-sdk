@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[7895],{"./src/design-system/components/Banners/Banner/variants/BannerTip/assets/fox-chat.png":(module,__unused_webpack_exports,__webpack_require__)=>{module.exports=__webpack_require__.p+"static/media/fox-chat.7cfd30d5.png"}}]);
