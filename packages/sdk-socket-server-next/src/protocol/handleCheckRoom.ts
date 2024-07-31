@@ -9,7 +9,7 @@ export type CheckRoomParams = {
   io: Server;
   callback: (
     error: Error | null,
-    result?: { occupancy: number; channelOccupancy?: string },
+    result?: { occupancy: number; channelOccupancy?: number },
   ) => void;
 };
 
@@ -33,8 +33,11 @@ export const handleCheckRoom = async ({
 
   const room = io.sockets.adapter.rooms.get(channelId);
   const occupancy = room ? room.size : 0;
-  const channelOccupancy =
-    (await pubClient.hget('channels', channelId)) ?? undefined;
+
+  const sRedisChannelOccupancy = await pubClient.hget('channels', channelId);
+  const channelOccupancy = sRedisChannelOccupancy
+    ? parseInt(sRedisChannelOccupancy, 10)
+    : 0;
 
   logger.info(
     `check_room occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,

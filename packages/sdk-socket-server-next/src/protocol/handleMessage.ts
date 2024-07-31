@@ -85,6 +85,8 @@ export const handleMessage = async ({
         await pubClient.set(
           `channel_config:${channelId}`,
           JSON.stringify(channelConfig),
+          'EX',
+          config.channelExpiry.toString(),
         );
 
         keyExchangeAck = true;
