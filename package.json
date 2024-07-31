@@ -41,6 +41,7 @@
     "child-workspace-package-names-as-json": "ts-node scripts/child-workspace-package-names-as-json.ts",
     "prepack": "./scripts/prepack.sh",
     "prepare-preview-builds": "./scripts/prepare-preview-builds.sh",
+    "update-examples-dapps": "./scripts/update-examples-dapps.sh",
     "publish-previews": "yarn workspaces foreach --parallel --verbose run publish:preview",
     "publish:all": "./scripts/publish-all.sh",
     "reset": "yarn workspaces foreach --no-private run reset && rimraf node_modules && yarn setup",
