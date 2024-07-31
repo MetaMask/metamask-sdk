@@ -100,7 +100,7 @@ export function initCommunicationLayer({
   }
 
   const defaultDappId =
-    state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'n/a';
+    state.dappMetadata?.name ?? state.dappMetadata?.url ?? 'N/A';
   const dappId =
     typeof window !== 'undefined' && typeof window.location !== 'undefined'
       ? window.location.hostname ?? defaultDappId

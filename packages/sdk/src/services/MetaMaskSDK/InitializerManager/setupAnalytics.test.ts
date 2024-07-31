@@ -40,7 +40,7 @@ describe('setupAnalytics', () => {
         title: '',
         platform: '',
         source: '',
-        dappId: 'unkown',
+        dappId: 'N/A',
       },
     });
   });

@@ -261,7 +261,7 @@ app.post('/evt', async (_req, res) => {
         platform: '',
         source: '',
         sdkVersion: '',
-        dappId: '',
+        dappId: 'N/A',
       };
     }
 
@@ -273,7 +273,7 @@ app.post('/evt', async (_req, res) => {
         platform: body.platform || '',
         source: body.source || '',
         sdkVersion: body.sdkVersion || '',
-        dappId: body.dappId || '',
+        dappId: body.dappId || 'N/A',
       };
 
       await pubClient.set(
@@ -298,7 +298,7 @@ app.post('/evt', async (_req, res) => {
         url: userInfo.url || body.originationInfo?.url,
         title: userInfo.title || body.originationInfo?.title,
         platform: userInfo.platform || body.originationInfo?.platform,
-        dappId: userInfo.dappId || body.originationInfo?.dappId || '',
+        dappId: userInfo.dappId || body.originationInfo?.dappId || 'N/A',
         sdkVersion:
           userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
         source: userInfo.source || body.originationInfo?.source || 'direct',
