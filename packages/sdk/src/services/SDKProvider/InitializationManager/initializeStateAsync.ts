@@ -126,7 +126,8 @@ export async function initializeStateAsync(instance: SDKProvider) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       instance._state.isConnected = true;
-      instance.emit('connect', { chainId: initialState?.chainId });
     }
+
+    instance.emit('connect', { chainId: initialState?.chainId });
   }
 }
