@@ -141,6 +141,10 @@ export class SDKProvider extends MetaMaskInpageProvider {
     chainId,
     networkVersion,
   }: { chainId?: string; networkVersion?: string } = {}) {
+    if (this.getState().accounts === null || this.getState().accounts?.length === 0) {
+      return;
+    }
+
     this.state.chainId = chainId as string;
     this.state.networkVersion = networkVersion as string;
 
