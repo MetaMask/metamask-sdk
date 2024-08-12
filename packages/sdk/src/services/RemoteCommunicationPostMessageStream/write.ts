@@ -84,7 +84,7 @@ export async function write(
       `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2`,
     );
 
-    if (METHODS_TO_REDIRECT[targetMethod]) {
+    if (METHODS_TO_REDIRECT[targetMethod] && RPC_METHODS.ETH_ACCOUNTS.toLowerCase() !== targetMethod.toLowerCase()) {
       logger(
         `[RCPMS: _write()] redirect link for '${targetMethod}' socketConnected=${socketConnected} connect?${urlParams}`,
       );
