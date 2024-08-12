@@ -6,6 +6,7 @@ import Head from 'next/head';
 import { useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
 import { getSignParams } from '../utils/sign-utils';
+import { SiweMessage } from 'siwe';
 
 const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
@@ -608,6 +609,48 @@ const Demo = () => {
     }
   };
 
+  const handleSIWE = async () => {
+    try {
+      // Get user address
+      const selectedAddress = provider?.getSelectedAddress() as string;
+
+      const address = ethers.utils.getAddress(selectedAddress);
+
+      // Create SIWE message
+      const message = new SiweMessage({
+        domain: window.location.host,
+        address: address,
+        statement: 'Sign-In with Ethereum to access the app.',
+        uri: window.location.origin,
+        version: '1',
+        chainId: parseInt(chainId as string, 16),
+      });
+
+      // Sign the SIWE message
+      const signature = (await provider?.request({
+        method: 'personal_sign',
+        params: [message.prepareMessage(), address],
+      })) as string;
+
+      console.debug('💬 SIWE Message:', message);
+      console.debug('🔑 SIWE Signature:', signature);
+
+      // Verify the signature
+      const verificationResult = await message.verify({
+        signature,
+        domain: window.location.host,
+      });
+
+      if (verificationResult.success) {
+        console.debug('✅ Signature is valid:', verificationResult);
+      } else {
+        throw new Error('Invalid signature');
+      }
+    } catch (err) {
+      console.error('Error with SIWE:', err);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -672,6 +715,12 @@ const Demo = () => {
                     wallet_getPermissions
                   </button>
 
+                  <button
+                    style={{ padding: 10, margin: 10 }}
+                    onClick={handleSIWE}
+                  >
+                    Test SIWE
+                  </button>
                   <button
                     style={{ padding: 10, margin: 10 }}
                     onClick={interactEthers}
