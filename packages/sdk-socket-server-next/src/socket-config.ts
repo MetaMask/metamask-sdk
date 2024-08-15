@@ -1,3 +1,4 @@
+// socket-config.ts
 /* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
@@ -86,8 +87,19 @@ export const configureSocketServer = async (
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
 
-    // Inform the room of the disconnection
-    io.to(roomId).emit(`clients_disconnected-${roomId}`);
+    if (channelOccupancy <= -1) {
+      // In this case we don't cleanup the room until occupancy is -1 to avoid premature disconnection from one side.
+      // We can even increment this value.
+      logger.debug(`'leave-room' room ${roomId} was deleted`);
+      // remove from redis
+      await pubClient.hdel('channels', roomId);
+    } else {
+      logger.info(
+        `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
+      );
+      // Inform the room of the disconnection
+      io.to(roomId).emit(`clients_disconnected-${roomId}`);
+    }
   });
 
   io.on('connection', (socket: Socket) => {
