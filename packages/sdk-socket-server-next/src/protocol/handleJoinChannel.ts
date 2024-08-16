@@ -202,7 +202,7 @@ export const handleJoinChannel = async ({
         .emit(`clients_disconnected-${channelId}`, error);
     });
 
-    if (channelOccupancy >= 1) {
+    if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
       logger.info(`emitting clients_connected-${channelId}`, channelId);
 
       // imform all clients of new arrival and that room is ready
