@@ -31,10 +31,10 @@ export async function write(
   if (!channelId) {
     // ignore initial metamask_getProviderState() call from ethereum.init()
     if (targetMethod !== RPC_METHODS.METAMASK_GETPROVIDERSTATE) {
-      logger(`[RCPMS: write()] Invalid channel id -- undefined`);
+      logger(`[RCPMS: write()] ${targetMethod} --> channelId is undefined`);
     }
 
-    return callback();
+    return callback(new Error('disconnected'));
   }
 
   logger(
