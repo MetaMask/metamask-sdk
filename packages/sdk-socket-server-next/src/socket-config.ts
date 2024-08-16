@@ -87,9 +87,7 @@ export const configureSocketServer = async (
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
 
-    if (channelOccupancy <= -1) {
-      // In this case we don't cleanup the room until occupancy is -1 to avoid premature disconnection from one side.
-      // We can even increment this value.
+    if (channelOccupancy <= 0) {
       logger.debug(`'leave-room' room ${roomId} was deleted`);
       // remove from redis
       await pubClient.hdel('channels', roomId);
