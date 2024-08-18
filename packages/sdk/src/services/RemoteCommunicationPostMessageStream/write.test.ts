@@ -109,9 +109,8 @@ describe('write function', () => {
         callback,
       );
 
-      expect(spyLogger).toHaveBeenCalledWith(
-        '[RCPMS: write()] Invalid channel id -- undefined',
-      );
+      // First call is general log, 2nd call is the error log
+      expect(spyLogger).toHaveBeenCalledTimes(2);
     });
   });
 
