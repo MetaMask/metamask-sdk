@@ -1,6 +1,7 @@
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
+import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { logger } from '../../../utils/logger';
 import { setupChannelListeners } from '../ChannelManager';
 
@@ -15,14 +16,14 @@ import { setupChannelListeners } from '../ChannelManager';
  * @param instance The current instance of the SocketService.
  * @throws {Error} Throws an error if the socket is already connected.
  */
-export function connectToChannel({
+export async function connectToChannel({
   options,
   instance,
 }: {
   options: ConnectToChannelOptions;
   instance: SocketService;
-}) {
-  const { channelId, withKeyExchange } = options;
+}): Promise<void> {
+  const { channelId, authorized, withKeyExchange } = options;
   const isOriginator = instance.state.isOriginator ?? false;
 
   logger.SocketService(
@@ -61,23 +62,45 @@ export function connectToChannel({
   instance.state.isOriginator = isOriginator;
   instance.state.channelId = channelId;
   setupChannelListeners(instance, channelId);
-  instance.state.socket?.emit(
-    EventType.JOIN_CHANNEL,
-    {
-      channelId,
-      context: `${instance.state.context}_connectToChannel`,
-      clientType: isOriginator ? 'dapp' : 'wallet',
-    },
-    (
-      error: string | null,
-      result?: { ready: boolean; persistence: boolean },
-    ) => {
-      if (error === 'error_terminated') {
-        instance.emit(EventType.TERMINATE);
-      } else if (typeof result === 'object' && result.persistence) {
-        // Inform that this channel supports full session persistence
-        instance.emit(EventType.CHANNEL_PERSISTENCE);
-      }
-    },
-  );
+
+  return new Promise((resolve) => {
+    const publicKey = instance.state.keyExchange?.getKeyInfo()?.ecies.public;
+    const withWalletKey = authorized && !isOriginator ? publicKey : undefined;
+    instance.state.socket?.emit(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId,
+        context: `${instance.state.context}_connectToChannel`,
+        clientType: isOriginator ? 'dapp' : 'wallet',
+        publicKey: withWalletKey,
+      },
+      (
+        error: string | null,
+        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+      ) => {
+        if (error === 'error_terminated') {
+          instance.emit(EventType.TERMINATE);
+        } else if (typeof result === 'object') {
+          if (result.persistence) {
+            // Inform that this channel supports full session persistence
+            instance.emit(EventType.CHANNEL_PERSISTENCE);
+          }
+
+          if (
+            result.walletKey &&
+            !instance.remote.state.channelConfig?.otherKey
+          ) {
+            console.log(`Setting wallet key ${result.walletKey}`);
+            instance.getKeyExchange().setOtherPublicKey(result.walletKey);
+            instance.state.keyExchange?.setKeysExchanged(true);
+            instance.sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+            });
+          }
+        }
+
+        resolve();
+      },
+    );
+  });
 }

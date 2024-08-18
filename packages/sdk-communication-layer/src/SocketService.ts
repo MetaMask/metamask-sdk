@@ -159,11 +159,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   connectToChannel({
     channelId,
     withKeyExchange = false,
-  }: ConnectToChannelOptions): void {
+    authorized,
+  }: ConnectToChannelOptions): Promise<void> {
     return connectToChannel({
       options: {
         channelId,
         withKeyExchange,
+        authorized,
       },
       instance: this,
     });

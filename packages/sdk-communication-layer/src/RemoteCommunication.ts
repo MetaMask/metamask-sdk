@@ -256,12 +256,15 @@ export class RemoteCommunication extends EventEmitter2 {
   connectToChannel({
     channelId,
     withKeyExchange,
+    authorized,
   }: {
     channelId: string;
+    authorized?: boolean;
     withKeyExchange?: boolean;
-  }) {
+  }): Promise<void> {
     return connectToChannel({
       channelId,
+      authorized,
       withKeyExchange,
       state: this.state,
     });

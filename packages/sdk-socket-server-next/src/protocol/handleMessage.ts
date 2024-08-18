@@ -82,6 +82,11 @@ export const handleMessage = async ({
       if (channelConfig && message.type === 'key_handshake_ACK') {
         ready = true;
         channelConfig = { ...channelConfig, ready };
+        console.log(
+          `channelConfig updated on channelId=${channelId}`,
+          channelConfig,
+        );
+
         await pubClient.set(
           `channel_config:${channelId}`,
           JSON.stringify(channelConfig),

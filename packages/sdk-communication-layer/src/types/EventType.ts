@@ -6,6 +6,7 @@ export enum EventType {
   RPC_UPDATE = 'rpc_update',
   KEYS_EXCHANGED = 'keys_exchanged',
   JOIN_CHANNEL = 'join_channel',
+  PUBLIC_KEY = 'public_key',
   CHANNEL_CREATED = 'channel_created',
   CLIENTS_CONNECTED = 'clients_connected',
   CLIENTS_DISCONNECTED = 'clients_disconnected',

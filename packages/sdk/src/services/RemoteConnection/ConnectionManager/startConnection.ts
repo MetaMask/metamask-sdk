@@ -1,3 +1,4 @@
+import { OriginatorInfo } from '@metamask/sdk-communication-layer';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
@@ -92,12 +93,37 @@ export async function startConnection(
 
   // if we are on desktop browser
   const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
+  const sdkVersion = 111;
+  const { iconUrl, name, url } = options.dappMetadata || {};
+  const platformType = state.platformManager?.getPlatformType();
+
+  let base64OriginatorInfo: string | undefined;
+
+  if (
+    !(typeof window === 'undefined' || typeof window.location === 'undefined')
+  ) {
+    const originatorInfo: OriginatorInfo = {
+      url: url ?? '',
+      title: name ?? '',
+      icon: iconUrl,
+      dappId:
+        typeof window === 'undefined' || typeof window.location === 'undefined'
+          ? name ?? url ?? 'N/A'
+          : window.location.hostname,
+      platform: platformType ?? '',
+      source: options._source ?? '',
+    };
+    console.log(`BOBOONO`, originatorInfo);
+    base64OriginatorInfo = btoa(JSON.stringify(originatorInfo));
+  }
 
   const linkParams = encodeURI(
     `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}`,
+    }&pubkey=${pubKey}${qrCodeOrigin}&sdkVersion=${sdkVersion}&originatorInfo=${base64OriginatorInfo}`,
   );
+
+  console.warn(`AAAAAAAAAAAAAA`, linkParams);
 
   const qrcodeLink = `${
     state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL

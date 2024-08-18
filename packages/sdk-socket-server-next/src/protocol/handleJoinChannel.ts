@@ -13,6 +13,7 @@ export type JoinChannelParams = {
   socket: Socket;
   channelId: string;
   clientType?: ClientType;
+  publicKey?: string;
   context?: string;
   hasRateLimit: boolean;
   callback?: (error: string | null, result?: unknown) => void;
@@ -22,6 +23,7 @@ export type ChannelConfig = {
   clients: Record<ClientType, string>; // 'dapp' | 'wallet';
   persistence?: boolean; // Determines if the channel is compatible with full protocol persistence
   ready?: boolean; // Determines if the keys have been exchanged
+  walletKey?: string; // Wallet public key
   createdAt: number;
   updatedAt: number;
 };
@@ -32,6 +34,7 @@ export const handleJoinChannel = async ({
   channelId,
   context,
   clientType,
+  publicKey,
   hasRateLimit,
   callback,
 }: JoinChannelParams) => {
@@ -47,7 +50,7 @@ export const handleJoinChannel = async ({
     }
 
     logger.debug(
-      `join_channel channelId=${channelId} context=${context} clientType=${clientType} callback=${typeof callback}`,
+      `join_channel channelId=${channelId} context=${context} clientType=${clientType} publicKey=${publicKey} callback=${typeof callback}`,
     );
 
     if (hasRateLimit) {
@@ -75,15 +78,16 @@ export const handleJoinChannel = async ({
       const channelConfigKey = `channel_config:${channelId}`;
       const existingConfig = await pubClient.get(channelConfigKey);
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
+      const now = Date.now();
 
-      if (clientType === 'dapp' && !existingConfig) {
-        // Initialize new config for this channel
+      if (!channelConfig) {
         logger.info(`Creating new channel config for ${channelId}`);
-        const now = Date.now();
+        // Initialize new config for this channel
         channelConfig = {
           clients: {
-            dapp: socketId,
+            [clientType]: socketId,
           } as Record<ClientType, string>,
+          walletKey: publicKey,
           createdAt: now,
           updatedAt: now,
         };
@@ -94,6 +98,20 @@ export const handleJoinChannel = async ({
         const persistence = Object.keys(channelConfig.clients).length === 2;
         channelConfig.persistence = persistence;
         channelConfig.updatedAt = Date.now();
+        if (publicKey && !channelConfig.walletKey) {
+          channelConfig.walletKey = publicKey;
+
+          logger.info(
+            `join_channel ${channelId} walletKey=${publicKey} inform dapp config`,
+          );
+
+          // if channelConfig is received, we inform dApp
+          socket.broadcast.to(channelId).emit(`config-${channelId}`, {
+            walletKey: publicKey,
+            persistence,
+          });
+        }
+
         logger.info(
           `join_channel ${channelId} clientType=${clientType} persistence=${persistence}`,
           JSON.stringify(channelConfig),
@@ -138,22 +156,6 @@ export const handleJoinChannel = async ({
       await socket.join(channelId);
     }
 
-    // // room occupancy is the number of clients in the room on this server
-    // if (roomOccupancy > MAX_CLIENTS_PER_ROOM) {
-    //   logger.warn(`join_channel from=${from} ${channelId} room already full`);
-    //   socket.emit(`message-${channelId}`, { error: 'room already full' });
-    //   return;
-    // }
-
-    // // channel occupancy is the number of clients in the room across all servers
-    // if (channelOccupancy > MAX_CLIENTS_PER_ROOM) {
-    //   logger.warn(
-    //     `join_channel from=${from} ${channelId} redis channel appears full`,
-    //   );
-    //   socket.emit(`message-${channelId}`, { error: 'room already full' });
-    //   return;
-    // }
-
     channelOccupancy = parseInt(
       (await pubClient.hget('channels', channelId)) ?? '1',
       10,
@@ -179,6 +181,27 @@ export const handleJoinChannel = async ({
         channelOccupancy,
       },
     );
+
+    if (
+      !channelConfig?.ready &&
+      clientType === 'dapp' &&
+      channelConfig?.walletKey
+    ) {
+      console.warn(
+        `Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
+      );
+
+      // socket.emit(`config-${channelId}`, {
+      //   walletKey: channelConfig.walletKey,
+      // });
+
+      callback?.(null, {
+        ready: channelConfig?.ready,
+        persistence: channelConfig?.persistence,
+        walletKey: channelConfig?.walletKey,
+      });
+      return;
+    }
 
     if (!clientType && channelOccupancy < MAX_CLIENTS_PER_ROOM) {
       logger.debug(
@@ -237,7 +260,12 @@ export const handleJoinChannel = async ({
           logger.error(`Error retrieving messages: ${error}`);
         }
       }, 1000);
+      return;
     }
+
+    // Make sure to always call the callback
+    console.debug(`join_channel default callback`);
+    callback?.(null, {});
   } catch (error) {
     logger.error(`Error in handleJoinChannel: ${error}`);
   }
