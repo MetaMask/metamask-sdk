@@ -20,9 +20,8 @@ const checkMessage = ({
   setTimeout(async () => {
     try {
       const messages = await retrieveMessages({ channelId, clientType });
-      console.log(
-        `checkMessages ${channelId} clientType=${clientType} retrieved messages`,
-        JSON.stringify(messages, null, 2),
+      logger.debug(
+        `checkMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
       );
 
       messages.forEach((msg) => {

@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { logger } from '../logger';
 import { ClientType } from '../socket-config';
+import { isDevelopment } from '../config';
 import { retrieveMessages } from './retrieveMessages';
 
 export type PingParams = {
@@ -52,10 +53,21 @@ export const handlePing = async ({
     // Check for pending messages
     const messages = await retrieveMessages({ channelId, clientType });
     if (messages.length > 0) {
-      logger.info(
-        `INFO> ping channelId=${channelId} clientType=${clientType} retrieved messages length=${messages.length}`,
+      logger.debug(
+        `retrieveMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
       );
-      socket.emit(`message-${channelId}`, { messages });
+
+      messages.forEach((msg) => {
+        if (isDevelopment) {
+          logger.debug(`emit message-${channelId}`, msg);
+        }
+
+        socket.emit(`message-${channelId}`, {
+          id: channelId,
+          ackId: msg.ackId,
+          message: msg.message,
+        });
+      });
     }
   }
 

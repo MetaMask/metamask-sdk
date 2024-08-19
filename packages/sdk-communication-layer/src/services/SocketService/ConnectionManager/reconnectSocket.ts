@@ -3,6 +3,10 @@ import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
+import { MessageType } from '../../../types/MessageType';
+import { ChannelConfig } from '../../../types/ChannelConfig';
+import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
+import { ConnectionStatus } from '../../../types/ConnectionStatus';
 
 /**
  * Attempts to reconnect the socket after a disconnection.
@@ -43,29 +47,64 @@ export const reconnectSocket = async (instance: SocketService) => {
         context: `${instance.state.context}connect_again`,
         clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
       },
-      (
+      async (
         error: string | null,
         result?: { ready: boolean; persistence?: boolean; walletKey?: string },
       ) => {
-        if (error === 'error_terminated') {
-          instance.emit(EventType.TERMINATE);
-        } else if (typeof result === 'object') {
-          if (result.persistence) {
-            // Inform that this channel supports full session persistence
-            instance.emit(EventType.CHANNEL_PERSISTENCE);
-          }
+        try {
+          if (error === 'error_terminated') {
+            instance.emit(EventType.TERMINATE);
+          } else if (typeof result === 'object') {
+            if (result.persistence) {
+              // Inform that this channel supports full session persistence
+              instance.emit(EventType.CHANNEL_PERSISTENCE);
+              // Below manual state changes are redundant to the above event but we need them in case the event code is not triggered fast enough.
+              instance.state.keyExchange?.setKeysExchanged(true);
+              instance.remote.state.ready = true;
+              instance.remote.state.authorized = true;
+            }
 
-          if (
-            result.walletKey &&
-            !instance.remote.state.channelConfig?.otherKey
-          ) {
-            console.log(`Setting wallet key ${result.walletKey}`);
-            instance.getKeyExchange().setOtherPublicKey(result.walletKey);
-            instance.state.keyExchange?.setKeysExchanged(true);
-            instance.sendMessage({
-              type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
-            });
+            if (
+              result.walletKey &&
+              !instance.remote.state.channelConfig?.otherKey
+            ) {
+              instance.getKeyExchange().setOtherPublicKey(result.walletKey);
+              instance.state.keyExchange?.setKeysExchanged(true);
+              instance.remote.state.ready = true;
+              instance.remote.state.authorized = true;
+
+              const { state } = instance.remote;
+              // Save channel config
+              // Update channelConfig with the new keys
+              const channelConfig: ChannelConfig = {
+                ...state.channelConfig,
+                channelId: state.channelId ?? '',
+                validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS, // extend session timeout
+                localKey: state.communicationLayer?.getKeyInfo().ecies.private,
+                otherKey: result.walletKey,
+              };
+
+              instance.sendMessage({
+                type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+              });
+
+              instance.state.socket?.emit(MessageType.PING, {
+                id: instance.state.channelId,
+                clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
+                context: 'on_channel_reconnect',
+                message: '',
+              });
+
+              await state.storageManager?.persistChannelConfig(
+                channelConfig,
+                'reconnectSocket',
+              );
+              instance.remote.emitServiceStatusEvent();
+              instance.remote.setConnectionStatus(ConnectionStatus.LINKED);
+            }
           }
+        } catch (runtimeError) {
+          console.warn(`Error reconnecting to channel`, runtimeError);
         }
       },
     );

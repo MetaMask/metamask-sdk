@@ -64,6 +64,12 @@ export async function connectToChannel({
   instance.state.channelId = channelId;
   setupChannelListeners(instance, channelId);
 
+  if (!isOriginator && authorized) {
+    instance.state.keyExchange?.setKeysExchanged(true);
+    instance.remote.state.ready = true;
+    instance.remote.state.authorized = true;
+  }
+
   return new Promise((resolve) => {
     const publicKey = instance.state.keyExchange?.getKeyInfo()?.ecies.public;
     const withWalletKey = authorized && !isOriginator ? publicKey : undefined;
@@ -85,6 +91,7 @@ export async function connectToChannel({
           if (result.persistence) {
             // Inform that this channel supports full session persistence
             instance.emit(EventType.CHANNEL_PERSISTENCE);
+            // Below manual state changes are redundant to the above event but we need them in case the event code is not triggered fast enough.
             instance.state.keyExchange?.setKeysExchanged(true);
             instance.remote.state.ready = true;
             instance.remote.state.authorized = true;
@@ -99,6 +106,8 @@ export async function connectToChannel({
             instance.state.keyExchange?.setKeysExchanged(true);
             instance.remote.state.ready = true;
             instance.remote.state.authorized = true;
+            // Save channel config
+            instance.remote.emit(EventType.KEYS_EXCHANGED);
 
             instance.sendMessage({
               type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,

@@ -17,7 +17,7 @@ export async function handleAuthorization(
   return new Promise((resolve) => {
     const { state } = instance;
 
-    console.log(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleAuthorization()] context=${state.context} ready=${state.ready} authorized=${state.authorized} method=${message.method}`,
     );
 

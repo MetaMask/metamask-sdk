@@ -31,7 +31,7 @@ export async function sendMessage(
 ): Promise<void> {
   const { state } = instance;
 
-  console.log(
+  logger.RemoteCommunication(
     `[RemoteCommunication: sendMessage()] context=${state.context} paused=${
       state.paused
     } ready=${state.ready} relayPersistence=${
@@ -50,7 +50,7 @@ export async function sendMessage(
       !state.communicationLayer?.isConnected() ||
       !state.clientsConnected)
   ) {
-    console.log(
+    logger.RemoteCommunication(
       `[RemoteCommunication: sendMessage()] context=${state.context}  SKIP message waiting for MM mobile readiness.`,
     );
 
@@ -58,7 +58,7 @@ export async function sendMessage(
       instance.once(EventType.CLIENTS_READY, resolve);
     });
 
-    console.log(
+    logger.RemoteCommunication(
       `[RemoteCommunication: sendMessage()] context=${state.context}  AFTER SKIP / READY -- sending pending message`,
     );
   }
