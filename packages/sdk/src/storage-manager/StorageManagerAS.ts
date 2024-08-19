@@ -6,14 +6,12 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-// import { logger } from '../utils/logger';
+import { logger } from '../utils/logger';
 import {
   STORAGE_DAPP_CHAINID,
   STORAGE_DAPP_SELECTED_ADDRESS,
   STORAGE_PATH,
 } from '../config';
-
-const logger = console.log;
 
 export class StorageManagerAS implements StorageManager {
   private enabled = false;

@@ -119,7 +119,6 @@ const initializeMobileProvider = async ({
     f: any,
     debugRequest: boolean,
   ) => {
-    console.log(`[initializeMobileProvider: sendRequest()]`, method);
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
@@ -260,6 +259,7 @@ const initializeMobileProvider = async ({
             });
           });
 
+          // Installer can be started in parallel with the request
           await Promise.race([installerPromise, receiveAuthorizedPromise]);
           setInitializing(false);
         } catch (installError) {

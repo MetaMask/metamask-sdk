@@ -2,7 +2,7 @@
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from '../api-config';
-import { MAX_CLIENTS_PER_ROOM, config } from '../config';
+import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { logger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
@@ -25,7 +25,10 @@ const checkMessage = ({
       );
 
       messages.forEach((msg) => {
-        console.log(`emit message-${channelId}`, msg);
+        if (isDevelopment) {
+          logger.debug(`emit message-${channelId}`, msg);
+        }
+
         socket.emit(`message-${channelId}`, {
           id: channelId,
           ackId: msg.ackId,
@@ -219,7 +222,7 @@ export const handleJoinChannel = async ({
       clientType === 'dapp' &&
       channelConfig?.walletKey
     ) {
-      console.warn(
+      logger.warn(
         `Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
       );
 
@@ -280,7 +283,6 @@ export const handleJoinChannel = async ({
     }
 
     // Make sure to always call the callback
-    console.debug(`join_channel default callback`);
     callback?.(null, {});
   } catch (error) {
     logger.error(`Error in handleJoinChannel: ${error}`);

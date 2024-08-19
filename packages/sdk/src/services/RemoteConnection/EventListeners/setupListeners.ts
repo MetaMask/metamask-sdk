@@ -89,7 +89,6 @@ export function setupListeners(
         chainId,
         isUnlocked: false,
       };
-      console.log(`initialState`, initialState);
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       provider._initializeState(initialState);
@@ -128,10 +127,6 @@ export function setupListeners(
 
       await provider.forceInitializeState();
     } catch (err) {
-      console.log(
-        '🟠 ~ file: setupListeners.ts:107 ~ state.connector.on ~ err:',
-        err,
-      );
       // Ignore error if already initialized.
       // console.debug(`IGNORE ERROR`, err);
     }
