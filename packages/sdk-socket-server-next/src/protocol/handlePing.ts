@@ -6,9 +6,7 @@ import { retrieveMessages } from './retrieveMessages';
 
 export type PingParams = {
   channelId: string;
-  message: string;
-  context: string;
-  clientType?: ClientType;
+  clientType: ClientType;
   socket: Socket;
   io: Server;
   callback: (error: string | null, result?: unknown) => void;
@@ -50,12 +48,12 @@ export const handlePing = async ({
     return callback('error_socket_not_in_room', undefined);
   }
 
-  if (clientType === 'dapp') {
+  if (clientType) {
     // Check for pending messages
     const messages = await retrieveMessages({ channelId, clientType });
     if (messages.length > 0) {
       logger.info(
-        `INFO> ping channelId=${channelId} retrieved messages length=${messages.length}`,
+        `INFO> ping channelId=${channelId} clientType=${clientType} retrieved messages length=${messages.length}`,
       );
       socket.emit(`message-${channelId}`, { messages });
     }

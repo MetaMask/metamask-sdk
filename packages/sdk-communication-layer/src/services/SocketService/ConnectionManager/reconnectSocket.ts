@@ -2,6 +2,7 @@ import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
+import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 
 /**
  * Attempts to reconnect the socket after a disconnection.
@@ -35,11 +36,39 @@ export const reconnectSocket = async (instance: SocketService) => {
     instance.state.socket?.connect();
 
     instance.emit(EventType.SOCKET_RECONNECT);
-    instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
-      channelId: instance.state.channelId,
-      context: `${instance.state.context}connect_again`,
-      clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
-    });
+    instance.state.socket?.emit(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId: instance.state.channelId,
+        context: `${instance.state.context}connect_again`,
+        clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
+      },
+      (
+        error: string | null,
+        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+      ) => {
+        if (error === 'error_terminated') {
+          instance.emit(EventType.TERMINATE);
+        } else if (typeof result === 'object') {
+          if (result.persistence) {
+            // Inform that this channel supports full session persistence
+            instance.emit(EventType.CHANNEL_PERSISTENCE);
+          }
+
+          if (
+            result.walletKey &&
+            !instance.remote.state.channelConfig?.otherKey
+          ) {
+            console.log(`Setting wallet key ${result.walletKey}`);
+            instance.getKeyExchange().setOtherPublicKey(result.walletKey);
+            instance.state.keyExchange?.setKeysExchanged(true);
+            instance.sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+            });
+          }
+        }
+      },
+    );
   }
 
   // wait again to make sure socket status is updated.

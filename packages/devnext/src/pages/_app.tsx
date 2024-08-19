@@ -51,6 +51,11 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
         dappMetadata: {
           name: 'DevNext',
           url: window.location.protocol + '//' + window.location.host,
+          iconUrl:
+            window.location.protocol +
+            '//' +
+            window.location.host +
+            '/favicon.ico',
         },
         i18nOptions: {
           enabled: true,

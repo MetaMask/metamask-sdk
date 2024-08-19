@@ -224,12 +224,10 @@ export const configureSocketServer = async (
       (
         {
           id,
-          message,
-          context,
+          clientType,
         }: {
           id: string;
-          message: string;
-          context: string;
+          clientType: ClientType;
         },
         callback: (error: string | null, result?: unknown) => void,
       ) => {
@@ -237,8 +235,7 @@ export const configureSocketServer = async (
           channelId: id,
           socket,
           io,
-          message,
-          context,
+          clientType,
           callback,
         }).catch((error) => {
           logger.error('Error handling ping:', error);

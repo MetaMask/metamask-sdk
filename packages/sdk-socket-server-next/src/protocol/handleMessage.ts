@@ -99,7 +99,7 @@ export const handleMessage = async ({
 
     let ackId: string | undefined;
 
-    if (encrypted && ready) {
+    if (encrypted) {
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';

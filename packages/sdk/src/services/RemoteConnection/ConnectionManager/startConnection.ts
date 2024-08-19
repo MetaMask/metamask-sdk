@@ -1,4 +1,5 @@
 import { OriginatorInfo } from '@metamask/sdk-communication-layer';
+import packageJson from '../../../../package.json';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
@@ -93,7 +94,7 @@ export async function startConnection(
 
   // if we are on desktop browser
   const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
-  const sdkVersion = 111;
+  const sdkVersion = packageJson.version;
   const { iconUrl, name, url } = options.dappMetadata || {};
   const platformType = state.platformManager?.getPlatformType();
 

@@ -8,6 +8,39 @@ import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
 
+const checkMessage = ({
+  clientType,
+  channelId,
+  socket,
+}: {
+  clientType: ClientType;
+  channelId: string;
+  socket: Socket;
+}) => {
+  setTimeout(async () => {
+    try {
+      const messages = await retrieveMessages({ channelId, clientType });
+      console.log(
+        `checkMessages ${channelId} clientType=${clientType} retrieved messages`,
+        JSON.stringify(messages, null, 2),
+      );
+
+      messages.forEach((msg) => {
+        console.log(`emit message-${channelId}`, msg);
+        socket.emit(`message-${channelId}`, {
+          id: channelId,
+          ackId: msg.ackId,
+          message: msg.message,
+        });
+      });
+    } catch (error) {
+      logger.error(`Error retrieving messages: ${error}`);
+    }
+  }, 1000);
+
+  return true;
+};
+
 export type JoinChannelParams = {
   io: Server;
   socket: Socket;
@@ -200,6 +233,8 @@ export const handleJoinChannel = async ({
         persistence: channelConfig?.persistence,
         walletKey: channelConfig?.walletKey,
       });
+
+      checkMessage({ clientType, channelId, socket });
       return;
     }
 
@@ -241,25 +276,7 @@ export const handleJoinChannel = async ({
         persistence: channelConfig?.persistence,
       });
 
-      setTimeout(async () => {
-        try {
-          const messages = await retrieveMessages({ channelId, clientType });
-          console.log(
-            `join_channel ${channelId} clientType=${clientType} retrieved messages`,
-            JSON.stringify(messages, null, 2),
-          );
-
-          messages.forEach((msg) => {
-            socket.emit(`message-${channelId}`, {
-              id: channelId,
-              ackId: msg.ackId,
-              message: msg.message,
-            });
-          });
-        } catch (error) {
-          logger.error(`Error retrieving messages: ${error}`);
-        }
-      }, 1000);
+      checkMessage({ clientType, channelId, socket });
       return;
     }
 

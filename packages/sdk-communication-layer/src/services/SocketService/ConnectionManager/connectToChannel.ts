@@ -2,6 +2,7 @@ import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
+import { MessageType } from '../../../types/MessageType';
 import { logger } from '../../../utils/logger';
 import { setupChannelListeners } from '../ChannelManager';
 
@@ -74,7 +75,7 @@ export async function connectToChannel({
         clientType: isOriginator ? 'dapp' : 'wallet',
         publicKey: withWalletKey,
       },
-      (
+      async (
         error: string | null,
         result?: { ready: boolean; persistence?: boolean; walletKey?: string },
       ) => {
@@ -84,6 +85,9 @@ export async function connectToChannel({
           if (result.persistence) {
             // Inform that this channel supports full session persistence
             instance.emit(EventType.CHANNEL_PERSISTENCE);
+            instance.state.keyExchange?.setKeysExchanged(true);
+            instance.remote.state.ready = true;
+            instance.remote.state.authorized = true;
           }
 
           if (
@@ -93,8 +97,18 @@ export async function connectToChannel({
             console.log(`Setting wallet key ${result.walletKey}`);
             instance.getKeyExchange().setOtherPublicKey(result.walletKey);
             instance.state.keyExchange?.setKeysExchanged(true);
+            instance.remote.state.ready = true;
+            instance.remote.state.authorized = true;
+
             instance.sendMessage({
               type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+            });
+
+            instance.state.socket?.emit(MessageType.PING, {
+              id: channelId,
+              clientType: isOriginator ? 'dapp' : 'wallet',
+              context: 'on_channel_config',
+              message: '',
             });
           }
         }
