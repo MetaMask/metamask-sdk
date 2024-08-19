@@ -226,10 +226,6 @@ export const handleJoinChannel = async ({
         `Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
       );
 
-      // socket.emit(`config-${channelId}`, {
-      //   walletKey: channelConfig.walletKey,
-      // });
-
       callback?.(null, {
         ready: channelConfig?.ready,
         persistence: channelConfig?.persistence,
