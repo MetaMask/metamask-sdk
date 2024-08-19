@@ -111,9 +111,7 @@ export async function startConnection(
 
   let base64OriginatorInfo: string | undefined;
 
-  if (
-    !(typeof window === 'undefined' || typeof window.location === 'undefined')
-  ) {
+if (typeof window?.location !== 'undefined') {
     const originatorInfo: OriginatorInfo = {
       url: url ?? '',
       title: name ?? '',
