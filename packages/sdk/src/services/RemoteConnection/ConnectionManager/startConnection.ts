@@ -111,12 +111,12 @@ export async function startConnection(
 
   let base64OriginatorInfo: string | undefined;
 
-if (typeof window?.location !== 'undefined') {
+  if (typeof window?.location !== 'undefined') {
     const originatorInfo: OriginatorInfo = {
       url: url ?? '',
       title: name ?? '',
       icon: iconUrl,
-     dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
+      dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
       platform: platformType ?? '',
       source: options._source ?? '',
     };
