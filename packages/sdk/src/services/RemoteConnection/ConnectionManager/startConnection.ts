@@ -116,10 +116,7 @@ if (typeof window?.location !== 'undefined') {
       url: url ?? '',
       title: name ?? '',
       icon: iconUrl,
-      dappId:
-        typeof window === 'undefined' || typeof window.location === 'undefined'
-          ? name ?? url ?? 'N/A'
-          : window.location.hostname,
+     dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
       platform: platformType ?? '',
       source: options._source ?? '',
     };
