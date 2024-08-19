@@ -155,6 +155,10 @@ export class RemoteConnection implements ProviderService {
     return startConnection(this.state, this.options, extras);
   }
 
+  async initRemoteCommunication(): Promise<void> {
+    return this.getConnector().initFromDappStorage();
+  }
+
   showActiveModal() {
     return showActiveModal(this.state);
   }

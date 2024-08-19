@@ -12,6 +12,7 @@ export enum EventType {
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
+  WALLET_INIT = 'wallet_init',
   CHANNEL_PERSISTENCE = 'channel_persistence',
   MESSAGE_ACK = 'ack',
   SOCKET_DISCONNECTED = 'socket_disconnected',

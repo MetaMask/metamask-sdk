@@ -28,6 +28,7 @@ export type MessageParams = {
 export type QueuedMessage = {
   ackId: string;
   message: string;
+  plaintext?: string;
   timestamp: number;
 };
 
@@ -99,6 +100,11 @@ export const handleMessage = async ({
 
     let ackId: string | undefined;
 
+    logger.debug(
+      `clientType: ${clientType} encrypted: ${encrypted} ready: ${ready} `,
+      message,
+    );
+
     if (encrypted) {
       ackId = uuidv4();
       // Store in the correct message queue
@@ -107,6 +113,7 @@ export const handleMessage = async ({
       const persistedMsg: QueuedMessage = {
         message,
         ackId,
+        plaintext: isDevelopment ? formatted : undefined,
         timestamp: Date.now(),
       };
       logger.debug(`persisting message in queue ${queueKey}`, persistedMsg);

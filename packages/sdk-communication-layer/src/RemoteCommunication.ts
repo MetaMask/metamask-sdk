@@ -238,6 +238,31 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   /**
+   * Initialize the connection from the dapp side.
+   */
+  public async initFromDappStorage() {
+    if (this.state.storageManager) {
+      // Try to get existing channel config from storage
+      const channelConfig =
+        await this.state.storageManager.getPersistedChannelConfig({
+          context: 'initFromDappStorage',
+        });
+      if (channelConfig) {
+        this.state.channelConfig = channelConfig;
+        this.state.channelId = channelConfig.channelId;
+        if (channelConfig.relayPersistence) {
+          this.state.authorized = true;
+          this.state.ready = true;
+          this.setConnectionStatus(ConnectionStatus.LINKED);
+          await this.connectToChannel({
+            channelId: channelConfig.channelId,
+          });
+        }
+      }
+    }
+  }
+
+  /**
    * Connect from the dapp using session persistence.
    */
   async originatorSessionConnect(): Promise<ChannelConfig | undefined> {

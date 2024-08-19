@@ -18,12 +18,12 @@ export function handlesClientsDisconnected(
 ) {
   return () => {
     instance.state.clientsConnected = false;
-    logger.SocketService(
+    console.log(
       `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}'`,
     );
 
     if (instance.remote.state.relayPersistence) {
-      logger.SocketService(
+      console.log(
         `[SocketService: handlesClientsDisconnected()] context=${instance.state.context} on 'clients_disconnected-${channelId}' - relayPersistence enabled, skipping key exchange cleanup.`,
       );
       return;

@@ -32,6 +32,7 @@ export function handleChannelConfig(
 
         await instance.remote.state.storageManager?.persistChannelConfig(
           instance.remote.state.channelConfig,
+          'handleChannelConfig',
         );
       }
 
@@ -52,13 +53,14 @@ export function handleChannelConfig(
 
         await instance.remote.state.storageManager?.persistChannelConfig(
           instance.remote.state.channelConfig,
+          'handleChannelConfig',
         );
       }
-    } else {
-      console.warn(
-        `Channel ${channelId} received CONFIG event but is not the originator`,
-        config,
-      );
+    } else if (!instance.state.isOriginator) {
+      if (config.persistence) {
+        instance.remote.state.relayPersistence = true;
+        instance.remote.emit(EventType.CHANNEL_PERSISTENCE);
+      }
     }
   };
 }

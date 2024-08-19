@@ -1,4 +1,7 @@
-import { OriginatorInfo } from '@metamask/sdk-communication-layer';
+import {
+  DEFAULT_SESSION_TIMEOUT_MS,
+  OriginatorInfo,
+} from '@metamask/sdk-communication-layer';
 import packageJson from '../../../../package.json';
 import {
   METAMASK_CONNECT_BASE_URL,
@@ -64,6 +67,14 @@ export async function startConnection(
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
+
+    const now = Date.now();
+    // Save channelId to storage for re-use until it expires or is terminated
+    state.connector.state.storageManager?.persistChannelConfig({
+      channelId,
+      lastActive: now,
+      validUntil: now + DEFAULT_SESSION_TIMEOUT_MS,
+    });
   }
 
   if (initialCheck && channelConfig?.channelId) {
@@ -114,7 +125,6 @@ export async function startConnection(
       platform: platformType ?? '',
       source: options._source ?? '',
     };
-    console.log(`BOBOONO`, originatorInfo);
     base64OriginatorInfo = btoa(JSON.stringify(originatorInfo));
   }
 
@@ -123,8 +133,6 @@ export async function startConnection(
       state.communicationLayerPreference ?? ''
     }&pubkey=${pubKey}${qrCodeOrigin}&sdkVersion=${sdkVersion}&originatorInfo=${base64OriginatorInfo}`,
   );
-
-  console.warn(`AAAAAAAAAAAAAA`, linkParams);
 
   const qrcodeLink = `${
     state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL

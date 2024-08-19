@@ -119,6 +119,7 @@ const initializeMobileProvider = async ({
     f: any,
     debugRequest: boolean,
   ) => {
+    console.log(`[initializeMobileProvider: sendRequest()]`, method);
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
@@ -250,10 +251,17 @@ const initializeMobileProvider = async ({
         setInitializing(true);
 
         try {
-          // installer modal display but doesn't mean connection is auhtorized
-          await installer.start({
+          const installerPromise = installer.start({
             wait: false,
           });
+          const receiveAuthorizedPromise = new Promise((resolve) => {
+            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+              resolve(true);
+            });
+          });
+
+          await Promise.race([installerPromise, receiveAuthorizedPromise]);
+          setInitializing(false);
         } catch (installError) {
           setInitializing(false);
 

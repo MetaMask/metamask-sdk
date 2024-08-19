@@ -1,4 +1,3 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
@@ -13,7 +12,7 @@ import { ServiceStatus } from '../../../types/ServiceStatus';
  */
 export function handleKeysExchanged(instance: SocketService) {
   return () => {
-    logger.SocketService(
+    console.log(
       `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
     );
 
@@ -26,7 +25,7 @@ export function handleKeysExchanged(instance: SocketService) {
       channelConfig.otherKey = eciesState.otherPubKey;
       instance.remote.state.channelConfig = channelConfig;
       instance.remote.state.storageManager
-        ?.persistChannelConfig(channelConfig)
+        ?.persistChannelConfig(channelConfig, 'handleKeysExchanged')
         .catch((error) => {
           console.error(`Error persisting channel config`, error);
         });

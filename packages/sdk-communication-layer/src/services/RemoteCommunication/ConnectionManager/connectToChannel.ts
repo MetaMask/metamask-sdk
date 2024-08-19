@@ -54,5 +54,8 @@ export async function connectToChannel({
     validUntil: Date.now() + state.sessionDuration,
   };
   state.channelConfig = newChannelConfig;
-  state.storageManager?.persistChannelConfig(newChannelConfig);
+  state.storageManager?.persistChannelConfig(
+    newChannelConfig,
+    'connectToChannel',
+  );
 }

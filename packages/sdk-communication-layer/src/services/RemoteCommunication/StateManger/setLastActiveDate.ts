@@ -39,5 +39,8 @@ export function setLastActiveDate(
         .otherPubKey,
     lastActive: lastActiveDate.getTime(),
   };
-  state.storageManager?.persistChannelConfig(newChannelConfig);
+  state.storageManager?.persistChannelConfig(
+    newChannelConfig,
+    'setLastActiveDate',
+  );
 }

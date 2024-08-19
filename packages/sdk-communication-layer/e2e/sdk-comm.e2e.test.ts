@@ -263,6 +263,9 @@ describe('SDK Communication Layer', () => {
       const walletClient = getClient({ type: 'dApp', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
 
       await walletClient.connectToChannel({ channelId, authorized: true });
+
+      dAppClient.disconnect();
+
       await walletClient.sendMessage({
         type: MessageType.WALLET_INIT,
         data: {
@@ -270,6 +273,10 @@ describe('SDK Communication Layer', () => {
           accounts: ['0x123'],
         }
       })
+
+      // dApp reconnect
+      await dAppClient.connectToChannel({ channelId });
+
       // wait for receicing message from wakket
       await waitForEvent(dAppClient, 'message');
 

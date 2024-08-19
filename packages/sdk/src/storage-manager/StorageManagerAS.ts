@@ -6,12 +6,14 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-import { logger } from '../utils/logger';
+// import { logger } from '../utils/logger';
 import {
   STORAGE_DAPP_CHAINID,
   STORAGE_DAPP_SELECTED_ADDRESS,
   STORAGE_PATH,
 } from '../config';
+
+const logger = console.log;
 
 export class StorageManagerAS implements StorageManager {
   private enabled = false;
@@ -104,17 +106,18 @@ export class StorageManagerAS implements StorageManager {
     }
   }
 
-  public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {
+  public async getPersistedChannelConfig(options?: {
+    context?: string;
+  }): Promise<ChannelConfig | undefined> {
     let payload;
+    const { context } = options || {};
 
     try {
       logger(
-        `[StorageManagerAS: getPersistedChannelConfig()] enabled=${this.enabled}`,
+        `[StorageManagerAS: getPersistedChannelConfig()] context=${context} enabled=${this.enabled}`,
       );
 
       payload = await AsyncStorage.getItem(STORAGE_PATH);
-
-      logger(`[StorageManagerAS: getPersistedChannelConfig()]`, payload);
 
       if (!payload) {
         return undefined;
@@ -122,7 +125,7 @@ export class StorageManagerAS implements StorageManager {
 
       const channelConfig = JSON.parse(payload) as ChannelConfig;
       logger(
-        `[StorageManagerAS: getPersistedChannelConfig()] channelConfig`,
+        `[StorageManagerAS: getPersistedChannelConfig()] context=${context}  channelConfig`,
         channelConfig,
       );
 

@@ -1,15 +1,14 @@
-import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
+import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { RemoteCommunication } from '../../../RemoteCommunication';
+import { ChannelConfig } from '../../../types/ChannelConfig';
 import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { TrackingEvents } from '../../../types/TrackingEvent';
 import { setLastActiveDate } from '../StateManger';
-import { ChannelConfig } from '../../../types/ChannelConfig';
-import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 
 /**
  * Creates and returns an event handler function for the "keys_exchanged" event. This handler is responsible for managing the state and operations associated with the key exchange process within a `RemoteCommunication` instance.
@@ -43,7 +42,7 @@ export function handleKeysExchangedEvent(
   }) => {
     const { state } = instance;
 
-    logger.RemoteCommunication(
+    console.log(
       `[RemoteCommunication: handleKeysExchangedEvent()] context=${state.context} on commLayer.'keys_exchanged' channel=${state.channelId}`,
       message,
     );
@@ -59,7 +58,7 @@ export function handleKeysExchangedEvent(
         otherKey: state.communicationLayer.getKeyInfo().ecies.otherPubKey,
       };
       state.storageManager
-        ?.persistChannelConfig(channelConfig)
+        ?.persistChannelConfig(channelConfig, 'handleKeysExchangedEvent')
         .catch((error) => {
           console.error(`Error persisting channel config`, error);
         });
