@@ -25,7 +25,7 @@ export function handleKeysExchanged(instance: SocketService) {
       channelConfig.otherKey = eciesState.otherPubKey;
       instance.remote.state.channelConfig = channelConfig;
       instance.remote.state.storageManager
-        ?.persistChannelConfig(channelConfig, 'handleKeysExchanged')
+        ?.persistChannelConfig(channelConfig)
         .catch((error) => {
           console.error(`Error persisting channel config`, error);
         });

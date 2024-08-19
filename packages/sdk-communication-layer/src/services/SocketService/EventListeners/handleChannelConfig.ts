@@ -32,7 +32,6 @@ export function handleChannelConfig(
 
         await instance.remote.state.storageManager?.persistChannelConfig(
           instance.remote.state.channelConfig,
-          'handleChannelConfig',
         );
       }
 
@@ -53,7 +52,6 @@ export function handleChannelConfig(
 
         await instance.remote.state.storageManager?.persistChannelConfig(
           instance.remote.state.channelConfig,
-          'handleChannelConfig',
         );
       }
     } else if (!instance.state.isOriginator) {

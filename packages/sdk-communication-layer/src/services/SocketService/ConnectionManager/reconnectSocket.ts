@@ -95,10 +95,7 @@ export const reconnectSocket = async (instance: SocketService) => {
                 message: '',
               });
 
-              await state.storageManager?.persistChannelConfig(
-                channelConfig,
-                'reconnectSocket',
-              );
+              await state.storageManager?.persistChannelConfig(channelConfig);
               instance.remote.emitServiceStatusEvent();
               instance.remote.setConnectionStatus(ConnectionStatus.LINKED);
             }

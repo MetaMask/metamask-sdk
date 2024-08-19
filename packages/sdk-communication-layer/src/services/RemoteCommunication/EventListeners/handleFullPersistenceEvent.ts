@@ -41,10 +41,7 @@ export function handleFullPersistenceEvent(instance: RemoteCommunication) {
         relayPersistence: true,
       };
 
-      await state.storageManager?.persistChannelConfig(
-        state.channelConfig,
-        'handleFullPersistenceEvent',
-      );
+      await state.storageManager?.persistChannelConfig(state.channelConfig);
     } catch (error) {
       console.error(`Error persisting channel config`, error);
     }

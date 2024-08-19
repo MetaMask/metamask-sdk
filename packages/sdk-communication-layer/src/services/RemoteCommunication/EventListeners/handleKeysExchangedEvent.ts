@@ -59,7 +59,7 @@ export function handleKeysExchangedEvent(
         otherKey: state.communicationLayer.getKeyInfo().ecies.otherPubKey,
       };
       state.storageManager
-        ?.persistChannelConfig(channelConfig, 'handleKeysExchangedEvent')
+        ?.persistChannelConfig(channelConfig)
         .catch((error) => {
           console.error(`Error persisting channel config`, error);
         });

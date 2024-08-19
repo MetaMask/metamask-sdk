@@ -31,14 +31,11 @@ export function handleWalletInitMessage(
         const chainId = data.chainId as string;
         const walletKey = data.walletKey as string;
 
-        instance.state.storageManager?.persistChannelConfig(
-          {
-            ...channelConfig,
-            otherKey: walletKey,
-            relayPersistence: true,
-          },
-          'handleWalletInitMessage',
-        );
+        instance.state.storageManager?.persistChannelConfig({
+          ...channelConfig,
+          otherKey: walletKey,
+          relayPersistence: true,
+        });
 
         instance.state.storageManager?.persistAccounts(accounts);
         instance.state.storageManager?.persistChainId(chainId);
