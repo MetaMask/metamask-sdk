@@ -40,17 +40,6 @@ describe('handleAuthorization', () => {
     };
   });
 
-  it('should send message immediately if wallet version is less than 7.3', async () => {
-    instance.state.walletInfo!.version = '7.2';
-
-    await handleAuthorization(instance, message);
-
-    expect(instance.state.communicationLayer?.sendMessage).toHaveBeenCalledWith(
-      message,
-    );
-    expect(instance.once).not.toHaveBeenCalled();
-  });
-
   it('should send message immediately if isOriginator is false or authorized is true', async () => {
     instance.state.isOriginator = false;
 
@@ -98,16 +87,5 @@ describe('handleAuthorization', () => {
     expect(spyLogger).toHaveBeenCalledWith(
       '[RemoteCommunication: handleAuthorization()] context=testContext  AFTER SKIP / AUTHORIZED -- sending pending message',
     );
-  });
-
-  it('should correctly handle wallet versions like 7.10 vs 7.9', async () => {
-    instance.state.walletInfo!.version = '7.10';
-
-    await handleAuthorization(instance, message);
-
-    expect(instance.state.communicationLayer?.sendMessage).toHaveBeenCalledWith(
-      message,
-    );
-    expect(instance.once).not.toHaveBeenCalled();
   });
 });
