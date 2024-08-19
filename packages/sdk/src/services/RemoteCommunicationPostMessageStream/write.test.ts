@@ -94,7 +94,7 @@ describe('write function', () => {
       );
 
       expect(callback).toHaveBeenCalledTimes(1);
-      expect(callback).toHaveBeenCalledWith();
+      expect(callback).toHaveBeenCalledWith(new Error('disconnected'));
     });
 
     it('should log when method is not METAMASK_GETPROVIDERSTATE', async () => {
@@ -130,7 +130,7 @@ describe('write function', () => {
         callback,
       );
 
-      expect(callback).toHaveBeenCalledWith();
+      expect(callback).toHaveBeenCalledWith(new Error('disconnected'));
       expect(mockSendMessage).not.toHaveBeenCalled();
     });
 
