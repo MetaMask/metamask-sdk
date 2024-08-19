@@ -1,6 +1,7 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
+import { logger } from '../../../utils/logger';
 
 /**
  * Returns a handler function to handle the 'keys_exchanged' event.
@@ -12,7 +13,7 @@ import { ServiceStatus } from '../../../types/ServiceStatus';
  */
 export function handleKeysExchanged(instance: SocketService) {
   return () => {
-    console.log(
+    logger.SocketService(
       `[SocketService: handleKeysExchanged()] on 'keys_exchanged' keyschanged=${instance.state.keyExchange?.areKeysExchanged()}`,
     );
 
