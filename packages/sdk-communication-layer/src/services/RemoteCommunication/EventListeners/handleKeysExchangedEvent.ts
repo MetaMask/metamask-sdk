@@ -8,6 +8,7 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
 import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 import { setLastActiveDate } from '../StateManger';
 
 /**
@@ -42,7 +43,7 @@ export function handleKeysExchangedEvent(
   }) => {
     const { state } = instance;
 
-    console.log(
+    logger.RemoteCommunication(
       `[RemoteCommunication: handleKeysExchangedEvent()] context=${state.context} on commLayer.'keys_exchanged' channel=${state.channelId}`,
       message,
     );
