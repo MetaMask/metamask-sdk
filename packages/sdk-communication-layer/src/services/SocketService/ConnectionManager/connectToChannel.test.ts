@@ -17,7 +17,7 @@ describe('connectToChannel', () => {
   const mockConsoleError = jest.fn();
   const mockConsoleLog = jest
     .spyOn(console, 'log')
-    .mockImplementation(() => {});
+    .mockImplementation(() => '');
 
   beforeEach(() => {
     jest.clearAllMocks();
