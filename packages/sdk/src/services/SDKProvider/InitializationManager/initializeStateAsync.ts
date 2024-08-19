@@ -55,9 +55,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     // Only use cache if relayPersistence is enabled for current channel.
     if (storageManager) {
       // Try to initialize optimistacally with cached value which would be updated once wallet is fully connected.
-      const channelConfig = await storageManager.getPersistedChannelConfig({
-        context: 'initializeStateAsync',
-      });
+      const channelConfig = await storageManager.getPersistedChannelConfig({});
       relayPersistence = channelConfig?.relayPersistence ?? false;
       cachedChainId = await storageManager.getCachedChainId();
       const cachedAccounts = await storageManager.getCachedAccounts();

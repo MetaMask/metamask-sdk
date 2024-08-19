@@ -244,9 +244,7 @@ export class RemoteCommunication extends EventEmitter2 {
     if (this.state.storageManager) {
       // Try to get existing channel config from storage
       const channelConfig =
-        await this.state.storageManager.getPersistedChannelConfig({
-          context: 'initFromDappStorage',
-        });
+        await this.state.storageManager.getPersistedChannelConfig({});
       if (channelConfig) {
         this.state.channelConfig = channelConfig;
         this.state.channelId = channelConfig.channelId;

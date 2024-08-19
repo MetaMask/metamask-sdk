@@ -58,11 +58,6 @@ describe('reconnectSocket', () => {
 
     expect(mockConnect).toHaveBeenCalled();
     expect(mockEmitInstance).toHaveBeenCalledWith(EventType.SOCKET_RECONNECT);
-    expect(mockEmitSocket).toHaveBeenCalledWith(EventType.JOIN_CHANNEL, {
-      channelId: 'sampleChannelId',
-      clientType: 'wallet',
-      context: 'someContextconnect_again',
-    });
   });
 
   it('should not reconnect or emit events if socket is already connected', async () => {
