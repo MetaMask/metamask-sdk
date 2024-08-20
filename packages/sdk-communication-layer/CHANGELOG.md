@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0]
+### Added
+- feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk.git/pull/990))
+- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk.git/pull/985))
+- feat: change the default value for 'dappId' to 'N/A' instead of an empty string ([#972](https://github.com/MetaMask/metamask-sdk.git/pull/972))
+
 ## [0.27.0]
 ### Added
 - feat: adds `connector` analytical property ([#947](https://github.com/MetaMask/metamask-sdk/pull/947))
@@ -235,7 +241,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...HEAD
+[0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...@metamask/sdk-communication-layer@0.28.0
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...@metamask/sdk-communication-layer@0.27.0
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.2...@metamask/sdk-communication-layer@0.26.4
 [0.26.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.0...@metamask/sdk-communication-layer@0.26.2
