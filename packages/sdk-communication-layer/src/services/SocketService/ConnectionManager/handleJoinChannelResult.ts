@@ -5,6 +5,7 @@ import { MessageType } from '../../../types/MessageType';
 import { ChannelConfig } from '../../../types/ChannelConfig';
 import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
+import { logger } from '../../../utils/logger';
 
 export const handleJoinChannelResults = async (
   instance: SocketService,
@@ -15,19 +16,23 @@ export const handleJoinChannelResults = async (
   const { channelId, isOriginator } = state;
 
   if (error === 'error_terminated') {
-    console.log(`handleJoinChannelResults: Channel ${channelId} terminated`);
+    logger.SocketService(
+      `handleJoinChannelResults: Channel ${channelId} terminated`,
+    );
     instance.emit(EventType.TERMINATE);
     return;
   }
 
   if (!result) {
-    console.log(`handleJoinChannelResults: No result for channel ${channelId}`);
+    logger.SocketService(
+      `handleJoinChannelResults: No result for channel ${channelId}`,
+    );
     return;
   }
 
   const { persistence, walletKey } = result;
 
-  console.log(
+  logger.SocketService(
     `handleJoinChannelResults: Channel ${channelId} persistence=${persistence} walletKey=${walletKey}`,
   );
 
