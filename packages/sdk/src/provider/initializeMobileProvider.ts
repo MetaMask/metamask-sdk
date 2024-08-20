@@ -125,9 +125,12 @@ const initializeMobileProvider = async ({
 
       let loop = getInitializing();
       while (loop) {
+        console.log(
+          `[initializeMobileProvider: sendRequest()] waiting for initialization to complete`,
+        );
         // Wait for already ongoing method that triggered installation to complete
         await wait(1000);
-        loop = getInitializing();
+        loop = getInitializing() && !remoteConnection?.isAuthorized();
       }
 
       logger(
