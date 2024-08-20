@@ -1,7 +1,11 @@
 export function base64Encode(str: string): string {
   if (typeof btoa === 'function') {
     // Web environment
-    return btoa(str);
+    return btoa(
+      encodeURIComponent(str).replace(/%([0-9A-F]{2})/gu, (_match, p1) =>
+        String.fromCharCode(parseInt(p1, 16)),
+      ),
+    );
   } else if (typeof Buffer !== 'undefined') {
     // Node.js environment
     return Buffer.from(str, 'utf8').toString('base64');

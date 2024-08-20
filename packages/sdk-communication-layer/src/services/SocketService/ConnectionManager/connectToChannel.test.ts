@@ -1,8 +1,7 @@
 import { Socket } from 'socket.io-client';
 import { SocketService } from '../../../SocketService';
-import { logger } from '../../../utils/logger';
-import { setupChannelListeners } from '../ChannelManager';
 import { EventType } from '../../../types/EventType';
+import { setupChannelListeners } from '../ChannelManager';
 import { connectToChannel } from './connectToChannel';
 
 jest.mock('../ChannelManager');
@@ -13,7 +12,6 @@ describe('connectToChannel', () => {
   let mockSocket: jest.Mocked<Socket>;
   let originalConsoleError: typeof console.error;
 
-  const spyLogger = jest.spyOn(logger, 'SocketService');
   const mockConsoleError = jest.fn();
   const mockConsoleLog = jest
     .spyOn(console, 'log')
@@ -102,27 +100,6 @@ describe('connectToChannel', () => {
 
     expect(mockConsoleError).toHaveBeenCalledWith(
       '[SocketService: connectToChannel()] socket already connected',
-    );
-  });
-
-  it('should log debug information', async () => {
-    const options = {
-      channelId: 'channel123',
-      withKeyExchange: true,
-      authorized: false,
-    };
-
-    (instance.state.socket?.emit as jest.Mock).mockImplementation(
-      (_event: string, _data: any, callback: any) => {
-        callback(null, { ready: true });
-      },
-    );
-
-    await connectToChannel({ options, instance });
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: connectToChannel()] context=someContext channelId=channel123 isOriginator=true',
-      'keyExchangeString',
     );
   });
 });

@@ -19,16 +19,6 @@ export function handleDisconnect(instance: SocketService) {
     );
 
     if (!instance.state.manualDisconnect) {
-      /**
-       * Used for web in case of socket io disconnection.
-       * Always try to recover the connection.
-       *
-       * 'disconnect' event also happens on RN after app is in background for ~30seconds.
-       * The reason is will be 'transport error'.
-       * instance creates an issue that the user needs to reply a provider query within 30 seconds.
-       *
-       * FIXME: is there a way to address a slow (>30s) provider query reply.
-       */
       instance.emit(EventType.SOCKET_DISCONNECTED);
       reconnectSocket(instance).catch((err) => {
         console.error(

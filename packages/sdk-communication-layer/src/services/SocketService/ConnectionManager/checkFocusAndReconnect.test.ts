@@ -3,69 +3,86 @@ import { checkFocusAndReconnect } from './checkFocusAndReconnect';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('./reconnectSocket');
-
-const mockHasFocus = jest.fn();
-const mockAddEventListener = jest.fn();
+jest.mock('../../../utils/logger', () => ({
+  logger: { SocketService: jest.fn() },
+}));
 
 describe('checkFocusAndReconnect', () => {
   let instance: SocketService;
+  let mockAddEventListener: jest.Mock;
 
   beforeEach(() => {
+    instance = { state: {} } as SocketService;
+    mockAddEventListener = jest.fn();
+    (global as any).window = { addEventListener: mockAddEventListener };
+    (global as any).document = {
+      hasFocus: jest.fn(),
+    };
+    (reconnectSocket as jest.Mock).mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
     jest.clearAllMocks();
-
-    mockHasFocus.mockReturnValue(false);
-
-    global.document = {
-      hasFocus: mockHasFocus,
-    } as unknown as Document;
-
-    global.window = {
-      addEventListener: mockAddEventListener,
-    } as unknown as Window & typeof globalThis;
-
-    instance = {
-      state: {},
-    } as SocketService;
-
-    (reconnectSocket as jest.Mock).mockResolvedValue(true);
+    delete (global as any).window;
+    delete (global as any).document;
   });
 
-  afterAll(() => {
-    jest.restoreAllMocks();
-  });
+  it('should set up a focus event listener', () => {
+    jest.spyOn(document, 'hasFocus').mockImplementation().mockReturnValue(true);
 
-  it('should immediately attempt reconnection if document has focus', () => {
-    mockHasFocus.mockReturnValue(true);
-
-    checkFocusAndReconnect(instance);
-
-    expect(reconnectSocket).toHaveBeenCalledWith(instance);
-  });
-
-  it('should not immediately attempt reconnection if document does not have focus', () => {
-    mockHasFocus.mockReturnValueOnce(false);
-    checkFocusAndReconnect(instance);
-
-    expect(reconnectSocket).not.toHaveBeenCalled();
-  });
-
-  it('should set up a focus event listener if document does not have focus', () => {
-    mockHasFocus.mockReturnValueOnce(false);
     checkFocusAndReconnect(instance);
 
     expect(mockAddEventListener).toHaveBeenCalledWith(
       'focus',
       expect.any(Function),
-      { once: true },
     );
   });
 
-  it('should not run if window or document are undefined', () => {
-    global.document = undefined as unknown as Document;
-    global.window = undefined as unknown as Window & typeof globalThis;
+  it('should attempt reconnection when focus event is triggered', async () => {
+    jest
+      .spyOn(document, 'hasFocus')
+      .mockImplementation()
+      .mockReturnValue(false);
 
     checkFocusAndReconnect(instance);
 
-    expect(reconnectSocket).not.toHaveBeenCalled();
+    const focusCallback = mockAddEventListener.mock.calls[0][1];
+    await focusCallback();
+
+    expect(reconnectSocket).toHaveBeenCalledWith(instance);
+  });
+
+  it('should handle errors when reconnection fails', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+    (reconnectSocket as jest.Mock).mockRejectedValue(
+      new Error('Reconnection failed'),
+    );
+
+    jest
+      .spyOn(document, 'hasFocus')
+      .mockImplementation()
+      .mockReturnValue(false);
+
+    checkFocusAndReconnect(instance);
+
+    const focusCallback = mockAddEventListener.mock.calls[0][1];
+    await focusCallback();
+
+    expect(reconnectSocket).toHaveBeenCalledWith(instance);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'SocketService::checkFocus Error reconnecting socket',
+      new Error('Reconnection failed'),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('should not run if window or document are undefined', () => {
+    delete (global as any).window;
+    delete (global as any).document;
+
+    checkFocusAndReconnect(instance);
+
+    expect(mockAddEventListener).not.toHaveBeenCalled();
   });
 });

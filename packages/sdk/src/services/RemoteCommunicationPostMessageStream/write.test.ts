@@ -17,6 +17,7 @@ describe('write function', () => {
   const mockIsPaused = jest.fn();
   const mockGetChannelId = jest.fn();
   const mockIsAuthorized = jest.fn();
+  const mockIsMobileWeb = jest.fn();
   const mockSendMessage = jest.fn(
     () =>
       new Promise((resolve) => {
@@ -41,6 +42,7 @@ describe('write function', () => {
       },
       platformManager: {
         isSecure: mockIsSecure,
+        isMobileWeb: mockIsMobileWeb,
         openDeeplink: mockOpenDeeplink,
       },
       debug: false,
@@ -53,6 +55,8 @@ describe('write function', () => {
     jest.clearAllMocks();
 
     callback = jest.fn();
+
+    mockIsMobileWeb.mockReturnValue(false);
 
     mockEthereum.mockReturnValue({
       isConnected: isProviderConnected,
@@ -76,6 +80,7 @@ describe('write function', () => {
         platformManager: {
           isSecure: mockIsSecure,
           openDeeplink: mockOpenDeeplink,
+          isMobileWeb: mockIsMobileWeb,
         },
         debug: false,
       },
@@ -117,6 +122,7 @@ describe('write function', () => {
   describe('Connection Status', () => {
     beforeEach(() => {
       mockIsSecure.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
     });
 
     it('should call the callback and not send a message if neither socketConnected nor ready', async () => {
@@ -174,6 +180,7 @@ describe('write function', () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
       mockIsAuthorized.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
       mockIsSecure.mockReturnValue(true);
     });
 
@@ -220,6 +227,7 @@ describe('write function', () => {
     it('should call the callback once if everything is fine', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
 
       await write(
         mockRemoteCommunicationPostMessageStream,
