@@ -390,11 +390,16 @@ const initializeMobileProvider = async ({
       );
     }
 
-    const rpcResponse = await executeRequest(...args);
-    logger(
-      `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
-    );
-    return rpcResponse;
+    try {
+      const rpcResponse = await executeRequest(...args);
+      logger(
+        `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
+      );
+      return rpcResponse;
+    } catch (error) {
+      console.error(`[initializeMobileProvider: sendRequest()] error:`, error);
+      throw error;
+    }
   };
 
   // Wrap ethereum.request call to check if the user needs to install MetaMask
