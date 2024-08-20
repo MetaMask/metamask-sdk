@@ -57,6 +57,7 @@ describe('performSDKInitialization', () => {
       enableAnalytics: true,
       injectProvider: true,
       shouldShimWeb3: true,
+      _experimentalDeeplinkProtocol: false,
       useDeeplink: false,
       storage: {
         enabled: true,

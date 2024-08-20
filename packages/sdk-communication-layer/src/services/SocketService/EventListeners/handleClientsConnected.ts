@@ -60,7 +60,7 @@ export function handleClientsConnected(
     } else if (!instance.state.isOriginator) {
       // Reconnect scenario --- maybe web dapp got refreshed
       const force = !relayPersistence;
-      console.log(
+      logger.SocketService(
         `[SocketService: handleClientsConnected()] context=${
           instance.state.context
         } on 'clients_connected' / keysExchanged=${instance.state.keyExchange?.areKeysExchanged()} -- force=${force} -- backward compatibility`,

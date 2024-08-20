@@ -1,7 +1,7 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { ServiceStatus } from '../../../types/ServiceStatus';
+import { logger } from '../../../utils/logger';
 
 /**
  * Returns a handler function to handle the 'keys_exchanged' event.

@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { wait } from '../../../utils/wait';
 import { logger } from '../../../utils/logger';
+import { MessageType } from '../../../types/MessageType';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('../../../utils/wait', () => ({
@@ -25,6 +25,7 @@ describe('reconnectSocket', () => {
         debug: false,
         context: 'someContext',
         channelId: 'sampleChannelId',
+        isOriginator: false,
         socket: {
           connected: false,
           connect: mockConnect,
@@ -42,7 +43,7 @@ describe('reconnectSocket', () => {
     await reconnectSocket(instance);
 
     expect(spyLogger).toHaveBeenCalledWith(
-      '[SocketService: reconnectSocket()] instance.state.socket?.connected=false trying to reconnect after socketio disconnection',
+      '[SocketService: reconnectSocket()] connected=false trying to reconnect after socketio disconnection',
       instance,
     );
   });
@@ -58,20 +59,30 @@ describe('reconnectSocket', () => {
 
     expect(mockConnect).toHaveBeenCalled();
     expect(mockEmitInstance).toHaveBeenCalledWith(EventType.SOCKET_RECONNECT);
-    expect(mockEmitSocket).toHaveBeenCalledWith(EventType.JOIN_CHANNEL, {
-      channelId: 'sampleChannelId',
-      clientType: 'wallet',
-      context: 'someContextconnect_again',
-    });
+    expect(mockEmitSocket).toHaveBeenCalledWith(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId: 'sampleChannelId',
+        context: 'someContextconnect_again',
+        clientType: 'wallet',
+      },
+      expect.any(Function),
+    );
   });
 
-  it('should not reconnect or emit events if socket is already connected', async () => {
+  it('should not reconnect but emit PING if socket is already connected', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     instance.state.socket!.connected = true;
 
     await reconnectSocket(instance);
 
     expect(mockConnect).not.toHaveBeenCalled();
     expect(mockEmitInstance).not.toHaveBeenCalled();
-    expect(mockEmitSocket).not.toHaveBeenCalled();
+    expect(mockEmitSocket).toHaveBeenCalledWith(MessageType.PING, {
+      id: 'sampleChannelId',
+      clientType: 'wallet',
+      context: 'on_channel_config',
+      message: '',
+    });
   });
 });

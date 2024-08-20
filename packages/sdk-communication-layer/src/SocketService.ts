@@ -2,11 +2,12 @@ import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
 import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
-import { ECIESProps } from './ECIES';
+import { ECIES, ECIESProps } from './ECIES';
 import { KeyExchange } from './KeyExchange';
 import { RemoteCommunication } from './RemoteCommunication';
 import { createChannel } from './services/SocketService/ChannelManager';
 import {
+  checkFocusAndReconnect,
   connectToChannel,
   disconnect,
   pause,
@@ -46,6 +47,7 @@ export interface SocketServiceState {
   resumed?: boolean;
   communicationLayerPreference?: CommunicationLayerPreference;
   context?: string;
+  eciesInstance?: ECIES;
   withKeyExchange?: boolean;
   communicationServerUrl: string;
   debug?: boolean;
@@ -146,6 +148,9 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     };
 
     this.state.keyExchange = new KeyExchange(keyExchangeInitParameter);
+
+    // Make sure to always be connected and retrieve messages
+    checkFocusAndReconnect(this);
   }
 
   resetKeys(): void {
@@ -159,11 +164,13 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
   connectToChannel({
     channelId,
     withKeyExchange = false,
-  }: ConnectToChannelOptions): void {
+    authorized,
+  }: ConnectToChannelOptions): Promise<void> {
     return connectToChannel({
       options: {
         channelId,
         withKeyExchange,
+        authorized,
       },
       instance: this,
     });

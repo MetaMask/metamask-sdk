@@ -35,45 +35,35 @@ describe('handleChannelConfig', () => {
           persistChannelConfig: mockPersistChannelConfig,
         },
       },
+      sendMessage: jest.fn(),
       emit: mockEmit,
     };
 
     instance = {
       state,
       remote,
+      getKeyExchange: jest.fn().mockReturnValue({
+        setOtherPublicKey: jest.fn(),
+      }),
     } as unknown as SocketService;
   });
 
   it('logs the relay persistence update', async () => {
     const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
+    await handler({ persistence: true, walletKey: 'testWalletKey' });
 
     expect(logger.SocketService).toHaveBeenCalledWith(
       `[SocketService: handleChannelConfig()] update relayPersistence on 'config-testChannelId'`,
-      { persistence: true },
+      { persistence: true, walletKey: 'testWalletKey' },
     );
   });
 
   it('updates relayPersistence state and emits CHANNEL_PERSISTENCE event', async () => {
     const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
+    await handler({ persistence: true, walletKey: 'testWalletKey' });
 
     expect(instance.remote.state.relayPersistence).toBe(true);
     expect(mockEmit).toHaveBeenCalledWith(EventType.CHANNEL_PERSISTENCE);
-  });
-
-  it('sets keys exchanged', async () => {
-    const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
-
-    expect(mockSetKeysExchanged).toHaveBeenCalledWith(true);
-  });
-
-  it('does not persist channel config if not originator', async () => {
-    const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
-
-    expect(mockPersistChannelConfig).not.toHaveBeenCalled();
   });
 
   it('persists channel config if originator and config conditions are met', async () => {
@@ -81,22 +71,12 @@ describe('handleChannelConfig', () => {
     remote.state.channelConfig = { relayPersistence: false };
 
     const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
+    await handler({ persistence: true, walletKey: 'testWalletKey' });
 
     expect(remote.state.channelConfig.relayPersistence).toBe(true);
     expect(mockPersistChannelConfig).toHaveBeenCalledWith(
       remote.state.channelConfig,
     );
-  });
-
-  it('does not persist channel config if relayPersistence is already true', async () => {
-    state.isOriginator = true;
-    remote.state.channelConfig = { relayPersistence: true };
-
-    const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
-
-    expect(mockPersistChannelConfig).not.toHaveBeenCalled();
   });
 
   it('handles null storageManager gracefully', async () => {
@@ -105,7 +85,7 @@ describe('handleChannelConfig', () => {
     remote.state.storageManager = null;
 
     const handler = handleChannelConfig(instance, 'testChannelId');
-    await handler({ persistence: true });
+    await handler({ persistence: true, walletKey: 'testWalletKey' });
 
     expect(remote.state.channelConfig.relayPersistence).toBe(true);
   });

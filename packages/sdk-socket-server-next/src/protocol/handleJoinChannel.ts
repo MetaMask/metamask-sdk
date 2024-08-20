@@ -1,26 +1,64 @@
+// protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from '../api-config';
-import { MAX_CLIENTS_PER_ROOM, config } from '../config';
+import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { logger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
+
+const checkMessage = ({
+  clientType,
+  channelId,
+  socket,
+}: {
+  clientType: ClientType;
+  channelId: string;
+  socket: Socket;
+}) => {
+  setTimeout(async () => {
+    try {
+      const messages = await retrieveMessages({ channelId, clientType });
+      logger.debug(
+        `checkMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
+      );
+
+      messages.forEach((msg) => {
+        if (isDevelopment) {
+          logger.debug(`emit message-${channelId}`, msg);
+        }
+
+        socket.emit(`message-${channelId}`, {
+          id: channelId,
+          ackId: msg.ackId,
+          message: msg.message,
+        });
+      });
+    } catch (error) {
+      logger.error(`Error retrieving messages: ${error}`);
+    }
+  }, 1000);
+
+  return true;
+};
 
 export type JoinChannelParams = {
   io: Server;
   socket: Socket;
   channelId: string;
   clientType?: ClientType;
+  publicKey?: string;
   context?: string;
   hasRateLimit: boolean;
   callback?: (error: string | null, result?: unknown) => void;
 };
 
 export type ChannelConfig = {
-  clients: Record<ClientType, string>;
+  clients: Record<ClientType, string>; // 'dapp' | 'wallet';
   persistence?: boolean; // Determines if the channel is compatible with full protocol persistence
   ready?: boolean; // Determines if the keys have been exchanged
+  walletKey?: string; // Wallet public key
   createdAt: number;
   updatedAt: number;
 };
@@ -31,6 +69,7 @@ export const handleJoinChannel = async ({
   channelId,
   context,
   clientType,
+  publicKey,
   hasRateLimit,
   callback,
 }: JoinChannelParams) => {
@@ -46,7 +85,7 @@ export const handleJoinChannel = async ({
     }
 
     logger.debug(
-      `join_channel channelId=${channelId} context=${context} clientType=${clientType} callback=${typeof callback}`,
+      `join_channel channelId=${channelId} context=${context} clientType=${clientType} publicKey=${publicKey} callback=${typeof callback}`,
     );
 
     if (hasRateLimit) {
@@ -74,15 +113,16 @@ export const handleJoinChannel = async ({
       const channelConfigKey = `channel_config:${channelId}`;
       const existingConfig = await pubClient.get(channelConfigKey);
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
+      const now = Date.now();
 
-      if (clientType === 'dapp' && !existingConfig) {
-        // Initialize new config for this channel
+      if (!channelConfig) {
         logger.info(`Creating new channel config for ${channelId}`);
-        const now = Date.now();
+        // Initialize new config for this channel
         channelConfig = {
           clients: {
-            dapp: socketId,
+            [clientType]: socketId,
           } as Record<ClientType, string>,
+          walletKey: publicKey,
           createdAt: now,
           updatedAt: now,
         };
@@ -93,6 +133,20 @@ export const handleJoinChannel = async ({
         const persistence = Object.keys(channelConfig.clients).length === 2;
         channelConfig.persistence = persistence;
         channelConfig.updatedAt = Date.now();
+        if (publicKey && !channelConfig.walletKey) {
+          channelConfig.walletKey = publicKey;
+
+          logger.info(
+            `join_channel ${channelId} walletKey=${publicKey} inform dapp config`,
+          );
+
+          // if channelConfig is received, we inform dApp
+          socket.broadcast.to(channelId).emit(`config-${channelId}`, {
+            walletKey: publicKey,
+            persistence,
+          });
+        }
+
         logger.info(
           `join_channel ${channelId} clientType=${clientType} persistence=${persistence}`,
           JSON.stringify(channelConfig),
@@ -108,33 +162,19 @@ export const handleJoinChannel = async ({
 
     const sRedisChannelOccupancy = await pubClient.hget('channels', channelId);
     let channelOccupancy = 0;
-    const now = Date.now();
 
     logger.debug(
       `join_channel from=${from} ${channelId} context=${context} clientType=${clientType} occupancy=${sRedisChannelOccupancy}`,
     );
 
     if (sRedisChannelOccupancy) {
-      let channelData;
-      try {
-        channelData = JSON.parse(sRedisChannelOccupancy);
-        channelOccupancy = channelData.occupancy;
-      } catch (error) {
-        // Fallback to the old format
-        channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
-        channelData = { occupancy: channelOccupancy, timestamp: now };
-      }
+      channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
     } else {
       logger.debug(
         `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
 
-      await pubClient.hset(
-        'channels',
-        channelId,
-        JSON.stringify({ occupancy: 0, timestamp: now }),
-      );
-      await pubClient.expire('channels', config.channelExpiry); // Set TTL for the hash
+      await pubClient.hset('channels', channelId, 0);
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -151,35 +191,12 @@ export const handleJoinChannel = async ({
       await socket.join(channelId);
     }
 
-    // // room occupancy is the number of clients in the room on this server
-    // if (roomOccupancy > MAX_CLIENTS_PER_ROOM) {
-    //   logger.warn(`join_channel from=${from} ${channelId} room already full`);
-    //   socket.emit(`message-${channelId}`, { error: 'room already full' });
-    //   return;
-    // }
-
-    // // channel occupancy is the number of clients in the room across all servers
-    // if (channelOccupancy > MAX_CLIENTS_PER_ROOM) {
-    //   logger.warn(
-    //     `join_channel from=${from} ${channelId} redis channel appears full`,
-    //   );
-    //   socket.emit(`message-${channelId}`, { error: 'room already full' });
-    //   return;
-    // }
-
     channelOccupancy = parseInt(
       (await pubClient.hget('channels', channelId)) ?? '1',
       10,
     );
     //  Refresh the room occupancy -it should now matches channel occupancy
     roomOccupancy = io.sockets.adapter.rooms.get(channelId)?.size ?? 0;
-
-    // Update the hash with the new occupancy and timestamp
-    await pubClient.hset(
-      'channels',
-      channelId,
-      JSON.stringify({ occupancy: channelOccupancy, timestamp: now }),
-    );
 
     // There may be -1 discrepency between room and channel occupancy depending if they are connected on the same server or not
     if (channelOccupancy - roomOccupancy > 1 || channelOccupancy < 0) {
@@ -199,6 +216,25 @@ export const handleJoinChannel = async ({
         channelOccupancy,
       },
     );
+
+    if (
+      !channelConfig?.ready &&
+      clientType === 'dapp' &&
+      channelConfig?.walletKey
+    ) {
+      logger.warn(
+        `Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
+      );
+
+      callback?.(null, {
+        ready: channelConfig?.ready,
+        persistence: channelConfig?.persistence,
+        walletKey: channelConfig?.walletKey,
+      });
+
+      checkMessage({ clientType, channelId, socket });
+      return;
+    }
 
     if (!clientType && channelOccupancy < MAX_CLIENTS_PER_ROOM) {
       logger.debug(
@@ -238,26 +274,12 @@ export const handleJoinChannel = async ({
         persistence: channelConfig?.persistence,
       });
 
-      setTimeout(async () => {
-        try {
-          const messages = await retrieveMessages({ channelId, clientType });
-          console.log(
-            `join_channel ${channelId} clientType=${clientType} retrieved messages`,
-            JSON.stringify(messages, null, 2),
-          );
-
-          messages.forEach((msg) => {
-            socket.emit(`message-${channelId}`, {
-              id: channelId,
-              ackId: msg.ackId,
-              message: msg.message,
-            });
-          });
-        } catch (error) {
-          logger.error(`Error retrieving messages: ${error}`);
-        }
-      }, 1000);
+      checkMessage({ clientType, channelId, socket });
+      return;
     }
+
+    // Make sure to always call the callback
+    callback?.(null, {});
   } catch (error) {
     logger.error(`Error in handleJoinChannel: ${error}`);
   }

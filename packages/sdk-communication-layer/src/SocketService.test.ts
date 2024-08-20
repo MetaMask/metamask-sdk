@@ -62,10 +62,10 @@ describe('SocketService', () => {
     expect(socketService.state.keyExchange).toBeInstanceOf(KeyExchange);
   });
 
-  it('should successfully connect to a channel', () => {
+  it('should successfully connect to a channel', async () => {
     const mockOptions = { channelId: 'SOME_CHANNEL_ID' };
 
-    socketService.connectToChannel(mockOptions);
+    await socketService.connectToChannel(mockOptions);
 
     expect(connectToChannel).toHaveBeenCalledWith({
       options: {

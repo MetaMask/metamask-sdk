@@ -238,6 +238,29 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   /**
+   * Initialize the connection from the dapp side.
+   */
+  public async initFromDappStorage() {
+    if (this.state.storageManager) {
+      // Try to get existing channel config from storage
+      const channelConfig =
+        await this.state.storageManager.getPersistedChannelConfig({});
+      if (channelConfig) {
+        this.state.channelConfig = channelConfig;
+        this.state.channelId = channelConfig.channelId;
+        if (channelConfig.relayPersistence) {
+          this.state.authorized = true;
+          this.state.ready = true;
+          this.setConnectionStatus(ConnectionStatus.LINKED);
+          await this.connectToChannel({
+            channelId: channelConfig.channelId,
+          });
+        }
+      }
+    }
+  }
+
+  /**
    * Connect from the dapp using session persistence.
    */
   async originatorSessionConnect(): Promise<ChannelConfig | undefined> {
@@ -256,12 +279,15 @@ export class RemoteCommunication extends EventEmitter2 {
   connectToChannel({
     channelId,
     withKeyExchange,
+    authorized,
   }: {
     channelId: string;
+    authorized?: boolean;
     withKeyExchange?: boolean;
-  }) {
+  }): Promise<void> {
     return connectToChannel({
       channelId,
+      authorized,
       withKeyExchange,
       state: this.state,
     });
@@ -398,6 +424,25 @@ export class RemoteCommunication extends EventEmitter2 {
 
   resume() {
     return resume(this);
+  }
+
+  encrypt(data: string) {
+    const keyExchange = this.state.communicationLayer?.getKeyExchange();
+    const otherPublicKey = keyExchange?.getOtherPublicKey();
+    if (!otherPublicKey) {
+      throw new Error('KeyExchange not completed');
+    }
+    return this.state.communicationLayer?.state.eciesInstance?.encrypt(
+      data,
+      otherPublicKey,
+    );
+  }
+
+  decrypt(data: string) {
+    if (!this.state.communicationLayer?.state.eciesInstance) {
+      throw new Error('ECIES instance is not initialized');
+    }
+    return this.state.communicationLayer?.state.eciesInstance?.decrypt(data);
   }
 
   getChannelId() {

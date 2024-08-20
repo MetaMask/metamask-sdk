@@ -12,12 +12,14 @@ import { ChannelConfig } from '../../../types/ChannelConfig';
  * @param state Current state of the RemoteCommunication class instance.
  * @returns void
  */
-export function connectToChannel({
+export async function connectToChannel({
   channelId,
   withKeyExchange,
+  authorized,
   state,
 }: {
   channelId: string;
+  authorized?: boolean;
   withKeyExchange?: boolean;
   state: RemoteCommunicationState;
 }) {
@@ -41,8 +43,9 @@ export function connectToChannel({
   }
 
   state.channelId = channelId;
-  state.communicationLayer?.connectToChannel({
+  await state.communicationLayer?.connectToChannel({
     channelId,
+    authorized,
     withKeyExchange,
   });
   const newChannelConfig: ChannelConfig = {

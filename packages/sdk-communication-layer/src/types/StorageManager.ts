@@ -16,6 +16,8 @@ export interface StorageManager {
   getCachedAccounts(): Promise<string[]>;
   getCachedChainId(): Promise<string | undefined>;
   persistChainId(chainId: string, context?: string): Promise<void>;
-  getPersistedChannelConfig(): Promise<ChannelConfig | undefined>;
+  getPersistedChannelConfig(options?: {
+    context?: string;
+  }): Promise<ChannelConfig | undefined>;
   terminate(channelId: string): Promise<void>;
 }

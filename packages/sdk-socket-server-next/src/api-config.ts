@@ -9,9 +9,11 @@ import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
 import {
   config,
+  EVENTS_DEBUG_LOGS,
   hasRateLimit,
   isDevelopment,
   isDevelopmentServer,
+  REDIS_DEBUG_LOGS,
   redisCluster,
   redisTLS,
 } from './config';
@@ -243,7 +245,7 @@ app.post('/evt', async (_req, res) => {
       );
     }
 
-    if (isDevelopment) {
+    if (REDIS_DEBUG_LOGS) {
       inspectRedis(id);
     }
 
@@ -284,7 +286,7 @@ app.post('/evt', async (_req, res) => {
       );
     }
 
-    if (isDevelopment) {
+    if (REDIS_DEBUG_LOGS) {
       inspectRedis(userIdHash);
     }
 
@@ -318,12 +320,12 @@ app.post('/evt', async (_req, res) => {
       }
     }
 
-    if (isDevelopment) {
+    if (EVENTS_DEBUG_LOGS) {
       logger.debug('Event object:', event);
     }
 
     analytics.track(event, function (err: Error) {
-      if (isDevelopment) {
+      if (EVENTS_DEBUG_LOGS) {
         logger.info('Segment batch', JSON.stringify({ event }, null, 2));
       } else {
         logger.info('Segment batch', { event });

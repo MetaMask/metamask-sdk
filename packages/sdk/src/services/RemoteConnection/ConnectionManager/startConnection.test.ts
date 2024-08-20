@@ -9,6 +9,11 @@ import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 import { startConnection } from './startConnection';
 
+// Mock the entire module that contains the base64Encode function
+jest.mock('../../../utils/base64', () => ({
+  base64Encode: jest.fn((str) => Buffer.from(str).toString('base64')),
+}));
+
 jest.mock('../../Ethereum', () => ({
   Ethereum: {
     getProvider: jest.fn().mockReturnValue({
@@ -38,6 +43,7 @@ describe('startConnection', () => {
   const mockGenerateChannelIdConnect = jest.fn();
   const mockGetKeyInfo = jest.fn();
   const mockIsSecure = jest.fn();
+  const mockGetPlatformType = jest.fn();
   const mockReconnectWithModalOTP = reconnectWithModalOTP as jest.Mock;
   const mockConnectWithDeeplink = connectWithDeeplink as jest.Mock;
   const mockConnectWithModalInstaller = connectWithModalInstaller as jest.Mock;
@@ -49,17 +55,27 @@ describe('startConnection', () => {
         getKeyInfo: mockGetKeyInfo,
         generateChannelIdConnect: mockGenerateChannelIdConnect,
         isConnected: jest.fn(() => true),
+        state: {
+          storageManager: {
+            persistChannelConfig: jest.fn(),
+          },
+        },
       },
       developerMode: false,
       platformManager: {
         isSecure: mockIsSecure,
+        getPlatformType: mockGetPlatformType,
       },
       communicationLayerPreference: 'mock_comm',
       authorized: true,
     } as unknown as RemoteConnectionState;
 
     options = {
-      dappMetadata: {},
+      dappMetadata: {
+        name: 'Test Dapp',
+        url: 'https://testdapp.com',
+        iconUrl: 'https://testdapp.com/icon.png',
+      },
     } as unknown as RemoteConnectionProps;
 
     jest.spyOn(console, 'debug').mockImplementation(() => {
@@ -69,6 +85,8 @@ describe('startConnection', () => {
     mockGetKeyInfo.mockReturnValue({
       ecies: { public: 'public_key' },
     });
+
+    mockGetPlatformType.mockReturnValue('test_platform');
   });
 
   it('should throw an error if no connector is defined', async () => {
@@ -88,6 +106,8 @@ describe('startConnection', () => {
   });
 
   it('should establish socket connection by emitting connecting', async () => {
+    mockOriginatorSessionConnect.mockResolvedValue({});
+
     await startConnection(state, options);
 
     expect(Ethereum.getProvider().emit).toHaveBeenCalledWith('connecting');
@@ -95,6 +115,7 @@ describe('startConnection', () => {
 
   it('should call connectWithDeeplink when platform is secure', async () => {
     mockIsSecure.mockReturnValue(true);
+    mockOriginatorSessionConnect.mockResolvedValue({});
 
     await startConnection(state, options);
 
@@ -110,7 +131,6 @@ describe('startConnection', () => {
     };
 
     mockOriginatorSessionConnect.mockResolvedValue(mockChannelConfig);
-
     mockIsSecure.mockReturnValue(false);
 
     await startConnection(state, options);

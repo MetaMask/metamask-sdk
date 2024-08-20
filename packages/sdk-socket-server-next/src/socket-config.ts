@@ -1,3 +1,4 @@
+// socket-config.ts
 /* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
@@ -7,6 +8,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from './api-config';
 import { logger } from './logger';
+import { ACKParams, handleAck } from './protocol/handleAck';
 import { handleCheckRoom } from './protocol/handleCheckRoom';
 import {
   handleJoinChannel,
@@ -14,7 +16,6 @@ import {
 } from './protocol/handleJoinChannel';
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
-import { ACKParams, handleAck } from './protocol/handleAck';
 
 export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
 
@@ -46,6 +47,7 @@ export const configureSocketServer = async (
   type SocketJoinChannelParams = {
     channelId: string;
     clientType?: ClientType;
+    publicKey?: string;
     context?: string;
   };
 
@@ -86,8 +88,17 @@ export const configureSocketServer = async (
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
 
-    // Inform the room of the disconnection
-    io.to(roomId).emit(`clients_disconnected-${roomId}`);
+    if (channelOccupancy <= 0) {
+      logger.debug(`'leave-room' room ${roomId} was deleted`);
+      // remove from redis
+      await pubClient.hdel('channels', roomId);
+    } else {
+      logger.info(
+        `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
+      );
+      // Inform the room of the disconnection
+      io.to(roomId).emit(`clients_disconnected-${roomId}`);
+    }
   });
 
   io.on('connection', (socket: Socket) => {
@@ -138,6 +149,7 @@ export const configureSocketServer = async (
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.publicKey = channelIdOrParams.publicKey;
           params.callback = callbackOrContext as (
             error: string | null,
             result?: unknown,
@@ -210,12 +222,10 @@ export const configureSocketServer = async (
       (
         {
           id,
-          message,
-          context,
+          clientType,
         }: {
           id: string;
-          message: string;
-          context: string;
+          clientType: ClientType;
         },
         callback: (error: string | null, result?: unknown) => void,
       ) => {
@@ -223,8 +233,7 @@ export const configureSocketServer = async (
           channelId: id,
           socket,
           io,
-          message,
-          context,
+          clientType,
           callback,
         }).catch((error) => {
           logger.error('Error handling ping:', error);
@@ -278,6 +287,7 @@ export const configureSocketServer = async (
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.publicKey = channelIdOrParams.publicKey;
           params.callback = callbackOrContext as (
             error: string | null,
             result?: unknown,

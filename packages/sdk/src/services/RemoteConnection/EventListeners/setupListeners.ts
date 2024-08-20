@@ -74,6 +74,29 @@ export function setupListeners(
     },
   );
 
+  state.connector.on(
+    EventType.WALLET_INIT,
+    async ({ accounts, chainId }: { accounts: string[]; chainId: string }) => {
+      logger(
+        `[RemoteConnection: setupListeners() => EventType.WALLET_INIT] 'wallet_init' accounts=${accounts} chainId=${chainId}`,
+      );
+
+      const provider = Ethereum.getProvider();
+      provider._setConnected();
+
+      const initialState = {
+        accounts,
+        chainId,
+        isUnlocked: false,
+      };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      provider._initializeState(initialState);
+      provider.emit('chainChanged', chainId);
+      provider.emit('accountsChanged', accounts);
+    },
+  );
+
   state.connector.on(EventType.AUTHORIZED, async () => {
     try {
       logger(
@@ -104,10 +127,6 @@ export function setupListeners(
 
       await provider.forceInitializeState();
     } catch (err) {
-      console.log(
-        '🟠 ~ file: setupListeners.ts:107 ~ state.connector.on ~ err:',
-        err,
-      );
       // Ignore error if already initialized.
       // console.debug(`IGNORE ERROR`, err);
     }

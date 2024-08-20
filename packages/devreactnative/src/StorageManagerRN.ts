@@ -37,8 +37,11 @@ export class StorageManagerRN implements StorageManager {
     console.debug('StorageManagerRN::peristChannelConfig() temp find', temp);
   }
 
-  public async getPersistedChannelConfig(): Promise<ChannelConfig | undefined> {
+  public async getPersistedChannelConfig(options?: {
+    context?: string;
+  }): Promise<ChannelConfig | undefined> {
     let payload;
+    const {context} = options || {};
 
     if (this.debug) {
       console.debug(
@@ -54,7 +57,10 @@ export class StorageManagerRN implements StorageManager {
     }
 
     if (this.debug) {
-      console.debug('StorageManagerRN::getPersistedChannelConfig()', payload);
+      console.debug(
+        `StorageManagerRN::getPersistedChannelConfig() context=${context}`,
+        payload,
+      );
     }
 
     if (!payload) {

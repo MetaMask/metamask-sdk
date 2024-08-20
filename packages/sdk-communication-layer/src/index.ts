@@ -9,7 +9,7 @@ import {
   RPCMethodResult,
   SocketService,
 } from './SocketService';
-import { DEFAULT_SERVER_URL } from './config';
+import { DEFAULT_SERVER_URL, DEFAULT_SESSION_TIMEOUT_MS } from './config';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { AutoConnectType } from './types/AutoConnectType';
 import { ChannelConfig } from './types/ChannelConfig';
@@ -56,6 +56,7 @@ export {
   CommunicationLayerPreference,
   ConnectionStatus,
   DEFAULT_SERVER_URL,
+  DEFAULT_SESSION_TIMEOUT_MS,
   ECIES,
   EventType,
   MessageType,

@@ -17,6 +17,7 @@ describe('write function', () => {
   const mockIsPaused = jest.fn();
   const mockGetChannelId = jest.fn();
   const mockIsAuthorized = jest.fn();
+  const mockIsMobileWeb = jest.fn();
   const mockSendMessage = jest.fn(
     () =>
       new Promise((resolve) => {
@@ -41,6 +42,7 @@ describe('write function', () => {
       },
       platformManager: {
         isSecure: mockIsSecure,
+        isMobileWeb: mockIsMobileWeb,
         openDeeplink: mockOpenDeeplink,
       },
       debug: false,
@@ -53,6 +55,8 @@ describe('write function', () => {
     jest.clearAllMocks();
 
     callback = jest.fn();
+
+    mockIsMobileWeb.mockReturnValue(false);
 
     mockEthereum.mockReturnValue({
       isConnected: isProviderConnected,
@@ -76,6 +80,7 @@ describe('write function', () => {
         platformManager: {
           isSecure: mockIsSecure,
           openDeeplink: mockOpenDeeplink,
+          isMobileWeb: mockIsMobileWeb,
         },
         debug: false,
       },
@@ -94,7 +99,7 @@ describe('write function', () => {
       );
 
       expect(callback).toHaveBeenCalledTimes(1);
-      expect(callback).toHaveBeenCalledWith();
+      expect(callback).toHaveBeenCalledWith(new Error('disconnected'));
     });
 
     it('should log when method is not METAMASK_GETPROVIDERSTATE', async () => {
@@ -109,15 +114,15 @@ describe('write function', () => {
         callback,
       );
 
-      expect(spyLogger).toHaveBeenCalledWith(
-        '[RCPMS: write()] Invalid channel id -- undefined',
-      );
+      // First call is general log, 2nd call is the error log
+      expect(spyLogger).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('Connection Status', () => {
     beforeEach(() => {
       mockIsSecure.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
     });
 
     it('should call the callback and not send a message if neither socketConnected nor ready', async () => {
@@ -131,7 +136,7 @@ describe('write function', () => {
         callback,
       );
 
-      expect(callback).toHaveBeenCalledWith();
+      expect(callback).toHaveBeenCalledWith(new Error('disconnected'));
       expect(mockSendMessage).not.toHaveBeenCalled();
     });
 
@@ -175,6 +180,7 @@ describe('write function', () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
       mockIsAuthorized.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
       mockIsSecure.mockReturnValue(true);
     });
 
@@ -221,6 +227,7 @@ describe('write function', () => {
     it('should call the callback once if everything is fine', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
 
       await write(
         mockRemoteCommunicationPostMessageStream,

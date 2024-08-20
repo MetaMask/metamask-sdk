@@ -1,8 +1,9 @@
+// packages/sdk-communication-layer/src/services/SocketService/ConnectionManager/connectToChannel.ts
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
-import { logger } from '../../../utils/logger';
 import { setupChannelListeners } from '../ChannelManager';
+import { handleJoinChannelResults } from './handleJoinChannelResult';
 
 /**
  * Connects a SocketService instance to a specified channel.
@@ -15,69 +16,68 @@ import { setupChannelListeners } from '../ChannelManager';
  * @param instance The current instance of the SocketService.
  * @throws {Error} Throws an error if the socket is already connected.
  */
-export function connectToChannel({
+export async function connectToChannel({
   options,
   instance,
 }: {
   options: ConnectToChannelOptions;
   instance: SocketService;
-}) {
-  const { channelId, withKeyExchange } = options;
-  const isOriginator = instance.state.isOriginator ?? false;
+}): Promise<void> {
+  const { channelId, authorized, withKeyExchange } = options;
+  const { state, remote } = instance;
+  const { isOriginator = false, socket, keyExchange } = state;
+  const { channelConfig } = remote.state;
 
-  logger.SocketService(
-    `[SocketService: connectToChannel()] context=${instance.state.context} channelId=${channelId} isOriginator=${isOriginator}`,
-    instance.state.keyExchange?.toString(),
-  );
-
-  if (instance.state.socket?.connected) {
+  if (socket?.connected) {
     console.error(
       `[SocketService: connectToChannel()] socket already connected`,
     );
     throw new Error(`socket already connected`);
   }
 
-  const { channelConfig } = instance.remote.state;
-
   if (isOriginator && channelConfig?.relayPersistence) {
-    if (
-      channelConfig.localKey &&
-      channelConfig?.localKey?.length > 0 &&
-      channelConfig.otherKey &&
-      channelConfig?.otherKey?.length > 0
-    ) {
-      // Update key exchange status with persisted keys
-      instance.state.keyExchange?.setRelayPersistence({
-        localKey: channelConfig.localKey,
-        otherKey: channelConfig.otherKey,
-      });
+    const { localKey, otherKey } = channelConfig;
+    if (localKey && otherKey) {
+      keyExchange?.setRelayPersistence({ localKey, otherKey });
     } else {
       console.warn(`Missing keys in relay persistence`, channelConfig);
     }
   }
-  instance.state.manualDisconnect = false;
-  instance.state.socket?.connect();
-  instance.state.withKeyExchange = withKeyExchange;
-  instance.state.isOriginator = isOriginator;
-  instance.state.channelId = channelId;
+
+  Object.assign(state, {
+    manualDisconnect: false,
+    withKeyExchange,
+    isOriginator,
+    channelId,
+  });
+
+  socket?.connect();
   setupChannelListeners(instance, channelId);
-  instance.state.socket?.emit(
-    EventType.JOIN_CHANNEL,
-    {
-      channelId,
-      context: `${instance.state.context}_connectToChannel`,
-      clientType: isOriginator ? 'dapp' : 'wallet',
-    },
-    (
-      error: string | null,
-      result?: { ready: boolean; persistence: boolean },
-    ) => {
-      if (error === 'error_terminated') {
-        instance.emit(EventType.TERMINATE);
-      } else if (typeof result === 'object' && result.persistence) {
-        // Inform that this channel supports full session persistence
-        instance.emit(EventType.CHANNEL_PERSISTENCE);
-      }
-    },
-  );
+
+  if (!isOriginator && authorized) {
+    keyExchange?.setKeysExchanged(true);
+    Object.assign(remote.state, { ready: true, authorized: true });
+  }
+
+  return new Promise((resolve) => {
+    const publicKey = keyExchange?.getKeyInfo()?.ecies.public;
+    const withWalletKey = authorized && !isOriginator ? publicKey : undefined;
+
+    socket?.emit(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId,
+        context: `${state.context}_connectToChannel`,
+        clientType: isOriginator ? 'dapp' : 'wallet',
+        publicKey: withWalletKey,
+      },
+      async (
+        error: string | null,
+        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+      ) => {
+        await handleJoinChannelResults(instance, error, result);
+        resolve();
+      },
+    );
+  });
 }

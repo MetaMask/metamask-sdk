@@ -22,7 +22,9 @@ export async function originatorSessionConnect(instance: RemoteCommunication) {
     return undefined;
   }
 
-  const channelConfig = await state.storageManager.getPersistedChannelConfig();
+  const channelConfig = await state.storageManager.getPersistedChannelConfig(
+    {},
+  );
   logger.RemoteCommunication(
     `[RemoteCommunication: originatorSessionConnect()] autoStarted=${state.originatorConnectStarted} channelConfig`,
     channelConfig,

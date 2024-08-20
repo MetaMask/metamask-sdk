@@ -11,7 +11,20 @@ describe('KeyExchange', () => {
 
   beforeEach(() => {
     // Create a mock CommunicationLayer instance
-    mockCommunicationLayer = new EventEmitter2() as jest.Mocked<SocketService>;
+    mockCommunicationLayer = {
+      ...new EventEmitter2(),
+      state: {
+        eciesInstance: undefined,
+      },
+      remote: {
+        state: {
+          relayPersistence: false,
+          protocolVersion: 2,
+        },
+      },
+      sendMessage: jest.fn(),
+      on: jest.fn(),
+    } as unknown as jest.Mocked<SocketService>;
 
     // Initialize the KeyExchange instance with the mocked CommunicationLayer
     keyExchange = new KeyExchange({

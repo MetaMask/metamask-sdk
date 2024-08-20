@@ -37,6 +37,9 @@ describe('getPostMessageStream', () => {
         ({
           getConnector: jest.fn().mockReturnValue(fakeConnector),
           getPlatformManager: jest.fn().mockReturnValue(fakePlatformManager),
+          state: {
+            deeplinkProtocol: false,
+          },
         } as any),
     );
 
@@ -52,6 +55,7 @@ describe('getPostMessageStream', () => {
     expect(mockPostMessageStream).toHaveBeenCalledWith({
       name: ProviderConstants.CONTENT_SCRIPT,
       remote: fakeConnector,
+      deeplinkProtocol: false,
       platformManager: fakePlatformManager,
     });
   });

@@ -62,6 +62,7 @@ export async function setupRemoteConnectionAndInstaller(
     },
   });
 
+  await instance.remoteConnection.initRemoteCommunication();
   instance.installer = new MetaMaskInstaller({
     remote: instance.remoteConnection,
     preferDesktop: options.preferDesktop ?? false,

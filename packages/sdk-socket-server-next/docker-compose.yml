@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
 
   # This service is used to debug the redis cluster
@@ -97,7 +95,7 @@ services:
     image: redis:7.2-alpine
     command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
-      - '6379:6379'
+      - "${DOCKER_ENV_LOCAL_REDIS_PORT}:6379"
 
   nginx:
     image: nginx:latest

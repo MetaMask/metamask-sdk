@@ -60,6 +60,7 @@ export class KeyExchange extends EventEmitter2 {
     }
 
     this.myECIES = new ECIES({ ...ecies, debug: logging?.eciesLayer });
+    this.communicationLayer.state.eciesInstance = this.myECIES;
     this.myPublicKey = this.myECIES.getPublicKey();
 
     this.debug = logging?.keyExchangeLayer === true;
