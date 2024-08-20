@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
+import { isDevelopment } from '../config';
 import { logger } from '../logger';
 import { ClientType } from '../socket-config';
-import { isDevelopment } from '../config';
 import { retrieveMessages } from './retrieveMessages';
 
 export type PingParams = {
@@ -14,7 +14,6 @@ export type PingParams = {
 };
 
 export const handlePing = async ({
-  io,
   channelId,
   clientType,
   socket,
@@ -35,21 +34,6 @@ export const handlePing = async ({
   logger.info(
     `INFO> ping received channelId=${channelId} clientType=${clientType}`,
   );
-  const room = io.sockets.adapter.rooms.get(channelId);
-  // If the clientType socket is in the channel, retrieve messages
-  const isSocketInRoom = room?.has(socketId) ?? false;
-
-  if (!isSocketInRoom) {
-    logger.error(
-      `ERROR> PING ERROR > Socket not in room channelId=${channelId}`,
-      {
-        channelId,
-        clientIp,
-        socketId,
-      },
-    );
-    return callback('error_socket_not_in_room', undefined);
-  }
 
   if (clientType) {
     // Check for pending messages
