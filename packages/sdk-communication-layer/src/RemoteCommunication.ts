@@ -426,6 +426,25 @@ export class RemoteCommunication extends EventEmitter2 {
     return resume(this);
   }
 
+  encrypt(data: string) {
+    const keyExchange = this.state.communicationLayer?.getKeyExchange();
+    const otherPublicKey = keyExchange?.getOtherPublicKey();
+    if (!otherPublicKey) {
+      throw new Error('KeyExchange not completed');
+    }
+    return this.state.communicationLayer?.state.eciesInstance?.encrypt(
+      data,
+      otherPublicKey,
+    );
+  }
+
+  decrypt(data: string) {
+    if (!this.state.communicationLayer?.state.eciesInstance) {
+      throw new Error('ECIES instance is not initialized');
+    }
+    return this.state.communicationLayer?.state.eciesInstance?.decrypt(data);
+  }
+
   getChannelId() {
     return this.state.channelId;
   }

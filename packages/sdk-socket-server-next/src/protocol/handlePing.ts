@@ -32,7 +32,9 @@ export const handlePing = async ({
     return callback('error_id', undefined);
   }
 
-  logger.info(`INFO> ping received channelId=${channelId}`);
+  logger.info(
+    `INFO> ping received channelId=${channelId} clientType=${clientType}`,
+  );
   const room = io.sockets.adapter.rooms.get(channelId);
   // If the clientType socket is in the channel, retrieve messages
   const isSocketInRoom = room?.has(socketId) ?? false;

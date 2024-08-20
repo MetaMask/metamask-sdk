@@ -4,6 +4,7 @@ export interface OriginatorInfo {
   platform: string;
   dappId: string;
   icon?: string;
+  scheme?: string;
   source?: string;
   apiVersion?: string;
   connector?: string;

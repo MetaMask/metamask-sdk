@@ -1,3 +1,4 @@
+// packages/sdk-communication-layer/src/services/SocketService/ConnectionManager/connectToChannel.ts
 import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';

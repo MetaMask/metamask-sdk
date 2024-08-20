@@ -1,7 +1,7 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import { checkFocusAndReconnect } from '../ConnectionManager';
+import { logger } from '../../../utils/logger';
+import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
 
 /**
  * Returns a handler function to handle the 'disconnect' event.
@@ -30,7 +30,12 @@ export function handleDisconnect(instance: SocketService) {
        * FIXME: is there a way to address a slow (>30s) provider query reply.
        */
       instance.emit(EventType.SOCKET_DISCONNECTED);
-      checkFocusAndReconnect(instance);
+      reconnectSocket(instance).catch((err) => {
+        console.error(
+          `SocketService::handleDisconnect Error reconnecting socket`,
+          err,
+        );
+      });
     }
   };
 }

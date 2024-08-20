@@ -1,10 +1,11 @@
-import { logger } from '../../utils/logger';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../../config';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../constants';
+import { base64Encode } from '../../utils/base64';
+import { logger } from '../../utils/logger';
 import { Ethereum } from '../Ethereum';
 import { extractMethod } from './extractMethod';
 
@@ -21,6 +22,7 @@ export async function write(
   const provider = Ethereum.getProvider();
   const channelId = instance.state.remote?.getChannelId();
   const authorized = instance.state.remote?.isAuthorized();
+  const { deeplinkProtocol } = instance.state;
   const { method: targetMethod, data } = extractMethod(chunk);
 
   logger(
@@ -42,47 +44,73 @@ export async function write(
     chunk,
   );
 
+  // isSecure is only available in RN and mobile web
+  const isSecure = instance.state.platformManager?.isSecure();
+  const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
+
+  const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb;
+  console.warn(
+    `[RCPMS: write()] activeDeeplinkProtocol=${activeDeeplinkProtocol}`,
+  );
+
   try {
-    instance.state.remote
-      ?.sendMessage(data?.data)
-      .then(() => {
-        logger(`[RCPMS: _write()] ${targetMethod} sent successfully`);
-      })
-      .catch((err: unknown) => {
-        logger(`[RCPMS: _write()] error sending message`, err);
-      });
+    if (!activeDeeplinkProtocol) {
+      // The only reason not to send via network is because the rpc call will be sent in the deeplink
+      instance.state.remote
+        ?.sendMessage(data?.data)
+        .then(() => {
+          logger(`[RCPMS: _write()] ${targetMethod} sent successfully`);
+        })
+        .catch((err: unknown) => {
+          logger(`[RCPMS: _write()] error sending message`, err);
+        });
 
-    if (!instance.state.platformManager?.isSecure()) {
-      // Redirect early if nodejs or browser...
-      logger(
-        `[RCPMS: _write()] unsecure platform for method ${targetMethod} -- return callback`,
-      );
-      return callback();
-    }
+      // Keep this for now as  reference -- it should become unnecessary if we send via deeplink
+      // if (!socketConnected && !isRemoteReady) {
+      //   // Invalid connection status
+      //   logger(
+      //     `[RCPMS: _write()] invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}`,
+      //   );
+      //   return callback();
+      // }
+      if (!socketConnected && isRemoteReady) {
+        // Shouldn't happen -- needs to refresh
+        console.warn(
+          `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
+        );
+        return callback();
+      }
 
-    if (!socketConnected && !isRemoteReady) {
-      // Invalid connection status
-      logger(
-        `[RCPMS: _write()] invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}`,
-      );
-
-      return callback();
-    }
-
-    if (!socketConnected && isRemoteReady) {
-      // Shouldn't happen -- needs to refresh
-      console.warn(
-        `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
-      );
-      return callback();
+      if (!isSecure) {
+        // Redirect early if nodejs or browser...
+        logger(
+          `[RCPMS: _write()] unsecure platform for method ${targetMethod} -- return callback`,
+        );
+        return callback();
+      }
     }
 
     // Check if should open app
     const pubKey = instance.state.remote?.getKeyInfo()?.ecies.public ?? '';
-
-    const urlParams = encodeURI(
+    let urlParams = encodeURI(
       `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2`,
     );
+
+    if (activeDeeplinkProtocol) {
+      const jsonrpc = JSON.stringify(data?.data);
+      const encrypted = instance.state.remote?.encrypt(jsonrpc);
+      if (!encrypted) {
+        logger(`[RCPMS: _write()] error encrypting message`);
+        return callback(
+          new Error('RemoteCommunicationPostMessageStream - disconnected'),
+        );
+      }
+      const encoded = base64Encode(encrypted);
+      console.warn(`[RCPMS: _write()] rpc`, data?.data, jsonrpc);
+      urlParams += `&scheme=${deeplinkProtocol}&rpc=${encoded}`;
+    }
+
+    console.log(`[RCPMS: _write()] urlParams=${urlParams}`);
 
     if (METHODS_TO_REDIRECT[targetMethod]) {
       logger(

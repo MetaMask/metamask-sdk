@@ -1,9 +1,9 @@
-import { Duplex } from 'readable-stream';
 import {
   CommunicationLayerMessage,
   EventType,
   RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
+import { Duplex } from 'readable-stream';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { ProviderConstants } from '../constants';
 import { onMessage } from '../services/RemoteCommunicationPostMessageStream/onMessage';
@@ -13,6 +13,7 @@ import { PostMessageStream } from './PostMessageStream';
 interface RemoteCommunicationPostMessageStreamState {
   _name: any;
   remote: RemoteCommunication | null;
+  deeplinkProtocol: boolean;
   platformManager: PlatformManager | null;
 }
 
@@ -23,15 +24,18 @@ export class RemoteCommunicationPostMessageStream
   public state: RemoteCommunicationPostMessageStreamState = {
     _name: null,
     remote: null,
+    deeplinkProtocol: false,
     platformManager: null,
   };
 
   constructor({
     name,
     remote,
+    deeplinkProtocol,
     platformManager,
   }: {
     name: ProviderConstants;
+    deeplinkProtocol: boolean;
     remote: RemoteCommunication;
     platformManager: PlatformManager;
   }) {
@@ -40,6 +44,7 @@ export class RemoteCommunicationPostMessageStream
     });
     this.state._name = name;
     this.state.remote = remote;
+    this.state.deeplinkProtocol = deeplinkProtocol;
     this.state.platformManager = platformManager;
 
     this._onMessage = this._onMessage.bind(this);

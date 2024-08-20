@@ -14,6 +14,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { base64Encode } from '../../../utils/base64';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
@@ -106,7 +107,7 @@ export async function startConnection(
   // if we are on desktop browser
   const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
   const sdkVersion = packageJson.version;
-  const { iconUrl, name, url } = options.dappMetadata || {};
+  const { iconUrl, name, url, scheme } = options.dappMetadata || {};
   const platformType = state.platformManager?.getPlatformType();
 
   let base64OriginatorInfo: string | undefined;
@@ -118,11 +119,12 @@ export async function startConnection(
       url: url ?? '',
       title: name ?? '',
       icon: iconUrl,
+      scheme: scheme ?? '',
       dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
       platform: platformType ?? '',
       source: options._source ?? '',
     };
-    base64OriginatorInfo = btoa(JSON.stringify(originatorInfo));
+    base64OriginatorInfo = base64Encode(JSON.stringify(originatorInfo));
   }
 
   const linkParams = encodeURI(

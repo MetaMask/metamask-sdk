@@ -24,6 +24,7 @@ export const getPostMessageStream = ({
   return new RemoteCommunicationPostMessageStream({
     name,
     remote: remoteConnection?.getConnector(),
+    deeplinkProtocol: remoteConnection?.state.deeplinkProtocol,
     platformManager: remoteConnection?.getPlatformManager(),
   });
 };

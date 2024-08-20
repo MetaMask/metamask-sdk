@@ -84,6 +84,7 @@ export interface RemoteConnectionState {
   analytics?: Analytics;
   authorized: boolean;
   reconnection: boolean;
+  deeplinkProtocol: boolean;
   preferDesktop?: boolean;
   communicationLayerPreference?: CommunicationLayerPreference;
   platformManager?: PlatformManager;
@@ -114,6 +115,7 @@ export class RemoteConnection implements ProviderService {
     authorized: false,
     reconnection: false,
     preferDesktop: false,
+    deeplinkProtocol: false,
     communicationLayerPreference: undefined,
     platformManager: undefined,
     pendingModal: undefined,
@@ -132,6 +134,8 @@ export class RemoteConnection implements ProviderService {
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;
+    this.state.deeplinkProtocol =
+      options.sdk.options._experimentalDeeplinkProtocol ?? false;
 
     // Set default modals implementation
     if (!options.modals.install) {
