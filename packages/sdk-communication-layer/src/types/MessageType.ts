@@ -6,6 +6,7 @@ export enum MessageType {
   CANDIDATE = 'candidate',
   JSONRPC = 'jsonrpc',
   WALLET_INFO = 'wallet_info',
+  WALLET_INIT = 'wallet_init',
   ORIGINATOR_INFO = 'originator_info',
   PAUSE = 'pause',
   OTP = 'otp',

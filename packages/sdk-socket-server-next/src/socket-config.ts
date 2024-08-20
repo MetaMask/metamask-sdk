@@ -8,6 +8,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from './api-config';
 import { logger } from './logger';
+import { ACKParams, handleAck } from './protocol/handleAck';
 import { handleCheckRoom } from './protocol/handleCheckRoom';
 import {
   handleJoinChannel,
@@ -15,7 +16,6 @@ import {
 } from './protocol/handleJoinChannel';
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
-import { ACKParams, handleAck } from './protocol/handleAck';
 
 export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
 
@@ -47,6 +47,7 @@ export const configureSocketServer = async (
   type SocketJoinChannelParams = {
     channelId: string;
     clientType?: ClientType;
+    publicKey?: string;
     context?: string;
   };
 
@@ -148,6 +149,7 @@ export const configureSocketServer = async (
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.publicKey = channelIdOrParams.publicKey;
           params.callback = callbackOrContext as (
             error: string | null,
             result?: unknown,
@@ -220,12 +222,10 @@ export const configureSocketServer = async (
       (
         {
           id,
-          message,
-          context,
+          clientType,
         }: {
           id: string;
-          message: string;
-          context: string;
+          clientType: ClientType;
         },
         callback: (error: string | null, result?: unknown) => void,
       ) => {
@@ -233,8 +233,7 @@ export const configureSocketServer = async (
           channelId: id,
           socket,
           io,
-          message,
-          context,
+          clientType,
           callback,
         }).catch((error) => {
           logger.error('Error handling ping:', error);
@@ -288,6 +287,7 @@ export const configureSocketServer = async (
           params.channelId = channelIdOrParams.channelId;
           params.clientType = channelIdOrParams.clientType;
           params.context = channelIdOrParams.context;
+          params.publicKey = channelIdOrParams.publicKey;
           params.callback = callbackOrContext as (
             error: string | null,
             result?: unknown,

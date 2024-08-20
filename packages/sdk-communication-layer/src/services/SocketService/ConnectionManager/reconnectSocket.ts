@@ -1,7 +1,10 @@
-import { logger } from '../../../utils/logger';
+// packages/sdk-communication-layer/src/services/SocketService/ConnectionManager/reconnectSocket.ts
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
+import { MessageType } from '../../../types/MessageType';
+import { logger } from '../../../utils/logger';
 import { wait } from '../../../utils/wait';
+import { handleJoinChannelResults } from './handleJoinChannelResult';
 
 /**
  * Attempts to reconnect the socket after a disconnection.
@@ -12,17 +15,34 @@ import { wait } from '../../../utils/wait';
  * @param instance The current instance of the SocketService.
  */
 export const reconnectSocket = async (instance: SocketService) => {
-  if (instance.remote.state.terminated) {
-    // Make sure the connection wasn't terminated, no need to reconnect automatically if it was.
+  const { remote, state } = instance;
+  const { terminated } = remote.state;
+  const { socket, channelId, context, isOriginator } = state;
+
+  if (!socket) {
     logger.SocketService(
-      `[SocketService: reconnectSocket()] instance.remote.state.terminated=${instance.remote.state.terminated} socket already terminated`,
+      `[SocketService: reconnectSocket()] socket is not defined`,
+      instance,
+    );
+    return false;
+  }
+
+  if (!channelId) {
+    // ignore reconnect if channelId is not defined
+    return false;
+  }
+
+  const { connected } = socket;
+  if (terminated) {
+    logger.SocketService(
+      `[SocketService: reconnectSocket()] terminated=${terminated} socket already terminated`,
       instance,
     );
     return false;
   }
 
   logger.SocketService(
-    `[SocketService: reconnectSocket()] instance.state.socket?.connected=${instance.state.socket?.connected} trying to reconnect after socketio disconnection`,
+    `[SocketService: reconnectSocket()] connected=${connected} trying to reconnect after socketio disconnection`,
     instance,
   );
 
@@ -30,19 +50,43 @@ export const reconnectSocket = async (instance: SocketService) => {
   // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
   await wait(200);
 
-  if (!instance.state.socket?.connected) {
-    instance.state.resumed = true;
-    instance.state.socket?.connect();
+  if (connected) {
+    logger.SocketService(
+      `Socket already connected --- ping to retrive messages`,
+    );
+
+    socket.emit(MessageType.PING, {
+      id: channelId,
+      clientType: isOriginator ? 'dapp' : 'wallet',
+      context: 'on_channel_config',
+      message: '',
+    });
+  } else {
+    // Use a temporary variable to avoid the race condition
+    state.resumed = true;
+    socket.connect();
 
     instance.emit(EventType.SOCKET_RECONNECT);
-    instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
-      channelId: instance.state.channelId,
-      context: `${instance.state.context}connect_again`,
-      clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
-    });
+    socket.emit(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId,
+        context: `${context}connect_again`,
+        clientType: isOriginator ? 'dapp' : 'wallet',
+      },
+      async (
+        error: string | null,
+        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+      ) => {
+        try {
+          await handleJoinChannelResults(instance, error, result);
+        } catch (runtimeError) {
+          console.warn(`Error reconnecting to channel`, runtimeError);
+        }
+      },
+    );
   }
 
-  // wait again to make sure socket status is updated.
   await wait(100);
-  return instance.state.socket?.connected;
+  return socket.connected;
 };

@@ -10,6 +10,7 @@ import { handlePauseMessage } from './handlePauseMessage';
 import { handleReadyMessage } from './handleReadyMessage';
 import { handleTerminateMessage } from './handleTerminateMessage';
 import { handleWalletInfoMessage } from './handleWalletInfoMessage';
+import { handleWalletInitMessage } from './handleWalletInitMessage';
 
 /**
  * Central dispatcher function to handle messages for a `RemoteCommunication` instance.
@@ -49,6 +50,9 @@ export function onCommunicationLayerMessage(
   } else if (state.isOriginator && message.type === MessageType.WALLET_INFO) {
     handleWalletInfoMessage(instance, message);
     return;
+  } else if (state.isOriginator && message.type === MessageType.WALLET_INIT) {
+    // receive initial account and chainId
+    handleWalletInitMessage(instance, message);
   } else if (message.type === MessageType.TERMINATE) {
     handleTerminateMessage(instance);
   } else if (message.type === MessageType.PAUSE) {

@@ -10,9 +10,18 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "incremental": true,
-    "lib": ["DOM", "ES2016"],
+    "lib": [
+      "DOM",
+      "ES2016"
+    ],
     "skipLibCheck": true,
-    "types": ["node", "jest"]
+    "types": [
+      "node",
+      "jest"
+    ]
   },
-  "include": ["./src/**/*.ts", "e2e/**/*.ts"],
+  "include": [
+    "./src/**/*.ts",
+    "e2e/**/*.ts"
+  ],
 }

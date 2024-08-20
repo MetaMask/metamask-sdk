@@ -21,6 +21,7 @@ describe('RemoteCommunicationPostMessageStream', () => {
     instance = new RemoteCommunicationPostMessageStream({
       name: ProviderConstants.PROVIDER,
       remote: mockRemoteCommunication,
+      deeplinkProtocol: false,
       platformManager: mockPlatformManager,
     });
   });

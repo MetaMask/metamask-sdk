@@ -21,18 +21,6 @@ export async function handleAuthorization(
       `[RemoteCommunication: handleAuthorization()] context=${state.context} ready=${state.ready} authorized=${state.authorized} method=${message.method}`,
     );
 
-    // TODO remove after wallet 7.3+ is deployed
-    // backward compatibility for wallet <7.3
-    if ('7.3'.localeCompare(state.walletInfo?.version || '') === 1) {
-      logger.RemoteCommunication(
-        `[RemoteCommunication: handleAuthorization()] compatibility hack wallet version > ${state.walletInfo?.version}`,
-      );
-
-      state.communicationLayer?.sendMessage(message);
-      resolve();
-      return;
-    }
-
     if (!state.isOriginator || state.authorized || state.relayPersistence) {
       state.communicationLayer?.sendMessage(message);
       resolve();

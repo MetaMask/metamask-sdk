@@ -40,6 +40,7 @@ export function handleFullPersistenceEvent(instance: RemoteCommunication) {
           state.channelConfig?.validUntil ?? DEFAULT_SESSION_TIMEOUT_MS,
         relayPersistence: true,
       };
+
       await state.storageManager?.persistChannelConfig(state.channelConfig);
     } catch (error) {
       console.error(`Error persisting channel config`, error);

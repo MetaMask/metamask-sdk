@@ -10,7 +10,9 @@ jest.mock('../ProviderManager');
 jest.mock('../../RemoteConnection', () => {
   return {
     RemoteConnection: jest.fn().mockImplementation(() => {
-      return {};
+      return {
+        initRemoteCommunication: jest.fn().mockResolvedValue(undefined),
+      };
     }),
   };
 });

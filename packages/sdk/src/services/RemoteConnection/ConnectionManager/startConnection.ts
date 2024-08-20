@@ -1,4 +1,9 @@
 import {
+  DEFAULT_SESSION_TIMEOUT_MS,
+  OriginatorInfo,
+} from '@metamask/sdk-communication-layer';
+import packageJson from '../../../../package.json';
+import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../../constants';
@@ -9,6 +14,7 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { base64Encode } from '../../../utils/base64';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
@@ -62,6 +68,14 @@ export async function startConnection(
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';
     pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
+
+    const now = Date.now();
+    // Save channelId to storage for re-use until it expires or is terminated
+    state.connector.state.storageManager?.persistChannelConfig({
+      channelId,
+      lastActive: now,
+      validUntil: now + DEFAULT_SESSION_TIMEOUT_MS,
+    });
   }
 
   if (initialCheck && channelConfig?.channelId) {
@@ -92,11 +106,31 @@ export async function startConnection(
 
   // if we are on desktop browser
   const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
+  const sdkVersion = packageJson.version;
+  const { iconUrl, name, url, scheme } = options.dappMetadata || {};
+  const platformType = state.platformManager?.getPlatformType();
+
+  let base64OriginatorInfo: string | undefined;
+
+  if (
+    !(typeof window === 'undefined' || typeof window.location === 'undefined')
+  ) {
+    const originatorInfo: OriginatorInfo = {
+      url: url ?? '',
+      title: name ?? '',
+      icon: iconUrl,
+      scheme: scheme ?? '',
+      dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
+      platform: platformType ?? '',
+      source: options._source ?? '',
+    };
+    base64OriginatorInfo = base64Encode(JSON.stringify(originatorInfo));
+  }
 
   const linkParams = encodeURI(
     `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}`,
+    }&pubkey=${pubKey}${qrCodeOrigin}&sdkVersion=${sdkVersion}&originatorInfo=${base64OriginatorInfo}`,
   );
 
   const qrcodeLink = `${

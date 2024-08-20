@@ -2,6 +2,7 @@ export interface DappMetadata {
   url?: string;
   name?: string;
   iconUrl?: string;
+  scheme?: string;
   base64Icon?: string;
   connector?: string;
 }

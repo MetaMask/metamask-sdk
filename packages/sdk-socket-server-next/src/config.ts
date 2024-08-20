@@ -1,6 +1,10 @@
 import { logger } from './logger';
 
 export const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+export const REDIS_DEBUG_LOGS: boolean =
+  process.env.REDIS_DEBUG_LOGS === 'true';
+export const EVENTS_DEBUG_LOGS: boolean =
+  process.env.EVENTS_DEBUG_LOGS === 'true';
 export const isDevelopmentServer: boolean =
   process.env.ENVIRONMENT === 'development';
 export const withAdminUI: boolean = process.env.ADMIN_UI === 'true';
