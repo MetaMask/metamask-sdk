@@ -27,6 +27,11 @@ export const reconnectSocket = async (instance: SocketService) => {
     return false;
   }
 
+  if (!channelId) {
+    // ignore reconnect if channelId is not defined
+    return false;
+  }
+
   const { connected } = socket;
   if (terminated) {
     logger.SocketService(
