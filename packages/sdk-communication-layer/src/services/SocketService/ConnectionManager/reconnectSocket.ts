@@ -1,13 +1,10 @@
 // packages/sdk-communication-layer/src/services/SocketService/ConnectionManager/reconnectSocket.ts
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import { wait } from '../../../utils/wait';
-import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
-import { ChannelConfig } from '../../../types/ChannelConfig';
-import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
-import { ConnectionStatus } from '../../../types/ConnectionStatus';
+import { logger } from '../../../utils/logger';
+import { wait } from '../../../utils/wait';
+import { handleJoinChannelResults } from './handleJoinChannelResult';
 
 /**
  * Attempts to reconnect the socket after a disconnection.
@@ -49,8 +46,11 @@ export const reconnectSocket = async (instance: SocketService) => {
   await wait(200);
 
   if (connected) {
-    console.log(`Socket already connected --- ping to retrive messages`);
-    instance.state.socket?.emit(MessageType.PING, {
+    logger.SocketService(
+      `Socket already connected --- ping to retrive messages`,
+    );
+
+    socket.emit(MessageType.PING, {
       id: channelId,
       clientType: isOriginator ? 'dapp' : 'wallet',
       context: 'on_channel_config',
@@ -58,8 +58,7 @@ export const reconnectSocket = async (instance: SocketService) => {
     });
   } else {
     // Use a temporary variable to avoid the race condition
-    const newResumedState = true;
-    state.resumed = newResumedState;
+    state.resumed = true;
     socket.connect();
 
     instance.emit(EventType.SOCKET_RECONNECT);
@@ -75,52 +74,7 @@ export const reconnectSocket = async (instance: SocketService) => {
         result?: { ready: boolean; persistence?: boolean; walletKey?: string },
       ) => {
         try {
-          if (error === 'error_terminated') {
-            instance.emit(EventType.TERMINATE);
-          } else if (result) {
-            const { persistence, walletKey } = result;
-
-            if (persistence) {
-              instance.emit(EventType.CHANNEL_PERSISTENCE);
-              instance.state.keyExchange?.setKeysExchanged(true);
-              remote.state.ready = true;
-              remote.state.authorized = true;
-            }
-
-            if (walletKey && !remote.state.channelConfig?.otherKey) {
-              const keyExchange = instance.getKeyExchange();
-              keyExchange.setOtherPublicKey(walletKey);
-              instance.state.keyExchange?.setKeysExchanged(true);
-              remote.state.ready = true;
-              remote.state.authorized = true;
-
-              const { state: remoteState } = remote;
-              const { communicationLayer, storageManager } = remoteState;
-
-              const channelConfig: ChannelConfig = {
-                ...remoteState.channelConfig,
-                channelId: remoteState.channelId ?? '',
-                validUntil: Date.now() + DEFAULT_SESSION_TIMEOUT_MS,
-                localKey: communicationLayer?.getKeyInfo().ecies.private,
-                otherKey: walletKey,
-              };
-
-              instance.sendMessage({
-                type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
-              });
-
-              socket.emit(MessageType.PING, {
-                id: channelId,
-                clientType: isOriginator ? 'dapp' : 'wallet',
-                context: 'on_channel_reconnect',
-                message: '',
-              });
-
-              await storageManager?.persistChannelConfig(channelConfig);
-              remote.emitServiceStatusEvent();
-              remote.setConnectionStatus(ConnectionStatus.LINKED);
-            }
-          }
+          await handleJoinChannelResults(instance, error, result);
         } catch (runtimeError) {
           console.warn(`Error reconnecting to channel`, runtimeError);
         }
