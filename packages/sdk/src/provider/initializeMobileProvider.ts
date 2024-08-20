@@ -116,7 +116,7 @@ const initializeMobileProvider = async ({
   const sendRequest = async (
     method: string,
     args: any,
-    f: any,
+    executeRequest: any,
     debugRequest: boolean,
   ) => {
     if (initializationOngoing) {
@@ -125,7 +125,7 @@ const initializeMobileProvider = async ({
 
       let loop = getInitializing();
       while (loop) {
-        console.log(
+        logger(
           `[initializeMobileProvider: sendRequest()] waiting for initialization to complete`,
         );
         // Wait for already ongoing method that triggered installation to complete
@@ -137,7 +137,7 @@ const initializeMobileProvider = async ({
         `[initializeMobileProvider: sendRequest()] initial method completed -- prevent installation and call provider`,
       );
       // Previous init has completed, meaning we can safely interrup and call the provider.
-      return f(...args);
+      return executeRequest(...args);
     }
 
     const isInstalled = platformManager.isMetaMaskInstalled();
@@ -322,7 +322,7 @@ const initializeMobileProvider = async ({
         }
 
         // Initialize the request (otherwise the rpc call is not sent)
-        const response = f(...args);
+        const response = executeRequest(...args);
 
         // Wait for the provider to be initialized so we can process requests
         try {
@@ -364,7 +364,7 @@ const initializeMobileProvider = async ({
         return response;
       } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
         // Should be connected to call f ==> redirect to RPCMS
-        return f(...args);
+        return executeRequest(...args);
       }
 
       if (sdk.isExtensionActive()) {
@@ -390,7 +390,7 @@ const initializeMobileProvider = async ({
       );
     }
 
-    const rpcResponse = await f(...args);
+    const rpcResponse = await executeRequest(...args);
     logger(
       `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
     );
