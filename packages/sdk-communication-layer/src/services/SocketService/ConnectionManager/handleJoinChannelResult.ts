@@ -15,15 +15,21 @@ export const handleJoinChannelResults = async (
   const { channelId, isOriginator } = state;
 
   if (error === 'error_terminated') {
+    console.log(`handleJoinChannelResults: Channel ${channelId} terminated`);
     instance.emit(EventType.TERMINATE);
     return;
   }
 
   if (!result) {
+    console.log(`handleJoinChannelResults: No result for channel ${channelId}`);
     return;
   }
 
   const { persistence, walletKey } = result;
+
+  console.log(
+    `handleJoinChannelResults: Channel ${channelId} persistence=${persistence} walletKey=${walletKey}`,
+  );
 
   if (persistence) {
     instance.emit(EventType.CHANNEL_PERSISTENCE);

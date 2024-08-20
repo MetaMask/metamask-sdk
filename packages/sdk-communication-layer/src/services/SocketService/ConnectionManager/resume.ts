@@ -2,6 +2,7 @@ import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
+import { handleJoinChannelResults } from './handleJoinChannelResult';
 
 /**
  * Resumes the connection of a SocketService instance.
@@ -14,45 +15,64 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  */
 export function resume(instance: SocketService) {
+  const { state, remote } = instance;
+  const { socket, channelId, context, keyExchange, isOriginator } = state;
+  const { isOriginator: remoteIsOriginator } = remote.state;
+
   logger.SocketService(
-    `[SocketService: resume()] context=${instance.state.context} connected=${
-      instance.state.socket?.connected
-    } manualDisconnect=${instance.state.manualDisconnect} resumed=${
-      instance.state.resumed
-    } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
+    `[SocketService: resume()] context=${context} connected=${
+      socket?.connected
+    } manualDisconnect=${state.manualDisconnect} resumed=${
+      state.resumed
+    } keysExchanged=${keyExchange?.areKeysExchanged()}`,
   );
 
-  if (instance.state.socket?.connected) {
+  if (socket?.connected) {
     logger.SocketService(`[SocketService: resume()] already connected.`);
+    socket.emit(MessageType.PING, {
+      id: channelId,
+      clientType: remoteIsOriginator ? 'dapp' : 'wallet',
+      context: 'on_channel_config',
+      message: '',
+    });
   } else {
-    instance.state.socket?.connect();
+    socket?.connect();
 
     logger.SocketService(
-      `[SocketService: resume()] after connecting socket --> connected=${instance.state.socket?.connected}`,
+      `[SocketService: resume()] after connecting socket --> connected=${socket?.connected}`,
     );
 
-    // Useful to re-emmit otherwise dapp might sometime loose track of the connection event.
-    instance.state.socket?.emit(EventType.JOIN_CHANNEL, {
-      channelId: instance.state.channelId,
-      context: `${instance.state.context}_resume`,
-      clientType: instance.remote.state.isOriginator ? 'dapp' : 'wallet',
-    });
+    socket?.emit(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId,
+        context: `${context}_resume`,
+        clientType: remoteIsOriginator ? 'dapp' : 'wallet',
+      },
+      async (
+        error: string | null,
+        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+      ) => {
+        try {
+          await handleJoinChannelResults(instance, error, result);
+        } catch (runtimeError) {
+          console.warn(`Error reconnecting to channel`, runtimeError);
+        }
+      },
+    );
   }
 
   // Always try to recover key exchange from both side (wallet / dapp)
-  if (instance.state.keyExchange?.areKeysExchanged()) {
-    if (!instance.state.isOriginator) {
-      // this message will be ignored by the dapp if it has restarted and updated keys.
-      // Dapp will then init another key exchange.
+  if (keyExchange?.areKeysExchanged()) {
+    if (!isOriginator) {
       instance.sendMessage({ type: MessageType.READY });
     }
-  } else if (!instance.state.isOriginator) {
-    // Ask to start key exchange
-    instance.state.keyExchange?.start({
-      isOriginator: instance.state.isOriginator ?? false,
+  } else if (!isOriginator) {
+    keyExchange?.start({
+      isOriginator: isOriginator ?? false,
     });
   }
 
-  instance.state.manualDisconnect = false;
-  instance.state.resumed = true;
+  state.manualDisconnect = false;
+  state.resumed = true;
 }

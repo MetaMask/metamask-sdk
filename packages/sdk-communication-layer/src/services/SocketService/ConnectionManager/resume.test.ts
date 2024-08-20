@@ -1,9 +1,12 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
 import { logger } from '../../../utils/logger';
 import { resume } from './resume';
+
+jest.mock('./handleJoinChannelResult', () => ({
+  handleJoinChannelResults: jest.fn(),
+}));
 
 describe('resume', () => {
   let instance: SocketService;
@@ -45,6 +48,7 @@ describe('resume', () => {
   });
 
   it('should not connect socket if already connected', () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     instance.state.socket!.connected = true;
 
     resume(instance);
@@ -56,11 +60,15 @@ describe('resume', () => {
     resume(instance);
 
     expect(mockConnect).toHaveBeenCalled();
-    expect(mockEmit).toHaveBeenCalledWith(EventType.JOIN_CHANNEL, {
-      channelId: 'sampleChannelId',
-      clientType: 'wallet',
-      context: 'someContext_resume',
-    });
+    expect(mockEmit).toHaveBeenCalledWith(
+      EventType.JOIN_CHANNEL,
+      {
+        channelId: 'sampleChannelId',
+        clientType: 'wallet',
+        context: 'someContext_resume',
+      },
+      expect.any(Function),
+    );
   });
 
   it('should send READY message if keys have been exchanged and not an originator', () => {
