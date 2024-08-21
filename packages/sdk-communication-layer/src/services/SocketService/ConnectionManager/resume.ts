@@ -14,18 +14,23 @@ import { handleJoinChannelResults } from './handleJoinChannelResult';
  *
  * @param instance The current instance of the SocketService.
  */
-export function resume(instance: SocketService) {
+export function resume(instance: SocketService): void {
   const { state, remote } = instance;
   const { socket, channelId, context, keyExchange, isOriginator } = state;
   const { isOriginator: remoteIsOriginator } = remote.state;
 
   logger.SocketService(
-    `[SocketService: resume()] context=${context} connected=${
+    `[SocketService: resume()] channelId=${channelId} context=${context} connected=${
       socket?.connected
     } manualDisconnect=${state.manualDisconnect} resumed=${
       state.resumed
     } keysExchanged=${keyExchange?.areKeysExchanged()}`,
   );
+
+  if (!channelId) {
+    logger.SocketService(`[SocketService: resume()] channelId is not defined`);
+    throw new Error('ChannelId is not defined');
+  }
 
   if (socket?.connected) {
     logger.SocketService(`[SocketService: resume()] already connected.`);
@@ -35,6 +40,15 @@ export function resume(instance: SocketService) {
       context: 'on_channel_config',
       message: '',
     });
+
+    if (!remote.hasRelayPersistence() && !keyExchange?.areKeysExchanged()) {
+      // Always try to recover key exchange from both side (wallet / dapp)
+      if (isOriginator) {
+        instance.sendMessage({ type: MessageType.READY });
+      } else {
+        keyExchange?.start({ isOriginator: false });
+      }
+    }
   } else {
     socket?.connect();
 
@@ -51,7 +65,11 @@ export function resume(instance: SocketService) {
       },
       async (
         error: string | null,
-        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+        result?: {
+          ready: boolean;
+          persistence?: boolean;
+          walletKey?: string;
+        },
       ) => {
         try {
           await handleJoinChannelResults(instance, error, result);
@@ -60,17 +78,6 @@ export function resume(instance: SocketService) {
         }
       },
     );
-  }
-
-  // Always try to recover key exchange from both side (wallet / dapp)
-  if (keyExchange?.areKeysExchanged()) {
-    if (!isOriginator) {
-      instance.sendMessage({ type: MessageType.READY });
-    }
-  } else if (!isOriginator) {
-    keyExchange?.start({
-      isOriginator: isOriginator ?? false,
-    });
   }
 
   state.manualDisconnect = false;
