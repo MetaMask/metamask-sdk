@@ -29,9 +29,7 @@ export function onMessage(
     }
 
     if (!message?.name) {
-      logger(
-        `[RCPMS: onMessage()] ignore message without name message=${message}`,
-      );
+      logger(`[RCPMS: onMessage()] ignore message without name`, message);
       return;
     }
 

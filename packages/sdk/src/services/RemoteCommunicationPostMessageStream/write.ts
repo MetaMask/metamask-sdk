@@ -48,7 +48,7 @@ export async function write(
   const isSecure = instance.state.platformManager?.isSecure();
   const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
 
-  const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb;
+  const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb && authorized;
   console.warn(
     `[RCPMS: write()] activeDeeplinkProtocol=${activeDeeplinkProtocol}`,
   );
@@ -65,22 +65,6 @@ export async function write(
           logger(`[RCPMS: _write()] error sending message`, err);
         });
 
-      // Keep this for now as  reference -- it should become unnecessary if we send via deeplink
-      // if (!socketConnected && !isRemoteReady) {
-      //   // Invalid connection status
-      //   logger(
-      //     `[RCPMS: _write()] invalid connection status targetMethod=${targetMethod} socketConnected=${socketConnected} ready=${isRemoteReady} providerConnected=${provider.isConnected()}`,
-      //   );
-      //   return callback();
-      // }
-      if (!socketConnected && isRemoteReady) {
-        // Shouldn't happen -- needs to refresh
-        console.warn(
-          `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
-        );
-        return callback();
-      }
-
       if (!isSecure) {
         // Redirect early if nodejs or browser...
         logger(
@@ -90,7 +74,6 @@ export async function write(
       }
     }
 
-    // Check if should open app
     const pubKey = instance.state.remote?.getKeyInfo()?.ecies.public ?? '';
     let urlParams = encodeURI(
       `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2`,
@@ -106,18 +89,21 @@ export async function write(
         );
       }
       const encoded = base64Encode(encrypted);
-      console.warn(`[RCPMS: _write()] rpc`, data?.data, jsonrpc);
       urlParams += `&scheme=${deeplinkProtocol}&rpc=${encoded}`;
     }
 
-    console.log(`[RCPMS: _write()] urlParams=${urlParams}`);
+    if (!instance.state.platformManager?.isMetaMaskInstalled()) {
+      logger(
+        `[RCPMS: _write()] prevent deeplink until installation is completed.`,
+      );
+      return callback();
+    }
 
     if (METHODS_TO_REDIRECT[targetMethod]) {
       logger(
         `[RCPMS: _write()] redirect link for '${targetMethod}' socketConnected=${socketConnected} connect?${urlParams}`,
       );
 
-      // Use otp to re-enable host approval
       instance.state.platformManager?.openDeeplink(
         `${METAMASK_CONNECT_BASE_URL}?${urlParams}`,
         `${METAMASK_DEEPLINK_BASE}?${urlParams}`,

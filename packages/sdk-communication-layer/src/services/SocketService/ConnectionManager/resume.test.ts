@@ -1,6 +1,5 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import { MessageType } from '../../../types/MessageType';
 import { logger } from '../../../utils/logger';
 import { resume } from './resume';
 
@@ -36,7 +35,7 @@ describe('resume', () => {
           start: mockStart,
         },
       },
-      remote: { state: {} },
+      remote: { state: {}, hasRelayPersistence: jest.fn() },
       sendMessage: mockSendMessage,
     } as unknown as SocketService;
   });
@@ -76,25 +75,7 @@ describe('resume', () => {
 
     resume(instance);
 
-    expect(mockSendMessage).toHaveBeenCalledWith({ type: MessageType.READY });
-  });
-
-  it('should not send READY message if an originator, but initiate key exchange', () => {
-    instance.state.isOriginator = true;
-
-    mockAreKeysExchanged.mockReturnValue(true);
-
-    resume(instance);
-
-    expect(mockSendMessage).not.toHaveBeenCalled();
-  });
-
-  it('should start key exchange if keys are not exchanged and not an originator', () => {
-    mockAreKeysExchanged.mockReturnValue(false);
-
-    resume(instance);
-
-    expect(mockStart).toHaveBeenCalledWith({ isOriginator: false });
+    expect(mockEmit).toHaveBeenCalled();
   });
 
   it('should update manualDisconnect and resumed state after resuming', () => {

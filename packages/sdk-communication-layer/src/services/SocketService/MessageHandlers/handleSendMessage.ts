@@ -41,6 +41,9 @@ export function handleSendMessage(
   message: CommunicationLayerMessage,
 ) {
   if (!instance.state.channelId) {
+    logger.SocketService(
+      `handleSendMessage: no channelId - Create a channel first`,
+    );
     throw new Error('Create a channel first');
   }
 
