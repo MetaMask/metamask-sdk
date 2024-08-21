@@ -52,7 +52,11 @@ export function onCommunicationLayerMessage(
     return;
   } else if (state.isOriginator && message.type === MessageType.WALLET_INIT) {
     // receive initial account and chainId
-    handleWalletInitMessage(instance, message);
+    handleWalletInitMessage(instance, message).catch((error) => {
+      logger.RemoteCommunication(
+        `[RemoteCommunication: onCommunicationLayerMessage()] error=${error}`,
+      );
+    });
   } else if (message.type === MessageType.TERMINATE) {
     handleTerminateMessage(instance);
   } else if (message.type === MessageType.PAUSE) {
