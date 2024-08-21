@@ -94,7 +94,7 @@ export async function write(
 
     if (!instance.state.platformManager?.isMetaMaskInstalled()) {
       logger(
-        `[RCPMS: _write()] prevent deeplink until istallation is completed.`,
+        `[RCPMS: _write()] prevent deeplink until installation is completed.`,
       );
       return callback();
     }
