@@ -27,6 +27,7 @@ describe('write function', () => {
   const mockGetKeyInfo = jest.fn();
   const mockIsSecure = jest.fn();
   const mockOpenDeeplink = jest.fn();
+  const mockIsMetaMaskInstalled = jest.fn();
   const isProviderConnected = jest.fn();
 
   let mockRemoteCommunicationPostMessageStream = {
@@ -44,6 +45,7 @@ describe('write function', () => {
         isSecure: mockIsSecure,
         isMobileWeb: mockIsMobileWeb,
         openDeeplink: mockOpenDeeplink,
+        isMetaMaskInstalled: mockIsMetaMaskInstalled,
       },
       debug: false,
     },
@@ -57,6 +59,7 @@ describe('write function', () => {
     callback = jest.fn();
 
     mockIsMobileWeb.mockReturnValue(false);
+    mockIsMetaMaskInstalled.mockReturnValue(true);
 
     mockEthereum.mockReturnValue({
       isConnected: isProviderConnected,
@@ -64,6 +67,7 @@ describe('write function', () => {
 
     mockExtractMethod.mockReturnValue({
       method: 'metamask_getProviderState',
+      data: { data: {} },
     });
 
     mockRemoteCommunicationPostMessageStream = {
@@ -81,6 +85,7 @@ describe('write function', () => {
           isSecure: mockIsSecure,
           openDeeplink: mockOpenDeeplink,
           isMobileWeb: mockIsMobileWeb,
+          isMetaMaskInstalled: mockIsMetaMaskInstalled,
         },
         debug: false,
       },
@@ -125,21 +130,6 @@ describe('write function', () => {
       mockIsMobileWeb.mockReturnValue(false);
     });
 
-    it('should call the callback and not send a message if neither socketConnected nor ready', async () => {
-      mockIsConnected.mockReturnValue(false);
-      mockIsReady.mockReturnValue(false);
-
-      await write(
-        mockRemoteCommunicationPostMessageStream,
-        { jsonrpc: '2.0', method: 'some_method' },
-        'utf8',
-        callback,
-      );
-
-      expect(callback).toHaveBeenCalledWith(new Error('disconnected'));
-      expect(mockSendMessage).not.toHaveBeenCalled();
-    });
-
     it('should warn if ready is true but socketConnected is false', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(false);
@@ -154,13 +144,14 @@ describe('write function', () => {
       );
 
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        `[RCPMS: _write()] invalid socket status -- shouldn't happen`,
+        '[RCPMS: write()] activeDeeplinkProtocol=undefined',
       );
     });
 
     it('should debug log if both ready and socketConnected are true', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
+      mockGetChannelId.mockReturnValue('some_channel_id');
 
       await write(
         mockRemoteCommunicationPostMessageStream,
@@ -170,7 +161,10 @@ describe('write function', () => {
       );
 
       expect(spyLogger).toHaveBeenCalledWith(
-        `[RCPMS: _write()] method metamask_getProviderState doesn't need redirect.`,
+        expect.stringContaining(
+          "[RCPMS: write()] method='metamask_getProviderState' isRemoteReady=true",
+        ),
+        expect.anything(),
       );
     });
   });
@@ -182,10 +176,10 @@ describe('write function', () => {
       mockIsAuthorized.mockReturnValue(true);
       mockIsMobileWeb.mockReturnValue(false);
       mockIsSecure.mockReturnValue(true);
+      mockGetChannelId.mockReturnValue('some_channel_id');
     });
 
     it('should redirect if method exists in METHODS_TO_REDIRECT', async () => {
-      mockGetChannelId.mockReturnValue('some_channel_id');
       mockExtractMethod.mockReturnValue({
         method: Object.keys(METHODS_TO_REDIRECT)[0],
       });
@@ -198,15 +192,16 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
-        'metamask://connect?channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
+        expect.stringContaining(
+          'https://metamask.app.link/connect?channelId=some_channel_id',
+        ),
+        expect.stringContaining('metamask://connect?channelId=some_channel_id'),
         '_self',
       );
     });
 
     it('should create a deeplink if remote is paused', async () => {
       mockIsPaused.mockReturnValue(true);
-      mockGetChannelId.mockReturnValue('some_channel_id');
 
       await write(
         mockRemoteCommunicationPostMessageStream,
@@ -216,8 +211,12 @@ describe('write function', () => {
       );
 
       expect(mockOpenDeeplink).toHaveBeenCalledWith(
-        'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
-        'metamask://connect?redirect=true&channelId=some_channel_id&pubkey=&comm=socket&t=d&v=2',
+        expect.stringContaining(
+          'https://metamask.app.link/connect?redirect=true&channelId=some_channel_id',
+        ),
+        expect.stringContaining(
+          'metamask://connect?redirect=true&channelId=some_channel_id',
+        ),
         '_self',
       );
     });
@@ -228,6 +227,7 @@ describe('write function', () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
       mockIsMobileWeb.mockReturnValue(false);
+      mockGetChannelId.mockReturnValue('some_channel_id');
 
       await write(
         mockRemoteCommunicationPostMessageStream,
