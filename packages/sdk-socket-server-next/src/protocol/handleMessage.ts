@@ -134,11 +134,16 @@ export const handleMessage = async ({
       );
 
       // broadcast that the channel supports relayPersistence
-      socket.broadcast
-        .to(channelId)
-        .emit(`config-${channelId}`, { persistence: true });
+      socket.broadcast.to(channelId).emit(`config-${channelId}`, {
+        persistence: true,
+        walletKey: channelConfig.walletKey,
+      });
+
       // also inform current client
-      socket.emit(`config-${channelId}`, { persistence: true });
+      socket.emit(`config-${channelId}`, {
+        persistence: true,
+        walletKey: channelConfig.walletKey,
+      });
     }
     return;
   } catch (error) {
