@@ -58,6 +58,8 @@ export interface SocketServiceState {
   setupChannelListeners?: boolean;
   analytics?: boolean;
   keyExchange?: KeyExchange;
+  focusListenerAdded: boolean;
+  removeFocusListener?: () => void;
 }
 
 export interface RPCMethodResult {
@@ -89,6 +91,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     rpcMethodTracker: {},
     hasPlaintext: false,
     communicationServerUrl: '',
+    focusListenerAdded: false,
+    removeFocusListener: undefined,
   };
 
   remote: RemoteCommunication;
