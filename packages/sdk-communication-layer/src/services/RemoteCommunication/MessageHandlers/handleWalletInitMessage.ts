@@ -3,7 +3,7 @@ import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMess
 import { EventType } from '../../../types/EventType';
 import { logger } from '../../../utils/logger';
 
-export function handleWalletInitMessage(
+export async function handleWalletInitMessage(
   instance: RemoteCommunication,
   message: CommunicationLayerMessage,
 ) {
@@ -19,32 +19,36 @@ export function handleWalletInitMessage(
       'chainId' in data &&
       'walletKey' in data
     ) {
-      // Persist channel config
-      const { channelConfig } = instance.state;
-      logger.RemoteCommunication(
-        `WALLET_INIT: channelConfig`,
-        JSON.stringify(channelConfig, null, 2),
-      );
+      try {
+        // Persist channel config
+        const { channelConfig } = instance.state;
+        logger.RemoteCommunication(
+          `WALLET_INIT: channelConfig`,
+          JSON.stringify(channelConfig, null, 2),
+        );
 
-      if (channelConfig) {
-        const accounts = data.accounts as string[];
-        const chainId = data.chainId as string;
-        const walletKey = data.walletKey as string;
+        if (channelConfig) {
+          const accounts = data.accounts as string[];
+          const chainId = data.chainId as string;
+          const walletKey = data.walletKey as string;
 
-        instance.state.storageManager?.persistChannelConfig({
-          ...channelConfig,
-          otherKey: walletKey,
-          relayPersistence: true,
+          await instance.state.storageManager?.persistChannelConfig({
+            ...channelConfig,
+            otherKey: walletKey,
+            relayPersistence: true,
+          });
+
+          await instance.state.storageManager?.persistAccounts(accounts);
+          await instance.state.storageManager?.persistChainId(chainId);
+        }
+
+        instance.emit(EventType.WALLET_INIT, {
+          accounts: data.accounts,
+          chainId: data.chainId,
         });
-
-        instance.state.storageManager?.persistAccounts(accounts);
-        instance.state.storageManager?.persistChainId(chainId);
+      } catch (error) {
+        console.error('RemoteCommunication::on "wallet_init" -- error', error);
       }
-
-      instance.emit(EventType.WALLET_INIT, {
-        accounts: data.accounts,
-        chainId: data.chainId,
-      });
     } else {
       console.error(
         'RemoteCommunication::on "wallet_init" -- invalid data format',
