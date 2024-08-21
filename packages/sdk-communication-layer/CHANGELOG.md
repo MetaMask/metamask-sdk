@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.1]
+### Uncategorized
+- feat: full deeplink protocol ([#992](https://github.com/MetaMask/metamask-sdk.git/pull/992))
+
 ## [0.28.0]
 ### Added
 - feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk.git/pull/990))
@@ -241,7 +245,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.1...HEAD
+[0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...@metamask/sdk-communication-layer@0.28.1
 [0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...@metamask/sdk-communication-layer@0.28.0
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...@metamask/sdk-communication-layer@0.27.0
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.2...@metamask/sdk-communication-layer@0.26.4
