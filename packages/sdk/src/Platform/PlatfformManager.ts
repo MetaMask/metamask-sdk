@@ -14,8 +14,6 @@ interface PlatformProps {
 }
 
 interface PlatformManagerState {
-  wakeLockTimer?: NodeJS.Timeout;
-  wakeLockFeatureActive: boolean;
   platformType?: PlatformType;
   useDeeplink: boolean;
   preferredOpenLink?: (link: string, target?: string) => void;
@@ -24,8 +22,6 @@ interface PlatformManagerState {
 
 export class PlatformManager {
   public state: PlatformManagerState = {
-    wakeLockTimer: undefined,
-    wakeLockFeatureActive: false,
     platformType: undefined,
     useDeeplink: false,
     preferredOpenLink: undefined,

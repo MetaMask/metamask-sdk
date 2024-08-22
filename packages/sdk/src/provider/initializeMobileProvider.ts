@@ -119,6 +119,7 @@ const initializeMobileProvider = async ({
     executeRequest: any,
     debugRequest: boolean,
   ) => {
+    console.warn(`OOOOOOOO method=${method} `);
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
