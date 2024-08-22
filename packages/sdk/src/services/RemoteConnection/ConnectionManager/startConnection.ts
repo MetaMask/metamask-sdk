@@ -88,7 +88,7 @@ export async function startConnection(
         channelConfig,
       );
 
-      state.connector?.connectToChannel({
+      await state.connector?.connectToChannel({
         channelId,
       });
     }
@@ -102,7 +102,7 @@ export async function startConnection(
       channelConfig,
     );
 
-    state.connector?.connectToChannel({
+    await state.connector?.connectToChannel({
       channelId,
     });
   }

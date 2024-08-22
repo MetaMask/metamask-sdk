@@ -119,7 +119,10 @@ const initializeMobileProvider = async ({
     executeRequest: any,
     debugRequest: boolean,
   ) => {
-    console.warn(`OOOOOOOO method=${method} `);
+    console.warn(
+      `OOOOOOOO method=${method} initializationOngoing=${initializationOngoing}`,
+    );
+
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
@@ -152,6 +155,10 @@ const initializeMobileProvider = async ({
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
     chainId = provider.getChainId() || cachedChainId;
+
+    console.log(
+      `[BOOOOM] selectedAddress=${selectedAddress} chainId=${chainId}`,
+    );
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
@@ -254,19 +261,20 @@ const initializeMobileProvider = async ({
         setInitializing(true);
 
         try {
-          const installerPromise = installer.start({
+          await installer.start({
             wait: false,
           });
+
           const receiveAuthorizedPromise = new Promise((resolve) => {
             remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
               resolve(true);
             });
           });
+          await receiveAuthorizedPromise;
 
-          // Installer can be started in parallel with the request
-          await Promise.race([installerPromise, receiveAuthorizedPromise]);
           setInitializing(false);
         } catch (installError) {
+          console.warn(`ERROR INSTALLER`, installError);
           setInitializing(false);
 
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
@@ -320,7 +328,18 @@ const initializeMobileProvider = async ({
           );
 
           throw installError;
+        } finally {
+          console.warn(`FINALLY INSTALLER`);
         }
+
+        // Inform next step that this method triggered installer
+        if (args[0] && typeof args[0] === 'object') {
+          args[0].params = {
+            __triggeredInstaller: true,
+            wrappedParams: args[0].params,
+          };
+        }
+        console.warn(`add connectCall param`, args);
 
         // Initialize the request (otherwise the rpc call is not sent)
         const response = executeRequest(...args);

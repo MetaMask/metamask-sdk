@@ -41,14 +41,6 @@ export const reconnectSocket = async (instance: SocketService) => {
   }
 
   const { connected } = socket;
-  // if (terminated) {
-  //   logger.SocketService(
-  //     `[SocketService: reconnectSocket()] terminated=${terminated} socket already terminated`,
-  //     instance,
-  //   );
-  //   return false;
-  // }
-
   state.isReconnecting = true;
   state.reconnectionAttempts = 0;
 

@@ -23,8 +23,14 @@ export async function write(
   const channelId = instance.state.remote?.getChannelId();
   const authorized = instance.state.remote?.isAuthorized();
   const { deeplinkProtocol } = instance.state;
-  const { method: targetMethod, data } = extractMethod(chunk);
+  const {
+    method: targetMethod,
+    data,
+    triggeredInstaller,
+  } = extractMethod(chunk);
   const installed = instance.state.platformManager?.isMetaMaskInstalled();
+
+  // TODO detect if it was the first call that created connection and installer.
 
   logger(
     `[RCPMS: write()] method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
@@ -48,25 +54,10 @@ export async function write(
   // isSecure is only available in RN and mobile web
   const isSecure = instance.state.platformManager?.isSecure();
   const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
-  let preventDeeplink = false;
 
   console.warn(
-    `BOOOM! method=${targetMethod} mobileWeb=${mobileWeb} installed=${installed}`,
+    `BOOOM! method=${targetMethod} triggeredInstaller=${triggeredInstaller} mobileWeb=${mobileWeb} installed=${installed}`,
   );
-
-  if (mobileWeb && !installed) {
-    logger(`[RCPMS: write()] MetaMask not installed, waiting for installer`);
-
-    // wait for installer to complete
-    await new Promise((resolve) => {
-      logger(`[RCPMS: write()] waiting for installer to complete`);
-      instance.state.remote?.once('wallet_init', (walletInitResult) => {
-        logger(`[RCPMS: write()] wallet_init`, walletInitResult);
-        resolve(walletInitResult);
-      });
-    });
-    preventDeeplink = true;
-  }
 
   const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb && authorized;
   console.warn(
@@ -94,7 +85,7 @@ export async function write(
       }
     }
 
-    if (preventDeeplink) {
+    if (triggeredInstaller) {
       logger(
         `[RCPMS: _write()] prevent deeplink -- installation completed separately.`,
       );
