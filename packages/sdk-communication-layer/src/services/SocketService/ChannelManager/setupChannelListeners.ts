@@ -12,6 +12,7 @@ import {
   handlesClientsDisconnected,
 } from '../EventListeners';
 import { handleChannelConfig } from '../EventListeners/handleChannelConfig';
+import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
 
 const channelEventListenerMap = [
   {
@@ -89,6 +90,10 @@ export function setupChannelListeners(
           `[SocketService: setupChannelListener()] context=${instance.state.context} socket event=reconnect`,
           attempt,
         );
+
+        reconnectSocket(instance).catch((_e) => {
+          // error handled in reconnectSocket
+        });
       });
 
       socket?.io.on('reconnect_error', (error) => {

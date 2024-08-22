@@ -10,13 +10,15 @@ import { reconnectSocket } from './reconnectSocket';
  *
  * @param instance The current instance of the SocketService.
  */
-export function checkFocusAndReconnect(instance: SocketService) {
+export function setupSocketFocusListener(instance: SocketService) {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return;
   }
 
+  console.warn(`AAAAAAAAAABBBB setupSocketFocusListener`);
+
   logger.SocketService(
-    `[SocketService: checkFocusAndReconnect()] hasFocus=${document.hasFocus()}`,
+    `[SocketService: setupSocketFocusListener()] hasFocus=${document.hasFocus()}`,
     instance,
   );
 
@@ -26,7 +28,7 @@ export function checkFocusAndReconnect(instance: SocketService) {
       logger.SocketService(`Document has focus --- reconnecting socket`);
       reconnectSocket(instance).catch((err) => {
         console.error(
-          `SocketService::checkFocus Error reconnecting socket`,
+          `setupSocketFocusListeners Error reconnecting socket`,
           err,
         );
       });
@@ -42,12 +44,5 @@ export function checkFocusAndReconnect(instance: SocketService) {
       window.removeEventListener('focus', focusHandler);
       instance.state.focusListenerAdded = false;
     };
-  }
-
-  // If the document already has focus, try to reconnect immediately
-  if (document.hasFocus()) {
-    reconnectSocket(instance).catch((err) => {
-      console.error(`SocketService::checkFocus Error reconnecting socket`, err);
-    });
   }
 }

@@ -4,14 +4,10 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
 // @ts-ignore
 import Bowser from 'bowser';
-import { disableWakeLock } from '../services/PlatfformManager/disableWakeLock';
-import { enableWakeLock } from '../services/PlatfformManager/enableWakeLock';
 import { getPlatformType } from '../services/PlatfformManager/getPlatformType';
 import { isMetaMaskInstalled } from '../services/PlatfformManager/isMetaMaskInstalled';
 import { openDeeplink } from '../services/PlatfformManager/openDeeplink';
-import { WakeLockStatus } from '../types/WakeLockStatus';
 import { PlatformManager } from './PlatfformManager';
-import { WakeLockManager } from './WakeLockManager';
 
 jest.mock('../services/PlatfformManager/enableWakeLock');
 jest.mock('../services/PlatfformManager/disableWakeLock');
@@ -21,14 +17,6 @@ jest.mock('../services/PlatfformManager/openDeeplink');
 
 describe('PlatformManager', () => {
   let platformManager: PlatformManager;
-
-  const mockEnableWakeLock = enableWakeLock as jest.MockedFunction<
-    typeof enableWakeLock
-  >;
-
-  const mockDisableWakeLock = disableWakeLock as jest.MockedFunction<
-    typeof disableWakeLock
-  >;
 
   const mockGetPlatformType = getPlatformType as jest.MockedFunction<
     typeof getPlatformType
@@ -48,7 +36,6 @@ describe('PlatformManager', () => {
     platformManager = new PlatformManager({
       useDeepLink: false,
       preferredOpenLink: undefined,
-      wakeLockStatus: undefined,
       debug: false,
     });
   });
@@ -61,61 +48,18 @@ describe('PlatformManager', () => {
 
       expect(platformManager).toBeDefined();
       expect(platformManager.state.useDeeplink).toBe(false);
-      expect(platformManager.state.wakeLockStatus).toBe(
-        WakeLockStatus.UntilResponse,
-      );
       expect(platformManager.state.debug).toBe(false);
-      expect(platformManager.state.wakeLock).toBeInstanceOf(WakeLockManager);
     });
 
     it('should initialize correctly with custom parameters', () => {
       platformManager = new PlatformManager({
         useDeepLink: true,
-        wakeLockStatus: WakeLockStatus.UntilResponse,
         debug: true,
       });
 
       expect(platformManager).toBeDefined();
       expect(platformManager.state.useDeeplink).toBe(true);
-      expect(platformManager.state.wakeLockStatus).toBe(
-        WakeLockStatus.UntilResponse,
-      );
       expect(platformManager.state.debug).toBe(true);
-    });
-  });
-
-  describe('enableWakeLock', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-      platformManager = new PlatformManager({
-        useDeepLink: false,
-      });
-    });
-
-    it('should call enableWakeLock from enableWakeLockService', async () => {
-      mockEnableWakeLock.mockReturnValue(undefined);
-
-      platformManager.enableWakeLock();
-
-      expect(mockEnableWakeLock).toHaveBeenCalledWith(platformManager);
-    });
-  });
-
-  describe('disableWakeLock', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-
-      platformManager = new PlatformManager({
-        useDeepLink: false,
-      });
-    });
-
-    it('should call disableWakeLock from disableWakeLockService', async () => {
-      mockDisableWakeLock.mockReturnValue(undefined);
-
-      platformManager.disableWakeLock();
-
-      expect(mockDisableWakeLock).toHaveBeenCalledWith(platformManager);
     });
   });
 

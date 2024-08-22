@@ -1,6 +1,6 @@
 import { SocketService } from '../../../SocketService';
-import { checkFocusAndReconnect } from '../ConnectionManager';
 import { logger } from '../../../utils/logger';
+import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
 import { handleSocketError } from './handleSocketError';
 
 jest.mock('../ConnectionManager');
@@ -35,6 +35,6 @@ describe('handleSocketError', () => {
     const handler = handleSocketError(instance);
     handler(error);
 
-    expect(checkFocusAndReconnect).toHaveBeenCalledWith(instance);
+    expect(reconnectSocket).toHaveBeenCalledWith(instance);
   });
 });

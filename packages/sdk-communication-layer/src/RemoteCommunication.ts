@@ -39,6 +39,7 @@ import {
 } from './types/StorageManager';
 import { WalletInfo } from './types/WalletInfo';
 import { logger } from './utils/logger';
+import { Channel } from './types/Channel';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -268,7 +269,7 @@ export class RemoteCommunication extends EventEmitter2 {
     return channelConfig;
   }
 
-  async generateChannelIdConnect() {
+  async generateChannelIdConnect(): Promise<Channel> {
     return generateChannelIdConnect(this.state);
   }
 

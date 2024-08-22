@@ -38,8 +38,10 @@ export function createChannel(instance: SocketService) {
     context: `${instance.state.context}createChannel`,
     clientType: 'dapp', // only dapp can create channel
   });
+  const keyInfo = instance.state.keyExchange?.getKeyInfo();
   return {
     channelId,
-    pubKey: instance.state.keyExchange?.getMyPublicKey() || '',
+    pubKey: keyInfo?.ecies.public || '',
+    privKey: keyInfo?.ecies.private || '',
   };
 }

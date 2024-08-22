@@ -1,12 +1,8 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import Bowser from 'bowser';
-import { disableWakeLock } from '../services/PlatfformManager/disableWakeLock';
-import { enableWakeLock } from '../services/PlatfformManager/enableWakeLock';
 import { getPlatformType } from '../services/PlatfformManager/getPlatformType';
 import { isMetaMaskInstalled } from '../services/PlatfformManager/isMetaMaskInstalled';
 import { openDeeplink } from '../services/PlatfformManager/openDeeplink';
-import { WakeLockStatus } from '../types/WakeLockStatus';
-import { WakeLockManager } from './WakeLockManager';
 
 export const TEMPORARY_WAKE_LOCK_TIME = 2000;
 export const UNTIL_RESPONSE_WAKE_LOCK_TIME = 40000;
@@ -14,13 +10,10 @@ export const UNTIL_RESPONSE_WAKE_LOCK_TIME = 40000;
 interface PlatformProps {
   useDeepLink: boolean;
   preferredOpenLink?: (link: string, target?: string) => void;
-  wakeLockStatus?: WakeLockStatus;
   debug?: boolean;
 }
 
 interface PlatformManagerState {
-  wakeLock: WakeLockManager;
-  wakeLockStatus: WakeLockStatus;
   wakeLockTimer?: NodeJS.Timeout;
   wakeLockFeatureActive: boolean;
   platformType?: PlatformType;
@@ -31,8 +24,6 @@ interface PlatformManagerState {
 
 export class PlatformManager {
   public state: PlatformManagerState = {
-    wakeLock: new WakeLockManager(),
-    wakeLockStatus: WakeLockStatus.UntilResponse,
     wakeLockTimer: undefined,
     wakeLockFeatureActive: false,
     platformType: undefined,
@@ -44,23 +35,12 @@ export class PlatformManager {
   constructor({
     useDeepLink,
     preferredOpenLink,
-    wakeLockStatus = WakeLockStatus.UntilResponse,
     debug = false,
   }: PlatformProps) {
     this.state.platformType = this.getPlatformType();
     this.state.useDeeplink = useDeepLink;
     this.state.preferredOpenLink = preferredOpenLink;
-    this.state.wakeLockStatus = wakeLockStatus;
     this.state.debug = debug;
-    this.state.wakeLock.setDebug(debug);
-  }
-
-  enableWakeLock() {
-    return enableWakeLock(this);
-  }
-
-  disableWakeLock() {
-    return disableWakeLock(this);
   }
 
   openDeeplink(universalLink: string, deeplink: string, target?: string) {

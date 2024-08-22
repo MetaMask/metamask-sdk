@@ -55,13 +55,6 @@ describe('openDeeplink', () => {
     );
   });
 
-  it('should call enableWakeLock when instance.isBrowser() is true', () => {
-    instance.isBrowser.mockReturnValue(true);
-    openDeeplink(instance, 'universalLink', 'deeplink');
-
-    expect(instance.enableWakeLock).toHaveBeenCalled();
-  });
-
   it('should use state.preferredOpenLink when defined', () => {
     const mockPreferredOpenLink = jest.fn();
     instance.state.preferredOpenLink = mockPreferredOpenLink as any;

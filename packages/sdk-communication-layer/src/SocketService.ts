@@ -7,12 +7,12 @@ import { KeyExchange } from './KeyExchange';
 import { RemoteCommunication } from './RemoteCommunication';
 import { createChannel } from './services/SocketService/ChannelManager';
 import {
-  checkFocusAndReconnect,
   connectToChannel,
   disconnect,
   pause,
   ping,
   resume,
+  setupSocketFocusListener,
 } from './services/SocketService/ConnectionManager';
 import { keyCheck, resetKeys } from './services/SocketService/KeysManager';
 import { handleSendMessage } from './services/SocketService/MessageHandlers';
@@ -60,6 +60,8 @@ export interface SocketServiceState {
   keyExchange?: KeyExchange;
   focusListenerAdded: boolean;
   removeFocusListener?: () => void;
+  isReconnecting: boolean;
+  reconnectionAttempts: number;
 }
 
 export interface RPCMethodResult {
@@ -93,6 +95,8 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     communicationServerUrl: '',
     focusListenerAdded: false,
     removeFocusListener: undefined,
+    isReconnecting: false,
+    reconnectionAttempts: 0,
   };
 
   remote: RemoteCommunication;
@@ -154,7 +158,7 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     this.state.keyExchange = new KeyExchange(keyExchangeInitParameter);
 
     // Make sure to always be connected and retrieve messages
-    checkFocusAndReconnect(this);
+    setupSocketFocusListener(this);
   }
 
   resetKeys(): void {

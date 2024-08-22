@@ -54,25 +54,28 @@ export async function startConnection(
 
   let channelId = channelConfig?.channelId ?? '';
   let pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
+  let privKey = state.connector.getKeyInfo()?.ecies.private ?? '';
 
   if (initialCheck && !channelConfig) {
     return Promise.resolve();
   }
 
-  if (initialCheck && !channelConfig?.relayPersistence) {
-    // Prevent autoconnect when new sdk --> old wallet.
-    return Promise.resolve();
-  }
+  // if (initialCheck && !channelConfig?.relayPersistence) {
+  //   // Prevent autoconnect when new sdk --> old wallet.
+  //   return Promise.resolve();
+  // }
 
   if (!channelConfig && !initialCheck) {
     const newChannel = await state.connector.generateChannelIdConnect();
     channelId = newChannel.channelId ?? '';
-    pubKey = state.connector.getKeyInfo()?.ecies.public ?? '';
+    pubKey = newChannel.pubKey ?? '';
+    privKey = newChannel.privKey ?? '';
 
     const now = Date.now();
     // Save channelId to storage for re-use until it expires or is terminated
     state.connector.state.storageManager?.persistChannelConfig({
       channelId,
+      localKey: privKey,
       lastActive: now,
       validUntil: now + DEFAULT_SESSION_TIMEOUT_MS,
     });

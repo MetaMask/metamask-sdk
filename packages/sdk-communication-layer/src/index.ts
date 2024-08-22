@@ -13,6 +13,7 @@ import { DEFAULT_SERVER_URL, DEFAULT_SESSION_TIMEOUT_MS } from './config';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { AutoConnectType } from './types/AutoConnectType';
 import { ChannelConfig } from './types/ChannelConfig';
+import { Channel } from './types/Channel';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectionStatus } from './types/ConnectionStatus';
@@ -34,6 +35,7 @@ import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 export type {
   AutoConnectOptions,
   ChannelConfig,
+  Channel,
   CommunicationLayerLoggingOptions,
   CommunicationLayerMessage,
   DappMetadata,

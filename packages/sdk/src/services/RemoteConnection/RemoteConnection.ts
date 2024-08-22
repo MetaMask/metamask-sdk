@@ -9,13 +9,13 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import { i18n } from 'i18next';
-import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
 import { SDKLoggingOptions } from '../../types/SDKLoggingOptions';
 import InstallModal from '../../ui/InstallModal/installModal';
 import PendingModal from '../../ui/InstallModal/pendingModal';
+import { logger } from '../../utils/logger';
 import { Analytics } from '../Analytics';
 import { Ethereum } from '../Ethereum';
 import { ProviderService } from '../ProviderService';
@@ -145,10 +145,6 @@ export class RemoteConnection implements ProviderService {
     if (!options.modals.otp) {
       options.modals.otp = PendingModal;
     }
-
-    initializeConnector(this.state, this.options);
-
-    setupListeners(this.state, this.options);
   }
 
   /**
@@ -159,7 +155,26 @@ export class RemoteConnection implements ProviderService {
     return startConnection(this.state, this.options, extras);
   }
 
-  async initRemoteCommunication(): Promise<void> {
+  async initRemoteCommunication({
+    sdkInstance,
+  }: {
+    sdkInstance: MetaMaskSDK;
+  }): Promise<void> {
+    // get channel config
+    const channelConfig =
+      await sdkInstance.options.storage?.storageManager?.getPersistedChannelConfig();
+
+    if (!this.options.ecies) {
+      const eciesProps: ECIESProps = {
+        privateKey: channelConfig?.localKey,
+      };
+      this.options.ecies = eciesProps;
+    }
+    console.warn(`AAAAAAA channelConfig`, channelConfig, this.options.ecies);
+    initializeConnector(this.state, this.options);
+
+    setupListeners(this.state, this.options);
+
     return this.getConnector().initFromDappStorage();
   }
 

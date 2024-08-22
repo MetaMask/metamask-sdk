@@ -1,6 +1,6 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
-import { checkFocusAndReconnect } from '../ConnectionManager';
+import { logger } from '../../../utils/logger';
+import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
 
 /**
  * Returns a handler function to handle the 'error' event of the socket.
@@ -17,6 +17,8 @@ export function handleSocketError(instance: SocketService) {
       error,
     );
 
-    checkFocusAndReconnect(instance);
+    reconnectSocket(instance).catch((_e) => {
+      // error handled in reconnectSocket
+    });
   };
 }
