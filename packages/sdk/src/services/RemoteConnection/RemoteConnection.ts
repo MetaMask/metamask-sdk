@@ -170,7 +170,6 @@ export class RemoteConnection implements ProviderService {
       };
       this.options.ecies = eciesProps;
     }
-    console.warn(`AAAAAAA channelConfig`, channelConfig, this.options.ecies);
     initializeConnector(this.state, this.options);
 
     setupListeners(this.state, this.options);
