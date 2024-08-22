@@ -13,7 +13,11 @@ describe('reconnectSocket', () => {
   let instance: SocketService;
   const mockConnect = jest.fn();
   const mockEmitInstance = jest.fn();
-  const mockEmitSocket = jest.fn();
+  const mockEmitSocket = jest.fn((event, _payload, callback) => {
+    if (event === EventType.JOIN_CHANNEL) {
+      callback(null, { ready: true });
+    }
+  });
 
   const spyLogger = jest.spyOn(logger, 'SocketService');
 

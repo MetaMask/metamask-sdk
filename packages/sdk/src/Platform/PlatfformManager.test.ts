@@ -9,8 +9,6 @@ import { isMetaMaskInstalled } from '../services/PlatfformManager/isMetaMaskInst
 import { openDeeplink } from '../services/PlatfformManager/openDeeplink';
 import { PlatformManager } from './PlatfformManager';
 
-jest.mock('../services/PlatfformManager/enableWakeLock');
-jest.mock('../services/PlatfformManager/disableWakeLock');
 jest.mock('../services/PlatfformManager/getPlatformType');
 jest.mock('../services/PlatfformManager/isMetaMaskInstalled');
 jest.mock('../services/PlatfformManager/openDeeplink');

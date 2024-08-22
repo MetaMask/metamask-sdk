@@ -116,3 +116,4 @@ packages/devreact/webpack.config.json
 .tool-versions
 packages/examples/nodejs/.MMSDK_cached_address
 packages/examples/nodejs/.MMSDK_cached_chainId
+**/package-lock.json

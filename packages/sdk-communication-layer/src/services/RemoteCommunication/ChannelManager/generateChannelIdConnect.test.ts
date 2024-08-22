@@ -72,6 +72,7 @@ describe('generateChannelIdConnect', () => {
     expect(result).toStrictEqual({
       channelId: 'mockChannelId',
       pubKey: 'mockPublicKey',
+      privKey: undefined,
     });
   });
 

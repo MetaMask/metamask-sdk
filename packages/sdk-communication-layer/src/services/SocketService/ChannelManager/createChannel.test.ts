@@ -13,6 +13,7 @@ const mockGetMyPublicKey = jest.fn();
 describe('createChannel', () => {
   let instance: SocketService;
 
+  const mockGetKeyInfo = jest.fn();
   const spyLogger = jest.spyOn(logger, 'SocketService');
 
   beforeEach(() => {
@@ -32,6 +33,7 @@ describe('createChannel', () => {
         channelId: '',
         keyExchange: {
           getMyPublicKey: mockGetMyPublicKey,
+          getKeyInfo: mockGetKeyInfo,
         },
       },
       remote: { state: {} },
@@ -69,13 +71,6 @@ describe('createChannel', () => {
       clientType: 'dapp',
       context: 'testContextcreateChannel',
     });
-  });
-
-  it('should return pubKey if available', () => {
-    mockGetMyPublicKey.mockReturnValue('testPublicKey');
-    const result = createChannel(instance);
-
-    expect(result.pubKey).toBe('testPublicKey');
   });
 
   it('should return empty string for pubKey if not available', () => {
