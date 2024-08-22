@@ -15,8 +15,6 @@ export function setupSocketFocusListener(instance: SocketService) {
     return;
   }
 
-  console.warn(`AAAAAAAAAABBBB setupSocketFocusListener`);
-
   logger.SocketService(
     `[SocketService: setupSocketFocusListener()] hasFocus=${document.hasFocus()}`,
     instance,
