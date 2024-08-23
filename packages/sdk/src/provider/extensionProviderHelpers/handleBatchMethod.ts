@@ -29,7 +29,7 @@ export const handleBatchMethod = async ({
   }
 
   const resp = await target.request(args);
-  const selectedAddress = provider.selectedAddress || {};
+  const selectedAddress = provider.selectedAddress || '';
 
   if (trackEvent) {
     sdkInstance.analytics?.send({

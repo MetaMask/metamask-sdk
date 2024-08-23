@@ -31,7 +31,7 @@ export const wrapExtensionProvider = ({
 
           const { method, params } = args;
           const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
-          const selectedAddress = provider.selectedAddress || {};
+          const selectedAddress = provider.selectedAddress || '';
 
           if (trackEvent) {
             sdkInstance.analytics?.send({
