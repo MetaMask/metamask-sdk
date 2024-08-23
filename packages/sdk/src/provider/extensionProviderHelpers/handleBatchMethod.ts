@@ -29,10 +29,12 @@ export const handleBatchMethod = async ({
   }
 
   const resp = await target.request(args);
+  const selectedAddress = provider.selectedAddress || {};
+
   if (trackEvent) {
     sdkInstance.analytics?.send({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-      params: { method: args.method, from: 'extension' },
+      params: { method: args.method, from: 'extension', id: selectedAddress },
     });
   }
   return resp;
