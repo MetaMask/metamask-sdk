@@ -1,5 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { hashString } from 'src/utils/cryptography';
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
@@ -33,10 +34,15 @@ export const wrapExtensionProvider = ({
           const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
           const selectedAddress = provider.selectedAddress || '';
 
+          // Take the first half of the hash
+          const halfSelectedAddress = hashString(
+            selectedAddress.slice(0, selectedAddress.length / 2),
+          );
+
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
-              params: { method, from: 'extension', id: selectedAddress },
+              params: { method, from: 'extension', id: halfSelectedAddress },
             });
           }
 
