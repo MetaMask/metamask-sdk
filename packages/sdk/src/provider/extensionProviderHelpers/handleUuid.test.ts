@@ -1,4 +1,5 @@
-import { toBase64, getOrCreateUuidForIdentifier } from './handleUuid';
+import { base64Encode } from '../../utils/base64';
+import { getOrCreateUuidForIdentifier } from './handleUuid';
 
 describe('Extension UUID Functions', () => {
   // Mocking localStorage
@@ -26,22 +27,6 @@ describe('Extension UUID Functions', () => {
     jest.restoreAllMocks();
   });
 
-  describe('toBase64', () => {
-    it('should encode a string to Base64', () => {
-      const input = 'Hello, World!';
-      const expectedOutput = 'SGVsbG8sIFdvcmxkIQ==';
-
-      expect(toBase64(input)).toBe(expectedOutput);
-    });
-
-    it('should handle UTF-8 characters correctly', () => {
-      const input = '你好，世界！'; // "Hello, World!" in Chinese
-      const expectedOutput = '5L2g5aW977yM5LiW55WM77yB'; // Correct Base64 encoding for UTF-8 string
-
-      expect(toBase64(input)).toBe(expectedOutput);
-    });
-  });
-
   describe('getOrCreateUuidForIdentifier', () => {
     beforeEach(() => {
       localStorage.clear();
@@ -52,7 +37,7 @@ describe('Extension UUID Functions', () => {
       const name = 'ExampleDApp';
       const identifier = getOrCreateUuidForIdentifier(url, name);
 
-      const storedUuid = localStorage.getItem(toBase64(url + name));
+      const storedUuid = localStorage.getItem(base64Encode(url + name));
 
       expect(storedUuid).toBe(identifier);
       expect(storedUuid).toMatch(
