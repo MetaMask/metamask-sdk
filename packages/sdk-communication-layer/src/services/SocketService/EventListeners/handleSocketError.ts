@@ -18,7 +18,10 @@ export function handleSocketError(instance: SocketService) {
     );
 
     reconnectSocket(instance).catch((_e) => {
-      // error handled in reconnectSocket
+      console.error(
+        `[SocketService: handleSocketError()] error in reconnectSocket`,
+        error,
+      );
     });
   };
 }
