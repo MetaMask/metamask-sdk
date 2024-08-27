@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.7]
+### Uncategorized
+- chore: update native sdk versions ([#997](https://github.com/MetaMask/metamask-sdk/pull/997))
+
 ## [0.3.6]
 ### Uncategorized
 - chore: filter metamask urls ([#987](https://github.com/MetaMask/metamask-sdk/pull/987))
@@ -46,7 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.6...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.7...HEAD
+[0.3.7]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.6...@metamask/sdk-react-native@0.3.7
 [0.3.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.5...@metamask/sdk-react-native@0.3.6
 [0.3.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.4...@metamask/sdk-react-native@0.3.5
 [0.3.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.3...@metamask/sdk-react-native@0.3.4
