@@ -121,8 +121,11 @@ describe('handleBatchMethod', () => {
 
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-      params: { method: 'someMethod', from: 'extension' },
-      id: expect.any(String),
+      params: {
+        method: 'someMethod',
+        from: 'extension',
+        id: expect.any(String),
+      },
     });
   });
 
