@@ -5,10 +5,10 @@ import {
   METAMASK_DEEPLINK_BASE,
 } from '../../constants';
 import { base64Encode } from '../../utils/base64';
+import { logger } from '../../utils/logger';
 import { Ethereum } from '../Ethereum';
 import { extractMethod } from './extractMethod';
 
-const logger = console.debug;
 export async function write(
   instance: RemoteCommunicationPostMessageStream,
   chunk: any,
@@ -28,9 +28,6 @@ export async function write(
     data,
     triggeredInstaller,
   } = extractMethod(chunk);
-  const installed = instance.state.platformManager?.isMetaMaskInstalled();
-
-  // TODO detect if it was the first call that created connection and installer.
 
   logger(
     `[RCPMS: write()] method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
@@ -55,14 +52,7 @@ export async function write(
   const isSecure = instance.state.platformManager?.isSecure();
   const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
 
-  console.warn(
-    `BOOOM! method=${targetMethod} triggeredInstaller=${triggeredInstaller} mobileWeb=${mobileWeb} installed=${installed}`,
-  );
-
   const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb && authorized;
-  console.warn(
-    `[RCPMS: write()] activeDeeplinkProtocol=${activeDeeplinkProtocol} triggeredInstaller=${triggeredInstaller}`,
-  );
 
   try {
     if (!activeDeeplinkProtocol || triggeredInstaller) {

@@ -130,24 +130,6 @@ describe('write function', () => {
       mockIsMobileWeb.mockReturnValue(false);
     });
 
-    it('should warn if ready is true but socketConnected is false', async () => {
-      mockIsReady.mockReturnValue(true);
-      mockIsConnected.mockReturnValue(false);
-      mockGetChannelId.mockReturnValue('some_channel_id');
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
-      await write(
-        mockRemoteCommunicationPostMessageStream,
-        { jsonrpc: '2.0', method: 'some_method' },
-        'utf8',
-        callback,
-      );
-
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        '[RCPMS: write()] activeDeeplinkProtocol=undefined',
-      );
-    });
-
     it('should debug log if both ready and socketConnected are true', async () => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
