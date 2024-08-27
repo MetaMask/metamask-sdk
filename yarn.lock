@@ -10405,7 +10405,6 @@ __metadata:
     "@metamask/providers": 16.1.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
-    "@noble/hashes": ^1.4.0
     "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-json": ^6.0.0

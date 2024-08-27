@@ -1,8 +1,8 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { hashString } from 'src/utils/cryptography';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
+import { getOrCreateUuidForIdentifier } from './handleUuid';
 
 export const handleBatchMethod = async ({
   params,
@@ -30,12 +30,11 @@ export const handleBatchMethod = async ({
   }
 
   const resp = await target.request(args);
-  const selectedAddress = provider.selectedAddress || '';
 
-  // Take the first half of the hash
-  const halfSelectedAddress = hashString(
-    selectedAddress.slice(0, selectedAddress.length / 2),
-  );
+  const { dappMetadata } = sdkInstance;
+  const url = dappMetadata?.url ?? 'no_url';
+  const name = dappMetadata?.name ?? 'no_name';
+  const identifier = getOrCreateUuidForIdentifier(url, name);
 
   if (trackEvent) {
     sdkInstance.analytics?.send({
@@ -43,7 +42,7 @@ export const handleBatchMethod = async ({
       params: {
         method: args.method,
         from: 'extension',
-        id: halfSelectedAddress,
+        id: identifier,
       },
     });
   }

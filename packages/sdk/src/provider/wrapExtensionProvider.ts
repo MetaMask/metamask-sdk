@@ -1,12 +1,13 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
-import { hashString } from 'src/utils/cryptography';
+
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
 import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod';
 import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
 import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
+import { getOrCreateUuidForIdentifier } from './extensionProviderHelpers/handleUuid';
 
 export interface RequestArguments {
   method: string;
@@ -32,17 +33,16 @@ export const wrapExtensionProvider = ({
 
           const { method, params } = args;
           const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
-          const selectedAddress = provider.selectedAddress || '';
 
-          // Take the first half of the hash
-          const halfSelectedAddress = hashString(
-            selectedAddress.slice(0, selectedAddress.length / 2),
-          );
+          const { dappMetadata } = sdkInstance;
+          const url = dappMetadata?.url ?? 'no_url';
+          const name = dappMetadata?.name ?? 'no_name';
+          const identifier = getOrCreateUuidForIdentifier(url, name);
 
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
-              params: { method, from: 'extension', id: halfSelectedAddress },
+              params: { method, from: 'extension', id: identifier },
             });
           }
 
@@ -81,7 +81,7 @@ export const wrapExtensionProvider = ({
             if (trackEvent) {
               sdkInstance.analytics?.send({
                 event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-                params: { method, from: 'extension', id: selectedAddress },
+                params: { method, from: 'extension', id: identifier },
               });
             }
           }
