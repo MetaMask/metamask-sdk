@@ -1,5 +1,6 @@
 import {
   DEFAULT_SESSION_TIMEOUT_MS,
+  EventType,
   OriginatorInfo,
 } from '@metamask/sdk-communication-layer';
 import packageJson from '../../../../package.json';
@@ -158,8 +159,13 @@ export async function startConnection(
 
   // first handle secure connection
   if (state.platformManager?.isSecure()) {
-    // FIXME do we also need to wait for event on secure platform? ready / authorized
-    return connectWithDeeplink(state, linkParams);
+    await connectWithDeeplink(state, linkParams);
+    // wait for authorized event
+    return new Promise((resolve) => {
+      state.connector?.once(EventType.AUTHORIZED, () => {
+        resolve();
+      });
+    });
   }
 
   if (channelConfig?.lastActive) {

@@ -119,10 +119,6 @@ const initializeMobileProvider = async ({
     executeRequest: any,
     debugRequest: boolean,
   ) => {
-    console.warn(
-      `OOOOOOOO method=${method} initializationOngoing=${initializationOngoing}`,
-    );
-
     if (initializationOngoing) {
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
@@ -155,10 +151,6 @@ const initializeMobileProvider = async ({
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
     chainId = provider.getChainId() || cachedChainId;
-
-    console.log(
-      `[BOOOOM] selectedAddress=${selectedAddress} chainId=${chainId}`,
-    );
 
     // keep cached values for selectedAddress and chainId
     if (selectedAddress) {
@@ -265,13 +257,6 @@ const initializeMobileProvider = async ({
             wait: false,
           });
 
-          const receiveAuthorizedPromise = new Promise((resolve) => {
-            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
-              resolve(true);
-            });
-          });
-          await receiveAuthorizedPromise;
-
           setInitializing(false);
         } catch (installError) {
           console.warn(`ERROR INSTALLER`, installError);
@@ -339,7 +324,6 @@ const initializeMobileProvider = async ({
             wrappedParams: args[0].params,
           };
         }
-        console.warn(`add connectCall param`, args);
 
         // Initialize the request (otherwise the rpc call is not sent)
         const response = executeRequest(...args);
@@ -347,6 +331,11 @@ const initializeMobileProvider = async ({
         // Wait for the provider to be initialized so we can process requests
         try {
           await new Promise((resolve, reject) => {
+            const authorized = remoteConnection?.isAuthorized();
+            if (!authorized) {
+              resolve(true);
+            }
+
             remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
               resolve(true);
             });
