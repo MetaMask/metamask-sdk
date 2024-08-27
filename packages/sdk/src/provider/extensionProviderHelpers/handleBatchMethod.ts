@@ -35,13 +35,14 @@ export const handleBatchMethod = async ({
   const url = dappMetadata?.url ?? 'no_url';
   const name = dappMetadata?.name ?? 'no_name';
   const identifier = getOrCreateUuidForIdentifier(url, name);
+  const hasMobileProvider = Boolean(sdkInstance.sdkProvider);
 
   if (trackEvent) {
     sdkInstance.analytics?.send({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
       params: {
         method: args.method,
-        from: 'extension',
+        from: hasMobileProvider ? 'mobile' : 'extension',
         id: identifier,
       },
     });
