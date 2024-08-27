@@ -7,7 +7,9 @@ import { setupChannelListeners } from './setupChannelListeners';
 jest.mock('./setupChannelListeners');
 
 const mockConnect = jest.fn();
-const mockEmit = jest.fn();
+const mockEmit = jest.fn((_event, _payload, callback) => {
+  callback(null, { ready: true }); // Simulate successful emit
+});
 const mockGetMyPublicKey = jest.fn();
 
 describe('createChannel', () => {
@@ -67,11 +69,15 @@ describe('createChannel', () => {
   it('should emit JOIN_CHANNEL event with correct parameters', async () => {
     const result = await createChannel(instance);
 
-    expect(instance.state.socket?.emit).toHaveBeenCalledWith('join_channel', {
-      channelId: instance.state.channelId,
-      clientType: 'dapp',
-      context: 'testContextcreateChannel',
-    });
+    expect(instance.state.socket?.emit).toHaveBeenCalledWith(
+      'join_channel',
+      {
+        channelId: instance.state.channelId,
+        clientType: 'dapp',
+        context: 'testContextcreateChannel',
+      },
+      expect.any(Function), // Match the callback function
+    );
 
     expect(result.pubKey).toBe('');
   });
