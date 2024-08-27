@@ -121,6 +121,7 @@ describe('wrapExtensionProvider', () => {
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST,
       params: { method: args.method, from: 'extension' },
+      id: expect.any(String),
     });
   });
 
@@ -214,6 +215,7 @@ describe('wrapExtensionProvider', () => {
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
       params: { method: args.method, from: 'extension' },
+      id: expect.any(String),
     });
   });
 
