@@ -132,6 +132,7 @@ export async function startConnection(
       title: name ?? '',
       icon: iconUrl,
       scheme: scheme ?? '',
+      apiVersion: sdkVersion,
       dappId: window?.location?.hostname ?? name ?? url ?? 'N/A',
       platform: platformType ?? '',
       source: options._source ?? '',
@@ -142,7 +143,7 @@ export async function startConnection(
   const linkParams = encodeURI(
     `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}&sdkVersion=${sdkVersion}&originatorInfo=${base64OriginatorInfo}`,
+    }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}`,
   );
 
   const qrcodeLink = `${
