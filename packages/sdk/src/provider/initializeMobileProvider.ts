@@ -259,7 +259,6 @@ const initializeMobileProvider = async ({
 
           setInitializing(false);
         } catch (installError) {
-          console.warn(`ERROR INSTALLER`, installError);
           setInitializing(false);
 
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
@@ -313,8 +312,6 @@ const initializeMobileProvider = async ({
           );
 
           throw installError;
-        } finally {
-          console.warn(`FINALLY INSTALLER`);
         }
 
         // Inform next step that this method triggered installer
