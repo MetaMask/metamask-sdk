@@ -162,6 +162,11 @@ export async function startConnection(
     await connectWithDeeplink(state, linkParams);
     // wait for authorized event
     return new Promise((resolve) => {
+      if (state.connector?.isAuthorized()) {
+        resolve();
+        return;
+      }
+
       state.connector?.once(EventType.AUTHORIZED, () => {
         resolve();
       });
