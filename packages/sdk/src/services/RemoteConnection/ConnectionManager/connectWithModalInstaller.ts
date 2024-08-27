@@ -62,9 +62,6 @@ export async function connectWithModalInstaller(
     );
 
     state.connector.once(EventType.AUTHORIZED, () => {
-      console.warn(
-        `[RemoteConnection: connectWithModalInstaller()] once authorized -- resolving startConnection promise`,
-      );
       resolve();
     });
 
