@@ -38,11 +38,16 @@ export const wrapExtensionProvider = ({
           const url = dappMetadata?.url ?? 'no_url';
           const name = dappMetadata?.name ?? 'no_name';
           const identifier = getOrCreateUuidForIdentifier(url, name);
+          const hasMobileProvider = Boolean(sdkInstance.sdkProvider);
 
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
-              params: { method, from: 'extension', id: identifier },
+              params: {
+                method,
+                from: hasMobileProvider ? 'mobile' : 'extension',
+                id: identifier,
+              },
             });
           }
 
@@ -81,7 +86,11 @@ export const wrapExtensionProvider = ({
             if (trackEvent) {
               sdkInstance.analytics?.send({
                 event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-                params: { method, from: 'extension', id: identifier },
+                params: {
+                  method,
+                  from: hasMobileProvider ? 'mobile' : 'extension',
+                  id: identifier,
+                },
               });
             }
           }
