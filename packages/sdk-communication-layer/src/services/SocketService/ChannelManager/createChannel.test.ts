@@ -36,26 +36,27 @@ describe('createChannel', () => {
           getKeyInfo: mockGetKeyInfo,
         },
       },
+      initSocket: jest.fn(),
       remote: { state: {} },
     } as unknown as SocketService;
   });
 
-  it('should generate a valid UUID for the channel', () => {
-    const result = createChannel(instance);
+  it('should generate a valid UUID for the channel', async () => {
+    const result = await createChannel(instance);
 
     expect(result.channelId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu,
     );
   });
 
-  it('should connect socket if not connected', () => {
-    createChannel(instance);
+  it('should connect socket if not connected', async () => {
+    await createChannel(instance);
 
     expect(instance.state.socket?.connect).toHaveBeenCalled();
   });
 
-  it('should setup channel listeners with correct channelId', () => {
-    const result = createChannel(instance);
+  it('should setup channel listeners with correct channelId', async () => {
+    const result = await createChannel(instance);
 
     expect(setupChannelListeners).toHaveBeenCalledWith(
       instance,
@@ -63,25 +64,27 @@ describe('createChannel', () => {
     );
   });
 
-  it('should emit JOIN_CHANNEL event with correct parameters', () => {
-    createChannel(instance);
+  it('should emit JOIN_CHANNEL event with correct parameters', async () => {
+    const result = await createChannel(instance);
 
     expect(instance.state.socket?.emit).toHaveBeenCalledWith('join_channel', {
       channelId: instance.state.channelId,
       clientType: 'dapp',
       context: 'testContextcreateChannel',
     });
-  });
-
-  it('should return empty string for pubKey if not available', () => {
-    mockGetMyPublicKey.mockReturnValue(undefined);
-    const result = createChannel(instance);
 
     expect(result.pubKey).toBe('');
   });
 
-  it('should log debug info', () => {
-    createChannel(instance);
+  it('should return empty string for pubKey if not available', async () => {
+    mockGetMyPublicKey.mockReturnValue(undefined);
+    const result = await createChannel(instance);
+
+    expect(result.pubKey).toBe('');
+  });
+
+  it('should log debug info', async () => {
+    await createChannel(instance);
 
     expect(spyLogger).toHaveBeenCalledWith(
       `[SocketService: createChannel()] context=${instance.state.context}`,
