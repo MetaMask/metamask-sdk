@@ -134,10 +134,12 @@ describe('SocketService', () => {
     expect(keyCheck).toHaveBeenCalledWith(socketService);
   });
 
-  it('should create a new channel', () => {
+  it('should create a new channel', async () => {
     const mockChannel = { id: 'CHANNEL_ID', members: [] };
-    (createChannel as jest.Mock).mockReturnValue(mockChannel);
-    const channel = socketService.createChannel();
+    (createChannel as jest.Mock).mockReturnValue(Promise.resolve(mockChannel));
+
+    const channel = await socketService.createChannel();
+
     expect(channel).toStrictEqual(mockChannel);
   });
 });
