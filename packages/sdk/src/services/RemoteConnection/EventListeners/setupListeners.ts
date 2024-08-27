@@ -3,6 +3,25 @@ import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { RemoteConnection, RemoteConnectionState } from '../RemoteConnection';
+import { cleanupListeners } from './cleanupListeners';
+
+// Define specific types for each event handler
+type SDKRPCCallHandler = (requestParams: RequestArguments) => Promise<void>;
+type WalletInitHandler = (data: {
+  accounts: string[];
+  chainId: string;
+}) => Promise<void>;
+type AuthorizedHandler = () => Promise<void>;
+type ClientsDisconnectedHandler = () => void;
+type TerminateHandler = () => void;
+
+// Union type for all possible handlers
+export type EventHandler =
+  | SDKRPCCallHandler
+  | WalletInitHandler
+  | AuthorizedHandler
+  | ClientsDisconnectedHandler
+  | TerminateHandler;
 
 /**
  * Sets up event listeners for MetaMask remote communication and handles responses accordingly.
@@ -19,85 +38,35 @@ export function setupListeners(
     return;
   }
 
-  if (!state.platformManager?.isSecure()) {
-    state.connector.on(EventType.OTP, (otpAnswer: string) => {
-      // Prevent double handling OTP message
-      if (state.otpAnswer === otpAnswer) {
-        return;
-      }
+  // Clear existing listeners if any
+  cleanupListeners(state);
 
-      logger(
-        `[RemoteConnection: setupListeners() => EventType.OTP] 'OTP' `,
-        otpAnswer,
-      );
-
-      state.otpAnswer = otpAnswer;
-      if (!state.pendingModal) {
-        logger(
-          `[RemoteConnection: setupListeners() => EventType.OTP] 'OTP' init pending modal`,
-        );
-
-        const onDisconnect = () => {
-          options.modals.onPendingModalDisconnect?.();
-          state.pendingModal?.unmount?.();
-          state.pendingModal?.updateOTPValue?.('');
-        };
-
-        state.pendingModal = options.modals.otp?.({
-          i18nInstance: options.i18nInstance,
-          onDisconnect,
-        });
-      }
-      state.pendingModal?.mount?.();
-      state.pendingModal?.updateOTPValue?.(otpAnswer);
-    });
+  function addListener(event: EventType, handler: EventHandler) {
+    state.connector?.on(event, handler);
+    state.listeners.push({ event, handler });
   }
 
-  // TODO this event can probably be removed in future version as it was created to maintain backward compatibility with older wallet (< 7.0.0).
-  state.connector.on(
-    EventType.SDK_RPC_CALL,
-    async (requestParams: RequestArguments) => {
-      logger(
-        `[RemoteConnection: setupListeners() => EventType.SDK_RPC_CALL] 'sdk_rpc_call' requestParam`,
-        requestParams,
-      );
+  addListener(EventType.WALLET_INIT, (async ({ accounts, chainId }) => {
+    logger(
+      `[RemoteConnection: setupListeners() => EventType.WALLET_INIT] 'wallet_init' accounts=${accounts} chainId=${chainId}`,
+    );
 
-      const provider = Ethereum.getProvider();
-      const result = await provider.request(requestParams);
-      logger(
-        `[RemoteConnection: setupListeners() => EventType.SDK_RPC_CALL] 'sdk_rpc_call' result`,
-        result,
-      );
+    const provider = Ethereum.getProvider();
+    provider._setConnected();
 
-      // Close opened modals
-      state.pendingModal?.unmount?.();
-    },
-  );
+    const initialState = {
+      accounts,
+      chainId,
+      isUnlocked: false,
+    };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    provider._initializeState(initialState);
+    provider.emit('chainChanged', chainId);
+    provider.emit('accountsChanged', accounts);
+  }) as WalletInitHandler);
 
-  state.connector.on(
-    EventType.WALLET_INIT,
-    async ({ accounts, chainId }: { accounts: string[]; chainId: string }) => {
-      logger(
-        `[RemoteConnection: setupListeners() => EventType.WALLET_INIT] 'wallet_init' accounts=${accounts} chainId=${chainId}`,
-      );
-
-      const provider = Ethereum.getProvider();
-      provider._setConnected();
-
-      const initialState = {
-        accounts,
-        chainId,
-        isUnlocked: false,
-      };
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      provider._initializeState(initialState);
-      provider.emit('chainChanged', chainId);
-      provider.emit('accountsChanged', accounts);
-    },
-  );
-
-  state.connector.on(EventType.AUTHORIZED, async () => {
+  addListener(EventType.AUTHORIZED, (async () => {
     try {
       logger(
         `[RemoteConnection: setupListeners() => EventType.AUTHORIZED] 'authorized' closing modals`,
@@ -130,21 +99,23 @@ export function setupListeners(
       // Ignore error if already initialized.
       // console.debug(`IGNORE ERROR`, err);
     }
-  });
+  }) as AuthorizedHandler);
 
-  state.connector.on(EventType.CLIENTS_DISCONNECTED, () => {
-    logger(
-      `[RemoteConnection: setupListeners() => EventType.CLIENTS_DISCONNECTED] received '${EventType.CLIENTS_DISCONNECTED}'`,
-    );
+  // Should not be needed anymore but keeping for reference if needed for backward compatibility with older SDK (pre async communication)
+  // addListener(EventType.CLIENTS_DISCONNECTED, (() => {
+  //   logger(
+  //     `[RemoteConnection: setupListeners() => EventType.CLIENTS_DISCONNECTED] received '${EventType.CLIENTS_DISCONNECTED}'`,
+  //   );
 
-    if (!state.platformManager?.isSecure()) {
-      const provider = Ethereum.getProvider();
-      provider.handleDisconnect({ terminate: false });
-      state.pendingModal?.updateOTPValue?.('');
-    }
-  });
+  //   if (!state.platformManager?.isSecure()) {
+  //     const provider = Ethereum.getProvider();
+  //     provider.handleDisconnect({ terminate: false });
+  //     state.pendingModal?.updateOTPValue?.('');
+  //   }
+  // }) as ClientsDisconnectedHandler);
 
-  state.connector.on(EventType.TERMINATE, () => {
+  addListener(EventType.TERMINATE, (() => {
+    // ... existing TERMINATE handling logic ...
     if (!state.connector?.isAuthorized()) {
       // It means the connection was rejected by the user
       if (options.enableAnalytics) {
@@ -169,5 +140,10 @@ export function setupListeners(
 
     const provider = Ethereum.getProvider();
     provider.handleDisconnect({ terminate: true });
-  });
+
+    // Clean up all listeners
+    cleanupListeners(state);
+
+    logger(`[RemoteConnection: setupListeners()] All listeners cleaned up`);
+  }) as TerminateHandler);
 }

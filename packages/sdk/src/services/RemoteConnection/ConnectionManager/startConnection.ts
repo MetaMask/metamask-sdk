@@ -7,14 +7,16 @@ import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../../constants';
+import { base64Encode } from '../../../utils/base64';
 import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
+import { initializeConnector } from '../ConnectionInitializer';
+import { setupListeners } from '../EventListeners';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
-import { base64Encode } from '../../../utils/base64';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
@@ -34,9 +36,15 @@ export async function startConnection(
   options: RemoteConnectionProps,
   { initialCheck }: StartConnectionExtras = {},
 ): Promise<void> {
+  // Initialize the connector - will skip if already initialized
+  initializeConnector(state, options);
+
   if (!state.connector) {
     throw new Error('no connector defined');
   }
+
+  // Ensure listeners are set up
+  setupListeners(state, options);
 
   const provider = Ethereum.getProvider();
 

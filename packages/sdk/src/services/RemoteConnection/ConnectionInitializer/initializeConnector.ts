@@ -17,6 +17,10 @@ export function initializeConnector(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
 ) {
+  if (state.connector) {
+    return;
+  }
+
   logger(`[RemoteConnection: initializeConnector()] initialize connector`);
 
   // Check if existing channel config to re-use previous ecies key if not directly provided

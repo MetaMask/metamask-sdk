@@ -10,7 +10,9 @@ import { logger } from '../../../utils/logger';
  * @returns An object containing the channelId and its corresponding public/private key.
  */
 
-export function generateChannelIdConnect(state: RemoteCommunicationState) {
+export async function generateChannelIdConnect(
+  state: RemoteCommunicationState,
+) {
   if (!state.communicationLayer) {
     throw new Error('communication layer not initialized');
   }
@@ -41,7 +43,7 @@ export function generateChannelIdConnect(state: RemoteCommunicationState) {
   }
 
   logger.RemoteCommunication(`[RemoteCommunication: generateChannelId()]`);
-  const channel = state.communicationLayer.createChannel();
+  const channel = await state.communicationLayer.createChannel();
 
   logger.RemoteCommunication(
     `[RemoteCommunication: generateChannelId()] channel created`,
