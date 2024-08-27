@@ -22,11 +22,6 @@ export async function generateChannelIdConnect(
   }
 
   if (state.channelId && state.communicationLayer?.isConnected()) {
-    console.warn(
-      `Channel already exists -- interrupt generateChannelId`,
-      state.channelConfig,
-    );
-
     state.channelConfig = {
       ...state.channelConfig,
       channelId: state.channelId,

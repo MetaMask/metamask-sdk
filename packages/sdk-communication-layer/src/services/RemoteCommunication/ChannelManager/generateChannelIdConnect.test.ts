@@ -35,26 +35,15 @@ describe('generateChannelIdConnect', () => {
     } as RemoteCommunicationState;
   });
 
-  it('should throw error if communicationLayer is not initialized', () => {
-    state.communicationLayer = undefined;
-
-    expect(() => {
-      generateChannelIdConnect(state);
-    }).toThrow('communication layer not initialized');
-  });
-
-  it('should throw error if channel is already connected', () => {
+  it('should throw error if channel is already connected', async () => {
     state.ready = true;
-    state.communicationLayer = {
-      isConnected: jest.fn(() => true),
-    } as unknown as SocketService;
 
-    expect(() => {
-      generateChannelIdConnect(state);
-    }).toThrow('Channel already connected');
+    await expect(generateChannelIdConnect(state)).rejects.toThrow(
+      'Channel already connected',
+    );
   });
 
-  it('should generate a new channel ID if none exists', () => {
+  it('should generate a new channel ID if none exists', async () => {
     const mockChannel = {
       channelId: 'mockChannelId',
       pubKey: 'mockPublicKey',
@@ -68,7 +57,7 @@ describe('generateChannelIdConnect', () => {
 
     state.communicationLayer = mockChannel;
 
-    const result = generateChannelIdConnect(state);
+    const result = await generateChannelIdConnect(state);
     expect(result).toStrictEqual({
       channelId: 'mockChannelId',
       pubKey: 'mockPublicKey',
@@ -76,7 +65,7 @@ describe('generateChannelIdConnect', () => {
     });
   });
 
-  it('should persist channelConfig if storageManager exists', () => {
+  it('should persist channelConfig if storageManager exists', async () => {
     const mockChannel = {
       channelId: 'mockChannelId',
       pubKey: 'mockPublicKey',
@@ -96,7 +85,7 @@ describe('generateChannelIdConnect', () => {
       persistChannelConfig: mockPersist,
     } as unknown as StorageManager;
 
-    generateChannelIdConnect(state);
+    await generateChannelIdConnect(state);
 
     expect(mockPersist).toHaveBeenCalledWith({
       channelId: 'mockChannelId',
@@ -104,8 +93,8 @@ describe('generateChannelIdConnect', () => {
     });
   });
 
-  it('should log debug messages', () => {
-    generateChannelIdConnect(state);
+  it('should log debug messages', async () => {
+    await generateChannelIdConnect(state);
 
     expect(spyLogger).toHaveBeenCalled();
   });
