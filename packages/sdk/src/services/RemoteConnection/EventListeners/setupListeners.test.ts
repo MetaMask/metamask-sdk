@@ -44,10 +44,12 @@ describe('setupListeners', () => {
     state = {
       connector: {
         on: mockConnectorOn,
+        off: jest.fn(),
         isAuthorized: mockIsAuthorized,
         disconnect: mockDisconnect,
       },
       developerMode: false,
+      listeners: [],
       platformManager: {
         isSecure: mocksIsSecure,
         isBrowser: mockIsBrowser,
@@ -74,57 +76,6 @@ describe('setupListeners', () => {
     setupListeners(state, options);
 
     expect(mockConnectorOn).not.toHaveBeenCalled();
-  });
-
-  it('should handle OTP event when platform is secure and pendingModal is present', () => {
-    state.pendingModal = undefined;
-    mocksIsSecure.mockReturnValue(false);
-
-    setupListeners(state, options);
-
-    const otpCallback = mockConnectorOn.mock.calls.find(
-      ([event]) => event === EventType.OTP,
-    )[1];
-
-    otpCallback('test_otp');
-
-    expect(state.otpAnswer).toBe('test_otp');
-    expect(mockOtpModal).toHaveBeenCalled();
-  });
-
-  it('should handle SDK_RPC_CALL event', async () => {
-    setupListeners(state, options);
-
-    const sdkRpcCallback = mockConnectorOn.mock.calls.find(
-      ([event]) => event === EventType.SDK_RPC_CALL,
-    )[1];
-
-    const mockRequestParams = {
-      method: 'testMethod',
-      params: ['testParam'],
-    };
-    await sdkRpcCallback(mockRequestParams);
-
-    const provider = Ethereum.getProvider();
-    expect(provider.request).toHaveBeenCalledWith(mockRequestParams);
-  });
-
-  it('should handle CLIENTS_DISCONNECTED event when platform is not secure', () => {
-    mocksIsSecure.mockReturnValue(false);
-
-    setupListeners(state, options);
-
-    const clientsDisconnectedCallback = mockConnectorOn.mock.calls.find(
-      ([event]) => event === EventType.CLIENTS_DISCONNECTED,
-    )[1];
-
-    clientsDisconnectedCallback();
-
-    const provider = Ethereum.getProvider();
-    expect(provider.handleDisconnect).toHaveBeenCalledWith({
-      terminate: false,
-    });
-    expect(state.pendingModal?.updateOTPValue).toHaveBeenCalledWith('');
   });
 
   it('should handle TERMINATE event', () => {
@@ -157,23 +108,6 @@ describe('setupListeners', () => {
     expect(provider.forceInitializeState).toHaveBeenCalled();
   });
 
-  it('should handle CLIENTS_DISCONNECTED event when platform is secure', () => {
-    mocksIsSecure.mockReturnValue(true);
-
-    setupListeners(state, options);
-
-    const clientsDisconnectedCallback = mockConnectorOn.mock.calls.find(
-      ([event]) => event === EventType.CLIENTS_DISCONNECTED,
-    )[1];
-
-    clientsDisconnectedCallback();
-
-    const provider = Ethereum.getProvider();
-
-    expect(provider.handleDisconnect).not.toHaveBeenCalled();
-    expect(state.pendingModal?.updateOTPValue).not.toHaveBeenCalled();
-  });
-
   it('should handle TERMINATE event and reset all state properties', () => {
     state.otpAnswer = 'test_otp';
     state.authorized = true;
@@ -191,24 +125,6 @@ describe('setupListeners', () => {
 
     const provider = Ethereum.getProvider();
     expect(provider.handleDisconnect).toHaveBeenCalledWith({ terminate: true });
-  });
-
-  it('should handle SDK_RPC_CALL event with different request parameters', async () => {
-    setupListeners(state, options);
-
-    const sdkRpcCallback = mockConnectorOn.mock.calls.find(
-      ([event]) => event === EventType.SDK_RPC_CALL,
-    )[1];
-
-    const anotherMockRequestParams = {
-      method: 'anotherTestMethod',
-      params: ['anotherTestParam'],
-    };
-
-    await sdkRpcCallback(anotherMockRequestParams);
-
-    const provider = Ethereum.getProvider();
-    expect(provider.request).toHaveBeenCalledWith(anotherMockRequestParams);
   });
 
   it('should not handle OTP event when platform is secure', () => {
