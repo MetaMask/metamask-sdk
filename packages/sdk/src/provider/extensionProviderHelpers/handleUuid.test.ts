@@ -1,6 +1,31 @@
-import { toBase64, getOrCreateUuidForIdentifier } from './handleUuid'; // Adjust the import path as needed
+import { toBase64, getOrCreateUuidForIdentifier } from './handleUuid';
 
 describe('Extension UUID Functions', () => {
+  // Mocking localStorage
+  beforeEach(() => {
+    let store: { [key: string]: string } = {};
+
+    global.localStorage = {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+      length: 0,
+      key: (index: number) => Object.keys(store)[index] || null,
+    };
+  });
+
+  afterEach(() => {
+    // Clean up mocks after each test
+    jest.restoreAllMocks();
+  });
+
   describe('toBase64', () => {
     it('should encode a string to Base64', () => {
       const input = 'Hello, World!';
@@ -18,7 +43,6 @@ describe('Extension UUID Functions', () => {
   });
 
   describe('getOrCreateUuidForIdentifier', () => {
-    // Mocking localStorage before each test
     beforeEach(() => {
       localStorage.clear();
     });
@@ -28,7 +52,6 @@ describe('Extension UUID Functions', () => {
       const name = 'ExampleDApp';
       const identifier = getOrCreateUuidForIdentifier(url, name);
 
-      // Check if the UUID is stored correctly in localStorage
       const storedUuid = localStorage.getItem(toBase64(url + name));
 
       expect(storedUuid).toBe(identifier);
@@ -43,7 +66,6 @@ describe('Extension UUID Functions', () => {
       const firstIdentifier = getOrCreateUuidForIdentifier(url, name);
       const secondIdentifier = getOrCreateUuidForIdentifier(url, name);
 
-      // The UUID should be the same for both calls
       expect(secondIdentifier).toBe(firstIdentifier);
     });
 
@@ -56,7 +78,6 @@ describe('Extension UUID Functions', () => {
       const identifier1 = getOrCreateUuidForIdentifier(url1, name1);
       const identifier2 = getOrCreateUuidForIdentifier(url2, name2);
 
-      // The UUIDs should be different for different identifiers
       expect(identifier1).not.toBe(identifier2);
     });
   });
