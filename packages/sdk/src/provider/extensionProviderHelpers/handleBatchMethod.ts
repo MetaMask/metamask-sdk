@@ -37,7 +37,7 @@ export const handleBatchMethod = async ({
   const { dappMetadata } = sdkInstance;
   const url = dappMetadata?.url ?? 'no_url';
   const name = dappMetadata?.name ?? 'no_name';
-  const id = getOrCreateUuidForIdentifier(url, name);
+  const id = getOrCreateUuidForIdentifier({ url, name });
 
   const platFormType = sdkInstance.platformManager?.getPlatformType();
   const isExtension = Boolean(platFormType === PlatformType.DesktopWeb);
