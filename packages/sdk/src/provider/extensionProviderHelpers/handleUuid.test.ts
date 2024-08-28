@@ -1,5 +1,6 @@
+import { PlatformType } from '@metamask/sdk-communication-layer';
 import { base64Encode } from '../../utils/base64';
-import { getOrCreateUuidForIdentifier } from './handleUuid';
+import { getOrCreateUuidForIdentifier, getPlatformDetails } from './handleUuid';
 
 describe('Extension UUID Functions', () => {
   // Mocking localStorage
@@ -70,6 +71,88 @@ describe('Extension UUID Functions', () => {
       });
 
       expect(identifier1).not.toBe(identifier2);
+    });
+  });
+
+  describe('getPlatformDetails', () => {
+    let sdkInstance: typeof MetaMaskSDK;
+
+    beforeEach(() => {
+      sdkInstance = {
+        dappMetadata: {
+          url: 'https://example.com',
+          name: 'ExampleDApp',
+        },
+        platformManager: {
+          getPlatformType: jest.fn(),
+        },
+      } as unknown as typeof MetaMaskSDK;
+    });
+
+    it('should return "extension" if platform type is DesktopWeb', () => {
+      jest
+        .spyOn(sdkInstance.platformManager, 'getPlatformType')
+        .mockImplementation()
+        .mockReturnValue(PlatformType.DesktopWeb);
+
+      const result = getPlatformDetails(sdkInstance);
+
+      expect(result.from).toBe('extension');
+      expect(result.id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+      );
+    });
+
+    it('should return "mobile" if platform type is MetaMaskMobileWebview', () => {
+      jest
+        .spyOn(sdkInstance.platformManager, 'getPlatformType')
+        .mockImplementation()
+        .mockReturnValue(PlatformType.MetaMaskMobileWebview);
+
+      const result = getPlatformDetails(sdkInstance);
+
+      expect(result.from).toBe('mobile');
+      expect(result.id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+      );
+    });
+
+    it('should return "N/A" if platform type is neither DesktopWeb nor MetaMaskMobileWebview', () => {
+      jest
+        .spyOn(sdkInstance.platformManager, 'getPlatformType')
+        .mockImplementation()
+        .mockReturnValue('OtherPlatform');
+
+      const result = getPlatformDetails(sdkInstance);
+
+      expect(result.from).toBe('N/A');
+      expect(result.id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+      );
+    });
+
+    it('should return "N/A" if platform type is undefined', () => {
+      jest
+        .spyOn(sdkInstance.platformManager, 'getPlatformType')
+        .mockImplementation()
+        .mockReturnValue(undefined);
+
+      const result = getPlatformDetails(sdkInstance);
+
+      expect(result.from).toBe('N/A');
+      expect(result.id).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+      );
+    });
+
+    it('should use default "no_url" and "no_name" if dappMetadata is undefined', () => {
+      sdkInstance.dappMetadata = undefined;
+
+      const result = getPlatformDetails(sdkInstance);
+
+      expect(result.id).toBe(
+        getOrCreateUuidForIdentifier({ url: 'no_url', name: 'no_name' }),
+      );
     });
   });
 });

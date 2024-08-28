@@ -1,11 +1,8 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import {
-  TrackingEvents,
-  PlatformType,
-} from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
-import { getOrCreateUuidForIdentifier } from './handleUuid';
+import { getPlatformDetails } from './handleUuid';
 
 export const handleBatchMethod = async ({
   params,
@@ -34,23 +31,7 @@ export const handleBatchMethod = async ({
 
   const resp = await target.request(args);
 
-  const { dappMetadata } = sdkInstance;
-  const url = dappMetadata?.url ?? 'no_url';
-  const name = dappMetadata?.name ?? 'no_name';
-  const id = getOrCreateUuidForIdentifier({ url, name });
-
-  const platFormType = sdkInstance.platformManager?.getPlatformType();
-  const isExtension = Boolean(platFormType === PlatformType.DesktopWeb);
-  const isInAppBrowser = Boolean(
-    platFormType === PlatformType.MetaMaskMobileWebview,
-  );
-
-  let from = 'N/A';
-  if (isExtension) {
-    from = 'extension';
-  } else if (isInAppBrowser) {
-    from = 'mobile';
-  }
+  const { id, from } = getPlatformDetails(sdkInstance);
 
   if (trackEvent) {
     sdkInstance.analytics?.send({
