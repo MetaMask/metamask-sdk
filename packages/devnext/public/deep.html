@@ -4,12 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Interactive Debug Universal Link</title>
+  <title>Custom Input Debug Universal Link</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
       padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     pre {
@@ -17,12 +19,15 @@
       padding: 10px;
       border-radius: 5px;
       overflow-x: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
     table {
       border-collapse: collapse;
       width: 100%;
       margin-bottom: 20px;
+      table-layout: fixed;
     }
 
     th,
@@ -36,25 +41,52 @@
       background-color: #f2f2f2;
     }
 
+    .param-column {
+      width: 30%;
+      word-break: break-word;
+    }
+
+    .value-column {
+      width: 70%;
+      word-break: break-word;
+    }
+
     .param-control {
       display: flex;
       align-items: center;
+      margin-bottom: 5px;
     }
 
     .param-control input[type="checkbox"] {
       margin-right: 10px;
     }
 
-    button {
+    button,
+    input[type="text"] {
       margin-top: 10px;
       padding: 5px 10px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #decodedInfo {
+      max-height: 300px;
+      overflow-y: auto;
     }
   </style>
 </head>
 
 <body>
-  <h1>Interactive Universal Link Debug</h1>
-  <p>Modify parameters and test the universal link:</p>
+  <h1>Custom Input Universal Link Debug</h1>
+  <p>Paste your own deep link or use the default:</p>
+  <input type="text" id="customLink" placeholder="Paste your deep link here">
+  <button id="useCustomLink">Use Custom Link</button>
+  <button id="useDefaultLink">Use Default Link</button>
+
+  <h2>Modify Parameters:</h2>
   <div id="paramControls"></div>
   <button id="updateLink">Update Link</button>
   <button id="testLink">Test Updated Link</button>
@@ -65,8 +97,8 @@
   <h2>Query Parameters:</h2>
   <table id="paramsTable">
     <tr>
-      <th>Parameter</th>
-      <th>Value</th>
+      <th class="param-column">Parameter</th>
+      <th class="value-column">Value</th>
     </tr>
   </table>
 
@@ -74,8 +106,9 @@
   <pre id="decodedInfo"></pre>
 
   <script>
-    const originalLink = "https://metamask.app.link/connect?channelId=4e8f280b-3c3b-41f4-9cbe-9967f67f1ee8&v=2&comm=socket&pubkey=0248e0e610fd2ce7a1058a57434a65114520d2f0a6dcafa587b7ceebe5ac439359&t=q&originatorInfo=eyJ1cmwiOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldCIsInRpdGxlIjoiRGV2TmV4dCIsImljb24iOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldC9mYXZpY29uLmljbyIsInNjaGVtZSI6IiIsImFwaVZlcnNpb24iOiIwLjI3LjAiLCJkYXBwSWQiOiJkZXZkYXBwLnNpdGVlZC5uZXQiLCJwbGF0Zm9ybSI6IndlYi1kZXNrdG9wIiwic291cmNlIjoiZGlyZWN0In0=";
-    let currentLink = originalLink;
+    const defaultLink = "https://metamask.app.link/connect?channelId=4e8f280b-3c3b-41f4-9cbe-9967f67f1ee8&v=2&comm=socket&pubkey=0248e0e610fd2ce7a1058a57434a65114520d2f0a6dcafa587b7ceebe5ac439359&t=q&originatorInfo=eyJ1cmwiOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldCIsInRpdGxlIjoiRGV2TmV4dCIsImljb24iOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldC9mYXZpY29uLmljbyIsInNjaGVtZSI6IiIsImFwaVZlcnNpb24iOiIwLjI3LjAiLCJkYXBwSWQiOiJkZXZkYXBwLnNpdGVlZC5uZXQiLCJwbGF0Zm9ybSI6IndlYi1kZXNrdG9wIiwic291cmNlIjoiZGlyZWN0In0=";
+    let currentLink = defaultLink;
+    let originalParams = new URLSearchParams(new URL(defaultLink).search);
 
     function decodeOriginatorInfo(encodedInfo) {
       try {
@@ -103,6 +136,8 @@
         const row = paramsTable.insertRow();
         const cell1 = row.insertCell(0);
         const cell2 = row.insertCell(1);
+        cell1.className = 'param-column';
+        cell2.className = 'value-column';
         cell1.textContent = key;
         cell2.textContent = value;
       });
@@ -116,11 +151,14 @@
       }
     }
 
-    function createParamControls() {
-      const url = new URL(originalLink);
+    function createParamControls(link) {
+      const url = new URL(link);
       const controlsContainer = document.getElementById('paramControls');
+      controlsContainer.innerHTML = ''; // Clear existing controls
 
-      url.searchParams.forEach((value, key) => {
+      originalParams = new URLSearchParams(url.search);
+
+      originalParams.forEach((value, key) => {
         const controlDiv = document.createElement('div');
         controlDiv.className = 'param-control';
 
@@ -140,10 +178,10 @@
     }
 
     function updateLink() {
-      const url = new URL(originalLink);
+      const url = new URL(currentLink);
       const newUrl = new URL(url.origin + url.pathname);
 
-      url.searchParams.forEach((value, key) => {
+      originalParams.forEach((value, key) => {
         const checkbox = document.getElementById(`check-${key}`);
         if (checkbox && checkbox.checked) {
           newUrl.searchParams.append(key, value);
@@ -154,6 +192,24 @@
       displayLinkInfo(currentLink);
     }
 
+    document.getElementById('useCustomLink').addEventListener('click', function () {
+      const customLinkInput = document.getElementById('customLink');
+      if (customLinkInput.value) {
+        currentLink = customLinkInput.value;
+        createParamControls(currentLink);
+        displayLinkInfo(currentLink);
+      } else {
+        alert('Please enter a custom link first.');
+      }
+    });
+
+    document.getElementById('useDefaultLink').addEventListener('click', function () {
+      currentLink = defaultLink;
+      document.getElementById('customLink').value = '';
+      createParamControls(currentLink);
+      displayLinkInfo(currentLink);
+    });
+
     document.getElementById('updateLink').addEventListener('click', updateLink);
 
     document.getElementById('testLink').addEventListener('click', function () {
@@ -162,8 +218,8 @@
     });
 
     // Initialize the page
-    createParamControls();
-    displayLinkInfo(originalLink);
+    createParamControls(currentLink);
+    displayLinkInfo(currentLink);
   </script>
 </body>
 
