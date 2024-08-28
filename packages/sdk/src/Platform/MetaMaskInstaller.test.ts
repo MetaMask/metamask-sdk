@@ -2,7 +2,7 @@ import { checkInstallation } from '../services/MetaMaskInstaller/checkInstallati
 import { redirectToProperInstall } from '../services/MetaMaskInstaller/redirectToProperInstall';
 import { startDesktopOnboarding } from '../services/MetaMaskInstaller/startDesktopOnboarding';
 import { startInstaller } from '../services/MetaMaskInstaller/startInstaller';
-import { ProviderService } from '../services/ProviderService';
+import { RemoteConnection } from '../services/RemoteConnection';
 import { MetaMaskInstaller } from './MetaMaskInstaller';
 import { PlatformManager } from './PlatfformManager';
 
@@ -13,12 +13,12 @@ jest.mock('../services/MetaMaskInstaller/startInstaller');
 
 describe('MetaMaskInstaller', () => {
   let mockPlatformManager: jest.Mocked<PlatformManager>;
-  let mockProviderService: jest.Mocked<ProviderService>;
+  let mockProviderService: jest.Mocked<RemoteConnection>;
   let installer: MetaMaskInstaller;
 
   beforeEach(() => {
     mockPlatformManager = {} as jest.Mocked<PlatformManager>;
-    mockProviderService = {} as jest.Mocked<ProviderService>;
+    mockProviderService = {} as jest.Mocked<RemoteConnection>;
 
     installer = new MetaMaskInstaller({
       remote: mockProviderService,
