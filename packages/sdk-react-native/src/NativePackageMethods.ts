@@ -138,10 +138,6 @@ export function setupDeeplinkHandling() {
         if (host === 'mmsdk') {
           // Handle the URL event here
           MetaMaskReactNativeSdk.handleDeepLink(event.url);
-        } else {
-          console.warn(
-            `MetaMaskReactNativeSdk.handleOpenURL() => Unexpected host ${host}`,
-          );
         }
       } catch (error) {
         console.error(
