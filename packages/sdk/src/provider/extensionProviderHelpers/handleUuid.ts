@@ -62,14 +62,21 @@ function getOrCreateUuidForIdentifier({ url, name }: DappIdentifier): string {
   const rawIdentifier = url + name;
   const encodedIdentifier = base64Encode(rawIdentifier);
 
+  if (!localStorage) {
+    return '';
+  }
+
   let storedUuid = localStorage.getItem(encodedIdentifier) ?? '';
 
   if (!storedUuid) {
     storedUuid = uuidv4();
-    localStorage.setItem(encodedIdentifier, storedUuid);
+    try {
+      localStorage.setItem(encodedIdentifier, storedUuid);
+    } catch (error) {
+      return '';
+    }
   }
 
   return storedUuid;
 }
-
 export { getOrCreateUuidForIdentifier, getPlatformDetails };
