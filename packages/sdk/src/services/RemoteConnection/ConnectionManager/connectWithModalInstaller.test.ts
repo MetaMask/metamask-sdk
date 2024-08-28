@@ -49,19 +49,27 @@ describe('connectWithModalInstaller', () => {
   it('should show the installation modal with the correct universal link', async () => {
     const expectedUniversalLink = `${METAMASK_CONNECT_BASE_URL}?${linkParams}`;
 
+    // Mocking the connector event
     mockConnectorOnce.mockImplementationOnce((event, callback) => {
-      if (event === EventType.CLIENTS_READY) {
+      if (event === EventType.AUTHORIZED) {
         callback();
       }
     });
 
-    await connectWithModalInstaller(state, options, linkParams);
+    try {
+      // Calling the function under test
+      await connectWithModalInstaller(state, options, linkParams);
 
-    expect(mockShowInstallModal).toHaveBeenCalledWith(
-      state,
-      options,
-      expectedUniversalLink,
-    );
+      // Assertion after successful connection
+      expect(mockShowInstallModal).toHaveBeenCalledWith(
+        state,
+        options,
+        expectedUniversalLink,
+      );
+    } catch (error) {
+      // Force test failure if an unexpected error occurs
+      throw new Error(`Test failed due to unexpected error: ${error}`);
+    }
   });
 
   it('should reject the promise when EventType.PROVIDER_UPDATE is emitted', async () => {
@@ -76,17 +84,5 @@ describe('connectWithModalInstaller', () => {
     await expect(
       connectWithModalInstaller(state, options, linkParams),
     ).rejects.toStrictEqual(mockType);
-  });
-
-  it('should resolve the promise when EventType.CLIENTS_READY is emitted', async () => {
-    mockConnectorOnce.mockImplementationOnce((event, callback) => {
-      if (event === EventType.CLIENTS_READY) {
-        callback();
-      }
-    });
-
-    const res = await connectWithModalInstaller(state, options, linkParams);
-
-    expect(res).toBeUndefined();
   });
 });

@@ -14,10 +14,6 @@ export function openDeeplink(
   );
   logger(`[PlatfformManager: openDeeplink()] deepLink --> ${deeplink}`);
 
-  if (instance.isBrowser()) {
-    instance.enableWakeLock();
-  }
-
   try {
     if (state.preferredOpenLink) {
       state.preferredOpenLink(

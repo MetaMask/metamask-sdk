@@ -152,7 +152,7 @@ describe('RemoteConnection', () => {
       const connection = new RemoteConnection(options);
       connection.state.platformManager = undefined;
       expect(() => connection.getPlatformManager()).toThrow(
-        'platformManager is not initialized',
+        'PlatformManager not available',
       );
     });
 

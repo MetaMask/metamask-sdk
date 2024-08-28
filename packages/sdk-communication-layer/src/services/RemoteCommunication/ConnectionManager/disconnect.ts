@@ -42,6 +42,7 @@ export function disconnect({
       }
     }
 
+    state.authorized = false;
     state.relayPersistence = false;
     state.channelId = uuidv4();
     options.channelId = state.channelId;

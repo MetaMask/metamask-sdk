@@ -61,6 +61,10 @@ export async function connectWithModalInstaller(
       },
     );
 
+    state.connector.once(EventType.AUTHORIZED, () => {
+      resolve();
+    });
+
     // TODO shouldn't it make more sense to actually wait for full connection and 'authorized' event?
     state.connector.once(EventType.CLIENTS_READY, async () => {
       logger(

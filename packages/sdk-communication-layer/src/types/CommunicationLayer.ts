@@ -8,8 +8,8 @@ import { DisconnectOptions } from './DisconnectOptions';
 import { KeyInfo } from './KeyInfo';
 
 export interface CommunicationLayer extends EventEmitter2 {
-  createChannel(): Channel;
-  connectToChannel(options: ConnectToChannelOptions): void;
+  createChannel(): Promise<Channel>;
+  connectToChannel(options: ConnectToChannelOptions): Promise<void>;
   sendMessage(message: CommunicationLayerMessage): boolean | void;
   getKeyInfo(): KeyInfo;
   pause(): void;

@@ -12,6 +12,12 @@ describe('connectToChannel', () => {
   let mockSocket: jest.Mocked<Socket>;
   let originalConsoleError: typeof console.error;
 
+  const mockEmit = jest.fn().mockImplementation((event, _data, callback) => {
+    if (event === 'join_channel') {
+      callback(null, { ready: true });
+    }
+  });
+
   const mockConsoleError = jest.fn();
   const mockConsoleLog = jest
     .spyOn(console, 'log')
@@ -25,7 +31,7 @@ describe('connectToChannel', () => {
     mockSocket = {
       connected: false,
       connect: jest.fn(),
-      emit: jest.fn(),
+      emit: mockEmit,
     } as unknown as jest.Mocked<Socket>;
 
     instance = {

@@ -29,7 +29,6 @@ import {
 } from './services/RemoteConnection';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
-import { WakeLockStatus } from './types/WakeLockStatus';
 import { logger } from './utils/logger';
 
 export interface MetaMaskSDKOptions {
@@ -82,11 +81,6 @@ export interface MetaMaskSDKOptions {
    * If true, the SDK will use deeplinks to connect with MetaMask Mobile. If false, the SDK will use universal links to connect with MetaMask Mobile.
    */
   useDeeplink?: boolean;
-
-  /**
-   * The type of wake lock to use when the SDK is running in the background.
-   */
-  wakeLockType?: WakeLockStatus;
 
   /**
    * If true, the SDK will shim the window.web3 object with the provider returned by the SDK (useful for compatibility with older browser).
@@ -214,6 +208,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       dappMetadata: {
         name: '',
         url: '',
+        iconUrl: '',
       },
       _source: DEFAULT_SDK_SOURCE,
       i18nOptions: {
