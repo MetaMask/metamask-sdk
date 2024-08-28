@@ -342,7 +342,15 @@ const initializeMobileProvider = async ({
           throw installError;
         }
 
+        // We should now have obtained the authorization and account infos so we can skip sending that rpc call.
+        if (method === RPC_METHODS.ETH_REQUESTACCOUNTS) {
+          // Retrieve the selected address and return it
+          selectedAddress = provider.getSelectedAddress();
+          return [selectedAddress];
+        }
+
         // Inform next step that this method triggered installer
+        // TODO: change logic to avoid this call and instead send initial method in the installer to avoid back and forth on mobile.
         if (args[0] && typeof args[0] === 'object') {
           args[0].params = {
             __triggeredInstaller: true,

@@ -49,10 +49,6 @@ export const reconnectSocket = async (instance: SocketService) => {
     instance,
   );
 
-  if (connected) {
-    return true;
-  }
-
   try {
     while (state.reconnectionAttempts < MAX_RECONNECTION_ATTEMPS) {
       logger.SocketService(
