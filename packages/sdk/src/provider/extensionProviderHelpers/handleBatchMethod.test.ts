@@ -123,7 +123,7 @@ describe('handleBatchMethod', () => {
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
       params: {
         method: 'someMethod',
-        from: 'extension',
+        from: 'N/A',
         id: expect.any(String),
       },
     });

@@ -122,7 +122,7 @@ describe('wrapExtensionProvider', () => {
       event: TrackingEvents.SDK_RPC_REQUEST,
       params: {
         method: args.method,
-        from: 'extension',
+        from: 'N/A',
         id: expect.any(String),
       },
     });
@@ -219,7 +219,7 @@ describe('wrapExtensionProvider', () => {
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
       params: {
         method: args.method,
-        from: 'extension',
+        from: 'N/A',
         id: expect.any(String),
       },
     });
