@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.8]
+### Uncategorized
+- chore: improve the deeplink handling for MetaMask SDK on iOS ([#1002](https://github.com/MetaMask/metamask-sdk/pull/1002))
+
 ## [0.3.7]
 ### Uncategorized
 - chore: update native sdk versions ([#997](https://github.com/MetaMask/metamask-sdk/pull/997))
@@ -50,7 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.7...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.8...HEAD
+[0.3.8]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.7...@metamask/sdk-react-native@0.3.8
 [0.3.7]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.6...@metamask/sdk-react-native@0.3.7
 [0.3.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.5...@metamask/sdk-react-native@0.3.6
 [0.3.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.4...@metamask/sdk-react-native@0.3.5
