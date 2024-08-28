@@ -261,6 +261,9 @@ const initializeMobileProvider = async ({
           await new Promise((resolve, reject) => {
             const authorized = remoteConnection?.isAuthorized();
             if (authorized) {
+              logger(
+                `[initializeMobileProvider: sendRequest()] already authorized`,
+              );
               resolve(true);
             }
 
