@@ -1,3 +1,4 @@
+// packages/sdk-communication-layer/src/services/RemoteCommunication/ConnectionManager/connectToChannel.ts
 import { validate } from 'uuid';
 import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';

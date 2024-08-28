@@ -3,20 +3,19 @@ import { EventEmitter2 } from 'eventemitter2';
 import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 import { DEFAULT_SERVER_URL, DEFAULT_SOCKET_TRANSPORTS } from './config';
 import { ECIES, ECIESProps } from './ECIES';
-import { KeyExchange } from './KeyExchange';
+import { KeyExchange, KeyExchangeProps } from './KeyExchange';
 import { RemoteCommunication } from './RemoteCommunication';
 import { createChannel } from './services/SocketService/ChannelManager';
 import {
-  checkFocusAndReconnect,
   connectToChannel,
   disconnect,
   pause,
   ping,
   resume,
+  setupSocketFocusListener,
 } from './services/SocketService/ConnectionManager';
 import { keyCheck, resetKeys } from './services/SocketService/KeysManager';
 import { handleSendMessage } from './services/SocketService/MessageHandlers';
-import { Channel } from './types/Channel';
 import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
@@ -58,6 +57,10 @@ export interface SocketServiceState {
   setupChannelListeners?: boolean;
   analytics?: boolean;
   keyExchange?: KeyExchange;
+  focusListenerAdded: boolean;
+  removeFocusListener?: () => void;
+  isReconnecting: boolean;
+  reconnectionAttempts: number;
 }
 
 export interface RPCMethodResult {
@@ -89,22 +92,28 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
     rpcMethodTracker: {},
     hasPlaintext: false,
     communicationServerUrl: '',
+    focusListenerAdded: false,
+    removeFocusListener: undefined,
+    isReconnecting: false,
+    reconnectionAttempts: 0,
   };
 
   remote: RemoteCommunication;
 
-  constructor({
-    otherPublicKey,
-    reconnect,
-    communicationLayerPreference,
-    transports,
-    communicationServerUrl,
-    context,
-    ecies,
-    remote,
-    logging,
-  }: SocketServiceProps) {
+  options: SocketServiceProps;
+
+  constructor(options: SocketServiceProps) {
     super();
+
+    this.options = options;
+    const {
+      reconnect,
+      communicationLayerPreference,
+      communicationServerUrl,
+      context,
+      remote,
+      logging,
+    } = options;
 
     this.state.resumed = reconnect;
     this.state.context = context;
@@ -122,42 +131,46 @@ export class SocketService extends EventEmitter2 implements CommunicationLayer {
       this.state.communicationServerUrl !== DEFAULT_SERVER_URL &&
       logging?.plaintext === true;
 
-    const options: Partial<ManagerOptions & SocketOptions> = {
-      autoConnect: false,
-      transports: DEFAULT_SOCKET_TRANSPORTS, // ['polling', 'websocket']
-      withCredentials: true,
-    };
-
-    if (transports) {
-      options.transports = transports;
-    }
-
     logger.SocketService(
       `[SocketService: constructor()] Socket IO url: ${this.state.communicationServerUrl}`,
     );
 
-    this.state.socket = io(communicationServerUrl, options);
+    this.initSocket();
+  }
 
-    const keyExchangeInitParameter = {
+  initSocket() {
+    const { otherPublicKey, ecies, logging } = this.options;
+    const socketOptions: Partial<ManagerOptions & SocketOptions> = {
+      autoConnect: false,
+      transports: DEFAULT_SOCKET_TRANSPORTS,
+      withCredentials: true,
+    };
+
+    const url = this.state.communicationServerUrl;
+    logger.SocketService(`[SocketService: initSocket()] Socket IO url: ${url}`);
+
+    this.state.socket = io(url, socketOptions);
+
+    // Make sure to always be connected and retrieve messages
+    setupSocketFocusListener(this);
+
+    const keyExchangeInitParameter: KeyExchangeProps = {
       communicationLayer: this,
       otherPublicKey,
       sendPublicKey: false,
-      context: this.state.context,
+      context: this.state.context ?? '',
       ecies,
       logging,
     };
 
     this.state.keyExchange = new KeyExchange(keyExchangeInitParameter);
-
-    // Make sure to always be connected and retrieve messages
-    checkFocusAndReconnect(this);
   }
 
   resetKeys(): void {
     return resetKeys(this);
   }
 
-  createChannel(): Channel {
+  async createChannel() {
     return createChannel(this);
   }
 

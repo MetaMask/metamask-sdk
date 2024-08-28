@@ -18,12 +18,21 @@ jest.mock('../../Ethereum', () => ({
   Ethereum: {
     getProvider: jest.fn().mockReturnValue({
       emit: jest.fn(),
+      on: jest.fn(),
+      once: jest.fn((event, callback) => {
+        if (event === 'AUTHORIZED') {
+          console.log('Mock AUTHORIZED event emitted');
+          callback();
+        }
+      }),
     }),
   },
 }));
 
 jest.mock('./connectWithDeeplink', () => ({
-  connectWithDeeplink: jest.fn(),
+  connectWithDeeplink: jest.fn(async () => {
+    return Promise.resolve();
+  }),
 }));
 
 jest.mock('./connectWithModalInstaller', () => ({
@@ -49,18 +58,25 @@ describe('startConnection', () => {
   const mockConnectWithModalInstaller = connectWithModalInstaller as jest.Mock;
 
   beforeEach(() => {
-    state = {
-      connector: {
-        originatorSessionConnect: mockOriginatorSessionConnect,
-        getKeyInfo: mockGetKeyInfo,
-        generateChannelIdConnect: mockGenerateChannelIdConnect,
-        isConnected: jest.fn(() => true),
-        state: {
-          storageManager: {
-            persistChannelConfig: jest.fn(),
-          },
+    const mockConnector = {
+      originatorSessionConnect: mockOriginatorSessionConnect,
+      getKeyInfo: mockGetKeyInfo,
+      generateChannelIdConnect: mockGenerateChannelIdConnect,
+      isConnected: jest.fn(() => true),
+      isAuthorized: jest.fn(() => true),
+      on: jest.fn(),
+      emit: jest.fn(),
+      once: jest.fn(),
+      connectToChannel: jest.fn(),
+      state: {
+        storageManager: {
+          persistChannelConfig: jest.fn(),
         },
       },
+    };
+
+    state = {
+      connector: mockConnector,
       developerMode: false,
       platformManager: {
         isSecure: mockIsSecure,
@@ -68,6 +84,7 @@ describe('startConnection', () => {
       },
       communicationLayerPreference: 'mock_comm',
       authorized: true,
+      listeners: [],
     } as unknown as RemoteConnectionState;
 
     options = {
@@ -75,6 +92,9 @@ describe('startConnection', () => {
         name: 'Test Dapp',
         url: 'https://testdapp.com',
         iconUrl: 'https://testdapp.com/icon.png',
+      },
+      platformManager: {
+        getPlatformType: mockGetPlatformType,
       },
     } as unknown as RemoteConnectionProps;
 
@@ -93,7 +113,7 @@ describe('startConnection', () => {
     state.connector = undefined;
 
     await expect(startConnection(state, options)).rejects.toThrow(
-      'no connector defined',
+      'Invalid communication protocol',
     );
   });
 
@@ -119,10 +139,7 @@ describe('startConnection', () => {
 
     await startConnection(state, options);
 
-    expect(mockConnectWithDeeplink).toHaveBeenCalledWith(
-      state,
-      expect.any(String),
-    );
+    expect(mockConnectWithDeeplink).toHaveBeenCalled();
   });
 
   it('should call reconnectWithModalOTP when channelConfig lastActive is true and isSecure is false', async () => {

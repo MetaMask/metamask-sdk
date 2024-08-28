@@ -8,6 +8,8 @@ export const DEFAULT_SESSION_TIMEOUT_MS = 7 * DAY_IN_MS;
 // time upon which we wait for a metamask reocnnection before creating a new channel
 export const CHANNEL_MAX_WAITING_TIME = 3 * 1000; // 3 seconds
 
+export const MAX_RECONNECTION_ATTEMPS = 3;
+
 export const MAX_RPC_WAIT_TIME = 5 * 60 * 1000; // 5 minutes
 
 export const PROTOCOL_VERSION = 2;

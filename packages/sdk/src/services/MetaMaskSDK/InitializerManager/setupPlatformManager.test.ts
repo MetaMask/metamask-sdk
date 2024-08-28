@@ -1,6 +1,5 @@
 import { PlatformManager } from '../../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../../sdk';
-import { WakeLockStatus } from '../../../types/WakeLockStatus';
 
 import { setupPlatformManager } from './setupPlatformManager';
 
@@ -28,7 +27,6 @@ describe('setupPlatformManager', () => {
     expect(PlatformManager).toHaveBeenCalledWith({
       useDeepLink: false,
       preferredOpenLink: undefined,
-      wakeLockStatus: undefined,
       debug: false,
     });
     expect(instance.platformManager).toBeDefined();
@@ -38,7 +36,6 @@ describe('setupPlatformManager', () => {
     const fakeOptions = {
       useDeeplink: true,
       openDeeplink: jest.fn() as any,
-      wakeLockType: WakeLockStatus.Disabled,
     } as MetaMaskSDK['options'];
     instance.options = fakeOptions;
     instance.debug = true;
@@ -48,7 +45,6 @@ describe('setupPlatformManager', () => {
     expect(PlatformManager).toHaveBeenCalledWith({
       useDeepLink: fakeOptions.useDeeplink,
       preferredOpenLink: fakeOptions.openDeeplink,
-      wakeLockStatus: fakeOptions.wakeLockType,
       debug: true,
     });
     expect(instance.platformManager).toBeDefined();

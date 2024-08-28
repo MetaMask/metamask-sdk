@@ -36,14 +36,6 @@ export const handleJoinChannelResults = async (
     `handleJoinChannelResults: Channel ${channelId} persistence=${persistence} walletKey=${walletKey}`,
   );
 
-  if (persistence) {
-    instance.emit(EventType.CHANNEL_PERSISTENCE);
-    instance.state.keyExchange?.setKeysExchanged(true);
-    remote.state.ready = true;
-    remote.state.authorized = true;
-    remote.emit(EventType.AUTHORIZED);
-  }
-
   if (walletKey && !remote.state.channelConfig?.otherKey) {
     const keyExchange = instance.getKeyExchange();
     keyExchange.setOtherPublicKey(walletKey);
@@ -76,5 +68,13 @@ export const handleJoinChannelResults = async (
     await storageManager?.persistChannelConfig(channelConfig);
     remote.emitServiceStatusEvent();
     remote.setConnectionStatus(ConnectionStatus.LINKED);
+  }
+
+  if (persistence) {
+    instance.emit(EventType.CHANNEL_PERSISTENCE);
+    instance.state.keyExchange?.setKeysExchanged(true);
+    remote.state.ready = true;
+    remote.state.authorized = true;
+    remote.emit(EventType.AUTHORIZED);
   }
 };

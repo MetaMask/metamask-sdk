@@ -22,11 +22,16 @@ export function disconnect(
   );
 
   if (options?.terminate) {
+    instance.state.removeFocusListener?.();
     instance.state.channelId = options.channelId;
+    instance.state.socket?.removeAllListeners();
     instance.state.keyExchange?.clean();
+    instance.remote.state.ready = false;
+    instance.state.socket = undefined;
     // Reset rpcMethodTracker
     instance.state.rpcMethodTracker = {};
   }
+
   instance.state.manualDisconnect = true;
   instance.state.socket?.disconnect();
 }

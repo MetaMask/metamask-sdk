@@ -18,9 +18,15 @@ describe('disconnect', () => {
         context: 'someContext',
         socket: {
           disconnect: mockDisconnect,
+          removeAllListeners: jest.fn(),
         },
         keyExchange: {
           clean: mockClean,
+        },
+      },
+      remote: {
+        state: {
+          ready: true,
         },
       },
     } as unknown as SocketService;

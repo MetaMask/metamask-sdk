@@ -4,24 +4,26 @@ import {
   DappMetadata,
   DisconnectOptions,
   ECIESProps,
+  EventType,
   KeyInfo,
   RemoteCommunication,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import { i18n } from 'i18next';
-import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
 import { SDKLoggingOptions } from '../../types/SDKLoggingOptions';
 import InstallModal from '../../ui/InstallModal/installModal';
 import PendingModal from '../../ui/InstallModal/pendingModal';
+import { logger } from '../../utils/logger';
 import { Analytics } from '../Analytics';
 import { Ethereum } from '../Ethereum';
 import { ProviderService } from '../ProviderService';
 import { initializeConnector } from './ConnectionInitializer';
+import { cleanupConnector } from './ConnectionInitializer/cleanupConnector';
 import { startConnection, StartConnectionExtras } from './ConnectionManager';
-import { setupListeners } from './EventListeners';
+import { EventHandler, setupListeners } from './EventListeners';
 import { showActiveModal } from './ModalManager';
 
 export interface RemoteConnectionProps {
@@ -86,6 +88,7 @@ export interface RemoteConnectionState {
   reconnection: boolean;
   deeplinkProtocol: boolean;
   preferDesktop?: boolean;
+  listeners: { event: EventType; handler: EventHandler }[];
   communicationLayerPreference?: CommunicationLayerPreference;
   platformManager?: PlatformManager;
   pendingModal?: {
@@ -116,6 +119,7 @@ export class RemoteConnection implements ProviderService {
     reconnection: false,
     preferDesktop: false,
     deeplinkProtocol: false,
+    listeners: [],
     communicationLayerPreference: undefined,
     platformManager: undefined,
     pendingModal: undefined,
@@ -145,10 +149,6 @@ export class RemoteConnection implements ProviderService {
     if (!options.modals.otp) {
       options.modals.otp = PendingModal;
     }
-
-    initializeConnector(this.state, this.options);
-
-    setupListeners(this.state, this.options);
   }
 
   /**
@@ -159,8 +159,26 @@ export class RemoteConnection implements ProviderService {
     return startConnection(this.state, this.options, extras);
   }
 
-  async initRemoteCommunication(): Promise<void> {
-    return this.getConnector().initFromDappStorage();
+  async initRemoteCommunication({
+    sdkInstance,
+  }: {
+    sdkInstance: MetaMaskSDK;
+  }): Promise<void> {
+    // get channel config
+    const channelConfig =
+      await sdkInstance.options.storage?.storageManager?.getPersistedChannelConfig();
+
+    if (!this.options.ecies) {
+      const eciesProps: ECIESProps = {
+        privateKey: channelConfig?.localKey,
+      };
+      this.options.ecies = eciesProps;
+    }
+    initializeConnector(this.state, this.options);
+
+    setupListeners(this.state, this.options);
+
+    return this.getConnector()?.initFromDappStorage();
   }
 
   showActiveModal() {
@@ -189,9 +207,9 @@ export class RemoteConnection implements ProviderService {
     return this.state.connector;
   }
 
-  getPlatformManager() {
+  getPlatformManager(): PlatformManager {
     if (!this.state.platformManager) {
-      throw new Error('platformManager is not initialized');
+      throw new Error('PlatformManager not available');
     }
 
     return this.state.platformManager;
@@ -220,5 +238,6 @@ export class RemoteConnection implements ProviderService {
       this.state.otpAnswer = undefined;
     }
     this.state.connector?.disconnect(options);
+    cleanupConnector(this.state);
   }
 }

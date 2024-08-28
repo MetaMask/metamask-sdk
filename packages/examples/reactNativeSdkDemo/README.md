@@ -88,3 +88,37 @@ yarn ios:device
 ```sh
 yarn android
 ```
+
+
+### Running the `sdk-react-native` Package Locally and Testing
+
+To run the `sdk-react-native` package locally and test it within the example dApp, follow these steps:
+
+1. **Copy the Package Path:**
+   - Right-click on the `sdk-react-native` package folder.
+   - Click on "Copy Path" to copy the folder path.
+
+2. **Update the Example dApp:**
+   - Open the `package.json` file of your example dApp.
+   - Replace the existing reference to `sdk-react-native` with the copied path.
+   - The entry in your `package.json` should look something like this:
+     ```json
+     "@metamask/sdk-react-native": "/Users/{YOUR_MAC_USER_NAME}/Projects/metamask-sdk/packages/sdk-react-native"
+     ```
+
+3. **Build and Link the Package:**
+   - Open a terminal and navigate to the `sdk-react-native` package folder.
+   - Run the following command to build the package and link it to the example dApp:
+     ```bash
+     yarn build && cd .. && cd examples/reactNativeSdkDemo && rm -rf .yarn && rm -rf node_modules && yarn && cd ios && pod install && cd ..
+     ```
+
+4. **Consume the Local Package:**
+   - Your example dApp is now consuming the `sdk-react-native` package from the local folder.
+   - After making any changes to the `sdk-react-native` package, repeat the above steps to see the updates reflected in the example dApp.
+
+5. **Build and Test:**
+   - With the local package linked, you can now build the example dApp and start testing.
+
+---
+By following these steps, you ensure that the example dApp is using the latest local version of the `sdk-react-native` package, allowing for seamless development and testing.

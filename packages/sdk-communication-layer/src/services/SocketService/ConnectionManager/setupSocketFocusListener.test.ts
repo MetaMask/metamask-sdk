@@ -1,5 +1,5 @@
 import { SocketService } from '../../../SocketService';
-import { checkFocusAndReconnect } from './checkFocusAndReconnect';
+import { setupSocketFocusListener } from './setupSocketFocusListener';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('./reconnectSocket');
@@ -7,7 +7,7 @@ jest.mock('../../../utils/logger', () => ({
   logger: { SocketService: jest.fn() },
 }));
 
-describe('checkFocusAndReconnect', () => {
+describe('setupSocketFocusListener', () => {
   let instance: SocketService;
   let mockAddEventListener: jest.Mock;
 
@@ -30,7 +30,7 @@ describe('checkFocusAndReconnect', () => {
   it('should set up a focus event listener', () => {
     jest.spyOn(document, 'hasFocus').mockImplementation().mockReturnValue(true);
 
-    checkFocusAndReconnect(instance);
+    setupSocketFocusListener(instance);
 
     expect(mockAddEventListener).toHaveBeenCalledWith(
       'focus',
@@ -44,7 +44,7 @@ describe('checkFocusAndReconnect', () => {
       .mockImplementation()
       .mockReturnValue(false);
 
-    checkFocusAndReconnect(instance);
+    setupSocketFocusListener(instance);
 
     const focusCallback = mockAddEventListener.mock.calls[0][1];
     await focusCallback();
@@ -63,14 +63,14 @@ describe('checkFocusAndReconnect', () => {
       .mockImplementation()
       .mockReturnValue(false);
 
-    checkFocusAndReconnect(instance);
+    setupSocketFocusListener(instance);
 
     const focusCallback = mockAddEventListener.mock.calls[0][1];
     await focusCallback();
 
     expect(reconnectSocket).toHaveBeenCalledWith(instance);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'SocketService::checkFocus Error reconnecting socket',
+      'setupSocketFocusListeners Error reconnecting socket',
       new Error('Reconnection failed'),
     );
 
@@ -81,7 +81,7 @@ describe('checkFocusAndReconnect', () => {
     delete (global as any).window;
     delete (global as any).document;
 
-    checkFocusAndReconnect(instance);
+    setupSocketFocusListener(instance);
 
     expect(mockAddEventListener).not.toHaveBeenCalled();
   });
