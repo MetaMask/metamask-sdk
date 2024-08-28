@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Debug Universal Link</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .param-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .param-control input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Interactive Universal Link Debug</h1>
+  <p>Modify parameters and test the universal link:</p>
+  <div id="paramControls"></div>
+  <button id="updateLink">Update Link</button>
+  <button id="testLink">Test Updated Link</button>
+
+  <h2>Current Link:</h2>
+  <pre id="currentLink"></pre>
+
+  <h2>Query Parameters:</h2>
+  <table id="paramsTable">
+    <tr>
+      <th>Parameter</th>
+      <th>Value</th>
+    </tr>
+  </table>
+
+  <h2>Decoded originatorInfo:</h2>
+  <pre id="decodedInfo"></pre>
+
+  <script>
+    const originalLink = "https://metamask.app.link/connect?channelId=4e8f280b-3c3b-41f4-9cbe-9967f67f1ee8&v=2&comm=socket&pubkey=0248e0e610fd2ce7a1058a57434a65114520d2f0a6dcafa587b7ceebe5ac439359&t=q&originatorInfo=eyJ1cmwiOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldCIsInRpdGxlIjoiRGV2TmV4dCIsImljb24iOiJodHRwczovL2RldmRhcHAuc2l0ZWVkLm5ldC9mYXZpY29uLmljbyIsInNjaGVtZSI6IiIsImFwaVZlcnNpb24iOiIwLjI3LjAiLCJkYXBwSWQiOiJkZXZkYXBwLnNpdGVlZC5uZXQiLCJwbGF0Zm9ybSI6IndlYi1kZXNrdG9wIiwic291cmNlIjoiZGlyZWN0In0=";
+    let currentLink = originalLink;
+
+    function decodeOriginatorInfo(encodedInfo) {
+      try {
+        return JSON.parse(atob(decodeURIComponent(encodedInfo)));
+      } catch (e) {
+        return "Error decoding originatorInfo: " + e.message;
+      }
+    }
+
+    function displayLinkInfo(link) {
+      const url = new URL(link);
+      const currentLinkElement = document.getElementById('currentLink');
+      const paramsTable = document.getElementById('paramsTable');
+      const decodedInfo = document.getElementById('decodedInfo');
+
+      currentLinkElement.textContent = link;
+
+      // Clear existing rows
+      while (paramsTable.rows.length > 1) {
+        paramsTable.deleteRow(1);
+      }
+
+      // Display query parameters
+      url.searchParams.forEach((value, key) => {
+        const row = paramsTable.insertRow();
+        const cell1 = row.insertCell(0);
+        const cell2 = row.insertCell(1);
+        cell1.textContent = key;
+        cell2.textContent = value;
+      });
+
+      // Decode and display originatorInfo
+      const originatorInfo = url.searchParams.get('originatorInfo');
+      if (originatorInfo) {
+        decodedInfo.textContent = JSON.stringify(decodeOriginatorInfo(originatorInfo), null, 2);
+      } else {
+        decodedInfo.textContent = "No originatorInfo found in the URL.";
+      }
+    }
+
+    function createParamControls() {
+      const url = new URL(originalLink);
+      const controlsContainer = document.getElementById('paramControls');
+
+      url.searchParams.forEach((value, key) => {
+        const controlDiv = document.createElement('div');
+        controlDiv.className = 'param-control';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = `check-${key}`;
+        checkbox.checked = true;
+
+        const label = document.createElement('label');
+        label.htmlFor = `check-${key}`;
+        label.textContent = key;
+
+        controlDiv.appendChild(checkbox);
+        controlDiv.appendChild(label);
+        controlsContainer.appendChild(controlDiv);
+      });
+    }
+
+    function updateLink() {
+      const url = new URL(originalLink);
+      const newUrl = new URL(url.origin + url.pathname);
+
+      url.searchParams.forEach((value, key) => {
+        const checkbox = document.getElementById(`check-${key}`);
+        if (checkbox && checkbox.checked) {
+          newUrl.searchParams.append(key, value);
+        }
+      });
+
+      currentLink = newUrl.toString();
+      displayLinkInfo(currentLink);
+    }
+
+    document.getElementById('updateLink').addEventListener('click', updateLink);
+
+    document.getElementById('testLink').addEventListener('click', function () {
+      console.log('Testing link:', currentLink);
+      window.location.href = currentLink;
+    });
+
+    // Initialize the page
+    createParamControls();
+    displayLinkInfo(originalLink);
+  </script>
+</body>
+
+</html>
