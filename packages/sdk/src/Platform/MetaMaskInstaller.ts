@@ -2,7 +2,7 @@ import { checkInstallation } from '../services/MetaMaskInstaller/checkInstallati
 import { redirectToProperInstall } from '../services/MetaMaskInstaller/redirectToProperInstall';
 import { startDesktopOnboarding } from '../services/MetaMaskInstaller/startDesktopOnboarding';
 import { startInstaller } from '../services/MetaMaskInstaller/startInstaller';
-import { ProviderService } from '../services/ProviderService';
+import { RemoteConnection } from '../services/RemoteConnection';
 import { PlatformManager } from './PlatfformManager';
 
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
@@ -10,9 +10,14 @@ import { PlatformManager } from './PlatfformManager';
 
 interface InstallerProps {
   preferDesktop: boolean;
-  remote: ProviderService;
+  remote: RemoteConnection;
   platformManager: PlatformManager;
   debug?: boolean;
+}
+
+export interface RPCCall {
+  method: string;
+  params: unknown;
 }
 
 interface MetaMaskInstallerState {
@@ -21,7 +26,8 @@ interface MetaMaskInstallerState {
   resendRequest: any;
   preferDesktop: boolean;
   platformManager: PlatformManager | null;
-  remote: ProviderService | null;
+  connectWith?: RPCCall;
+  remote: RemoteConnection | null;
   debug: boolean;
 }
 
@@ -39,6 +45,7 @@ export class MetaMaskInstaller {
     platformManager: null,
     remote: null,
     debug: false,
+    connectWith: undefined,
   };
 
   public constructor({
@@ -65,7 +72,14 @@ export class MetaMaskInstaller {
     return checkInstallation(this);
   }
 
-  async start({ wait = false }: { wait: boolean }) {
+  async start({
+    wait = false,
+    connectWith,
+  }: {
+    wait: boolean;
+    connectWith?: { method: string; params: unknown };
+  }) {
+    this.state.connectWith = connectWith;
     await startInstaller(this, { wait });
 
     if (wait) {

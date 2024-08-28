@@ -252,9 +252,16 @@ const initializeMobileProvider = async ({
       ) {
         setInitializing(true);
 
+        const isConnectWith = method === RPC_METHODS.METAMASK_CONNECTWITH;
         try {
           await installer.start({
             wait: false,
+            connectWith: isConnectWith
+              ? {
+                  method,
+                  params,
+                }
+              : undefined,
           });
 
           // wait for authorization

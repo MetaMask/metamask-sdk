@@ -18,11 +18,13 @@ import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
+import { RPCCall } from '../../../Platform/MetaMaskInstaller';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
 export interface StartConnectionExtras {
   initialCheck?: boolean;
+  connectWith?: RPCCall;
 }
 
 /**
@@ -35,7 +37,7 @@ export interface StartConnectionExtras {
 export async function startConnection(
   state: RemoteConnectionState,
   options: RemoteConnectionProps,
-  { initialCheck }: StartConnectionExtras = {},
+  { initialCheck, connectWith }: StartConnectionExtras = {},
 ): Promise<void> {
   try {
     // Initialize the connector - will skip if already initialized
@@ -149,9 +151,20 @@ export async function startConnection(
     };
     const base64OriginatorInfo = base64Encode(JSON.stringify(originatorInfo));
 
-    const linkParams = `channelId=${channelId}&v=2&comm=${
+    let linkParams = `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
     }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}`;
+
+    if (connectWith) {
+      const rpc = {
+        id: Date.now(), // We dont need a better id, this is only for current user session.
+        // future rpc calls will have ids generated via JSON-RPC package.
+        method: connectWith.method,
+        params: connectWith.params,
+      };
+      const base64Rpc = base64Encode(JSON.stringify(rpc));
+      linkParams += `&rpc=${base64Rpc}`;
+    }
     const encodedLinkParams = encodeURI(linkParams);
     const qrcodeLink = `${
       state.useDeeplink ? METAMASK_DEEPLINK_BASE : METAMASK_CONNECT_BASE_URL
