@@ -1,5 +1,8 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import {
+  PlatformType,
+  TrackingEvents,
+} from '@metamask/sdk-communication-layer';
 
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
@@ -37,16 +40,28 @@ export const wrapExtensionProvider = ({
           const { dappMetadata } = sdkInstance;
           const url = dappMetadata?.url ?? 'no_url';
           const name = dappMetadata?.name ?? 'no_name';
-          const identifier = getOrCreateUuidForIdentifier(url, name);
-          const hasMobileProvider = Boolean(sdkInstance.sdkProvider);
+          const id = getOrCreateUuidForIdentifier(url, name);
+
+          const platFormType = sdkInstance.platformManager?.getPlatformType();
+          const isExtension = Boolean(platFormType === PlatformType.DesktopWeb);
+          const isInAppBrowser = Boolean(
+            platFormType === PlatformType.MetaMaskMobileWebview,
+          );
+
+          let from = 'N/A';
+          if (isExtension) {
+            from = 'extension';
+          } else if (isInAppBrowser) {
+            from = 'mobile';
+          }
 
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
               params: {
                 method,
-                from: hasMobileProvider ? 'mobile' : 'extension',
-                id: identifier,
+                from,
+                id,
               },
             });
           }
@@ -88,8 +103,8 @@ export const wrapExtensionProvider = ({
                 event: TrackingEvents.SDK_RPC_REQUEST_DONE,
                 params: {
                   method,
-                  from: hasMobileProvider ? 'mobile' : 'extension',
-                  id: identifier,
+                  from,
+                  id,
                 },
               });
             }
