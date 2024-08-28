@@ -114,9 +114,9 @@ export const terminate = async (): Promise<void> => {
 export function setupDeeplinkHandling() {
   if (Platform.OS === 'ios') {
     const handleOpenURL = (event: any) => {
-      try {
-        const { url } = event;
+      const { url } = event;
 
+      try {
         if (!url || typeof url !== 'string') {
           return;
         }
@@ -137,11 +137,11 @@ export function setupDeeplinkHandling() {
         // Only listen for metamask urls
         if (host === 'mmsdk') {
           // Handle the URL event here
-          MetaMaskReactNativeSdk.handleDeepLink(event.url);
+          MetaMaskReactNativeSdk.handleDeepLink(url);
         }
       } catch (error) {
         console.error(
-          'MetaMaskReactNativeSdk.handleOpenURL() => Error handling URL:',
+          `MetaMaskReactNativeSdk.handleOpenURL() => Error handling URL ${url} `,
           error,
         );
       }
