@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import { base64Encode } from '../../utils/base64';
+import { MetaMaskSDK } from '../../sdk';
+import { PlatformManager } from '../../Platform/PlatfformManager';
 import { getOrCreateUuidForIdentifier, getPlatformDetails } from './handleUuid';
 
 describe('Extension UUID Functions', () => {
@@ -75,7 +78,7 @@ describe('Extension UUID Functions', () => {
   });
 
   describe('getPlatformDetails', () => {
-    let sdkInstance: typeof MetaMaskSDK;
+    let sdkInstance: MetaMaskSDK;
 
     beforeEach(() => {
       sdkInstance = {
@@ -85,63 +88,59 @@ describe('Extension UUID Functions', () => {
         },
         platformManager: {
           getPlatformType: jest.fn(),
-        },
-      } as unknown as typeof MetaMaskSDK;
+        } as unknown as PlatformManager, // Ensure it's typed as PlatformManager
+      } as MetaMaskSDK;
     });
 
     it('should return "extension" if platform type is DesktopWeb', () => {
       jest
-        .spyOn(sdkInstance.platformManager, 'getPlatformType')
-        .mockImplementation()
-        .mockReturnValue(PlatformType.DesktopWeb);
+        .spyOn(sdkInstance.platformManager!, 'getPlatformType')
+        .mockReturnValue(PlatformType.DesktopWeb); // Ensure platformManager is not undefined here
 
       const result = getPlatformDetails(sdkInstance);
 
       expect(result.from).toBe('extension');
       expect(result.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
       );
     });
 
     it('should return "mobile" if platform type is MetaMaskMobileWebview', () => {
       jest
-        .spyOn(sdkInstance.platformManager, 'getPlatformType')
-        .mockImplementation()
+        .spyOn(sdkInstance.platformManager!, 'getPlatformType')
         .mockReturnValue(PlatformType.MetaMaskMobileWebview);
 
       const result = getPlatformDetails(sdkInstance);
 
       expect(result.from).toBe('mobile');
       expect(result.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
       );
     });
 
     it('should return "N/A" if platform type is neither DesktopWeb nor MetaMaskMobileWebview', () => {
       jest
-        .spyOn(sdkInstance.platformManager, 'getPlatformType')
-        .mockImplementation()
-        .mockReturnValue('OtherPlatform');
+        .spyOn(sdkInstance.platformManager!, 'getPlatformType')
+        .mockReturnValue('OtherPlatform' as any); // Explicitly cast to any since 'OtherPlatform' is not in PlatformType
 
       const result = getPlatformDetails(sdkInstance);
 
       expect(result.from).toBe('N/A');
       expect(result.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
       );
     });
 
     it('should return "N/A" if platform type is undefined', () => {
       jest
-        .spyOn(sdkInstance.platformManager, 'getPlatformType')
-        .mockImplementation()
-        .mockReturnValue(undefined);
+        .spyOn(sdkInstance.platformManager!, 'getPlatformType')
+        .mockReturnValue(undefined as unknown as PlatformType);
 
       const result = getPlatformDetails(sdkInstance);
 
       expect(result.from).toBe('N/A');
       expect(result.id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u, // UUID v4 regex
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
       );
     });
 
