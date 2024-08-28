@@ -35,7 +35,7 @@ describe('Extension UUID Functions', () => {
     it('should create and store a UUID if one does not exist', () => {
       const url = 'https://example.com';
       const name = 'ExampleDApp';
-      const identifier = getOrCreateUuidForIdentifier(url, name);
+      const identifier = getOrCreateUuidForIdentifier({ url, name });
 
       const storedUuid = localStorage.getItem(base64Encode(url + name));
 
@@ -48,8 +48,8 @@ describe('Extension UUID Functions', () => {
     it('should return the same UUID if it already exists in localStorage', () => {
       const url = 'https://example.com';
       const name = 'ExampleDApp';
-      const firstIdentifier = getOrCreateUuidForIdentifier(url, name);
-      const secondIdentifier = getOrCreateUuidForIdentifier(url, name);
+      const firstIdentifier = getOrCreateUuidForIdentifier({ url, name });
+      const secondIdentifier = getOrCreateUuidForIdentifier({ url, name });
 
       expect(secondIdentifier).toBe(firstIdentifier);
     });
@@ -60,8 +60,14 @@ describe('Extension UUID Functions', () => {
       const url2 = 'https://example2.com';
       const name2 = 'ExampleDApp2';
 
-      const identifier1 = getOrCreateUuidForIdentifier(url1, name1);
-      const identifier2 = getOrCreateUuidForIdentifier(url2, name2);
+      const identifier1 = getOrCreateUuidForIdentifier({
+        url: url1,
+        name: name1,
+      });
+      const identifier2 = getOrCreateUuidForIdentifier({
+        url: url2,
+        name: name2,
+      });
 
       expect(identifier1).not.toBe(identifier2);
     });
