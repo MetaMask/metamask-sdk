@@ -1,4 +1,5 @@
 // packages/sdk-communication-layer/src/services/SocketService/ConnectionManager/reconnectSocket.ts
+import { MAX_RECONNECTION_ATTEMPS } from '../../../config';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
@@ -15,9 +16,16 @@ import { handleJoinChannelResults } from './handleJoinChannelResult';
  * @param instance The current instance of the SocketService.
  */
 export const reconnectSocket = async (instance: SocketService) => {
-  const { remote, state } = instance;
-  const { terminated } = remote.state;
-  const { socket, channelId, context, isOriginator } = state;
+  const { state } = instance;
+  const { socket, channelId, context, isOriginator, isReconnecting } = state;
+
+  if (isReconnecting) {
+    logger.SocketService(
+      `[SocketService: reconnectSocket()] Reconnection already in progress, skipping`,
+      instance,
+    );
+    return false;
+  }
 
   if (!socket) {
     logger.SocketService(
@@ -33,60 +41,103 @@ export const reconnectSocket = async (instance: SocketService) => {
   }
 
   const { connected } = socket;
-  if (terminated) {
-    logger.SocketService(
-      `[SocketService: reconnectSocket()] terminated=${terminated} socket already terminated`,
-      instance,
-    );
-    return false;
-  }
+  state.isReconnecting = true;
+  state.reconnectionAttempts = 0;
 
   logger.SocketService(
     `[SocketService: reconnectSocket()] connected=${connected} trying to reconnect after socketio disconnection`,
     instance,
   );
 
-  // Add delay to prevent IOS error
-  // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
-  await wait(200);
+  try {
+    while (state.reconnectionAttempts < MAX_RECONNECTION_ATTEMPS) {
+      logger.SocketService(
+        `[SocketService: reconnectSocket()] Attempt ${
+          state.reconnectionAttempts + 1
+        } of ${MAX_RECONNECTION_ATTEMPS}`,
+        instance,
+      );
 
-  if (connected) {
-    logger.SocketService(
-      `Socket already connected --- ping to retrive messages`,
-    );
+      // https://stackoverflow.com/questions/53297188/afnetworking-error-53-during-attempted-background-fetch
+      await wait(200); // Delay to prevent IOS error
 
-    socket.emit(MessageType.PING, {
-      id: channelId,
-      clientType: isOriginator ? 'dapp' : 'wallet',
-      context: 'on_channel_config',
-      message: '',
-    });
-  } else {
-    // Use a temporary variable to avoid the race condition
-    state.resumed = true;
-    socket.connect();
+      if (socket.connected) {
+        logger.SocketService(
+          `Socket already connected --- ping to retrieve messages`,
+        );
 
-    instance.emit(EventType.SOCKET_RECONNECT);
-    socket.emit(
-      EventType.JOIN_CHANNEL,
-      {
-        channelId,
-        context: `${context}connect_again`,
-        clientType: isOriginator ? 'dapp' : 'wallet',
-      },
-      async (
-        error: string | null,
-        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
-      ) => {
-        try {
-          await handleJoinChannelResults(instance, error, result);
-        } catch (runtimeError) {
-          console.warn(`Error reconnecting to channel`, runtimeError);
+        socket.emit(MessageType.PING, {
+          id: channelId,
+          clientType: isOriginator ? 'dapp' : 'wallet',
+          context: 'on_channel_config',
+          message: '',
+        });
+        return true;
+      }
+
+      state.resumed = true;
+      socket.connect();
+
+      instance.emit(EventType.SOCKET_RECONNECT);
+
+      try {
+        await new Promise<void>((resolve, reject) => {
+          socket.emit(
+            EventType.JOIN_CHANNEL,
+            {
+              channelId,
+              context: `${context}connect_again`,
+              clientType: isOriginator ? 'dapp' : 'wallet',
+            },
+            async (
+              error: string | null,
+              result?: {
+                ready: boolean;
+                persistence?: boolean;
+                walletKey?: string;
+              },
+            ) => {
+              try {
+                await handleJoinChannelResults(instance, error, result);
+                resolve();
+              } catch (runtimeError) {
+                reject(runtimeError);
+              }
+            },
+          );
+        });
+
+        // Add another delay to make sure connected state is available.
+        await wait(100);
+        if (socket.connected) {
+          logger.SocketService(
+            `Reconnection successful on attempt ${
+              state.reconnectionAttempts + 1
+            }`,
+          );
+          return true;
         }
-      },
-    );
-  }
+      } catch (error) {
+        logger.SocketService(
+          `Error during reconnection attempt ${
+            state.reconnectionAttempts + 1
+          }:`,
+          error,
+        );
+      }
 
-  await wait(100);
-  return socket.connected;
+      state.reconnectionAttempts += 1;
+      if (state.reconnectionAttempts < MAX_RECONNECTION_ATTEMPS) {
+        await wait(200);
+      }
+    }
+
+    logger.SocketService(
+      `Failed to reconnect after ${MAX_RECONNECTION_ATTEMPS} attempts`,
+    );
+    return false;
+  } finally {
+    state.isReconnecting = false;
+    state.reconnectionAttempts = 0;
+  }
 };

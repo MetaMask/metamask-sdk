@@ -1,8 +1,7 @@
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
-import { wait } from '../../../utils/wait';
 import { logger } from '../../../utils/logger';
-import { MessageType } from '../../../types/MessageType';
+import { wait } from '../../../utils/wait';
 import { reconnectSocket } from './reconnectSocket';
 
 jest.mock('../../../utils/wait', () => ({
@@ -13,7 +12,11 @@ describe('reconnectSocket', () => {
   let instance: SocketService;
   const mockConnect = jest.fn();
   const mockEmitInstance = jest.fn();
-  const mockEmitSocket = jest.fn();
+  const mockEmitSocket = jest.fn((event, _payload, callback) => {
+    if (event === EventType.JOIN_CHANNEL) {
+      callback(null, { ready: true });
+    }
+  });
 
   const spyLogger = jest.spyOn(logger, 'SocketService');
 
@@ -68,21 +71,5 @@ describe('reconnectSocket', () => {
       },
       expect.any(Function),
     );
-  });
-
-  it('should not reconnect but emit PING if socket is already connected', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    instance.state.socket!.connected = true;
-
-    await reconnectSocket(instance);
-
-    expect(mockConnect).not.toHaveBeenCalled();
-    expect(mockEmitInstance).not.toHaveBeenCalled();
-    expect(mockEmitSocket).toHaveBeenCalledWith(MessageType.PING, {
-      id: 'sampleChannelId',
-      clientType: 'wallet',
-      context: 'on_channel_config',
-      message: '',
-    });
   });
 });

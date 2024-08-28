@@ -109,6 +109,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
 
   await setupRemoteConnectionAndInstaller(instance, metamaskBrowserExtension);
 
+  // initialize mobile provider and event listeners
   await initializeProviderAndEventListeners(instance);
   await handleAutoAndExtensionConnections(instance, preferExtension);
 

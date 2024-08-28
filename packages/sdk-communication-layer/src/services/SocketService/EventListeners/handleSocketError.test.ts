@@ -1,9 +1,11 @@
 import { SocketService } from '../../../SocketService';
-import { checkFocusAndReconnect } from '../ConnectionManager';
 import { logger } from '../../../utils/logger';
+import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
 import { handleSocketError } from './handleSocketError';
 
-jest.mock('../ConnectionManager');
+jest.mock('../ConnectionManager/reconnectSocket', () => ({
+  reconnectSocket: jest.fn().mockResolvedValue(undefined), // Mock to return a resolved promise
+}));
 
 describe('handleSocketError', () => {
   let instance: SocketService;
@@ -19,6 +21,9 @@ describe('handleSocketError', () => {
         debug: false,
       },
     } as unknown as SocketService;
+
+    // Verify the mock
+    console.log(reconnectSocket); // Should log a mock function
   });
 
   it('should log the error when debugging is enabled', () => {
@@ -31,10 +36,10 @@ describe('handleSocketError', () => {
     );
   });
 
-  it('should call the checkFocusAndReconnect function', () => {
+  it('should call the reconnect function', () => {
     const handler = handleSocketError(instance);
     handler(error);
 
-    expect(checkFocusAndReconnect).toHaveBeenCalledWith(instance);
+    expect(reconnectSocket).toHaveBeenCalledWith(instance);
   });
 });

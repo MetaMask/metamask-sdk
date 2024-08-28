@@ -18,7 +18,6 @@ export async function setupPlatformManager(instance: MetaMaskSDK) {
   instance.platformManager = new PlatformManager({
     useDeepLink: options.useDeeplink ?? false,
     preferredOpenLink: options.openDeeplink,
-    wakeLockStatus: options.wakeLockType,
     debug: instance.debug,
   });
 }

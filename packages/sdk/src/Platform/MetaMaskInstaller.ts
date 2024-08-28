@@ -66,6 +66,17 @@ export class MetaMaskInstaller {
   }
 
   async start({ wait = false }: { wait: boolean }) {
-    return await startInstaller(this, { wait });
+    await startInstaller(this, { wait });
+
+    if (wait) {
+      // wait until the installation is done
+      while (this.state.isInstalling) {
+        // FIXME: remove before release
+        console.warn(
+          `[MetaMaskInstaller: start()] isInstalling=${this.state.isInstalling}`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
   }
 }

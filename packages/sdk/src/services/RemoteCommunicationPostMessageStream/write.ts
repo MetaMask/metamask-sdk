@@ -23,7 +23,11 @@ export async function write(
   const channelId = instance.state.remote?.getChannelId();
   const authorized = instance.state.remote?.isAuthorized();
   const { deeplinkProtocol } = instance.state;
-  const { method: targetMethod, data } = extractMethod(chunk);
+  const {
+    method: targetMethod,
+    data,
+    triggeredInstaller,
+  } = extractMethod(chunk);
 
   logger(
     `[RCPMS: write()] method='${targetMethod}' isRemoteReady=${isRemoteReady} channelId=${channelId} isSocketConnected=${socketConnected} isRemotePaused=${isPaused} providerConnected=${provider.isConnected()}`,
@@ -49,12 +53,9 @@ export async function write(
   const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
 
   const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb && authorized;
-  console.warn(
-    `[RCPMS: write()] activeDeeplinkProtocol=${activeDeeplinkProtocol}`,
-  );
 
   try {
-    if (!activeDeeplinkProtocol) {
+    if (!activeDeeplinkProtocol || triggeredInstaller) {
       // The only reason not to send via network is because the rpc call will be sent in the deeplink
       instance.state.remote
         ?.sendMessage(data?.data)
@@ -72,6 +73,13 @@ export async function write(
         );
         return callback();
       }
+    }
+
+    if (triggeredInstaller) {
+      logger(
+        `[RCPMS: _write()] prevent deeplink -- installation completed separately.`,
+      );
+      return callback();
     }
 
     const pubKey = instance.state.remote?.getKeyInfo()?.ecies.public ?? '';
