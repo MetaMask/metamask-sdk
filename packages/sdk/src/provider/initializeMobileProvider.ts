@@ -260,7 +260,7 @@ const initializeMobileProvider = async ({
           // wait for authorization
           await new Promise((resolve, reject) => {
             const authorized = remoteConnection?.isAuthorized();
-            if (!authorized) {
+            if (authorized) {
               resolve(true);
             }
 
@@ -344,8 +344,12 @@ const initializeMobileProvider = async ({
 
         // We should now have obtained the authorization and account infos so we can skip sending that rpc call.
         if (method === RPC_METHODS.ETH_REQUESTACCOUNTS) {
+          await wait(100); // wait for the provider to update
           // Retrieve the selected address and return it
           selectedAddress = provider.getSelectedAddress();
+          logger(
+            `[initializeMobileProvider: sendRequest()] selectedAddress: ${selectedAddress} --- SKIP rpc call`,
+          );
           return [selectedAddress];
         }
 
