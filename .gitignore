@@ -100,7 +100,6 @@ typings/
 .vscode/settings.json
 packages/deve2e/sdk-comm
 packages/examples/test1/ios/test1.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
-packages/examples/nodejs/.sdk-comm
 
 # yarn v3 (w/o zero-install)
 # See: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
@@ -114,6 +113,7 @@ packages/examples/nodejs/.sdk-comm
 packages/devnext/next.webpack.config.json
 packages/devreact/webpack.config.json
 .tool-versions
-packages/examples/nodejs/.MMSDK_cached_address
-packages/examples/nodejs/.MMSDK_cached_chainId
+**/.MMSDK_cached_address
+**/.MMSDK_cached_chainId
+**/.sdk-comm
 **/package-lock.json

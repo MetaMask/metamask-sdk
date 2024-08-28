@@ -48,7 +48,6 @@
     "@metamask/providers": "16.1.0",
     "@metamask/sdk-communication-layer": "workspace:*",
     "@metamask/sdk-install-modal-web": "workspace:*",
-    "@types/dom-screen-wake-lock": "^1.0.0",
     "bowser": "^2.9.0",
     "cross-fetch": "^4.0.0",
     "debug": "^4.3.4",

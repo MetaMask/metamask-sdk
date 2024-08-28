@@ -208,6 +208,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       dappMetadata: {
         name: '',
         url: '',
+        iconUrl: '',
       },
       _source: DEFAULT_SDK_SOURCE,
       i18nOptions: {

@@ -257,6 +257,34 @@ const initializeMobileProvider = async ({
             wait: false,
           });
 
+          // wait for authorization
+          await new Promise((resolve, reject) => {
+            const authorized = remoteConnection?.isAuthorized();
+            if (!authorized) {
+              resolve(true);
+            }
+
+            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
+              resolve(true);
+            });
+
+            // Also detect changes of provider
+            sdk.once(
+              EventType.PROVIDER_UPDATE,
+              (type: PROVIDER_UPDATE_TYPE) => {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] PROVIDER_UPDATE --- remote provider request interupted type=${type}`,
+                );
+
+                if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
+                  reject(EventType.PROVIDER_UPDATE);
+                } else {
+                  reject(new Error('Connection Terminated'));
+                }
+              },
+            );
+          });
+
           setInitializing(false);
         } catch (installError) {
           setInitializing(false);
@@ -324,48 +352,6 @@ const initializeMobileProvider = async ({
 
         // Initialize the request (otherwise the rpc call is not sent)
         const response = executeRequest(...args);
-
-        // Wait for the provider to be initialized so we can process requests
-        try {
-          await new Promise((resolve, reject) => {
-            const authorized = remoteConnection?.isAuthorized();
-            if (!authorized) {
-              resolve(true);
-            }
-
-            remoteConnection?.getConnector().once(EventType.AUTHORIZED, () => {
-              resolve(true);
-            });
-
-            // Also detect changes of provider
-            sdk.once(
-              EventType.PROVIDER_UPDATE,
-              (type: PROVIDER_UPDATE_TYPE) => {
-                logger(
-                  `[initializeMobileProvider: sendRequest()] PROVIDER_UPDATE --- remote provider request interupted type=${type}`,
-                );
-
-                if (type === PROVIDER_UPDATE_TYPE.EXTENSION) {
-                  reject(EventType.PROVIDER_UPDATE);
-                } else {
-                  reject(new Error('Connection Terminated'));
-                }
-              },
-            );
-          });
-        } catch (err: unknown) {
-          setInitializing(false);
-          if (err === EventType.PROVIDER_UPDATE) {
-            // Re-create the query on the active provider
-            return await sdk.getProvider()?.request({
-              method,
-              params,
-            });
-          }
-          throw err;
-        }
-
-        setInitializing(false);
 
         return response;
       } else if (platformManager.isSecure() && METHODS_TO_REDIRECT[method]) {
