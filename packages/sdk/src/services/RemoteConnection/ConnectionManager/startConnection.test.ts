@@ -184,6 +184,7 @@ describe('startConnection', () => {
       const connectWith = {
         method: 'eth_sendTransaction',
         params: [{ from: '0x123', to: '0x456', value: '0x789' }],
+        id: '123',
       };
 
       await startConnection(state, options, { connectWith });
@@ -199,6 +200,7 @@ describe('startConnection', () => {
       const connectWith = {
         method: 'personal_sign',
         params: ['0xabcdef', '0x123456'],
+        id: '123',
       };
 
       await startConnection(state, options, { connectWith });
@@ -215,6 +217,7 @@ describe('startConnection', () => {
       const connectWith = {
         method: 'eth_sign',
         params: ['0x123456', '0xabcdef'],
+        id: '123',
       };
 
       await startConnection(state, options, { connectWith });
@@ -230,6 +233,7 @@ describe('startConnection', () => {
       const connectWith = {
         method: 'eth_sign',
         params: ['0x123456', '0xabcdef'],
+        id: '123',
       };
 
       await startConnection(state, options, { connectWith });
