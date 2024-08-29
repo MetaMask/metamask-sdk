@@ -23,6 +23,24 @@ describe('handleBatchMethod', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    // Mocking localStorage for Node.js environment
+    let store: { [key: string]: string } = {};
+
+    global.localStorage = {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+      length: 0,
+      key: (index: number) => Object.keys(store)[index] || null,
+    };
+
     sdkInstance = {
       analytics: {
         send: spyAnalytics,
@@ -36,6 +54,11 @@ describe('handleBatchMethod', () => {
     mockTarget = {
       request: jest.fn(),
     } as unknown as MetaMaskInpageProvider;
+  });
+
+  afterEach(() => {
+    // Clean up after each test
+    jest.restoreAllMocks();
   });
 
   it('should calls the provider request method for each RPC in params', async () => {
@@ -98,7 +121,11 @@ describe('handleBatchMethod', () => {
 
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-      params: { method: 'someMethod', from: 'extension' },
+      params: {
+        method: 'someMethod',
+        from: 'N/A',
+        id: expect.any(String),
+      },
     });
   });
 

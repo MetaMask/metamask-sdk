@@ -1,11 +1,13 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
+
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
 import { logger } from '../utils/logger';
 import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod';
 import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
 import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
+import { getPlatformDetails } from './extensionProviderHelpers/handleUuid';
 
 export interface RequestArguments {
   method: string;
@@ -32,10 +34,16 @@ export const wrapExtensionProvider = ({
           const { method, params } = args;
           const trackEvent = lcAnalyticsRPCs.includes(method.toLowerCase());
 
+          const { id, from } = getPlatformDetails(sdkInstance);
+
           if (trackEvent) {
             sdkInstance.analytics?.send({
               event: TrackingEvents.SDK_RPC_REQUEST,
-              params: { method, from: 'extension' },
+              params: {
+                method,
+                from,
+                id,
+              },
             });
           }
 
@@ -74,7 +82,11 @@ export const wrapExtensionProvider = ({
             if (trackEvent) {
               sdkInstance.analytics?.send({
                 event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-                params: { method, from: 'extension' },
+                params: {
+                  method,
+                  from,
+                  id,
+                },
               });
             }
           }

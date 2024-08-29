@@ -34,8 +34,27 @@ describe('wrapExtensionProvider', () => {
   let mockProvider: MetaMaskInpageProvider;
   const spyAnalytics = jest.fn();
 
+  // Mocking localStorage
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Mocking localStorage for Node.js environment
+    let store: { [key: string]: string } = {};
+
+    global.localStorage = {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => {
+        store[key] = value.toString();
+      },
+      removeItem: (key: string) => {
+        delete store[key];
+      },
+      clear: () => {
+        store = {};
+      },
+      length: 0,
+      key: (index: number) => Object.keys(store)[index] || null,
+    };
 
     sdkInstance = {
       analytics: {
@@ -46,6 +65,11 @@ describe('wrapExtensionProvider', () => {
     mockProvider = {
       request: jest.fn(),
     } as unknown as MetaMaskInpageProvider;
+  });
+
+  afterEach(() => {
+    // Clean up after each test
+    jest.restoreAllMocks();
   });
 
   it('should throw an error if provider has state', () => {
@@ -96,7 +120,11 @@ describe('wrapExtensionProvider', () => {
 
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST,
-      params: { method: args.method, from: 'extension' },
+      params: {
+        method: args.method,
+        from: 'N/A',
+        id: expect.any(String),
+      },
     });
   });
 
@@ -189,7 +217,11 @@ describe('wrapExtensionProvider', () => {
 
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-      params: { method: args.method, from: 'extension' },
+      params: {
+        method: args.method,
+        from: 'N/A',
+        id: expect.any(String),
+      },
     });
   });
 

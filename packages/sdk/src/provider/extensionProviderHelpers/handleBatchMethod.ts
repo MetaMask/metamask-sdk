@@ -2,6 +2,7 @@ import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
+import { getPlatformDetails } from './handleUuid';
 
 export const handleBatchMethod = async ({
   params,
@@ -29,10 +30,17 @@ export const handleBatchMethod = async ({
   }
 
   const resp = await target.request(args);
+
+  const { id, from } = getPlatformDetails(sdkInstance);
+
   if (trackEvent) {
     sdkInstance.analytics?.send({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
-      params: { method: args.method, from: 'extension' },
+      params: {
+        method: args.method,
+        from,
+        id,
+      },
     });
   }
   return resp;
