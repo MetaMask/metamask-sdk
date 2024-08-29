@@ -31,7 +31,7 @@ export async function redirectToProperInstall(instance: MetaMaskInstaller) {
   // If is not installed, start remote connection
   state.isInstalling = true;
   try {
-    await state.remote?.startConnection();
+    await state.remote?.startConnection({ connectWith: state.connectWith });
 
     state.isInstalling = false;
     state.hasInstalled = true;

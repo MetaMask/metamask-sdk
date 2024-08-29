@@ -37,7 +37,12 @@ export async function connectAndSign({
   }
 
   return instance.activeProvider.request({
-    method: RPC_METHODS.METAMASK_CONNECTSIGN,
-    params: [msg],
+    method: RPC_METHODS.METAMASK_CONNECTWITH,
+    params: [
+      {
+        method: RPC_METHODS.PERSONAL_SIGN,
+        params: [msg],
+      },
+    ],
   });
 }
