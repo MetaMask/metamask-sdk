@@ -1,10 +1,11 @@
+import { base64Encode } from '../../../utils/base64';
+import * as loggerModule from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
-import * as loggerModule from '../../../utils/logger';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 import { startConnection } from './startConnection';
@@ -106,6 +107,12 @@ describe('startConnection', () => {
       ecies: { public: 'public_key' },
     });
 
+    mockGenerateChannelIdConnect.mockResolvedValue({
+      channelId: 'test_channel_id',
+      pubKey: 'test_pub_key',
+      privKey: 'test_priv_key',
+    });
+
     mockGetPlatformType.mockReturnValue('test_platform');
   });
 
@@ -170,5 +177,68 @@ describe('startConnection', () => {
       options,
       expect.any(String),
     );
+  });
+
+  describe('startConnection with connectWith', () => {
+    it('should correctly encode and append connectWith RPC call to linkParams', async () => {
+      const connectWith = {
+        method: 'eth_sendTransaction',
+        params: [{ from: '0x123', to: '0x456', value: '0x789' }],
+      };
+
+      await startConnection(state, options, { connectWith });
+
+      expect(mockConnectWithModalInstaller).toHaveBeenCalledWith(
+        state,
+        options,
+        expect.stringContaining(`rpc=`),
+      );
+    });
+
+    it('should call base64Encode with correct connectWith RPC call', async () => {
+      const connectWith = {
+        method: 'personal_sign',
+        params: ['0xabcdef', '0x123456'],
+      };
+
+      await startConnection(state, options, { connectWith });
+
+      // Ensure the base64Encode was called with originatorInfo first
+      expect(base64Encode).toHaveBeenNthCalledWith(
+        1,
+        expect.stringContaining('"url":'),
+      );
+    });
+
+    it('should handle connectWith in a secure environment with deeplink', async () => {
+      mockIsSecure.mockReturnValue(true);
+      const connectWith = {
+        method: 'eth_sign',
+        params: ['0x123456', '0xabcdef'],
+      };
+
+      await startConnection(state, options, { connectWith });
+
+      expect(mockConnectWithDeeplink).toHaveBeenCalledWith(
+        state,
+        expect.stringContaining(`rpc=`),
+      );
+    });
+
+    it('should handle connectWith in a non-secure environment with modal installer', async () => {
+      mockIsSecure.mockReturnValue(false);
+      const connectWith = {
+        method: 'eth_sign',
+        params: ['0x123456', '0xabcdef'],
+      };
+
+      await startConnection(state, options, { connectWith });
+
+      expect(mockConnectWithModalInstaller).toHaveBeenCalledWith(
+        state,
+        options,
+        expect.stringContaining(`rpc=`),
+      );
+    });
   });
 });

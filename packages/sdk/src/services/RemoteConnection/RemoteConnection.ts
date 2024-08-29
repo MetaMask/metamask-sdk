@@ -19,7 +19,6 @@ import PendingModal from '../../ui/InstallModal/pendingModal';
 import { logger } from '../../utils/logger';
 import { Analytics } from '../Analytics';
 import { Ethereum } from '../Ethereum';
-import { ProviderService } from '../ProviderService';
 import { initializeConnector } from './ConnectionInitializer';
 import { cleanupConnector } from './ConnectionInitializer/cleanupConnector';
 import { startConnection, StartConnectionExtras } from './ConnectionManager';
@@ -107,7 +106,7 @@ export interface RemoteConnectionState {
   otpAnswer?: string;
 }
 
-export class RemoteConnection implements ProviderService {
+export class RemoteConnection {
   private options: RemoteConnectionProps;
 
   public state: RemoteConnectionState = {
