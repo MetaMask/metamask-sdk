@@ -3,6 +3,7 @@ import { redirectToProperInstall } from '../services/MetaMaskInstaller/redirectT
 import { startDesktopOnboarding } from '../services/MetaMaskInstaller/startDesktopOnboarding';
 import { startInstaller } from '../services/MetaMaskInstaller/startInstaller';
 import { RemoteConnection } from '../services/RemoteConnection';
+import { logger } from '../utils/logger';
 import { PlatformManager } from './PlatfformManager';
 
 // ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
@@ -80,6 +81,7 @@ export class MetaMaskInstaller {
     connectWith?: { method: string; params: unknown };
   }) {
     this.state.connectWith = connectWith;
+    logger(`[MetaMaskInstaller: start()] wait=${wait}`, connectWith);
     await startInstaller(this, { wait });
 
     if (wait) {
