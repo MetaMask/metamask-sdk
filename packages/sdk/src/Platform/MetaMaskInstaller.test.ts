@@ -71,8 +71,11 @@ describe('MetaMaskInstaller', () => {
   });
 
   it('should start installer with connectWith provided', async () => {
-    const connectWith = { method: 'eth_requestAccounts', params: [] };
-
+    const connectWith = {
+      method: 'eth_requestAccounts',
+      params: [],
+      id: '123',
+    };
     await installer.start({ wait: false, connectWith });
 
     expect(installer.state.connectWith).toStrictEqual(connectWith);
@@ -97,7 +100,11 @@ describe('MetaMaskInstaller', () => {
   it('should correctly handle isInstalling in start with wait set to true', async () => {
     installer.state.isInstalling = true;
 
-    const connectWith = { method: 'eth_requestAccounts', params: [] };
+    const connectWith = {
+      method: 'eth_requestAccounts',
+      params: [],
+      id: '123',
+    };
 
     const startPromise = installer.start({ wait: true, connectWith });
 
