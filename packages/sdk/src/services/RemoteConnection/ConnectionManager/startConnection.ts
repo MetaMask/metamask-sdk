@@ -156,14 +156,18 @@ export async function startConnection(
     }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}`;
 
     if (connectWith) {
-      const rpc = {
-        id: Date.now(), // We dont need a better id, this is only for current user session.
-        // future rpc calls will have ids generated via JSON-RPC package.
-        method: connectWith.method,
-        params: connectWith.params,
-      };
-      const base64Rpc = base64Encode(JSON.stringify(rpc));
+      const base64Rpc = base64Encode(JSON.stringify(connectWith));
       linkParams += `&rpc=${base64Rpc}`;
+
+      const tracker = state.connector.getRPCMethodTracker();
+      // Add rpcMethod to tracker
+      if (tracker) {
+        tracker[`${connectWith.id}`] = {
+          ...connectWith,
+          id: `${connectWith.id}`,
+          timestamp: Date.now(),
+        };
+      }
     }
     const encodedLinkParams = encodeURI(linkParams);
     const qrcodeLink = `${

@@ -19,6 +19,7 @@ interface InstallerProps {
 export interface RPCCall {
   method: string;
   params: unknown;
+  id: string;
 }
 
 interface MetaMaskInstallerState {
@@ -78,7 +79,7 @@ export class MetaMaskInstaller {
     connectWith,
   }: {
     wait: boolean;
-    connectWith?: { method: string; params: unknown };
+    connectWith?: RPCCall;
   }) {
     this.state.connectWith = connectWith;
     logger(`[MetaMaskInstaller: start()] wait=${wait}`, connectWith);

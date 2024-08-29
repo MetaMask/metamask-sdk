@@ -253,12 +253,17 @@ const initializeMobileProvider = async ({
         setInitializing(true);
 
         const isConnectWith = method === RPC_METHODS.METAMASK_CONNECTWITH;
+        // Only used with connectWith
+        const rpcInstallId = `${Date.now()}`;
         try {
           await installer.start({
             wait: false,
             connectWith: isConnectWith
               ? {
                   method,
+                  // We dont need a better id, this is only for current user session.
+                  // future rpc calls will have ids generated via JSON-RPC package.
+                  id: rpcInstallId,
                   params,
                 }
               : undefined,
@@ -361,6 +366,38 @@ const initializeMobileProvider = async ({
             `[initializeMobileProvider: sendRequest()] selectedAddress: ${selectedAddress} --- SKIP rpc call`,
           );
           return [selectedAddress];
+        } else if (method === RPC_METHODS.METAMASK_CONNECTWITH) {
+          // wait for  tracker to be updated
+
+          try {
+            const result = await new Promise((resolve, reject) => {
+              const tracker = remoteConnection
+                ?.getConnector()
+                .getRPCMethodTracker();
+              logger(`TRACKER: method ${rpcInstallId}`, tracker);
+              if (tracker?.[rpcInstallId].result) {
+                resolve(tracker?.[rpcInstallId].result);
+              } else if (tracker?.[rpcInstallId].error) {
+                reject(tracker?.[rpcInstallId].error);
+              }
+
+              remoteConnection
+                ?.getConnector()
+                .once(EventType.RPC_UPDATE, (rpcResult) => {
+                  logger(`TRACKER: update method ${rpcInstallId}`, rpcResult);
+
+                  if (rpcResult.result) {
+                    resolve(rpcResult.result);
+                  } else {
+                    reject(rpcResult.error);
+                  }
+                });
+            });
+            return result;
+          } catch (error) {
+            logger(`[initializeMobileProvider: sendRequest()] error:`, error);
+            throw error;
+          }
         }
 
         // Inform next step that this method triggered installer
