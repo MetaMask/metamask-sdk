@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.26.0]
 ### Added
-- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
+- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
 
 ## [0.20.4]
 ### Added
