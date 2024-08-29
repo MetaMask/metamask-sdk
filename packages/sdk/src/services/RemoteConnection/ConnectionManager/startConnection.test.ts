@@ -74,6 +74,7 @@ describe('startConnection', () => {
           persistChannelConfig: jest.fn(),
         },
       },
+      getRPCMethodTracker: jest.fn().mockReturnValue({}),
     };
 
     state = {
