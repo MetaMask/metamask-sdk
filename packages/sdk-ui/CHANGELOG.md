@@ -6,14 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0]
+### Uncategorized
+- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
+
 ## [0.26.0]
 ### Uncategorized
-- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
+- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
 
 ## [0.20.5]
 ### Added
 - align version with sdk package
-- chore: create wagmi demo dapp ([#669](https://github.com/MetaMask/metamask-sdk.git/pull/669))
+- chore: create wagmi demo dapp ([#669](https://github.com/MetaMask/metamask-sdk/pull/669))
 
 ## [0.4.2]
 ### Uncategorized
@@ -83,7 +87,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.26.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.28.0...HEAD
+[0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.26.0...@metamask/sdk-ui@0.28.0
 [0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.20.5...@metamask/sdk-ui@0.26.0
 [0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.2...@metamask/sdk-ui@0.20.5
 [0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.1...@metamask/sdk-ui@0.4.2

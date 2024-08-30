@@ -40,7 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.1]
 ### Uncategorized
-- chore: update reactNativeSdkDemo with latest sdk-react-native version ([#872](https://github.com/MetaMask/metamask-sdk.git/pull/872))
+- chore: update reactNativeSdkDemo with latest sdk-react-native version ([#872](https://github.com/MetaMask/metamask-sdk/pull/872))
 
 ## [0.3.0]
 ### Added

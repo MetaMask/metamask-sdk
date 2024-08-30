@@ -19,6 +19,7 @@ interface InstallerProps {
 export interface RPCCall {
   method: string;
   params: unknown;
+  id: string;
 }
 
 interface MetaMaskInstallerState {
@@ -78,21 +79,10 @@ export class MetaMaskInstaller {
     connectWith,
   }: {
     wait: boolean;
-    connectWith?: { method: string; params: unknown };
+    connectWith?: RPCCall;
   }) {
     this.state.connectWith = connectWith;
     logger(`[MetaMaskInstaller: start()] wait=${wait}`, connectWith);
     await startInstaller(this, { wait });
-
-    if (wait) {
-      // wait until the installation is done
-      while (this.state.isInstalling) {
-        // FIXME: remove before release
-        console.warn(
-          `[MetaMaskInstaller: start()] isInstalling=${this.state.isInstalling}`,
-        );
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
   }
 }

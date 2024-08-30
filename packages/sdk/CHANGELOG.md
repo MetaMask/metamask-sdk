@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0]
+### Added
+- fix: adds a unique id to RPC events for extension ([#996](https://github.com/MetaMask/metamask-sdk/pull/996))
+- feat: connectwith working with async key exchange ([#1004](https://github.com/MetaMask/metamask-sdk/pull/1004))
+- feat: socket reconnection optimization ([#994](https://github.com/MetaMask/metamask-sdk/pull/994))
+- feat: full deeplink protocol ([#992](https://github.com/MetaMask/metamask-sdk/pull/992))
+- feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk/pull/990))
+- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
+- feat: change the default value for 'dappId' to 'N/A' instead of an empty string ([#972](https://github.com/MetaMask/metamask-sdk/pull/972))
+
 ## [0.27.0]
 ### Added
 - fix: adds extensionOnly default to true to SDK initialization ([#962](https://github.com/MetaMask/metamask-sdk/pull/962))
@@ -364,7 +374,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.27.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.0...HEAD
+[0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.27.0...@metamask/sdk@0.28.0
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.5...@metamask/sdk@0.27.0
 [0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.4...@metamask/sdk@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.26.3...@metamask/sdk@0.26.4

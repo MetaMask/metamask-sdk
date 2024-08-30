@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.0]
+### Uncategorized
+- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
+
 ## [0.27.0]
 ### Added
 - fix: adds extensionOnly default to true to SDK initialization ([#962](https://github.com/MetaMask/metamask-sdk/pull/962))
@@ -235,7 +239,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.27.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.0...HEAD
+[0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.27.0...@metamask/sdk-react@0.28.0
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.5...@metamask/sdk-react@0.27.0
 [0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.4...@metamask/sdk-react@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.26.3...@metamask/sdk-react@0.26.4

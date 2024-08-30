@@ -6,15 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.2]
+### Added
+- feat: socket reconnection optimization ([#994](https://github.com/MetaMask/metamask-sdk/pull/994))
+
 ## [0.28.1]
-### Uncategorized
-- feat: full deeplink protocol ([#992](https://github.com/MetaMask/metamask-sdk.git/pull/992))
+### Added
+- feat: full deeplink protocol ([#992](https://github.com/MetaMask/metamask-sdk/pull/992))
 
 ## [0.28.0]
 ### Added
-- feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk.git/pull/990))
-- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk.git/pull/985))
-- feat: change the default value for 'dappId' to 'N/A' instead of an empty string ([#972](https://github.com/MetaMask/metamask-sdk.git/pull/972))
+- feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk/pull/990))
+- feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
+- feat: change the default value for 'dappId' to 'N/A' instead of an empty string ([#972](https://github.com/MetaMask/metamask-sdk/pull/972))
 
 ## [0.27.0]
 ### Added
@@ -30,14 +34,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.26.0]
 ### Added
-- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk.git/pull/902))
-- feat: update dev rn / expo and empty dappid ([#897](https://github.com/MetaMask/metamask-sdk.git/pull/897))
-- feat: prevent empty dappid ([#891](https://github.com/MetaMask/metamask-sdk.git/pull/891))
-- chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk.git/pull/888))
+- feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
+- feat: update dev rn / expo and empty dappid ([#897](https://github.com/MetaMask/metamask-sdk/pull/897))
+- feat: prevent empty dappid ([#891](https://github.com/MetaMask/metamask-sdk/pull/891))
+- chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk/pull/888))
 
 ## [0.20.5]
 ### Added
-- fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk.git/pull/871))
+- fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk/pull/871))
 
 ## [0.20.4]
 ### Added
@@ -245,7 +249,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.2...HEAD
+[0.28.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.1...@metamask/sdk-communication-layer@0.28.2
 [0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...@metamask/sdk-communication-layer@0.28.1
 [0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...@metamask/sdk-communication-layer@0.28.0
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.26.4...@metamask/sdk-communication-layer@0.27.0
