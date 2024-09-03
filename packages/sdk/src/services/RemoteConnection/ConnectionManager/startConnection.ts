@@ -119,7 +119,6 @@ export async function startConnection(
       });
     }
 
-    // if we are on desktop browser
     const qrCodeOrigin = state.platformManager?.isSecure() ? '' : '&t=q';
     const sdkVersion = packageJson.version;
     const { iconUrl, name, url, scheme } = options.dappMetadata || {};

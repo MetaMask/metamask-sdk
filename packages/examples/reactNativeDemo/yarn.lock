@@ -3678,9 +3678,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.27.0":
-  version: 0.27.0
-  resolution: "@metamask/sdk-communication-layer@npm:0.27.0"
+"@metamask/sdk-communication-layer@npm:0.28.2, @metamask/sdk-communication-layer@npm:^0.28.2":
+  version: 0.28.2
+  resolution: "@metamask/sdk-communication-layer@npm:0.28.2"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -3693,7 +3693,7 @@ __metadata:
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: 19e68c808d36b783e27a6bdc5439a60aedb8a298da66c7496e73c173807abccdf240b614d8bc283b7b7e8e7d438ed846b91b42460fe8212e7f20122501df3e5e
+  checksum: 349103ca72018fc4077ddf3d84d3976572525cf27b17b65308c6a00710c66f06d2d3880bb611a4a6462d1fb54bc59edd6855826f78796f49d8c7cd9904742577
   languageName: node
   linkType: hard
 
@@ -3718,11 +3718,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.27.0":
-  version: 0.27.0
-  resolution: "@metamask/sdk-react@npm:0.27.0"
+"@metamask/sdk-react@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "@metamask/sdk-react@npm:0.28.0"
   dependencies:
-    "@metamask/sdk": ^0.27.0
+    "@metamask/sdk": ^0.28.0
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -3741,19 +3741,20 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 2983b19e1d96b8b8e52653e2f19dd88bf680d28c1a397bbc86f7992423b9c4d6498bf1b8e1e0b20b49f296280f350af69be140380a72559cd1c66dcce3e65786
+  checksum: 57c113bd31ccd4cc0925c564e3da02920086468a8179a57916ffd9917379d07f04a0b2f5aead41d7a7e652ab04c9ae0992c4fb2311fb07e51187539934a93266
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.27.0":
-  version: 0.27.0
-  resolution: "@metamask/sdk@npm:0.27.0"
+"@metamask/sdk@npm:^0.28.0":
+  version: 0.28.0
+  resolution: "@metamask/sdk@npm:0.28.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
-    "@metamask/sdk-communication-layer": 0.27.0
+    "@metamask/sdk-communication-layer": 0.28.2
     "@metamask/sdk-install-modal-web": 0.26.5
     "@types/dom-screen-wake-lock": ^1.0.0
+    "@types/uuid": ^10.0.0
     bowser: ^2.9.0
     cross-fetch: ^4.0.0
     debug: ^4.3.4
@@ -3779,7 +3780,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: 25c2c988567bb62f4c9cc9493e333f4754a5ba68e1b7adfaaf8ea5bae38da5300712e5d7dc286f7c1d5140b01862f5ddb7105d59f4f4ef4d5e6d635ee6385578
+  checksum: 52897a021b84047140557324ae2212c8617c1f8feefda490a9a132c02faea30051ebe7aeb93f7ccc99b179cf5e9cbe196871b4f025a51e03fbb82eb96d8da993
   languageName: node
   linkType: hard
 
@@ -3897,14 +3898,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-async-storage/async-storage@npm:^1.19.3":
-  version: 1.21.0
-  resolution: "@react-native-async-storage/async-storage@npm:1.21.0"
+"@react-native-async-storage/async-storage@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.0.0"
   dependencies:
     merge-options: ^3.0.4
   peerDependencies:
-    react-native: ^0.0.0-0 || >=0.60 <1.0
-  checksum: 969cdeb444a037087b1897553082e148e25c8331055dd0dc142f76deeb4aadd9ed5ec26926ae990b3e9ff088396e74ab557148a2dd2a7db86058051b774f2619
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: 7007a411f13988594a3f9b5ebb29f1554ab65ff2bd90814fa8b125fa68b69c431bdfcd38769ae2dcb6505aec2bad9296f0a0fa1ac8f123007eda49c826f2d138
   languageName: node
   linkType: hard
 
@@ -4786,6 +4787,13 @@ __metadata:
   version: 2.0.1
   resolution: "@types/stack-utils@npm:2.0.1"
   checksum: 205fdbe3326b7046d7eaf5e494d8084f2659086a266f3f9cf00bccc549c8e36e407f88168ad4383c8b07099957ad669f75f2532ed4bc70be2b037330f7bae019
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@types/uuid@npm:10.0.0"
+  checksum: e3958f8b0fe551c86c14431f5940c3470127293280830684154b91dc7eb3514aeb79fe3216968833cf79d4d1c67f580f054b5be2cd562bebf4f728913e73e944
   languageName: node
   linkType: hard
 
@@ -12132,8 +12140,9 @@ __metadata:
     "@babel/core": ^7.23.6
     "@babel/preset-env": ^7.23.6
     "@babel/runtime": ^7.23.6
-    "@metamask/sdk-react": ^0.27.0
-    "@react-native-async-storage/async-storage": ^1.19.3
+    "@metamask/sdk-communication-layer": ^0.28.2
+    "@metamask/sdk-react": ^0.28.0
+    "@react-native-async-storage/async-storage": ^2.0.0
     "@react-native-community/eslint-config": ^3.2.0
     "@react-native/eslint-config": ^0.72.2
     "@react-native/metro-config": ^0.72.11
