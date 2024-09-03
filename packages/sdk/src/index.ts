@@ -15,6 +15,7 @@ import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
+import { StorageManagerAS } from './storage-manager/StorageManagerAS';
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
 
 declare global {
@@ -38,6 +39,7 @@ export type {
 
 export {
   DEFAULT_SERVER_URL,
+  StorageManagerAS,
   EventType,
   CommunicationLayerPreference,
   MetaMaskSDK,
