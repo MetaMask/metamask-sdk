@@ -14,7 +14,7 @@ config.services = (config.services ? config.services : []).concat([
       },
       browserstackLocal: true,
       opts: {
-        forceLocal: "true"
+        forceLocal: 'true',
       },
     },
   ],

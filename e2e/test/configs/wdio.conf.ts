@@ -41,6 +41,8 @@ export const config: WebdriverIO.Config = {
 
   framework: 'mocha',
 
+  // outputDir: 'logs',
+
   reporters: ['spec', ['allure', { outputDir: 'allure-results' }]],
 
   /*
