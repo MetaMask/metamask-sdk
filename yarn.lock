@@ -9929,7 +9929,43 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-install-modal-web@0.26.5, @metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@npm:0.11.1":
+  version: 0.11.1
+  resolution: "@metamask/sdk-install-modal-web@npm:0.11.1"
+  dependencies:
+    "@emotion/react": ^11.10.6
+    "@emotion/styled": ^11.10.6
+    i18next: 22.5.1
+    qr-code-styling: ^1.6.0-rc.1
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-i18next: ^13.2.2
+  checksum: decd4f3ba7f2cc35361564e5e3d9da73f3efd31c75f842aec2c23358607bac28b46f71ee455a3409968ba233a8fbe0f29d0d7b7298b0296a3cb749e09a5ad288
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-install-modal-web@npm:0.26.5":
+  version: 0.26.5
+  resolution: "@metamask/sdk-install-modal-web@npm:0.26.5"
+  dependencies:
+    qr-code-styling: ^1.6.0-rc.1
+  peerDependencies:
+    i18next: 23.11.5
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 3aba8d39bac0d320727b7abfcd803d843906962cea28685e946acba3f198b14d0a672ac8dfd6ec97a7d0efd4f92d00dae956af8872ca4cb2e677f91342bc58b0
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
@@ -9983,21 +10019,6 @@ __metadata:
       optional: true
   languageName: unknown
   linkType: soft
-
-"@metamask/sdk-install-modal-web@npm:0.11.1":
-  version: 0.11.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.11.1"
-  dependencies:
-    "@emotion/react": ^11.10.6
-    "@emotion/styled": ^11.10.6
-    i18next: 22.5.1
-    qr-code-styling: ^1.6.0-rc.1
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-i18next: ^13.2.2
-  checksum: decd4f3ba7f2cc35361564e5e3d9da73f3efd31c75f842aec2c23358607bac28b46f71ee455a3409968ba233a8fbe0f29d0d7b7298b0296a3cb749e09a5ad288
-  languageName: node
-  linkType: hard
 
 "@metamask/sdk-lab@workspace:^, @metamask/sdk-lab@workspace:packages/sdk-lab":
   version: 0.0.0-use.local
