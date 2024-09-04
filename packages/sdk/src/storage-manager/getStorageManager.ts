@@ -3,12 +3,13 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-// import { PlatformManager } from '../Platform/PlatfformManager';
 
 /* #if _NODEJS
 import { StorageManagerNode as SMDyn } from './StorageManagerNode';
 //#elif _WEB
 import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
+//#elif _REACTNATIVE
+import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 //#else */
 import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 // #endif

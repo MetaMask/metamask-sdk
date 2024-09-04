@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React, { useContext } from 'react';
 import { SDKConfigProvider, SDKConfigContext } from './SDKConfigProvider';
-import { logger } from './utils/logger';
 
 // Mock logger
 jest.mock('./utils/logger', () => ({
@@ -46,7 +45,7 @@ describe('SDKConfigProvider', () => {
 
     expect(screen.getByTestId('socketServer')).toHaveTextContent(initialSocketServer);
     expect(screen.getByTestId('infuraAPIKey')).toHaveTextContent(initialInfuraKey);
-    expect(screen.getByTestId('useDeeplink')).toHaveTextContent('false');
+    expect(screen.getByTestId('useDeeplink')).toHaveTextContent('true');
     expect(screen.getByTestId('checkInstallationImmediately')).toHaveTextContent('false');
     expect(screen.getByTestId('debug')).toHaveTextContent('true');
     expect(screen.getByTestId('logs')).toHaveTextContent(JSON.stringify({ sdk: true, provider: true, commLayer: true }));

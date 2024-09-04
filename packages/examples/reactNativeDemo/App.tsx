@@ -54,8 +54,6 @@ const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
       debug={debug}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        // TODO: change to enableAnalytics when updating the SDK version
-        enableDebug: true,
         infuraAPIKey,
         readonlyRPCMap: {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
@@ -80,6 +78,7 @@ const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
         checkInstallationImmediately,
         storage: {
           enabled: true,
+          // storageManager: new StoraManagerAS(),
         },
         dappMetadata: {
           name: 'devreactnative',

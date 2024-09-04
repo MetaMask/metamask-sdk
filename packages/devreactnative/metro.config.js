@@ -3,10 +3,13 @@ const path = require('path');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
 const escape = require('escape-string-regexp');
 
-const sdkRootPath = path.resolve(__dirname, '../../');
-const uiRoot = sdkRootPath + '/packages/sdk-ui';
-const hooksRoot = sdkRootPath + '/packages/sdk-react';
-console.log(`sdkRootPath: ${sdkRootPath}`);
+const monorepoRootPath = path.resolve(__dirname, '../../');
+const sdkPath = monorepoRootPath + '/packages/sdk';
+const sdkCommunicationLayerPath = monorepoRootPath + '/packages/sdk-communication-layer';
+const uiRoot = monorepoRootPath + '/packages/sdk-ui';
+const hooksRoot = monorepoRootPath + '/packages/sdk-react';
+const socketServerRoot = monorepoRootPath + '/packages/sdk-socket-server-next';
+console.log(`sdkRootPath: ${monorepoRootPath}`);
 
 const modules = [
   'react',
@@ -25,21 +28,20 @@ const extraNodeModules = modules.reduce((acc, name) => {
   return acc;
 }, {});
 
-// Create the first blacklist regular expressions array
-const blacklistRE1 = modules.map(
-  m => new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`),
-);
 
-// Create the second blacklist regular expressions array
-const blacklistRE2 = modules.map(
-  m => new RegExp(`^${escape(path.join(hooksRoot, 'node_modules', m))}\\/.*$`),
-);
-
-// Combine the two arrays
-const combinedBlacklistRE = [...blacklistRE1, ...blacklistRE2];
-
-// Create a single exclusion list using the combined array
-const finalBlacklistRE = exclusionList(combinedBlacklistRE);
+const finalBlacklistRE = exclusionList([
+  // Exclude sdk-ui node_modules
+  ...modules.map(
+    m => new RegExp(`^${escape(path.join(uiRoot, 'node_modules', m))}\\/.*$`)
+  ),
+  // Exclude sdk-react node_modules
+  ...modules.map(
+    m => new RegExp(`^${escape(path.join(hooksRoot, 'node_modules', m))}\\/.*$`)
+  ),
+  // Exclude sdk-socket-server-next and its dist folder
+  new RegExp(`^${escape(socketServerRoot)}\\/.*$`),
+  new RegExp(`^${escape(socketServerRoot + '/dist')}\\/.*$`)
+]);
 
 console.log(`modules: `, modules);
 console.log(`###################`);
@@ -71,7 +73,7 @@ const config = {
     }),
     babelTransformerPath: require.resolve('react-native-svg-transformer'),
   },
-  watchFolders: [sdkRootPath+'/packages/'],
+  watchFolders: [sdkPath, sdkCommunicationLayerPath, uiRoot, hooksRoot],
   resolver: {
     extraNodeModules: {
       ...extraNodeModules,
@@ -96,34 +98,34 @@ const config = {
         // NOTE: Throw an error if there is no resolution.
         return {
           filePath:
-            sdkRootPath + '/packages/sdk-communication-layer/src/index.ts',
+            monorepoRootPath + '/packages/sdk-communication-layer/src/index.ts',
           type: 'sourceFile',
         };
       } else if (moduleName === '@metamask/sdk') {
         console.debug(
           `CUSTOM RESOLVER ${moduleName}`,
-          sdkRootPath + '/packages/sdk/src/index.ts',
+          monorepoRootPath + '/packages/sdk/src/index.ts',
         );
         return {
-          filePath: sdkRootPath + '/packages/sdk/src/index.ts',
+          filePath: monorepoRootPath + '/packages/sdk/src/index.ts',
           type: 'sourceFile',
         };
       } else if (moduleName === '@metamask/sdk-react') {
         console.debug(
           `CUSTOM RESOLVER ${moduleName}`,
-          sdkRootPath + '/packages/sdk-react/src/index.ts',
+          monorepoRootPath + '/packages/sdk-react/src/index.ts',
         );
         return {
-          filePath: sdkRootPath + '/packages/sdk-react/src/index.ts',
+          filePath: monorepoRootPath + '/packages/sdk-react/src/index.ts',
           type: 'sourceFile',
         };
       } else if (moduleName === '@metamask/sdk-ui') {
         console.debug(
           `CUSTOM RESOLVER ${moduleName}`,
-          sdkRootPath + '/packages/sdk-ui/src/index.ts',
+          monorepoRootPath + '/packages/sdk-ui/src/index.ts',
         );
         return {
-          filePath: sdkRootPath + '/packages/sdk-ui/src/index.ts',
+          filePath: monorepoRootPath + '/packages/sdk-ui/src/index.ts',
           type: 'sourceFile',
         };
       }
