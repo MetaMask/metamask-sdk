@@ -15,8 +15,13 @@ import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
-import { StorageManagerAS } from './storage-manager/StorageManagerAS';
+
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
+
+// eslint-disable-next-line spaced-comment
+/*#if _REACTNATIVE
+export { StorageManagerAS } from './storage-manager/StorageManagerAS';
+/*#endif */
 
 declare global {
   interface Window {
@@ -26,7 +31,7 @@ declare global {
     mmsdk?: MetaMaskSDK;
     extension?: MetaMaskInpageProvider;
     extensions?: any[];
-    MSStream: unknown;
+    MSStream: unknown; // specific for older browser environment
   }
 }
 
@@ -39,7 +44,6 @@ export type {
 
 export {
   DEFAULT_SERVER_URL,
-  StorageManagerAS,
   EventType,
   CommunicationLayerPreference,
   MetaMaskSDK,
