@@ -2,7 +2,6 @@ import '@testing-library/jest-dom';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React, { useContext } from 'react';
 import { SDKConfigProvider, SDKConfigContext } from './SDKConfigProvider';
-import { logger } from './utils/logger';
 
 // Mock logger
 jest.mock('./utils/logger', () => ({
