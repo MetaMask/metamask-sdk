@@ -1,6 +1,6 @@
 import path from 'path';
 import dotenv from 'dotenv';
-import type { Capabilities } from '@wdio/types'
+import type { Capabilities } from '@wdio/types';
 import config from './wdio.shared.browserstack.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.ios.env') });

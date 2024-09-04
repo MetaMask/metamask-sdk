@@ -60,11 +60,13 @@ class Utils {
     // named bundleId
     if (PLATFORM === Platforms.ANDROID) {
       console.log('Android test detected. Reversing TCP ports...');
+      /*
       const adb = new ADB({
         adbHost: 'localhost',
         adbPort: 5037,
       });
-      // const adb = await ADB.createADB({});
+       */
+      const adb = await ADB.createADB({});
       await driver.pause(5000);
       await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
       await driver.pause(5000);
@@ -74,30 +76,40 @@ class Utils {
     await startFixtureServer(fixtureServer);
     await loadFixture(fixtureServer, { fixture });
 
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+
     console.log('Terminating app');
     await driver.terminateApp(bundleId);
 
-    console.log('app is terminated, cooling down for 2s');
+    console.log('App is terminated, cooling down for 5s');
     await driver.pause(5000);
 
     console.log(`Re-launching MetaMask on ${PLATFORM}...`);
     if (PLATFORM === Platforms.IOS) {
-      await driver.executeScript('mobile:launchApp', [
+      /*
+      await driver.executeScript('mobile: launchApp', [
         {
           bundleId,
-          fixtureServerPort: FIXTURE_SERVER_PORT,
+          fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
         },
       ]);
+       */
+      await driver.activateApp(bundleId);
     } else {
-      await driver.execute('mobile:activateApp', {
+      await driver.activateApp(bundleId);
+      console.log('App is launched, cooling down for 3s');
+      await driver.pause(5000);
+      /*
+      await driver.execute('mobile: activateApp', {
         appId: bundleId,
-        fixtureServerPort: FIXTURE_SERVER_PORT,
+        fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
       });
+       */
+
       console.log('Launched Android MetaMask with fixture');
     }
-
-    console.log('sleeping');
-    await driver.pause(10000);
   }
 
   /*

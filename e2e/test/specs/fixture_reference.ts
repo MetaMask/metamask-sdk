@@ -9,7 +9,17 @@ const fixtureServer = new FixtureServer();
 describe('Fixture test', () => {
   before(async () => {
     await Utils.launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await driver.pause(5000);
+    await LockScreen.unlockMM(WALLET_PASSWORD);
   });
 
   after(async () => {
@@ -18,6 +28,8 @@ describe('Fixture test', () => {
 
   it('should wait', async () => {
     console.log('Dummy waiting for 50 seconds');
-    await driver.pause(50000);
+    await driver.pause(10000);
+    await driver.pause(10000);
+    await driver.pause(10000);
   });
 });

@@ -14,13 +14,12 @@ config.capabilities = [
     'appium:platformVersion': process.env.PLATFORM_VERSION,
     'appium:automationName': process.env.AUTOMATION_NAME,
     'appium:app': process.env.APP_PATH,
-    'appium:appActivity': process.env.APP_ACTIVITY,
+    'appium:appActivity': 'io.metamask.MainActivity',
     'appium:newCommandTimeout': 360,
     'appium:appPackage': process.env.BUNDLE_ID,
     // 'appium:otherApps': process.env.RN_TEST_APP_PATH ?? '',
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,
-    // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
   },
 ];
 

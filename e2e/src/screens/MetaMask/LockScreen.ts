@@ -1,4 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio';
+import { driver } from '@wdio/globals';
 import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
@@ -48,6 +49,7 @@ class LockScreen {
 
   async unlockMM(password: string): Promise<void> {
     await (await this.passwordInput).setValue(password);
+    await driver.pause(2000);
     await (await this.unlockButton).click();
   }
 
