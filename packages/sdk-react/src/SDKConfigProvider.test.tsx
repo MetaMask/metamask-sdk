@@ -46,7 +46,7 @@ describe('SDKConfigProvider', () => {
 
     expect(screen.getByTestId('socketServer')).toHaveTextContent(initialSocketServer);
     expect(screen.getByTestId('infuraAPIKey')).toHaveTextContent(initialInfuraKey);
-    expect(screen.getByTestId('useDeeplink')).toHaveTextContent('false');
+    expect(screen.getByTestId('useDeeplink')).toHaveTextContent('true');
     expect(screen.getByTestId('checkInstallationImmediately')).toHaveTextContent('false');
     expect(screen.getByTestId('debug')).toHaveTextContent('true');
     expect(screen.getByTestId('logs')).toHaveTextContent(JSON.stringify({ sdk: true, provider: true, commLayer: true }));
