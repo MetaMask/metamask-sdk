@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.1]
+### Added
+- Release 85.0.0 ([#1006](https://github.com/MetaMask/metamask-sdk/pull/1006))
+
 ## [0.27.0]
 ### Added
 - fix: adds extensionOnly default to true to SDK initialization ([#962](https://github.com/MetaMask/metamask-sdk/pull/962))
@@ -178,7 +182,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.27.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.28.1...HEAD
+[0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.27.0...@metamask/sdk-react-ui@0.28.1
 [0.27.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.5...@metamask/sdk-react-ui@0.27.0
 [0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.4...@metamask/sdk-react-ui@0.26.5
 [0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-ui@0.26.3...@metamask/sdk-react-ui@0.26.4
