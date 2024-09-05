@@ -1,7 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
+import { visibilityOf } from 'wdio-wait-for';
 import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
+import MainScreen from './MainScreen';
 
 class LockScreen {
   get passwordInput(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -47,10 +49,37 @@ class LockScreen {
     return (await this.loginTitle).isDisplayed();
   }
 
-  async unlockMM(password: string): Promise<void> {
-    await (await this.passwordInput).setValue(password);
-    await driver.pause(2000);
-    await (await this.unlockButton).click();
+  async unlockMM(password: string): Promise<boolean> {
+    /*
+    const maxAttempts = 10;
+    let attempts = 0;
+    while (attempts < maxAttempts) {
+      if (await (await this.passwordInput).isDisplayed()) {
+        await (await this.passwordInput).setValue(password);
+        await (await this.unlockButton).click();
+      }
+      console.log('AAA: Bumping attenps to: ', attempts);
+      attempts += 1;
+      console.log('AAA: Waiting for 2 seconds');
+      await driver.pause(2000);
+    }
+
+    return await (await MainScreen.networkSwitcher).isDisplayed();
+     */
+    await driver
+      .waitUntil(visibilityOf(this.passwordInput), {
+        timeout: 60000,
+        interval: 5000,
+        timeoutMsg: 'Password input not visible',
+      })
+      .then(async () => {
+        await (await this.passwordInput).setValue(password);
+        await (await this.unlockButton).click();
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
+    return await (await MainScreen.networkSwitcher).isDisplayed();
   }
 
   async unlockMMifLocked(password: string): Promise<void> {

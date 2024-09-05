@@ -77,14 +77,9 @@ class Utils {
     await loadFixture(fixtureServer, { fixture });
 
     await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
 
-    console.log('Terminating app');
+    console.log('Rebooting MetaMask...');
     await driver.terminateApp(bundleId);
-
-    console.log('App is terminated, cooling down for 5s');
-    await driver.pause(5000);
 
     console.log(`Re-launching MetaMask on ${PLATFORM}...`);
     if (PLATFORM === Platforms.IOS) {
@@ -98,9 +93,12 @@ class Utils {
        */
       await driver.activateApp(bundleId);
     } else {
+      await driver.updateSettings({
+        waitForIdleTimeout: 5000,
+      });
       await driver.activateApp(bundleId);
-      console.log('App is launched, cooling down for 3s');
-      await driver.pause(5000);
+      console.log('MetaMask was loaded with fixtures!');
+
       /*
       await driver.execute('mobile: activateApp', {
         appId: bundleId,
