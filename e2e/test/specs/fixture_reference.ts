@@ -9,17 +9,8 @@ const fixtureServer = new FixtureServer();
 describe('Fixture test', () => {
   before(async () => {
     await Utils.launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await driver.pause(5000);
-    await LockScreen.unlockMM(WALLET_PASSWORD);
+    const isMMUnlocked = await LockScreen.unlockMM(WALLET_PASSWORD);
+    expect(isMMUnlocked);
   });
 
   after(async () => {
