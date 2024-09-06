@@ -212,8 +212,11 @@ const initializeMobileProvider = async ({
 
     // is it a readonly method with infura supported chain?
     const isReadOnlyMethod = !METHODS_TO_REDIRECT[method];
-    console.warn(`BOOM isReadOnlyMethod=${isReadOnlyMethod} method=${method}`);
     const rpcEndpoint = sdk.options.readonlyRPCMap?.[chainId as `0x${string}`];
+    console.warn(
+      `BOOM isReadOnlyMethod=${isReadOnlyMethod} method=${method} rpcEndpoint=${rpcEndpoint}`,
+    );
+
     if (rpcEndpoint && isReadOnlyMethod) {
       try {
         const params = args?.[0]?.params;
