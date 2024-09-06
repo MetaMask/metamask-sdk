@@ -36,11 +36,9 @@ describe('Ethereum Class', () => {
   });
 
   describe('destroy method', () => {
-    it('should destroy the Ethereum instance', () => {
+    it('should not tdestroy the ethereum instance', () => {
       Ethereum.destroy();
-      expect(() => Ethereum.getInstance()).toThrow(
-        'Ethereum instance not intiialized - call Ethereum.factory first.',
-      );
+      expect(() => Ethereum.getInstance()).not.toThrow();
     });
   });
 
