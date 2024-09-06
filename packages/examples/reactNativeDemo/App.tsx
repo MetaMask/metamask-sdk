@@ -18,13 +18,7 @@ import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import {
-  AppState,
-  AppStateStatus,
-  Linking,
-  LogBox,
-  Platform,
-} from 'react-native';
+import {AppState, AppStateStatus, Linking, LogBox} from 'react-native';
 import BackgroundTimer from 'react-native-background-timer';
 import RootNavigator from './src/RootNavigator';
 

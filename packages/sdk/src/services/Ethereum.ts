@@ -70,7 +70,7 @@ export class Ethereum {
   }
 
   static destroy() {
-    Ethereum.instance = undefined;
+    // Do not reinitialize to instance to avoid throwing on terminated.
   }
 
   static getInstance() {

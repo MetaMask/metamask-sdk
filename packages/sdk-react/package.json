@@ -20,6 +20,7 @@
   "author": "MetaMask",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
+  "react-native": "dist/react-native/es/metamask-sdk-react.js",
   "types": "dist/esm/src/index.d.ts",
   "files": [
     "dist",
@@ -95,9 +96,11 @@
     "rimraf": "^5.0.0",
     "rollup": "^3.21.8",
     "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.36.0",
     "tailwindcss": "^3.1.4",
     "typescript": "^4.7.4"
   },
