@@ -117,16 +117,6 @@ export async function write(
         `${METAMASK_DEEPLINK_BASE}?${urlParams}`,
         '_self',
       );
-    } else if (instance.state.remote?.isPaused()) {
-      logger(
-        `[RCPMS: _write()] MM is PAUSED! deeplink with connect! targetMethod=${targetMethod}`,
-      );
-
-      instance.state.platformManager?.openDeeplink(
-        `${METAMASK_CONNECT_BASE_URL}?redirect=true&${urlParams}`,
-        `${METAMASK_DEEPLINK_BASE}?redirect=true&${urlParams}`,
-        '_self',
-      );
     } else {
       // Already connected with custom rpc method (don't need redirect) - send message without opening metamask mobile.
       // instance only happens when metamask was opened in last 30seconds.
