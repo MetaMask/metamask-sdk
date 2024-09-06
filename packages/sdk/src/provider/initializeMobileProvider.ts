@@ -125,12 +125,14 @@ const initializeMobileProvider = async ({
 
       let loop = getInitializing();
       while (loop) {
+        const initializing = getInitializing();
+        const authorized = remoteConnection?.isAuthorized();
+        loop = initializing && !authorized;
         logger(
-          `[initializeMobileProvider: sendRequest()] waiting for initialization to complete`,
+          `[initializeMobileProvider: sendRequest()] waiting for initialization to complete - initializing: ${initializing} authorized: ${authorized}`,
         );
         // Wait for already ongoing method that triggered installation to complete
         await wait(1000);
-        loop = getInitializing() && !remoteConnection?.isAuthorized();
       }
 
       logger(
