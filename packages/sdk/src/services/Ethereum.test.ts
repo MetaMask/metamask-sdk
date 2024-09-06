@@ -59,7 +59,7 @@ describe('Ethereum Class', () => {
 
     it('should throw error if provider is not initialized', () => {
       // Force reset the Ethereum instance
-      jest.spyOn(Ethereum, 'getInstance').mockImplementation(() => {
+      jest.spyOn(Ethereum, 'getProvider').mockImplementation(() => {
         throw new Error(
           'Ethereum instance not intiialized - call Ethereum.factory first.',
         );
