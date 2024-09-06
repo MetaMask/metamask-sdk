@@ -5,11 +5,22 @@
  * @format
  */
 
-import {MetaMaskSDK} from '@metamask/sdk-react';
 import React, {useEffect} from 'react';
 
-import {AppState, AppStateStatus, LogBox, Text, View} from 'react-native';
-// import { StorageManagerAS } from './src/StorageManagerAS';
+import {COMM_SERVER_URL, INFURA_API_KEY} from '@env';
+import {
+  MetaMaskProvider,
+  SDKConfigProvider,
+  useSDKConfig,
+} from '@metamask/sdk-react';
+
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
+import {AppState, AppStateStatus, Linking, LogBox} from 'react-native';
+import BackgroundTimer from 'react-native-background-timer';
+import RootNavigator from './src/RootNavigator';
 
 LogBox.ignoreLogs([
   'Possible Unhandled Promise Rejection',
@@ -23,14 +34,61 @@ LogBox.ignoreLogs([
 // hence usage of a global variable.
 let canOpenLink = true;
 
-const sdk = new MetaMaskSDK({
-  dappMetadata: {
-    name: 'reactNativeDemo',
-  },
-});
-console.log('sdk found', sdk);
+const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
+  const {
+    socketServer,
+    infuraAPIKey,
+    useDeeplink,
+    debug,
+    checkInstallationImmediately,
+  } = useSDKConfig();
+
+  return (
+    <MetaMaskProvider
+      debug={debug}
+      sdkOptions={{
+        communicationServerUrl: socketServer,
+        infuraAPIKey,
+        readonlyRPCMap: {
+          '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
+        },
+        logging: {
+          developerMode: true,
+          plaintext: true,
+        },
+        openDeeplink: (link: string, _target?: string) => {
+          console.debug(`App::openDeepLink() ${link}`);
+          if (canOpenLink) {
+            Linking.openURL(link);
+          } else {
+            console.debug(
+              'useBlockchainProiver::openDeepLink app is not active - skip link',
+              link,
+            );
+          }
+        },
+        timer: BackgroundTimer,
+        useDeeplink,
+        checkInstallationImmediately,
+        storage: {
+          enabled: true,
+          // storageManager: new StoraManagerAS(),
+        },
+        dappMetadata: {
+          name: 'devreactnative',
+        },
+        i18nOptions: {
+          enabled: true,
+        },
+      }}>
+      {children}
+    </MetaMaskProvider>
+  );
+};
 
 export const SafeApp = () => {
+  const navigationRef = useNavigationContainerRef();
+
   const handleAppState = (appState: AppStateStatus) => {
     canOpenLink = appState === 'active';
     console.debug(`AppState change: ${appState} canOpenLink=${canOpenLink}`);
@@ -44,9 +102,19 @@ export const SafeApp = () => {
     };
   }, []);
 
+  const handleNavReady = () => {
+    console.log('Navigation container ready!');
+  };
+
   return (
-    <View>
-      <Text>Hello World</Text>
-    </View>
+    <SDKConfigProvider
+      initialSocketServer={COMM_SERVER_URL}
+      initialInfuraKey={INFURA_API_KEY}>
+      <WithSDKConfig>
+        <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
+          <RootNavigator />
+        </NavigationContainer>
+      </WithSDKConfig>
+    </SDKConfigProvider>
   );
 };
