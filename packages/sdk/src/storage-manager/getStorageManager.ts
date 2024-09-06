@@ -11,8 +11,10 @@ import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
 //#elif _REACTNATIVE
 import { StorageManagerAS as SMDyn } from './StorageManagerAS';
 //#else */
+// This is ONLY used during development with devnext/devreactnative or via transpiling
 import { StorageManagerAS as SMDyn } from './StorageManagerAS';
-// #endif
+// eslint-disable-next-line spaced-comment
+//#endif
 
 export const getStorageManager = (
   // platformManager: PlatformManager,
