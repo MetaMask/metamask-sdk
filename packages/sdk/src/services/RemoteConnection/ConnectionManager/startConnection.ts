@@ -8,17 +8,16 @@ import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
 } from '../../../constants';
+import { RPCCall } from '../../../Platform/MetaMaskInstaller';
 import { base64Encode } from '../../../utils/base64';
 import { logger } from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
 import { initializeConnector } from '../ConnectionInitializer';
 import { setupListeners } from '../EventListeners';
-import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
   RemoteConnectionProps,
   RemoteConnectionState,
 } from '../RemoteConnection';
-import { RPCCall } from '../../../Platform/MetaMaskInstaller';
 import { connectWithDeeplink } from './connectWithDeeplink';
 import { connectWithModalInstaller } from './connectWithModalInstaller';
 
@@ -197,10 +196,6 @@ export async function startConnection(
           resolve();
         });
       });
-    }
-
-    if (channelConfig?.lastActive) {
-      return reconnectWithModalOTP(state, options, channelConfig);
     }
 
     return connectWithModalInstaller(state, options, encodedLinkParams);

@@ -1,7 +1,6 @@
 import { base64Encode } from '../../../utils/base64';
 import * as loggerModule from '../../../utils/logger';
 import { Ethereum } from '../../Ethereum';
-import { reconnectWithModalOTP } from '../ModalManager/reconnectWithModalOTP';
 import {
   RemoteConnectionProps,
   RemoteConnectionState,
@@ -40,10 +39,6 @@ jest.mock('./connectWithModalInstaller', () => ({
   connectWithModalInstaller: jest.fn(),
 }));
 
-jest.mock('../ModalManager/reconnectWithModalOTP', () => ({
-  reconnectWithModalOTP: jest.fn(),
-}));
-
 describe('startConnection', () => {
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
@@ -54,7 +49,6 @@ describe('startConnection', () => {
   const mockGetKeyInfo = jest.fn();
   const mockIsSecure = jest.fn();
   const mockGetPlatformType = jest.fn();
-  const mockReconnectWithModalOTP = reconnectWithModalOTP as jest.Mock;
   const mockConnectWithDeeplink = connectWithDeeplink as jest.Mock;
   const mockConnectWithModalInstaller = connectWithModalInstaller as jest.Mock;
 
@@ -148,23 +142,6 @@ describe('startConnection', () => {
     await startConnection(state, options);
 
     expect(mockConnectWithDeeplink).toHaveBeenCalled();
-  });
-
-  it('should call reconnectWithModalOTP when channelConfig lastActive is true and isSecure is false', async () => {
-    const mockChannelConfig = {
-      lastActive: true,
-    };
-
-    mockOriginatorSessionConnect.mockResolvedValue(mockChannelConfig);
-    mockIsSecure.mockReturnValue(false);
-
-    await startConnection(state, options);
-
-    expect(mockReconnectWithModalOTP).toHaveBeenCalledWith(
-      state,
-      options,
-      mockChannelConfig,
-    );
   });
 
   it('should call connectWithModalInstaller when platform is not secure and channelConfig does not have lastActive', async () => {
