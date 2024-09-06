@@ -19,30 +19,30 @@ const config = [
         file: packageJson.module,
         inlineDynamicImports: true,
         format: 'esm',
-        sourcemap: true,
-        sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-          // Not sure why rollup otherwise adds an extra '../' to the path
+        sourcemap: false,
+        // sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+        //   // Not sure why rollup otherwise adds an extra '../' to the path
 
-          // Adjust the path transformation logic as needed
-          return relativeSourcePath.replace(/^..\//, '');
-        },
+        //   // Adjust the path transformation logic as needed
+        //   return relativeSourcePath.replace(/^..\//, '');
+        // },
       },
       {
         file: packageJson.main,
         inlineDynamicImports: true,
         format: 'cjs',
-        sourcemap: true,
-        sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-          // Not sure why rollup otherwise adds an extra '../' to the path
+        sourcemap: false,
+        // sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
+        //   // Not sure why rollup otherwise adds an extra '../' to the path
 
-          // Adjust the path transformation logic as needed
-          return relativeSourcePath.replace(/^..\//, '');
-        },
+        //   // Adjust the path transformation logic as needed
+        //   return relativeSourcePath.replace(/^..\//, '');
+        // },
       },
     ],
     plugins: [
       external(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ tsconfig: './tsconfig.json', inlineSources: true, sourceMap: true, }),
       nodeResolve({
         browser: true,
       }),
