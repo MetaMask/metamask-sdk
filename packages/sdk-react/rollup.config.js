@@ -19,25 +19,13 @@ const config = [
         file: packageJson.module,
         inlineDynamicImports: true,
         format: 'esm',
-        sourcemap: false,
-        // sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-        //   // Not sure why rollup otherwise adds an extra '../' to the path
-
-        //   // Adjust the path transformation logic as needed
-        //   return relativeSourcePath.replace(/^..\//, '');
-        // },
+        sourcemap: true,
       },
       {
         file: packageJson.main,
         inlineDynamicImports: true,
         format: 'cjs',
-        sourcemap: false,
-        // sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
-        //   // Not sure why rollup otherwise adds an extra '../' to the path
-
-        //   // Adjust the path transformation logic as needed
-        //   return relativeSourcePath.replace(/^..\//, '');
-        // },
+        sourcemap: true,
       },
     ],
     plugins: [
@@ -51,6 +39,31 @@ const config = [
       terser(),
     ],
   },
+  {
+    external: ['react', 'react-dom', 'react-native'],
+    input: 'src/index.ts',
+    output: [
+      {
+        file: 'dist/react-native/es/metamask-sdk-react.js',
+        inlineDynamicImports: true,
+        format: 'esm',
+        sourcemap: true,
+      },
+    ],
+    plugins: [
+      external(),
+      typescript({ tsconfig: './tsconfig.json', inlineSources: true, sourceMap: true, }),
+      nodeResolve({
+        mainFields: ['react-native', 'node', 'browser'],
+        exportConditions: ['react-native', 'node', 'browser'],
+        browser: true,
+        preferBuiltins: true,
+      }),
+      commonjs(),
+      json(),
+      terser(),
+    ],
+  }
 ];
 
 export default config;
