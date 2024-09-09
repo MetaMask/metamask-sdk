@@ -8,6 +8,7 @@
 @property (nonatomic, strong, readonly) NSString *dappIconUrl;
 @property (nonatomic, strong, readonly) NSString *dappScheme;
 @property (nonatomic, strong, readonly) NSString *infuraAPIKey;
+@property (nonatomic, strong, readonly) NSString *apiVersion;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 

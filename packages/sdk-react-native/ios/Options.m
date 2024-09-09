@@ -8,6 +8,8 @@
 @synthesize dappIconUrl = _dappIconUrl;
 @synthesize dappScheme = _dappScheme;
 @synthesize infuraAPIKey = _infuraAPIKey;
+@synthesize apiVersion = _apiVersion;
+
 
 - (instancetype)initWithDictionary:(NSDictionary *)dictionary {
   if (self = [super init]) {
@@ -16,6 +18,7 @@
     _dappIconUrl = dictionary[@"dappIconUrl"];
     _dappScheme = dictionary[@"dappScheme"];
     _infuraAPIKey = dictionary[@"infuraAPIKey"];
+    _apiVersion = dictionary[@"apiVersion"];
   }
   return self;
 }

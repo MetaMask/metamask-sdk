@@ -9,6 +9,7 @@ interface MetaMaskSDKNativeModuleOptions {
   dappIconUrl: string;
   dappScheme: string;
   infuraAPIKey?: string;
+  apiVersion: string;
 }
 
 export interface RequestArguments {
@@ -164,6 +165,7 @@ export function initializeSDK(sdkOptions: MetaMaskSDKOptions) {
     dappIconUrl: sdkOptions.dappMetadata.iconUrl,
     dappScheme: sdkOptions.dappMetadata.scheme,
     infuraAPIKey: sdkOptions.infuraAPIKey,
+    apiVersion: '0.8.5',
   };
 
   MetaMaskReactNativeSdk.initialize(options);

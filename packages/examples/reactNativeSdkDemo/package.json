@@ -13,7 +13,7 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk-react-native": "^0.3.7",
+    "@metamask/sdk-react-native": "/Users/omri/Projects/metamask-sdk/packages/sdk-react-native",
     "@react-native-async-storage/async-storage": "^1.19.3",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",

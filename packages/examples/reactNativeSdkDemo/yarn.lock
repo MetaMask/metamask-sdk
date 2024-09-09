@@ -2499,9 +2499,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-native@npm:^0.3.7":
-  version: 0.3.7
-  resolution: "@metamask/sdk-react-native@npm:0.3.7"
+"@metamask/sdk-react-native@file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native::locator=reactNativeSdkDemo%40workspace%3A.":
+  version: 0.3.8
+  resolution: "@metamask/sdk-react-native@file:/Users/omri/Projects/metamask-sdk/packages/sdk-react-native#/Users/omri/Projects/metamask-sdk/packages/sdk-react-native::hash=9b8595&locator=reactNativeSdkDemo%40workspace%3A."
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2515,7 +2515,7 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: a5a6c943f7209ac2540b9ff4e9048530c9bcd9e6865cc21301712b6c29203d2185f1883f2eadcf235ba3276e73f20240e3297d95613340006a87bfcff3736ceb
+  checksum: 04eadeb67382be6946453468674e7463c79352a4c92b655d164b9c5da0322db887148796215758cc9a9ea1e95aaf672eba461fcc312c9dba39689e687d66fa89
   languageName: node
   linkType: hard
 
@@ -10332,7 +10332,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@metamask/sdk-react-native": ^0.3.7
+    "@metamask/sdk-react-native": /Users/omri/Projects/metamask-sdk/packages/sdk-react-native
     "@react-native-async-storage/async-storage": ^1.19.3
     "@react-native-community/eslint-config": ^3.2.0
     "@react-native/eslint-config": ^0.72.2
