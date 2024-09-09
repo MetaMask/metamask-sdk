@@ -22,6 +22,8 @@ import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from '../../package.json';
 import {DAPPView} from '../views/DappView';
 
+import { DemoSignView } from './DemoSign';
+
 export function DemoScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
@@ -89,6 +91,7 @@ export function DemoScreen(): React.JSX.Element {
               .replaceAll('\n', '')}`}
             )
           </Text>
+          <DemoSignView />
           <Button title="Test Encryption" onPress={testEncrypt} />
           <Text style={{color: Colors.black}}>
             {encryptionTime && `Encryption time: ${encryptionTime} ms`}
