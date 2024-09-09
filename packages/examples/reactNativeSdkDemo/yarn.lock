@@ -2500,8 +2500,8 @@ __metadata:
   linkType: hard
 
 "@metamask/sdk-react-native@npm:^0.3.7":
-  version: 0.3.7
-  resolution: "@metamask/sdk-react-native@npm:0.3.7"
+  version: 0.3.8
+  resolution: "@metamask/sdk-react-native@npm:0.3.8"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2515,7 +2515,7 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: a5a6c943f7209ac2540b9ff4e9048530c9bcd9e6865cc21301712b6c29203d2185f1883f2eadcf235ba3276e73f20240e3297d95613340006a87bfcff3736ceb
+  checksum: 7e2af2608084325521bb7df18a8343896836ba7f77681245c84380861080b27073ce471c970cded4a8ba858a00b89486b2da522b694e632a8a9a2bcde1d02bb9
   languageName: node
   linkType: hard
 

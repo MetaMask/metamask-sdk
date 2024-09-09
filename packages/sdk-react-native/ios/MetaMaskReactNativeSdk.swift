@@ -41,11 +41,18 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
       sdkOptions = SDKOptions(infuraAPIKey: infuraAPIKey)
     }
 
+    // Logging the API version and adding it to the SDK options if necessary
+    // if let apiVersion = options.apiVersion {
+    //   Logging.log("MetaMaskReactNativeSdk:: API version: \(apiVersion)")
+    //   sdkOptions?.apiVersion = apiVersion // Assuming SDKOptions has an apiVersion field
+    // }
+
     metaMaskSDK = MetaMaskSDK.shared(
       AppMetadata(
         name: options.dappName,
         url: options.dappUrl,
-        iconUrl: options.dappIconUrl),
+        iconUrl: options.dappIconUrl,
+        apiVersion: options.apiVersion),
       transport: transport,
       sdkOptions: sdkOptions
     )

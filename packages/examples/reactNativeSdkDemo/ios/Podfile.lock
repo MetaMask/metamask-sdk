@@ -15,11 +15,11 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.5)
   - hermes-engine/Pre-built (0.72.5)
   - libevent (2.1.12)
-  - metamask-ios-sdk (0.8.4):
+  - metamask-ios-sdk (0.8.5):
     - Socket.IO-Client-Swift (~> 16.1.0)
     - Starscream (= 4.0.6)
-  - metamask-sdk-react-native (0.3.7):
-    - metamask-ios-sdk (~> 0.8.4)
+  - metamask-sdk-react-native (0.3.8):
+    - metamask-ios-sdk (~> 0.8.5)
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - RCT-Folly (2021.07.22.00):
@@ -644,8 +644,8 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: f6cf92a471053245614d9d8097736f6337d5b86c
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  metamask-ios-sdk: eb147a8b4003f6fce54bd98aae4511e695e9d090
-  metamask-sdk-react-native: 39f6adb410d7750fb2d76fa1a94376fe36e38f52
+  metamask-ios-sdk: af7194f932f533e1386462d2bd91431b1c21439e
+  metamask-sdk-react-native: 80e7dfa6196ac7d713c2eb453685a8e243b68790
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: df81ab637d35fac9e6eb94611cfd20f0feb05455
   RCTTypeSafety: 4636e4a36c7c2df332bda6d59b19b41c443d4287
