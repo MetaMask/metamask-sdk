@@ -12,7 +12,7 @@
         "stable": "0.26.4"
     },
     "@metamask/sdk-react-native": {
-        "stable": "0.3.3"
+        "stable": "0.3.8"
     },
     "@metamask/sdk-react-ui": {
       "stable": "0.26.5"
@@ -27,9 +27,9 @@
         "stable": "2.1.0"
     },
     "metamask-ios-sdk": {
-        "stable": "0.7.3"
+        "stable": "0.8.6"
     },
     "metamask-android-sdk": {
-        "stable": "0.5.8"
+        "stable": "0.6.4"
     }
 }
