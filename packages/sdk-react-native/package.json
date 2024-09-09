@@ -1,7 +1,7 @@
 {
   "name": "@metamask/sdk-react-native",
   "title": "MetaMask - ReactNative SDK",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "MetaMask SDK for React Native applications, enabling seamless integration with MetaMask for blockchain interactions.",
   "main": "dist/esm/index.js",
   "types": "dist/esm/src/index.d.ts",
