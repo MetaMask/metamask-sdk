@@ -24,7 +24,7 @@ export interface RequestArguments {
  *
  * @returns A Promise that resolves when the connection is successful.
  */
-export const connect = async (): Promise<string> => {
+export const connect = async (): Promise<string[]> => {
   return MetaMaskReactNativeSdk.connect();
 };
 
