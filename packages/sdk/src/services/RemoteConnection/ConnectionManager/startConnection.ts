@@ -3,10 +3,11 @@ import {
   EventType,
   OriginatorInfo,
 } from '@metamask/sdk-communication-layer';
+import { v4 as uuidv4 } from 'uuid';
 import packageJson from '../../../../package.json';
 import {
   METAMASK_CONNECT_BASE_URL,
-  METAMASK_DEEPLINK_BASE,
+  METAMASK_DEEPLINK_BASE
 } from '../../../constants';
 import { RPCCall } from '../../../Platform/MetaMaskInstaller';
 import { base64Encode } from '../../../utils/base64';
@@ -149,9 +150,11 @@ export async function startConnection(
     };
     const base64OriginatorInfo = base64Encode(JSON.stringify(originatorInfo));
 
+    const clickId = uuidv4(); // Generate a unique clickId
+
     let linkParams = `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}`;
+    }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}&clickId=${clickId}`;
 
     if (connectWith) {
       const base64Rpc = base64Encode(JSON.stringify(connectWith));
