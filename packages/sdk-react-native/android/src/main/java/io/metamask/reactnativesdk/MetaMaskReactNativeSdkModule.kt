@@ -39,11 +39,19 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
         val dappIconUrl = options.getString("dappIconUrl") ?: ""
         val infuraAPIKey = options.getString("infuraAPIKey")
 
-        val dappMetadata = DappMetadata(name = dappName, url = dappURL, iconUrl = dappIconUrl)
-        var sdkOptions: SDKOptions? = null
+        val readonlyRPCMap: Map<String, String>? = if (options.hasKey("readonlyRPCMap")) {
+            // Get the ReadableMap associated with "readonlyRPCMap"
+            val readonlyRPCMapReadable: ReadableMap? = options.getMap("readonlyRPCMap")
+            readonlyRPCMapReadable?.toHashMap()?.map { it.key to it.value as String }?.toMap()
+        } else {
+            null
+        }
 
-        infuraAPIKey?.let { key ->
-            sdkOptions = SDKOptions(key)
+        val dappMetadata = DappMetadata(name = dappName, url = dappURL, iconUrl = dappIconUrl)
+        val sdkOptions: SDKOptions? = if (infuraAPIKey != null || readonlyRPCMap != null) {
+            SDKOptions(infuraAPIKey, readonlyRPCMap)
+        } else {
+            null
         }
 
         val eth = Ethereum(context, dappMetadata, sdkOptions)
