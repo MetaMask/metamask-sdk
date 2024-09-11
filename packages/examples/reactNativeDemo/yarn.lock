@@ -3718,11 +3718,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react@npm:^0.28.1":
-  version: 0.28.1
-  resolution: "@metamask/sdk-react@npm:0.28.1"
+"@metamask/sdk-react@npm:^0.28.2":
+  version: 0.28.2
+  resolution: "@metamask/sdk-react@npm:0.28.2"
   dependencies:
-    "@metamask/sdk": ^0.28.1
+    "@metamask/sdk": ^0.28.2
     debug: ^4.3.4
     eth-rpc-errors: ^4.0.3
     rollup-plugin-node-builtins: ^2.1.2
@@ -3741,13 +3741,13 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: 5db66143d448afc00374abc3590ed48b7fe7d834d937de3320eed183e0c71d6fd7338d4112192188ecac12823ec6479193e7b1648e4e7dea311877f03be9cc50
+  checksum: 027adef224764ec546179ce7776df9f6b30dfaa1905defa2d6c29d3d07316d1687db1823606543edaf4a4dc7ac4805ca6d9cf43315f078342d10775ded03388a
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.28.1":
-  version: 0.28.1
-  resolution: "@metamask/sdk@npm:0.28.1"
+"@metamask/sdk@npm:^0.28.2":
+  version: 0.28.2
+  resolution: "@metamask/sdk@npm:0.28.2"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
@@ -3780,7 +3780,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: e6237d677239d683873c4ae387e356135a2df13f82d1e6dc8ba6320ab54846953013f75e27618a53f3b494e0fab19913ccc08cc399d087fbe6f79c5fe6c6c94d
+  checksum: f51eb506b8614b8eae2015668eccb9c5924c31bbdfc050bfa788bd03349107d9281a52107021f6daf3888bd0bd15796605ce883b270b2c4a304f830bac15aaf7
   languageName: node
   linkType: hard
 
@@ -12191,8 +12191,8 @@ __metadata:
     "@babel/core": ^7.23.6
     "@babel/preset-env": ^7.23.6
     "@babel/runtime": ^7.23.6
-    "@metamask/sdk": ^0.28.1
-    "@metamask/sdk-react": ^0.28.1
+    "@metamask/sdk": ^0.28.2
+    "@metamask/sdk-react": ^0.28.2
     "@react-native-async-storage/async-storage": ^2.0.0
     "@react-native-community/eslint-config": ^3.2.0
     "@react-native/eslint-config": ^0.72.2

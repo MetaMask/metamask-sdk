@@ -180,7 +180,7 @@ export async function startConnection(
     }
 
     // emit qrcode url link
-    provider.emit('display_uri', encodedLinkParams);
+    provider.emit('display_uri', qrcodeLink);
 
     // first handle secure connection
     if (state.platformManager?.isSecure()) {
