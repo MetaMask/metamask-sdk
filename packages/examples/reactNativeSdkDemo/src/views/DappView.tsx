@@ -53,7 +53,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
     try {
       console.log('Calling Connect....');
 
-      const res = (await sdk?.connect()) as string;
+      const res = (await sdk?.connect()) as string[];
       console.log('account', res);
     } catch (e) {
       console.log('ERROR', e);

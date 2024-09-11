@@ -89,8 +89,8 @@ class MetaMaskReactNativeSdk: NSObject, RCTBridgeModule {
       let result = await metaMaskSDK?.connect()
 
       switch result {
-      case .success(let account):
-        resolve(account)
+      case .success(let accounts):
+        resolve(accounts)
         return
       case .failure(let error):
         reject("ERROR_CONNECT", error.localizedDescription, error)
