@@ -31,7 +31,7 @@ export interface SDKState {
   chainId?: string;
   account?: string;
   sdk?: {
-    connect: () => Promise<string | undefined>;
+    connect: () => Promise<string[] | undefined>;
     connectAndSign: ({ msg }: { msg: string }) => Promise<string | undefined>;
     connectWith: (req: RequestArguments) => Promise<string | undefined>;
     terminate: () => Promise<void>;

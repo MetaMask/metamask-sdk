@@ -53,8 +53,8 @@ export const DAPPView = (_props: DAPPViewProps) => {
     try {
       console.log('Calling Connect....');
 
-      const res = (await sdk?.connect()) as string;
-      console.log('account', res);
+      const res = (await sdk?.connect()) as string[];
+      console.log('accounts', res);
     } catch (e) {
       console.log('ERROR', e);
     }
@@ -93,6 +93,21 @@ export const DAPPView = (_props: DAPPViewProps) => {
       setResponse(signResult);
     } catch (err) {
       console.warn('failed to connect..', err);
+    }
+  };
+
+  const getBalance = async () => {
+    const from = await provider?.getSelectedAddress();
+
+    try {
+      const balanceResult = await provider?.request({
+        method: 'eth_getBalance',
+        params: [from, 'latest'],
+      });
+      console.log('getBalance result:', balanceResult);
+      setResponse(balanceResult);
+    } catch (err) {
+      console.warn('failed to getBalance..', err);
     }
   };
 
@@ -372,6 +387,10 @@ export const DAPPView = (_props: DAPPViewProps) => {
           <Button title="eth_signTypedData_v4" onPress={sign} />
           <Button title="Personal Sign" onPress={personalSign} />
           <Button title="Batch Sign Calls" onPress={batch} />
+          <Button
+            title="Get Balance"
+            onPress={getBalance}
+          />
           <Button
             title="Batch With Switch Chain"
             onPress={batchWithSwitchChain}
