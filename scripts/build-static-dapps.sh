@@ -33,6 +33,7 @@ build_and_consolidate() {
     build_project "deployments/dapps/sdk-playground"
     build_project "packages/examples/create-react-app"
     build_project "packages/examples/vuejs"
+    build_project "packages/examples/wagmi-demo-react"  # Added new project here
 
     # Special handling for Pure JS Example
     echo "Handling Pure JS Example..."
@@ -59,6 +60,7 @@ build_and_consolidate() {
     mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
     mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
     mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
+    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
     cp -r packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
@@ -68,8 +70,7 @@ build_and_consolidate() {
     cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
     cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
     cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
-
-    # Special handling for pure_javascript
+    cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
     cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
@@ -115,7 +116,7 @@ update_index_html() {
     fi
 
     rm "$deployment_dir/version_info.html"
-    # Last pass to make sure to replae RELEASE_VERSION_PLACEHOLDER with the actual version
+    # Last pass to make sure to replace RELEASE_VERSION_PLACEHOLDER with the actual version
     if [[ "$(uname)" == "Darwin" ]]; then
         sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
     else
@@ -167,4 +168,3 @@ echo "<meta http-equiv=\"refresh\" content=\"0; url=\"$version/index.html\">" > 
 cat index.html
 
 echo "Deployment directory ready!"
-
