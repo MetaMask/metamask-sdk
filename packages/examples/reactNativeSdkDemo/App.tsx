@@ -57,7 +57,7 @@ const SafeApp = () => {
               'https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png',
             scheme: 'testdapp',
           },
-          infuraAPIKey: '92007f99166a4fb39b46afd091bb43c2',
+          infuraAPIKey: '#########',
         }}>
         <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
           <RootNavigator />
