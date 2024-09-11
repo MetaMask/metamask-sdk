@@ -1,9 +1,10 @@
 /* eslint-disable react-native/no-inline-styles */
 import {useSDK} from '@metamask/sdk-react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors} from './colors';
 import {NativeModules} from 'react-native';
+import { ethers } from 'ethers';
 const {MetaMaskReactNativeSdk} = NativeModules;
 
 export interface DAPPViewProps {}
@@ -45,9 +46,26 @@ const createStyles = ({connected}: {connected: boolean}) => {
 
 export const DAPPView = (_props: DAPPViewProps) => {
   const {sdk, provider, chainId, account, connected} = useSDK();
+  const [ethersProvider, setProvider] =
+    useState<ethers.providers.Web3Provider>();
+
+  useEffect(() => {
+    if (connected && provider && !ethersProvider) {
+      const prov = new ethers.providers.Web3Provider(provider);
+      setProvider(prov);
+    }
+  }, [connected, provider, setProvider, ethersProvider]);
 
   const [response, setResponse] = useState<unknown>('');
   const styles = createStyles({connected});
+
+  const etherSign = async () => {
+    const signer = ethersProvider.getSigner(account);
+
+    const sig = await signer.signMessage('Hello Aarna');
+    console.log('Ethers Signature', sig);
+    setResponse(sig);
+  };
 
   const connect = async () => {
     try {
@@ -387,14 +405,12 @@ export const DAPPView = (_props: DAPPViewProps) => {
           <Button title="eth_signTypedData_v4" onPress={sign} />
           <Button title="Personal Sign" onPress={personalSign} />
           <Button title="Batch Sign Calls" onPress={batch} />
-          <Button
-            title="Get Balance"
-            onPress={getBalance}
-          />
+          <Button title="Get Balance" onPress={getBalance} />
           <Button
             title="Batch With Switch Chain"
             onPress={batchWithSwitchChain}
           />
+          <Button title="Ethers Sign" onPress={etherSign} />
           <Button title="Send Transaction" onPress={sendTransaction} />
           <Button
             title="Add The Polygon Chain"
