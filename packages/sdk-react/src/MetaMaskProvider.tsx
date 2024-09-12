@@ -174,6 +174,14 @@ const MetaMaskProviderClient = ({
     }
   }, [rpcHistory]);
 
+  // Sync connection status with the provider
+  useEffect(() => {
+    if (status?.connectionStatus === ConnectionStatus.DISCONNECTED || status?.connectionStatus === ConnectionStatus.TERMINATED) {
+      setConnected(false);
+      setConnecting(false);
+    }
+  }, [status]);
+
   useEffect(() => {
     // avoid asking balance multiple times on same account/chain
     const currentBalanceQuery = `${account}${chainId}`;

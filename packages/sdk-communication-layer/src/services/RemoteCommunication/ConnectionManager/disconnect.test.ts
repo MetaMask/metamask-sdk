@@ -1,6 +1,5 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { SocketService } from '../../../SocketService';
-import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
 import { StorageManager } from '../../../types/StorageManager';
@@ -22,7 +21,7 @@ describe('disconnect', () => {
           getKeyInfo: jest.fn(() => ({ keysExchanged: false })),
           sendMessage: jest.fn(),
           disconnect: jest.fn(),
-        } as unknown as CommunicationLayer,
+        } as unknown as SocketService,
         debug: false,
         channelId: 'sampleChannelId',
       },

@@ -7,10 +7,17 @@ import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { logger } from '../../../utils/logger';
 
+export interface JoinChannelResult {
+  ready: boolean;
+  rejected?: boolean;
+  persistence?: boolean;
+  walletKey?: string;
+}
+
 export const handleJoinChannelResults = async (
   instance: SocketService,
   error: string | null,
-  result?: { ready: boolean; persistence?: boolean; walletKey?: string },
+  result?: JoinChannelResult,
 ) => {
   const { remote, state } = instance;
   const { channelId, isOriginator } = state;
@@ -30,11 +37,21 @@ export const handleJoinChannelResults = async (
     return;
   }
 
-  const { persistence, walletKey } = result;
+  const { persistence, walletKey, rejected } = result;
 
   logger.SocketService(
-    `handleJoinChannelResults: Channel ${channelId} persistence=${persistence} walletKey=${walletKey}`,
+    `handleJoinChannelResults: Channel ${channelId} persistence=${persistence} walletKey=${walletKey} rejected=${rejected}`,
   );
+
+  if (rejected) {
+    logger.SocketService(
+      `handleJoinChannelResults: Channel ${channelId} rejected`,
+    );
+    instance.remote.disconnect({ terminate: true });
+    instance.remote.emit(EventType.REJECTED, { channelId });
+    instance.remote.emitServiceStatusEvent();
+    return;
+  }
 
   if (walletKey && !remote.state.channelConfig?.otherKey) {
     const keyExchange = instance.getKeyExchange();

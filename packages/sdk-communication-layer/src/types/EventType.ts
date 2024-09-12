@@ -12,8 +12,10 @@ export enum EventType {
   CLIENTS_DISCONNECTED = 'clients_disconnected',
   CLIENTS_WAITING = 'clients_waiting',
   CLIENTS_READY = 'clients_ready',
+  REJECTED = 'rejected',
   WALLET_INIT = 'wallet_init',
   CHANNEL_PERSISTENCE = 'channel_persistence',
+  CONFIG = 'config',
   MESSAGE_ACK = 'ack',
   SOCKET_DISCONNECTED = 'socket_disconnected',
   // socket reconnect should only happen on ios mobile

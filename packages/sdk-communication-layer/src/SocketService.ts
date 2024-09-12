@@ -16,7 +16,6 @@ import {
 } from './services/SocketService/ConnectionManager';
 import { keyCheck, resetKeys } from './services/SocketService/KeysManager';
 import { handleSendMessage } from './services/SocketService/MessageHandlers';
-import { CommunicationLayer } from './types/CommunicationLayer';
 import { CommunicationLayerMessage } from './types/CommunicationLayerMessage';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
 import { ConnectToChannelOptions } from './types/ConnectToChannelOptions';
@@ -75,11 +74,7 @@ export interface RPCMethodCache {
   [id: string]: RPCMethodResult;
 }
 
-export type SocketServiceInstanceType = SocketService &
-  EventEmitter2 &
-  CommunicationLayer;
-
-export class SocketService extends EventEmitter2 implements CommunicationLayer {
+export class SocketService extends EventEmitter2 {
   public state: SocketServiceState = {
     clientsConnected: false,
     /**

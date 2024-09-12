@@ -15,7 +15,7 @@ import {
 import {
   connectToChannel,
   disconnect,
-  initCommunicationLayer,
+  initSocketService,
   originatorSessionConnect,
   resume,
 } from './services/RemoteCommunication/ConnectionManager';
@@ -40,6 +40,7 @@ import {
 import { WalletInfo } from './types/WalletInfo';
 import { logger } from './utils/logger';
 import { Channel } from './types/Channel';
+import { rejectChannel } from './services/RemoteCommunication/ConnectionManager/rejectChannel';
 
 type MetaMaskMobile = 'metamask-mobile';
 
@@ -203,32 +204,7 @@ export class RemoteCommunication extends EventEmitter2 {
       `[RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
     );
 
-    this.initCommunicationLayer({
-      communicationLayerPreference,
-      otherPublicKey,
-      reconnect,
-      ecies,
-      communicationServerUrl,
-    });
-
-    this.emitServiceStatusEvent({ context: 'constructor' });
-  }
-
-  private initCommunicationLayer({
-    communicationLayerPreference,
-    otherPublicKey,
-    reconnect,
-    ecies,
-    communicationServerUrl = DEFAULT_SERVER_URL,
-  }: Pick<
-    RemoteCommunicationProps,
-    | 'communicationLayerPreference'
-    | 'otherPublicKey'
-    | 'reconnect'
-    | 'ecies'
-    | 'communicationServerUrl'
-  >) {
-    return initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference,
       otherPublicKey,
       reconnect,
@@ -236,6 +212,8 @@ export class RemoteCommunication extends EventEmitter2 {
       communicationServerUrl,
       instance: this,
     });
+
+    this.emitServiceStatusEvent({ context: 'constructor' });
   }
 
   /**
@@ -452,6 +430,13 @@ export class RemoteCommunication extends EventEmitter2 {
 
   getRPCMethodTracker() {
     return this.state.communicationLayer?.getRPCMethodTracker();
+  }
+
+  reject({ channelId }: { channelId: string }) {
+    return rejectChannel({
+      channelId,
+      state: this.state,
+    });
   }
 
   disconnect(options?: DisconnectOptions) {

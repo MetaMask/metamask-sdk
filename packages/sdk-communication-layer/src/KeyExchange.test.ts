@@ -3,7 +3,7 @@ import { KeyExchange } from './KeyExchange';
 import { SocketService } from './SocketService';
 
 jest.mock('./ECIES');
-jest.mock('./types/CommunicationLayer'); // Assuming CommunicationLayer is a class that can be mocked.
+jest.mock('./SocketService'); // Assuming CommunicationLayer is a class that can be mocked.
 
 describe('KeyExchange', () => {
   let keyExchange: KeyExchange;

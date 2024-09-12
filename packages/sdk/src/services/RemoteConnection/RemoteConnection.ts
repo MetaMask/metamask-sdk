@@ -184,6 +184,11 @@ export class RemoteConnection {
     return showActiveModal(this.state);
   }
 
+  closeModal() {
+    this.state.pendingModal?.unmount?.();
+    this.state.installModal?.unmount?.(false);
+  }
+
   getUniversalLink() {
     if (!this.state.qrcodeLink) {
       throw new Error('connection not started. run startConnection() first.');

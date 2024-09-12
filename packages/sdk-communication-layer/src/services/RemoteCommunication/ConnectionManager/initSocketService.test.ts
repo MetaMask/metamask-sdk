@@ -2,11 +2,11 @@ import { CommunicationLayerPreference } from '../../../types/CommunicationLayerP
 import { SocketService } from '../../../SocketService';
 import { DEFAULT_SERVER_URL } from '../../../config';
 import { ECIESProps } from '../../../ECIES';
-import { initCommunicationLayer } from './initCommunicationLayer';
+import { initSocketService } from './initSocketService';
 
 jest.mock('../../../SocketService');
 
-describe('initCommunicationLayer', () => {
+describe('initSocketService', () => {
   let instance: any;
 
   const mockOn = jest.fn();
@@ -39,7 +39,7 @@ describe('initCommunicationLayer', () => {
 
   it('should throw error for invalid communication protocol', () => {
     expect(() => {
-      initCommunicationLayer({
+      initSocketService({
         communicationLayerPreference: 'UNKNOWN' as CommunicationLayerPreference,
         instance,
       });
@@ -47,7 +47,7 @@ describe('initCommunicationLayer', () => {
   });
 
   it('should initialize socket service for SOCKET communication preference', () => {
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -61,7 +61,7 @@ describe('initCommunicationLayer', () => {
   });
 
   it('should populate originatorInfo using dappMetadata', () => {
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -84,7 +84,7 @@ describe('initCommunicationLayer', () => {
       writable: true,
     });
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -98,7 +98,7 @@ describe('initCommunicationLayer', () => {
   });
 
   it('should use DEFAULT_SERVER_URL if communicationServerUrl is not provided', () => {
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -116,7 +116,7 @@ describe('initCommunicationLayer', () => {
       privateKey: 'mockPrivateKey',
     };
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
       ecies: eciesProps,
@@ -130,7 +130,7 @@ describe('initCommunicationLayer', () => {
   });
 
   it('should register event listeners for the communication layer', () => {
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -141,7 +141,7 @@ describe('initCommunicationLayer', () => {
   it('should pass otherPublicKey to SocketService if provided', () => {
     const publicKey = 'samplePublicKey';
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       otherPublicKey: publicKey,
       instance,
@@ -155,7 +155,7 @@ describe('initCommunicationLayer', () => {
   });
 
   it('should enable reconnect in SocketService if reconnect is true', () => {
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       reconnect: true,
       instance,
@@ -171,7 +171,7 @@ describe('initCommunicationLayer', () => {
   it('should pass logging option to SocketService', () => {
     instance.state.logging = true;
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -189,7 +189,7 @@ describe('initCommunicationLayer', () => {
       throw new Error('Mock Event Listener Error');
     });
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       instance,
     });
@@ -205,7 +205,7 @@ describe('initCommunicationLayer', () => {
   it('should use provided communicationServerUrl', () => {
     const customServerUrl = 'https://custom-server-url.com';
 
-    initCommunicationLayer({
+    initSocketService({
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       communicationServerUrl: customServerUrl,
       instance,

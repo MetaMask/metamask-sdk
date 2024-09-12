@@ -106,6 +106,7 @@ const initializeMobileProvider = async ({
 
   let initializationOngoing = false;
   const setInitializing = (ongoing: boolean) => {
+    console.log(`[initializeMobileProvider] setInitializing: ${ongoing}`);
     initializationOngoing = ongoing;
   };
 
@@ -301,11 +302,7 @@ const initializeMobileProvider = async ({
               },
             );
           });
-
-          setInitializing(false);
-        } catch (installError) {
-          setInitializing(false);
-
+        } catch (installError: unknown) {
           if (PROVIDER_UPDATE_TYPE.EXTENSION === installError) {
             logger(
               `[initializeMobileProvider: sendRequest()] extension provider detect: re-create ${method} on the active provider`,
@@ -350,6 +347,14 @@ const initializeMobileProvider = async ({
               method,
               params,
             });
+          } else if (installError === EventType.REJECTED) {
+            // Close modal, connection was rejected
+            remoteConnection?.closeModal();
+            sdk.getProvider()?.handleDisconnect({ terminate: false });
+
+            throw Object.assign(new Error('User rejected connection'), {
+              code: 4001,
+            });
           }
 
           logger(
@@ -357,6 +362,8 @@ const initializeMobileProvider = async ({
           );
 
           throw installError;
+        } finally {
+          setInitializing(false);
         }
 
         // We should now have obtained the authorization and account infos so we can skip sending that rpc call.
