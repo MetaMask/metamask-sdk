@@ -54,15 +54,15 @@ export const DAPPView = (_props: DAPPViewProps) => {
       const prov = new ethers.providers.Web3Provider(provider);
       setProvider(prov);
     }
-  }, [connected, provider, setProvider, ethersProvider]);
+  }, [connected, ethersProvider, provider]);
 
   const [response, setResponse] = useState<unknown>('');
   const styles = createStyles({connected});
 
-  const etherSign = async () => {
-    const signer = ethersProvider.getSigner(account);
+  const ethersSign = async () => {
+    const signer = ethersProvider?.getSigner(account);
 
-    const sig = await signer.signMessage('Hello Aarna');
+    const sig = await signer?.signMessage('Hello Aarna');
     console.log('Ethers Signature', sig);
     setResponse(sig);
   };
@@ -404,13 +404,13 @@ export const DAPPView = (_props: DAPPViewProps) => {
           <Button title={'Request Accounts'} onPress={connect} />
           <Button title="eth_signTypedData_v4" onPress={sign} />
           <Button title="Personal Sign" onPress={personalSign} />
+          <Button title="Ethers Sign" onPress={ethersSign} />
           <Button title="Batch Sign Calls" onPress={batch} />
           <Button title="Get Balance" onPress={getBalance} />
           <Button
             title="Batch With Switch Chain"
             onPress={batchWithSwitchChain}
           />
-          <Button title="Ethers Sign" onPress={etherSign} />
           <Button title="Send Transaction" onPress={sendTransaction} />
           <Button
             title="Add The Polygon Chain"
