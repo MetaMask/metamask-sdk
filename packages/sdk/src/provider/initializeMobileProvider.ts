@@ -149,6 +149,7 @@ const initializeMobileProvider = async ({
     const provider = Ethereum.getProvider();
 
     let selectedAddress: string | null = null;
+    let connectedAccounts: string[] | null = null;
     let chainId: string | null = null;
 
     selectedAddress = provider.getSelectedAddress() ?? cachedAccountAddress;
@@ -362,12 +363,13 @@ const initializeMobileProvider = async ({
         // We should now have obtained the authorization and account infos so we can skip sending that rpc call.
         if (method === RPC_METHODS.ETH_REQUESTACCOUNTS) {
           // wait for provider address to be updated
-          selectedAddress = await new Promise<string>((resolve) => {
+          connectedAccounts = await new Promise<string[]>((resolve) => {
             const interval = setInterval(() => {
-              const address = provider.getSelectedAddress();
-              if (address) {
+              const { accounts } = provider.getState();
+
+              if (accounts) {
                 clearInterval(interval);
-                resolve(address);
+                resolve(accounts);
               }
             }, 100);
           });
@@ -375,7 +377,8 @@ const initializeMobileProvider = async ({
           logger(
             `[initializeMobileProvider: sendRequest()] selectedAddress: ${selectedAddress} --- SKIP rpc call`,
           );
-          return [selectedAddress];
+
+          return connectedAccounts;
         } else if (method === RPC_METHODS.METAMASK_CONNECTWITH) {
           // wait for  tracker to be updated
 
