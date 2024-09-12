@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.28.4]
+### Added
+- fix: update the `initializeMobileProvider` function to ensure it returns all connected accounts on mobile ([#1031](https://github.com/MetaMask/metamask-sdk/pull/1031))
+
 ## [0.28.3]
 ### Added
 - fix: invalid display_uri event emitted
@@ -386,7 +390,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.4...HEAD
+[0.28.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.3...@metamask/sdk@0.28.4
 [0.28.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.2...@metamask/sdk@0.28.3
 [0.28.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.1...@metamask/sdk@0.28.2
 [0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.0...@metamask/sdk@0.28.1
