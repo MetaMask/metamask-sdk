@@ -2082,9 +2082,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk@npm:^0.28.2":
-  version: 0.28.2
-  resolution: "@metamask/sdk@npm:0.28.2"
+"@metamask/sdk@npm:^0.28.4":
+  version: 0.28.4
+  resolution: "@metamask/sdk@npm:0.28.4"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
@@ -2117,7 +2117,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: f51eb506b8614b8eae2015668eccb9c5924c31bbdfc050bfa788bd03349107d9281a52107021f6daf3888bd0bd15796605ce883b270b2c4a304f830bac15aaf7
+  checksum: 419880a65c09a340dac6ca756ef81193dbc441db6fab620a3bd610fa077b11b2dec96f4651e81aac49c266ac00dbd109ffc184e067738ded7ea325174be94f31
   languageName: node
   linkType: hard
 
@@ -7144,7 +7144,7 @@ __metadata:
   dependencies:
     "@babel/core": ^7.23.5
     "@babel/eslint-parser": ^7.23.3
-    "@metamask/sdk": ^0.28.2
+    "@metamask/sdk": ^0.28.4
     "@vue/cli-plugin-babel": ~5.0.0
     "@vue/cli-plugin-eslint": ~5.0.0
     "@vue/cli-service": ~5.0.0

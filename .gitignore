@@ -117,3 +117,6 @@ packages/devreact/webpack.config.json
 **/.MMSDK_cached_chainId
 **/.sdk-comm
 **/package-lock.json
+
+# Local Netlify folder
+.netlify
