@@ -52,7 +52,6 @@ export const DAPPView = (_props: DAPPViewProps) => {
   useEffect(() => {
     if (connected && provider && !ethersProvider) {
       const prov = new ethers.providers.Web3Provider(provider);
-      const prov2 = new ethers.providers.Web3Provider(provider);
       setProvider(prov);
     }
   }, [connected, ethersProvider, provider]);
