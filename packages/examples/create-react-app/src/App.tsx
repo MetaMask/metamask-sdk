@@ -1,11 +1,47 @@
 import { useSDK } from '@metamask/sdk-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import { send_eth_signTypedData_v4, send_personal_sign } from './SignHelpers';
+import { ethers } from 'ethers';
 
 export const App = () => {
   const [response, setResponse] = useState<unknown>('');
   const { sdk, connected, connecting, provider, chainId, account, balance } = useSDK();
+
+  const [ethersProvider, setProvider] =
+    useState<ethers.providers.Web3Provider>();
+  const [currentAccount, setCurrentAccount] =
+    useState<string>();
+
+  useEffect(() => {
+    console.log('App useEffect account:', account);
+    if (account !== currentAccount) {
+      console.log('-------------------------------------  Account Changed:', currentAccount, '->', account);
+      setCurrentAccount(account);
+    }
+
+    if (connected && provider && account) {
+      const prov = new ethers.providers.Web3Provider(provider as ethers.providers.ExternalProvider);
+
+      const signer = prov.getSigner(account);
+      signer.getAddress().then((address) => {
+        console.log('-------------------------------  App Signer Ethers Address:', address);
+      }).catch((e) => {
+        console.log('-------------------------------  App Signer Ethers Address: Error:', e);
+      });
+      const address = provider?.getSelectedAddress()
+      console.log('-------------------------------  App Signer Provider Address:', address);
+
+      signer.getBalance().then((balance) => {
+        console.log('-------------------------------  App Signer Balance:', balance);
+      }).catch((e) => {
+        console.log('-------------------------------  App Signer Balance: Error:', e);
+      });
+
+      setProvider(prov);
+    }
+  }, [connected, provider, account]);
+
 
   const languages = sdk?.availableLanguages ?? ['en'];
 
@@ -48,21 +84,21 @@ export const App = () => {
   };
 
   const readOnlyCalls = async () => {
-     if(!sdk?.hasReadOnlyRPCCalls() && !provider){
-         setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
-         return;
-     }
-     try {
-       const result = await provider.request({
-         method: 'eth_blockNumber',
-         params: [],
-       });
-       const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
-       setResponse(`(${gotFrom}) ${result}`);
-     } catch (e) {
-       console.log(`error getting the blockNumber`, e);
-       setResponse('error getting the blockNumber');
-     }
+    if (!sdk?.hasReadOnlyRPCCalls() && !provider) {
+      setResponse('readOnlyCalls are not set and provider is not set. Please set your infuraAPIKey in the SDK Options');
+      return;
+    }
+    try {
+      const result = await provider.request({
+        method: 'eth_blockNumber',
+        params: [],
+      });
+      const gotFrom = sdk.hasReadOnlyRPCCalls() ? 'infura' : 'MetaMask provider';
+      setResponse(`(${gotFrom}) ${result}`);
+    } catch (e) {
+      console.log(`error getting the blockNumber`, e);
+      setResponse('error getting the blockNumber');
+    }
   };
 
   const addEthereumChain = () => {
@@ -107,6 +143,19 @@ export const App = () => {
       setResponse(txHash);
     } catch (e) {
       console.log(e);
+    }
+  };
+
+  const ethersSign = async () => {
+    console.log('---------------- Sign With Account', account, await provider?.getSelectedAddress());
+    const signer = ethersProvider?.getSigner(account);
+
+    try {
+      const sig = await signer?.signMessage('Hello Aarna');
+      console.log('---------------- Ethers Signature', sig);
+      setResponse(sig);
+    } catch (e) {
+      console.log('---------------- Ethers Signature ERROR', e);
     }
   };
 
@@ -193,6 +242,14 @@ export const App = () => {
           <button
             className={'Button-Normal'}
             style={{ padding: 10, margin: 10 }}
+            onClick={ethersSign}
+          >
+            ethersSign
+          </button>
+
+          <button
+            className={'Button-Normal'}
+            style={{ padding: 10, margin: 10 }}
             onClick={eth_personal_sign}
           >
             personal_sign
@@ -206,7 +263,7 @@ export const App = () => {
             Send transaction
           </button>
 
-          { provider?.getChainId() === '0x1' ? (
+          {provider?.getChainId() === '0x1' ? (
             <button
               className={'Button-Normal'}
               style={{ padding: 10, margin: 10 }}

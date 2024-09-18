@@ -1,15 +1,15 @@
 /* eslint-disable react-native/no-inline-styles */
-import {useSDK} from '@metamask/sdk-react-native';
-import React, {useState, useEffect} from 'react';
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {colors} from './colors';
-import {NativeModules} from 'react-native';
+import { useSDK } from '@metamask/sdk-react-native';
+import React, { useState, useEffect } from 'react';
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { colors } from './colors';
+import { NativeModules } from 'react-native';
 import { ethers } from 'ethers';
-const {MetaMaskReactNativeSdk} = NativeModules;
+const { MetaMaskReactNativeSdk } = NativeModules;
 
-export interface DAPPViewProps {}
+export interface DAPPViewProps { }
 
-const createStyles = ({connected}: {connected: boolean}) => {
+const createStyles = ({ connected }: { connected: boolean }) => {
   return StyleSheet.create({
     container: {
       borderWidth: 2,
@@ -45,26 +45,61 @@ const createStyles = ({connected}: {connected: boolean}) => {
 };
 
 export const DAPPView = (_props: DAPPViewProps) => {
-  const {sdk, provider, chainId, account, connected} = useSDK();
+  const { sdk, provider, chainId, account, connected, ready } = useSDK();
   const [ethersProvider, setProvider] =
     useState<ethers.providers.Web3Provider>();
+  const [currentAccount, setCurrentAccount] =
+    useState<string>();
 
   useEffect(() => {
-    if (connected && provider && !ethersProvider) {
+    console.log('DAPPView useEffect account:', account);
+    if (account !== currentAccount) {
+      console.log('-------------------------------------  Account Changed:', currentAccount, '->', account);
+      setCurrentAccount(account);
+    }
+
+
+    if (connected && provider && ready && account) {
+      console.log('----------- Create new Ethers Provider ---------------');
       const prov = new ethers.providers.Web3Provider(provider);
       setProvider(prov);
+      prov.getBalance(account).then((balance) => {
+        console.log('DAPPView Balance: ', balance.toString());
+      });
+
+      const signer = prov.getSigner(account);
+      signer.getAddress().then((address) => {
+        console.log('-------------------------------  DAPPView Signer Ethers Address:', address);
+      }).catch((e) => {
+        console.log('-------------------------------  DAPPView Signer Ethers Address: Error:', e);
+      });
+      provider?.getSelectedAddress().then((address) => {
+        console.log('-------------------------------  DAPPView Signer Provider Address:', address);
+      }).catch((e) => {
+        console.log('-------------------------------  DAPPView Signer Provider Address: Error:', e);
+      });
+      signer.getBalance().then((balance) => {
+        console.log('-------------------------------  DAPPView Signer Balance:', balance);
+      }).catch((e) => {
+        console.log('-------------------------------  DAPPView Signer Balance: Error:', e);
+      });
     }
-  }, [connected, ethersProvider, provider]);
+  }, [connected, provider, account]);
 
   const [response, setResponse] = useState<unknown>('');
-  const styles = createStyles({connected});
+  const styles = createStyles({ connected });
 
   const ethersSign = async () => {
+    console.log('---------------- Sign With Account', account, await provider?.getSelectedAddress());
     const signer = ethersProvider?.getSigner(account);
 
-    const sig = await signer?.signMessage('Hello Aarna');
-    console.log('Ethers Signature', sig);
-    setResponse(sig);
+    try {
+      const sig = await signer?.signMessage('Hello Aarna');
+      console.log('---------------- Ethers Signature', sig);
+      setResponse(sig);
+    } catch (e) {
+      console.log('---------------- Ethers Signature ERROR', e);
+    }
   };
 
   const connect = async () => {
@@ -89,7 +124,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
             chainId: '0x89',
             chainName: 'Polygon',
             blockExplorerUrls: ['https://polygonscan.com'],
-            nativeCurrency: {symbol: 'MATIC', decimals: 18},
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
             rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
@@ -139,7 +174,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
             chainId: '0x89',
             chainName: 'Polygon',
             blockExplorerUrls: ['https://polygonscan.com'],
-            nativeCurrency: {symbol: 'MATIC', decimals: 18},
+            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
             rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
@@ -160,7 +195,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
     try {
       const res = await provider?.request({
         method: 'wallet_switchEthereumChain',
-        params: [{chainId: hexChainId}], // chainId must be in hexadecimal numbers
+        params: [{ chainId: hexChainId }], // chainId must be in hexadecimal numbers
       });
 
       console.debug('response', res);
@@ -243,26 +278,26 @@ export const DAPPView = (_props: DAPPViewProps) => {
       types: {
         // TODO: Clarify if EIP712Domain refers to the domain the contract is hosted on
         EIP712Domain: [
-          {name: 'name', type: 'string'},
-          {name: 'version', type: 'string'},
-          {name: 'chainId', type: 'uint256'},
-          {name: 'verifyingContract', type: 'address'},
+          { name: 'name', type: 'string' },
+          { name: 'version', type: 'string' },
+          { name: 'chainId', type: 'uint256' },
+          { name: 'verifyingContract', type: 'address' },
         ],
         // Not an EIP712Domain definition
         Group: [
-          {name: 'name', type: 'string'},
-          {name: 'members', type: 'Person[]'},
+          { name: 'name', type: 'string' },
+          { name: 'members', type: 'Person[]' },
         ],
         // Refer to PrimaryType
         Mail: [
-          {name: 'from', type: 'Person'},
-          {name: 'to', type: 'Person[]'},
-          {name: 'contents', type: 'string'},
+          { name: 'from', type: 'Person' },
+          { name: 'to', type: 'Person[]' },
+          { name: 'contents', type: 'string' },
         ],
         // Not an EIP712Domain definition
         Person: [
-          {name: 'name', type: 'string'},
-          {name: 'wallets', type: 'address[]'},
+          { name: 'name', type: 'string' },
+          { name: 'wallets', type: 'address[]' },
         ],
       },
     });
@@ -274,7 +309,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
       const method = 'eth_signTypedData_v4';
 
       setResponse('');
-      const resp = await provider?.request({method, params});
+      const resp = await provider?.request({ method, params });
       console.debug('sign response', resp);
       setResponse(resp);
     } catch (error) {
@@ -298,7 +333,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
       const method = 'personal_sign';
       console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
       console.debug('sign params', params);
-      const resp = await provider?.request({method, params});
+      const resp = await provider?.request({ method, params });
       setResponse(resp);
       console.debug('sign response', resp);
     } catch (e) {
@@ -346,7 +381,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
 
       const req1 = {
         method: 'wallet_switchEthereumChain',
-        params: [{chainId: '0x89'}], // chainId must be in hexadecimal numbers
+        params: [{ chainId: '0x89' }], // chainId must be in hexadecimal numbers
       };
 
       const req2 = {
@@ -373,7 +408,7 @@ export const DAPPView = (_props: DAPPViewProps) => {
   };
 
   return (
-    <View style={{borderWidth: 2, padding: 8}}>
+    <View style={{ borderWidth: 2, padding: 8 }}>
       <Text style={styles.title}>{'MetaMask_ReactNativeSDK - Demo Dapp'}</Text>
 
       <Text style={styles.title}>
