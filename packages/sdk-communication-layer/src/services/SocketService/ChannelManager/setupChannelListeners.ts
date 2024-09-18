@@ -107,12 +107,12 @@ export function setupChannelListeners(
         // return handleReconnectFailed(instance)();
       });
 
-      socket?.io.on('ping', () => {
-        logger.SocketService(
-          `[SocketService: setupChannelListener()] context=${instance.state.context} socket`,
-        );
-        // return handlePing(instance)();
-      });
+      // socket?.io.on('ping', () => {
+      //   logger.SocketService(
+      //     `[SocketService: setupChannelListener()] 'ping' context=${instance.state.context} socket`,
+      //   );
+      //   // return handlePing(instance)();
+      // });
     }
 
     socket?.on('disconnect', (reason: string) => {

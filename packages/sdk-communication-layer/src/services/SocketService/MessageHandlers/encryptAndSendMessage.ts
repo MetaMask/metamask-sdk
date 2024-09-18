@@ -13,10 +13,10 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the SocketService.
  * @param message The message to be encrypted and sent.
  */
-export function encryptAndSendMessage(
+export async function encryptAndSendMessage(
   instance: SocketService,
   message: CommunicationLayerMessage,
-) {
+): Promise<boolean> {
   const encryptedMessage = instance.state.keyExchange?.encryptMessage(
     JSON.stringify(message),
   );
@@ -38,5 +38,22 @@ export function encryptAndSendMessage(
   if (message.type === MessageType.TERMINATE) {
     instance.state.manualDisconnect = true;
   }
-  instance.state.socket?.emit(EventType.MESSAGE, messageToSend);
+
+  return new Promise((resolve, reject) => {
+    instance.state.socket?.emit(
+      EventType.MESSAGE,
+      messageToSend,
+      (error: Error | null, response?: { success: boolean }) => {
+        if (error) {
+          logger.SocketService(
+            `[SocketService: encryptAndSendMessage()] error=${error}`,
+          );
+          reject(error);
+        }
+
+        logger.SocketService(`[encryptAndSendMessage] response`, response);
+        resolve(response?.success ?? false);
+      },
+    );
+  });
 }

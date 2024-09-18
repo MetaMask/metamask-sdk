@@ -439,7 +439,7 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  disconnect(options?: DisconnectOptions) {
+  async disconnect(options?: DisconnectOptions) {
     return disconnect({
       options,
       instance: this,
