@@ -65,7 +65,10 @@ export async function connectWithModalInstaller(
       resolve();
     });
 
-    // TODO shouldn't it make more sense to actually wait for full connection and 'authorized' event?
+    state.connector.once(EventType.REJECTED, () => {
+      reject(EventType.REJECTED);
+    });
+
     state.connector.once(EventType.CLIENTS_READY, async () => {
       logger(
         `[RemoteConnection: connectWithModalInstaller()] once clients_ready -- resolving startConnection promise`,

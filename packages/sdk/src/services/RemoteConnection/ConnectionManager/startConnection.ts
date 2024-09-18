@@ -71,11 +71,6 @@ export async function startConnection(
       return Promise.resolve();
     }
 
-    // if (initialCheck && !channelConfig?.relayPersistence) {
-    //   // Prevent autoconnect when new sdk --> old wallet.
-    //   return Promise.resolve();
-    // }
-
     if (!channelConfig && !initialCheck) {
       const newChannel = await state.connector.generateChannelIdConnect();
       channelId = newChannel.channelId ?? '';
@@ -186,7 +181,7 @@ export async function startConnection(
     if (state.platformManager?.isSecure()) {
       await connectWithDeeplink(state, encodedLinkParams);
       // wait for authorized event
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         if (state.connector?.isAuthorized()) {
           resolve();
           return;
@@ -194,6 +189,10 @@ export async function startConnection(
 
         state.connector?.once(EventType.AUTHORIZED, () => {
           resolve();
+        });
+
+        state.connector?.once(EventType.REJECTED, () => {
+          reject(EventType.REJECTED);
         });
       });
     }

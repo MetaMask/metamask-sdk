@@ -3,7 +3,10 @@ import { SocketService } from '../../../SocketService';
 import { ConnectToChannelOptions } from '../../../types/ConnectToChannelOptions';
 import { EventType } from '../../../types/EventType';
 import { setupChannelListeners } from '../ChannelManager';
-import { handleJoinChannelResults } from './handleJoinChannelResult';
+import {
+  handleJoinChannelResults,
+  JoinChannelResult,
+} from './handleJoinChannelResult';
 
 /**
  * Connects a SocketService instance to a specified channel.
@@ -71,10 +74,7 @@ export async function connectToChannel({
         clientType: isOriginator ? 'dapp' : 'wallet',
         publicKey: withWalletKey,
       },
-      async (
-        error: string | null,
-        result?: { ready: boolean; persistence?: boolean; walletKey?: string },
-      ) => {
+      async (error: string | null, result?: JoinChannelResult) => {
         await handleJoinChannelResults(instance, error, result);
         resolve();
       },

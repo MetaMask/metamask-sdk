@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { SocketService } from '../../../SocketService';
-import { CommunicationLayer } from '../../../types/CommunicationLayer';
 import { StorageManager } from '../../../types/StorageManager';
 import { logger } from '../../../utils/logger';
 import { generateChannelIdConnect } from './generateChannelIdConnect';
@@ -27,7 +26,7 @@ describe('generateChannelIdConnect', () => {
         })),
         isConnected: jest.fn(() => false),
         getKeyInfo: jest.fn(() => ({ ecies: { public: 'mockPublicKey' } })),
-      } as unknown as CommunicationLayer,
+      } as unknown as SocketService,
       ready: false,
       channelId: undefined,
       sessionDuration: 1000,

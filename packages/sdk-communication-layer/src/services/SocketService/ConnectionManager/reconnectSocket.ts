@@ -5,7 +5,10 @@ import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
 import { logger } from '../../../utils/logger';
 import { wait } from '../../../utils/wait';
-import { handleJoinChannelResults } from './handleJoinChannelResult';
+import {
+  handleJoinChannelResults,
+  JoinChannelResult,
+} from './handleJoinChannelResult';
 
 /**
  * Attempts to reconnect the socket after a disconnection.
@@ -89,14 +92,7 @@ export const reconnectSocket = async (instance: SocketService) => {
               context: `${context}connect_again`,
               clientType: isOriginator ? 'dapp' : 'wallet',
             },
-            async (
-              error: string | null,
-              result?: {
-                ready: boolean;
-                persistence?: boolean;
-                walletKey?: string;
-              },
-            ) => {
+            async (error: string | null, result?: JoinChannelResult) => {
               try {
                 await handleJoinChannelResults(instance, error, result);
                 resolve();

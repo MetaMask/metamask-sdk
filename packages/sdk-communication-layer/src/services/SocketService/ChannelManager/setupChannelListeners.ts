@@ -13,22 +13,24 @@ import {
 } from '../EventListeners';
 import { handleChannelConfig } from '../EventListeners/handleChannelConfig';
 import { reconnectSocket } from '../ConnectionManager/reconnectSocket';
+import { handleChannelRejected } from '../EventListeners/handleChannelRejected';
 
 const channelEventListenerMap = [
   {
-    event: 'clients_connected',
+    event: EventType.CLIENTS_CONNECTED,
     handler: handleClientsConnected,
   },
   {
-    event: 'channel_created',
+    event: EventType.CHANNEL_CREATED,
     handler: handleChannelCreated,
   },
   {
-    event: 'clients_disconnected',
+    event: EventType.CLIENTS_DISCONNECTED,
     handler: handlesClientsDisconnected,
   },
-  { event: 'config', handler: handleChannelConfig },
-  { event: 'message', handler: handleMessage },
+  { event: EventType.CONFIG, handler: handleChannelConfig },
+  { event: EventType.MESSAGE, handler: handleMessage },
+  { event: EventType.REJECTED, handler: handleChannelRejected },
   {
     event: 'clients_waiting_to_join',
     handler: handleClientsWaitingToJoin,

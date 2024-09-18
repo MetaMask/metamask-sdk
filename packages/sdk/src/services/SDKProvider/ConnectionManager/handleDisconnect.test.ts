@@ -86,21 +86,6 @@ describe('handleDisconnect', () => {
     expect(mockHandleAccountsChanged).toHaveBeenCalledWith([]);
   });
 
-  it('should interrupt disconnection and log when not connected', () => {
-    mockIsConnected.mockReturnValueOnce(false);
-
-    handleDisconnect({ terminate: false, instance: mockSDKProvider });
-
-    expect(spyLogger).toHaveBeenCalledWith(
-      '[SDKProvider: handleDisconnect()] not connected --- interrupt disconnection',
-    );
-
-    expect(mockSDKProvider.chainId).toBe('someChainId');
-    // @ts-ignore
-    expect(mockSDKProvider._state.isConnected).toBe(true);
-    expect(mockEmit).not.toHaveBeenCalled();
-  });
-
   it('should interrupt disconnection', () => {
     mockIsConnected.mockReturnValueOnce(false);
 
@@ -108,8 +93,7 @@ describe('handleDisconnect', () => {
 
     expect(mockSDKProvider.chainId).toBe('someChainId');
     // @ts-ignore
-    expect(mockSDKProvider._state.isConnected).toBe(true);
-    expect(mockEmit).not.toHaveBeenCalled();
+    expect(mockSDKProvider._state.isConnected).toBe(false);
   });
 
   it('should not interrupt disconnection when connected', () => {

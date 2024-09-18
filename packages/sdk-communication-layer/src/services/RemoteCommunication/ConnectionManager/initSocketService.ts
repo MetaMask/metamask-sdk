@@ -48,7 +48,7 @@ type CommunicationLayerHandledEvents =
  * @param instance The current instance of the RemoteCommunication class.
  * @throws Error when an invalid communication protocol is specified.
  */
-export function initCommunicationLayer({
+export function initSocketService({
   communicationLayerPreference,
   otherPublicKey,
   reconnect,

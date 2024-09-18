@@ -2,7 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { logger } from '../../../utils/logger';
-import { handleJoinChannelResults } from '../ConnectionManager/handleJoinChannelResult';
+import {
+  handleJoinChannelResults,
+  JoinChannelResult,
+} from '../ConnectionManager/handleJoinChannelResult';
 import { Channel } from '../../../types/Channel';
 import { setupChannelListeners } from './setupChannelListeners';
 
@@ -47,14 +50,7 @@ export async function createChannel(instance: SocketService): Promise<Channel> {
         context: `${instance.state.context}createChannel`,
         clientType: 'dapp', // only dapp can create channel
       },
-      async (
-        error: string | null,
-        result?: {
-          ready: boolean;
-          persistence?: boolean;
-          walletKey?: string;
-        },
-      ) => {
+      async (error: string | null, result?: JoinChannelResult) => {
         try {
           await handleJoinChannelResults(instance, error, result);
           resolve();

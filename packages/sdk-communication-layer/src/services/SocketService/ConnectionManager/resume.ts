@@ -2,7 +2,10 @@ import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
-import { handleJoinChannelResults } from './handleJoinChannelResult';
+import {
+  handleJoinChannelResults,
+  JoinChannelResult,
+} from './handleJoinChannelResult';
 
 /**
  * Resumes the connection of a SocketService instance.
@@ -63,14 +66,7 @@ export function resume(instance: SocketService): void {
         context: `${context}_resume`,
         clientType: remoteIsOriginator ? 'dapp' : 'wallet',
       },
-      async (
-        error: string | null,
-        result?: {
-          ready: boolean;
-          persistence?: boolean;
-          walletKey?: string;
-        },
-      ) => {
+      async (error: string | null, result?: JoinChannelResult) => {
         try {
           await handleJoinChannelResults(instance, error, result);
         } catch (runtimeError) {
