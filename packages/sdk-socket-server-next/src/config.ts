@@ -1,6 +1,11 @@
-import { logger } from './logger';
+import { createLogger, setLogger } from './logger';
 
 export const isDevelopment: boolean = process.env.NODE_ENV === 'development';
+
+// Initialize the logger
+const logger = createLogger(isDevelopment);
+setLogger(logger);
+
 export const REDIS_DEBUG_LOGS: boolean =
   process.env.REDIS_DEBUG_LOGS === 'true';
 export const EVENTS_DEBUG_LOGS: boolean =
@@ -16,6 +21,7 @@ export const MAX_CLIENTS_PER_ROOM = 2;
 export const config = {
   msgExpiry: HOUR_IN_SECONDS,
   channelExpiry: THIRTY_DAYS_IN_SECONDS,
+  rejectedChannelExpiry: 5 * 60, // 5min for dapp to fetch the message
 };
 
 if (process.env.CHANNEL_EXPIRY) {

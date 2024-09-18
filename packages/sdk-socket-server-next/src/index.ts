@@ -5,16 +5,18 @@ import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
 
+// Load config
 import { instrument } from '@socket.io/admin-ui';
 import packageJson from '../package.json';
+import { isDevelopment, withAdminUI } from './config';
 import { analytics, app } from './api-config';
-import { logger } from './logger';
+import { getLogger } from './logger';
 import { extractMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
 import { cleanupAndExit } from './utils';
-import { isDevelopment, withAdminUI } from './config';
 
 const server = http.createServer(app);
+const logger = getLogger();
 
 // Register event listeners for process termination events
 process.on('SIGINT', async () => {

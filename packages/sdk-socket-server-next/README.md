@@ -8,6 +8,14 @@ This guide provides instructions for setting up and debugging the SDK socket ser
 - Docker and Docker Compose installed (for Docker-based setup)
 - Ngrok account and CLI tool installed (for external access testing)
 
+## QuickStart
+
+```bash
+# start local redis server
+docker compose up -d cache
+yarn debug
+```
+
 ## Local Setup
 
 ### Initial Configuration

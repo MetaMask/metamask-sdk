@@ -1,7 +1,9 @@
 import { validate } from 'uuid';
 import { Server, Socket } from 'socket.io';
-import { logger } from '../logger';
+import { getLogger } from '../logger';
 import { pubClient } from '../api-config';
+
+const logger = getLogger();
 
 export type CheckRoomParams = {
   channelId: string;
@@ -23,8 +25,8 @@ export const handleCheckRoom = async ({
   const clientIp = socket.request.socket.remoteAddress;
 
   if (!validate(channelId)) {
-    logger.info(`check_room ${channelId} invalid`, {
-      id: channelId,
+    logger.info(`[check_room] ${channelId} invalid`, {
+      channelId,
       clientIp,
       socketId,
     });
@@ -37,8 +39,8 @@ export const handleCheckRoom = async ({
     (await pubClient.hget('channels', channelId)) ?? undefined;
 
   logger.info(
-    `check_room occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,
-    { socketId, clientIp, id: channelId },
+    `[check_room] occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,
+    { socketId, clientIp, channelId },
   );
   // Callback with null as the first argument, meaning "no error"
   return callback(null, { occupancy, channelOccupancy });

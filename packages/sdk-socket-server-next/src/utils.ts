@@ -1,5 +1,7 @@
 import { Server as HttpServer } from 'http';
-import { logger } from './logger';
+import { getLogger } from './logger';
+
+const logger = getLogger();
 
 export type FlushResponse = {
   batch: any;

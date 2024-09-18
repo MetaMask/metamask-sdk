@@ -3,10 +3,12 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from '../api-config';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
-import { logger } from '../logger';
+import { getLogger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
+
+const logger = getLogger();
 
 const checkMessage = ({
   clientType,
@@ -21,7 +23,7 @@ const checkMessage = ({
     try {
       const messages = await retrieveMessages({ channelId, clientType });
       logger.debug(
-        `checkMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
+        `[checkMessage] ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
       );
 
       messages.forEach((msg) => {
@@ -30,7 +32,7 @@ const checkMessage = ({
         }
 
         socket.emit(`message-${channelId}`, {
-          id: channelId,
+          channelId,
           ackId: msg.ackId,
           message: msg.message,
         });
@@ -59,6 +61,7 @@ export type ChannelConfig = {
   persistence?: boolean; // Determines if the channel is compatible with full protocol persistence
   ready?: boolean; // Determines if the keys have been exchanged
   walletKey?: string; // Wallet public key
+  rejected?: boolean; // Determines if the channel has been rejected
   createdAt: number;
   updatedAt: number;
 };
@@ -73,10 +76,9 @@ export const handleJoinChannel = async ({
   hasRateLimit,
   callback,
 }: JoinChannelParams) => {
+  const socketId = socket.id;
+  const clientIp = socket.request.socket.remoteAddress;
   try {
-    const socketId = socket.id;
-    const clientIp = socket.request.socket.remoteAddress;
-
     let from = context ?? MISSING_CONTEXT;
     if (context?.indexOf('metamask-mobile') !== -1) {
       from = 'wallet';
@@ -85,7 +87,7 @@ export const handleJoinChannel = async ({
     }
 
     logger.debug(
-      `join_channel channelId=${channelId} context=${context} clientType=${clientType} publicKey=${publicKey} callback=${typeof callback}`,
+      `[handleJoinChannel] channelId=${channelId} context=${context} clientType=${clientType} publicKey=${publicKey} callback=${typeof callback}`,
     );
 
     if (hasRateLimit) {
@@ -98,7 +100,12 @@ export const handleJoinChannel = async ({
     }
 
     if (!validate(channelId)) {
-      logger.error(`ERROR > join_channel ${channelId} invalid`);
+      logger.error(`[handleJoinChannel] ${channelId} invalid`, {
+        channelId,
+        socketId,
+        clientIp,
+      });
+
       socket.emit(`message-${channelId}`, {
         error: 'must specify a valid id',
       });
@@ -116,7 +123,15 @@ export const handleJoinChannel = async ({
       const now = Date.now();
 
       if (!channelConfig) {
-        logger.info(`Creating new channel config for ${channelId}`);
+        logger.info(
+          `[handleJoinChannel] Creating new channel config for ${channelId}`,
+          {
+            channelId,
+            socketId,
+            clientIp,
+          },
+        );
+
         // Initialize new config for this channel
         channelConfig = {
           clients: {
@@ -129,6 +144,18 @@ export const handleJoinChannel = async ({
       }
 
       if (channelConfig) {
+        // check if connection was rejected
+        if (channelConfig.rejected) {
+          logger.info(
+            `[handleJoinChannel] ${channelId} walletKey=${publicKey} connection was rejected`,
+          );
+
+          callback?.(null, {
+            rejected: channelConfig.rejected,
+          });
+          return;
+        }
+
         channelConfig.clients[clientType] = socketId;
         const persistence = Object.keys(channelConfig.clients).length === 2;
         channelConfig.persistence = persistence;
@@ -137,7 +164,7 @@ export const handleJoinChannel = async ({
           channelConfig.walletKey = publicKey;
 
           logger.info(
-            `join_channel ${channelId} walletKey=${publicKey} inform dapp config`,
+            `[handleJoinChannel] ${channelId} walletKey=${publicKey} inform dapp config`,
           );
 
           // if channelConfig is received, we inform dApp
@@ -148,7 +175,7 @@ export const handleJoinChannel = async ({
         }
 
         logger.info(
-          `join_channel ${channelId} clientType=${clientType} persistence=${persistence}`,
+          `[handleJoinChannel] ${channelId} clientType=${clientType} persistence=${persistence}`,
           JSON.stringify(channelConfig),
         );
 
@@ -164,14 +191,14 @@ export const handleJoinChannel = async ({
     let channelOccupancy = 0;
 
     logger.debug(
-      `join_channel from=${from} ${channelId} context=${context} clientType=${clientType} occupancy=${sRedisChannelOccupancy}`,
+      `[handleJoinChannel] from=${from} ${channelId} context=${context} clientType=${clientType} occupancy=${sRedisChannelOccupancy}`,
     );
 
     if (sRedisChannelOccupancy) {
       channelOccupancy = parseInt(sRedisChannelOccupancy, 10);
     } else {
       logger.debug(
-        `join_channel ${channelId} from ${socketId} -- room not found -- creating it now`,
+        `[handleJoinChannel] ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
 
       await pubClient.hset('channels', channelId, 0);
@@ -185,7 +212,14 @@ export const handleJoinChannel = async ({
 
     const isSocketInRoom = room?.has(socketId) ?? false;
     if (isSocketInRoom) {
-      logger.warn(`Socket ${socketId} already in room ${channelId} `);
+      logger.warn(
+        `[handleJoinChannel] Socket ${socketId} already in room ${channelId} `,
+        {
+          channelId,
+          socketId,
+          clientIp,
+        },
+      );
     } else {
       // Join and get the number of clients in the room
       await socket.join(channelId);
@@ -202,14 +236,19 @@ export const handleJoinChannel = async ({
     if (channelOccupancy - roomOccupancy > 1 || channelOccupancy < 0) {
       // Send warning if anything different than allowed discrepancy
       logger.warn(
-        `INVALID occupancy room=${roomOccupancy} channel=${channelOccupancy}`,
+        `[handleJoinChannel] INVALID occupancy room=${roomOccupancy} channel=${channelOccupancy}`,
+        {
+          channelId,
+          socketId,
+          clientIp,
+        },
       );
     }
 
     logger.info(
-      `join_channel from=${from} ${channelId}, ready=${channelConfig?.ready} persistence=${channelConfig?.persistence} Occupancy: ${channelOccupancy}`,
+      `[handleJoinChannel] from=${from} ${channelId}, ready=${channelConfig?.ready} persistence=${channelConfig?.persistence} Occupancy: ${channelOccupancy}`,
       {
-        id: channelId,
+        channelId,
         socketId,
         clientIp,
         roomOccupancy,
@@ -223,7 +262,12 @@ export const handleJoinChannel = async ({
       channelConfig?.walletKey
     ) {
       logger.warn(
-        `Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
+        `[handleJoinChannel] Channel ${channelId} is not ready yet --- send key_handshake_wallet`,
+        {
+          channelId,
+          socketId,
+          clientIp,
+        },
       );
 
       callback?.(null, {
@@ -238,7 +282,7 @@ export const handleJoinChannel = async ({
 
     if (!clientType && channelOccupancy < MAX_CLIENTS_PER_ROOM) {
       logger.debug(
-        `emit clients_waiting_to_join-${channelId} - channelCount = ${channelOccupancy}`,
+        `[handleJoinChannel] emit clients_waiting_to_join-${channelId} - channelCount = ${channelOccupancy}`,
       );
 
       socket.emit(`clients_waiting_to_join-${channelId}`, channelOccupancy);
@@ -246,11 +290,14 @@ export const handleJoinChannel = async ({
     }
 
     socket.on('disconnect', async (error) => {
-      logger.info(`disconnect event from=${from} room ${channelId} ${error}`, {
-        id: channelId,
-        socketId,
-        clientIp,
-      });
+      logger.info(
+        `[disconnect event] from=${from} room ${channelId} ${error}`,
+        {
+          channelId,
+          socketId,
+          clientIp,
+        },
+      );
 
       // Inform the room of the disconnection
       socket.broadcast
@@ -259,7 +306,14 @@ export const handleJoinChannel = async ({
     });
 
     if (channelOccupancy >= MAX_CLIENTS_PER_ROOM) {
-      logger.info(`emitting clients_connected-${channelId}`, channelId);
+      logger.info(
+        `[handleJoinChannel] emitting clients_connected-${channelId}`,
+        {
+          channelId,
+          socketId,
+          clientIp,
+        },
+      );
 
       // imform all clients of new arrival and that room is ready
       socket.broadcast
@@ -281,6 +335,10 @@ export const handleJoinChannel = async ({
     // Make sure to always call the callback
     callback?.(null, {});
   } catch (error) {
-    logger.error(`Error in handleJoinChannel: ${error}`);
+    logger.error(`[handleJoinChannel] Error in handleJoinChannel: ${error}`, {
+      channelId,
+      socketId,
+      clientIp,
+    });
   }
 };

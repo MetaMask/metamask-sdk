@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { pubClient } from '../api-config';
 import { config, isDevelopment } from '../config';
-import { logger } from '../logger';
+import { getLogger } from '../logger';
 import {
   increaseRateLimits,
   rateLimiterMessage,
@@ -11,6 +11,8 @@ import {
 } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { ChannelConfig } from './handleJoinChannel';
+
+const logger = getLogger();
 
 export type MessageParams = {
   io: Server;
@@ -40,9 +42,10 @@ export const handleMessage = async ({
   plaintext,
   clientType,
   hasRateLimit,
+  callback,
 }: MessageParams) => {
-  // const socketId = socket.id;
-  // const clientIp = socket.request.socket.remoteAddress;
+  const socketId = socket.id;
+  const clientIp = socket.request.socket.remoteAddress;
 
   let from = context ?? MISSING_CONTEXT;
   if (context?.indexOf('metamask-mobile') !== -1) {
@@ -96,9 +99,13 @@ export const handleMessage = async ({
 
     let ackId: string | undefined;
 
-    logger.debug(
-      `clientType: ${clientType} encrypted: ${encrypted} ready: ${ready} `,
-      message,
+    logger.info(
+      `[handleMessage] clientType: ${clientType} encrypted: ${encrypted} ready: ${ready} `,
+      {
+        channelId,
+        socketId,
+        clientIp,
+      },
     );
 
     if (encrypted) {
@@ -112,13 +119,16 @@ export const handleMessage = async ({
         plaintext: isDevelopment ? formatted : undefined,
         timestamp: Date.now(),
       };
-      logger.debug(`persisting message in queue ${queueKey}`, persistedMsg);
+      logger.debug(
+        `[handleMessage] persisting message in queue ${queueKey}`,
+        persistedMsg,
+      );
       await pubClient.rpush(queueKey, JSON.stringify(persistedMsg));
       await pubClient.expire(queueKey, config.msgExpiry);
     }
 
-    logger.info(
-      `message-${channelId} received from=${from} ready=${ready} clientType=${clientType} ackId=${ackId}`,
+    logger.debug(
+      `[handleMessage] message-${channelId} received from=${from} ready=${ready} clientType=${clientType} ackId=${ackId}`,
       formatted,
       protocol,
     );
@@ -127,10 +137,18 @@ export const handleMessage = async ({
       .to(channelId)
       .emit(`message-${channelId}`, { id: channelId, ackId, message });
 
+    // Always emit success response to socket
+    callback?.(null, { id: channelId, success: true });
+
     if (keyExchangeAck && channelConfig?.persistence) {
-      logger.info(
-        `channelConfig updated on channelId=${channelId}`,
-        channelConfig,
+      logger.debug(
+        `[handleMessage] channelConfig updated on channelId=${channelId}`,
+        {
+          channelId,
+          socketId,
+          clientIp,
+          channelConfig,
+        },
       );
 
       // broadcast that the channel supports relayPersistence
@@ -149,7 +167,12 @@ export const handleMessage = async ({
   } catch (error) {
     setLastConnectionErrorTimestamp(Date.now());
     increaseRateLimits(90);
-    logger.error(`ERROR > Error on message: ${error} `);
+    logger.error(`[handleMessage] ERROR > Error on message: ${error} `, {
+      channelId,
+      socketId,
+      clientIp,
+    });
+
     // emit an error message back to the client, if appropriate
     socket.broadcast.emit(`message-${channelId}`, {
       error: (error as Error).message,
