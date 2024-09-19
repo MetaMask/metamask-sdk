@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0-wallet]
+### Added
+- feat: async termination of connection (using ack from server) ([#1022](https://github.com/MetaMask/metamask-sdk/pull/1022))
+- feat: handle connection reject event ([#1020](https://github.com/MetaMask/metamask-sdk/pull/1020))
+
 ## [0.28.2]
 ### Added
 - feat: socket reconnection optimization ([#994](https://github.com/MetaMask/metamask-sdk/pull/994))
@@ -249,7 +254,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0-wallet...HEAD
+[0.29.0-wallet]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.2...@metamask/sdk-communication-layer@0.29.0-wallet
 [0.28.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.1...@metamask/sdk-communication-layer@0.28.2
 [0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...@metamask/sdk-communication-layer@0.28.1
 [0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.27.0...@metamask/sdk-communication-layer@0.28.0
