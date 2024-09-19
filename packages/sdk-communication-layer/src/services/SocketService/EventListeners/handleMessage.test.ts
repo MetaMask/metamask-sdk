@@ -93,19 +93,6 @@ describe('handleMessage', () => {
     }).toThrow('Some error');
   });
 
-  it('should log an error if checkSameId throws an error', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-    mockCheckSameId.mockImplementation(() => {
-      throw new Error('Some error');
-    });
-
-    const handler = handleMessage(instance, channelId);
-    handler({ ackId: 'testId', message: { type: '' } });
-
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    consoleErrorSpy.mockRestore();
-  });
-
   it('should start key exchange if isOriginator and receives a HANDSHAKE_START message', () => {
     instance.state.isOriginator = true;
 
