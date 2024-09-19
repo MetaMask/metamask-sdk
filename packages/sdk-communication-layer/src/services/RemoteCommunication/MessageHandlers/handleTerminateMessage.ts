@@ -28,8 +28,9 @@ export function handleTerminateMessage(instance: RemoteCommunication) {
     disconnect({
       options: { terminate: true, sendMessage: false },
       instance,
+    }).catch((error) => {
+      console.error('[handleTerminateMessage] disconnect error', error);
     });
-    console.debug();
     instance.emit(EventType.TERMINATE);
   }
 }

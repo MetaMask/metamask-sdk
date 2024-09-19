@@ -24,7 +24,10 @@ export function ping(instance: SocketService) {
       console.warn(
         `[SocketService:ping()] context=${instance.state.context} sending READY message`,
       );
-      instance.sendMessage({ type: MessageType.READY });
+
+      instance.sendMessage({ type: MessageType.READY }).catch((error) => {
+        console.error('[ping] sendMessage error', error);
+      });
     } else {
       console.warn(
         `[SocketService: ping()] context=${instance.state.context} starting key exchange`,

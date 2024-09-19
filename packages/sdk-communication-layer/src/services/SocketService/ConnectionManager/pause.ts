@@ -16,7 +16,9 @@ export function pause(instance: SocketService) {
 
   instance.state.manualDisconnect = true;
   if (instance.state.keyExchange?.areKeysExchanged()) {
-    instance.sendMessage({ type: MessageType.PAUSE });
+    instance.sendMessage({ type: MessageType.PAUSE }).catch((error) => {
+      console.error('[pause] sendMessage error', error);
+    });
   }
   instance.state.socket?.disconnect();
 }
