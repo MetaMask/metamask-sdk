@@ -272,7 +272,7 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  sendMessage(message: CommunicationLayerMessage): Promise<void> {
+  sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
     return sendMessage(this, message);
   }
 

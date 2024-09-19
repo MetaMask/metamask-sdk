@@ -39,13 +39,13 @@ export const lcLogguedRPCs = [
 export async function handleSendMessage(
   instance: SocketService,
   message: CommunicationLayerMessage,
-) {
+): Promise<boolean> {
   if (!instance.state.channelId) {
     logger.SocketService(
       `handleSendMessage: no channelId - Create a channel first`,
     );
     // Throw the error asynchronously
-    return Promise.reject(new Error('Create a channel first'));
+    throw new Error('Create a channel first');
   }
 
   logger.SocketService(
@@ -59,14 +59,14 @@ export async function handleSendMessage(
 
   if (isKeyHandshakeMessage) {
     handleKeyHandshake(instance, message);
-    return Promise.resolve();
+    return true;
   }
 
   validateKeyExchange(instance, message);
 
   trackRpcMethod(instance, message);
 
-  await encryptAndSendMessage(instance, message);
+  const sent = await encryptAndSendMessage(instance, message);
 
   if (instance.remote.state.analytics) {
     // Only logs specific RPCs
@@ -100,5 +100,5 @@ export async function handleSendMessage(
     console.warn('[handleSendMessage] Error handleRpcReplies', err);
   });
 
-  return Promise.resolve();
+  return sent;
 }

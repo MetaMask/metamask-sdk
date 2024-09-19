@@ -196,7 +196,7 @@ export class SocketService extends EventEmitter2 {
     return this.state.keyExchange as KeyExchange;
   }
 
-  async sendMessage(message: CommunicationLayerMessage): Promise<void> {
+  async sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
     return handleSendMessage(this, message);
   }
 

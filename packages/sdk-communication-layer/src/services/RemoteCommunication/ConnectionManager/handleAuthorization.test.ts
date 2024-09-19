@@ -12,7 +12,7 @@ describe('handleAuthorization', () => {
   const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   const mockOnce = jest.fn();
-  const mockSendMessage = jest.fn();
+  const mockSendMessage = jest.fn().mockResolvedValue(true); // Change this line
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -43,8 +43,9 @@ describe('handleAuthorization', () => {
   it('should send message immediately if isOriginator is false or authorized is true', async () => {
     instance.state.isOriginator = false;
 
-    await handleAuthorization(instance, message);
+    const result = await handleAuthorization(instance, message);
 
+    expect(result).toBe(true);
     expect(instance.state.communicationLayer?.sendMessage).toHaveBeenCalledWith(
       message,
     );
@@ -54,8 +55,9 @@ describe('handleAuthorization', () => {
     instance.state.isOriginator = true;
     instance.state.authorized = true;
 
-    await handleAuthorization(instance, message);
+    const result2 = await handleAuthorization(instance, message);
 
+    expect(result2).toBe(true);
     expect(instance.state.communicationLayer?.sendMessage).toHaveBeenCalledWith(
       message,
     );

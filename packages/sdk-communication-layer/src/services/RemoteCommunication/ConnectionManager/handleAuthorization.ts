@@ -13,7 +13,7 @@ import { EventType } from '../../../types/EventType';
 export async function handleAuthorization(
   instance: RemoteCommunication,
   message: CommunicationLayerMessage,
-): Promise<void> {
+): Promise<boolean> {
   return new Promise((resolve) => {
     const { state } = instance;
 
@@ -22,16 +22,37 @@ export async function handleAuthorization(
     );
 
     if (!state.isOriginator || state.authorized || state.relayPersistence) {
-      state.communicationLayer?.sendMessage(message);
-      resolve();
+      state.communicationLayer
+        ?.sendMessage(message)
+        .then((sent) => {
+          resolve(sent);
+        })
+        .catch((error) => {
+          console.error(
+            `[RemoteCommunication: handleAuthorization()] context=${state.context}  ERROR`,
+            error,
+          );
+          resolve(false);
+        });
     } else {
       instance.once(EventType.AUTHORIZED, () => {
         logger.RemoteCommunication(
           `[RemoteCommunication: handleAuthorization()] context=${state.context}  AFTER SKIP / AUTHORIZED -- sending pending message`,
         );
+
         // only send the message after the clients have awaken.
-        state.communicationLayer?.sendMessage(message);
-        resolve();
+        state.communicationLayer
+          ?.sendMessage(message)
+          .then((sent) => {
+            resolve(sent);
+          })
+          .catch((error) => {
+            console.error(
+              `[RemoteCommunication: handleAuthorization()] context=${state.context}  ERROR`,
+              error,
+            );
+            resolve(false);
+          });
       });
     }
   });
