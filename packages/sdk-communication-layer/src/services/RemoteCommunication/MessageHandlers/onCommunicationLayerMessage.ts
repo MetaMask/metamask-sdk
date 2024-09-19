@@ -58,7 +58,11 @@ export function onCommunicationLayerMessage(
       );
     });
   } else if (message.type === MessageType.TERMINATE) {
-    handleTerminateMessage(instance);
+    handleTerminateMessage(instance).catch((error) => {
+      logger.RemoteCommunication(
+        `[RemoteCommunication: onCommunicationLayerMessage()] error=${error}`,
+      );
+    });
   } else if (message.type === MessageType.PAUSE) {
     handlePauseMessage(instance);
   } else if (message.type === MessageType.READY && state.isOriginator) {

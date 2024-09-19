@@ -272,7 +272,7 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  sendMessage(message: CommunicationLayerMessage): Promise<void> {
+  sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
     return sendMessage(this, message);
   }
 
@@ -314,12 +314,12 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.state.communicationLayer;
   }
 
-  ping() {
+  async ping() {
     logger.RemoteCommunication(
       `[RemoteCommunication: ping()] channel=${this.state.channelId}`,
     );
 
-    this.state.communicationLayer?.ping();
+    await this.state.communicationLayer?.ping();
   }
 
   testLogger() {
@@ -384,12 +384,12 @@ export class RemoteCommunication extends EventEmitter2 {
     }
   }
 
-  pause() {
+  async pause() {
     logger.RemoteCommunication(
       `[RemoteCommunication: pause()] channel=${this.state.channelId}`,
     );
 
-    this.state.communicationLayer?.pause();
+    await this.state.communicationLayer?.pause();
     this.setConnectionStatus(ConnectionStatus.PAUSED);
   }
 
@@ -401,7 +401,7 @@ export class RemoteCommunication extends EventEmitter2 {
     return this.state.relayPersistence ?? false;
   }
 
-  resume() {
+  async resume() {
     return resume(this);
   }
 
@@ -439,7 +439,7 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  disconnect(options?: DisconnectOptions) {
+  async disconnect(options?: DisconnectOptions): Promise<boolean> {
     return disconnect({
       options,
       instance: this,

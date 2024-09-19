@@ -40,23 +40,23 @@ describe('resume', () => {
     } as unknown as SocketService;
   });
 
-  it('should log debug information', () => {
-    resume(instance);
+  it('should log debug information', async () => {
+    await resume(instance);
 
     expect(spyLogger).toHaveBeenCalled();
   });
 
-  it('should not connect socket if already connected', () => {
+  it('should not connect socket if already connected', async () => {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     instance.state.socket!.connected = true;
 
-    resume(instance);
+    await resume(instance);
 
     expect(mockConnect).not.toHaveBeenCalled();
   });
 
-  it('should connect socket if not connected and emit JOIN_CHANNEL event', () => {
-    resume(instance);
+  it('should connect socket if not connected and emit JOIN_CHANNEL event', async () => {
+    await resume(instance);
 
     expect(mockConnect).toHaveBeenCalled();
     expect(mockEmit).toHaveBeenCalledWith(
@@ -70,16 +70,16 @@ describe('resume', () => {
     );
   });
 
-  it('should send READY message if keys have been exchanged and not an originator', () => {
+  it('should send READY message if keys have been exchanged and not an originator', async () => {
     mockAreKeysExchanged.mockReturnValue(true);
 
-    resume(instance);
+    await resume(instance);
 
     expect(mockEmit).toHaveBeenCalled();
   });
 
-  it('should update manualDisconnect and resumed state after resuming', () => {
-    resume(instance);
+  it('should update manualDisconnect and resumed state after resuming', async () => {
+    await resume(instance);
 
     expect(instance.state.manualDisconnect).toBe(false);
     expect(instance.state.resumed).toBe(true);

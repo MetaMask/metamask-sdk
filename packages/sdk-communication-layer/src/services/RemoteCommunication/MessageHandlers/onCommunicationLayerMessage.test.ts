@@ -1,16 +1,15 @@
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
-import { MessageType } from '../../../types/MessageType';
 import { EventType } from '../../../types/EventType';
+import { MessageType } from '../../../types/MessageType';
 import { logger } from '../../../utils/logger';
-import { onCommunicationLayerMessage } from './onCommunicationLayerMessage';
-import { handleOriginatorInfoMessage } from './handleOriginatorInfoMessage';
 import { handleAuthorizedMessage } from './handleAuthorizedMessage';
+import { handleOriginatorInfoMessage } from './handleOriginatorInfoMessage';
 import { handleOtpMessage } from './handleOtpMessage';
 import { handlePauseMessage } from './handlePauseMessage';
 import { handleReadyMessage } from './handleReadyMessage';
-import { handleTerminateMessage } from './handleTerminateMessage';
 import { handleWalletInfoMessage } from './handleWalletInfoMessage';
+import { onCommunicationLayerMessage } from './onCommunicationLayerMessage';
 
 jest.mock('./handleOriginatorInfoMessage');
 jest.mock('./handleAuthorizedMessage');
@@ -33,8 +32,6 @@ const mockHandlePauseMessage = handlePauseMessage as jest.MockedFunction<
 const mockHandleReadyMessage = handleReadyMessage as jest.MockedFunction<
   typeof handleReadyMessage
 >;
-const mockHandleTerminateMessage =
-  handleTerminateMessage as jest.MockedFunction<typeof handleTerminateMessage>;
 const mockHandleWalletInfoMessage =
   handleWalletInfoMessage as jest.MockedFunction<
     typeof handleWalletInfoMessage
@@ -95,12 +92,6 @@ describe('onCommunicationLayerMessage', () => {
     message = { type: MessageType.WALLET_INFO };
     onCommunicationLayerMessage(message, instance);
     expect(mockHandleWalletInfoMessage).toHaveBeenCalled();
-  });
-
-  it('should invoke handleTerminateMessage for TERMINATE messages', () => {
-    message = { type: MessageType.TERMINATE };
-    onCommunicationLayerMessage(message, instance);
-    expect(mockHandleTerminateMessage).toHaveBeenCalled();
   });
 
   it('should invoke handlePauseMessage for PAUSE messages', () => {

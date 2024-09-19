@@ -34,7 +34,7 @@ describe('handleSendMessage', () => {
 
     mockedHandleKeyHandshake.mockImplementation(() => Promise.resolve());
     mockedValidateKeyExchange.mockImplementation(() => Promise.resolve());
-    mockedEncryptAndSendMessage.mockImplementation(() => Promise.resolve());
+    mockedEncryptAndSendMessage.mockImplementation(() => Promise.resolve(true));
     mockedTrackRpcMethod.mockImplementation(() => Promise.resolve());
     mockedHandleRpcReplies.mockImplementation(() => Promise.resolve());
 
@@ -56,14 +56,14 @@ describe('handleSendMessage', () => {
     } as unknown as SocketService;
   });
 
-  it('should error if channel is not yet established', () => {
+  it('should error if channel is not yet established', async () => {
     instance.state.channelId = undefined;
     const message: CommunicationLayerMessage = {
       id: '123',
       method: 'testMethod',
     };
 
-    expect(() => handleSendMessage(instance, message)).toThrow(
+    await expect(handleSendMessage(instance, message)).rejects.toThrow(
       'Create a channel first',
     );
   });
@@ -109,7 +109,7 @@ describe('handleSendMessage', () => {
 
     expect(mockedHandleRpcReplies).toHaveBeenCalledWith(instance, message);
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      'Error handleRpcReplies',
+      '[handleSendMessage] Error handleRpcReplies',
       mockError,
     );
 

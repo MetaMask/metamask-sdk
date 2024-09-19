@@ -9,14 +9,14 @@ import { MessageType } from '../../../types/MessageType';
  *
  * @param instance The current instance of the SocketService.
  */
-export function pause(instance: SocketService) {
+export async function pause(instance: SocketService) {
   logger.SocketService(
     `[SocketService: pause()] context=${instance.state.context}`,
   );
 
   instance.state.manualDisconnect = true;
   if (instance.state.keyExchange?.areKeysExchanged()) {
-    instance.sendMessage({ type: MessageType.PAUSE });
+    await instance.sendMessage({ type: MessageType.PAUSE });
   }
   instance.state.socket?.disconnect();
 }

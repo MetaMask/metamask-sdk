@@ -12,7 +12,7 @@ import { MessageType } from '../../../types/MessageType';
  *
  * @param instance The current instance of the SocketService.
  */
-export function ping(instance: SocketService) {
+export async function ping(instance: SocketService) {
   logger.SocketService(
     `[SocketService: ping()] context=${instance.state.context} originator=${
       instance.state.isOriginator
@@ -24,7 +24,8 @@ export function ping(instance: SocketService) {
       console.warn(
         `[SocketService:ping()] context=${instance.state.context} sending READY message`,
       );
-      instance.sendMessage({ type: MessageType.READY });
+
+      await instance.sendMessage({ type: MessageType.READY });
     } else {
       console.warn(
         `[SocketService: ping()] context=${instance.state.context} starting key exchange`,

@@ -3,8 +3,8 @@ import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
-import * as ChannelManager from '../ChannelManager';
 import { logger } from '../../../utils/logger';
+import * as ChannelManager from '../ChannelManager';
 import { handleMessage } from './handleMessage';
 
 jest.mock('../ChannelManager');
@@ -57,13 +57,13 @@ describe('handleMessage', () => {
 
   it('should log debug information', () => {
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: MessageType.PING } });
+    handler({ ackId: 'testId', message: { type: MessageType.PING } });
     expect(spyLogger).toHaveBeenCalled();
   });
 
   it('should emit KEY_EXCHANGE when a key_handshake message is received', () => {
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: 'key_handshake_test' } });
+    handler({ ackId: 'testId', message: { type: 'key_handshake_test' } });
 
     expect(mockEmit).toHaveBeenCalledWith(InternalEventType.KEY_EXCHANGE, {
       message: { type: 'key_handshake_test' },
@@ -78,7 +78,7 @@ describe('handleMessage', () => {
     );
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: msgToDeEncrypt });
+    handler({ ackId: 'testId', message: msgToDeEncrypt });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       message: { type: MessageType.PAUSE },
@@ -89,21 +89,8 @@ describe('handleMessage', () => {
     const handler = handleMessage(instance, channelId);
 
     expect(() => {
-      handler({ id: 'testId', message: { type: '' }, error: 'Some error' });
+      handler({ ackId: 'testId', message: { type: '' }, error: 'Some error' });
     }).toThrow('Some error');
-  });
-
-  it('should log an error if checkSameId throws an error', () => {
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
-    mockCheckSameId.mockImplementation(() => {
-      throw new Error('Some error');
-    });
-
-    const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: '' } });
-
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    consoleErrorSpy.mockRestore();
   });
 
   it('should start key exchange if isOriginator and receives a HANDSHAKE_START message', () => {
@@ -111,7 +98,7 @@ describe('handleMessage', () => {
 
     const handler = handleMessage(instance, channelId);
     handler({
-      id: 'testId',
+      ackId: 'testId',
       message: { type: KeyExchangeMessageType.KEY_HANDSHAKE_START },
     });
 
@@ -128,7 +115,7 @@ describe('handleMessage', () => {
     instance.sendMessage = mockSendMessage;
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: msgToDeEncrypt });
+    handler({ ackId: 'testId', message: msgToDeEncrypt });
 
     // expect(mockSendMessage).toHaveBeenCalledWith({
     //   type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
@@ -149,7 +136,7 @@ describe('handleMessage', () => {
 
     const handler = handleMessage(instance, channelId);
     handler({
-      id: 'testId',
+      ackId: 'testId',
       message: {
         type: 'testType',
         data: 'testData',
@@ -169,14 +156,14 @@ describe('handleMessage', () => {
     );
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: msgToDeEncrypt });
+    handler({ ackId: 'testId', message: msgToDeEncrypt });
 
     expect(instance.state.clientsPaused).toBe(true);
   });
 
   it('should emit a MESSAGE event with a ping message when receiving a PING message', () => {
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: MessageType.PING } });
+    handler({ ackId: 'testId', message: { type: MessageType.PING } });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       type: 'ping',
@@ -185,7 +172,7 @@ describe('handleMessage', () => {
 
   it('should emit KEY_EXCHANGE when a message starting with key_handshake is received', () => {
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: { type: 'key_handshake_someType' } });
+    handler({ ackId: 'testId', message: { type: 'key_handshake_someType' } });
 
     expect(mockEmit).toHaveBeenCalledWith(InternalEventType.KEY_EXCHANGE, {
       message: { type: 'key_handshake_someType' },
@@ -200,7 +187,7 @@ describe('handleMessage', () => {
     );
 
     const handler = handleMessage(instance, channelId);
-    handler({ id: 'testId', message: msgToDeEncrypt });
+    handler({ ackId: 'testId', message: msgToDeEncrypt });
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       message: { type: 'testType', data: 'testData' },

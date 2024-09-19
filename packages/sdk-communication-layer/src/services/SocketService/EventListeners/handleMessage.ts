@@ -1,14 +1,13 @@
-import { logger } from '../../../utils/logger';
+import packageJson from '../../../../package.json';
+import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
-import { checkSameId } from '../ChannelManager';
-import { lcLogguedRPCs } from '../MessageHandlers';
-import { SendAnalytics } from '../../../Analytics';
 import { TrackingEvents } from '../../../types/TrackingEvent';
-import packageJson from '../../../../package.json';
+import { logger } from '../../../utils/logger';
+import { lcLogguedRPCs } from '../MessageHandlers';
 
 /**
  * Returns a handler function to handle incoming messages.
@@ -20,12 +19,11 @@ import packageJson from '../../../../package.json';
  */
 export function handleMessage(instance: SocketService, channelId: string) {
   return (rawMsg: {
-    id: string;
     ackId?: string;
     message: string | { type: string; [key: string]: any };
     error?: any;
   }) => {
-    const { id, ackId, message, error } = rawMsg;
+    const { ackId, message, error } = rawMsg;
     const relayPersistence = instance.remote.state.relayPersistence ?? false;
 
     logger.SocketService(
@@ -40,13 +38,6 @@ export function handleMessage(instance: SocketService, channelId: string) {
       [SocketService handleMessage()] context=${instance.state.context}::on 'message' error=${error}`);
 
       throw new Error(error);
-    }
-
-    try {
-      checkSameId(instance.state, id);
-    } catch (err) {
-      console.error(`ignore message --- wrong id `, message);
-      return;
     }
 
     const isEncryptedMessage = typeof message === 'string';
@@ -127,9 +118,16 @@ export function handleMessage(instance: SocketService, channelId: string) {
           });
         } else {
           // Request new key exchange
-          instance.sendMessage({
-            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
-          });
+          instance
+            .sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+            })
+            .catch((err) => {
+              console.error(
+                `[SocketService handleMessage()] context=${instance.state.context}::on 'message' error`,
+                err,
+              );
+            });
         }
 
         //  ignore message and wait for completion.
@@ -168,12 +166,12 @@ export function handleMessage(instance: SocketService, channelId: string) {
     // Acknowledge that the message was received and decryoted
     if (ackId && ackId?.length > 0) {
       logger.SocketService(
-        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' ackid=${ackId} channelId=${id}`,
+        `[SocketService handleMessage()] context=${instance.state.context}::on 'message' ackid=${ackId} channelId=${channelId}`,
       );
 
       instance.state.socket?.emit(EventType.MESSAGE_ACK, {
         ackId,
-        channelId: id,
+        channelId,
         clientType: instance.state.isOriginator ? 'dapp' : 'wallet',
       });
     }

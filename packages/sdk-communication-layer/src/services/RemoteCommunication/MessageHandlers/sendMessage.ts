@@ -28,7 +28,7 @@ import { handleAuthorization } from '../ConnectionManager';
 export async function sendMessage(
   instance: RemoteCommunication,
   message: CommunicationLayerMessage,
-): Promise<void> {
+): Promise<boolean> {
   const { state } = instance;
 
   logger.RemoteCommunication(
@@ -64,7 +64,8 @@ export async function sendMessage(
   }
 
   try {
-    await handleAuthorization(instance, message);
+    const success = await handleAuthorization(instance, message);
+    return success;
   } catch (err) {
     console.error(
       `[RemoteCommunication: sendMessage()] context=${state.context}  ERROR`,

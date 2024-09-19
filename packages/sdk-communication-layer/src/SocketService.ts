@@ -196,7 +196,7 @@ export class SocketService extends EventEmitter2 {
     return this.state.keyExchange as KeyExchange;
   }
 
-  sendMessage(message: CommunicationLayerMessage): void {
+  async sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
     return handleSendMessage(this, message);
   }
 
@@ -204,7 +204,7 @@ export class SocketService extends EventEmitter2 {
     return ping(this);
   }
 
-  pause(): void {
+  pause(): Promise<void> {
     return pause(this);
   }
 
@@ -212,7 +212,7 @@ export class SocketService extends EventEmitter2 {
     return this.state.socket?.connected as boolean;
   }
 
-  resume(): void {
+  resume(): Promise<void> {
     return resume(this);
   }
 

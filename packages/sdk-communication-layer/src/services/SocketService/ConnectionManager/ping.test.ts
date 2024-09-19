@@ -35,16 +35,16 @@ describe('ping', () => {
     } as unknown as SocketService;
   });
 
-  it('should log debug information', () => {
-    ping(instance);
+  it('should log debug information', async () => {
+    await ping(instance);
 
     expect(spyLogger).toHaveBeenCalledWith(
       '[SocketService: ping()] context=someContext originator=false keysExchanged=undefined',
     );
   });
 
-  it('should emit a PING message to the socket', () => {
-    ping(instance);
+  it('should emit a PING message to the socket', async () => {
+    await ping(instance);
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       id: 'sampleChannelId',
@@ -56,11 +56,11 @@ describe('ping', () => {
     });
   });
 
-  it('should send a READY message if originator and keys are exchanged', () => {
+  it('should send a READY message if originator and keys are exchanged', async () => {
     instance.state.isOriginator = true;
     mockAreKeysExchanged.mockReturnValue(true);
 
-    ping(instance);
+    await ping(instance);
 
     expect(spyWarn).toHaveBeenCalledWith(
       '[SocketService:ping()] context=someContext sending READY message',
@@ -68,11 +68,11 @@ describe('ping', () => {
     expect(mockSendMessage).toHaveBeenCalledWith({ type: MessageType.READY });
   });
 
-  it('should start key exchange if originator and keys are not exchanged', () => {
+  it('should start key exchange if originator and keys are not exchanged', async () => {
     instance.state.isOriginator = true;
     mockAreKeysExchanged.mockReturnValue(false);
 
-    ping(instance);
+    await ping(instance);
 
     expect(spyWarn).toHaveBeenCalledWith(
       '[SocketService: ping()] context=someContext starting key exchange',
@@ -83,10 +83,10 @@ describe('ping', () => {
     });
   });
 
-  it('should handle missing keyExchange object gracefully', () => {
+  it('should handle missing keyExchange object gracefully', async () => {
     instance.state.keyExchange = undefined;
 
-    ping(instance);
+    await ping(instance);
 
     expect(spyLogger).toHaveBeenCalledWith(
       '[SocketService: ping()] context=someContext originator=false keysExchanged=undefined',

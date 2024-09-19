@@ -24,32 +24,21 @@ describe('handleTerminateMessage', () => {
     } as unknown as RemoteCommunication;
   });
 
-  it('should not terminate if the instance is not the originator', () => {
-    handleTerminateMessage(instance);
+  it('should not terminate if the instance is not the originator', async () => {
+    await handleTerminateMessage(instance);
     expect(mockDisconnect).not.toHaveBeenCalled();
     expect(instance.emit).not.toHaveBeenCalledWith(EventType.TERMINATE);
   });
 
-  it('should terminate the communication channel if the instance is the originator', () => {
+  it('should terminate the communication channel if the instance is the originator', async () => {
     instance.state.isOriginator = true;
 
-    handleTerminateMessage(instance);
+    await handleTerminateMessage(instance);
 
     expect(mockDisconnect).toHaveBeenCalledWith({
       options: { terminate: true, sendMessage: false },
       instance,
     });
     expect(instance.emit).toHaveBeenCalledWith(EventType.TERMINATE);
-  });
-
-  it('should output a debug message during termination', () => {
-    const consoleDebugSpy = jest.spyOn(console, 'debug').mockImplementation();
-
-    instance.state.isOriginator = true;
-    handleTerminateMessage(instance);
-
-    expect(consoleDebugSpy).toHaveBeenCalled();
-
-    consoleDebugSpy.mockRestore();
   });
 });

@@ -4,6 +4,7 @@ import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 import { MessageType } from '../../../types/MessageType';
+import { encryptAndSendMessage } from '../../SocketService/MessageHandlers';
 
 /**
  * Handles the disconnection process for a RemoteCommunication instance Depending on the provided options, it can terminate the connection and clear related configurations or simply disconnect.
@@ -12,13 +13,13 @@ import { MessageType } from '../../../types/MessageType';
  * @param instance The current instance of the RemoteCommunication class that needs to be disconnected.
  * @returns void
  */
-export function disconnect({
+export async function disconnect({
   options,
   instance,
 }: {
   options?: DisconnectOptions;
   instance: RemoteCommunication;
-}) {
+}): Promise<boolean> {
   const { state } = instance;
 
   logger.RemoteCommunication(
@@ -29,29 +30,46 @@ export function disconnect({
   state.ready = false;
   state.paused = false;
 
-  if (options?.terminate) {
-    // remove channel config from persistence layer and close active connections.
-    state.storageManager?.terminate(state.channelId ?? '');
-    instance.state.terminated = true;
-    if (options.sendMessage) {
-      // Prevent sending terminate in loop
-      if (state.communicationLayer?.getKeyInfo().keysExchanged) {
-        state.communicationLayer?.sendMessage({
-          type: MessageType.TERMINATE,
-        });
+  return new Promise((resolve, reject) => {
+    if (options?.terminate) {
+      // remove channel config from persistence layer and close active connections.
+      state.storageManager?.terminate(state.channelId ?? '');
+      instance.state.terminated = true;
+      if (options.sendMessage) {
+        // Prevent sending terminate in loop
+        if (
+          state.communicationLayer?.getKeyInfo().keysExchanged &&
+          instance.state.communicationLayer
+        ) {
+          encryptAndSendMessage(instance.state.communicationLayer, {
+            type: MessageType.TERMINATE,
+          })
+            .then(() => {
+              console.warn(
+                `[disconnect] Terminate message sent to the other peer`,
+              );
+              resolve(true);
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        }
+      } else {
+        resolve(true);
       }
-    }
 
-    state.authorized = false;
-    state.relayPersistence = false;
-    state.channelId = uuidv4();
-    options.channelId = state.channelId;
-    state.channelConfig = undefined;
-    state.originatorConnectStarted = false;
-    state.communicationLayer?.disconnect(options);
-    instance.setConnectionStatus(ConnectionStatus.TERMINATED);
-  } else {
-    state.communicationLayer?.disconnect(options);
-    instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-  }
+      state.authorized = false;
+      state.relayPersistence = false;
+      state.channelId = uuidv4();
+      options.channelId = state.channelId;
+      state.channelConfig = undefined;
+      state.originatorConnectStarted = false;
+      state.communicationLayer?.disconnect(options);
+      instance.setConnectionStatus(ConnectionStatus.TERMINATED);
+    } else {
+      state.communicationLayer?.disconnect(options);
+      instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+      resolve(true);
+    }
+  });
 }

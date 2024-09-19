@@ -1,10 +1,10 @@
+import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
-import { TrackingEvents } from '../../../types/TrackingEvent';
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
-import packageJson from '../../../../package.json';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 import { handleRpcReplies } from './handleRpcReplies';
 import { trackRpcMethod } from './trackRpcMethod';
@@ -36,14 +36,15 @@ export const lcLogguedRPCs = [
  * @param instance The current instance of the SocketService.
  * @param message The message to be sent.
  */
-export function handleSendMessage(
+export async function handleSendMessage(
   instance: SocketService,
   message: CommunicationLayerMessage,
-) {
+): Promise<boolean> {
   if (!instance.state.channelId) {
     logger.SocketService(
       `handleSendMessage: no channelId - Create a channel first`,
     );
+    // Throw the error asynchronously
     throw new Error('Create a channel first');
   }
 
@@ -58,14 +59,14 @@ export function handleSendMessage(
 
   if (isKeyHandshakeMessage) {
     handleKeyHandshake(instance, message);
-    return;
+    return true;
   }
 
   validateKeyExchange(instance, message);
 
   trackRpcMethod(instance, message);
 
-  encryptAndSendMessage(instance, message);
+  const sent = await encryptAndSendMessage(instance, message);
 
   if (instance.remote.state.analytics) {
     // Only logs specific RPCs
@@ -88,7 +89,7 @@ export function handleSendMessage(
         },
         instance.remote.state.communicationServerUrl,
       ).catch((err) => {
-        console.error(`Cannot send analytics`, err);
+        console.error(`[handleSendMessage] Cannot send analytics`, err);
       });
     }
   }
@@ -96,6 +97,8 @@ export function handleSendMessage(
   // Only makes sense on originator side.
   // wait for reply when eth_requestAccounts is sent.
   handleRpcReplies(instance, message).catch((err) => {
-    console.warn('Error handleRpcReplies', err);
+    console.warn('[handleSendMessage] Error handleRpcReplies', err);
   });
+
+  return sent;
 }

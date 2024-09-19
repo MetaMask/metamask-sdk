@@ -29,38 +29,38 @@ describe('pause', () => {
     } as unknown as SocketService;
   });
 
-  it('should disconnect the socket', () => {
-    pause(instance);
+  it('should disconnect the socket', async () => {
+    await pause(instance);
 
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('should log debug information', () => {
-    pause(instance);
+  it('should log debug information', async () => {
+    await pause(instance);
 
     expect(spyLogger).toHaveBeenCalledWith(
       '[SocketService: pause()] context=someContext',
     );
   });
 
-  it('should set manualDisconnect to true', () => {
-    pause(instance);
+  it('should set manualDisconnect to true', async () => {
+    await pause(instance);
 
     expect(instance.state.manualDisconnect).toBe(true);
   });
 
-  it('should send PAUSE message when keys have been exchanged', () => {
+  it('should send PAUSE message when keys have been exchanged', async () => {
     mockAreKeysExchanged.mockReturnValueOnce(true);
 
-    pause(instance);
+    await pause(instance);
 
     expect(mockSendMessage).toHaveBeenCalledWith({ type: MessageType.PAUSE });
   });
 
-  it('should not send PAUSE message when keys have not been exchanged', () => {
+  it('should not send PAUSE message when keys have not been exchanged', async () => {
     mockAreKeysExchanged.mockReturnValueOnce(false);
 
-    pause(instance);
+    await pause(instance);
 
     expect(mockSendMessage).not.toHaveBeenCalledWith({
       type: MessageType.PAUSE,
