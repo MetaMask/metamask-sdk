@@ -1,7 +1,9 @@
 import { pubClient } from '../api-config';
-import { logger } from '../logger';
+import { getLogger } from '../logger';
 import { ClientType } from '../socket-config';
 import { QueuedMessage } from './handleMessage';
+
+const logger = getLogger();
 
 export const retrieveMessages = async ({
   channelId,
@@ -19,7 +21,7 @@ export const retrieveMessages = async ({
     return messages;
   } catch (error) {
     logger.error(
-      `Error retrieving messages for channelId=${channelId}: ${error}`,
+      `[retrieveMessages] Error retrieving messages for channelId=${channelId}: ${error}`,
     );
     return [];
   }

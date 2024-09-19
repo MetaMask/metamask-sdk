@@ -7,8 +7,12 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { pubClient } from './api-config';
-import { logger } from './logger';
+import { getLogger } from './logger';
 import { ACKParams, handleAck } from './protocol/handleAck';
+import {
+  ChannelRejectedParams,
+  handleChannelRejected,
+} from './protocol/handleChannelRejected';
 import { handleCheckRoom } from './protocol/handleCheckRoom';
 import {
   handleJoinChannel,
@@ -16,6 +20,8 @@ import {
 } from './protocol/handleJoinChannel';
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
+
+const logger = getLogger();
 
 export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
 
@@ -136,13 +142,13 @@ export const configureSocketServer = async (
         }
 
         if (typeof channelIdOrParams === 'string') {
-          logger.debug(`join_channel channelId=${channelIdOrParams}`);
+          logger.info(`join_channel channelId=${channelIdOrParams}`);
           // old protocol support
           params.channelId = channelIdOrParams;
           params.context = callbackOrContext as string;
           params.callback = callback;
         } else {
-          logger.debug(
+          logger.info(
             `join_channel channelId=${channelIdOrParams.channelId}`,
             JSON.stringify(channelIdOrParams),
           );
@@ -211,6 +217,13 @@ export const configureSocketServer = async (
           hasRateLimit,
           callback,
         };
+
+        // only send message if we are in the room
+        if (!socket.rooms.has(id)) {
+          logger.warn(`message ${id} not in room`);
+          return;
+        }
+
         handleMessage(params).catch((error) => {
           logger.error('Error handling message:', error);
         });
@@ -297,6 +310,20 @@ export const configureSocketServer = async (
         handleJoinChannel(params).catch((error) => {
           logger.error('Error joining channel:', error);
         });
+      },
+    );
+
+    socket.on(
+      'rejected',
+      (
+        params: ChannelRejectedParams,
+        callback?: (error: string | null, result?: unknown) => void,
+      ) => {
+        handleChannelRejected({ ...params, io, socket }, callback).catch(
+          (error) => {
+            logger.error('Error rejecting channel:', error);
+          },
+        );
       },
     );
 

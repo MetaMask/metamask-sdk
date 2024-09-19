@@ -4,7 +4,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 import { getRedisClient } from './api-config';
 
-import { logger } from './logger';
+import { createLogger } from './logger';
+
+const logger = createLogger(true);
 
 // Initialize Redis Cluster client
 let redisNodes: {

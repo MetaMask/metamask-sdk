@@ -1,5 +1,4 @@
 import winston, { format } from 'winston';
-import { isDevelopment } from './config';
 
 const customFormat = format.printf((ti) => {
   const { level, message, timestamp } = ti;
@@ -32,27 +31,36 @@ const customFormat = format.printf((ti) => {
       })
       .join(' ') ?? '';
 
-  if (isDevelopment) {
-    const searchContext = message;
-    if (searchContext.indexOf('wallet') !== -1) {
-      msg += `\x1b[36m${message} ${extras}\x1b[0m`;
-      // eslint-disable-next-line no-negated-condition
-    } else if (searchContext.indexOf('dapp') !== -1) {
-      msg += `\x1b[35m${message} ${extras}\x1b[0m`;
-    } else {
-      msg += `${message} ${extras}`;
-    }
+  const searchContext = message;
+  if (searchContext.indexOf('wallet') !== -1) {
+    msg += `\x1b[36m${message} ${extras}\x1b[0m`;
+    // eslint-disable-next-line no-negated-condition
+  } else if (searchContext.indexOf('dapp') !== -1) {
+    msg += `\x1b[35m${message} ${extras}\x1b[0m`;
   } else {
     msg += `${message} ${extras}`;
   }
   return msg;
 });
 
-export const logger = winston.createLogger({
-  level: 'debug',
-  format: winston.format.combine(winston.format.timestamp(), customFormat),
-  transports: [
-    new winston.transports.Console(),
-    // You can also add file transport or any other transport here
-  ],
-});
+// Create a function to initialize the logger
+export function createLogger(isDevelopment: boolean) {
+  return winston.createLogger({
+    level: isDevelopment ? 'debug' : 'info',
+    format: winston.format.combine(winston.format.timestamp(), customFormat),
+    transports: [
+      new winston.transports.Console(),
+      // You can also add file transport or any other transport here
+    ],
+  });
+}
+
+let _logger: winston.Logger;
+
+export function getLogger(): winston.Logger {
+  return _logger;
+}
+
+export function setLogger(newLogger: winston.Logger): void {
+  _logger = newLogger;
+}

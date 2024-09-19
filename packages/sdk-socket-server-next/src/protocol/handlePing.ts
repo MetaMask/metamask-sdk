@@ -1,9 +1,11 @@
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { isDevelopment } from '../config';
-import { logger } from '../logger';
+import { getLogger } from '../logger';
 import { ClientType } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
+
+const logger = getLogger();
 
 export type PingParams = {
   channelId: string;
@@ -23,7 +25,7 @@ export const handlePing = async ({
   const clientIp = socket.request.socket.remoteAddress;
 
   if (!validate(channelId)) {
-    logger.info(`ping ${channelId} invalid`, {
+    logger.info(`[handlePing] ping ${channelId} invalid`, {
       id: channelId,
       clientIp,
       socketId,
@@ -32,7 +34,12 @@ export const handlePing = async ({
   }
 
   logger.info(
-    `INFO> ping received channelId=${channelId} clientType=${clientType}`,
+    `[handlePing] ping received channelId=${channelId} clientType=${clientType}`,
+    {
+      channelId,
+      socketId,
+      clientIp,
+    },
   );
 
   if (clientType) {
@@ -40,12 +47,12 @@ export const handlePing = async ({
     const messages = await retrieveMessages({ channelId, clientType });
     if (messages.length > 0) {
       logger.debug(
-        `retrieveMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
+        `[handlePing] retrieveMessages ${channelId} clientType=${clientType} retrieved ${messages.length} messages`,
       );
 
       messages.forEach((msg) => {
         if (isDevelopment) {
-          logger.debug(`emit message-${channelId}`, msg);
+          logger.debug(`[handlePing] emit message-${channelId}`, msg);
         }
 
         socket.emit(`message-${channelId}`, {
@@ -60,7 +67,15 @@ export const handlePing = async ({
   try {
     socket.broadcast.to(channelId).emit(`ping-${channelId}`, { id: channelId });
   } catch (error) {
-    logger.error(`ERROR> channelId=${channelId} Error on ping:`, error);
+    logger.error(
+      `[handlePing] ERROR> channelId=${channelId} Error on ping:`,
+      error,
+      {
+        channelId,
+        socketId,
+        clientIp,
+      },
+    );
     // emit an error message back to the client, if appropriate
     socket.emit(`ping-${channelId}`, { error: (error as Error).message });
   }

@@ -17,7 +17,9 @@ import {
   redisCluster,
   redisTLS,
 } from './config';
-import { logger } from './logger';
+import { getLogger } from './logger';
+
+const logger = getLogger();
 
 // Initialize Redis Cluster client
 let redisNodes: {
