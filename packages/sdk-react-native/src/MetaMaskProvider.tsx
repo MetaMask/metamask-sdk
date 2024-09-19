@@ -219,7 +219,6 @@ const MetaMaskProviderClient = ({
     const accountChangedSubscription = eventEmitter.addListener(
       'onAccountChanged',
       (event) => {
-        console.log('Account changed:', event.account);
         setAccount(event.account);
       },
     );
@@ -227,7 +226,6 @@ const MetaMaskProviderClient = ({
     const chainIdChangedSubscription = eventEmitter.addListener(
       'onChainIdChanged',
       (event) => {
-        console.log('Chain ID changed:', event.chainId);
         setChainId(event.chainId);
       },
     );
