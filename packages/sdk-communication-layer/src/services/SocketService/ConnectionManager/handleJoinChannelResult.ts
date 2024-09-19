@@ -47,7 +47,7 @@ export const handleJoinChannelResults = async (
     logger.SocketService(
       `handleJoinChannelResults: Channel ${channelId} rejected`,
     );
-    instance.remote.disconnect({ terminate: true });
+    await instance.remote.disconnect({ terminate: true });
     instance.remote.emit(EventType.REJECTED, { channelId });
     instance.remote.emitServiceStatusEvent();
     return;
@@ -71,9 +71,13 @@ export const handleJoinChannelResults = async (
       otherKey: walletKey,
     };
 
-    instance.sendMessage({
-      type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
-    });
+    instance
+      .sendMessage({
+        type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+      })
+      .catch((err) => {
+        console.error(err);
+      });
 
     instance.state.socket?.emit(MessageType.PING, {
       id: channelId,

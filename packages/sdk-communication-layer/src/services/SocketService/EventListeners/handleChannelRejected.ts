@@ -28,7 +28,7 @@ export function handleChannelRejected(
     );
 
     // Terminate the channel
-    instance.remote.disconnect({ terminate: true });
+    await instance.remote.disconnect({ terminate: true });
     instance.remote.emit(EventType.REJECTED, { channelId });
     instance.remote.setConnectionStatus(ConnectionStatus.DISCONNECTED);
   };

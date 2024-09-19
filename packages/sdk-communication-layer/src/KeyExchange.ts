@@ -118,10 +118,17 @@ export class KeyExchange extends EventEmitter2 {
         this.setOtherPublicKey(message.pubkey);
       }
 
-      this.communicationLayer.sendMessage({
-        type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
-        pubkey: this.myPublicKey,
-      });
+      this.communicationLayer
+        .sendMessage({
+          type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
+          pubkey: this.myPublicKey,
+        })
+        .catch((error) => {
+          logger.KeyExchange(
+            `[KeyExchange: onKeyExchangeMessage()] Error sending KEY_HANDSHAKE_SYNACK`,
+            error,
+          );
+        });
 
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
     } else if (message.type === KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK) {
@@ -140,9 +147,16 @@ export class KeyExchange extends EventEmitter2 {
         this.setOtherPublicKey(message.pubkey);
       }
 
-      this.communicationLayer.sendMessage({
-        type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
-      });
+      this.communicationLayer
+        .sendMessage({
+          type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
+        })
+        .catch((error) => {
+          logger.KeyExchange(
+            `[KeyExchange: onKeyExchangeMessage()] Error sending KEY_HANDSHAKE_ACK`,
+            error,
+          );
+        });
       this.keysExchanged = true;
       // Reset step value for next exchange.
       this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_ACK);
@@ -212,19 +226,33 @@ export class KeyExchange extends EventEmitter2 {
       if (!this.keysExchanged || force === true) {
         if (v2Protocol) {
           // Ask to start exchange only if not already in progress
-          this.communicationLayer.sendMessage({
-            type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
-            pubkey: this.myPublicKey,
-            v: PROTOCOL_VERSION,
-          });
+          this.communicationLayer
+            .sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK,
+              pubkey: this.myPublicKey,
+              v: PROTOCOL_VERSION,
+            })
+            .catch((error) => {
+              logger.KeyExchange(
+                `[KeyExchange: start()] Error sending KEY_HANDSHAKE_SYNACK`,
+                error,
+              );
+            });
           // Ignore completion --- already consider keys exchanged completed in case mobile to mobile and the client was disconnected
           // We need to be able to send the walletInfo onto the relayer.
           // TODO: this.keysExchanged = true;
         } else {
           // Ask to start exchange only if not already in progress
-          this.communicationLayer.sendMessage({
-            type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
-          });
+          this.communicationLayer
+            .sendMessage({
+              type: KeyExchangeMessageType.KEY_HANDSHAKE_START,
+            })
+            .catch((error) => {
+              logger.KeyExchange(
+                `[KeyExchange: start()] Error sending KEY_HANDSHAKE_START`,
+                error,
+              );
+            });
           this.clean();
         }
       } else {
@@ -263,11 +291,18 @@ export class KeyExchange extends EventEmitter2 {
     // except a SYN_ACK for next step
     this.setStep(KeyExchangeMessageType.KEY_HANDSHAKE_SYNACK);
     // From v0.2.0, we Always send the public key because exchange can be restarted at any time.
-    this.communicationLayer.sendMessage({
-      type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
-      pubkey: this.myPublicKey,
-      v: PROTOCOL_VERSION,
-    });
+    this.communicationLayer
+      .sendMessage({
+        type: KeyExchangeMessageType.KEY_HANDSHAKE_SYN,
+        pubkey: this.myPublicKey,
+        v: PROTOCOL_VERSION,
+      })
+      .catch((error) => {
+        logger.KeyExchange(
+          `[KeyExchange: start()] Error sending KEY_HANDSHAKE_SYN`,
+          error,
+        );
+      });
   }
 
   setStep(step: KeyExchangeMessageType): void {

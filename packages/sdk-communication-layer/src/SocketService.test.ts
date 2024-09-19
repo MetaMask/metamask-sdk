@@ -87,18 +87,18 @@ describe('SocketService', () => {
     expect(keyInfo).toStrictEqual(mockKeyInfo);
   });
 
-  it('should send a message', () => {
+  it('should send a message', async () => {
     const mockMessage = {
       type: MessageType.PING,
       data: {},
     } as CommunicationLayerMessage;
 
-    socketService.sendMessage(mockMessage);
+    await socketService.sendMessage(mockMessage);
 
     expect(handleSendMessage).toHaveBeenCalledWith(socketService, mockMessage);
   });
 
-  it('should send a ping to verify connection', () => {
+  it('should send a ping to verify connection', async () => {
     socketService.ping();
     expect(ping).toHaveBeenCalledWith(socketService);
   });
@@ -108,7 +108,7 @@ describe('SocketService', () => {
     expect(isConnected).toBe(true);
   });
 
-  it('should pause the connection', () => {
+  it('should pause the connection', async () => {
     socketService.pause();
     expect(pause).toHaveBeenCalledWith(socketService);
   });

@@ -137,6 +137,9 @@ export const handleMessage = async ({
       .to(channelId)
       .emit(`message-${channelId}`, { id: channelId, ackId, message });
 
+    // Always emit success response to socket
+    callback?.(null, { id: channelId, success: true });
+
     if (keyExchangeAck && channelConfig?.persistence) {
       logger.debug(
         `[handleMessage] channelConfig updated on channelId=${channelId}`,

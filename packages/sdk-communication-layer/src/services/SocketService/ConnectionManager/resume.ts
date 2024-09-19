@@ -47,7 +47,9 @@ export function resume(instance: SocketService): void {
     if (!remote.hasRelayPersistence() && !keyExchange?.areKeysExchanged()) {
       // Always try to recover key exchange from both side (wallet / dapp)
       if (isOriginator) {
-        instance.sendMessage({ type: MessageType.READY });
+        instance.sendMessage({ type: MessageType.READY }).catch((err) => {
+          console.error(err);
+        });
       } else {
         keyExchange?.start({ isOriginator: false });
       }
