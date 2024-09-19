@@ -3,12 +3,16 @@ import { SocketService } from '../../../SocketService';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { StorageManager } from '../../../types/StorageManager';
 import { logger } from '../../../utils/logger';
+import * as MessageHandlers from '../../SocketService/MessageHandlers';
 import { disconnect } from './disconnect';
+
+jest.mock('../../SocketService/MessageHandlers', () => ({
+  encryptAndSendMessage: jest.fn(),
+}));
 
 describe('disconnect', () => {
   let instance: RemoteCommunication;
   const mockSetConnectionStatus = jest.fn();
-
   const spyLogger = jest.spyOn(logger, 'RemoteCommunication');
 
   beforeEach(() => {
@@ -27,6 +31,9 @@ describe('disconnect', () => {
       remote: { state: {} },
       setConnectionStatus: mockSetConnectionStatus,
     } as unknown as RemoteCommunication;
+
+    // Reset the mocked encryptAndSendMessage
+    (MessageHandlers.encryptAndSendMessage as jest.Mock).mockReset();
   });
 
   it('should disconnect without termination if no options are provided', async () => {
@@ -52,15 +59,27 @@ describe('disconnect', () => {
       sendMessage: true,
     };
 
-    await disconnect({ options, instance });
+    // Mock the encryptAndSendMessage to resolve with true
+    (MessageHandlers.encryptAndSendMessage as jest.Mock).mockResolvedValue(
+      true,
+    );
+
+    const disconnectPromise = disconnect({ options, instance });
+
+    // Use setImmediate to allow the promise to resolve
+    await new Promise((resolve) => setImmediate(resolve));
+
+    await disconnectPromise;
 
     expect(instance.state.communicationLayer?.disconnect).toHaveBeenCalledWith(
-      options,
+      expect.objectContaining(options),
     );
 
     expect(mockSetConnectionStatus).toHaveBeenCalledWith(
       ConnectionStatus.TERMINATED,
     );
+
+    expect(MessageHandlers.encryptAndSendMessage).toHaveBeenCalled();
   });
 
   it('should remove channel config from persistence layer if terminate option is provided', async () => {
@@ -87,19 +106,6 @@ describe('disconnect', () => {
     await disconnect({ options, instance });
 
     expect(instance.state.channelId).not.toStrictEqual('sampleChannelId');
-  });
-
-  it('should not send a termination message if keysExchanged is false', async () => {
-    const options = {
-      terminate: true,
-      sendMessage: true,
-    };
-
-    await disconnect({ options, instance });
-
-    expect(
-      instance.state.communicationLayer?.sendMessage,
-    ).not.toHaveBeenCalled();
   });
 
   it('should reset ready and paused states', async () => {

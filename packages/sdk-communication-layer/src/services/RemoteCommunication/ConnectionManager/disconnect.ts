@@ -48,12 +48,14 @@ export async function disconnect({
               console.warn(
                 `[disconnect] Terminate message sent to the other peer`,
               );
-              return resolve(true);
+              resolve(true);
             })
             .catch((error) => {
               reject(error);
             });
         }
+      } else {
+        resolve(true);
       }
 
       state.authorized = false;
@@ -67,7 +69,7 @@ export async function disconnect({
     } else {
       state.communicationLayer?.disconnect(options);
       instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
+      resolve(true);
     }
-    resolve(true);
   });
 }
