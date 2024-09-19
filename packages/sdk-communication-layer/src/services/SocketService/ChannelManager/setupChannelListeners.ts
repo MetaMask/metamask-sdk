@@ -107,6 +107,7 @@ export function setupChannelListeners(
         // return handleReconnectFailed(instance)();
       });
 
+      // Keep commented for now, only useful during development
       // socket?.io.on('ping', () => {
       //   logger.SocketService(
       //     `[SocketService: setupChannelListener()] 'ping' context=${instance.state.context} socket`,
