@@ -27,30 +27,30 @@ describe('resume', () => {
     } as unknown as RemoteCommunication;
   });
 
-  it('should log channel info', () => {
-    resume(instance);
+  it('should log channel info', async () => {
+    await resume(instance);
     expect(spyLogger).toHaveBeenCalledWith(
       '[RemoteCommunication: resume()] channel=testChannel',
     );
   });
 
-  it('should call resume on the communication layer', () => {
-    resume(instance);
+  it('should call resume on the communication layer', async () => {
+    await resume(instance);
     expect(mockResume).toHaveBeenCalledTimes(1);
   });
 
-  it('should set connection status to LINKED', () => {
-    resume(instance);
+  it('should set connection status to LINKED', async () => {
+    await resume(instance);
     expect(mockSetConnectionStatus).toHaveBeenCalledWith(
       ConnectionStatus.LINKED,
     );
   });
 
-  it('should handle when communicationLayer is not defined', () => {
+  it('should handle when communicationLayer is not defined', async () => {
     delete instance.state.communicationLayer;
 
-    expect(() => {
-      resume(instance);
+    expect(async () => {
+      await resume(instance);
     }).not.toThrow();
 
     expect(spyLogger).toHaveBeenCalledWith(
@@ -58,28 +58,28 @@ describe('resume', () => {
     );
   });
 
-  it('should set connection status to LINKED even when communicationLayer is not defined', () => {
+  it('should set connection status to LINKED even when communicationLayer is not defined', async () => {
     delete instance.state.communicationLayer;
 
-    resume(instance);
+    await resume(instance);
     expect(mockSetConnectionStatus).toHaveBeenCalledWith(
       ConnectionStatus.LINKED,
     );
   });
 
-  it('should handle when channelId is not defined', () => {
+  it('should handle when channelId is not defined', async () => {
     instance.state.channelId = undefined;
 
-    resume(instance);
+    await resume(instance);
     expect(spyLogger).toHaveBeenCalledWith(
       '[RemoteCommunication: resume()] channel=undefined',
     );
   });
 
-  it('should log debug info when channelId is undefined', () => {
+  it('should log debug info when channelId is undefined', async () => {
     instance.state.channelId = undefined;
 
-    resume(instance);
+    await resume(instance);
     expect(spyLogger).toHaveBeenCalledWith(
       '[RemoteCommunication: resume()] channel=undefined',
     );

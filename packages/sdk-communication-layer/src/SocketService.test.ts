@@ -99,7 +99,7 @@ describe('SocketService', () => {
   });
 
   it('should send a ping to verify connection', async () => {
-    socketService.ping();
+    await socketService.ping();
     expect(ping).toHaveBeenCalledWith(socketService);
   });
 
@@ -109,12 +109,12 @@ describe('SocketService', () => {
   });
 
   it('should pause the connection', async () => {
-    socketService.pause();
+    await socketService.pause();
     expect(pause).toHaveBeenCalledWith(socketService);
   });
 
-  it('should resume a paused connection', () => {
-    socketService.resume();
+  it('should resume a paused connection', async () => {
+    await socketService.resume();
     expect(resume).toHaveBeenCalledWith(socketService);
   });
 

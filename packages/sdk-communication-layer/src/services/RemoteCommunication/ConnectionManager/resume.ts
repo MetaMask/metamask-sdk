@@ -9,13 +9,13 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
  *
  * @param instance The current instance of the RemoteCommunication class.
  */
-export function resume(instance: RemoteCommunication) {
+export async function resume(instance: RemoteCommunication) {
   const { state } = instance;
 
   logger.RemoteCommunication(
     `[RemoteCommunication: resume()] channel=${state.channelId}`,
   );
 
-  state.communicationLayer?.resume();
+  await state.communicationLayer?.resume();
   instance.setConnectionStatus(ConnectionStatus.LINKED);
 }

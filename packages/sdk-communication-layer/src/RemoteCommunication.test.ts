@@ -2,7 +2,6 @@ import packageJson from '../package.json';
 import { RemoteCommunication } from './RemoteCommunication';
 import { SocketService } from './SocketService';
 import { clean } from './services/RemoteCommunication/ChannelManager';
-import { resume } from './services/RemoteCommunication/ConnectionManager';
 import { sendMessage } from './services/RemoteCommunication/MessageHandlers';
 import { testStorage } from './services/RemoteCommunication/StorageManager';
 import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
@@ -125,13 +124,13 @@ describe('RemoteCommunication', () => {
   });
 
   describe('ping', () => {
-    it('should call communicationLayer ping method if defined and debug state is true', () => {
+    it('should call communicationLayer ping method if defined and debug state is true', async () => {
       const pingMock = jest.fn();
       remoteCommunicationInstance.state.communicationLayer = {
         ping: pingMock,
       } as unknown as SocketService;
       remoteCommunicationInstance.state.debug = true;
-      remoteCommunicationInstance.ping();
+      await remoteCommunicationInstance.ping();
       expect(pingMock).toHaveBeenCalled();
     });
   });
@@ -263,7 +262,7 @@ describe('RemoteCommunication', () => {
   });
 
   describe('pause', () => {
-    it('should call pause on the communicationLayer and set connection status to PAUSED', () => {
+    it('should call pause on the communicationLayer and set connection status to PAUSED', async () => {
       const pauseMock = jest.fn();
       const getKeyInfoMock = jest.fn().mockReturnValue({ key: 'key' });
       const loggerSpy = jest.spyOn(logger, 'RemoteCommunication');
@@ -271,7 +270,7 @@ describe('RemoteCommunication', () => {
         getKeyInfo: getKeyInfoMock,
         pause: pauseMock,
       } as unknown as SocketService;
-      remoteCommunicationInstance.pause();
+      await remoteCommunicationInstance.pause();
       expect(pauseMock).toHaveBeenCalled();
       expect(remoteCommunicationInstance.state._connectionStatus).toBe(
         ConnectionStatus.PAUSED,
@@ -288,13 +287,6 @@ describe('RemoteCommunication', () => {
       expect(remoteCommunicationInstance.hasRelayPersistence()).toBe(false);
       remoteCommunicationInstance.state.relayPersistence = true;
       expect(remoteCommunicationInstance.hasRelayPersistence()).toBe(true);
-    });
-  });
-
-  describe('resume', () => {
-    it('should call resume with the current instance', async () => {
-      await remoteCommunicationInstance.resume();
-      expect(resume).toHaveBeenCalledWith(remoteCommunicationInstance);
     });
   });
 

@@ -20,16 +20,14 @@ import { disconnect } from '../ConnectionManager';
  *
  * @param instance The `RemoteCommunication` instance that needs to be acted upon when a terminate message is received.
  */
-export function handleTerminateMessage(instance: RemoteCommunication) {
+export async function handleTerminateMessage(instance: RemoteCommunication) {
   const { state } = instance;
 
   // remove channel config from persistence layer and close active connections.
   if (state.isOriginator) {
-    disconnect({
+    await disconnect({
       options: { terminate: true, sendMessage: false },
       instance,
-    }).catch((error) => {
-      console.error('[handleTerminateMessage] disconnect error', error);
     });
     instance.emit(EventType.TERMINATE);
   }

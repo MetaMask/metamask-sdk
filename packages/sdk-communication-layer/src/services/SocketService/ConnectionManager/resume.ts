@@ -17,7 +17,7 @@ import {
  *
  * @param instance The current instance of the SocketService.
  */
-export function resume(instance: SocketService): void {
+export async function resume(instance: SocketService): Promise<void> {
   const { state, remote } = instance;
   const { socket, channelId, context, keyExchange, isOriginator } = state;
   const { isOriginator: remoteIsOriginator } = remote.state;
@@ -47,9 +47,7 @@ export function resume(instance: SocketService): void {
     if (!remote.hasRelayPersistence() && !keyExchange?.areKeysExchanged()) {
       // Always try to recover key exchange from both side (wallet / dapp)
       if (isOriginator) {
-        instance.sendMessage({ type: MessageType.READY }).catch((err) => {
-          console.error(err);
-        });
+        await instance.sendMessage({ type: MessageType.READY });
       } else {
         keyExchange?.start({ isOriginator: false });
       }
