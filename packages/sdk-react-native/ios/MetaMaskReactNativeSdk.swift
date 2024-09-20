@@ -9,84 +9,74 @@ import metamask_ios_sdk
 
 @objc(MetaMaskReactNativeSdk)
 class MetaMaskReactNativeSdk: RCTEventEmitter {
-  
+
   private var metaMaskSDK: MetaMaskSDK?
-    private var hasListeners = false
+  private var hasListeners = false
     
-    override init() {
-        super.init()
+  override init() {
+      super.init()
 
-        // Observe the account change notification
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleAccountChanged(_:)),
-            name: .MetaMaskAccountChanged,
-            object: nil
-        )
-        
-        // Observe the chainId change notification
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleChainIdChanged(_:)),
-            name: .MetaMaskChainIdChanged,
-            object: nil
-        )
-    }
-
-    override static func moduleName() -> String! {
-      return "MetaMaskReactNativeSdk"
+      // Observe the account change notification
+      NotificationCenter.default.addObserver(
+          self,
+          selector: #selector(handleAccountChanged(_:)),
+          name: .MetaMaskAccountChanged,
+          object: nil
+      )
+      
+      // Observe the chainId change notification
+      NotificationCenter.default.addObserver(
+          self,
+          selector: #selector(handleChainIdChanged(_:)),
+          name: .MetaMaskChainIdChanged,
+          object: nil
+      )
   }
 
-    override static func requiresMainQueueSetup() -> Bool {
-      return true
+  deinit {
+      // Remove the observers when the instance is deallocated
+      NotificationCenter.default.removeObserver(self, name: .MetaMaskAccountChanged, object: nil)
+      NotificationCenter.default.removeObserver(self, name: .MetaMaskChainIdChanged, object: nil)
+  }  
+
+  override static func moduleName() -> String! {
+    return "MetaMaskReactNativeSdk"
+  }
+
+  override static func requiresMainQueueSetup() -> Bool {
+    return true
   }
     
-    override func startObserving() {
-        Logging.log("MetaMaskReactNativeSdk:: started observing")
-        hasListeners = true
-    }
-    
-    override func stopObserving() {
-        Logging.log("MetaMaskReactNativeSdk:: stopped observing")
-        hasListeners = false
-    }
-    
-    // Handle the account change
-    @objc private func handleAccountChanged(_ notification: Notification) {
-        if let account = notification.userInfo?["account"] as? String {
-            Logging.log("MetaMaskReactNativeSdk:: Account changed: \(account)")
-            sendEvent("onAccountChanged", payload: ["account": account])
-        }
-    }
-    
-    private func sendEvent(_ event: String, payload: [String: Any]) {
-        // Emit the event to the JavaScript side
-        if hasListeners {
-            Logging.log("MetaMaskReactNativeSdk:: Sending event \(event): \(payload)")
-            sendEvent(withName: event, body: payload)
-        } else {
-            Logging.log("MetaMaskReactNativeSdk:: Could not send event \(event), not subscribed")
-        }
-    }
-    
-    // Handle the chainId change
-    @objc private func handleChainIdChanged(_ notification: Notification) {
-        if let chainId = notification.userInfo?["chainId"] as? String {
-            Logging.log("MetaMaskReactNativeSdk:: Account changed: \(chainId)")
-            sendEvent("onChainIdChanged", payload: ["chainId": chainId])
-        }
-    }
+  override func startObserving() {
+      hasListeners = true
+  }
+  
+  override func stopObserving() {
+      hasListeners = false
+  }
 
-    deinit {
-        // Remove the observers when the instance is deallocated
-        NotificationCenter.default.removeObserver(self, name: .MetaMaskAccountChanged, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .MetaMaskChainIdChanged, object: nil)
-    }
+  // Required method to tell React Native which events are supported
+  override func supportedEvents() -> [String]! {
+      return ["onAccountChanged", "onChainIdChanged"]
+  }
+    
+  // Handle the account change
+  @objc private func handleAccountChanged(_ notification: Notification) {
+      guard let account = notification.userInfo?["account"] as? String else { return }
+      sendEvent("onAccountChanged", payload: ["account": account])
+  }
 
-    // Required method to tell React Native which events are supported
-    override func supportedEvents() -> [String]! {
-        return ["onAccountChanged", "onChainIdChanged"]
-    }
+  // Handle the chainId change
+  @objc private func handleChainIdChanged(_ notification: Notification) {
+      guard let chainId = notification.userInfo?["chainId"] as? String else { return }
+      sendEvent("onChainIdChanged", payload: ["chainId": chainId])
+  }
+  
+  private func sendEvent(_ event: String, payload: [String: Any]) {
+      // Emit the event to the JavaScript side
+      guard hasListeners else { return }
+      sendEvent(withName: event, body: payload)
+  }
 
   @objc func initialize(_ options: [String: Any]) {
     Logging.log("MetaMaskReactNativeSdk:: initializing with: \(options)")
@@ -109,12 +99,6 @@ class MetaMaskReactNativeSdk: RCTEventEmitter {
     if let infuraAPIKey = options.infuraAPIKey {
       sdkOptions = SDKOptions(infuraAPIKey: infuraAPIKey)
     }
-
-    // Logging the API version and adding it to the SDK options if necessary
-    // if let apiVersion = options.apiVersion {
-    //   Logging.log("MetaMaskReactNativeSdk:: API version: \(apiVersion)")
-    //   sdkOptions?.apiVersion = apiVersion // Assuming SDKOptions has an apiVersion field
-    // }
 
     metaMaskSDK = MetaMaskSDK.shared(
       AppMetadata(
