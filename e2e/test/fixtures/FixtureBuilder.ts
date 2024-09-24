@@ -2,7 +2,7 @@
 import { merge } from 'lodash';
 
 function getGanachePort() {
-  return process.env.GANACHE_PORT || '8545';
+  return process.env.GANACHE_PORT || '8585';
 }
 
 /**
