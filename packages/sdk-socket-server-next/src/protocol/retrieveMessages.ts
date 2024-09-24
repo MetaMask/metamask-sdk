@@ -1,4 +1,4 @@
-import { pubClient } from '../api-config';
+import { pubClient } from '../analytics-api';
 import { getLogger } from '../logger';
 import { ClientType } from '../socket-config';
 import { QueuedMessage } from './handleMessage';

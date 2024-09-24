@@ -1,7 +1,7 @@
 // protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from '../api-config';
+import { pubClient } from '../analytics-api';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import { rateLimiter } from '../rate-limiter';

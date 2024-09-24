@@ -75,6 +75,7 @@ export function handleKeysExchangedEvent(
           event: message.isOriginator
             ? TrackingEvents.CONNECTED
             : TrackingEvents.CONNECTED_MOBILE,
+          ...state.originatorInfo,
           sdkVersion: state.sdkVersion,
           commLayer: communicationLayerPreference,
           commLayerVersion: packageJson.version,

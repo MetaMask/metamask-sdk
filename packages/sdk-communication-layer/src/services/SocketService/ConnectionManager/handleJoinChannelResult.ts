@@ -6,6 +6,10 @@ import { ChannelConfig } from '../../../types/ChannelConfig';
 import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { logger } from '../../../utils/logger';
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+
+import packageJson from '../../../../package.json';
 
 export interface JoinChannelResult {
   ready: boolean;
@@ -29,6 +33,23 @@ export const handleJoinChannelResults = async (
     instance.emit(EventType.TERMINATE);
     return;
   }
+
+  SendAnalytics(
+    {
+      id: channelId ?? '',
+      event: isOriginator
+        ? TrackingEvents.CONNECTED
+        : TrackingEvents.CONNECTED_MOBILE,
+      ...instance.remote.state.originatorInfo,
+      sdkVersion: instance.remote.state.sdkVersion,
+      commLayer: instance.state.communicationLayerPreference,
+      commLayerVersion: packageJson.version,
+      walletVersion: instance.remote.state.walletInfo?.version,
+    },
+    state.communicationServerUrl,
+  ).catch((err) => {
+    console.error(`Cannot send analytics`, err);
+  });
 
   if (!result) {
     logger.SocketService(

@@ -1,7 +1,7 @@
 import { validate } from 'uuid';
 import { Server, Socket } from 'socket.io';
 import { getLogger } from '../logger';
-import { pubClient } from '../api-config';
+import { pubClient } from '../analytics-api';
 
 const logger = getLogger();
 
