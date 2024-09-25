@@ -6,7 +6,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from './api-config';
+import { pubClient } from './analytics-api';
 import { getLogger } from './logger';
 import { ACKParams, handleAck } from './protocol/handleAck';
 import {

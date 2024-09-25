@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { pubClient } from '../api-config';
+import { pubClient } from '../analytics-api';
 import { config } from '../config';
 import { getLogger } from '../logger';
 import { ChannelConfig } from './handleJoinChannel';

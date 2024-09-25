@@ -9,7 +9,7 @@ dotenv.config();
 import { instrument } from '@socket.io/admin-ui';
 import packageJson from '../package.json';
 import { isDevelopment, withAdminUI } from './config';
-import { analytics, app } from './api-config';
+import { analytics, app } from './analytics-api';
 import { getLogger } from './logger';
 import { extractMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
@@ -59,9 +59,9 @@ configureSocketServer(server)
 
     const port: number = Number(process.env.PORT) || 4000;
     server.listen(port, () => {
-      logger.info(`INFO> listening on *:${port}`);
+      logger.info(`listening on *:${port}`);
     });
   })
   .catch((err) => {
-    logger.error(`ERROR> socket.io error: ${err}`);
+    logger.error(`socket.io error: ${err}`);
   });

@@ -18,6 +18,7 @@ import {
   redisTLS,
 } from './config';
 import { getLogger } from './logger';
+import { ChannelInfo, extractChannelInfo } from './utils';
 
 const logger = getLogger();
 
@@ -227,20 +228,19 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
-    logger.debug(`Received event /debug`, body);
-
-    const id: string = body.id || 'socket.io-server';
-
-    if (typeof id !== 'string') {
+    const channelId: string = body.id || 'socket.io-server';
+    if (typeof channelId !== 'string') {
+      logger.error(`Received event with invalid channelId: ${channelId}`, body);
       return res.status(400).json({ status: 'error' });
     }
 
-    let userIdHash = await pubClient.get(id);
+    logger.debug(`Received event /evt channelId=${channelId}`, body);
+    let userIdHash = await pubClient.get(channelId);
 
     if (!userIdHash) {
-      userIdHash = crypto.createHash('sha1').update(id).digest('hex');
+      userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
       await pubClient.set(
-        id,
+        channelId,
         userIdHash,
         'EX',
         config.channelExpiry.toString(),
@@ -248,48 +248,50 @@ app.post('/evt', async (_req, res) => {
     }
 
     if (REDIS_DEBUG_LOGS) {
-      inspectRedis(id);
+      await inspectRedis(channelId);
     }
 
-    let userInfo;
-    const cachedUserInfo = await pubClient.get(userIdHash);
+    let channelInfo: ChannelInfo | null;
+    const cachedChannelInfo = await pubClient.get(userIdHash);
 
-    if (cachedUserInfo) {
-      logger.debug(`Cached user info found for ${userIdHash}`, cachedUserInfo);
-      userInfo = JSON.parse(cachedUserInfo);
+    if (cachedChannelInfo) {
+      logger.debug(
+        `Found cached channel info for ${userIdHash}`,
+        cachedChannelInfo,
+      );
+      channelInfo = JSON.parse(cachedChannelInfo);
     } else {
-      // Initial userInfo setup
-      userInfo = {
-        url: '',
-        title: '',
-        platform: '',
-        source: '',
-        sdkVersion: '',
-        dappId: 'N/A',
-      };
-    }
+      logger.info(
+        `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash}`,
+      );
 
-    // If 'sdk_connect_request_started', update userInfo in Redis
-    if (body.event === 'sdk_connect_request_started') {
-      userInfo = {
-        url: body.url || '',
-        title: body.title || '',
-        platform: body.platform || '',
-        source: body.source || '',
-        sdkVersion: body.sdkVersion || '',
-        dappId: body.dappId || 'N/A',
-      };
+      // Extract channelInfo from any events if available
+      channelInfo = extractChannelInfo(body);
+
+      if (!channelInfo) {
+        logger.error(
+          `event: ${body.event} channelId: ${channelId}  - Invalid channelInfo format`,
+          JSON.stringify(body, null, 2),
+        );
+        return res.status(400).json({ error: 'invalid channelInfo format' });
+      }
+
+      // Save the channelInfo in Redis
+      logger.info(
+        `Adding channelInfo for event=${body.event} channelId=${channelId} userIdHash=${userIdHash} expiry=${config.channelExpiry}`,
+        channelInfo,
+      );
 
       await pubClient.set(
         userIdHash,
-        JSON.stringify(userInfo),
+        JSON.stringify(channelInfo),
         'EX',
         config.channelExpiry.toString(),
       );
     }
 
     if (REDIS_DEBUG_LOGS) {
-      inspectRedis(userIdHash);
+      await inspectRedis(userIdHash);
     }
 
     const event = {
@@ -298,16 +300,16 @@ app.post('/evt', async (_req, res) => {
       properties: {
         userId: userIdHash,
         ...body.properties,
-        // Apply stored user info if available
-        url: userInfo.url || body.originationInfo?.url,
-        title: userInfo.title || body.originationInfo?.title,
-        platform: userInfo.platform || body.originationInfo?.platform,
-        dappId: userInfo.dappId || body.originationInfo?.dappId || 'N/A',
-        sdkVersion:
-          userInfo.sdkVersion || body.originationInfo?.sdkVersion || '',
-        source: userInfo.source || body.originationInfo?.source || 'direct',
+        // Apply channelInfo properties
+        ...channelInfo,
       },
     };
+
+    // Make sure each events have a valid dappId
+    if (!event.properties.dappId) {
+      logger.error(`event: ${event.event} - dappId is required`, event);
+      return res.status(400).json({ error: 'invalid channelInfo format' });
+    }
 
     // Define properties to be excluded
     const propertiesToExclude: string[] = ['icon', 'originationInfo', 'id'];

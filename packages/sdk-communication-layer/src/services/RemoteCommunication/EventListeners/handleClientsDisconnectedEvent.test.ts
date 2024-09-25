@@ -1,6 +1,5 @@
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
 import { TrackingEvents } from '../../../types/TrackingEvent';
@@ -47,10 +46,7 @@ describe('handleClientsDisconnectedEvent', () => {
   });
 
   it('should log event details', () => {
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(spyLogger).toHaveBeenCalledWith(
       `[RemoteCommunication: handleClientsDisconnectedEvent()] context=testContext on 'clients_disconnected' channelId=testChannel`,
@@ -58,10 +54,7 @@ describe('handleClientsDisconnectedEvent', () => {
   });
 
   it('should update state correctly when relay persistence is not available', () => {
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(instance.state.clientsConnected).toBe(false);
     expect(instance.state.ready).toBe(false);
@@ -70,10 +63,7 @@ describe('handleClientsDisconnectedEvent', () => {
 
   it('should not update state when relay persistence is available', () => {
     instance.state.relayPersistence = true;
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(instance.state.clientsConnected).toBe(true);
     expect(instance.state.ready).toBe(true);
@@ -81,10 +71,7 @@ describe('handleClientsDisconnectedEvent', () => {
   });
 
   it('should emit CLIENTS_DISCONNECTED event', () => {
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(mockEmit).toHaveBeenCalledWith(
       EventType.CLIENTS_DISCONNECTED,
@@ -93,10 +80,7 @@ describe('handleClientsDisconnectedEvent', () => {
   });
 
   it('should set connection status to DISCONNECTED', () => {
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(mockSetConnectionStatus).toHaveBeenCalledWith(
       ConnectionStatus.DISCONNECTED,
@@ -104,19 +88,12 @@ describe('handleClientsDisconnectedEvent', () => {
   });
 
   it('should send analytics data when analytics tracking is enabled and channelId is available', () => {
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(SendAnalytics).toHaveBeenCalledWith(
       {
         id: 'testChannel',
         event: TrackingEvents.DISCONNECTED,
-        sdkVersion: 'mockSdkVersion',
-        commLayer: CommunicationLayerPreference.SOCKET,
-        commLayerVersion: 'mockVersion',
-        walletVersion: 'mockWalletVersion',
       },
       'mockUrl',
     );
@@ -126,10 +103,7 @@ describe('handleClientsDisconnectedEvent', () => {
     (SendAnalytics as jest.Mock).mockRejectedValueOnce(
       new Error('Network error'),
     );
-    const handler = handleClientsDisconnectedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
     expect(SendAnalytics).toHaveBeenCalled();
     await new Promise(process.nextTick); // Wait for the promise to be processed

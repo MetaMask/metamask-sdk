@@ -138,7 +138,7 @@ export async function startConnection(
       icon: iconUrl,
       scheme: scheme ?? '',
       apiVersion: sdkVersion,
-      dappId,
+      dappId: dappId || url || 'N/A',
       platform: platformType ?? '',
       source: options._source ?? '',
     };
