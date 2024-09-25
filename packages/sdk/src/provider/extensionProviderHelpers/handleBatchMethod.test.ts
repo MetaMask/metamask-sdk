@@ -17,7 +17,6 @@ jest.mock('@metamask/providers', () => {
 describe('handleBatchMethod', () => {
   let sdkInstance: MetaMaskSDK;
   let mockProvider: MetaMaskInpageProvider;
-  let mockTarget: MetaMaskInpageProvider;
   const spyAnalytics = jest.fn();
 
   beforeEach(() => {
@@ -50,10 +49,6 @@ describe('handleBatchMethod', () => {
     mockProvider = {
       request: jest.fn(),
     } as unknown as MetaMaskInpageProvider;
-
-    mockTarget = {
-      request: jest.fn(),
-    } as unknown as MetaMaskInpageProvider;
   });
 
   afterEach(() => {
@@ -70,7 +65,6 @@ describe('handleBatchMethod', () => {
 
     await handleBatchMethod({
       params,
-      target: mockTarget,
       args,
       trackEvent: false,
       provider: mockProvider,
@@ -91,19 +85,21 @@ describe('handleBatchMethod', () => {
   it('should returns the response from the target request method', async () => {
     const params: any[] = [];
     const args = { method: 'someMethod', params: ['param1'] };
-    const mockResponse = 'mockResponse';
-    (mockTarget.request as jest.Mock).mockResolvedValue(mockResponse);
+    const mockResponse = [] as any;
 
     const response = await handleBatchMethod({
       params,
-      target: mockTarget,
       args,
       trackEvent: false,
       provider: mockProvider,
       sdkInstance,
     });
 
-    expect(response).toBe(mockResponse);
+    console.log(
+      '🟠 ~ file: handleBatchMethod.test.ts:102 ~ it ~ response:',
+      response,
+    );
+    expect(response).toStrictEqual(mockResponse);
   });
 
   it('should sends tracking event if trackEvent is true', async () => {
@@ -112,7 +108,6 @@ describe('handleBatchMethod', () => {
 
     await handleBatchMethod({
       params,
-      target: mockTarget,
       args,
       trackEvent: true,
       provider: mockProvider,
@@ -135,7 +130,6 @@ describe('handleBatchMethod', () => {
 
     await handleBatchMethod({
       params,
-      target: mockTarget,
       args,
       trackEvent: false,
       provider: mockProvider,
