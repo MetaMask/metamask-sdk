@@ -78,10 +78,6 @@ export async function handleSendMessage(
         {
           id: instance.remote.state.channelId ?? '',
           event: TrackingEvents.SDK_RPC_REQUEST,
-          // sdkVersion: instance.remote.state.sdkVersion,
-          // commLayerVersion: packageJson.version,
-          // ...instance.remote.state.originatorInfo, // Do not double send originator info, it should be extracted from cache on server.
-          // walletVersion: instance.remote.state.walletInfo?.version,
           params: {
             method: message.method,
             from: 'mobile',

@@ -42,11 +42,6 @@ export function handleClientsDisconnectedEvent(instance: RemoteCommunication) {
         {
           id: state.channelId,
           event: TrackingEvents.DISCONNECTED,
-          // sdkVersion: state.sdkVersion,
-          // ...state.originatorInfo, // Do not double send originator info, it should be extracted from cache on server.
-          // commLayer: communicationLayerPreference,
-          // commLayerVersion: packageJson.version,
-          // walletVersion: state.walletInfo?.version,
         },
         state.communicationServerUrl,
       ).catch((err) => {
