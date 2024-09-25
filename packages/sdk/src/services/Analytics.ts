@@ -48,7 +48,7 @@ export class Analytics {
       id: ANALYTICS_CONSTANTS.DEFAULT_ID,
       event,
       sdkVersion: packageJson.version,
-      originationInfo: this.#originatorInfo,
+      ...this.#originatorInfo,
       params,
     };
     logger(`[Analytics: send()] event: ${event}`, props);
