@@ -17,7 +17,7 @@ export class Analytics {
 
   #enabled: boolean;
 
-  #originatorInfo: Readonly<AnalyticsProps['originationInfo']>;
+  #originatorInfo: Readonly<AnalyticsProps['originatorInfo']>;
 
   constructor({
     serverUrl,
@@ -25,7 +25,7 @@ export class Analytics {
     originatorInfo,
   }: {
     serverUrl: string;
-    originatorInfo: AnalyticsProps['originationInfo'];
+    originatorInfo: AnalyticsProps['originatorInfo'];
     enabled?: boolean;
   }) {
     this.#serverURL = serverUrl;
