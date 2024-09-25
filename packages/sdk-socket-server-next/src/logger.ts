@@ -47,7 +47,9 @@ const customFormat = format.printf((ti) => {
 export function createLogger(isDevelopment: boolean) {
   return winston.createLogger({
     level: isDevelopment ? 'debug' : 'info',
-    format: winston.format.combine(winston.format.timestamp(), customFormat),
+    format: isDevelopment
+      ? winston.format.combine(winston.format.timestamp(), customFormat)
+      : winston.format.json(),
     transports: [
       new winston.transports.Console(),
       // You can also add file transport or any other transport here
