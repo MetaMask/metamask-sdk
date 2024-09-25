@@ -94,11 +94,6 @@ describe('handleBatchMethod', () => {
       provider: mockProvider,
       sdkInstance,
     });
-
-    console.log(
-      '🟠 ~ file: handleBatchMethod.test.ts:102 ~ it ~ response:',
-      response,
-    );
     expect(response).toStrictEqual(mockResponse);
   });
 
