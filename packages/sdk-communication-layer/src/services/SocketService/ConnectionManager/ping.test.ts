@@ -1,7 +1,6 @@
 import { SocketService } from '../../../SocketService';
-import { logger } from '../../../utils/logger';
-import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
+import { logger } from '../../../utils/logger';
 import { ping } from './ping';
 
 describe('ping', () => {
@@ -11,7 +10,6 @@ describe('ping', () => {
   const mockSendMessage = jest.fn();
   const mockAreKeysExchanged = jest.fn();
   const mockStart = jest.fn();
-  const spyWarn = jest.spyOn(console, 'warn').mockImplementation();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -46,40 +44,23 @@ describe('ping', () => {
   it('should emit a PING message to the socket', async () => {
     await ping(instance);
 
-    expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
+    expect(mockEmit).toHaveBeenCalledWith(MessageType.PING, {
       id: 'sampleChannelId',
-      context: 'someContext',
+      context: 'ping',
       clientType: 'wallet',
-      message: {
-        type: MessageType.PING,
-      },
+      message: '',
     });
   });
 
-  it('should send a READY message if originator and keys are exchanged', async () => {
-    instance.state.isOriginator = true;
-    mockAreKeysExchanged.mockReturnValue(true);
-
+  it('should use correct clientType based on remote.state.isOriginator', async () => {
+    instance.remote.state.isOriginator = true;
     await ping(instance);
 
-    expect(spyWarn).toHaveBeenCalledWith(
-      '[SocketService:ping()] context=someContext sending READY message',
-    );
-    expect(mockSendMessage).toHaveBeenCalledWith({ type: MessageType.READY });
-  });
-
-  it('should start key exchange if originator and keys are not exchanged', async () => {
-    instance.state.isOriginator = true;
-    mockAreKeysExchanged.mockReturnValue(false);
-
-    await ping(instance);
-
-    expect(spyWarn).toHaveBeenCalledWith(
-      '[SocketService: ping()] context=someContext starting key exchange',
-    );
-
-    expect(mockStart).toHaveBeenCalledWith({
-      isOriginator: true,
+    expect(mockEmit).toHaveBeenCalledWith(MessageType.PING, {
+      id: 'sampleChannelId',
+      context: 'ping',
+      clientType: 'dapp',
+      message: '',
     });
   });
 
@@ -92,13 +73,11 @@ describe('ping', () => {
       '[SocketService: ping()] context=someContext originator=false keysExchanged=undefined',
     );
 
-    expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
+    expect(mockEmit).toHaveBeenCalledWith(MessageType.PING, {
       id: 'sampleChannelId',
-      context: 'someContext',
+      context: 'ping',
       clientType: 'wallet',
-      message: {
-        type: MessageType.PING,
-      },
+      message: '',
     });
   });
 });
