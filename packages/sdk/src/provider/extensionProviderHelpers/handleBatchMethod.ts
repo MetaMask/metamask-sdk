@@ -6,14 +6,12 @@ import { getPlatformDetails } from './handleUuid';
 
 export const handleBatchMethod = async ({
   params,
-  target,
   args,
   trackEvent,
   provider,
   sdkInstance,
 }: {
   params: any[];
-  target: MetaMaskInpageProvider;
   args: RequestArguments;
   trackEvent: boolean;
   provider: MetaMaskInpageProvider;
@@ -29,8 +27,6 @@ export const handleBatchMethod = async ({
     responses.push(response);
   }
 
-  const resp = await target.request(args);
-
   const { id, from } = getPlatformDetails(sdkInstance);
 
   if (trackEvent) {
@@ -43,5 +39,5 @@ export const handleBatchMethod = async ({
       },
     });
   }
-  return resp;
+  return responses;
 };

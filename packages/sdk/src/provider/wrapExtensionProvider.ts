@@ -50,7 +50,6 @@ export const wrapExtensionProvider = ({
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
             return handleBatchMethod({
               params,
-              target,
               args,
               trackEvent,
               sdkInstance,
