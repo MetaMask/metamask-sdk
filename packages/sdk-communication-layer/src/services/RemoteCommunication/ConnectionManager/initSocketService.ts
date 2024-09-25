@@ -135,10 +135,7 @@ export function initSocketService({
     ),
     [EventType.SOCKET_DISCONNECTED]: handleSocketDisconnectedEvent(instance),
     [EventType.SOCKET_RECONNECT]: handleSocketReconnectEvent(instance),
-    [EventType.CLIENTS_DISCONNECTED]: handleClientsDisconnectedEvent(
-      instance,
-      communicationLayerPreference,
-    ),
+    [EventType.CLIENTS_DISCONNECTED]: handleClientsDisconnectedEvent(instance),
     [EventType.KEY_INFO]: () => {
       // Skip handling KEY_INFO event, not required anymore
       // instance.emitServiceStatusEvent();

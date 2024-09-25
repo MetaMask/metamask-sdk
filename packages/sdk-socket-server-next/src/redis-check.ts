@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
-import { getRedisClient } from './api-config';
+import { getRedisClient } from './analytics-api';
 
 import { createLogger } from './logger';
 

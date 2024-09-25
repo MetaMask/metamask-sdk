@@ -1,11 +1,9 @@
-import { logger } from '../../../utils/logger';
-import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
 import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 
 /**
  * Creates and returns an event handler function for the "CLIENTS_DISCONNECTED" event. This handler function manages the state and operations when clients get disconnected from a RemoteCommunication instance.
@@ -20,10 +18,7 @@ import { TrackingEvents } from '../../../types/TrackingEvent';
  * @param communicationLayerPreference The preferred communication layer used for this connection.
  * @returns A function that acts as the event handler for the "CLIENTS_DISCONNECTED" event, expecting a channel ID as its parameter.
  */
-export function handleClientsDisconnectedEvent(
-  instance: RemoteCommunication,
-  communicationLayerPreference: CommunicationLayerPreference,
-) {
+export function handleClientsDisconnectedEvent(instance: RemoteCommunication) {
   return (channelId: string) => {
     const { state } = instance;
 
@@ -47,10 +42,6 @@ export function handleClientsDisconnectedEvent(
         {
           id: state.channelId,
           event: TrackingEvents.DISCONNECTED,
-          sdkVersion: state.sdkVersion,
-          commLayer: communicationLayerPreference,
-          commLayerVersion: packageJson.version,
-          walletVersion: state.walletInfo?.version,
         },
         state.communicationServerUrl,
       ).catch((err) => {

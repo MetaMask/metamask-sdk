@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { pubClient } from '../api-config';
+import { pubClient } from '../analytics-api';
 import { config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import {

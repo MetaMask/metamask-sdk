@@ -216,8 +216,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
             {
               id: instance.remote.state.channelId ?? '',
               event: TrackingEvents.SDK_RPC_REQUEST_DONE,
+              // Do not double send originator info, it should be extracted from cache on server.
+              // Keep below commented out for reference.
               sdkVersion: instance.remote.state.sdkVersion,
               commLayerVersion: packageJson.version,
+              ...instance.remote.state.originatorInfo,
               walletVersion: instance.remote.state.walletInfo?.version,
               params: {
                 method: initialRPCMethod.method,
