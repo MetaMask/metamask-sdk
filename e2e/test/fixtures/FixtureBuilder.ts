@@ -18,10 +18,13 @@ export class FixtureBuilder {
   withDefaultFixture() {
     this.fixture = {
       state: {
+        /*
         legalNotices: {
           newPrivacyPolicyToastClickedOrClosed: true,
           newPrivacyPolicyToastShownDate: Date.now(),
         },
+
+         */
         collectibles: {
           favorites: {},
         },
@@ -589,13 +592,18 @@ export class FixtureBuilder {
         inpageProvider: {
           networkId: '1',
         },
-        /*
+        /* WORKS BUT IT'S VERY SLOW
+        _persist: {
+          rehydrated: true,
+          version: -1,
+        },
+         */
+
+        /* Works but slow as well (object has bo context)
         _persist: {
           // rehydrated: true,
-          // version: 50,
-        },
-
-         */
+          // version: -1,
+        }, */
       },
       asyncState: {
         '@MetaMask:existingUser': 'true',
