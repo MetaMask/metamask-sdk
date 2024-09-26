@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class CreateReactAppDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -18,7 +18,7 @@ class CreateReactAppDappScreen implements Dapp {
     );
   }
 
-  get connectAndSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectAndSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -31,7 +31,7 @@ class CreateReactAppDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -44,7 +44,7 @@ class CreateReactAppDappScreen implements Dapp {
     );
   }
 
-  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -57,7 +57,7 @@ class CreateReactAppDappScreen implements Dapp {
     );
   }
 
-  get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signTypedDataV4Button(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -70,7 +70,7 @@ class CreateReactAppDappScreen implements Dapp {
     );
   }
 
-  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendTransactionButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -84,7 +84,7 @@ class CreateReactAppDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async signTypedDataV4(): Promise<void> {
@@ -92,15 +92,15 @@ class CreateReactAppDappScreen implements Dapp {
   }
 
   async personalSign(): Promise<void> {
-    await (await this.personalSignButton).click();
+    await this.personalSignButton.click();
   }
 
   async sendTransaction(): Promise<void> {
-    await (await this.sendTransactionButton).click();
+    await this.sendTransactionButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 }
 

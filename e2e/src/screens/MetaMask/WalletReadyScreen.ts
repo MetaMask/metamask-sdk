@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class WalletReadyScreen {
-  get doneButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get doneButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -18,12 +18,10 @@ class WalletReadyScreen {
   }
 
   async tapDoneButton(): Promise<void> {
-    await (
-      await this.doneButton
-    ).waitForEnabled({
+    await this.doneButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.doneButton).click();
+    await this.doneButton.click();
   }
 }
 

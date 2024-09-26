@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class ConnectModalComponent {
-  get accountApprovalModalContainer(): ChainablePromiseElement<WebdriverIO.Element> {
+  get accountApprovalModalContainer(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,7 +17,7 @@ class ConnectModalComponent {
     );
   }
 
-  get connectApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectApprovalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -28,7 +28,7 @@ class ConnectModalComponent {
     );
   }
 
-  get cancelApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get cancelApprovalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -40,12 +40,10 @@ class ConnectModalComponent {
   }
 
   async tapConnectApproval(): Promise<void> {
-    await (
-      await this.connectApprovalButton
-    ).waitForEnabled({
+    await this.connectApprovalButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.connectApprovalButton).click();
+    await this.connectApprovalButton.click();
   }
 }
 

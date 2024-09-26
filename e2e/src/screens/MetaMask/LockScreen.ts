@@ -6,7 +6,7 @@ import { AndroidSelector, IOSSelector } from '../../Selectors';
 import MainScreen from './MainScreen';
 
 class LockScreen {
-  get passwordInput(): ChainablePromiseElement<WebdriverIO.Element> {
+  get passwordInput(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -19,7 +19,7 @@ class LockScreen {
     );
   }
 
-  get loginTitle(): ChainablePromiseElement<WebdriverIO.Element> {
+  get loginTitle(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -32,7 +32,7 @@ class LockScreen {
     );
   }
 
-  get unlockButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get unlockButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -46,26 +46,22 @@ class LockScreen {
   }
 
   async isMMLocked(): Promise<boolean> {
-    return (await this.loginTitle).isDisplayed();
+    await driver
+      .waitUntil(visibilityOf(MainScreen.networkSwitcher), {
+        timeout: 60000,
+        interval: 5000,
+        timeoutMsg: 'Network switcher not visible. Wallet is not unlocked,',
+      })
+      .then(() => {
+        return true;
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
+    return false;
   }
 
-  async unlockMM(password: string): Promise<boolean> {
-    /*
-    const maxAttempts = 10;
-    let attempts = 0;
-    while (attempts < maxAttempts) {
-      if (await (await this.passwordInput).isDisplayed()) {
-        await (await this.passwordInput).setValue(password);
-        await (await this.unlockButton).click();
-      }
-      console.log('AAA: Bumping attenps to: ', attempts);
-      attempts += 1;
-      console.log('AAA: Waiting for 2 seconds');
-      await driver.pause(2000);
-    }
-
-    return await (await MainScreen.networkSwitcher).isDisplayed();
-     */
+  async unlockMM(password: string): Promise<void> {
     await driver
       .waitUntil(visibilityOf(this.passwordInput), {
         timeout: 60000,
@@ -73,13 +69,12 @@ class LockScreen {
         timeoutMsg: 'Password input not visible',
       })
       .then(async () => {
-        await (await this.passwordInput).setValue(password);
-        await (await this.unlockButton).click();
+        await (this.passwordInput).setValue(password);
+        await (this.unlockButton).click();
       })
       .catch((e) => {
         console.error('Error unlocking MM: ', e);
       });
-    return await (await MainScreen.networkSwitcher).isDisplayed();
   }
 
   async unlockMMifLocked(password: string): Promise<void> {

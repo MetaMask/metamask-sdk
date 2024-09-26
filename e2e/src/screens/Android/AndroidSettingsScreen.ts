@@ -1,4 +1,4 @@
-import { ChainablePromiseElement } from 'webdriverio';
+import { ChainablePromiseArray, ChainablePromiseElement } from 'webdriverio';
 
 import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
@@ -7,9 +7,10 @@ import {
   METAMASK_APP_NAME_ANDROID,
 } from '../../Constants';
 import { AndroidSelector } from '../../Selectors';
+import { $$ } from '@wdio/globals';
 
 class AndroidSettingsScreen {
-  get metaMaskQALinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get metaMaskQALinksButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText(
@@ -19,7 +20,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get openSearchBarButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get openSearchBarButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -29,7 +30,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get searchBarInput(): ChainablePromiseElement<WebdriverIO.Element> {
+  get searchBarInput(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -39,7 +40,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get openingLinksSearchResult(): ChainablePromiseElement<WebdriverIO.Element> {
+  get openingLinksSearchResult(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -51,7 +52,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get supportedWebAddresses(): ChainablePromiseElement<WebdriverIO.Element> {
+  get supportedWebAddresses(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText(
@@ -61,7 +62,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get links(): ReturnType<WebdriverIO.Browser['$$']> {
+  get links(): ChainablePromiseArray{
     return $$(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath('//android.widget.Switch'),
@@ -70,60 +71,52 @@ class AndroidSettingsScreen {
   }
 
   async tapMetaMaskLinksButton(): Promise<void> {
-    await (
-      await this.metaMaskQALinksButton
-    ).waitForEnabled({
+    await this.metaMaskQALinksButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.metaMaskQALinksButton).click();
+    await (this.metaMaskQALinksButton).click();
   }
 
   async tapOpenSearchBarButton(): Promise<void> {
-    await (
-      await this.openSearchBarButton
-    ).waitForEnabled({
+    await this.openSearchBarButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.openSearchBarButton).click();
+    await this.openSearchBarButton.click();
   }
 
   async tapOpeningLinksSearchResult(): Promise<void> {
-    await (
-      await this.openingLinksSearchResult
-    ).waitForEnabled({
+    await this.openingLinksSearchResult.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.openingLinksSearchResult).click();
+    await this.openingLinksSearchResult.click();
   }
 
   async fillSearchBarInput(text: string): Promise<void> {
-    await (await this.searchBarInput).setValue(text);
+    await this.searchBarInput.setValue(text);
   }
 
   async tapSupportedWebAddresses(): Promise<void> {
-    await (
-      await this.supportedWebAddresses
-    ).waitForEnabled({
+    await this.supportedWebAddresses.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.supportedWebAddresses).click();
+    await this.supportedWebAddresses.click();
   }
 
   async tapLinks(): Promise<void> {
+    // @ts-ignore
+    // ts-ignore because this is not in use for the time being
     for (const link of await this.links) {
       await link.click();
     }
   }
 
   async setSupportedAddresses(): Promise<void> {
-    let isMetaMaskLinksButtonDisplayed = await (
-      await this.metaMaskQALinksButton
-    ).isDisplayed();
+    let isMetaMaskLinksButtonDisplayed =
+      await this.metaMaskQALinksButton.isDisplayed();
     while (!isMetaMaskLinksButtonDisplayed) {
       await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-      isMetaMaskLinksButtonDisplayed = await (
-        await this.metaMaskQALinksButton
-      ).isDisplayed();
+      isMetaMaskLinksButtonDisplayed =
+        await this.metaMaskQALinksButton.isDisplayed();
     }
     await this.tapMetaMaskLinksButton();
     await this.tapSupportedWebAddresses();

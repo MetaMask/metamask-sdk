@@ -5,7 +5,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector } from '../../Selectors';
 
 class AndroidSettingsOpeningLinksScreen {
-  get openingLinksMetaMaskAppOption(): ChainablePromiseElement<WebdriverIO.Element> {
+  get openingLinksMetaMaskAppOption(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -15,7 +15,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get addLinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get addLinksButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -25,7 +25,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get addSupportedLinksButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get addSupportedLinksButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -35,7 +35,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get firstSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
+  get firstSupportedLink(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -45,7 +45,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get secondSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
+  get secondSupportedLink(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -55,7 +55,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get thirdSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
+  get thirdSupportedLink(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -65,7 +65,7 @@ class AndroidSettingsOpeningLinksScreen {
     );
   }
 
-  get forthSupportedLink(): ChainablePromiseElement<WebdriverIO.Element> {
+  get forthSupportedLink(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -76,39 +76,37 @@ class AndroidSettingsOpeningLinksScreen {
   }
 
   async scrollToMetaMaskAppOption(): Promise<void> {
-    let isMetaMaskLinksButtonDisplayed = await (
-      await this.openingLinksMetaMaskAppOption
-    ).isDisplayed();
+    let isMetaMaskLinksButtonDisplayed =
+      await this.openingLinksMetaMaskAppOption.isDisplayed();
 
     while (!isMetaMaskLinksButtonDisplayed) {
       await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-      isMetaMaskLinksButtonDisplayed = await (
-        await this.openingLinksMetaMaskAppOption
-      ).isDisplayed();
+      isMetaMaskLinksButtonDisplayed =
+        await this.openingLinksMetaMaskAppOption.isDisplayed();
     }
   }
 
   async tapMetaMaskAppOption(): Promise<void> {
-    await (await this.openingLinksMetaMaskAppOption).click();
+    await (this.openingLinksMetaMaskAppOption).click();
   }
 
   async selectAllMetaMaskSupportedLinks(): Promise<void> {
-    await (await this.firstSupportedLink).click();
-    await (await this.secondSupportedLink).click();
-    await (await this.thirdSupportedLink).click();
-    await (await this.forthSupportedLink).click();
+    await (this.firstSupportedLink).click();
+    await this.secondSupportedLink.click();
+    await (this.thirdSupportedLink).click();
+    await (this.forthSupportedLink).click();
   }
 
   async tapAddMetaMaskSupportedLinks(): Promise<void> {
-    await (await this.addSupportedLinksButton).click();
+    await (this.addSupportedLinksButton).click();
   }
 
   async tapAddLinksButton(): Promise<void> {
-    await (await this.addLinksButton).click();
+    await (this.addLinksButton).click();
   }
 
   async isAddLinksButtonEnabled(): Promise<boolean> {
-    return await (await this.addLinksButton).isEnabled();
+    return await (this.addLinksButton).isEnabled();
   }
 }
 

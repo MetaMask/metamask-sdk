@@ -7,7 +7,7 @@ import { IOSSelector } from '../../Selectors';
 import { Dapp } from '../interfaces/Dapp';
 
 class SafariBrowserScreen implements MobileBrowser {
-  get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
+  get urlAddressBar(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString('label == "Address"'),
@@ -15,7 +15,7 @@ class SafariBrowserScreen implements MobileBrowser {
     );
   }
 
-  get goButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get goButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString('label == "go"'),
@@ -23,7 +23,7 @@ class SafariBrowserScreen implements MobileBrowser {
     );
   }
 
-  get refreshButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get refreshButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString('label == "refresh"'),
@@ -32,19 +32,19 @@ class SafariBrowserScreen implements MobileBrowser {
   }
 
   async refreshPage(): Promise<void> {
-    await (await this.refreshButton).click();
+    await this.refreshButton.click();
     await driver.pause(500); // Wait for the page to refresh
   }
 
   async goToAddress(address: string, pageObject: Dapp): Promise<void> {
     // await driver.deleteAllCookies();
-    await (await this.urlAddressBar).click();
-    await (await this.urlAddressBar).clearValue();
-    await (await this.urlAddressBar).setValue(address);
-    await (await this.goButton).click();
+    await this.urlAddressBar.click();
+    await this.urlAddressBar.clearValue();
+    await this.urlAddressBar.setValue(address);
+    await this.goButton.click();
 
     const connectButton =
-      pageObject.connectButton as unknown as ChainablePromiseElement<Element>;
+      pageObject.connectButton as unknown as ChainablePromiseElement;
 
     // Tries to find the connect button 5 times for 10 seconds
     let retries = 0;

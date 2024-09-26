@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class MetaMetricsComponent {
-  get agreeToMetaMetrics(): ChainablePromiseElement<WebdriverIO.Element> {
+  get agreeToMetaMetrics(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath('//*[@text="I agree"]'),
@@ -17,7 +17,7 @@ class MetaMetricsComponent {
   }
 
   async tapAgreeToMetaMetrics(): Promise<void> {
-    await (await this.agreeToMetaMetrics).click();
+    await this.agreeToMetaMetrics.click();
   }
 }
 

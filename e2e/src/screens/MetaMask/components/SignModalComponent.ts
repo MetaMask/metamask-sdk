@@ -3,7 +3,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class SignModalComponent {
-  get signApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signApprovalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -14,7 +14,7 @@ class SignModalComponent {
     );
   }
 
-  get cancelButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get cancelButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -26,22 +26,18 @@ class SignModalComponent {
   }
 
   async tapSignApproval(): Promise<void> {
-    await (
-      await this.signApprovalButton
-    ).waitForDisplayed({
+    await this.signApprovalButton.waitForDisplayed({
       timeout: 5000,
     });
 
-    await (
-      await this.signApprovalButton
-    ).waitForEnabled({
+    await this.signApprovalButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.signApprovalButton).click();
+    await this.signApprovalButton.click();
   }
 
   async tapCancel(): Promise<void> {
-    await (await this.cancelButton).click();
+    await this.cancelButton.click();
   }
 }
 

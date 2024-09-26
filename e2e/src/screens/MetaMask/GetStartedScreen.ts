@@ -2,9 +2,8 @@ import { ChainablePromiseElement } from 'webdriverio';
 import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
-
 class GetStartedScreen {
-  get getStartedButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get getStartedButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -16,7 +15,7 @@ class GetStartedScreen {
   }
 
   async tapGetStarted(): Promise<void> {
-    await (await this.getStartedButton).click();
+    await this.getStartedButton.click();
   }
 }
 

@@ -3,7 +3,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class NetworkSwitchedModalComponent {
-  get gotItButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get gotItButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,12 +17,10 @@ class NetworkSwitchedModalComponent {
   }
 
   async tapGotItButton(): Promise<void> {
-    await (
-      await this.gotItButton
-    ).waitForDisplayed({
+    await this.gotItButton.waitForDisplayed({
       timeout: 10000,
     });
-    await (await this.gotItButton).click();
+    await this.gotItButton.click();
   }
 }
 

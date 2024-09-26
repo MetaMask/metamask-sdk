@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class EnableSmartTransactionsComponent {
-  private get enableSmartTransactions(): ChainablePromiseElement<WebdriverIO.Element> {
+  private get enableSmartTransactions(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath('//*[@text="Enable"]'),
@@ -14,12 +14,10 @@ class EnableSmartTransactionsComponent {
   }
 
   async tapEnableSmartTransactions(): Promise<void> {
-    await (
-      await this.enableSmartTransactions
-    ).waitForEnabled({
+    await this.enableSmartTransactions.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.enableSmartTransactions).click();
+    await this.enableSmartTransactions.click();
   }
 }
 
