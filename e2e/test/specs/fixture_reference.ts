@@ -8,9 +8,8 @@ const fixtureServer = new FixtureServer();
 
 describe('Fixture test', () => {
   before(async () => {
-    await Utils.launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
-    const isMMUnlocked = await LockScreen.unlockMM(WALLET_PASSWORD);
-    expect(isMMUnlocked);
+    // await Utils.launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
+    await LockScreen.unlockMM(WALLET_PASSWORD);
   });
 
   after(async () => {
