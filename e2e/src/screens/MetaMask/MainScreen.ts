@@ -3,7 +3,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class MainScreen {
-  get networkSwitcher(): ChainablePromiseElement<WebdriverIO.Element> {
+  get networkSwitcher(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(

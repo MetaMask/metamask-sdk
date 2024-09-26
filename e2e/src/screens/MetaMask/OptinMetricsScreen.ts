@@ -5,7 +5,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class OptinMetricsScreen {
-  get acceptOptinMetrics(): ChainablePromiseElement<WebdriverIO.Element> {
+  get acceptOptinMetrics(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -20,11 +20,11 @@ class OptinMetricsScreen {
     if (!(await this.isAcceptOptinMetricsEnabled())) {
       await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
     }
-    await (await this.acceptOptinMetrics).click();
+    await this.acceptOptinMetrics.click();
   }
 
   async isAcceptOptinMetricsEnabled(): Promise<boolean> {
-    return (await this.acceptOptinMetrics).isEnabled();
+    return this.acceptOptinMetrics.isEnabled();
   }
 }
 

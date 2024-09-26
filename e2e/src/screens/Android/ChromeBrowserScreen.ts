@@ -6,7 +6,7 @@ import { AndroidSelector } from '../../Selectors';
 import { Dapp } from '../interfaces/Dapp';
 
 class ChromeBrowserScreen implements MobileBrowser {
-  get urlAddressBar(): ChainablePromiseElement<WebdriverIO.Element> {
+  get urlAddressBar(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
@@ -17,7 +17,7 @@ class ChromeBrowserScreen implements MobileBrowser {
   }
 
   // 3 dots on the top
-  get browserMoreOptions(): ChainablePromiseElement<WebdriverIO.Element> {
+  get browserMoreOptions(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -27,7 +27,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  get refreshButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get refreshButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -37,7 +37,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  get switchTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchTabsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -47,7 +47,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  get closeAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get closeAllTabsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -57,7 +57,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  get confirmCloseAllTabsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get confirmCloseAllTabsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -67,7 +67,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
-  get newTabButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get newTabButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -78,7 +78,7 @@ class ChromeBrowserScreen implements MobileBrowser {
   }
 
   async goToAddress(address: string, pageObject: Dapp): Promise<void> {
-    const urlAddressBar = await this.urlAddressBar;
+    const urlAddressBar = this.urlAddressBar;
 
     await urlAddressBar.waitForDisplayed({
       timeout: 10000,
@@ -90,7 +90,7 @@ class ChromeBrowserScreen implements MobileBrowser {
     await driver.pressKeyCode(66);
 
     const connectButton =
-      pageObject.connectButton as unknown as ChainablePromiseElement<Element>;
+      pageObject.connectButton as unknown as ChainablePromiseElement;
 
     // Tries to find the connect button 5 times for 10 seconds
     let retries = 0;
@@ -101,28 +101,28 @@ class ChromeBrowserScreen implements MobileBrowser {
   }
 
   async tapSwitchTabsButton(): Promise<void> {
-    await (await this.switchTabsButton).click();
+    await (this.switchTabsButton).click();
   }
 
   async tapBrowserMoreOptionsButton(): Promise<void> {
-    await (await this.browserMoreOptions).click();
+    await (this.browserMoreOptions).click();
   }
 
   async tapCloseAllTabsButton(): Promise<void> {
-    await (await this.closeAllTabsButton).click();
+    await (this.closeAllTabsButton).click();
   }
 
   async tapConfirmCloseAllTabsButton(): Promise<void> {
-    await (await this.confirmCloseAllTabsButton).click();
+    await (this.confirmCloseAllTabsButton).click();
   }
 
   async tapNewTabButton(): Promise<void> {
-    await (await this.newTabButton).click();
+    await (this.newTabButton).click();
   }
 
   async refreshPage(): Promise<void> {
-    await (await this.browserMoreOptions).click();
-    await (await this.refreshButton).click();
+    await (this.browserMoreOptions).click();
+    await (this.refreshButton).click();
     await driver.pause(500); // Wait for the page to refresh
 
   }

@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class NextJSDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText('Connect'),
@@ -14,7 +14,7 @@ class NextJSDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -26,7 +26,7 @@ class NextJSDappScreen implements Dapp {
   }
 
   // Currently there's no terminate in create-react-dapp
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -38,20 +38,20 @@ class NextJSDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async sign(): Promise<void> {
     await this.scrollToSignButton();
-    await (await this.signButton).click();
+    await this.signButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 
   async scrollToSignButton(): Promise<void> {
-    await (await this.signButton).scrollIntoView();
+    await this.signButton.scrollIntoView();
   }
 }
 
