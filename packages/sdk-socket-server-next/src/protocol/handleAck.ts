@@ -15,28 +15,38 @@ export type ACKParams = {
   ackId: string;
 };
 
+const IDENTIFIER = 'TO_REMOVE_';
+
 export const handleAck = async ({
   channelId,
   ackId,
   socket,
   clientType,
-}: ACKParams) => {
+}: ACKParams): Promise<void> => {
   const queueKey = `queue:${channelId}:${clientType}`;
-  let messages: any[] = [];
+  let messages: string[] = [];
 
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
   try {
     // Retrieve all messages to find and remove the specified one
-    messages = await pubClient.lrange(queueKey, 0, -1);
+    const rawMessages = await pubClient.lrange(queueKey, 0, -1);
+    messages = rawMessages.map((item) =>
+      Array.isArray(item) ? item[1] : item,
+    );
+
     logger.debug(
       `[handleAck] channelId=${channelId} -- Messages in ${clientType} queue: ${messages.length}`,
       messages,
     );
+
     const index = messages.findIndex((msg) => {
+      if (msg.startsWith(IDENTIFIER)) {
+        return false;
+      }
+
       try {
         const parsed = JSON.parse(msg) as QueuedMessage;
-        // logger.debug(`Parsed ackId: ${parsed.ackId}, Target ackId: ${ackId}`);
         return parsed.ackId === ackId;
       } catch (e) {
         logger.error(
@@ -47,6 +57,7 @@ export const handleAck = async ({
         return false;
       }
     });
+
     if (index === -1) {
       logger.warn(
         `[handleAck] channelId=${channelId} -- Message ${ackId} not found in ${clientType} queue.`,
@@ -57,7 +68,7 @@ export const handleAck = async ({
         },
       );
     } else {
-      const placeholder = `TO_REMOVE_${new Date().getTime()}`; // Unique placeholder
+      const placeholder = `${IDENTIFIER}${new Date().getTime()}`; // Unique placeholder
       await pubClient.lset(queueKey, index, placeholder); // Set the message at index to unique placeholder
       await pubClient.lrem(queueKey, 1, placeholder); // Remove the unique placeholder
       logger.info(
