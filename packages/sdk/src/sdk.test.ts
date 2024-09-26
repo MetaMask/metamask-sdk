@@ -150,7 +150,7 @@ describe('MetaMaskSDK', () => {
 
     it('should throw error if dappMetadata is missing', () => {
       expect(() => new MetaMaskSDK({} as MetaMaskSDKOptions)).toThrow(
-        'You must provide dAppMetadata option (name and/or url)',
+        'You must provide dAppMetadata url',
       );
     });
 

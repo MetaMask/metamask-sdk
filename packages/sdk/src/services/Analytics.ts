@@ -17,7 +17,7 @@ export class Analytics {
 
   #enabled: boolean;
 
-  #originatorInfo: Readonly<AnalyticsProps['originationInfo']>;
+  #originatorInfo: Readonly<AnalyticsProps['originatorInfo']>;
 
   constructor({
     serverUrl,
@@ -25,7 +25,7 @@ export class Analytics {
     originatorInfo,
   }: {
     serverUrl: string;
-    originatorInfo: AnalyticsProps['originationInfo'];
+    originatorInfo: AnalyticsProps['originatorInfo'];
     enabled?: boolean;
   }) {
     this.#serverURL = serverUrl;
@@ -48,7 +48,7 @@ export class Analytics {
       id: ANALYTICS_CONSTANTS.DEFAULT_ID,
       event,
       sdkVersion: packageJson.version,
-      originationInfo: this.#originatorInfo,
+      ...this.#originatorInfo,
       params,
     };
     logger(`[Analytics: send()] event: ${event}`, props);
