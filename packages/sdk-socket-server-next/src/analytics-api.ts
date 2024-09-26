@@ -269,11 +269,12 @@ app.post('/evt', async (_req, res) => {
       channelInfo = extractChannelInfo(body);
 
       if (!channelInfo) {
-        logger.error(
-          `event: ${body.event} channelId: ${channelId}  - Invalid channelInfo format`,
+        logger.info(
+          `event: ${body.event} channelId: ${channelId}  - Invalid channelInfo format - event will be ignored`,
           JSON.stringify(body, null, 2),
         );
-        return res.status(400).json({ error: 'invalid channelInfo format' });
+        // always return success
+        return res.json({ success: true });
       }
 
       // Save the channelInfo in Redis
@@ -307,8 +308,12 @@ app.post('/evt', async (_req, res) => {
 
     // Make sure each events have a valid dappId
     if (!event.properties.dappId) {
-      logger.error(`event: ${event.event} - dappId is required`, event);
-      return res.status(400).json({ error: 'invalid channelInfo format' });
+      logger.error(
+        `event: ${event.event} - dappId is required - event will be ignored`,
+        event,
+      );
+      // always return success
+      return res.json({ success: true });
     }
 
     // Define properties to be excluded

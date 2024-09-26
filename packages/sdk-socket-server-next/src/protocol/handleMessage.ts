@@ -47,7 +47,7 @@ export const handleMessage = async ({
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
 
-  let from = context ?? MISSING_CONTEXT;
+  let from: string = context ?? MISSING_CONTEXT;
   if (context?.indexOf('metamask-mobile') !== -1) {
     from = 'wallet';
   } else if (context.indexOf('dapp') !== -1) {
@@ -56,15 +56,16 @@ export const handleMessage = async ({
 
   let channelConfig: ChannelConfig | null = null;
   let ready = false; // Determines if the keys have been exchanged and both side support the full protocol
-  if (clientType) {
-    // new protocol, get channelConfig
-    const channelConfigKey = `channel_config:${channelId}`;
-    const existingConfig = await pubClient.get(channelConfigKey);
-    channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
-    ready = channelConfig?.ready ?? false;
-  }
 
   try {
+    if (clientType) {
+      // new protocol, get channelConfig
+      const channelConfigKey = `channel_config:${channelId}`;
+      const existingConfig = await pubClient.get(channelConfigKey);
+      channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
+      ready = channelConfig?.ready ?? false;
+    }
+
     if (hasRateLimit) {
       await rateLimiterMessage.consume(socket.handshake.address);
     }
@@ -151,19 +152,17 @@ export const handleMessage = async ({
         },
       );
 
-      // broadcast that the channel supports relayPersistence
-      socket.broadcast.to(channelId).emit(`config-${channelId}`, {
+      const configUpdate = {
         persistence: true,
         walletKey: channelConfig.walletKey,
-      });
+      };
+
+      // broadcast that the channel supports relayPersistence
+      socket.broadcast.to(channelId).emit(`config-${channelId}`, configUpdate);
 
       // also inform current client
-      socket.emit(`config-${channelId}`, {
-        persistence: true,
-        walletKey: channelConfig.walletKey,
-      });
+      socket.emit(`config-${channelId}`, configUpdate);
     }
-    return;
   } catch (error) {
     setLastConnectionErrorTimestamp(Date.now());
     increaseRateLimits(90);
@@ -175,7 +174,10 @@ export const handleMessage = async ({
 
     // emit an error message back to the client, if appropriate
     socket.broadcast.emit(`message-${channelId}`, {
-      error: (error as Error).message,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
     });
+
+    // Call the callback with the error
+    callback(error instanceof Error ? error.message : 'Unknown error occurred');
   }
 };

@@ -7,7 +7,7 @@ import { logger } from './utils/logger';
 export interface AnalyticsProps {
   id: string;
   event: TrackingEvents;
-  originationInfo?: OriginatorInfo;
+  originatorInfo?: OriginatorInfo;
   commLayer?: CommunicationLayerPreference;
   sdkVersion?: string;
   commLayerVersion?: string;
@@ -46,8 +46,8 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
   swapBuffers();
 
   const serverUrl = targetUrl.endsWith('/')
-    ? `${targetUrl}debug`
-    : `${targetUrl}/debug`;
+    ? `${targetUrl}evt`
+    : `${targetUrl}/evt`;
 
   const flatParams: {
     [key: string]: unknown;

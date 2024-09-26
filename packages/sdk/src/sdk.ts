@@ -228,17 +228,15 @@ export class MetaMaskSDK extends EventEmitter2 {
     logger(`[MetaMaskSDK: constructor()]: begin.`);
     this.setMaxListeners(50);
 
-    if (!options.dappMetadata?.name && !options.dappMetadata?.url) {
+    if (!options.dappMetadata?.url) {
       // Automatically set dappMetadata on web env.
       if (typeof window !== 'undefined' && typeof document !== 'undefined') {
         options.dappMetadata = {
-          url: window.location.href,
-          name: document.title,
+          ...options.dappMetadata,
+          url: `${window.location.protocol}//${window.location.host}`,
         };
       } else {
-        throw new Error(
-          `You must provide dAppMetadata option (name and/or url)`,
-        );
+        throw new Error(`You must provide dAppMetadata url`);
       }
     }
 

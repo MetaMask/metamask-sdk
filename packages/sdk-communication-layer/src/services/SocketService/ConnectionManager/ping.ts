@@ -1,7 +1,6 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
-import { EventType } from '../../../types/EventType';
 import { MessageType } from '../../../types/MessageType';
+import { logger } from '../../../utils/logger';
 
 /**
  * Sends a PING message using a SocketService instance.
@@ -19,30 +18,10 @@ export async function ping(instance: SocketService) {
     } keysExchanged=${instance.state.keyExchange?.areKeysExchanged()}`,
   );
 
-  if (instance.state.isOriginator) {
-    if (instance.state.keyExchange?.areKeysExchanged()) {
-      console.warn(
-        `[SocketService:ping()] context=${instance.state.context} sending READY message`,
-      );
-
-      await instance.sendMessage({ type: MessageType.READY });
-    } else {
-      console.warn(
-        `[SocketService: ping()] context=${instance.state.context} starting key exchange`,
-      );
-
-      instance.state.keyExchange?.start({
-        isOriginator: instance.state.isOriginator ?? false,
-      });
-    }
-  }
-
-  instance.state.socket?.emit(EventType.MESSAGE, {
+  instance.state.socket?.emit(MessageType.PING, {
     id: instance.state.channelId,
-    context: instance.state.context,
+    context: 'ping',
     clientType: instance.remote.state.isOriginator ? 'dapp' : 'wallet',
-    message: {
-      type: MessageType.PING,
-    },
+    message: '',
   });
 }

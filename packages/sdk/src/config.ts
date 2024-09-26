@@ -28,6 +28,7 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   [RPC_METHODS.ETH_SENDTRANSACTION]: true,
   [RPC_METHODS.ETH_SIGNTRANSACTION]: true,
   [RPC_METHODS.ETH_SIGN]: true,
+  [RPC_METHODS.PERSONAL_SIGN]: true,
   // stop redirecting these as we are caching values in the provider
   [RPC_METHODS.ETH_ACCOUNTS]: false,
   [RPC_METHODS.ETH_CHAINID]: false,
