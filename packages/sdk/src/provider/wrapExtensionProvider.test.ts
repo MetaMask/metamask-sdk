@@ -142,7 +142,6 @@ describe('wrapExtensionProvider', () => {
 
     expect(handleBatchMethod).toHaveBeenCalledWith({
       params: args.params,
-      target: mockProvider,
       args,
       trackEvent: true,
       sdkInstance,
