@@ -51,8 +51,10 @@ export async function write(
   // isSecure is only available in RN and mobile web
   const isSecure = instance.state.platformManager?.isSecure();
   const mobileWeb = instance.state.platformManager?.isMobileWeb() ?? false;
-
-  const activeDeeplinkProtocol = deeplinkProtocol && mobileWeb && authorized;
+  const deeplinkProtocolAvailable =
+    instance.state.remote?.hasDeeplinkProtocol() ?? false;
+  const activeDeeplinkProtocol =
+    deeplinkProtocolAvailable && mobileWeb && authorized;
 
   try {
     if (!activeDeeplinkProtocol || triggeredInstaller) {
@@ -65,14 +67,14 @@ export async function write(
         .catch((err: unknown) => {
           logger(`[RCPMS: _write()] error sending message`, err);
         });
+    }
 
-      if (!isSecure) {
-        // Redirect early if nodejs or browser...
-        logger(
-          `[RCPMS: _write()] unsecure platform for method ${targetMethod} -- return callback`,
-        );
-        return callback();
-      }
+    if (!isSecure) {
+      // Redirect early if nodejs or browser...
+      logger(
+        `[RCPMS: _write()] unsecure platform for method ${targetMethod} -- return callback`,
+      );
+      return callback();
     }
 
     if (triggeredInstaller) {

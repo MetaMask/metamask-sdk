@@ -73,6 +73,7 @@ export interface RemoteCommunicationState {
   relayPersistence?: boolean;
   otherPublicKey?: string;
   protocolVersion: number;
+  deeplinkProtocolAvailable: boolean;
   privateKey?: string;
   terminated: boolean;
   transports?: string[];
@@ -110,6 +111,7 @@ export class RemoteCommunication extends EventEmitter2 {
     terminated: false,
     protocolVersion: 1,
     paused: false,
+    deeplinkProtocolAvailable: false,
     platformType: 'metamask-mobile',
     analytics: false,
     reconnection: false,
@@ -227,6 +229,9 @@ export class RemoteCommunication extends EventEmitter2 {
       if (channelConfig) {
         this.state.channelConfig = channelConfig;
         this.state.channelId = channelConfig.channelId;
+        this.state.deeplinkProtocolAvailable =
+          channelConfig.deeplinkProtocolAvailable ?? false;
+
         if (channelConfig.relayPersistence) {
           this.state.authorized = true;
           this.state.ready = true;
@@ -278,6 +283,10 @@ export class RemoteCommunication extends EventEmitter2 {
 
   async testStorage() {
     return testStorage(this.state);
+  }
+
+  hasDeeplinkProtocol() {
+    return this.state.deeplinkProtocolAvailable;
   }
 
   getChannelConfig() {
