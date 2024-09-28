@@ -243,6 +243,10 @@ app.post('/evt', async (_req, res) => {
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
+      logger.info(
+        `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash} - creating new channelId`,
+      );
+
       await pubClient.set(
         channelId,
         userIdHash,
