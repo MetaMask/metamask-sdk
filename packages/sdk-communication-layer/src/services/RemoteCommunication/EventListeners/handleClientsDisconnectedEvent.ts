@@ -1,8 +1,6 @@
-import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 
 /**
@@ -36,17 +34,5 @@ export function handleClientsDisconnectedEvent(instance: RemoteCommunication) {
     // Propagate the disconnect event to clients.
     instance.emit(EventType.CLIENTS_DISCONNECTED, state.channelId);
     instance.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-
-    if (state.analytics && state.channelId) {
-      SendAnalytics(
-        {
-          id: state.channelId,
-          event: TrackingEvents.DISCONNECTED,
-        },
-        state.communicationServerUrl,
-      ).catch((err) => {
-        console.error(`Cannot send analytics`, err);
-      });
-    }
   };
 }
