@@ -33,6 +33,7 @@ const checkMessage = ({
 
         socket.emit(`message-${channelId}`, {
           channelId,
+          id: channelId,
           ackId: msg.ackId,
           message: msg.message,
         });
