@@ -11,14 +11,14 @@ jest.mock('@metamask/sdk-communication-layer');
 const mockSendAnalytics = SendAnalytics as jest.Mock;
 interface Props {
   serverUrl: string;
-  originatorInfo: AnalyticsProps['originationInfo'];
+  originatorInfo: AnalyticsProps['originatorInfo'];
   enabled?: boolean;
 }
 
 describe('Analytics', () => {
   let props: {
     serverUrl: string;
-    originatorInfo: AnalyticsProps['originationInfo'];
+    originatorInfo: AnalyticsProps['originatorInfo'];
     enabled?: boolean;
   };
   const spyLogger = jest.spyOn(loggerModule, 'logger');
