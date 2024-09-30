@@ -2,7 +2,9 @@ import {
   CommunicationLayerPreference,
   EventType,
   PlatformType,
+  RemoteCommunication,
 } from '@metamask/sdk-communication-layer';
+import { Listener } from 'eventemitter2';
 import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
@@ -219,11 +221,6 @@ const initializeMobileProvider = async ({
       try {
         const params = args?.[0]?.params;
 
-        // TODO: decide if we want external provider tracking
-        // sdk.analytics?.send({
-        //   event: TrackingEvents.SDK_RPC_REQUEST,
-        //   params: { method, from: 'readonly' },
-        // });
         const readOnlyResponse = await rpcRequestHandler({
           rpcEndpoint,
           sdkInfo,
@@ -390,29 +387,88 @@ const initializeMobileProvider = async ({
           // wait for  tracker to be updated
 
           try {
+            let messageCount = 0;
+            const maxMessages = 5; // Wait for 5 messages before timing out
+            const onRPCUpdate = ({
+              resolve,
+              reject,
+            }: {
+              resolve: (value: unknown) => void;
+              reject: (reason?: any) => void;
+            }) => {
+              messageCount += 1;
+              const Localtracker = remoteConnection
+                ?.getConnector()
+                .getRPCMethodTracker();
+
+              const target = Localtracker?.[rpcInstallId];
+              logger(`TRACKER: update method ${rpcInstallId}`, target);
+
+              if (target?.result) {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] found result`,
+                  target.result,
+                );
+                resolve(target.result);
+                return;
+              } else if (target?.error) {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] found error`,
+                  target.error,
+                );
+
+                reject(target.error);
+                return;
+              } else if (messageCount >= maxMessages) {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] max message count reached without result`,
+                );
+
+                reject(new Error('Max message count reached without result'));
+                return;
+              }
+
+              // not found yet, need to wait for next update
+              logger(
+                `[initializeMobileProvider: sendRequest()] not found yet, need to wait for next update`,
+              );
+            };
+
+            let listener: RemoteCommunication | Listener | undefined;
+            let rpcUpdateHandler: (() => void) | undefined;
+
             const result = await new Promise((resolve, reject) => {
               const tracker = remoteConnection
                 ?.getConnector()
                 .getRPCMethodTracker();
               logger(`TRACKER: method ${rpcInstallId}`, tracker);
+
               if (tracker?.[rpcInstallId].result) {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] found result`,
+                  tracker?.[rpcInstallId].result,
+                );
                 resolve(tracker?.[rpcInstallId].result);
               } else if (tracker?.[rpcInstallId].error) {
+                logger(
+                  `[initializeMobileProvider: sendRequest()] found error`,
+                  tracker?.[rpcInstallId].error,
+                );
                 reject(tracker?.[rpcInstallId].error);
               }
 
-              remoteConnection
-                ?.getConnector()
-                .once(EventType.RPC_UPDATE, (rpcResult) => {
-                  logger(`TRACKER: update method ${rpcInstallId}`, rpcResult);
+              rpcUpdateHandler = () => onRPCUpdate({ resolve, reject });
 
-                  if (rpcResult.result) {
-                    resolve(rpcResult.result);
-                  } else {
-                    reject(rpcResult.error);
-                  }
-                });
+              listener = remoteConnection
+                ?.getConnector()
+                .on(EventType.RPC_UPDATE, rpcUpdateHandler);
             });
+
+            if (rpcUpdateHandler) {
+              listener?.off(EventType.RPC_UPDATE, rpcUpdateHandler);
+            }
+
+            logger(`TRACKER: result`, result);
             return result;
           } catch (error) {
             logger(`[initializeMobileProvider: sendRequest()] error:`, error);
