@@ -5,6 +5,8 @@ import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 import { MessageType } from '../../../types/MessageType';
 import { encryptAndSendMessage } from '../../SocketService/MessageHandlers';
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
 
 /**
  * Handles the disconnection process for a RemoteCommunication instance Depending on the provided options, it can terminate the connection and clear related configurations or simply disconnect.
@@ -27,11 +29,23 @@ export async function disconnect({
     options,
   );
 
-  state.ready = false;
-  state.paused = false;
-
-  return new Promise((resolve, reject) => {
+  return new Promise<boolean>((resolve, reject) => {
     if (options?.terminate) {
+      if (instance.state.ready) {
+        SendAnalytics(
+          {
+            id: instance.state.channelId ?? '',
+            event: TrackingEvents.TERMINATED,
+          },
+          instance.state.communicationServerUrl,
+        ).catch((err) => {
+          console.error(`[handleSendMessage] Cannot send analytics`, err);
+        });
+      }
+
+      state.ready = false;
+      state.paused = false;
+
       // remove channel config from persistence layer and close active connections.
       state.storageManager?.terminate(state.channelId ?? '');
       instance.state.terminated = true;

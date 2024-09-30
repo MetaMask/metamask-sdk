@@ -2,7 +2,6 @@ import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { handleClientsDisconnectedEvent } from './handleClientsDisconnectedEvent';
 
@@ -87,29 +86,20 @@ describe('handleClientsDisconnectedEvent', () => {
     );
   });
 
-  it('should send analytics data when analytics tracking is enabled and channelId is available', () => {
+  it('should not send analytics data even when analytics tracking is enabled and channelId is available', () => {
     const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
-    expect(SendAnalytics).toHaveBeenCalledWith(
-      {
-        id: 'testChannel',
-        event: TrackingEvents.DISCONNECTED,
-      },
-      'mockUrl',
-    );
+    expect(SendAnalytics).not.toHaveBeenCalled();
   });
 
-  it('should handle errors when sending analytics data', async () => {
+  it('should not attempt to send analytics data', async () => {
     (SendAnalytics as jest.Mock).mockRejectedValueOnce(
       new Error('Network error'),
     );
     const handler = handleClientsDisconnectedEvent(instance);
     handler('testChannel');
-    expect(SendAnalytics).toHaveBeenCalled();
-    await new Promise(process.nextTick); // Wait for the promise to be processed
-    expect(console.error).toHaveBeenCalledWith(
-      'Cannot send analytics',
-      expect.any(Error),
-    );
+    expect(SendAnalytics).not.toHaveBeenCalled();
+    await new Promise(process.nextTick);
+    expect(console.error).not.toHaveBeenCalled();
   });
 });
