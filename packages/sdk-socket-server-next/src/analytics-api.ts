@@ -328,10 +328,11 @@ app.post('/evt', async (_req, res) => {
 
     // Make sure each events have a valid dappId
     if (!event.properties.dappId) {
-      const newDappId = uuidv4();
+      const newDappId =
+        event.properties.url || event.properties.title || uuidv4();
       event.properties.dappId = newDappId;
       logger.info(
-        `event: ${event.event} - dappId missing - replacing with a random dappId=${newDappId}`,
+        `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
         event,
       );
     }
