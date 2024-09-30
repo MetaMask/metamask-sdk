@@ -18,7 +18,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
     socketServer,
     useDeeplink,
     lang,
-    _experimentalDeeplinkProtocol,
     infuraAPIKey,
     setAppContext,
     reset,
@@ -39,12 +38,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
     setAppContext({ useDeeplink: !useDeeplink });
   };
 
-  const toggleDeeplinkProtocol = () => {
-    setAppContext({
-      _experimentalDeeplinkProtocol: !_experimentalDeeplinkProtocol,
-    });
-  };
-
   const onReset = () => {
     reset();
   };
@@ -55,10 +48,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
       <ItemView label="Infura API Key" value={infuraAPIKey} />
       <ItemView label="Lang" value={lang} />
       <ItemView label="Use DeepLink" value={JSON.stringify(useDeeplink)} />
-      <ItemView
-        label="Experimental Deeplink Protocol"
-        value={JSON.stringify(_experimentalDeeplinkProtocol)}
-      />
       <View style={styles.buttonContainer}>
         <Button
           variant={ButtonVariants.Secondary}
@@ -69,11 +58,6 @@ export const SDKConfig = ({ showQRCode }: SDKConfigProps) => {
           variant={ButtonVariants.Secondary}
           label={`Toggle Deeplink`}
           onPress={updateUseDeeplink}
-        />
-        <Button
-          variant={ButtonVariants.Secondary}
-          label={`Toggle Deeplink Protocol`}
-          onPress={toggleDeeplinkProtocol}
         />
         <Button
           variant={ButtonVariants.Secondary}

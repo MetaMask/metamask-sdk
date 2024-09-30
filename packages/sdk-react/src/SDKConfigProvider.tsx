@@ -7,7 +7,6 @@ export interface SDKConfigContextProps {
   useDeeplink?: boolean;
   infuraAPIKey?: string;
   extensionOnly?: boolean;
-  _experimentalDeeplinkProtocol?: boolean;
   checkInstallationImmediately: boolean;
   debug: boolean;
   logs: {
@@ -23,7 +22,6 @@ const initProps: SDKConfigContextProps = {
   useDeeplink: true,
   extensionOnly: true,
   checkInstallationImmediately: false,
-  _experimentalDeeplinkProtocol: false,
   debug: true,
   logs: {
     sdk: true,
@@ -43,7 +41,6 @@ export const SDKConfigContext = createContext({
 export interface SDKConfigProviderProps {
   initialSocketServer?: string;
   initialInfuraKey?: string;
-  _initialExperimentalDeeplinkProtocol?: boolean;
   children: React.ReactNode;
   debug?: boolean;
 }
@@ -54,14 +51,12 @@ const STORAGE_LOCATION = 'appContext';
 export const SDKConfigProvider = ({
   initialSocketServer,
   initialInfuraKey,
-  _initialExperimentalDeeplinkProtocol,
   children,
 }: SDKConfigProviderProps) => {
   const [appContext, setAppContext] = useState<SDKConfigContextProps>({
     ...initProps,
     socketServer: initialSocketServer ?? DEFAULT_SERVER_URL,
     infuraAPIKey: initialInfuraKey,
-    _experimentalDeeplinkProtocol: _initialExperimentalDeeplinkProtocol ?? false,
   });
 
   const syncState = (newState: SDKConfigContextProps) => {
