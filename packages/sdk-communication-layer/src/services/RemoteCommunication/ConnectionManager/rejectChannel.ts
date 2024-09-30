@@ -2,13 +2,11 @@
 import { validate } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
-// import { logger } from '../../../utils/logger';
+import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 
-const logger = {
-  RemoteCommunication: (message: string, ...args: unknown[]) => {
-    console.log(message, ...args);
-  },
-};
+import packageJson from '../../../../package.json';
 
 /**
  * Rejects a channel connection from the wallet.
@@ -48,9 +46,20 @@ export async function rejectChannel({
     socket?.connect();
   }
 
-  logger.RemoteCommunication(
-    `[RemoteCommunication: reject()] context=${state.context} channelId=${channelId} socket=${socket} emitting ${EventType.REJECTED}`,
-  );
+  // Send analytics event
+  SendAnalytics(
+    {
+      id: channelId,
+      event: TrackingEvents.REJECTED,
+      ...state.originatorInfo,
+      sdkVersion: state.sdkVersion,
+      commLayerVersion: packageJson.version,
+      walletVersion: state.walletInfo?.version,
+    },
+    state.communicationServerUrl,
+  ).catch((error) => {
+    console.error(`rejectChannel:: Error emitting analytics event`, error);
+  });
 
   // emit reject event
   await new Promise<unknown>((resolve, reject) => {

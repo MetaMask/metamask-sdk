@@ -34,23 +34,6 @@ export const handleJoinChannelResults = async (
     return;
   }
 
-  SendAnalytics(
-    {
-      id: channelId ?? '',
-      event: isOriginator
-        ? TrackingEvents.CONNECTED
-        : TrackingEvents.CONNECTED_MOBILE,
-      ...instance.remote.state.originatorInfo,
-      sdkVersion: instance.remote.state.sdkVersion,
-      commLayer: instance.state.communicationLayerPreference,
-      commLayerVersion: packageJson.version,
-      walletVersion: instance.remote.state.walletInfo?.version,
-    },
-    state.communicationServerUrl,
-  ).catch((err) => {
-    console.error(`Cannot send analytics`, err);
-  });
-
   if (!result) {
     logger.SocketService(
       `handleJoinChannelResults: No result for channel ${channelId}`,
@@ -118,5 +101,22 @@ export const handleJoinChannelResults = async (
     remote.state.ready = true;
     remote.state.authorized = true;
     remote.emit(EventType.AUTHORIZED);
+
+    SendAnalytics(
+      {
+        id: channelId ?? '',
+        event: isOriginator
+          ? TrackingEvents.CONNECTED
+          : TrackingEvents.CONNECTED_MOBILE,
+        ...instance.remote.state.originatorInfo,
+        sdkVersion: instance.remote.state.sdkVersion,
+        commLayer: instance.state.communicationLayerPreference,
+        commLayerVersion: packageJson.version,
+        walletVersion: instance.remote.state.walletInfo?.version,
+      },
+      state.communicationServerUrl,
+    ).catch((err) => {
+      console.error(`Cannot send analytics`, err);
+    });
   }
 };

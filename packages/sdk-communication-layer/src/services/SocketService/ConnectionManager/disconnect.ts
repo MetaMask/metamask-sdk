@@ -1,6 +1,6 @@
-import { logger } from '../../../utils/logger';
 import { SocketService } from '../../../SocketService';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
+import { logger } from '../../../utils/logger';
 
 /**
  * Disconnects a SocketService instance from its current connection.

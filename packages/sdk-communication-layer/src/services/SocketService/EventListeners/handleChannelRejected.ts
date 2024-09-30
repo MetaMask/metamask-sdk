@@ -1,7 +1,11 @@
+import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
+import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
+
+import packageJson from '../../../../package.json';
 
 /**
  * Returns an asynchronous handler function to handle the 'reject' event for a specific channel.
@@ -25,7 +29,27 @@ export function handleChannelRejected(
 
     logger.SocketService(
       `[SocketService: handleChannelRejected()] context=${instance.state.context} channelId=${channelId} isOriginator=${instance.state.isOriginator} ready=${instance.remote.state.ready}`,
+      instance.remote.state.originatorInfo,
     );
+
+    // Emit analytics event
+    SendAnalytics(
+      {
+        id: channelId,
+        event: TrackingEvents.REJECTED,
+        ...instance.remote.state.originatorInfo,
+        sdkVersion: instance.remote.state.sdkVersion,
+        commLayer: instance.state.communicationLayerPreference,
+        commLayerVersion: packageJson.version,
+        walletVersion: instance.remote.state.walletInfo?.version,
+      },
+      instance.remote.state.communicationServerUrl,
+    ).catch((error) => {
+      console.error(
+        `handleChannelRejected:: Error emitting analytics event`,
+        error,
+      );
+    });
 
     // Terminate the channel
     await instance.remote.disconnect({ terminate: true });
