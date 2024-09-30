@@ -137,8 +137,6 @@ export class RemoteConnection {
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;
-    this.state.deeplinkProtocol =
-      options.sdk.options._experimentalDeeplinkProtocol ?? false;
 
     // Set default modals implementation
     if (!options.modals.install) {
