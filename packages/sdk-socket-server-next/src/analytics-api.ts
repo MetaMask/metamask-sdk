@@ -317,19 +317,22 @@ app.post('/evt', async (_req, res) => {
     // Replace 'sdk' id wichch translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with a unique random id
     if (event.userId === SDK_EXTENSION_DEFAULT_ID) {
       const newUserId = uuidv4();
-      logger.info(`Replacing 'sdk' id with a random uuid=${newUserId}`);
+      logger.info(
+        `event: ${event.event} - Replacing 'sdk' id with a random uuid=${newUserId}`,
+        event,
+      );
       event.userId = newUserId;
       event.properties.userId = newUserId;
     }
 
     // Make sure each events have a valid dappId
     if (!event.properties.dappId) {
-      logger.error(
-        `event: ${event.event} - dappId is required - event will be ignored`,
+      const newDappId = uuidv4();
+      event.properties.dappId = newDappId;
+      logger.info(
+        `event: ${event.event} - dappId missing - replacing with a random dappId=${newDappId}`,
         event,
       );
-      // always return success
-      return res.json({ success: true });
     }
 
     // Define properties to be excluded
