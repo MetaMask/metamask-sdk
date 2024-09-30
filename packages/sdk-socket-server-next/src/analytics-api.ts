@@ -316,9 +316,10 @@ app.post('/evt', async (_req, res) => {
 
     // Replace 'sdk' id wichch translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with a unique random id
     if (event.userId === SDK_EXTENSION_DEFAULT_ID) {
-      const newUserId = uuidv4();
+      const newUserId =
+        event.properties.url || event.properties.title || uuidv4();
       logger.info(
-        `event: ${event.event} - Replacing 'sdk' id with a random uuid=${newUserId}`,
+        `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
         event,
       );
       event.userId = newUserId;
