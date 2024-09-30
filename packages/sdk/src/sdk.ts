@@ -88,11 +88,6 @@ export interface MetaMaskSDKOptions {
   shouldShimWeb3?: boolean;
 
   /**
-   * Enable the experimental deeplink protocol on mobile web.
-   */
-  _experimentalDeeplinkProtocol?: boolean;
-
-  /**
    * The preferred communication layer to use for the SDK.
    */
   communicationLayerPreference?: CommunicationLayerPreference;
