@@ -314,22 +314,32 @@ app.post('/evt', async (_req, res) => {
       },
     };
 
-    // Replace 'sdk' id wichch translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with a unique random id
-    if (event.userId === SDK_EXTENSION_DEFAULT_ID) {
+    // Always check for userId to avoid hot sharding events
+    if (!event.userId) {
       const newUserId = uuidv4();
-      logger.info(`Replacing 'sdk' id with a random uuid=${newUserId}`);
+      logger.debug(
+        `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
+        event,
+      );
       event.userId = newUserId;
-      event.properties.userId = newUserId;
     }
 
     // Make sure each events have a valid dappId
-    if (!event.properties.dappId) {
-      logger.error(
-        `event: ${event.event} - dappId is required - event will be ignored`,
+    // Replace 'sdk' id which translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with fallback to url / title / random uuid
+    if (
+      !event.properties.dappId ||
+      event.properties.dappId === SDK_EXTENSION_DEFAULT_ID
+    ) {
+      // Prevent "N/A" in url and ensure a valid dappId
+      const newDappId =
+        event.properties.url && event.properties.url !== 'N/A'
+          ? event.properties.url
+          : event.properties.title || uuidv4();
+      event.properties.dappId = newDappId;
+      logger.debug(
+        `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
         event,
       );
-      // always return success
-      return res.json({ success: true });
     }
 
     // Define properties to be excluded
