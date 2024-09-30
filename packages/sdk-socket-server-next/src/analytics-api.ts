@@ -336,7 +336,7 @@ app.post('/evt', async (_req, res) => {
           ? event.properties.url
           : event.properties.title || uuidv4();
       event.properties.dappId = newDappId;
-      logger.info(
+      logger.debug(
         `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
         event,
       );
