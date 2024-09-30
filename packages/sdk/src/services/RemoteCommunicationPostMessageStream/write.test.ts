@@ -29,6 +29,7 @@ describe('write function', () => {
   const mockOpenDeeplink = jest.fn();
   const mockIsMetaMaskInstalled = jest.fn();
   const isProviderConnected = jest.fn();
+  const mockHasDeeplinkProtocol = jest.fn();
 
   let mockRemoteCommunicationPostMessageStream = {
     state: {
@@ -40,6 +41,7 @@ describe('write function', () => {
         isAuthorized: mockIsAuthorized,
         sendMessage: mockSendMessage,
         getKeyInfo: mockGetKeyInfo,
+        hasDeeplinkProtocol: mockHasDeeplinkProtocol,
       },
       platformManager: {
         isSecure: mockIsSecure,
@@ -80,6 +82,7 @@ describe('write function', () => {
           isAuthorized: mockIsAuthorized,
           sendMessage: mockSendMessage,
           getKeyInfo: mockGetKeyInfo,
+          hasDeeplinkProtocol: mockHasDeeplinkProtocol,
         },
         platformManager: {
           isSecure: mockIsSecure,

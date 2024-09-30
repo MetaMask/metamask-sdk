@@ -108,11 +108,22 @@ describe('disconnect', () => {
     expect(instance.state.channelId).not.toStrictEqual('sampleChannelId');
   });
 
-  it('should reset ready and paused states', async () => {
+  it('should reset ready and paused states only when terminating', async () => {
     instance.state.ready = true;
     instance.state.paused = true;
 
+    // First, test without termination
     await disconnect({ instance });
+
+    expect(instance.state.ready).toBe(true);
+    expect(instance.state.paused).toBe(true);
+
+    // Now, test with termination
+    const options = {
+      terminate: true,
+    };
+
+    await disconnect({ options, instance });
 
     expect(instance.state.ready).toBe(false);
     expect(instance.state.paused).toBe(false);

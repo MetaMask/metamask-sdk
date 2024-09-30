@@ -4,6 +4,7 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
+import { v4 as uuidv4 } from 'uuid';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
@@ -21,6 +22,9 @@ import { getLogger } from './logger';
 import { ChannelInfo, extractChannelInfo } from './utils';
 
 const logger = getLogger();
+
+// SDK version prev 0.27.0 uses 'sdk' as the default id, below value is the sha1 hash of 'sdk'
+const SDK_EXTENSION_DEFAULT_ID = '5a374dcd2e5eb762b527af3a5bab6072a4d24493';
 
 // Initialize Redis Cluster client
 let redisNodes: {
@@ -239,6 +243,10 @@ app.post('/evt', async (_req, res) => {
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
+      logger.info(
+        `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash} - creating new channelId`,
+      );
+
       await pubClient.set(
         channelId,
         userIdHash,
@@ -306,14 +314,32 @@ app.post('/evt', async (_req, res) => {
       },
     };
 
-    // Make sure each events have a valid dappId
-    if (!event.properties.dappId) {
-      logger.error(
-        `event: ${event.event} - dappId is required - event will be ignored`,
+    // Always check for userId to avoid hot sharding events
+    if (!event.userId) {
+      const newUserId = uuidv4();
+      logger.debug(
+        `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
         event,
       );
-      // always return success
-      return res.json({ success: true });
+      event.userId = newUserId;
+    }
+
+    // Make sure each events have a valid dappId
+    // Replace 'sdk' id which translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with fallback to url / title / random uuid
+    if (
+      !event.properties.dappId ||
+      event.properties.dappId === SDK_EXTENSION_DEFAULT_ID
+    ) {
+      // Prevent "N/A" in url and ensure a valid dappId
+      const newDappId =
+        event.properties.url && event.properties.url !== 'N/A'
+          ? event.properties.url
+          : event.properties.title || uuidv4();
+      event.properties.dappId = newDappId;
+      logger.debug(
+        `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
+        event,
+      );
     }
 
     // Define properties to be excluded
