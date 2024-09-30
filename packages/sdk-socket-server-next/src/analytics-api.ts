@@ -317,7 +317,7 @@ app.post('/evt', async (_req, res) => {
     // Always check for userId to avoid hot sharding events
     if (!event.userId) {
       const newUserId = uuidv4();
-      logger.info(
+      logger.debug(
         `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
         event,
       );
