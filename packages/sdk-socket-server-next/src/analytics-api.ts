@@ -333,7 +333,6 @@ app.post('/evt', async (_req, res) => {
       const newDappId =
         event.properties.url || event.properties.title || uuidv4();
       event.properties.dappId = newDappId;
-      event.userId = newDappId;
       logger.info(
         `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
         event,
