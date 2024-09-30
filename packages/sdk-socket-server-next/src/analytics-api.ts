@@ -330,8 +330,11 @@ app.post('/evt', async (_req, res) => {
       !event.properties.dappId ||
       event.properties.dappId === SDK_EXTENSION_DEFAULT_ID
     ) {
+      // Prevent "N/A" in url and ensure a valid dappId
       const newDappId =
-        event.properties.url || event.properties.title || uuidv4();
+        event.properties.url && event.properties.url !== 'N/A'
+          ? event.properties.url
+          : event.properties.title || uuidv4();
       event.properties.dappId = newDappId;
       logger.info(
         `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
