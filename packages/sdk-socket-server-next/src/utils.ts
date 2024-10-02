@@ -123,11 +123,7 @@ export const extractChannelInfo = (
       'UNKNOWN-server', // should never happen but keep as identifier if it does
   };
 
-  if (Object.values(mergedInfo).every((value) => value !== '')) {
-    return mergedInfo;
-  }
-
-  return null;
+  return mergedInfo;
 };
 
 export const isValidEventBody = (
