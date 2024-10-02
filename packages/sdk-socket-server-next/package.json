@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-socket-server-scale",
-  "version": "2.8.0",
+  "version": "2.8.1",
   "private": true,
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
