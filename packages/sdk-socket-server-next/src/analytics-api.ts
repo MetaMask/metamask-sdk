@@ -232,13 +232,24 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
-    const channelId: string = body.id || 'socket.io-server';
+    let channelId: string = body.id || 'sdk';
+    // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
+    let isExtensionEvent = body.from === 'extension';
+
     if (typeof channelId !== 'string') {
       logger.error(`Received event with invalid channelId: ${channelId}`, body);
       return res.status(400).json({ status: 'error' });
     }
 
-    logger.debug(`Received event /evt channelId=${channelId}`, body);
+    if (channelId === 'sdk') {
+      channelId = uuidv4();
+      isExtensionEvent = true;
+    }
+
+    logger.debug(
+      `Received event /evt channelId=${channelId} isExtensionEvent=${isExtensionEvent}`,
+      body,
+    );
     let userIdHash = await pubClient.get(channelId);
 
     if (!userIdHash) {
@@ -247,12 +258,14 @@ app.post('/evt', async (_req, res) => {
         `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash} - creating new channelId`,
       );
 
-      await pubClient.set(
-        channelId,
-        userIdHash,
-        'EX',
-        config.channelExpiry.toString(),
-      );
+      if (!isExtensionEvent) {
+        await pubClient.set(
+          channelId,
+          userIdHash,
+          'EX',
+          config.channelExpiry.toString(),
+        );
+      }
     }
 
     if (REDIS_DEBUG_LOGS) {
@@ -291,12 +304,18 @@ app.post('/evt', async (_req, res) => {
         channelInfo,
       );
 
-      await pubClient.set(
-        userIdHash,
-        JSON.stringify(channelInfo),
-        'EX',
-        config.channelExpiry.toString(),
-      );
+      if (userIdHash === 'sdk') {
+        logger.warn('userIdHash is sdk - this should not happen');
+      }
+
+      if (!isExtensionEvent) {
+        await pubClient.set(
+          userIdHash,
+          JSON.stringify(channelInfo),
+          'EX',
+          config.channelExpiry.toString(),
+        );
+      }
     }
 
     if (REDIS_DEBUG_LOGS) {
