@@ -232,13 +232,24 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
-    const channelId: string = body.id || 'socket.io-server';
+    let channelId: string = body.id || 'sdk';
+    // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
+    let isExtensionEvent = body.from === 'extension';
+
     if (typeof channelId !== 'string') {
       logger.error(`Received event with invalid channelId: ${channelId}`, body);
       return res.status(400).json({ status: 'error' });
     }
 
-    logger.debug(`Received event /evt channelId=${channelId}`, body);
+    if (channelId === 'sdk') {
+      channelId = uuidv4();
+      isExtensionEvent = true;
+    }
+
+    logger.debug(
+      `Received event /evt channelId=${channelId} isExtensionEvent=${isExtensionEvent}`,
+      body,
+    );
     let userIdHash = await pubClient.get(channelId);
 
     if (!userIdHash) {
@@ -247,12 +258,14 @@ app.post('/evt', async (_req, res) => {
         `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash} - creating new channelId`,
       );
 
-      await pubClient.set(
-        channelId,
-        userIdHash,
-        'EX',
-        config.channelExpiry.toString(),
-      );
+      if (!isExtensionEvent) {
+        await pubClient.set(
+          channelId,
+          userIdHash,
+          'EX',
+          config.channelExpiry.toString(),
+        );
+      }
     }
 
     if (REDIS_DEBUG_LOGS) {
@@ -291,12 +304,14 @@ app.post('/evt', async (_req, res) => {
         channelInfo,
       );
 
-      await pubClient.set(
-        userIdHash,
-        JSON.stringify(channelInfo),
-        'EX',
-        config.channelExpiry.toString(),
-      );
+      if (!isExtensionEvent) {
+        await pubClient.set(
+          userIdHash,
+          JSON.stringify(channelInfo),
+          'EX',
+          config.channelExpiry.toString(),
+        );
+      }
     }
 
     if (REDIS_DEBUG_LOGS) {
@@ -315,7 +330,7 @@ app.post('/evt', async (_req, res) => {
     };
 
     // Always check for userId to avoid hot sharding events
-    if (!event.userId) {
+    if (!event.userId || event.userId === SDK_EXTENSION_DEFAULT_ID) {
       const newUserId = uuidv4();
       logger.debug(
         `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
@@ -324,17 +339,12 @@ app.post('/evt', async (_req, res) => {
       event.userId = newUserId;
     }
 
-    // Make sure each events have a valid dappId
-    // Replace 'sdk' id which translates to '5a374dcd2e5eb762b527af3a5bab6072a4d24493' with fallback to url / title / random uuid
-    if (
-      !event.properties.dappId ||
-      event.properties.dappId === SDK_EXTENSION_DEFAULT_ID
-    ) {
+    if (!event.properties.dappId) {
       // Prevent "N/A" in url and ensure a valid dappId
       const newDappId =
         event.properties.url && event.properties.url !== 'N/A'
           ? event.properties.url
-          : event.properties.title || uuidv4();
+          : event.properties.title || 'N/A';
       event.properties.dappId = newDappId;
       logger.debug(
         `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
