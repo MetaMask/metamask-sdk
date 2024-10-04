@@ -141,12 +141,10 @@ describe('wrapExtensionProvider', () => {
     await wrapped.request(args);
 
     expect(handleBatchMethod).toHaveBeenCalledWith({
-      params: args.params,
       target: mockProvider,
       args,
       trackEvent: true,
       sdkInstance,
-      provider: mockProvider,
     });
   });
 

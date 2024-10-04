@@ -50,10 +50,10 @@ describe('handleBatchMethod', () => {
     mockProvider = {
       request: jest.fn(),
     } as unknown as MetaMaskInpageProvider;
-
-    mockTarget = {
-      request: jest.fn(),
-    } as unknown as MetaMaskInpageProvider;
+    
+    // the provider is always the target
+    // in wrapExtensionProvider
+    mockTarget = mockProvider 
   });
 
   afterEach(() => {
@@ -66,14 +66,12 @@ describe('handleBatchMethod', () => {
       { method: 'rpc1', params: [] },
       { method: 'rpc2', params: [] },
     ];
-    const args = { method: 'someMethod', params: ['param1'] };
+    const args = { method: 'metamask_batch', params };
 
     await handleBatchMethod({
-      params,
       target: mockTarget,
       args,
       trackEvent: false,
-      provider: mockProvider,
       sdkInstance,
     });
 
@@ -86,43 +84,48 @@ describe('handleBatchMethod', () => {
       method: 'rpc2',
       params: [],
     });
+
+    expect(mockProvider.request).toHaveReturnedTimes(2);
   });
 
   it('should returns the response from the target request method', async () => {
-    const params: any[] = [];
-    const args = { method: 'someMethod', params: ['param1'] };
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
     const mockResponse = 'mockResponse';
     (mockTarget.request as jest.Mock).mockResolvedValue(mockResponse);
 
     const response = await handleBatchMethod({
-      params,
       target: mockTarget,
       args,
       trackEvent: false,
-      provider: mockProvider,
       sdkInstance,
     });
 
-    expect(response).toBe(mockResponse);
+    // 2 RPCs mean 2 return values
+    expect(response).toStrictEqual([mockResponse, mockResponse]);
   });
 
   it('should sends tracking event if trackEvent is true', async () => {
-    const params: any[] = [];
-    const args = { method: 'someMethod', params: ['param1'] };
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
 
     await handleBatchMethod({
-      params,
       target: mockTarget,
       args,
       trackEvent: true,
-      provider: mockProvider,
       sdkInstance,
     });
 
     expect(spyAnalytics).toHaveBeenCalledWith({
       event: TrackingEvents.SDK_RPC_REQUEST_DONE,
       params: {
-        method: 'someMethod',
+        method: 'metamask_batch',
         from: 'N/A',
         id: expect.any(String),
       },
@@ -130,15 +133,16 @@ describe('handleBatchMethod', () => {
   });
 
   it('should does not send tracking event if trackEvent is false', async () => {
-    const params: any[] = [];
-    const args = { method: 'someMethod', params: ['param1'] };
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
 
     await handleBatchMethod({
-      params,
       target: mockTarget,
       args,
       trackEvent: false,
-      provider: mockProvider,
       sdkInstance,
     });
 
