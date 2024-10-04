@@ -6,7 +6,7 @@
     "@types/koa": "^2.13.12",
     "@wdio/allure-reporter": "^8.11.0",
     "@wdio/appium-service": "^8.24.6",
-    "@wdio/browserstack-service": "^8.24.6",
+    "@wdio/browserstack-service": "^9.1.2",
     "@wdio/cli": "latest",
     "@wdio/local-runner": "latest",
     "@wdio/mocha-framework": "latest",

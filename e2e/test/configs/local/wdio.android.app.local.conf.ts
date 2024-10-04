@@ -17,6 +17,7 @@ config.capabilities = [
     'appium:appActivity': 'io.metamask.MainActivity',
     'appium:newCommandTimeout': 360,
     'appium:appPackage': process.env.BUNDLE_ID,
+    'appium:autoLaunch': false,
     // 'appium:otherApps': process.env.RN_TEST_APP_PATH ?? '',
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,

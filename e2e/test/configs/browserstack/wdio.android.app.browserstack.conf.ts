@@ -10,7 +10,6 @@ config.capabilities = [
   {
     // The defaults you need to have in your config
     platformName: 'Android',
-    maxInstances: 1,
     'appium:deviceName': 'Google Pixel 7',
     'appium:platformVersion': '13.0',
     'appium:automationName': 'UiAutomator2',
@@ -20,6 +19,7 @@ config.capabilities = [
     'appium:appPackage': process.env.BUNDLE_ID,
     /* This setting will tell Appium if it need to install the app or no. */
     'appium:noReset': false,
+    'appium:autoLaunch': false,
     // 'appium:optionalIntentArguments': '--es fixtureServerPort 12345'
     // Removing ReactNative tests for now
     // 'appium:otherApps': getOtherAppsPath(),

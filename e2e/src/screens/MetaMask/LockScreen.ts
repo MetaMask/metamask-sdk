@@ -69,6 +69,7 @@ class LockScreen {
         timeoutMsg: 'Password input not visible',
       })
       .then(async () => {
+        // await driver.pause(5000);
         await (this.passwordInput).setValue(password);
         await (this.unlockButton).click();
       })

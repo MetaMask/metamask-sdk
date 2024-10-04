@@ -43,6 +43,8 @@ export const config: WebdriverIO.Config = {
 
   // outputDir: 'logs',
 
+  maxInstances: 1,
+
   reporters: ['spec', ['allure', { outputDir: 'allure-results' }]],
 
   /*
