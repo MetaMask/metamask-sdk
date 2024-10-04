@@ -14,9 +14,11 @@ import {
 } from './types';
 import {
   FIXTURE_SERVER_PORT,
+  APP_PATH,
   METAMASK_BUNDLE_ID,
   PLATFORM,
   Platforms,
+  LOCALHOST,
 } from './Constants';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
@@ -46,6 +48,22 @@ class Utils {
   }
 
   /*
+   * Little helper to reinstall a given app based on a file path
+   * This usually refers to the const APP_PATH
+   */
+  static async reinstallApp({
+    filePath,
+    bundleId,
+  }: {
+    filePath: string;
+    bundleId: string;
+  }): Promise<void> {
+    // await driver.removeApp(bundleId);
+    // await driver.installApp(filePath);
+    await driver.activateApp(bundleId);
+  }
+
+  /*
    * Launches MetaMask with a fixture
    * This means that MM will load in a fully onboarded state
    *
@@ -55,59 +73,43 @@ class Utils {
     fixtureServer: FixtureServer,
     bundleId: string,
   ): Promise<void> {
-    // Little helper to activate the app for the platform. This is helpful
-    // since the Android driver expects a key named appId and iOS expects a key
-    // named bundleId
     if (PLATFORM === Platforms.ANDROID) {
       console.log('Android test detected. Reversing TCP ports...');
-      /*
+      // We'll need this once we start runing tests on CI
       const adb = new ADB({
-        adbHost: 'localhost',
+        adbHost: LOCALHOST,
         adbPort: 5037,
       });
-       */
-      const adb = await ADB.createADB({});
+      // const adb = await ADB.createADB({});
       await driver.pause(5000);
       await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
       await driver.pause(5000);
     }
 
-    const fixture = new FixtureBuilder().build();
+    const fixture = new FixtureBuilder().withDefaultFixture().build();
     await startFixtureServer(fixtureServer);
     await loadFixture(fixtureServer, { fixture });
 
-    await driver.pause(5000);
-
-    console.log('Rebooting MetaMask...');
-    await driver.terminateApp(bundleId);
-
     console.log(`Re-launching MetaMask on ${PLATFORM}...`);
     if (PLATFORM === Platforms.IOS) {
-      /*
-      await driver.executeScript('mobile: launchApp', [
+      console.log('Pausing for 10 seconds...');
+      await driver.pause(5000);
+      await driver.pause(5000);
+      await driver.executeScript('mobile:launchApp', [
         {
           bundleId,
           fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
         },
       ]);
-       */
-      await driver.activateApp(bundleId);
+      // const t = {"bundleId": "io.metamask.MetaMask-QA", "fixtureServerPort": 12345}
     } else {
-      await driver.updateSettings({
-        waitForIdleTimeout: 5000,
+      await this.reinstallApp({
+        filePath: APP_PATH,
+        bundleId: METAMASK_BUNDLE_ID,
       });
-      await driver.activateApp(bundleId);
-      console.log('MetaMask was loaded with fixtures!');
-
-      /*
-      await driver.execute('mobile: activateApp', {
-        appId: bundleId,
-        fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
-      });
-       */
-
-      console.log('Launched Android MetaMask with fixture');
     }
+
+    console.log('MetaMask was loaded with fixtures!');
   }
 
   /*

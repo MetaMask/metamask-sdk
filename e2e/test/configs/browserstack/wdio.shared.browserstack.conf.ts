@@ -7,7 +7,7 @@ config.services = (config.services ? config.services : []).concat([
   [
     'browserstack',
     {
-      testObservability: true,
+      testObservability: false,
       testObservabilityOptions: {
         projectName: 'SDK e2e tests',
         buildName: 'SDK e2e PR regression',

@@ -19,7 +19,6 @@ dotenv.config({ path: path.join(process.cwd(), '.ios.env') });
 config.capabilities = [
   {
     platformName: 'iOS',
-    maxInstances: 1,
     // http://appium.io/docs/en/writing-running-appium/caps/
     'appium:deviceName': process.env.DEVICE_NAME ?? '',
     'appium:platformVersion': process.env.PLATFORM_VERSION ?? '',
@@ -38,6 +37,7 @@ config.capabilities = [
     // "appium:xcodeSigningId": "iPhone Developer",
     'appium:newCommandTimeout': 240,
     'appium:noReset': false,
+    'appium:autoLaunch': false,
     'appium:language': 'en',
     'appium:fullReset': true,
     'appium:settings[snapshotMaxDepth]': 62,
