@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useRef, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, NativeEventEmitter, NativeModules } from 'react-native';
 import {
   RequestArguments,
   batchRequest,
@@ -62,6 +62,8 @@ const initProps: SDKState = {
 
 export const SDKContext = createContext(initProps);
 
+const { MetaMaskReactNativeSdk } = NativeModules;
+
 const MetaMaskProviderClient = ({
   children,
   sdkOptions,
@@ -74,6 +76,8 @@ const MetaMaskProviderClient = ({
   const [connected, setConnected] = useState<boolean>(false);
   const [chainId, setChainId] = useState<string>();
   const [account, setAccount] = useState<string>();
+
+  const eventEmitter = new NativeEventEmitter(MetaMaskReactNativeSdk);
 
   const syncAccountAndChianId = async () => {
     const selectedAddress = await getSelectedAddress();
@@ -209,6 +213,29 @@ const MetaMaskProviderClient = ({
       console.error('MetaMaskProviderClient:: Error onReady =>', error);
     });
   }, [ready]);
+
+  // Subscribing to Native Event Listeners
+  useEffect(() => {
+    const accountChangedSubscription = eventEmitter.addListener(
+      'onAccountChanged',
+      (event) => {
+        setAccount(event.account);
+      },
+    );
+
+    const chainIdChangedSubscription = eventEmitter.addListener(
+      'onChainIdChanged',
+      (event) => {
+        setChainId(event.chainId);
+      },
+    );
+
+    // Cleanup subscriptions when component unmounts
+    return () => {
+      accountChangedSubscription.remove();
+      chainIdChangedSubscription.remove();
+    };
+  }, []);
 
   return (
     <SDKContext.Provider
