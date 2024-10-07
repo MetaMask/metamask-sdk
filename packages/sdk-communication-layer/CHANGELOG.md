@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0]
+### Added
+- feat: event alignment with async protocol ([#1054](https://github.com/MetaMask/metamask-sdk/pull/1054))
+- feat: auto activate deeplink protocol when wallet supports it ([#1056](https://github.com/MetaMask/metamask-sdk/pull/1056))
+- feat: default web url metadata ([#1043](https://github.com/MetaMask/metamask-sdk/pull/1043))
+- feat: ping to retrieve pending messages from server ([#1049](https://github.com/MetaMask/metamask-sdk/pull/1049))
+- feat: server events and dappid recovery ([#1044](https://github.com/MetaMask/metamask-sdk/pull/1044))
+
 ## [0.29.0-wallet]
 ### Added
 - feat: async termination of connection (using ack from server) ([#1022](https://github.com/MetaMask/metamask-sdk/pull/1022))
@@ -254,7 +262,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0-wallet...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0...HEAD
+[0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0-wallet...@metamask/sdk-communication-layer@0.29.0
 [0.29.0-wallet]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.2...@metamask/sdk-communication-layer@0.29.0-wallet
 [0.28.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.1...@metamask/sdk-communication-layer@0.28.2
 [0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.0...@metamask/sdk-communication-layer@0.28.1
