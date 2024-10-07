@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class SecurityUpdatesScreen {
-  get noThanksSecurityUpdates(): ChainablePromiseElement<WebdriverIO.Element> {
+  get noThanksSecurityUpdates(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -16,12 +16,10 @@ class SecurityUpdatesScreen {
   }
 
   async tapNoThanksSecurityUpdates(): Promise<void> {
-    await (
-      await this.noThanksSecurityUpdates
-    ).waitForEnabled({
+    await this.noThanksSecurityUpdates.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.noThanksSecurityUpdates).click();
+    await this.noThanksSecurityUpdates.click();
   }
 }
 

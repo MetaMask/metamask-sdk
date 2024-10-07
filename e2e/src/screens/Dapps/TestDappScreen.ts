@@ -1,12 +1,13 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
+import { driver } from '@wdio/globals';
 import { Dapp } from '../interfaces/Dapp';
 import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class TestDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,7 +18,7 @@ class TestDappScreen implements Dapp {
     );
   }
 
-  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -30,7 +31,7 @@ class TestDappScreen implements Dapp {
     );
   }
 
-  get signTypedDataV3Button(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signTypedDataV3Button(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -43,7 +44,7 @@ class TestDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -55,27 +56,25 @@ class TestDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async signTypedDataV3(): Promise<void> {
     await this.scrollToSignTypedDataV3Button();
-    await (await this.signTypedDataV3Button).click();
+    await this.signTypedDataV3Button.click();
   }
 
   async personalSign(): Promise<void> {
     await this.scrollToPersonalSignButton();
-    await (await this.personalSignButton).click();
+    await this.personalSignButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 
   async scrollToSignTypedDataV3Button(): Promise<void> {
-    let isButtonDisplayed = await (
-      await this.signTypedDataV3Button
-    ).isDisplayed();
+    let isButtonDisplayed = await this.signTypedDataV3Button.isDisplayed();
 
     while (!isButtonDisplayed) {
       if (driver.isAndroid) {
@@ -84,14 +83,12 @@ class TestDappScreen implements Dapp {
         await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
       }
 
-      isButtonDisplayed = await (
-        await this.signTypedDataV3Button
-      ).isDisplayed();
+      isButtonDisplayed = await this.signTypedDataV3Button.isDisplayed();
     }
   }
 
   async scrollToPersonalSignButton(): Promise<void> {
-    let isButtonDisplayed = await (await this.personalSignButton).isDisplayed();
+    let isButtonDisplayed = await this.personalSignButton.isDisplayed();
 
     while (!isButtonDisplayed) {
       if (driver.isAndroid) {
@@ -100,7 +97,7 @@ class TestDappScreen implements Dapp {
         await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
       }
 
-      isButtonDisplayed = await (await this.personalSignButton).isDisplayed();
+      isButtonDisplayed = await this.personalSignButton.isDisplayed();
     }
   }
 }

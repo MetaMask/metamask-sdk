@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class WalletSetupScreen {
-  get importWithSRP(): ChainablePromiseElement<WebdriverIO.Element> {
+  get importWithSRP(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().accessibilityId(
@@ -18,7 +18,7 @@ class WalletSetupScreen {
   }
 
   async tapImportWithSRP(): Promise<void> {
-    await (await this.importWithSRP).click();
+    await this.importWithSRP.click();
   }
 }
 

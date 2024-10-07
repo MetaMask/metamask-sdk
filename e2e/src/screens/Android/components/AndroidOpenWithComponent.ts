@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector } from '../../../Selectors';
 
 class AndroidOpenWithComponent {
-  get openWithMetaMaskQA(): ChainablePromiseElement<WebdriverIO.Element> {
+  get openWithMetaMaskQA(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText('MetaMask-QA'),
@@ -12,7 +12,7 @@ class AndroidOpenWithComponent {
     );
   }
 
-  get openWithMetaMask(): ChainablePromiseElement<WebdriverIO.Element> {
+  get openWithMetaMask(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText('MetaMask'),
@@ -22,20 +22,20 @@ class AndroidOpenWithComponent {
 
   async tapOpenWithMetaMaskQA(): Promise<void> {
     await (
-      await this.openWithMetaMaskQA
+      this.openWithMetaMaskQA
     ).waitForEnabled({
       timeout: 10000,
     });
-    await (await this.openWithMetaMaskQA).click();
+    await (this.openWithMetaMaskQA).click();
   }
 
   async tapOpenWithMetaMask(): Promise<void> {
     await (
-      await this.openWithMetaMask
+      this.openWithMetaMask
     ).waitForEnabled({
       timeout: 10000,
     });
-    await (await this.openWithMetaMask).click();
+    await (this.openWithMetaMask).click();
   }
 }
 

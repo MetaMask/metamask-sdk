@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class ConnectModalComponent {
-  get accountApprovalModalContainer(): ChainablePromiseElement<WebdriverIO.Element> {
+  get accountApprovalModalContainer(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,22 +17,22 @@ class ConnectModalComponent {
     );
   }
 
-  get connectApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectApprovalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="connect-button"]',
+          '//android.widget.Button[@resource-id="connect-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
       }),
     );
   }
 
-  get cancelApprovalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get cancelApprovalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="cancel-button"]',
+          '//android.widget.Button[@resource-id="cancel-button"]',
         ),
         iosSelector: IOSSelector.by().predicateString('label == "Cancel"'),
       }),
@@ -40,12 +40,10 @@ class ConnectModalComponent {
   }
 
   async tapConnectApproval(): Promise<void> {
-    await (
-      await this.connectApprovalButton
-    ).waitForEnabled({
+    await this.connectApprovalButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.connectApprovalButton).click();
+    await this.connectApprovalButton.click();
   }
 }
 

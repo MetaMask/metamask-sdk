@@ -4,7 +4,7 @@ import { IOSSelector } from '../../../Selectors';
 import { getSelectorForPlatform } from '../../../Utils';
 
 class IOSOpenInComponent {
-  get open(): ChainablePromiseElement<WebdriverIO.Element> {
+  get open(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString(
@@ -14,7 +14,7 @@ class IOSOpenInComponent {
     );
   }
 
-  get cancel(): ChainablePromiseElement<WebdriverIO.Element> {
+  get cancel(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString(
@@ -25,11 +25,11 @@ class IOSOpenInComponent {
   }
 
   async tapOpen(): Promise<void> {
-    await (await this.open).click();
+    await this.open.click();
   }
 
   async tapCancel(): Promise<void> {
-    await (await this.cancel).click();
+    await this.cancel.click();
   }
 }
 

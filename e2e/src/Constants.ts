@@ -1,4 +1,4 @@
-export const WALLET_PASSWORD = 'asdasdasd';
+export const WALLET_PASSWORD = '123123123';
 
 export const Browsers = {
   SAFARI: 'com.apple.mobilesafari',
@@ -22,10 +22,6 @@ export const SRP =
   process.env.SRP ??
   'test test test test test test test test test test test test';
 
-export const FIXTURE_SERVER_PORT = 12345;
-
-export const FIXTURE_SERVER_URL = `http://localhost:12345/state.json`;
-
 export const BROWSER_BUNDLE_ID = driver.isIOS
   ? Browsers.SAFARI
   : Browsers.CHROME;
@@ -43,5 +39,15 @@ export const WDIO_XPATH = '';
 export const WDIO_ACCESSIBILITY_ID = '~';
 export const WDIO_RESOURCE_ID = 'id:';
 
-const APP_PATH = process.env.APP_PATH as string;
+export const APP_PATH = process.env.APP_PATH as string;
 export const IS_RUNNING_IN_BROWSER_STACK = APP_PATH.startsWith('bs://');
+// export const LOCALHOST = IS_RUNNING_IN_BROWSER_STACK
+//   ? 'bs-local.com'
+//   : 'localhost';
+
+export const LOCALHOST = 'localhost';
+
+
+export const FIXTURE_SERVER_HOST = LOCALHOST;
+export const FIXTURE_SERVER_PORT = 12345;
+export const FIXTURE_SERVER_URL = `http://${FIXTURE_SERVER_HOST}:${FIXTURE_SERVER_PORT}/state.json`;

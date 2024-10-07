@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class WhatsNewComponent {
-  get closeModalButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get closeModalButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -19,12 +19,10 @@ class WhatsNewComponent {
 
   async closeModal(): Promise<void> {
     try {
-      await (
-        await this.closeModalButton
-      ).waitForEnabled({
+      await this.closeModalButton.waitForEnabled({
         timeout: 10000,
       });
-      await (await this.closeModalButton).click();
+      await this.closeModalButton.click();
     } catch (e) {
       console.log('No Whats New Modal to close, skipping: ', e.message);
     }

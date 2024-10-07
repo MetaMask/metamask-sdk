@@ -4,12 +4,16 @@ import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
-class NextJSDappScreen implements Dapp {
+class DevnextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().uiAutomatorAndText('Connect'),
-        iosSelector: IOSSelector.by().predicateString('label == "Connect"'),
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="Connect wallet"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "Connect wallet"',
+        ),
       }),
     );
   }
@@ -55,5 +59,5 @@ class NextJSDappScreen implements Dapp {
   }
 }
 
-const nextJSDappScreen = new NextJSDappScreen();
-export default nextJSDappScreen;
+const devnextJSDappScreen = new DevnextDappScreen();
+export default devnextJSDappScreen;

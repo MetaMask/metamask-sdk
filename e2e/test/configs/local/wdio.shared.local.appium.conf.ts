@@ -19,6 +19,7 @@ config.services = (config.services ? config.services : []).concat([
         port: 4723,
         // Write the Appium logs to a file in the root of the directory
         log: './appium.log',
+        allowCors: true,
       },
     },
   ],

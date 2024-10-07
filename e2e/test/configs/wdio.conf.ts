@@ -14,6 +14,8 @@ export const config: WebdriverIO.Config = {
   suites: {
     js_sdk: ['../../specs/js_sdk.spec.ts'],
     android_sdk: ['../../specs/android_sdk.spec.ts'],
+    // Development suite that uses fixtures
+    development: ['../../specs/fixture_reference.ts'],
   },
   mochaOpts: {
     timeout: 360000,
@@ -38,6 +40,10 @@ export const config: WebdriverIO.Config = {
   connectionRetryCount: 3,
 
   framework: 'mocha',
+
+  // outputDir: 'logs',
+
+  maxInstances: 1,
 
   reporters: ['spec', ['allure', { outputDir: 'allure-results' }]],
 
