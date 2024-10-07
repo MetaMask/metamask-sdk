@@ -15,8 +15,8 @@ export const handleBatchMethod = async ({
   trackEvent: boolean;
   sdkInstance: MetaMaskSDK;
 }) => {
-  if (args.method !== "metamask_batch") {
-    throw new Error("Invalid usage");
+  if (args.method !== 'metamask_batch') {
+    throw new Error('Invalid usage');
   }
 
   // params is a list of RPCs to call

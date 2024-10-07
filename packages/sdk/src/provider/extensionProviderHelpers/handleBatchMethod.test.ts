@@ -50,10 +50,10 @@ describe('handleBatchMethod', () => {
     mockProvider = {
       request: jest.fn(),
     } as unknown as MetaMaskInpageProvider;
-    
+
     // the provider is always the target
     // in wrapExtensionProvider
-    mockTarget = mockProvider 
+    mockTarget = mockProvider;
   });
 
   afterEach(() => {
