@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "93.0.0",
+  "version": "94.0.0",
   "private": true,
   "repository": {
     "type": "git",

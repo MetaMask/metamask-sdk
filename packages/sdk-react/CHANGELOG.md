@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.0]
+### Uncategorized
+- feat: auto activate deeplink protocol when wallet supports it ([#1056](https://github.com/MetaMask/metamask-sdk/pull/1056))
+- feat: handle connection reject event ([#1020](https://github.com/MetaMask/metamask-sdk/pull/1020))
+
 ## [0.28.4]
 ### Added
 - fix: update the `initializeMobileProvider` function to ensure it returns all connected accounts on mobile ([#1031](https://github.com/MetaMask/metamask-sdk/pull/1031))
@@ -255,7 +260,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.0...HEAD
+[0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.4...@metamask/sdk-react@0.29.0
 [0.28.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.3...@metamask/sdk-react@0.28.4
 [0.28.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.2...@metamask/sdk-react@0.28.3
 [0.28.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.1...@metamask/sdk-react@0.28.2
