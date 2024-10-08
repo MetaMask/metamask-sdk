@@ -3,7 +3,7 @@ import { useSDK } from '@metamask/sdk-react';
 import { MetaMaskButton, SDKStatus, RPCHistoryViewer } from '@metamask/sdk-ui';
 import { ethers } from 'ethers';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SimpleABI from '../abi/Simple.json';
 import { getSignParams } from '../utils/sign-utils';
 import { SiweMessage } from 'siwe';
@@ -15,6 +15,19 @@ const Demo = () => {
   const [response, setResponse] = useState<unknown>('');
   const [rpcError, setRpcError] = useState<unknown>();
   const [requesting, setRequesting] = useState(false);
+
+  useEffect(() => {
+    if (sdk) {
+      const listener = (response: unknown) => {
+        console.warn('Received connectWithResponse', response);
+      };
+      sdk.on('connectWithResponse', listener);
+
+      return () => {
+        sdk.off('connectWithResponse', listener);
+      };
+    }
+  }, [sdk]);
 
   const connect = async () => {
     try {

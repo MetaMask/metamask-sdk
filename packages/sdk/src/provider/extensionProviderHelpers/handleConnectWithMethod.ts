@@ -44,8 +44,10 @@ export const handleConnectWithMethod = async ({
     return accounts;
   }
 
-  return await target.request({
+  const response = await target.request({
     method: currentRpcMethod,
     params: currentRpcParams,
   });
+
+  return response;
 };
