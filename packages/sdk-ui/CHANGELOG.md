@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.29.1]
 ### Uncategorized
-- feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk.git/pull/1068))
+- feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
 
 ## [0.29.0]
 ### Uncategorized
@@ -95,20 +95,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.29.1...HEAD
-[0.29.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.29.0...@metamask/sdk-ui@0.29.1
-[0.29.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.28.0...@metamask/sdk-ui@0.29.0
-[0.28.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.26.0...@metamask/sdk-ui@0.28.0
-[0.26.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.20.5...@metamask/sdk-ui@0.26.0
-[0.20.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.4.2...@metamask/sdk-ui@0.20.5
-[0.4.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.4.1...@metamask/sdk-ui@0.4.2
-[0.4.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.4.0...@metamask/sdk-ui@0.4.1
-[0.4.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.3.0...@metamask/sdk-ui@0.4.0
-[0.3.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.2.0...@metamask/sdk-ui@0.3.0
-[0.2.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.6...@metamask/sdk-ui@0.2.0
-[0.1.6]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.5...@metamask/sdk-ui@0.1.6
-[0.1.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.4...@metamask/sdk-ui@0.1.5
-[0.1.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.3...@metamask/sdk-ui@0.1.4
-[0.1.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.2...@metamask/sdk-ui@0.1.3
-[0.1.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-ui@0.1.1...@metamask/sdk-ui@0.1.2
-[0.1.1]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-ui@0.1.1
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.29.1...HEAD
+[0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.29.0...@metamask/sdk-ui@0.29.1
+[0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.28.0...@metamask/sdk-ui@0.29.0
+[0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.26.0...@metamask/sdk-ui@0.28.0
+[0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.20.5...@metamask/sdk-ui@0.26.0
+[0.20.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.2...@metamask/sdk-ui@0.20.5
+[0.4.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.1...@metamask/sdk-ui@0.4.2
+[0.4.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.4.0...@metamask/sdk-ui@0.4.1
+[0.4.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.3.0...@metamask/sdk-ui@0.4.0
+[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.2.0...@metamask/sdk-ui@0.3.0
+[0.2.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.6...@metamask/sdk-ui@0.2.0
+[0.1.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.5...@metamask/sdk-ui@0.1.6
+[0.1.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.4...@metamask/sdk-ui@0.1.5
+[0.1.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.3...@metamask/sdk-ui@0.1.4
+[0.1.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.2...@metamask/sdk-ui@0.1.3
+[0.1.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.1.1...@metamask/sdk-ui@0.1.2
+[0.1.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-ui@0.1.1
