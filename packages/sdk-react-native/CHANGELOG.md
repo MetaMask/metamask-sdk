@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.12]
+### Uncategorized
+- feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
+
 ## [0.3.11]
 ### Uncategorized
 - chore: bump ios sdk version ([#1035](https://github.com/MetaMask/metamask-sdk/pull/1035))
@@ -69,7 +73,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.11...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.12...HEAD
+[0.3.12]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.11...@metamask/sdk-react-native@0.3.12
 [0.3.11]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.10...@metamask/sdk-react-native@0.3.11
 [0.3.10]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.9...@metamask/sdk-react-native@0.3.10
 [0.3.9]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.8...@metamask/sdk-react-native@0.3.9
