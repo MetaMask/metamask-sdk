@@ -9,7 +9,11 @@ import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
+import {
+  CONNECTWITH_RESPONSE_EVENT,
+  METHODS_TO_REDIRECT,
+  RPC_METHODS,
+} from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
@@ -324,21 +328,31 @@ const initializeMobileProvider = async ({
                 throw new Error(`SDK state invalid -- undefined accounts`);
               }
 
-              return await sdk.getProvider()?.request({
+              const response = await sdk.getProvider()?.request({
                 method: RPC_METHODS.PERSONAL_SIGN,
                 params: [params[0], accounts[0]],
               });
+
+              // Emit connectResponse
+              sdk.emit(CONNECTWITH_RESPONSE_EVENT, response);
+
+              return response;
             } else if (
               method.toLowerCase() ===
               RPC_METHODS.METAMASK_CONNECTWITH.toLowerCase()
             ) {
               const [rpc] = params;
               // Overwrite rpc method with correct account information
-              return await extensionConnectWithOverwrite({
+              const response = await extensionConnectWithOverwrite({
                 method: rpc.method,
                 sdk,
                 params: rpc.params,
               });
+
+              // Emit connectResponse
+              sdk.emit(CONNECTWITH_RESPONSE_EVENT, response);
+
+              return response;
             }
 
             logger(
@@ -414,6 +428,9 @@ const initializeMobileProvider = async ({
                   `[initializeMobileProvider: sendRequest()] found result`,
                   target.result,
                 );
+                // Emit connectWith response
+                sdk.emit(CONNECTWITH_RESPONSE_EVENT, target.result);
+
                 resolve(target.result);
                 return;
               } else if (target?.error) {
