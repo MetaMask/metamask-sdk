@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.12]
+### Uncategorized
+- feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk.git/pull/1068))
+
 ## [0.3.11]
 ### Uncategorized
 - chore: bump ios sdk version ([#1035](https://github.com/MetaMask/metamask-sdk/pull/1035))
@@ -69,17 +73,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.11...HEAD
-[0.3.11]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.10...@metamask/sdk-react-native@0.3.11
-[0.3.10]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.9...@metamask/sdk-react-native@0.3.10
-[0.3.9]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.8...@metamask/sdk-react-native@0.3.9
-[0.3.8]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.7...@metamask/sdk-react-native@0.3.8
-[0.3.7]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.6...@metamask/sdk-react-native@0.3.7
-[0.3.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.5...@metamask/sdk-react-native@0.3.6
-[0.3.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.4...@metamask/sdk-react-native@0.3.5
-[0.3.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.3...@metamask/sdk-react-native@0.3.4
-[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.2...@metamask/sdk-react-native@0.3.3
-[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.1...@metamask/sdk-react-native@0.3.2
-[0.3.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.0...@metamask/sdk-react-native@0.3.1
-[0.3.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.2.0...@metamask/sdk-react-native@0.3.0
-[0.2.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-react-native@0.2.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.12...HEAD
+[0.3.12]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.11...@metamask/sdk-react-native@0.3.12
+[0.3.11]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.10...@metamask/sdk-react-native@0.3.11
+[0.3.10]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.9...@metamask/sdk-react-native@0.3.10
+[0.3.9]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.8...@metamask/sdk-react-native@0.3.9
+[0.3.8]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.7...@metamask/sdk-react-native@0.3.8
+[0.3.7]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.6...@metamask/sdk-react-native@0.3.7
+[0.3.6]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.5...@metamask/sdk-react-native@0.3.6
+[0.3.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.4...@metamask/sdk-react-native@0.3.5
+[0.3.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.3...@metamask/sdk-react-native@0.3.4
+[0.3.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.2...@metamask/sdk-react-native@0.3.3
+[0.3.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.1...@metamask/sdk-react-native@0.3.2
+[0.3.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.3.0...@metamask/sdk-react-native@0.3.1
+[0.3.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-react-native@0.2.0...@metamask/sdk-react-native@0.3.0
+[0.2.0]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-react-native@0.2.0
