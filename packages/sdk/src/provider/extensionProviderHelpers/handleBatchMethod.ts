@@ -5,31 +5,30 @@ import { RequestArguments } from '../wrapExtensionProvider';
 import { getPlatformDetails } from './handleUuid';
 
 export const handleBatchMethod = async ({
-  params,
   target,
   args,
   trackEvent,
-  provider,
   sdkInstance,
 }: {
-  params: any[];
   target: MetaMaskInpageProvider;
   args: RequestArguments;
   trackEvent: boolean;
-  provider: MetaMaskInpageProvider;
   sdkInstance: MetaMaskSDK;
 }) => {
+  if (args.method !== 'metamask_batch') {
+    throw new Error('Invalid usage');
+  }
+
   // params is a list of RPCs to call
   const responses = [];
+  const params = args?.params ?? [];
   for (const rpc of params) {
-    const response = await provider?.request({
+    const response = await target?.request({
       method: rpc.method,
       params: rpc.params,
     });
     responses.push(response);
   }
-
-  const resp = await target.request(args);
 
   const { id, from } = getPlatformDetails(sdkInstance);
 
@@ -43,5 +42,5 @@ export const handleBatchMethod = async ({
       },
     });
   }
-  return resp;
+  return responses;
 };
