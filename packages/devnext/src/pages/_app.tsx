@@ -21,7 +21,6 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
     socketServer,
     infuraAPIKey,
     useDeeplink,
-    _experimentalDeeplinkProtocol,
     checkInstallationImmediately,
   } = useSDKConfig();
 
@@ -38,7 +37,6 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
           '0x539': process.env.NEXT_PUBLIC_PROVIDER_RPCURL ?? '',
         },
         extensionOnly: false,
-        _experimentalDeeplinkProtocol,
         logging: {
           developerMode: true,
           remoteLayer: true,
@@ -76,7 +74,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <SDKConfigProvider
         initialSocketServer={process.env.NEXT_PUBLIC_COMM_SERVER_URL}
         initialInfuraKey={process.env.NEXT_PUBLIC_INFURA_API_KEY}
-        _initialExperimentalDeeplinkProtocol={false}
         debug={true}
       >
         <WithSDKConfig>
