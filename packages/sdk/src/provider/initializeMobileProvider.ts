@@ -122,7 +122,14 @@ const initializeMobileProvider = async ({
     executeRequest: any,
     debugRequest: boolean,
   ) => {
+    const provider = Ethereum.getProvider();
+
     if (initializationOngoing) {
+      // Always re-emit the display_uri event
+      provider.emit('display_uri', {
+        uri: remoteConnection?.state.qrcodeLink || '',
+      });
+
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
 
@@ -148,8 +155,6 @@ const initializeMobileProvider = async ({
     const isInstalled = platformManager.isMetaMaskInstalled();
     // Also check that socket is connected -- otherwise it would be in inconherant state.
     const socketConnected = remoteConnection?.isConnected();
-
-    const provider = Ethereum.getProvider();
 
     let selectedAddress: string | null = null;
     let connectedAccounts: string[] | null = null;
