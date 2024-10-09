@@ -15,7 +15,7 @@ PODS:
     - hermes-engine/Pre-built (= 0.72.5)
   - hermes-engine/Pre-built (0.72.5)
   - libevent (2.1.12)
-  - metamask-ios-sdk (0.8.7):
+  - metamask-ios-sdk (0.8.8):
     - Socket.IO-Client-Swift (~> 16.1.0)
     - Starscream (= 4.0.6)
   - metamask-sdk-react-native (0.3.10):
@@ -644,7 +644,7 @@ SPEC CHECKSUMS:
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: f6cf92a471053245614d9d8097736f6337d5b86c
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
-  metamask-ios-sdk: 423410eb97f17b756ea4e851d4e1ced83aa7dde5
+  metamask-ios-sdk: 86ba6d4731b90c4368546a5bdf1815b9db6e929a
   metamask-sdk-react-native: 075ab0e854ebd126403a06df322c61fbb43244fb
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: df81ab637d35fac9e6eb94611cfd20f0feb05455

@@ -8,7 +8,7 @@
 
 import {useSDK} from '@metamask/sdk-react-native';
 import {encrypt} from 'eciesjs';
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -21,11 +21,37 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import packageJSON from '../../package.json';
 import {DAPPView} from '../views/DappView';
+import { ethers } from 'ethers';
 
 export function DemoScreen(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   const [encryptionTime, setEncryptionTime] = useState<number>();
-  const {sdk} = useSDK();
+
+  const { sdk, connected, provider, account } = useSDK();
+  const [ethersProvider, setProvider] =
+    useState<ethers.providers.Web3Provider>();
+
+  useEffect(() => {
+
+    if (connected && provider && account && !ethersProvider) {
+      console.log('DemoScreen Connected to provider');
+      const prov = new ethers.providers.Web3Provider(provider);
+      setProvider(prov);
+    }
+
+    if (connected && provider && account && ethersProvider) {
+      ethersProvider.getBalance(account).then((balance) => {
+        console.log('DemoScreen Balance: ', balance.toString());
+      });
+      ethersProvider.getGasPrice().then((gasPrice) => {
+        console.log('DemoScreen gasPrice: ', gasPrice.toString());
+      });
+      ethersProvider.getBlockNumber().then((blockNumber) => {
+        console.log('DemoScreen blockNumber: ', blockNumber.toString());
+      });
+    }
+
+  }, [connected, provider, account, ethersProvider]);
 
   if (!sdk) {
     return <Text>SDK loading</Text>;

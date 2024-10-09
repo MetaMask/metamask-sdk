@@ -4,14 +4,14 @@
  *
  * @format
  */
-import {INFURA_API_KEY} from '@env';
-import {MetaMaskProvider, SDKConfigProvider} from '@metamask/sdk-react-native';
+import { INFURA_API_KEY } from '@env';
+import { MetaMaskProvider, SDKConfigProvider } from '@metamask/sdk-react-native';
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
-import React, {useEffect} from 'react';
-import {AppState, AppStateStatus, LogBox} from 'react-native';
+import React, { useEffect } from 'react';
+import { AppState, AppStateStatus, LogBox } from 'react-native';
 import RootNavigator from './src/RootNavigator';
 
 LogBox.ignoreLogs([
@@ -57,6 +57,7 @@ const SafeApp = () => {
               'https://cdn.sstatic.net/Sites/stackoverflow/Img/apple-touch-icon.png',
             scheme: 'testdapp',
           },
+          infuraAPIKey: '#######'
         }}>
         <NavigationContainer ref={navigationRef} onReady={handleNavReady}>
           <RootNavigator />
