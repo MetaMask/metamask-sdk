@@ -45,7 +45,7 @@ export const IS_RUNNING_IN_BROWSER_STACK = APP_PATH.startsWith('bs://');
 //   ? 'bs-local.com'
 //   : 'localhost';
 
-export const LOCALHOST = 'localhost';
+export const LOCALHOST = '127.0.0.1';
 
 
 export const FIXTURE_SERVER_HOST = LOCALHOST;

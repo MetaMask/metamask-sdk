@@ -19,7 +19,9 @@ import {
   PLATFORM,
   Platforms,
   LOCALHOST,
+  FIXTURE_SERVER_URL,
 } from './Constants';
+import axios from 'axios';
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
@@ -73,34 +75,43 @@ class Utils {
     fixtureServer: FixtureServer,
     bundleId: string,
   ): Promise<void> {
-    if (PLATFORM === Platforms.ANDROID) {
-      console.log('Android test detected. Reversing TCP ports...');
-      // We'll need this once we start runing tests on CI
-      const adb = new ADB({
-        adbHost: LOCALHOST,
-        adbPort: 5037,
-      });
-      // const adb = await ADB.createADB({});
-      await driver.pause(5000);
-      await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
-      await driver.pause(5000);
-    }
+    // NOT NEEDED FOR BS
+    // if (PLATFORM === Platforms.ANDROID) {
+    //   console.log('Android test detected. Reversing TCP ports...');
+    //   // We'll need this once we start runing tests on CI
+    //   const adb = new ADB({
+    //     adbHost: LOCALHOST,
+    //     adbPort: 5037,
+    //   });
+    //   // const adb = await ADB.createADB({});
+    //   await driver.pause(5000);
+    //   await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+    //   await driver.pause(5000);
+    // }
 
-    const fixture = new FixtureBuilder().withDefaultFixture().build();
-    await startFixtureServer(fixtureServer);
-    await loadFixture(fixtureServer, { fixture });
+    // const fixture = new FixtureBuilder().withDefaultFixture().build();
+    // await startFixtureServer(fixtureServer);
+    // await loadFixture(fixtureServer, { fixture });
+
 
     console.log(`Re-launching MetaMask on ${PLATFORM}...`);
     if (PLATFORM === Platforms.IOS) {
       console.log('Pausing for 10 seconds...');
-      await driver.pause(5000);
-      await driver.pause(5000);
-      await driver.executeScript('mobile:launchApp', [
-        {
-          bundleId,
+      await driver.pause(20000);
+      // await driver.executeScript('mobile:launchApp', [
+      //   {
+      //     bundleId,
+      //     fixtureServerPort: FIXTURE_SERVER_PORT,
+      //   },
+      // ]);
+      await driver.executeScript('mobile:launchApp', [{
+        bundleId: bundleId,
+        arguments: ['fixtureServerPort', '12345'],
+        environment: {
           fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
-        },
-      ]);
+        }
+      }]);
+
       // const t = {"bundleId": "io.metamask.MetaMask-QA", "fixtureServerPort": 12345}
     } else {
       await this.reinstallApp({
