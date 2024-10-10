@@ -1,13 +1,12 @@
 <script src="/node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"></script>
 <script>
   const sdk = new MetaMaskSDK.MetaMaskSDK({
-    dappMetadata: {
-      name: "Pure JS example",
-      url: window.location.host,
-    },
     logging: {
-      sdk: false,
-    }
+      developerMode: true,
+    },
+    dappMetadata: {
+      name: 'Pure JS example',
+    },
   });
 </script>
 <script>
@@ -30,7 +29,7 @@
             chainId: '0x89',
             chainName: 'Polygon',
             blockExplorerUrls: ['https://polygonscan.com'],
-            nativeCurrency: { symbol: 'MATIC', decimals: 18 },
+            nativeCurrency: { symbol: 'POL', decimals: 18 },
             rpcUrls: ['https://polygon-rpc.com/'],
           },
         ],
