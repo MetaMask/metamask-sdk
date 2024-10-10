@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.2]
+### Uncategorized
+- chore: bump .change files to 0.29.2 ([#1071](https://github.com/MetaMask/metamask-sdk/pull/1071))
+
 ## [0.29.1]
 ### Uncategorized
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
@@ -266,7 +270,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.2...HEAD
+[0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.1...@metamask/sdk-communication-layer@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0...@metamask/sdk-communication-layer@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0-wallet...@metamask/sdk-communication-layer@0.29.0
 [0.29.0-wallet]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.28.2...@metamask/sdk-communication-layer@0.29.0-wallet
