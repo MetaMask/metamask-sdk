@@ -6,12 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.2]
+### Added
+- feat: default options for pure js and useDeeplink default to true ([#1070](https://github.com/MetaMask/metamask-sdk/pull/1070))
+
 ## [0.29.1]
-### Uncategorized
+### Added
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
 
 ## [0.29.0]
-### Uncategorized
+### Added
 - feat: auto activate deeplink protocol when wallet supports it ([#1056](https://github.com/MetaMask/metamask-sdk/pull/1056))
 - feat: handle connection reject event ([#1020](https://github.com/MetaMask/metamask-sdk/pull/1020))
 
@@ -264,7 +268,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.2...HEAD
+[0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.1...@metamask/sdk-react@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.0...@metamask/sdk-react@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.4...@metamask/sdk-react@0.29.0
 [0.28.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.28.3...@metamask/sdk-react@0.28.4
