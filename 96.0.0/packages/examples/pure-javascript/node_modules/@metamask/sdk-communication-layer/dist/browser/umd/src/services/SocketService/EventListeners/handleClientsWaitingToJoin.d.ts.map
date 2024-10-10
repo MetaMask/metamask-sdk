@@ -1,0 +1,1 @@
+{"version":3,"file":"handleClientsWaitingToJoin.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/SocketService/EventListeners/handleClientsWaitingToJoin.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,aAAa,EAAE,MAAM,wBAAwB,CAAC;AAGvD;;;;;;;GAOG;AACH,wBAAgB,0BAA0B,CACxC,QAAQ,EAAE,aAAa,EACvB,SAAS,EAAE,MAAM,iBAEI,MAAM,UAQ5B"}
