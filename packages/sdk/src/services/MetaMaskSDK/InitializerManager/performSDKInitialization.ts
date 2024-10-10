@@ -58,7 +58,7 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   options.injectProvider = options.injectProvider ?? true;
   options.shouldShimWeb3 = options.shouldShimWeb3 ?? true;
   options.extensionOnly = options.extensionOnly ?? true;
-  options.useDeeplink = options.useDeeplink ?? false;
+  options.useDeeplink = options.useDeeplink ?? true;
   options.storage = options.storage ?? {
     enabled: true,
   };
