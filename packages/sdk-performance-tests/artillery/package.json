@@ -1,0 +1,18 @@
+{
+    "name": "metamask-sdk-performance-tests-artillery",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "generate:uuid": "node index.js",
+        "generate:report-dev": "artillery report dev-run.json",
+        "generate:report-test": "artillery report test-run.json",
+        "test:dev": "DEBUG=socketio artillery run -e dev scenarios/socket-server.yml -o dev-run.json",
+        "test:test": "DEBUG=socketio artillery run -e test scenarios/socket-server.yml -o test-run.json",
+        "allow-scripts": ""
+    },
+    "dependencies": {
+        "artillery-engine-socketio-v3": "^1.2.0",
+        "csv": "^6.2.10",
+        "csv-stringify": "^6.3.2"
+    }
+}

@@ -1,0 +1,77 @@
+config:
+  target: http://192.168.0.87:4000/  # Change this for your local IP for local testing
+  socketio:
+    transports: ["websocket"]
+  payload:
+    path: "../payloads/socketioUUID.csv"
+    skipEmptyLines: true
+    skipHeader: true
+    fields:
+      - "uuid"
+  environments:
+    dev-multi-node:
+      target: https://metamask-sdk.dev-api.cx.metamask.io/
+      phases:
+        - duration: 60
+          arrivalRate: 20
+          name: "Warming up"
+        - duration: 60
+          arrivalRate: 20
+          rampTo: 100
+          name: "Ramping up"
+        - duration: 300
+          arrivalRate: 30
+          name: "Soaking"
+        - duration: 60
+          arrivalRate: 100
+          name: "Sustained load"
+        - duration: 60
+          arrivalRate: 1
+          name: "Warming down"
+
+scenarios:
+  - name: SOCKET.IO Soak Tests
+    engine: socketio
+    flow:
+      - emit:
+          channel: "create_channel"
+          data: "{{ uuid }}"
+      - think: "{{ $randomNumber(1, 10) }}"
+      - emit:
+          channel: "join_channel"
+          data: "{{ uuid }}"
+      - think: "{{ $randomNumber(1, 10) }}"
+      - emit:
+          channel: "message"
+          data:
+            id: "{{ uuid }}"
+            message: "Message 1"
+            context: "mm-mobile"
+            plaintext: false
+      - think: "{{ $randomNumber(1, 10) }}"
+      - emit:
+          channel: "message"
+          data:
+            id: "{{ uuid }}"
+            message: "Message 2"
+            context: "mm-mobile"
+            plaintext: false
+      - think: "{{ $randomNumber(1, 10) }}"
+      - emit:
+          channel: "ping"
+          data:
+            id: "{{ uuid }}"
+            message: "Ping Message!"
+            context: "mm-mobile"
+      - think: "{{ $randomNumber(1, 10) }}"
+      - emit:
+          channel: "message"
+          data:
+            id: "{{ uuid }}"
+            message: "Message 3"
+            context: "mm-mobile"
+            plaintext: false
+      - think: "{{ $randomNumber(1, 20) }}"
+      - emit:
+          channel: "leave_channel"
+          data: "{{ uuid }}"
