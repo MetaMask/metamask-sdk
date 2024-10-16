@@ -130,9 +130,7 @@ const initializeMobileProvider = async ({
 
     if (initializationOngoing) {
       // Always re-emit the display_uri event
-      provider.emit('display_uri', {
-        uri: remoteConnection?.state.qrcodeLink || '',
-      });
+      provider.emit('display_uri', remoteConnection?.state.qrcodeLink || '');
 
       // make sure the active modal is displayed
       remoteConnection?.showActiveModal();
