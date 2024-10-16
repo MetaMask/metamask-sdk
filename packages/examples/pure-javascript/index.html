@@ -1,9 +1,6 @@
 <script src="/node_modules/@metamask/sdk/dist/browser/iife/metamask-sdk.js"></script>
 <script>
   const sdk = new MetaMaskSDK.MetaMaskSDK({
-    logging: {
-      developerMode: true,
-    },
     dappMetadata: {
       name: 'Pure JS example',
     },
@@ -12,11 +9,26 @@
 <script>
   let provider;
 
+  async function init() {
+    await sdk.init();
+    provider = sdk.getProvider();
+
+
+    provider.on('connect', () => {
+      console.log('onConnect');
+    });
+    provider.on('disconnect', () => {
+      console.log('onDisconnect');
+    });
+    provider.on('accountsChanged', (accounts) => {
+      console.log('accountsChanged', accounts);
+    });
+  }
+  init();
+
   function connect() {
     sdk.connect()
-      .then((res) => {
-        provider = sdk.getProvider();
-      })
+      .then((res) => { })
       .catch((e) => console.log('request accounts ERR', e));
   }
 
