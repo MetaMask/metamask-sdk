@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.29.3]
+### Added
+- fix: display_uri event malformed ([#1076](https://github.com/MetaMask/metamask-sdk/pull/1076))
+
 ## [0.29.2]
 ### Added
 - feat: default options for pure js and useDeeplink default to true ([#1070](https://github.com/MetaMask/metamask-sdk/pull/1070))
@@ -411,7 +415,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.3...HEAD
+[0.29.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...@metamask/sdk@0.29.3
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.1...@metamask/sdk@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.0...@metamask/sdk@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.4...@metamask/sdk@0.29.0
