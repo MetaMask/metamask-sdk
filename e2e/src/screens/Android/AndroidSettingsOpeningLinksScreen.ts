@@ -87,26 +87,26 @@ class AndroidSettingsOpeningLinksScreen {
   }
 
   async tapMetaMaskAppOption(): Promise<void> {
-    await (this.openingLinksMetaMaskAppOption).click();
+    await this.openingLinksMetaMaskAppOption.click();
   }
 
   async selectAllMetaMaskSupportedLinks(): Promise<void> {
-    await (this.firstSupportedLink).click();
+    await this.firstSupportedLink.click();
     await this.secondSupportedLink.click();
-    await (this.thirdSupportedLink).click();
-    await (this.forthSupportedLink).click();
+    await this.thirdSupportedLink.click();
+    await this.forthSupportedLink.click();
   }
 
   async tapAddMetaMaskSupportedLinks(): Promise<void> {
-    await (this.addSupportedLinksButton).click();
+    await this.addSupportedLinksButton.click();
   }
 
   async tapAddLinksButton(): Promise<void> {
-    await (this.addLinksButton).click();
+    await this.addLinksButton.click();
   }
 
   async isAddLinksButtonEnabled(): Promise<boolean> {
-    return await (this.addLinksButton).isEnabled();
+    return await this.addLinksButton.isEnabled();
   }
 }
 

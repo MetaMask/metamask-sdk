@@ -1,4 +1,4 @@
-import Utils from '../src/Utils';
+import Utils, { killApp, launchApp, launchMetaMask } from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
 import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
@@ -16,6 +16,7 @@ import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen'
 import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
 import WalletReadyScreen from '../src/screens/MetaMask/WalletReadyScreen';
 import EnableSmartTransactionsComponent from '../src/screens/MetaMask/components/EnableSmartTransactionsComponent';
+import { driver } from '@wdio/globals';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
@@ -28,8 +29,8 @@ const goToSettingsAndClearAllConnections = async () => {
 };
 
 const setAndroidDefaultLinks = async () => {
-  await Utils.killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
-  await Utils.launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+  await killApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
+  await launchApp(NATIVE_OS_APPS.ANDROID.SETTINGS);
   await driver.setOrientation('PORTRAIT');
 
   await AndroidSettingsScreen.tapOpenSearchBarButton();
@@ -56,30 +57,20 @@ const setAndroidDefaultLinks = async () => {
   }
 };
 
-export const beforeHook = async () => {
-  // Fox animation takes a while to finish
-  await driver.pause(5000);
+export const onboardMM = async () => {
+  await beforeHook();
+};
 
+export const beforeHook = async () => {
   if (driver.isAndroid) {
     await setAndroidDefaultLinks();
+    await launchMetaMask();
   }
 
-  await Utils.launchMetaMask();
-
-  // Checks it is onboarded. If it is and MM is locked, it unlocks it
-  if (
-    (await LockScreen.isMMLocked()) ||
-    (await BottomNavigationComponent.isMetaMaskOnboarded())
-  ) {
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
-    await goToSettingsAndClearAllConnections();
-    return;
-  }
   await GetStartedScreen.tapGetStarted();
   await WalletSetupScreen.tapImportWithSRP();
   await OptinMetricsScreen.tapAgreeOptinMetrics();
   await TermsOfUseScreen.tapAcceptTermsOfUseCheckbox();
-  await driver.pause(8000); // Waiting for the Terms of Use to be loaded
   await TermsOfUseScreen.tapScrollToBottom();
   await TermsOfUseScreen.tapAcceptTermsOfUseButton();
   await ImportFromSeedScreen.fillSrpField(SRP);
@@ -104,13 +95,13 @@ export const beforeHook = async () => {
 };
 
 export const beforeEachHook = async () => {
-  await Utils.launchMetaMask();
+  await launchMetaMask();
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 };
 
 // Skipping for now
 export const afterEachHook = async () => {
-  await Utils.launchMetaMask();
+  await launchMetaMask();
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
   await goToSettingsAndClearAllConnections();
 };

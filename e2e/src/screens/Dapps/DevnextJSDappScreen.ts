@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
+import { visibilityOf } from 'wdio-wait-for';
 import { getSelectorForPlatform, scrollToElement } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
-import { visibilityOf } from 'wdio-wait-for';
 
 class DevnextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -19,7 +19,7 @@ class DevnextDappScreen implements Dapp {
     );
   }
 
-  // TODO iOS
+  // TODO: Add iOS Locator when adding the personal_sign test case
   get personalSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
@@ -53,9 +53,9 @@ class DevnextDappScreen implements Dapp {
     );
   }
 
-  // TODO: Improve devnext dapp to have a better way to locate the connected 
-  // status
-  // TODO: iOS locator
+  // TODO:
+  //  Improve devnext dapp to have a better way to locate the connected status
+  //  status
   get connectedStatus(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
@@ -99,11 +99,8 @@ class DevnextDappScreen implements Dapp {
         timeout: 10000,
         timeoutMsg: 'Dapp is not connected!',
       },
-    )
-    if (isConnected) {
-      return true;
-    }
-    return false;
+    );
+    return Boolean(isConnected);
   }
 }
 

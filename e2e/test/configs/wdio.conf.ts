@@ -12,11 +12,12 @@ export const config: WebdriverIO.Config = {
   services: [],
   // specs: ['../../specs/*.spec.ts'],
   suites: {
-    js_sdk: ['../../specs/js_sdk.spec.ts'],
-    android_sdk: ['../../specs/android_sdk.spec.ts'],
+    web_dapp: ['../../specs/web_dapp.spec.ts'],
+    // Deprecated test suites
+    // js_sdk: ['../../specs/js_sdk.spec.ts'],
+    // android_sdk: ['../../specs/android_sdk.spec.ts'],
     // Development suite that uses fixtures
-    development: ['../../specs/fixture_reference.ts'],
-    local_development: ['../../specs/connection.spec.ts'],
+    // fixture_reference: ['../../specs/fixture_reference.ts'],
   },
   mochaOpts: {
     timeout: 360000,

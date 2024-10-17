@@ -88,7 +88,7 @@ class CreateReactAppDappScreen implements Dapp {
   }
 
   async signTypedDataV4(): Promise<void> {
-    await (await this.signTypedDataV4Button).click();
+    await this.signTypedDataV4Button.click();
   }
 
   async personalSign(): Promise<void> {

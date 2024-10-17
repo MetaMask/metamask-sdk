@@ -1,15 +1,17 @@
+import { driver } from '@wdio/globals';
 import FixtureServer from '../fixtures/FixtureServer';
 import LockScreen from '../../src/screens/MetaMask/LockScreen';
-import Utils from '../../src/Utils';
+import { launchMetaMaskWithFixture } from '../../src/Utils';
 import { METAMASK_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
 import { stopFixtureServer } from '../fixtures/FixtureHelper';
-import { driver } from '@wdio/globals';
 
 const fixtureServer = new FixtureServer();
 
-describe('Fixture test', () => {
+// This test reference will be kept for the work in progress of integrating the
+// fixtureServer
+describe.skip('Fixture test', () => {
   before(async () => {
-    await Utils.launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
+    await launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
 
     await LockScreen.unlockMM(WALLET_PASSWORD);
   });

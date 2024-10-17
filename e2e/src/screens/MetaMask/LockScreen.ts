@@ -45,6 +45,22 @@ class LockScreen {
     );
   }
 
+  async isMMOnboarded(): Promise<boolean> {
+    await driver
+      .waitUntil(visibilityOf(this.loginTitle), {
+        timeout: 10000,
+        interval: 5000,
+        timeoutMsg: 'Welcome Back! is not visible. Assuming Wallet is not onboarded',
+      })
+      .then(() => {
+        return true;
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
+    return false;
+  }
+
   async isMMLocked(): Promise<boolean> {
     await driver
       .waitUntil(visibilityOf(MainScreen.networkSwitcher), {
@@ -73,7 +89,7 @@ class LockScreen {
         await (this.passwordInput).setValue(password);
         await (this.unlockButton).click();
         // Wait for the wallet to be unlocked
-        await driver.pause(3500); 
+        await driver.pause(3500);
       })
       .catch((e) => {
         console.error('Error unlocking MM: ', e);

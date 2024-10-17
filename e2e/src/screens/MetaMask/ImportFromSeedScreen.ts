@@ -46,7 +46,7 @@ class ImportFromSeedScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
-          'new UiSelector().className("android.widget.Switch")',
+          'android.widget.Switch',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "login-with-biometrics-switch"',

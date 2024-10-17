@@ -14,10 +14,17 @@ class EnableSmartTransactionsComponent {
   }
 
   async tapEnableSmartTransactions(): Promise<void> {
-    await this.enableSmartTransactions.waitForEnabled({
-      timeout: 10000,
-    });
-    await this.enableSmartTransactions.click();
+    try {
+      await this.enableSmartTransactions.waitForEnabled({
+        timeout: 10000,
+      });
+      await this.enableSmartTransactions.click();
+    } catch (e) {
+      console.error(
+        'Error enabling smart transactions. Assuming it wasnt displayed and wont be: ',
+        e,
+      );
+    }
   }
 }
 
