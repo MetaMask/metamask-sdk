@@ -1,9 +1,6 @@
 // Helper functions
 export function isHexString(value: string): boolean {
-  if (value === '0x') {
-    return false;
-  }
-  return /^0x([0-9A-Fa-f]{2})+$/u.test(value);
+  return /^0x([0-9A-Fa-f]{2})*$/u.test(value);
 }
 
 export function stringToHex(value: string): string {
@@ -32,6 +29,10 @@ export function stringToHex(value: string): string {
 export function hexToString(hex: string): string {
   if (!isHexString(hex)) {
     throw new Error('Invalid hex string');
+  }
+
+  if (hex === '0x') {
+    return '';
   }
 
   const hexWithoutPrefix = hex.slice(2);
