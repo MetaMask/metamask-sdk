@@ -17,6 +17,10 @@ import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupRea
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
+import {
+  MetaMaskSDKEvent,
+  MetaMaskSDKEventType,
+} from './types/MetaMaskSDKEvents';
 
 // eslint-disable-next-line spaced-comment
 /*#if _REACTNATIVE
@@ -40,10 +44,12 @@ export type {
   MetaMaskSDKOptions,
   SDKLoggingOptions,
   ServiceStatus,
+  MetaMaskSDKEventType,
 };
 
 export {
   DEFAULT_SERVER_URL,
+  MetaMaskSDKEvent,
   EventType,
   CommunicationLayerPreference,
   MetaMaskSDK,

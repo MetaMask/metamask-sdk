@@ -1,8 +1,9 @@
-import { EventType, TrackingEvents } from '@metamask/sdk-communication-layer';
-import { logger } from '../../../utils/logger';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
+import { MetaMaskSDKEvent } from '../../../types/MetaMaskSDKEvents';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
+import { logger } from '../../../utils/logger';
 
 /**
  * Connects the MetaMaskSDK instance to the MetaMask browser extension as the active provider.
@@ -48,7 +49,10 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
   localStorage.setItem(STORAGE_PROVIDER_TYPE, 'extension');
   // eslint-disable-next-line require-atomic-updates
   instance.extensionActive = true;
-  instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.EXTENSION);
+  instance.emit(
+    MetaMaskSDKEvent.ProviderUpdate,
+    PROVIDER_UPDATE_TYPE.EXTENSION,
+  );
 
   if (instance.options.enableAnalytics) {
     instance.analytics?.send({ event: TrackingEvents.SDK_USE_EXTENSION });

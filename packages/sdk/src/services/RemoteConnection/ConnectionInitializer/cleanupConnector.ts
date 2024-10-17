@@ -7,6 +7,11 @@ export function cleanupConnector(state: RemoteConnectionState) {
 
   if (state.connector) {
     cleanupListeners(state);
-    state.connector.disconnect({ terminate: true });
+    state.connector.disconnect({ terminate: true }).catch((error) => {
+      logger(
+        `[RemoteConnection: cleanupConnector()] error disconnecting connector`,
+        error,
+      );
+    });
   }
 }

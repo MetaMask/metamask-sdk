@@ -66,8 +66,6 @@ export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const STORAGE_DAPP_SELECTED_ADDRESS = '.MMSDK_cached_address';
 export const STORAGE_DAPP_CHAINID = '.MMSDK_cached_chainId';
 
-export const CONNECTWITH_RESPONSE_EVENT = 'connectWithResponse';
-
 export const EXTENSION_EVENTS = {
   CHAIN_CHANGED: 'chainChanged',
   ACCOUNTS_CHANGED: 'accountsChanged',
