@@ -17,8 +17,8 @@
     "wdio-wait-for": "^3.0.9"
   },
   "scripts": {
-    "test:android:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite js_sdk",
-    "test:ios:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite js_sdk",
+    "test:android:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite web_dapp",
+    "test:ios:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite web_dapp",
     "test:ios:jssdk:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite web_dapp",
     "test:android:jssdk:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite web_dapp",
     "setup": "yarn install",
