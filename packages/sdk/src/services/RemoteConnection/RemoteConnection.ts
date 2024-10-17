@@ -180,10 +180,9 @@ export class RemoteConnection {
       this.options.ecies = eciesProps;
     }
     initializeConnector(this.state, this.options);
+    await this.getConnector()?.initFromDappStorage();
 
     setupListeners(this.state, this.options);
-
-    return this.getConnector()?.initFromDappStorage();
   }
 
   showActiveModal() {

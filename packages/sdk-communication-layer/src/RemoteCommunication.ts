@@ -102,6 +102,8 @@ export interface RemoteCommunicationState {
   _connectionStatus: ConnectionStatus;
 }
 export class RemoteCommunication extends EventEmitter2 {
+  private _options: RemoteCommunicationProps;
+
   public state: RemoteCommunicationState = {
     // ready flag is turned on after we receive 'clients_ready' message, meaning key exchange is complete.
     ready: false,
@@ -132,28 +134,32 @@ export class RemoteCommunication extends EventEmitter2 {
     _connectionStatus: ConnectionStatus.DISCONNECTED,
   };
 
-  constructor({
-    platformType,
-    communicationLayerPreference,
-    otherPublicKey,
-    reconnect,
-    walletInfo,
-    dappMetadata,
-    protocolVersion,
-    transports,
-    context,
-    relayPersistence,
-    ecies,
-    analytics = false,
-    storage,
-    sdkVersion,
-    communicationServerUrl = DEFAULT_SERVER_URL,
-    logging,
-    autoConnect = {
-      timeout: CHANNEL_MAX_WAITING_TIME,
-    },
-  }: RemoteCommunicationProps) {
+  constructor(options: RemoteCommunicationProps) {
     super();
+
+    this._options = options;
+
+    const {
+      platformType,
+      communicationLayerPreference,
+      otherPublicKey,
+      reconnect,
+      walletInfo,
+      dappMetadata,
+      protocolVersion,
+      transports,
+      context,
+      relayPersistence,
+      ecies,
+      analytics = false,
+      storage,
+      sdkVersion,
+      communicationServerUrl = DEFAULT_SERVER_URL,
+      logging,
+      autoConnect = {
+        timeout: CHANNEL_MAX_WAITING_TIME,
+      },
+    } = options;
 
     this.state.otherPublicKey = otherPublicKey;
     this.state.dappMetadata = dappMetadata;
@@ -206,14 +212,16 @@ export class RemoteCommunication extends EventEmitter2 {
       `[RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
     );
 
-    initSocketService({
-      communicationLayerPreference,
-      otherPublicKey,
-      reconnect,
-      ecies,
-      communicationServerUrl,
-      instance: this,
-    });
+    if (!this.state.isOriginator) {
+      initSocketService({
+        communicationLayerPreference,
+        otherPublicKey,
+        reconnect,
+        ecies,
+        communicationServerUrl,
+        instance: this,
+      });
+    }
 
     this.emitServiceStatusEvent({ context: 'constructor' });
   }
@@ -242,6 +250,15 @@ export class RemoteCommunication extends EventEmitter2 {
         }
       }
     }
+
+    initSocketService({
+      communicationLayerPreference: CommunicationLayerPreference.SOCKET,
+      otherPublicKey: this.state.otherPublicKey,
+      reconnect: this._options.reconnect,
+      ecies: this._options.ecies,
+      communicationServerUrl: this.state.communicationServerUrl,
+      instance: this,
+    });
   }
 
   /**
