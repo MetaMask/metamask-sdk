@@ -47,6 +47,14 @@ export interface RemoteConnectionProps {
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
+  /**
+   * @deprecated Use the 'display_uri' event on the provider instead.
+   * Listen to this event to get the QR code URL and customize your UI.
+   * Example:
+   * sdk.getProvider().on('display_uri', (uri: string) => {
+   *   // Use the uri to display a QR code or customize your UI
+   * });
+   */
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
@@ -172,10 +180,9 @@ export class RemoteConnection {
       this.options.ecies = eciesProps;
     }
     initializeConnector(this.state, this.options);
+    await this.getConnector()?.initFromDappStorage();
 
     setupListeners(this.state, this.options);
-
-    return this.getConnector()?.initFromDappStorage();
   }
 
   showActiveModal() {
