@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, reopened, labeled, unlabeled, synchronize]
 
 jobs:
   check-workflows:
@@ -33,30 +32,6 @@ jobs:
     uses: ./.github/workflows/sonar-cloud.yml
     secrets:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
-  build-deploy-test-dapp:
-    name: Build, deploy, and test dapp
-    needs: lint-build-test
-    uses: ./.github/workflows/build-deploy-test-dapp.yml
-    with:
-      s3_prefix: /${{ github.sha }}
-      # TODO Change this
-      environment:
-      build_name:
-      aws_iam_role:
-      aws_region: ''
-      s3_bucket: ''
-      url: ''
-
-  e2e-tests:
-    if: ${{ github.event.label.name == 'Run E2E' }}
-    uses: ./.github/workflows/e2e-js-sdk-tests.yml
-    needs: build-deploy-test-dapp
-    with:
-      # TODO Change this
-      webdapp-url: ''
-      android-wallet-name: 'MM-QA-Wallet-Latest.apk'
-      ios-wallet-name: 'MM-QA-Wallet-Latest.ipa'
 
   is-release:
     name: Determine whether this is a release merge commit
