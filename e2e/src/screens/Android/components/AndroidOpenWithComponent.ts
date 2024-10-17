@@ -21,21 +21,17 @@ class AndroidOpenWithComponent {
   }
 
   async tapOpenWithMetaMaskQA(): Promise<void> {
-    await (
-      this.openWithMetaMaskQA
-    ).waitForEnabled({
+    await this.openWithMetaMaskQA.waitForEnabled({
       timeout: 10000,
     });
-    await (this.openWithMetaMaskQA).click();
+    await this.openWithMetaMaskQA.click();
   }
 
   async tapOpenWithMetaMask(): Promise<void> {
-    await (
-      this.openWithMetaMask
-    ).waitForEnabled({
+    await this.openWithMetaMask.waitForEnabled({
       timeout: 10000,
     });
-    await (this.openWithMetaMask).click();
+    await this.openWithMetaMask.click();
   }
 }
 

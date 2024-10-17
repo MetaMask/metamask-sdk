@@ -5,7 +5,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { IOSSelector } from '../../Selectors';
 import { Dapp } from '../interfaces/Dapp';
-import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../../src/Constants';
+import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../Constants';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {
@@ -45,7 +45,7 @@ class SafariBrowserScreen implements MobileBrowser {
     await driver.pause(500); // Wait for the page to refresh
   }
 
-  async goToAddress(address: string, pageObject: Dapp): Promise<void> {
+  async goToAddress(address: string): Promise<void> {
     const currentAppState = await driver.queryAppState(Browsers.SAFARI);
     // 4 is the state for the app being running in the foreground
     if (currentAppState !== 4) {
@@ -63,15 +63,19 @@ class SafariBrowserScreen implements MobileBrowser {
     // Figures out if a dapp is loaded on the mobile browser
     const checkIfDappIsLoaded = async () => {
       let retries = 20;
-      let isStopPageLoadButtonDisplayed = await this.stopPageLoadingButton.isDisplayed();
+      let isStopPageLoadButtonDisplayed =
+        await this.stopPageLoadingButton.isDisplayed();
 
-      if (!isStopPageLoadButtonDisplayed) return true;
+      if (!isStopPageLoadButtonDisplayed) {
+        return true;
+      }
 
       while (isStopPageLoadButtonDisplayed && retries > 0) {
         // Waits for 2 seconds before checking again
         await driver.pause(2000);
-        isStopPageLoadButtonDisplayed = await this.stopPageLoadingButton.isDisplayed();
-        retries--;
+        isStopPageLoadButtonDisplayed =
+          await this.stopPageLoadingButton.isDisplayed();
+        retries -= 1;
       }
       return false;
     };
@@ -82,7 +86,8 @@ class SafariBrowserScreen implements MobileBrowser {
 
     while (!isWebDappLoaded && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
       await this.refreshPage();
-      attempts++;
+      isWebDappLoaded = await checkIfDappIsLoaded();
+      attempts += 1;
     }
   }
 }

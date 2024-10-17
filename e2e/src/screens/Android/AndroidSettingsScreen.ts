@@ -1,5 +1,6 @@
 import { ChainablePromiseArray, ChainablePromiseElement } from 'webdriverio';
 
+import { $$ } from '@wdio/globals';
 import Gestures from '../../Gestures';
 import { getSelectorForPlatform } from '../../Utils';
 import {
@@ -7,7 +8,6 @@ import {
   METAMASK_APP_NAME_ANDROID,
 } from '../../Constants';
 import { AndroidSelector } from '../../Selectors';
-import { $$ } from '@wdio/globals';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement {
@@ -62,7 +62,7 @@ class AndroidSettingsScreen {
     );
   }
 
-  get links(): ChainablePromiseArray{
+  get links(): ChainablePromiseArray {
     return $$(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath('//android.widget.Switch'),
@@ -74,7 +74,7 @@ class AndroidSettingsScreen {
     await this.metaMaskQALinksButton.waitForEnabled({
       timeout: 5000,
     });
-    await (this.metaMaskQALinksButton).click();
+    await this.metaMaskQALinksButton.click();
   }
 
   async tapOpenSearchBarButton(): Promise<void> {
@@ -105,7 +105,7 @@ class AndroidSettingsScreen {
   async tapLinks(): Promise<void> {
     // @ts-ignore
     // ts-ignore because this is not in use for the time being
-    for (const link of await this.links) {
+    for (const link of this.links) {
       await link.click();
     }
   }

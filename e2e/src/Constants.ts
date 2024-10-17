@@ -1,4 +1,5 @@
-export const WALLET_PASSWORD = process.env.WALLET_PASSWORD as string || '123123123';
+export const WALLET_PASSWORD =
+  (process.env.WALLET_PASSWORD as string) || '123123123';
 
 export const Browsers = {
   SAFARI: 'com.apple.mobilesafari',
@@ -35,8 +36,9 @@ export const WEB_DAPP_LOAD_ATTEMPTS = 3;
 // This comes from the config file, it'll never be undefined otherwise there are no tests to run
 export const METAMASK_BUNDLE_ID = process.env.BUNDLE_ID as string;
 
+// Previously QA builds had a different name show up, this prepares for that
 export const METAMASK_APP_NAME_ANDROID =
-  METAMASK_BUNDLE_ID === 'io.metamask.qa' ? 'MetaMask-QA' : 'MetaMask';
+  METAMASK_BUNDLE_ID === 'io.metamask.qa' ? 'MetaMask' : 'MetaMask';
 
 export const WDIO_IOS_CLASS_CHAIN = '-ios class chain:';
 export const WDIO_IOS_PREDICATE_STRING = '-ios predicate string:';
@@ -47,12 +49,10 @@ export const WDIO_RESOURCE_ID = 'id:';
 
 export const APP_PATH = process.env.APP_PATH as string;
 export const IS_RUNNING_IN_BROWSER_STACK = APP_PATH.startsWith('bs://');
-// export const LOCALHOST = IS_RUNNING_IN_BROWSER_STACK
-//   ? 'bs-local.com'
-//   : 'localhost';
 
-export const LOCALHOST = '127.0.0.1';
-
+export const LOCALHOST = IS_RUNNING_IN_BROWSER_STACK
+  ? 'bs-local.com'
+  : 'localhost';
 
 export const FIXTURE_SERVER_HOST = LOCALHOST;
 export const FIXTURE_SERVER_PORT = 12345;

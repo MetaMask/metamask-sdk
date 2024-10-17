@@ -17,7 +17,14 @@ class MetaMetricsComponent {
   }
 
   async tapAgreeToMetaMetrics(): Promise<void> {
-    await this.agreeToMetaMetrics.click();
+    try {
+      await this.agreeToMetaMetrics.click();
+    } catch (e) {
+      console.error(
+        'Error agreeing to MetaMetrics. Assuming it wasnt displayed and wont be: ',
+        e,
+      );
+    }
   }
 }
 

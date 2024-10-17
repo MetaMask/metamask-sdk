@@ -79,6 +79,16 @@ class ChromeBrowserScreen implements MobileBrowser {
     );
   }
 
+  get stopRefreshingButton(): ChainablePromiseElement {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.ImageButton[@content-desc="Stop refreshing"]',
+        ),
+      }),
+    );
+  }
+
   async goToAddress(address: string, pageObject: Dapp): Promise<void> {
     const currentActivity = await driver.getCurrentActivity();
     if (currentActivity !== Browsers.CHROME) {
@@ -145,9 +155,12 @@ class ChromeBrowserScreen implements MobileBrowser {
 
   async refreshPage(): Promise<void> {
     await (this.browserMoreOptions).click();
-    await (this.refreshButton).click();
-    await driver.pause(5000); // Wait for the page to refresh
-
+    if (await this.stopRefreshingButton.isDisplayed()) {
+      await this.stopRefreshingButton.click();
+      await this.browserMoreOptions.click();
+    }
+    await this.refreshButton.click();
+    await driver.pause(6000); // Wait for the page to refresh
   }
 }
 

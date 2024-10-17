@@ -26,20 +26,19 @@ class PersonalSignConfirmationComponent {
       }),
     );
   }
-
-   // personal sign message TODO
-   // TODO iOS
+  
+  // TODO: add iOS locator
   get messageText(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.TextView[@text="Personal Sign"]', 
+          '//android.widget.TextView[@text="Personal Sign"]',
         ),
       }),
     );
   }
 
-  // TODO iOS
+  // TODO: add iOS locator
   get personalSignContainer(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
