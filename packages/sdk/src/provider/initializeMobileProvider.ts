@@ -542,42 +542,6 @@ const initializeMobileProvider = async ({
         rpcResponse,
       );
 
-      // Check for wallet_requestPermissions to update local list of accounts since metamask mobile doesn't update the list automatically
-      if (method === RPC_METHODS.WALLET_REQUESTPERMISSIONS) {
-        const permissions = rpcResponse as {
-          caveats: { type: string; value: string[] }[];
-          parentCapability: string;
-        }[];
-
-        const accountsToPersist = permissions.reduce(
-          (acc: string[], permission) => {
-            if (permission.parentCapability === 'eth_accounts') {
-              const restrictedAccounts = permission.caveats.find(
-                (caveat) => caveat.type === 'restrictReturnedAccounts',
-              )?.value;
-
-              if (restrictedAccounts) {
-                acc.push(...restrictedAccounts);
-              }
-            }
-            return acc;
-          },
-          [],
-        );
-
-        logger(
-          `[initializeMobileProvider: sendRequest()] accountsToPersist:`,
-          accountsToPersist,
-        );
-
-        if (accountsToPersist.length > 0) {
-          // Emulate 'accountsChanged' on the provider
-          provider.handleAccountsChanged(accountsToPersist, false);
-          // provider.emit('accountsChanged', accountsToPersist);
-          storageManager?.persistAccounts(accountsToPersist);
-        }
-      }
-
       return rpcResponse;
     } catch (error) {
       console.error(`[initializeMobileProvider: sendRequest()] error:`, error);
