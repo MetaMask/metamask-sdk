@@ -61,7 +61,6 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     enabled: true,
   };
 
-  console.log(`headless: ${options.headless}`);
   if (options.headless) {
     debug('[MetaMaskSDK: performSDKInitialization()] headless mode enabled');
     // eslint-disable-next-line @typescript-eslint/no-empty-function
