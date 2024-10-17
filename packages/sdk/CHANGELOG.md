@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.0]
+### Added
+- feat: wallet_requestpermissions update local provider accounts ([#1081](https://github.com/MetaMask/metamask-sdk/pull/1081))
+- fix: connectAndSign send as hexString ([#1082](https://github.com/MetaMask/metamask-sdk/pull/1082))
+- feat: sdk integration improvements ([#1080](https://github.com/MetaMask/metamask-sdk/pull/1080))
+- feat: fake metamask wallet detection ([#1074](https://github.com/MetaMask/metamask-sdk/pull/1074))
+- fix: rpc protocol resetting after refresh ([#1079](https://github.com/MetaMask/metamask-sdk/pull/1079))
+
 ## [0.29.3]
 ### Added
 - fix: display_uri event malformed ([#1076](https://github.com/MetaMask/metamask-sdk/pull/1076))
@@ -415,7 +423,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.0...HEAD
+[0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.3...@metamask/sdk@0.30.0
 [0.29.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...@metamask/sdk@0.29.3
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.1...@metamask/sdk@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.0...@metamask/sdk@0.29.1

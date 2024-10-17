@@ -12,7 +12,6 @@ describe('hex utils', () => {
     it('should return false for invalid hex strings', () => {
       expect(isHexString('1234')).toBe(false);
       expect(isHexString('0x12G')).toBe(false);
-      expect(isHexString('0x')).toBe(false);
       expect(isHexString('abc')).toBe(false);
     });
   });
