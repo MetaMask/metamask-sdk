@@ -104,6 +104,20 @@ describe('getBrowserExtension', () => {
     ).rejects.toThrow('MetaMask provider not found in Ethereum');
   });
 
+  it('should throw an error if mustBeMetaMask is true but uniswap wallet installed instead of Metamask', async () => {
+    (eip6963RequestProvider as jest.Mock).mockRejectedValue(
+      new Error('Provider request failed'),
+    );
+
+    global.window = {
+      ethereum: { isMetaMask: true, isUniswapWallet: true },
+    } as any;
+
+    await expect(
+      getBrowserExtension({ mustBeMetaMask: true, sdkInstance }),
+    ).rejects.toThrow('MetaMask provider not found in Ethereum');
+  });
+
   it('should return ethereum object if mustBeMetaMask is false and ethereum object exists', async () => {
     const ethereumObj = { isMetaMask: true };
     (eip6963RequestProvider as jest.Mock).mockRejectedValue(
