@@ -31,11 +31,12 @@ export async function handleWalletInitMessage(
           const accounts = data.accounts as string[];
           const chainId = data.chainId as string;
           const walletKey = data.walletKey as string;
-          let deeplinProtocolAvailable = false;
+          let deeplinkProtocolAvailable = false;
           let walletVersion: string | undefined;
           if ('deeplinkProtocol' in data) {
-            deeplinProtocolAvailable = Boolean(data.deeplinkProtocol);
-            instance.state.deeplinkProtocolAvailable = deeplinProtocolAvailable;
+            deeplinkProtocolAvailable = Boolean(data.deeplinkProtocol);
+            instance.state.deeplinkProtocolAvailable =
+              deeplinkProtocolAvailable;
           }
 
           if ('walletVersion' in data) {
@@ -46,7 +47,7 @@ export async function handleWalletInitMessage(
             ...channelConfig,
             otherKey: walletKey,
             walletVersion,
-            deeplinkProtocolAvailable: deeplinProtocolAvailable,
+            deeplinkProtocolAvailable,
             relayPersistence: true,
           });
 
