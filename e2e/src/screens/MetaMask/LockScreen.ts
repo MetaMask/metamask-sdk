@@ -72,6 +72,8 @@ class LockScreen {
         // await driver.pause(5000);
         await (this.passwordInput).setValue(password);
         await (this.unlockButton).click();
+        // Wait for the wallet to be unlocked
+        await driver.pause(3500); 
       })
       .catch((e) => {
         console.error('Error unlocking MM: ', e);

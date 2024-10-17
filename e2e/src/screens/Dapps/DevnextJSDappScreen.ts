@@ -1,18 +1,30 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../Utils';
+import { getSelectorForPlatform, scrollToElement } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
+import { visibilityOf } from 'wdio-wait-for';
 
 class DevnextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.TextView[@text="Connect wallet"]',
+          '//android.view.View[@text="Connect wallet"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "Connect wallet"',
+        ),
+      }),
+    );
+  }
+
+  // TODO iOS
+  get personalSignButton(): ChainablePromiseElement {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.Button[@text="personal_sign"]',
         ),
       }),
     );
@@ -41,6 +53,22 @@ class DevnextDappScreen implements Dapp {
     );
   }
 
+  // TODO: Improve devnext dapp to have a better way to locate the connected 
+  // status
+  // TODO: iOS locator
+  get connectedStatus(): ChainablePromiseElement {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.widget.TextView[@text="YES"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "YES"',
+        ),
+      }),
+    );
+  }
+
   async connect(): Promise<void> {
     await this.connectButton.click();
   }
@@ -51,11 +79,31 @@ class DevnextDappScreen implements Dapp {
   }
 
   async terminate(): Promise<void> {
+    await scrollToElement(this.terminateButton);
     await this.terminateButton.click();
   }
 
   async scrollToSignButton(): Promise<void> {
     await this.signButton.scrollIntoView();
+  }
+
+  async tapPersonalSignButton(): Promise<void> {
+    await scrollToElement(this.personalSignButton);
+    await this.personalSignButton.click();
+  }
+
+  async isDappConnected(): Promise<boolean> {
+    const isConnected = await driver.waitUntil(
+      visibilityOf(this.connectedStatus),
+      {
+        timeout: 10000,
+        timeoutMsg: 'Dapp is not connected!',
+      },
+    )
+    if (isConnected) {
+      return true;
+    }
+    return false;
   }
 }
 

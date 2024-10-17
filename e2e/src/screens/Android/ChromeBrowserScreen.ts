@@ -4,6 +4,8 @@ import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { AndroidSelector } from '../../Selectors';
 import { Dapp } from '../interfaces/Dapp';
+import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../../src/Constants';
+import { waitUntil } from 'webdriverio/build/commands/browser';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {
@@ -20,8 +22,8 @@ class ChromeBrowserScreen implements MobileBrowser {
   get browserMoreOptions(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.ImageButton[@content-desc="More options"]',
+        androidSelector: AndroidSelector.by().resourceId(
+          'com.android.chrome:id/menu_button',
         ),
       }),
     );
@@ -78,25 +80,46 @@ class ChromeBrowserScreen implements MobileBrowser {
   }
 
   async goToAddress(address: string, pageObject: Dapp): Promise<void> {
-    const urlAddressBar = this.urlAddressBar;
+    const currentActivity = await driver.getCurrentActivity();
+    if (currentActivity !== Browsers.CHROME) {
+      await driver.activateApp(Browsers.CHROME);
+    }
 
-    await urlAddressBar.waitForDisplayed({
+    await this.urlAddressBar.waitForDisplayed({
       timeout: 10000,
     });
 
-    await urlAddressBar.click();
-    await urlAddressBar.clearValue();
-    await urlAddressBar.setValue(address);
-    await driver.pressKeyCode(66);
+    const addressPrefix = address.substring(8, 16);
+    if (!(await this.urlAddressBar.getText()).includes(addressPrefix)) {
+      await this.urlAddressBar.click();
+      await this.urlAddressBar.clearValue();
+      await this.urlAddressBar.setValue(address);
+      await driver.pressKeyCode(66);
+    } 
 
-    const connectButton =
-      pageObject.connectButton as unknown as ChainablePromiseElement;
+    await this.refreshPage();
 
-    // Tries to find the connect button 5 times for 10 seconds
-    let retries = 0;
-    if (!(await connectButton.isDisplayed()) && retries < 5) {
-      await driver.pause(2000);
-      retries += 1;
+    // Wait for the page to start loading
+    await driver.pause(3000);
+
+    const isWebDappLoaded = async () => {
+      let retries = 20;
+      // TODO: refactor this to use the page object
+      let isConnectButtonDisplayed = await ((await pageObject.connectButton) as ChainablePromiseElement).isDisplayed();
+
+      while (!isConnectButtonDisplayed && retries > 0) {
+        // Waits for 2 seconds before checking again
+        await driver.pause(2000);
+        isConnectButtonDisplayed = await ((await pageObject.connectButton) as ChainablePromiseElement).isDisplayed();
+        retries--;
+      }
+    };
+
+    let attempts = 0;
+
+    while (!isWebDappLoaded() && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
+      await this.refreshPage();
+      attempts++;
     }
   }
 
@@ -123,7 +146,7 @@ class ChromeBrowserScreen implements MobileBrowser {
   async refreshPage(): Promise<void> {
     await (this.browserMoreOptions).click();
     await (this.refreshButton).click();
-    await driver.pause(500); // Wait for the page to refresh
+    await driver.pause(5000); // Wait for the page to refresh
 
   }
 }
