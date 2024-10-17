@@ -38,6 +38,7 @@ export default class Gestures {
     }
   }
 
+  // Currently broken with the latest XCUITest
   static async swipeIOSByPercentage(
     from: ScreenPercentage,
     to: ScreenPercentage,
@@ -47,19 +48,21 @@ export default class Gestures {
     );
     const toPercentage = await Utils.getCoordinatesForDeviceFromPercentage(to);
 
-    await browser.touchAction([
+    await driver.touchAction([
       {
         action: Actions.PRESS as ActionTypes,
         x: fromPercentage.x,
         y: fromPercentage.y,
       },
-      { action: Actions.WAIT as ActionTypes, ms: 2000 },
+      { action: Actions.WAIT as ActionTypes, ms: 1000 },
       {
         action: Actions.MOVE_TO as ActionTypes,
         x: toPercentage.x,
         y: toPercentage.y,
       },
-      'release',
+      {
+        action: Actions.RELEASE as ActionTypes,
+      }
     ]);
   }
 
@@ -134,10 +137,21 @@ export default class Gestures {
       x: location.x,
       y: location.y,
     });
-    await browser.touchAction({
-      action: Actions.TAP as ActionTypes,
-      x: tapLocation.x,
-      y: tapLocation.y,
-    });
+    console.log('tapLocation', tapLocation);
+    await browser.action("pointer")
+      .move({
+        x: tapLocation.x,
+        y: tapLocation.y,
+        origin: 'viewport'
+      })
+      .down()
+      .pause(100)
+      .up()
+      .perform();
+    // await browser.touchAction({
+    //   action: Actions.TAP as ActionTypes,
+    //   x: tapLocation.x,
+    //   y: tapLocation.y,
+    // });
   }
 }

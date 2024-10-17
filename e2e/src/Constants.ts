@@ -1,8 +1,12 @@
-export const WALLET_PASSWORD = '123123123';
+export const WALLET_PASSWORD = process.env.WALLET_PASSWORD as string || '123123123';
 
 export const Browsers = {
   SAFARI: 'com.apple.mobilesafari',
   CHROME: 'com.android.chrome',
+};
+
+export const BrowsersActivity = {
+  CHROME: 'com.google.android.apps.chrome.Main',
 };
 
 export const NATIVE_OS_APPS = {
@@ -25,6 +29,8 @@ export const SRP =
 export const BROWSER_BUNDLE_ID = driver.isIOS
   ? Browsers.SAFARI
   : Browsers.CHROME;
+
+export const WEB_DAPP_LOAD_ATTEMPTS = 3;
 
 // This comes from the config file, it'll never be undefined otherwise there are no tests to run
 export const METAMASK_BUNDLE_ID = process.env.BUNDLE_ID as string;

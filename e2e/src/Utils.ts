@@ -20,8 +20,26 @@ import {
   Platforms,
   LOCALHOST,
   FIXTURE_SERVER_URL,
+  WALLET_PASSWORD,
+  BROWSER_BUNDLE_ID,
+  Browsers,
+  BrowsersActivity,
 } from './Constants';
-import axios from 'axios';
+import LockScreen from './screens/MetaMask/LockScreen';
+import { Dapp } from './screens/interfaces/Dapp';
+import SafariBrowserScreen from './screens/iOS/SafariBrowserScreen';
+import ChromeBrowserScreen from './screens/Android/ChromeBrowserScreen';
+import Gestures from './Gestures';
+import AndroidOpenWithComponent from './screens/Android/components/AndroidOpenWithComponent';
+import iOSOpenInComponent from './screens/iOS/components/IOSOpenInComponent';
+
+export const deviceOpenDeeplinkWithMetaMask = async () => {
+  if (PLATFORM === Platforms.IOS) {
+    await iOSOpenInComponent.tapOpen();
+  } else {
+    await AndroidOpenWithComponent.tapOpenWithMetaMask();
+  }
+}
 
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
@@ -32,6 +50,58 @@ export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
 
   return platformSelector;
 };
+
+export const restartAndUnlockMetaMask = async () => {
+  await driver.terminateApp(METAMASK_BUNDLE_ID);
+  await driver.activateApp(METAMASK_BUNDLE_ID);
+  await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+};
+
+export const navigateToWebMobileDapp = async (dappUrl: string, dappScreen: Dapp) => {
+  const browserScreen = driver.isIOS
+  ? SafariBrowserScreen
+  : ChromeBrowserScreen;
+
+  await browserScreen.goToAddress(dappUrl, dappScreen);
+}
+
+export const scrollToElement = async (element: ChainablePromiseElement) => {
+  let isElementDisplayed = await element.isDisplayed();
+
+  while (!isElementDisplayed) {
+    await Gestures.swipeByPercentage({ x: 50, y: 70 }, { x: 50, y: 5 });
+    isElementDisplayed = await element.isDisplayed();
+  }
+}
+
+export const goBack = async () => {
+  await driver.pause(1000);
+  if (driver.isIOS) {
+    await Gestures.tapOnCoordinatesByPercentage({x: 50, y: 80});
+    await driver.pause(1000);
+    await Utils.launchApp(Browsers.SAFARI);
+    return;
+  } 
+
+  // Android wait to go back since it takes a while for it to happen in the 
+  // current version of the app
+  let currentActivity = await driver.getCurrentActivity();
+  while (currentActivity !== BrowsersActivity.CHROME) {
+    await driver.pause(2000);
+    currentActivity = await driver.getCurrentActivity();
+  }
+
+  // Waiting for the dapp to fetch updates before trying to assert them
+  await driver.pause(3000);
+}
+
+export const launchMobileBrowser = async () => {
+  if (driver.isIOS) {
+    await driver.activateApp(Browsers.SAFARI);
+  } else {
+    await driver.activateApp(Browsers.CHROME);
+  }
+}
 
 class Utils {
   static async launchApp(bundleId: string): Promise<void> {
@@ -49,61 +119,41 @@ class Utils {
     await driver.activateApp(METAMASK_BUNDLE_ID);
   }
 
-  /*
-   * Little helper to reinstall a given app based on a file path
-   * This usually refers to the const APP_PATH
-   */
-  static async reinstallApp({
-    filePath,
-    bundleId,
-  }: {
-    filePath: string;
-    bundleId: string;
-  }): Promise<void> {
-    // await driver.removeApp(bundleId);
-    // await driver.installApp(filePath);
-    await driver.activateApp(bundleId);
-  }
 
   /*
    * Launches MetaMask with a fixture
    * This means that MM will load in a fully onboarded state
    *
+   * Disclaimer: iOS does not support launching with a fixture for the time being
+   * 
    * @param {FixtureServer} fixtureServer - server fixture running in the background
    * */
   static async launchMetaMaskWithFixture(
     fixtureServer: FixtureServer,
     bundleId: string,
   ): Promise<void> {
-    // NOT NEEDED FOR BS
-    // if (PLATFORM === Platforms.ANDROID) {
-    //   console.log('Android test detected. Reversing TCP ports...');
-    //   // We'll need this once we start runing tests on CI
-    //   const adb = new ADB({
-    //     adbHost: LOCALHOST,
-    //     adbPort: 5037,
-    //   });
-    //   // const adb = await ADB.createADB({});
-    //   await driver.pause(5000);
-    //   await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
-    //   await driver.pause(5000);
-    // }
+    // NOT NEEDED FOR BrowserStack
+    if (PLATFORM === Platforms.ANDROID) {
+      console.log('Android test detected. Reversing TCP ports...');
+      const adb = new ADB({
+        adbHost: LOCALHOST,
+        adbPort: 5037,
+      });
+      await driver.pause(5000);
+      await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
+      await driver.pause(5000);
+    }
 
-    // const fixture = new FixtureBuilder().withDefaultFixture().build();
-    // await startFixtureServer(fixtureServer);
-    // await loadFixture(fixtureServer, { fixture });
+    const fixture = new FixtureBuilder().withDefaultFixture().build();
+    await startFixtureServer(fixtureServer);
+    await loadFixture(fixtureServer, { fixture });
 
 
     console.log(`Re-launching MetaMask on ${PLATFORM}...`);
     if (PLATFORM === Platforms.IOS) {
       console.log('Pausing for 10 seconds...');
       await driver.pause(20000);
-      // await driver.executeScript('mobile:launchApp', [
-      //   {
-      //     bundleId,
-      //     fixtureServerPort: FIXTURE_SERVER_PORT,
-      //   },
-      // ]);
+
       await driver.executeScript('mobile:launchApp', [{
         bundleId: bundleId,
         arguments: ['fixtureServerPort', '12345'],
@@ -112,12 +162,8 @@ class Utils {
         }
       }]);
 
-      // const t = {"bundleId": "io.metamask.MetaMask-QA", "fixtureServerPort": 12345}
     } else {
-      await this.reinstallApp({
-        filePath: APP_PATH,
-        bundleId: METAMASK_BUNDLE_ID,
-      });
+      await this.launchApp(METAMASK_BUNDLE_ID);
     }
 
     console.log('MetaMask was loaded with fixtures!');

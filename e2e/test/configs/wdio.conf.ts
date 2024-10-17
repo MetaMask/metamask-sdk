@@ -16,6 +16,7 @@ export const config: WebdriverIO.Config = {
     android_sdk: ['../../specs/android_sdk.spec.ts'],
     // Development suite that uses fixtures
     development: ['../../specs/fixture_reference.ts'],
+    local_development: ['../../specs/connection.spec.ts'],
   },
   mochaOpts: {
     timeout: 360000,

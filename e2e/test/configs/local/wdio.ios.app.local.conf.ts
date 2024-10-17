@@ -1,7 +1,7 @@
 import path from 'path';
 import * as dotenv from 'dotenv';
-
 import type { Capabilities } from '@wdio/types';
+
 import config from './wdio.shared.local.appium.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.ios.env') });
@@ -23,7 +23,7 @@ config.capabilities = [
     'appium:deviceName': process.env.DEVICE_NAME ?? '',
     'appium:platformVersion': process.env.PLATFORM_VERSION ?? '',
     'appium:automationName': process.env.AUTOMATION_NAME ?? '',
-    'appium:app': process.env.APP_PATH ?? '',
+    // 'appium:app': process.env.APP_PATH ?? '',
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     'appium:bundleId': process.env.BUNDLE_ID ?? '',
@@ -36,12 +36,14 @@ config.capabilities = [
      */
     // "appium:xcodeSigningId": "iPhone Developer",
     'appium:newCommandTimeout': 240,
-    'appium:noReset': false,
+    'appium:waitForQuiescence': true,
+    'appium:noReset': true,
     'appium:autoLaunch': false,
     'appium:language': 'en',
-    'appium:fullReset': true,
+    'appium:fullReset': false,
     'appium:settings[snapshotMaxDepth]': 62,
     'appium:settings[customSnapshotTimeout]': 50000,
-  } as Capabilities.RemoteCapability,
+    // {"appium:settings[snapshotMaxDepth]": 62, "appium:settings[customSnapshotTimeout]": 50000}
+  } as Capabilities.AppiumXCUITestCapabilities,
 ];
 export { config };
