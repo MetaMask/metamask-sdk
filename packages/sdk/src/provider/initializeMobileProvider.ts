@@ -564,14 +564,16 @@ const initializeMobileProvider = async ({
           },
           [],
         );
-        // Emulate 'accountsChanged' on the provider
-        provider.emit('accountsChanged', accountsToPersist);
 
-        console.log(
-          `[initializeMobileProvider: sendRequest()] accountsToPersist: ${accountsToPersist}`,
+        logger(
+          `[initializeMobileProvider: sendRequest()] accountsToPersist:`,
+          accountsToPersist,
         );
 
         if (accountsToPersist.length > 0) {
+          // Emulate 'accountsChanged' on the provider
+          provider.handleAccountsChanged(accountsToPersist, false);
+          // provider.emit('accountsChanged', accountsToPersist);
           storageManager?.persistAccounts(accountsToPersist);
         }
       }
