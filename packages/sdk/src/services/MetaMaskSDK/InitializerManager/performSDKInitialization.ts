@@ -1,22 +1,20 @@
-import {
-  CommunicationLayerPreference,
-  EventType,
-} from '@metamask/sdk-communication-layer';
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import debug from 'debug';
-import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
+import { MetaMaskSDKEvent } from '../../../types/MetaMaskSDKEvents';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
+import { logger } from '../../../utils/logger';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
+import { initializeI18next } from './initializeI18next';
 import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { setupAnalytics } from './setupAnalytics';
 import { setupDappMetadata } from './setupDappMetadata';
 import { setupExtensionPreferences } from './setupExtensionPreferences';
+import { setupInfuraProvider } from './setupInfuraProvider';
 import { setupPlatformManager } from './setupPlatformManager';
+import { setupReadOnlyRPCProviders } from './setupReadOnlyRPCProviders';
 import { setupRemoteConnectionAndInstaller } from './setupRemoteConnectionAndInstaller';
 import { setupStorageManager } from './setupStorage';
-import { setupInfuraProvider } from './setupInfuraProvider';
-import { setupReadOnlyRPCProviders } from './setupReadOnlyRPCProviders';
-import { initializeI18next } from './initializeI18next';
 
 /**
  * Performs the complete initialization of the MetaMask SDK instance.
@@ -62,6 +60,26 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   options.storage = options.storage ?? {
     enabled: true,
   };
+
+  console.log(`headless: ${options.headless}`);
+  if (options.headless) {
+    debug('[MetaMaskSDK: performSDKInitialization()] headless mode enabled');
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const noop = () => {};
+    const _modals = {
+      install: () => {
+        return {
+          mount: noop,
+          unmount: noop,
+        };
+      },
+    };
+    const _ui = {
+      installer: noop,
+    };
+    options.modals = _modals;
+    options.ui = _ui;
+  }
 
   const developerMode = options.logging?.developerMode === true;
   instance.debug = options.logging?.sdk || developerMode;
@@ -119,5 +137,8 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     );
   }
 
-  instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.INITIALIZED);
+  instance.emit(
+    MetaMaskSDKEvent.ProviderUpdate,
+    PROVIDER_UPDATE_TYPE.INITIALIZED,
+  );
 }
