@@ -16,6 +16,7 @@ describe('connect', () => {
       debug: false,
       init: jest.fn().mockResolvedValue(true),
       activeProvider: {
+        getSelectedAddress: jest.fn(),
         request: jest.fn().mockResolvedValue('result'),
       },
     } as unknown as MetaMaskSDK;

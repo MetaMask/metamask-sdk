@@ -27,6 +27,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
      *
      */
     instance.state = {
+      accounts: null,
       autoRequestAccounts: false,
       providerStateRequested: false,
       chainId: '',

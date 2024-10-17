@@ -9,16 +9,13 @@ import packageJson from '../../package.json';
 import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { getPostMessageStream } from '../PostMessageStream/getPostMessageStream';
-import {
-  CONNECTWITH_RESPONSE_EVENT,
-  METHODS_TO_REDIRECT,
-  RPC_METHODS,
-} from '../config';
+import { METHODS_TO_REDIRECT, RPC_METHODS } from '../config';
 import { ProviderConstants } from '../constants';
 import { MetaMaskSDK } from '../sdk';
 import { Ethereum } from '../services/Ethereum';
 import { RemoteConnection } from '../services/RemoteConnection';
 import { rpcRequestHandler } from '../services/rpc-requests/RPCRequestHandler';
+import { MetaMaskSDKEvent } from '../types/MetaMaskSDKEvents';
 import { PROVIDER_UPDATE_TYPE } from '../types/ProviderUpdateType';
 import { logger } from '../utils/logger';
 import { wait } from '../utils/wait';
@@ -108,6 +105,7 @@ const initializeMobileProvider = async ({
     shouldSetOnWindow,
     connectionStream: metamaskStream,
     shouldShimWeb3,
+    sdkInstance: sdk,
   });
 
   let initializationOngoing = false;
@@ -332,7 +330,7 @@ const initializeMobileProvider = async ({
               });
 
               // Emit connectResponse
-              sdk.emit(CONNECTWITH_RESPONSE_EVENT, response);
+              sdk.emit(MetaMaskSDKEvent.ConnectWithResponse, response);
 
               return response;
             } else if (
@@ -348,7 +346,7 @@ const initializeMobileProvider = async ({
               });
 
               // Emit connectResponse
-              sdk.emit(CONNECTWITH_RESPONSE_EVENT, response);
+              sdk.emit(MetaMaskSDKEvent.ConnectWithResponse, response);
 
               return response;
             }
@@ -427,7 +425,7 @@ const initializeMobileProvider = async ({
                   target.result,
                 );
                 // Emit connectWith response
-                sdk.emit(CONNECTWITH_RESPONSE_EVENT, target.result);
+                sdk.emit(MetaMaskSDKEvent.ConnectWithResponse, target.result);
 
                 resolve(target.result);
                 return;
@@ -540,8 +538,10 @@ const initializeMobileProvider = async ({
     try {
       const rpcResponse = await executeRequest(...args);
       logger(
-        `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse: ${rpcResponse}`,
+        `[initializeMobileProvider: sendRequest()] method=${method} rpcResponse`,
+        rpcResponse,
       );
+
       return rpcResponse;
     } catch (error) {
       console.error(`[initializeMobileProvider: sendRequest()] error:`, error);
