@@ -29,6 +29,8 @@ export interface SDKProviderProps {
 }
 
 interface SDKProviderState {
+  accounts: string[] | null;
+  selectedAddress?: string;
   autoRequestAccounts: boolean;
   providerStateRequested: boolean;
   chainId: string;
@@ -37,6 +39,7 @@ interface SDKProviderState {
 
 export class SDKProvider extends MetaMaskInpageProvider {
   public state: SDKProviderState = {
+    accounts: null,
     autoRequestAccounts: false,
     providerStateRequested: false,
     chainId: '',
@@ -106,6 +109,10 @@ export class SDKProvider extends MetaMaskInpageProvider {
       ...this.state,
       ...state,
     };
+  }
+
+  handleAccountsChanged(accounts: string[], isEthAccounts?: boolean) {
+    return this._handleAccountsChanged(accounts, isEthAccounts);
   }
 
   handleDisconnect({ terminate = false }: { terminate: boolean }) {

@@ -115,7 +115,7 @@ describe('startConnection', () => {
     state.connector = undefined;
 
     await expect(startConnection(state, options)).rejects.toThrow(
-      'Invalid communication protocol',
+      'communication layer not initialized',
     );
   });
 

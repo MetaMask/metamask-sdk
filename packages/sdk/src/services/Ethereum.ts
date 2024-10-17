@@ -2,12 +2,15 @@ import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
 import { Duplex } from 'readable-stream';
 import { SDKProvider } from '../provider/SDKProvider';
 import { logger } from '../utils/logger';
+import { MetaMaskSDK } from '../sdk';
+import { MetaMaskSDKEvent } from '../types/MetaMaskSDKEvents';
 
 export interface EthereumProps {
   shouldSetOnWindow: boolean;
   connectionStream: Duplex;
   shouldSendMetadata?: boolean;
   shouldShimWeb3: boolean;
+  sdkInstance: MetaMaskSDK;
 }
 
 export class Ethereum {
@@ -15,11 +18,14 @@ export class Ethereum {
 
   private provider: SDKProvider;
 
+  private sdkInstance: MetaMaskSDK;
+
   private constructor({
     shouldSetOnWindow,
     connectionStream,
     shouldSendMetadata = false,
     shouldShimWeb3,
+    sdkInstance,
   }: EthereumProps) {
     const provider = new SDKProvider({
       connectionStream,
@@ -35,7 +41,7 @@ export class Ethereum {
     });
 
     this.provider = proxiedProvieer;
-
+    this.sdkInstance = sdkInstance;
     if (shouldSetOnWindow && typeof window !== 'undefined') {
       setGlobalProvider(provider);
     }
@@ -44,14 +50,22 @@ export class Ethereum {
       shimWeb3(this.provider);
     }
 
+    // Propagate display_uri events to the SDK
+    this.provider.on('display_uri', (uri) => {
+      this.sdkInstance.emit(MetaMaskSDKEvent.DisplayURI, uri as string);
+    });
+
     this.provider.on('_initialized', () => {
       const info = {
         chainId: this.provider.getChainId(),
         isConnected: this.provider.isConnected(),
-        isMetaNask: this.provider.isMetaMask,
+        isMetaMask: this.provider.isMetaMask,
         selectedAddress: this.provider.getSelectedAddress(),
         networkVersion: this.provider.getNetworkVersion(),
       };
+
+      // Also emit initialized event on sdk.
+      this.sdkInstance.emit(MetaMaskSDKEvent.Initialized, info);
 
       logger(`[Ethereum: constructor()] provider initialized`, info);
     });
