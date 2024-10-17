@@ -1,0 +1,1 @@
+(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[8695],{"./src/design-system/components/Cells/Cell/foundation/CellBase/CellBase.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);

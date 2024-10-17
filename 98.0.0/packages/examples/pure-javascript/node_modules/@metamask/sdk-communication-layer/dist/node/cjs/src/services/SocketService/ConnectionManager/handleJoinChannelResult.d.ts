@@ -1,0 +1,9 @@
+import { SocketService } from '../../../SocketService';
+export interface JoinChannelResult {
+    ready: boolean;
+    rejected?: boolean;
+    persistence?: boolean;
+    walletKey?: string;
+}
+export declare const handleJoinChannelResults: (instance: SocketService, error: string | null, result?: JoinChannelResult) => Promise<void>;
+//# sourceMappingURL=handleJoinChannelResult.d.ts.map
