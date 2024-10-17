@@ -6,7 +6,8 @@
       "@wdio/globals/types",
       "expect-webdriverio",
       "@wdio/appium-service",
-      "@wdio/mocha-framework"
+      "@wdio/mocha-framework",
+      "wdio-intercept-service"
       // "@types/allure-commandline"
     ],
     "target": "ES6",

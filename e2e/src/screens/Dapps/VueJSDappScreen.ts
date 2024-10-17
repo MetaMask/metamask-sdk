@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class VueJSDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -18,7 +18,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get connectAndSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectAndSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -31,7 +31,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -44,7 +44,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -57,7 +57,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signTypedDataV4Button(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -70,7 +70,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendTransactionButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -83,7 +83,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get switchToPolygonButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchToPolygonButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -96,7 +96,7 @@ class VueJSDappScreen implements Dapp {
     );
   }
 
-  get switchToMainnetButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchToMainnetButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -110,35 +110,35 @@ class VueJSDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async connectAndSign(): Promise<void> {
-    await (await this.connectAndSignButton).click();
+    await this.connectAndSignButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 
   async signTypedDataV4(): Promise<void> {
-    await (await this.signTypedDataV4Button).click();
+    await this.signTypedDataV4Button.click();
   }
 
   async personalSign(): Promise<void> {
-    await (await this.personalSignButton).click();
+    await this.personalSignButton.click();
   }
 
   async sendTransaction(): Promise<void> {
-    await (await this.sendTransactionButton).click();
+    await this.sendTransactionButton.click();
   }
 
   async switchToPolygonNetwork(): Promise<void> {
-    await (await this.switchToPolygonButton).click();
+    await this.switchToPolygonButton.click();
   }
 
   async switchToMainnetNetwork(): Promise<void> {
-    await (await this.switchToMainnetButton).click();
+    await this.switchToMainnetButton.click();
   }
 }
 

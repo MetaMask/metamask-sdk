@@ -17,8 +17,21 @@ import SwitchNetworkModalComponent from '../../src/screens/MetaMask/components/S
 import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
 import IOSOpenInComponent from '../../src/screens/iOS/components/IOSOpenInComponent';
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
+import DevnextJSDappScreen from '../../src/screens/Dapps/DevnextJSDappScreen';
 
-describe('JS SDK E2E', () => {
+
+/*
+* @deprecated
+* 
+* This test suite is deprecated and will be removed in the future.
+* It is currently being kept for reference purposes.
+* 
+* The tests within this suite were originally designed to test the MetaMask
+* JavaScript SDK. However, the current implementation of the SDK has changed,
+* and the tests are no longer applicable.
+* 
+*/ 
+describe.skip('JS SDK E2E', () => {
   before(async () => {
     await beforeHook();
   });
@@ -27,7 +40,27 @@ describe('JS SDK E2E', () => {
     await beforeEachHook();
   });
 
-  it('Connect to the Web3onboard Dapp', async () => {
+  it('E2E on devnext', async () => {
+    await driver.pause(5000);
+
+    // Kill and launch the mobile browser
+    await Utils.killApp(BROWSER_BUNDLE_ID);
+    await Utils.launchApp(BROWSER_BUNDLE_ID);
+
+    const browserScreen = driver.isIOS
+      ? SafariBrowserScreen
+      : ChromeBrowserScreen;
+
+    const devnextDappUrl = process.env.DEVNEXT_DAPP_URL ?? '';
+
+    await browserScreen.goToAddress(devnextDappUrl, DevnextJSDappScreen);
+    // TODO: Make the devnext pom and continue writing tests
+
+    await driver.pause(5000);
+  });
+
+  // Tests from the first iteration are now being skipped
+  it.skip('Connect to the Web3onboard Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -41,7 +74,7 @@ describe('JS SDK E2E', () => {
     // Get and navigate to the Dapp URL
     const dappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(dappUrl);
+    await browserScreen.goToAddress(dappUrl, DevnextJSDappScreen);
 
     await Web3OnBoardDappScreen.connect();
 
@@ -79,7 +112,7 @@ describe('JS SDK E2E', () => {
     await SignModalComponent.tapSignApproval();
   });
 
-  it('Connect to the SDK Playground Dapp', async () => {
+  it.skip('Connect to the SDK Playground Dapp', async () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
@@ -93,7 +126,7 @@ describe('JS SDK E2E', () => {
     // Get and navigate to the Dapp URL
     const dappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(dappUrl);
+    await browserScreen.goToAddress(dappUrl, DevnextJSDappScreen);
 
     await SdkPlaygroundDappScreen.terminate();
 
@@ -204,7 +237,7 @@ describe('JS SDK E2E', () => {
     }
   });
 
-  it('Connect to the ReactNativeDemo Dapp', async () => {
+  it.skip('Connect to the ReactNativeDemo Dapp', async () => {
     await driver.pause(5000);
 
     await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
@@ -287,7 +320,7 @@ describe('JS SDK E2E', () => {
       await (browserScreen as typeof ChromeBrowserScreen).tapNewTabButton();
     }
 
-    await browserScreen.goToAddress(testDappUrl);
+    await browserScreen.goToAddress(testDappUrl, DevnextJSDappScreen);
 
     await driver.pause(5000);
 

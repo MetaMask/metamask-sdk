@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class ReactNativeDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -16,7 +16,7 @@ class ReactNativeDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -27,7 +27,7 @@ class ReactNativeDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -39,15 +39,15 @@ class ReactNativeDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async sign(): Promise<void> {
-    await (await this.signButton).click();
+    await this.signButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 }
 

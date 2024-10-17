@@ -4,7 +4,7 @@ import { AndroidSelector, IOSSelector } from '../../Selectors';
 import { getSelectorForPlatform } from '../../Utils';
 
 class ReactMetamaskButtonDappScreen {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,7 +17,7 @@ class ReactMetamaskButtonDappScreen {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -31,11 +31,11 @@ class ReactMetamaskButtonDappScreen {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 }
 

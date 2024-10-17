@@ -7,12 +7,15 @@ config.services = (config.services ? config.services : []).concat([
   [
     'browserstack',
     {
-      testObservability: true,
+      testObservability: false,
       testObservabilityOptions: {
         projectName: 'SDK e2e tests',
         buildName: 'SDK e2e PR regression',
       },
-      browserstackLocal: false,
+      browserstackLocal: true,
+      opts: {
+        forceLocal: 'true',
+      },
     },
   ],
 ]);
@@ -24,8 +27,8 @@ config.commonCapabilities = {
     buildName: 'SDK e2e PR regression',
     buildIdentifier: '123',
     projectName: 'BrowserStack Sample',
-    debug: 'true',
-    networkLogs: 'false',
+    debug: true,
+    networkLogs: true,
     consoleLogs: 'info',
     deviceOrientation: 'portrait',
     screenOrientation: 'locked',
