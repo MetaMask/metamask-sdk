@@ -1,6 +1,7 @@
 import { logger } from '../../../utils/logger';
 import { RPC_METHODS } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
+import { isHexString, stringToHex } from '../../../utils/hex.utils';
 
 /**
  * Asynchronously connects to MetaMask, requests account access and sign message.
@@ -36,12 +37,15 @@ export async function connectAndSign({
     throw new Error(`SDK state invalid -- undefined provider`);
   }
 
+  // Check if msg is a hex string and convert if not
+  const hexMsg = isHexString(msg) ? msg : stringToHex(msg);
+
   return instance.activeProvider.request({
     method: RPC_METHODS.METAMASK_CONNECTWITH,
     params: [
       {
         method: RPC_METHODS.PERSONAL_SIGN,
-        params: [msg],
+        params: [hexMsg],
       },
     ],
   });
