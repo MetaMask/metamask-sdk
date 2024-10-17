@@ -61,26 +61,6 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     enabled: true,
   };
 
-  console.log(`headless: ${options.headless}`);
-  if (options.headless) {
-    debug('[MetaMaskSDK: performSDKInitialization()] headless mode enabled');
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    const noop = () => {};
-    const _modals = {
-      install: () => {
-        return {
-          mount: noop,
-          unmount: noop,
-        };
-      },
-    };
-    const _ui = {
-      installer: noop,
-    };
-    options.modals = _modals;
-    options.ui = _ui;
-  }
-
   const developerMode = options.logging?.developerMode === true;
   instance.debug = options.logging?.sdk || developerMode;
 
