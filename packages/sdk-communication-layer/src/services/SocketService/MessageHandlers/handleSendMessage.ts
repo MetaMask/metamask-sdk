@@ -78,6 +78,7 @@ export async function handleSendMessage(
         {
           id: instance.remote.state.channelId ?? '',
           event: TrackingEvents.SDK_RPC_REQUEST,
+          ...instance.remote.state.originatorInfo,
           params: {
             method: message.method,
             from: 'mobile',
