@@ -32,7 +32,9 @@ export async function getBrowserExtension({
     if ('providers' in ethereum) {
       if (Array.isArray(ethereum.providers)) {
         const provider = mustBeMetaMask
-          ? ethereum.providers.find((p: any) => p.isMetaMask)
+          ? ethereum.providers.find((p: any) =>
+              isRealMetaMaskExtensionInstalled(p),
+            )
           : ethereum.providers[0];
 
         if (!provider) {
@@ -41,7 +43,7 @@ export async function getBrowserExtension({
 
         return wrapExtensionProvider({ provider, sdkInstance });
       }
-    } else if (mustBeMetaMask && !ethereum.isMetaMask) {
+    } else if (mustBeMetaMask && !isRealMetaMaskExtensionInstalled(ethereum)) {
       throw new Error('MetaMask provider not found in Ethereum');
     }
 
@@ -50,4 +52,44 @@ export async function getBrowserExtension({
       sdkInstance,
     });
   }
+}
+
+function isRealMetaMaskExtensionInstalled(eth: any) {
+  if (!eth.isMetaMask) {
+    return false;
+  }
+
+  // Brave tries to make itself look like MetaMask
+  // Could also try RPC `web3_clientVersion` if following is unreliable
+  if (eth.isBraveWallet && !eth._events && !eth._state) {
+    return false;
+  }
+
+  // Other wallets that try to look like MetaMask
+  const flags: string[] = [
+    'isApexWallet',
+    'isAvalanche',
+    'isBitKeep',
+    'isBlockWallet',
+    'isKuCoinWallet',
+    'isMathWallet',
+    'isOkxWallet',
+    'isOKExWallet',
+    'isOneInchIOSWallet',
+    'isOneInchAndroidWallet',
+    'isOpera',
+    'isPortal',
+    'isRabby',
+    'isTokenPocket',
+    'isTokenary',
+    'isUniswapWallet',
+    'isZerion',
+  ];
+  for (const flag of flags) {
+    if (eth[flag]) {
+      return false;
+    }
+  }
+
+  return true;
 }
