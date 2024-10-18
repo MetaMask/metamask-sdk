@@ -1,5 +1,8 @@
 #!/bin/bash
 
+
+# TODO Add a way to inject the package json for each sdk repo with the version number to get the branch name as well. May need to change the sdk-copy script to accomodate that.
+
 # Stop on first error
 set -e
 
@@ -159,9 +162,9 @@ build_and_consolidate
 # Copy built files to deployment directory
 echo "Copying built files to $deployment_dir"
 # Replace these with your actual build output directories
-cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
+# cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
 cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
-cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
+# cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
 # Add more cp commands for other apps as needed
 
 # Update index.html
