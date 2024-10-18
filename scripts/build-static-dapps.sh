@@ -17,7 +17,8 @@ get_deployment_folder() {
     elif [ "$IS_RELEASE" = "true" ]; then
         echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
     else
-        echo "$current_branch"
+        # Replace slashes with hyphens in the branch name
+        echo "$current_branch" | sed 's/\//-/g'
     fi
 }
 
