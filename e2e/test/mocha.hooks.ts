@@ -1,4 +1,4 @@
-import Utils, { killApp, launchApp, launchMetaMask } from '../src/Utils';
+import { killApp, launchApp, launchMetaMask } from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
 import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
