@@ -50,48 +50,48 @@ build_and_consolidate() {
     yarn build # first build all workspace dependencies
 
     # Build projects
-    build_project "deployments/dapps/sdk-playground"
+    # build_project "deployments/dapps/sdk-playground"
     build_project "packages/examples/create-react-app"
-    build_project "packages/examples/vuejs"
-    build_project "packages/examples/wagmi-demo-react"  
+    # build_project "packages/examples/vuejs"
+    # build_project "packages/examples/wagmi-demo-react"  
 
     # Special handling for Pure JS Example
-    echo "Handling Pure JS Example..."
-    cd packages/examples/pure-javascript
-    yarn install
-    cd -
+    # echo "Handling Pure JS Example..."
+    # cd packages/examples/pure-javascript
+    # yarn install
+    # cd -
 
     # Continue building other projects
-    build_project "packages/examples/react-metamask-button"
-    build_project "packages/examples/react-with-custom-modal"
-    build_project "packages/examples/with-web3onboard"
+    # build_project "packages/examples/react-metamask-button"
+    # build_project "packages/examples/react-with-custom-modal"
+    # build_project "packages/examples/with-web3onboard"
 
-    echo "Building Storybook Static..."
-    yarn workspace @metamask/sdk-ui build:storybook # then build storybook
+    # echo "Building Storybook Static..."
+    # yarn workspace @metamask/sdk-ui build:storybook # then build storybook
 
     # Combine Deployments
     echo "Combining deployments..."
     # Create necessary directories in deployments
     mkdir -p $deployment_dir/packages/examples/create-react-app/build
-    mkdir -p $deployment_dir/dapps/sdk-playground/build
-    mkdir -p $deployment_dir/packages/examples/vuejs/dist
-    mkdir -p $deployment_dir/packages/examples/pure-javascript
-    mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
-    mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
-    mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
-    mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
-    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
+    # mkdir -p $deployment_dir/dapps/sdk-playground/build
+    # mkdir -p $deployment_dir/packages/examples/vuejs/dist
+    # mkdir -p $deployment_dir/packages/examples/pure-javascript
+    # mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
+    # mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
+    # mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
+    # mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
+    # mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
     cp -r packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
-    cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
-    cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
-    cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
-    cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
-    cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
-    cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
-    cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
-    cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
+    # cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
+    # cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
+    # cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
+    # cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
+    # cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
+    # cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
+    # cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
+    # cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
 # Function to update index.html (placeholder)
