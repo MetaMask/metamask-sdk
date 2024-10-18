@@ -1,0 +1,1 @@
+(self.webpackChunk_metamask_sdk_ui=self.webpackChunk_metamask_sdk_ui||[]).push([[6245],{"./src/design-system/components/Avatars/Avatar/variants/AvatarFavicon/AvatarFavicon.types.ts":(__unused_webpack_module,exports)=>{Object.defineProperty(exports,"__esModule",{value:!0})}}]);
