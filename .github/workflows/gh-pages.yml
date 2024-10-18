@@ -1,11 +1,7 @@
 name: Deploy to GitHub Pages
-permissions:
-  contents: write
 
 on:
   push:
-    branches: [main]
-  pull_request:
     branches: [main]
   workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
 
@@ -34,7 +30,7 @@ jobs:
     - name: Deploy dapps
       uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.DEPLOY_TOKEN }}
         force_orphan: true
         keep_files: true  # Important to keep the rest of the files deployed previously
         publish_dir: ./deployments
