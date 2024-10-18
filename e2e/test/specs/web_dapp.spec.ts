@@ -25,6 +25,7 @@ describe('Devnext E2E', () => {
     if (!isMMOnboarded) {
       await onboardMM();
     }
+    
   });
 
   beforeEach(async () => {});

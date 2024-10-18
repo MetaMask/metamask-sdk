@@ -46,19 +46,16 @@ class LockScreen {
   }
 
   async isMMOnboarded(): Promise<boolean> {
-    await driver
+    const isWelcomeBackVisible = await driver
       .waitUntil(visibilityOf(this.loginTitle), {
         timeout: 10000,
         interval: 5000,
         timeoutMsg: 'Welcome Back! is not visible. Assuming Wallet is not onboarded',
       })
-      .then(() => {
-        return true;
-      })
       .catch((e) => {
         console.error('Error unlocking MM: ', e);
       });
-    return false;
+    return Boolean(isWelcomeBackVisible);
   }
 
   async isMMLocked(): Promise<boolean> {

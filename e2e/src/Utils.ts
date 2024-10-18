@@ -48,6 +48,14 @@ export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   return platformSelector;
 };
 
+export const launchMobileBrowser = async () => {
+  if (driver.isIOS) {
+    await driver.activateApp(Browsers.SAFARI);
+  } else {
+    await driver.activateApp(Browsers.CHROME);
+  }
+};
+
 export const restartAndUnlockMetaMask = async () => {
   await driver.terminateApp(METAMASK_BUNDLE_ID);
   await driver.activateApp(METAMASK_BUNDLE_ID);
@@ -62,6 +70,7 @@ export const navigateToWebMobileDapp = async (
     ? SafariBrowserScreen
     : ChromeBrowserScreen;
 
+  await launchMobileBrowser();
   await browserScreen.goToAddress(dappUrl, dappScreen);
 };
 
