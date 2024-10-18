@@ -5,7 +5,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 
 class AndroidSDKDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -15,7 +15,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get connectAndSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectAndSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -25,7 +25,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get connectWithRequestButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectWithRequestButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -35,7 +35,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get clearSessionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get clearSessionButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -45,7 +45,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -55,7 +55,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get signButton2(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton2(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -65,7 +65,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get batchSigningButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get batchSigningButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -75,7 +75,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get batchSigningButton2(): ChainablePromiseElement<WebdriverIO.Element> {
+  get batchSigningButton2(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -85,7 +85,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendTransactionButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -95,7 +95,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get sendTransactionButton2(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendTransactionButton2(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -105,7 +105,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get switchChainButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchChainButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -115,7 +115,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get switchChainButton2(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchChainButton2(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -125,7 +125,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -135,7 +135,7 @@ class AndroidSDKDappScreen implements Dapp {
     );
   }
 
-  get backButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get backButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -146,129 +146,101 @@ class AndroidSDKDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (
-      await this.connectButton
-    ).waitForEnabled({
+    await this.connectButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async sign(): Promise<void> {
-    await (
-      await this.signButton
-    ).waitForEnabled({
+    await this.signButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.signButton).click();
+    await this.signButton.click();
   }
 
   async sign2(): Promise<void> {
-    await (
-      await this.signButton2
-    ).waitForEnabled({
+    await this.signButton2.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.signButton2).click();
+    await this.signButton2.click();
   }
 
   async sendTransaction(): Promise<void> {
-    await (
-      await this.sendTransactionButton
-    ).waitForEnabled({
+    await this.sendTransactionButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.sendTransactionButton).click();
+    await this.sendTransactionButton.click();
   }
 
   async sendTransaction2(): Promise<void> {
-    await (
-      await this.sendTransactionButton2
-    ).waitForEnabled({
+    await this.sendTransactionButton2.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.sendTransactionButton2).click();
+    await this.sendTransactionButton2.click();
   }
 
   async switchChain(): Promise<void> {
-    await (
-      await this.switchChainButton
-    ).waitForEnabled({
+    await this.switchChainButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.switchChainButton).click();
+    await this.switchChainButton.click();
   }
 
   async switchChain2(): Promise<void> {
-    await (
-      await this.switchChainButton2
-    ).waitForEnabled({
+    await this.switchChainButton2.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.switchChainButton2).click();
+    await this.switchChainButton2.click();
   }
 
   async clearSession(): Promise<void> {
-    await (
-      await this.clearSessionButton
-    ).waitForEnabled({
+    await this.clearSessionButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.clearSessionButton).click();
+    await this.clearSessionButton.click();
   }
 
   async goBack(): Promise<void> {
-    await (
-      await this.backButton
-    ).waitForEnabled({
+    await this.backButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.backButton).click();
+    await this.backButton.click();
   }
 
   async connectAndSign(): Promise<void> {
-    await (
-      await this.connectAndSignButton
-    ).waitForEnabled({
+    await this.connectAndSignButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.connectAndSignButton).click();
+    await this.connectAndSignButton.click();
   }
 
   async connectWithRequest(): Promise<void> {
-    await (
-      await this.connectWithRequestButton
-    ).waitForEnabled({
+    await this.connectWithRequestButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.connectWithRequestButton).click();
+    await this.connectWithRequestButton.click();
   }
 
   async batchSigning(): Promise<void> {
-    await (
-      await this.batchSigningButton
-    ).waitForEnabled({
+    await this.batchSigningButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.batchSigningButton).click();
+    await this.batchSigningButton.click();
   }
 
   async batchSigning2(): Promise<void> {
-    await (
-      await this.batchSigningButton2
-    ).waitForEnabled({
+    await this.batchSigningButton2.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.batchSigningButton2).click();
+    await this.batchSigningButton2.click();
   }
 
   async terminate(): Promise<void> {
-    await (
-      await this.terminateButton
-    ).waitForEnabled({
+    await this.terminateButton.waitForEnabled({
       timeout: 5000,
     });
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 }
 

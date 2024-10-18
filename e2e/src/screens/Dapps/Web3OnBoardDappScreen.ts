@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class Web3OnBoardDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -16,7 +16,7 @@ class Web3OnBoardDappScreen implements Dapp {
     );
   }
 
-  get metaMaskConnectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get metaMaskConnectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -27,7 +27,7 @@ class Web3OnBoardDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -40,7 +40,7 @@ class Web3OnBoardDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -52,39 +52,31 @@ class Web3OnBoardDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (
-      await this.connectButton
-    ).waitForEnabled({
+    await this.connectButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async tapMetaMaskConnectButton(): Promise<void> {
-    await (
-      await this.metaMaskConnectButton
-    ).waitForEnabled({
+    await this.metaMaskConnectButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.metaMaskConnectButton).click();
+    await this.metaMaskConnectButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (
-      await this.terminateButton
-    ).waitForEnabled({
+    await this.terminateButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 
   async sign(): Promise<void> {
-    await (
-      await this.signButton
-    ).waitForEnabled({
+    await this.signButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.signButton).click();
+    await this.signButton.click();
   }
 }
 

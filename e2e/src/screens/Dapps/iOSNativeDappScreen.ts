@@ -5,7 +5,7 @@ import { Dapp } from '../interfaces/Dapp';
 import { IOSSelector } from '../../Selectors';
 
 class IOSNNativeDappScreen implements Dapp {
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString(
@@ -15,7 +15,7 @@ class IOSNNativeDappScreen implements Dapp {
     );
   }
 
-  get signMenuButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signMenuButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString(
@@ -25,7 +25,7 @@ class IOSNNativeDappScreen implements Dapp {
     );
   }
 
-  get signButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString(
@@ -35,7 +35,7 @@ class IOSNNativeDappScreen implements Dapp {
     );
   }
 
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         iosSelector: IOSSelector.by().predicateString('label == "Terminate"'),
@@ -44,16 +44,16 @@ class IOSNNativeDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async sign(): Promise<void> {
-    await (await this.signMenuButton).click();
-    await (await this.signButton).click();
+    await this.signMenuButton.click();
+    await this.signButton.click();
   }
 
   async terminate(): Promise<void> {
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 }
 

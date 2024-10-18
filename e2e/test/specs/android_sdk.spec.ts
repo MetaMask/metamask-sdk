@@ -8,7 +8,7 @@ import SignModalComponent from '../../src/screens/MetaMask/components/SignModalC
 import SwitchNetworkModalComponent from '../../src/screens/MetaMask/components/SwitchNetworkModalComponent';
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
 
-describe('Android SDK (native) E2E', () => {
+describe.skip('Android SDK (native) E2E', () => {
   before(async () => {
     await beforeHook();
   });

@@ -1,11 +1,9 @@
 import Koa from 'koa';
 import * as http from "http";
-import { FIXTURE_SERVER_PORT } from '../../src/Constants';
+import { FIXTURE_SERVER_HOST, FIXTURE_SERVER_PORT } from '../../src/Constants';
 
 const CURRENT_STATE_KEY = '__CURRENT__';
 const DEFAULT_STATE_KEY = '__DEFAULT__';
-
-const FIXTURE_SERVER_HOST = 'localhost';
 
 class FixtureServer {
   private _app: Koa;

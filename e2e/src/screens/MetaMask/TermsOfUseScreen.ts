@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class TermsOfUseScreen {
-  get acceptTermsOfUseCheckbox(): ChainablePromiseElement<WebdriverIO.Element> {
+  get acceptTermsOfUseCheckbox(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,7 +17,7 @@ class TermsOfUseScreen {
     );
   }
 
-  get scrollToBottomButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get scrollToBottomButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -30,7 +30,7 @@ class TermsOfUseScreen {
     );
   }
 
-  get acceptButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get acceptButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -42,19 +42,19 @@ class TermsOfUseScreen {
   }
 
   async tapScrollToBottom(): Promise<void> {
-    await (await this.scrollToBottomButton).click();
+    await this.scrollToBottomButton.click();
   }
 
   async tapAcceptTermsOfUseCheckbox(): Promise<void> {
-    await (await this.acceptTermsOfUseCheckbox).click();
+    await this.acceptTermsOfUseCheckbox.click();
   }
 
   async isAcceptButtonEnabled(): Promise<boolean> {
-    return await (await this.acceptButton).isEnabled();
+    return await this.acceptButton.isEnabled();
   }
 
   async tapAcceptTermsOfUseButton(): Promise<void> {
-    await (await this.acceptButton).click();
+    await this.acceptButton.click();
   }
 }
 

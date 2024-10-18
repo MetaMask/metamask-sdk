@@ -3,7 +3,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class ImportFromSeedScreen {
-  get srpInput(): ChainablePromiseElement<WebdriverIO.Element> {
+  get srpInput(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -46,7 +46,7 @@ class ImportFromSeedScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndClassName(
-          'new UiSelector().className("android.widget.Switch")',
+          'android.widget.Switch',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "login-with-biometrics-switch"',
@@ -70,7 +70,7 @@ class ImportFromSeedScreen {
 
   async tapBiometricsToggleIfDisplayed(): Promise<void> {
     if (await this.biometricsToggle.isDisplayed()) {
-      await (await this.biometricsToggle).click();
+      await this.biometricsToggle.click();
     }
   }
 
