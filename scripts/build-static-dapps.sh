@@ -120,20 +120,20 @@ create_index_html() {
 </head>
 <body>
     <h1>MetaMask SDK Deployments</h1>
-    <ul>" > gh-pages/index.html
+    <ul>" > deployments/index.html
 
     # List all directories in gh-pages, excluding index.html itself
-    for dir in gh-pages/*/; do
+    for dir in deployments/*/; do
         dir=${dir%*/}  # Remove trailing slash
         dir_name=${dir##*/}  # Extract directory name
         if [ "$dir_name" != "index.html" ]; then
-            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> gh-pages/index.html
+            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> deployments/index.html
         fi
     done
 
     echo "    </ul>
 </body>
-</html>" >> gh-pages/index.html
+</html>" >> deployments/index.html
 
     echo "Created index.html with list of deployment folders"
 }
@@ -144,7 +144,7 @@ echo "Starting deployment process..."
 
 # Determine the deployment folder
 deployment_folder=$(get_deployment_folder)
-deployment_dir="gh-pages/$deployment_folder"
+deployment_dir="deployments/$deployment_folder"
 
 echo "Deployment folder: $deployment_folder"
 echo "Deployment directory: $deployment_dir"
@@ -169,15 +169,15 @@ update_index_html "$deployment_dir"
 # Handle special cases for main branch and production releases
 if [ "$deployment_folder" = "main" ]; then
     echo "Deploying to main folder, replacing existing content"
-    rm -rf gh-pages/main
-    mv "$deployment_dir" gh-pages/main
+    rm -rf deployments/main
+    mv "$deployment_dir" deployments/main
 elif [ "$IS_RELEASE" = "true" ]; then
     echo "Deploying to prod folder, replacing existing content"
-    rm -rf gh-pages/prod
-    mv "$deployment_dir" gh-pages/prod
+    rm -rf deployments/prod
+    mv "$deployment_dir" deployments/prod
     # Create a symlink or copy to the versioned folder
     version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
-    ln -s gh-pages/prod "gh-pages/$version" || cp -r gh-pages/prod "gh-pages/$version"
+    ln -s deployments/prod "deployments/$version" || cp -r deployments/prod "deployments/$version"
 fi
 
 # Update root index.html to point to the latest deployment
