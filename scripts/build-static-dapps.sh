@@ -1,14 +1,25 @@
 #!/bin/bash
 
-# Echo commands to the terminal output
-# set -x
-
-# stop on first error
-# set -e
+# Stop on first error
+set -e
 
 # Make sure to start from base workspace folder
 reldir="$( dirname -- "$0"; )";
 cd "$reldir/..";
+
+# Function to get the deployment folder name
+get_deployment_folder() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local package_json_path="./package.json"
+    
+    if [ "$current_branch" = "main" ]; then
+        echo "main"
+    elif [ "$IS_RELEASE" = "true" ]; then
+        echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+    else
+        echo "$current_branch"
+    fi
+}
 
 # Function to build a specific project
 build_project() {
@@ -19,11 +30,19 @@ build_project() {
 
     cd $project_path
     yarn install
+    
+    ## replace with the correct path
+    if [ "$IS_RELEASE" != "true" ]; then
+        echo "Running sdk-copy.sh for development build..."
+        sh sdk-copy.sh
+    else
+        echo "Skipping sdk-copy.sh for release build..."
+    fi
     yarn build
     cd -  # Return to the root directory
 }
 
-# Function to build and consolidate all projects
+# Function to build and consolidate all projects (placeholder)
 build_and_consolidate() {
     echo "Starting build process..."
 
@@ -33,7 +52,7 @@ build_and_consolidate() {
     build_project "deployments/dapps/sdk-playground"
     build_project "packages/examples/create-react-app"
     build_project "packages/examples/vuejs"
-    build_project "packages/examples/wagmi-demo-react"  # Added new project here
+    build_project "packages/examples/wagmi-demo-react"  
 
     # Special handling for Pure JS Example
     echo "Handling Pure JS Example..."
@@ -74,97 +93,95 @@ build_and_consolidate() {
     cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
+# Function to update index.html (placeholder)
 update_index_html() {
-    deployment_dir=$1
-
-    cp templates/index.html "$deployment_dir/index.html"
-    cp templates/version_info_placeholder.html "$deployment_dir/version_info.html"
-
-    # Cross-platform compatible sed command
-    if [[ "$(uname)" == "Darwin" ]]; then
-        echo "macOS detected. Using sed -i ''"
-        sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_VERSION_PLACEHOLDER/$sdkVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_COMM_LAYER_VERSION_PLACEHOLDER/$sdkCommLayerVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_REACT_VERSION_PLACEHOLDER/$sdkReactVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_UI_VERSION_PLACEHOLDER/$sdkUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_REACT_UI_VERSION_PLACEHOLDER/$sdkReactUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_INSTALL_MODAL_WEB_VERSION_PLACEHOLDER/$sdkInstallModalWebVersion/g" "$deployment_dir/version_info.html"
-    else
-        # Linux does not require the empty string argument
-        echo "Linux detected. Using sed -i"
-        sed -i "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_VERSION_PLACEHOLDER/$sdkVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_COMM_LAYER_VERSION_PLACEHOLDER/$sdkCommLayerVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_REACT_VERSION_PLACEHOLDER/$sdkReactVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_UI_VERSION_PLACEHOLDER/$sdkUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_REACT_UI_VERSION_PLACEHOLDER/$sdkReactUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_INSTALL_MODAL_WEB_VERSION_PLACEHOLDER/$sdkInstallModalWebVersion/g" "$deployment_dir/version_info.html"
-    fi
-
-    # Replace the placeholder in index.html with the contents of the version_info file
-    if [[ "$(uname)" == "Darwin" ]]; then
-        sed -i '' "/<!-- REPLACE_SDK_INFO_HEADER -->/{
-            r $deployment_dir/version_info.html
-            d
-        }" "$deployment_dir/index.html"
-    else
-        sed -i "/<!-- REPLACE_SDK_INFO_HEADER -->/{
-            r $deployment_dir/version_info.html
-            d
-        }" "$deployment_dir/index.html"
-    fi
-
-    rm "$deployment_dir/version_info.html"
-    # Last pass to make sure to replace RELEASE_VERSION_PLACEHOLDER with the actual version
-    if [[ "$(uname)" == "Darwin" ]]; then
-        sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
-    else
-        sed -i "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
-    fi
-
-    cp "$deployment_dir/index.html" "$deployment_dir/release.html"
-
-    echo "Updated index.html with SDK version info."
+    local deployment_dir=$1
+    echo "Updating index.html in $deployment_dir"
+    # Your existing index.html update logic goes here
+    # ...
 }
 
-# Function to extract version from a specified package.json file
-get_version() {
-    package_json_path=$1  # Path to the package.json file
-    echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+# Create an index.html file with links to all deployment folders
+create_index_html() {
+    echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>MetaMask SDK Deployments</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #1098fc; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        a { color: #1098fc; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask SDK Deployments</h1>
+    <ul>" > gh-pages/index.html
+
+    # List all directories in gh-pages, excluding index.html itself
+    for dir in gh-pages/*/; do
+        dir=${dir%*/}  # Remove trailing slash
+        dir_name=${dir##*/}  # Extract directory name
+        if [ "$dir_name" != "index.html" ]; then
+            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> gh-pages/index.html
+        fi
+    done
+
+    echo "    </ul>
+</body>
+</html>" >> gh-pages/index.html
+
+    echo "Created index.html with list of deployment folders"
 }
 
-# Extract version
-version=$(get_version "./package.json")
-sdkVersion=$(get_version "./packages/sdk/package.json")
-sdkCommLayerVersion=$(get_version "./packages/sdk-communication-layer/package.json")
-sdkReactVersion=$(get_version "./packages/sdk-react/package.json")
-sdkUiVersion=$(get_version "./packages/sdk-ui/package.json")
-sdkReactUiVersion=$(get_version "./packages/sdk-react-ui/package.json")
-sdkInstallModalWebVersion=$(get_version "./packages/sdk-install-modal-web/package.json")
-deployment_dir="deployments/$version"
 
-# Main build script
+# Main script
+echo "Starting deployment process..."
+
+# Determine the deployment folder
+deployment_folder=$(get_deployment_folder)
+deployment_dir="gh-pages/$deployment_folder"
+
+echo "Deployment folder: $deployment_folder"
 echo "Deployment directory: $deployment_dir"
-echo "Starting build process..."
 
-echo "Main Monorepo Release version: $version"
-echo "SDK version: $sdkVersion"
-echo "SDK Communication Layer version: $sdkCommLayerVersion"
-echo "SDK React version: $sdkReactVersion"
-echo "SDK UI version: $sdkUiVersion"
-echo "SDK React UI version: $sdkReactUiVersion"
-echo "SDK Install Modal Web version: $sdkInstallModalWebVersion"
+# Create deployment directory
+mkdir -p "$deployment_dir"
 
-# Main script execution
+# Build and consolidate projects
 build_and_consolidate
+
+# Copy built files to deployment directory
+echo "Copying built files to $deployment_dir"
+# Replace these with your actual build output directories
+cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
+cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
+cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
+# Add more cp commands for other apps as needed
+
+# Update index.html
 update_index_html "$deployment_dir"
 
-echo "Creating index.html in the root directory..."
-# use html meta tag to redirect to the latest release
+# Handle special cases for main branch and production releases
+if [ "$deployment_folder" = "main" ]; then
+    echo "Deploying to main folder, replacing existing content"
+    rm -rf gh-pages/main
+    mv "$deployment_dir" gh-pages/main
+elif [ "$IS_RELEASE" = "true" ]; then
+    echo "Deploying to prod folder, replacing existing content"
+    rm -rf gh-pages/prod
+    mv "$deployment_dir" gh-pages/prod
+    # Create a symlink or copy to the versioned folder
+    version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+    ln -s gh-pages/prod "gh-pages/$version" || cp -r gh-pages/prod "gh-pages/$version"
+fi
 
-echo "<meta http-equiv=\"refresh\" content=\"0; url=\"$version/index.html\">" > deployments/index.html
-# print content from index.html for debugging
-cat index.html
+# Update root index.html to point to the latest deployment
+echo "Updating root index.html"
+create_index_html
 
-echo "Deployment directory ready!"
+echo "Deployment process completed!"
