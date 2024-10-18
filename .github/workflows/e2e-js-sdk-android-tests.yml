@@ -1,14 +1,14 @@
-name: Run Android SDK E2E Tests
+name: Run JS E2E Tests on Android
 
 on:
   workflow_dispatch:
     inputs:
-      android_sdk_native:
-        description: 'Android SDK Native apk'
+      rn_test_app_name_android:
+        description: 'React Native Test App apk'
         required: true
         type: choice
         options:
-          - 'Android-SDK-Dapp-0-4-0.apk'
+          - 'RN-demo-0-14-2.apk'
       wallet_app_name_android:
         description: 'MM Wallet Android apk name'
         required: true
@@ -44,22 +44,32 @@ jobs:
           browserstack_api_url="https://api-cloud.browserstack.com/app-automate/recent_apps/"
           response=$(curl -s -u "$BROWSERSTACK_API_USERNAME:$BROWSERSTACK_API_PASSWORD" "$browserstack_api_url")
           android_wallet_app_name="${{ inputs.wallet_app_name_android }}"
-          android_native_sdk="${{ inputs.android_sdk_native }}"
+          android_rn_app_name="${{ inputs.rn_test_app_name_android }}"
 
           # Gets the app_url and custom_id for the wallet app, react native and android native test app to use in the .android.env file
           android_wallet_app_url=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .app_url')
           android_wallet_app_bundle_id=$(echo "$response" | jq -r --arg android_wallet_app_name "$android_wallet_app_name" '.[] | select(.app_name == $android_wallet_app_name) | .custom_id')
+          android_rn_app_url=$(echo "$response" | jq -r --arg android_rn_app_name "$android_rn_app_name" '.[] | select(.app_name == $android_rn_app_name) | .app_url')
+          android_rn_app_bundle_id=$(echo "$response" | jq -r --arg android_rn_app_name "$android_rn_app_name" '.[] | select(.app_name == $android_rn_app_name) | .custom_id')
 
-          android_native_sdk_url=$(echo "$response" | jq -r --arg android_native_sdk "$android_native_sdk" '.[] | select(.app_name == $android_native_sdk) | .app_url')
-          android_native_sdk_bundle_id=$(echo "$response" | jq -r --arg android_native_sdk "$android_native_sdk" '.[] | select(.app_name == $android_native_sdk) | .custom_id')
-
+          # Writes to the .android.env file
           {
             echo "APP_PATH=$android_wallet_app_url"
             echo "BUNDLE_ID=$android_wallet_app_bundle_id"
-            echo "ANDROID_SDK_TEST_APP_PATH=$android_native_sdk_url"
-            echo "ANDROID_SDK_TEST_BUNDLE_ID=$android_native_sdk_bundle_id"
+            echo "RN_TEST_APP_PATH=$android_rn_app_url"
+            echo "RN_TEST_APP_BUNDLE_ID=$android_rn_app_bundle_id"
           } >> .android.env
 
-      - name: Run Android SDK E2E tests
+      # Hard code .dapps.env values in the /e2e directory
+      - name: Set Dapps Environment Variables
         working-directory: ./e2e
-        run: yarn test:android:androidsdk:e2e:browserstack
+        run: |
+          {
+            echo "TEST_DAPP_URL=https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/test-dapp/"
+            echo "SDK_PLAYGROUND_DAPP_URL=https://mmsdk-playground-test.vercel.app/demo"
+            echo "WEB3_ON_BOARD_DAPP_URL=https://mmsdk-playground-test.vercel.app/onboard"
+          } >> .dapps.env
+
+      - name: Run JS-SDK Android E2E tests
+        working-directory: ./e2e
+        run: yarn test:android:jssdk:e2e:browserstack
