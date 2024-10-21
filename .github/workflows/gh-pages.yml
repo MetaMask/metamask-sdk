@@ -37,6 +37,10 @@ jobs:
     - name: Install Dependencies
       run: yarn --immutable
 
+    - name: Update Examples Dapps
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true'
+      run: bash ./scripts/update-examples-dapps.sh
+
     - name: Build All Static Example Projects
       env:
         IS_RELEASE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true' || false }}

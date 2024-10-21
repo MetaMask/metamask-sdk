@@ -77,21 +77,21 @@ build_and_consolidate() {
     inject_version_into_package_json
 
     # Build projects
-    # build_project "deployments/dapps/sdk-playground"
+    build_project "deployments/dapps/sdk-playground"
     build_project "packages/examples/create-react-app"
-    # build_project "packages/examples/vuejs"
-    # build_project "packages/examples/wagmi-demo-react"  
+    build_project "packages/examples/vuejs"
+    build_project "packages/examples/wagmi-demo-react"  
 
     # Special handling for Pure JS Example
-    # echo "Handling Pure JS Example..."
-    # cd packages/examples/pure-javascript
-    # yarn install
-    # cd -
+    echo "Handling Pure JS Example..."
+    cd packages/examples/pure-javascript
+    yarn install
+    cd -
 
     # Continue building other projects
-    # build_project "packages/examples/react-metamask-button"
-    # build_project "packages/examples/react-with-custom-modal"
-    # build_project "packages/examples/with-web3onboard"
+    build_project "packages/examples/react-metamask-button"
+    build_project "packages/examples/react-with-custom-modal"
+    build_project "packages/examples/with-web3onboard"
 
     # echo "Building Storybook Static..."
     # yarn workspace @metamask/sdk-ui build:storybook # then build storybook
@@ -100,25 +100,25 @@ build_and_consolidate() {
     echo "Combining deployments..."
     # Create necessary directories in deployments
     mkdir -p $deployment_dir/packages/examples/create-react-app/build
-    # mkdir -p $deployment_dir/dapps/sdk-playground/build
-    # mkdir -p $deployment_dir/packages/examples/vuejs/dist
-    # mkdir -p $deployment_dir/packages/examples/pure-javascript
-    # mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
-    # mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
-    # mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
-    # mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
-    # mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
+    mkdir -p $deployment_dir/dapps/sdk-playground/build
+    mkdir -p $deployment_dir/packages/examples/vuejs/dist
+    mkdir -p $deployment_dir/packages/examples/pure-javascript
+    mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
+    mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
+    mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
+    mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
+    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
     cp -rf packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
-    # cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
-    # cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
-    # cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
-    # cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
-    # cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
-    # cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
-    # cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
-    # cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
+    cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
+    cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
+    cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
+    cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
+    cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
+    cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
+    cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
+    cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
 # Function to update index.html (placeholder)
@@ -149,7 +149,7 @@ update_index_html() {
         dir=${dir%*/}  # Remove trailing slash
         dir_name=${dir##*/}  # Extract directory name
         if [ "$dir_name" != "index.html" ]; then
-            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
+            echo "        <li><a href=\"$dir_name/build/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
         fi
     done
 
@@ -186,7 +186,7 @@ create_index_html() {
         dir=${dir%*/}  # Remove trailing slash
         dir_name=${dir##*/}  # Extract directory name
         if [ "$dir_name" != "index.html" ]; then
-            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> deployments/index.html
+            echo "        <li><a href=\"$dir_name/packages/examples/index.html\">$dir_name</a></li>" >> deployments/index.html
         fi
     done
 
@@ -207,7 +207,12 @@ if [ "$IS_RELEASE" = "true" ]; then
 fi
 
 # Determine the deployment folder - change this to detect if main or is_realease to hardcode folders
-deployment_folder=$(get_deployment_folder)
+if [ "$IS_RELEASE" = "true" ]; then
+    deployment_folder="prod"
+else
+    deployment_folder=$(get_deployment_folder)
+fi
+
 deployment_dir="deployments/$deployment_folder"
 
 echo "Deployment folder: $deployment_folder"
@@ -221,39 +226,10 @@ build_and_consolidate
 
 # Copy built files to deployment directory
 echo "Copying built files to $deployment_dir"
-# Replace these with your actual build output directories
-# cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
-
-# Create folder for create-react-app inside the deployment directory
-# if [ -d "$deployment_dir/create-react-app/" ]; then
-#     rm -rf "$deployment_dir/create-react-app/*"
-# fi
-# mkdir -p "$deployment_dir/create-react-app/"
-# cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
-
-# cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
-# Add more cp commands for other apps as needed
 
 # Update index.html
 update_index_html "$deployment_dir/packages/examples"
 
-# Handle special cases for main branch and production releases
-# if [ "$deployment_folder" = "main" ]; then
-#     echo "Deploying to main folder, replacing existing content"
-#     rm -rf deployments/main
-#     mv "$deployment_dir" deployments/main
-# elif [ "$IS_RELEASE" = "true" ]; then
-#     echo "Deploying to prod folder, replacing existing content"
-#     rm -rf deployments/prod
-#     mv "$deployment_dir" deployments/prod
-#     # Create a symlink or copy to the versioned folder
-#     version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
-#     ln -s deployments/prod "deployments/$version" || cp -r deployments/prod "deployments/$version"
-# else
-#     echo "Deploying to $deployment_folder folder, replacing existing content"
-#     rm -rf "deployments/$deployment_folder"
-#     mv "$deployment_dir" "deployments/$deployment_folder"
-# fi
 
 # Update root index.html to point to the latest deployment
 echo "Updating root index.html"
