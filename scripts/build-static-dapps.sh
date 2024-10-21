@@ -117,7 +117,7 @@ update_index_html() {
     done
 
     # special case for pure-javascript that does not have a build folder
-    echo "        <li><a href=\"pure-javascript/build/index.html\">pure-javascript</a></li>" >> "$deployment_dir/index.html"
+    echo "        <li><a href=\"pure-javascript/index.html\">pure-javascript</a></li>" >> "$deployment_dir/index.html"
 
     echo "    </ul>
 </body>
