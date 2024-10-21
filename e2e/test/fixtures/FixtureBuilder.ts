@@ -1,360 +1,15 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { merge } from 'lodash';
+
+function getGanachePort() {
+  return process.env.GANACHE_PORT || '8585';
+}
+
 /**
  * FixtureBuilder class provides a fluent interface for building fixture data.
  */
 export class FixtureBuilder {
-  fixture:
-    | {
-        state: {
-          collectibles: {
-            favorites: Record<string, unknown>;
-          };
-          engine: {
-            backgroundState: {
-              AccountTrackerController: {
-                accounts: {
-                  [address: string]: {
-                    balance: string;
-                  };
-                };
-                _U: number;
-                _V: number;
-                _X: null;
-              };
-              AddressBookController: {
-                addressBook: Record<string, unknown>;
-              };
-              AssetsContractController: Record<string, unknown>;
-              NftController: {
-                allNftContracts: Record<string, unknown>;
-                allNfts: Record<string, unknown>;
-                ignoredNfts: [];
-              };
-              TokenListController: {
-                tokenList: {
-                  [address: string]: {
-                    address: string;
-                    symbol: string;
-                    decimals: number;
-                    name: string;
-                    iconUrl: string;
-                    type: string;
-                    aggregators: string[];
-                    occurrences: number;
-                    fees: {
-                      [address: string]: number;
-                    };
-                  };
-                };
-                tokensChainsCache: Record<string, unknown>;
-                preventPollingOnNetworkRestart: boolean;
-              };
-              CurrencyRateController: {
-                conversionDate: number;
-                conversionRate: number;
-                nativeCurrency: string;
-                currentCurrency: string;
-                pendingCurrentCurrency: null;
-                pendingNativeCurrency: null;
-                usdConversionRate: number;
-              };
-              KeyringController: {
-                vault: string;
-                keyrings: {
-                  accounts: string[];
-                  index: number;
-                  type: string;
-                }[];
-              };
-              NetworkController: {
-                network: string;
-                isCustomNetwork: boolean;
-                providerConfig: {
-                  type: string;
-                  chainId: string;
-                };
-                networkDetails: {
-                  isEIP1559Compatible: boolean;
-                };
-              };
-              PhishingController: {
-                listState: {
-                  allowlist: [];
-                  fuzzylist: string[];
-                  version: number;
-                  name: string;
-                  tolerance: number;
-                  lastUpdated: number;
-                };
-                whitelist: [];
-                hotlistLastFetched: number;
-                stalelistLastFetched: number;
-              };
-              PreferencesController: {
-                featureFlags: Record<string, unknown>;
-                frequentRpcList: {
-                  rpcUrl: string;
-                  chainId: string;
-                  ticker: string;
-                  nickname: string;
-                }[];
-                identities: {
-                  [address: string]: {
-                    address: string;
-                    name: string;
-                    importTime: number;
-                  };
-                };
-                ipfsGateway: string;
-                lostIdentities: Record<string, unknown>;
-                selectedAddress: string;
-                useTokenDetection: boolean;
-                useNftDetection: boolean;
-                displayNftMedia: boolean;
-                isMultiAccountBalancesEnabled: boolean;
-                disabledRpcMethodPreferences: {
-                  eth_sign: boolean;
-                };
-                showTestNetworks: boolean;
-                _U: number;
-                _V: number;
-                _W: {
-                  featureFlags: Record<string, unknown>;
-                  frequentRpcList: [];
-                  identities: {
-                    [address: string]: {
-                      address: string;
-                      name: string;
-                      importTime: number;
-                    };
-                  };
-                  ipfsGateway: string;
-                  lostIdentities: Record<string, unknown>;
-                  selectedAddress: string;
-                  useTokenDetection: boolean;
-                  useNftDetection: boolean;
-                  displayNftMedia: boolean;
-                  isMultiAccountBalancesEnabled: boolean;
-                  disabledRpcMethodPreferences: {
-                    eth_sign: boolean;
-                  };
-                  showTestNetworks: boolean;
-                  showIncomingTransactions: {
-                    [chainId: string]: boolean;
-                  };
-                };
-                _X: null;
-              };
-              TokenBalancesController: {
-                contractBalances: Record<string, unknown>;
-              };
-              TokenRatesController: {
-                contractExchangeRates: Record<string, unknown>;
-              };
-              TokensController: {
-                tokens: [];
-                ignoredTokens: [];
-                detectedTokens: [];
-                allTokens: Record<string, unknown>;
-                allIgnoredTokens: Record<string, unknown>;
-                allDetectedTokens: Record<string, unknown>;
-              };
-              TransactionController: {
-                methodData: Record<string, unknown>;
-                transactions: [];
-                internalTransactions: [];
-                swapsTransactions: Record<string, unknown>;
-              };
-              SwapsController: {
-                quotes: Record<string, unknown>;
-                quoteValues: Record<string, unknown>;
-                fetchParams: {
-                  slippage: number;
-                  sourceToken: string;
-                  sourceAmount: number;
-                  destinationToken: string;
-                  walletAddress: string;
-                };
-                fetchParamsMetaData: {
-                  sourceTokenInfo: {
-                    decimals: number;
-                    address: string;
-                    symbol: string;
-                  };
-                  destinationTokenInfo: {
-                    decimals: number;
-                    address: string;
-                    symbol: string;
-                  };
-                };
-                topAggSavings: null;
-                aggregatorMetadata: null;
-                tokens: null;
-                topAssets: null;
-                approvalTransaction: null;
-                aggregatorMetadataLastFetched: number;
-                quotesLastFetched: number;
-                topAssetsLastFetched: number;
-                error: {
-                  key: null;
-                  description: null;
-                };
-                topAggId: null;
-                tokensLastFetched: number;
-                isInPolling: boolean;
-                pollingCyclesLeft: number;
-                quoteRefreshSeconds: null;
-                usedGasEstimate: null;
-                usedCustomGas: null;
-                chainCache: {
-                  [chainId: string]: {
-                    aggregatorMetadata: null;
-                    tokens: null;
-                    topAssets: null;
-                    aggregatorMetadataLastFetched: number;
-                    topAssetsLastFetched: number;
-                    tokensLastFetched: number;
-                  };
-                };
-              };
-              GasFeeController: {
-                gasFeeEstimates: Record<string, unknown>;
-                estimatedGasFeeTimeBounds: Record<string, unknown>;
-                gasEstimateType: string;
-              };
-              TokenDetectionController: Record<string, unknown>;
-              NftDetectionController: Record<string, unknown>;
-              PermissionController: {
-                subjects: Record<string, unknown>;
-              };
-              ApprovalController: {
-                pendingApprovals: Record<string, unknown>;
-                pendingApprovalCount: number;
-                approvalFlows: [];
-              };
-            };
-          };
-          privacy: {
-            approvedHosts: Record<string, unknown>;
-            revealSRPTimestamps: [];
-          };
-          bookmarks: [];
-          browser: {
-            history: [];
-            whitelist: [];
-            tabs: {
-              url: string;
-              id: number;
-            }[];
-            activeTab: number;
-          };
-          modals: {
-            networkModalVisible: boolean;
-            shouldNetworkSwitchPopToWallet: boolean;
-            collectibleContractModalVisible: boolean;
-            receiveModalVisible: boolean;
-            dappTransactionModalVisible: boolean;
-            signMessageModalVisible: boolean;
-          };
-          settings: {
-            searchEngine: string;
-            primaryCurrency: string;
-            lockTime: number;
-            useBlockieIcon: boolean;
-            hideZeroBalanceTokens: boolean;
-          };
-          alert: {
-            isVisible: boolean;
-            autodismiss: null;
-            content: null;
-            data: null;
-          };
-          transaction: {
-            selectedAsset: Record<string, unknown>;
-            transaction: Record<string, unknown>;
-          };
-          user: {
-            loadingMsg: string;
-            loadingSet: boolean;
-            passwordSet: boolean;
-            seedphraseBackedUp: boolean;
-            backUpSeedphraseVisible: boolean;
-            protectWalletModalVisible: boolean;
-            gasEducationCarouselSeen: boolean;
-            userLoggedIn: boolean;
-            isAuthChecked: boolean;
-            initialScreen: string;
-            appTheme: string;
-          };
-          wizard: {
-            step: number;
-          };
-          onboarding: {
-            events: [];
-          };
-          notification: {
-            notifications: [];
-          };
-          swaps: {
-            1: {
-              isLive: boolean;
-            };
-            isLive: boolean;
-            hasOnboarded: boolean;
-          };
-          fiatOrders: {
-            orders: [];
-            customOrderIds: [];
-            networks: {
-              active: boolean;
-              chainId: number;
-              chainName: string;
-              shortName: string;
-              nativeTokenSupported: boolean;
-            }[];
-            selectedRegionAgg: null;
-            selectedPaymentMethodAgg: null;
-            getStartedAgg: boolean;
-            authenticationUrls: [];
-            activationKeys: [];
-          };
-          infuraAvailability: {
-            isBlocked: boolean;
-          };
-          navigation: {
-            currentRoute: string;
-            currentBottomNavRoute: string;
-          };
-          networkOnboarded: {
-            networkOnboardedState: Record<string, unknown>;
-            networkState: {
-              showNetworkOnboarding: boolean;
-              nativeToken: string;
-              networkType: string;
-              networkUrl: string;
-            };
-            switchedNetwork: {
-              networkUrl: string;
-              networkStatus: boolean;
-            };
-          };
-          security: {
-            allowLoginWithRememberMe: boolean;
-            automaticSecurityChecksEnabled: boolean;
-            hasUserSelectedAutomaticSecurityCheckOption: boolean;
-            isAutomaticSecurityChecksModalOpen: boolean;
-          };
-          experimentalSettings: {
-            securityAlertsEnabled: boolean;
-          };
-        };
-        asyncState: {
-          '@MetaMask:existingUser': string;
-          '@MetaMask:onboardingWizard': string;
-          '@MetaMask:UserTermsAcceptedv1.0': string;
-          '@MetaMask:WhatsNewAppVersionSeen': string;
-        };
-      }
-    | undefined;
+  fixture: any;
 
   constructor() {
     this.withDefaultFixture();
@@ -363,6 +18,13 @@ export class FixtureBuilder {
   withDefaultFixture() {
     this.fixture = {
       state: {
+        /*
+        legalNotices: {
+          newPrivacyPolicyToastClickedOrClosed: true,
+          newPrivacyPolicyToastShownDate: Date.now(),
+        },
+
+         */
         collectibles: {
           favorites: {},
         },
@@ -370,8 +32,20 @@ export class FixtureBuilder {
           backgroundState: {
             AccountTrackerController: {
               accounts: {
-                '0xb0211940962A776CCd41FE1092fDe46c7e667e6b': {
+                '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
                   balance: '0x0',
+                },
+              },
+              accountsByChainId: {
+                64: {
+                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                    balance: '0x0',
+                  },
+                },
+                1: {
+                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                    balance: '0x0',
+                  },
                 },
               },
               _U: 0,
@@ -395,7 +69,7 @@ export class FixtureBuilder {
                   decimals: 18,
                   name: 'Synthetix Network Token',
                   iconUrl:
-                    'https://static.metafi.codefi.network/api/v1/tokenIcons/1/0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png',
+                    'https://static.cx.metamask.io/api/v1/tokenIcons/1/0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png',
                   type: 'erc20',
                   aggregators: [
                     'Aave',
@@ -420,34 +94,81 @@ export class FixtureBuilder {
               preventPollingOnNetworkRestart: false,
             },
             CurrencyRateController: {
-              conversionDate: 1684232383.997,
-              conversionRate: 1815.41,
-              nativeCurrency: 'ETH',
               currentCurrency: 'usd',
-              pendingCurrentCurrency: null,
-              pendingNativeCurrency: null,
-              usdConversionRate: 1815.41,
+              currencyRates: {
+                ETH: {
+                  conversionDate: 1684232383.997,
+                  conversionRate: 1815.41,
+                  usdConversionRate: 1815.41,
+                },
+              },
             },
             KeyringController: {
               vault:
-                '{"cipher":"+IMrJYjZQ3XWUrCM5SeV5ayaA0ZygbaCV6ALW9gdirjl1GPsM9JAbrH0h4Gu/NSv4KzDpCzZMu1tVyyxkq62pu7Nx1/4YQU7wlTlbBuZz8keY/9ldkILILQvLKEzkOa/MPiHH7F77fvUnHKzMA960Y0VdcCN0MUKpNKaMoIHhnqJB2oUyh0HSz8/gRAkNJTFr5Rkjg+8I+o/O6cnvkS7rgL328U0+ZmBhBbEKdsCyfXuYw7JmFxAw/rPVOdgfJkISa9aJiGhagoBjZbF7g4pLNOj1xyOZtrzWgD4ZiG9cammcbvyJwlZvUZWgwOduprgnCHRckYN35tcOahuYxKtlyFG9LolYLV575FZmaxpE6n/yX5n1vUkJYFuoBF6+Ga+z0MbFGgu5clRwV5rjqBOOdZTIJqYjCFo2IrM9BzPJ/2dGSr7Siz4cEqyC85k32xb6hoqGdfoe3fn2NKJnuokN06cqiuNsZI7/sTeh0C0fd/imBu9nPNPX6zLLh3OreYj29YjXrvxY13uVq41X7Flbu4hAqJVzgq8jq1yWAj6mGQKGrqSfMonsrWZTvvdS+Qnvn3SJemWYJCaNsqGwg8117P/ZHqijlMeqB1Vnc6qg5meEe0i9YEMKZlwxfjEpVO6yw41LF2yfqVKsiK/4aPcqsFvMzv96ozGnjJ6Ko1HXQchWTVdgpHxzHfzGYjD2fJb/NCU9coUVDQ90P9MO5zk2VP0jOUwdYVTTIk9zh0Yenhbg81BbZOvjswHr/8XBkGSQz0kiXnAAR4Bn+suSHoPlDiEjh76wd6uJkv5BUGCHS3nTB9xggliqa7YEBof5MDAHnUyxIS5fwkxeksDgTYsffxGHd9qNqqU6mBqtl5oCecw1GVQSE0uHBKmz/2atYUe","iv":"5949f19153af04b74567967d8136a358","salt":"2rtO7xK++a3kHPrAeoofxA==","lib":"original"}',
-              keyrings: [],
+                '{"cipher":"ynNI8tAH4fcpmXo8S88A/3T3Dd1w0LY5ftpL59gW0ObYxovgFhrtKpRe/WD7WU42KwGBNKVicB9W9at4ePgOJGS6IMWr//C3jh0vKQTabkDzDy1ZfSvztRxGpVjmrnU3fC5B0eq/MBMSrgu8Bww309pk5jghyRfzp9YsG0ONo1CXUm2brQo/eRve7i9aDbiGXiEK0ch0BO7AvZPGMhHtYRrrOro4QrDVHGUgAF5SA1LD4dv/2AB8ctHwn4YbUmICieqlhJhprx3CNOJ086g7vPQOr21T4IbvtTumFaTibfoD3GWHQo11CvE04z3cN3rRERriP7bww/tZOe8OAMFGWANkmOJHwPPwEo1NBr6w3GD2VObEmqNhXeNc6rrM23Vm1JU40Hl+lVKubnbT1vujdGLmOpDY0GdekscQQrETEQJfhKlXIT0wwyPoLwR+Ja+GjyOhBr0nfWVoVoVrcTUwAk5pStBMt+5OwDRpP29L1+BL9eMwDgKpjVXRTh4MGagKYmFc6eKDf6jV0Yt9pG+jevv5IuyhwX0TRtfQCGgRTtS7oxhDQPxGqu01rr+aI7vGMfRQpaKEEXEWVmMaqCmktyUV35evK9h/xv1Yif00XBll55ShxN8t2/PnATvZxFKQfjJe5f/monbwf8rpfXHuFoh8M9hzjbcS5eh/TPYZZu1KltpeHSIAh5C+4aFyZw0e1DeAg/wdRO3PhBrVztsHSyISHlRdfEyw7QF4Lemr++2MVR1dTxS2I5mUEHjh+hmp64euH1Vb/RUppXlmE8t1RYYXfcsF2DlRwPswP739E/EpVtY3Syf/zOTyHyrOJBldzw22sauIzt8Q5Fe5qA/hGRWiejjK31P/P5j7wEKY7vrOJB1LWNXHSuSjffx9Ai9E","iv":"d5dc0252424ac0c08ca49ef320d09569","salt":"feAPSGdL4R2MVj2urJFl4A==","lib":"original"}',
+              keyrings: [
+                {
+                  accounts: ['0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3'],
+                  index: 0,
+                  type: 'HD Key Tree',
+                },
+              ],
             },
             NetworkController: {
-              network: '1',
-              isCustomNetwork: false,
+              selectedNetworkClientId: 'mainnet',
               providerConfig: {
                 type: 'mainnet',
-                chainId: '1',
+                chainId: '0x1',
+                ticker: 'ETH',
               },
-              networkDetails: {
-                isEIP1559Compatible: true,
+              networksMetadata: {
+                goerli: {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+                'linea-goerli': {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+                'linea-sepolia': {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+                'linea-mainnet': {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+                mainnet: {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+                sepolia: {
+                  EIPS: {},
+                  status: 'unknown',
+                },
+              },
+              networkConfigurations: {
+                networkId1: {
+                  rpcUrl: `http://localhost:${getGanachePort()}`,
+                  chainId: '1337',
+                  ticker: 'ETH',
+                  nickname: 'Localhost',
+                },
               },
             },
             PhishingController: {
               listState: {
                 allowlist: [],
-                fuzzylist: [],
+                fuzzylist: [
+                  'cryptokitties.co',
+                  'launchpad.ethereum.org',
+                  'etherscan.io',
+                  'makerfoundation.com',
+                  'metamask.io',
+                  'myetherwallet.com',
+                  'opensea.io',
+                  'satoshilabs.com',
+                ],
                 version: 2,
                 name: 'MetaMask',
                 tolerance: 1,
@@ -457,22 +178,50 @@ export class FixtureBuilder {
               hotlistLastFetched: 1684231917,
               stalelistLastFetched: 1684231917,
             },
+            AccountsController: {
+              internalAccounts: {
+                accounts: {
+                  '4d7a5e0b-b261-4aed-8126-43972b0fa0a1': {
+                    address: '0x76cf1cdd1fcc252442b50d6e97207228aa4aefc3',
+                    id: '4d7a5e0b-b261-4aed-8126-43972b0fa0a1',
+                    metadata: {
+                      name: 'Account 1',
+                      importTime: 1684232000456,
+                      keyring: {
+                        type: 'HD Key Tree',
+                      },
+                    },
+                    options: {},
+                    methods: [
+                      'personal_sign',
+                      'eth_sign',
+                      'eth_signTransaction',
+                      'eth_signTypedData_v1',
+                      'eth_signTypedData_v3',
+                      'eth_signTypedData_v4',
+                    ],
+                    type: 'eip155:eoa',
+                  },
+                },
+                selectedAccount: '4d7a5e0b-b261-4aed-8126-43972b0fa0a1',
+              },
+            },
             PreferencesController: {
               featureFlags: {},
-              frequentRpcList: [],
               identities: {
-                '0xb0211940962A776CCd41FE1092fDe46c7e667e6b': {
-                  address: '0xb0211940962A776CCd41FE1092fDe46c7e667e6b',
+                '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                  address: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
                   name: 'Account 1',
                   importTime: 1684232000456,
                 },
               },
               ipfsGateway: 'https://cloudflare-ipfs.com/ipfs/',
               lostIdentities: {},
-              selectedAddress: '0xb0211940962A776CCd41FE1092fDe46c7e667e6b',
+              selectedAddress: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
               useTokenDetection: true,
-              useNftDetection: false,
+              useNftDetection: true,
               displayNftMedia: true,
+              useSafeChainsListValidation: false,
               isMultiAccountBalancesEnabled: true,
               disabledRpcMethodPreferences: {
                 eth_sign: false,
@@ -484,18 +233,19 @@ export class FixtureBuilder {
                 featureFlags: {},
                 frequentRpcList: [],
                 identities: {
-                  '0xb0211940962A776CCd41FE1092fDe46c7e667e6b': {
-                    address: '0xb0211940962A776CCd41FE1092fDe46c7e667e6b',
+                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                    address: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
                     name: 'Account 1',
                     importTime: 1684232000456,
                   },
                 },
                 ipfsGateway: 'https://cloudflare-ipfs.com/ipfs/',
                 lostIdentities: {},
-                selectedAddress: '0xb0211940962A776CCd41FE1092fDe46c7e667e6b',
+                selectedAddress: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
                 useTokenDetection: true,
                 useNftDetection: false,
                 displayNftMedia: true,
+                useSafeChainsListValidation: false,
                 isMultiAccountBalancesEnabled: true,
                 disabledRpcMethodPreferences: {
                   eth_sign: false,
@@ -516,6 +266,7 @@ export class FixtureBuilder {
                   '0xfa2': true,
                   '0xaa36a7': true,
                   '0xe704': true,
+                  '0xe705': true,
                   '0xe708': true,
                   '0x504': true,
                   '0x507': true,
@@ -529,7 +280,7 @@ export class FixtureBuilder {
               contractBalances: {},
             },
             TokenRatesController: {
-              contractExchangeRates: {},
+              marketData: {},
             },
             TokensController: {
               tokens: [],
@@ -587,7 +338,7 @@ export class FixtureBuilder {
               usedGasEstimate: null,
               usedCustomGas: null,
               chainCache: {
-                1: {
+                '0x1': {
                   aggregatorMetadata: null,
                   tokens: null,
                   topAssets: null,
@@ -601,6 +352,8 @@ export class FixtureBuilder {
               gasFeeEstimates: {},
               estimatedGasFeeTimeBounds: {},
               gasEstimateType: 'none',
+              gasFeeEstimatesByChainId: {},
+              nonRPCGasFeeApisDisabled: false,
             },
             TokenDetectionController: {},
             NftDetectionController: {},
@@ -644,6 +397,7 @@ export class FixtureBuilder {
           lockTime: 30000,
           useBlockieIcon: true,
           hideZeroBalanceTokens: false,
+          basicFunctionalityEnabled: true,
         },
         alert: {
           isVisible: false,
@@ -678,7 +432,7 @@ export class FixtureBuilder {
           notifications: [],
         },
         swaps: {
-          1: {
+          '0x1': {
             isLive: true,
           },
           isLive: true,
@@ -794,7 +548,6 @@ export class FixtureBuilder {
               nativeTokenSupported: true,
             },
             {
-              active: false,
               chainId: 1,
               chainName: 'Tenderly',
               shortName: 'Tenderly',
@@ -834,16 +587,48 @@ export class FixtureBuilder {
           isAutomaticSecurityChecksModalOpen: false,
         },
         experimentalSettings: {
-          securityAlertsEnabled: false,
+          securityAlertsEnabled: true,
         },
+        inpageProvider: {
+          networkId: '1',
+        },
+        /* WORKS BUT IT'S VERY SLOW
+        _persist: {
+          rehydrated: true,
+          version: -1,
+        },
+         */
+
+        /* Works but slow as well (object has bo context)
+        _persist: {
+          // rehydrated: true,
+          // version: -1,
+        }, */
       },
       asyncState: {
         '@MetaMask:existingUser': 'true',
         '@MetaMask:onboardingWizard': 'explored',
         '@MetaMask:UserTermsAcceptedv1.0': 'true',
-        '@MetaMask:WhatsNewAppVersionSeen': '6.5.0',
+        '@MetaMask:WhatsNewAppVersionSeen': '7.24.3',
+        '@MetaMask:passcodeDisabled': true,
+        '@MetaMask:biometryChoiceDisabled': true,
       },
     };
+    return this;
+  }
+
+  withKeyringController() {
+    merge(this.fixture.state.engine.backgroundState.KeyringController, {
+      keyrings: [
+        {
+          type: 'HD Key Tree',
+          accounts: ['0x37cc5ef6bfe753aeaf81f945efe88134b238face'],
+        },
+        { type: 'QR Hardware Wallet Device', accounts: [] },
+      ],
+      vault:
+        '{"cipher":"T+MXWPPwXOh8RLxpryUuoFCObwXqNQdwak7FafAoVeXOehhpuuUDbjWiHkeVs9slsy/uzG8z+4Va+qyz4dlRnd/Gvc/2RbHTAb/LG1ECk1rvLZW23JPGkBBVAu36FNGCTtT+xrF4gRzXPfIBVAAgg40YuLJWkcfVty6vGcHr3R3/9gpsqs3etrF5tF4tHYWPEhzhhx6HN6Tr4ts3G9sqgyEhyxTLCboAYWp4lsq2iTEl1vQ6T/UyBRNhfDj8RyQMF6hwkJ0TIq2V+aAYkr5NJguBBSi0YKPFI/SGLrin9/+d66gcOSFhIH0GhUbez3Yf54852mMtvOH8Vj7JZc664ukOvEdJIpvCw1CbtA9TItyVApkjQypLtE+IdV3sT5sy+v0mK7Xc054p6+YGiV8kTiTG5CdlI4HkKvCOlP9axwXP0aRwc4ffsvp5fKbnAVMf9+otqmOmlA5nCKdx4FOefTkr/jjhMlTGV8qUAJ2c6Soi5X02fMcrhAfdUtFxtUqHovOh3KzOe25XhjxZ6KCuix8OZZiGtbNDu3xJezPc3vzkTFwF75ubYozLDvw8HzwI+D5Ifn0S3q4/hiequ6NGiR3Dd0BIhWODSvFzbaD7BKdbgXhbJ9+3FXFF9Xkp74msFp6o7nLsx02ywv/pmUNqQhwtVBfoYhcFwqZZQlOPKcH8otguhSvZ7dPgt7VtUuf8gR23eAV4ffVsYK0Hll+5n0nZztpLX4jyFZiV/kSaBp+D2NZM2dnQbsWULKOkjo/1EpNBIjlzjXRBg5Ui3GgT3JXUDx/2GmJXceacrbMcos3HC2yfxwUTXC+yda4IrBx/81eYb7sIjEVNxDuoBxNdRLKoxwmAJztxoQLF3gRexS45QKoFZZ0kuQ9MqLyY6HDK","iv":"3271713c2b35a7c246a2a9b263365c3d","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":5000}},"lib":"original","salt":"l4e+sn/jdsaofDWIB/cuGQ=="}',
+    });
     return this;
   }
 

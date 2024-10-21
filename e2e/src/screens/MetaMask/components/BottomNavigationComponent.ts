@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class BottomNavigationComponent {
-  get settingsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get settingsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -17,7 +17,7 @@ class BottomNavigationComponent {
     );
   }
 
-  get walletButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get walletButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -31,18 +31,18 @@ class BottomNavigationComponent {
   }
 
   async tapSettingsButton(): Promise<void> {
-    await (await this.settingsButton).click();
+    await this.settingsButton.click();
   }
 
   async tapHomeButton(): Promise<void> {
-    await (await this.walletButton).click();
+    await this.walletButton.click();
   }
 
   // Relying on the bottom navigation to be displayed to determine if the user is onboarded
   async isMetaMaskOnboarded(): Promise<boolean> {
     return (
-      (await (await this.walletButton).isDisplayed()) &&
-      (await (await this.settingsButton).isDisplayed())
+      (await this.walletButton.isDisplayed()) &&
+      (await this.settingsButton.isDisplayed())
     );
   }
 }

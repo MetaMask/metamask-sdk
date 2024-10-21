@@ -5,7 +5,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
 
 class SettingsScreen {
-  get securityAndPrivacyButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get securityAndPrivacyButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector:
@@ -17,7 +17,7 @@ class SettingsScreen {
     );
   }
 
-  get manageConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get manageConnectionsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -30,7 +30,7 @@ class SettingsScreen {
     );
   }
 
-  get disconnectAll(): ChainablePromiseElement<WebdriverIO.Element> {
+  get disconnectAll(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -55,7 +55,7 @@ class SettingsScreen {
     );
   }
 
-  get acceptClearConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get acceptClearConnectionsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText('CLEAR'),
@@ -64,7 +64,7 @@ class SettingsScreen {
     );
   }
 
-  get cancelClearConnectionsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get cancelClearConnectionsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText('Cancel'),
@@ -73,7 +73,7 @@ class SettingsScreen {
     );
   }
 
-  get noConnectionsFoundTest(): ChainablePromiseElement<WebdriverIO.Element> {
+  get noConnectionsFoundTest(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText(''),
@@ -85,23 +85,23 @@ class SettingsScreen {
   }
 
   async tapManageConnections(): Promise<void> {
-    await (await this.manageConnectionsButton).click();
+    await this.manageConnectionsButton.click();
   }
 
   async tapDisconnectAll(): Promise<void> {
-    await (await this.disconnectAll).click();
+    await this.disconnectAll.click();
   }
 
   async tapAcceptClearConnections(): Promise<void> {
-    await (await this.acceptClearConnectionsButton).click();
+    await this.acceptClearConnectionsButton.click();
   }
 
   async tapCancelClearConnections(): Promise<void> {
-    await (await this.cancelClearConnectionsButton).click();
+    await this.cancelClearConnectionsButton.click();
   }
 
   async tapSecurityAndPrivacy(): Promise<void> {
-    await (await this.securityAndPrivacyButton).click();
+    await this.securityAndPrivacyButton.click();
   }
 
   async clearAllConnections(): Promise<void> {

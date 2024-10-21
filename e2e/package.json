@@ -5,8 +5,8 @@
   "devDependencies": {
     "@types/koa": "^2.13.12",
     "@wdio/allure-reporter": "^8.11.0",
-    "@wdio/appium-service": "^8.24.6",
-    "@wdio/browserstack-service": "^8.24.6",
+    "@wdio/appium-service": "^9.2.1",
+    "@wdio/browserstack-service": "^9.1.2",
     "@wdio/cli": "latest",
     "@wdio/local-runner": "latest",
     "@wdio/mocha-framework": "latest",
@@ -16,12 +16,10 @@
     "wdio-wait-for": "^3.0.9"
   },
   "scripts": {
-    "test:android:jssdk:e2e:browserstack": "SDK_TYPE=js wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite js_sdk",
-    "test:android:androidsdk:e2e:browserstack": "SDK_TYPE=androidsdk wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite android_sdk",
-    "test:ios:jssdk:e2e:browserstack": "SDK_TYPE=js wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite js_sdk",
-    "test:android:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts",
-    "test:ios:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts",
-    "test:android": "wdio run test/configs/local/wdio.android.app.local.conf.ts",
+    "test:android:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite web_dapp",
+    "test:ios:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite web_dapp",
+    "test:ios:jssdk:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite web_dapp",
+    "test:android:jssdk:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite web_dapp",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",
@@ -48,6 +46,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "koa": "^2.14.2",
     "prettier": "^2.8.8",
-    "webdriverio": "^8.27.0"
+    "webdriverio": "^9.2.1"
   }
 }
