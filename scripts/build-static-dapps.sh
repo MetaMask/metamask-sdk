@@ -110,10 +110,14 @@ update_index_html() {
     for dir in "$deployment_dir"/*/; do
         dir=${dir%*/}  # Remove trailing slash
         dir_name=${dir##*/}  # Extract directory name
-        if [ "$dir_name" != "index.html" ]; then
+        # special case for pure-javascript that does not have a build folder
+        if [ "$dir_name" != "index.html" && "$dir_name" != "pure-javascript" ]; then
             echo "        <li><a href=\"$dir_name/build/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
         fi
     done
+
+    # special case for pure-javascript that does not have a build folder
+    echo "        <li><a href=\"pure-javascript/build/index.html\">pure-javascript</a></li>" >> "$deployment_dir/index.html"
 
     echo "    </ul>
 </body>
