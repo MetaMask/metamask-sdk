@@ -174,9 +174,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-communication-layer@npm:0.29.1":
-  version: 0.29.1
-  resolution: "@metamask/sdk-communication-layer@npm:0.29.1"
+"@metamask/sdk-communication-layer@npm:0.30.0":
+  version: 0.30.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.30.0"
   dependencies:
     bufferutil: ^4.0.8
     date-fns: ^2.29.3
@@ -189,13 +189,13 @@ __metadata:
     eventemitter2: ^6.4.7
     readable-stream: ^3.6.2
     socket.io-client: ^4.5.1
-  checksum: dee17bc6604464a3427d74f5afa670a804465c227e37318664f4117823a8c4f11f1463e4e29c2e27abcf60bbb2d389c137eac257b86c0825b8328f05d6c50de9
+  checksum: 163385834b5f0719fd4fd6c89b62426261e190df001fab39226c0eae72e6597b02f0214ebf3f3530317c974a867afe0b29c5243775dc4cde65f0c382e5f6a314
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@npm:0.29.1":
-  version: 0.29.1
-  resolution: "@metamask/sdk-install-modal-web@npm:0.29.1"
+"@metamask/sdk-install-modal-web@npm:0.30.0":
+  version: 0.30.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.30.0"
   dependencies:
     qr-code-styling: ^1.6.0-rc.1
   peerDependencies:
@@ -210,7 +210,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 6f5d4a2922ec96aa6c3fa8bc46b5ac9e3f5a5a6b3d326133bd606949fc6d6913dd0cff5fbccdd8816425c00d533c958efd61799b0c606da2172b4afff1e4e6eb
+  checksum: 025c5d975b1a76cfcca50014b8860a3ecaa3a951645390b4bf7b488aedd910d35b569aab3f711dcf4c98f20e38d43d432ddcfe891f21e39ad6435b8daf9c45c6
   languageName: node
   linkType: hard
 
@@ -218,19 +218,19 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-pure-javascript-example@workspace:."
   dependencies:
-    "@metamask/sdk": ^0.29.1
+    "@metamask/sdk": ^0.30.0
     serve: 13.0.2
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk@npm:^0.29.1":
-  version: 0.29.1
-  resolution: "@metamask/sdk@npm:0.29.1"
+"@metamask/sdk@npm:^0.30.0":
+  version: 0.30.0
+  resolution: "@metamask/sdk@npm:0.30.0"
   dependencies:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
-    "@metamask/sdk-communication-layer": 0.29.1
-    "@metamask/sdk-install-modal-web": 0.29.1
+    "@metamask/sdk-communication-layer": 0.30.0
+    "@metamask/sdk-install-modal-web": 0.30.0
     "@types/dom-screen-wake-lock": ^1.0.0
     "@types/uuid": ^10.0.0
     bowser: ^2.9.0
@@ -258,7 +258,7 @@ __metadata:
       optional: true
     react-dom:
       optional: true
-  checksum: bdfc806e8294957eefa1760958228f1242f119eea22346becd73cbdb38d73dbff523b860b23cde8034cd43957ed7f23503fff09870d85543ce7118bf5d6f83ee
+  checksum: 1aa5dda1f2bb4f4ee8f062f0798b09b2321172f87963e242f4e2658416705a0a554d3ff1283c2b64bc6d736383f6e31dd66ec24874d62bfffe25d0526a9f291c
   languageName: node
   linkType: hard
 
