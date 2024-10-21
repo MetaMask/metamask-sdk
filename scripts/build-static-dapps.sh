@@ -171,6 +171,10 @@ create_index_html() {
 echo "Starting deployment process..."
 echo "Using IS_RELEASE: $IS_RELEASE"
 
+if [ "$IS_RELEASE" = "true" ]; then
+    sh scripts/update-examples-dapps.sh
+fi
+
 # Determine the deployment folder
 deployment_folder=$(get_deployment_folder)
 deployment_dir="deployments/$deployment_folder"
@@ -188,7 +192,11 @@ build_and_consolidate
 echo "Copying built files to $deployment_dir"
 # Replace these with your actual build output directories
 # cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
+
+# Create folder for create-react-app inside the deployment directory
+mkdir -p "$deployment_dir/create-react-app/"
 cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
+
 # cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
 # Add more cp commands for other apps as needed
 
