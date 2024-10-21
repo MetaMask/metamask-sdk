@@ -206,7 +206,7 @@ if [ "$IS_RELEASE" = "true" ]; then
     sh scripts/update-examples-dapps.sh
 fi
 
-# Determine the deployment folder
+# Determine the deployment folder - change this to detect if main or is_realease to hardcode folders
 deployment_folder=$(get_deployment_folder)
 deployment_dir="deployments/$deployment_folder"
 
@@ -235,7 +235,7 @@ echo "Copying built files to $deployment_dir"
 # Add more cp commands for other apps as needed
 
 # Update index.html
-update_index_html "$deployment_dir"
+update_index_html "$deployment_dir/packages/examples"
 
 # Handle special cases for main branch and production releases
 # if [ "$deployment_folder" = "main" ]; then
@@ -259,4 +259,4 @@ update_index_html "$deployment_dir"
 echo "Updating root index.html"
 create_index_html
 
-echo "Deployment process completed!"
+echo "Deployment process completed! You can check it out here: https://metamask.github.io/sdk-dapps/$deployment_folder"
