@@ -110,7 +110,7 @@ build_and_consolidate() {
     # mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
-    cp -r packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
+    cp -rf packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
     # cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
     # cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
     # cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
@@ -225,8 +225,11 @@ echo "Copying built files to $deployment_dir"
 # cp -r deployments/dapps/sdk-playground/build/* "$deployment_dir/"
 
 # Create folder for create-react-app inside the deployment directory
-mkdir -p "$deployment_dir/create-react-app/"
-cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
+# if [ -d "$deployment_dir/create-react-app/" ]; then
+#     rm -rf "$deployment_dir/create-react-app/*"
+# fi
+# mkdir -p "$deployment_dir/create-react-app/"
+# cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-app/"
 
 # cp -r packages/examples/vuejs/dist/* "$deployment_dir/vuejs/"
 # Add more cp commands for other apps as needed
@@ -235,22 +238,22 @@ cp -r packages/examples/create-react-app/build/* "$deployment_dir/create-react-a
 update_index_html "$deployment_dir"
 
 # Handle special cases for main branch and production releases
-if [ "$deployment_folder" = "main" ]; then
-    echo "Deploying to main folder, replacing existing content"
-    rm -rf deployments/main
-    mv "$deployment_dir" deployments/main
-elif [ "$IS_RELEASE" = "true" ]; then
-    echo "Deploying to prod folder, replacing existing content"
-    rm -rf deployments/prod
-    mv "$deployment_dir" deployments/prod
-    # Create a symlink or copy to the versioned folder
-    version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
-    ln -s deployments/prod "deployments/$version" || cp -r deployments/prod "deployments/$version"
-else
-    echo "Deploying to $deployment_folder folder, replacing existing content"
-    rm -rf "deployments/$deployment_folder"
-    mv "$deployment_dir" "deployments/$deployment_folder"
-fi
+# if [ "$deployment_folder" = "main" ]; then
+#     echo "Deploying to main folder, replacing existing content"
+#     rm -rf deployments/main
+#     mv "$deployment_dir" deployments/main
+# elif [ "$IS_RELEASE" = "true" ]; then
+#     echo "Deploying to prod folder, replacing existing content"
+#     rm -rf deployments/prod
+#     mv "$deployment_dir" deployments/prod
+#     # Create a symlink or copy to the versioned folder
+#     version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+#     ln -s deployments/prod "deployments/$version" || cp -r deployments/prod "deployments/$version"
+# else
+#     echo "Deploying to $deployment_folder folder, replacing existing content"
+#     rm -rf "deployments/$deployment_folder"
+#     mv "$deployment_dir" "deployments/$deployment_folder"
+# fi
 
 # Update root index.html to point to the latest deployment
 echo "Updating root index.html"
