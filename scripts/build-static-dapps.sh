@@ -125,8 +125,39 @@ build_and_consolidate() {
 update_index_html() {
     local deployment_dir=$1
     echo "Updating index.html in $deployment_dir"
-    # Your existing index.html update logic goes here
-    # ...
+    echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>MetaMask SDK Deployment</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #f45c00; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        a { color: #333333; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask SDK Dapps</h1>
+    <ul>" > "$deployment_dir/index.html"
+
+    # List all directories in the deployment directory, excluding index.html itself
+    for dir in "$deployment_dir"/*/; do
+        dir=${dir%*/}  # Remove trailing slash
+        dir_name=${dir##*/}  # Extract directory name
+        if [ "$dir_name" != "index.html" ]; then
+            echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
+        fi
+    done
+
+    echo "    </ul>
+</body>
+</html>" >> "$deployment_dir/index.html"
+
+    echo "Updated index.html in $deployment_dir"
 }
 
 # Create an index.html file with links to all deployment folders
@@ -139,10 +170,10 @@ create_index_html() {
     <title>MetaMask SDK Deployments</title>
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        h1 { color: #1098fc; }
+        h1 { color: #f45c00; }
         ul { list-style-type: none; padding: 0; }
         li { margin-bottom: 10px; }
-        a { color: #1098fc; text-decoration: none; }
+        a { color: #333333; text-decoration: none; }
         a:hover { text-decoration: underline; }
     </style>
 </head>
@@ -215,6 +246,10 @@ elif [ "$IS_RELEASE" = "true" ]; then
     # Create a symlink or copy to the versioned folder
     version=$(grep '"version":' "./package.json" | sed -E 's/.*"version": "([^"]+)".*/\1/')
     ln -s deployments/prod "deployments/$version" || cp -r deployments/prod "deployments/$version"
+else
+    echo "Deploying to $deployment_folder folder, replacing existing content"
+    rm -rf "deployments/$deployment_folder"
+    mv "$deployment_dir" "deployments/$deployment_folder"
 fi
 
 # Update root index.html to point to the latest deployment

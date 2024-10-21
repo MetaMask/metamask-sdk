@@ -34,9 +34,6 @@ jobs:
     - name: Install Yarn 3
       run: yarn set version 3.5.1
 
-    - name: Install Dependencies
-      run: yarn --immutable
-
     - name: Build All Static Example Projects
       env:
         IS_RELEASE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true' || false }}
