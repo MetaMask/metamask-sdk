@@ -21,7 +21,6 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
     runs-on: ubuntu-latest
-    environment: github-pages
 
     steps:
     - name: Checkout Repository
