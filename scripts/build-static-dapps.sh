@@ -28,7 +28,7 @@ inject_version_into_package_json() {
         echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
     else
         # Replace slashes with hyphens in the branch name
-        jq --arg new_version "$new_version" '.version = $new_version' package.json > temp.json && mv temp.json package.json
+        jq --arg current_branch "$current_branch" '.version = $current_branch' package.json > temp.json && mv temp.json package.json
     fi
 }
 
@@ -63,6 +63,8 @@ build_project() {
         echo "Skipping sdk-copy.sh for release build..."
     fi
     yarn build
+    echo "Build completed for $project_name"
+
     cd -  # Return to the root directory
 }
 
@@ -167,6 +169,7 @@ create_index_html() {
 
 # Main script
 echo "Starting deployment process..."
+echo "Using IS_RELEASE: $IS_RELEASE"
 
 # Determine the deployment folder
 deployment_folder=$(get_deployment_folder)
