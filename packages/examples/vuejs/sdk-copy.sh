@@ -19,10 +19,10 @@ cd $DAPP_DIR
 echo "Hack Metamask sdk && sdk-communication-layer packages..."
 ## hack to debug to latest unpublished version of the sdk
 rm -rf node_modules/@metamask/sdk-communication-layer/dist node_modules/@metamask/sdk/dist 
-cp -rf $COMM_LAYER_DIR node_modules/@metamask/sdk-communication-layer/dist
+cp -rf $COMM_LAYER_DIR/dist node_modules/@metamask/sdk-communication-layer/dist
 cp -rf $COMM_LAYER_DIR/package.json node_modules/@metamask/sdk-communication-layer/package.json
 
-cp -rf $SDK_DIR node_modules/@metamask/sdk/dist
+cp -rf $SDK_DIR/dist node_modules/@metamask/sdk/dist
 cp -rf $SDK_DIR/package.json node_modules/@metamask/sdk/package.json
 
 echo "All done."
