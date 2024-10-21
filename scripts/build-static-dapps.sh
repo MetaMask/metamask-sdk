@@ -70,16 +70,16 @@ build_and_consolidate() {
     echo "Combining deployments..."
     # Create necessary directories in deployments
     mkdir -p $deployment_dir/packages/examples/create-react-app/build
-    mkdir -p $deployment_dir/packages/examples/vuejs/dist
+    mkdir -p $deployment_dir/packages/examples/vuejs/build
     mkdir -p $deployment_dir/packages/examples/pure-javascript/
-    mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
-    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
+    mkdir -p $deployment_dir/packages/examples/with-web3onboard/build
+    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/build # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
     cp -rf packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
-    cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
-    cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
-    cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
+    cp -r packages/examples/vuejs/build/* $deployment_dir/packages/examples/vuejs/build/
+    cp -r packages/examples/with-web3onboard/build/* $deployment_dir/packages/examples/with-web3onboard/build/
+    cp -r packages/examples/wagmi-demo-react/build/* $deployment_dir/packages/examples/wagmi-demo-react/build/  # Copy build output for the new project
     cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
