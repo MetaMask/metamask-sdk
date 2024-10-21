@@ -1,15 +1,31 @@
-import { Server } from 'socket.io';
+import * as prometheus from 'prom-client';
 
-export const extractMetrics = ({ ioServer }: { ioServer: Server }) => {
-  const totalClients = ioServer.engine.clientsCount;
-  let fullMetrics = `# HELP socket_io_server_total_clients Total number of connected clients\n`;
-  fullMetrics += `# TYPE socket_io_server_total_clients gauge\n`;
-  fullMetrics += `socket_io_server_total_clients ${totalClients}\n`;
+const register = new prometheus.Registry();
 
-  const totalRooms = ioServer.sockets.adapter.rooms.size;
-  fullMetrics += `# HELP socket_io_server_total_rooms Total number of rooms\n`;
-  fullMetrics += `# TYPE socket_io_server_total_rooms gauge\n`;
-  fullMetrics += `socket_io_server_total_rooms ${totalRooms}\n`;
+prometheus.collectDefaultMetrics({ register });
 
-  return fullMetrics;
-};
+export async function read() {
+  return await register.metrics();
+}
+
+const socketIoServerTotalClients = new prometheus.Gauge({
+  name: 'socket_io_server_total_clients',
+  help: 'Total number of connected clients',
+  labelNames: [],
+  registers: [register],
+});
+
+const socketIoServerTotalRooms = new prometheus.Gauge({
+  name: 'socket_io_server_total_rooms',
+  help: 'Total number of rooms',
+  labelNames: [],
+  registers: [register],
+});
+
+export function setSocketIoServerTotalClients(count: number) {
+  socketIoServerTotalClients.set(count);
+}
+
+export function setSocketIoServerTotalRooms(count: number) {
+  socketIoServerTotalRooms.set(count);
+}

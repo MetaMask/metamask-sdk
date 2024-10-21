@@ -20,6 +20,7 @@ import {
 } from './protocol/handleJoinChannel';
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
+import * as metrics from './metrics';
 
 const logger = getLogger();
 
@@ -67,6 +68,8 @@ export const configureSocketServer = async (
       credentials: true,
     },
   });
+
+  watchSocketIoServerMetrics(io);
 
   io.of('/').adapter.on('join-room', async (roomId, socketId) => {
     logger.debug(`'join-room' socket ${socketId} has joined room ${roomId}`);
@@ -357,3 +360,10 @@ export const configureSocketServer = async (
 
   return io;
 };
+
+function watchSocketIoServerMetrics(io: Server) {
+  setInterval(() => {
+    metrics.setSocketIoServerTotalClients(io.engine.clientsCount);
+    metrics.setSocketIoServerTotalRooms(io.sockets.adapter.rooms.size);
+  }, 5_000);
+}
