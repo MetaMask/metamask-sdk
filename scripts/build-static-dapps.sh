@@ -10,14 +10,34 @@ set -e
 reldir="$( dirname -- "$0"; )";
 cd "$reldir/..";
 
+# Function to update the version in package.json
+update_version_in_package_json() {
+    local package_json_path=$1
+    local new_version=$2
+
+    # Use jq to update the version in package.json
+    jq --arg new_version "$new_version" '.version = $new_version' "$package_json_path" > tmp.$$.json && mv tmp.$$.json "$package_json_path"
+}
+
+# Inject the new version into package.json for each package
+inject_version_into_package_json() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local package_json_path="./package.json"
+
+    if [ "$IS_RELEASE" = "true" ]; then
+        echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+    else
+        # Replace slashes with hyphens in the branch name
+        jq --arg new_version "$new_version" '.version = $new_version' package.json > temp.json && mv temp.json package.json
+    fi
+}
+
 # Function to get the deployment folder name
 get_deployment_folder() {
     local current_branch=$(git rev-parse --abbrev-ref HEAD)
     local package_json_path="./package.json"
     
-    if [ "$current_branch" = "main" ]; then
-        echo "main"
-    elif [ "$IS_RELEASE" = "true" ]; then
+    if [ "$IS_RELEASE" = "true" ]; then
         echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
     else
         # Replace slashes with hyphens in the branch name
@@ -51,6 +71,8 @@ build_and_consolidate() {
     echo "Starting build process..."
 
     yarn build # first build all workspace dependencies
+
+    inject_version_into_package_json
 
     # Build projects
     # build_project "deployments/dapps/sdk-playground"

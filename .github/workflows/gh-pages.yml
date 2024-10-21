@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
+    inputs:
+      IS_RELEASE:
+        description: 'Is this a release build?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   build-and-deploy:
@@ -25,6 +31,8 @@ jobs:
       run: yarn --immutable
 
     - name: Build All Static Example Projects
+      env:
+        IS_RELEASE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true' || false }}
       run: bash ./scripts/build-static-dapps.sh
 
     - name: Deploy dapps
@@ -34,4 +42,3 @@ jobs:
         force_orphan: true
         keep_files: true  # Important to keep the rest of the files deployed previously
         publish_dir: ./deployments
-
