@@ -16,7 +16,10 @@ on:
 jobs:
 
   build-and-deploy:
-    if: github.event.label.name == 'deploy'
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
     runs-on: ubuntu-latest
     environment: github-pages
 
