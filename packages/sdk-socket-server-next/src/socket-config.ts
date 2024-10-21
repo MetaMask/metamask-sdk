@@ -20,7 +20,10 @@ import {
 } from './protocol/handleJoinChannel';
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
-import * as metrics from './metrics';
+import {
+  setSocketIoServerTotalClients,
+  setSocketIoServerTotalRooms,
+} from './metrics';
 
 const logger = getLogger();
 
@@ -363,7 +366,7 @@ export const configureSocketServer = async (
 
 function watchSocketIoServerMetrics(io: Server) {
   setInterval(() => {
-    metrics.setSocketIoServerTotalClients(io.engine.clientsCount);
-    metrics.setSocketIoServerTotalRooms(io.sockets.adapter.rooms.size);
+    setSocketIoServerTotalClients(io.engine.clientsCount);
+    setSocketIoServerTotalRooms(io.sockets.adapter.rooms.size);
   }, 5_000);
 }
