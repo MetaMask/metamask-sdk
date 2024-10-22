@@ -1,10 +1,10 @@
-import { Registry, collectDefaultMetrics, Gauge } from 'prom-client';
+import { collectDefaultMetrics, Gauge, Registry } from 'prom-client';
 
 const register = new Registry();
 
 collectDefaultMetrics({ register });
 
-export async function read() {
+export async function readMetrics() {
   return await register.metrics();
 }
 
