@@ -38,8 +38,6 @@ build_project() {
         echo "Skipping sdk-copy.sh for release build..."
     fi
 
-    # hack package.json to appear on the connect modal
-
     yarn build
     echo "Build completed for $project_name"
 
@@ -83,9 +81,10 @@ build_and_consolidate() {
     cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
-# Function to update index.html (placeholder)
+# Function to update index.html inside the deployment folder
 update_index_html() {
     local deployment_dir=$1
+    local branch_name=$2
     echo "Updating index.html in $deployment_dir"
     echo "<!DOCTYPE html>
 <html lang=\"en\">
@@ -104,7 +103,7 @@ update_index_html() {
 </head>
 <body>
     <h1>MetaMask SDK Dapps</h1>
-    <h3>$deployment_dir</h3>
+    <h3>$branch_name</h3>
     <ul>" > "$deployment_dir/index.html"
 
     # List all directories in the deployment directory, excluding index.html itself
@@ -119,8 +118,6 @@ update_index_html() {
             fi
         fi
     done
-
-    # No need for a separate case for pure-javascript as it's now handled in the loop
 
     echo "    </ul>
 </body>
@@ -197,7 +194,7 @@ build_and_consolidate
 echo "Copying built files to $deployment_dir"
 
 # Update index.html
-update_index_html "$deployment_dir/packages/examples"
+update_index_html "$deployment_dir/packages/examples" $deployment_folder
 
 
 # Update root index.html to point to the latest deployment
