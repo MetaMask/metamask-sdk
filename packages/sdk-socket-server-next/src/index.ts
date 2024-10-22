@@ -11,7 +11,7 @@ import packageJson from '../package.json';
 import { isDevelopment, withAdminUI } from './config';
 import { analytics, app } from './analytics-api';
 import { getLogger } from './logger';
-import { extractMetrics } from './metrics';
+import { readMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
 import { cleanupAndExit } from './utils';
 
@@ -49,8 +49,7 @@ configureSocketServer(server)
     // Make sure to protect the endpoint to be only available within the cluster for prometheus
     app.get('/metrics', async (_req, res) => {
       res.set('Content-Type', 'text/plain');
-      const metrics = extractMetrics({ ioServer });
-      res.send(metrics);
+      res.send(await readMetrics());
     });
 
     app.get('/version', (_req, res) => {
