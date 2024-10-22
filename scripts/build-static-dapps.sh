@@ -48,7 +48,9 @@ build_project() {
 build_and_consolidate() {
     echo "Starting build process..."
 
-    yarn build # first build all workspace dependencies
+    if [ "$IS_RELEASE" != "true" ]; then
+        yarn build # first build all workspace dependencies
+    fi
 
     # Build projects
     build_project "packages/examples/create-react-app"
@@ -75,10 +77,10 @@ build_and_consolidate() {
 
     # Copy build outputs to deployments
     cp -rf packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
-    cp -r packages/examples/vuejs/build/* $deployment_dir/packages/examples/vuejs/build/
-    cp -r packages/examples/with-web3onboard/build/* $deployment_dir/packages/examples/with-web3onboard/build/
-    cp -r packages/examples/wagmi-demo-react/build/* $deployment_dir/packages/examples/wagmi-demo-react/build/  # Copy build output for the new project
-    cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
+    cp -rf packages/examples/vuejs/build/* $deployment_dir/packages/examples/vuejs/build/
+    cp -rf packages/examples/with-web3onboard/build/* $deployment_dir/packages/examples/with-web3onboard/build/
+    cp -rf packages/examples/wagmi-demo-react/build/* $deployment_dir/packages/examples/wagmi-demo-react/build/  # Copy build output for the new project
+    cp -rf packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
 # Function to update index.html inside the deployment folder
