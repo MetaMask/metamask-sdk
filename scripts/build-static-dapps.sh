@@ -104,6 +104,7 @@ update_index_html() {
 </head>
 <body>
     <h1>MetaMask SDK Dapps</h1>
+    <h3>$deployment_dir</h3>
     <ul>" > "$deployment_dir/index.html"
 
     # List all directories in the deployment directory, excluding index.html itself
@@ -203,4 +204,4 @@ update_index_html "$deployment_dir/packages/examples"
 echo "Updating root index.html"
 create_index_html
 
-echo "Deployment process completed! You can check it out here: https://metamask.github.io/sdk-dapps/$deployment_folder"
+echo "Deployment process completed! You can check it out here: https://metamask.github.io/metamask-sdk/$deployment_folder"
