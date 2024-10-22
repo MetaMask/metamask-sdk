@@ -374,6 +374,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.sdkProvider;
   }
 
+  /**
+   * @deprecated use 'display_uri' event on from sdk instance instead.
+   * @returns {string} - The QRCode Link.
+   */
   getUniversalLink() {
     const universalLink = this.remoteConnection?.getUniversalLink();
 
