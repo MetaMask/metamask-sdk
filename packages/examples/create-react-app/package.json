@@ -2,7 +2,7 @@
   "name": "mm-sdk-cra",
   "version": "1.0.0",
   "private": true,
-  "homepage": "./",
+  "homepage": "https://metamask.github.io/metamask-sdk",
   "dependencies": {
     "@metamask/sdk-react": "^0.30.0",
     "@testing-library/jest-dom": "^5.16.5",
