@@ -1,4 +1,5 @@
 /*
+ * @deprecated until CI workflow is done
  * Dynamically infers the path of the other apps to be installed on the device
  * based on the SDK_TYPE environment variable
  */

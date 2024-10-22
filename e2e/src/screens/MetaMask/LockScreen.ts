@@ -1,9 +1,12 @@
 import { ChainablePromiseElement } from 'webdriverio';
+import { driver } from '@wdio/globals';
+import { visibilityOf } from 'wdio-wait-for';
 import { getSelectorForPlatform } from '../../Utils';
 import { AndroidSelector, IOSSelector } from '../../Selectors';
+import MainScreen from './MainScreen';
 
 class LockScreen {
-  get passwordInput(): ChainablePromiseElement<WebdriverIO.Element> {
+  get passwordInput(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -16,7 +19,7 @@ class LockScreen {
     );
   }
 
-  get loginTitle(): ChainablePromiseElement<WebdriverIO.Element> {
+  get loginTitle(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -29,7 +32,7 @@ class LockScreen {
     );
   }
 
-  get unlockButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get unlockButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -42,13 +45,52 @@ class LockScreen {
     );
   }
 
+  async isMMOnboarded(): Promise<boolean> {
+    const isWelcomeBackVisible = await driver
+      .waitUntil(visibilityOf(this.loginTitle), {
+        timeout: 10000,
+        interval: 5000,
+        timeoutMsg: 'Welcome Back! is not visible. Assuming Wallet is not onboarded',
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
+    return Boolean(isWelcomeBackVisible);
+  }
+
   async isMMLocked(): Promise<boolean> {
-    return (await this.loginTitle).isDisplayed();
+    await driver
+      .waitUntil(visibilityOf(MainScreen.networkSwitcher), {
+        timeout: 60000,
+        interval: 5000,
+        timeoutMsg: 'Network switcher not visible. Wallet is not unlocked,',
+      })
+      .then(() => {
+        return true;
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
+    return false;
   }
 
   async unlockMM(password: string): Promise<void> {
-    await (await this.passwordInput).setValue(password);
-    await (await this.unlockButton).click();
+    await driver
+      .waitUntil(visibilityOf(this.passwordInput), {
+        timeout: 60000,
+        interval: 5000,
+        timeoutMsg: 'Password input not visible',
+      })
+      .then(async () => {
+        // await driver.pause(5000);
+        await (this.passwordInput).setValue(password);
+        await (this.unlockButton).click();
+        // Wait for the wallet to be unlocked
+        await driver.pause(3500);
+      })
+      .catch((e) => {
+        console.error('Error unlocking MM: ', e);
+      });
   }
 
   async unlockMMifLocked(password: string): Promise<void> {

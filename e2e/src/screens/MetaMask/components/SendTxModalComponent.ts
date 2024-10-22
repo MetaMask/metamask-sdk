@@ -3,7 +3,7 @@ import { getSelectorForPlatform } from '../../../Utils';
 import { AndroidSelector, IOSSelector } from '../../../Selectors';
 
 class SendTxModalComponent {
-  get confirmButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get confirmButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -14,7 +14,7 @@ class SendTxModalComponent {
     );
   }
 
-  get rejectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get rejectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -26,16 +26,14 @@ class SendTxModalComponent {
   }
 
   async confirm(): Promise<void> {
-    await (await this.confirmButton).click();
+    await this.confirmButton.click();
   }
 
   async reject(): Promise<void> {
-    await (
-      await this.rejectButton
-    ).waitForEnabled({
+    await this.rejectButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.rejectButton).click();
+    await this.rejectButton.click();
   }
 }
 

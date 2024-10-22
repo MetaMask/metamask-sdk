@@ -6,7 +6,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { Dapp } from '../interfaces/Dapp';
 
 class SdkPlaygroundDappScreen implements Dapp {
-  get demoProviderButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get demoProviderButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -19,7 +19,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get connectButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -30,7 +30,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get personalSignButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get personalSignButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -43,7 +43,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get signTypedDataV4Button(): ChainablePromiseElement<WebdriverIO.Element> {
+  get signTypedDataV4Button(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -56,7 +56,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get sendTransactionButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendTransactionButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -69,7 +69,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get sendBatchRpcCallsButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get sendBatchRpcCallsButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -82,7 +82,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get switchToPolygonButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchToPolygonButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -95,7 +95,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get switchToGoerliButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get switchToGoerliButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -108,7 +108,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get chainSwitchAndSignAndSwitchBackButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get chainSwitchAndSignAndSwitchBackButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -121,7 +121,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get chainSwitchAndSignAndSendTxButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get chainSwitchAndSignAndSendTxButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -135,7 +135,7 @@ class SdkPlaygroundDappScreen implements Dapp {
   }
 
   // Currently there's no terminate in create-react-dapp
-  get terminateButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get terminateButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -146,7 +146,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get dropdownSettingsArrowButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get dropdownSettingsArrowButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -159,7 +159,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     );
   }
 
-  get toggleDeeplinkButton(): ChainablePromiseElement<WebdriverIO.Element> {
+  get toggleDeeplinkButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
@@ -173,141 +173,113 @@ class SdkPlaygroundDappScreen implements Dapp {
   }
 
   async connect(): Promise<void> {
-    await (
-      await this.connectButton
-    ).waitForEnabled({
+    await this.connectButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.connectButton).click();
+    await this.connectButton.click();
   }
 
   async tapDropdownSettingsArrowButton(): Promise<void> {
-    await (
-      await this.dropdownSettingsArrowButton
-    ).waitForEnabled({
+    await this.dropdownSettingsArrowButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.dropdownSettingsArrowButton).click();
+    await this.dropdownSettingsArrowButton.click();
   }
 
   async tapToggleDeeplinkButton(): Promise<void> {
-    await (
-      await this.toggleDeeplinkButton
-    ).waitForEnabled({
+    await this.toggleDeeplinkButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.toggleDeeplinkButton).click();
+    await this.toggleDeeplinkButton.click();
   }
 
   async signTypedDataV4(): Promise<void> {
     await this.scrollToElement(this.signTypedDataV4Button);
-    await (
-      await this.signTypedDataV4Button
-    ).waitForEnabled({
+    await this.signTypedDataV4Button.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.signTypedDataV4Button).click();
+    await this.signTypedDataV4Button.click();
   }
 
   async personalSign(): Promise<void> {
     await this.scrollToElement(this.personalSignButton);
-    await (
-      await this.personalSignButton
-    ).waitForEnabled({
+    await this.personalSignButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.personalSignButton).click();
+    await this.personalSignButton.click();
   }
 
   async sendTransaction(): Promise<void> {
     await this.scrollToElement(this.sendTransactionButton);
-    await (
-      await this.sendTransactionButton
-    ).waitForEnabled({
+    await this.sendTransactionButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.sendTransactionButton).click();
+    await this.sendTransactionButton.click();
   }
 
   async tapDemoProviderButton(): Promise<void> {
     await this.scrollToElement(this.demoProviderButton);
-    await (
-      await this.demoProviderButton
-    ).waitForEnabled({
+    await this.demoProviderButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.demoProviderButton).click();
+    await this.demoProviderButton.click();
   }
 
   async terminate(): Promise<void> {
     await this.scrollToElement(this.terminateButton);
-    await (
-      await this.terminateButton
-    ).waitForEnabled({
+    await this.terminateButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.terminateButton).click();
+    await this.terminateButton.click();
   }
 
   async switchToGoerliNetwork(): Promise<void> {
     await this.scrollToElement(this.switchToGoerliButton);
-    await (
-      await this.switchToGoerliButton
-    ).waitForEnabled({
+    await this.switchToGoerliButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.switchToGoerliButton).click();
+    await this.switchToGoerliButton.click();
   }
 
   async switchToPolygonNetwork(): Promise<void> {
     await this.scrollToElement(this.switchToPolygonButton);
-    await (
-      await this.switchToPolygonButton
-    ).waitForEnabled({
+    await this.switchToPolygonButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.switchToPolygonButton).click();
+    await this.switchToPolygonButton.click();
   }
 
   async chainSwitchAndSignAndSendTx(): Promise<void> {
     await this.scrollToElement(this.chainSwitchAndSignAndSendTxButton);
-    await (
-      await this.chainSwitchAndSignAndSendTxButton
-    ).waitForEnabled({
+    await this.chainSwitchAndSignAndSendTxButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.chainSwitchAndSignAndSendTxButton).click();
+    await this.chainSwitchAndSignAndSendTxButton.click();
   }
 
   async sendBatchRpcCalls(): Promise<void> {
     await this.scrollToElement(this.sendBatchRpcCallsButton);
-    await (
-      await this.sendBatchRpcCallsButton
-    ).waitForEnabled({
+    await this.sendBatchRpcCallsButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.sendBatchRpcCallsButton).click();
+    await this.sendBatchRpcCallsButton.click();
   }
 
   async chainSwitchAndSignAndSwitchBack(): Promise<void> {
     await this.scrollToElement(this.chainSwitchAndSignAndSwitchBackButton);
-    await (
-      await this.chainSwitchAndSignAndSwitchBackButton
-    ).waitForEnabled({
+    await this.chainSwitchAndSignAndSwitchBackButton.waitForEnabled({
       timeout: 10000,
     });
-    await (await this.chainSwitchAndSignAndSwitchBackButton).click();
+    await this.chainSwitchAndSignAndSwitchBackButton.click();
   }
 
-  async scrollToElement(
-    element: ChainablePromiseElement<WebdriverIO.Element>,
-  ): Promise<void> {
+  async scrollToElement(element: ChainablePromiseElement): Promise<void> {
     if (driver.isAndroid) {
-      let isMetaMaskLinksButtonDisplayed = await (await element).isDisplayed();
+      let isMetaMaskLinksButtonDisplayed = await element.isDisplayed();
 
       while (!isMetaMaskLinksButtonDisplayed) {
         await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-        isMetaMaskLinksButtonDisplayed = await (await element).isDisplayed();
+        isMetaMaskLinksButtonDisplayed = await element.isDisplayed();
       }
     }
   }
