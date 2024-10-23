@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { type Hex, parseAbi, parseEther } from 'viem'
+import { Client, type Hex, parseAbi, parseEther } from 'viem'
 import {
   type BaseError,
   useAccount,
@@ -23,6 +23,7 @@ import {
   useSimulateContract,
 } from 'wagmi'
 import { optimism } from 'wagmi/chains'
+import { providers } from 'ethers';
 
 import { wagmiContractConfig } from './contracts'
 
@@ -236,6 +237,9 @@ function BlockNumber() {
 
 function ConnectorClient() {
   const { data, error } = useConnectorClient()
+
+
+
   return (
     <div>
       <h2>Connector Client</h2>
@@ -245,15 +249,33 @@ function ConnectorClient() {
   )
 }
 
+export const clientToSigner = (client?: any) => {
+  if (!client) return;
+  const { account, chain, transport } = client;
+  const network = {
+    chainId: chain.id || 1,
+    name: chain.name || 'mainnet',
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  };
+  const provider = new providers.Web3Provider(transport, network);
+  const signer = provider.getSigner(account.address);
+  return signer;
+};
+
 function SendTransaction() {
   const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
+  const { data } = useConnectorClient()
+
+
+  const signer = clientToSigner(data);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
     const to = formData.get('address') as Hex
     const value = formData.get('value') as string
-    sendTransaction({ to, value: parseEther(value) })
+    
+    signer?.sendTransaction({to, value: parseEther(value)}).then((response)=> { console.log(`response`, response)}).catch((error)=> {console.log(`error`, error)});
   }
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
