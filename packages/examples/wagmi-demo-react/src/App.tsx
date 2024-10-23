@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Client, type Hex, parseAbi, parseEther } from 'viem'
+import { type Hex, parseAbi, parseEther } from 'viem'
 import {
   type BaseError,
   useAccount,
@@ -263,10 +263,10 @@ export const clientToSigner = (client?: any) => {
 };
 
 function SendTransaction() {
-  const { data: hash, error, isPending, sendTransaction } = useSendTransaction()
+  const { data: hash, error, isPending } = useSendTransaction()
   const { data } = useConnectorClient()
 
-
+  
   const signer = clientToSigner(data);
 
   async function submit(e: FormEvent<HTMLFormElement>) {
