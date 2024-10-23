@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/css/main.158b69c2.css",
+    "main.js": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/js/main.6bde71a4.js",
+    "static/js/787.e8ffdd19.chunk.js": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/js/787.e8ffdd19.chunk.js",
+    "index.html": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/index.html",
+    "main.158b69c2.css.map": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/css/main.158b69c2.css.map",
+    "main.6bde71a4.js.map": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/js/main.6bde71a4.js.map",
+    "787.e8ffdd19.chunk.js.map": "/metamask-sdk/update-gh-pages-deployments/packages/examples/create-react-app/build/static/js/787.e8ffdd19.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.158b69c2.css",
+    "static/js/main.6bde71a4.js"
+  ]
+}
