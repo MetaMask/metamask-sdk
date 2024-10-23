@@ -4959,13 +4959,13 @@ __metadata:
     supports-color: ^9.4.0
     utf-8-validate: ^6.0.3
     viem: 2.*
-    wagmi: 2.12.10
+    wagmi: 2.12.11
   languageName: unknown
   linkType: soft
 
-"wagmi@npm:2.12.10":
-  version: 2.12.10
-  resolution: "wagmi@npm:2.12.10"
+"wagmi@npm:2.12.11":
+  version: 2.12.11
+  resolution: "wagmi@npm:2.12.11"
   dependencies:
     "@wagmi/connectors": 5.1.10
     "@wagmi/core": 2.13.5
@@ -4978,7 +4978,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 5640a830391e92f8e0f8632c2921c50646ba2f1d937291c0a2c84301beee21826e86aed5c5a2ff3758917dfba3025a56edec43ea0407b14f03e04c6e291f6516
+  checksum: 46f50d30e57664631f48f8fcec1af8b1a77ca2d44aae513148d947ade30f57b763421ceeab9d8bc63f819b847a743d38a9f0ad2adbcaee1c40f8f95e9ecbf2f5
   languageName: node
   linkType: hard
 

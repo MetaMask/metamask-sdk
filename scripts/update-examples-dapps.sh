@@ -51,7 +51,10 @@ for app in "$EXAMPLES_DIR"/*; do
       echo "Current @metamask/sdk version in $app: $current_version"
       if [[ "$current_version" != "null" && "$current_version" != "$latest_version" ]]; then
         echo "Updating @metamask/sdk in $app from $current_version to $latest_version"
-        jq '.dependencies["@metamask/sdk"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
+
+        # using yarn instead to allow upgrading to happen on ci
+        yarn up @metamask/sdk
+        # jq '.dependencies["@metamask/sdk"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
       # Check and update sdk-react
@@ -60,7 +63,10 @@ for app in "$EXAMPLES_DIR"/*; do
       echo "Current @metamask/sdk-react version in $app: $current_version"
       if [[ "$current_version" != "null" && "$current_version" != "$latest_version" ]]; then
         echo "Updating @metamask/sdk-react in $app from $current_version to $latest_version"
-        jq '.dependencies["@metamask/sdk-react"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
+
+        # using yarn instead to allow upgrading to happen on ci
+        yarn up @metamask/sdk-react
+        # jq '.dependencies["@metamask/sdk-react"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
       # Check and update sdk-react-ui
@@ -69,7 +75,10 @@ for app in "$EXAMPLES_DIR"/*; do
       echo "Current @metamask/sdk-react-ui version in $app: $current_version"
       if [[ "$current_version" != "null" && "$current_version" != "$latest_version" ]]; then
         echo "Updating @metamask/sdk-react-ui in $app from $current_version to $latest_version"
-        jq '.dependencies["@metamask/sdk-react-ui"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
+
+        # using yarn instead to allow upgrading to happen on ci
+        yarn up @metamask/sdk-react-ui
+        # jq '.dependencies["@metamask/sdk-react-ui"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
       # Check and update sdk-react-native
@@ -78,12 +87,12 @@ for app in "$EXAMPLES_DIR"/*; do
       echo "Current @metamask/sdk-react-native version in $app: $current_version"
       if [[ "$current_version" != "null" && "$current_version" != "$latest_version" ]]; then
         echo "Updating @metamask/sdk-react-native in $app from $current_version to $latest_version"
-        jq '.dependencies["@metamask/sdk-react-native"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
+
+        # using yarn instead to allow upgrading to happen on ci
+        yarn up @metamask/sdk-react-native
+        # jq '.dependencies["@metamask/sdk-react-native"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
-      # Run yarn install
-      echo "Running 'yarn install' in $app"
-      (cd "$app" && yarn install)
     else
       echo "No package.json found in $app"
     fi

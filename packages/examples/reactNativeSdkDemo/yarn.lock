@@ -2499,9 +2499,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-native@npm:^0.3.10":
-  version: 0.3.10
-  resolution: "@metamask/sdk-react-native@npm:0.3.10"
+"@metamask/sdk-react-native@npm:^0.3.12":
+  version: 0.3.12
+  resolution: "@metamask/sdk-react-native@npm:0.3.12"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2515,7 +2515,7 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: adbca12afb1816973211812a0bac650fc1c185f7f024eaad9a854e78bb9d93c88fafc8d5aac2dd577c32d938a18a01dc5c6e4f410d608864307dc8141621b02b
+  checksum: ac5a15e857cc867ee9cf840806c6dfb21ab8628da24a74359f9025b974273abcce0b8e4c47166bdc3e15f7d20b7fc5862b9b5386747836b7f9ca2a72ec8de062
   languageName: node
   linkType: hard
 
@@ -10332,7 +10332,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@metamask/sdk-react-native": ^0.3.10
+    "@metamask/sdk-react-native": ^0.3.12
     "@react-native-async-storage/async-storage": ^1.19.3
     "@react-native-community/eslint-config": ^3.2.0
     "@react-native/eslint-config": ^0.72.2
