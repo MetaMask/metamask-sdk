@@ -79,9 +79,9 @@ export const send_eth_signTypedData_v4 = async (provider: SDKProvider, chainId: 
     console.debug(`ethRequest ${method}`, JSON.stringify(params, null, 4));
     console.debug(`sign params`, params);
     return await provider?.request({ method, params });
-  } catch (e: any) {
-    console.log(e);
-    return "Error: " + e.message;
+  } catch (e: unknown) {
+    console.log(`eth_signTypedData_v4 error: ${e}`);
+    return "Error: " + e;
   }
 };
 
@@ -91,14 +91,14 @@ export const send_personal_sign = async (provider: SDKProvider) => {
     const message = 'Hello World from the Create React dapp!';
     const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
 
-    const sign = await window.ethereum!.request({
+    const sign = await provider.request({
       method: 'personal_sign',
       params: [hexMessage, from, 'Example password'],
     });
     console.log(`sign: ${sign}`);
     return sign;
-  } catch (err: any) {
-    console.log(err);
-    return "Error: " + err.message;
+  } catch (err: unknown) {
+    console.log(`personal_sign error: ${err}`);
+    return "Error: " + err;
   }
 };

@@ -147,7 +147,7 @@ export const App = () => {
 
   return (
     <div className="App">
-      <h1>Create-React-App Example</h1>
+      <h1>Vite React MMSDK Example</h1>
       <div className={"Info-Status"}>
         <p>{`Connected chain: ${chainId}`}</p>
         <p>{`Connected account: ${account}`}</p>
