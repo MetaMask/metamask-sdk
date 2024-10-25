@@ -9,7 +9,7 @@ SDK_DIR="$SDK_WORKSPACE_DIR/packages/sdk"
 SDK_REACT_DIR="$SDK_WORKSPACE_DIR/packages/sdk-react"
 SDK_REACT_UI_DIR="$SDK_WORKSPACE_DIR/packages/sdk-react-ui"
 
-DAPP_DIR="$SDK_WORKSPACE_DIR/packages/examples/nextjs-demo"
+DAPP_DIR="$SDK_WORKSPACE_DIR/packages/examples/react-demo"
 
 echo "SDK_DIR: $SDK_DIR"
 echo "COMM_LAYER_DIR: $COMM_LAYER_DIR"

@@ -26,6 +26,9 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
 
+    - name: Fetch all branches
+      run: git fetch --all
+
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
