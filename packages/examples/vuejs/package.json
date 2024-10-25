@@ -5,12 +5,12 @@
   "homepage": "./",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --dest build",
     "lint": "vue-cli-service lint",
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.28.4",
+    "@metamask/sdk": "^0.30.0",
     "core-js": "^3.8.3",
     "vue": "^3.2.13"
   },

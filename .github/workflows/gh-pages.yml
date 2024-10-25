@@ -4,11 +4,23 @@ on:
   push:
     branches: [main]
   workflow_dispatch:  # Allows you to run this workflow manually from the Actions tab
+    inputs:
+      IS_RELEASE:
+        description: 'Is this a release build?'
+        required: true
+        type: boolean
+        default: false
+  pull_request:
+    types: [labeled]
 
 jobs:
+
   build-and-deploy:
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
     runs-on: ubuntu-latest
-    environment: github-pages
 
     steps:
     - name: Checkout Repository
@@ -25,14 +37,19 @@ jobs:
     - name: Install Dependencies
       run: yarn --immutable
 
+    - name: Update Examples Dapps
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true'
+      run: bash ./scripts/update-examples-dapps.sh
+
     - name: Build All Static Example Projects
+      env:
+        IS_RELEASE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.IS_RELEASE == 'true' || false }}
       run: bash ./scripts/build-static-dapps.sh
 
     - name: Deploy dapps
       uses: peaceiris/actions-gh-pages@068dc23d9710f1ba62e86896f84735d869951305
       with:
         personal_token: ${{ secrets.DEPLOY_TOKEN }}
-        force_orphan: true
+        # force_orphan: true  # removing for now as it is incompatible with keep_files
         keep_files: true  # Important to keep the rest of the files deployed previously
         publish_dir: ./deployments
-
