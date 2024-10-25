@@ -130,6 +130,7 @@ update_index_html() {
 
 # Create an index.html file with links to all deployment folders
 create_index_html() {
+    local existing_folders=$1
     echo "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -149,12 +150,10 @@ create_index_html() {
     <h1>MetaMask SDK Deployments</h1>
     <ul>" > deployments/index.html
 
-    # List all directories in gh-pages, excluding index.html itself
-    for dir in deployments/*/; do
-        dir=${dir%*/}  # Remove trailing slash
-        dir_name=${dir##*/}  # Extract directory name
-        if [ "$dir_name" != "index.html" ]; then
-            echo "        <li><a href=\"$dir_name/packages/examples/index.html\">$dir_name</a></li>" >> deployments/index.html
+    # List all directories in existing_folders, excluding index.html itself
+    for dir in $existing_folders; do
+        if [ "$dir" != "index.html" ]; then
+            echo "        <li><a href=\"$dir/packages/examples/index.html\">$dir</a></li>" >> deployments/index.html
         fi
     done
 
@@ -198,9 +197,18 @@ echo "Copying built files to $deployment_dir"
 # Update index.html
 update_index_html "$deployment_dir/packages/examples" $deployment_folder
 
+# Fetch the existing folders on the "gh-pages" branch and keep them as a list
+existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
+# Check if the deployment directory is already in the existing folders list
+if ! echo "$existing_folders" | grep -q "^$deployment_folder$"; then
+    existing_folders="$existing_folders"$'\n'"$deployment_folder"
+fi
+
+echo "Existing folders on gh-pages branch:"
+echo "$existing_folders"
 
 # Update root index.html to point to the latest deployment
 echo "Updating root index.html"
-create_index_html
+create_index_html $existing_folders
 
 echo "Deployment process completed! You can check it out here: https://metamask.github.io/metamask-sdk/$deployment_folder"
