@@ -66,6 +66,7 @@ jobs:
         run: |
           {
             # TODO: Add dapps environment variables here
+            echo "Add dapps environment variables here"
           } >> .dapps.env
 
       - name: Run JS-SDK Android E2E tests
