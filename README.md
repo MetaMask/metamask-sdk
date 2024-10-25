@@ -1,4 +1,4 @@
-# MetaMask SDK
+# MetaMask SDK - Testing a dummy PR
 
 [![codecov](https://codecov.io/gh/MetaMask/metamask-sdk/graph/badge.svg?token=6B3Z3724OO)](https://codecov.io/gh/MetaMask/metamask-sdk)
 
