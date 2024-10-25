@@ -1,4 +1,4 @@
-# MetaMask SDK
+# MetaMask SDK - DO NOT MERGE
 
 [![codecov](https://codecov.io/gh/MetaMask/metamask-sdk/graph/badge.svg?token=6B3Z3724OO)](https://codecov.io/gh/MetaMask/metamask-sdk)
 
