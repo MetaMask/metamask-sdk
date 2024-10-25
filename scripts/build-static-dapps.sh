@@ -130,7 +130,7 @@ update_index_html() {
 
 # Create an index.html file with links to all deployment folders
 create_index_html() {
-    local existing_folders=$1
+    local existing_folders="$1"
     echo "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
@@ -199,16 +199,12 @@ update_index_html "$deployment_dir/packages/examples" $deployment_folder
 
 # Fetch the existing folders on the "gh-pages" branch and keep them as a list
 existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
-# Check if the deployment directory is already in the existing folders list
-if ! echo "$existing_folders" | grep -q "^$deployment_folder$"; then
-    existing_folders="$existing_folders"$'\n'"$deployment_folder"
-fi
 
 echo "Existing folders on gh-pages branch:"
 echo "$existing_folders"
 
 # Update root index.html to point to the latest deployment
 echo "Updating root index.html"
-create_index_html $existing_folders
+create_index_html "$existing_folders"
 
 echo "Deployment process completed! You can check it out here: https://metamask.github.io/metamask-sdk/$deployment_folder"
