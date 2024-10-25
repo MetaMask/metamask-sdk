@@ -53,7 +53,7 @@ build_and_consolidate() {
     fi
 
     # Build projects
-    build_project "packages/examples/create-react-app"
+    build_project "packages/examples/react-demo"
     build_project "packages/examples/vuejs"
     build_project "packages/examples/wagmi-demo-react"  
 
@@ -69,14 +69,14 @@ build_and_consolidate() {
     # Combine Deployments
     echo "Combining deployments..."
     # Create necessary directories in deployments
-    mkdir -p $deployment_dir/packages/examples/create-react-app/build
+    mkdir -p $deployment_dir/packages/examples/react-demo/build
     mkdir -p $deployment_dir/packages/examples/vuejs/build
     mkdir -p $deployment_dir/packages/examples/pure-javascript/
     mkdir -p $deployment_dir/packages/examples/with-web3onboard/build
     mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/build # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
-    cp -rf packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
+    cp -rf packages/examples/react-demo/build/* $deployment_dir/packages/examples/react-demo/build/
     cp -rf packages/examples/vuejs/build/* $deployment_dir/packages/examples/vuejs/build/
     cp -rf packages/examples/with-web3onboard/build/* $deployment_dir/packages/examples/with-web3onboard/build/
     cp -rf packages/examples/wagmi-demo-react/build/* $deployment_dir/packages/examples/wagmi-demo-react/build/  # Copy build output for the new project
