@@ -111,8 +111,6 @@ export function setupListeners(
   // }) as ClientsDisconnectedHandler);
 
   addListener(EventType.TERMINATE, (() => {
-    console.info(`SDK Connection has been terminated`);
-
     state.pendingModal?.unmount?.();
     state.installModal?.unmount?.(true);
     state.pendingModal = undefined;
