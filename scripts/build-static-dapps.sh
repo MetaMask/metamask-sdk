@@ -203,7 +203,7 @@ existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
 echo "Existing folders on gh-pages branch:"
 echo "$existing_folders"
 
-if [[ ! " $existing_folders " =~ " $deployment_folder " ]]; then
+if [[ ! "$existing_folders" =~ "$deployment_folder" ]]; then
     existing_folders="$existing_folders $deployment_folder"
 fi
 
