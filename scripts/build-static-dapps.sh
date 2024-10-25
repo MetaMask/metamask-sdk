@@ -203,6 +203,10 @@ existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
 echo "Existing folders on gh-pages branch:"
 echo "$existing_folders"
 
+if [[ ! "$existing_folders" =~ "$deployment_folder" ]]; then
+    existing_folders="$existing_folders $deployment_folder"
+fi
+
 # Update root index.html to point to the latest deployment
 echo "Updating root index.html"
 create_index_html "$existing_folders"
