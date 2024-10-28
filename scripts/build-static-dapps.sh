@@ -16,9 +16,10 @@ get_deployment_folder() {
     else
         local branch_name=""
         
-        echo "Debug: GITHUB_HEAD_REF = $GITHUB_HEAD_REF"
-        echo "Debug: GITHUB_REF = $GITHUB_REF"
-        echo "Debug: GITHUB_REF_NAME = $GITHUB_REF_NAME"
+        # Send debug messages to stderr instead of stdout
+        >&2 echo "Debug: GITHUB_HEAD_REF = $GITHUB_HEAD_REF"
+        >&2 echo "Debug: GITHUB_REF = $GITHUB_REF"
+        >&2 echo "Debug: GITHUB_REF_NAME = $GITHUB_REF_NAME"
         
         if [ -n "$GITHUB_HEAD_REF" ]; then
             # We're in a pull request
@@ -33,14 +34,14 @@ get_deployment_folder() {
             # Last resort: use git command
             branch_name=$(git rev-parse --abbrev-ref HEAD)
             if [ "$branch_name" = "HEAD" ]; then
-                echo "Error: Unable to determine branch name" >&2
+                >&2 echo "Error: Unable to determine branch name"
                 exit 1
             fi
         fi
 
-        echo "Debug: Determined branch_name = $branch_name"
+        >&2 echo "Debug: Determined branch_name = $branch_name"
 
-        # Replace slashes with hyphens in the branch name
+        # Only output the final result to stdout
         echo "$branch_name" | sed 's/\//-/g'
     fi
 }
