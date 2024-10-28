@@ -9,14 +9,39 @@ cd "$reldir/..";
 
 # Function to get the deployment folder name
 get_deployment_folder() {
-    local current_branch=$(git rev-parse --abbrev-ref HEAD)
     local package_json_path="./package.json"
     
     if [ "$IS_RELEASE" = "true" ]; then
         echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
     else
+        local branch_name=""
+        
+        echo "Debug: GITHUB_HEAD_REF = $GITHUB_HEAD_REF"
+        echo "Debug: GITHUB_REF = $GITHUB_REF"
+        echo "Debug: GITHUB_REF_NAME = $GITHUB_REF_NAME"
+        
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+            # We're in a pull request
+            branch_name=$GITHUB_HEAD_REF
+        elif [ -n "$GITHUB_REF_NAME" ]; then
+            # We're in a push event or other workflow
+            branch_name=$GITHUB_REF_NAME
+        elif [ -n "$GITHUB_REF" ]; then
+            # Fallback to GITHUB_REF if GITHUB_REF_NAME is not set
+            branch_name=${GITHUB_REF#refs/heads/}
+        else
+            # Last resort: use git command
+            branch_name=$(git rev-parse --abbrev-ref HEAD)
+            if [ "$branch_name" = "HEAD" ]; then
+                echo "Error: Unable to determine branch name" >&2
+                exit 1
+            fi
+        fi
+
+        echo "Debug: Determined branch_name = $branch_name"
+
         # Replace slashes with hyphens in the branch name
-        echo "$current_branch" | sed 's/\//-/g'
+        echo "$branch_name" | sed 's/\//-/g'
     fi
 }
 
