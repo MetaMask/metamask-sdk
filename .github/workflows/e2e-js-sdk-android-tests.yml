@@ -65,9 +65,8 @@ jobs:
         working-directory: ./e2e
         run: |
           {
-            echo "TEST_DAPP_URL=https://c0f4f41c-2f55-4863-921b-sdk-docs.github.io/test-dapp/"
-            echo "SDK_PLAYGROUND_DAPP_URL=https://mmsdk-playground-test.vercel.app/demo"
-            echo "WEB3_ON_BOARD_DAPP_URL=https://mmsdk-playground-test.vercel.app/onboard"
+            # TODO: Add dapps environment variables here
+            echo "Add dapps environment variables here"
           } >> .dapps.env
 
       - name: Run JS-SDK Android E2E tests
