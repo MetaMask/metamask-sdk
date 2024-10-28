@@ -221,7 +221,7 @@ build_and_consolidate
 echo "Copying built files to $deployment_dir"
 
 # Update index.html
-update_index_html "$deployment_dir/packages/examples" $deployment_folder
+update_index_html "$deployment_dir/packages/examples" "$deployment_folder" 
 
 # Fetch the existing folders on the "gh-pages" branch and keep them as a list
 existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
