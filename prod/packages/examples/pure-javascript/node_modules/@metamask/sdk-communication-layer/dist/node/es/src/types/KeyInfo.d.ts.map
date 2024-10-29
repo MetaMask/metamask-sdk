@@ -1,0 +1,1 @@
+{"version":3,"file":"KeyInfo.d.ts","sourceRoot":"","sources":["../../../../../src/types/KeyInfo.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,OAAO;IACtB,IAAI,EAAE,MAAM,CAAC;IACb,KAAK,EAAE;QACL,MAAM,EAAE,MAAM,CAAC;QACf,OAAO,EAAE,MAAM,CAAC;QAChB,WAAW,CAAC,EAAE,MAAM,CAAC;KACtB,CAAC;IACF,aAAa,EAAE,OAAO,CAAC;CACxB"}
