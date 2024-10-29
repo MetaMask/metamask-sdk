@@ -4,7 +4,7 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
@@ -218,6 +218,30 @@ app.post('/debug', (req, _res, next) => {
   next(); // Pass control to the next handler (which will be /evt)
 });
 
+// Dirty way to generate a stable channelId from the event body
+// Reason: we want to avoid generating a new UUID for each event
+// Solution: use a hash of the event body properties as the channelId
+const generateStableChannelId = (body: any): string => {
+  const channelInfo = extractChannelInfo(body);
+  if (!channelInfo) return '';
+
+  const components = [
+    channelInfo.url,
+    channelInfo.platform,
+    channelInfo.source,
+    channelInfo.sdkVersion,
+    channelInfo.dappId,
+  ].filter(Boolean);
+
+  const key = components.length > 0
+    ? crypto.createHash('sha1').update(components.join('-')).digest('hex')
+    : '';
+
+  const channelId = key !== '' ? uuidv5(key, uuidv5.URL) : '';
+
+  return channelId;
+};
+
 app.post('/evt', async (_req, res) => {
   try {
     const { body } = _req;
@@ -242,7 +266,11 @@ app.post('/evt', async (_req, res) => {
     }
 
     if (channelId === 'sdk') {
-      channelId = uuidv4();
+      channelId = generateStableChannelId(body);
+      if (channelId === '') {
+        logger.error(`Failed to generate stable channelId for event`, body);
+        return res.status(400).json({ status: 'error' });
+      }
       isExtensionEvent = true;
     }
 
