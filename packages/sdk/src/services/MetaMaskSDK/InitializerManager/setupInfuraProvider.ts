@@ -16,7 +16,7 @@ export const setupInfuraProvider = async (instance: MetaMaskSDK) => {
     // Goerli
     '0x5': `https://goerli.infura.io/v3/${infuraAPIKey}`,
     // Sepolia 11155111
-    '0x2a': `https://sepolia.infura.io/v3/${infuraAPIKey}`,
+    '0xaa36a7': `https://sepolia.infura.io/v3/${infuraAPIKey}`,
     // ###### Linea ######
     // Mainnet Alpha
     '0xe708': `https://linea-mainnet.infura.io/v3/${infuraAPIKey}`,
