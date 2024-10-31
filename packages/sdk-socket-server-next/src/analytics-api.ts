@@ -20,6 +20,12 @@ import {
 } from './config';
 import { getLogger } from './logger';
 import { ChannelInfo, extractChannelInfo } from './utils';
+import { evtMetricsMiddleware } from './middleware-metrics';
+import {
+  incrementAnalyticsError,
+  incrementAnalyticsEvents,
+  incrementRedisCacheOperation,
+} from './metrics';
 
 const logger = getLogger();
 
@@ -218,17 +224,19 @@ app.post('/debug', (req, _res, next) => {
   next(); // Pass control to the next handler (which will be /evt)
 });
 
-app.post('/evt', async (_req, res) => {
+app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
   try {
     const { body } = _req;
 
     if (!body.event) {
       logger.error(`Event is required`);
+      incrementAnalyticsError('MissingEventError');
       return res.status(400).json({ error: 'event is required' });
     }
 
     if (!body.event.startsWith('sdk_')) {
       logger.error(`Wrong event name: ${body.event}`);
+      incrementAnalyticsError('WrongEventNameError');
       return res.status(400).json({ error: 'wrong event name' });
     }
 
@@ -238,6 +246,7 @@ app.post('/evt', async (_req, res) => {
 
     if (typeof channelId !== 'string') {
       logger.error(`Received event with invalid channelId: ${channelId}`, body);
+      incrementAnalyticsError('InvalidChannelIdError');
       return res.status(400).json({ status: 'error' });
     }
 
@@ -251,6 +260,8 @@ app.post('/evt', async (_req, res) => {
       body,
     );
     let userIdHash = await pubClient.get(channelId);
+
+    incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
@@ -274,6 +285,11 @@ app.post('/evt', async (_req, res) => {
 
     let channelInfo: ChannelInfo | null;
     const cachedChannelInfo = await pubClient.get(userIdHash);
+
+    incrementRedisCacheOperation(
+      'analytics-get-channel-info',
+      !!cachedChannelInfo,
+    );
 
     if (cachedChannelInfo) {
       logger.debug(
@@ -369,7 +385,17 @@ app.post('/evt', async (_req, res) => {
       logger.debug('Event object:', event);
     }
 
+    incrementAnalyticsEvents(
+      body.from,
+      channelId === 'sdk',
+      event.event,
+      body.platform,
+      body.sdkVersion,
+    );
+
     analytics.track(event, function (err: Error) {
+      incrementAnalyticsError('SegmentError');
+
       if (EVENTS_DEBUG_LOGS) {
         logger.info('Segment batch', JSON.stringify({ event }, null, 2));
       } else {
@@ -383,6 +409,9 @@ app.post('/evt', async (_req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
+    incrementAnalyticsError(
+      error instanceof Error ? error.constructor.name : 'UnknownError',
+    );
     return res.json({ error });
   }
 });
