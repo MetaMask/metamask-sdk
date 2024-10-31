@@ -214,9 +214,17 @@ const analytics = new Analytics(
   },
 );
 
-app.get('/', (_req, res) => {
+app.get('/', (req, res) => {
+  if (process.env.NODE_ENV === 'development') {
+    logger.info(`health check from`, {
+      'x-forwarded-for': req.headers['x-forwarded-for'],
+      'cf-connecting-ip': req.headers['cf-connecting-ip'],
+    });
+  }
+
   res.json({ success: true });
 });
+
 
 // Redirect /debug to /evt for backwards compatibility
 app.post('/debug', (req, _res, next) => {
