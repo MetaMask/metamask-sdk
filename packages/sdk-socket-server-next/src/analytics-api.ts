@@ -218,6 +218,15 @@ app.get('/', (_req, res) => {
   res.json({ success: true });
 });
 
+app.get('/health', (req, res) => {
+  logger.info(`health check from`, {
+    'x-forwarded-for': req.headers['x-forwarded-for'],
+    'cf-connecting-ip': req.headers['cf-connecting-ip'],
+  });
+
+  res.send('ok');
+});
+
 // Redirect /debug to /evt for backwards compatibility
 app.post('/debug', (req, _res, next) => {
   req.url = '/evt'; // Redirect to /evt
