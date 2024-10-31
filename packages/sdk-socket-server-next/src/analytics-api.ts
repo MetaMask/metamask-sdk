@@ -219,10 +219,12 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/health', (req, res) => {
-  logger.info(`health check from`, {
-    'x-forwarded-for': req.headers['x-forwarded-for'],
-    'cf-connecting-ip': req.headers['cf-connecting-ip'],
-  });
+  if (process.env.NODE_ENV === 'development') {
+    logger.info(`health check from`, {
+      'x-forwarded-for': req.headers['x-forwarded-for'],
+      'cf-connecting-ip': req.headers['cf-connecting-ip'],
+    });
+  }
 
   res.send('ok');
 });
