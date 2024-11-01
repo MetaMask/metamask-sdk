@@ -73,7 +73,7 @@ export const getClient = ({ type, options }: { type: 'dApp' | 'wallet', options:
 
 describe('SDK Communication Layer', () => {
   let clientsReady = false;
-  const communicationServerUrl = 'http://localhost:4000';
+  const communicationServerUrl = 'http://localhost:4000'; // Adjust with your server url
 
   describe('Protocol V1', () => {
     it('should establish client/mobile connection through comm server with remote key exchange', async () => {
