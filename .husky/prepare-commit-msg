@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Call your personal global hook if it exists
+if [ -x "$HOME/.config/git/hooks/prepare-commit-msg" ]; then
+  "$HOME/.config/git/hooks/prepare-commit-msg" "$1" "$2" "$3"
+fi
