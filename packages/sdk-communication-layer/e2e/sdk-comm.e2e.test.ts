@@ -145,7 +145,8 @@ describe('SDK Communication Layer', () => {
           communicationServerUrl
         }
       })
-      const clientPublicKey = dAppClient.getKeyInfo()?.ecies.public ?? '';
+      await dAppClient.initFromDappStorage();
+      const clientPublicKey = dAppClient.getKeyInfo()?.ecies.public ?? 'aaa';
 
       const walletClient = getClient({ type: 'dApp', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
 
@@ -172,14 +173,16 @@ describe('SDK Communication Layer', () => {
       const channelId = uuidv4();
 
       const dAppClient = getClient({
-        type: 'wallet', options: {
+        type: 'dApp', options: {
           communicationServerUrl
         }
       })
+      await dAppClient.initFromDappStorage();
       await dAppClient.connectToChannel({ channelId });
+
       const clientPublicKey = dAppClient.getKeyInfo()?.ecies.public ?? '';
 
-      const walletClient = getClient({ type: 'dApp', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
+      const walletClient = getClient({ type: 'wallet', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
       await walletClient.connectToChannel({ channelId, authorized: true });
 
       await waitForCondition({
@@ -209,14 +212,16 @@ describe('SDK Communication Layer', () => {
       const channelId = uuidv4();
 
       const dAppClient = getClient({
-        type: 'wallet', options: {
+        type: 'dApp', options: {
           communicationServerUrl
         }
       })
+      await dAppClient.initFromDappStorage();
       await dAppClient.connectToChannel({ channelId });
+
       const clientPublicKey = dAppClient.getKeyInfo()?.ecies.public ?? '';
 
-      const walletClient = getClient({ type: 'dApp', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
+      const walletClient = getClient({ type: 'wallet', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
 
       await walletClient.connectToChannel({ channelId, authorized: true });
       await walletClient.sendMessage({
@@ -251,14 +256,16 @@ describe('SDK Communication Layer', () => {
       const channelId = uuidv4();
 
       const dAppClient = getClient({
-        type: 'wallet', options: {
+        type: 'dApp', options: {
           communicationServerUrl
         }
       })
+      await dAppClient.initFromDappStorage();
       await dAppClient.connectToChannel({ channelId });
+
       const clientPublicKey = dAppClient.getKeyInfo()?.ecies.public ?? '';
 
-      const walletClient = getClient({ type: 'dApp', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
+      const walletClient = getClient({ type: 'wallet', options: { communicationServerUrl, otherPublicKey: clientPublicKey } });
 
       await walletClient.connectToChannel({ channelId, authorized: true });
 
