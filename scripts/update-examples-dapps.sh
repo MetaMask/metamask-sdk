@@ -28,11 +28,15 @@ sdk_react_version=$(get_version "$SDK_REACT_DIR/package.json")
 sdk_react_ui_version=$(get_version "$SDK_REACT_UI_DIR/package.json")
 sdk_react_native_version=$(get_version "$SDK_REACT_NATIVE_DIR/package.json")
 
-echo "Latest versions:"
+echo "\n---------------------------------------------------"
+echo "Updating examples dapps to the latest versions"
 echo "@metamask/sdk: $sdk_version"
 echo "@metamask/sdk-react: $sdk_react_version"
 echo "@metamask/sdk-react-ui: $sdk_react_ui_version"
 echo "@metamask/sdk-react-native: $sdk_react_native_version"
+echo "-----------------------------------------------------\n"
+
+
 
 # Define the path to the examples folder
 EXAMPLES_DIR="$SDK_WORKSPACE_DIR/packages/examples"
@@ -53,7 +57,9 @@ for app in "$EXAMPLES_DIR"/*; do
         echo "Updating @metamask/sdk in $app from $current_version to $latest_version"
 
         # using yarn instead to allow upgrading to happen on ci
+        cd "$app"
         yarn up @metamask/sdk
+        cd "$SDK_WORKSPACE_DIR"
         # jq '.dependencies["@metamask/sdk"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
@@ -65,7 +71,9 @@ for app in "$EXAMPLES_DIR"/*; do
         echo "Updating @metamask/sdk-react in $app from $current_version to $latest_version"
 
         # using yarn instead to allow upgrading to happen on ci
+        cd "$app"
         yarn up @metamask/sdk-react
+        cd "$SDK_WORKSPACE_DIR"
         # jq '.dependencies["@metamask/sdk-react"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
@@ -77,7 +85,9 @@ for app in "$EXAMPLES_DIR"/*; do
         echo "Updating @metamask/sdk-react-ui in $app from $current_version to $latest_version"
 
         # using yarn instead to allow upgrading to happen on ci
+        cd "$app"
         yarn up @metamask/sdk-react-ui
+        cd "$SDK_WORKSPACE_DIR"
         # jq '.dependencies["@metamask/sdk-react-ui"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
@@ -89,7 +99,9 @@ for app in "$EXAMPLES_DIR"/*; do
         echo "Updating @metamask/sdk-react-native in $app from $current_version to $latest_version"
 
         # using yarn instead to allow upgrading to happen on ci
+        cd "$app"
         yarn up @metamask/sdk-react-native
+        cd "$SDK_WORKSPACE_DIR"
         # jq '.dependencies["@metamask/sdk-react-native"] = "'"$latest_version"'"' "$PACKAGE_JSON" > "$PACKAGE_JSON.tmp" && mv "$PACKAGE_JSON.tmp" "$PACKAGE_JSON"
       fi
 
