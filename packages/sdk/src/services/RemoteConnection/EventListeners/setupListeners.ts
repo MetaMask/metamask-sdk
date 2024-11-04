@@ -111,13 +111,6 @@ export function setupListeners(
   // }) as ClientsDisconnectedHandler);
 
   addListener(EventType.TERMINATE, (() => {
-    if (state.platformManager?.isBrowser()) {
-      // TODO use a modal or let user customize messsage instead
-      // eslint-disable-next-line no-alert
-      alert(`SDK Connection has been terminated from MetaMask.`);
-    } else {
-      console.info(`SDK Connection has been terminated`);
-    }
     state.pendingModal?.unmount?.();
     state.installModal?.unmount?.(true);
     state.pendingModal = undefined;
