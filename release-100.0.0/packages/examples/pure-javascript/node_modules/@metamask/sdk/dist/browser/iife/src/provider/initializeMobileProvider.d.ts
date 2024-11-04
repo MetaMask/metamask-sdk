@@ -1,0 +1,18 @@
+import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
+import { MetaMaskInstaller } from '../Platform/MetaMaskInstaller';
+import { PlatformManager } from '../Platform/PlatfformManager';
+import { MetaMaskSDK } from '../sdk';
+import { RemoteConnection } from '../services/RemoteConnection';
+declare const initializeMobileProvider: ({ checkInstallationOnAllCalls, communicationLayerPreference, injectProvider, shouldShimWeb3, platformManager, installer, sdk, remoteConnection, debug, }: {
+    communicationLayerPreference: CommunicationLayerPreference;
+    checkInstallationOnAllCalls?: boolean | undefined;
+    injectProvider?: boolean | undefined;
+    shouldShimWeb3: boolean;
+    sdk: MetaMaskSDK;
+    platformManager: PlatformManager;
+    installer: MetaMaskInstaller;
+    remoteConnection?: RemoteConnection | undefined;
+    debug: boolean;
+}) => Promise<import("./SDKProvider").SDKProvider>;
+export default initializeMobileProvider;
+//# sourceMappingURL=initializeMobileProvider.d.ts.map
