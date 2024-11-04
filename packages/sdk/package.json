@@ -51,7 +51,7 @@
     "bowser": "^2.9.0",
     "cross-fetch": "^4.0.0",
     "debug": "^4.3.4",
-    "eciesjs": "^0.4.8",
+    "eciesjs": "^0.4.10",
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.7",
     "i18next": "23.11.5",

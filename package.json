@@ -107,6 +107,7 @@
   },
   "resolutions": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "secp256k1": "^5.0.1"
   }
 }

@@ -98,7 +98,7 @@
   },
   "peerDependencies": {
     "cross-fetch": "^4.0.0",
-    "eciesjs": "^0.3.16",
+    "eciesjs": "*",
     "eventemitter2": "^6.4.7",
     "readable-stream": "^3.6.2",
     "socket.io-client": "^4.5.1"
