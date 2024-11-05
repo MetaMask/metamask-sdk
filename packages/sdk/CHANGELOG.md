@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.2]
+### Added
+- fix: potential security issue with secp256k1 ([#1111](https://github.com/MetaMask/metamask-sdk/pull/1111))
+- chore: remove the alert of 'SDK Connection has been terminated' ([#1095](https://github.com/MetaMask/metamask-sdk/pull/1095))
+- fix: chainId for sepolia in infura rpc map ([#1105](https://github.com/MetaMask/metamask-sdk/pull/1105))
+
 ## [0.30.1]
 ### Added
 - feat: deprecate getUniversalLink in favor or display_uri ([#1089](https://github.com/MetaMask/metamask-sdk/pull/1089))
@@ -428,7 +434,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.2...HEAD
+[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.1...@metamask/sdk@0.30.2
 [0.30.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.0...@metamask/sdk@0.30.1
 [0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.3...@metamask/sdk@0.30.0
 [0.29.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...@metamask/sdk@0.29.3
