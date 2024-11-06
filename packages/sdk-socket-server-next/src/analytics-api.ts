@@ -225,7 +225,6 @@ app.get('/', (req, res) => {
   res.json({ success: true });
 });
 
-
 // Redirect /debug to /evt for backwards compatibility
 app.post('/debug', (req, _res, next) => {
   req.url = '/evt'; // Redirect to /evt
@@ -259,8 +258,14 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
     }
 
     if (channelId === 'sdk') {
-      channelId = uuidv4();
-      isExtensionEvent = true;
+      incrementAnalyticsEvents(
+        body.from,
+        channelId === 'sdk',
+        'unknown',
+        body.platform,
+        body.sdkVersion,
+      );
+      return res.json({ success: true });
     }
 
     logger.debug(
@@ -402,8 +407,6 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
     );
 
     analytics.track(event, function (err: Error) {
-      incrementAnalyticsError('SegmentError');
-
       if (EVENTS_DEBUG_LOGS) {
         logger.info('Segment batch', JSON.stringify({ event }, null, 2));
       } else {
@@ -411,6 +414,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       }
 
       if (err) {
+        incrementAnalyticsError('SegmentError');
         logger.error('Segment error:', err);
       }
     });
