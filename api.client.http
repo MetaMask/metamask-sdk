@@ -1,6 +1,0 @@
-### Get Metadata
-GET http://localhost:4000/
-
-
-### Get Metrics
-GET http://localhost:4000/metrics
