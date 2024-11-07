@@ -277,7 +277,6 @@ export class MetaMaskSDK extends EventEmitter2 {
   }
 
   /**
-   * @deprecated init is called automatically when the SDK is instantiated.
    * You can subscribe to the 'initialized' event to know when the SDK is ready or call connect() to start the connection process.
    * @returns {Promise<void>} - A promise that resolves when the SDK is initialized.
    */
