@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.2]
+### Uncategorized
+- align version with sdk
+
 ## [0.30.0]
 
 ## [0.29.2]
@@ -154,7 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.2...HEAD
+[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.0...@metamask/sdk-install-modal-web@0.30.2
 [0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.2...@metamask/sdk-install-modal-web@0.30.0
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.1...@metamask/sdk-install-modal-web@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.28.1...@metamask/sdk-install-modal-web@0.29.1
