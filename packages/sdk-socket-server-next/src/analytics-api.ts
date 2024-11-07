@@ -4,7 +4,6 @@ import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
@@ -225,7 +224,6 @@ app.get('/', (req, res) => {
   res.json({ success: true });
 });
 
-
 // Redirect /debug to /evt for backwards compatibility
 app.post('/debug', (req, _res, next) => {
   req.url = '/evt'; // Redirect to /evt
@@ -258,8 +256,10 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       return res.status(400).json({ status: 'error' });
     }
 
+    let isAnonUser = false;
+
     if (channelId === 'sdk') {
-      channelId = uuidv4();
+      isAnonUser = true;
       isExtensionEvent = true;
     }
 
@@ -267,7 +267,10 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       `Received event /evt channelId=${channelId} isExtensionEvent=${isExtensionEvent}`,
       body,
     );
-    let userIdHash = await pubClient.get(channelId);
+
+    let userIdHash = isAnonUser
+      ? crypto.createHash('sha1').update(channelId).digest('hex')
+      : await pubClient.get(channelId);
 
     incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
 
@@ -292,7 +295,9 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
     }
 
     let channelInfo: ChannelInfo | null;
-    const cachedChannelInfo = await pubClient.get(userIdHash);
+    const cachedChannelInfo = isAnonUser
+      ? null
+      : await pubClient.get(userIdHash);
 
     incrementRedisCacheOperation(
       'analytics-get-channel-info',
@@ -353,16 +358,6 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       },
     };
 
-    // Always check for userId to avoid hot sharding events
-    if (!event.userId || event.userId === SDK_EXTENSION_DEFAULT_ID) {
-      const newUserId = uuidv4();
-      logger.debug(
-        `event: ${event.event} - Replacing 'sdk' id with '${newUserId}'`,
-        event,
-      );
-      event.userId = newUserId;
-    }
-
     if (!event.properties.dappId) {
       // Prevent "N/A" in url and ensure a valid dappId
       const newDappId =
@@ -395,15 +390,13 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     incrementAnalyticsEvents(
       body.from,
-      channelId === 'sdk',
+      !isAnonUser,
       event.event,
       body.platform,
       body.sdkVersion,
     );
 
     analytics.track(event, function (err: Error) {
-      incrementAnalyticsError('SegmentError');
-
       if (EVENTS_DEBUG_LOGS) {
         logger.info('Segment batch', JSON.stringify({ event }, null, 2));
       } else {
@@ -411,6 +404,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       }
 
       if (err) {
+        incrementAnalyticsError('SegmentError');
         logger.error('Segment error:', err);
       }
     });
