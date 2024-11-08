@@ -25,13 +25,13 @@ const baseExternalDeps = [
 const listDepForRollup = [...baseExternalDeps];
 const webExternalDeps = [
   ...listDepForRollup,
-  'qrcode-terminal-nooctal',
+  '@paulmillr/qr',
   'react',
   'react-dom',
 ];
 const rnExternalDeps = [
   ...listDepForRollup,
-  'qrcode-terminal-nooctal',
+  '@paulmillr/qr',
   'react',
   'react-native',
 ];

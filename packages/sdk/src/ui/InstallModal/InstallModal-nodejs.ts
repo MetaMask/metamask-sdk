@@ -1,10 +1,9 @@
 import { logger } from '../../utils/logger';
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
-const qrcode = require('qrcode-terminal-nooctal');
+import encodeQR from "@paulmillr/qr"
 
 const InstallModal = ({ link }: { link: string; debug?: boolean }) => {
-  qrcode.generate(link, { small: true }, (qr: unknown) => console.log(qr));
+  const qr = encodeQR(link, 'ascii')
+  console.log(qr)
   logger(`[UI: InstallModal-nodejs()] qrcode url: ${link}`);
   return {
     unmount: () => undefined,
