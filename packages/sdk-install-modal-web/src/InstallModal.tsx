@@ -8,9 +8,9 @@ import InstallIcon from './components/InstallIcon';
 import WalletIcon from './components/LockIcon';
 import Logo from './components/Logo';
 import LockIcon from './components/WalletIcon';
-import { FOX_IMAGE } from './constants';
 import styles from './styles';
 import SDKVersion from './components/SDKVersion';
+import encodeQR from '@paulmillr/qr';
 
 export interface InstallModalProps {
   onClose: () => void;
@@ -32,30 +32,11 @@ export const InstallModal = (props: InstallModalProps) => {
 
   useEffect(() => {
     if (qrCodeContainer.current) {
-      // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const QRCodeStyling = require('qr-code-styling');
-      const qrCode = new QRCodeStyling({
-        width: 270,
-        height: 270,
-        type: 'svg',
-        data: props.link,
-        image: FOX_IMAGE,
-        dotsOptions: {
-          color: 'black',
-          type: 'rounded',
-        },
-        imageOptions: {
-          margin: 5,
-        },
-        cornersDotOptions: {
-          color: '#f66a07',
-        },
-        qrOptions: {
-          errorCorrectionLevel: 'M',
-        },
-      });
-      qrCode.append(qrCodeContainer.current);
+      const svgElement = encodeQR(props.link, "svg", {
+        ecc: "medium",
+        scale: 2
+      })
+      qrCodeContainer.current.innerHTML = svgElement
     }
   }, [qrCodeContainer]);
 

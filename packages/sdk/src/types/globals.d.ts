@@ -1,1 +1,1 @@
-declare module 'qrcode-terminal-nooctal';
+declare module '@paulmillr/qr';
