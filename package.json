@@ -9,6 +9,7 @@
   "workspaces": [
     "packages/sdk-socket-server-next",
     "packages/sdk-install-modal-web",
+    "packages/sdk-install-modal-web-new",
     "packages/sdk-communication-layer",
     "packages/sdk",
     "packages/sdk-react",
