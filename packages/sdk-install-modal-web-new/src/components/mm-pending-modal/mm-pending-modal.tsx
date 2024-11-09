@@ -20,6 +20,8 @@ export class PendingModal {
 
   @Prop() i18nInstance: i18n;
 
+  @Prop() otpCode?: string;
+
   @Event() close: EventEmitter;
 
   @Event() disconnect: EventEmitter;
@@ -38,6 +40,10 @@ export class PendingModal {
     this.updateOTPValue.emit({
         otpValue,
     })
+  }
+
+  disconnectedCallback() {
+    this.onClose();
   }
 
   render() {
@@ -82,8 +88,8 @@ export class PendingModal {
               </div>
               <div
                 id="sdk-mm-otp-value"
-                style={{ padding: '10px', fontSize: '32px', display: 'none' }}
-              ></div>
+                style={{ padding: '10px', fontSize: '32px', display: this.otpCode ? 'block' : 'none' }}
+              >{this.otpCode}</div>
               {displayOTP && (
                 <div class='notice'>
                   * {t('PENDING_MODAL.NUMBER_AFTER_OPEN_NOTICE')}

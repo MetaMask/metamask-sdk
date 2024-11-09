@@ -8,9 +8,8 @@ import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { FOX_IMAGE } from '../misc/constants';
 import { i18n } from 'i18next';
-import QRCodeStyling from 'qr-code-styling';
+import encodeQR from '@paulmillr/qr';
 
 @Component({
   tag: 'mm-install-modal',
@@ -54,6 +53,16 @@ export class InstallModal {
     }
   }
 
+  @Watch('link')
+  updateLink(newLink: string) {
+    const svgElement = encodeQR(newLink, "svg", {
+      ecc: "medium",
+      scale: 2
+    })
+
+    this.el.shadowRoot.querySelector("#sdk-mm-qrcode").innerHTML = svgElement
+  }
+
   onClose() {
     this.close.emit();
   }
@@ -67,28 +76,7 @@ export class InstallModal {
   }
 
   componentDidLoad() {
-    const qrCode = new QRCodeStyling({
-      width: 270,
-      height: 270,
-      type: 'svg',
-      data: this.link,
-      image: FOX_IMAGE,
-      dotsOptions: {
-        color: 'black',
-        type: 'rounded',
-      },
-      imageOptions: {
-        margin: 5,
-      },
-      cornersDotOptions: {
-        color: '#f66a07',
-      },
-      qrOptions: {
-        errorCorrectionLevel: 'M',
-      },
-    });
-
-    qrCode.append(this.el.shadowRoot.querySelector("#sdk-mm-qrcode"))
+    this.updateLink(this.link);
   }
 
   render() {

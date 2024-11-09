@@ -61,8 +61,6 @@
     "i18next": "23.11.5"
   },
   "dependencies": {
-    "canvas": "^2.11.2",
-    "jsdom": "^25.0.1",
-    "qr-code-styling": "^1.8.4"
+    "@paulmillr/qr": "^0.2.1"
   }
 }

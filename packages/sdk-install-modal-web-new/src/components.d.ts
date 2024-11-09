@@ -23,6 +23,7 @@ export namespace Components {
          */
         "displayOTP"?: boolean;
         "i18nInstance": i18n;
+        "otpCode"?: string;
         "sdkVersion"?: string;
     }
     interface MmSelectModal {
@@ -129,6 +130,7 @@ declare namespace LocalJSX {
         "onClose"?: (event: MmPendingModalCustomEvent<any>) => void;
         "onDisconnect"?: (event: MmPendingModalCustomEvent<any>) => void;
         "onUpdateOTPValue"?: (event: MmPendingModalCustomEvent<{ otpValue: string }>) => void;
+        "otpCode"?: string;
         "sdkVersion"?: string;
     }
     interface MmSelectModal {

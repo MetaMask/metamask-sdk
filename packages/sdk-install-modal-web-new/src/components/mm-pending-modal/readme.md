@@ -11,6 +11,7 @@
 | -------------- | --------------- | ---------------- | --------- | ----------- |
 | `displayOTP`   | `display-o-t-p` | The QR code link | `boolean` | `undefined` |
 | `i18nInstance` | --              |                  | `i18n`    | `undefined` |
+| `otpCode`      | `otp-code`      |                  | `string`  | `undefined` |
 | `sdkVersion`   | `sdk-version`   |                  | `string`  | `undefined` |
 
 

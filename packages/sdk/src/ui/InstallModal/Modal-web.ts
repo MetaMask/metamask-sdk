@@ -117,20 +117,13 @@ export interface InstallWidgetProps {
       }
   
       const tryUpdate = () => {
-        const otpNode =
-        document.getElementById('sdk-mm-otp-value');
-  
-        if(this.debug) {
-          console.debug(`ModalLoader: updateOTPValue: otpNode`, otpNode);
-        }
-  
-        if (otpNode) {
-          otpNode.textContent = otpValue;
-          otpNode.style.display = 'block';
+
+        const modal = this.pendingContainer?.querySelector('mm-pending-modal') as HTMLMmPendingModalElement | null;
+        if (modal) {
+          modal.otpCode = otpValue
           return true;
-        } else {
-          return false;
         }
+        return false;
       }
       // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
       setTimeout(() => {
@@ -145,36 +138,10 @@ export interface InstallWidgetProps {
       if (this.debug) {
         console.debug(`ModalLoader: updateQRCode`, link);
       }
-      // TODO use scoped elem
-      const qrCodeNode =
-        document.getElementById('sdk-qrcode-container');
-      if (qrCodeNode) {
-        qrCodeNode.innerHTML = '';
-        // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const QRCodeStyling = require('qr-code-styling');
-        // Prevent nextjs import issue
-        const qrCode = new QRCodeStyling({
-          width: 270,
-          height: 270,
-          type: 'svg',
-          data: link,
-          image: FOX_IMAGE,
-          dotsOptions: {
-            color: 'black',
-            type: 'rounded',
-          },
-          imageOptions: {
-            margin: 5,
-          },
-          cornersDotOptions: {
-            color: '#f66a07',
-          },
-          qrOptions: {
-            errorCorrectionLevel: 'M',
-          },
-        });
-        qrCode.append(qrCodeNode);
+
+      const modal = this.installContainer?.querySelector('mm-install-modal') as HTMLMmInstallModalElement | null;
+      if (modal) {
+        modal.link = link;
       }
     };
   

@@ -40,6 +40,10 @@ export class PendingModal {
     this.tab = tab;
   }
 
+  disconnectedCallback() {
+    this.onClose();
+  }
+
   render() {
     const sdkVersion = this.sdkVersion
     const t = this.i18nInstance.t;
