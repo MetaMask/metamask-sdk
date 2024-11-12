@@ -21,6 +21,7 @@ import {
   WALLET_PASSWORD,
   Browsers,
   BrowsersActivity,
+  IS_RUNNING_IN_BROWSER_STACK,
 } from './Constants';
 import LockScreen from './screens/MetaMask/LockScreen';
 import { Dapp } from './screens/interfaces/Dapp';
@@ -53,6 +54,9 @@ export const launchMobileBrowser = async () => {
     await driver.activateApp(Browsers.SAFARI);
   } else {
     await driver.activateApp(Browsers.CHROME);
+    if (IS_RUNNING_IN_BROWSER_STACK) {
+      await driver.setOrientation('LANDSCAPE');
+    }
   }
 };
 

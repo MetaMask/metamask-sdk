@@ -1,6 +1,6 @@
 import { killApp, launchApp, launchMetaMask } from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
+import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP, IS_RUNNING_IN_BROWSER_STACK } from '../src/Constants';
 import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
 import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
 import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
@@ -76,9 +76,12 @@ export const beforeHook = async () => {
   await ImportFromSeedScreen.fillSrpField(SRP);
   await ImportFromSeedScreen.fillFirstPasswordInput(WALLET_PASSWORD);
   await ImportFromSeedScreen.fillSecondPasswordInput(WALLET_PASSWORD);
-  await Gestures.hideKeyboardWithTap();
+  if (await driver.isKeyboardShown()) {
+    await Gestures.hideKeyboardWithTap();
+  }
   await ImportFromSeedScreen.tapBiometricsToggleIfDisplayed();
   await ImportFromSeedScreen.tapImportButton();
+  await driver.pause(2000);  // Importing an SRP in android is specially slow
   await WalletReadyScreen.tapDoneButton();
 
   // Waiting for the wallet to be ready. Because the initial loading popups

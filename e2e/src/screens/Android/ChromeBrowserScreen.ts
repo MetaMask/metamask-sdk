@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { AndroidSelector } from '../../Selectors';
 import { Dapp } from '../interfaces/Dapp';
-import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../../src/Constants';
+import { Browsers, BrowsersActivity, WEB_DAPP_LOAD_ATTEMPTS } from '../../../src/Constants';
 import { waitUntil } from 'webdriverio/build/commands/browser';
 
 class ChromeBrowserScreen implements MobileBrowser {
@@ -91,7 +91,7 @@ class ChromeBrowserScreen implements MobileBrowser {
 
   async goToAddress(address: string, pageObject: Dapp): Promise<void> {
     const currentActivity = await driver.getCurrentActivity();
-    if (currentActivity !== Browsers.CHROME) {
+    if (currentActivity !== BrowsersActivity.CHROME) {
       await driver.activateApp(Browsers.CHROME);
     }
 
@@ -105,9 +105,9 @@ class ChromeBrowserScreen implements MobileBrowser {
       await this.urlAddressBar.clearValue();
       await this.urlAddressBar.setValue(address);
       await driver.pressKeyCode(66);
-    } 
-
-    await this.refreshPage();
+    } else {
+      await this.refreshPage();
+    }
 
     // Wait for the page to start loading
     await driver.pause(3000);
