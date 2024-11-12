@@ -3,7 +3,7 @@ import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
+import { Translator } from '../../lang';
 
 @Component({
   tag: 'mm-pending-modal',
@@ -18,7 +18,7 @@ export class PendingModal {
 
   @Prop() sdkVersion?: string;
 
-  @Prop() i18nInstance: i18n;
+  @Prop() i18nInstance: Translator;
 
   @Prop() otpCode?: string;
 

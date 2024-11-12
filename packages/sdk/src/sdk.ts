@@ -7,7 +7,7 @@ import {
 import debug from 'debug';
 
 import EventEmitter2 from 'eventemitter2';
-import { createInstance, i18n } from 'i18next';
+import { Translator, createInstance } from '@metamask/sdk-install-modal-web';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
@@ -204,7 +204,7 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private readonlyRPCCalls = false;
 
-  public i18nInstance: i18n = createInstance();
+  public i18nInstance: Translator = createInstance();
 
   public availableLanguages: string[] = ['en'];
 

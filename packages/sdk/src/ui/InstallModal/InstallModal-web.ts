@@ -1,4 +1,4 @@
-import { i18n } from 'i18next';
+import { Translator } from '@metamask/sdk-install-modal-web';
 import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import packageJson from '../../../package.json';
@@ -19,7 +19,7 @@ const sdkWebInstallModal = ({
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
-  i18nInstance: i18n;
+  i18nInstance: Translator;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;

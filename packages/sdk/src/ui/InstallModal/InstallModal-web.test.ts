@@ -1,20 +1,15 @@
-import { ModalLoader } from '@metamask/sdk-install-modal-web';
-import { i18n } from 'i18next';
+import { ModalLoader, Translator } from '@metamask/sdk-install-modal-web';
+import createInstance from '@metamask/sdk-install-modal-web/dist/es/src/lang';
 import * as loggerModule from '../../utils/logger';
 import sdkWebInstallModal from './InstallModal-web';
 
 jest.mock('@metamask/sdk-install-modal-web');
-jest.mock('i18next', () => ({
-  t: jest.fn((key) => key),
-}));
 
 describe('sdkWebInstallModal', () => {
   const spyLogger = jest.spyOn(loggerModule, 'logger');
 
   let documentSpy: jest.SpyInstance;
-  let mockI18n: i18n = {
-    t: jest.fn((key) => key),
-  } as unknown as i18n;
+  let mockI18n: Translator = createInstance();
 
   const mockModalLoader = ModalLoader as jest.MockedClass<typeof ModalLoader>;
 
@@ -31,7 +26,7 @@ describe('sdkWebInstallModal', () => {
 
     mockI18n = {
       t: jest.fn((key) => key),
-    } as unknown as i18n;
+    } as unknown as Translator;
 
     global.document = {
       createElement: jest.fn(() => ({

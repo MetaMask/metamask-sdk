@@ -1,4 +1,4 @@
-import { i18n } from 'i18next';
+import { Translator } from '@metamask/sdk-install-modal-web';
 import packageJson from '../../../package.json';
 import { logger } from '../../utils/logger';
 import ModalLoader from './Modal-web';
@@ -9,7 +9,7 @@ const sdkWebPendingModal = ({
   debug,
 }: {
   onDisconnect?: () => void;
-  i18nInstance: i18n;
+  i18nInstance: Translator;
   debug?: boolean;
 }) => {
   let div: HTMLDivElement | null = null;

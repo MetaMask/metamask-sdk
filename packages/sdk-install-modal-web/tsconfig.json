@@ -11,8 +11,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "jsx": "react",
-    "jsxFactory": "h"
+    "jsxFactory": "h",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "dist"]
 }
