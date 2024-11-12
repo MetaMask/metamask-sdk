@@ -1,0 +1,1 @@
+{"version":3,"file":"setupReadOnlyRPCProviders.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,WAAW,EAAE,MAAM,cAAc,CAAC;AAE3C,MAAM,WAAW,YAAY;IAC3B,CAAC,OAAO,EAAE,KAAK,MAAM,EAAE,GAAG,MAAM,CAAC;CAClC;AAED,eAAO,MAAM,yBAAyB,aAAoB,WAAW,kBAkBpE,CAAC"}
