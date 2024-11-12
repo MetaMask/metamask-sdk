@@ -24,7 +24,10 @@ copy_to_deployment_dir() {
 # ------ Start
 deployment_folder="cdn"
 gh_tag=$tag
-deployment_dir="deployments/$deployment_folder/$gh_tag"
+gh_tag_version=$(echo "$gh_tag" | sed -E 's/@metamask\/sdk@([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+
+# Sanitize tag version
+deployment_dir="deployments/$deployment_folder/$gh_tag_version"
 
 echo "Deployment folder: $deployment_folder"
 echo "Deployment directory: $deployment_dir"
