@@ -57,7 +57,7 @@
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
-    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md'",
     "clean": "rimraf ./dist && rimraf ./loader && rimraf ./.stencil",
     "size": "size-limit",
     "preversion": "yarn test",

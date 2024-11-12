@@ -16,7 +16,6 @@ export default {
 
 export const Network = () => (
   <View
-    // eslint-disable-next-line react-native/no-inline-styles
     style={{
       height: 50,
       width: 50,
@@ -28,7 +27,6 @@ export const Network = () => (
 
 export const Status = () => (
   <View
-    // eslint-disable-next-line react-native/no-inline-styles
     style={{
       height: 50,
       width: 50,

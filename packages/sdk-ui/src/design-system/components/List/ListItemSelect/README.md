@@ -12,7 +12,7 @@ Optional prop to determine if the item is selected.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| boolean    | No                                                     | false                                               |
+| boolean                                             | No                                                      | false                                                  |
 
 ### `isDisabled`
 
@@ -20,7 +20,7 @@ Optional prop to determine if the item is disabled.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| boolean    | No                                                     | false                                               |
+| boolean                                             | No                                                      | false                                                  |
 
 ### `gap`
 
@@ -28,7 +28,7 @@ Optional prop to configure the gap between items inside the ListItem.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| number or string                                            | No                                                     |                   16                                         |
+| number or string                                    | No                                                      | 16                                                     |
 
 ### `verticalAlignment`
 
@@ -36,17 +36,18 @@ Optional prop to configure the vertical alignment between items inside the ListI
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| VerticalAlignment                                            | No                                                     |                   VerticalAlignment.Top                                         |
+| VerticalAlignment                                   | No                                                      | VerticalAlignment.Top                                  |
 
 ## Usage
 
 ```javascript
-<ListItemSelect 
-  onPress={ONPRESS_HANDLER} 
-  isSelected 
+<ListItemSelect
+  onPress={ONPRESS_HANDLER}
+  isSelected
   isDisabled={false}
-  gap={8} 
-  verticalAlignment={VerticalAlignment.Center}>
+  gap={8}
+  verticalAlignment={VerticalAlignment.Center}
+>
   {SAMPLE_CHILDREN_COMPONENT}
-</ListItemSelect>;
+</ListItemSelect>
 ```

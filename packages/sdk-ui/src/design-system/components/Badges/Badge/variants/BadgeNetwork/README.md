@@ -12,7 +12,7 @@ Optional prop to control the variant of badge.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [BadgeVariant.Network](../../Badge.types.ts)                                           | Yes                                                     |
+| [BadgeVariant.Network](../../Badge.types.ts)        | Yes                                                     |
 
 ### `name`
 
@@ -27,8 +27,8 @@ Optional prop for name of the network.
 Optional prop to control the image source of the network from either a local or remote source.
 
 | <span style="color:gray;font-size:14px">TYPE</span>                   | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| [ImageSourcePropType](https://reactnative.dev/docs/image#imagesource) | Yes                                                     |                                      |
+| :-------------------------------------------------------------------- | :------------------------------------------------------ | --- |
+| [ImageSourcePropType](https://reactnative.dev/docs/image#imagesource) | Yes                                                     |     |
 
 ## Usage
 
@@ -37,5 +37,5 @@ Optional prop to control the image source of the network from either a local or 
   variant={BadgeVariant.Network}
   name={NETWORK_NAME}
   imageSource={NETWORK_IMAGE_SOURCE}
-/>;
+/>
 ```

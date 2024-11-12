@@ -154,7 +154,7 @@ function buildOpts(opts: BlockiesOptions): BlockiesOptions {
   );
 }
 
-const _crc32 = new Array();
+const _crc32: any[] = [];
 
 // compute crc32 of the PNG chunks
 function crc32(png: any, offs: any, size: any) {
@@ -213,8 +213,8 @@ class BlockiesPNG {
     this.iend_size = 4 + 4 + 4;
     this.buffer_size = this.iend_offs + this.iend_size; // total PNG size
 
-    this.buffer = new Array();
-    this.palette = new Object();
+    this.buffer = [];
+    this.palette = {};
     this.pindex = 0;
 
     // initialize buffer with zero bytes
@@ -349,7 +349,7 @@ class BlockiesPNG {
       for (let x = -1; x < this.width; x++) {
         s1 += this.buffer[this.index(x, y)].charCodeAt(0);
         s2 += s1;
-        if ((n -= 1) == 0) {
+        if ((n -= 1) === 0) {
           s1 %= BASE;
           s2 %= BASE;
           n = NMAX;
@@ -419,7 +419,7 @@ export function toDataUrl(address: string) {
     // if data is 0, leave the background
     if (imageData[i]) {
       // if data is 2, choose spot color, if 1 choose foreground
-      const pngColor = imageData[i] == 1 ? color : spotcolor;
+      const pngColor = imageData[i] === 1 ? color : spotcolor;
       p.fillRect(
         col * opts.scale,
         row * opts.scale,

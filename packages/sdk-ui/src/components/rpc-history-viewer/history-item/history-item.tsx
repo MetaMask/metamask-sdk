@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import { RPCMethodResult } from '@metamask/sdk-communication-layer';
 import React, { useMemo } from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';

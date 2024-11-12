@@ -12,7 +12,7 @@ Icon name of the icon that will be displayed.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [IconName](../Icons/Icon.types.ts)               | Yes                                                     |
+| [IconName](../Icons/Icon.types.ts)                  | Yes                                                     |
 
 ### `onPress`
 
@@ -28,7 +28,7 @@ Optional enum to select between variants.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| [ButtonIconVariants](./ButtonIcon.types.ts)       | No                                                      | Primary                                                |
+| [ButtonIconVariants](./ButtonIcon.types.ts)         | No                                                      | Primary                                                |
 
 ## Usage
 
@@ -37,5 +37,5 @@ Optional enum to select between variants.
   iconName={IconName.Bank}
   onPress={ONPRESS_HANDLER}
   variant={ButtonIconVariants.Primary}
-/>;
+/>
 ```

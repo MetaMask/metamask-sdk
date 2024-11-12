@@ -55,5 +55,5 @@ Optional label (using [Tag](../../../../Tags/Tag/Tag.tsx) component) below the t
   secondaryText={SAMPLE_SECONDARY_TEXT}
   tertiaryText={SAMPLE_TERTIARY_TEXT}
   tagLabel={SAMPLE_TAG_LABEL}
-/>;
+/>
 ```

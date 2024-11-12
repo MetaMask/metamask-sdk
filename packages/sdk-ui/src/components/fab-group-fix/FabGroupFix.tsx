@@ -202,7 +202,7 @@ const FABGroupFix = ({
   onPress,
   onLongPress,
   toggleStackOnLongPress,
-  accessibilityLabel,
+  accessibilityLabel: accessibilityLabelUpper,
   style,
   fabStyle,
   visible,
@@ -461,7 +461,7 @@ const FABGroupFix = ({
           delayLongPress={delayLongPress}
           icon={icon}
           color={colorProp}
-          accessibilityLabel={accessibilityLabel}
+          accessibilityLabel={accessibilityLabelUpper}
           accessibilityRole="button"
           accessibilityState={{ expanded: open }}
           style={[styles.fab, fabStyle]}

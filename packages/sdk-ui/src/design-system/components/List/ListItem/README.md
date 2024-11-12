@@ -12,7 +12,7 @@ Content to wrap to display.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| ReactNode                                          | No                                                     |
+| ReactNode                                           | No                                                      |
 
 ### `gap`
 
@@ -20,7 +20,7 @@ Optional prop to configure the gap between items inside the ListItem.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| number or string                                            | No                                                     |                   16                                         |
+| number or string                                    | No                                                      | 16                                                     |
 
 ### `verticalAlignment`
 
@@ -28,15 +28,12 @@ Optional prop to configure the vertical alignment between items inside the ListI
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| VerticalAlignment                                            | No                                                     |                   VerticalAlignment.Top                                         |
+| VerticalAlignment                                   | No                                                      | VerticalAlignment.Top                                  |
 
 ## Usage
 
 ```javascript
-<ListItem 
-  gap={20} 
-  verticalAlignment={VerticalAlignment.Center}
->
+<ListItem gap={20} verticalAlignment={VerticalAlignment.Center}>
   {SAMPLE_CHILDREN_COMPONENT}
 </ListItem>
 ```

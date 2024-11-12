@@ -10,7 +10,7 @@ export enum BannerAlertSeverity {
   Info = 'Info',
   Success = 'Success',
   Warning = 'Warning',
-  // eslint-disable-next-line @typescript-eslint/no-shadow
+
   Error = 'Error',
 }
 

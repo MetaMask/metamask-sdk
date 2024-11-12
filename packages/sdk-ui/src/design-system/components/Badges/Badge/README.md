@@ -10,7 +10,7 @@ Variant of badge.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [BadgeVariant](../../Badge.types.ts)                                           | Yes                                                     |
+| [BadgeVariant](../../Badge.types.ts)                | Yes                                                     |
 
 ## BadgeNetwork Props
 
@@ -27,8 +27,8 @@ Optional prop for name of the network.
 Optional prop to control the image source of the network from either a local or remote source.
 
 | <span style="color:gray;font-size:14px">TYPE</span>                   | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| [ImageSourcePropType](https://reactnative.dev/docs/image#imagesource) | Yes                                                     |                                      |
+| :-------------------------------------------------------------------- | :------------------------------------------------------ | --- |
+| [ImageSourcePropType](https://reactnative.dev/docs/image#imagesource) | Yes                                                     |     |
 
 ## BadgeStatus Props
 
@@ -38,15 +38,15 @@ Optional prop to control the status of BadgeStatus.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| [BadgeStatusState](./BadgeStatus.types.ts)  | No                                                      | Disconnected                                               |
+| [BadgeStatusState](./BadgeStatus.types.ts)          | No                                                      | Disconnected                                           |
 
 ### `borderColor`
 
 Optional prop to change the color of the border.
 
-| <span style="color:gray;font-size:14px">TYPE</span>                   | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| ColorValue                                            | No                                                     |
+| <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
+| :-------------------------------------------------- | :------------------------------------------------------ |
+| ColorValue                                          | No                                                      |
 
 ## Usage
 
@@ -59,8 +59,5 @@ Optional prop to change the color of the border.
 />;
 
 // Badge Status
-<Badge
-  variant={BadgeVariant.Status}
-  state={BadgeStatusState.Disconnected}
-/>;
+<Badge variant={BadgeVariant.Status} state={BadgeStatusState.Disconnected} />;
 ```

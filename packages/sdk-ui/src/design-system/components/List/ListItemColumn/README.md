@@ -12,7 +12,7 @@ Optional prop for content to wrap to display.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| ReactNode                                           | No                                                     |
+| ReactNode                                           | No                                                      |
 
 ### `widthType`
 
@@ -20,7 +20,7 @@ Optional prop to configure the width of the column.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| WidthType                                            | No                                                     |                   WidthType.Auto                                         |
+| WidthType                                           | No                                                      | WidthType.Auto                                         |
 
 ## Usage
 

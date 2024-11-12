@@ -11,8 +11,8 @@ This component extends React Native's [ViewProps](https://reactnative.dev/docs/v
 Content to wrap to display.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------- | :------------------------------------------------------ |
-| string | ReactNode                                    | Yes                                                     |
+| :-------------------------------------------------- | :------------------------------------------------------ | --- |
+| string                                              | ReactNode                                               | Yes |
 
 ### `startAccessory`
 
@@ -20,7 +20,7 @@ Optional prop to include content to be displayed before the title.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| ReactNode                                           | No                                                     |
+| ReactNode                                           | No                                                      |
 
 ### `endAccessory`
 
@@ -28,24 +28,24 @@ Optional prop to include content to be displayed after the title.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| ReactNode                                           | No                                                     |
-
+| ReactNode                                           | No                                                      |
 
 ## Usage
 
 ```javascript
-
 // HeaderBase with String title
-<HeaderBase 
-  startAccessory={SAMPLE_STARTACCESSORY} 
-  endAccessory={SAMPLE_ENDACCESSORY}>
+<HeaderBase
+  startAccessory={SAMPLE_STARTACCESSORY}
+  endAccessory={SAMPLE_ENDACCESSORY}
+>
   {SAMPLE_TITLE_STRING}
 </HeaderBase>;
 
 // HeaderBase with custom title
-<HeaderBase 
-  startAccessory={SAMPLE_STARTACCESSORY} 
-  endAccessory={SAMPLE_ENDACCESSORY}>
+<HeaderBase
+  startAccessory={SAMPLE_STARTACCESSORY}
+  endAccessory={SAMPLE_ENDACCESSORY}
+>
   {CUSTOM_TITLE_NODE}
 </HeaderBase>;
 ```

@@ -85,7 +85,6 @@ const Icon = ({
     );
     return (
       <View
-        // eslint-disable-next-line react-native/no-inline-styles
         style={{
           width: sizeAsNum,
           height: sizeAsNum,

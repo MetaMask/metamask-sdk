@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useMemo, useContext, useEffect, useState } from 'react';
 import {
   useColorScheme,
   StatusBar,
@@ -65,22 +65,22 @@ export const getAssetFromTheme = (
  * @param delay - Optional delay for throttling setting the system theme.
  * @returns - The system's theme, light or dark.
  */
-/* eslint-disable */
 const useColorSchemeCustom = (
   delay = Platform.select({ android: 0, ios: 350 }),
 ) => {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
-  const onColorSchemeChange = useCallback(
-    throttle(
-      ({ colorScheme }) => {
-        setColorScheme(colorScheme);
-      },
-      delay,
-      {
-        leading: false,
-      },
-    ),
-    [],
+  const onColorSchemeChange = useMemo(
+    () =>
+      throttle(
+        ({ colorScheme: iColorScheme }) => {
+          setColorScheme(iColorScheme);
+        },
+        delay,
+        {
+          leading: false,
+        },
+      ),
+    [delay],
   );
   useEffect(() => {
     const appearanceStateListener =
@@ -89,10 +89,9 @@ const useColorSchemeCustom = (
       onColorSchemeChange.cancel();
       appearanceStateListener?.remove();
     };
-  }, []);
+  }, [onColorSchemeChange]);
   return colorScheme;
 };
-/* eslint-enable */
 
 export const useAppTheme = (appThemeKey = AppThemeKey.light): Theme => {
   const osThemeName = useColorSchemeCustom();

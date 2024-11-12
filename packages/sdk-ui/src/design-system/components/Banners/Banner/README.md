@@ -10,7 +10,7 @@ Variant of Banner.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [BannerVariant](../../Banner.types.ts)               | Yes                                                     |
+| [BannerVariant](../../Banner.types.ts)              | Yes                                                     |
 
 ## BannerAlert Props
 
@@ -20,7 +20,7 @@ Optional enum to determine the severity color of the BannerAlert.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| [BannerAlertSeverity](./BannerAlert.types.ts)    | No                                                     | BannerAlertSeverity.Info                                |
+| [BannerAlertSeverity](./BannerAlert.types.ts)       | No                                                      | BannerAlertSeverity.Info                               |
 
 ## BannerTip Props
 
@@ -30,7 +30,7 @@ Optional enum to determine the logo type of the Banner.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| [BannerLogoType](./Banner.types.ts)    | No                                                     | BannerLogoType.Greeting                                |
+| [BannerLogoType](./Banner.types.ts)                 | No                                                      | BannerLogoType.Greeting                                |
 
 ## Common Props
 
@@ -40,7 +40,7 @@ Title of the Banner.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| string                                                | No                                                     |
+| string                                              | No                                                      |
 
 ### `titleProps`
 
@@ -48,7 +48,7 @@ Optional prop to control the title's props.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [TextProps](../../../../Texts/Text/Text.types.ts)                                         | No                                                     |
+| [TextProps](../../../../Texts/Text/Text.types.ts)   | No                                                      |
 
 ### `description`
 
@@ -56,7 +56,7 @@ Optional description below the title.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| string                                                | No                                                     |
+| string                                              | No                                                      |
 
 ### `descriptionProps`
 
@@ -64,7 +64,7 @@ Optional prop to control the description's props.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [TextProps](../../../../Texts/Text/Text.types.ts)                                         | No                                                     |
+| [TextProps](../../../../Texts/Text/Text.types.ts)   | No                                                      |
 
 ### `descriptionEl`
 
@@ -72,7 +72,7 @@ For custom description with links, pass in node element.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| React.ReactNode                                       | No                                                     |
+| React.ReactNode                                     | No                                                      |
 
 ### `actionButtonLabel`
 
@@ -80,7 +80,7 @@ Label for optional action button below the description and title.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| string                                              | No                                                     |
+| string                                              | No                                                      |
 
 ### `actionButtonOnPress`
 
@@ -88,15 +88,15 @@ Function to trigger when pressing the action button.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| Function                                            | No                                                     |
+| Function                                            | No                                                      |
 
 ### `actionButtonProps`
 
 Optional prop to control the action button's props.
 
-| <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------- | :------------------------------------------------------ |
-| [ButtonProps](../../../../Buttons/Button/Button.types.ts)                                  | No                                                     |
+| <span style="color:gray;font-size:14px">TYPE</span>       | <span style="color:gray;font-size:14px">REQUIRED</span> |
+| :-------------------------------------------------------- | :------------------------------------------------------ |
+| [ButtonProps](../../../../Buttons/Button/Button.types.ts) | No                                                      |
 
 ### `onClose`
 
@@ -104,15 +104,15 @@ Function to trigger when pressing the action button.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| Function                                            | No                                                     |
+| Function                                            | No                                                      |
 
 ### `closeButtonProps`
 
 Optional prop to control the close button's props.
 
-| <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------- | :------------------------------------------------------ |
-| [ButtonIconProps](../../../../Buttons/ButtonIcon/ButtonIcon.types.ts)                                  | No                                                     |
+| <span style="color:gray;font-size:14px">TYPE</span>                   | <span style="color:gray;font-size:14px">REQUIRED</span> |
+| :-------------------------------------------------------------------- | :------------------------------------------------------ |
+| [ButtonIconProps](../../../../Buttons/ButtonIcon/ButtonIcon.types.ts) | No                                                      |
 
 ### `children`
 
@@ -120,12 +120,11 @@ Optional prop to add children components to the Banner
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| React.ReactNode                                     | No                                                     |
+| React.ReactNode                                     | No                                                      |
 
 ## Usage
 
 ```javascript
-
 // Banner Alert
 <Banner
   variant={BannerVariant.Alert}

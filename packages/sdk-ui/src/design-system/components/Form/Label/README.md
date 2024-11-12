@@ -9,5 +9,5 @@ This component extends [TextProps](../../Texts/Text/Text.types.ts).
 ## Usage
 
 ```javascript
-<Label>{SAMPLE_TEXT}</Label>;
+<Label>{SAMPLE_TEXT}</Label>
 ```

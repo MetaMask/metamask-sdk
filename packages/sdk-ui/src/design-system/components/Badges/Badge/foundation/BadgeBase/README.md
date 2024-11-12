@@ -12,7 +12,7 @@ Any given component to be placed within the badge.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| ReactNode                                              | Yes                                                     |
+| ReactNode                                           | Yes                                                     |
 
 ## Usage
 

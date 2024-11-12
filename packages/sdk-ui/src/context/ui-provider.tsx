@@ -84,7 +84,7 @@ export const UIProvider = ({
     <SafeAreaProvider>
       <LanguageProvider locale={locale}>
         <PreferencesProvider preferences={activePreferences}>
-          {/* eslint-disable-next-line react-native/no-inline-styles  */}
+          {}
           <GestureHandlerRootView style={{ flex: 1 }}>
             <WithPreferences>
               <WithToasts>{children}</WithToasts>

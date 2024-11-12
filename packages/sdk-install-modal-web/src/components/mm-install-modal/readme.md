@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property        | Attribute        | Description      | Type      | Default     |
@@ -11,6 +12,7 @@
 | `preferDesktop` | `prefer-desktop` |                  | `boolean` | `undefined` |
 | `sdkVersion`    | `sdk-version`    |                  | `string`  | `undefined` |
 
+
 ## Events
 
 | Event                    | Description | Type               |
@@ -18,6 +20,7 @@
 | `close`                  |             | `CustomEvent<any>` |
 | `startDesktopOnboarding` |             | `CustomEvent<any>` |
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

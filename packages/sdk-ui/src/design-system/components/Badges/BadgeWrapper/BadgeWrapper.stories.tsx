@@ -12,9 +12,7 @@ import {
   BadgePosition,
   BadgeWrapperProps,
 } from './BadgeWrapper.types';
-import Avatar from '../../Avatars/Avatar';
 import AvatarAccount from '../../Avatars/Avatar/variants/AvatarAccount';
-import Icon from '../../Icons/Icon';
 
 export default {
   title: 'Component Library/Badges/BadgeWrapper',
@@ -42,7 +40,6 @@ export const Default = (args: BadgeWrapperProps) => {
         badgeElement={BadgeElement}
       >
         <View
-          // eslint-disable-next-line react-native/no-inline-styles
           style={{
             borderRadius:
               args.anchorElementShape === BadgeAnchorElementShape.Circular

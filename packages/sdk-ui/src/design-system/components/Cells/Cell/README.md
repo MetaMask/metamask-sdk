@@ -10,7 +10,7 @@ Variant of Cell.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [CellVariant](./Cell.types.ts#L9)                                              | Yes                                                     |
+| [CellVariant](./Cell.types.ts#L9)                   | Yes                                                     |
 
 ### `avatarProps`
 
@@ -18,7 +18,7 @@ Props for the [Avatar](../../Avatars/Avatar.tsx) component (with the exception o
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [AvatarProps](../../Avatars/Avatar.types.ts#L19)                                              | Yes                                                     |
+| [AvatarProps](../../Avatars/Avatar.types.ts#L19)    | Yes                                                     |
 
 ### `title`
 

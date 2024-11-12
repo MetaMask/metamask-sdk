@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 // Third party dependencies.
 import React, { forwardRef } from 'react';
 import { TouchableOpacity } from 'react-native';

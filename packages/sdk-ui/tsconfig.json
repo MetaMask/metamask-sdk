@@ -16,18 +16,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "paths": {
-      "@metamask/sdk-ui": [
-        "./src/index"
-      ],
-      "@metamask/sdk-design-system": [
-        "./src/design-system"
-      ],
-      "@assets": [
-        "./assets"
-      ],
-      "react": [
-        "node_modules/@types/react"
-      ]
+      "@metamask/sdk-ui": ["./src/index"],
+      "@metamask/sdk-design-system": ["./src/design-system"],
+      "@assets": ["./assets"],
+      "react": ["node_modules/@types/react"]
     }
   },
   "include": [
@@ -41,6 +33,6 @@
     "dist",
     "node_modules",
     "./src/**/*.test.tsx",
-    "./src/**/*.test.ts",
+    "./src/**/*.test.ts"
   ]
 }

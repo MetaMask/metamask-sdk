@@ -29,7 +29,6 @@ export const SAMPLE_BADGEWRAPPER_PROPS: BadgeWrapperProps = {
   badgeElement: <Badge {...SAMPLE_BADGENETWORK_PROPS} />,
   children: (
     <View
-      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         height: 24,
         width: 24,

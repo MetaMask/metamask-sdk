@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-
 // Third library dependencies.
 import React from 'react';
 

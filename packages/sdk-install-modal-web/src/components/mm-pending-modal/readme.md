@@ -2,6 +2,7 @@
 
 <!-- Auto Generated Below -->
 
+
 ## Properties
 
 | Property       | Attribute       | Description      | Type      | Default     |
@@ -11,6 +12,7 @@
 | `otpCode`      | `otp-code`      |                  | `string`  | `undefined` |
 | `sdkVersion`   | `sdk-version`   |                  | `string`  | `undefined` |
 
+
 ## Events
 
 | Event            | Description | Type                                 |
@@ -19,6 +21,7 @@
 | `disconnect`     |             | `CustomEvent<any>`                   |
 | `updateOTPValue` |             | `CustomEvent<{ otpValue: string; }>` |
 
----
 
-_Built with [StencilJS](https://stenciljs.com/)_
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

@@ -13,7 +13,6 @@ export default {
 const Template: Story<typeof CardComponent> = () => (
   <CardComponent>
     <View
-      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         height: 50,
         backgroundColor: mockTheme.colors.background.alternative,

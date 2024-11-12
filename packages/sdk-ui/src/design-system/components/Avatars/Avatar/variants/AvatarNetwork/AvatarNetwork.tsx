@@ -1,6 +1,6 @@
 // Third party dependencies.
 import React, { useCallback, useEffect, useState } from 'react';
-import { Image, ImageSourcePropType, Platform } from 'react-native';
+import { Image, Platform } from 'react-native';
 
 // External dependencies.
 import Text, { TextVariant } from '../../../../Texts/Text';

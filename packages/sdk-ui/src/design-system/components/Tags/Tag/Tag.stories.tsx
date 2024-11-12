@@ -1,5 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-
 // Third party dependencies.
 import React from 'react';
 import { View } from 'react-native';

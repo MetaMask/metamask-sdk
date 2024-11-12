@@ -12,7 +12,7 @@ Optional prop to control the variant of badge.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ |
-| [BadgeVariant.Status](../../Badge.types.ts)                                           | Yes                                                     |
+| [BadgeVariant.Status](../../Badge.types.ts)         | Yes                                                     |
 
 ### `state`
 
@@ -20,15 +20,15 @@ Optional prop to control the status of BadgeStatus.
 
 | <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> | <span style="color:gray;font-size:14px">DEFAULT</span> |
 | :-------------------------------------------------- | :------------------------------------------------------ | :----------------------------------------------------- |
-| [BadgeStatusState](./BadgeStatus.types.ts)  | No                                                      | Disconnected                                               |
+| [BadgeStatusState](./BadgeStatus.types.ts)          | No                                                      | Disconnected                                           |
 
 ### `borderColor`
 
 Optional prop to change the color of the border.
 
-| <span style="color:gray;font-size:14px">TYPE</span>                   | <span style="color:gray;font-size:14px">REQUIRED</span> |
-| :-------------------------------------------------------------------- | :------------------------------------------------------ |
-| ColorValue                                            | No                                                     |
+| <span style="color:gray;font-size:14px">TYPE</span> | <span style="color:gray;font-size:14px">REQUIRED</span> |
+| :-------------------------------------------------- | :------------------------------------------------------ |
+| ColorValue                                          | No                                                      |
 
 ## Usage
 
@@ -36,5 +36,5 @@ Optional prop to change the color of the border.
 <BadgeStatus
   variant={BadgeVariant.Status}
   state={BadgeStatusState.Disconnected}
-/>;
+/>
 ```
