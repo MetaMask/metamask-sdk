@@ -23,7 +23,8 @@ copy_to_deployment_dir() {
 
 # ------ Start
 deployment_folder="cdn"
-deployment_dir="deployments/$deployment_folder"
+gh_tag=$tag
+deployment_dir="deployments/$deployment_folder/$gh_tag"
 
 echo "Deployment folder: $deployment_folder"
 echo "Deployment directory: $deployment_dir"

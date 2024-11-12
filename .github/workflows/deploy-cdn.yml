@@ -30,6 +30,8 @@ jobs:
       run: yarn install --immutable
 
     - name: Run deploy script
+      env:
+        tag: ${{ github.event.inputs.tag }}
       run: bash ./scripts/deploy-cdn.sh
 
     - name: Deploy dapps
