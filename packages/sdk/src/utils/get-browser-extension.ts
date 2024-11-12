@@ -11,25 +11,22 @@ export async function getBrowserExtension({
   sdkInstance: MetaMaskSDK;
 }): Promise<MetaMaskInpageProvider> {
   if (typeof window === 'undefined') {
-    throw new Error(`window not available`);
+    throw new Error('window not available');
   }
 
   try {
+    // Try EIP-6963 first
     const extensionProvider = await eip6963RequestProvider();
     return wrapExtensionProvider({ provider: extensionProvider, sdkInstance });
   } catch (e) {
-    if (mustBeMetaMask) {
-      throw new Error('MetaMask provider not found via EIP-6963');
+    // Legacy fallback only for non-MetaMask cases
+    if (!mustBeMetaMask && window.ethereum) {
+      return wrapExtensionProvider({
+        provider: window.ethereum,
+        sdkInstance,
+      });
     }
 
-    const { ethereum } = window;
-    if (!ethereum) {
-      throw new Error('Ethereum not found in window object');
-    }
-
-    return wrapExtensionProvider({
-      provider: ethereum,
-      sdkInstance,
-    });
+    throw new Error('Provider not found');
   }
 }
