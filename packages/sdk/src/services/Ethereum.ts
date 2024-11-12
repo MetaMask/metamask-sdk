@@ -35,19 +35,37 @@ export class Ethereum {
       autoRequestAccounts: false,
     });
 
-    const proxiedProvieer = new Proxy(provider, {
-      // some common libraries, e.g. web3@1.x, can confict with our API.
+    const proxiedProvider = new Proxy(provider, {
+      // some common libraries, e.g. web3@1.x, can conflict with our API.
       deleteProperty: () => true,
     });
 
-    this.provider = proxiedProvieer;
+    this.provider = proxiedProvider;
     this.sdkInstance = sdkInstance;
+
+    // Add try-catch block around window modifications
     if (shouldSetOnWindow && typeof window !== 'undefined') {
-      setGlobalProvider(provider);
+      try {
+        setGlobalProvider(provider);
+      } catch (error) {
+        logger(
+          '[Ethereum] Unable to set global provider - window.ethereum may be read-only',
+          error,
+        );
+        // Continue execution without throwing
+      }
     }
 
     if (shouldShimWeb3 && typeof window !== 'undefined') {
-      shimWeb3(this.provider);
+      try {
+        shimWeb3(this.provider);
+      } catch (error) {
+        logger(
+          '[Ethereum] Unable to shim web3 - window.web3 may be read-only',
+          error,
+        );
+        // Continue execution without throwing
+      }
     }
 
     // Propagate display_uri events to the SDK
