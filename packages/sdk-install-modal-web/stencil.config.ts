@@ -1,7 +1,7 @@
 import { Config } from '@stencil/core';
 
 export const config: Config = {
-  namespace: 'sdk-install-modal-web-new',
+  namespace: 'sdk-install-modal-web',
   outputTargets: [
     {
       type: 'dist',
@@ -14,10 +14,6 @@ export const config: Config = {
     },
     {
       type: 'docs-readme',
-    },
-    {
-      type: 'www',
-      serviceWorker: null, // disable service workers
     },
   ],
   testing: {

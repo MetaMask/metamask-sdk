@@ -5695,17 +5695,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@es-joy/jsdoccomment@npm:~0.39.4":
-  version: 0.39.4
-  resolution: "@es-joy/jsdoccomment@npm:0.39.4"
-  dependencies:
-    comment-parser: 1.3.1
-    esquery: ^1.5.0
-    jsdoc-type-pratt-parser: ~4.0.0
-  checksum: efae229ae998840fdcb4faf44574bcc0a070e4aa6df69c01afedaeaddf6d2ea857a68b463df45f9437231201201f092402968c0c53c34e3c09842fef0da7f2d4
-  languageName: node
-  linkType: hard
-
 "@esbuild/android-arm64@npm:0.18.20":
   version: 0.18.20
   resolution: "@esbuild/android-arm64@npm:0.18.20"
@@ -9938,24 +9927,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-install-modal-web-new@workspace:*, @metamask/sdk-install-modal-web-new@workspace:packages/sdk-install-modal-web-new":
-  version: 0.0.0-use.local
-  resolution: "@metamask/sdk-install-modal-web-new@workspace:packages/sdk-install-modal-web-new"
-  dependencies:
-    "@paulmillr/qr": ^0.2.1
-    "@stencil/core": ^4.7.0
-    "@types/i18n": ^0.13.12
-    "@types/jest": ^29.5.6
-    "@types/node": ^16.18.11
-    i18next: 23.11.5
-    jest: ^29.7.0
-    jest-cli: ^29.7.0
-    puppeteer: ^21.9.0
-  peerDependencies:
-    i18next: 23.11.5
-  languageName: unknown
-  linkType: soft
-
 "@metamask/sdk-install-modal-web@npm:0.11.1":
   version: 0.11.1
   resolution: "@metamask/sdk-install-modal-web@npm:0.11.1"
@@ -9992,58 +9963,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
-    "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
     "@paulmillr/qr": ^0.2.1
-    "@rollup/plugin-commonjs": ^25.0.7
-    "@rollup/plugin-node-resolve": ^15.0.2
-    "@rollup/plugin-terser": ^0.4.1
-    "@rollup/plugin-typescript": ^11.1.1
-    "@size-limit/preset-big-lib": ^11.0.2
-    "@types/prettier": ^2
-    "@types/react": ^18.2.37
-    "@types/react-dom": ^18.2.15
-    "@typescript-eslint/eslint-plugin": ^5.56.0
-    "@typescript-eslint/parser": ^5.56.0
-    eslint: ^8.36.0
-    eslint-config-prettier: ^8.3.0
-    eslint-plugin-import: ^2.23.4
-    eslint-plugin-jest: ^24.4.0
-    eslint-plugin-jsdoc: ^44.2.4
-    eslint-plugin-node: ^11.1.0
-    eslint-plugin-prettier: ^3.4.0
-    eslint-plugin-react: ^7.32.2
+    "@stencil/core": ^4.7.0
+    "@types/i18n": ^0.13.12
+    "@types/jest": ^29.5.6
+    "@types/node": ^16.18.11
     i18next: 23.11.5
-    jest: ^29.6.4
-    postcss: ^8.4.35
-    prettier: ^2.8.8
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    rimraf: ^5.0.0
-    rollup: ^3.21.7
-    rollup-plugin-peer-deps-external: ^2.2.4
-    rollup-plugin-postcss: ^4.0.2
-    rollup-plugin-sizes: ^1.0.6
-    rollup-plugin-typescript2: ^0.36.0
-    rollup-plugin-visualizer: ^5.12.0
-    size-limit: ^11.0.2
-    typescript: ^5.0.2
+    jest: ^29.7.0
+    jest-cli: ^29.7.0
+    puppeteer: ^21.9.0
   peerDependencies:
     i18next: 23.11.5
-    react: ^18.2.0
-    react-dom: ^18.2.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -10555,7 +10489,7 @@ __metadata:
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
     "@metamask/sdk-communication-layer": "workspace:*"
-    "@metamask/sdk-install-modal-web-new": "workspace:*"
+    "@metamask/sdk-install-modal-web": "workspace:*"
     "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-commonjs": ^25.0.7
@@ -14074,25 +14008,6 @@ __metadata:
     rollup:
       optional: true
   checksum: 0d697e816f32e9609c48defbda6f3ed90548126fbf673451cfde2c576a7511073cd25d45a9669f179d0b89485e62f56cabeb65428c2232469ab6057ae5dc7709
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-typescript@npm:^11.1.1":
-  version: 11.1.2
-  resolution: "@rollup/plugin-typescript@npm:11.1.2"
-  dependencies:
-    "@rollup/pluginutils": ^5.0.1
-    resolve: ^1.22.1
-  peerDependencies:
-    rollup: ^2.14.0||^3.0.0
-    tslib: "*"
-    typescript: ">=3.7.0"
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-    tslib:
-      optional: true
-  checksum: f4655a35e08639574e86dbce578b76468ee8627e4a3d8a46b7e0703d5d98c39a9bda9aa7144510aae11c5d8ce9c3b065e7f3e52dd31fbc6780015dd7802e01f7
   languageName: node
   linkType: hard
 
@@ -17913,7 +17828,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/prettier@npm:^2, @types/prettier@npm:^2.1.5":
+"@types/prettier@npm:^2.1.5":
   version: 2.7.3
   resolution: "@types/prettier@npm:2.7.3"
   checksum: 705384209cea6d1433ff6c187c80dcc0b95d99d5c5ce21a46a9a58060c527973506822e428789d842761e0280d25e3359300f017fbe77b9755bc772ab3dc2f83
@@ -18501,7 +18416,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.30.5, @typescript-eslint/eslint-plugin@npm:^5.5.0, @typescript-eslint/eslint-plugin@npm:^5.56.0":
+"@typescript-eslint/eslint-plugin@npm:^5.30.5, @typescript-eslint/eslint-plugin@npm:^5.5.0":
   version: 5.62.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.62.0"
   dependencies:
@@ -18642,7 +18557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.30.5, @typescript-eslint/parser@npm:^5.42.0, @typescript-eslint/parser@npm:^5.5.0, @typescript-eslint/parser@npm:^5.56.0":
+"@typescript-eslint/parser@npm:^5.30.5, @typescript-eslint/parser@npm:^5.42.0, @typescript-eslint/parser@npm:^5.5.0":
   version: 5.62.0
   resolution: "@typescript-eslint/parser@npm:5.62.0"
   dependencies:
@@ -20787,13 +20702,6 @@ __metadata:
   version: 2.2.0
   resolution: "arch@npm:2.2.0"
   checksum: e21b7635029fe8e9cdd5a026f9a6c659103e63fff423834323cdf836a1bb240a72d0c39ca8c470f84643385cf581bd8eda2cad8bf493e27e54bd9783abe9101f
-  languageName: node
-  linkType: hard
-
-"are-docs-informative@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "are-docs-informative@npm:0.0.2"
-  checksum: 7a48ca90d66e29afebc4387d7029d86cfe97bad7e796c8e7de01309e02dcfc027250231c02d4ca208d2984170d09026390b946df5d3d02ac638ab35f74501c74
   languageName: node
   linkType: hard
 
@@ -25452,7 +25360,6 @@ __metadata:
     "@metamask/providers": 16.1.0
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
-    "@metamask/sdk-install-modal-web": "workspace:^"
     "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@metamask/sdk-react-ui": "workspace:^"
@@ -27576,24 +27483,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsdoc@npm:^44.2.4":
-  version: 44.2.7
-  resolution: "eslint-plugin-jsdoc@npm:44.2.7"
-  dependencies:
-    "@es-joy/jsdoccomment": ~0.39.4
-    are-docs-informative: ^0.0.2
-    comment-parser: 1.3.1
-    debug: ^4.3.4
-    escape-string-regexp: ^4.0.0
-    esquery: ^1.5.0
-    semver: ^7.5.1
-    spdx-expression-parse: ^3.0.1
-  peerDependencies:
-    eslint: ^7.0.0 || ^8.0.0
-  checksum: f00f262d5b52d44a7a1ae9e4c72fce49382bf50a8695f02c767cfa6fe8885ee0fb258b2706d68ae28236bea3c7bac323740f15f36f7004f2f726027b19daaa4d
-  languageName: node
-  linkType: hard
-
 "eslint-plugin-jsx-a11y@npm:^6.5.1":
   version: 6.7.1
   resolution: "eslint-plugin-jsx-a11y@npm:6.7.1"
@@ -27750,7 +27639,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.31.7, eslint-plugin-react@npm:^7.32.2":
+"eslint-plugin-react@npm:^7.27.1, eslint-plugin-react@npm:^7.31.7":
   version: 7.32.2
   resolution: "eslint-plugin-react@npm:7.32.2"
   dependencies:
@@ -28046,7 +27935,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.3.0, eslint@npm:^8.36.0":
+"eslint@npm:^8.3.0":
   version: 8.45.0
   resolution: "eslint@npm:8.45.0"
   dependencies:
@@ -41131,17 +41020,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.35":
-  version: 8.4.35
-  resolution: "postcss@npm:8.4.35"
-  dependencies:
-    nanoid: ^3.3.7
-    picocolors: ^1.0.0
-    source-map-js: ^1.0.2
-  checksum: cf3c3124d3912a507603f6d9a49b3783f741075e9aa73eb592a6dd9194f9edab9d20a8875d16d137d4f779fe7b6fbd1f5727e39bfd1c3003724980ee4995e1da
-  languageName: node
-  linkType: hard
-
 "postcss@npm:^8.4.4":
   version: 8.4.29
   resolution: "postcss@npm:8.4.29"
@@ -44740,7 +44618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.1, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4":
+"semver@npm:^7.2.1, semver@npm:^7.3.2, semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7, semver@npm:^7.3.8, semver@npm:^7.5.0, semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -47846,7 +47724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.4 || ^5.0.0, typescript@npm:^5.0.2, typescript@npm:^5.0.4":
+"typescript@npm:^4.6.4 || ^5.0.0, typescript@npm:^5.0.4":
   version: 5.1.6
   resolution: "typescript@npm:5.1.6"
   bin:
@@ -47926,7 +47804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.4 || ^5.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.2#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.6.4 || ^5.0.0#~builtin<compat/typescript>, typescript@patch:typescript@^5.0.4#~builtin<compat/typescript>":
   version: 5.1.6
   resolution: "typescript@patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=77c9e2"
   bin:

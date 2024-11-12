@@ -192,3 +192,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.2...@metamask/sdk-install-modal-web@0.3.3
 [0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.0...@metamask/sdk-install-modal-web@0.3.2
 [0.3.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-install-modal-web@0.3.0
+

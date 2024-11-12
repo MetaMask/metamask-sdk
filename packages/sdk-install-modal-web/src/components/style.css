@@ -161,3 +161,9 @@
     align-items: center;
     justify-content: right;
 }
+
+#sdk-mm-qrcode {
+    svg {
+        width: 50%;
+    }
+}
