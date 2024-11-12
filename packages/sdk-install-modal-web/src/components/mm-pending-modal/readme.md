@@ -1,9 +1,6 @@
 # mm-pending-modal
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Properties
 
@@ -14,7 +11,6 @@
 | `otpCode`      | `otp-code`      |                  | `string`  | `undefined` |
 | `sdkVersion`   | `sdk-version`   |                  | `string`  | `undefined` |
 
-
 ## Events
 
 | Event            | Description | Type                                 |
@@ -23,7 +19,6 @@
 | `disconnect`     |             | `CustomEvent<any>`                   |
 | `updateOTPValue` |             | `CustomEvent<{ otpValue: string; }>` |
 
+---
 
-----------------------------------------------
-
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_

@@ -11,7 +11,9 @@ module.exports = {
     ignorePatterns: [
       '.eslintrc.js',
       'dist',
-      'rollup.config.js',
+      'loader',
+      '.stencil',
+      'stencil.config.ts',
       '**/coverage/**',
       'postcss.config.js',
       'jest-preload.js',

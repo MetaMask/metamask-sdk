@@ -1,9 +1,6 @@
 # my-component
 
-
-
 <!-- Auto Generated Below -->
-
 
 ## Properties
 
@@ -14,7 +11,6 @@
 | `preferDesktop` | `prefer-desktop` |                  | `boolean` | `undefined` |
 | `sdkVersion`    | `sdk-version`    |                  | `string`  | `undefined` |
 
-
 ## Events
 
 | Event                    | Description | Type               |
@@ -22,7 +18,6 @@
 | `close`                  |             | `CustomEvent<any>` |
 | `startDesktopOnboarding` |             | `CustomEvent<any>` |
 
+---
 
-----------------------------------------------
-
-*Built with [StencilJS](https://stenciljs.com/)*
+_Built with [StencilJS](https://stenciljs.com/)_
