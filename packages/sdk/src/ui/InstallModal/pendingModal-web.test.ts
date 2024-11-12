@@ -1,4 +1,6 @@
-import { i18n } from 'i18next';
+import createInstance, {
+  Translator,
+} from '@metamask/sdk-install-modal-web/dist/es/src/lang';
 import sdkWebPendingModal from './pendingModal-web';
 import ModalLoader from './Modal-web';
 
@@ -6,10 +8,7 @@ jest.mock('./Modal-web');
 
 describe('sdkWebPendingModal', () => {
   const mockModalLoader = ModalLoader as jest.MockedClass<typeof ModalLoader>;
-  let mockI18n: i18n = {
-    t: jest.fn((key) => key),
-  } as unknown as i18n;
-
+  let mockI18n: Translator = createInstance();
   const mockRenderPendingModal = jest.fn();
   const mockUpdateOTPValue = jest.fn();
 
@@ -26,7 +25,7 @@ describe('sdkWebPendingModal', () => {
 
     mockI18n = {
       t: jest.fn((key) => key),
-    } as unknown as i18n;
+    } as unknown as Translator;
 
     global.document = {
       createElement: jest.fn(

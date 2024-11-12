@@ -1,0 +1,27 @@
+{
+  "DESKTOP": "Desktop",
+  "MOBILE": "Móvel",
+  "META_MASK_MOBILE_APP": "Aplicativo móvel MetaMask",
+  "SCAN_TO_CONNECT": "Escanear para conectar e assinar com",
+  "CONNECT_WITH_EXTENSION": "Conectar com a extensão MetaMask",
+  "INSTALL_MODAL": {
+    "TRUSTED_BY_USERS": "Confiado por mais de 30 milhões de usuários para comprar, armazenar, enviar e trocar cripto com segurança",
+    "LEADING_CRYPTO_WALLET": "A principal carteira de cripto & portal para aplicativos blockchain construídos em Ethereum Mainnet, Polygon, Optimism, e muitas outras redes",
+    "CONTROL_DIGITAL_INTERACTIONS": "Coloca você no controle de suas interações digitais, tornando o poder da criptografia mais acessível",
+    "INSTALL_META_MASK_EXTENSION": "Instalar a extensão MetaMask"
+  },
+  "PENDING_MODAL": {
+    "OPEN_META_MASK_SELECT_CODE": "Por favor, abra o aplicativo MetaMask e selecione o código na tela OU desconecte",
+    "OPEN_META_MASK_CONTINUE": "Abra o aplicativo MetaMask para continuar sua sessão.",
+    "NUMBER_AFTER_OPEN_NOTICE": "Se um número não aparecer após abrir o MetaMask, por favor clique em desconectar e re-escaneie o QRCode.",
+    "DISCONNECT": "Desconectar"
+  },
+  "SELECT_MODAL": {
+    "CRYPTO_TAKE_CONTROL_TEXT": "Assuma o controle de sua cripto e explore a blockchain com a carteira confiada por mais de 30 milhões de pessoas em todo o mundo"
+  },
+  "META_MASK_MODAL": {
+    "ADDRESS_COPIED": "Endereço copiado para a área de transferência!",
+    "DISCONNECT": "Desconectar",
+    "ACTIVE_NETWORK": "Rede ativa"
+  }
+}

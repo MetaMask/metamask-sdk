@@ -68,8 +68,6 @@
     "eciesjs": "^0.4.11",
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.9",
-    "i18next": "23.11.5",
-    "i18next-browser-languagedetector": "7.1.0",
     "obj-multiplex": "^1.0.0",
     "pump": "^3.0.0",
     "react-native-webview": "^11.26.0",

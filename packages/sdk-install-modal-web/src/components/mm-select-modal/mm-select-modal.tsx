@@ -3,10 +3,10 @@ import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
 import ConnectIcon from '../misc/ConnectIcon';
 import { MetamaskExtensionImage } from '../misc/MetamaskExtensionImage';
 import encodeQR from '@paulmillr/qr';
+import { Translator } from '../../lang';
 
 @Component({
   tag: 'mm-select-modal',
@@ -21,7 +21,7 @@ export class PendingModal {
 
   @Prop() sdkVersion?: string;
 
-  @Prop() i18nInstance: i18n;
+  @Prop() i18nInstance: Translator;
 
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
