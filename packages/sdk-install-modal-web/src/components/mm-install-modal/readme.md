@@ -5,12 +5,12 @@
 
 ## Properties
 
-| Property        | Attribute        | Description      | Type      | Default     |
-| --------------- | ---------------- | ---------------- | --------- | ----------- |
-| `i18nInstance`  | --               |                  | `i18n`    | `undefined` |
-| `link`          | `link`           | The QR code link | `string`  | `undefined` |
-| `preferDesktop` | `prefer-desktop` |                  | `boolean` | `undefined` |
-| `sdkVersion`    | `sdk-version`    |                  | `string`  | `undefined` |
+| Property        | Attribute        | Description      | Type         | Default     |
+| --------------- | ---------------- | ---------------- | ------------ | ----------- |
+| `i18nInstance`  | --               |                  | `Translator` | `undefined` |
+| `link`          | `link`           | The QR code link | `string`     | `undefined` |
+| `preferDesktop` | `prefer-desktop` |                  | `boolean`    | `undefined` |
+| `sdkVersion`    | `sdk-version`    |                  | `string`     | `undefined` |
 
 
 ## Events

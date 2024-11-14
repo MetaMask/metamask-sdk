@@ -1,6 +1,5 @@
 import { Config } from '@stencil/core';
 import external from 'rollup-plugin-peer-deps-external';
-import json from '@rollup/plugin-json';
 import sizes from 'rollup-plugin-sizes';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -34,7 +33,7 @@ export const config: Config = {
     ],
     after: [
       // Plugins injected after commonjs()
-      json(),
+      //json(), handled by stencil by default
       isDev && sizes(),
       // terser(), handled by minifyJs option (uses terser plugin internally)
       isDev &&

@@ -5934,7 +5934,6 @@ __metadata:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
     "@paulmillr/qr": ^0.2.1
-    "@rollup/plugin-json": ^6.1.0
     "@size-limit/preset-big-lib": ^11.0.2
     "@stencil/core": ^4.7.0
     "@types/jest": ^29.5.6
@@ -6432,7 +6431,6 @@ __metadata:
     rollup-plugin-natives: ^0.7.5
     rollup-plugin-node-builtins: ^2.1.2
     rollup-plugin-node-globals: ^1.4.0
-    rollup-plugin-polyfill-node: ^0.11.0
     rollup-plugin-sizes: ^1.0.6
     rollup-plugin-typescript2: ^0.31.2
     rollup-plugin-visualizer: ^5.9.2
@@ -10145,22 +10143,6 @@ __metadata:
     rollup:
       optional: true
   checksum: 30363d50c3d43fc35add135ce1b9591a69f378d696829724ce229e7c78ed00bc646280c150bd4b872d9359aeee656fae7107876c802dd7374aa71e21cb0af371
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-inject@npm:^5.0.1":
-  version: 5.0.5
-  resolution: "@rollup/plugin-inject@npm:5.0.5"
-  dependencies:
-    "@rollup/pluginutils": ^5.0.1
-    estree-walker: ^2.0.2
-    magic-string: ^0.30.3
-  peerDependencies:
-    rollup: ^1.20.0||^2.0.0||^3.0.0||^4.0.0
-  peerDependenciesMeta:
-    rollup:
-      optional: true
-  checksum: 22cb772fd6f7178308b2ece95cdde5f8615f6257197832166294552a7e4c0d3976dc996cbfa6470af3151d8b86c00091aa93da5f4db6ec563f11b6db29fd1b63
   languageName: node
   linkType: hard
 
@@ -37150,17 +37132,6 @@ __metadata:
   peerDependencies:
     rollup: "*"
   checksum: 597bc7631f4e3cfc066a7da4e09e507258aba932008148328c1a4b48e7ffa755592ef4bcf0165320bbd5019afbdd326f569cd0c68406d820da9ab52e971c009b
-  languageName: node
-  linkType: hard
-
-"rollup-plugin-polyfill-node@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "rollup-plugin-polyfill-node@npm:0.11.0"
-  dependencies:
-    "@rollup/plugin-inject": ^5.0.1
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0 || ^3.0.0
-  checksum: 059657c718154964c7b2e9140aa884fb1602a2f9348124f942d3ce4e5640fcf92733cd9096c77d7ff99842b3a07b7e237126b5b185d678f7f523aaf0d949e67b
   languageName: node
   linkType: hard
 
