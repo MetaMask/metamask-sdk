@@ -1,1 +1,1 @@
-export { ModalLoader } from './ModalLoader';
+export { ModalLoader, type InstallWidgetProps, type PendingWidgetProps, type SelectWidgetProps } from './ModalLoader';

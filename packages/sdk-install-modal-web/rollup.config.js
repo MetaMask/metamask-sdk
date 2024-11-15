@@ -2,7 +2,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
 import terser from '@rollup/plugin-terser';
-import sizes from 'rollup-plugin-sizes';
 import { visualizer } from 'rollup-plugin-visualizer';
 import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
@@ -17,7 +16,6 @@ const packageJson = require('./package.json');
  */
 const config = [
   {
-    external: ['react', 'react-dom', 'react-native', 'i18next'],
     input: 'src/index.ts',
     output: [
       {
@@ -26,10 +24,19 @@ const config = [
         sourcemap: true,
       },
       {
-        name: 'browser',
         file: packageJson.unpkg,
         format: 'umd',
+        exports: 'named',
+        name: 'MetaMaskSDKInstallModal',
         sourcemap: true,
+        globals: {
+          'react': 'React',
+          'react-dom': 'ReactDOM',
+          'react-dom/client': 'ReactDOM.createRoot',
+          'react-native': 'ReactNative',
+          'i18next': 'i18next',
+          'tslib': 'tslib'
+        }
       },
       {
         file: packageJson.main,
@@ -37,30 +44,44 @@ const config = [
         sourcemap: true,
       },
     ],
+    external: [
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react-native',
+      'i18next',
+      'tslib',
+      external(),
+    ],
     plugins: [
       external(),
-      resolve(),
-      commonjs(),
-      typescript(),
-      postcss({
-        // Extract CSS to the same location as the JS file
-        extract: true,
-        // Use Sass compiler
-        plugins: [],
-        // Enable source maps
-        sourceMap: true,
-        // Enable CSS modules if needed
-        modules: true,
-        // Use additional plugins like `autoprefixer`
-        // plugins: [require('autoprefixer')]
+      resolve({
+        browser: true,
+        extensions: ['.ts', '.tsx']
       }),
-      isDev && sizes(),
+      commonjs(),
+      typescript({
+        tsconfigOverride: {
+          compilerOptions: {
+            importHelpers: true,
+            noEmitHelpers: true,
+          },
+        },
+        useTsconfigDeclarationDir: true,
+      }),
+      postcss({
+        extract: true,
+        plugins: [],
+        sourceMap: true,
+        modules: true,
+      }),
       terser(),
-      isDev &&
-        visualizer({
-          filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
-        }),
-    ],
+      isDev && visualizer({
+        filename: `bundle_stats/${packageJson.version}/stats.html`,
+        gzipSize: true,
+        brotliSize: true,
+      }),
+    ].filter(Boolean),
   },
 ];
 

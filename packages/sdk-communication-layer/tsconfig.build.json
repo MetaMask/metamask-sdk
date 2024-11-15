@@ -1,7 +1,14 @@
 {
   "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "composite": true
-  },
-  "include": ["./src", "package.json"]
+  "compilerOptions": {},
+  "include": [
+    "./src",
+    "package.json"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
 }
