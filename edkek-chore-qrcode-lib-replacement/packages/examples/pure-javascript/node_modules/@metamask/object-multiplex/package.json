@@ -1,0 +1,60 @@
+{
+  "name": "@metamask/object-multiplex",
+  "version": "2.0.0",
+  "description": "Simple stream multiplexing for objectMode.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/object-multiplex.git"
+  },
+  "engines": {
+    "node": "^16.20 || ^18.16 || >=20"
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "setup": "yarn install && yarn allow-scripts",
+    "build:clean": "rimraf dist && yarn build",
+    "build": "tsc --project .",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' '**/*.yml' --ignore-path .gitignore",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "test": "yarn build && node test",
+    "prepublishOnly": "yarn build:clean && yarn test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "once": "^1.4.0",
+    "readable-stream": "^3.6.2"
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^2.5.1",
+    "@metamask/auto-changelog": "^2.3.0",
+    "@metamask/eslint-config": "^6.0.0",
+    "@metamask/eslint-config-nodejs": "^6.0.0",
+    "@metamask/eslint-config-typescript": "^6.0.0",
+    "@types/node": "^16",
+    "@types/once": "^1.4.0",
+    "@types/readable-stream": "4.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "prettier": "^2.8.8",
+    "rimraf": "^3.0.2",
+    "tape": "^4.17.0",
+    "typescript": "~4.8.4"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@lavamoat/preinstall-always-fail": false
+    }
+  }
+}
