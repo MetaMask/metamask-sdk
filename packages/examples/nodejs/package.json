@@ -15,7 +15,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "workspace:^"
+    "@metamask/sdk": "^0.30.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
