@@ -8,195 +8,250 @@ import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
-import packageJson from './package.json'; // Ensure this path is correct
-import sizes from 'rollup-plugin-sizes';
-import external from 'rollup-plugin-peer-deps-external';
+import packageJson from './package.json';
+import replace from '@rollup/plugin-replace';
+import path from 'path';
+import nodePolyfills from 'rollup-plugin-polyfill-node';
 
-// Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
 
-// Base external dependencies across different builds
-const baseExternalDeps = ['@react-native-async-storage/async-storage'];
+const umdGlobals = {
+  'cross-fetch': 'fetch',
+  eventemitter2: 'EventEmitter2',
+  'socket.io-client': 'io',
+  eciesjs: 'ECIES',
+  debug: 'debug',
+  uuid: 'uuid',
+  'date-fns': 'dateFns',
+  buffer: 'Buffer',
+  'readable-stream': 'ReadableStream',
+  tslib: 'tslib',
+};
 
-// Dependencies for rollup to consider as external
-const listDepForRollup = [
-  ...baseExternalDeps,
-  'cross-fetch',
-  'date-fns',
-  // do not include eciesjs in the bundle otherwise it would force the dapp to include crypto-browserify and stream-browserify
-  // 'eciesjs',
-  'eventemitter2',
-  'socket.io-client',
-  'uuid',
+// Get dependencies from package.json
+const allDependencies = [
+  ...Object.keys(packageJson.dependencies || {}),
+  ...Object.keys(packageJson.peerDependencies || {}),
+  ...Object.keys(packageJson.optionalDependencies || {}),
+  '@react-native-async-storage/async-storage',
+  'bufferutil',
+  'utf-8-validate',
+  'tslib',
+  'buffer',
 ];
 
-// Keeping separate external deps list for web and react-native to allow for future divergence
-const webExternalDeps = [...listDepForRollup];
-const rnExternalDeps = [...listDepForRollup];
+// Platform specific externals (only add platform-specific deps if needed)
+const webExternalDeps = [...allDependencies];
+const rnExternalDeps = [...allDependencies];
+const nodeExternalDeps = [...allDependencies];
+
+const getTypescriptPlugin = (platform) =>
+  typescript({
+    tsconfig: './tsconfig.build.json',
+    tsconfigOverride: {
+      compilerOptions: {
+        declaration: true,
+        declarationMap: true,
+        sourceMap: true,
+        outDir: 'dist',
+        declarationDir:
+          platform === 'web'
+            ? path.dirname(packageJson.browser)
+            : platform === 'rn'
+            ? path.dirname(packageJson['react-native'])
+            : path.dirname(packageJson.main),
+        module: 'esnext',
+        moduleResolution: 'node',
+        importHelpers: true,
+        noEmitHelpers: true,
+      },
+      include: ['./src'],
+      exclude: ['**/*.spec.ts', '**/*.test.ts'],
+    },
+    useTsconfigDeclarationDir: true,
+    clean: true,
+    exclude: ['**/*.spec.ts', '**/*.test.ts'],
+    check: !isDev,
+  });
+
+const sharedWarningHandler = (warning, warn) => {
+  if (
+    warning.code === 'CIRCULAR_DEPENDENCY' &&
+    (warning.message.includes('RemoteCommunication/ConnectionManager') ||
+      warning.message.includes('RemoteCommunication/EventListeners') ||
+      warning.message.includes('RemoteCommunication/MessageHandlers'))
+  ) {
+    return;
+  }
+
+  if (warning.code === 'THIS_IS_UNDEFINED') return;
+  warn(warning);
+};
+
+const getPlugins = ({ platform, minify = true }) => [
+  replace({
+    preventAssignment: true,
+    values: {
+      'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production'),
+      'process.env.PKG_VERSION': JSON.stringify(packageJson.version),
+      'process.env.PKG_NAME': JSON.stringify(packageJson.name),
+    },
+  }),
+  jscc({
+    values: {
+      _WEB: platform === 'web' ? 1 : 0,
+      _REACTNATIVE: platform === 'rn' ? 1 : 0,
+      _NODEJS: platform === 'node' ? 1 : 0,
+    },
+  }),
+  getTypescriptPlugin(platform),
+  nodeResolve({
+    browser: platform === 'web',
+    preferBuiltins: platform === 'node',
+    exportConditions:
+      platform === 'web'
+        ? ['browser']
+        : platform === 'rn'
+        ? ['react-native', 'node']
+        : ['node'],
+    mainFields:
+      platform === 'rn'
+        ? ['react-native', 'browser', 'module', 'main']
+        : ['browser', 'module', 'main'],
+  }),
+  commonjs({
+    transformMixedEsModules: true,
+    include: [/node_modules/, 'src/**'],
+    exclude: [
+      ...allDependencies.map((dep) => new RegExp(`node_modules/${dep}`)),
+    ],
+    ignoreTryCatch: true,
+    ignore: (id) => {
+      if (
+        id.includes('RemoteCommunication/ConnectionManager') ||
+        id.includes('RemoteCommunication/EventListeners') ||
+        id.includes('RemoteCommunication/MessageHandlers')
+      ) {
+        return true;
+      }
+      return false;
+    },
+  }),
+  platform === 'web' && globals(),
+  platform === 'web' && builtins({
+    crypto: true,
+    buffer: false
+  }),
+  platform === 'web' && nodePolyfills({
+    include: ['buffer']
+  }),
+  json(),
+  minify && terser({
+    format: { comments: false },
+    compress: {
+      passes: 2,
+      drop_console: !isDev,
+      pure_getters: true,
+      unsafe_comps: true,
+      unsafe_methods: true,
+    },
+    mangle: {
+      reserved: ['Buffer', 'global', 'process'],
+    },
+  }),
+  isDev && ['treemap', 'sunburst', 'network', 'raw-data', 'list'].map((template) =>
+    visualizer({
+      filename: `bundle_stats/${platform}/${
+        packageJson.version
+      }/${template}${
+        template === 'list'
+          ? '.txt'
+          : template === 'raw-data'
+          ? '.json'
+          : '.html'
+      }`,
+      gzipSize: true,
+      brotliSize: true,
+      template,
+    })
+  ),
+].filter(Boolean);
 
 /**
- * @type {import('rollup').RollupOptions}
+ * @type {import('rollup').RollupOptions[]}
  */
-const config = [
-  // Browser builds (ES)
+const configs = [
+  // Browser ES build
   {
+    input: 'src/index.ts',
+    output: {
+      file: packageJson.browser,
+      format: 'es',
+      sourcemap: true,
+      interop: 'auto',
+    },
     external: webExternalDeps,
-    input: 'src/index.ts',
-    output: [
-      {
-        file: packageJson.browser,
-        format: 'es',
-        sourcemap: true,
-      },
-    ],
-    plugins: [
-      external(),
-      // Replace macros in your source code with environment-specific variables
-      jscc({
-        values: { _WEB: 1 },
-      }),
-      // TypeScript plugin with overridden configuration file path
-      typescript({ tsconfig: './tsconfig.json' }),
-      // Resolves modules specified in "node_modules"
-      nodeResolve({
-        browser: true, // Prefer browser versions of modules if available
-        preferBuiltins: false, // Do not prefer Node.js built-ins over npm modules
-        exportConditions: ['browser'], // Use "browser" field in package.json for overrides
-      }),
-      // Converts CommonJS modules to ES6, to be included in the Rollup bundle
-      commonjs({ transformMixedEsModules: true }),
-      // Polyfills Node.js globals and modules for use in the browser
-      globals(),
-      builtins({ crypto: true }), // Includes Node.js built-ins like 'crypto'
-      // Convert .json files to ES6 modules
-      json(),
-      isDev && sizes(), // Log the size of the bundle
-      // Minify the bundle
-      terser(),
-      // Visualize the bundle to analyze its composition and size
-      isDev &&
-        visualizer({
-          filename: `bundle_stats/browser-es-stats-${packageJson.version}.html`,
-        }),
-    ],
+    plugins: getPlugins({ platform: 'web' }),
+    onwarn: sharedWarningHandler,
   },
-  // Browser builds (UMD, IIFE)
+
+  // Browser UMD build
   {
-    // Only considering base external deps for UMD and IIFE builds
-    external: baseExternalDeps,
     input: 'src/index.ts',
-    output: [
-      {
-        name: 'browser',
-        file: packageJson.unpkg,
-        format: 'umd',
-        sourcemap: true,
-      },
-      {
-        file: 'dist/browser/iife/metamask-sdk-communication-layer.js',
-        format: 'iife',
-        name: 'MetaMaskSDK',
-        sourcemap: true,
-      },
-    ],
-    plugins: [
-      external(),
-      jscc({
-        values: { _WEB: 1 },
-      }),
-      typescript({ tsconfig: './tsconfig.json' }),
-      nodeResolve({
-        browser: true,
-        preferBuiltins: false,
-        exportConditions: ['browser'],
-      }),
-      commonjs({ transformMixedEsModules: true }),
-      globals(),
-      builtins({ crypto: true }),
-      json(),
-      isDev && sizes(), // Log the size of the bundle
-      terser(),
-      isDev &&
-        visualizer({
-          filename: `bundle_stats/browser-umd-iife-stats-${packageJson.version}.html`,
-        }),
-    ],
+    output: {
+      file: packageJson.unpkg,
+      format: 'umd',
+      name: 'MetaMaskSDKCommunication',
+      sourcemap: true,
+      globals: umdGlobals,
+      interop: 'auto',
+    },
+    external: webExternalDeps,
+    plugins: getPlugins({ platform: 'web' }),
+    onwarn: sharedWarningHandler,
   },
+
+  // React Native build
   {
+    input: 'src/index.ts',
+    output: {
+      file: packageJson['react-native'],
+      format: 'es',
+      sourcemap: true,
+      interop: 'auto',
+    },
     external: rnExternalDeps,
-    input: 'src/index.ts',
-    output: [
-      {
-        file: packageJson['react-native'],
-        format: 'es',
-        sourcemap: true,
-      },
-    ],
-    plugins: [
-      external(),
-      jscc({
-        values: { _REACTNATIVE: 1 },
-      }),
-      typescript({ tsconfig: './tsconfig.json' }),
-      commonjs({ transformMixedEsModules: true }),
-      nodeResolve({
-        mainFields: ['react-native', 'node', 'browser'],
-        exportConditions: ['react-native', 'node', 'browser'],
-        browser: true,
-        preferBuiltins: true,
-      }),
-      json(),
-      isDev && sizes(), // Log the size of the bundle
-      terser(),
-      isDev &&
-        visualizer({
-          filename: `bundle_stats/react-native-stats-${packageJson.version}.html`,
-        }),
-    ],
+    plugins: getPlugins({ platform: 'rn' }),
+    onwarn: sharedWarningHandler,
   },
+
+  // Node.js builds
   {
-    external: listDepForRollup,
     input: 'src/index.ts',
     output: [
       {
         file: packageJson.main,
         format: 'cjs',
         sourcemap: true,
+        interop: 'auto',
       },
       {
         file: packageJson.module,
         format: 'es',
         sourcemap: true,
+        interop: 'auto',
       },
     ],
+    external: nodeExternalDeps,
     plugins: [
-      external(),
-      jscc({
-        values: { _NODEJS: 1 },
-      }),
+      ...getPlugins({ platform: 'node' }),
       nativePlugin({
-        // Use `dlopen` instead of `require`/`import`.
-        // This must be set to true if using a different file extension that '.node'
         dlopen: false,
-        // Generate sourcemap
         sourcemap: true,
       }),
-      typescript({ tsconfig: './tsconfig.json' }),
-      nodeResolve({
-        browser: false,
-        preferBuiltins: true,
-        exportConditions: ['node'],
-      }),
-      commonjs({ transformMixedEsModules: true }),
-      json(),
-      isDev && sizes(), // Log the size of the bundle
-      terser(),
-      isDev &&
-        visualizer({
-          filename: `bundle_stats/node-stats-${packageJson.version}.html`,
-        }),
     ],
+    onwarn: sharedWarningHandler,
   },
 ];
 
-export default config;
+export default configs;
