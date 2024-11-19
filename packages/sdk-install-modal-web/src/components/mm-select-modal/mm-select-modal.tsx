@@ -67,13 +67,13 @@ export class PendingModal {
               <div class='flexContainer'>
                 <div
                   onClick={() => this.setTab(1)}
-                  class={`tab flexItem${this.tab === 1 ? 'tabactive' : ''}`}
+                  class={`tab flexItem ${this.tab === 1 ? 'tabactive' : ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
                   onClick={() => this.setTab(2)}
-                  class={`tab flexItem${this.tab === 2 ? 'tabactive' : ''}`}
+                  class={`tab flexItem ${this.tab === 2 ? 'tabactive' : ''}`}
                 >
                   {t('MOBILE')}
                 </div>
