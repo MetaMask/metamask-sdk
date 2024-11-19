@@ -16,13 +16,16 @@
   "main": "dist/cjs/index.js",
   "module": "dist/es/index.js",
   "unpkg": "dist/umd/index.js",
-  "browser": "dist/umd/index.js",
-  "types": "dist/es/src/index.d.ts",
+  "browser": "dist/es/index.js",
+  "types": "dist/types/src/index.d.ts",
   "files": [
     "/dist"
   ],
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --outDir dist/types",
+    "build:clean": "yarn clean && yarn build",
+    "build": "yarn build:types && rollup -c --bundleConfigAsCjs",
+    "build:dev": "yarn build:types && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:tsc": "tsc --build tsconfig.json --verbose",
     "build:watch": "webpack-cli --watch",
     "build:post-tsc": "echo 'N/A'",
@@ -45,7 +48,7 @@
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
   },
   "dependencies": {
-    "qr-code-styling": "^1.6.0-rc.1"
+    "qr-code-styling": "^1.8.4"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
@@ -75,14 +78,14 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "rimraf": "^5.0.0",
-    "rollup": "^3.21.7",
+    "rollup": "^4.26.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-sizes": "^1.0.6",
     "rollup-plugin-typescript2": "^0.36.0",
     "rollup-plugin-visualizer": "^5.12.0",
     "size-limit": "^11.0.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "i18next": "23.11.5",

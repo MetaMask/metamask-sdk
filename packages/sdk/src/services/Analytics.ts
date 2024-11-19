@@ -13,11 +13,11 @@ export const ANALYTICS_CONSTANTS = {
 };
 
 export class Analytics {
-  #serverURL: string = DEFAULT_SERVER_URL;
+  private serverURL: string = DEFAULT_SERVER_URL;
 
-  #enabled: boolean;
+  private enabled: boolean;
 
-  #originatorInfo: Readonly<AnalyticsProps['originatorInfo']>;
+  private readonly originatorInfo: Readonly<AnalyticsProps['originatorInfo']>;
 
   constructor({
     serverUrl,
@@ -28,9 +28,9 @@ export class Analytics {
     originatorInfo: AnalyticsProps['originatorInfo'];
     enabled?: boolean;
   }) {
-    this.#serverURL = serverUrl;
-    this.#originatorInfo = originatorInfo;
-    this.#enabled = enabled ?? true;
+    this.serverURL = serverUrl;
+    this.originatorInfo = originatorInfo;
+    this.enabled = enabled ?? true;
   }
 
   send({
@@ -40,7 +40,7 @@ export class Analytics {
     event: TrackingEvents;
     params?: Record<string, unknown>;
   }) {
-    if (!this.#enabled) {
+    if (!this.enabled) {
       return;
     }
 
@@ -48,12 +48,12 @@ export class Analytics {
       id: ANALYTICS_CONSTANTS.DEFAULT_ID,
       event,
       sdkVersion: packageJson.version,
-      ...this.#originatorInfo,
+      ...this.originatorInfo,
       params,
     };
     logger(`[Analytics: send()] event: ${event}`, props);
 
-    SendAnalytics(props, this.#serverURL).catch((error: unknown) => {
+    SendAnalytics(props, this.serverURL).catch((error: unknown) => {
       logger(`[Analytics: send()] error: ${error}`);
     });
   }
