@@ -155,7 +155,7 @@ export default class ModalLoader {
       modal.link = link;
     } else {
       const selectModal = this.installContainer?.querySelector(
-        'mm-select-modal'
+        'mm-select-modal',
       ) as HTMLMmSelectModalElement | null;
       if (selectModal) {
         selectModal.link = link;

@@ -8,4 +8,5 @@
  * to consume components of this package as outlined in the `README.md`.
  */
 
-export * from './components'
+export type { Components, MmInstallModalCustomEvent, MmPendingModalCustomEvent, MmSelectModalCustomEvent, JSX } from './components'
+

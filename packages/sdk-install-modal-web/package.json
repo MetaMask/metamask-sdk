@@ -17,6 +17,7 @@
   "module": "dist/index.js",
   "unpkg": "dist/sdk-install-modal-web/index.esm.js",
   "types": "dist/types/index.d.ts",
+  "browser": "dist/sdk-install-modal-web/index.esm.js",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "files": [
@@ -47,10 +48,14 @@
     }
   },
   "scripts": {
-    "build": "stencil build",
-    "test.watch": "stencil test --spec --e2e --watchAll",
     "allow-scripts": "",
     "generate": "stencil generate",
+    "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --outDir dist/types",
+    "build:clean": "yarn clean && yarn build",
+    "build": "stencil build --prod",
+    "build:dev": "stencil build --debug --dev",
+    "build:tsc": "tsc --build tsconfig.json --verbose",
+    "build:watch": "stencil build --watchAll",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "build:release": "yarn version && stencil build",
@@ -65,6 +70,7 @@
     "reset": "yarn clean && rimraf ./node_modules/",
     "start": "stencil build --dev --watch --serve",
     "test": "stencil test --spec --e2e",
+    "test:watch": "stencil test --spec --e2e --watchAll",
     "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js",
     "preversion": "yarn test",
     "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\""
@@ -97,7 +103,7 @@
     "puppeteer": "^23.8.0",
     "rimraf": "^5.0.0",
     "size-limit": "^11.0.2",
-    "typescript": "^5.0.2"
+    "typescript": "^5.6.3"
   },
   "peerDependencies": {
     "i18next": "23.11.5"
