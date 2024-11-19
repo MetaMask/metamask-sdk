@@ -45,12 +45,11 @@ const baseExternalDeps = [
 ];
 
 // Platform-specific externals
-// TODO qrcode-terminal-nooctal still needed?
-const webExternalDeps = [...baseExternalDeps, 'qrcode-terminal-nooctal'].filter(
+const webExternalDeps = [...baseExternalDeps,].filter(
   excludeBundledDeps,
 );
 
-const rnExternalDeps = [...baseExternalDeps, 'qrcode-terminal-nooctal'].filter(
+const rnExternalDeps = [...baseExternalDeps,].filter(
   excludeBundledDeps,
 );
 
