@@ -9974,7 +9974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
@@ -10518,6 +10518,7 @@ __metadata:
     "@metamask/providers": 16.1.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
+    "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-json": ^6.0.0
@@ -10551,9 +10552,6 @@ __metadata:
     obj-multiplex: ^1.0.0
     prettier: ^2.3.0
     pump: ^3.0.0
-    qrcode-terminal-nooctal: ^0.12.1
-    react: ^18.2.0
-    react-dom: 18.2.0
     react-native-webview: ^11.26.0
     readable-stream: ^3.6.2
     rimraf: ^4.4.0
@@ -10574,14 +10572,6 @@ __metadata:
     typescript: ^4.3.2
     util: ^0.12.4
     uuid: ^8.3.2
-  peerDependencies:
-    react: ^18.2.0
-    react-dom: ^18.2.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -25431,7 +25421,6 @@ __metadata:
     "@metamask/providers": 16.1.0
     "@metamask/sdk": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
-    "@metamask/sdk-install-modal-web": "workspace:^"
     "@metamask/sdk-lab": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@metamask/sdk-react-ui": "workspace:^"
