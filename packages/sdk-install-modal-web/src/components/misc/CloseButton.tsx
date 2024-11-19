@@ -1,16 +1,17 @@
-import React from 'react';
+import { h } from "@stencil/core";
+
 const CloseButton = () => (
   <svg
-    width="14"
-    height="14"
+    width="14px"
+    height="14px"
     viewBox="0 0 16 16"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <rect width="16" height="16" fill="white" />
+    <rect width="16px" height="16px" fill="white" />
     <path
-      fillRule="evenodd"
-      clipRule="evenodd"
+      fill-rule="evenodd"
+      clip-rule="evenodd"
       d="M2.40554 2.40554C2.94627 1.86482 3.82296 1.86482 4.36369 2.40554L8 6.04186L11.6363 2.40554C12.177 1.86482 13.0537 1.86482 13.5945 2.40554C14.1352 2.94627 14.1352 3.82296 13.5945 4.36369L9.95814 8L13.5945 11.6363C14.1352 12.177 14.1352 13.0537 13.5945 13.5945C13.0537 14.1352 12.177 14.1352 11.6363 13.5945L8 9.95814L4.36369 13.5945C3.82296 14.1352 2.94627 14.1352 2.40554 13.5945C1.86482 13.0537 1.86482 12.177 2.40554 11.6363L6.04186 8L2.40554 4.36369C1.86482 3.82296 1.86482 2.94627 2.40554 2.40554Z"
       fill="#BBC0C5"
     />

@@ -1,8 +1,9 @@
-import React from 'react';
+import { h } from "@stencil/core";
+
 const WalletIcon = () => (
   <svg
-    width="20"
-    height="20"
+    width="20px"
+    height="20px"
     viewBox="0 0 20 20"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"

@@ -1,12 +1,11 @@
-import React from 'react';
-import styles from '../styles';
+import { h } from '@stencil/core';
 
 const AdvantagesListItem = ({ Icon, text }: { Icon: any; text: string }) => (
-  <div style={{ padding: 6, ...styles.flexContainer, flexDirection: 'row'}}>
-    <div style={styles.flexItem1}>
+  <div class='flexContainer' style={{ padding: '6', flexDirection: 'row'}}>
+    <div class='flexItem1'>
       <Icon />
     </div>
-    <div style={styles.flexItem11}>
+    <div class='flexItem11'>
       <span style={{ lineHeight: '2',  color: 'black' }}>{text}</span>
     </div>
   </div>

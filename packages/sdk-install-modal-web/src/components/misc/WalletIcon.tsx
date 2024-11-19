@@ -1,8 +1,9 @@
-import React from 'react';
+import { h } from "@stencil/core";
+
 const LockIcon = () => (
   <svg
-    width="20"
-    height="18"
+    width="20px"
+    height="18px"
     viewBox="0 0 20 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
