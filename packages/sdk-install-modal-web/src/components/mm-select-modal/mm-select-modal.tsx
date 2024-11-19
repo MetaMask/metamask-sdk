@@ -27,7 +27,7 @@ export class PendingModal {
 
   @Event() connectWithExtension: EventEmitter;
 
-  @State() tab: number;
+  @State() tab: number = 1;
 
   @Element() el: HTMLElement;
 

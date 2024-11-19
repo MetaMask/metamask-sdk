@@ -32,7 +32,7 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
-  @State() tab: number;
+  @State() tab: number = 1;
 
   @Element() el: HTMLElement;
 

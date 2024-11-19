@@ -153,6 +153,13 @@ export default class ModalLoader {
     ) as HTMLMmInstallModalElement | null;
     if (modal) {
       modal.link = link;
+    } else {
+      const selectModal = this.installContainer?.querySelector(
+        'mm-select-modal'
+      ) as HTMLMmSelectModalElement | null;
+      if (selectModal) {
+        selectModal.link = link;
+      }
     }
   }
 
