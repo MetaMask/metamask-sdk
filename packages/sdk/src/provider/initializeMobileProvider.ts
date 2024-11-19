@@ -110,7 +110,6 @@ const initializeMobileProvider = async ({
 
   let initializationOngoing = false;
   const setInitializing = (ongoing: boolean) => {
-    console.log(`[initializeMobileProvider] setInitializing: ${ongoing}`);
     initializationOngoing = ongoing;
   };
 
