@@ -1,8 +1,8 @@
 import { i18n } from 'i18next';
-import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import sdkWebPendingModal from './pendingModal-web';
+import ModalLoader from './Modal-web';
 
-jest.mock('@metamask/sdk-install-modal-web');
+jest.mock('./Modal-web');
 
 describe('sdkWebPendingModal', () => {
   const mockModalLoader = ModalLoader as jest.MockedClass<typeof ModalLoader>;
