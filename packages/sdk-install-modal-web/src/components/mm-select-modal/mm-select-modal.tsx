@@ -1,4 +1,4 @@
-import { Component, Prop, h, Event, EventEmitter, State } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Watch, Element } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
@@ -6,6 +6,7 @@ import Logo from '../misc/Logo';
 import { i18n } from 'i18next';
 import ConnectIcon from '../misc/ConnectIcon';
 import { MetamaskExtensionImage } from '../misc/MetamaskExtensionImage';
+import encodeQR from '@paulmillr/qr';
 
 @Component({
   tag: 'mm-select-modal',
@@ -28,6 +29,8 @@ export class PendingModal {
 
   @State() tab: number;
 
+  @Element() el: HTMLElement;
+
   onClose(shouldTerminate = false) {
     this.close.emit({ shouldTerminate });
   }
@@ -38,6 +41,26 @@ export class PendingModal {
 
   setTab(tab: number) {
     this.tab = tab;
+  }
+
+  @Watch('link')
+  updateLink(newLink: string) {
+    const svgElement = encodeQR(newLink, "svg", {
+      ecc: "medium",
+      scale: 2
+    })
+
+    if (!this.el.shadowRoot) {
+      return;
+    }
+
+    const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
+
+    if (!qrcodeDiv) {
+      return;
+    }
+
+    qrcodeDiv.innerHTML = svgElement
   }
 
   disconnectedCallback() {
@@ -88,7 +111,7 @@ export class PendingModal {
                     marginTop: '4',
                   }}
                 >
-                  <div class='center' id="sdk-qrcode-container" />
+                  <div class='center' id="sdk-mm-qrcode" />
                   <div class='connectMobileText'>
                     {t('SCAN_TO_CONNECT')}
                     <br />
