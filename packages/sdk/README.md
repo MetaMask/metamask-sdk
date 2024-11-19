@@ -50,34 +50,40 @@ ethereum.request({method: 'eth_requestAccounts', params: []})
 The MetaMask SDK provides different bundles optimized for various environments:
 
 ## Browser Bundle
+
 - **Usage**: For web applications running in browsers
 - **Import Path**: `@metamask/sdk/browser`
 - **Format**: ES Modules
 - **Example**:
+
 ```javascript
-import MetaMaskSDK from '@metamask/sdk/browser'
+import MetaMaskSDK from '@metamask/sdk/browser';
 ```
 
 ## React Native Bundle
+
 - **Usage**: For React Native mobile applications
 - **Import Path**: `@metamask/sdk/react-native`
 - **Format**: ES Modules
 - **Example**:
+
 ```javascript
-import MetaMaskSDK from '@metamask/sdk/react-native'
+import MetaMaskSDK from '@metamask/sdk/react-native';
 ```
 
 ## Node.js Bundle
+
 - **Usage**: For Node.js server-side applications
 - **Import Path**: `@metamask/sdk/node`
 - **Formats**: Both CommonJS (require) and ES Modules (import)
 - **Example**:
+
 ```javascript
 // ESM
-import MetaMaskSDK from '@metamask/sdk/node'
+import MetaMaskSDK from '@metamask/sdk/node';
 
 // CommonJS
-const MetaMaskSDK = require('@metamask/sdk/node')
+const MetaMaskSDK = require('@metamask/sdk/node');
 ```
 
 The SDK will automatically select the appropriate bundle based on your environment, but you can explicitly choose a specific bundle using the paths above.
