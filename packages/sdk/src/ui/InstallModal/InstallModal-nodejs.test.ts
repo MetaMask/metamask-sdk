@@ -2,9 +2,7 @@ import encodeQR from '@paulmillr/qr';
 import * as loggerModule from '../../utils/logger';
 import InstallModal from './InstallModal-nodejs';
 
-jest.mock('@paulmillr/qr', () => ({
-  encodeQR: jest.fn((_, __) => 'Mocked QR Code'),
-}));
+jest.mock('@paulmillr/qr', () => (jest.fn((_, __) => 'Mocked QR Code')));
 
 describe('InstallModal-nodejs', () => {
   const spyLogger = jest.spyOn(loggerModule, 'logger');
@@ -29,8 +27,7 @@ describe('InstallModal-nodejs', () => {
 
     expect(mockGenerate).toHaveBeenCalledWith(
       mockLink,
-      { small: true },
-      expect.any(Function),
+      'ascii'
     );
   });
 
