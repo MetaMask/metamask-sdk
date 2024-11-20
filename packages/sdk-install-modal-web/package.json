@@ -17,7 +17,6 @@
   "module": "dist/index.js",
   "unpkg": "dist/sdk-install-modal-web/index.esm.js",
   "types": "dist/types/index.d.ts",
-  "browser": "dist/sdk-install-modal-web/index.esm.js",
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "files": [
