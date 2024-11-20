@@ -23,6 +23,7 @@
     "typeRoots": ["./types", "./node_modules/@types"],
     "paths": {
       "@metamask/sdk-communication-layer": ["../sdk-communication-layer/src"],
+      "@metamask/sdk-install-modal-web": ["../sdk-install-modal-web/src"],
       "@metamask/sdk-react": ["../sdk-react/src"],
       "@metamask/sdk-react-ui": ["../sdk-react-ui/src"],
       "@metamask/sdk": ["../sdk/src"],

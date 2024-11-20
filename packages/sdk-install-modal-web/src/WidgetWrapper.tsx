@@ -1,4 +1,4 @@
-import { h, ChildNode } from '@stencil/core';
+import React from 'react';
 import './resetStyles.css';
 
 const widgetWrapperStyle = {
@@ -6,12 +6,14 @@ const widgetWrapperStyle = {
 };
 
 export const WidgetWrapper = ({
+  children,
   className,
 }: {
+  children: React.ReactNode;
   className: string;
-}, children: ChildNode) => {
+}) => {
   return (
-    <div style={widgetWrapperStyle} class={className}>
+    <div style={widgetWrapperStyle} className={className}>
       {children}
     </div>
   );

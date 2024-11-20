@@ -1,4 +1,4 @@
-import { h } from "@stencil/core";
+import React from 'react';
 
 export const MetamaskExtensionImage = () => (
   <svg
@@ -116,233 +116,233 @@ export const MetamaskExtensionImage = () => (
       d="M295.952 95.4242L241.395 135.226L251.54 111.77L295.952 95.4242Z"
       fill="#E17726"
       stroke="#E17726"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M170.111 95.4242L224.181 135.598L214.522 111.77L170.111 95.4242Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M276.309 187.712L261.793 209.576L292.876 218.014L301.78 188.189L276.309 187.712Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M164.336 188.189L173.186 218.014L204.215 209.576L189.753 187.712L164.336 188.189Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M202.542 150.776L193.908 163.618L224.667 164.998L223.642 132.36L202.542 150.776Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M263.52 150.775L242.097 131.989L241.395 164.998L272.154 163.618L263.52 150.775Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M204.215 209.576L222.832 200.714L206.805 188.402L204.215 209.576Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M243.23 200.714L261.793 209.576L259.257 188.402L243.23 200.714Z"
       fill="#E27625"
       stroke="#E27625"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M261.793 209.576L243.23 200.714L244.741 212.601L244.579 217.643L261.793 209.576Z"
       fill="#D5BFB2"
       stroke="#D5BFB2"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M204.215 209.576L221.483 217.643L221.375 212.601L222.832 200.714L204.215 209.576Z"
       fill="#D5BFB2"
       stroke="#D5BFB2"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M221.807 180.547L206.373 176.09L217.274 171.154L221.807 180.547Z"
       fill="#233447"
       stroke="#233447"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M244.255 180.547L248.788 171.154L259.742 176.09L244.255 180.547Z"
       fill="#233447"
       stroke="#233447"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M204.215 209.576L206.913 187.712L189.753 188.189L204.215 209.576Z"
       fill="#CC6228"
       stroke="#CC6228"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M259.149 187.712L261.793 209.576L276.309 188.189L259.149 187.712Z"
       fill="#CC6228"
       stroke="#CC6228"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M272.154 163.618L241.395 164.998L244.255 180.547L248.788 171.154L259.742 176.09L272.154 163.618Z"
       fill="#CC6228"
       stroke="#CC6228"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M206.373 176.09L217.274 171.154L221.807 180.547L224.667 164.998L193.908 163.618L206.373 176.09Z"
       fill="#CC6228"
       stroke="#CC6228"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M193.908 163.618L206.805 188.402L206.373 176.09L193.908 163.618Z"
       fill="#E27525"
       stroke="#E27525"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M259.743 176.09L259.257 188.402L272.154 163.618L259.743 176.09Z"
       fill="#E27525"
       stroke="#E27525"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M224.667 164.998L221.807 180.548L225.422 198.909L226.232 174.71L224.667 164.998Z"
       fill="#E27525"
       stroke="#E27525"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M241.395 164.998L239.884 174.657L240.64 198.909L244.255 180.548L241.395 164.998Z"
       fill="#E27525"
       stroke="#E27525"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M244.255 180.547L240.64 198.909L243.23 200.714L259.257 188.402L259.743 176.09L244.255 180.547Z"
       fill="#F5841F"
       stroke="#F5841F"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M206.373 176.09L206.805 188.402L222.832 200.714L225.422 198.909L221.807 180.547L206.373 176.09Z"
       fill="#F5841F"
       stroke="#F5841F"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M244.579 217.643L244.741 212.601L243.338 211.434H222.724L221.375 212.601L221.483 217.643L204.215 209.576L210.259 214.459L222.508 222.791H243.5L255.803 214.459L261.793 209.576L244.579 217.643Z"
       fill="#C0AC9D"
       stroke="#C0AC9D"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M243.23 200.714L240.64 198.909H225.422L222.832 200.714L221.375 212.601L222.724 211.434H243.338L244.741 212.601L243.23 200.714Z"
       fill="#161616"
       stroke="#161616"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M298.272 137.827L302.859 115.856L295.952 95.4242L243.23 133.899L263.52 150.775L292.174 159.001L298.488 151.731L295.736 149.767L300.107 145.84L296.761 143.293L301.132 140.002L298.272 137.827Z"
       fill="#763E1A"
       stroke="#763E1A"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M163.203 115.856L167.844 137.827L164.876 140.002L169.301 143.293L165.955 145.84L170.326 149.767L167.574 151.731L173.888 159.001L202.542 150.775L222.832 133.899L170.11 95.4242L163.203 115.856Z"
       fill="#763E1A"
       stroke="#763E1A"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M292.175 159.001L263.52 150.775L272.154 163.618L259.257 188.402L276.309 188.189H301.78L292.175 159.001Z"
       fill="#F5841F"
       stroke="#F5841F"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M202.542 150.775L173.888 159.001L164.336 188.189H189.753L206.805 188.402L193.908 163.618L202.542 150.775Z"
       fill="#F5841F"
       stroke="#F5841F"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <path
       d="M241.395 164.998L243.23 133.9L251.54 111.77H214.522L222.832 133.9L224.667 164.998L225.368 174.763L225.422 198.909H240.64L240.694 174.763L241.395 164.998Z"
       fill="#F5841F"
       stroke="#F5841F"
-      stroke-width="0.94513"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeWidth="0.94513"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     />
     <defs>
       <linearGradient
@@ -353,8 +353,8 @@ export const MetamaskExtensionImage = () => (
         y2="266.801"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint1_linear_1356_14057"
@@ -364,9 +364,9 @@ export const MetamaskExtensionImage = () => (
         y2="401.574"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="0.0929" stop-color="#81C2F6" />
-        <stop offset="1" stop-color="#F0B8BD" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="0.0929" stopColor="#81C2F6" />
+        <stop offset="1" stopColor="#F0B8BD" />
       </linearGradient>
       <linearGradient
         id="paint2_linear_1356_14057"
@@ -376,8 +376,8 @@ export const MetamaskExtensionImage = () => (
         y2="104.53"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint3_linear_1356_14057"
@@ -387,8 +387,8 @@ export const MetamaskExtensionImage = () => (
         y2="72.8792"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint4_linear_1356_14057"
@@ -398,8 +398,8 @@ export const MetamaskExtensionImage = () => (
         y2="183.406"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint5_linear_1356_14057"
@@ -409,9 +409,9 @@ export const MetamaskExtensionImage = () => (
         y2="163.003"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="0.0929" stop-color="#81C2F6" />
-        <stop offset="1" stop-color="#F0B8BD" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="0.0929" stopColor="#81C2F6" />
+        <stop offset="1" stopColor="#F0B8BD" />
       </linearGradient>
       <linearGradient
         id="paint6_linear_1356_14057"
@@ -421,8 +421,8 @@ export const MetamaskExtensionImage = () => (
         y2="241.328"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint7_linear_1356_14057"
@@ -432,8 +432,8 @@ export const MetamaskExtensionImage = () => (
         y2="182.925"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint8_linear_1356_14057"
@@ -443,8 +443,8 @@ export const MetamaskExtensionImage = () => (
         y2="245.537"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint9_linear_1356_14057"
@@ -454,8 +454,8 @@ export const MetamaskExtensionImage = () => (
         y2="280.762"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint10_linear_1356_14057"
@@ -465,8 +465,8 @@ export const MetamaskExtensionImage = () => (
         y2="100.028"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint11_linear_1356_14057"
@@ -476,8 +476,8 @@ export const MetamaskExtensionImage = () => (
         y2="157.571"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint12_linear_1356_14057"
@@ -487,8 +487,8 @@ export const MetamaskExtensionImage = () => (
         y2="243.911"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint13_linear_1356_14057"
@@ -498,8 +498,8 @@ export const MetamaskExtensionImage = () => (
         y2="38.8076"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="1" stop-color="#75C3FC" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="1" stopColor="#75C3FC" />
       </linearGradient>
       <linearGradient
         id="paint14_linear_1356_14057"
@@ -509,8 +509,8 @@ export const MetamaskExtensionImage = () => (
         y2="104.041"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint15_linear_1356_14057"
@@ -520,8 +520,8 @@ export const MetamaskExtensionImage = () => (
         y2="302.269"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
       <linearGradient
         id="paint16_linear_1356_14057"
@@ -531,9 +531,9 @@ export const MetamaskExtensionImage = () => (
         y2="197.95"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="0.0929" stop-color="#81C2F6" />
-        <stop offset="1" stop-color="#F0B8BD" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="0.0929" stopColor="#81C2F6" />
+        <stop offset="1" stopColor="#F0B8BD" />
       </linearGradient>
       <linearGradient
         id="paint17_linear_1356_14057"
@@ -543,9 +543,9 @@ export const MetamaskExtensionImage = () => (
         y2="232.788"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#75C3FC" />
-        <stop offset="0.0929" stop-color="#81C2F6" />
-        <stop offset="1" stop-color="#F0B8BD" />
+        <stop stopColor="#75C3FC" />
+        <stop offset="0.0929" stopColor="#81C2F6" />
+        <stop offset="1" stopColor="#F0B8BD" />
       </linearGradient>
       <linearGradient
         id="paint18_linear_1356_14057"
@@ -555,8 +555,8 @@ export const MetamaskExtensionImage = () => (
         y2="273.774"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FFE466" />
-        <stop offset="1" stop-color="#FFAFEA" />
+        <stop stopColor="#FFE466" />
+        <stop offset="1" stopColor="#FFAFEA" />
       </linearGradient>
     </defs>
   </svg>
