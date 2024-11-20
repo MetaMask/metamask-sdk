@@ -9982,6 +9982,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
+    "@rollup/plugin-alias": ^5.1.1
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.2
     "@rollup/plugin-terser": ^0.4.1
@@ -10003,10 +10004,9 @@ __metadata:
     i18next: 23.11.5
     jest: ^29.6.4
     postcss: ^8.4.35
+    preact: ^10.24.3
     prettier: ^2.8.8
     qr-code-styling: ^1.8.4
-    react: ^18.2.0
-    react-dom: ^18.2.0
     rimraf: ^5.0.0
     rollup: ^4.26.0
     rollup-plugin-peer-deps-external: ^2.2.4
@@ -10018,14 +10018,8 @@ __metadata:
     typescript: ^5.6.3
   peerDependencies:
     i18next: 23.11.5
-    react: ^18.2.0
-    react-dom: ^18.2.0
     react-native: "*"
   peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
     react-native:
       optional: true
   languageName: unknown
@@ -10577,12 +10571,12 @@ __metadata:
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     obj-multiplex: ^1.0.0
+    preact: ^10.24.3
     prettier: ^2.3.0
     process: ^0.11.10
     pump: ^3.0.0
+    qr-code-styling: ^1.8.4
     qrcode-terminal-nooctal: ^0.12.1
-    react: ^18.2.0
-    react-dom: 18.2.0
     react-native-webview: ^11.26.0
     readable-stream: ^3.6.2
     rimraf: ^4.4.0
@@ -10608,14 +10602,6 @@ __metadata:
     util: ^0.12.4
     uuid: ^8.3.2
     webpack: ^5.0.0
-  peerDependencies:
-    react: ^18.2.0
-    react-dom: ^18.2.0
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -41547,6 +41533,13 @@ __metadata:
   version: 10.23.2
   resolution: "preact@npm:10.23.2"
   checksum: 1df6a9d72480c42b4985c1344941184422374c48af0f1e9df0de8d1c3f1f85c996d3a9e2850c8256abe39352d8fd174dd95e2f4177433022661baabfb6547f2c
+  languageName: node
+  linkType: hard
+
+"preact@npm:^10.24.3":
+  version: 10.24.3
+  resolution: "preact@npm:10.24.3"
+  checksum: 372f601576f52d6417a750a8732cd83c4fc133b0b136f82ea69f013092266ad0213c160b71ae421a0fc7ab04caacb651c29dbf515e3aec26d82b0a8675e8786e
   languageName: node
   linkType: hard
 

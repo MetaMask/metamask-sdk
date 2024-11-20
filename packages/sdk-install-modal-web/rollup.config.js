@@ -5,6 +5,7 @@ import terser from '@rollup/plugin-terser';
 import { visualizer } from 'rollup-plugin-visualizer';
 import external from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
+import alias from '@rollup/plugin-alias';
 
 // Check if environment variable is set to 'dev'
 const isDev = process.env.NODE_ENV === 'dev';
@@ -45,9 +46,6 @@ const config = [
       },
     ],
     external: [
-      'react',
-      'react-dom',
-      'react-dom/client',
       'react-native',
       'i18next',
       'tslib',
@@ -55,6 +53,14 @@ const config = [
     ],
     plugins: [
       external(),
+      alias({
+        entries: [
+          { find: 'react', replacement: 'preact/compat' },
+          { find: 'react-dom/test-utils', replacement: 'preact/test-utils' },
+          { find: 'react-dom', replacement: 'preact/compat' },
+          { find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime' }
+        ]
+      }),
       resolve({
         browser: true,
         extensions: ['.ts', '.tsx']

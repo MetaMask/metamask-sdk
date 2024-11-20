@@ -9,6 +9,7 @@ import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
 
 const packageJson = require('./package.json');
 const isDev = process.env.NODE_ENV === 'dev';
@@ -115,6 +116,14 @@ const getBasePlugins = ({ platform }) =>
         _REACTNATIVE: platform === 'rn' ? 1 : 0,
         _NODEJS: platform === 'node' ? 1 : 0,
       },
+    }),
+    alias({
+      entries: [
+        { find: 'react', replacement: 'preact/compat' },
+        { find: 'react-dom/test-utils', replacement: 'preact/test-utils' },
+        { find: 'react-dom', replacement: 'preact/compat' },
+        { find: 'react/jsx-runtime', replacement: 'preact/jsx-runtime' }
+      ]
     }),
     typescript({
       tsconfig: './tsconfig.build.json',
