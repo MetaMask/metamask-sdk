@@ -9,4 +9,4 @@
  */
 
 export type { Components, MmInstallModalCustomEvent, MmPendingModalCustomEvent, MmSelectModalCustomEvent, JSX } from './components'
-export { DefaultLanguage, Translator, createInstance } from './lang'
+export { DefaultLanguage, type Translator, createInstance } from './lang'

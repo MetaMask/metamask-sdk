@@ -1,4 +1,3 @@
-
 import { Translator } from '@metamask/sdk-install-modal-web';
 import createInstance from '@metamask/sdk-install-modal-web/dist/es/src/lang';
 import * as loggerModule from '../../utils/logger';
