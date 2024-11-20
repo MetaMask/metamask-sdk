@@ -54,7 +54,7 @@ export const InstallModal = (props: InstallModalProps) => {
         <div style={styles.logoContainer}>
           <Logo />
         </div>
-        <div>
+        <div style={{height: 450}}>
           <div style={styles.tabcontainer}>
             <div style={styles.flexContainer}>
               <div
@@ -89,6 +89,7 @@ export const InstallModal = (props: InstallModalProps) => {
                 style={{
                   textAlign: 'center',
                   marginTop: 4,
+                  maxWidth: 250,
                   ...styles.flexItem,
                 }}
               >
