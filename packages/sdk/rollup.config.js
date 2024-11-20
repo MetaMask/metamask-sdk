@@ -25,7 +25,7 @@ const dependencies = Object.keys(packageJson.dependencies || {});
 const bundledDeps = [
   // '@metamask/sdk-communication-layer',
   // '@metamask/sdk-install-modal-web',
-  'qr-code-styling',
+  '@paulmillr/qr',
   // Add other dependencies that should be bundled
 ];
 
@@ -46,11 +46,11 @@ const baseExternalDeps = [
 ];
 
 // Platform-specific externals
-const webExternalDeps = [...baseExternalDeps, 'qrcode-terminal-nooctal'].filter(
+const webExternalDeps = [...baseExternalDeps,].filter(
   excludeBundledDeps,
 );
 
-const rnExternalDeps = [...baseExternalDeps, 'qrcode-terminal-nooctal'].filter(
+const rnExternalDeps = [...baseExternalDeps,].filter(
   excludeBundledDeps,
 );
 
