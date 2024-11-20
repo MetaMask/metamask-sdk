@@ -2,8 +2,8 @@ import { h } from "@stencil/core";
 
 const HeartIcon = () => (
   <svg
-    width="20px"
-    height="18px"
+    width="20"
+    height="18"
     viewBox="0 0 20 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
