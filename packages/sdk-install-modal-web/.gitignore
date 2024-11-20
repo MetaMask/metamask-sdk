@@ -54,32 +54,3 @@ node_modules/
 # lock files
 yarn.lock
 package-lock.json
-
-# == Stencil ==
-dist/
-www/
-loader/
-
-*~
-*.sw[mnpcod]
-*.log
-*.lock
-*.tmp
-*.tmp.*
-log.txt
-*.sublime-project
-*.sublime-workspace
-
-.stencil/
-.idea/
-.vscode/
-.sass-cache/
-.versions/
-node_modules/
-$RECYCLE.BIN/
-
-.DS_Store
-Thumbs.db
-UserInterfaceState.xcuserstate
-.env
-# ====

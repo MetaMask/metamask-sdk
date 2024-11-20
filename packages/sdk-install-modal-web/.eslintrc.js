@@ -15,9 +15,6 @@ module.exports = {
     '**/coverage/**',
     'postcss.config.js',
     'jest-preload.js',
-    'loader',
-    '.stencil',
-    'stencil.config.ts',
   ],
 
   parserOptions: {

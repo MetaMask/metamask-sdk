@@ -1,5 +1,4 @@
-import { h } from "@stencil/core";
-
+import React from 'react';
 const ConnectIcon = () => (
   <svg
     width="21"

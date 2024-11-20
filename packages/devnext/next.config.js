@@ -24,6 +24,7 @@ const nextConfig = withExpo({
     '@expo/vector-icons',
     '@metamask/sdk-communication-layer',
     '@metamask/sdk',
+    '@metamask/sdk-install-modal-web',
     '@metamask/sdk-react',
     '@metamask/sdk-react-ui',
     '@metamask/sdk-ui',

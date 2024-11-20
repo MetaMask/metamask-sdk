@@ -1,9 +1,9 @@
+import { ModalLoader } from '@metamask/sdk-install-modal-web';
 import { i18n } from 'i18next';
 import * as loggerModule from '../../utils/logger';
 import sdkWebInstallModal from './InstallModal-web';
-import ModalLoader from './Modal-web';
 
-jest.mock('./Modal-web');
+jest.mock('@metamask/sdk-install-modal-web');
 jest.mock('i18next', () => ({
   t: jest.fn((key) => key),
 }));
