@@ -33,7 +33,7 @@ cp -rf $SDK_DIR/package.json node_modules/@metamask/sdk/package.json
 cp -rf $SDK_REACT_DIR/dist node_modules/@metamask/sdk-react/dist
 cp -rf $SDK_REACT_DIR/package.json node_modules/@metamask/sdk-react/package.json
 
-cp -rf $SDK_INSTALL_MODAL_WEB_DIR/dist node_modules/@metamask/sdk-install-modal-web/dist
+cp -rf $SDK_INSTALL_MODAL_WEB_DIR/dist node_modules/@metamask/sdk-install-modal-web
 cp -rf $SDK_INSTALL_MODAL_WEB_DIR/package.json node_modules/@metamask/sdk-install-modal-web/package.json
 
 

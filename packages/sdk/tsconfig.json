@@ -14,7 +14,12 @@
     "incremental": true,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@metamask/sdk-install-modal-web/*": [
+        "../sdk-install-modal-web/dist/*"
+      ]
+    }
     // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
   "include": ["./src", "./tools"],
