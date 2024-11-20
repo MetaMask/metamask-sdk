@@ -9982,6 +9982,7 @@ __metadata:
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
+    "@paulmillr/qr": ^0.2.1
     "@rollup/plugin-commonjs": ^25.0.7
     "@rollup/plugin-node-resolve": ^15.0.2
     "@rollup/plugin-terser": ^0.4.1
@@ -10004,7 +10005,6 @@ __metadata:
     jest: ^29.6.4
     postcss: ^8.4.35
     prettier: ^2.8.8
-    qr-code-styling: ^1.8.4
     react: ^18.2.0
     react-dom: ^18.2.0
     rimraf: ^5.0.0
@@ -10540,6 +10540,7 @@ __metadata:
     "@metamask/providers": 16.1.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
+    "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-alias": ^5.1.1
     "@rollup/plugin-commonjs": ^25.0.7
@@ -10580,7 +10581,6 @@ __metadata:
     prettier: ^2.3.0
     process: ^0.11.10
     pump: ^3.0.0
-    qrcode-terminal-nooctal: ^0.12.1
     react: ^18.2.0
     react-dom: 18.2.0
     react-native-webview: ^11.26.0
@@ -11400,6 +11400,13 @@ __metadata:
     "@parcel/watcher-win32-x64":
       optional: true
   checksum: 12f494998dbae363cc9c48b49f7e09589c179e84133e3b6cd0c087573a7dc70b3adec458f95b39e3b8e4d9c93cff770ce15b1d2452d6741a5047f1ca90485ded
+  languageName: node
+  linkType: hard
+
+"@paulmillr/qr@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@paulmillr/qr@npm:0.2.1"
+  checksum: 8a7b882f74f472759b0e5911c9c902a29c5232609373af4c5775625d9aad4ebda635d84c25be27e694144ba73d8e4204e72c3b9b59e9a375ec1d19f034a2d2ad
   languageName: node
   linkType: hard
 
@@ -42036,16 +42043,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qr-code-styling@npm:^1.8.4":
-  version: 1.8.4
-  resolution: "qr-code-styling@npm:1.8.4"
-  dependencies:
-    qrcode-generator: ^1.4.4
-  checksum: 755c5dfd242d1e3ac01de39453664eb554030226ca74d9ea68a421ac1c12f204a60aef4714b473c6a1a85ef1222c3deb77bdc4bed9554c5af700133e08f25602
-  languageName: node
-  linkType: hard
-
-"qrcode-generator@npm:^1.4.3, qrcode-generator@npm:^1.4.4":
+"qrcode-generator@npm:^1.4.3":
   version: 1.4.4
   resolution: "qrcode-generator@npm:1.4.4"
   checksum: 860cfdd2a7a608d34e92cab99774cc08182e1911432f30ed36d16f8a5cdabd7fdf40239caed91fa2691cfe66c8d95c1340a2fc9cc439eed07a9f2eb328c6f527

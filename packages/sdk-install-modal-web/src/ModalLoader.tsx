@@ -1,10 +1,10 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { FOX_IMAGE } from './constants';
 
 import { InstallModal, InstallModalProps } from './InstallModal';
 import { PendingModal, PendingModalProps } from './PendingModal';
 import { SelectModal, SelectModalProps } from './SelectModal';
+import encodeQR from '@paulmillr/qr';
 
 export interface InstallWidgetProps extends InstallModalProps {
   parentElement: Element;
@@ -131,31 +131,12 @@ export class ModalLoader {
       document.getElementById('sdk-qrcode-container');
     if (qrCodeNode) {
       qrCodeNode.innerHTML = '';
-      // Prevent nextjs import issue: https://github.com/kozakdenys/qr-code-styling/issues/38
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const QRCodeStyling = require('qr-code-styling');
-      // Prevent nextjs import issue
-      const qrCode = new QRCodeStyling({
-        width: 270,
-        height: 270,
-        type: 'svg',
-        data: link,
-        image: FOX_IMAGE,
-        dotsOptions: {
-          color: 'black',
-          type: 'rounded',
-        },
-        imageOptions: {
-          margin: 5,
-        },
-        cornersDotOptions: {
-          color: '#f66a07',
-        },
-        qrOptions: {
-          errorCorrectionLevel: 'M',
-        },
-      });
-      qrCode.append(qrCodeNode);
+
+      const svgElement = encodeQR(link, "svg", {
+        ecc: "medium",
+        scale: 2,
+      })
+      qrCodeNode.innerHTML = svgElement
     }
   };
 
