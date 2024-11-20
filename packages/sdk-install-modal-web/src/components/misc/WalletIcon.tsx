@@ -1,4 +1,5 @@
-import React from 'react';
+import { h } from "@stencil/core";
+
 const LockIcon = () => (
   <svg
     width="20"
