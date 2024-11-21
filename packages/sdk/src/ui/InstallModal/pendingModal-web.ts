@@ -1,15 +1,12 @@
-import { i18n } from 'i18next';
 import packageJson from '../../../package.json';
 import { logger } from '../../utils/logger';
 import ModalLoader from './Modal-web';
 
 const sdkWebPendingModal = ({
   onDisconnect,
-  i18nInstance,
   debug,
 }: {
   onDisconnect?: () => void;
-  i18nInstance: i18n;
   debug?: boolean;
 }) => {
   let div: HTMLDivElement | null = null;
@@ -65,7 +62,6 @@ const sdkWebPendingModal = ({
     document.body.appendChild(div);
 
     modalLoader.renderPendingModal({
-      i18nInstance,
       parentElement: div,
       onClose: unmount,
       onDisconnect,

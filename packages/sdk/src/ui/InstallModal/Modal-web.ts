@@ -57,7 +57,6 @@ export default class ModalLoader {
       modal.link = props.link;
       modal.preferDesktop = props.preferDesktop;
       modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.i18nInstance = props.i18nInstance;
       modal.addEventListener('close', props.onClose);
       modal.addEventListener(
         'startDesktopOnboarding',
@@ -92,7 +91,6 @@ export default class ModalLoader {
       ) as HTMLMmSelectModalElement;
       modal.link = props.link;
       modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.i18nInstance = props.i18nInstance;
       modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
         props.onClose(shouldTerminate),
       );
@@ -134,7 +132,6 @@ export default class ModalLoader {
         'mm-pending-modal',
       ) as HTMLMmPendingModalElement;
       modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.i18nInstance = props.i18nInstance;
       modal.displayOTP = props.displayOTP;
       modal.addEventListener('close', props.onClose);
       modal.addEventListener('updateOTPValue', ({ detail: { otpValue } }) =>

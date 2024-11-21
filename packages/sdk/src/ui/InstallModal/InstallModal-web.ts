@@ -1,7 +1,6 @@
-import { i18n } from 'i18next';
-import { logger } from '../../utils/logger';
-import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import packageJson from '../../../package.json';
+import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import { logger } from '../../utils/logger';
 import ModalLoader from './Modal-web';
 
 const sdkWebInstallModal = ({
@@ -11,7 +10,6 @@ const sdkWebInstallModal = ({
   terminate,
   connectWithExtension,
   preferDesktop,
-  i18nInstance,
 }: {
   link: string;
   debug?: boolean;
@@ -19,7 +17,6 @@ const sdkWebInstallModal = ({
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
-  i18nInstance: i18n;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -64,6 +61,7 @@ const sdkWebInstallModal = ({
       div,
     );
 
+    console.warn(`AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`);
     if (div) {
       div.style.display = 'block';
       modalLoader?.updateQRCode(qrcodeLink);
@@ -76,7 +74,6 @@ const sdkWebInstallModal = ({
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
       modalLoader.renderSelectModal({
-        i18nInstance,
         parentElement: div,
         connectWithExtension: () => {
           unmount();
@@ -87,7 +84,6 @@ const sdkWebInstallModal = ({
       });
     } else {
       modalLoader.renderInstallModal({
-        i18nInstance,
         parentElement: div,
         preferDesktop: preferDesktop ?? false,
         link,

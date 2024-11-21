@@ -33,13 +33,27 @@ const nextConfig = withExpo({
   experimental: {
     forceSwcTransforms: true,
   },
-  webpack: (config) => {
+  webpack: (config, { dev, isServer }) => {
     config.resolve = {
       ...config.resolve,
       symlinks: false, // tells webpack to follow the real path of symlinked module instead of the symlink path itself
+      fallback: {
+        ...config.resolve.fallback,
+        stream: require.resolve('stream-browserify'),
+        crypto: require.resolve('crypto-browserify'),
+        http: require.resolve('stream-http'),
+        https: require.resolve('https-browserify'),
+        os: require.resolve('os-browserify/browser'),
+        path: require.resolve('path-browserify'),
+        zlib: require.resolve('browserify-zlib'),
+      },
       alias: {
         ...config.resolve.alias,
         // Make sure the react version used is from our node_modules
+        '@babel/runtime': path.resolve(
+          __dirname,
+          './node_modules/@babel/runtime',
+        ),
         react: path.resolve(__dirname, './node_modules/react'),
         'react-native$': require.resolve('react-native-web'),
         // 'expo-asset': path.resolve(__dirname, './node_modules/expo-asset'),
@@ -62,6 +76,36 @@ const nextConfig = withExpo({
         ),
       },
     };
+
+    // Disable caching for development
+    config.cache = {
+      type: 'filesystem',
+      buildDependencies: {
+        config: [__filename],
+      },
+      cacheDirectory: path.resolve(__dirname, '.next/cache/webpack'),
+      // Only cache node_modules except for sdk-install-modal-web
+      managedPaths: [
+        // Include all node_modules except sdk-install-modal-web
+        path.resolve(__dirname, 'node_modules'),
+      ],
+      // Exclude the sdk package from caching using version check
+      version: `${
+        require('@metamask/sdk-install-modal-web/package.json').version
+      }-${Date.now()}`,
+    };
+
+    // Add watch options to detect changes
+    config.watchOptions = {
+      aggregateTimeout: 300,
+      poll: 1000,
+      ignored: [
+        '**/.git/**',
+        '**/node_modules/**',
+        '!**/node_modules/@metamask/sdk-install-modal-web/**',
+      ],
+    };
+
     config.module.rules.push(
       {
         test: /\.(js|jsx)$/,
@@ -126,6 +170,41 @@ const nextConfig = withExpo({
         type: 'asset/resource',
       },
     );
+
+    // Find the rule that handles JavaScript files
+    const jsRule = config.module.rules.find(
+      (rule) => rule.test && rule.test.test('.js'),
+    );
+
+    if (jsRule) {
+      // Include @babel/runtime in the Babel loader
+      jsRule.include = [
+        ...(Array.isArray(jsRule.include)
+          ? jsRule.include
+          : [jsRule.include]
+        ).filter(Boolean),
+        path.resolve(__dirname, 'node_modules/@babel/runtime'),
+      ];
+    }
+
+    // Add the babel-plugin-transform-import-meta to the loader options
+    config.module.rules.forEach((rule) => {
+      if (rule.use) {
+        const use = Array.isArray(rule.use) ? rule.use : [rule.use];
+        use.forEach((loader) => {
+          if (
+            typeof loader === 'object' &&
+            loader.loader &&
+            loader.loader.includes('babel-loader') &&
+            loader.options
+          ) {            loader.options.plugins = [
+              ...(loader.options.plugins || []),
+              'babel-plugin-transform-import-meta',
+            ];
+          }
+        });
+      }
+    });
 
     // write config to disk for debugging
     fs.writeFileSync(

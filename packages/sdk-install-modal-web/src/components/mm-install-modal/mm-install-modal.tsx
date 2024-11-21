@@ -8,9 +8,9 @@ import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
+import { i18n, createInstance } from 'i18next';
 import encodeQR from '@paulmillr/qr';
-
+import en from '../../locales/en.json';
 @Component({
   tag: 'mm-install-modal',
   styleUrl: '../style.css',
@@ -26,7 +26,7 @@ export class InstallModal {
 
   @Prop() preferDesktop: boolean;
 
-  @Prop() i18nInstance: i18n;
+  private i18nInstance: i18n;
 
   @Event() close: EventEmitter;
 
@@ -42,6 +42,21 @@ export class InstallModal {
     this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
     this.setTab(2);
+
+    this.i18nInstance = createInstance()
+    this.i18nInstance.init({
+      debug: true,
+      compatibilityJSON: 'v3',
+      fallbackLng: 'en',
+      interpolation: {
+        escapeValue: false,
+      },
+      resources: {
+        en: {
+          translation: en,
+        },
+      },
+    });
   }
 
   @Watch('preferDesktop')
@@ -90,6 +105,7 @@ export class InstallModal {
   }
 
   render() {
+    console.log('render');
     const t = this.i18nInstance.t;
 
     return (
@@ -105,6 +121,7 @@ export class InstallModal {
           </div>
           <div class='logoContainer'>
             <Logo />
+            hope
           </div>
           <div>
             <div class='tabcontainer'>

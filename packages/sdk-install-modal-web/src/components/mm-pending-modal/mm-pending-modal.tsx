@@ -3,7 +3,8 @@ import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
+import { createInstance, i18n } from 'i18next';
+import en from '../../locales/en.json';
 
 @Component({
   tag: 'mm-pending-modal',
@@ -18,7 +19,7 @@ export class PendingModal {
 
   @Prop() sdkVersion?: string;
 
-  @Prop() i18nInstance: i18n;
+  private i18nInstance: i18n;
 
   @Prop() otpCode?: string;
 
@@ -27,6 +28,23 @@ export class PendingModal {
   @Event() disconnect: EventEmitter;
 
   @Event() updateOTPValue: EventEmitter<{ otpValue: string }>;
+
+  constructor() {
+    this.i18nInstance = createInstance()
+    this.i18nInstance.init({
+      debug: true,
+      compatibilityJSON: 'v3',
+      fallbackLng: 'en',
+      interpolation: {
+        escapeValue: false,
+      },
+      resources: {
+        en: {
+          translation: en,
+        },
+      },
+    });
+  }
 
   onClose() {
     this.close.emit();
