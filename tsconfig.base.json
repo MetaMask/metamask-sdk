@@ -17,7 +17,7 @@
       "@metamask/sdk-communication-layer": [
         "packages/sdk-communication-layer/src/index.ts"
       ],
-      "@metamask/sdk-install-modal-web": ["packages/sdk-install-modal-web/src/EmbeddableWidget.ts"],
+      "@metamask/sdk-install-modal-web": ["packages/sdk-install-modal-web/src/index.ts"],
       "@metamask/sdk-react": ["packages/sdk-react/src/index.ts"],
       "@metamask/sdk-react-native": ["packages/sdk-react-native/src/index.ts"]
     }

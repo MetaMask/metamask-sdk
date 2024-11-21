@@ -1,9 +1,8 @@
-import { ModalLoader } from '@metamask/sdk-install-modal-web';
-
 import { i18n } from 'i18next';
 import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import packageJson from '../../../package.json';
+import ModalLoader from './Modal-web';
 
 const sdkWebInstallModal = ({
   link,
