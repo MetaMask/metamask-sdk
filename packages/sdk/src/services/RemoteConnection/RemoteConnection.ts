@@ -9,7 +9,7 @@ import {
   RemoteCommunication,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-import { Translator } from '@metamask/sdk-install-modal-web';
+import { Translator } from '@metamask/sdk-install-modal-web/types/lang';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';

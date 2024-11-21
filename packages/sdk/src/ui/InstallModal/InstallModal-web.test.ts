@@ -1,5 +1,4 @@
-import { Translator } from '@metamask/sdk-install-modal-web';
-import createInstance from '@metamask/sdk-install-modal-web/dist/es/src/lang';
+import { Translator, createInstance } from '@metamask/sdk-install-modal-web/types/lang';
 import * as loggerModule from '../../utils/logger';
 import sdkWebInstallModal from './InstallModal-web';
 import ModalLoader from './Modal-web';

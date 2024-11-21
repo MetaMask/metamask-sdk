@@ -1,4 +1,4 @@
-import { Translator } from '@metamask/sdk-install-modal-web';
+import { Translator } from '@metamask/sdk-install-modal-web/types/lang';
 import packageJson from '../../../package.json';
 import { logger } from '../../utils/logger';
 import ModalLoader from './Modal-web';

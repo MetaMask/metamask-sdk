@@ -13,37 +13,28 @@
   },
   "author": "MetaMask",
   "packageManager": "yarn@3.5.0",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.js",
-  "unpkg": "dist/sdk-install-modal-web/index.esm.js",
-  "types": "dist/types/index.d.ts",
-  "collection": "dist/collection/collection-manifest.json",
-  "collection:main": "dist/collection/index.js",
+  "main": "dist/components/index.js",
+  "module": "dist/components/index.js",
+  "types": "dist/components/index.d.ts",
   "files": [
-    "./dist",
-    "./loader"
+    "./dist"
   ],
   "exports": {
     ".": {
-      "import": "./dist/sdk-install-modal-web/index.esm.js",
-      "require": "./dist/cjs/sdk-install-modal-web.cjs.js"
+      "import": "./dist/components/index.js",
+      "types": "./dist/components/index.d.ts"
     },
-    "./mm-install-modal": {
+    "./components/mm-install-modal": {
       "import": "./dist/components/mm-install-modal.js",
       "types": "./dist/components/mm-install-modal.d.ts"
     },
-    "./mm-pending-modal": {
+    "./components/mm-pending-modal": {
       "import": "./dist/components/mm-pending-modal.js",
       "types": "./dist/components/mm-pending-modal.d.ts"
     },
-    "./mm-select-modal": {
+    "./components/mm-select-modal": {
       "import": "./dist/components/mm-select-modal.js",
       "types": "./dist/components/mm-select-modal.d.ts"
-    },
-    "./loader": {
-      "import": "./loader/index.js",
-      "require": "./loader/index.cjs",
-      "types": "./loader/index.d.ts"
     }
   },
   "scripts": {

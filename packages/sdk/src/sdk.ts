@@ -7,7 +7,7 @@ import {
 import debug from 'debug';
 
 import EventEmitter2 from 'eventemitter2';
-import { Translator, createInstance } from '@metamask/sdk-install-modal-web';
+import { Translator, createInstance } from '@metamask/sdk-install-modal-web/types/lang';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';

@@ -1,6 +1,6 @@
 import createInstance, {
   Translator,
-} from '@metamask/sdk-install-modal-web/dist/es/src/lang';
+} from '@metamask/sdk-install-modal-web/components/lang';
 import sdkWebPendingModal from './pendingModal-web';
 import ModalLoader from './Modal-web';
 

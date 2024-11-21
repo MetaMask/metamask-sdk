@@ -11,15 +11,11 @@ const packageJson = require('./package.json');
 export const config: Config = {
   namespace: 'sdk-install-modal-web',
   minifyJs: true,  
+  validatePrimaryPackageOutputTarget: true,
   outputTargets: [
     {
-      type: 'dist',
-      esmLoaderPath: '../loader',
-    },
-    {
       type: 'dist-custom-elements',
-      customElementsExportBehavior: 'auto-define-custom-elements',
-      externalRuntime: false,
+      isPrimaryPackageOutputTarget: true,
     },
   ],
   rollupPlugins: {

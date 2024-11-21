@@ -1,8 +1,8 @@
-import { Translator } from '@metamask/sdk-install-modal-web';
 import { logger } from '../../utils/logger';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import packageJson from '../../../package.json';
 import ModalLoader from './Modal-web';
+import { Translator } from '@metamask/sdk-install-modal-web/types/lang';
 
 const sdkWebInstallModal = ({
   link,
