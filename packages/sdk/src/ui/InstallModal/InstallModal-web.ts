@@ -61,7 +61,6 @@ const sdkWebInstallModal = ({
       div,
     );
 
-    console.warn(`AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA`);
     if (div) {
       div.style.display = 'block';
       modalLoader?.updateQRCode(qrcodeLink);
@@ -73,23 +72,31 @@ const sdkWebInstallModal = ({
     document.body.appendChild(div);
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
-      modalLoader.renderSelectModal({
-        parentElement: div,
-        connectWithExtension: () => {
-          unmount();
-          connectWithExtension?.();
-        },
-        onClose: unmount,
-        link,
-      });
+      modalLoader
+        .renderSelectModal({
+          parentElement: div,
+          connectWithExtension: () => {
+            unmount();
+            connectWithExtension?.();
+          },
+          onClose: unmount,
+          link,
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
-      modalLoader.renderInstallModal({
-        parentElement: div,
-        preferDesktop: preferDesktop ?? false,
-        link,
-        metaMaskInstaller: installer,
-        onClose: unmount,
-      });
+      modalLoader
+        .renderInstallModal({
+          parentElement: div,
+          preferDesktop: preferDesktop ?? false,
+          link,
+          metaMaskInstaller: installer,
+          onClose: unmount,
+        })
+        .catch((err) => {
+          console.error(`[UI: InstallModal-web: sdkWebInstallModal()]`, err);
+        });
     }
   };
 

@@ -10,7 +10,6 @@ import {
   RPCMethodResult,
   RPCMethodCache,
 } from '@metamask/sdk-communication-layer';
-import WebView from 'react-native-webview';
 import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
 import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
@@ -29,7 +28,7 @@ export { StorageManagerAS } from './storage-manager/StorageManagerAS';
 
 declare global {
   interface Window {
-    ReactNativeWebView?: WebView;
+    ReactNativeWebView?: any;
     sdkProvider: SDKProvider;
     ethereum?: SDKProvider;
     mmsdk?: MetaMaskSDK;

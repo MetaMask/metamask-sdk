@@ -1,4 +1,4 @@
-import { Components } from '@metamask/sdk-install-modal-web/types/components';
+import type { Components } from '@metamask/sdk-install-modal-web/types/components';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
@@ -22,19 +22,19 @@ export interface SelectWidgetProps extends Components.MmSelectModal {
 }
 
 export default class ModalLoader {
-  private installContainer?: Element;
+  private containers: Record<string, Element | undefined> = {
+    install: undefined,
+    pending: undefined,
+    select: undefined,
+  };
 
-  private pendingContainer?: Element;
+  private defined: Record<string, boolean> = {
+    install: false,
+    pending: false,
+    select: false,
+  };
 
-  private selectContainer?: Element;
-
-  private debug = false;
-
-  private installDefined = false;
-
-  private pendingDefined = false;
-
-  private selectDefined = false;
+  private debug: boolean;
 
   private sdkVersion?: string;
 
@@ -43,128 +43,102 @@ export default class ModalLoader {
     this.sdkVersion = sdkVersion;
   }
 
-  renderInstallModal(props: InstallWidgetProps) {
-    if (this.debug) {
-      console.debug(`ModalLoader: renderInstallModal`, props);
+  private async loadComponent(type: 'install' | 'pending' | 'select') {
+    if (this.defined[type]) {
+      return;
     }
 
-    this.installContainer = props.parentElement;
-
-    const buildElement = () => {
-      const modal = document.createElement(
-        'mm-install-modal',
-      ) as HTMLMmInstallModalElement;
-      modal.link = props.link;
-      modal.preferDesktop = props.preferDesktop;
-      modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.addEventListener('close', props.onClose);
-      modal.addEventListener(
-        'startDesktopOnboarding',
-        props.metaMaskInstaller.startDesktopOnboarding,
-      );
-
-      props.parentElement.appendChild(modal);
+    this.defined[type] = true;
+    const componentMap = {
+      install: () =>
+        import(
+          /* webpackChunkName: "mm-install-modal" */
+          '@metamask/sdk-install-modal-web/components/mm-install-modal'
+        ),
+      pending: () =>
+        import(
+          /* webpackChunkName: "mm-pending-modal" */
+          '@metamask/sdk-install-modal-web/components/mm-pending-modal'
+        ),
+      select: () =>
+        import(
+          /* webpackChunkName: "mm-select-modal" */
+          '@metamask/sdk-install-modal-web/components/mm-select-modal'
+        ),
     };
 
-    if (this.installDefined) {
-      buildElement();
-    } else {
-      this.installDefined = true;
-      import('@metamask/sdk-install-modal-web/components/mm-install-modal')
-        .then(({ defineCustomElement }) => {
-          defineCustomElement();
-          buildElement();
-        })
-        .catch(console.error);
+    try {
+      const { defineCustomElement } = await componentMap[type]();
+      defineCustomElement();
+    } catch (error) {
+      console.error(`Failed to load ${type} modal:`, error);
     }
   }
 
-  renderSelectModal(props: SelectWidgetProps) {
+  async renderInstallModal(props: InstallWidgetProps) {
     if (this.debug) {
-      console.debug(`ModalLoader: renderSelectModal`, props);
+      console.debug('ModalLoader: renderInstallModal', props);
     }
-    this.selectContainer = props.parentElement;
 
-    const buildElement = () => {
-      const modal = document.createElement(
-        'mm-select-modal',
-      ) as HTMLMmSelectModalElement;
-      modal.link = props.link;
-      modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
-        props.onClose(shouldTerminate),
-      );
+    this.containers.install = props.parentElement;
+    await this.loadComponent('install');
 
-      modal.addEventListener(
-        'connectWithExtension',
-        props.connectWithExtension,
-      );
-
-      props.parentElement.appendChild(modal);
-
-      setTimeout(() => {
-        this.updateQRCode(props.link);
-      }, 100);
-    };
-
-    if (this.selectDefined) {
-      buildElement();
-    } else {
-      this.selectDefined = true;
-      import('@metamask/sdk-install-modal-web/components/mm-select-modal')
-        .then(({ defineCustomElement }) => {
-          defineCustomElement();
-          buildElement();
-        })
-        .catch(console.error);
-    }
+    const modal = document.createElement(
+      'mm-install-modal',
+    ) as HTMLMmInstallModalElement;
+    modal.link = props.link;
+    modal.preferDesktop = props.preferDesktop;
+    modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
+    modal.addEventListener('close', props.onClose);
+    modal.addEventListener(
+      'startDesktopOnboarding',
+      props.metaMaskInstaller.startDesktopOnboarding,
+    );
+    props.parentElement.appendChild(modal);
   }
 
-  renderPendingModal(props: PendingWidgetProps) {
-    if (this.debug) {
-      console.debug(`ModalLoader: renderPendingModal`, props);
+  async renderSelectModal(props: SelectWidgetProps) {
+    this.containers.select = props.parentElement;
+    await this.loadComponent('select');
+
+    const modal = document.createElement(
+      'mm-select-modal',
+    ) as HTMLMmSelectModalElement;
+    modal.link = props.link;
+    modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
+    modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
+      props.onClose(shouldTerminate),
+    );
+    modal.addEventListener('connectWithExtension', props.connectWithExtension);
+    props.parentElement.appendChild(modal);
+
+    setTimeout(() => this.updateQRCode(props.link), 100);
+  }
+
+  async renderPendingModal(props: PendingWidgetProps) {
+    this.containers.pending = props.parentElement;
+    await this.loadComponent('pending');
+
+    const modal = document.createElement(
+      'mm-pending-modal',
+    ) as HTMLMmPendingModalElement;
+    modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
+    modal.displayOTP = props.displayOTP;
+    modal.addEventListener('close', props.onClose);
+    modal.addEventListener('updateOTPValue', ({ detail: { otpValue } }) =>
+      props.updateOTPValue(otpValue),
+    );
+
+    if (props.onDisconnect) {
+      modal.addEventListener('disconnect', props.onDisconnect);
     }
 
-    this.pendingContainer = props.parentElement;
-
-    const buildElement = () => {
-      const modal = document.createElement(
-        'mm-pending-modal',
-      ) as HTMLMmPendingModalElement;
-      modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-      modal.displayOTP = props.displayOTP;
-      modal.addEventListener('close', props.onClose);
-      modal.addEventListener('updateOTPValue', ({ detail: { otpValue } }) =>
-        props.updateOTPValue(otpValue),
-      );
-
-      if (props.onDisconnect) {
-        modal.addEventListener('disconnect', props.onDisconnect);
-      }
-
-      props.parentElement.appendChild(modal);
-    };
-
-    if (this.pendingDefined) {
-      buildElement();
-    } else {
-      this.pendingDefined = true;
-      import('@metamask/sdk-install-modal-web/components/mm-pending-modal')
-        .then(({ defineCustomElement }) => {
-          defineCustomElement();
-          buildElement();
-        })
-        .catch(console.error);
-    }
+    props.parentElement.appendChild(modal);
   }
 
   updateOTPValue(otpValue: string) {
-    if (this.debug) {
-      console.debug(`ModalLoader: updateOTPValue`, otpValue);
-    }
-
     const tryUpdate = () => {
-      const modal = this.pendingContainer?.querySelector(
+      const modal = this.containers.pending?.querySelector(
         'mm-pending-modal',
       ) as HTMLMmPendingModalElement | null;
       if (modal) {
@@ -174,27 +148,19 @@ export default class ModalLoader {
       return false;
     };
 
-    // Sometime the modal is not properly initialized and the node is not found, we try again after 1s to solve the issue.
     setTimeout(() => {
-      if (this.debug) {
-        console.debug(`ModalLoader: updateOTPValue: delayed otp update`);
-      }
       tryUpdate();
     }, 800);
   }
 
   updateQRCode(link: string) {
-    if (this.debug) {
-      console.debug(`ModalLoader: updateQRCode`, link);
-    }
-
-    const modal = this.installContainer?.querySelector(
+    const installModal = this.containers.install?.querySelector(
       'mm-install-modal',
     ) as HTMLMmInstallModalElement | null;
-    if (modal) {
-      modal.link = link;
+    if (installModal) {
+      installModal.link = link;
     } else {
-      const selectModal = this.installContainer?.querySelector(
+      const selectModal = this.containers.select?.querySelector(
         'mm-select-modal',
       ) as HTMLMmSelectModalElement | null;
       if (selectModal) {
@@ -204,11 +170,9 @@ export default class ModalLoader {
   }
 
   unmount() {
-    this.pendingContainer?.parentNode?.removeChild(this.pendingContainer);
-    this.pendingContainer = undefined;
-    this.installContainer?.parentNode?.removeChild(this.installContainer);
-    this.installContainer = undefined;
-    this.selectContainer?.parentNode?.removeChild(this.selectContainer);
-    this.selectContainer = undefined;
+    Object.entries(this.containers).forEach(([key, container]) => {
+      container?.parentNode?.removeChild(container);
+      this.containers[key as keyof typeof this.containers] = undefined;
+    });
   }
 }

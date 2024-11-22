@@ -61,13 +61,17 @@ const sdkWebPendingModal = ({
     div = document.createElement('div');
     document.body.appendChild(div);
 
-    modalLoader.renderPendingModal({
-      parentElement: div,
-      onClose: unmount,
-      onDisconnect,
-      updateOTPValue,
-      displayOTP,
-    });
+    modalLoader
+      .renderPendingModal({
+        parentElement: div,
+        onClose: unmount,
+        onDisconnect,
+        updateOTPValue,
+        displayOTP,
+      })
+      .catch((err) => {
+        console.error(`[UI: pendingModal-web: sdkWebPendingModal()]`, err);
+      });
   };
 
   // Auto mount on initialization

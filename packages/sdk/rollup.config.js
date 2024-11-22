@@ -27,7 +27,8 @@ const bundledDeps = [
 ];
 
 // Shared dependencies that should be deduplicated
-const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid'];
+const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross-fetch'];
+
 
 // Filter function to exclude bundled dependencies
 const excludeBundledDeps = (dep) => !bundledDeps.includes(dep);
@@ -95,7 +96,7 @@ const sharedWarningHandler = (warning, warn) => {
   warn(warning);
 };
 
-const getBasePlugins = ({ platform }) =>
+const getBasePlugins = ({ platform, format }) =>
   [
     replace({
       preventAssignment: true,
@@ -122,9 +123,7 @@ const getBasePlugins = ({ platform }) =>
     isDev &&
       ['treemap', 'sunburst', 'network', 'raw-data', 'list'].map((template) =>
         visualizer({
-          filename: `bundle_stats/${platform}/${
-            packageJson.version
-          }/${template}${
+          filename: `bundle_stats/${platform}/${packageJson.version}/${format}_${template}${
             template === 'list'
               ? '.txt'
               : template === 'raw-data'
@@ -156,7 +155,7 @@ const configs = [
       },
     ],
     plugins: [
-      ...getBasePlugins({ platform: 'web' }),
+      ...getBasePlugins({ platform: 'web', format: 'es' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
@@ -187,6 +186,9 @@ const configs = [
     input: 'src/index.ts',
     output: [
       {
+        // UMD build - Universal Module Definition
+        // Supports AMD, CommonJS, and global variable
+        // Works in both Node.js and browser environments
         name: 'browser',
         file: packageJson.unpkg,
         inlineDynamicImports: true,
@@ -204,6 +206,9 @@ const configs = [
         },
       },
       {
+        // IIFE build - Immediately Invoked Function Expression
+        // Browser-only bundle that creates a single global variable
+        // Simpler than UMD but only works in browsers
         file: packageJson.unpkg.replace('.js', '.iife.js'),
         format: 'iife',
         name: 'MetaMaskSDK',
@@ -222,7 +227,7 @@ const configs = [
       },
     ],
     plugins: [
-      ...getBasePlugins({ platform: 'web' }),
+      ...getBasePlugins({ platform: 'web', format: 'umd-iife' }),
       nodeResolve({
         browser: true,
         preferBuiltins: false,
@@ -251,7 +256,7 @@ const configs = [
       },
     ],
     plugins: [
-      ...getBasePlugins({ platform: 'rn' }),
+      ...getBasePlugins({ platform: 'rn', format: 'es' }),
       commonjs({ transformMixedEsModules: true }),
       nodeResolve({
         mainFields: ['react-native', 'node', 'browser'],
@@ -270,6 +275,9 @@ const configs = [
     input: 'src/index.ts',
     output: [
       {
+        // CommonJS (CJS) build
+        // Traditional Node.js module format using require/exports
+        // Better compatibility with older Node.js code and environments
         file: 'dist/node/cjs/metamask-sdk.js',
         format: 'cjs',
         sourcemap: true,
@@ -277,6 +285,9 @@ const configs = [
         exports: 'named',
       },
       {
+        // ES Module (ESM) build
+        // Modern JavaScript module format using import/export
+        // Better tree-shaking, smaller bundles, and future-proof
         file: 'dist/node/es/metamask-sdk.js',
         format: 'es',
         sourcemap: true,
@@ -285,7 +296,7 @@ const configs = [
       },
     ],
     plugins: [
-      ...getBasePlugins({ platform: 'node' }),
+      ...getBasePlugins({ platform: 'node', format: 'cjs-es' }),
       nativePlugin({
         dlopen: false,
         sourcemap: true,
