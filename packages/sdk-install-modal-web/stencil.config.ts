@@ -8,6 +8,13 @@ export const config: Config = {
     {
       type: 'dist',
       isPrimaryPackageOutputTarget: true,
+      copy: [
+        {
+          src: '../src/locales',
+          dest: '../locales',
+          warn: true,
+        }
+      ]
     },
   ],
   enableCache: true,

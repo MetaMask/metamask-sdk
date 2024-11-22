@@ -7,7 +7,7 @@ interface TranslationDict {
   [key: string]: string | TranslationDict;
 }
 
-const en = {
+const defaultTranslations: TranslationDict = {
   "DESKTOP": "Desktop",
   "MOBILE": "Mobile",
   "META_MASK_MOBILE_APP": "MetaMask mobile app",
@@ -33,28 +33,74 @@ const en = {
     "DISCONNECT": "Disconnect",
     "ACTIVE_NETWORK": "Active Network"
   }
-}
+} as const;
 
 export class SimpleI18n implements I18nInstance {
-  private translations: TranslationDict = {};
+  private translations: TranslationDict = defaultTranslations;
+  private supportedLocales: string[] = ['es', 'fr', 'he', 'it', 'pt', 'tr'];
+  private baseUrl: string;
 
-  constructor() {}
+  constructor(config?: { baseUrl?: string }) {
+    this.baseUrl = config?.baseUrl ?? 'https://raw.githubusercontent.com/MetaMask/metamask-sdk/refs/heads/gh-pages/locales';
+  }
+
+  private getBrowserLanguage(): string {
+    // Get all browser languages in order of preference
+    const browserLanguages = navigator.languages || [navigator.language];
+    console.log('🌐 Browser languages in order:', browserLanguages);
+
+    // Check if English is one of the preferred languages
+    const hasEnglish = browserLanguages.some(lang =>
+      lang.toLowerCase().startsWith('en')
+    );
+    console.log('🇬🇧 English found in language preferences:', hasEnglish);
+
+    // If user understands English, use it
+    if (hasEnglish) {
+      console.log('✅ Using English as user understands it');
+      return 'en';
+    }
+
+    // Otherwise, check for other supported languages
+    const primaryLang = navigator.language;
+    const shortLang = primaryLang.toLowerCase().split('-')[0];
+    console.log('🌍 Primary browser language:', primaryLang);
+    console.log('🔍 Checking support for:', shortLang);
+    console.log('📋 Supported locales:', this.supportedLocales);
+
+    if (this.supportedLocales.includes(shortLang)) {
+      console.log(`✅ Found supported language: ${shortLang}`);
+      return shortLang;
+    }
+
+    // Default to English if no supported language found
+    console.log('⚠️ No supported language found, defaulting to English');
+    return 'en';
+  }
+
+  async init(config: { fallbackLng: string }): Promise<void> {
+    const browserLang = this.getBrowserLanguage();
+    const locale = config.fallbackLng || browserLang;
+    await this.loadTranslations(locale);
+  }
 
   async loadTranslations(locale: string): Promise<void> {
-    // try {
-    //   const module = await import(`../../locales/${locale}.json`);
-    //   this.translations = module.default;
-    // } catch (e) {
-    //   console.warn(`Failed to load translations for ${locale}, falling back to en`);
-    //   if (locale !== 'en') {
-    //     await this.loadTranslations('en');
-    //   } else {
-    //     // If even English fails to load, use empty translations
-    //     this.translations = {};
-    //   }
-    // }
-    console.log(`loading translations for ${locale}`);
-    this.translations = en;
+    const shortLocale = locale.split('-')[0];
+
+    if (shortLocale === 'en' || !this.supportedLocales.includes(shortLocale)) {
+      this.translations = defaultTranslations;
+      return;
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/${shortLocale}.json`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      this.translations = await response.json();
+      console.log(`Successfully loaded ${shortLocale} translations`);
+    } catch (error) {
+      console.warn(`Failed to load ${shortLocale} translations, falling back to English:`, error);
+      this.translations = defaultTranslations;
+    }
   }
 
   t(key: string): string {
@@ -71,10 +117,5 @@ export class SimpleI18n implements I18nInstance {
     }
 
     return typeof current === 'string' ? current : '';
-  }
-
-  async init(config: { fallbackLng: string }): Promise<void> {
-    const locale = config.fallbackLng || 'en';
-    await this.loadTranslations(locale);
   }
 }
