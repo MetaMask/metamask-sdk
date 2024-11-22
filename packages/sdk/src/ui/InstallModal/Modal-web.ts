@@ -1,4 +1,4 @@
-import type { Components } from '@metamask/sdk-install-modal-web/types/components';
+import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
@@ -49,27 +49,12 @@ export default class ModalLoader {
     }
 
     this.defined[type] = true;
-    const componentMap = {
-      install: () =>
-        import(
-          /* webpackChunkName: "mm-install-modal" */
-          '@metamask/sdk-install-modal-web/components/mm-install-modal'
-        ),
-      pending: () =>
-        import(
-          /* webpackChunkName: "mm-pending-modal" */
-          '@metamask/sdk-install-modal-web/components/mm-pending-modal'
-        ),
-      select: () =>
-        import(
-          /* webpackChunkName: "mm-select-modal" */
-          '@metamask/sdk-install-modal-web/components/mm-select-modal'
-        ),
-    };
-
     try {
-      const { defineCustomElement } = await componentMap[type]();
-      defineCustomElement();
+      const loader = await import(
+        '@metamask/sdk-install-modal-web/dist/loader'
+      );
+      console.log('loader', loader);
+      loader.defineCustomElements();
     } catch (error) {
       console.error(`Failed to load ${type} modal:`, error);
     }
