@@ -2,5 +2,13 @@
   {
     "path": "./dist/browser/es/metamask-sdk.js",
     "limit": "100000 ms"
+  },
+  {
+    "path": "./dist/browser/umd/metamask-sdk.js",
+    "limit": "100000 ms"
+  },
+  {
+    "path": "./dist/browser/umd/metamask-sdk.iife.js",
+    "limit": "100000 ms"
   }
 ]

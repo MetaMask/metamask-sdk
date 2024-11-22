@@ -1,0 +1,485 @@
+{
+  "timestamp": "2024-11-22T01:33:27",
+  "compiler": {
+    "name": "node",
+    "version": "20.12.2"
+  },
+  "app": {
+    "namespace": "SdkInstallModalWeb",
+    "fsNamespace": "sdk-install-modal-web",
+    "components": 0,
+    "entries": 0,
+    "bundles": 17,
+    "outputs": [
+      {
+        "name": "dist-custom-elements",
+        "files": 16,
+        "generatedFiles": [
+          "./dist/components/index.d.ts",
+          "./dist/components/index.js",
+          "./dist/components/index.js.map",
+          "./dist/components/index2.js",
+          "./dist/components/index2.js.map",
+          "./dist/components/mm-install-modal.d.ts",
+          "./dist/components/mm-install-modal.js",
+          "./dist/components/mm-install-modal.js.map",
+          "./dist/components/mm-pending-modal.d.ts",
+          "./dist/components/mm-pending-modal.js",
+          "./dist/components/mm-pending-modal.js.map",
+          "./dist/components/mm-select-modal.d.ts",
+          "./dist/components/mm-select-modal.js",
+          "./dist/components/mm-select-modal.js.map",
+          "./dist/components/simple-i18n.js",
+          "./dist/components/simple-i18n.js.map"
+        ]
+      },
+      {
+        "name": "dist-types",
+        "files": 1,
+        "generatedFiles": [
+          "./dist/types/stencil-public-runtime.d.ts"
+        ]
+      }
+    ]
+  },
+  "options": {
+    "minifyJs": true,
+    "minifyCss": true,
+    "hashFileNames": true,
+    "hashedFileNameLength": 8,
+    "buildEs5": true
+  },
+  "formats": {
+    "esmBrowser": [],
+    "esm": [],
+    "es5": [],
+    "system": [],
+    "commonjs": []
+  },
+  "components": [
+    {
+      "tag": "mm-install-modal",
+      "path": "./src/components/mm-install-modal/mm-install-modal.js",
+      "source": "./src/components/mm-install-modal/mm-install-modal.tsx",
+      "elementRef": "el",
+      "componentClassName": "InstallModal",
+      "assetsDirs": [],
+      "dependencies": [],
+      "dependents": [],
+      "directDependencies": [],
+      "directDependents": [],
+      "docs": {
+        "tags": [],
+        "text": ""
+      },
+      "encapsulation": "shadow",
+      "excludeFromCollection": false,
+      "events": [
+        {
+          "name": "close",
+          "method": "close",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "any",
+            "resolved": "any",
+            "references": {}
+          },
+          "internal": false
+        },
+        {
+          "name": "startDesktopOnboarding",
+          "method": "startDesktopOnboarding",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "any",
+            "resolved": "any",
+            "references": {}
+          },
+          "internal": false
+        }
+      ],
+      "internal": false,
+      "listeners": [],
+      "methods": [],
+      "potentialCmpRefs": [],
+      "properties": [
+        {
+          "name": "link",
+          "type": "string",
+          "attribute": "link",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": false,
+          "complexType": {
+            "original": "string",
+            "resolved": "string",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": "The QR code link"
+          },
+          "internal": false
+        },
+        {
+          "name": "sdkVersion",
+          "type": "string",
+          "attribute": "sdk-version",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": true,
+          "complexType": {
+            "original": "string",
+            "resolved": "string | undefined",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "internal": false
+        },
+        {
+          "name": "preferDesktop",
+          "type": "boolean",
+          "attribute": "prefer-desktop",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": false,
+          "complexType": {
+            "original": "boolean",
+            "resolved": "boolean",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "internal": false
+        }
+      ],
+      "shadowDelegatesFocus": false,
+      "states": [
+        {
+          "name": "tab"
+        },
+        {
+          "name": "translationsLoaded"
+        }
+      ]
+    },
+    {
+      "tag": "mm-pending-modal",
+      "path": "./src/components/mm-pending-modal/mm-pending-modal.js",
+      "source": "./src/components/mm-pending-modal/mm-pending-modal.tsx",
+      "elementRef": "el",
+      "componentClassName": "PendingModal",
+      "assetsDirs": [],
+      "dependencies": [],
+      "dependents": [],
+      "directDependencies": [],
+      "directDependents": [],
+      "docs": {
+        "tags": [],
+        "text": ""
+      },
+      "encapsulation": "shadow",
+      "excludeFromCollection": false,
+      "events": [
+        {
+          "name": "close",
+          "method": "close",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "any",
+            "resolved": "any",
+            "references": {}
+          },
+          "internal": false
+        },
+        {
+          "name": "disconnect",
+          "method": "disconnect",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "any",
+            "resolved": "any",
+            "references": {}
+          },
+          "internal": false
+        },
+        {
+          "name": "updateOTPValue",
+          "method": "updateOTPValue",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "{ otpValue: string }",
+            "resolved": "{ otpValue: string; }",
+            "references": {}
+          },
+          "internal": false
+        }
+      ],
+      "internal": false,
+      "listeners": [],
+      "methods": [],
+      "potentialCmpRefs": [],
+      "properties": [
+        {
+          "name": "displayOTP",
+          "type": "boolean",
+          "attribute": "display-o-t-p",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": true,
+          "complexType": {
+            "original": "boolean",
+            "resolved": "boolean | undefined",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": "The QR code link"
+          },
+          "internal": false
+        },
+        {
+          "name": "sdkVersion",
+          "type": "string",
+          "attribute": "sdk-version",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": true,
+          "complexType": {
+            "original": "string",
+            "resolved": "string | undefined",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "internal": false
+        },
+        {
+          "name": "otpCode",
+          "type": "string",
+          "attribute": "otp-code",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": true,
+          "complexType": {
+            "original": "string",
+            "resolved": "string | undefined",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "internal": false
+        }
+      ],
+      "shadowDelegatesFocus": false,
+      "states": [
+        {
+          "name": "translationsLoaded"
+        }
+      ]
+    },
+    {
+      "tag": "mm-select-modal",
+      "path": "./src/components/mm-select-modal/mm-select-modal.js",
+      "source": "./src/components/mm-select-modal/mm-select-modal.tsx",
+      "elementRef": "el",
+      "componentClassName": "SelectModal",
+      "assetsDirs": [],
+      "dependencies": [],
+      "dependents": [],
+      "directDependencies": [],
+      "directDependents": [],
+      "docs": {
+        "tags": [],
+        "text": ""
+      },
+      "encapsulation": "shadow",
+      "excludeFromCollection": false,
+      "events": [
+        {
+          "name": "close",
+          "method": "close",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "{ shouldTerminate?: boolean }",
+            "resolved": "{ shouldTerminate?: boolean | undefined; }",
+            "references": {}
+          },
+          "internal": false
+        },
+        {
+          "name": "connectWithExtension",
+          "method": "connectWithExtension",
+          "bubbles": true,
+          "cancelable": true,
+          "composed": true,
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "complexType": {
+            "original": "any",
+            "resolved": "any",
+            "references": {}
+          },
+          "internal": false
+        }
+      ],
+      "internal": false,
+      "listeners": [],
+      "methods": [],
+      "potentialCmpRefs": [],
+      "properties": [
+        {
+          "name": "link",
+          "type": "string",
+          "attribute": "link",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": false,
+          "complexType": {
+            "original": "string",
+            "resolved": "string",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": "The QR code link"
+          },
+          "internal": false
+        },
+        {
+          "name": "sdkVersion",
+          "type": "string",
+          "attribute": "sdk-version",
+          "reflect": false,
+          "mutable": false,
+          "required": false,
+          "optional": true,
+          "complexType": {
+            "original": "string",
+            "resolved": "string | undefined",
+            "references": {}
+          },
+          "docs": {
+            "tags": [],
+            "text": ""
+          },
+          "internal": false
+        }
+      ],
+      "shadowDelegatesFocus": false,
+      "states": [
+        {
+          "name": "tab"
+        },
+        {
+          "name": "translationsLoaded"
+        }
+      ]
+    }
+  ],
+  "entries": [],
+  "componentGraph": {},
+  "sourceGraph": {
+    "./src/components/misc/AdvantagesListItem.tsx": [],
+    "./src/components/misc/CloseButton.tsx": [],
+    "./src/components/misc/ConnectIcon.tsx": [],
+    "./src/components/misc/HeartIcon.tsx": [],
+    "./src/components/misc/InstallIcon.tsx": [],
+    "./src/components/misc/LockIcon.tsx": [],
+    "./src/components/misc/Logo.tsx": [],
+    "./src/components/misc/MetamaskExtensionImage.tsx": [],
+    "./src/components/misc/SDKVersion.tsx": [],
+    "./src/components/misc/WalletIcon.tsx": [],
+    "./src/components/misc/simple-i18n.ts": [],
+    "./src/components/mm-install-modal/mm-install-modal.tsx": [
+      "./src/components/misc/AdvantagesListItem",
+      "./src/components/misc/CloseButton",
+      "./src/components/misc/HeartIcon",
+      "./src/components/misc/InstallIcon",
+      "./src/components/misc/LockIcon",
+      "./src/components/misc/Logo",
+      "./src/components/misc/SDKVersion",
+      "./src/components/misc/WalletIcon",
+      "./src/components/misc/simple-i18n",
+      "./src/components/widget-wrapper/widget-wrapper"
+    ],
+    "./src/components/mm-pending-modal/mm-pending-modal.tsx": [
+      "./src/components/misc/CloseButton",
+      "./src/components/misc/Logo",
+      "./src/components/misc/SDKVersion",
+      "./src/components/misc/simple-i18n",
+      "./src/components/widget-wrapper/widget-wrapper"
+    ],
+    "./src/components/mm-select-modal/mm-select-modal.tsx": [
+      "./src/components/misc/CloseButton",
+      "./src/components/misc/ConnectIcon",
+      "./src/components/misc/Logo",
+      "./src/components/misc/MetamaskExtensionImage",
+      "./src/components/misc/SDKVersion",
+      "./src/components/misc/simple-i18n",
+      "./src/components/widget-wrapper/widget-wrapper"
+    ],
+    "./src/components/widget-wrapper/widget-wrapper.tsx": [
+      "./src/components/widget-wrapper/resetStyles.css"
+    ],
+    "./src/index.ts": []
+  },
+  "rollupResults": {
+    "modules": []
+  },
+  "collections": []
+}
