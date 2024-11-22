@@ -3,18 +3,17 @@ import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { createInstance, i18n } from 'i18next';
 import ConnectIcon from '../misc/ConnectIcon';
 import { MetamaskExtensionImage } from '../misc/MetamaskExtensionImage';
 import encodeQR from '@paulmillr/qr';
-import en from '../../locales/en.json';
+import { SimpleI18n } from '../misc/simple-i18n';
 
 @Component({
   tag: 'mm-select-modal',
   styleUrl: '../style.css',
   shadow: true,
 })
-export class PendingModal {
+export class SelectModal {
   /**
    * The QR code link
    */
@@ -22,7 +21,7 @@ export class PendingModal {
 
   @Prop() sdkVersion?: string;
 
-  private i18nInstance: i18n;
+  private i18nInstance: SimpleI18n;
 
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
@@ -32,21 +31,17 @@ export class PendingModal {
 
   @Element() el: HTMLElement;
 
+  @State() private translationsLoaded: boolean = false;
+
   constructor() {
-    this.i18nInstance = createInstance()
-    this.i18nInstance.init({
-      debug: true,
-      compatibilityJSON: 'v3',
-      fallbackLng: 'en',
-      interpolation: {
-        escapeValue: false,
-      },
-      resources: {
-        en: {
-          translation: en,
-        },
-      },
+    this.i18nInstance = new SimpleI18n();
+  }
+
+  async connectedCallback() {
+    await this.i18nInstance.init({
+      fallbackLng: 'en'
     });
+    this.translationsLoaded = true;
   }
 
   onClose(shouldTerminate = false) {
@@ -86,8 +81,13 @@ export class PendingModal {
   }
 
   render() {
+    if (!this.translationsLoaded) {
+      return null;
+    }
+
+    const t = (key: string) => this.i18nInstance.t(key);
+
     const sdkVersion = this.sdkVersion
-    const t = this.i18nInstance.t;
 
     return (
       <WidgetWrapper className="select-modal">
@@ -102,9 +102,6 @@ export class PendingModal {
           </div>
           <div class='logoContainer'>
             <Logo />
-          </div>
-          <div>
-            lalalala
           </div>
           <div>
             <div class='tabcontainer'>

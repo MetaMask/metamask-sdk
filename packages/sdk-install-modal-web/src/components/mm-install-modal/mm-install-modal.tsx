@@ -8,9 +8,8 @@ import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n, createInstance } from 'i18next';
 import encodeQR from '@paulmillr/qr';
-import en from '../../locales/en.json';
+import { SimpleI18n } from '../misc/simple-i18n';
 @Component({
   tag: 'mm-install-modal',
   styleUrl: '../style.css',
@@ -26,7 +25,7 @@ export class InstallModal {
 
   @Prop() preferDesktop: boolean;
 
-  private i18nInstance: i18n;
+  private i18nInstance: SimpleI18n;
 
   @Event() close: EventEmitter;
 
@@ -36,6 +35,8 @@ export class InstallModal {
 
   @Element() el: HTMLElement;
 
+  @State() private translationsLoaded: boolean = false;
+
   constructor() {
     this.onClose = this.onClose.bind(this);
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
@@ -43,20 +44,14 @@ export class InstallModal {
     this.render = this.render.bind(this);
     this.setTab(2);
 
-    this.i18nInstance = createInstance()
-    this.i18nInstance.init({
-      debug: true,
-      compatibilityJSON: 'v3',
-      fallbackLng: 'en',
-      interpolation: {
-        escapeValue: false,
-      },
-      resources: {
-        en: {
-          translation: en,
-        },
-      },
+    this.i18nInstance = new SimpleI18n();
+  }
+
+  async connectedCallback() {
+    await this.i18nInstance.init({
+      fallbackLng: 'en'
     });
+    this.translationsLoaded = true;
   }
 
   @Watch('preferDesktop')
@@ -105,8 +100,11 @@ export class InstallModal {
   }
 
   render() {
-    console.log('render');
-    const t = this.i18nInstance.t;
+    if (!this.translationsLoaded) {
+      return null; // or a loading state
+    }
+
+    const t = (key: string) => this.i18nInstance.t(key);
 
     return (
       <WidgetWrapper className="install-model">
@@ -121,7 +119,6 @@ export class InstallModal {
           </div>
           <div class='logoContainer'>
             <Logo />
-            hope
           </div>
           <div>
             <div class='tabcontainer'>
