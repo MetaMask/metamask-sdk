@@ -1,0 +1,28 @@
+{
+    "DESKTOP": "Masaüstü",
+    "MOBILE": "Mobil",
+    "META_MASK_MOBILE_APP": "MetaMask mobil uygulama",
+    "SCAN_TO_CONNECT": "Bağlanmak ve imzalamak için tarayın",
+    "CONNECT_WITH_EXTENSION": "MetaMask Eklentisi ile Bağlan",
+    "INSTALL_MODAL": {
+      "TRUSTED_BY_USERS": "Kriptoyu güvenle satın almak, saklamak, göndermek ve değiştirmek için 30 milyondan fazla kullanıcı tarafından güvenilir",
+      "LEADING_CRYPTO_WALLET": "Ethereum Ana Ağı, Polygon, Optimism ve birçok diğer ağda kurulu blockchain uygulamalarına erişim sağlayan öncü kripto cüzdanı",
+      "CONTROL_DIGITAL_INTERACTIONS": "Kriptografinin gücünü daha erişilebilir kılarak dijital etkileşimlerinizin kontrolünü size verir",
+      "INSTALL_META_MASK_EXTENSION": "MetaMask Eklentisini Yükleyin"
+    },
+    "PENDING_MODAL": {
+      "OPEN_META_MASK_SELECT_CODE": "Lütfen MetaMask cüzdan uygulamasını açın ve ekrandaki kodu seçin YA DA bağlantıyı kesin",
+      "OPEN_META_MASK_CONTINUE": "Oturumunuzla devam etmek için MetaMask uygulamasını açın.",
+      "NUMBER_AFTER_OPEN_NOTICE": "MetaMask'ı açtıktan sonra bir numara görünmezse, lütfen bağlantıyı kesin ve QR Kodunu tekrar tarayın.",
+      "DISCONNECT": "Bağlantıyı Kes"
+    },
+    "SELECT_MODAL": {
+      "CRYPTO_TAKE_CONTROL_TEXT": "Kriptonuzu kontrol edin ve dünya genelinde 30 milyondan fazla kişi tarafından güvenilen cüzdanla blockchain'i keşfedin"
+    },
+    "META_MASK_MODAL": {
+      "ADDRESS_COPIED": "Adres panoya kopyalandı!",
+      "DISCONNECT": "Bağlantıyı Kes",
+      "ACTIVE_NETWORK": "Aktif Ağ"
+    }
+  }
+  
