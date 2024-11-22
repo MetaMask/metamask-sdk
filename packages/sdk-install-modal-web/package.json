@@ -25,7 +25,7 @@
     "generate": "stencil generate",
     "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --outDir dist/types",
     "build:clean": "yarn clean && yarn build",
-    "build": "stencil build --prod  --stats",
+    "build": "stencil build --prod",
     "build:dev": "stencil build --debug --dev",
     "build:tsc": "tsc --build tsconfig.json --verbose",
     "build:watch": "stencil build --watchAll",

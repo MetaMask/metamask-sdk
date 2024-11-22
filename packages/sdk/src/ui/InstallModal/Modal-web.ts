@@ -1,4 +1,4 @@
-import type { Components } from '@metamask/sdk-install-modal-web';
+import type { Components } from '@metamask/sdk-install-modal-web/dist/types/components';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
@@ -51,6 +51,7 @@ export default class ModalLoader {
     this.defined[type] = true;
     try {
       const loader = await import(
+        /* webpackChunkName: "sdk-install-modal" */
         '@metamask/sdk-install-modal-web/dist/loader'
       );
       console.log('loader', loader);

@@ -6,7 +6,6 @@ import nativePlugin from 'rollup-plugin-natives';
 import jscc from 'rollup-plugin-jscc';
 import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
-import globals from 'rollup-plugin-node-globals';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
 
@@ -38,6 +37,7 @@ const baseExternalDeps = [
   ...peerDependencies.filter(excludeBundledDeps),
   ...optionalDependencies.filter(excludeBundledDeps),
   ...sharedDeps, // Exclude shared deps from bundle
+  '@metamask/sdk-install-modal-web',
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
   'tslib',
@@ -166,7 +166,6 @@ const configs = [
         transformMixedEsModules: true,
         include: /node_modules/,
       }),
-      globals(),
       builtins({
         crypto: true,
         stream: true,
@@ -235,7 +234,6 @@ const configs = [
         dedupe: sharedDeps,
       }),
       commonjs({ transformMixedEsModules: true, include: /node_modules/ }),
-      globals(),
       builtins({ crypto: true }),
       terser(),
     ],
