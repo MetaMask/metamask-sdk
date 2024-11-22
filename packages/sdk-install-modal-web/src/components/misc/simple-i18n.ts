@@ -47,40 +47,30 @@ export class SimpleI18n implements I18nInstance {
   private getBrowserLanguage(): string {
     // Get all browser languages in order of preference
     const browserLanguages = navigator.languages || [navigator.language];
-    console.log('🌐 Browser languages in order:', browserLanguages);
 
     // Check if English is one of the preferred languages
     const hasEnglish = browserLanguages.some(lang =>
       lang.toLowerCase().startsWith('en')
     );
-    console.log('🇬🇧 English found in language preferences:', hasEnglish);
 
     // If user understands English, use it
     if (hasEnglish) {
-      console.log('✅ Using English as user understands it');
       return 'en';
     }
 
     // Otherwise, check for other supported languages
     const primaryLang = navigator.language;
     const shortLang = primaryLang.toLowerCase().split('-')[0];
-    console.log('🌍 Primary browser language:', primaryLang);
-    console.log('🔍 Checking support for:', shortLang);
-    console.log('📋 Supported locales:', this.supportedLocales);
-
     if (this.supportedLocales.includes(shortLang)) {
-      console.log(`✅ Found supported language: ${shortLang}`);
       return shortLang;
     }
 
-    // Default to English if no supported language found
-    console.log('⚠️ No supported language found, defaulting to English');
     return 'en';
   }
 
   async init(config: { fallbackLng: string }): Promise<void> {
     const browserLang = this.getBrowserLanguage();
-    const locale = config.fallbackLng || browserLang;
+    const locale = browserLang || config.fallbackLng;
     await this.loadTranslations(locale);
   }
 
@@ -88,18 +78,19 @@ export class SimpleI18n implements I18nInstance {
     const shortLocale = locale.split('-')[0];
 
     if (shortLocale === 'en' || !this.supportedLocales.includes(shortLocale)) {
-      this.translations = defaultTranslations;
-      return;
+        this.translations = defaultTranslations;
+        return;
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}/${shortLocale}.json`);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      this.translations = await response.json();
-      console.log(`Successfully loaded ${shortLocale} translations`);
+        const url = `${this.baseUrl}/${shortLocale}.json`;
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        this.translations = await response.json();
     } catch (error) {
-      console.warn(`Failed to load ${shortLocale} translations, falling back to English:`, error);
-      this.translations = defaultTranslations;
+        console.warn(`❌ Failed to load ${shortLocale} translations, falling back to English:`, error);
+        this.translations = defaultTranslations;
     }
   }
 

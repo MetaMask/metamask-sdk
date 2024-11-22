@@ -65,22 +65,42 @@ export class InstallModal {
 
   @Watch('link')
   updateLink(newLink: string) {
+    if (!this.translationsLoaded || this.tab !== 2) {
+      return;
+    }
+
     const svgElement = encodeQR(newLink, "svg", {
       ecc: "medium",
       scale: 2
-    })
+    });
 
     if (!this.el.shadowRoot) {
+      console.warn('Shadow root not found');
       return;
     }
 
     const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
 
     if (!qrcodeDiv) {
+      console.warn('QR code div not found');
       return;
     }
 
-    qrcodeDiv.innerHTML = svgElement
+    qrcodeDiv.innerHTML = svgElement;
+  }
+
+  @Watch('translationsLoaded')
+  onTranslationsLoaded(isLoaded: boolean) {
+    if (isLoaded && this.tab === 2) {
+      this.updateLink(this.link);
+    }
+  }
+
+  @Watch('tab')
+  onTabChange(newTab: number) {
+    if (newTab === 2 && this.translationsLoaded) {
+      this.updateLink(this.link);
+    }
   }
 
   onClose() {
