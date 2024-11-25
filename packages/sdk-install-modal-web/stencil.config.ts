@@ -27,8 +27,8 @@ export const config: Config = {
   },
   rollupPlugins: {
     after: [
-      visualizer()
-    ],
+      process.env.NODE_ENV === 'development' ? visualizer() : null
+    ].filter(Boolean),
   },
   // Add treeshaking for better optimization
   extras: {
