@@ -85,6 +85,7 @@
     "react-native-webview": "^11.26.0",
     "readable-stream": "^3.6.2",
     "socket.io-client": "^4.5.1",
+    "tslib": "^2.6.0",
     "util": "^0.12.4",
     "uuid": "^8.3.2"
   },
@@ -141,7 +142,6 @@
     "stream-http": "^3.2.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "tslib": "latest",
     "typescript": "^4.3.2",
     "url": "^0.11.0",
     "webpack": "^5.0.0"

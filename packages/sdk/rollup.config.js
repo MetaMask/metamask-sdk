@@ -25,7 +25,6 @@ const bundledDeps = [
   // '@metamask/sdk-communication-layer',
   // '@metamask/sdk-install-modal-web',
   '@paulmillr/qr',
-  'tslib',
   // Add other dependencies that should be bundled
 ];
 
