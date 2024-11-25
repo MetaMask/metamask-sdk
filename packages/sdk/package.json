@@ -14,12 +14,22 @@
   "exports": {
     ".": {
       "node": {
+        "types": "./dist/types/src/index.d.ts",
         "import": "./dist/node/es/metamask-sdk.js",
         "require": "./dist/node/cjs/metamask-sdk.js"
       },
-      "browser": "./dist/browser/es/metamask-sdk.js",
-      "react-native": "./dist/react-native/es/metamask-sdk.js",
-      "default": "./dist/browser/es/metamask-sdk.js"
+      "browser": {
+        "types": "./dist/types/src/index.d.ts",
+        "import": "./dist/browser/es/metamask-sdk.js"
+      },
+      "react-native": {
+        "types": "./dist/types/src/index.d.ts",
+        "import": "./dist/react-native/es/metamask-sdk.js"
+      },
+      "default": {
+        "types": "./dist/types/src/index.d.ts",
+        "import": "./dist/browser/es/metamask-sdk.js"
+      }
     }
   },
   "main": "dist/node/cjs/metamask-sdk.js",

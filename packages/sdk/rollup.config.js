@@ -25,6 +25,7 @@ const bundledDeps = [
   // '@metamask/sdk-communication-layer',
   // '@metamask/sdk-install-modal-web',
   '@paulmillr/qr',
+  'tslib',
   // Add other dependencies that should be bundled
 ];
 
@@ -41,7 +42,6 @@ const baseExternalDeps = [
   ...sharedDeps, // Exclude shared deps from bundle
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
-  'tslib',
 ];
 
 // Platform-specific externals
