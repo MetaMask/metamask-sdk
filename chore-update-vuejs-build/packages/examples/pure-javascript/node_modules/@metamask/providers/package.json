@@ -1,0 +1,124 @@
+{
+  "name": "@metamask/providers",
+  "version": "16.1.0",
+  "description": "A JavaScript Ethereum provider that connects to the wallet over a stream",
+  "keywords": [
+    "MetaMask",
+    "Ethereum",
+    "Provider"
+  ],
+  "homepage": "https://github.com/MetaMask/providers#readme",
+  "bugs": {
+    "url": "https://github.com/MetaMask/providers/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/providers.git"
+  },
+  "license": "MIT",
+  "author": "MetaMask",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./dist/StreamProvider": {
+      "import": "./dist/StreamProvider.mjs",
+      "require": "./dist/StreamProvider.js",
+      "types": "./dist/types/StreamProvider.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup --clean && yarn build:types",
+    "build:clean": "rimraf dist && yarn build",
+    "build:docs": "typedoc",
+    "build:types": "tsc --project tsconfig.build.json",
+    "lint": "yarn lint:eslint && yarn lint:constraints && yarn lint:misc --check && yarn lint:dependencies --check && yarn lint:changelog",
+    "lint:changelog": "auto-changelog validate --prettier",
+    "lint:constraints": "yarn constraints",
+    "lint:dependencies": "depcheck && yarn dedupe",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:constraints --fix && yarn lint:misc --write && yarn lint:dependencies && yarn lint:changelog",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '**/*.yml' '!.yarnrc.yml' --ignore-path .gitignore --no-error-on-unmatched-pattern",
+    "prepack": "./scripts/prepack.sh",
+    "test": "jest && jest-it-up",
+    "test:watch": "jest --watch"
+  },
+  "resolutions": {
+    "extension-port-stream/readable-stream": "^3.6.2"
+  },
+  "dependencies": {
+    "@metamask/json-rpc-engine": "^8.0.1",
+    "@metamask/json-rpc-middleware-stream": "^7.0.1",
+    "@metamask/object-multiplex": "^2.0.0",
+    "@metamask/rpc-errors": "^6.2.1",
+    "@metamask/safe-event-emitter": "^3.1.1",
+    "@metamask/utils": "^8.3.0",
+    "detect-browser": "^5.2.0",
+    "extension-port-stream": "^3.0.0",
+    "fast-deep-equal": "^3.1.3",
+    "is-stream": "^2.0.0",
+    "readable-stream": "^3.6.2",
+    "webextension-polyfill": "^0.10.0"
+  },
+  "devDependencies": {
+    "@lavamoat/allow-scripts": "^3.0.0",
+    "@lavamoat/preinstall-always-fail": "^2.0.0",
+    "@metamask/auto-changelog": "^3.4.3",
+    "@metamask/eslint-config": "^12.2.0",
+    "@metamask/eslint-config-jest": "^12.1.0",
+    "@metamask/eslint-config-nodejs": "^12.1.0",
+    "@metamask/eslint-config-typescript": "^12.1.0",
+    "@types/chrome": "^0.0.233",
+    "@types/jest": "^28.1.6",
+    "@types/node": "^17.0.23",
+    "@types/uuid": "^9.0.1",
+    "@types/webextension-polyfill": "^0.10.0",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "depcheck": "^1.4.3",
+    "eslint": "^8.44.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^27.2.2",
+    "eslint-plugin-jsdoc": "^39.9.1",
+    "eslint-plugin-n": "^15.7.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "jest": "^28.1.3",
+    "jest-chrome": "^0.7.1",
+    "jest-environment-jsdom": "^29.5.0",
+    "jest-it-up": "^2.0.2",
+    "prettier": "^2.7.1",
+    "prettier-plugin-packagejson": "^2.3.0",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^28.0.7",
+    "ts-node": "^10.7.0",
+    "tsup": "^7.2.0",
+    "typedoc": "^0.23.15",
+    "typescript": "~4.8.4"
+  },
+  "packageManager": "yarn@3.2.1",
+  "engines": {
+    "node": "^18.18 || >=20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@lavamoat/preinstall-always-fail": false,
+      "tsup>esbuild": true
+    }
+  }
+}
