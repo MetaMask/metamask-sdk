@@ -8,6 +8,7 @@ import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
+import globals from 'rollup-plugin-node-globals';
 
 const packageJson = require('./package.json');
 const isDev = process.env.NODE_ENV === 'dev';
@@ -164,6 +165,7 @@ const configs = [
         transformMixedEsModules: true,
         include: /node_modules/,
       }),
+      globals(),
       builtins({
         crypto: true,
         stream: true,
@@ -232,6 +234,7 @@ const configs = [
         dedupe: sharedDeps,
       }),
       commonjs({ transformMixedEsModules: true, include: /node_modules/ }),
+      globals(),
       builtins({ crypto: true }),
       terser(),
     ],

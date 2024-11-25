@@ -8,17 +8,10 @@ export const config: Config = {
     {
       type: 'dist',
       isPrimaryPackageOutputTarget: true,
-      copy: [
-        {
-          src: '../src/locales',
-          dest: '../locales',
-          warn: true,
-        }
-      ]
     },
   ],
   enableCache: true,
-  buildEs5: false, // Modern browser don't need ES5
+  buildEs5: true,
   // Add hash for file names for better caching
   hashFileNames: true,
   excludeUnusedDependencies: true,

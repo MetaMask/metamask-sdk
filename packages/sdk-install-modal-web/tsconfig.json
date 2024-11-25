@@ -20,9 +20,8 @@
     "jsxFactory": "h",
     "module": "esnext",
     "noUnusedLocals": true,
-    "resolveJsonModule": true,
     "noUnusedParameters": true
   },
-  "include": ["./src", "./src/locales/*.json"],
+  "include": ["./src"],
   "exclude": ["node_modules", "dist", "loader"]
 }
