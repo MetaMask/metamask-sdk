@@ -1,9 +1,9 @@
-import { Component, Prop, h, Event, EventEmitter } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Element } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
+import { SimpleI18n } from '../misc/simple-i18n';
 
 @Component({
   tag: 'mm-pending-modal',
@@ -18,7 +18,7 @@ export class PendingModal {
 
   @Prop() sdkVersion?: string;
 
-  @Prop() i18nInstance: i18n;
+  private i18nInstance: SimpleI18n;
 
   @Prop() otpCode?: string;
 
@@ -27,6 +27,21 @@ export class PendingModal {
   @Event() disconnect: EventEmitter;
 
   @Event() updateOTPValue: EventEmitter<{ otpValue: string }>;
+
+  @Element() el: HTMLElement;
+
+  @State() private translationsLoaded: boolean = false;
+
+  constructor() {
+    this.i18nInstance = new SimpleI18n();
+  }
+
+  async connectedCallback() {
+    await this.i18nInstance.init({
+      fallbackLng: 'en'
+    });
+    this.translationsLoaded = true;
+  }
 
   onClose() {
     this.close.emit();
@@ -47,17 +62,21 @@ export class PendingModal {
   }
 
   render() {
+    if (!this.translationsLoaded) {
+      return null;
+    }
+
     const displayOTP = this.displayOTP ?? true;
     const sdkVersion = this.sdkVersion
-    const t = this.i18nInstance.t;
+    const t = (key: string) => this.i18nInstance.t(key);
 
     return (
         <WidgetWrapper className="pending-modal">
-        <div class='backdrop' onClick={this.onClose}></div>
+        <div class='backdrop' onClick={() => this.onClose()}></div>
         <div class='modal'>
           <div class='closeButtonContainer'>
             <div class='right'>
-              <span class='closeButton' onClick={this.onClose}>
+              <span class='closeButton' onClick={() => this.onClose()}>
                 <CloseButton />
               </span>
             </div>
@@ -107,7 +126,7 @@ export class PendingModal {
                   borderStyle: 'solid',
                   backgroundColor: 'white',
                 }}
-                onClick={this.onDisconnect}
+                onClick={() => this.onDisconnect()}
               >
                 {t('PENDING_MODAL.DISCONNECT')}
               </button>

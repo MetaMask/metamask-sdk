@@ -1,15 +1,12 @@
-import { i18n } from 'i18next';
 import packageJson from '../../../package.json';
 import { logger } from '../../utils/logger';
 import ModalLoader from './Modal-web';
 
 const sdkWebPendingModal = ({
   onDisconnect,
-  i18nInstance,
   debug,
 }: {
   onDisconnect?: () => void;
-  i18nInstance: i18n;
   debug?: boolean;
 }) => {
   let div: HTMLDivElement | null = null;
@@ -64,14 +61,17 @@ const sdkWebPendingModal = ({
     div = document.createElement('div');
     document.body.appendChild(div);
 
-    modalLoader.renderPendingModal({
-      i18nInstance,
-      parentElement: div,
-      onClose: unmount,
-      onDisconnect,
-      updateOTPValue,
-      displayOTP,
-    });
+    modalLoader
+      .renderPendingModal({
+        parentElement: div,
+        onClose: unmount,
+        onDisconnect,
+        updateOTPValue,
+        displayOTP,
+      })
+      .catch((err) => {
+        console.error(`[UI: pendingModal-web: sdkWebPendingModal()]`, err);
+      });
   };
 
   // Auto mount on initialization

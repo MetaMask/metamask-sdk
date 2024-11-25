@@ -5,11 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { i18n } from "i18next";
-export { i18n } from "i18next";
 export namespace Components {
     interface MmInstallModal {
-        "i18nInstance": i18n;
         /**
           * The QR code link
          */
@@ -22,12 +19,10 @@ export namespace Components {
           * The QR code link
          */
         "displayOTP"?: boolean;
-        "i18nInstance": i18n;
         "otpCode"?: string;
         "sdkVersion"?: string;
     }
     interface MmSelectModal {
-        "i18nInstance": i18n;
         /**
           * The QR code link
          */
@@ -111,7 +106,6 @@ declare global {
 }
 declare namespace LocalJSX {
     interface MmInstallModal {
-        "i18nInstance"?: i18n;
         /**
           * The QR code link
          */
@@ -126,7 +120,6 @@ declare namespace LocalJSX {
           * The QR code link
          */
         "displayOTP"?: boolean;
-        "i18nInstance"?: i18n;
         "onClose"?: (event: MmPendingModalCustomEvent<any>) => void;
         "onDisconnect"?: (event: MmPendingModalCustomEvent<any>) => void;
         "onUpdateOTPValue"?: (event: MmPendingModalCustomEvent<{ otpValue: string }>) => void;
@@ -134,7 +127,6 @@ declare namespace LocalJSX {
         "sdkVersion"?: string;
     }
     interface MmSelectModal {
-        "i18nInstance"?: i18n;
         /**
           * The QR code link
          */

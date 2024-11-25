@@ -28,15 +28,7 @@ const config = [
         format: 'umd',
         exports: 'named',
         name: 'MetaMaskSDKInstallModal',
-        sourcemap: true,
-        globals: {
-          'react': 'React',
-          'react-dom': 'ReactDOM',
-          'react-dom/client': 'ReactDOM.createRoot',
-          'react-native': 'ReactNative',
-          'i18next': 'i18next',
-          'tslib': 'tslib'
-        }
+        sourcemap: true
       },
       {
         file: packageJson.main,
@@ -45,12 +37,6 @@ const config = [
       },
     ],
     external: [
-      'react',
-      'react-dom',
-      'react-dom/client',
-      'react-native',
-      'i18next',
-      'tslib',
       external(),
     ],
     plugins: [

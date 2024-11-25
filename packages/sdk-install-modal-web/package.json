@@ -13,37 +13,20 @@
   },
   "author": "MetaMask",
   "packageManager": "yarn@3.5.0",
-  "main": "dist/components/index.js",
-  "module": "dist/components/index.js",
-  "types": "dist/components/index.d.ts",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "collection": "dist/collection/collection-manifest.json",
+  "types": "dist/types/index.d.ts",
   "files": [
     "./dist"
   ],
-  "exports": {
-    ".": {
-      "import": "./dist/components/index.js",
-      "types": "./dist/components/index.d.ts"
-    },
-    "./components/mm-install-modal": {
-      "import": "./dist/components/mm-install-modal.js",
-      "types": "./dist/components/mm-install-modal.d.ts"
-    },
-    "./components/mm-pending-modal": {
-      "import": "./dist/components/mm-pending-modal.js",
-      "types": "./dist/components/mm-pending-modal.d.ts"
-    },
-    "./components/mm-select-modal": {
-      "import": "./dist/components/mm-select-modal.js",
-      "types": "./dist/components/mm-select-modal.d.ts"
-    }
-  },
   "scripts": {
     "allow-scripts": "",
     "generate": "stencil generate",
     "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --outDir dist/types",
     "build:clean": "yarn clean && yarn build",
     "build": "stencil build --prod",
-    "build:dev": "stencil build --debug --dev",
+    "build:dev": "NODE_ENV=development stencil build --debug --dev",
     "build:tsc": "tsc --build tsconfig.json --verbose",
     "build:watch": "stencil build --watchAll",
     "build:post-tsc": "echo 'N/A'",
@@ -84,16 +67,13 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.32.2",
-    "i18next": "23.11.5",
     "jest": "^29.6.4",
     "prettier": "^2.8.8",
     "puppeteer": "^23.8.0",
     "rimraf": "^5.0.0",
-    "size-limit": "^11.0.2",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "size-limit": "^11.1.6",
     "typescript": "^5.6.3"
-  },
-  "peerDependencies": {
-    "i18next": "23.11.5"
   },
   "publishConfig": {
     "access": "public",

@@ -8,9 +8,8 @@ import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import { i18n } from 'i18next';
 import encodeQR from '@paulmillr/qr';
-
+import { SimpleI18n } from '../misc/simple-i18n';
 @Component({
   tag: 'mm-install-modal',
   styleUrl: '../style.css',
@@ -26,7 +25,7 @@ export class InstallModal {
 
   @Prop() preferDesktop: boolean;
 
-  @Prop() i18nInstance: i18n;
+  private i18nInstance: SimpleI18n;
 
   @Event() close: EventEmitter;
 
@@ -36,12 +35,23 @@ export class InstallModal {
 
   @Element() el: HTMLElement;
 
+  @State() private translationsLoaded: boolean = false;
+
   constructor() {
     this.onClose = this.onClose.bind(this);
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
     this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
     this.setTab(2);
+
+    this.i18nInstance = new SimpleI18n();
+  }
+
+  async connectedCallback() {
+    await this.i18nInstance.init({
+      fallbackLng: 'en'
+    });
+    this.translationsLoaded = true;
   }
 
   @Watch('preferDesktop')
@@ -55,22 +65,42 @@ export class InstallModal {
 
   @Watch('link')
   updateLink(newLink: string) {
+    if (!this.translationsLoaded || this.tab !== 2) {
+      return;
+    }
+
     const svgElement = encodeQR(newLink, "svg", {
       ecc: "medium",
       scale: 2
-    })
+    });
 
     if (!this.el.shadowRoot) {
+      console.warn('Shadow root not found');
       return;
     }
 
     const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
 
     if (!qrcodeDiv) {
+      console.warn('QR code div not found');
       return;
     }
 
-    qrcodeDiv.innerHTML = svgElement
+    qrcodeDiv.innerHTML = svgElement;
+  }
+
+  @Watch('translationsLoaded')
+  onTranslationsLoaded(isLoaded: boolean) {
+    if (isLoaded && this.tab === 2) {
+      this.updateLink(this.link);
+    }
+  }
+
+  @Watch('tab')
+  onTabChange(newTab: number) {
+    if (newTab === 2 && this.translationsLoaded) {
+      this.updateLink(this.link);
+    }
   }
 
   onClose() {
@@ -90,7 +120,11 @@ export class InstallModal {
   }
 
   render() {
-    const t = this.i18nInstance.t;
+    if (!this.translationsLoaded) {
+      return null; // or a loading state
+    }
+
+    const t = (key: string) => this.i18nInstance.t(key);
 
     return (
       <WidgetWrapper className="install-model">

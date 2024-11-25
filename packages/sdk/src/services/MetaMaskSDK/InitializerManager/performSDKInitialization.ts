@@ -5,7 +5,6 @@ import { MetaMaskSDKEvent } from '../../../types/MetaMaskSDKEvents';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { logger } from '../../../utils/logger';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
-import { initializeI18next } from './initializeI18next';
 import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { setupAnalytics } from './setupAnalytics';
 import { setupDappMetadata } from './setupDappMetadata';
@@ -96,8 +95,6 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
     runtimeLogging.serviceLayer = true;
     runtimeLogging.plaintext = true;
   }
-
-  await initializeI18next(instance);
 
   await setupPlatformManager(instance);
 

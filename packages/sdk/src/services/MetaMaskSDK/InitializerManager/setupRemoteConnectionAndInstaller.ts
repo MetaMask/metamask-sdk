@@ -27,7 +27,6 @@ export async function setupRemoteConnectionAndInstaller(
   const runtimeLogging = { ...options.logging };
 
   instance.remoteConnection = new RemoteConnection({
-    i18nInstance: instance.i18nInstance,
     preferDesktop: options.preferDesktop ?? false,
     communicationLayerPreference:
       options.communicationLayerPreference ??

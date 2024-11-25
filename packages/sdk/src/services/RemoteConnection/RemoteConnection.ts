@@ -9,7 +9,6 @@ import {
   RemoteCommunication,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -43,7 +42,6 @@ export interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
   preferDesktop?: boolean;
-  i18nInstance: i18n;
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
@@ -58,7 +56,6 @@ export interface RemoteConnectionProps {
   modals: {
     onPendingModalDisconnect?: () => void;
     install?: (params: {
-      i18nInstance: i18n;
       link: string;
       debug?: boolean;
       preferDesktop?: boolean;
@@ -70,11 +67,9 @@ export interface RemoteConnectionProps {
       mount?: (link: string) => void;
     };
     otp?: ({
-      i18nInstance,
       debug,
       onDisconnect,
     }: {
-      i18nInstance: i18n;
       debug?: boolean;
       onDisconnect?: () => void;
     }) => {
@@ -147,7 +142,9 @@ export class RemoteConnection {
     this.state.platformManager = options.platformManager;
 
     // Set default modals implementation
+    // @ts-error backward compatibility
     if (!options.modals.install) {
+      // @ts-error backward compatibility
       options.modals.install = InstallModal;
     }
 
