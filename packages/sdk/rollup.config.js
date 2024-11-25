@@ -37,10 +37,8 @@ const baseExternalDeps = [
   ...peerDependencies.filter(excludeBundledDeps),
   ...optionalDependencies.filter(excludeBundledDeps),
   ...sharedDeps, // Exclude shared deps from bundle
-  '@metamask/sdk-install-modal-web',
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
-  'tslib',
 ];
 
 // Platform-specific externals

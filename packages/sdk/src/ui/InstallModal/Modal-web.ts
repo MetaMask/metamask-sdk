@@ -1,4 +1,4 @@
-import type { Components } from '@metamask/sdk-install-modal-web/dist/types/components';
+import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
