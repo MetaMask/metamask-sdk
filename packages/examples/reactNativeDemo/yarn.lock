@@ -2538,6 +2538,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime@npm:^7.26.0":
+  version: 7.26.0
+  resolution: "@babel/runtime@npm:7.26.0"
+  dependencies:
+    regenerator-runtime: ^0.14.0
+  checksum: c8e2c0504ab271b3467a261a8f119bf2603eb857a0d71e37791f4e3fae00f681365073cc79f141ddaa90c6077c60ba56448004ad5429d07ac73532be9f7cf28a
+  languageName: node
+  linkType: hard
+
 "@babel/template@npm:^7.0.0, @babel/template@npm:^7.22.5, @babel/template@npm:^7.3.3":
   version: 7.22.5
   resolution: "@babel/template@npm:7.22.5"
@@ -2667,6 +2676,15 @@ __metadata:
   peerDependencies:
     react: ">=16.3.0"
   checksum: f888ef0b8f993d393a9d49864f75b04b5cf7259e72f290ec570fc5e314315f75c979b03b391243a72578ab55db4ffcdd4dc9dc1a2f8ec2b516cabb958971a85e
+  languageName: node
+  linkType: hard
+
+"@ecies/ciphers@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@ecies/ciphers@npm:0.2.1"
+  peerDependencies:
+    "@noble/ciphers": ^1.0.0
+  checksum: 4a2012358f79ef842c6a9fdcf3d4e1f7d3d59ad3d025cca52b3e7135f62d5c35d394882cbfe8ad5aa17f707663921bf466707d20712b5027a0af5813a6ad7b08
   languageName: node
   linkType: hard
 
@@ -3697,6 +3715,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/sdk-communication-layer@npm:0.31.0":
+  version: 0.31.0
+  resolution: "@metamask/sdk-communication-layer@npm:0.31.0"
+  dependencies:
+    bufferutil: ^4.0.8
+    date-fns: ^2.29.3
+    debug: ^4.3.4
+    utf-8-validate: ^5.0.2
+    uuid: ^8.3.2
+  peerDependencies:
+    cross-fetch: ^4.0.0
+    eciesjs: "*"
+    eventemitter2: ^6.4.9
+    readable-stream: ^3.6.2
+    socket.io-client: ^4.5.1
+  checksum: 3f9283d828d736f331154bfa0e1368b7c7c18e00eff66ccd20e97fb86618433cef3c60ed4168e2565bda825303562eb00bb9ca101d1abdcdc3f3848f807e614e
+  languageName: node
+  linkType: hard
+
 "@metamask/sdk-install-modal-web@npm:0.30.0":
   version: 0.30.0
   resolution: "@metamask/sdk-install-modal-web@npm:0.30.0"
@@ -3715,6 +3752,15 @@ __metadata:
     react-native:
       optional: true
   checksum: 025c5d975b1a76cfcca50014b8860a3ecaa3a951645390b4bf7b488aedd910d35b569aab3f711dcf4c98f20e38d43d432ddcfe891f21e39ad6435b8daf9c45c6
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-install-modal-web@npm:0.31.0":
+  version: 0.31.0
+  resolution: "@metamask/sdk-install-modal-web@npm:0.31.0"
+  dependencies:
+    "@paulmillr/qr": ^0.2.1
+  checksum: 4ef7bf111d058ea3e3900ae9d913a3fd0d3b2b30ac3fb293dda52a386822d2a1bec2e2edd7e6b4679d9fedaeb456d3141435abd11fe4eb593222582280787dcc
   languageName: node
   linkType: hard
 
@@ -3784,6 +3830,33 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/sdk@npm:^0.31.0":
+  version: 0.31.0
+  resolution: "@metamask/sdk@npm:0.31.0"
+  dependencies:
+    "@babel/runtime": ^7.26.0
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/providers": 16.1.0
+    "@metamask/sdk-communication-layer": 0.31.0
+    "@metamask/sdk-install-modal-web": 0.31.0
+    "@paulmillr/qr": ^0.2.1
+    bowser: ^2.9.0
+    cross-fetch: ^4.0.0
+    debug: ^4.3.4
+    eciesjs: ^0.4.11
+    eth-rpc-errors: ^4.0.3
+    eventemitter2: ^6.4.9
+    obj-multiplex: ^1.0.0
+    pump: ^3.0.0
+    readable-stream: ^3.6.2
+    socket.io-client: ^4.5.1
+    tslib: ^2.6.0
+    util: ^0.12.4
+    uuid: ^8.3.2
+  checksum: 5c79480ed2bc7db708b5c3b9bd23f53e5d5e0673baa43ef8d1f20599e66efa6a4527948a3c9260510854e6fc5b213edc17005519ae8aa2c36a4074b5806ba7be
+  languageName: node
+  linkType: hard
+
 "@metamask/utils@npm:^8.3.0":
   version: 8.3.0
   resolution: "@metamask/utils@npm:8.3.0"
@@ -3816,6 +3889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ciphers@npm:^1.0.0":
+  version: 1.1.1
+  resolution: "@noble/ciphers@npm:1.1.1"
+  checksum: 1264234506c6d87cdef060bb5cbdfb098ee2b853c34dc377ce51aa34790013d00cc4fc44fc921c52002e4a4f92310b56f3d6965d3f0a4c2d1ec912a20494b981
+  languageName: node
+  linkType: hard
+
 "@noble/curves@npm:1.1.0, @noble/curves@npm:~1.1.0":
   version: 1.1.0
   resolution: "@noble/curves@npm:1.1.0"
@@ -3834,6 +3914,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/curves@npm:^1.6.0":
+  version: 1.7.0
+  resolution: "@noble/curves@npm:1.7.0"
+  dependencies:
+    "@noble/hashes": 1.6.0
+  checksum: e220b704f1e516f326fff985e794e840a267f5542e1388737142b08177672ebc41b460b5a5bf636d7622c68e8ae719bc042ccd8aed16dc14311450a94b5f2a05
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:1.3.1":
   version: 1.3.1
   resolution: "@noble/hashes@npm:1.3.1"
@@ -3848,10 +3937,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/hashes@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@noble/hashes@npm:1.6.0"
+  checksum: 07729b80108d2a9b862eb4e070d4f78ca7ee86b9a9c13a4f7c338ba47a15d4386dd283235da71f21ad515fa9f0b9429fc3da39d2f2b4a50e2442212d14cfd4a9
+  languageName: node
+  linkType: hard
+
 "@noble/hashes@npm:^1.3.1":
   version: 1.4.0
   resolution: "@noble/hashes@npm:1.4.0"
   checksum: 8ba816ae26c90764b8c42493eea383716396096c5f7ba6bea559993194f49d80a73c081f315f4c367e51bd2d5891700bcdfa816b421d24ab45b41cb03e4f3342
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:^1.5.0":
+  version: 1.6.1
+  resolution: "@noble/hashes@npm:1.6.1"
+  checksum: 57c62f65ee217c0293b4321b547792aa6d79812bfe70a7d62dc83e0f936cc677b14ed981b4e88cf8fdad37cd6d3a0cbd3bd0908b0728adc9daf066e678be8901
   languageName: node
   linkType: hard
 
@@ -3888,6 +3991,13 @@ __metadata:
   dependencies:
     semver: ^7.3.5
   checksum: a50a6818de5fc557d0b0e6f50ec780a7a02ab8ad07e5ac8b16bf519e0ad60a144ac64f97d05c443c3367235d337182e1d012bbac0eb8dbae8dc7b40b193efd0e
+  languageName: node
+  linkType: hard
+
+"@paulmillr/qr@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@paulmillr/qr@npm:0.2.1"
+  checksum: 8a7b882f74f472759b0e5911c9c902a29c5232609373af4c5775625d9aad4ebda635d84c25be27e694144ba73d8e4204e72c3b9b59e9a375ec1d19f034a2d2ad
   languageName: node
   linkType: hard
 
@@ -7008,6 +7118,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eciesjs@npm:^0.4.11":
+  version: 0.4.12
+  resolution: "eciesjs@npm:0.4.12"
+  dependencies:
+    "@ecies/ciphers": ^0.2.1
+    "@noble/ciphers": ^1.0.0
+    "@noble/curves": ^1.6.0
+    "@noble/hashes": ^1.5.0
+  checksum: ef98528b8af23b013dd432b43cc1a378d58621f887a7db234ebc997006e16ab9ffa0ea973bf2195aa63dbfa996afa9e3a8f8410b6e3d5c3808365a3d02b1141a
+  languageName: node
+  linkType: hard
+
 "eciesjs@npm:^0.4.4":
   version: 0.4.5
   resolution: "eciesjs@npm:0.4.5"
@@ -7709,7 +7831,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eventemitter2@npm:^6.4.7":
+"eventemitter2@npm:^6.4.7, eventemitter2@npm:^6.4.9":
   version: 6.4.9
   resolution: "eventemitter2@npm:6.4.9"
   checksum: be59577c1e1c35509c7ba0e2624335c35bbcfd9485b8a977384c6cc6759341ea1a98d3cb9dbaa5cea4fff9b687e504504e3f9c2cc1674cf3bd8a43a7c74ea3eb
@@ -12191,7 +12313,7 @@ __metadata:
     "@babel/core": ^7.23.6
     "@babel/preset-env": ^7.23.6
     "@babel/runtime": ^7.23.6
-    "@metamask/sdk": ^0.30.0
+    "@metamask/sdk": ^0.31.0
     "@metamask/sdk-react": ^0.30.0
     "@react-native-async-storage/async-storage": ^2.0.0
     "@react-native-community/eslint-config": ^3.2.0
@@ -13503,6 +13625,13 @@ __metadata:
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.6.0":
+  version: 2.8.1
+  resolution: "tslib@npm:2.8.1"
+  checksum: e4aba30e632b8c8902b47587fd13345e2827fa639e7c3121074d5ee0880723282411a8838f830b55100cbe4517672f84a2472667d355b81e8af165a55dc6203a
   languageName: node
   linkType: hard
 
