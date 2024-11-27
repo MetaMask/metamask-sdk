@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.0]
+### Changed
+- refactor(sdk-install-modal-web): migrate from i18next to custom SimpleI18n implementation ([#1141](https://github.com/MetaMask/metamask-sdk/pull/1141))
+- refactor(sdk-install-modal-web): migrate to StencilJS + Lazy Loading ([#1139](https://github.com/MetaMask/metamask-sdk/pull/1139))
+- style: add inline styles to div elements ([#1138](https://github.com/MetaMask/metamask-sdk/pull/1138))
+- refactor: replace qr-code-styling with smaller library ([#1129](https://github.com/MetaMask/metamask-sdk/pull/1129))
+
 ## [0.30.2]
 ### Uncategorized
 - align version with sdk
@@ -158,7 +165,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.0...HEAD
+[0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.2...@metamask/sdk-install-modal-web@0.31.0
 [0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.0...@metamask/sdk-install-modal-web@0.30.2
 [0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.2...@metamask/sdk-install-modal-web@0.30.0
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.1...@metamask/sdk-install-modal-web@0.29.2
