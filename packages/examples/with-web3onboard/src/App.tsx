@@ -91,12 +91,12 @@ const chains = [
 
 // initialize the module with options
 const metamaskSDKWallet = metamaskSDK({options: {
-  extensionOnly: false,
   logging: {
     developerMode: true,
   },
   dappMetadata: {
-    name: 'Demo Web3Onboard'
+    name: 'Demo Web3Onboard',
+    url: 'https://metamask.io'
   }
 }})
 
