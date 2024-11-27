@@ -1,0 +1,1 @@
+(self["webpackChunkmetamasksdk_vuejs"]=self["webpackChunkmetamasksdk_vuejs"]||[]).push([[2798],{2798:function(){}}]);
