@@ -80,12 +80,9 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           }
 
           if (isExtensionActive && (accounts as string[])?.length === 0) {
-            instance.terminate().catch((error) => {
-              logger(
-                `[MetaMaskSDK: setupExtensionPreferences()] Error terminating`,
-                error,
-              );
-            });
+            logger(
+              `[MetaMaskSDK: setupExtensionPreferences()] permissions were revoked on extension or extension was locked`,
+            );
           }
         },
       );
