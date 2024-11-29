@@ -11,7 +11,7 @@ export const config: Config = {
     },
   ],
   enableCache: true,
-  buildEs5: true,
+  buildEs5: false,
   // Add hash for file names for better caching
   hashFileNames: true,
   excludeUnusedDependencies: true,

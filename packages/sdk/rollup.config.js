@@ -8,7 +8,7 @@ import terser from '@rollup/plugin-terser';
 import builtins from 'rollup-plugin-node-builtins';
 import { visualizer } from 'rollup-plugin-visualizer';
 import replace from '@rollup/plugin-replace';
-import globals from 'rollup-plugin-node-globals';
+import globals from 'rollup-plugin-polyfill-node';
 
 const packageJson = require('./package.json');
 const isDev = process.env.NODE_ENV === 'dev';
@@ -32,6 +32,24 @@ const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross
 
 // Filter function to exclude bundled dependencies
 const excludeBundledDeps = (dep) => !bundledDeps.includes(dep);
+
+// Used to inject "/* webpackIgnore: true */" for sdk-install-modal-web dynamic import
+const injectWebpackIgnore = () => {
+  return {
+    name: 'inject-webpack-ignore',
+    generateBundle(_, bundle) {
+      for (const file of Object.keys(bundle)) {
+        if (file === 'metamask-sdk.js' && bundle[file].code) {
+          // Inject the webpackIgnore comment into dynamic import
+          bundle[file].code = bundle[file].code.replace(
+            /import\(/g,
+            'import(/* webpackIgnore: true */'
+          );
+        }
+      }
+    },
+  };
+};
 
 // Dependencies that should always be external
 const baseExternalDeps = [
@@ -165,16 +183,25 @@ const configs = [
         transformMixedEsModules: true,
         include: /node_modules/,
       }),
-      globals(),
+      globals({
+        include: null,
+      }),
       builtins({
         crypto: true,
         stream: true,
         http: true,
         https: true,
         url: true,
+        process: true,
         buffer: false,
       }),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
+      injectWebpackIgnore(),
     ],
     onwarn: sharedWarningHandler,
   },
@@ -234,9 +261,17 @@ const configs = [
         dedupe: sharedDeps,
       }),
       commonjs({ transformMixedEsModules: true, include: /node_modules/ }),
-      globals(),
+      globals({
+        include: null,
+      }),
       builtins({ crypto: true }),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
+      injectWebpackIgnore(),
     ],
     onwarn: sharedWarningHandler,
   },
@@ -263,7 +298,12 @@ const configs = [
         browser: true,
         preferBuiltins: true,
       }),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
     ],
     onwarn: sharedWarningHandler,
   },
@@ -306,7 +346,12 @@ const configs = [
         exportConditions: ['node'],
       }),
       commonjs({ transformMixedEsModules: true }),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
     ],
     onwarn: sharedWarningHandler,
   },
