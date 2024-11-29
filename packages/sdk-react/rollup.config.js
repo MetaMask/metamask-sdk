@@ -4,6 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import external from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser';
+import globals from 'rollup-plugin-polyfill-node';
 
 const packageJson = require('./package.json');
 
@@ -35,8 +36,16 @@ const config = [
         browser: true,
       }),
       commonjs(),
+      globals({
+        include: null,
+      }),
       json(),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
     ],
   },
   {
@@ -60,8 +69,16 @@ const config = [
         preferBuiltins: true,
       }),
       commonjs(),
+      globals({
+        include: null,
+      }),
       json(),
-      terser(),
+      terser({
+        format: {
+          // keep all /* webpack*: * */ comments and /* vite-*: * */ comments
+          comments: (_, comment) => comment.value.includes("webpack") || comment.value.includes("vite")
+        }
+      }),
     ],
   }
 ];
