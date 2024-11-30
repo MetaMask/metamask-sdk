@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.1]
+### Changed
+- fix: Tell webpack about dynamic import + fixed polyfills ([#1151](https://github.com/MetaMask/metamask-sdk/pull/1151))
+
 ## [0.31.0]
 ### Changed
 - refactor(sdk-install-modal-web): migrate from i18next to custom SimpleI18n implementation ([#1141](https://github.com/MetaMask/metamask-sdk/pull/1141))
@@ -278,7 +282,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.1...HEAD
+[0.31.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.0...@metamask/sdk-react@0.31.1
 [0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.30.2...@metamask/sdk-react@0.31.0
 [0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.30.0...@metamask/sdk-react@0.30.2
 [0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.29.2...@metamask/sdk-react@0.30.0
