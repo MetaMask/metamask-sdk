@@ -42,7 +42,7 @@ export class InstallModal {
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
     this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
-    this.setTab(2);
+    this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
   }
