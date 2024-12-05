@@ -1,5 +1,4 @@
 import { Dialog, Transition } from '@headlessui/react';
-import MetaMaskSDK from '@metamask/sdk';
 import React, { Fragment, useState } from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
@@ -17,11 +16,9 @@ import { truncatedAddress } from './utils';
 export default function Modal({
   isOpen,
   setIsOpen,
-  t,
 }: {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
-  t: typeof MetaMaskSDK.prototype.i18nInstance.t;
 }) {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
@@ -160,7 +157,7 @@ export default function Modal({
                       <div className="tw-text-2xl tw-font-bold tw-mt-2 tw-flex tw-text-center tw-content-center tw-justify-center">
                         {copied ? (
                           <div className="tw-text-lg tw-text-blue-500 tw-grid tw-content-center tw-justify-center">
-                            {t('META_MASK_MODAL.ADDRESS_COPIED')}
+                            Address copied to clipboard!
                           </div>
                         ) : (
                           address && (
@@ -211,13 +208,13 @@ export default function Modal({
                           />
                         </svg>
                         <span className="tw-ml-1">
-                          {t('META_MASK_MODAL.DISCONNECT')}
+                          Disconnect
                         </span>
                       </button>
                     </div>
                   </div>
                   <div className="tw-text-sm tw-font-bold	tw-mt-6">
-                    {t('META_MASK_MODAL.ACTIVE_NETWORK')}
+                    Active Network
                   </div>
                   <div className="tw-mt-4">{getNetworks()}</div>
                 </Dialog.Panel>

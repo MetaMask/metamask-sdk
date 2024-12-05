@@ -249,10 +249,6 @@ Props) => {
 
   const connectedAndRightNetwork = isConnected && !wrongNetwork;
 
-  if (!sdk?.i18nInstance) return null;
-
-  const t = sdk.i18nInstance.t;
-
   return (
     <>
       <button
@@ -283,7 +279,7 @@ Props) => {
         )}
         {getText()}
       </button>
-      {<MetaMaskModal t={t} isOpen={modalOpen} setIsOpen={setModalOpen} />}
+      {<MetaMaskModal isOpen={modalOpen} setIsOpen={setModalOpen} />}
     </>
   );
 };
