@@ -78,6 +78,7 @@ const WithSDKConfig = ({children}: {children: React.ReactNode}) => {
         },
         dappMetadata: {
           name: 'devreactnative',
+          url: 'https://demornativesdk.metamask.io',
         },
         i18nOptions: {
           enabled: true,

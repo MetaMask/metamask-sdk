@@ -78,6 +78,7 @@ const config = {
     extraNodeModules: {
       ...extraNodeModules,
       ...require('node-libs-react-native'),
+      'node:crypto': require.resolve('react-native-crypto'),
       // crypto: require.resolve('react-native-quick-crypto'),
       // url: require.resolve('whatwg-url'),
     },
@@ -126,6 +127,25 @@ const config = {
         );
         return {
           filePath: monorepoRootPath + '/packages/sdk-ui/src/index.ts',
+          type: 'sourceFile',
+        };
+      }
+       else if (moduleName === '@ecies/ciphers/aes') {
+        console.debug(`CUSTOM RESOLVER ${moduleName}`);
+        // Logic to resolve the module name to a file path...
+        // NOTE: Throw an error if there is no resolution.
+        return {
+          filePath:
+            sdkPath + '/node_modules/@ecies/ciphers/dist/aes/node.js',
+          type: 'sourceFile',
+        };
+      } else if (moduleName === '@ecies/ciphers/chacha') {
+        console.debug(`CUSTOM RESOLVER ${moduleName}`);
+        // Logic to resolve the module name to a file path...
+        // NOTE: Throw an error if there is no resolution.
+        return {
+          filePath:
+            sdkPath + '/node_modules/@ecies/ciphers/dist/chacha/node.js',
           type: 'sourceFile',
         };
       }

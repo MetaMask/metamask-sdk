@@ -13,7 +13,7 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "^0.30.0",
+    "@metamask/sdk": "^0.31.0",
     "@metamask/sdk-react": "^0.30.0",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
