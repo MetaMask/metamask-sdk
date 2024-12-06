@@ -33,6 +33,8 @@ export class InstallModal {
 
   @State() tab: number = 1;
 
+  @State() isDefaultTab: boolean = true;
+
   @Element() el: HTMLElement;
 
   @State() private translationsLoaded: boolean = false;
@@ -65,10 +67,6 @@ export class InstallModal {
 
   @Watch('link')
   updateLink(newLink: string) {
-    if (!this.translationsLoaded || this.tab !== 2) {
-      return;
-    }
-
     const svgElement = encodeQR(newLink, "svg", {
       ecc: "medium",
       scale: 2
@@ -113,6 +111,7 @@ export class InstallModal {
 
   setTab(newTab: number) {
     this.tab = newTab
+    this.isDefaultTab = false;
   }
 
   componentDidLoad() {
@@ -125,6 +124,8 @@ export class InstallModal {
     }
 
     const t = (key: string) => this.i18nInstance.t(key);
+
+    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab
 
     return (
       <WidgetWrapper className="install-model">
@@ -145,19 +146,19 @@ export class InstallModal {
               <div class='flexContainer'>
                 <div
                   onClick={() => this.setTab(1)}
-                  class={`tab flexItem ${this.tab === 1 ? 'tabactive': ''}`}
+                  class={`tab flexItem ${currentTab === 1 ? 'tabactive': ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
                   onClick={() => this.setTab(2)}
-                  class={`tab flexItem ${this.tab === 2 ? 'tabactive': ''}`}
+                  class={`tab flexItem ${currentTab === 2 ? 'tabactive': ''}`}
                 >
                   {t('MOBILE')}
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 1 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 1 ? 'none' : 'block' }}>
               <div class='flexContainer'>
                 <div
                   class='flexItem'
@@ -177,7 +178,7 @@ export class InstallModal {
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 2 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 2 ? 'none' : 'block' }}>
               <div class='item'>
                 <AdvantagesListItem
                   Icon={HeartIcon}
