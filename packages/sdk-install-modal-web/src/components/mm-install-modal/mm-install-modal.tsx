@@ -73,14 +73,16 @@ export class InstallModal {
     });
 
     if (!this.el.shadowRoot) {
-      console.warn('Shadow root not found');
+      console.warn('Shadow root not found, will try again in 100ms');
+      setTimeout(() => this.updateLink(newLink), 100);
       return;
     }
 
     const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
 
     if (!qrcodeDiv) {
-      console.warn('QR code div not found');
+      console.warn('QR code div not found, will try again in 100ms');
+      setTimeout(() => this.updateLink(newLink), 100);
       return;
     }
 
