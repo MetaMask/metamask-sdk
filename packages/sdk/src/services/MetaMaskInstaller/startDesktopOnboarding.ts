@@ -18,7 +18,9 @@ export async function startDesktopOnboarding() {
   );
 
   Ethereum.destroy();
-  delete window.ethereum;
+  if (window.ethereum) {
+    window.ethereum = undefined;
+  }
   const onboardingExtension = new MetaMaskOnboarding();
   onboardingExtension.startOnboarding();
 }
