@@ -81,6 +81,7 @@ const sdkWebInstallModal = ({
           },
           onClose: unmount,
           link,
+          preferDesktop: preferDesktop ?? false,
         })
         .catch((err) => {
           console.error(err);

@@ -27,6 +27,7 @@ export namespace Components {
           * The QR code link
          */
         "link": string;
+        "preferDesktop": boolean;
         "sdkVersion"?: string;
     }
 }
@@ -133,6 +134,7 @@ declare namespace LocalJSX {
         "link"?: string;
         "onClose"?: (event: MmSelectModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
         "onConnectWithExtension"?: (event: MmSelectModalCustomEvent<any>) => void;
+        "preferDesktop"?: boolean;
         "sdkVersion"?: string;
     }
     interface IntrinsicElements {
