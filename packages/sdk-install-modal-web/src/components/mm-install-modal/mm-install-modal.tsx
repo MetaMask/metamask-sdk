@@ -65,44 +65,6 @@ export class InstallModal {
     }
   }
 
-  @Watch('link')
-  updateLink(newLink: string) {
-    const svgElement = encodeQR(newLink, "svg", {
-      ecc: "medium",
-      scale: 2
-    });
-
-    if (!this.el.shadowRoot) {
-      console.warn('Shadow root not found, will try again in 100ms');
-      setTimeout(() => this.updateLink(newLink), 100);
-      return;
-    }
-
-    const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
-
-    if (!qrcodeDiv) {
-      console.warn('QR code div not found, will try again in 100ms');
-      setTimeout(() => this.updateLink(newLink), 100);
-      return;
-    }
-
-    qrcodeDiv.innerHTML = svgElement;
-  }
-
-  @Watch('translationsLoaded')
-  onTranslationsLoaded(isLoaded: boolean) {
-    if (isLoaded && this.tab === 2) {
-      this.updateLink(this.link);
-    }
-  }
-
-  @Watch('tab')
-  onTabChange(newTab: number) {
-    if (newTab === 2 && this.translationsLoaded) {
-      this.updateLink(this.link);
-    }
-  }
-
   onClose() {
     this.close.emit();
   }
@@ -116,10 +78,6 @@ export class InstallModal {
     this.isDefaultTab = false;
   }
 
-  componentDidLoad() {
-    this.updateLink(this.link);
-  }
-
   render() {
     if (!this.translationsLoaded) {
       return null; // or a loading state
@@ -128,6 +86,13 @@ export class InstallModal {
     const t = (key: string) => this.i18nInstance.t(key);
 
     const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab
+
+    const svgElement = encodeQR(this.link, "svg", {
+      ecc: "medium",
+      scale: 2
+    });
+
+    console.log(`Showing modal with link ${this.link} and SVG QRCode ${svgElement}`)
 
     return (
       <WidgetWrapper className="install-model">
@@ -169,8 +134,11 @@ export class InstallModal {
                     marginTop: '4',
                   }}
                 >
-                  <div id="sdk-mm-qrcode" class='center'>
-                  </div>
+                  {
+                    svgElement && (
+                      <div id="sdk-mm-qrcode" class='center' innerHTML={svgElement} />
+                    )
+                  }
                   <div class='connectMobileText'>
                     {t('SCAN_TO_CONNECT')} <br />
                     <span class='blue'>
