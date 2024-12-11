@@ -92,6 +92,7 @@ export default class ModalLoader {
     ) as HTMLMmSelectModalElement;
     modal.link = props.link;
     modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
+    modal.preferDesktop = props.preferDesktop;
     modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
       props.onClose(shouldTerminate),
     );
