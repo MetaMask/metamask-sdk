@@ -33,6 +33,8 @@ export class InstallModal {
 
   @State() tab: number = 1;
 
+  @State() isDefaultTab: boolean = true;
+
   @Element() el: HTMLElement;
 
   @State() private translationsLoaded: boolean = false;
@@ -42,7 +44,7 @@ export class InstallModal {
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
     this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
-    this.setTab(2);
+    this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
   }
@@ -63,46 +65,6 @@ export class InstallModal {
     }
   }
 
-  @Watch('link')
-  updateLink(newLink: string) {
-    if (!this.translationsLoaded || this.tab !== 2) {
-      return;
-    }
-
-    const svgElement = encodeQR(newLink, "svg", {
-      ecc: "medium",
-      scale: 2
-    });
-
-    if (!this.el.shadowRoot) {
-      console.warn('Shadow root not found');
-      return;
-    }
-
-    const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
-
-    if (!qrcodeDiv) {
-      console.warn('QR code div not found');
-      return;
-    }
-
-    qrcodeDiv.innerHTML = svgElement;
-  }
-
-  @Watch('translationsLoaded')
-  onTranslationsLoaded(isLoaded: boolean) {
-    if (isLoaded && this.tab === 2) {
-      this.updateLink(this.link);
-    }
-  }
-
-  @Watch('tab')
-  onTabChange(newTab: number) {
-    if (newTab === 2 && this.translationsLoaded) {
-      this.updateLink(this.link);
-    }
-  }
-
   onClose() {
     this.close.emit();
   }
@@ -113,10 +75,7 @@ export class InstallModal {
 
   setTab(newTab: number) {
     this.tab = newTab
-  }
-
-  componentDidLoad() {
-    this.updateLink(this.link);
+    this.isDefaultTab = false;
   }
 
   render() {
@@ -125,6 +84,15 @@ export class InstallModal {
     }
 
     const t = (key: string) => this.i18nInstance.t(key);
+
+    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab
+
+    const svgElement = encodeQR(this.link, "svg", {
+      ecc: "medium",
+      scale: 2
+    });
+
+    console.log(`Showing modal with link ${this.link} and SVG QRCode ${svgElement}`)
 
     return (
       <WidgetWrapper className="install-model">
@@ -145,19 +113,19 @@ export class InstallModal {
               <div class='flexContainer'>
                 <div
                   onClick={() => this.setTab(1)}
-                  class={`tab flexItem ${this.tab === 1 ? 'tabactive': ''}`}
+                  class={`tab flexItem ${currentTab === 1 ? 'tabactive': ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
                   onClick={() => this.setTab(2)}
-                  class={`tab flexItem ${this.tab === 2 ? 'tabactive': ''}`}
+                  class={`tab flexItem ${currentTab === 2 ? 'tabactive': ''}`}
                 >
                   {t('MOBILE')}
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 1 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 1 ? 'none' : 'block' }}>
               <div class='flexContainer'>
                 <div
                   class='flexItem'
@@ -166,8 +134,11 @@ export class InstallModal {
                     marginTop: '4',
                   }}
                 >
-                  <div id="sdk-mm-qrcode" class='center'>
-                  </div>
+                  {
+                    svgElement && (
+                      <div id="sdk-mm-qrcode" class='center' innerHTML={svgElement} />
+                    )
+                  }
                   <div class='connectMobileText'>
                     {t('SCAN_TO_CONNECT')} <br />
                     <span class='blue'>
@@ -177,7 +148,7 @@ export class InstallModal {
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 2 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 2 ? 'none' : 'block' }}>
               <div class='item'>
                 <AdvantagesListItem
                   Icon={HeartIcon}
