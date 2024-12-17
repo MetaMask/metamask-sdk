@@ -1,3 +1,8 @@
+import {
+  TrackingEvents,
+  SendAnalytics,
+  DEFAULT_SERVER_URL,
+} from '@metamask/sdk-communication-layer';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../../config';
 import {
@@ -67,6 +72,24 @@ export async function write(
         .catch((err: unknown) => {
           logger(`[RCPMS: _write()] error sending message`, err);
         });
+    } else {
+      try {
+        // Only send analytics if we are not sending via network.
+        await SendAnalytics(
+          {
+            id: channelId,
+            event: TrackingEvents.SDK_RPC_REQUEST,
+            params: {
+              method: targetMethod,
+              from: 'mobile',
+            },
+          },
+          instance.state.remote?.state.communicationServerUrl ??
+            DEFAULT_SERVER_URL,
+        );
+      } catch (error) {
+        logger(`[RCPMS: _write()] error sending analytics`, error);
+      }
     }
 
     if (!isSecure) {
