@@ -3,7 +3,7 @@ export interface DappMetadata {
   name?: string;
   iconUrl?: string;
   scheme?: string;
-  base64Icon?: string;
+  base64Icon?: string; // @deprecated use iconUrl instead - backwards compatibility
   connector?: string;
 }
 
