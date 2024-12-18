@@ -63,6 +63,23 @@ export async function write(
 
   try {
     if (!activeDeeplinkProtocol || triggeredInstaller) {
+      // Add to rpc method tracker first then send the event to simulate sending from network.
+      const rpcMethodTracker = instance.state.remote?.getRPCMethodTracker();
+      if (rpcMethodTracker) {
+        const rpcId = data?.data?.id;
+        console.warn(
+          `[RCPMS: _write()] rpcId=${rpcId} targetMethod=${targetMethod}`,
+        );
+
+        if (rpcId) {
+          rpcMethodTracker[rpcId] = {
+            id: rpcId,
+            method: targetMethod,
+            timestamp: Date.now(),
+          };
+        }
+      }
+
       // The only reason not to send via network is because the rpc call will be sent in the deeplink
       instance.state.remote
         ?.sendMessage(data?.data)
@@ -74,6 +91,10 @@ export async function write(
         });
     } else {
       try {
+        console.warn(
+          `[RCPMS: _write()] sending analytics method=${targetMethod}`,
+        );
+
         // Only send analytics if we are not sending via network.
         await SendAnalytics(
           {
