@@ -1,8 +1,3 @@
-import {
-  TrackingEvents,
-  SendAnalytics,
-  DEFAULT_SERVER_URL,
-} from '@metamask/sdk-communication-layer';
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
 import { METHODS_TO_REDIRECT, RPC_METHODS } from '../../config';
 import {
