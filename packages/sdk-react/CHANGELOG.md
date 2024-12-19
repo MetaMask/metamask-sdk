@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.4]
+### Fixed
+- refactor(sdk): always send RPC requests via network and deeplink ([#1181](https://github.com/MetaMask/metamask-sdk/pull/1181))
+
 ## [0.31.3]
 ### Fixed
 - fix(analytics): improve dapp details tracking and SDK RPC request analytics ([#1179](https://github.com/MetaMask/metamask-sdk/pull/1179))
@@ -291,7 +295,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.3...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.4...HEAD
+[0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.3...@metamask/sdk-react@0.31.4
 [0.31.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.2...@metamask/sdk-react@0.31.3
 [0.31.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.1...@metamask/sdk-react@0.31.2
 [0.31.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.0...@metamask/sdk-react@0.31.1
