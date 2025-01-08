@@ -267,9 +267,9 @@ const MetaMaskProviderClient = ({
     }
 
     const isConnected = sdk.isExtensionActive()
-      ? !!account && account.length > 0
+      ? !!activeProvider.getSelectedAddress()
       : activeProvider.isConnected();
-
+     
     setConnected(isConnected);
     setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
