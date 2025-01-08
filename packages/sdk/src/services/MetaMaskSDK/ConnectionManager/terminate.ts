@@ -52,6 +52,7 @@ export async function terminate(instance: MetaMaskSDK) {
         MetaMaskSDKEvent.ProviderUpdate,
         PROVIDER_UPDATE_TYPE.TERMINATE,
       );
+
       logger(
         `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
       );

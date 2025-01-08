@@ -305,6 +305,7 @@ const MetaMaskProviderClient = ({
       activeProvider.removeListener('connecting', onConnecting);
       activeProvider.removeListener('connect', onConnect);
       activeProvider.removeListener('disconnect', onDisconnect);
+      activeProvider.removeListener('terminate', onTerminate);
       activeProvider.removeListener('accountsChanged', onAccountsChanged);
       activeProvider.removeListener('chainChanged', onChainChanged);
       sdk.removeListener(EventType.SERVICE_STATUS, onSDKStatusEvent);
