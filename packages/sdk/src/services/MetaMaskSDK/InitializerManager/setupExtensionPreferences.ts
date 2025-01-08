@@ -68,7 +68,7 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
 
       metamaskBrowserExtension.on(
         EXTENSION_EVENTS.ACCOUNTS_CHANGED,
-        (accounts) => {
+        async (accounts) => {
           logger(
             `[MetaMaskSDK: setupExtensionPreferences()] PROPAGATE accountsChanged accounts=${accounts}`,
           );
@@ -84,37 +84,28 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           }
 
           if (isExtensionActive && (accounts as string[])?.length === 0) {
-            instance
+            const getPermissionsResponse = await instance
               .getProvider()
               ?.request({
                 method: RPC_METHODS.WALLET_GETPERMISSIONS,
                 params: [],
-              })
-              .then((getPermissionsResponse) => {
-                const permissions = getPermissionsResponse as {
-                  caveats: { type: string; value: string[] }[];
-                  parentCapability: string;
-                }[];
-                logger(
-                  `[MetaMaskSDK: setupExtensionPreferences()] permissions`,
-                  permissions,
-                );
+              });
 
-                if (permissions.length === 0) {
-                  instance.terminate().catch((error) => {
-                    logger(
-                      `[MetaMaskSDK: setupExtensionPreferences()] error terminating on permissions revoked`,
-                      error,
-                    );
-                  });
-                }
-              })
-              .catch((error) => {
+            const permissions = getPermissionsResponse as {
+              caveats: { type: string; value: string[] }[];
+              parentCapability: string;
+            }[];
+
+            if (permissions.length === 0) {
+              try {
+                await instance.terminate();
+              } catch (error) {
                 logger(
-                  `[MetaMaskSDK: setupExtensionPreferences()] error getting permissions`,
+                  `[MetaMaskSDK: setupExtensionPreferences()] error terminating on permissions revoked`,
                   error,
                 );
-              });
+              }
+            }
           }
         },
       );
