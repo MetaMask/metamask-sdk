@@ -1,7 +1,11 @@
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
-import { EXTENSION_EVENTS, RPC_METHODS, STORAGE_PROVIDER_TYPE } from '../../../config';
+import {
+  EXTENSION_EVENTS,
+  RPC_METHODS,
+  STORAGE_PROVIDER_TYPE,
+} from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { getBrowserExtension } from '../../../utils/get-browser-extension';
 import { Ethereum } from '../../Ethereum';
@@ -80,10 +84,12 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
           }
 
           if (isExtensionActive && (accounts as string[])?.length === 0) {
-            instance.getProvider()?.request({
-              method: RPC_METHODS.WALLET_GETPERMISSIONS,
-              params: [],
-            })
+            instance
+              .getProvider()
+              ?.request({
+                method: RPC_METHODS.WALLET_GETPERMISSIONS,
+                params: [],
+              })
               .then((getPermissionsResponse) => {
                 const permissions = getPermissionsResponse as {
                   caveats: { type: string; value: string[] }[];
@@ -93,10 +99,12 @@ export async function setupExtensionPreferences(instance: MetaMaskSDK) {
                   `[MetaMaskSDK: setupExtensionPreferences()] permissions`,
                   permissions,
                 );
+
                 if (permissions.length === 0) {
                   instance.terminate().catch((error) => {
                     logger(
-                      `[MetaMaskSDK: setupExtensionPreferences()] error terminating on permissions revoked`, error,
+                      `[MetaMaskSDK: setupExtensionPreferences()] error terminating on permissions revoked`,
+                      error,
                     );
                   });
                 }
