@@ -23,6 +23,7 @@ import { useHandleInitializedEvent } from './EventsHandlers/useHandleInitialized
 import { useHandleOnConnectingEvent } from './EventsHandlers/useHandleOnConnectingEvent';
 import { useHandleProviderEvent } from './EventsHandlers/useHandleProviderEvent';
 import { useHandleSDKStatusEvent } from './EventsHandlers/useHandleSDKStatusEvent';
+import { useHandleTerminateEvent } from './EventsHandlers/useHandleTerminateEvent';
 import { logger } from './utils/logger';
 
 export interface EventHandlerProps {
@@ -130,6 +131,8 @@ const MetaMaskProviderClient = ({
   const onConnect = useHandleConnectEvent(eventHandlerProps);
 
   const onDisconnect = useHandleDisconnectEvent(eventHandlerProps);
+  
+  const onTerminate = useHandleTerminateEvent(eventHandlerProps);
 
   const onAccountsChanged = useHandleAccountsChangedEvent(eventHandlerProps);
 
@@ -262,12 +265,18 @@ const MetaMaskProviderClient = ({
       console.warn(`[MetaMaskProviderClient] activeProvider is undefined.`);
       return;
     }
-    setConnected(activeProvider.isConnected());
+
+    const isConnected = sdk.isExtensionActive()
+      ? !!account && account.length > 0
+      : activeProvider.isConnected();
+
+    setConnected(isConnected);
     setAccount(activeProvider.getSelectedAddress() || undefined);
     setProvider(activeProvider);
     setChainId(activeProvider.getChainId() || undefined);
 
     activeProvider.on('_initialized', onInitialized);
+    activeProvider.on('terminate', onTerminate);
     activeProvider.on('connecting', onConnecting);
     activeProvider.on('connect', onConnect);
     activeProvider.on('disconnect', onDisconnect);
