@@ -1,3 +1,4 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
@@ -6,6 +7,9 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
+  onAnalyticsEvent: (
+    event: { event: TrackingEvents; params?: Record<string, unknown> },
+  ) => void;
 }
 
 export interface PendingWidgetProps extends Components.MmPendingModal {
@@ -79,6 +83,10 @@ export default class ModalLoader {
     modal.addEventListener(
       'startDesktopOnboarding',
       props.metaMaskInstaller.startDesktopOnboarding,
+    );
+    modal.addEventListener(
+      'trackAnalytics',
+      ((e: CustomEvent) => props.onAnalyticsEvent?.(e.detail)) as EventListener,
     );
     props.parentElement.appendChild(modal);
   }

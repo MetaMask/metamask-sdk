@@ -1,3 +1,4 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import {
   RemoteConnectionProps,
@@ -33,6 +34,15 @@ export function showInstallModal(
     connectWithExtension: () => {
       options.connectWithExtensionProvider?.();
       return false;
+    },
+    onAnalyticsEvent: (
+      { event, params }: {
+        event: TrackingEvents;
+        params?: Record<string, any>;
+      },
+    ) => {
+      console.log('onAnalyticsEvent 69', event, params);
+      state.analytics?.send({ event, params });
     },
   });
   state.installModal?.mount?.(link);

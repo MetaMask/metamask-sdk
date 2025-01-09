@@ -10,6 +10,8 @@ import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
 import encodeQR from '@paulmillr/qr';
 import { SimpleI18n } from '../misc/simple-i18n';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
+
 @Component({
   tag: 'mm-install-modal',
   styleUrl: '../style.css',
@@ -31,6 +33,8 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
+  @Event() trackAnalytics: EventEmitter<{ event: TrackingEvents, params?: Record<string, unknown> }>;
+
   @State() tab: number = 1;
 
   @State() isDefaultTab: boolean = true;
@@ -47,6 +51,14 @@ export class InstallModal {
     this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
+
+    this.trackAnalytics.emit({
+      event: TrackingEvents.SDK_MODAL_VIEWED,
+      params: {
+        extensionInstalled: false,
+        tab: this.tab === 1 ? 'desktop' : 'mobile',
+      },
+    });
   }
 
   async connectedCallback() {
@@ -84,15 +96,12 @@ export class InstallModal {
     }
 
     const t = (key: string) => this.i18nInstance.t(key);
-
-    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab
+    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab;
 
     const svgElement = encodeQR(this.link, "svg", {
       ecc: "medium",
       scale: 2
     });
-
-    console.log(`Showing modal with link ${this.link} and SVG QRCode ${svgElement}`)
 
     return (
       <WidgetWrapper className="install-model">
