@@ -16,7 +16,7 @@ export const METAMASK_DEEPLINK_BASE = 'metamask://connect';
 
 export const METAMASK_EIP_6369_PROVIDER_INFO = {
   NAME: 'MetaMask',
-  RDNS: 'io.metamask',
+  RDNS: 'io.metamask.flask',
 };
 
 export const UUID_V4_REGEX =
