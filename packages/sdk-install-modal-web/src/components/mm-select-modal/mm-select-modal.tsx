@@ -157,7 +157,7 @@ export class SelectModal {
                 {t('SELECT_MODAL.CRYPTO_TAKE_CONTROL_TEXT')}
               </div>
 
-              <button class='button' onClick={this.connectWithExtensionHandler}>
+              <button class='button' onClick={() => this.connectWithExtensionHandler()}>
                 <ConnectIcon />
                 <span class='installExtensionText'>
                   {t('CONNECT_WITH_EXTENSION')}
