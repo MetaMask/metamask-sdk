@@ -94,11 +94,11 @@ export class InstallModal {
 
     return (
       <WidgetWrapper className="install-model">
-        <div class='backdrop' onClick={this.onClose}></div>
+        <div class='backdrop' onClick={() => this.onClose()}></div>
         <div class='modal'>
           <div class='closeButtonContainer'>
             <div class='right'>
-              <span class='closeButton' onClick={this.onClose}>
+              <span class='closeButton' onClick={() => this.onClose()}>
                 <CloseButton />
               </span>
             </div>
@@ -168,7 +168,7 @@ export class InstallModal {
 
               <button
                 class='button'
-                onClick={this.onStartDesktopOnboardingHandler}
+                onClick={() => this.onStartDesktopOnboardingHandler()}
               >
                 <InstallIcon />
                 <span class='installExtensionText'>
