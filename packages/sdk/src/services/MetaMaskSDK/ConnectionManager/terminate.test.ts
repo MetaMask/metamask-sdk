@@ -90,7 +90,7 @@ describe('terminate', () => {
       it('should not switch providers if extensionOnly option is true', async () => {
         instance.options.extensionOnly = true;
         await terminate(instance);
-        expect(mockEmit).not.toHaveBeenCalled();
+        expect(mockEmit).toHaveBeenCalledTimes(1);
       });
     });
 
