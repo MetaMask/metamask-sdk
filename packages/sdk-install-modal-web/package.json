@@ -86,7 +86,6 @@
     }
   },
   "dependencies": {
-    "@metamask/sdk-communication-layer": "workspace:*",
     "@paulmillr/qr": "^0.2.1"
   }
 }

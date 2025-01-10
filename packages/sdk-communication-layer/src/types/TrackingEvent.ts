@@ -14,7 +14,4 @@ export enum TrackingEvents {
   SDK_RPC_REQUEST_DONE = 'sdk_rpc_request_done',
   SDK_EXTENSION_UTILIZED = 'sdk_extension_utilized',
   SDK_USE_INAPP_BROWSER = 'sdk_use_inapp_browser',
-  SDK_MODAL_VIEWED = 'sdk_modal_viewed',
-  SDK_MODAL_BUTTON_CLICKED = 'sdk_modal_button_clicked',
-  SDK_MODAL_TOGGLE_CHANGED = 'sdk_modal_toggle_changed',
 }

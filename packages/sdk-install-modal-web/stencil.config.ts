@@ -1,6 +1,5 @@
 import { Config } from '@stencil/core';
 import { visualizer } from 'rollup-plugin-visualizer';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 export const config: Config = {
   namespace: 'sdk-install-modal-web',
@@ -19,9 +18,6 @@ export const config: Config = {
   testing: {
     browserHeadless: "new",
   },
-  plugins: [
-    nodePolyfills(),
-  ],
   rollupPlugins: {
     after: [
       process.env.NODE_ENV === 'development' ? visualizer() : null

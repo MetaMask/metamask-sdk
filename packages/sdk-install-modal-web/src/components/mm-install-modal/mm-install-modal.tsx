@@ -10,7 +10,7 @@ import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
 import encodeQR from '@paulmillr/qr';
 import { SimpleI18n } from '../misc/simple-i18n';
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '../misc/tracking-events';
 
 @Component({
   tag: 'mm-install-modal',

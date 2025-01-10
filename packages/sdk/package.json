@@ -134,9 +134,7 @@
       "socket.io-client>engine.io-client>ws>utf-8-validate": false,
       "@metamask/sdk-communication-layer>bufferutil": false,
       "@metamask/sdk-communication-layer>eciesjs>secp256k1": false,
-      "@metamask/sdk-communication-layer>utf-8-validate": false,
-      "@metamask/sdk-install-modal-web>@metamask/sdk-communication-layer>bufferutil": false,
-      "@metamask/sdk-install-modal-web>@metamask/sdk-communication-layer>utf-8-validate": false
+      "@metamask/sdk-communication-layer>utf-8-validate": false
     }
   }
 }

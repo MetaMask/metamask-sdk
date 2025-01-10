@@ -5,8 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
-import { TrackingEvents } from "@metamask/sdk-communication-layer";
-export { TrackingEvents } from "@metamask/sdk-communication-layer";
+import { TrackingEvents } from "./components/misc/tracking-events";
+export { TrackingEvents } from "./components/misc/tracking-events";
 export namespace Components {
     interface MmInstallModal {
         /**
