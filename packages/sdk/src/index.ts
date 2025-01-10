@@ -31,6 +31,8 @@ export type {
   SDKLoggingOptions,
   ServiceStatus,
   MetaMaskSDKEventType,
+  RPCMethodResult,
+  RPCMethodCache,
 };
 
 export {
@@ -44,8 +46,6 @@ export {
   PlatformType,
   ConnectionStatus,
   MessageType,
-  RPCMethodResult,
-  RPCMethodCache,
 };
 
 export default MetaMaskSDK;

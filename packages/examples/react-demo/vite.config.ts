@@ -8,5 +8,15 @@ export default defineConfig({
   build: {
     outDir: './build',
     emptyOutDir: true, // also necessary
+  },
+  resolve: {
+    alias: {
+      // Polyfill Node.js stream modules
+      stream: 'stream-browserify',
+      buffer: 'buffer',
+    }
+  },
+  optimizeDeps: {
+    include: ['buffer', 'stream-browserify']
   }
 })
