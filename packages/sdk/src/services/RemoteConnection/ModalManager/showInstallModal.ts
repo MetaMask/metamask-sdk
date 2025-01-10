@@ -41,8 +41,14 @@ export function showInstallModal(
         params?: Record<string, any>;
       },
     ) => {
-      console.log('onAnalyticsEvent 69', event, params);
-      state.analytics?.send({ event, params });
+      const extended = {
+        ...params,
+        sdkVersion: options.sdk.getVersion(),
+        dappId: options.dappMetadata?.name,
+        source: options._source,
+        url: options.dappMetadata?.url,
+      };
+      state.analytics?.send({ event, params: extended });
     },
   });
   state.installModal?.mount?.(link);

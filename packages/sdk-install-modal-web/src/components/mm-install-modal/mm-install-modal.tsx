@@ -82,11 +82,27 @@ export class InstallModal {
   }
 
   onStartDesktopOnboardingHandler() {
+    this.trackAnalytics.emit({
+      event: TrackingEvents.SDK_MODAL_BUTTON_CLICKED,
+      params: {
+        button_type: 'install_extension',
+        tab: 'desktop',
+      },
+    });
     this.startDesktopOnboarding.emit();
   }
 
-  setTab(newTab: number) {
-    this.tab = newTab
+  setTab(newTab: number, isUserAction: boolean = false) {
+    if (isUserAction && this.tab !== newTab) {
+      this.trackAnalytics.emit({
+        event: TrackingEvents.SDK_MODAL_TOGGLE_CHANGED,
+        params: {
+          toggle: this.tab === 1 ? 'desktop_to_mobile' : 'mobile_to_desktop',
+        },
+      });
+    }
+    
+    this.tab = newTab;
     this.isDefaultTab = false;
   }
 
@@ -121,13 +137,13 @@ export class InstallModal {
             <div class='tabcontainer'>
               <div class='flexContainer'>
                 <div
-                  onClick={() => this.setTab(1)}
+                  onClick={() => this.setTab(1, true)}
                   class={`tab flexItem ${currentTab === 1 ? 'tabactive': ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
-                  onClick={() => this.setTab(2)}
+                  onClick={() => this.setTab(2, true)}
                   class={`tab flexItem ${currentTab === 2 ? 'tabactive': ''}`}
                 >
                   {t('MOBILE')}
