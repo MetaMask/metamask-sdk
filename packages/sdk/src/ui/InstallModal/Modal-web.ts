@@ -7,9 +7,10 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
-  onAnalyticsEvent: (
-    event: { event: TrackingEvents; params?: Record<string, unknown> },
-  ) => void;
+  onAnalyticsEvent: (event: {
+    event: TrackingEvents;
+    params?: Record<string, unknown>;
+  }) => void;
 }
 
 export interface PendingWidgetProps extends Components.MmPendingModal {
@@ -84,10 +85,9 @@ export default class ModalLoader {
       'startDesktopOnboarding',
       props.metaMaskInstaller.startDesktopOnboarding,
     );
-    modal.addEventListener(
-      'trackAnalytics',
-      ((e: CustomEvent) => props.onAnalyticsEvent?.(e.detail)) as EventListener,
-    );
+
+    modal.addEventListener('trackAnalytics', ((e: CustomEvent) =>
+      props.onAnalyticsEvent?.(e.detail)) as EventListener);
     props.parentElement.appendChild(modal);
   }
 

@@ -56,19 +56,20 @@ export interface RemoteConnectionProps {
    */
   modals: {
     onPendingModalDisconnect?: () => void;
-    install?: (params: {
+    install?: (args: {
       link: string;
       debug?: boolean;
       preferDesktop?: boolean;
       installer: MetaMaskInstaller;
       terminate?: () => void;
       connectWithExtension?: () => void;
-      onAnalyticsEvent: (
-        { event, params }: {
-          event: TrackingEvents;
-          params?: Record<string, unknown>;
-        },
-      ) => void;
+      onAnalyticsEvent: ({
+        event,
+        params,
+      }: {
+        event: TrackingEvents;
+        params?: Record<string, unknown>;
+      }) => void;
     }) => {
       unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;

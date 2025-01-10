@@ -35,12 +35,13 @@ export function showInstallModal(
       options.connectWithExtensionProvider?.();
       return false;
     },
-    onAnalyticsEvent: (
-      { event, params }: {
-        event: TrackingEvents;
-        params?: Record<string, any>;
-      },
-    ) => {
+    onAnalyticsEvent: ({
+      event,
+      params,
+    }: {
+      event: TrackingEvents;
+      params?: Record<string, any>;
+    }) => {
       const extended = {
         ...params,
         sdkVersion: options.sdk.getVersion(),

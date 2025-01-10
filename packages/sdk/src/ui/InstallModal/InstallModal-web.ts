@@ -19,12 +19,13 @@ const sdkWebInstallModal = ({
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
-  onAnalyticsEvent: (
-    { event, params }: {
-      event: TrackingEvents;
-      params?: Record<string, unknown>;
-    },
-  ) => void;
+  onAnalyticsEvent: ({
+    event,
+    params,
+  }: {
+    event: TrackingEvents;
+    params?: Record<string, unknown>;
+  }) => void;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -102,7 +103,7 @@ const sdkWebInstallModal = ({
           link,
           metaMaskInstaller: installer,
           onClose: unmount,
-          onAnalyticsEvent: onAnalyticsEvent,
+          onAnalyticsEvent,
         })
         .catch((err) => {
           console.error(`[UI: InstallModal-web: sdkWebInstallModal()]`, err);
