@@ -92,8 +92,6 @@ export class InstallModal {
       scale: 2
     });
 
-    console.log(`Showing modal with link ${this.link} and SVG QRCode ${svgElement}`)
-
     return (
       <WidgetWrapper className="install-model">
         <div class='backdrop' onClick={this.onClose}></div>
