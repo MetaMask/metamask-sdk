@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "@metamask/sdk-react": "0.30.0",
+    "buffer": "^6.0.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

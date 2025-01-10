@@ -25,7 +25,6 @@
     "watch": "yarn start --watch"
   },
   "dependencies": {
-    "@metamask/providers": "16.1.0",
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "bowser": "^2.11.0",

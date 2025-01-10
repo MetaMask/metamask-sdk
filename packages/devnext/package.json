@@ -20,7 +20,6 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@metamask/design-tokens": "^1.12.0",
-    "@metamask/providers": "16.1.0",
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/sdk-lab": "workspace:^",
@@ -96,6 +95,9 @@
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "tailwindcss": "^3.3.5",
-    "url": "^0.11.4"
+    "url": "^0.11.4",
+    "@babel/plugin-proposal-json-modules": "^7.22.5",
+    "@babel/plugin-syntax-import-attributes": "^7.22.5",
+    "to-fast-properties": "^4.0.0"
   }
 }

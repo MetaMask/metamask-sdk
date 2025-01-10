@@ -12,6 +12,7 @@
     "moduleResolution": "Node",
     "resolveJsonModule": true,
     "incremental": true,
+    "isolatedModules": true,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
     "types": ["node"],
