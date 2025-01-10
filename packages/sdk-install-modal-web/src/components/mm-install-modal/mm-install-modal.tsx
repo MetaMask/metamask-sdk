@@ -93,7 +93,7 @@ export class InstallModal {
   }
 
   setTab(newTab: number, isUserAction: boolean = false) {
-    if (isUserAction && this.tab !== newTab) {
+    if (isUserAction) {
       this.trackAnalytics.emit({
         event: TrackingEvents.SDK_MODAL_TOGGLE_CHANGED,
         params: {
