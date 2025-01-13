@@ -51,7 +51,9 @@ export class InstallModal {
     this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
+  }
 
+  componentDidLoad() {
     this.trackAnalytics.emit({
       event: TrackingEvents.SDK_MODAL_VIEWED,
       params: {
