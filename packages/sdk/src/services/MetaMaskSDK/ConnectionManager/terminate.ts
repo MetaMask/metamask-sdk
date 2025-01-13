@@ -48,6 +48,11 @@ export async function terminate(instance: MetaMaskSDK) {
     }
 
     if (instance.options.extensionOnly) {
+      instance.emit(
+        MetaMaskSDKEvent.ProviderUpdate,
+        PROVIDER_UPDATE_TYPE.TERMINATE,
+      );
+
       logger(
         `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
       );
