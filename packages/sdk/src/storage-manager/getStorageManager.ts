@@ -3,25 +3,14 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
-import { PlatformManager } from 'src/Platform/PlatfformManager';
+import { PlatformManager } from '../Platform/PlatfformManager';
 
-/* #if _NODEJS
-import { StorageManagerNode as SMDyn } from './StorageManagerNode';
-//#elif _WEB
-import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
-//#elif _REACTNATIVE
-import { StorageManagerAS as SMDyn } from './StorageManagerAS';
-//#else */
-// This is ONLY used during development with devnext/devreactnative or via transpiling
-import { StorageManagerAS as SMDyn } from './StorageManagerAS';
-// eslint-disable-next-line spaced-comment
-//#endif
-
-export const getStorageManager = (
+export const getStorageManager = async (
   options: StorageManagerProps,
-): StorageManager => {
+): Promise<StorageManager> => {
   if (PlatformManager.isBrowser()) {
-    return new SMDyn(options);
+    const { StorageManagerWeb } = await import('./StorageManagerWeb');
+    return new StorageManagerWeb(options);
   }
 
   const noopStorageManager: StorageManager = {
@@ -34,5 +23,5 @@ export const getStorageManager = (
     terminate: async () => undefined,
   } as StorageManager;
 
-  return noopStorageManager;
+  return Promise.resolve(noopStorageManager);
 };
