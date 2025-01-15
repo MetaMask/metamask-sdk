@@ -23,6 +23,7 @@ const dependencies = Object.keys(packageJson.dependencies || {});
 // Dependencies that should be bundled
 const bundledDeps = [
   // '@metamask/sdk-communication-layer',
+  'readable-stream',
   // Add other dependencies that should be bundled
 ];
 
@@ -58,6 +59,7 @@ const baseExternalDeps = [
   ...sharedDeps, // Exclude shared deps from bundle
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
+  '@metamask/providers',
 ];
 
 // Platform-specific externals
