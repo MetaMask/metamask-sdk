@@ -1,5 +1,9 @@
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream';
-import { METHODS_TO_REDIRECT, RPC_METHODS } from '../../config';
+import {
+  METHODS_TO_REDIRECT,
+  RPC_METHODS,
+  MAX_MESSAGE_LENGTH,
+} from '../../config';
 import {
   METAMASK_CONNECT_BASE_URL,
   METAMASK_DEEPLINK_BASE,
@@ -58,6 +62,16 @@ export async function write(
 
   try {
     if (!triggeredInstaller) {
+      // Check message size before sending
+      const stringifiedData = JSON.stringify(data?.data);
+      if (stringifiedData.length > MAX_MESSAGE_LENGTH) {
+        return callback(
+          new Error(
+            `Message size ${stringifiedData.length} exceeds maximum allowed size of ${MAX_MESSAGE_LENGTH} bytes`,
+          ),
+        );
+      }
+
       // The only reason not to send via network is because the rpc call will be sent in the deeplink
       instance.state.remote
         ?.sendMessage(data?.data)
