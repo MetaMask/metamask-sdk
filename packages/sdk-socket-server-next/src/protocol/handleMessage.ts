@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { pubClient } from '../analytics-api';
-import { config, isDevelopment } from '../config';
+import { config, isDevelopment, MAX_MESSAGE_LENGTH } from '../config';
 import { getLogger } from '../logger';
 import {
   increaseRateLimits,
@@ -58,6 +58,21 @@ export const handleMessage = async ({
   let ready = false; // Determines if the keys have been exchanged and both side support the full protocol
 
   try {
+    // Add message size validation
+    const messageSize = typeof message === 'string'
+      ? message.length
+      : JSON.stringify(message).length;
+
+    if (messageSize > MAX_MESSAGE_LENGTH) {
+      logger.warn(`[handleMessage] Message size ${messageSize} exceeds limit of ${MAX_MESSAGE_LENGTH} bytes`, {
+        channelId,
+        socketId,
+        clientIp,
+      });
+      callback?.(`Message size ${messageSize} exceeds maximum allowed size of ${MAX_MESSAGE_LENGTH} bytes`);
+      return;
+    }
+
     if (clientType) {
       // new protocol, get channelConfig
       const channelConfigKey = `channel_config:${channelId}`;
