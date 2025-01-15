@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { MAX_MESSAGE_LENGTH } from '../../config';
 import { write } from './write';
 
 describe('write function', () => {
@@ -76,5 +77,51 @@ describe('write function', () => {
     expect(cb).toHaveBeenCalledWith(
       new Error('MobilePortStream - disconnected'),
     );
+  });
+
+  describe('Message Size Validation', () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      global.window = {
+        location: { href: 'http://example.com' },
+        ReactNativeWebView: { postMessage: mockPostMessage },
+      } as any;
+    });
+
+    it('should reject messages exceeding MAX_MESSAGE_LENGTH', () => {
+      const largeData = {
+        data: {
+          jsonrpc: '2.0',
+          method: 'test_method',
+          params: ['x'.repeat(MAX_MESSAGE_LENGTH)],
+        },
+      };
+
+      write(largeData, 'utf-8', cb);
+
+      expect(cb).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringMatching(
+            /Message size \d+ exceeds maximum allowed size of \d+ bytes/u,
+          ),
+        }),
+      );
+      expect(mockPostMessage).not.toHaveBeenCalled();
+    });
+
+    it('should accept messages within MAX_MESSAGE_LENGTH', () => {
+      const validData = {
+        data: {
+          jsonrpc: '2.0',
+          method: 'test_method',
+          params: ['x'.repeat(100)],
+        },
+      };
+
+      write(validData, 'utf-8', cb);
+
+      expect(cb).toHaveBeenCalledWith();
+      expect(mockPostMessage).toHaveBeenCalled();
+    });
   });
 });
