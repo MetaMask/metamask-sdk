@@ -25,7 +25,6 @@
     "build:types": "tsc --project tsconfig.build.json --emitDeclarationOnly --outDir dist/types",
     "build": "yarn build:types && rollup -c --bundleConfigAsCjs",
     "build:clean": "yarn clean && yarn build",
-    "build:dev": "yarn build:types && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "typecheck": "tsc --noEmit",
@@ -44,7 +43,9 @@
     "test:e2e": "jest --testPathPattern \"/e2e/\"",
     "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js --testPathIgnorePatterns \"/e2e/\"",
     "test:dev": "jest -c ./jest.config.ts --detectOpenHandles  --testPathIgnorePatterns \"/e2e/\"",
-    "watch": "rollup -c -w"
+    "watch": "rollup -c -w",
+    "dev": "concurrently \"tsc --watch\" \"rollup -c -w --bundleConfigAsCjs\"",
+    "build:dev": "yarn build:types && NODE_ENV=dev rollup -c --bundleConfigAsCjs"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
@@ -91,6 +92,7 @@
     "@typescript-eslint/parser": "^4.26.0",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
+    "concurrently": "^9.1.2",
     "crypto-browserify": "^3.12.0",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",

@@ -33,6 +33,7 @@
     "postinstall": "patch-package",
     "link-packages": "./scripts/link-packages.sh",
     "prepare": "husky install",
+    "dev:core": "turbo run dev --parallel --filter=@metamask/sdk-communication-layer --filter=@metamask/sdk --filter=@metamask/sdk-react",
     "lint": "yarn workspaces foreach --no-private run lint",
     "lint:changelogs": "yarn workspaces foreach --no-private run lint:changelog",
     "lint:eslint": "yarn workspaces foreach --no-private run lint:eslint",
@@ -86,6 +87,8 @@
     "rimraf": "^3.0.2",
     "serve": "^14.2.1",
     "ts-jest": "^29.0.3",
+    "turbo": "^2.3.3",
+    "turborepo": "^0.0.1",
     "typescript": "^4.3.5"
   },
   "engines": {
