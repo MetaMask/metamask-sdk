@@ -73,3 +73,5 @@ export const EXTENSION_EVENTS = {
   CONNECT: 'connect',
   CONNECTED: 'connected',
 };
+
+export const MAX_MESSAGE_LENGTH = 1_000_000; // 1MB limit
