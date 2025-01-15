@@ -1,10 +1,9 @@
-import { Ethereum } from '../Ethereum'; // Adjust the import based on your project structure
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream'; // Adjust the import based on your project structure
-import { METHODS_TO_REDIRECT } from '../../config';
+import { MAX_MESSAGE_LENGTH, METHODS_TO_REDIRECT } from '../../config';
 import * as loggerModule from '../../utils/logger'; // Adjust the import based on your project structure
-import { write } from './write'; // Adjust the import based on your project structure
+import { Ethereum } from '../Ethereum'; // Adjust the import based on your project structure
 import { extractMethod } from './extractMethod';
-import { MAX_MESSAGE_LENGTH } from '../../config';
+import { write } from './write'; // Adjust the import based on your project structure
 
 jest.mock('./extractMethod');
 jest.mock('../Ethereum');
@@ -175,10 +174,10 @@ describe('write function', () => {
           data: {
             jsonrpc: '2.0',
             method: Object.keys(METHODS_TO_REDIRECT)[0],
-            params: []
-          }
+            params: [],
+          },
         },
-        triggeredInstaller: false
+        triggeredInstaller: false,
       });
 
       await write(
@@ -268,8 +267,8 @@ describe('write function', () => {
       mockExtractMethod.mockReturnValue({
         method: 'eth_call',
         data: {
-          data: largeData
-        }
+          data: largeData,
+        },
       });
 
       await write(
@@ -282,8 +281,10 @@ describe('write function', () => {
       // Don't test for exact error message, just verify it contains the key parts
       expect(callback).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: expect.stringMatching(/Message size \d+ exceeds maximum allowed size of \d+ bytes/)
-        })
+          message: expect.stringMatching(
+            /Message size \d+ exceeds maximum allowed size of \d+ bytes/u,
+          ),
+        }),
       );
       expect(mockSendMessage).not.toHaveBeenCalled();
     });
@@ -301,8 +302,8 @@ describe('write function', () => {
             jsonrpc: '2.0',
             method: 'eth_call',
             params: ['x'.repeat(100)],
-          }
-        }
+          },
+        },
       });
 
       await write(
