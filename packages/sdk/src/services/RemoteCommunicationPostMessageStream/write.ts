@@ -61,10 +61,6 @@ export async function write(
     deeplinkProtocolAvailable && mobileWeb && authorized;
 
   try {
-    console.warn(
-      `[RCPMS: _write()] triggeredInstaller=${triggeredInstaller} activeDeeplinkProtocol=${activeDeeplinkProtocol}`,
-    );
-
     if (!triggeredInstaller) {
       // Check message size before sending
       const stringifiedData = JSON.stringify(data?.data);
