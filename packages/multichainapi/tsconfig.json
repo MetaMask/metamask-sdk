@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist",
+    "rootDir": ".",
+    "paths": {
+      "@metamask/multichainapi/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["**/*.test.ts", "**/*.spec.ts"]
+}

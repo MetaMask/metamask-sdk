@@ -10,6 +10,7 @@
     "packages/sdk-socket-server-next",
     "packages/sdk-install-modal-web",
     "packages/sdk-communication-layer",
+    "packages/multichainapi",
     "packages/sdk",
     "packages/sdk-react",
     "packages/sdk-react-native",

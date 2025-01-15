@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
+    "@metamask/multichainapi": "workspace:*",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/providers": "^18.3.1",
     "@metamask/sdk-communication-layer": "workspace:*",
