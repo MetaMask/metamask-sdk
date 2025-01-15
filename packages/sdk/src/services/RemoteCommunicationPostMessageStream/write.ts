@@ -57,10 +57,6 @@ export async function write(
     deeplinkProtocolAvailable && mobileWeb && authorized;
 
   try {
-    console.warn(
-      `[RCPMS: _write()] triggeredInstaller=${triggeredInstaller} activeDeeplinkProtocol=${activeDeeplinkProtocol}`,
-    );
-
     if (!triggeredInstaller) {
       // The only reason not to send via network is because the rpc call will be sent in the deeplink
       instance.state.remote
