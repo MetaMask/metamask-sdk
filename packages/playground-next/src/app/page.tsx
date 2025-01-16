@@ -1,8 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { CAIP294EventNames, createMultichainAPI, discoverWallets, FEATURED_NETWORKS, injectParams, METHODS_REQUIRING_PARAM_INJECTION, openRPCExampleToJSON, SessionData, truncateJSON } from '@metamask/multichainapi';
-import { CaipAccountId, CaipChainId, Json, parseCaipAccountId } from '@metamask/utils';
+import {
+  CAIP294EventNames,
+  createMultichainAPI,
+  discoverWallets,
+  FEATURED_NETWORKS,
+  injectParams,
+  METHODS_REQUIRING_PARAM_INJECTION,
+  openRPCExampleToJSON,
+  SessionData,
+  truncateJSON,
+} from '@metamask/multichainapi';
+import {
+  CaipAccountId,
+  CaipChainId,
+  Json,
+  parseCaipAccountId,
+} from '@metamask/utils';
 import { MethodObject, OpenrpcDocument } from '@open-rpc/meta-schema';
 import { useCallback, useEffect, useState } from 'react';
 import DynamicInputs, { INPUT_LABEL_TYPE } from '../components/DynamicInputs';
@@ -50,11 +65,17 @@ interface ConnectWalletParams {
 }
 
 export default function Home() {
-  const [api, setApi] = useState<ReturnType<typeof createMultichainAPI> | null>(null);
+  const [api, setApi] = useState<ReturnType<typeof createMultichainAPI> | null>(
+    null,
+  );
   const [accountInfo, setAccountInfo] = useState<AccountInfo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [extensionId, setExtensionId] = useState<string>('nfdjnfhlblppdgdplngdjgpifllaamoc');
-  const [selectedChains, setSelectedChains] = useState<Record<NetworkId, boolean>>({
+  const [extensionId, setExtensionId] = useState<string>(
+    'nfdjnfhlblppdgdplngdjgpifllaamoc',
+  );
+  const [selectedChains, setSelectedChains] = useState<
+    Record<NetworkId, boolean>
+  >({
     'eip155:1': true,
     'eip155:59144': true,
     'eip155:42161': false,
@@ -68,13 +89,17 @@ export default function Home() {
   });
   const [walletSessionChangedHistory, setWalletSessionChangedHistory] =
     useState<WalletHistoryEntry[]>([]);
-  const [walletNotifyHistory, setWalletNotifyHistory] = useState<WalletHistoryEntry[]>([]);
+  const [walletNotifyHistory, setWalletNotifyHistory] = useState<
+    WalletHistoryEntry[]
+  >([]);
   const [invokeMethodRequests, setInvokeMethodRequests] = useState<
     Record<string, string>
   >({});
   const [metamaskOpenrpcDocument, setMetamaskOpenrpcDocument] =
     useState<OpenrpcDocument>();
-  const [sessionMethodHistory, setSessionMethodHistory] = useState<SessionMethodResult[]>([]);
+  const [sessionMethodHistory, setSessionMethodHistory] = useState<
+    SessionMethodResult[]
+  >([]);
   const [selectedAccounts, setSelectedAccounts] = useState<
     Record<string, CaipAccountId>
   >({});
@@ -84,15 +109,22 @@ export default function Home() {
   const [invokeMethodResults, setInvokeMethodResults] = useState<
     Record<string, Record<string, { result: any; request: any }[]>>
   >({});
-  const [sessionsScopes, setSessionsScopes] = useState<Record<NetworkId, string>>(defaultSessionsScopes);
+  const [sessionsScopes, setSessionsScopes] = useState<
+    Record<NetworkId, string>
+  >(defaultSessionsScopes);
   const [addresses, setAddresses] = useState<string[]>(['']);
   const [walletMapEntries, setWalletMapEntries] = useState<
     Record<string, WalletMapEntry>
   >({});
-  const [currentSession, setCurrentSession] = useState<SessionData | null>(null);
+  const [currentSession, setCurrentSession] = useState<SessionData | null>(
+    null,
+  );
 
   // Add computed property for connection status
-  const isConnected = Boolean(currentSession?.sessionId);
+  const isConnected = Boolean(
+    currentSession?.sessionId ||
+      Object.keys(currentSession?.sessionScopes || {}).length > 0,
+  );
 
   // Initialize API
   useEffect(() => {
@@ -117,24 +149,27 @@ export default function Home() {
         filterPredicate: (wallet) => {
           console.log('Filtering wallet:', wallet);
           return true;
-        }
+        },
       });
 
       console.log('Discovered wallets:', wallets);
 
       if (mounted) {
-        const entries = wallets.reduce<Record<string, WalletMapEntry>>((acc, wallet) => ({
-          ...acc,
-          [wallet.providerId]: {
-            params: {
-              name: wallet.name,
-              uuid: wallet.providerId,
-              rdns: wallet.rdns,
-              icon: wallet.icon,
-              extensionId: wallet.providerId
-            }
-          }
-        }), {});
+        const entries = wallets.reduce<Record<string, WalletMapEntry>>(
+          (acc, wallet) => ({
+            ...acc,
+            [wallet.providerId]: {
+              params: {
+                name: wallet.name,
+                uuid: wallet.providerId,
+                rdns: wallet.rdns,
+                icon: wallet.icon,
+                extensionId: wallet.providerId,
+              },
+            },
+          }),
+          {},
+        );
         setWalletMapEntries(entries);
       }
 
@@ -164,100 +199,106 @@ export default function Home() {
     setInvokeMethodResults({});
   };
 
-  const setInitialMethodsAndAccounts = useCallback((currentSession: SessionData) => {
-    const initialSelectedMethods: Record<string, string> = {};
-    const initialSelectedAccounts: Record<string, CaipAccountId> = {};
+  const setInitialMethodsAndAccounts = useCallback(
+    (currentSession: SessionData) => {
+      const initialSelectedMethods: Record<string, string> = {};
+      const initialSelectedAccounts: Record<string, CaipAccountId> = {};
 
-    Object.entries(currentSession.sessionScopes).forEach(
-      ([scope, details]: [string, any]) => {
-        if (details.accounts && details.accounts.length > 0) {
-          initialSelectedAccounts[scope] = details.accounts[0];
+      Object.entries(currentSession.sessionScopes).forEach(
+        ([scope, details]: [string, any]) => {
+          if (details.accounts && details.accounts.length > 0) {
+            initialSelectedAccounts[scope] = details.accounts[0];
+          }
+          initialSelectedMethods[scope] = 'eth_blockNumber';
+          const example = metamaskOpenrpcDocument?.methods.find(
+            (method) => (method as MethodObject).name === 'eth_blockNumber',
+          );
+
+          const defaultRequest = {
+            method: 'wallet_invokeMethod',
+            params: {
+              scope,
+              request: openRPCExampleToJSON(example as MethodObject),
+            },
+          };
+
+          setInvokeMethodRequests((prev) => ({
+            ...prev,
+            [scope]: JSON.stringify(defaultRequest, null, 2),
+          }));
+        },
+      );
+      setSelectedMethods(initialSelectedMethods);
+      setSelectedAccounts(initialSelectedAccounts);
+    },
+    [metamaskOpenrpcDocument],
+  );
+
+  const connectWallet = useCallback(
+    async ({ extensionId }: ConnectWalletParams): Promise<void> => {
+      if (!api) {
+        console.debug('[Wallet] Cannot connect - API not initialized');
+        return;
+      }
+
+      try {
+        setIsLoading(true);
+        console.debug(
+          '[Wallet] Attempting to connect to extension:',
+          extensionId,
+        );
+        const connected = await api.connect({ extensionId });
+
+        if (!connected) {
+          console.debug(
+            '[Wallet] Connection failed - received false from api.connect',
+          );
+          throw new Error('Failed to connect to extension');
         }
-        initialSelectedMethods[scope] = 'eth_blockNumber';
-        const example = metamaskOpenrpcDocument?.methods.find(
-          (method) => (method as MethodObject).name === 'eth_blockNumber',
+        console.debug('[Wallet] Successfully connected to extension');
+
+        // Create sessions for all selected chains
+        const selectedChainIds = Object.entries(selectedChains)
+          .filter(([_, isSelected]) => isSelected)
+          .map(([chainId]) => chainId as NetworkId);
+
+        console.debug(
+          '[Wallet] Creating sessions for chains:',
+          selectedChainIds,
         );
 
-        const defaultRequest = {
-          method: 'wallet_invokeMethod',
-          params: {
-            scope,
-            request: openRPCExampleToJSON(example as MethodObject),
-          },
-        };
+        const newSessions = { ...defaultSessionsScopes };
+        const newAccountInfo: AccountInfo[] = [];
 
-        setInvokeMethodRequests((prev) => ({
-          ...prev,
-          [scope]: JSON.stringify(defaultRequest, null, 2),
-        }));
-      },
-    );
-    setSelectedMethods(initialSelectedMethods);
-    setSelectedAccounts(initialSelectedAccounts);
-  }, [metamaskOpenrpcDocument]);
-
-
-  const connectWallet = useCallback(async ({ extensionId }: ConnectWalletParams): Promise<void> => {
-    if (!api) {
-      console.debug('[Wallet] Cannot connect - API not initialized');
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      console.debug('[Wallet] Attempting to connect to extension:', extensionId);
-      const connected = await api.connect({ extensionId });
-
-      if (!connected) {
-        console.debug('[Wallet] Connection failed - received false from api.connect');
-        throw new Error('Failed to connect to extension');
-      }
-      console.debug('[Wallet] Successfully connected to extension');
-
-      // Create sessions for all selected chains
-      const selectedChainIds = Object.entries(selectedChains)
-        .filter(([_, isSelected]) => isSelected)
-        .map(([chainId]) => chainId as NetworkId);
-
-      console.debug('[Wallet] Creating sessions for chains:', selectedChainIds);
-
-      const newSessions = { ...defaultSessionsScopes };
-      const newAccountInfo: AccountInfo[] = [];
-
-      for (const chainId of selectedChainIds) {
-        try {
-          const session = await api.createSession({
-            optionalScopes: {
-              [chainId]: {
-                methods: ['eth_getBalance'],
-                accounts: [`${chainId}:0x0`]
-              }
-            }
-          });
-          newSessions[chainId] = session.sessionId ?? '';
-          setCurrentSession(session);
-        } catch (err) {
-          console.error(`Failed to create session for ${chainId}:`, err);
+        for (const chainId of selectedChainIds) {
+          try {
+            const session = await api.createSession({
+              optionalScopes: {
+                [chainId]: {
+                  methods: ['eth_getBalance'],
+                  accounts: [`${chainId}:0x0`],
+                },
+              },
+            });
+            newSessions[chainId] = session.sessionId ?? '';
+            setCurrentSession(session);
+          } catch (err) {
+            console.error(`Failed to create session for ${chainId}:`, err);
+          }
         }
+
+        setSessionsScopes(newSessions);
+        setAccountInfo(newAccountInfo);
+      } catch (error) {
+        console.error('[Wallet] Connection error:', error);
+        throw error;
+      } finally {
+        setIsLoading(false);
+        console.debug('[Wallet] Connection attempt completed');
       }
-
-      setSessionsScopes(newSessions);
-      setAccountInfo(newAccountInfo);
-    } catch (error) {
-      console.error('[Wallet] Connection error:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-      console.debug('[Wallet] Connection attempt completed');
-    }
-  }, [api, selectedChains]);
-
-  useEffect(() => {
-    if (currentSession?.sessionScopes) {
-      setInitialMethodsAndAccounts(currentSession);
-    }
-  }, [currentSession, setInitialMethodsAndAccounts]);
-
+    },
+    [api, selectedChains],
+  );
 
   const terminateConnection = async (): Promise<void> => {
     if (!api) return;
@@ -267,12 +308,16 @@ export default function Home() {
 
       // Revoke all sessions
       await Promise.all(
-        Object.values(sessionsScopes).map((sessionId) => api.revokeSession(sessionId))
+        Object.values(sessionsScopes).map((sessionId) =>
+          api.revokeSession({ sessionId }),
+        ),
       );
 
+      // Reset all state after terminating sessions
+      handleResetState();
       setAccountInfo([]);
       setSessionsScopes(defaultSessionsScopes);
-      setCurrentSession(null); // Clear the current session instead of setting isConnected
+      setCurrentSession(null);
     } catch (err) {
       console.error('Failed to terminate connection:', err);
     } finally {
@@ -303,13 +348,16 @@ export default function Home() {
       if (!api) return;
 
       const result = await api.createSession({
-        optionalScopes: selectedChainsArray.reduce((acc, chainId) => ({
-          ...acc,
-          [chainId]: {
-            methods: ['eth_getBalance'],
-            accounts: addresses
-          }
-        }), {})
+        optionalScopes: selectedChainsArray.reduce(
+          (acc, chainId) => ({
+            ...acc,
+            [chainId]: {
+              methods: ['eth_getBalance'],
+              accounts: addresses,
+            },
+          }),
+          {},
+        ),
       });
 
       setSessionMethodHistory((prev) => [
@@ -324,7 +372,9 @@ export default function Home() {
   const handleGetSession = async () => {
     try {
       if (!api || !currentSession?.sessionId) return;
-      const result = await api.getSession({ sessionId: currentSession.sessionId });
+      const result = await api.getSession({
+        sessionId: currentSession.sessionId,
+      });
       setSessionMethodHistory((prev) => [
         { timestamp: Date.now(), method: 'wallet_getSession', data: result },
         ...prev,
@@ -338,7 +388,9 @@ export default function Home() {
     if (!api || !currentSession?.sessionId) return;
 
     try {
-      const result = await api.revokeSession({ sessionId: currentSession.sessionId });
+      const result = await api.revokeSession({
+        sessionId: currentSession.sessionId,
+      });
       setSessionMethodHistory((prev) => [
         { timestamp: Date.now(), method: 'wallet_revokeSession', data: result },
         ...prev,
@@ -347,7 +399,6 @@ export default function Home() {
       console.error('Error revoking session:', error);
     }
   };
-
 
   const handleResetState = () => {
     setSelectedMethods({});
@@ -368,7 +419,6 @@ export default function Home() {
       'eip155:1337': false,
     });
   };
-
 
   const handleSessionChangedNotification = useCallback(
     (notification: any) => {
@@ -391,7 +441,6 @@ export default function Home() {
       setInitialMethodsAndAccounts,
     ],
   );
-
 
   const handleInvokeAllMethods = async () => {
     const scopesWithMethods = Object.entries(selectedMethods)
@@ -451,7 +500,6 @@ export default function Home() {
     }
   };
 
-
   const handleInvokeMethod = async (scope: CaipChainId, method: string) => {
     const requestObject = JSON.parse(invokeMethodRequests[scope] ?? '{}');
     try {
@@ -462,7 +510,7 @@ export default function Home() {
         request: {
           method,
           params,
-        }
+        },
       });
 
       setInvokeMethodResults((prev) => {
@@ -498,6 +546,24 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (currentSession?.sessionScopes) {
+      setInitialMethodsAndAccounts(currentSession);
+    }
+  }, [currentSession, setInitialMethodsAndAccounts]);
+
+  // Add useEffect to set up session change listener when API is initialized
+  useEffect(() => {
+    if (api) {
+      api.addListener('sessionChanged', handleSessionChangedNotification);
+
+      // Clean up listener when component unmounts or API changes
+      return () => {
+        api.removeListener('sessionChanged', handleSessionChangedNotification);
+      };
+    }
+  }, [api, handleSessionChangedNotification]);
+
   return (
     <div className={styles.container}>
       <h1>MetaMask MultiChain API Test Dapp</h1>
@@ -520,9 +586,7 @@ export default function Home() {
           <WalletList
             wallets={walletMapEntries}
             handleClick={handleWalletListClick}
-            connectedExtensionId={
-              isConnected ? extensionId : ''
-            }
+            connectedExtensionId={isConnected ? extensionId : ''}
           />
         </div>
       </section>
@@ -540,9 +604,7 @@ export default function Home() {
                       <input
                         type="checkbox"
                         name={chainId}
-                        checked={
-                          selectedChains[chainId as NetworkId] ?? false
-                        }
+                        checked={selectedChains[chainId as NetworkId] ?? false}
                         onChange={(evt) =>
                           setSelectedChains((prev) => ({
                             ...prev,
@@ -557,12 +619,18 @@ export default function Home() {
                 )}
                 <div>
                   <DynamicInputs
-                    inputArray={Object.keys(selectedChains).filter(chain => selectedChains[chain as NetworkId])}
+                    inputArray={Object.keys(selectedChains).filter(
+                      (chain) => selectedChains[chain as NetworkId],
+                    )}
                     setInputArray={(newArray) => {
                       // Convert array back to record
                       const newSelectedChains = { ...selectedChains };
-                      Object.keys(selectedChains).forEach(chain => {
-                        newSelectedChains[chain as NetworkId] = Array.isArray(newArray) ? newArray.includes(chain) : false;
+                      Object.keys(selectedChains).forEach((chain) => {
+                        newSelectedChains[chain as NetworkId] = Array.isArray(
+                          newArray,
+                        )
+                          ? newArray.includes(chain)
+                          : false;
                       });
                       setSelectedChains(newSelectedChains);
                     }}
@@ -605,20 +673,18 @@ export default function Home() {
                 <div className="session-info">
                   <h3>Connected Accounts</h3>
                   <ul className="connection-list">
-                    {currentSession?.sessionScopes && Object.values(currentSession.sessionScopes)
-                      .flatMap((scope) => scope.accounts ?? [])
-                      .map(
-                        (account) =>
-                          parseCaipAccountId(account).address,
-                      )
-                      .filter((address: string) => address !== '')
-                      .filter(
-                        (address: string, index: number, array: string[]) =>
-                          array.indexOf(address) === index,
-                      )
-                      .map((address: string) => (
-                        <li key={address}>{address}</li>
-                      )) || <li>No accounts connected</li>}
+                    {(currentSession?.sessionScopes &&
+                      Object.values(currentSession.sessionScopes)
+                        .flatMap((scope) => scope.accounts ?? [])
+                        .map((account) => parseCaipAccountId(account).address)
+                        .filter((address: string) => address !== '')
+                        .filter(
+                          (address: string, index: number, array: string[]) =>
+                            array.indexOf(address) === index,
+                        )
+                        .map((address: string) => (
+                          <li key={address}>{address}</li>
+                        ))) || <li>No accounts connected</li>}
                   </ul>
 
                   <h3>Connected Chains</h3>
@@ -700,28 +766,30 @@ export default function Home() {
         <>
           <div className={styles.networkSelection}>
             <h3>Select Networks</h3>
-            {(Object.entries(FEATURED_NETWORKS) as [NetworkId, string][]).map(([chainId, networkName]) => (
-              <label key={chainId}>
-                <input
-                  type="checkbox"
-                  checked={selectedChains[chainId] ?? false}
-                  onChange={(e) => setSelectedChains(prev => ({
-                    ...prev,
-                    [chainId]: e.target.checked
-                  }))}
-                  disabled={isConnected}
-                />
-                {networkName}
-              </label>
-            ))}
+            {(Object.entries(FEATURED_NETWORKS) as [NetworkId, string][]).map(
+              ([chainId, networkName]) => (
+                <label key={chainId}>
+                  <input
+                    type="checkbox"
+                    checked={selectedChains[chainId] ?? false}
+                    onChange={(e) =>
+                      setSelectedChains((prev) => ({
+                        ...prev,
+                        [chainId]: e.target.checked,
+                      }))
+                    }
+                    disabled={isConnected}
+                  />
+                  {networkName}
+                </label>
+              ),
+            )}
           </div>
           <div className={styles.accountsGrid}>
             {accountInfo.map((info) => (
               <div key={info.sessionId} className={styles.accountCard}>
                 <h3>{FEATURED_NETWORKS[info.chainId]}</h3>
-                <div className={styles.address}>
-                  Address: {info.account}
-                </div>
+                <div className={styles.address}>Address: {info.account}</div>
                 <div className={styles.balance}>
                   Balance: {info.balance} Wei
                 </div>
@@ -968,7 +1036,7 @@ export default function Home() {
           </div>
         </section>
       )}
-       <section className="notifications-section">
+      <section className="notifications-section">
         <h2>
           Notifications ( <span className="code-method">wallet_notify</span>)
         </h2>

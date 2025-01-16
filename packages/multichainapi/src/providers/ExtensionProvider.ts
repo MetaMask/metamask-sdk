@@ -107,23 +107,22 @@ export class ExtensionProvider implements Provider {
       const errorMessage = chrome.runtime.lastError
         ? chrome.runtime.lastError.message
         : 'Port disconnected unexpectedly.';
-      console.error('[ExtensionProvider] Chromium connection error:', errorMessage);
+      console.error('[ExtensionProvider] Connection error:', errorMessage);
       this.#port = null;
       this.#requestMap.clear();
     });
 
-    // Wait briefly to confirm
+    // Use same timing as working implementation
     await new Promise((resolve) => setTimeout(resolve, 5));
 
     if (!isConnected) {
       console.error('[ExtensionProvider] Connect failed - port disconnected');
-      throw new Error('Error connecting; extension not found or disabled.');
+      return false;
     }
 
     this.#port.onMessage.addListener(this.#handleChromiumMessage.bind(this));
 
     try {
-      console.debug('[ExtensionProvider] Pinging extension to verify');
       this.#port.postMessage('ping');
       return true;
     } catch (err) {
@@ -134,24 +133,24 @@ export class ExtensionProvider implements Provider {
 
   #requestChromium(params: MethodParams): Promise<unknown> {
     if (!this.#port) {
-      console.error('[ExtensionProvider] requestChromium failed - no port');
       throw new Error('Not connected to extension. Call connect() first.');
     }
 
     const id = this.#nextId++;
+
+    // Format request based on method type
     const request = {
       jsonrpc: '2.0',
       id,
       method: params.method,
       params: params.params,
-      scope: params.chainId,
     };
 
     console.debug('[ExtensionProvider] Sending chromium request:', request);
 
     return new Promise((resolve, reject) => {
       this.#requestMap.set(id, { resolve, reject });
-      this.#port?.postMessage({ type: 'caip-request', data: request });
+      this.#port?.postMessage({ type: 'caip-x', data: request });
 
       setTimeout(() => {
         if (this.#requestMap.has(id)) {

@@ -14,13 +14,16 @@ export default function Home() {
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const getBalance = useCallback(async (address: string): Promise<string> => {
-    const balance = await provider?.request({
-      method: 'eth_getBalance',
-      params: [address, 'latest']
-    });
-    return balance ? parseInt(balance as string, 16).toString() : '0';
-  }, [provider]);
+  const getBalance = useCallback(
+    async (address: string): Promise<string> => {
+      const balance = await provider?.request({
+        method: 'eth_getBalance',
+        params: [address, 'latest'],
+      });
+      return balance ? parseInt(balance as string, 16).toString() : '0';
+    },
+    [provider],
+  );
 
   const connectWallet = async (): Promise<void> => {
     try {
@@ -51,7 +54,7 @@ export default function Home() {
         const balance = await getBalance(account);
         setAccountInfo({
           account,
-          balance
+          balance,
         });
       } else {
         setAccountInfo(null);
@@ -75,9 +78,7 @@ export default function Home() {
         </button>
       ) : (
         <>
-          <div className={styles.address}>
-            Address: {accountInfo?.account}
-          </div>
+          <div className={styles.address}>Address: {accountInfo?.account}</div>
           <div className={styles.address}>
             Balance: {accountInfo?.balance} Wei
           </div>

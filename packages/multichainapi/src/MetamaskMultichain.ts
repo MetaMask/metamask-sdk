@@ -79,20 +79,42 @@ export class MetamaskMultichain {
    * Create or update a CAIP-25 session.
    */
   public async createSession({
-    requiredScopes,
-    optionalScopes,
-    scopedProperties,
-    sessionProperties,
+    requiredScopes = {},
+    optionalScopes = {},
+    scopedProperties = {},
+    sessionProperties = {},
   }: CreateSessionParams): Promise<CreateSessionResult> {
-    console.debug('[Caip25MultichainProvider] createSession');
+    console.debug('[Caip25MultichainProvider] createSession with params:', {
+      requiredScopes,
+      optionalScopes,
+      scopedProperties,
+      sessionProperties,
+    });
+
+    // Define default notifications for each chain
+    const defaultNotifications = ['eth_subscription'];
+
+    // Format scopes with notifications
+    const formattedOptionalScopes = Object.entries(optionalScopes).reduce(
+      (acc, [chainId, scope]) => ({
+        ...acc,
+        [chainId]: {
+          methods: Array.isArray(scope.methods) ? scope.methods : [],
+          notifications: defaultNotifications,
+          accounts: Array.isArray(scope.accounts) ? scope.accounts : [],
+        },
+      }),
+      {}
+    );
 
     const result = (await this.provider.request({
       method: 'wallet_createSession',
       params: {
-        requiredScopes,
-        optionalScopes,
-        scopedProperties,
-        sessionProperties,
+        optionalScopes: formattedOptionalScopes,
+        // Only include other params if they're not empty
+        ...(Object.keys(requiredScopes).length > 0 && { requiredScopes }),
+        ...(Object.keys(scopedProperties).length > 0 && { scopedProperties }),
+        ...(Object.keys(sessionProperties).length > 0 && { sessionProperties }),
       },
     })) as CreateSessionResult;
 
