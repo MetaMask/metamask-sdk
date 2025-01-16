@@ -19,7 +19,20 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // "@metamask/multichainapi": ["./node_modules/@metamask/multichainapi/src/*"]
+      "@metamask/sdk-communication-layer": [
+        "../sdk-communication-layer/src"
+      ],
+      "@metamask/sdk-react": [
+        "../sdk-react/src"
+      ],
+      "@metamask/multichainapi": [
+        "../multichainapi/src"
+      ],
+      "@metamask/sdk": [
+        "../sdk/src"
+      ],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "outDir": "dist",
     "rootDir": ".",
+    "declaration": true,
     "paths": {
       "@metamask/multichainapi/*": ["./src/*"]
     }
