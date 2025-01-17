@@ -262,9 +262,14 @@ export default function Page() {
         (method) => (method as MethodObject).name === selectedMethod,
       );
 
+      console.log(`handleMethodSelect: ${selectedMethod}`, example);
+      console.log(`selectedAccounts: `, selectedAccounts);
+
       if (example) {
         let exampleParams: Json = openRPCExampleToJSON(example as MethodObject);
         const selectedAddress = selectedAccounts[scope];
+
+        console.log(`selectedAddress: ${selectedAddress}`);
 
         if (
           selectedAddress &&
@@ -278,16 +283,20 @@ export default function Page() {
           );
         }
 
+        console.log(`exampleParams: `, exampleParams);
+
         const defaultRequest: InvokeMethodRequest = {
           method: 'wallet_invokeMethod',
           params: {
             scope,
-            request: {
-              method: selectedMethod,
-              params: Array.isArray(exampleParams) ? exampleParams : [],
+            request: exampleParams as {
+              method: string;
+              params: Json[];
             },
           },
         };
+
+        console.log(`defaultRequest: `, defaultRequest);
 
         setInvokeMethodRequests((prev) => ({
           ...prev,
@@ -327,7 +336,8 @@ export default function Page() {
           },
         }));
       } catch (error) {
-        console.error('Error invoking method:', error);
+        // console.error('Error invoking method:', error);
+        console.warn(`Error invoking method: `, error);
       }
     },
     [invokeMethod, invokeMethodRequests],
