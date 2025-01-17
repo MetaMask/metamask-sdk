@@ -6,6 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.31.5]
+### Added
+- feat: improves the react connected hook when using extension & emit terminate when using extension ([#1186](https://github.com/MetaMask/metamask-sdk/pull/1186))
+- chore: add analytics to install modal ([#1189](https://github.com/MetaMask/metamask-sdk/pull/1189))
+- feat: add MetaMask Flask provider support for EIP-6963 ([#1192](https://github.com/MetaMask/metamask-sdk/pull/1192))
+- chore: call getPermissions on accountsChanged when using extension ([#1185](https://github.com/MetaMask/metamask-sdk/pull/1185))
+
+### Fixed
+- Fix nextjs localstorage issue ([#1193](https://github.com/MetaMask/metamask-sdk/pull/1193))
+- fix(MetaMaskInstaller): replace delete with assignment to undefined for window.ethereum ([#1162](https://github.com/MetaMask/metamask-sdk/pull/1162))
+
+## [0.31.4]
+### Fixed
+- refactor(sdk): always send RPC requests via network and deeplink ([#1181](https://github.com/MetaMask/metamask-sdk/pull/1181))
+
+## [0.31.3]
+### Fixed
+- fix(analytics): improve dapp details tracking and SDK RPC request analytics ([#1179](https://github.com/MetaMask/metamask-sdk/pull/1179))
+
+## [0.31.2]
+### Fixed
+- fix: nextjs build fix pr ([#1163](https://github.com/MetaMask/metamask-sdk/pull/1163))
+- Set initial modal tab based on preferDesktop option ([#1158](https://github.com/MetaMask/metamask-sdk/pull/1158))
+
+## [0.31.1]
+### Changed
+- fix: Tell webpack about dynamic import + fixed polyfills ([#1151](https://github.com/MetaMask/metamask-sdk/pull/1151))
+- chore: removes sdk terminate when accountsChanged comes in empty ([#1148](https://github.com/MetaMask/metamask-sdk/pull/1148))
+
 ## [0.31.0]
 ### Changed
 - refactor(sdk-install-modal-web): migrate from i18next to custom SimpleI18n implementation ([#1141](https://github.com/MetaMask/metamask-sdk/pull/1141))
@@ -444,7 +473,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...HEAD
+[0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.4...@metamask/sdk@0.31.5
+[0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.3...@metamask/sdk@0.31.4
+[0.31.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.2...@metamask/sdk@0.31.3
+[0.31.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.1...@metamask/sdk@0.31.2
+[0.31.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.0...@metamask/sdk@0.31.1
 [0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.3...@metamask/sdk@0.31.0
 [0.30.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.2...@metamask/sdk@0.30.3
 [0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.1...@metamask/sdk@0.30.2

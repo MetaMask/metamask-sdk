@@ -5,6 +5,8 @@
  * It contains typing information for all components that exist in this project.
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
+import { TrackingEvents } from "./components/misc/tracking-events";
+export { TrackingEvents } from "./components/misc/tracking-events";
 export namespace Components {
     interface MmInstallModal {
         /**
@@ -27,6 +29,7 @@ export namespace Components {
           * The QR code link
          */
         "link": string;
+        "preferDesktop": boolean;
         "sdkVersion"?: string;
     }
 }
@@ -46,6 +49,7 @@ declare global {
     interface HTMLMmInstallModalElementEventMap {
         "close": any;
         "startDesktopOnboarding": any;
+        "trackAnalytics": { event: TrackingEvents, params?: Record<string, unknown> };
     }
     interface HTMLMmInstallModalElement extends Components.MmInstallModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMmInstallModalElementEventMap>(type: K, listener: (this: HTMLMmInstallModalElement, ev: MmInstallModalCustomEvent<HTMLMmInstallModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -112,6 +116,7 @@ declare namespace LocalJSX {
         "link"?: string;
         "onClose"?: (event: MmInstallModalCustomEvent<any>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
+        "onTrackAnalytics"?: (event: MmInstallModalCustomEvent<{ event: TrackingEvents, params?: Record<string, unknown> }>) => void;
         "preferDesktop"?: boolean;
         "sdkVersion"?: string;
     }
@@ -133,6 +138,7 @@ declare namespace LocalJSX {
         "link"?: string;
         "onClose"?: (event: MmSelectModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
         "onConnectWithExtension"?: (event: MmSelectModalCustomEvent<any>) => void;
+        "preferDesktop"?: boolean;
         "sdkVersion"?: string;
     }
     interface IntrinsicElements {

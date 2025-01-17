@@ -9,9 +9,14 @@ export const config: Config = {
       type: 'dist',
       isPrimaryPackageOutputTarget: true,
     },
+    {
+      type: 'www',
+      serviceWorker: null,
+      baseUrl: 'http://localhost:4444/'
+    }
   ],
   enableCache: true,
-  buildEs5: true,
+  buildEs5: false,
   // Add hash for file names for better caching
   hashFileNames: true,
   excludeUnusedDependencies: true,

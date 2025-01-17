@@ -10,6 +10,8 @@ import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
 import encodeQR from '@paulmillr/qr';
 import { SimpleI18n } from '../misc/simple-i18n';
+import { TrackingEvents } from '../misc/tracking-events';
+
 @Component({
   tag: 'mm-install-modal',
   styleUrl: '../style.css',
@@ -31,7 +33,11 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
+  @Event() trackAnalytics: EventEmitter<{ event: TrackingEvents, params?: Record<string, unknown> }>;
+
   @State() tab: number = 1;
+
+  @State() isDefaultTab: boolean = true;
 
   @Element() el: HTMLElement;
 
@@ -42,9 +48,19 @@ export class InstallModal {
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
     this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
-    this.setTab(2);
+    this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
+  }
+
+  componentDidLoad() {
+    this.trackAnalytics.emit({
+      event: TrackingEvents.SDK_MODAL_VIEWED,
+      params: {
+        extensionInstalled: false,
+        tab: this.tab === 1 ? 'desktop' : 'mobile',
+      },
+    });
   }
 
   async connectedCallback() {
@@ -63,60 +79,33 @@ export class InstallModal {
     }
   }
 
-  @Watch('link')
-  updateLink(newLink: string) {
-    if (!this.translationsLoaded || this.tab !== 2) {
-      return;
-    }
-
-    const svgElement = encodeQR(newLink, "svg", {
-      ecc: "medium",
-      scale: 2
-    });
-
-    if (!this.el.shadowRoot) {
-      console.warn('Shadow root not found');
-      return;
-    }
-
-    const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
-
-    if (!qrcodeDiv) {
-      console.warn('QR code div not found');
-      return;
-    }
-
-    qrcodeDiv.innerHTML = svgElement;
-  }
-
-  @Watch('translationsLoaded')
-  onTranslationsLoaded(isLoaded: boolean) {
-    if (isLoaded && this.tab === 2) {
-      this.updateLink(this.link);
-    }
-  }
-
-  @Watch('tab')
-  onTabChange(newTab: number) {
-    if (newTab === 2 && this.translationsLoaded) {
-      this.updateLink(this.link);
-    }
-  }
-
   onClose() {
     this.close.emit();
   }
 
   onStartDesktopOnboardingHandler() {
+    this.trackAnalytics.emit({
+      event: TrackingEvents.SDK_MODAL_BUTTON_CLICKED,
+      params: {
+        button_type: 'install_extension',
+        tab: 'desktop',
+      },
+    });
     this.startDesktopOnboarding.emit();
   }
 
-  setTab(newTab: number) {
-    this.tab = newTab
-  }
-
-  componentDidLoad() {
-    this.updateLink(this.link);
+  setTab(newTab: number, isUserAction: boolean = false) {
+    if (isUserAction) {
+      this.trackAnalytics.emit({
+        event: TrackingEvents.SDK_MODAL_TOGGLE_CHANGED,
+        params: {
+          toggle: this.tab === 1 ? 'desktop_to_mobile' : 'mobile_to_desktop',
+        },
+      });
+    }
+    
+    this.tab = newTab;
+    this.isDefaultTab = false;
   }
 
   render() {
@@ -125,14 +114,20 @@ export class InstallModal {
     }
 
     const t = (key: string) => this.i18nInstance.t(key);
+    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab;
+
+    const svgElement = encodeQR(this.link, "svg", {
+      ecc: "medium",
+      scale: 2
+    });
 
     return (
       <WidgetWrapper className="install-model">
-        <div class='backdrop' onClick={this.onClose}></div>
+        <div class='backdrop' onClick={() => this.onClose()}></div>
         <div class='modal'>
           <div class='closeButtonContainer'>
             <div class='right'>
-              <span class='closeButton' onClick={this.onClose}>
+              <span class='closeButton' onClick={() => this.onClose()}>
                 <CloseButton />
               </span>
             </div>
@@ -144,20 +139,20 @@ export class InstallModal {
             <div class='tabcontainer'>
               <div class='flexContainer'>
                 <div
-                  onClick={() => this.setTab(1)}
-                  class={`tab flexItem ${this.tab === 1 ? 'tabactive': ''}`}
+                  onClick={() => this.setTab(1, true)}
+                  class={`tab flexItem ${currentTab === 1 ? 'tabactive': ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
-                  onClick={() => this.setTab(2)}
-                  class={`tab flexItem ${this.tab === 2 ? 'tabactive': ''}`}
+                  onClick={() => this.setTab(2, true)}
+                  class={`tab flexItem ${currentTab === 2 ? 'tabactive': ''}`}
                 >
                   {t('MOBILE')}
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 1 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 1 ? 'none' : 'block' }}>
               <div class='flexContainer'>
                 <div
                   class='flexItem'
@@ -166,8 +161,11 @@ export class InstallModal {
                     marginTop: '4',
                   }}
                 >
-                  <div id="sdk-mm-qrcode" class='center'>
-                  </div>
+                  {
+                    svgElement && (
+                      <div id="sdk-mm-qrcode" class='center' innerHTML={svgElement} />
+                    )
+                  }
                   <div class='connectMobileText'>
                     {t('SCAN_TO_CONNECT')} <br />
                     <span class='blue'>
@@ -177,7 +175,7 @@ export class InstallModal {
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 2 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 2 ? 'none' : 'block' }}>
               <div class='item'>
                 <AdvantagesListItem
                   Icon={HeartIcon}
@@ -199,7 +197,7 @@ export class InstallModal {
 
               <button
                 class='button'
-                onClick={this.onStartDesktopOnboardingHandler}
+                onClick={() => this.onStartDesktopOnboardingHandler()}
               >
                 <InstallIcon />
                 <span class='installExtensionText'>

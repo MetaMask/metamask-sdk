@@ -1,3 +1,4 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import packageJson from '../../../package.json';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { logger } from '../../utils/logger';
@@ -10,6 +11,7 @@ const sdkWebInstallModal = ({
   terminate,
   connectWithExtension,
   preferDesktop,
+  onAnalyticsEvent,
 }: {
   link: string;
   debug?: boolean;
@@ -17,6 +19,13 @@ const sdkWebInstallModal = ({
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
+  onAnalyticsEvent: ({
+    event,
+    params,
+  }: {
+    event: TrackingEvents;
+    params?: Record<string, unknown>;
+  }) => void;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -81,6 +90,7 @@ const sdkWebInstallModal = ({
           },
           onClose: unmount,
           link,
+          preferDesktop: preferDesktop ?? false,
         })
         .catch((err) => {
           console.error(err);
@@ -93,6 +103,7 @@ const sdkWebInstallModal = ({
           link,
           metaMaskInstaller: installer,
           onClose: unmount,
+          onAnalyticsEvent,
         })
         .catch((err) => {
           console.error(`[UI: InstallModal-web: sdkWebInstallModal()]`, err);

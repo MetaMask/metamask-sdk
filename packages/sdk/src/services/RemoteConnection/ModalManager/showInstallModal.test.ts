@@ -52,6 +52,7 @@ describe('showInstallModal', () => {
       terminate: expect.any(Function),
       debug: state.developerMode,
       connectWithExtension: expect.any(Function),
+      onAnalyticsEvent: expect.any(Function),
     });
     expect(mockModalsInstall).toHaveBeenCalledTimes(1);
     expect(mockInstallModalMount).toHaveBeenCalledWith(link);
