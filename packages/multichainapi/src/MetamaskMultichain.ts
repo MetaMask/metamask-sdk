@@ -10,15 +10,6 @@ export interface CreateSessionParams {
   sessionProperties?: SessionProperties;
 }
 
-export interface CreateSessionResult {
-  sessionId?: string;
-  sessionScopes: Record<string, ScopeObject>;
-  scopedProperties?: ScopedProperties;
-  sessionProperties?: SessionProperties;
-}
-
-
-
 /**
  * A CAIP-25-compliant provider that uses ExtensionProvider for transport.
  */
@@ -83,7 +74,7 @@ export class MetamaskMultichain {
     optionalScopes = {},
     scopedProperties = {},
     sessionProperties = {},
-  }: CreateSessionParams): Promise<CreateSessionResult> {
+  }: CreateSessionParams): Promise<SessionData> {
     console.debug('[Caip25MultichainProvider] createSession with params:', {
       requiredScopes,
       optionalScopes,
@@ -92,7 +83,7 @@ export class MetamaskMultichain {
     });
 
     // Define default notifications for each chain
-    const defaultNotifications = ['eth_subscription'];
+    const defaultNotifications = [];
 
     // Format scopes with notifications
     const formattedOptionalScopes = Object.entries(optionalScopes).reduce(
@@ -116,7 +107,7 @@ export class MetamaskMultichain {
         ...(Object.keys(scopedProperties).length > 0 && { scopedProperties }),
         ...(Object.keys(sessionProperties).length > 0 && { sessionProperties }),
       },
-    })) as CreateSessionResult;
+    })) as SessionData;
 
     console.debug('[Caip25MultichainProvider] wallet_createSession response:', result);
 

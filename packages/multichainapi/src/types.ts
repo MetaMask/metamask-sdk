@@ -26,7 +26,7 @@ export interface SessionProperties {
  * Represents a tracked session in local store.
  */
 export interface SessionData {
-  sessionId?: string;
+  sessionId: string;
   sessionScopes: Record<string, ScopeObject>;
   scopedProperties?: ScopedProperties;
   sessionProperties?: SessionProperties;

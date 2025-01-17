@@ -28,14 +28,6 @@ import { parseOpenRPCDocument } from '@open-rpc/schema-utils-js';
 import styles from './page.module.css';
 
 type NetworkId = keyof typeof FEATURED_NETWORKS;
-
-interface AccountInfo {
-  account: string;
-  balance: string;
-  chainId: NetworkId;
-  sessionId: string;
-}
-
 interface SessionMethodResult {
   timestamp: number;
   method: string;
@@ -47,17 +39,17 @@ interface WalletHistoryEntry {
   data: unknown;
 }
 
-const defaultSessionsScopes: Record<NetworkId, string> = {
-  'eip155:1': '',
-  'eip155:59144': '',
-  'eip155:42161': '',
-  'eip155:43114': '',
-  'eip155:56': '',
-  'eip155:10': '',
-  'eip155:137': '',
-  'eip155:324': '',
-  'eip155:8453': '',
-  'eip155:1337': '',
+const defaultSessionsScopes: Record<NetworkId, boolean> = {
+  'eip155:1': false,
+  'eip155:59144': false,
+  'eip155:42161': false,
+  'eip155:43114': false,
+  'eip155:56': false,
+  'eip155:10': false,
+  'eip155:137': false,
+  'eip155:324': false,
+  'eip155:8453': false,
+  'eip155:1337': false,
 };
 
 interface ConnectWalletParams {
@@ -68,54 +60,60 @@ export default function Home() {
   const [api, setApi] = useState<ReturnType<typeof createMultichainAPI> | null>(
     null,
   );
-  const [accountInfo, setAccountInfo] = useState<AccountInfo[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  // List of addresses to use when creating a session
+  const [addresses, setAddresses] = useState<string[]>(['']);
+
+  // Extension ID for connecting to the wallet
   const [extensionId, setExtensionId] = useState<string>(
     'nfdjnfhlblppdgdplngdjgpifllaamoc',
   );
-  const [selectedChains, setSelectedChains] = useState<
-    Record<NetworkId, boolean>
-  >({
-    'eip155:1': true,
-    'eip155:59144': true,
-    'eip155:42161': false,
-    'eip155:43114': false,
-    'eip155:56': false,
-    'eip155:10': false,
-    'eip155:137': false,
-    'eip155:324': false,
-    'eip155:8453': false,
-    'eip155:1337': false,
-  });
+
+  // --- Result/Output States ---
+  // Stores the results of method invocations by chain and method
+  const [invokeMethodResults, setInvokeMethodResults] = useState<
+    Record<string, Record<string, { result: any; request: any }[]>>
+  >({});
+
+  // History of session change notifications from the wallet
   const [walletSessionChangedHistory, setWalletSessionChangedHistory] =
     useState<WalletHistoryEntry[]>([]);
+
+  // History of general notifications from the wallet
   const [walletNotifyHistory, setWalletNotifyHistory] = useState<
     WalletHistoryEntry[]
   >([]);
+
+  // Stores the JSON-RPC request parameters for each chain
   const [invokeMethodRequests, setInvokeMethodRequests] = useState<
     Record<string, string>
   >({});
+
+  // Stores the parsed OpenRPC document that defines available methods
   const [metamaskOpenrpcDocument, setMetamaskOpenrpcDocument] =
     useState<OpenrpcDocument>();
+
+  // History of session-related method calls (create/get/revoke)
   const [sessionMethodHistory, setSessionMethodHistory] = useState<
     SessionMethodResult[]
   >([]);
+
   const [selectedAccounts, setSelectedAccounts] = useState<
     Record<string, CaipAccountId>
   >({});
   const [selectedMethods, setSelectedMethods] = useState<
     Record<string, string>
   >({});
-  const [invokeMethodResults, setInvokeMethodResults] = useState<
-    Record<string, Record<string, { result: any; request: any }[]>>
-  >({});
+
   const [sessionsScopes, setSessionsScopes] = useState<
-    Record<NetworkId, string>
+    Record<NetworkId, boolean>
   >(defaultSessionsScopes);
-  const [addresses, setAddresses] = useState<string[]>(['']);
+
+  // Stores information about available wallets
   const [walletMapEntries, setWalletMapEntries] = useState<
     Record<string, WalletMapEntry>
   >({});
+
+  // Stores the current session data
   const [currentSession, setCurrentSession] = useState<SessionData | null>(
     null,
   );
@@ -242,7 +240,6 @@ export default function Home() {
       }
 
       try {
-        setIsLoading(true);
         console.debug(
           '[Wallet] Attempting to connect to extension:',
           extensionId,
@@ -258,7 +255,7 @@ export default function Home() {
         console.debug('[Wallet] Successfully connected to extension');
 
         // Create sessions for all selected chains
-        const selectedChainIds = Object.entries(selectedChains)
+        const selectedChainIds = Object.entries(sessionsScopes)
           .filter(([_, isSelected]) => isSelected)
           .map(([chainId]) => chainId as NetworkId);
 
@@ -268,62 +265,19 @@ export default function Home() {
         );
 
         const newSessions = { ...defaultSessionsScopes };
-        const newAccountInfo: AccountInfo[] = [];
-
-        for (const chainId of selectedChainIds) {
-          try {
-            const session = await api.createSession({
-              optionalScopes: {
-                [chainId]: {
-                  methods: ['eth_getBalance'],
-                  accounts: [`${chainId}:0x0`],
-                },
-              },
-            });
-            newSessions[chainId] = session.sessionId ?? '';
-            setCurrentSession(session);
-          } catch (err) {
-            console.error(`Failed to create session for ${chainId}:`, err);
-          }
-        }
+        const session = await api.createSession({});
+        setCurrentSession(session);
 
         setSessionsScopes(newSessions);
-        setAccountInfo(newAccountInfo);
       } catch (error) {
         console.error('[Wallet] Connection error:', error);
         throw error;
       } finally {
-        setIsLoading(false);
         console.debug('[Wallet] Connection attempt completed');
       }
     },
-    [api, selectedChains],
+    [api, sessionsScopes],
   );
-
-  const terminateConnection = async (): Promise<void> => {
-    if (!api) return;
-
-    try {
-      setIsLoading(true);
-
-      // Revoke all sessions
-      await Promise.all(
-        Object.values(sessionsScopes).map((sessionId) =>
-          api.revokeSession({ sessionId }),
-        ),
-      );
-
-      // Reset all state after terminating sessions
-      handleResetState();
-      setAccountInfo([]);
-      setSessionsScopes(defaultSessionsScopes);
-      setCurrentSession(null);
-    } catch (err) {
-      console.error('Failed to terminate connection:', err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleWalletListClick = useCallback(
     async (newExtensionId: string): Promise<void> => {
@@ -339,9 +293,22 @@ export default function Home() {
     [connectWallet],
   );
 
+  const handleNotification = useCallback(
+    (notification: any) => {
+      setWalletNotifyHistory((prev) => {
+        const timestamp = Date.now();
+        if (prev.some((entry) => entry.timestamp === timestamp)) {
+          return prev;
+        }
+        return [{ timestamp, data: notification }, ...prev];
+      });
+    },
+    [setWalletNotifyHistory],
+  );
+
   const handleCreateSession = async () => {
-    const selectedChainsArray = Object.keys(selectedChains).filter(
-      (chain) => selectedChains[chain as NetworkId],
+    const selectedChainsArray = Object.keys(sessionsScopes).filter(
+      (chain) => sessionsScopes[chain as NetworkId],
     ) as NetworkId[];
 
     try {
@@ -371,10 +338,15 @@ export default function Home() {
 
   const handleGetSession = async () => {
     try {
-      if (!api || !currentSession?.sessionId) return;
+      if (!api || !currentSession?.sessionId) {
+        console.debug('[Wallet] No session found to get');
+        return;
+      }
+
       const result = await api.getSession({
         sessionId: currentSession.sessionId,
       });
+      console.debug('[Wallet] Session found to get:', result);
       setSessionMethodHistory((prev) => [
         { timestamp: Date.now(), method: 'wallet_getSession', data: result },
         ...prev,
@@ -385,12 +357,16 @@ export default function Home() {
   };
 
   const handleRevokeSession = async () => {
-    if (!api || !currentSession?.sessionId) return;
+    if (!api || !currentSession?.sessionId) {
+      console.debug('[Wallet] No session found to revoke');
+      return;
+    }
 
     try {
       const result = await api.revokeSession({
         sessionId: currentSession.sessionId,
       });
+      console.debug('[Wallet] Session revoked:', result);
       setSessionMethodHistory((prev) => [
         { timestamp: Date.now(), method: 'wallet_revokeSession', data: result },
         ...prev,
@@ -400,28 +376,9 @@ export default function Home() {
     }
   };
 
-  const handleResetState = () => {
-    setSelectedMethods({});
-    setInvokeMethodResults({});
-    setWalletSessionChangedHistory([]);
-    setWalletNotifyHistory([]);
-    setSessionMethodHistory([]);
-    setSelectedChains({
-      'eip155:1': false,
-      'eip155:59144': false,
-      'eip155:42161': false,
-      'eip155:43114': false,
-      'eip155:56': false,
-      'eip155:10': false,
-      'eip155:137': false,
-      'eip155:324': false,
-      'eip155:8453': false,
-      'eip155:1337': false,
-    });
-  };
-
   const handleSessionChangedNotification = useCallback(
     (notification: any) => {
+      console.debug('[Wallet] Session changed notification:', notification);
       setWalletSessionChangedHistory((prev) => {
         const timestamp = Date.now();
         if (prev.some((entry) => entry.timestamp === timestamp)) {
@@ -431,25 +388,26 @@ export default function Home() {
       });
 
       if (notification.params?.sessionScopes) {
-        setSelectedChains(notification.params.sessionScopes);
+        setSessionsScopes(notification.params.sessionScopes);
         setInitialMethodsAndAccounts(notification.params.sessionScopes);
       }
     },
     [
       setWalletSessionChangedHistory,
-      setSelectedChains,
+      setSessionsScopes,
       setInitialMethodsAndAccounts,
     ],
   );
 
   const handleInvokeAllMethods = async () => {
+    console.debug('[Wallet] Invoking all methods');
     const scopesWithMethods = Object.entries(selectedMethods)
       .filter(([_, method]) => method)
       .map(([scope, method]) => ({ scope, method }));
 
     await Promise.all(
       scopesWithMethods.map(async ({ scope, method }) => {
-        const scopeToInvoke = scope as keyof typeof selectedChains;
+        const scopeToInvoke = scope as keyof typeof sessionsScopes;
         return handleInvokeMethod(scopeToInvoke, method);
       }),
     );
@@ -460,6 +418,7 @@ export default function Home() {
     scope: CaipChainId,
   ) => {
     const selectedMethod = evt.target.value;
+    console.debug('[Wallet] Selected method:', selectedMethod);
     setSelectedMethods((prev) => ({
       ...prev,
       [scope]: selectedMethod,
@@ -470,6 +429,7 @@ export default function Home() {
     );
 
     if (example) {
+      console.debug('[Wallet] Example found:', example);
       let exampleParams: Json = openRPCExampleToJSON(example as MethodObject);
       const selectedAddress = selectedAccounts[scope];
 
@@ -502,6 +462,7 @@ export default function Home() {
 
   const handleInvokeMethod = async (scope: CaipChainId, method: string) => {
     const requestObject = JSON.parse(invokeMethodRequests[scope] ?? '{}');
+    console.debug('[Wallet] Invoking method:', requestObject);
     try {
       if (!api) return;
       const { params } = requestObject.params.request;
@@ -512,6 +473,7 @@ export default function Home() {
           params,
         },
       });
+      console.debug('[Wallet] Method invoked:', result);
 
       setInvokeMethodResults((prev) => {
         const scopeResults = prev[scope] ?? {};
@@ -548,6 +510,9 @@ export default function Home() {
 
   useEffect(() => {
     if (currentSession?.sessionScopes) {
+      console.debug(
+        `[Wallet] Setting initial methods and accounts: ${currentSession}`,
+      );
       setInitialMethodsAndAccounts(currentSession);
     }
   }, [currentSession, setInitialMethodsAndAccounts]);
@@ -556,13 +521,15 @@ export default function Home() {
   useEffect(() => {
     if (api) {
       api.addListener('sessionChanged', handleSessionChangedNotification);
+      api.addListener('notification', handleNotification);
 
       // Clean up listener when component unmounts or API changes
       return () => {
         api.removeListener('sessionChanged', handleSessionChangedNotification);
+        api.removeListener('notification', handleNotification);
       };
     }
-  }, [api, handleSessionChangedNotification]);
+  }, [api, handleSessionChangedNotification, handleNotification]);
 
   return (
     <div className={styles.container}>
@@ -604,9 +571,9 @@ export default function Home() {
                       <input
                         type="checkbox"
                         name={chainId}
-                        checked={selectedChains[chainId as NetworkId] ?? false}
+                        checked={sessionsScopes[chainId as NetworkId]}
                         onChange={(evt) =>
-                          setSelectedChains((prev) => ({
+                          setSessionsScopes((prev) => ({
                             ...prev,
                             [chainId]: evt.target.checked,
                           }))
@@ -619,20 +586,20 @@ export default function Home() {
                 )}
                 <div>
                   <DynamicInputs
-                    inputArray={Object.keys(selectedChains).filter(
-                      (chain) => selectedChains[chain as NetworkId],
+                    inputArray={Object.keys(sessionsScopes).filter(
+                      (chain) => sessionsScopes[chain as NetworkId],
                     )}
                     setInputArray={(newArray) => {
                       // Convert array back to record
-                      const newSelectedChains = { ...selectedChains };
-                      Object.keys(selectedChains).forEach((chain) => {
+                      const newSelectedChains = { ...sessionsScopes };
+                      Object.keys(sessionsScopes).forEach((chain) => {
                         newSelectedChains[chain as NetworkId] = Array.isArray(
                           newArray,
                         )
                           ? newArray.includes(chain)
                           : false;
                       });
-                      setSelectedChains(newSelectedChains);
+                      setSessionsScopes(newSelectedChains);
                     }}
                     label={INPUT_LABEL_TYPE.SCOPE}
                   />
@@ -762,62 +729,6 @@ export default function Home() {
         </div>
       </section>
 
-      {isConnected && (
-        <>
-          <div className={styles.networkSelection}>
-            <h3>Select Networks</h3>
-            {(Object.entries(FEATURED_NETWORKS) as [NetworkId, string][]).map(
-              ([chainId, networkName]) => (
-                <label key={chainId}>
-                  <input
-                    type="checkbox"
-                    checked={selectedChains[chainId] ?? false}
-                    onChange={(e) =>
-                      setSelectedChains((prev) => ({
-                        ...prev,
-                        [chainId]: e.target.checked,
-                      }))
-                    }
-                    disabled={isConnected}
-                  />
-                  {networkName}
-                </label>
-              ),
-            )}
-          </div>
-          <div className={styles.accountsGrid}>
-            {accountInfo.map((info) => (
-              <div key={info.sessionId} className={styles.accountCard}>
-                <h3>{FEATURED_NETWORKS[info.chainId]}</h3>
-                <div className={styles.address}>Address: {info.account}</div>
-                <div className={styles.balance}>
-                  Balance: {info.balance} Wei
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            className={styles.button}
-            onClick={terminateConnection}
-            disabled={isLoading}
-          >
-            {isLoading ? 'Terminating...' : 'Terminate All Sessions'}
-          </button>
-
-          <div className={styles.sessionHistory}>
-            <h3>Session Method History</h3>
-            {sessionMethodHistory.map((entry) => (
-              <details key={entry.timestamp} className={styles.methodEntry}>
-                <summary>
-                  {new Date(entry.timestamp).toLocaleString()} - {entry.method}
-                </summary>
-                <pre>{JSON.stringify(entry.data, null, 2)}</pre>
-              </details>
-            ))}
-          </div>
-        </>
-      )}
       {currentSession?.sessionScopes && isConnected && (
         <section>
           <div>
