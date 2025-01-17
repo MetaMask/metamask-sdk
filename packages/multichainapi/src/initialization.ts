@@ -1,12 +1,8 @@
 import { MetamaskMultichain } from './MetamaskMultichain';
-import { SessionData, SessionEventData } from './types';
+import { SessionData, SessionEventData, StoredSession } from './types';
 import { discoverWallets, walletFilters } from './walletDiscovery';
 
-interface StoredSession {
-  sessionId: string;
-  extensionId: string;
-  expiry?: string;
-}
+
 
 interface InitializationParams {
   extensionId?: string;

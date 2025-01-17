@@ -25,7 +25,7 @@ import WalletList, { WalletMapEntry } from '../components/WalletList';
 import { MetaMaskOpenRPCDocument } from '@metamask/api-specs';
 import { parseOpenRPCDocument } from '@open-rpc/schema-utils-js';
 
-import styles from './page.module.css';
+import styles from '../styles/page.module.css';
 
 type NetworkId = keyof typeof FEATURED_NETWORKS;
 interface SessionMethodResult {
@@ -56,7 +56,7 @@ interface ConnectWalletParams {
   extensionId: string;
 }
 
-export default function Home() {
+export default function Raw() {
   const [api, setApi] = useState<ReturnType<typeof createMultichainAPI> | null>(
     null,
   );

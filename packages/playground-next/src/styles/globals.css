@@ -322,6 +322,7 @@ input[type="checkbox"] {
   background: white;
   border-radius: 8px;
   padding: 2rem;
+  width: 100%;
 }
 
 .notifications-section h2 {

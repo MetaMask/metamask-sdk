@@ -14,7 +14,8 @@ export function createMultichainAPI() {
 export * from './constants/networks';
 export * from './constants/methods';
 export * from './walletDiscovery';
-export { performMultichainInit } from './initialization';
+export * from './initialization';
+export * from './storage';
 export * from './utils/getCaip25FormattedAddresses';
 export * from './utils/JsonHelpers';
 export * from './types';

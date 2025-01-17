@@ -1,15 +1,15 @@
 'use client';
 
-import { useSDK } from '@metamask/sdk-react';
-import styles from './page.module.css';
+import { MetaMaskProvider, useSDK } from '@metamask/sdk-react';
 import { useCallback, useEffect, useState } from 'react';
+import styles from '../styles/page.module.css';
 
 interface AccountInfo {
   account: string;
   balance: string;
 }
 
-export default function Home() {
+const PageSdk = () => {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -92,5 +92,21 @@ export default function Home() {
         </>
       )}
     </div>
+  );
+};
+
+export default function PageSDKWrapper() {
+  return (
+    <MetaMaskProvider
+      debug={false}
+      sdkOptions={{
+        dappMetadata: {
+          name: 'Simple Web3 Dapp',
+          url: 'https://metamask.io',
+        },
+      }}
+    >
+      <PageSdk />
+    </MetaMaskProvider>
   );
 }

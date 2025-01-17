@@ -2,7 +2,8 @@
 
 /// <reference types="chrome"/>
 import type { Provider } from './BaseProvider';
-import type { MethodParams } from '../types';
+import type { LoggerLike, MethodParams } from '../types';
+import { Json } from '@metamask/utils';
 
 interface ExtensionResponse {
   id?: number;
@@ -13,7 +14,7 @@ interface ExtensionResponse {
   };
 }
 
-type NotificationCallback = (notification: unknown) => void;
+type NotificationCallback = (notification: Json) => void;
 
 interface ConnectParams {
   extensionId: string;
@@ -25,22 +26,24 @@ export class ExtensionProvider implements Provider {
   #nextId: number;
   #notificationCallbacks: Set<NotificationCallback>;
   #fallbackMode: boolean;
+  #logger?: LoggerLike;
 
-  constructor() {
+  constructor(params?: { logger?: LoggerLike}) {
     this.#port = null;
     this.#requestMap = new Map();
     this.#nextId = 1;
     this.#notificationCallbacks = new Set();
     this.#fallbackMode = false;
-    console.debug('[ExtensionProvider] Initialized');
+    this.#logger = params?.logger ?? console;
+    this.#logger?.debug('[ExtensionProvider] Initialized');
   }
 
   public async connect({ extensionId }: ConnectParams): Promise<boolean> {
-    console.debug('[ExtensionProvider] Attempting to connect:', extensionId);
+    this.#logger?.debug('[ExtensionProvider] Attempting to connect:', extensionId);
 
     // Clear any existing state first
     if (this.#port) {
-      console.debug('[ExtensionProvider] Existing connection found, disconnecting');
+      this.#logger?.debug('[ExtensionProvider] Existing connection found, disconnecting');
       this.disconnect();
     }
 
@@ -59,7 +62,7 @@ export class ExtensionProvider implements Provider {
   }
 
   public disconnect(): void {
-    console.debug('[ExtensionProvider] Disconnecting');
+    this.#logger?.debug('[ExtensionProvider] Disconnecting');
     if (this.#port) {
       this.#port.disconnect();
       this.#port = null;
@@ -67,7 +70,7 @@ export class ExtensionProvider implements Provider {
     this.#requestMap.clear();
     this.removeAllNotificationListeners();
     this.#fallbackMode = false;
-    console.debug('[ExtensionProvider] Disconnected and reset');
+    this.#logger?.debug('[ExtensionProvider] Disconnected and reset');
   }
 
   public async request(params: MethodParams): Promise<unknown> {
@@ -78,17 +81,17 @@ export class ExtensionProvider implements Provider {
   }
 
   public onNotification(callback: NotificationCallback): void {
-    console.debug('[ExtensionProvider] Adding notification listener');
+    this.#logger?.debug('[ExtensionProvider] Adding notification listener');
     this.#notificationCallbacks.add(callback);
   }
 
   public removeNotificationListener(callback: NotificationCallback): void {
-    console.debug('[ExtensionProvider] Removing notification listener');
+    this.#logger?.debug('[ExtensionProvider] Removing notification listener');
     this.#notificationCallbacks.delete(callback);
   }
 
   public removeAllNotificationListeners(): void {
-    console.debug('[ExtensionProvider] Removing all notification listeners');
+    this.#logger?.debug('[ExtensionProvider] Removing all notification listeners');
     this.#notificationCallbacks.clear();
   }
 
@@ -97,7 +100,7 @@ export class ExtensionProvider implements Provider {
   // =========================================================================
 
   async #connectChromium({ extensionId }: ConnectParams): Promise<boolean> {
-    console.debug('[ExtensionProvider] #connectChromium to:', extensionId);
+    this.#logger?.debug('[ExtensionProvider] #connectChromium to:', extensionId);
 
     this.#port = chrome.runtime.connect(extensionId);
 
@@ -107,7 +110,7 @@ export class ExtensionProvider implements Provider {
       const errorMessage = chrome.runtime.lastError
         ? chrome.runtime.lastError.message
         : 'Port disconnected unexpectedly.';
-      console.error('[ExtensionProvider] Connection error:', errorMessage);
+      this.#logger?.error('[ExtensionProvider] Connection error:', errorMessage);
       this.#port = null;
       this.#requestMap.clear();
     });
@@ -116,7 +119,7 @@ export class ExtensionProvider implements Provider {
     await new Promise((resolve) => setTimeout(resolve, 5));
 
     if (!isConnected) {
-      console.error('[ExtensionProvider] Connect failed - port disconnected');
+      this.#logger?.error('[ExtensionProvider] Connect failed - port disconnected');
       return false;
     }
 
@@ -126,7 +129,7 @@ export class ExtensionProvider implements Provider {
       this.#port.postMessage('ping');
       return true;
     } catch (err) {
-      console.error('[ExtensionProvider] Ping error:', err);
+      this.#logger?.error('[ExtensionProvider] Ping error:', err);
       return false;
     }
   }
@@ -146,7 +149,7 @@ export class ExtensionProvider implements Provider {
       params: params.params,
     };
 
-    console.debug('[ExtensionProvider] Sending chromium request:', request);
+    this.#logger?.debug('[ExtensionProvider] Sending chromium request:', request);
 
     return new Promise((resolve, reject) => {
       this.#requestMap.set(id, { resolve, reject });
@@ -154,8 +157,8 @@ export class ExtensionProvider implements Provider {
 
       setTimeout(() => {
         if (this.#requestMap.has(id)) {
-          console.warn('[ExtensionProvider] Request timeout for id:', id);
-          this.#requestMap.delete(id);
+          this.#logger?.warn('[ExtensionProvider] Request timeout for id:', id);
+            this.#requestMap.delete(id);
           reject(new Error('Request timeout'));
         }
       }, 30000);
@@ -164,7 +167,7 @@ export class ExtensionProvider implements Provider {
 
   #handleChromiumMessage(message: { data: ExtensionResponse }): void {
     const { data } = message;
-    console.debug('[ExtensionProvider] Received chromium message:', data);
+    this.#logger?.debug('[ExtensionProvider] Received chromium message:', data);
     this.#handleResponse(data);
   }
 
@@ -173,12 +176,12 @@ export class ExtensionProvider implements Provider {
   // =========================================================================
 
   async #connectFallback({ extensionId }: ConnectParams): Promise<boolean> {
-    console.debug('[ExtensionProvider] #connectFallback to:', extensionId);
+    this.#logger?.debug('[ExtensionProvider] #connectFallback to:', extensionId);
 
     // Possibly store extensionId or post a request event
     window.postMessage(
       {
-        type: 'MULTICHAIN_CONNECT_REQUEST',
+        type: 'MULTICHAIN_CONNECT_REQUEST', // FIXME: what should we actually use?
         extensionId,
       },
       '*',
@@ -201,7 +204,7 @@ export class ExtensionProvider implements Provider {
       scope: params.chainId,
     };
 
-    console.debug('[ExtensionProvider] Sending fallback request:', request);
+    this.#logger?.debug('[ExtensionProvider] Sending fallback request:', request);
 
     return new Promise((resolve, reject) => {
       this.#requestMap.set(id, { resolve, reject });
@@ -216,7 +219,7 @@ export class ExtensionProvider implements Provider {
 
       setTimeout(() => {
         if (this.#requestMap.has(id)) {
-          console.warn('[ExtensionProvider] Request timeout for id:', id);
+          this.#logger?.warn('[ExtensionProvider] Request timeout for id:', id);
           this.#requestMap.delete(id);
           reject(new Error('Request timeout'));
         }
@@ -229,7 +232,7 @@ export class ExtensionProvider implements Provider {
       return;
     }
     const response = event.data?.data as ExtensionResponse;
-    console.debug('[ExtensionProvider] Received fallback message:', response);
+    this.#logger?.debug('[ExtensionProvider] Received fallback message:', response);
     this.#handleResponse(response);
   }
 
@@ -244,21 +247,21 @@ export class ExtensionProvider implements Provider {
 
       if (resolve && reject) {
         if (data.error) {
-          console.error('[ExtensionProvider] Request error for id:', data.id, data.error);
+          this.#logger?.error('[ExtensionProvider] Request error for id:', data.id, data.error);
           reject(new Error(data.error.message));
         } else {
-          console.debug('[ExtensionProvider] Request success for id:', data.id);
+          this.#logger?.debug('[ExtensionProvider] Request success for id:', data.id);
           resolve(data.result);
         }
       }
     } else if (!data.id) {
-      console.debug('[ExtensionProvider] Received notification');
-      this.#notifyCallbacks(data);
+      this.#logger?.debug('[ExtensionProvider] Received notification');
+      this.#notifyCallbacks(data as Json);
     }
   }
 
-  #notifyCallbacks(notification: unknown): void {
-    console.debug('[ExtensionProvider] Notifying callbacks:', {
+  #notifyCallbacks(notification: Json): void {
+    this.#logger?.debug('[ExtensionProvider] Notifying callbacks:', {
       callbackCount: this.#notificationCallbacks.size,
     });
 
@@ -266,7 +269,7 @@ export class ExtensionProvider implements Provider {
       try {
         callback(notification);
       } catch (error) {
-        console.error('[ExtensionProvider] Error in notification callback:', error);
+        this.#logger?.error('[ExtensionProvider] Error in notification callback:', error);
       }
     });
   }
