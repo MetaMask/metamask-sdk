@@ -3,7 +3,7 @@ import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
-  onClose: () => void;
+  onClose: (shouldTerminate?: boolean) => void;
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
@@ -80,7 +80,10 @@ export default class ModalLoader {
     modal.link = props.link;
     modal.preferDesktop = props.preferDesktop;
     modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-    modal.addEventListener('close', props.onClose);
+    modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
+      props.onClose(shouldTerminate),
+    );
+
     modal.addEventListener(
       'startDesktopOnboarding',
       props.metaMaskInstaller.startDesktopOnboarding,
