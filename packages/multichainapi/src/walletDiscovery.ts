@@ -1,3 +1,5 @@
+import { Provider } from "./types";
+
 export enum CAIP294EventNames {
   Announce = 'caip294:wallet_announce',
   Request = 'caip294:wallet_prompt',
@@ -12,7 +14,7 @@ export interface CAIP294ProviderInfo {
 
 export interface CAIP294ProviderDetail {
   info: CAIP294ProviderInfo;
-  provider: unknown;
+  provider: Provider;
 }
 
 export interface WalletInfo {
