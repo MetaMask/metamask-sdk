@@ -118,7 +118,7 @@ export class MetamaskMultichain {
     });
 
     // Define default notifications for each chain
-    const defaultNotifications = []; // wallet_notify?
+    const defaultNotifications: string[] = []; // wallet_notify?
 
     // Format scopes with notifications
     const formattedOptionalScopes = Object.entries(optionalScopes).reduce(
@@ -217,7 +217,7 @@ export class MetamaskMultichain {
   }
 
   /**
-   * Invoke a method (CAIP-25 style) within a particular scope.
+   * Invoke a method (CAIP-27 style) within a particular scope.
    */
   public async invokeMethod({
     scope,
@@ -227,6 +227,23 @@ export class MetamaskMultichain {
     request: { method: string; params: Json[] };
   }): Promise<Json> {
     this.logger?.debug('[Caip25MultichainProvider] Invoking method:', request.method, 'on scope:', scope);
+
+
+    //TODO: validate here or just let the wallet handle it?
+    // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-27.md
+    // The JSON-RPC method is labeled as wallet_invokeMethod and expects three parameters, two of them required:
+    // sessionId (conditional) - CAIP-171 SessionId disambiguates an open session in a multi-session actor; it is required in some sessions, such as CAIP-25 sessions created by a response containing one, and SHOULD be omitted in other sessions, such as CAIP-25 sessions created by a response not containing one (see CAIP-316).
+    // scope (required) - a valid CAIP-2 network identifier, previously authorized by or within a scopeObject in the active session
+    // request (required) - an object containing the fields:
+    // method (required) - the JSON-RPC method to invoke (previously authorized for the targeted network)
+    // params (required) - JSON-RPC parameters to invoke (may be empty but must be set)
+
+    //     Validation
+    // A respondent SHOULD check the scope against active session's scopeObjects before executing or responding to such a request, and SHOULD invalidate a request for a scope not previously authorized.
+    // The respondent SHOULD check that request.method is authorized for the specified scope, and SHOULD invalidate a request for a scope not previously authorized.
+    // The respondent MAY check that the request.params are valid for request.method, if its syntax is known to it.
+    // The respondent MAY apply other logic or validation.
+    // The respondent MAY chose to drop invalid requests or return an error message, but it MUST NOT route or submit them.
 
     const result = (await this.provider.request({
       method: 'wallet_invokeMethod',

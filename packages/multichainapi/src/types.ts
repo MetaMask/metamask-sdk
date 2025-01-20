@@ -4,7 +4,7 @@ import { CaipAccountId, Json } from "@metamask/utils";
 
 
 /**
- * Interfaces for CAIP-based Scopes and Sessions
+ * Interfaces for CAIP-based Scopes and Sessions (caip-217)
  */
 export interface ScopeObject {
   references?: string[];
@@ -30,7 +30,7 @@ export interface LoggerLike {
 }
 
 export interface StoredSession {
-  sessionId: string;
+  sessionId: string; // CAIP-171
   extensionId: string;
   expiry?: string;
 }
@@ -40,7 +40,7 @@ export interface StoredSession {
  * Represents a tracked session in local store.
  */
 export interface SessionData {
-  sessionId?: string; // Not used in metamask.
+  sessionId?: string; // Not used in metamask (CAIP-171).
   sessionScopes: Record<string, ScopeObject>;
   scopedProperties?: ScopedProperties; // Not implemented in metamask yet?
   sessionProperties?: SessionProperties; // Not implemented in metamask yet?

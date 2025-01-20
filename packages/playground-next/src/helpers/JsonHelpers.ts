@@ -5,11 +5,12 @@ import type {
   ExamplePairingObject,
   MethodObject,
 } from '@open-rpc/meta-schema';
+import type { Json } from '@metamask/utils';
 
 const paramsToObj = (
-  params: any[],
+  params: Record<string, unknown>[],
   methodParams: ContentDescriptorObject[],
-): any => {
+): Record<string, unknown> => {
   return params.reduce((acc, val, i) => {
     const paramName = methodParams[i]?.name;
     if (paramName) {
@@ -41,11 +42,11 @@ export const openRPCExampleToJSON = (method: MethodObject) => {
   return {
     method: method.name,
     params,
-  };
+  } as Json;
 };
 
 export const truncateJSON = (
-  json: any,
+  json: Json,
   maxLength = 100,
 ): { text: string; truncated: boolean } => {
   const stringified = JSON.stringify(json).slice(0, maxLength);

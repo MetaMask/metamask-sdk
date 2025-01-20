@@ -86,6 +86,8 @@ export const useMultichain = ({
         storageKey: 'metamask_multichain_session',
       });
 
+      console.log(`[useMultichain] Multichain instance`, instance);
+
       setMultichain(instance);
 
       // Only try to get session if we have a stored session

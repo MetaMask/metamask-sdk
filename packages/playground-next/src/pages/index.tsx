@@ -5,10 +5,8 @@ import {
   FEATURED_NETWORKS,
   injectParams,
   METHODS_REQUIRING_PARAM_INJECTION,
-  openRPCExampleToJSON,
   SessionData,
   SessionEventData,
-  truncateJSON,
 } from '@metamask/multichainapi';
 import {
   CaipAccountId,
@@ -22,6 +20,7 @@ import { useCallback, useEffect, useState } from 'react';
 import DynamicInputs, { INPUT_LABEL_TYPE } from '../components/DynamicInputs';
 import { useMultichain } from '../hooks/useMultichain';
 
+import { useConnection } from '../hooks/useConnection';
 import {
   InvokeMethodRequest,
   InvokeMethodResults,
@@ -30,7 +29,7 @@ import {
   WalletHistoryEntry,
 } from '../multichain-types';
 import styles from '../styles/page.module.css';
-import { useConnection } from '../hooks/useConnection';
+import { openRPCExampleToJSON, truncateJSON } from '../helpers/JsonHelpers';
 
 const defaultSessionsScopes: Record<NetworkId, boolean> = {
   'eip155:1': false,
@@ -194,7 +193,11 @@ export default function Page() {
       });
 
       setSessionMethodHistory((prev) => [
-        { timestamp: Date.now(), method: 'wallet_createSession', data: result },
+        {
+          timestamp: Date.now(),
+          method: 'wallet_createSession',
+          data: result,
+        },
         ...prev,
       ]);
     } catch (error) {
@@ -206,7 +209,11 @@ export default function Page() {
     try {
       const result = await getSession();
       setSessionMethodHistory((prev) => [
-        { timestamp: Date.now(), method: 'wallet_getSession', data: result },
+        {
+          timestamp: Date.now(),
+          method: 'wallet_getSession',
+          data: result,
+        },
         ...prev,
       ]);
     } catch (error) {
@@ -242,7 +249,7 @@ export default function Page() {
       console.log(`selectedAccounts: `, selectedAccounts);
 
       if (example) {
-        let exampleParams: Json = openRPCExampleToJSON(example as MethodObject);
+        let exampleParams = openRPCExampleToJSON(example as MethodObject);
         const selectedAddress = selectedAccounts[scope];
 
         console.log(`selectedAddress: ${selectedAddress}`);
@@ -463,7 +470,7 @@ export default function Page() {
                             {new Date(timestamp).toLocaleString()}
                           </span>
                           <span className="method-name">{method}</span>
-                          {truncateJSON(data).text}
+                          {truncateJSON(data as Json).text}
                         </summary>
                         <code className="code-left-align">
                           <pre id={`session-method-result-${index}`}>
@@ -493,7 +500,7 @@ export default function Page() {
                           <span className="timestamp">
                             {new Date(timestamp).toLocaleString()}
                           </span>
-                          {truncateJSON(data).text}
+                          {truncateJSON(data as Json).text}
                         </summary>
                         <code className="code-left-align">
                           <pre id={`wallet-session-changed-result-${index}`}>
@@ -744,7 +751,7 @@ export default function Page() {
                 <span className="timestamp">
                   {new Date(timestamp).toLocaleString()}
                 </span>
-                {truncateJSON(data).text}
+                {truncateJSON(data as Json).text}
               </summary>
               <code className="code-left-align">
                 <pre>{JSON.stringify(data, null, 2)}</pre>
