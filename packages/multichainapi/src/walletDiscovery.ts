@@ -27,21 +27,6 @@ export interface WalletDiscoveryOptions {
   filterPredicate?: (wallet: WalletInfo) => boolean;
 }
 
-interface CAIP294AnnounceParams {
-  name: string;
-  icon: string;
-  rdns: string;
-  uuid: string;
-  extensionId?: string;
-}
-
-interface CAIP294AnnounceEvent {
-  id: number;
-  jsonrpc: string;
-  method: string;
-  params: CAIP294AnnounceParams;
-}
-
 export function discoverWallets(options: WalletDiscoveryOptions = {}): Promise<WalletInfo[]> {
   const {
     timeout = 500,

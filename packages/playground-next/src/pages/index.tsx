@@ -1,13 +1,7 @@
 'use client';
 
 import { MetaMaskOpenRPCDocument } from '@metamask/api-specs';
-import {
-  FEATURED_NETWORKS,
-  injectParams,
-  METHODS_REQUIRING_PARAM_INJECTION,
-  SessionData,
-  SessionEventData,
-} from '@metamask/multichainapi';
+import { SessionData, SessionEventData } from '@metamask/multichainapi';
 import {
   CaipAccountId,
   CaipChainId,
@@ -20,6 +14,12 @@ import { useCallback, useEffect, useState } from 'react';
 import DynamicInputs, { INPUT_LABEL_TYPE } from '../components/DynamicInputs';
 import { useMultichain } from '../hooks/useMultichain';
 
+import {
+  injectParams,
+  METHODS_REQUIRING_PARAM_INJECTION,
+} from '../constants/methods';
+import { FEATURED_NETWORKS } from '../constants/networks';
+import { openRPCExampleToJSON, truncateJSON } from '../helpers/JsonHelpers';
 import { useConnection } from '../hooks/useConnection';
 import {
   InvokeMethodRequest,
@@ -29,7 +29,6 @@ import {
   WalletHistoryEntry,
 } from '../multichain-types';
 import styles from '../styles/page.module.css';
-import { openRPCExampleToJSON, truncateJSON } from '../helpers/JsonHelpers';
 
 const defaultSessionsScopes: Record<NetworkId, boolean> = {
   'eip155:1': false,

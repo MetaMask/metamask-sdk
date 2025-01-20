@@ -11,11 +11,8 @@ export function createMultichainAPI() {
 }
 
 // Re-export any constants or utilities that might be helpful:
-export * from './constants/networks';
-export * from './constants/methods';
 export * from './walletDiscovery';
 export * from './initialization';
 export * from './storage';
 export * from './utils/getCaip25FormattedAddresses';
 export * from './types';
-export * from './providers/BaseProvider';

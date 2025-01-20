@@ -1,8 +1,7 @@
 // packages/multichainapi/src/providers/ExtensionProvider.ts
 
 /// <reference types="chrome"/>
-import type { Provider } from './BaseProvider';
-import type { LoggerLike, MethodParams } from '../types';
+import type { LoggerLike, MethodParams, Provider } from '../types';
 import { Json } from '@metamask/utils';
 
 interface ExtensionResponse {

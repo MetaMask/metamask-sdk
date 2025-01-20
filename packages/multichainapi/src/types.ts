@@ -62,3 +62,12 @@ export interface MultichainEvents {
   sessionChanged: (event: SessionEventData) => void;
   notification: (notification: unknown) => void;
 }
+
+export interface Provider {
+  connect(params: unknown): Promise<boolean>;
+  disconnect(): void;
+  request(params: MethodParams): Promise<unknown>;
+  onNotification(callback: (notification: unknown) => void): void;
+  removeNotificationListener(callback: (notification: unknown) => void): void;
+  removeAllNotificationListeners(): void;
+}

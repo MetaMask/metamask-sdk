@@ -1,5 +1,6 @@
-import { FEATURED_NETWORKS, SessionData } from '@metamask/multichainapi';
+import { SessionData } from '@metamask/multichainapi';
 import { CaipChainId, Json } from '@metamask/utils';
+import { FEATURED_NETWORKS } from './constants/networks';
 
 export type NetworkId = keyof typeof FEATURED_NETWORKS;
 

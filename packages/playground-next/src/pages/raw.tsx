@@ -1,16 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+import { MetaMaskOpenRPCDocument } from '@metamask/api-specs';
 import {
   CAIP294EventNames,
   createMultichainAPI,
   discoverWallets,
-  FEATURED_NETWORKS,
-  injectParams,
-  METHODS_REQUIRING_PARAM_INJECTION,
-  openRPCExampleToJSON,
   SessionData,
-  truncateJSON,
 } from '@metamask/multichainapi';
 import {
   CaipAccountId,
@@ -19,13 +15,16 @@ import {
   parseCaipAccountId,
 } from '@metamask/utils';
 import { MethodObject, OpenrpcDocument } from '@open-rpc/meta-schema';
+import { parseOpenRPCDocument } from '@open-rpc/schema-utils-js';
 import { useCallback, useEffect, useState } from 'react';
 import DynamicInputs, { INPUT_LABEL_TYPE } from '../components/DynamicInputs';
 import WalletList, { WalletMapEntry } from '../components/WalletList';
-import { MetaMaskOpenRPCDocument } from '@metamask/api-specs';
-import { parseOpenRPCDocument } from '@open-rpc/schema-utils-js';
 
 import styles from '../styles/page.module.css';
+import { FEATURED_NETWORKS } from '../constants/networks';
+import { openRPCExampleToJSON, truncateJSON } from '../helpers/JsonHelpers';
+import { METHODS_REQUIRING_PARAM_INJECTION } from '../constants/methods';
+import { injectParams } from '../constants/methods';
 
 type NetworkId = keyof typeof FEATURED_NETWORKS;
 interface SessionMethodResult {
@@ -678,7 +677,7 @@ export default function Raw() {
                               {new Date(timestamp).toLocaleString()}
                             </span>
                             <span className="method-name">{method}</span>
-                            {truncateJSON(data).text}
+                            {truncateJSON(data as Json).text}
                           </summary>
                           <code className="code-left-align">
                             <pre id={`session-method-result-${index}`}>
@@ -708,7 +707,7 @@ export default function Raw() {
                             <span className="timestamp">
                               {new Date(timestamp).toLocaleString()}
                             </span>
-                            {truncateJSON(data).text}
+                            {truncateJSON(data as Json).text}
                           </summary>
                           <code className="code-left-align">
                             <pre id={`wallet-session-changed-result-${index}`}>
@@ -959,7 +958,7 @@ export default function Raw() {
                   <span className="timestamp">
                     {new Date(timestamp).toLocaleString()}
                   </span>
-                  {truncateJSON(data).text}
+                  {truncateJSON(data as Json).text}
                 </summary>
                 <code className="code-left-align">
                   <pre id={`wallet-notify-result-${index}`}>
