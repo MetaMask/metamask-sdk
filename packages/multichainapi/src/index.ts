@@ -19,3 +19,4 @@ export * from './storage';
 export * from './utils/getCaip25FormattedAddresses';
 export * from './utils/JsonHelpers';
 export * from './types';
+export * from './providers/BaseProvider';

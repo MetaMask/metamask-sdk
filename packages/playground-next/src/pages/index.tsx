@@ -22,44 +22,15 @@ import { useCallback, useEffect, useState } from 'react';
 import DynamicInputs, { INPUT_LABEL_TYPE } from '../components/DynamicInputs';
 import { useMultichain } from '../hooks/useMultichain';
 
+import {
+  InvokeMethodRequest,
+  InvokeMethodResults,
+  NetworkId,
+  SessionMethodResult,
+  WalletHistoryEntry,
+} from '../multichain-types';
 import styles from '../styles/page.module.css';
-
-type NetworkId = keyof typeof FEATURED_NETWORKS;
-
-interface WalletHistoryEntry {
-  timestamp: number;
-  data: unknown;
-}
-
-interface SessionMethodResult {
-  timestamp: number;
-  method: string;
-  data: unknown;
-}
-
-interface InvokeMethodResult {
-  result: Json;
-  request: Json;
-}
-
-interface InvokeMethodRequest {
-  method: string;
-  params: {
-    scope: CaipChainId;
-    request: {
-      method: string;
-      params: Json[];
-    };
-  };
-}
-
-interface ScopeMethodResults {
-  [method: string]: InvokeMethodResult[];
-}
-
-interface InvokeMethodResults {
-  [scope: string]: ScopeMethodResults;
-}
+import { useConnection } from '../hooks/useConnection';
 
 const defaultSessionsScopes: Record<NetworkId, boolean> = {
   'eip155:1': false,
@@ -190,10 +161,15 @@ export default function Page() {
     getSession,
     revokeSession,
     invokeMethod,
+    error: multichainError,
+    isInitializing,
   } = useMultichain({
     onSessionChanged: handleSessionChangedNotification,
     onNotification: handleNotification,
   });
+
+  // Initialize connection management
+  const { connectionError, handleConnect } = useConnection(connect);
 
   // Initialize OpenRPC document
   useEffect(() => {
@@ -360,19 +336,37 @@ export default function Page() {
     setInvokeMethodResults({});
   };
 
+  if (isInitializing) {
+    return (
+      <div className={styles.container}>
+        <h1>MetaMask MultiChain API Test Dapp</h1>
+        <div className="loading">Initializing...</div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <h1>MetaMask MultiChain API Test Dapp</h1>
 
       {!isConnected && (
         <section>
-          <button
-            onClick={() =>
-              connect({ extensionId: 'nfdjnfhlblppdgdplngdjgpifllaamoc' })
-            }
-          >
-            Connect
+          <button onClick={handleConnect} className="connect-button">
+            Connect to MetaMask
           </button>
+          {(connectionError || multichainError) && (
+            <div className="error-message">
+              {connectionError || multichainError}
+            </div>
+          )}
+        </section>
+      )}
+
+      {isConnected && !currentSession && (
+        <section>
+          <div className="info-message">
+            Connected to MetaMask. Please create a session to continue.
+          </div>
         </section>
       )}
 

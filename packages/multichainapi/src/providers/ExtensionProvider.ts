@@ -27,6 +27,7 @@ export class ExtensionProvider implements Provider {
   #notificationCallbacks: Set<NotificationCallback>;
   #fallbackMode: boolean;
   #logger?: LoggerLike;
+  #isConnected: boolean;
 
   constructor(params?: { logger?: LoggerLike}) {
     this.#port = null;
@@ -34,6 +35,7 @@ export class ExtensionProvider implements Provider {
     this.#nextId = 1;
     this.#notificationCallbacks = new Set();
     this.#fallbackMode = false;
+    this.#isConnected = false;
     this.#logger = params?.logger ?? console;
     this.#logger?.debug('[ExtensionProvider] Initialized');
   }
@@ -47,18 +49,28 @@ export class ExtensionProvider implements Provider {
       this.disconnect();
     }
 
-    // Attempt chromium connection if available
-    const canUseChrome = typeof chrome !== 'undefined'
-      && chrome.runtime
-      && typeof chrome.runtime.connect === 'function';
+    try {
+      // Attempt chromium connection if available
+      const canUseChrome = typeof chrome !== 'undefined'
+        && chrome.runtime
+        && typeof chrome.runtime.connect === 'function';
 
-    if (canUseChrome) {
-      return this.#connectChromium({ extensionId });
+      if (canUseChrome) {
+        const connected = await this.#connectChromium({ extensionId });
+        this.#isConnected = connected;
+        return connected;
+      }
+
+      // Otherwise fallback approach
+      this.#fallbackMode = true;
+      const connected = await this.#connectFallback({ extensionId });
+      this.#isConnected = connected;
+      return connected;
+    } catch (error) {
+      this.#logger?.error('[ExtensionProvider] Connection error:', error);
+      this.#isConnected = false;
+      return false;
     }
-
-    // Otherwise fallback approach
-    this.#fallbackMode = true;
-    return this.#connectFallback({ extensionId });
   }
 
   public disconnect(): void {
@@ -70,10 +82,16 @@ export class ExtensionProvider implements Provider {
     this.#requestMap.clear();
     this.removeAllNotificationListeners();
     this.#fallbackMode = false;
+    this.#isConnected = false;
     this.#logger?.debug('[ExtensionProvider] Disconnected and reset');
   }
 
+
   public async request(params: MethodParams): Promise<unknown> {
+    if (!this.#isConnected) {
+      throw new Error('Provider not connected. Please check if MetaMask is installed and call connect() first.');
+    }
+
     if (!this.#fallbackMode) {
       return this.#requestChromium(params);
     }

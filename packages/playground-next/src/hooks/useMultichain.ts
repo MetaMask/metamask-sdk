@@ -20,6 +20,8 @@ interface UseMultichainReturn {
   isConnected: boolean;
   currentSession: SessionData | null;
   extensionId: string;
+  error: string | null;
+  isInitializing: boolean;
   connect: (params: { extensionId: string }) => Promise<boolean>;
   disconnect: () => void;
   createSession: (params: CreateSessionParams) => Promise<SessionData>;
@@ -53,48 +55,81 @@ export const useMultichain = ({
   const [extensionId, setExtensionId] = useState<string>(
     defaultExtensionId ?? '',
   );
+  const [error, setError] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const multichainInitRef = useRef<boolean>(false);
 
   const init = useCallback(async () => {
-    // TODO move effect here
-    const instance = await performMultichainInit({
-      extensionId: defaultExtensionId,
-      onSessionChanged: (event) => {
-        console.debug('[useMultichain] Session changed', {
-          type: event.type,
-          sessionId: event.session?.sessionId,
-          storedSession: localStorage.getItem('metamask_multichain_session'),
-        });
-        setCurrentSession(event.session);
-        setIsConnected(!!event.session);
-        if (event.session) {
-          setExtensionId(defaultExtensionId);
-        }
-        onSessionChanged?.(event);
-      },
-      onNotification,
-      storageKey: 'metamask_multichain_session', // explicitly set the storage key
-    });
-
-    console.debug('[useMultichain] Initialization complete');
-    setMultichain(instance);
-    // Check initial connection state
-    if (instance) {
-      console.debug('[useMultichain] Checking initial session', instance);
-
-      const existingSessionId = localStorage.getItem(
-        'metamask_multichain_session',
-      );
-      console.debug('[useMultichain] Existing session ID', {
-        existingSessionId,
+    try {
+      console.debug('[useMultichain] Starting initialization', {
+        defaultExtensionId,
+        storedSession: localStorage.getItem('metamask_multichain_session'),
       });
-      const storedSession = getStoredSession('metamask_multichain_session');
-      console.debug('[useMultichain] Stored session', storedSession);
-      const session = await instance.getSession();
 
-      setIsConnected(!!session);
-      setCurrentSession(session);
+      const instance = await performMultichainInit({
+        extensionId: defaultExtensionId,
+        onSessionChanged: (event) => {
+          console.debug('[useMultichain] Session changed', {
+            type: event.type,
+            sessionId: event.session?.sessionId,
+            storedSession: localStorage.getItem('metamask_multichain_session'),
+          });
+          setCurrentSession(event.session);
+          setIsConnected(!!event.session);
+          if (event.session) {
+            setExtensionId(defaultExtensionId);
+          }
+          onSessionChanged?.(event);
+        },
+        onNotification,
+        storageKey: 'metamask_multichain_session',
+      });
+
+      setMultichain(instance);
+
+      // Only try to get session if we have a stored session
+      const storedSession = getStoredSession('metamask_multichain_session');
+      if (storedSession) {
+        try {
+          // First try to connect using stored extension ID
+          const connected = await instance.connect({
+            extensionId: storedSession.extensionId,
+          });
+
+          if (connected) {
+            const session = await instance.getSession();
+            if (session) {
+              setIsConnected(true);
+              setCurrentSession(session);
+              setExtensionId(storedSession.extensionId);
+            } else {
+              throw new Error('No valid session found');
+            }
+          } else {
+            throw new Error('Failed to connect to stored extension');
+          }
+        } catch (sessionError) {
+          console.debug(
+            '[useMultichain] Failed to restore session:',
+            sessionError,
+          );
+          // Clear stored session if it's invalid
+          localStorage.removeItem('metamask_multichain_session');
+          setIsConnected(false);
+          setCurrentSession(null);
+          // Don't set error here as this is an expected case
+        }
+      }
+
+      setError(null);
+    } catch (error) {
+      console.error('[useMultichain] Initialization failed:', error);
+      setError(error instanceof Error ? error.message : 'Failed to initialize');
+      setIsConnected(false);
+      setCurrentSession(null);
+    } finally {
+      setIsInitializing(false);
     }
   }, [defaultExtensionId, onSessionChanged, onNotification]);
 
@@ -119,21 +154,70 @@ export const useMultichain = ({
   const connect = useCallback(
     async (params?: { extensionId: string }) => {
       if (!multichain) {
-        console.error(
-          '[useMultichain] Connect failed - Multichain not initialized',
-        );
-        throw new Error('Multichain not initialized');
+        throw new Error('Multichain not initialized. Please try again.');
       }
 
-      const { extensionId } = params ?? { extensionId: defaultExtensionId };
-      console.debug('[useMultichain] Connecting', { extensionId });
-      const connected = await multichain.connect({ extensionId });
-      console.debug('[useMultichain] Connection result', { connected });
-      setIsConnected(connected);
-      setExtensionId(extensionId);
-      return connected;
+      try {
+        setError(null);
+        const { extensionId: connExtensionId } = params ?? {
+          extensionId: defaultExtensionId,
+        };
+        console.debug('[useMultichain] Connecting', {
+          extensionId: connExtensionId,
+        });
+
+        const connected = await multichain.connect({
+          extensionId: connExtensionId,
+        });
+
+        if (!connected) {
+          throw new Error(
+            'Failed to connect to MetaMask. Please make sure it is installed and unlocked.',
+          );
+        }
+
+        console.debug('[useMultichain] Connection result', { connected });
+        setIsConnected(connected);
+        setExtensionId(connExtensionId);
+
+        // Try to get or create session after successful connection
+        try {
+          const session = await multichain.getSession();
+          if (session) {
+            setCurrentSession(session);
+          }
+        } catch (sessionError) {
+          console.debug(
+            '[useMultichain] No existing session found after connect',
+            sessionError,
+          );
+          // This is normal for first-time connections, don't throw
+        }
+
+        return connected;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to connect';
+        console.error('[useMultichain] Connection error:', errorMessage);
+        setIsConnected(false);
+        setError(errorMessage);
+        throw error;
+      }
     },
     [multichain, defaultExtensionId],
+  );
+
+  const getSession = useCallback(
+    async (params?: { sessionId?: string }) => {
+      if (!multichain) {
+        throw new Error('Multichain not initialized');
+      }
+      if (!isConnected) {
+        throw new Error('Provider not connected. Please connect first.');
+      }
+      return multichain.getSession(params);
+    },
+    [multichain, isConnected],
   );
 
   const disconnect = useCallback(() => {
@@ -162,14 +246,6 @@ export const useMultichain = ({
       setCurrentSession(session);
       setIsConnected(true);
       return session;
-    },
-    [multichain],
-  );
-
-  const getSession = useCallback(
-    async (params?: { sessionId?: string }) => {
-      if (!multichain) throw new Error('Multichain not initialized');
-      return multichain.getSession(params);
     },
     [multichain],
   );
@@ -223,6 +299,8 @@ export const useMultichain = ({
     isConnected,
     currentSession,
     extensionId,
+    error,
+    isInitializing,
     connect,
     disconnect,
     createSession,
