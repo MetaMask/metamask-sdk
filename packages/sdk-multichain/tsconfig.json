@@ -6,7 +6,7 @@
     "rootDir": ".",
     "declaration": true,
     "paths": {
-      "@metamask/multichainapi/*": ["./src/*"]
+      "@metamask/sdk-multichain/*": ["./src/*"]
     }
   },
   "include": ["src"],

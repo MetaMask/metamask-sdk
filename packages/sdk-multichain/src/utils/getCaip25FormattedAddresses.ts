@@ -1,4 +1,4 @@
-// packages/multichainapi/src/utils/getCaip25FormattedAddresses.ts
+// packages/sdk-multichain/src/utils/getCaip25FormattedAddresses.ts
 
 /**
  * Formats addresses as [CAIP-10](https://chainagnostic.org/CAIPs/caip-10) addresses for it's respective request scope. See [CAIP-25](https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-25.md) and .

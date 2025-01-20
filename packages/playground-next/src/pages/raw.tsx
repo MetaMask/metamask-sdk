@@ -7,7 +7,7 @@ import {
   createMultichainAPI,
   discoverWallets,
   SessionData,
-} from '@metamask/multichainapi';
+} from '@metamask/sdk-multichain';
 import {
   CaipAccountId,
   CaipChainId,

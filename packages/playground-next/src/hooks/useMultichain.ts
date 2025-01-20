@@ -3,12 +3,12 @@ import {
   getStoredSession,
   MetamaskMultichain,
   MultichainEvents,
+  performMultichainInit,
   SessionData,
   SessionEventData,
-} from '@metamask/multichainapi';
+} from '@metamask/sdk-multichain';
 import { CaipChainId, Json } from '@metamask/utils';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { performMultichainInit } from '@metamask/multichainapi';
 
 interface UseMultichainParams {
   onSessionChanged?: (event: SessionEventData) => void;

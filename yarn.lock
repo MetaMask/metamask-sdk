@@ -11125,43 +11125,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/multichainapi@workspace:*, @metamask/multichainapi@workspace:^, @metamask/multichainapi@workspace:packages/multichainapi":
-  version: 0.0.0-use.local
-  resolution: "@metamask/multichainapi@workspace:packages/multichainapi"
-  dependencies:
-    "@babel/runtime": ^7.26.0
-    "@jest/globals": ^29.3.1
-    "@lavamoat/allow-scripts": ^3.3.1
-    "@metamask/api-specs": ^0.10.13
-    "@metamask/auto-changelog": 3.1.0
-    "@metamask/eslint-config": ^6.0.0
-    "@metamask/eslint-config-typescript": ^6.0.0
-    "@metamask/utils": ^11.0.1
-    "@open-rpc/meta-schema": ^1.14.9
-    "@rollup/plugin-commonjs": ^25.0.7
-    "@rollup/plugin-json": ^6.0.0
-    "@rollup/plugin-node-resolve": ^15.0.2
-    "@rollup/plugin-terser": ^0.4.4
-    "@rollup/plugin-typescript": ^11.1.6
-    "@types/chrome": ^0.0.296
-    "@types/debug": ^4.1.12
-    "@types/jest": ^29.5.11
-    "@types/node": ^20.1.3
-    "@typescript-eslint/eslint-plugin": ^4.26.0
-    "@typescript-eslint/parser": ^4.26.0
-    debug: ^4.3.4
-    eslint: ^7.30.0
-    eventemitter2: ^6.4.9
-    jest: ^29.3.1
-    prettier: ^2.3.0
-    rimraf: ^4.4.0
-    rollup: ^4.9.4
-    ts-jest: ^29.0.3
-    tslib: ^2.6.2
-    typescript: ^5.3.3
-  languageName: unknown
-  linkType: soft
-
 "@metamask/network-controller@npm:^16.0.0":
   version: 16.0.0
   resolution: "@metamask/network-controller@npm:16.0.0"
@@ -11552,6 +11515,43 @@ __metadata:
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
+  languageName: unknown
+  linkType: soft
+
+"@metamask/sdk-multichain@workspace:*, @metamask/sdk-multichain@workspace:^, @metamask/sdk-multichain@workspace:packages/sdk-multichain":
+  version: 0.0.0-use.local
+  resolution: "@metamask/sdk-multichain@workspace:packages/sdk-multichain"
+  dependencies:
+    "@babel/runtime": ^7.26.0
+    "@jest/globals": ^29.3.1
+    "@lavamoat/allow-scripts": ^3.3.1
+    "@metamask/api-specs": ^0.10.13
+    "@metamask/auto-changelog": 3.1.0
+    "@metamask/eslint-config": ^6.0.0
+    "@metamask/eslint-config-typescript": ^6.0.0
+    "@metamask/utils": ^11.0.1
+    "@open-rpc/meta-schema": ^1.14.9
+    "@rollup/plugin-commonjs": ^25.0.7
+    "@rollup/plugin-json": ^6.0.0
+    "@rollup/plugin-node-resolve": ^15.0.2
+    "@rollup/plugin-terser": ^0.4.4
+    "@rollup/plugin-typescript": ^11.1.6
+    "@types/chrome": ^0.0.296
+    "@types/debug": ^4.1.12
+    "@types/jest": ^29.5.11
+    "@types/node": ^20.1.3
+    "@typescript-eslint/eslint-plugin": ^4.26.0
+    "@typescript-eslint/parser": ^4.26.0
+    debug: ^4.3.4
+    eslint: ^7.30.0
+    eventemitter2: ^6.4.9
+    jest: ^29.3.1
+    prettier: ^2.3.0
+    rimraf: ^4.4.0
+    rollup: ^4.9.4
+    ts-jest: ^29.0.3
+    tslib: ^2.6.2
+    typescript: ^5.3.3
   languageName: unknown
   linkType: soft
 
@@ -12010,11 +12010,11 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
-    "@metamask/multichainapi": "workspace:*"
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": ^18.3.1
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
+    "@metamask/sdk-multichain": "workspace:*"
     "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
     "@rollup/plugin-alias": ^5.1.1
@@ -43962,7 +43962,7 @@ __metadata:
   dependencies:
     "@eslint/eslintrc": ^3
     "@metamask/api-specs": ^0.10.13
-    "@metamask/multichainapi": "workspace:^"
+    "@metamask/sdk-multichain": "workspace:^"
     "@metamask/sdk-react": "workspace:^"
     "@metamask/utils": ^11.0.1
     "@open-rpc/meta-schema": ^1.14.9

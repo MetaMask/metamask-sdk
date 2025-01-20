@@ -1,11 +1,11 @@
 {
-  "name": "@metamask/multichainapi",
+  "name": "@metamask/sdk-multichain",
   "version": "0.1.0",
   "description": "CAIP-based multichain API for MetaMask",
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk",
-    "directory": "packages/multichainapi"
+    "directory": "packages/multichain"
   },
   "main": "dist/node/cjs/index.js",
   "module": "dist/browser/es/index.js",
@@ -21,7 +21,7 @@
     "typecheck": "tsc --noEmit",
     "clean": "rimraf ./dist",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/multichainapi",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-multichain",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",

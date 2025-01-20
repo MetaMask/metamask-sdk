@@ -1,4 +1,4 @@
-// packages/multichainapi/src/constants/methods.ts
+// packages/sdk-multichain/src/constants/methods.ts
 import MetaMaskOpenRPCDocument from '@metamask/api-specs';
 import { parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
 import type { CaipAccountId, CaipChainId, Json } from '@metamask/utils';

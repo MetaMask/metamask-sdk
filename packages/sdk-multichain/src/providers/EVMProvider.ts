@@ -1,4 +1,4 @@
-// packages/multichainapi/src/providers/ExtensionProvider.ts
+// packages/sdk-multichain/src/providers/ExtensionProvider.ts
 
 /// <reference types="chrome"/>
 import type { LoggerLike, MethodParams, Provider } from '../types';
@@ -6,7 +6,7 @@ import { Json } from '@metamask/utils';
 
 interface ExtensionResponse {
   id?: number;
-  result?: unknown;
+  result?: Json;
   error?: {
     message: string;
     code?: number;
@@ -132,7 +132,11 @@ export class ExtensionProvider implements Provider {
       this.#requestMap.clear();
     });
 
-    // Use same timing as working implementation
+    // Wait for the next tick to allow onDisconnect to fire if there's an error
+    // This is an unfortunate hack required to ensure the port is connected before
+    // we declare the connection successful.
+    // This gives a few ticks for the onDisconnect listener to fire if the runtime
+    // connection fails because the extension for the given extensionId is not present.
     await new Promise((resolve) => setTimeout(resolve, 5));
 
     if (!isConnected) {

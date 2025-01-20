@@ -1,7 +1,7 @@
 'use client';
 
 import { MetaMaskOpenRPCDocument } from '@metamask/api-specs';
-import { SessionData, SessionEventData } from '@metamask/multichainapi';
+import { SessionData, SessionEventData } from '@metamask/sdk-multichain';
 import {
   CaipAccountId,
   CaipChainId,

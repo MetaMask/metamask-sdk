@@ -1,6 +1,6 @@
-// packages/multichainapi/src/types.ts
+// packages/sdk-multichain/src/types.ts
 
-import { CaipAccountId, Json } from "@metamask/utils";
+import { CaipAccountId, CaipChainId, Json } from "@metamask/utils";
 
 
 /**
@@ -41,16 +41,16 @@ export interface StoredSession {
  */
 export interface SessionData {
   sessionId?: string; // Not used in metamask (CAIP-171).
-  sessionScopes: Record<string, ScopeObject>;
+  sessionScopes: Record<CaipChainId, ScopeObject>;
   scopedProperties?: ScopedProperties; // Not implemented in metamask yet?
   sessionProperties?: SessionProperties; // Not implemented in metamask yet?
   expiry?: string; // Not implemented in metamask yet?
 }
 
 export interface MethodParams {
-  chainId?: string;
+  chainId?: CaipChainId;
   method: string;
-  params?: unknown[] | Record<string, unknown>;
+  params?: Json;
 }
 
 export interface SessionEventData {

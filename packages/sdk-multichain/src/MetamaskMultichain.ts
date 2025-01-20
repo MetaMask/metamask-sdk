@@ -1,6 +1,6 @@
-// packages/multichainapi/src/providers/MultichainProvider.ts
+// packages/sdk-multichain/src/providers/MultichainProvider.ts
 import type { Json } from '@metamask/utils';
-import { ExtensionProvider } from './providers/ExtensionProvider';
+import { ExtensionProvider } from './providers/EVMProvider';
 import { LoggerLike, MultichainEvents, ScopedProperties, ScopeObject, SessionData, SessionEventData, SessionProperties } from './types';
 
 export interface CreateSessionParams {
@@ -145,7 +145,7 @@ export class MetamaskMultichain {
 
     const result = (await this.provider.request({
       method: 'wallet_createSession',
-      params,
+      params: params as unknown as Json,
     })) as SessionData;
 
     this.logger?.debug('[Caip25MultichainProvider] wallet_createSession response:', result);

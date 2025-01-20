@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@metamask/api-specs": "^0.10.13",
-    "@metamask/multichainapi": "workspace:^",
+    "@metamask/sdk-multichain": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
     "@metamask/utils": "^11.0.1",
     "@open-rpc/meta-schema": "^1.14.9",

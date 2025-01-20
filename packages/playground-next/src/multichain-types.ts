@@ -1,4 +1,4 @@
-import { SessionData } from '@metamask/multichainapi';
+import { SessionData } from '@metamask/sdk-multichain';
 import { CaipChainId, Json } from '@metamask/utils';
 import { FEATURED_NETWORKS } from './constants/networks';
 

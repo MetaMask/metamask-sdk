@@ -1,4 +1,4 @@
-// packages/multichainapi/src/utils/JsonHelpers.ts
+// packages/sdk-multichain/src/utils/JsonHelpers.ts
 import type {
   ContentDescriptorObject,
   ExampleObject,

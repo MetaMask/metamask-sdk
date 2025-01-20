@@ -1,4 +1,4 @@
-// packages/multichainapi/src/constants/networks.ts
+// packages/sdk-multichain/src/constants/networks.ts
 export const FEATURED_NETWORKS = {
   'eip155:1': 'Ethereum Mainnet',
   'eip155:59144': 'Linea Mainnet',
