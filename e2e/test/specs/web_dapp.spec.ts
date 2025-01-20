@@ -3,7 +3,7 @@ import {
   deviceOpenDeeplinkWithMetaMask,
   goBack,
   killApp,
-  launchMetaMask,
+  launchMetaMaskWithFixture,
   navigateToWebMobileDapp,
 } from '../../src/Utils';
 import DevnextJSDappScreen from '../../src/screens/Dapps/DevnextJSDappScreen';
@@ -11,24 +11,19 @@ import LockScreen from '../../src/screens/MetaMask/LockScreen';
 import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
 import PersonalSignConfirmationComponent from '../../src/screens/MetaMask/components/PersonalSignConfirmationComponent';
 import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
-import { onboardMM } from '../mocha.hooks';
+import FixtureServer from '../fixtures/FixtureServer';
 
 let devNextDappUrl: string;
+const fixtureServer = new FixtureServer();
 
 describe('Devnext E2E', () => {
   before(async () => {
     devNextDappUrl = process.env.DEVNEXT_DAPP_URL ?? '';
     expect(devNextDappUrl).toBeDefined();
 
-    await launchMetaMask();
-    const isMMOnboarded = await LockScreen.isMMOnboarded();
-    if (!isMMOnboarded) {
-      await onboardMM();
-    }
-    
+    await launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
+    await LockScreen.unlockMM(WALLET_PASSWORD);
   });
-
-  beforeEach(async () => {});
 
   it('should connect with a cold start state', async () => {
     await navigateToWebMobileDapp(devNextDappUrl, DevnextJSDappScreen);

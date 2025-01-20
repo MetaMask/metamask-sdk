@@ -77,7 +77,7 @@ class SettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText(''),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
         ),
       }),

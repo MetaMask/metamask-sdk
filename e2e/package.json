@@ -20,6 +20,7 @@
     "test:ios:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite web_dapp",
     "test:ios:jssdk:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite web_dapp",
     "test:android:jssdk:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite web_dapp",
+    "test:ios:jssdk:e2e:local:fixture": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite fixture_reference",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",

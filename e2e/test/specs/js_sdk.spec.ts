@@ -19,18 +19,17 @@ import IOSOpenInComponent from '../../src/screens/iOS/components/IOSOpenInCompon
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
 import DevnextJSDappScreen from '../../src/screens/Dapps/DevnextJSDappScreen';
 
-
 /*
-* @deprecated
-* 
-* This test suite is deprecated and will be removed in the future.
-* It is currently being kept for reference purposes.
-* 
-* The tests within this suite were originally designed to test the MetaMask
-* JavaScript SDK. However, the current implementation of the SDK has changed,
-* and the tests are no longer applicable.
-* 
-*/ 
+ * @deprecated
+ *
+ * This test suite is deprecated and will be removed in the future.
+ * It is currently being kept for reference purposes.
+ *
+ * The tests within this suite were originally designed to test the MetaMask
+ * JavaScript SDK. However, the current implementation of the SDK has changed,
+ * and the tests are no longer applicable.
+ *
+ */
 describe.skip('JS SDK E2E', () => {
   before(async () => {
     await beforeHook();

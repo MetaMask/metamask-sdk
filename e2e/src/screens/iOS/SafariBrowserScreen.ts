@@ -4,7 +4,6 @@ import { driver } from '@wdio/globals';
 import { getSelectorForPlatform } from '../../Utils';
 import { MobileBrowser } from '../interfaces/MobileBrowser';
 import { IOSSelector } from '../../Selectors';
-import { Dapp } from '../interfaces/Dapp';
 import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../Constants';
 
 class SafariBrowserScreen implements MobileBrowser {
@@ -46,11 +45,7 @@ class SafariBrowserScreen implements MobileBrowser {
   }
 
   async goToAddress(address: string): Promise<void> {
-    const currentAppState = await driver.queryAppState(Browsers.SAFARI);
-    // 4 is the state for the app being running in the foreground
-    if (currentAppState !== 4) {
-      await driver.activateApp(Browsers.SAFARI);
-    }
+    await this.launchBrowser();
 
     const addressPrefix = address.substring(8, 16);
     if (!(await this.urlAddressBar.getText()).includes(addressPrefix)) {
@@ -88,6 +83,14 @@ class SafariBrowserScreen implements MobileBrowser {
       await this.refreshPage();
       isWebDappLoaded = await checkIfDappIsLoaded();
       attempts += 1;
+    }
+  }
+
+  async launchBrowser(): Promise<void> {
+    const currentAppState = await driver.queryAppState(Browsers.SAFARI);
+    // 4 is the state for the app being running in the foreground
+    if (currentAppState !== 4) {
+      await driver.activateApp(Browsers.SAFARI);
     }
   }
 }

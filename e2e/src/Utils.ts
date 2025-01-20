@@ -1,3 +1,4 @@
+import path from 'path';
 import ADB from 'appium-adb';
 import { driver } from '@wdio/globals';
 import { FixtureBuilder } from '../test/fixtures/FixtureBuilder';
@@ -179,6 +180,10 @@ export const launchMetaMaskWithFixture = async (
   fixtureServer: FixtureServer,
   bundleId: string,
 ) => {
+  const appPath = path.join(process.env.APP_PATH || '');
+  await driver.removeApp(bundleId);
+  await driver.installApp(appPath);
+
   // NOT NEEDED FOR BrowserStack
   if (PLATFORM === Platforms.ANDROID) {
     console.log('Android test detected. Reversing TCP ports...');

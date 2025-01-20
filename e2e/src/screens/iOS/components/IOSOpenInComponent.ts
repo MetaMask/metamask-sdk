@@ -7,8 +7,8 @@ class IOSOpenInComponent {
   get open(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
-        iosSelector: IOSSelector.by().predicateString(
-          'name == "Open" AND label == "Open" AND value == "Open"',
+        iosSelector: IOSSelector.by().xpath(
+          '//XCUIElementTypeStaticText[@name="Open"]',
         ),
       }),
     );

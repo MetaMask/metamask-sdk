@@ -33,7 +33,7 @@ class Web3OnBoardDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="disconnect"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "Terminate"`]',
         ),
       }),

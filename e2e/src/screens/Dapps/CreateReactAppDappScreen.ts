@@ -11,8 +11,8 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Connect"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
-          '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
+        iosSelector: IOSSelector.by().classChain(
+          '**/XCUIElementTypeButton[`name == "Connect"`]',
         ),
       }),
     );
@@ -24,7 +24,7 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Connect w/ Sign"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
         ),
       }),
@@ -37,7 +37,7 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Terminate"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "Terminate"`]',
         ),
       }),
@@ -50,7 +50,7 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="personal_sign"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "personal_sign"`]',
         ),
       }),
@@ -63,7 +63,7 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="eth_signTypedData_v4"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "eth_signTypedData_v4"`]',
         ),
       }),
@@ -76,7 +76,7 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Send transaction"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "Send transaction"`]',
         ),
       }),

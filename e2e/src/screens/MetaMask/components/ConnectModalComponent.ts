@@ -43,6 +43,7 @@ class ConnectModalComponent {
     await this.connectApprovalButton.waitForEnabled({
       timeout: 10000,
     });
+    await driver.pause(2000);
     await this.connectApprovalButton.click();
   }
 }

@@ -10,7 +10,7 @@ class ReactMetamaskButtonDappScreen {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Connect wallet"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
         ),
       }),
@@ -23,7 +23,7 @@ class ReactMetamaskButtonDappScreen {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Terminate"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "Terminate"`]',
         ),
       }),

@@ -1,6 +1,7 @@
 import {
   WDIO_ACCESSIBILITY_ID,
   WDIO_ANDROID_UI_AUTOMATOR,
+  WDIO_IOS_CLASS_CHAIN,
   WDIO_IOS_PREDICATE_STRING,
   WDIO_RESOURCE_ID,
   WDIO_XPATH,
@@ -63,17 +64,20 @@ export class AndroidSelector extends WDIOSelector {
 export class IOSSelector extends WDIOSelector {
   private predicateStringSelector = '';
 
+  private classChainSelector = '';
+
   constructor() {
     super();
     this.predicateStringSelector = `${WDIO_IOS_PREDICATE_STRING}`;
+    this.classChainSelector = `${WDIO_IOS_CLASS_CHAIN}`;
   }
 
   predicateString(predicateString: string): string {
     return this.predicateStringSelector.concat(predicateString);
   }
 
-  iosClassChain(classChain: string): string {
-    return this.predicateStringSelector.concat(classChain);
+  classChain(classChain: string): string {
+    return this.classChainSelector.concat(classChain);
   }
 
   static by() {

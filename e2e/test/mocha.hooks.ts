@@ -1,3 +1,4 @@
+import { driver } from '@wdio/globals';
 import { killApp, launchApp, launchMetaMask } from '../src/Utils';
 import LockScreen from '../src/screens/MetaMask/LockScreen';
 import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
@@ -16,7 +17,6 @@ import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen'
 import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
 import WalletReadyScreen from '../src/screens/MetaMask/WalletReadyScreen';
 import EnableSmartTransactionsComponent from '../src/screens/MetaMask/components/EnableSmartTransactionsComponent';
-import { driver } from '@wdio/globals';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
@@ -57,10 +57,6 @@ const setAndroidDefaultLinks = async () => {
   }
 };
 
-export const onboardMM = async () => {
-  await beforeHook();
-};
-
 export const beforeHook = async () => {
   if (driver.isAndroid) {
     await setAndroidDefaultLinks();
@@ -92,6 +88,10 @@ export const beforeHook = async () => {
   await driver.pause(1000);
   await MetaMetricsComponent.tapAgreeToMetaMetrics();
   // await WhatsNewComponent.closeModal();
+};
+
+export const onboardMM = async () => {
+  await beforeHook();
 };
 
 export const beforeEachHook = async () => {

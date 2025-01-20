@@ -24,7 +24,7 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="personalSign"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "SIGN"`][2]',
         ),
       }),
@@ -37,7 +37,7 @@ class TestDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@resource-id="signTypedDataV3"]',
         ),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeButton[`name == "SIGN"`][4]',
         ),
       }),
