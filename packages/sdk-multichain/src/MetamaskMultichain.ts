@@ -1,7 +1,9 @@
 // packages/sdk-multichain/src/providers/MultichainProvider.ts
 import type { Json } from '@metamask/utils';
-import { ExtensionProvider } from './providers/ExtensionProvider';
+import { ExtensionProvider, ProviderType } from './providers/ExtensionProvider';
 import { LoggerLike, MultichainEvents, ScopedProperties, ScopeObject, SessionData, SessionEventData, SessionProperties } from './types';
+import { MetaMaskInpageProvider } from '@metamask/providers';
+import { Duplex } from 'readable-stream';
 
 export interface CreateSessionParams {
   requiredScopes?: Record<string, ScopeObject>;
@@ -11,6 +13,13 @@ export interface CreateSessionParams {
 }
 
 const DEFAULT_SESSION_ID = 'SINGLE_SESSION_ONLY';
+
+interface MetamaskMultichainParams {
+  logger?: LoggerLike;
+  existingProvider?: MetaMaskInpageProvider;
+  existingStream?: Duplex;
+  preferredProvider?: ProviderType;
+}
 
 /**
  * A CAIP-25-compliant provider that uses ExtensionProvider for transport.
@@ -27,9 +36,21 @@ export class MetamaskMultichain {
   };
   private readonly logger?: LoggerLike;
 
-  constructor(params?: { logger?: LoggerLike }) {
+  constructor(params?: MetamaskMultichainParams) {
     this.logger = params?.logger ?? console;
-    this.provider = new ExtensionProvider(params);
+
+    this.logger?.debug('[MetamaskMultichain] Initializing with params:', {
+      hasExistingProvider: !!params?.existingProvider,
+      hasExistingStream: !!params?.existingStream,
+      preferredProvider: params?.preferredProvider,
+    });
+
+    this.provider = new ExtensionProvider({
+      logger: this.logger,
+      existingProvider: params?.existingProvider,
+      existingStream: params?.existingStream,
+      preferredProvider: params?.preferredProvider,
+    });
 
     this.provider.onNotification((notification) => {
       this.notify('notification', notification);

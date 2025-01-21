@@ -1,14 +1,20 @@
+import { MetaMaskInpageProvider } from '@metamask/providers';
 import { MetamaskMultichain } from './MetamaskMultichain';
-import { SessionData, SessionEventData, StoredSession } from './types';
+import { LoggerLike, SessionData, SessionEventData, StoredSession } from './types';
 import { discoverWallets, walletFilters } from './walletDiscovery';
 
-
+import { Duplex } from 'readable-stream';
 
 interface InitializationParams {
   extensionId?: string;
   onSessionChanged?: (event: SessionEventData) => void;
   onNotification?: (notification: unknown) => void;
   storageKey?: string;
+  providerConfig?: {
+    existingProvider?: MetaMaskInpageProvider;
+    logger?: LoggerLike;
+    existingStream?: Duplex;
+  };
 }
 
 /**
@@ -92,8 +98,20 @@ export const performMultichainInit = async ({
   onSessionChanged,
   onNotification,
   storageKey = 'metamask_multichain_session',
+  providerConfig,
 }: InitializationParams = {}): Promise<MetamaskMultichain> => {
-  const multichain = new MetamaskMultichain();
+  console.debug('[performMultichainInit] Starting initialization with:', {
+    extensionId,
+    hasProviderConfig: !!providerConfig,
+    hasExistingProvider: !!providerConfig?.existingProvider,
+    storageKey,
+  });
+
+  const multichain = new MetamaskMultichain({
+    logger: providerConfig?.logger,
+    existingProvider: providerConfig?.existingProvider,
+    existingStream: providerConfig?.existingStream,
+  });
 
   // Set up event listeners
   if (onSessionChanged) {
@@ -114,9 +132,16 @@ export const performMultichainInit = async ({
 
   // Try to restore previous session or auto-connect
   try {
-    // Check for stored session first
+    // If we have an existing provider, try to use it first
+    if (providerConfig?.existingProvider) {
+      console.debug('[performMultichainInit] Using existing provider');
+      return multichain;
+    }
+
+    // Check for stored session
     const storedSession = getStoredSession(storageKey);
     if (storedSession && isValidStoredSession(storedSession)) {
+      console.debug('[performMultichainInit] Found valid stored session:', storedSession);
       const connected = await multichain.connect({
         extensionId: storedSession.extensionId
       });
@@ -125,20 +150,22 @@ export const performMultichainInit = async ({
           sessionId: storedSession.sessionId
         });
         if (session) {
+          console.debug('[performMultichainInit] Successfully restored session');
           return multichain;
         }
       }
     }
 
     // If no stored session or it failed, try auto-detection
-    if (isChromeRuntime()) {
+    if (isChromeRuntime() && !providerConfig?.existingProvider) {
+      console.debug('[performMultichainInit] Attempting auto-detection');
       const detectedExtensionId = extensionId || await detectMetaMaskExtensionId();
       if (detectedExtensionId) {
         await multichain.connect({ extensionId: detectedExtensionId });
       }
     }
   } catch (error) {
-    console.error('Failed to initialize multichain:', error);
+    console.error('[performMultichainInit] Failed to initialize:', error);
   }
 
   return multichain;

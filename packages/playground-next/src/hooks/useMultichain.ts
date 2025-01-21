@@ -1,3 +1,4 @@
+import { eip6963RequestProvider } from '@metamask/sdk';
 import {
   CreateSessionParams,
   getStoredSession,
@@ -14,6 +15,7 @@ interface UseMultichainParams {
   onSessionChanged?: (event: SessionEventData) => void;
   onNotification?: (notification: unknown) => void;
   defaultExtensionId?: string;
+  useExistingProvider?: boolean;
 }
 
 interface UseMultichainReturn {
@@ -46,6 +48,7 @@ export const useMultichain = ({
   onSessionChanged,
   onNotification,
   defaultExtensionId = 'nfdjnfhlblppdgdplngdjgpifllaamoc',
+  useExistingProvider = false,
 }: UseMultichainParams = {}): UseMultichainReturn => {
   const [multichain, setMultichain] = useState<MetamaskMultichain | null>(null);
   const [isConnected, setIsConnected] = useState(false);
@@ -59,31 +62,41 @@ export const useMultichain = ({
   const [isInitializing, setIsInitializing] = useState(true);
 
   const multichainInitRef = useRef<boolean>(false);
+  const prevProviderTypeRef = useRef(useExistingProvider);
 
   const init = useCallback(async () => {
     try {
       console.debug('[useMultichain] Starting initialization', {
         defaultExtensionId,
+        useExistingProvider,
         storedSession: localStorage.getItem('metamask_multichain_session'),
       });
 
+      let existingProvider;
+      if (useExistingProvider) {
+        try {
+          existingProvider = await eip6963RequestProvider({
+            rdns: 'io.metamask.flask',
+          });
+          console.debug(
+            '[useMultichain] Found existing provider:',
+            existingProvider,
+          );
+        } catch (err) {
+          console.warn('[useMultichain] Failed to get existing provider:', err);
+        }
+      }
+
       const instance = await performMultichainInit({
         extensionId: defaultExtensionId,
-        onSessionChanged: (event) => {
-          console.debug('[useMultichain] Session changed', {
-            type: event.type,
-            sessionId: event.session?.sessionId,
-            storedSession: localStorage.getItem('metamask_multichain_session'),
-          });
-          setCurrentSession(event.session);
-          setIsConnected(!!event.session);
-          if (event.session) {
-            setExtensionId(defaultExtensionId);
-          }
-          onSessionChanged?.(event);
-        },
+        onSessionChanged,
         onNotification,
         storageKey: 'metamask_multichain_session',
+        providerConfig: existingProvider
+          ? {
+              existingProvider,
+            }
+          : undefined,
       });
 
       console.log(`[useMultichain] Multichain instance`, instance);
@@ -133,25 +146,46 @@ export const useMultichain = ({
     } finally {
       setIsInitializing(false);
     }
-  }, [defaultExtensionId, onSessionChanged, onNotification]);
+  }, [
+    defaultExtensionId,
+    onSessionChanged,
+    onNotification,
+    useExistingProvider,
+  ]);
 
   // Initialize multichain instance
   useEffect(() => {
-    if (multichainInitRef.current) {
-      console.debug('[useMultichain] Already initialized, skipping');
+    // Allow first init or reinitialize if provider type changed
+    if (
+      multichainInitRef.current &&
+      prevProviderTypeRef.current === useExistingProvider
+    ) {
       return;
     }
+
     console.debug('[useMultichain] Starting initialization', {
       defaultExtensionId,
+      useExistingProvider,
       storedSession: localStorage.getItem('metamask_multichain_session'),
     });
+
+    prevProviderTypeRef.current = useExistingProvider;
     multichainInitRef.current = true;
+
     init();
+
     return () => {
       console.debug('[useMultichain] Cleanup - disconnecting');
       multichain?.disconnect();
     };
-  }, [defaultExtensionId, onSessionChanged, onNotification, multichain, init]);
+  }, [
+    defaultExtensionId,
+    onSessionChanged,
+    onNotification,
+    init,
+    useExistingProvider,
+    multichain,
+  ]);
 
   const connect = useCallback(
     async (params?: { extensionId: string }) => {

@@ -5,6 +5,12 @@ import type { Duplex } from 'readable-stream';
 import { MetaMaskInpageProvider, RequestArguments } from '@metamask/providers';
 import type { LoggerLike, MethodParams, Provider } from '../types';
 
+export enum ProviderType {
+  CHROME_EXTENSION = 'chrome_extension',
+  EXISTING_PROVIDER = 'existing_provider',
+  STREAM_PROVIDER = 'stream_provider',
+}
+
 /**
  * Configuration object for ExtensionProvider
  */
@@ -23,6 +29,8 @@ interface ExtensionProviderConfig {
    * connection attempts.
    */
   existingProvider?: MetaMaskInpageProvider;
+
+  preferredProvider?: ProviderType;
 }
 
 /**
@@ -33,13 +41,13 @@ interface ConnectParams {
 }
 
 export class ExtensionProvider implements Provider {
-  private logger?: LoggerLike;
-  private existingStream?: Duplex;
-  private existingProvider?: MetaMaskInpageProvider;
-
+  private readonly logger?: LoggerLike;
+  private readonly existingProvider?: MetaMaskInpageProvider;
+  private readonly existingStream?: Duplex;
+  private readonly preferredProvider?: ProviderType;
   private isConnected = false;
   private chromePort: chrome.runtime.Port | null = null;
-  private fallbackInpageProvider?: MetaMaskInpageProvider;
+  private streamProvider?: MetaMaskInpageProvider;
 
   /**
    * Storing notification callbacks.
@@ -50,8 +58,15 @@ export class ExtensionProvider implements Provider {
 
   constructor(config?: ExtensionProviderConfig) {
     this.logger = config?.logger ?? console;
-    this.existingStream = config?.existingStream;
     this.existingProvider = config?.existingProvider;
+    this.existingStream = config?.existingStream;
+    this.preferredProvider = config?.preferredProvider;
+
+    this.logger?.debug('[ExtensionProvider] Initialized with:', {
+      hasExistingProvider: !!this.existingProvider,
+      hasExistingStream: !!this.existingStream,
+      preferredProvider: this.preferredProvider,
+    });
   }
 
   /**
@@ -59,38 +74,45 @@ export class ExtensionProvider implements Provider {
    * chrome.runtime, tries that first. Otherwise uses existing provider, etc.
    */
   public async connect(params?: ConnectParams): Promise<boolean> {
-    this.logger?.debug('[ExtensionProvider] connect called', params);
+    this.logger?.debug('[ExtensionProvider] Connect called with:', {
+      params,
+      preferredProvider: this.preferredProvider,
+      hasExistingProvider: !!this.existingProvider,
+      hasExistingStream: !!this.existingStream,
+      canUseChromeRuntime: this.canUseChromeRuntime(),
+    });
 
-    // 1. If extensionId is provided and we can do chrome connect, do that first
-    if (params?.extensionId && this.canUseChromeRuntime()) {
-      const success = await this.connectChrome(params.extensionId);
-      if (success) {
+    // First check if we have an existing provider
+    if (this.existingProvider) {
+      this.logger?.debug('[ExtensionProvider] Using existing provider');
+      this.isConnected = true;
+      return true;
+    }
+
+    // Then try other connection methods
+    try {
+      if (params?.extensionId && this.canUseChromeRuntime()) {
+        this.logger?.debug('[ExtensionProvider] Attempting Chrome extension connection');
+        const success = await this.connectChrome(params.extensionId);
+        if (success) {
+          this.isConnected = true;
+          return true;
+        }
+      }
+
+      if (this.existingStream) {
+        this.logger?.debug('[ExtensionProvider] Using existing stream');
+        this.wrapStreamAsProvider(this.existingStream);
         this.isConnected = true;
         return true;
       }
-      this.logger?.debug('[ExtensionProvider] Chrome connect failed, fallback...');
-    }
 
-    // 2. If user gave an existingProvider, we’re effectively already connected
-    if (this.existingProvider) {
-      this.logger?.debug('[ExtensionProvider] Using existingProvider');
-      this.isConnected = true;
-      return true;
+      this.logger?.error('[ExtensionProvider] No valid provider available');
+      throw new Error('No valid provider available');
+    } catch (error) {
+      this.logger?.error('[ExtensionProvider] Connection failed:', error);
+      throw error;
     }
-
-    // 3. If user gave an existingStream, wrap it
-    if (this.existingStream) {
-      this.logger?.debug('[ExtensionProvider] Using existingStream');
-      this.wrapStreamAsProvider(this.existingStream);
-      this.isConnected = true;
-      return true;
-    }
-
-    // 4. Otherwise, fallback to your postMessage or error
-    this.logger?.debug('[ExtensionProvider] Attempting postMessage fallback...');
-    await this.setupPostMessageFallback();
-    this.isConnected = true;
-    return true;
   }
 
   public disconnect() {
@@ -99,9 +121,11 @@ export class ExtensionProvider implements Provider {
       this.chromePort.disconnect();
       this.chromePort = null;
     }
-    // Clean up fallback or existing providers if needed
+    if (this.streamProvider) {
+      // Clean up stream provider if needed
+      this.streamProvider = undefined;
+    }
     this.isConnected = false;
-    // Clear any stored notification callbacks
     this.removeAllNotificationListeners();
   }
 
@@ -117,23 +141,38 @@ export class ExtensionProvider implements Provider {
       throw new Error('[ExtensionProvider] Not connected');
     }
 
-    // 1. If we connected via chromePort
-    if (this.chromePort) {
-      return this.requestViaChrome(params);
-    }
+    switch (this.preferredProvider) {
+      case ProviderType.EXISTING_PROVIDER:
+        if (!this.existingProvider) {
+          throw new Error('Existing provider requested but none available');
+        }
+        return this.existingProvider.request(params as RequestArguments);
 
-    // 2. If we have an existing provider
-    if (this.existingProvider) {
-      // cast to @metamask/providers' RequestArguments
-      return this.existingProvider.request(params as RequestArguments);
-    }
+      case ProviderType.STREAM_PROVIDER:
+        if (!this.streamProvider) {
+          throw new Error('Stream provider requested but not initialized');
+        }
+        return this.streamProvider.request(params as RequestArguments);
 
-    // 3. If we created a fallbackInpageProvider
-    if (this.fallbackInpageProvider) {
-      return this.fallbackInpageProvider.request(params as RequestArguments);
-    }
+      case ProviderType.CHROME_EXTENSION:
+        if (!this.chromePort) {
+          throw new Error('Chrome extension requested but not connected');
+        }
+        return this.requestViaChrome(params);
 
-    throw new Error('[ExtensionProvider] No valid provider found');
+      default:
+        // Use whatever provider is available
+        if (this.existingProvider) {
+          return this.existingProvider.request(params as RequestArguments);
+        }
+        if (this.streamProvider) {
+          return this.streamProvider.request(params as RequestArguments);
+        }
+        if (this.chromePort) {
+          return this.requestViaChrome(params);
+        }
+        throw new Error('No valid provider available');
+    }
   }
 
   /**
@@ -277,16 +316,15 @@ export class ExtensionProvider implements Provider {
   }
 
   private wrapStreamAsProvider(stream: Duplex) {
-    this.logger?.debug('[ExtensionProvider] wrapping existingStream as inpage provider');
-    const provider = new MetaMaskInpageProvider(stream, {
+    this.logger?.debug('[ExtensionProvider] wrapping stream as provider');
+    this.streamProvider = new MetaMaskInpageProvider(stream, {
       maxEventListeners: 100,
       shouldSendMetadata: true,
     });
-    this.fallbackInpageProvider = provider;
 
-    // Example: if you want to forward notifications from the provider:
-    provider.on('notification', (notif) => {
-      this.logger?.debug('[ExtensionProvider] fallback notification:', notif);
+    // Forward notifications from the stream provider
+    this.streamProvider.on('notification', (notif) => {
+      this.logger?.debug('[ExtensionProvider] stream notification:', notif);
       this.notifyCallbacks(notif);
     });
   }

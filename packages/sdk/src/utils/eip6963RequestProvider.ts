@@ -24,11 +24,25 @@ export type EIP6963AnnounceProviderEvent = CustomEvent & {
   detail: EIP6963ProviderDetail;
 };
 
-export function eip6963RequestProvider(): Promise<MetaMaskInpageProvider> {
+interface RequestProviderOptions {
+  rdns?: string; // Allow specifying a single RDNS to match
+  timeoutMs: number;
+}
+
+const DEFAULT_OPTIONS: RequestProviderOptions = {
+  rdns: 'io.metamask', // Default to regular MetaMask
+  timeoutMs: 500,
+};
+
+export function eip6963RequestProvider(
+  options: Partial<RequestProviderOptions> = {}
+): Promise<MetaMaskInpageProvider> {
+  const { rdns, timeoutMs } = { ...DEFAULT_OPTIONS, ...options };
+
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
       reject(new Error('eip6963RequestProvider timed out'));
-    }, 500);
+    }, timeoutMs);
 
     window.addEventListener(
       EIP6963EventNames.Announce,
@@ -38,16 +52,15 @@ export function eip6963RequestProvider(): Promise<MetaMaskInpageProvider> {
 
         const { detail: { info, provider } = {} } = event;
 
-        const { name, rdns, uuid } = info ?? {};
+        const { name, rdns: providerRdns, uuid } = info ?? {};
 
         const isValid =
           UUID_V4_REGEX.test(uuid) &&
           (name as string).startsWith(METAMASK_EIP_6369_PROVIDER_INFO.NAME) &&
-          METAMASK_EIP_6369_PROVIDER_INFO.RDNS.includes(rdns);
+          providerRdns === rdns;
 
         if (isValid) {
           clearTimeout(timeoutId);
-
           resolve(provider);
         }
       },

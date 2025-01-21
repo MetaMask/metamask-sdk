@@ -30,6 +30,12 @@ import {
 } from '../multichain-types';
 import styles from '../styles/page.module.css';
 
+// Simplify enum for provider types
+export enum ProviderType {
+  CHROME_EXTENSION = 'chrome_extension',
+  EXISTING_PROVIDER = 'existing_provider',
+}
+
 const defaultSessionsScopes: Record<NetworkId, boolean> = {
   'eip155:1': false,
   'eip155:59144': false,
@@ -72,6 +78,8 @@ export default function Page() {
   const [walletNotifyHistory, setWalletNotifyHistory] = useState<
     WalletHistoryEntry[]
   >([]);
+  const [selectedProviderType, setSelectedProviderType] =
+    useState<ProviderType>(ProviderType.CHROME_EXTENSION);
 
   const setInitialMethodsAndAccounts = useCallback(
     (session: SessionData) => {
@@ -164,6 +172,8 @@ export default function Page() {
   } = useMultichain({
     onSessionChanged: handleSessionChangedNotification,
     onNotification: handleNotification,
+    useExistingProvider:
+      selectedProviderType === ProviderType.EXISTING_PROVIDER,
   });
 
   // Initialize connection management
@@ -357,6 +367,39 @@ export default function Page() {
 
       {!isConnected && (
         <section>
+          <div className="connection-options">
+            <h3>Connection Method</h3>
+            <div className="provider-selector">
+              <label>
+                <input
+                  type="radio"
+                  name="provider-type"
+                  value={ProviderType.CHROME_EXTENSION}
+                  checked={
+                    selectedProviderType === ProviderType.CHROME_EXTENSION
+                  }
+                  onChange={(e) =>
+                    setSelectedProviderType(e.target.value as ProviderType)
+                  }
+                />
+                Chrome Extension
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="provider-type"
+                  value={ProviderType.EXISTING_PROVIDER}
+                  checked={
+                    selectedProviderType === ProviderType.EXISTING_PROVIDER
+                  }
+                  onChange={(e) =>
+                    setSelectedProviderType(e.target.value as ProviderType)
+                  }
+                />
+                Existing Provider (EIP-6963)
+              </label>
+            </div>
+          </div>
           <button onClick={handleConnect} className="connect-button">
             Connect to MetaMask
           </button>
