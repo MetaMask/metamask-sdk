@@ -47,7 +47,7 @@ export interface MmSelectModalCustomEvent<T> extends CustomEvent<T> {
 }
 declare global {
     interface HTMLMmInstallModalElementEventMap {
-        "close": any;
+        "close": { shouldTerminate?: boolean };
         "startDesktopOnboarding": any;
         "trackAnalytics": { event: TrackingEvents, params?: Record<string, unknown> };
     }
@@ -114,7 +114,7 @@ declare namespace LocalJSX {
           * The QR code link
          */
         "link"?: string;
-        "onClose"?: (event: MmInstallModalCustomEvent<any>) => void;
+        "onClose"?: (event: MmInstallModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
         "onTrackAnalytics"?: (event: MmInstallModalCustomEvent<{ event: TrackingEvents, params?: Record<string, unknown> }>) => void;
         "preferDesktop"?: boolean;

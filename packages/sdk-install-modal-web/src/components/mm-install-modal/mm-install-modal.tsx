@@ -29,7 +29,7 @@ export class InstallModal {
 
   private i18nInstance: SimpleI18n;
 
-  @Event() close: EventEmitter;
+  @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
   @Event() startDesktopOnboarding: EventEmitter;
 
@@ -79,8 +79,8 @@ export class InstallModal {
     }
   }
 
-  onClose() {
-    this.close.emit();
+  onClose(shouldTerminate = false) {
+    this.close.emit({ shouldTerminate });
   }
 
   onStartDesktopOnboardingHandler() {
@@ -123,11 +123,11 @@ export class InstallModal {
 
     return (
       <WidgetWrapper className="install-model">
-        <div class='backdrop' onClick={() => this.onClose()}></div>
+        <div class='backdrop' onClick={() => this.onClose(true)}></div>
         <div class='modal'>
           <div class='closeButtonContainer'>
             <div class='right'>
-              <span class='closeButton' onClick={() => this.onClose()}>
+              <span class='closeButton' onClick={() => this.onClose(true)}>
                 <CloseButton />
               </span>
             </div>
