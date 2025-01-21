@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import { visibilityOf } from 'wdio-wait-for';
-import { getSelectorForPlatform } from '../../Utils';
-import { AndroidSelector, IOSSelector } from '../../Selectors';
 import MainScreen from './MainScreen';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
 
 class LockScreen {
   get passwordInput(): ChainablePromiseElement {
@@ -50,7 +50,8 @@ class LockScreen {
       .waitUntil(visibilityOf(this.loginTitle), {
         timeout: 10000,
         interval: 5000,
-        timeoutMsg: 'Welcome Back! is not visible. Assuming Wallet is not onboarded',
+        timeoutMsg:
+          'Welcome Back! is not visible. Assuming Wallet is not onboarded',
       })
       .catch((e) => {
         console.error('Error unlocking MM: ', e);
@@ -83,8 +84,8 @@ class LockScreen {
       })
       .then(async () => {
         // await driver.pause(5000);
-        await (this.passwordInput).setValue(password);
-        await (this.unlockButton).click();
+        await this.passwordInput.setValue(password);
+        await this.unlockButton.click();
         // Wait for the wallet to be unlocked
         await driver.pause(3500);
       })

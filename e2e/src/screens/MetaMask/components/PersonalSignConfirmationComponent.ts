@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../../Utils';
-import { AndroidSelector, IOSSelector } from '../../../Selectors';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
 
 class PersonalSignConfirmationComponent {
   get signButton(): ChainablePromiseElement {
@@ -26,7 +26,7 @@ class PersonalSignConfirmationComponent {
       }),
     );
   }
-  
+
   // TODO: add iOS locator
   get messageText(): ChainablePromiseElement {
     return $(
@@ -58,5 +58,6 @@ class PersonalSignConfirmationComponent {
   }
 }
 
-const personalSignConfirmationComponent = new PersonalSignConfirmationComponent();
+const personalSignConfirmationComponent =
+  new PersonalSignConfirmationComponent();
 export default personalSignConfirmationComponent;

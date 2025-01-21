@@ -1,22 +1,22 @@
-import { METAMASK_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
+import { METAMASK_BUNDLE_ID, WALLET_PASSWORD } from '@/util/Constants';
+import FixtureServer from '@/fixtures/FixtureServer';
 import {
   deviceOpenDeeplinkWithMetaMask,
   goBack,
   killApp,
   launchMetaMaskWithFixture,
   navigateToWebMobileDapp,
-} from '../../src/Utils';
-import DevnextJSDappScreen from '../../src/screens/Dapps/DevnextJSDappScreen';
-import LockScreen from '../../src/screens/MetaMask/LockScreen';
-import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
-import PersonalSignConfirmationComponent from '../../src/screens/MetaMask/components/PersonalSignConfirmationComponent';
-import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
-import FixtureServer from '../fixtures/FixtureServer';
+} from '@/util/Utils';
+import ConnectModalComponent from '@/screens/MetaMask/components/ConnectModalComponent';
+import PersonalSignConfirmationComponent from '@/screens/MetaMask/components/PersonalSignConfirmationComponent';
+import AndroidOpenWithComponent from '@/screens/Android/components/AndroidOpenWithComponent';
+import LockScreen from '@/screens/MetaMask/LockScreen';
+import DevnextJSDappScreen from '@/screens/Dapps/DevnextJSDappScreen';
 
 let devNextDappUrl: string;
 const fixtureServer = new FixtureServer();
 
-describe('Devnext E2E', () => {
+describe('MetaMask SDK E2E', () => {
   before(async () => {
     devNextDappUrl = process.env.DEVNEXT_DAPP_URL ?? '';
     expect(devNextDappUrl).toBeDefined();

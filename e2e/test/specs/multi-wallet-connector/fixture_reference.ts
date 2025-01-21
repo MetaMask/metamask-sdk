@@ -1,4 +1,6 @@
 import { driver } from '@wdio/globals';
+import FixtureServer from '@/fixtures/FixtureServer';
+import { stopFixtureServer } from '@/fixtures/FixtureHelper';
 import connectModalComponent from '@/screens/MetaMask/components/ConnectModalComponent';
 import ChromeBrowserScreen from '@/screens/Android/ChromeBrowserScreen';
 import LockScreen from '@/screens/MetaMask/LockScreen';
@@ -7,8 +9,6 @@ import { METAMASK_BUNDLE_ID, WALLET_PASSWORD } from '@/util/Constants';
 import CreateReactAppDappScreen from '@/screens/Dapps/CreateReactAppDappScreen';
 import IOSOpenInComponent from '@/screens/iOS/components/IOSOpenInComponent';
 import SafariBrowserScreen from '@/screens/iOS/SafariBrowserScreen';
-import { stopFixtureServer } from '@/fixtures/FixtureHelper';
-import FixtureServer from '@/fixtures/FixtureServer';
 
 const fixtureServer = new FixtureServer();
 

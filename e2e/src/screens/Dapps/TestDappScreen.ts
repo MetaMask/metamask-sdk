@@ -1,10 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { Dapp } from '../interfaces/Dapp';
-import Gestures from '../../Gestures';
-import { getSelectorForPlatform } from '../../Utils';
-import { AndroidSelector, IOSSelector } from '../../Selectors';
+import { Dapp } from '@/screens/interfaces/Dapp';
+import Gestures from '@/util/Gestures';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
 
 class TestDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {

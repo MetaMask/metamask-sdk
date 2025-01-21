@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelector, IOSSelector } from '../../Selectors';
-import { getSelectorForPlatform } from '../../Utils';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@/util/Utils';
 
 class ReactMetamaskButtonDappScreen {
   get connectButton(): ChainablePromiseElement {

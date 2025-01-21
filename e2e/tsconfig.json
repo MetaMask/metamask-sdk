@@ -23,7 +23,8 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "@/*": ["src/*"]
     }
   },
   "include": ["test", "src", "node_modules/@types/mocha/index.d.ts"],

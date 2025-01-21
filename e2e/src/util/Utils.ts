@@ -1,18 +1,7 @@
 import path from 'path';
 import ADB from 'appium-adb';
 import { driver } from '@wdio/globals';
-import { FixtureBuilder } from '../test/fixtures/FixtureBuilder';
-import {
-  loadFixture,
-  startFixtureServer,
-} from '../test/fixtures/FixtureHelper';
-import FixtureServer from '../test/fixtures/FixtureServer';
-import {
-  BrowserSize,
-  Coordinates,
-  MetaMaskElementSelector,
-  ScreenPercentage,
-} from './types';
+import Gestures from './Gestures';
 import {
   FIXTURE_SERVER_PORT,
   METAMASK_BUNDLE_ID,
@@ -23,13 +12,21 @@ import {
   Browsers,
   BrowsersActivity,
 } from './Constants';
-import LockScreen from './screens/MetaMask/LockScreen';
-import { Dapp } from './screens/interfaces/Dapp';
-import SafariBrowserScreen from './screens/iOS/SafariBrowserScreen';
-import ChromeBrowserScreen from './screens/Android/ChromeBrowserScreen';
-import Gestures from './Gestures';
-import AndroidOpenWithComponent from './screens/Android/components/AndroidOpenWithComponent';
-import iOSOpenInComponent from './screens/iOS/components/IOSOpenInComponent';
+import {
+  BrowserSize,
+  Coordinates,
+  MetaMaskElementSelector,
+  ScreenPercentage,
+} from './types';
+import LockScreen from '@/screens/MetaMask/LockScreen';
+import { Dapp } from '@/screens/interfaces/Dapp';
+import SafariBrowserScreen from '@/screens/iOS/SafariBrowserScreen';
+import ChromeBrowserScreen from '@/screens/Android/ChromeBrowserScreen';
+import AndroidOpenWithComponent from '@/screens/Android/components/AndroidOpenWithComponent';
+import iOSOpenInComponent from '@/screens/iOS/components/IOSOpenInComponent';
+import { loadFixture, startFixtureServer } from '@/fixtures/FixtureHelper';
+import { FixtureBuilder } from '@/fixtures/FixtureBuilder';
+import FixtureServer from '@/fixtures/FixtureServer';
 
 export const deviceOpenDeeplinkWithMetaMask = async () => {
   if (PLATFORM === Platforms.IOS) {

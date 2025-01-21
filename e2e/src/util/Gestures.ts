@@ -1,4 +1,7 @@
-import { getCoordinatesAsPercentage, getCoordinatesForDeviceFromPercentage } from './Utils';
+import {
+  getCoordinatesAsPercentage,
+  getCoordinatesForDeviceFromPercentage,
+} from './Utils';
 import { ScreenPercentage } from './types';
 
 const Actions = {

@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { UnityDappElement } from '../../types';
+import { UnityDappElement } from '@/util/types';
 
 export type Dapp = {
   connectButton: ChainablePromiseElement | UnityDappElement;

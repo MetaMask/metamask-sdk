@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../Utils';
-import { Dapp } from '../interfaces/Dapp';
-import { IOSSelector } from '../../Selectors';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { Dapp } from '@/screens/interfaces/Dapp';
+import { IOSSelector } from '@/util/Selectors';
 
 class IOSNNativeDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {

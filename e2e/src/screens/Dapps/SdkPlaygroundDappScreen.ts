@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import Gestures from '../../Gestures';
-import { AndroidSelector, IOSSelector } from '../../Selectors';
-import { getSelectorForPlatform } from '../../Utils';
-import { Dapp } from '../interfaces/Dapp';
+import Gestures from '@/util/Gestures';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { Dapp } from '@/screens/interfaces/Dapp';
 
 class SdkPlaygroundDappScreen implements Dapp {
   get demoProviderButton(): ChainablePromiseElement {

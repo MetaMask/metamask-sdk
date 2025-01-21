@@ -1,6 +1,6 @@
-import { UnityDappElement } from '../../types';
-import Gestures from '../../Gestures';
-import { Dapp } from '../interfaces/Dapp';
+import { UnityDappElement } from '@/util/types';
+import Gestures from '@/util/Gestures';
+import { Dapp } from '@/screens/interfaces/Dapp';
 
 class UnityDappScreen implements Dapp {
   get connectButton(): UnityDappElement {

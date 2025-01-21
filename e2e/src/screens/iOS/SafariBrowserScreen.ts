@@ -1,10 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { getSelectorForPlatform } from '../../Utils';
-import { MobileBrowser } from '../interfaces/MobileBrowser';
-import { IOSSelector } from '../../Selectors';
-import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../Constants';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { MobileBrowser } from '@/screens/interfaces/MobileBrowser';
+import { IOSSelector } from '@/util/Selectors';
+import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '@/util/Constants';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {

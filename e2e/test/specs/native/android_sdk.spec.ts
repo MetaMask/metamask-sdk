@@ -1,12 +1,12 @@
-import { WALLET_PASSWORD } from '../../src/Constants';
-import Utils from '../../src/Utils';
-import AndroidSDKDappScreen from '../../src/screens/Dapps/AndroidSDKDappScreen';
-import LockScreen from '../../src/screens/MetaMask/LockScreen';
-import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
-import SendTxModalComponent from '../../src/screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '../../src/screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '../../src/screens/MetaMask/components/SwitchNetworkModalComponent';
-import { beforeEachHook, beforeHook } from '../mocha.hooks';
+import { beforeEachHook, beforeHook } from '../../mocha.hooks';
+import { WALLET_PASSWORD } from '@/util/Constants';
+import { launchApp } from '@/util/Utils';
+import AndroidSDKDappScreen from '@/screens/Dapps/AndroidSDKDappScreen';
+import LockScreen from '@/screens/MetaMask/LockScreen';
+import ConnectModalComponent from '@/screens/MetaMask/components/ConnectModalComponent';
+import SendTxModalComponent from '@/screens/MetaMask/components/SendTxModalComponent';
+import SignModalComponent from '@/screens/MetaMask/components/SignModalComponent';
+import SwitchNetworkModalComponent from '@/screens/MetaMask/components/SwitchNetworkModalComponent';
 
 describe.skip('Android SDK (native) E2E', () => {
   before(async () => {
@@ -20,7 +20,7 @@ describe.skip('Android SDK (native) E2E', () => {
   it('Smoke Testing on the AndroidSDK Test Dapp', async () => {
     await driver.pause(5000);
 
-    await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
+    await launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
 
     await driver.pause(5000);
 
@@ -38,7 +38,7 @@ describe.skip('Android SDK (native) E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
+      await launchApp(process.env.ANDROID_SDK_TEST_BUNDLE_ID ?? '');
     }
 
     await driver.pause(5000);

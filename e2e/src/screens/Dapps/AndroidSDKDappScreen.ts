@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelector } from '../../Selectors';
-import { getSelectorForPlatform } from '../../Utils';
-import { Dapp } from '../interfaces/Dapp';
+import { AndroidSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@/util/Utils';
+import { Dapp } from '@/screens/interfaces/Dapp';
 
 class AndroidSDKDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {

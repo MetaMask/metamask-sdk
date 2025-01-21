@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { visibilityOf } from 'wdio-wait-for';
-import { getSelectorForPlatform, scrollToElement } from '../../Utils';
-import { Dapp } from '../interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '../../Selectors';
+import { getSelectorForPlatform, scrollToElement } from '@/util/Utils';
+import { Dapp } from '@/screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@/util/Selectors';
 
 class DevnextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -62,9 +62,7 @@ class DevnextDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.TextView[@text="YES"]',
         ),
-        iosSelector: IOSSelector.by().predicateString(
-          'name == "YES"',
-        ),
+        iosSelector: IOSSelector.by().predicateString('name == "YES"'),
       }),
     );
   }
