@@ -1,6 +1,6 @@
 // packages/sdk-multichain/src/providers/MultichainProvider.ts
 import type { Json } from '@metamask/utils';
-import { ExtensionProvider } from './providers/EVMProvider';
+import { ExtensionProvider } from './providers/ExtensionProvider';
 import { LoggerLike, MultichainEvents, ScopedProperties, ScopeObject, SessionData, SessionEventData, SessionProperties } from './types';
 
 export interface CreateSessionParams {
@@ -50,41 +50,57 @@ export class MetamaskMultichain {
     this.listeners[event].delete(listener);
   }
 
-  private notify(event: 'sessionChanged', data: SessionEventData): void;
-  private notify(event: 'notification', data: Json): void;
-  private notify(event: keyof MultichainEvents, data: unknown): void {
-    this.logger?.debug(`MetamaskMultichain received event: ${event} / type: ${typeof data}`, data);
+  private notify<K extends keyof MultichainEvents>(
+    event: K,
+    data: Parameters<MultichainEvents[K]>[0],
+  ): void {
+    this.logger?.debug(
+      `MetamaskMultichain received event: ${event} / type: ${typeof data}`,
+      data,
+    );
+
     if (event === 'sessionChanged') {
       const sessionEventData = data as SessionEventData;
       // Update the session data
       this.sessions.set(sessionEventData.session.sessionId, sessionEventData.session);
-      this.listeners.sessionChanged.forEach(listener => listener(sessionEventData));
+      this.listeners.sessionChanged.forEach((listener) => listener(sessionEventData));
     } else if (event === 'notification') {
       this.logger?.debug('[MetamaskMultichain] Received notification:', data);
-      if(typeof data === 'object' && "method" in data && data.method === 'wallet_sessionChanged' && "params" in data && typeof data.params === 'object' && "sessionScopes" in data.params && typeof data.params.sessionScopes === 'object') {
-        const updatedSessionScope = data.params as SessionData;
+      if (
+        typeof data === 'object' &&
+        data !== null &&
+        'method' in data &&
+        (data as any).method === 'wallet_sessionChanged' &&
+        'params' in data &&
+        typeof (data as any).params === 'object' &&
+        'sessionScopes' in (data as any).params
+      ) {
+        const updatedSessionScope = (data as any).params as SessionData;
         const session = this.sessions.get(DEFAULT_SESSION_ID);
+
         this.logger?.debug('[MetamaskMultichain] wallet_sessionChanged received', {
           sessionId: DEFAULT_SESSION_ID,
           updatedSessionScope,
         });
-        console.log('[MetamaskMultichain] Updated session:', this.sessions);
+
         if (session) {
           session.sessionScopes = updatedSessionScope.sessionScopes;
           session.sessionProperties = updatedSessionScope.sessionProperties;
           session.expiry = updatedSessionScope.expiry;
           session.sessionId = updatedSessionScope.sessionId;
           session.scopedProperties = updatedSessionScope.scopedProperties;
+
           this.sessions.set(DEFAULT_SESSION_ID, session);
           this.logger?.debug('[MetamaskMultichain] Updated session:', session);
-          this.listeners.sessionChanged.forEach(listener => listener({
+
+          this.listeners.sessionChanged.forEach((listener) => listener({
             type: 'updated',
             session,
           }));
         }
       } else {
         console.error('[MetamaskMultichain] Received unknown notification:', data);
-        this.listeners.notification.forEach(listener => listener(data));
+        this.listeners.notification.forEach((listener) => listener(data));
       }
     } else {
       console.error('[MetamaskMultichain] Received unknown event:', event, data);

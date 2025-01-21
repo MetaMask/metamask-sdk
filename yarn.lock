@@ -11529,6 +11529,7 @@ __metadata:
     "@metamask/auto-changelog": 3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
+    "@metamask/providers": ^18.3.1
     "@metamask/utils": ^11.0.1
     "@open-rpc/meta-schema": ^1.14.9
     "@rollup/plugin-commonjs": ^25.0.7

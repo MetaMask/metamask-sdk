@@ -13,6 +13,7 @@ const PageSdk = () => {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [signedMessage, setSignedMessage] = useState<string>('');
 
   const getBalance = useCallback(
     async (address: string): Promise<string> => {
@@ -43,6 +44,24 @@ const PageSdk = () => {
       setAccountInfo(null);
     } catch (err) {
       console.error('Failed to terminate connection:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePersonalSign = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      if (!account) return;
+
+      const message = 'Hello from Simple Web3 Dapp!';
+      const signature = await provider?.request({
+        method: 'personal_sign',
+        params: [message, account],
+      });
+      setSignedMessage(signature as string);
+    } catch (err) {
+      console.error('Failed to sign message:', err);
     } finally {
       setIsLoading(false);
     }
@@ -84,6 +103,16 @@ const PageSdk = () => {
           </div>
           <button
             className={styles.button}
+            onClick={handlePersonalSign}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing...' : 'Sign Message'}
+          </button>
+          {signedMessage && (
+            <div className={styles.address}>Signature: {signedMessage}</div>
+          )}
+          <button
+            className={styles.button}
             onClick={terminateConnection}
             disabled={isLoading}
           >
@@ -103,6 +132,9 @@ export default function PageSDKWrapper() {
         dappMetadata: {
           name: 'Simple Web3 Dapp',
           url: 'https://metamask.io',
+        },
+        logging: {
+          developerMode: true,
         },
       }}
     >

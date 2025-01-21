@@ -1,3 +1,4 @@
+// packages/sdk/src/PostMessageStream/getPostMessageStream.ts
 import { CommunicationLayerPreference } from '@metamask/sdk-communication-layer';
 import { PlatformManager } from '../Platform/PlatfformManager';
 import { ProviderConstants } from '../constants';
