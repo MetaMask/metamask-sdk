@@ -114,6 +114,7 @@ export class MetamaskMultichain {
           this.sessions.set(DEFAULT_SESSION_ID, session);
           this.logger?.debug('[MetamaskMultichain] Updated session:', session);
 
+          this.logger?.debug(`[MetamaskMultichain] Notifying sessionChanged listeners ${this.listeners.sessionChanged.size}`);
           this.listeners.sessionChanged.forEach((listener) => listener({
             type: 'updated',
             session,
@@ -135,6 +136,12 @@ export class MetamaskMultichain {
 
   public disconnect(): void {
     this.logger?.debug('[Caip25MultichainProvider] Disconnecting...');
+    // Clear all sessions
+    this.sessions.clear();
+    // Clear all listeners
+    this.listeners.sessionChanged.clear();
+    this.listeners.notification.clear();
+    // Disconnect the provider
     this.provider.disconnect();
   }
 

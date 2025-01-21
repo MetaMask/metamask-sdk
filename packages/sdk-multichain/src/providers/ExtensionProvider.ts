@@ -117,15 +117,37 @@ export class ExtensionProvider implements Provider {
 
   public disconnect() {
     this.logger?.debug('[ExtensionProvider] disconnecting...');
+
+    // Disconnect Chrome port if it exists
     if (this.chromePort) {
-      this.chromePort.disconnect();
-      this.chromePort = null;
+      try {
+        this.chromePort.disconnect();
+        this.chromePort = null;
+      } catch (error) {
+        this.logger?.error('[ExtensionProvider] Error disconnecting Chrome port:', error);
+      }
     }
+
+    // Clean up stream provider
     if (this.streamProvider) {
-      // Clean up stream provider if needed
-      this.streamProvider = undefined;
+      try {
+        // Remove all listeners from the stream provider
+        this.streamProvider.removeAllListeners();
+        // @ts-expect-error - accessing private property
+        if (this.streamProvider._state?.stream) {
+          // @ts-expect-error - accessing private property
+          this.streamProvider._state.stream.destroy();
+        }
+        this.streamProvider = undefined;
+      } catch (error) {
+        this.logger?.error('[ExtensionProvider] Error cleaning up stream provider:', error);
+      }
     }
+
+    // Reset connection state
     this.isConnected = false;
+
+    // Clear all notification listeners
     this.removeAllNotificationListeners();
   }
 

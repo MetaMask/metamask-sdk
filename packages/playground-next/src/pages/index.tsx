@@ -163,6 +163,7 @@ export default function Page() {
     isConnected,
     currentSession,
     connect,
+    disconnect,
     createSession,
     getSession,
     revokeSession,
@@ -352,6 +353,27 @@ export default function Page() {
     setInvokeMethodResults({});
   };
 
+  const handleDisconnect = useCallback(() => {
+    // First revoke the session if it exists
+    if (currentSession) {
+      revokeSession().catch(console.error);
+    }
+
+    disconnect();
+
+    // Reset all state to initial values
+    setAddresses([]);
+    setSessionsScopes(defaultSessionsScopes);
+    setSelectedAccounts({});
+    setSelectedMethods({});
+    setCustomScopes(['']);
+    setInvokeMethodRequests({});
+    setInvokeMethodResults({});
+    setSessionMethodHistory([]);
+    setWalletSessionChangedHistory([]);
+    setWalletNotifyHistory([]);
+  }, [currentSession, revokeSession, disconnect]);
+
   if (isInitializing) {
     return (
       <div className={styles.container}>
@@ -416,6 +438,14 @@ export default function Page() {
           <div className="info-message">
             Connected to MetaMask. Please create a session to continue.
           </div>
+        </section>
+      )}
+
+      {isConnected && (
+        <section>
+          <button onClick={handleDisconnect} className="disconnect-button">
+            Disconnect
+          </button>
         </section>
       )}
 
