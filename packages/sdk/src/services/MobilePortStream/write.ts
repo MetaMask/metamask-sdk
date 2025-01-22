@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { MAX_MESSAGE_LENGTH } from '../../config';
 
 /**
  * Handles communication between the in-app browser and MetaMask mobile application.
@@ -15,6 +16,7 @@ export function write(
   cb: (error?: Error | null) => void,
 ) {
   try {
+    let stringifiedData: string;
     if (Buffer.isBuffer(chunk)) {
       const data: {
         type: 'Buffer';
@@ -23,18 +25,30 @@ export function write(
       } = chunk.toJSON();
 
       data._isBuffer = true;
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ ...data, origin: window.location.href }),
-      );
+      stringifiedData = JSON.stringify({
+        ...data,
+        origin: window.location.href,
+      });
     } else {
       if (chunk.data) {
         chunk.data.toNative = true;
       }
 
-      window.ReactNativeWebView?.postMessage(
-        JSON.stringify({ ...chunk, origin: window.location.href }),
+      stringifiedData = JSON.stringify({
+        ...chunk,
+        origin: window.location.href,
+      });
+    }
+
+    if (stringifiedData.length > MAX_MESSAGE_LENGTH) {
+      return cb(
+        new Error(
+          `Message size ${stringifiedData.length} exceeds maximum allowed size of ${MAX_MESSAGE_LENGTH} bytes`,
+        ),
       );
     }
+
+    window.ReactNativeWebView?.postMessage(stringifiedData);
   } catch (err) {
     return cb(new Error('MobilePortStream - disconnected'));
   }
