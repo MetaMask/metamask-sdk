@@ -10,6 +10,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
+    "@metamask/providers": "^18.3.1",
     "@metamask/sdk-react": "^0.30.0",
     "@types/node": "20.2.1",
     "@types/react": "18.2.6",
@@ -20,5 +21,15 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.0.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/plugin-proposal-json-modules": "^7.25.9",
+    "@babel/plugin-syntax-import-assertions": "^7.26.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.26.3",
+    "@babel/preset-env": "^7.26.0",
+    "babel-loader": "^9.2.1",
+    "bufferutil": "^4.0.9",
+    "utf-8-validate": "^6.0.5"
   }
 }

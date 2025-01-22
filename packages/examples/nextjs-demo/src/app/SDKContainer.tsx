@@ -30,7 +30,7 @@ export default function SDKContainer() {
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>();
   const [activeProvider, setActiveProvider] = useState<SDKProvider>();
   const [currentLanguage, setCurrentLanguage] = useState(
-    localStorage.getItem('MetaMaskSDKLng') || 'en',
+    'en',
   );
 
   const languages = sdk?.availableLanguages ?? ['en'];
