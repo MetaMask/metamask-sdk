@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class VueJSDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -141,7 +141,7 @@ class VueJSDappScreen implements Dapp {
     await this.switchToMainnetButton.click();
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

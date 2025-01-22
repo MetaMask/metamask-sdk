@@ -1,10 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import Gestures from '@/util/Gestures';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { Dapp } from '@screens/interfaces/Dapp';
+import Gestures from '@util/Gestures';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class TestDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -101,7 +101,7 @@ class TestDappScreen implements Dapp {
     }
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

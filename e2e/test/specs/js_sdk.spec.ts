@@ -1,23 +1,23 @@
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
-import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '@/util/Constants';
-import { killApp, launchApp, launchMetaMask } from '@/util/Utils';
-import ChromeBrowserScreen from '@/screens/Android/ChromeBrowserScreen';
-import AndroidOpenWithComponent from '@/screens/Android/components/AndroidOpenWithComponent';
-import ReactNativeDappScreen from '@/screens/Dapps/ReactNativeDappScreen';
-import SdkPlaygroundDappScreen from '@/screens/Dapps/SdkPlaygroundDappScreen';
-import TestDappScreen from '@/screens/Dapps/TestDappScreen';
-import Web3OnBoardDappScreen from '@/screens/Dapps/Web3OnBoardDappScreen';
-import LockScreen from '@/screens/MetaMask/LockScreen';
-import SettingsScreen from '@/screens/MetaMask/SettingsScreen';
-import BottomNavigationComponent from '@/screens/MetaMask/components/BottomNavigationComponent';
-import ConnectModalComponent from '@/screens/MetaMask/components/ConnectModalComponent';
-import NetworkSwitchedModalComponent from '@/screens/MetaMask/components/NetworkSwitchedModalComponent';
-import SendTxModalComponent from '@/screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '@/screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '@/screens/MetaMask/components/SwitchNetworkModalComponent';
-import SafariBrowserScreen from '@/screens/iOS/SafariBrowserScreen';
-import IOSOpenInComponent from '@/screens/iOS/components/IOSOpenInComponent';
-import DevnextJSDappScreen from '@/screens/Dapps/DevnextJSDappScreen';
+import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '@util/Constants';
+import { killApp, launchApp, launchMetaMask } from '@util/Utils';
+import ChromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
+import AndroidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
+import ReactNativeDappScreen from '@screens/Dapps/ReactNativeDappScreen';
+import SdkPlaygroundDappScreen from '@screens/Dapps/SdkPlaygroundDappScreen';
+import TestDappScreen from '@screens/Dapps/TestDappScreen';
+import Web3OnBoardDappScreen from '@screens/Dapps/Web3OnBoardDappScreen';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import SettingsScreen from '@screens/MetaMask/SettingsScreen';
+import BottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
+import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
+import NetworkSwitchedModalComponent from '@screens/MetaMask/components/NetworkSwitchedModalComponent';
+import SendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
+import SignModalComponent from '@screens/MetaMask/components/SignModalComponent';
+import SwitchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
+import SafariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
+import IOSOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
+import DevnextJSDappScreen from '@screens/Dapps/DevnextJSDappScreen';
 
 /*
  * @deprecated

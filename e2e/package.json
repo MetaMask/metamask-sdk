@@ -3,7 +3,10 @@
   "private": true,
   "type": "commonjs",
   "devDependencies": {
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
     "@types/koa": "^2.13.12",
+    "@types/module-alias": "^2.0.4",
     "@wdio/allure-reporter": "^8.11.0",
     "@wdio/appium-service": "^9.2.1",
     "@wdio/browserstack-service": "^9.1.2",
@@ -11,7 +14,9 @@
     "@wdio/local-runner": "latest",
     "@wdio/mocha-framework": "latest",
     "@wdio/spec-reporter": "latest",
-    "ts-node": "^10.9.1",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "module-alias": "^2.2.3",
+    "ts-node": "^10.9.2",
     "typescript": "^4.9.5",
     "wdio-wait-for": "^3.0.9"
   },

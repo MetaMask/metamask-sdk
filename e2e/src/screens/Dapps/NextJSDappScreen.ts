@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class NextJSDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -54,7 +54,7 @@ class NextJSDappScreen implements Dapp {
     await this.signButton.scrollIntoView();
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     return !(await this.terminateButton.isDisplayed());
   }
 }

@@ -1,34 +1,39 @@
 import { ChainablePromiseElement } from 'webdriverio';
+import { visibilityOf } from 'wdio-wait-for';
 
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
-class PlaygroundDappScreen implements Dapp {
+class PlaygroundNextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Connect"]',
         ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "Connect MetaMask"',
+        ),
+      }),
+    );
+  }
+
+  get addressContainer(): ChainablePromiseElement {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.View', // TODO
+        ),
         iosSelector: IOSSelector.by().classChain(
-          '**/XCUIElementTypeButton[`name == "Connect"`]',
+          '**/XCUIElementTypeStaticText[`name == "Address:"`]',
         ),
       }),
     );
   }
 
   get connectAndSignButton(): ChainablePromiseElement {
-    return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@text="Connect w/ Sign"]',
-        ),
-        iosSelector: IOSSelector.by().classChain(
-          '**/XCUIElementTypeStaticText[`name == "Connect wallet"`]',
-        ),
-      }),
-    );
+    throw new Error('Not implemented');
   }
 
   get terminateButton(): ChainablePromiseElement {
@@ -48,10 +53,10 @@ class PlaygroundDappScreen implements Dapp {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@text="personal_sign"]',
+          '//android.widget.Button[@text="Personal Sign"]',
         ),
-        iosSelector: IOSSelector.by().classChain(
-          '**/XCUIElementTypeButton[`name == "personal_sign"`]',
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "Personal Sign"',
         ),
       }),
     );
@@ -71,16 +76,7 @@ class PlaygroundDappScreen implements Dapp {
   }
 
   get sendTransactionButton(): ChainablePromiseElement {
-    return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@text="Send transaction"]',
-        ),
-        iosSelector: IOSSelector.by().classChain(
-          '**/XCUIElementTypeButton[`name == "Send transaction"`]',
-        ),
-      }),
-    );
+    throw new Error('Not implemented');
   }
 
   async connect(): Promise<void> {
@@ -103,10 +99,20 @@ class PlaygroundDappScreen implements Dapp {
     await this.terminateButton.click();
   }
 
-  async isDappTerminated(): Promise<boolean> {
-    return !(await this.terminateButton.isDisplayed());
+  async isDappConnected(): Promise<boolean> {
+    const isAddressContainerDisplayed = await driver.waitUntil(
+      visibilityOf(this.addressContainer),
+      {
+        timeout: 10000,
+      },
+    );
+    return isAddressContainerDisplayed;
+  }
+
+  async tapPersonalSignButton(): Promise<void> {
+    await this.personalSignButton.click();
   }
 }
 
-const playgroundDappScreen = new PlaygroundDappScreen();
-export default playgroundDappScreen;
+const playgroundNextDappScreen = new PlaygroundNextDappScreen();
+export default playgroundNextDappScreen;

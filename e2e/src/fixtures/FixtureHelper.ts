@@ -1,7 +1,7 @@
 import axios from 'axios';
-import FixtureServer from '@/fixtures/FixtureServer';
-import { FixtureBuilder } from '@/fixtures/FixtureBuilder';
-import { FIXTURE_SERVER_URL } from '@/util/Constants';
+import FixtureServer from '@fixtures/FixtureServer';
+import { FixtureBuilder } from '@fixtures/FixtureBuilder';
+import { FIXTURE_SERVER_URL } from '@util/Constants';
 
 // checks if server has already been started
 const isFixtureServerStarted = async () => {

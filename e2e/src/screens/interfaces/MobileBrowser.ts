@@ -1,4 +1,4 @@
-import { Dapp } from '@/screens/interfaces/Dapp';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 export type MobileBrowser = {
   goToAddress(address: string, pageObject: Dapp): Promise<void>;

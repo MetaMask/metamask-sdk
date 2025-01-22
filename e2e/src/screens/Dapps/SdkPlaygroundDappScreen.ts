@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import Gestures from '@/util/Gestures';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
+import Gestures from '@util/Gestures';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 class SdkPlaygroundDappScreen implements Dapp {
   get demoProviderButton(): ChainablePromiseElement {
@@ -284,7 +284,7 @@ class SdkPlaygroundDappScreen implements Dapp {
     }
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

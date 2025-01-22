@@ -1,13 +1,13 @@
 import { ChainablePromiseArray, ChainablePromiseElement } from 'webdriverio';
 
 import { $$ } from '@wdio/globals';
-import Gestures from '@/util/Gestures';
-import { getSelectorForPlatform } from '@/util/Utils';
+import Gestures from '@util/Gestures';
+import { getSelectorForPlatform } from '@util/Utils';
 import {
   IS_RUNNING_IN_BROWSER_STACK,
   METAMASK_APP_NAME_ANDROID,
-} from '@/util/Constants';
-import { AndroidSelector } from '@/util/Selectors';
+} from '@util/Constants';
+import { AndroidSelector } from '@util/Selectors';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement {

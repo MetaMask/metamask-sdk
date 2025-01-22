@@ -1,6 +1,6 @@
-import { UnityDappElement } from '@/util/types';
-import Gestures from '@/util/Gestures';
-import { Dapp } from '@/screens/interfaces/Dapp';
+import { UnityDappElement } from '@util/types';
+import Gestures from '@util/Gestures';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 class UnityDappScreen implements Dapp {
   get connectButton(): UnityDappElement {
@@ -36,7 +36,7 @@ class UnityDappScreen implements Dapp {
     });
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class Web3OnBoardDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -79,7 +79,7 @@ class Web3OnBoardDappScreen implements Dapp {
     await this.signButton.click();
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

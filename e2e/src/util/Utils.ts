@@ -1,7 +1,21 @@
 import path from 'path';
 import ADB from 'appium-adb';
 import { driver } from '@wdio/globals';
-import Gestures from './Gestures';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import { Dapp } from '@screens/interfaces/Dapp';
+import SafariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
+import ChromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
+import AndroidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
+import iOSOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
+import { loadFixture, startFixtureServer } from '@fixtures/FixtureHelper';
+import { FixtureBuilder } from '@fixtures/FixtureBuilder';
+import FixtureServer from '@fixtures/FixtureServer';
+import {
+  BrowserSize,
+  Coordinates,
+  MetaMaskElementSelector,
+  ScreenPercentage,
+} from './types';
 import {
   FIXTURE_SERVER_PORT,
   METAMASK_BUNDLE_ID,
@@ -12,21 +26,7 @@ import {
   Browsers,
   BrowsersActivity,
 } from './Constants';
-import {
-  BrowserSize,
-  Coordinates,
-  MetaMaskElementSelector,
-  ScreenPercentage,
-} from './types';
-import LockScreen from '@/screens/MetaMask/LockScreen';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import SafariBrowserScreen from '@/screens/iOS/SafariBrowserScreen';
-import ChromeBrowserScreen from '@/screens/Android/ChromeBrowserScreen';
-import AndroidOpenWithComponent from '@/screens/Android/components/AndroidOpenWithComponent';
-import iOSOpenInComponent from '@/screens/iOS/components/IOSOpenInComponent';
-import { loadFixture, startFixtureServer } from '@/fixtures/FixtureHelper';
-import { FixtureBuilder } from '@/fixtures/FixtureBuilder';
-import FixtureServer from '@/fixtures/FixtureServer';
+import Gestures from './Gestures';
 
 export const deviceOpenDeeplinkWithMetaMask = async () => {
   if (PLATFORM === Platforms.IOS) {
@@ -181,6 +181,10 @@ export const launchMetaMaskWithFixture = async (
   await driver.removeApp(bundleId);
   await driver.installApp(appPath);
 
+  const fixture = new FixtureBuilder().withDefaultFixture().build();
+  await startFixtureServer(fixtureServer);
+  await loadFixture(fixtureServer, { fixture });
+
   // NOT NEEDED FOR BrowserStack
   if (PLATFORM === Platforms.ANDROID) {
     console.log('Android test detected. Reversing TCP ports...');
@@ -188,32 +192,23 @@ export const launchMetaMaskWithFixture = async (
       adbHost: LOCALHOST,
       adbPort: 5037,
     });
-    await driver.pause(5000);
     await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
-    await driver.pause(5000);
-  }
 
-  const fixture = new FixtureBuilder().withDefaultFixture().build();
-  await startFixtureServer(fixtureServer);
-  await loadFixture(fixtureServer, { fixture });
-
-  console.log(`Re-launching MetaMask on ${PLATFORM}...`);
-  if (PLATFORM === Platforms.IOS) {
-    console.log('Pausing for 10 seconds...');
-    await driver.pause(20000);
-
-    await driver.executeScript('mobile:launchApp', [
-      {
-        bundleId,
-        arguments: ['fixtureServerPort', '12345'],
-        environment: {
-          fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
-        },
-      },
-    ]);
-  } else {
+    console.log('Launching MetaMask with fixture on Android...');
     await launchApp(METAMASK_BUNDLE_ID);
+    return;
   }
+
+  console.log(`Re-launching MetaMask on iOS...`);
+  await driver.executeScript('mobile:launchApp', [
+    {
+      bundleId,
+      arguments: ['fixtureServerPort', '12345'],
+      environment: {
+        fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
+      },
+    },
+  ]);
 
   console.log('MetaMask was loaded with fixtures!');
 };

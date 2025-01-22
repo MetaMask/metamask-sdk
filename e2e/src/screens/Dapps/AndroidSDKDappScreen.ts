@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelector } from '@/util/Selectors';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
+import { AndroidSelector } from '@util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 class AndroidSDKDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -243,7 +243,7 @@ class AndroidSDKDappScreen implements Dapp {
     await this.terminateButton.click();
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

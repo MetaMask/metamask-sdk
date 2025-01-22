@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import { visibilityOf } from 'wdio-wait-for';
-import MainScreen from './MainScreen';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import MainScreen from '@screens/MetaMask/MainScreen';
 
 class LockScreen {
   get passwordInput(): ChainablePromiseElement {

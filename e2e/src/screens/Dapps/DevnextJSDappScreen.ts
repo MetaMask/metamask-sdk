@@ -1,9 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { visibilityOf } from 'wdio-wait-for';
-import { getSelectorForPlatform, scrollToElement } from '@/util/Utils';
-import { Dapp } from '@/screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+import { getSelectorForPlatform, scrollToElement } from '@util/Utils';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class DevnextDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
@@ -99,10 +99,6 @@ class DevnextDappScreen implements Dapp {
       },
     );
     return Boolean(isConnected);
-  }
-
-  async isDappTerminated(): Promise<boolean> {
-    return !(await this.terminateButton.isDisplayed());
   }
 }
 

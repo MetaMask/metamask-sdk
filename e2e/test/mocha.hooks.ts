@@ -1,22 +1,22 @@
 import { driver } from '@wdio/globals';
-import { killApp, launchApp, launchMetaMask } from '@/util/Utils';
-import LockScreen from '@/screens/MetaMask/LockScreen';
-import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '@/util/Constants';
-import BottomNavigationComponent from '@/screens/MetaMask/components/BottomNavigationComponent';
-import SettingsScreen from '@/screens/MetaMask/SettingsScreen';
-import GetStartedScreen from '@/screens/MetaMask/GetStartedScreen';
-import WalletSetupScreen from '@/screens/MetaMask/WalletSetupScreen';
-import OptinMetricsScreen from '@/screens/MetaMask/OptinMetricsScreen';
-import TermsOfUseScreen from '@/screens/MetaMask/TermsOfUseScreen';
-import ImportFromSeedScreen from '@/screens/MetaMask/ImportFromSeedScreen';
-import Gestures from '@/util/Gestures';
-import SecurityUpdatesScreen from '@/screens/MetaMask/SecurityUpdates';
-import WelcomeComponent from '@/screens/MetaMask/components/WelcomeComponent';
-import MetaMetricsComponent from '@/screens/MetaMask/components/MetaMetricsComponent';
-import AndroidSettingsScreen from '@/screens/Android/AndroidSettingsScreen';
-import AndroidSettingsOpeningLinksScreen from '@/screens/Android/AndroidSettingsOpeningLinksScreen';
-import WalletReadyScreen from '@/screens/MetaMask/WalletReadyScreen';
-import EnableSmartTransactionsComponent from '@/screens/MetaMask/components/EnableSmartTransactionsComponent';
+import { killApp, launchApp, launchMetaMask } from '@util/Utils';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '@util/Constants';
+import BottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
+import SettingsScreen from '@screens/MetaMask/SettingsScreen';
+import GetStartedScreen from '@screens/MetaMask/GetStartedScreen';
+import WalletSetupScreen from '@screens/MetaMask/WalletSetupScreen';
+import OptinMetricsScreen from '@screens/MetaMask/OptinMetricsScreen';
+import TermsOfUseScreen from '@screens/MetaMask/TermsOfUseScreen';
+import ImportFromSeedScreen from '@screens/MetaMask/ImportFromSeedScreen';
+import Gestures from '@util/Gestures';
+import SecurityUpdatesScreen from '@screens/MetaMask/SecurityUpdates';
+import WelcomeComponent from '@screens/MetaMask/components/WelcomeComponent';
+import MetaMetricsComponent from '@screens/MetaMask/components/MetaMetricsComponent';
+import AndroidSettingsScreen from '@screens/Android/AndroidSettingsScreen';
+import AndroidSettingsOpeningLinksScreen from '@screens/Android/AndroidSettingsOpeningLinksScreen';
+import WalletReadyScreen from '@screens/MetaMask/WalletReadyScreen';
+import EnableSmartTransactionsComponent from '@screens/MetaMask/components/EnableSmartTransactionsComponent';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {

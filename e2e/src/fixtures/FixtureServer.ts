@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import * as http from "http";
-import { FIXTURE_SERVER_HOST, FIXTURE_SERVER_PORT } from '@/util/Constants';
+import { FIXTURE_SERVER_HOST, FIXTURE_SERVER_PORT } from '@util/Constants';
 
 const CURRENT_STATE_KEY = '__CURRENT__';
 const DEFAULT_STATE_KEY = '__DEFAULT__';

@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
-import { getSelectorForPlatform } from '@/util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
 
 class ReactMetamaskButtonDappScreen {
   get connectButton(): ChainablePromiseElement {
@@ -38,7 +38,7 @@ class ReactMetamaskButtonDappScreen {
     await this.terminateButton.click();
   }
 
-  async isDappTerminated(): Promise<boolean> {
+  async isDappConnected(): Promise<boolean> {
     throw new Error('Not implemented');
   }
 }

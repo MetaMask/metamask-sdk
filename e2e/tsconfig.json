@@ -24,14 +24,12 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"],
-      "@/*": ["src/*"]
+      "@util/*": ["src/util/*"],
+      "@specs/*": ["test/specs/*"],
+      "@screens/*": ["src/screens/*"],
+      "@fixtures/*": ["src/fixtures/*"]
     }
   },
   "include": ["test", "src", "node_modules/@types/mocha/index.d.ts"],
-  "exclude": [
-    "test/fixtures/fixture-helper.js",
-    "test/fixtures/fixture-server.js.js",
-    "test/fixtures/fixture-builder.js",
-    "test/fixtures/utils.js"
-  ]
+  "exclude": []
 }

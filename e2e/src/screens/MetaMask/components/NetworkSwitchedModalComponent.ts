@@ -1,6 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { AndroidSelector, IOSSelector } from '@/util/Selectors';
+
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class NetworkSwitchedModalComponent {
   get gotItButton(): ChainablePromiseElement {

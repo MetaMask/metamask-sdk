@@ -1,11 +1,33 @@
-import path from 'path';
+import { resolve } from 'path';
+import type { Options } from '@wdio/types';
+import { register } from 'ts-node';
+import moduleAlias from 'module-alias';
 import * as dotenv from 'dotenv';
+
 // const allure = require('allure-commandline');
 
-dotenv.config({ path: path.join(process.cwd(), '.dapps.env') });
-dotenv.config({ path: path.join(process.cwd(), '.env') });
+dotenv.config({ path: resolve(process.cwd(), '.dapps.env') });
+dotenv.config({ path: resolve(process.cwd(), '.env') });
 
-export const config: WebdriverIO.Config = {
+// Register ts-node
+register({
+  project: 'tsconfig.json',
+  transpileOnly: true,
+  compilerOptions: {
+    module: 'commonjs',
+  },
+});
+
+console.log('AAA', resolve(__dirname, '../../src/'));
+
+moduleAlias.addAliases({
+  '@fixtures': resolve(__dirname, '../../src/fixtures'),
+  '@util': resolve(__dirname, '../../src/util'),
+  '@screens': resolve(__dirname, '../../src/screens'),
+  '@specs': resolve(__dirname, '../../test/specs'),
+});
+
+export const config: Options.Testrunner = {
   runner: 'local',
   capabilities: [],
 

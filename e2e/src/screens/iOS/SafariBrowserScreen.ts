@@ -1,14 +1,11 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { Dapp } from '../interfaces/Dapp';
-import { getSelectorForPlatform } from '@/util/Utils';
-import { MobileBrowser } from '@/screens/interfaces/MobileBrowser';
-import { IOSSelector } from '@/util/Selectors';
-import {
-  Browsers,
-  // WEB_DAPP_LOAD_ATTEMPTS
-} from '@/util/Constants';
+import { getSelectorForPlatform } from '@util/Utils';
+import { MobileBrowser } from '@screens/interfaces/MobileBrowser';
+import { IOSSelector } from '@util/Selectors';
+import { Browsers } from '@util/Constants';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {
@@ -51,14 +48,6 @@ class SafariBrowserScreen implements MobileBrowser {
   async goToAddress(address: string, dappScreen: Dapp): Promise<void> {
     await this.launchBrowser();
 
-    // const addressPrefix = address.substring(8, 16);
-    // if (!(await this.urlAddressBar.getText()).includes(addressPrefix)) {
-    //   await this.urlAddressBar.click();
-    //   await this.urlAddressBar.clearValue();
-    //   await this.urlAddressBar.setValue(address);
-    //   await this.goButton.click();
-    // }
-
     // Trying to navigate directly to the address
     await driver.navigateTo(address);
 
@@ -67,39 +56,7 @@ class SafariBrowserScreen implements MobileBrowser {
       timeout: 10000,
     });
 
-    if (!(await dappScreen.isDappTerminated())) {
-      await dappScreen.terminate();
-    }
-
-    // Figures out if a dapp is loaded on the mobile browser
-    // const checkIfDappIsLoaded = async () => {
-    //   let retries = 20;
-    //   let isStopPageLoadButtonDisplayed =
-    //     await this.stopPageLoadingButton.isDisplayed();
-
-    //   if (!isStopPageLoadButtonDisplayed) {
-    //     return true;
-    //   }
-
-    //   while (isStopPageLoadButtonDisplayed && retries > 0) {
-    //     // Waits for 2 seconds before checking again
-    //     await driver.pause(2000);
-    //     isStopPageLoadButtonDisplayed =
-    //       await this.stopPageLoadingButton.isDisplayed();
-    //     retries -= 1;
-    //   }
-    //   return false;
-    // };
-
-    // let attempts = 0;
-
-    // let isWebDappLoaded = await checkIfDappIsLoaded();
-
-    // while (!isWebDappLoaded && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
-    //   await this.refreshPage();
-    //   isWebDappLoaded = await checkIfDappIsLoaded();
-    //   attempts += 1;
-    // }
+    await dappScreen.terminate();
   }
 
   async launchBrowser(): Promise<void> {

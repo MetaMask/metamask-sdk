@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { UnityDappElement } from '@/util/types';
+import { UnityDappElement } from '@util/types';
 
 export type Dapp = {
   connectButton: ChainablePromiseElement | UnityDappElement;
@@ -20,6 +20,6 @@ export type Dapp = {
   signTypedDataV4?(): Promise<void>;
   personalSign?(): Promise<void>;
   sendTransaction?(): Promise<void>;
-  isDappTerminated(): Promise<boolean>;
+  isDappConnected(): Promise<boolean>;
   terminate(): Promise<void>;
 };

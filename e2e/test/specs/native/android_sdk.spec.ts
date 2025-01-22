@@ -1,12 +1,12 @@
 import { beforeEachHook, beforeHook } from '../../mocha.hooks';
-import { WALLET_PASSWORD } from '@/util/Constants';
-import { launchApp } from '@/util/Utils';
-import AndroidSDKDappScreen from '@/screens/Dapps/AndroidSDKDappScreen';
-import LockScreen from '@/screens/MetaMask/LockScreen';
-import ConnectModalComponent from '@/screens/MetaMask/components/ConnectModalComponent';
-import SendTxModalComponent from '@/screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '@/screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '@/screens/MetaMask/components/SwitchNetworkModalComponent';
+import { WALLET_PASSWORD } from '@util/Constants';
+import { launchApp } from '@util/Utils';
+import AndroidSDKDappScreen from '@screens/Dapps/AndroidSDKDappScreen';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
+import SendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
+import SignModalComponent from '@screens/MetaMask/components/SignModalComponent';
+import SwitchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
 
 describe.skip('Android SDK (native) E2E', () => {
   before(async () => {
