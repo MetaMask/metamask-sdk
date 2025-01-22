@@ -18,8 +18,6 @@ register({
   },
 });
 
-console.log('AAA', resolve(__dirname, '../../src/'));
-
 moduleAlias.addAliases({
   '@fixtures': resolve(__dirname, '../../src/fixtures'),
   '@util': resolve(__dirname, '../../src/util'),

@@ -21,7 +21,6 @@ const fixtureServer = new FixtureServer();
 describe('MetaMask Connector Playground dapp', () => {
   before(async () => {
     playgroundNextDappUrl = process.env.PLAYGROUND_NEXT_DAPP_URL ?? '';
-    console.log('playgroundNextDappUrl', playgroundNextDappUrl);
     expect(playgroundNextDappUrl.length).toBeGreaterThan(0);
 
     await launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
