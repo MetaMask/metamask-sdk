@@ -13,6 +13,8 @@ export default function Home() {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [rpcResponse, setRpcResponse] = useState<any>();
+  const [rpcError, setRpcError] = useState<any>();
 
   const getBalance = useCallback(async (address: string): Promise<string> => {
     const balance = await provider?.request({
@@ -45,6 +47,24 @@ export default function Home() {
     }
   };
 
+  const personalSign = async (): Promise<void> => {
+    if (!provider) {
+      setRpcError('Provider not found');
+      return;
+    }
+
+    try {
+      const response = await provider?.request({
+        method: 'personal_sign',
+        params: ['Hello, world!', account]
+      });
+      setRpcResponse(response);
+    } catch (error) {
+      console.log('CAUGHT THIS ERROR: ', error);
+      setRpcError(error);
+    }
+  };
+
   useEffect(() => {
     const updateAccountInfo = async () => {
       if (connected && account) {
@@ -63,7 +83,12 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>Simple Web3 Dapp</h1>
+      <h1>Playground-Next Dapp</h1>
+
+      <h2>RPC Response</h2>
+      <p>{JSON.stringify(rpcResponse)}</p>
+      <h2>RPC Error</h2>
+      <p>{JSON.stringify(rpcError)}</p>
 
       {!connected ? (
         <button
@@ -81,6 +106,13 @@ export default function Home() {
           <div className={styles.address}>
             Balance: {accountInfo?.balance} Wei
           </div>
+          <button
+            className={styles.button}
+            onClick={personalSign}
+            disabled={isLoading}
+          >
+            Personal Sign
+          </button>
           <button
             className={styles.button}
             onClick={terminateConnection}
