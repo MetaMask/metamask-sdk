@@ -140,6 +140,10 @@ class VueJSDappScreen implements Dapp {
   async switchToMainnetNetwork(): Promise<void> {
     await this.switchToMainnetButton.click();
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const vueJSDappScreen = new VueJSDappScreen();

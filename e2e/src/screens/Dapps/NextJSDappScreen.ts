@@ -53,6 +53,10 @@ class NextJSDappScreen implements Dapp {
   async scrollToSignButton(): Promise<void> {
     await this.signButton.scrollIntoView();
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    return !(await this.terminateButton.isDisplayed());
+  }
 }
 
 const nextJSDappScreen = new NextJSDappScreen();

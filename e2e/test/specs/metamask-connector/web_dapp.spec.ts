@@ -16,10 +16,10 @@ import DevnextJSDappScreen from '@/screens/Dapps/DevnextJSDappScreen';
 let devNextDappUrl: string;
 const fixtureServer = new FixtureServer();
 
-describe('MetaMask SDK E2E', () => {
+describe('MetaMask Connector Playground dapp', () => {
   before(async () => {
-    devNextDappUrl = process.env.DEVNEXT_DAPP_URL ?? '';
-    expect(devNextDappUrl).toBeDefined();
+    devNextDappUrl = process.env.PLAYGROUND_DAPP_URL ?? '';
+    expect(devNextDappUrl.length).toBeGreaterThan(0);
 
     await launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
     await LockScreen.unlockMM(WALLET_PASSWORD);

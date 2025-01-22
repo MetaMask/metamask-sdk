@@ -49,6 +49,10 @@ class ReactNativeDappScreen implements Dapp {
   async terminate(): Promise<void> {
     await this.terminateButton.click();
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const reactNativeDappScreen = new ReactNativeDappScreen();

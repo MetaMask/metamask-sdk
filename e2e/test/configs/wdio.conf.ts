@@ -12,7 +12,7 @@ export const config: WebdriverIO.Config = {
   services: [],
   // specs: ['../../specs/*.spec.ts'],
   suites: {
-    web_dapp: ['../../specs/web_dapp.spec.ts'],
+    metamask_connector: ['../../specs/metamask-connector/*.spec.ts'],
     // Deprecated test suites
     // js_sdk: ['../../specs/js_sdk.spec.ts'],
     // android_sdk: ['../../specs/android_sdk.spec.ts'],

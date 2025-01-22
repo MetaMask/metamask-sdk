@@ -100,6 +100,10 @@ class DevnextDappScreen implements Dapp {
     );
     return Boolean(isConnected);
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    return !(await this.terminateButton.isDisplayed());
+  }
 }
 
 const devnextJSDappScreen = new DevnextDappScreen();

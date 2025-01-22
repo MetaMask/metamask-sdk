@@ -100,6 +100,10 @@ class TestDappScreen implements Dapp {
       isButtonDisplayed = await this.personalSignButton.isDisplayed();
     }
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const testDappScreen = new TestDappScreen();

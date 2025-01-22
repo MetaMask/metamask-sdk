@@ -242,6 +242,10 @@ class AndroidSDKDappScreen implements Dapp {
     });
     await this.terminateButton.click();
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const androidSDKDappScreen = new AndroidSDKDappScreen();

@@ -5,7 +5,7 @@ import { UnityDappElement } from '@/util/types';
 export type Dapp = {
   connectButton: ChainablePromiseElement | UnityDappElement;
 
-  connect(): Promise<void>;
+  terminateButton: ChainablePromiseElement | UnityDappElement;
 
   signTypedDataV3Button?: ChainablePromiseElement | UnityDappElement;
 
@@ -15,12 +15,11 @@ export type Dapp = {
 
   personalSignButton?: ChainablePromiseElement | UnityDappElement;
 
+  connect(): Promise<void>;
   signTypedDataV3?(): Promise<void>;
   signTypedDataV4?(): Promise<void>;
   personalSign?(): Promise<void>;
   sendTransaction?(): Promise<void>;
-
-  terminateButton: ChainablePromiseElement | UnityDappElement;
-
+  isDappTerminated(): Promise<boolean>;
   terminate(): Promise<void>;
 };

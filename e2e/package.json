@@ -21,6 +21,7 @@
     "test:ios:jssdk:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite web_dapp",
     "test:android:jssdk:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite web_dapp",
     "test:ios:jssdk:e2e:local:fixture": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite fixture_reference",
+    "test:ios:metamask-connector:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite metamask_connector",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",

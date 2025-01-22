@@ -78,6 +78,10 @@ class Web3OnBoardDappScreen implements Dapp {
     });
     await this.signButton.click();
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const web3OnBoardDappScreen = new Web3OnBoardDappScreen();

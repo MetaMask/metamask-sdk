@@ -35,6 +35,10 @@ class UnityDappScreen implements Dapp {
       y: this.terminateButton.yPercentage,
     });
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const unityDappScreen = new UnityDappScreen();

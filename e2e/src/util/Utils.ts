@@ -68,7 +68,7 @@ export const navigateToWebMobileDapp = async (
     ? SafariBrowserScreen
     : ChromeBrowserScreen;
 
-  await launchMobileBrowser();
+  // await launchMobileBrowser();
   await browserScreen.goToAddress(dappUrl, dappScreen);
 };
 

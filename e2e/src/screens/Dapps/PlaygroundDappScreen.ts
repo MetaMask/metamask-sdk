@@ -4,7 +4,7 @@ import { getSelectorForPlatform } from '@/util/Utils';
 import { Dapp } from '@/screens/interfaces/Dapp';
 import { AndroidSelector, IOSSelector } from '@/util/Selectors';
 
-class CreateReactAppDappScreen implements Dapp {
+class PlaygroundDappScreen implements Dapp {
   get connectButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
@@ -37,8 +37,8 @@ class CreateReactAppDappScreen implements Dapp {
         androidSelector: AndroidSelector.by().xpath(
           '//android.widget.Button[@text="Terminate"]',
         ),
-        iosSelector: IOSSelector.by().classChain(
-          '**/XCUIElementTypeButton[`name == "Terminate"`]',
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "Terminate Connection"',
         ),
       }),
     );
@@ -108,5 +108,5 @@ class CreateReactAppDappScreen implements Dapp {
   }
 }
 
-const createReactAppDappScreen = new CreateReactAppDappScreen();
-export default createReactAppDappScreen;
+const playgroundDappScreen = new PlaygroundDappScreen();
+export default playgroundDappScreen;

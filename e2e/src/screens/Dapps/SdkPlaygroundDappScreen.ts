@@ -283,6 +283,10 @@ class SdkPlaygroundDappScreen implements Dapp {
       }
     }
   }
+
+  async isDappTerminated(): Promise<boolean> {
+    throw new Error('Not implemented');
+  }
 }
 
 const sdkPlaygroundDappScreen = new SdkPlaygroundDappScreen();
