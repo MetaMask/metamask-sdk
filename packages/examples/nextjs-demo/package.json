@@ -31,5 +31,8 @@
     "babel-loader": "^9.2.1",
     "bufferutil": "^4.0.9",
     "utf-8-validate": "^6.0.5"
+  },
+  "resolutions": {
+    "@metamask/safe-event-emitter": "3.1.2"
   }
 }
