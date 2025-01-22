@@ -35,7 +35,6 @@ export function discoverWallets(options: WalletDiscoveryOptions = {}): Promise<W
     filterPredicate = () => true,
   } = options;
 
-  console.log('discoverWallets', options);
   return new Promise((resolve, reject) => {
     const discoveredWallets: WalletInfo[] = [];
 
