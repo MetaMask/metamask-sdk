@@ -91,13 +91,22 @@ export default function Home() {
       <p>{JSON.stringify(rpcError)}</p>
 
       {!connected ? (
-        <button
-          className={styles.button}
-          onClick={connectWallet}
-          disabled={isLoading || connecting}
+        <>
+          <button
+            className={styles.button}
+            onClick={connectWallet}
+            disabled={isLoading || connecting}
         >
           {isLoading || connecting ? 'Connecting...' : 'Connect MetaMask'}
         </button>
+        <button
+        className={styles.button}
+        onClick={terminateConnection}
+        disabled={isLoading}
+      >
+            {isLoading ? 'Terminating...' : 'Terminate Connection'}
+          </button>
+        </>
       ) : (
         <>
           <div className={styles.address}>
