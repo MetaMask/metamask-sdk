@@ -14,7 +14,7 @@ export function useConnection(
   const handleConnect = useCallback(async () => {
     try {
       setConnectionError(null);
-      await connect({ extensionId: 'nfdjnfhlblppdgdplngdjgpifllaamoc' });
+      await connect({ extensionId: 'eklmonnmoaepkgaomjcefmimkkfikokn' });
     } catch (error) {
       const errorMessage =
         error instanceof Error

@@ -47,7 +47,7 @@ interface UseMultichainReturn {
 export const useMultichain = ({
   onSessionChanged,
   onNotification,
-  defaultExtensionId = 'nfdjnfhlblppdgdplngdjgpifllaamoc',
+  defaultExtensionId = 'eklmonnmoaepkgaomjcefmimkkfikokn',
   useExistingProvider = false,
 }: UseMultichainParams = {}): UseMultichainReturn => {
   const [multichain, setMultichain] = useState<MetamaskMultichain | null>(null);

@@ -190,6 +190,9 @@ export class MetamaskMultichain {
     const result = (await this.provider.request({
       method: 'wallet_createSession',
       params: params as unknown as Json,
+    }).catch((error) => {
+      console.error('[MetamaskMultichain] Error creating session:', error);
+      throw error;
     })) as SessionData;
 
     this.logger?.debug('[Caip25MultichainProvider] wallet_createSession response:', result);
@@ -271,6 +274,7 @@ export class MetamaskMultichain {
     request: { method: string; params: Json[] };
   }): Promise<Json> {
     this.logger?.debug('[Caip25MultichainProvider] Invoking method:', request.method, 'on scope:', scope);
+    console.log("[Caip25MultichainProvider] Invoking method:", request.method, "on scope:", scope);
 
 
     //TODO: validate here or just let the wallet handle it?

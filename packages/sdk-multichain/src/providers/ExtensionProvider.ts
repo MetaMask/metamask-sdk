@@ -257,6 +257,8 @@ export class ExtensionProvider implements Provider {
   }
 
   private requestViaChrome(params: MethodParams): Promise<unknown> {
+    console.log("requestViaChrome", params);
+
     if (!this.chromePort) {
       throw new Error('[ExtensionProvider] no chromePort');
     }
@@ -269,10 +271,13 @@ export class ExtensionProvider implements Provider {
       params: params.params,
     };
 
+    console.log("requestPayload", requestPayload);
+
     this.logger?.debug('[ExtensionProvider] sending request to chrome port:', requestPayload);
 
     return new Promise((resolve, reject) => {
       const handleMessage = (msg: any) => {
+        console.log("handleMessage", msg);
         // Check if the message matches our request ID
         if (msg?.data?.id === id) {
           this.chromePort?.onMessage.removeListener(handleMessage);

@@ -64,7 +64,7 @@ export default function Raw() {
 
   // Extension ID for connecting to the wallet
   const [extensionId, setExtensionId] = useState<string>(
-    'nfdjnfhlblppdgdplngdjgpifllaamoc',
+    'eklmonnmoaepkgaomjcefmimkkfikokn',
   );
 
   // --- Result/Output States ---
@@ -120,7 +120,7 @@ export default function Raw() {
   // Add computed property for connection status
   const isConnected = Boolean(
     currentSession?.sessionId ||
-      Object.keys(currentSession?.sessionScopes || {}).length > 0,
+    Object.keys(currentSession?.sessionScopes || {}).length > 0,
   );
 
   // Initialize API
@@ -755,11 +755,10 @@ export default function Raw() {
                         FEATURED_NETWORKS[
                           scope as keyof typeof FEATURED_NETWORKS
                         ]
-                          ? `${
-                              FEATURED_NETWORKS[
-                                scope as keyof typeof FEATURED_NETWORKS
-                              ]
-                            } (${scope})`
+                          ? `${FEATURED_NETWORKS[
+                          scope as keyof typeof FEATURED_NETWORKS
+                          ]
+                          } (${scope})`
                           : scope
                       }
                       className="scope-card-title"
@@ -767,11 +766,10 @@ export default function Raw() {
                       {FEATURED_NETWORKS[
                         scope as keyof typeof FEATURED_NETWORKS
                       ]
-                        ? `${
-                            FEATURED_NETWORKS[
-                              scope as keyof typeof FEATURED_NETWORKS
-                            ]
-                          } (${scope})`
+                        ? `${FEATURED_NETWORKS[
+                        scope as keyof typeof FEATURED_NETWORKS
+                        ]
+                        } (${scope})`
                         : scope}
                     </h3>
 
