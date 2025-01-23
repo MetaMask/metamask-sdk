@@ -61,7 +61,7 @@ import { ProviderType } from '@metamask/sdk-multichain';
 const multichain = createMetamaskMultichain({
   preferredProvider: ProviderType.CHROME_EXTENSION,
   providerConfig: {
-    existingProvider: window.ethereum,
+    eip1193Provider: window.ethereum,
     existingStream: mobileWebsocketStream,
   }
 });
@@ -71,7 +71,7 @@ await multichain.connect({
   extensionId: 'your-extension-id'
 });
 
-// Or connect using existing provider (e.g., EIP-6963)
+// Or connect using an EIP-1193 provider
 await multichain.connect({
   provider: window.ethereum
 });
@@ -83,9 +83,9 @@ await multichain.connect({
 ```
 
 Available provider types:
-- `ProviderType.CHROME_EXTENSION`: Uses Chrome's `externally_connectable` API
-- `ProviderType.EXISTING_PROVIDER`: Uses an existing EIP-1193/EIP-6963 provider
-- `ProviderType.STREAM_PROVIDER`: Uses a Duplex stream (e.g., for mobile connections)
+- `ProviderType.CHROME_EXTENSION`: Uses Chrome's `externally_connectable` API for direct extension communication
+- `ProviderType.EIP1193_PROVIDER`: Uses any provider implementing the standard Ethereum Provider API (EIP-1193)
+- `ProviderType.STREAM_PROVIDER`: Uses a Duplex stream for bidirectional communication (e.g., for mobile connections)
 
 Dynamic provider switching:
 ```typescript
