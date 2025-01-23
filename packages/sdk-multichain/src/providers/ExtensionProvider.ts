@@ -7,7 +7,7 @@ import type { LoggerLike, MethodParams, Provider } from '../types';
 
 export enum ProviderType {
   CHROME_EXTENSION = 'chrome_extension',
-  EXISTING_PROVIDER = 'existing_provider',
+  EIP1193_PROVIDER = 'eip1193_provider',
   STREAM_PROVIDER = 'stream_provider',
 }
 
@@ -17,24 +17,24 @@ export enum ProviderType {
 interface ExtensionProviderConfig {
   logger?: LoggerLike;
   /**
-   * A user-provided Duplex stream, e.g. from getPostMessageStream or
+   * A Duplex stream, e.g. from getPostMessageStream or
    * a network socket for mobile. If provided, we skip or fallback to it
    * if chrome.connect is unavailable.
    */
   existingStream?: Duplex;
 
   /**
-   * If you already have a provider object (some EIP-1193 instance)
-   * you want to reuse, you can pass it here. This overrides all other
+   * If there's an existing provider object (some EIP-1193 instance)
+   * to reuse, it can be passed here. This overrides all other
    * connection attempts.
    */
-  existingProvider?: MetaMaskInpageProvider;
+  eip1193Provider?: MetaMaskInpageProvider;
 
   preferredProvider?: ProviderType;
 }
 
 /**
- * ConnectParams might hold your extensionId for the chrome externally_connectable approach
+ * ConnectParams might hold the extensionId for the chrome externally_connectable approach
  */
 interface ConnectParams {
   extensionId?: string;
@@ -58,7 +58,7 @@ export class ExtensionProvider implements Provider {
 
   constructor(config?: ExtensionProviderConfig) {
     this.logger = config?.logger ?? console;
-    this.existingProvider = config?.existingProvider;
+    this.existingProvider = config?.eip1193Provider;
     this.existingStream = config?.existingStream;
     this.preferredProvider = config?.preferredProvider;
 
@@ -164,7 +164,7 @@ export class ExtensionProvider implements Provider {
     }
 
     switch (this.preferredProvider) {
-      case ProviderType.EXISTING_PROVIDER:
+      case ProviderType.EIP1193_PROVIDER:
         if (!this.existingProvider) {
           throw new Error('Existing provider requested but none available');
         }
@@ -308,33 +308,13 @@ export class ExtensionProvider implements Provider {
    */
   private handleChromeMessage(msg: any) {
     if (msg?.data?.id) {
-      // It's a response to some request
-      // You could handle it in requestViaChrome if you store a request map
+      // should be handled in requestViaChrome listener - skipping
+      return;
     } else {
       // No id => notification
       this.logger?.debug('[ExtensionProvider] chrome notification:', msg);
       this.notifyCallbacks(msg.data);
     }
-  }
-
-  /**
-   * The fallback approach uses postMessage or your existing fallback logic:
-   */
-  private async setupPostMessageFallback() {
-    const fallbackStream = this.createPostMessageStream();
-    this.wrapStreamAsProvider(fallbackStream);
-
-    // We can listen for notifications from the inpage provider if needed:
-    // (this.fallbackInpageProvider as any).on('data', (msg: any) => {...})
-    // or 'notification' event from MetaMaskInpageProvider
-    // Or we do nothing if your fallback approach just returns responses
-  }
-
-  /**
-   * Create or retrieve your existing postMessage stream from the SDK
-   */
-  private createPostMessageStream(): Duplex {
-    throw new Error('Implement your fallback postMessage logic here');
   }
 
   private wrapStreamAsProvider(stream: Duplex) {

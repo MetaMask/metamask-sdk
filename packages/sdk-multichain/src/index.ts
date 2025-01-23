@@ -1,12 +1,17 @@
 // packages/sdk-multichain/src/index.ts
 
-import { MetamaskMultichain } from './MetamaskMultichain';
+import { MetamaskMultichain, MetamaskMultichainParams } from './MetamaskMultichain';
 
 // This is the main "entry point" for the package.
 export * from './MetamaskMultichain';
 
-export function createMetamaskMultichain() {
-  const provider = new MetamaskMultichain();
+/**
+ * Creates a new MetamaskMultichain instance.
+ * @param params - Optional parameters for the MetamaskMultichain instance.
+ * @returns A new MetamaskMultichain instance.
+ */
+export function createMetamaskMultichain(params?: MetamaskMultichainParams) {
+  const provider = new MetamaskMultichain(params);
   return provider;
 }
 

@@ -14,7 +14,7 @@ export interface CreateSessionParams {
 
 const DEFAULT_SESSION_ID = 'SINGLE_SESSION_ONLY';
 
-interface MetamaskMultichainParams {
+export interface MetamaskMultichainParams {
   logger?: LoggerLike;
   existingProvider?: MetaMaskInpageProvider;
   existingStream?: Duplex;
@@ -47,7 +47,7 @@ export class MetamaskMultichain {
 
     this.provider = new ExtensionProvider({
       logger: this.logger,
-      existingProvider: params?.existingProvider,
+      eip1193Provider: params?.existingProvider,
       existingStream: params?.existingStream,
       preferredProvider: params?.preferredProvider,
     });
