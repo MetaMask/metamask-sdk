@@ -33,6 +33,6 @@
     "utf-8-validate": "^6.0.5"
   },
   "resolutions": {
-    "@metamask/safe-event-emitter": "3.1.2"
+    "@metamask/safe-event-emitter": "3.1.1"
   }
 }
