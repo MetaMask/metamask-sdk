@@ -1,3 +1,4 @@
+// packages/sdk/src/provider/SDKProvider.ts
 import { Duplex } from 'readable-stream';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { logger } from '../utils/logger';

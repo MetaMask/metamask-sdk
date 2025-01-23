@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+  gap: 20px;
+}
+
+.button {
+  background: var(--foreground);
+  color: var(--background);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-family: var(--font-geist);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button:hover {
+  opacity: 0.8;
+}
+
+.address {
+  font-family: var(--font-geist);
+  background: var(--foreground);
+  color: var(--background);
+  padding: 12px 24px;
+  border-radius: 8px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #6b7280;
+}
+
+.error-message {
+  color: #dc2626;
+  background-color: #fee2e2;
+  border: 1px solid #fecaca;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.info-message {
+  color: #0369a1;
+  background-color: #e0f2fe;
+  border: 1px solid #bae6fd;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.connect-button {
+  background-color: #0d9488;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.connect-button:hover {
+  background-color: #0f766e;
+}
+
+.connect-button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+}
