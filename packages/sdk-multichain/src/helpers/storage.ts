@@ -1,4 +1,4 @@
-import { SessionData, StoredSession } from "./types";
+import { SessionData, StoredSession } from "../types";
 
 /**
  * Gets stored session data from storage

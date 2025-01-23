@@ -16,8 +16,8 @@ export function createMetamaskMultichain(params?: MetamaskMultichainParams) {
 }
 
 // Re-export any constants or utilities that might be helpful:
-export * from './walletDiscovery';
-export * from './initialization';
-export * from './storage';
+export * from './helpers/walletDiscovery';
+export * from './helpers/initialization';
+export * from './helpers/storage';
 export * from './utils/getCaip25FormattedAddresses';
 export * from './types';

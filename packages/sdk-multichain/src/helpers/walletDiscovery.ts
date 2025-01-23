@@ -1,4 +1,4 @@
-import { Provider } from "./types";
+import { Provider } from "../types";
 
 export enum CAIP294EventNames {
   Announce = 'caip294:wallet_announce',
