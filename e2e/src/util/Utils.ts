@@ -179,23 +179,32 @@ export const launchMetaMaskWithFixture = async (
 ) => {
   const appPath = path.join(process.env.APP_PATH || '');
   await driver.removeApp(bundleId);
-  await driver.installApp(appPath);
 
   const fixture = new FixtureBuilder().withDefaultFixture().build();
   await startFixtureServer(fixtureServer);
   await loadFixture(fixtureServer, { fixture });
+  await driver.pause(10000);
 
   // NOT NEEDED FOR BrowserStack
   if (PLATFORM === Platforms.ANDROID) {
     console.log('Android test detected. Reversing TCP ports...');
-    const adb = new ADB({
-      adbHost: LOCALHOST,
-      adbPort: 5037,
-    });
+    const adb = await ADB.createADB({});
+
     await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
 
+    await driver.installApp(appPath);
+
+    await driver.pause(20000);
+
     console.log('Launching MetaMask with fixture on Android...');
-    await launchApp(METAMASK_BUNDLE_ID);
+    // await launchApp(METAMASK_BUNDLE_ID);
+    await driver.terminateApp(bundleId);
+    await driver.executeScript('mobile:activateApp', [
+      {
+        appId: bundleId,
+        fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
+      },
+    ]);
     return;
   }
 

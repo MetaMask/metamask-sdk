@@ -1,19 +1,17 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { UnityDappElement } from '@util/types';
-
 export type Dapp = {
-  connectButton: ChainablePromiseElement | UnityDappElement;
+  connectButton: ChainablePromiseElement;
 
-  terminateButton: ChainablePromiseElement | UnityDappElement;
+  terminateButton: ChainablePromiseElement;
 
-  signTypedDataV3Button?: ChainablePromiseElement | UnityDappElement;
+  signTypedDataV3Button?: ChainablePromiseElement;
 
-  signTypedDataV4Button?: ChainablePromiseElement | UnityDappElement;
+  signTypedDataV4Button?: ChainablePromiseElement;
 
-  sendTransactionButton?: ChainablePromiseElement | UnityDappElement;
+  sendTransactionButton?: ChainablePromiseElement;
 
-  personalSignButton?: ChainablePromiseElement | UnityDappElement;
+  personalSignButton?: ChainablePromiseElement;
 
   connect(): Promise<void>;
   signTypedDataV3?(): Promise<void>;
