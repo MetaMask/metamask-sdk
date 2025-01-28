@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0]
+### Uncategorized
+- fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk.git/pull/1202))
+- feat: setup stencil development environment with component preview ([#1196](https://github.com/MetaMask/metamask-sdk.git/pull/1196))
+
 ## [0.31.5]
 ### Added
 - chore: add analytics to install modal ([#1189](https://github.com/MetaMask/metamask-sdk/pull/1189))
@@ -181,41 +186,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.5...HEAD
-[0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.2...@metamask/sdk-install-modal-web@0.31.5
-[0.31.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.1...@metamask/sdk-install-modal-web@0.31.2
-[0.31.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.0...@metamask/sdk-install-modal-web@0.31.1
-[0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.2...@metamask/sdk-install-modal-web@0.31.0
-[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.30.0...@metamask/sdk-install-modal-web@0.30.2
-[0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.2...@metamask/sdk-install-modal-web@0.30.0
-[0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.29.1...@metamask/sdk-install-modal-web@0.29.2
-[0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.28.1...@metamask/sdk-install-modal-web@0.29.1
-[0.28.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.5...@metamask/sdk-install-modal-web@0.28.1
-[0.26.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.4...@metamask/sdk-install-modal-web@0.26.5
-[0.26.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.26.0...@metamask/sdk-install-modal-web@0.26.4
-[0.26.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.4...@metamask/sdk-install-modal-web@0.26.0
-[0.20.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.2...@metamask/sdk-install-modal-web@0.20.4
-[0.20.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.1...@metamask/sdk-install-modal-web@0.20.2
-[0.20.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.20.0...@metamask/sdk-install-modal-web@0.20.1
-[0.20.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.18.5...@metamask/sdk-install-modal-web@0.20.0
-[0.18.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.17.0...@metamask/sdk-install-modal-web@0.18.5
-[0.17.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.16.0...@metamask/sdk-install-modal-web@0.17.0
-[0.16.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.15.0...@metamask/sdk-install-modal-web@0.16.0
-[0.15.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.14.1...@metamask/sdk-install-modal-web@0.15.0
-[0.14.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.13.0...@metamask/sdk-install-modal-web@0.14.1
-[0.13.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.12.2...@metamask/sdk-install-modal-web@0.13.0
-[0.12.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.12.1...@metamask/sdk-install-modal-web@0.12.2
-[0.12.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.12.0...@metamask/sdk-install-modal-web@0.12.1
-[0.12.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.11.1...@metamask/sdk-install-modal-web@0.12.0
-[0.11.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.11.0...@metamask/sdk-install-modal-web@0.11.1
-[0.11.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.10.0...@metamask/sdk-install-modal-web@0.11.0
-[0.10.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.9.0...@metamask/sdk-install-modal-web@0.10.0
-[0.9.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.7.0...@metamask/sdk-install-modal-web@0.9.0
-[0.7.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.2...@metamask/sdk-install-modal-web@0.7.0
-[0.6.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.1...@metamask/sdk-install-modal-web@0.6.2
-[0.6.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.6.0...@metamask/sdk-install-modal-web@0.6.1
-[0.6.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.5.1...@metamask/sdk-install-modal-web@0.6.0
-[0.5.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.3...@metamask/sdk-install-modal-web@0.5.1
-[0.3.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.2...@metamask/sdk-install-modal-web@0.3.3
-[0.3.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.3.0...@metamask/sdk-install-modal-web@0.3.2
-[0.3.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-install-modal-web@0.3.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.32.0...HEAD
+[0.32.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.31.5...@metamask/sdk-install-modal-web@0.32.0
+[0.31.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.31.2...@metamask/sdk-install-modal-web@0.31.5
+[0.31.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.31.1...@metamask/sdk-install-modal-web@0.31.2
+[0.31.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.31.0...@metamask/sdk-install-modal-web@0.31.1
+[0.31.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.30.2...@metamask/sdk-install-modal-web@0.31.0
+[0.30.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.30.0...@metamask/sdk-install-modal-web@0.30.2
+[0.30.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.29.2...@metamask/sdk-install-modal-web@0.30.0
+[0.29.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.29.1...@metamask/sdk-install-modal-web@0.29.2
+[0.29.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.28.1...@metamask/sdk-install-modal-web@0.29.1
+[0.28.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.26.5...@metamask/sdk-install-modal-web@0.28.1
+[0.26.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.26.4...@metamask/sdk-install-modal-web@0.26.5
+[0.26.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.26.0...@metamask/sdk-install-modal-web@0.26.4
+[0.26.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.20.4...@metamask/sdk-install-modal-web@0.26.0
+[0.20.4]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.20.2...@metamask/sdk-install-modal-web@0.20.4
+[0.20.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.20.1...@metamask/sdk-install-modal-web@0.20.2
+[0.20.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.20.0...@metamask/sdk-install-modal-web@0.20.1
+[0.20.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.18.5...@metamask/sdk-install-modal-web@0.20.0
+[0.18.5]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.17.0...@metamask/sdk-install-modal-web@0.18.5
+[0.17.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.16.0...@metamask/sdk-install-modal-web@0.17.0
+[0.16.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.15.0...@metamask/sdk-install-modal-web@0.16.0
+[0.15.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.14.1...@metamask/sdk-install-modal-web@0.15.0
+[0.14.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.13.0...@metamask/sdk-install-modal-web@0.14.1
+[0.13.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.12.2...@metamask/sdk-install-modal-web@0.13.0
+[0.12.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.12.1...@metamask/sdk-install-modal-web@0.12.2
+[0.12.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.12.0...@metamask/sdk-install-modal-web@0.12.1
+[0.12.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.11.1...@metamask/sdk-install-modal-web@0.12.0
+[0.11.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.11.0...@metamask/sdk-install-modal-web@0.11.1
+[0.11.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.10.0...@metamask/sdk-install-modal-web@0.11.0
+[0.10.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.9.0...@metamask/sdk-install-modal-web@0.10.0
+[0.9.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.7.0...@metamask/sdk-install-modal-web@0.9.0
+[0.7.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.6.2...@metamask/sdk-install-modal-web@0.7.0
+[0.6.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.6.1...@metamask/sdk-install-modal-web@0.6.2
+[0.6.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.6.0...@metamask/sdk-install-modal-web@0.6.1
+[0.6.0]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.5.1...@metamask/sdk-install-modal-web@0.6.0
+[0.5.1]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.3.3...@metamask/sdk-install-modal-web@0.5.1
+[0.3.3]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.3.2...@metamask/sdk-install-modal-web@0.3.3
+[0.3.2]: https://github.com/MetaMask/metamask-sdk.git/compare/@metamask/sdk-install-modal-web@0.3.0...@metamask/sdk-install-modal-web@0.3.2
+[0.3.0]: https://github.com/MetaMask/metamask-sdk.git/releases/tag/@metamask/sdk-install-modal-web@0.3.0
