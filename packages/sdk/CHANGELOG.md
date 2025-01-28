@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk/pull/1202))
+
 ## [0.31.5]
 ### Added
 - feat: improves the react connected hook when using extension & emit terminate when using extension ([#1186](https://github.com/MetaMask/metamask-sdk/pull/1186))
