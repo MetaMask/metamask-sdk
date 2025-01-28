@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.32.0]
-### Uncategorized
-- fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk/pull/1202))
+### Added
 - feat: setup stencil development environment with component preview ([#1196](https://github.com/MetaMask/metamask-sdk/pull/1196))
+
+### Fixed
+- fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk/pull/1202))
 
 ## [0.31.5]
 ### Added
