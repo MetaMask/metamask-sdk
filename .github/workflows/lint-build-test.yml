@@ -22,7 +22,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
       - run: yarn --immutable
       - name: Fetch workspace package names
         id: workspace-package-names
@@ -43,7 +42,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
       - run: yarn --immutable --immutable-cache
       - run: yarn lint
       - name: Require clean working directory
@@ -68,7 +66,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
       - run: yarn --immutable --immutable-cache
       - run: yarn workspace ${{ matrix.package-name }} lint:changelog
       - name: Require clean working directory
@@ -93,7 +90,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
       - run: yarn --immutable --immutable-cache
       - run: yarn build
       - name: Require clean working directory
@@ -118,7 +114,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
       - run: yarn --immutable --immutable-cache
       - run: yarn build
       - run: yarn workspace ${{ matrix.package-name }} run test:ci
