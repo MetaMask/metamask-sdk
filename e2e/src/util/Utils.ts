@@ -1,4 +1,3 @@
-import path from 'path';
 import ADB from 'appium-adb';
 import { driver } from '@wdio/globals';
 import LockScreen from '@screens/MetaMask/LockScreen';
@@ -177,38 +176,25 @@ export const launchMetaMaskWithFixture = async (
   fixtureServer: FixtureServer,
   bundleId: string,
 ) => {
-  const appPath = path.join(process.env.APP_PATH || '');
-  await driver.removeApp(bundleId);
-
   const fixture = new FixtureBuilder().withDefaultFixture().build();
   await startFixtureServer(fixtureServer);
   await loadFixture(fixtureServer, { fixture });
-  await driver.pause(10000);
 
-  // NOT NEEDED FOR BrowserStack
   if (PLATFORM === Platforms.ANDROID) {
     console.log('Android test detected. Reversing TCP ports...');
-    const adb = await ADB.createADB({});
+    const adb = new ADB({
+      adbHost: LOCALHOST,
+      adbPort: 5037,
+    });
 
     await adb.reversePort(FIXTURE_SERVER_PORT, FIXTURE_SERVER_PORT);
 
-    await driver.installApp(appPath);
-
-    await driver.pause(20000);
-
-    console.log('Launching MetaMask with fixture on Android...');
-    // await launchApp(METAMASK_BUNDLE_ID);
-    await driver.terminateApp(bundleId);
-    await driver.executeScript('mobile:activateApp', [
-      {
-        appId: bundleId,
-        fixtureServerPort: `${FIXTURE_SERVER_PORT}`,
-      },
-    ]);
+    await launchApp(METAMASK_BUNDLE_ID);
     return;
   }
 
-  console.log(`Re-launching MetaMask on iOS...`);
+  // Specific executeScript to launch MetaMask on iOS
+  console.log('Re-launching MetaMask on iOS...');
   await driver.executeScript('mobile:launchApp', [
     {
       bundleId,
@@ -218,6 +204,8 @@ export const launchMetaMaskWithFixture = async (
       },
     },
   ]);
+
+  // {"bundleId": "io.metamask.MetaMask-QA", "arguments": ["fixtureServerPort", "12345"], "environment": {"fixtureServerPort": "12345"}}
 
   console.log('MetaMask was loaded with fixtures!');
 };
