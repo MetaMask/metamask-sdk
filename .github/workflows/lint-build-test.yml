@@ -128,7 +128,7 @@ jobs:
         if: ${{ matrix.node-version == '18.x' }}
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
+          name: coverage-${{ matrix.package-name }}-${{ github.sha }}
           path: |
             stub
             ${{ steps.get-coverage-folder.outputs.coverage-folder }}/**/coverage-final.json
