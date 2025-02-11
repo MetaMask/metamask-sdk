@@ -149,8 +149,8 @@ jobs:
       - name: Download coverage artifact
         uses: actions/download-artifact@v4
         with:
-          name: coverage-${{ steps.get-coverage-folder.outputs.sanitized-name }}-${{ github.sha }}
-          path: packages/**/coverage-final.json
+          pattern: 'coverage-*-${{ github.sha }}'
+          merge-multiple: true
       - name: Upload coverage results
         uses: codecov/codecov-action@6d798873df2b1b8e5846dba6fb86631229fbcb17
         with:
