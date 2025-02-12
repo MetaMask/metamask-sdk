@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.31.5",
+  "version": "0.32.0",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -50,7 +50,7 @@
   "dependencies": {
     "@babel/runtime": "^7.26.0",
     "@metamask/onboarding": "^1.0.1",
-    "@metamask/providers": "^18.3.1",
+    "@metamask/providers": "16.1.0",
     "@metamask/sdk-communication-layer": "workspace:*",
     "@metamask/sdk-install-modal-web": "workspace:*",
     "@metamask/sdk-multichain": "workspace:*",

@@ -14,62 +14,45 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Install Corepack via Node
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
-          cache: yarn
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ./packages/**/dist
-            ./node_modules/.yarn-state.yml
-          key: ${{ github.sha }}
-      - uses: MetaMask/action-publish-release@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Yarn
+        run: corepack enable
       - run: yarn --immutable
       - run: yarn build
-
-  publish-npm-dry-run:
-    runs-on: ubuntu-latest
-    needs: publish-release
-    steps:
-      - uses: actions/checkout@v3
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          ref: ${{ github.sha }}
-      - uses: actions/cache@v3
-        with:
+          name: publish-release-artifacts-${{ github.sha }}
+          retention-days: 4
+          include-hidden-files: true
           path: |
-            ./packages/**/dist
+            ./dist
             ./node_modules/.yarn-state.yml
-          key: ${{ github.sha }}
-      - name: Dry Run Publish
-        # omit npm-token token to perform dry run publish
-        uses: MetaMask/action-npm-publish@v4
-        with:
-          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          subteam: S042S7RE4AE # @metamask-npm-publishers
-        env:
-          SKIP_PREPACK: true
 
   publish-npm:
-    environment: npm-publish
+    needs: publish-release
     runs-on: ubuntu-latest
-    needs: publish-npm-dry-run
+    environment: npm-publish
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
-      - uses: actions/cache@v3
+      - name: Install Corepack via Node
+        uses: actions/setup-node@v4
         with:
-          path: |
-            ./packages/**/dist
-            ./node_modules/.yarn-state.yml
-          key: ${{ github.sha }}
+          node-version-file: '.nvmrc'
+      - name: Install Yarn
+        run: corepack enable
+      - name: Restore build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-release-artifacts-${{ github.sha }}
       - name: Publish
         uses: MetaMask/action-npm-publish@v4
         with:
