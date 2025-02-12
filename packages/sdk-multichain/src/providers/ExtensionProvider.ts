@@ -48,6 +48,7 @@ export class ExtensionProvider implements Provider {
   private isConnected = false;
   private chromePort: chrome.runtime.Port | null = null;
   private streamProvider?: MetaMaskInpageProvider;
+  private requestId = 1;
 
   /**
    * Storing notification callbacks.
@@ -261,7 +262,7 @@ export class ExtensionProvider implements Provider {
       throw new Error('[ExtensionProvider] no chromePort');
     }
 
-    const id = Date.now() + Math.random(); // or any unique ID
+    const id = this.requestId++;
     const requestPayload = {
       id,
       jsonrpc: '2.0',
