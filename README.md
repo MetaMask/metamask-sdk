@@ -60,7 +60,7 @@ npm i @metamask/sdk
 See the following examples:
 
 - [Next.js](./packages/examples/nextjs-demo/README.md)
-- [React](./packages/examples/create-react-app/README.md)
+- [React](./packages/examples/react-demo/README.md)
 - [Vue.js](./packages/examples/vuejs/README.md)
 - [Pure JavaScript](./packages/examples/pure-javascript/README.md)
 
