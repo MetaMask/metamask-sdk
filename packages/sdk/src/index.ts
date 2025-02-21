@@ -19,6 +19,7 @@ import {
   MetaMaskSDKEvent,
   MetaMaskSDKEventType,
 } from './types/MetaMaskSDKEvents';
+import { eip6963RequestProvider } from './utils/eip6963RequestProvider';
 
 // eslint-disable-next-line spaced-comment
 /*#if _REACTNATIVE
@@ -36,6 +37,7 @@ export type {
 export {
   DEFAULT_SERVER_URL,
   MetaMaskSDKEvent,
+  eip6963RequestProvider,
   EventType,
   CommunicationLayerPreference,
   MetaMaskSDK,

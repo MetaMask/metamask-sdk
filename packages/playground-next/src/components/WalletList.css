@@ -1,0 +1,82 @@
+.wallet-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+
+.wallet-card {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 350px;
+}
+
+.wallet-card button:disabled {
+  background-color: #4299e1;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.wallet-card button:disabled:hover {
+  background-color: #4299e1;
+}
+
+.wallet-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  margin-right: 15px;
+}
+
+.wallet-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+.wallet-info button {
+  margin-top: 1rem;
+}
+
+.wallet-name {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.wallet-uuid,
+.wallet-rdns,
+.wallet-extension-id {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.wallet-card button {
+  align-self: stretch;
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.wallet-card button:hover:not(:disabled) {
+  background-color: #3182ce;
+}
+
+.wallet-card button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
