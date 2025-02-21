@@ -208,7 +208,7 @@ export const handleJoinChannel = async ({
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
     const room = io.sockets.adapter.rooms.get(channelId);
     // roomOccupancy can potentially be 0 instead of 1 if the dapp and wallet were dispatched on different servers
-    // channelOccupancy should be the correct value as it represents the global state accross all servers
+    // channelOccupancy should be the correct value as it represents the global state across all servers
     let roomOccupancy = room?.size ?? 0;
 
     const isSocketInRoom = room?.has(socketId) ?? false;
