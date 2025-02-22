@@ -28,6 +28,9 @@ import {
 
 const logger = getLogger();
 
+// SDK version prev 0.27.0 uses 'sdk' as the default id, below value is the sha1 hash of 'sdk'
+const SDK_EXTENSION_DEFAULT_ID = '5a374dcd2e5eb762b527af3a5bab6072a4d24493';
+
 // Initialize Redis Cluster client
 let redisNodes: {
   host: string;
@@ -243,7 +246,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
-    const channelId: string = body.id || 'sdk';
+    let channelId: string = body.id || 'sdk';
     // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
     let isExtensionEvent = body.from === 'extension';
 
@@ -269,10 +272,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       ? crypto.createHash('sha1').update(channelId).digest('hex')
       : await pubClient.get(channelId);
 
-    incrementRedisCacheOperation(
-      'analytics-get-channel-id',
-      Boolean(userIdHash),
-    );
+    incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
@@ -294,21 +294,15 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       await inspectRedis(channelId);
     }
 
-    let channelInfo: ChannelInfo | null = null;
+    let channelInfo: ChannelInfo | null;
     const cachedChannelInfo = isAnonUser
       ? null
       : await pubClient.get(userIdHash);
 
-    // Potential issue because we may have a cached channel info but the url inside may be empty and dappId "N/A".
-    // We then need to actually fully parse the string and extract the channelInfo object to validate the url and dappId.
-    const hasCachedChannelInfo = Boolean(cachedChannelInfo);
-
     incrementRedisCacheOperation(
       'analytics-get-channel-info',
-      hasCachedChannelInfo,
+      !!cachedChannelInfo,
     );
-
-    let hasValidCachedChannelInfo = false;
 
     if (cachedChannelInfo) {
       logger.debug(
@@ -316,18 +310,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
         cachedChannelInfo,
       );
       channelInfo = JSON.parse(cachedChannelInfo);
-      hasValidCachedChannelInfo =
-        channelInfo !== null &&
-        Boolean(channelInfo.url && channelInfo.url.length > 0);
-
-      if (!hasValidCachedChannelInfo) {
-        logger.warn(
-          `event: ${body.event} channelId: ${channelId}  - empty cached channel info for ${userIdHash} dAppId=${channelInfo?.dappId}`,
-        );
-      }
-    }
-
-    if (!hasValidCachedChannelInfo) {
+    } else {
       logger.info(
         `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash}`,
       );
