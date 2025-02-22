@@ -17,7 +17,6 @@ export const withAdminUI: boolean = process.env.ADMIN_UI === 'true';
 const HOUR_IN_SECONDS = 60 * 60;
 const THIRTY_DAYS_IN_SECONDS = 30 * 24 * 60 * 60; // expiration time of entries in Redis
 export const MAX_CLIENTS_PER_ROOM = 2;
-export const MAX_MESSAGE_LENGTH = 1_000_000; // 1MB limit
 
 export const config = {
   msgExpiry: HOUR_IN_SECONDS,
