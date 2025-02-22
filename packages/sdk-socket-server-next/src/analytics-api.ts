@@ -99,6 +99,7 @@ export const getRedisClient = () => {
       );
       const redisClusterOptions: ClusterOptions = {
         dnsLookup: (address, callback) => callback(null, address),
+        scaleReads: 'slave',
         slotsRefreshTimeout: 2000,
         showFriendlyErrorStack: true,
         slotsRefreshInterval: 4000,
