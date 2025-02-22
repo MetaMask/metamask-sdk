@@ -2,7 +2,7 @@ import winston, { format } from 'winston';
 
 const customFormat = format.printf((ti) => {
   const { level, message, timestamp } = ti;
-  const args = ti[Symbol.for('splat')];
+  const args = ti[Symbol.for('splat')] as unknown[];
 
   const color = {
     info: '\x1b[36m',
@@ -31,7 +31,7 @@ const customFormat = format.printf((ti) => {
       })
       .join(' ') ?? '';
 
-  const searchContext = message;
+  const searchContext = message as string;
   if (searchContext.indexOf('wallet') !== -1) {
     msg += `\x1b[36m${message} ${extras}\x1b[0m`;
     // eslint-disable-next-line no-negated-condition
