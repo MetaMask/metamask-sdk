@@ -71,6 +71,7 @@ export const getRedisOptions = (
   const options: RedisOptions = {
     ...(isTls && tlsOptions),
     connectTimeout: 30000,
+    keepAlive: 369,
     maxRetriesPerRequest: 4,
     retryStrategy: (times) => Math.min(times * 30, 1000),
     reconnectOnError: (error) => {
