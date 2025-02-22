@@ -46,7 +46,7 @@ const customFormat = format.printf((ti) => {
 // Create a function to initialize the logger
 export function createLogger(isDevelopment: boolean) {
   return winston.createLogger({
-    level: isDevelopment ? 'debug' : 'info',
+    level: isDevelopment ? 'debug' : 'notice',
     format: isDevelopment
       ? winston.format.combine(winston.format.timestamp(), customFormat)
       : winston.format.json(),
