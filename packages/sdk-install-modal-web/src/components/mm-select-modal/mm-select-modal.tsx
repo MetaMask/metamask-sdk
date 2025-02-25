@@ -7,6 +7,7 @@ import ConnectIcon from '../misc/ConnectIcon';
 import { MetamaskExtensionImage } from '../misc/MetamaskExtensionImage';
 import encodeQR from '@paulmillr/qr';
 import { SimpleI18n } from '../misc/simple-i18n';
+import Icon from '../misc/Icon';
 
 @Component({
   tag: 'mm-select-modal',
@@ -103,6 +104,7 @@ export class SelectModal {
             </div>
           </div>
           <div class='logoContainer'>
+            <Icon />
             <Logo />
           </div>
           <div>

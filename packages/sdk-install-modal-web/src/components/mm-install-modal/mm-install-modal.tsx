@@ -11,6 +11,7 @@ import Logo from '../misc/Logo';
 import encodeQR from '@paulmillr/qr';
 import { SimpleI18n } from '../misc/simple-i18n';
 import { TrackingEvents } from '../misc/tracking-events';
+import Icon from '../misc/Icon';
 
 @Component({
   tag: 'mm-install-modal',
@@ -133,6 +134,7 @@ export class InstallModal {
             </div>
           </div>
           <div class='logoContainer'>
+            <Icon />
             <Logo />
           </div>
           <div>
