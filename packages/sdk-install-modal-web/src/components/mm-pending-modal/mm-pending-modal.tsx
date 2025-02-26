@@ -4,7 +4,6 @@ import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
 import { SimpleI18n } from '../misc/simple-i18n';
-import Icon from '../misc/Icon';
 
 @Component({
   tag: 'mm-pending-modal',
@@ -83,7 +82,6 @@ export class PendingModal {
             </div>
           </div>
           <div class='logoContainer'>
-            <Icon />
             <Logo />
           </div>
           <div>
