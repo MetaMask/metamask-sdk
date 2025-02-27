@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.32.1]
 
-## [0.32.0]
+## [0.32.1]
 ### Added
 - feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
 
