@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.32.1]
+### Fixed
+- fix: Fix analytics for unwanted events when using extension ([#1219](https://github.com/MetaMask/metamask-sdk/pull/1219))
 
-## [0.32.1]
-### Added
+## [0.32.0]
+### Uncategorized
 - feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
 
 ## [0.31.5]
