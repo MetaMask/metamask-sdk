@@ -35,10 +35,29 @@ jobs:
             ./dist
             ./node_modules/.yarn-state.yml
 
+  publish-npm-dry-run:
+    runs-on: ubuntu-latest
+    needs: publish-release
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - name: Restore build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: publish-release-artifacts-${{ github.sha }}
+      - name: Dry Run Publish
+        uses: MetaMask/action-npm-publish@v4
+        with:
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          subteam: S042S7RE4AE # @metamask-npm-publishers
+        env:
+          SKIP_PREPACK: true
+
   publish-npm:
+    environment: npm-publish
     needs: publish-release
     runs-on: ubuntu-latest
-    environment: npm-publish
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,7 +74,3 @@ jobs:
           name: publish-release-artifacts-${{ github.sha }}
       - name: Publish
         uses: MetaMask/action-npm-publish@v4
-        with:
-          npm-token: ${{ secrets.NPM_TOKEN }}
-        env:
-          SKIP_PREPACK: true
