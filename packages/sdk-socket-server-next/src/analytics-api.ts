@@ -76,7 +76,7 @@ export const getRedisOptions = (
     retryStrategy: (times) => Math.min(times * 30, 1000),
     reconnectOnError: (error) => {
       // eslint-disable-next-line require-unicode-regexp
-      const targetErrors = [/READONLY/, /ETIMEDOUT/];
+      const targetErrors = [/MOVED/, /READONLY/, /ETIMEDOUT/];
       return targetErrors.some((targetError) =>
         targetError.test(error.message),
       );
