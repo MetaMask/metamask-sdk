@@ -1,3 +1,4 @@
+// packages/sdk/src/sdk.ts
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,

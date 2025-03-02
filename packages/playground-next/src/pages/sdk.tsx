@@ -1,26 +1,30 @@
 'use client';
 
-import { useSDK } from '@metamask/sdk-react';
-import styles from './page.module.css';
+import { MetaMaskProvider, useSDK } from '@metamask/sdk-react';
 import { useCallback, useEffect, useState } from 'react';
+import styles from '../styles/page.module.css';
 
 interface AccountInfo {
   account: string;
   balance: string;
 }
 
-export default function Home() {
+const PageSdk = () => {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [signedMessage, setSignedMessage] = useState<string>('');
 
-  const getBalance = useCallback(async (address: string): Promise<string> => {
-    const balance = await provider?.request({
-      method: 'eth_getBalance',
-      params: [address, 'latest']
-    });
-    return balance ? parseInt(balance as string, 16).toString() : '0';
-  }, [provider]);
+  const getBalance = useCallback(
+    async (address: string): Promise<string> => {
+      const balance = await provider?.request({
+        method: 'eth_getBalance',
+        params: [address, 'latest'],
+      });
+      return balance ? parseInt(balance as string, 16).toString() : '0';
+    },
+    [provider],
+  );
 
   const connectWallet = async (): Promise<void> => {
     try {
@@ -45,13 +49,31 @@ export default function Home() {
     }
   };
 
+  const handlePersonalSign = async (): Promise<void> => {
+    try {
+      setIsLoading(true);
+      if (!account) return;
+
+      const message = 'Hello from Simple Web3 Dapp!';
+      const signature = await provider?.request({
+        method: 'personal_sign',
+        params: [message, account],
+      });
+      setSignedMessage(signature as string);
+    } catch (err) {
+      console.error('Failed to sign message:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const updateAccountInfo = async () => {
       if (connected && account) {
         const balance = await getBalance(account);
         setAccountInfo({
           account,
-          balance
+          balance,
         });
       } else {
         setAccountInfo(null);
@@ -75,12 +97,20 @@ export default function Home() {
         </button>
       ) : (
         <>
-          <div className={styles.address}>
-            Address: {accountInfo?.account}
-          </div>
+          <div className={styles.address}>Address: {accountInfo?.account}</div>
           <div className={styles.address}>
             Balance: {accountInfo?.balance} Wei
           </div>
+          <button
+            className={styles.button}
+            onClick={handlePersonalSign}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Signing...' : 'Sign Message'}
+          </button>
+          {signedMessage && (
+            <div className={styles.address}>Signature: {signedMessage}</div>
+          )}
           <button
             className={styles.button}
             onClick={terminateConnection}
@@ -91,5 +121,24 @@ export default function Home() {
         </>
       )}
     </div>
+  );
+};
+
+export default function PageSDKWrapper() {
+  return (
+    <MetaMaskProvider
+      debug={false}
+      sdkOptions={{
+        dappMetadata: {
+          name: 'Simple Web3 Dapp',
+          url: 'https://metamask.io',
+        },
+        logging: {
+          developerMode: true,
+        },
+      }}
+    >
+      <PageSdk />
+    </MetaMaskProvider>
   );
 }

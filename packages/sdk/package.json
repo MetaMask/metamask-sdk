@@ -53,6 +53,7 @@
     "@metamask/providers": "16.1.0",
     "@metamask/sdk-communication-layer": "workspace:*",
     "@metamask/sdk-install-modal-web": "workspace:*",
+    "@metamask/sdk-multichain": "workspace:*",
     "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.9.0",
     "cross-fetch": "^4.0.0",
