@@ -10,7 +10,7 @@ import { WagmiProvider, deserialize, serialize } from 'wagmi'
 import './index.css'
 
 // `@coinbase-wallet/sdk` uses `Buffer`
-globalThis.Buffer = Buffer
+(globalThis as unknown as any).Buffer = Buffer
 
 import App from './App.tsx'
 import { config } from './wagmi.ts'
