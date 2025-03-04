@@ -75,3 +75,7 @@ jobs:
           name: publish-release-artifacts-${{ github.sha }}
       - name: Publish
         uses: MetaMask/action-npm-publish@v4
+        with:
+          npm-token: ${{ secrets.NPM_TOKEN }}
+        env:
+          SKIP_PREPACK: true
