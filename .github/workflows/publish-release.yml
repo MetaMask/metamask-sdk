@@ -32,7 +32,7 @@ jobs:
           retention-days: 4
           include-hidden-files: true
           path: |
-            ./packages/**/dist
+            ./packages/*/dist
             ./dist
             ./node_modules/.yarn-state.yml
 
