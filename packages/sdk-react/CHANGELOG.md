@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.1]
+### Fixed
+- fix: Fix analytics for unwanted events when using extension ([#1219](https://github.com/MetaMask/metamask-sdk/pull/1219))
+
 ## [0.32.0]
 ### Uncategorized
 - feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
@@ -303,7 +307,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.32.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.32.1...HEAD
+[0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.32.0...@metamask/sdk-react@0.32.1
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.5...@metamask/sdk-react@0.32.0
 [0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.4...@metamask/sdk-react@0.31.5
 [0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.31.3...@metamask/sdk-react@0.31.4
