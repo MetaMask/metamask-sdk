@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "lib": [
+            "es2017"
+        ],
+        "target": "es2019",
+        "removeComments": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": true,
+        "strictNullChecks": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        },
+        "types": [
+            "node",
+            "webdriverio/sync",
+            "expect-webdriverio"
+        ]
+    },
+    "include": [
+        "./**/*"
+    ]
+}
