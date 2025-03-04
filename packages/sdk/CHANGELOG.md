@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.1]
+### Fixed
+- fix: Fix analytics for unwanted events when using extension ([#1219](https://github.com/MetaMask/metamask-sdk/pull/1219))
+
 ## [0.32.0]
 ### Added
 - feat(sdk): rollback @metamask/providers to 16.1.0 due to Next.js compatibility issues ([#1207](https://github.com/MetaMask/metamask-sdk/pull/1207))
@@ -483,7 +487,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.1...HEAD
+[0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...@metamask/sdk@0.32.1
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...@metamask/sdk@0.32.0
 [0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.4...@metamask/sdk@0.31.5
 [0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.3...@metamask/sdk@0.31.4
