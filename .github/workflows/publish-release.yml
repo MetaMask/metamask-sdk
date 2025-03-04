@@ -23,6 +23,9 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Install Yarn
         run: corepack enable
+      - uses: MetaMask/action-publish-release@v3
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: yarn --immutable
       - run: yarn build
       - name: Upload build artifacts
