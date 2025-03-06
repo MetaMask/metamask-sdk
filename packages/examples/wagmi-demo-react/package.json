@@ -15,8 +15,8 @@
     "idb-keyval": "^6.2.1",
     "react": ">=18.3.1",
     "react-dom": ">=18.3.1",
-    "viem": "2.*",
-    "wagmi": "2.12.22"
+    "viem": "^2.21.54",
+    "wagmi": "^2.13.3"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.0.5",
