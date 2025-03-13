@@ -4089,13 +4089,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookies@npm:~0.8.0":
-  version: 0.8.0
-  resolution: "cookies@npm:0.8.0"
+"cookies@npm:~0.9.0":
+  version: 0.9.1
+  resolution: "cookies@npm:0.9.1"
   dependencies:
     depd: ~2.0.0
     keygrip: ~1.1.0
-  checksum: 806055a44f128705265b1bc6a853058da18bf80dea3654ad99be20985b1fa1b14f86c1eef73644aab8071241f8a78acd57202b54c4c5c70769fc694fbb9c4edc
+  checksum: 213e4d14847b582fbd8a003203d3621a4b9fa792a315c37954e89332d38fac5bcc34ba92ef316ad6d5fe28f0187aaa115927fbbe2080744ad1707a93b4313247
   languageName: node
   linkType: hard
 
@@ -7132,15 +7132,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"koa@npm:^2.14.2":
-  version: 2.14.2
-  resolution: "koa@npm:2.14.2"
+"koa@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "koa@npm:2.16.0"
   dependencies:
     accepts: ^1.3.5
     cache-content-type: ^1.0.0
     content-disposition: ~0.5.2
     content-type: ^1.0.4
-    cookies: ~0.8.0
+    cookies: ~0.9.0
     debug: ^4.3.2
     delegates: ^1.0.0
     depd: ^2.0.0
@@ -7159,7 +7159,7 @@ __metadata:
     statuses: ^1.5.0
     type-is: ^1.6.16
     vary: ^1.1.2
-  checksum: 17fe3b8f5e0b4759004a942cc6ba2a9507299943a697dff9766b85f41f45caed4077ca2645ac9ad254d3359fffedfc4c9ebdd7a70493e5df8cdfac159a8ee835
+  checksum: 01be3231d41115a6fd0a4706a8d9e15ffc05404151dd813d07ddf05d36f17db54c3d0afa1811e8b72d13e205753a0b62ef0aa43337b6d531ef1b522bcf856c8e
   languageName: node
   linkType: hard
 
@@ -7522,7 +7522,7 @@ __metadata:
     eslint-plugin-import: ^2.27.5
     eslint-plugin-jsdoc: ^46.4.3
     eslint-plugin-prettier: ^4.2.1
-    koa: ^2.14.2
+    koa: ^2.16.0
     module-alias: ^2.2.3
     prettier: ^2.8.8
     ts-node: ^10.9.2

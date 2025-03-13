@@ -21,13 +21,10 @@
     "wdio-wait-for": "^3.0.9"
   },
   "scripts": {
-    "test:android:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite web_dapp",
-    "test:ios:jssdk:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite web_dapp",
-    "test:ios:jssdk:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite web_dapp",
-    "test:android:jssdk:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite web_dapp",
-    "test:ios:jssdk:e2e:local:fixture": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite fixture_reference",
     "test:ios:metamask-connector:e2e:local": "wdio run test/configs/local/wdio.ios.app.local.conf.ts --suite metamask_connector",
+    "test:ios:metamask-connector:e2e:browserstack": "wdio run test/configs/browserstack/wdio.ios.app.browserstack.conf.ts --suite metamask_connector",
     "test:android:metamask-connector:e2e:local": "wdio run test/configs/local/wdio.android.app.local.conf.ts --suite metamask_connector",
+    "test:android:metamask-connector:e2e:browserstack": "wdio run test/configs/browserstack/wdio.android.app.browserstack.conf.ts --suite metamask_connector",
     "setup": "yarn install",
     "build": "tsc --build",
     "clean": "yarn clean:reports && rm -rf node_modules",
@@ -52,7 +49,7 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-jsdoc": "^46.4.3",
     "eslint-plugin-prettier": "^4.2.1",
-    "koa": "^2.14.2",
+    "koa": "^2.16.0",
     "prettier": "^2.8.8",
     "webdriverio": "^9.2.1"
   }
