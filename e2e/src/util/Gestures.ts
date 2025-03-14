@@ -1,8 +1,21 @@
+import winston from 'winston';
 import {
   getCoordinatesAsPercentage,
   getCoordinatesForDeviceFromPercentage,
 } from './Utils';
 import { ScreenPercentage } from './types';
+
+// Create a Winston logger
+const log = winston.createLogger({
+  level: 'debug',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+      return `${timestamp} [Gestures] ${level}: ${message}`;
+    }),
+  ),
+  transports: [new winston.transports.Console()],
+});
 
 const Actions = {
   LONG_PRESS: 'longPress',
@@ -112,16 +125,32 @@ export default class Gestures {
   static async tapOnCoordinatesByPercentage(
     location: ScreenPercentage,
   ): Promise<void> {
+    log.debug(`Tapping on coordinates: ${location.x}, ${location.y}`);
     const tapLocation = await getCoordinatesForDeviceFromPercentage({
       x: location.x,
       y: location.y,
     });
 
-    await driver
-      .action('pointer', { parameters: { pointerType: 'touch' } })
-      .move({ x: tapLocation.x, y: tapLocation.y })
-      .down()
-      .up()
-      .perform();
+    // TODO: use this for BrowserStack
+    await driver.touchAction([
+      {
+        action: 'tap',
+        x: tapLocation.x,
+        y: tapLocation.y,
+      },
+    ]);
+
+    // try {
+    //   await driver
+    //     .action('pointer', { parameters: { pointerType: 'touch' } })
+    //     .move({ x: tapLocation.x, y: tapLocation.y })
+    //     .down()
+    //     .pause(100)
+    //     .up()
+    //     .perform();
+    // } catch (error) {
+    //   log.error(`Error tapping on coordinates: ${location.x}, ${location.y}`);
+    //   log.error(error);
+    // }
   }
 }

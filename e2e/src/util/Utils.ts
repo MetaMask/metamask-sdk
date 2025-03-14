@@ -23,7 +23,6 @@ import {
   LOCALHOST,
   WALLET_PASSWORD,
   Browsers,
-  BrowsersActivity,
 } from './Constants';
 import Gestures from './Gestures';
 
@@ -71,6 +70,14 @@ export const navigateToWebMobileDapp = async (
   await browserScreen.goToAddress(dappUrl, dappScreen);
 };
 
+export const refreshBrowser = async () => {
+  const browserScreen = driver.isIOS
+    ? SafariBrowserScreen
+    : ChromeBrowserScreen;
+
+  await browserScreen.refreshPage();
+};
+
 export const scrollToElement = async (element: ChainablePromiseElement) => {
   let isElementDisplayed = await element.isDisplayed();
 
@@ -96,25 +103,12 @@ export const launchMetaMask = async () => {
 };
 
 export const goBack = async () => {
-  if (driver.isIOS) {
-    // Letting the loader appear
-    await driver.pause(2500);
-    await Gestures.tapOnCoordinatesByPercentage({ x: 50, y: 80 });
-    await driver.pause(500);
-    await launchApp(Browsers.SAFARI);
-    return;
-  }
+  const browserToOpen = driver.isIOS ? Browsers.SAFARI : Browsers.CHROME;
 
-  // Android wait to go back since it takes a while for it to happen in the
-  // current version of the app
-  let currentActivity = await driver.getCurrentActivity();
-  while (currentActivity !== BrowsersActivity.CHROME) {
-    await driver.pause(2000);
-    currentActivity = await driver.getCurrentActivity();
-  }
-
-  // Waiting for the dapp to fetch updates before trying to assert them
-  await driver.pause(3000);
+  await driver.pause(2500);
+  await Gestures.tapOnCoordinatesByPercentage({ x: 50, y: 80 });
+  await driver.pause(500);
+  await launchApp(browserToOpen);
 };
 
 /*

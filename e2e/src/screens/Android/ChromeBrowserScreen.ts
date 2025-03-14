@@ -94,6 +94,8 @@ class ChromeBrowserScreen implements MobileBrowser {
       await driver.activateApp(Browsers.CHROME);
     }
 
+    await driver.setOrientation('PORTRAIT');
+
     await this.urlAddressBar.waitForDisplayed({
       timeout: 10000,
     });
@@ -106,39 +108,7 @@ class ChromeBrowserScreen implements MobileBrowser {
       await driver.pressKeyCode(66);
     }
 
-    await this.refreshButton.waitForDisplayed({
-      timeout: 10000,
-    });
     await pageObject.terminate();
-
-    // await this.refreshPage();
-
-    // Wait for the page to start loading
-    // await driver.pause(3000);
-
-    // const isWebDappLoaded = async () => {
-    //   let retries = 20;
-    //   // TODO: refactor this to use the page object
-    //   let isConnectButtonDisplayed = await (
-    //     (await pageObject.connectButton) as ChainablePromiseElement
-    //   ).isDisplayed();
-
-    //   while (!isConnectButtonDisplayed && retries > 0) {
-    //     // Waits for 2 seconds before checking again
-    //     await driver.pause(2000);
-    //     isConnectButtonDisplayed = await (
-    //       (await pageObject.connectButton) as ChainablePromiseElement
-    //     ).isDisplayed();
-    //     retries -= 1;
-    //   }
-    // };
-
-    // let attempts = 0;
-
-    // while (!isWebDappLoaded() && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
-    //   await this.refreshPage();
-    //   attempts += 1;
-    // }
   }
 
   async tapSwitchTabsButton(): Promise<void> {

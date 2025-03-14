@@ -9,9 +9,11 @@ class PersonalSignConfirmationComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
+          '//android.widget.Button[@content-desc="Confirm"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('name == "Confirm"'),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "confirm-button"',
+        ),
       }),
     );
   }
@@ -20,18 +22,21 @@ class PersonalSignConfirmationComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-cancel-button"]',
+          '//android.widget.Button[@content-desc="Reject"]',
         ),
-        iosSelector: IOSSelector.by().predicateString('name == "Reject"'),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "cancel-button"',
+        ),
       }),
     );
   }
 
+  // TODO: adapt this to get any type of message based on the dapp
   get messageText(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.TextView[@text="Personal Sign"]',
+          '//android.widget.TextView[@text="Hello, world!"]',
         ),
         iosSelector: IOSSelector.by().xpath(
           '//*[starts-with(@label, "Message ")]',
@@ -44,10 +49,10 @@ class PersonalSignConfirmationComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.view.ViewGroup[@resource-id="personal-signature-request"]',
+          '//android.view.ViewGroup[@resource-id="personal_sign"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
-          'name == "Signature request"',
+          'name == "personal_sign"',
         ),
       }),
     );

@@ -5,6 +5,7 @@ import {
   killApp,
   launchMetaMaskWithFixture,
   navigateToWebMobileDapp,
+  refreshBrowser,
 } from '@util/Utils';
 import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
 import PersonalSignConfirmationComponent from '@screens/MetaMask/components/PersonalSignConfirmationComponent';
@@ -34,8 +35,8 @@ describe('MetaMask Connector Playground dapp', () => {
     );
     // Start with a cold start
     await killApp(METAMASK_BUNDLE_ID);
+    await refreshBrowser();
 
-    await PlaygroundNextDappScreen.terminate();
     await PlaygroundNextDappScreen.connect();
     await deviceOpenDeeplinkWithMetaMask();
 
@@ -69,5 +70,7 @@ describe('MetaMask Connector Playground dapp', () => {
 
     await PersonalSignConfirmationComponent.tapSignButton();
     await goBack();
+
+    // TODO: Assert personalSign contents
   });
 });

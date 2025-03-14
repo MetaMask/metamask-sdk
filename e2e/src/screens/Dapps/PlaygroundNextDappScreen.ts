@@ -10,7 +10,7 @@ class PlaygroundNextDappScreen implements Dapp {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@text="Connect"]',
+          '//android.widget.Button[@text="Connect MetaMask"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "Connect MetaMask"',
@@ -40,7 +40,7 @@ class PlaygroundNextDappScreen implements Dapp {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@text="Terminate"]',
+          '//android.widget.Button[@text="Terminate Connection"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
           'name == "Terminate Connection"',
