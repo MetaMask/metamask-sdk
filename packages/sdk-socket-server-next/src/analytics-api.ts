@@ -77,6 +77,17 @@ export const getRedisOptions = (
     reconnectOnError: (error) => {
       // eslint-disable-next-line require-unicode-regexp
       const targetErrors = [/MOVED/, /READONLY/, /ETIMEDOUT/];
+
+      logger.error('Redis reconnect error:', error);
+      if (error.message.includes('MOVED') && redisClient instanceof Cluster) {
+        logger.error('Refreshing Redis Cluster slots cache');
+        try {
+          redisClient?.refreshSlotsCache();
+        } catch (error) {
+          logger.error('Error refreshing Redis Cluster slots cache:', error);
+        }
+      }
+
       return targetErrors.some((targetError) =>
         targetError.test(error.message),
       );
@@ -100,9 +111,9 @@ export const getRedisClient = () => {
       const redisClusterOptions: ClusterOptions = {
         dnsLookup: (address, callback) => callback(null, address),
         scaleReads: 'slave',
-        slotsRefreshTimeout: 2000,
+        slotsRefreshTimeout: 5000,
         showFriendlyErrorStack: true,
-        slotsRefreshInterval: 4000,
+        slotsRefreshInterval: 2000,
         clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
         enableAutoPipelining: true,
         redisOptions,
@@ -119,6 +130,19 @@ export const getRedisClient = () => {
       redisClient = new Redis(redisNodes[0]);
     }
   }
+
+  redisClient.on('ready', () => {
+    logger.info('Redis ready');
+
+    if (redisClient instanceof Cluster) {
+      logger.error('Refreshing Redis Cluster slots cache');
+      try {
+        redisClient?.refreshSlotsCache();
+      } catch (error) {
+        logger.error('Error refreshing Redis Cluster slots cache:', error);
+      }
+    }
+  });
 
   redisClient.on('error', (error) => {
     logger.error('Redis error:', error);
