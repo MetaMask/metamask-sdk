@@ -115,7 +115,7 @@ export const getRedisClient = () => {
         showFriendlyErrorStack: true,
         slotsRefreshInterval: 2000,
         clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
-        enableAutoPipelining: true,
+        enableAutoPipelining: false, // Disable auto pipelining to avoid MOVED errors for now (should re-enable when we have a better solution)
         redisOptions,
       };
 
