@@ -80,7 +80,10 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, 1);
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
+    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, 1);
     logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -93,8 +96,11 @@ export const configureSocketServer = async (
       return;
     }
 
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
     // Decrement the number of clients in the room
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
+    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, -1);
 
     logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -102,8 +108,11 @@ export const configureSocketServer = async (
 
     if (channelOccupancy <= 0) {
       logger.debug(`'leave-room' room ${roomId} was deleted`);
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+      const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
       // remove from redis
-      await pubClient.hdel('channels', roomId);
+      await pubClient.del(channelOccupancyKey);
     } else {
       logger.info(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
