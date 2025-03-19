@@ -90,7 +90,7 @@ export const handleMessage = async ({
         channelConfig = { ...channelConfig, ready };
 
         await pubClient.set(
-          `channel_config:${channelId}`,
+          `channel_config:{${channelId}}`,
           JSON.stringify(channelConfig),
         );
 
