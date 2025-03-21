@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { pubClient } from '../analytics-api';
+import { pubClient, pubClientPool } from '../analytics-api';
 import { config } from '../config';
 import { getLogger } from '../logger';
 import { ChannelConfig } from './handleJoinChannel';
@@ -78,12 +78,16 @@ export const handleChannelRejected = async (
     },
   );
 
+  const client = await pubClientPool.acquire();
+
   // Update redis channel config to inform dApp of rejection
-  await pubClient.setex(
+  await client.setex(
     channelConfigKey,
     config.rejectedChannelExpiry,
     JSON.stringify(channelConfig),
   );
+
+  await pubClientPool.release(client);
 
   // Also broadcast to dapp if it is connected
   socket.broadcast.to(channelId).emit(`rejected-${channelId}`, { channelId });

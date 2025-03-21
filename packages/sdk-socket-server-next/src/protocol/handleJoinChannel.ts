@@ -1,7 +1,7 @@
 // protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from '../analytics-api';
+import { pubClient, pubClientPool } from '../analytics-api';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
@@ -182,11 +182,15 @@ export const handleJoinChannel = async ({
           JSON.stringify(channelConfig),
         );
 
-        await pubClient.setex(
+        const client = await pubClientPool.acquire();
+
+        await client.setex(
           channelConfigKey,
           config.channelExpiry,
           JSON.stringify(channelConfig),
         ); // 1 week expiration
+
+        await pubClientPool.release(client);
       }
     }
 
