@@ -6,7 +6,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from './analytics-api';
+import { pubClient, pubClientPool } from './analytics-api';
 import { getLogger } from './logger';
 import { ACKParams, handleAck } from './protocol/handleAck';
 import {
@@ -95,12 +95,14 @@ export const configureSocketServer = async (
       // Ignore invalid room IDs
       return;
     }
+  
+    const client = await pubClientPool.acquire();
 
     // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
     const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
 
     // Decrement the number of clients in the room
-    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, -1);
+    const channelOccupancy = await client.incrby(channelOccupancyKey, -1);
 
     logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -112,7 +114,7 @@ export const configureSocketServer = async (
       const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
 
       // remove from redis
-      await pubClient.del(channelOccupancyKey);
+      await client.del(channelOccupancyKey);
     } else {
       logger.info(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
@@ -120,6 +122,8 @@ export const configureSocketServer = async (
       // Inform the room of the disconnection
       io.to(roomId).emit(`clients_disconnected-${roomId}`);
     }
+
+    await pubClientPool.release(client);
   });
 
   io.on('connection', (socket: Socket) => {

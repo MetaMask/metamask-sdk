@@ -186,8 +186,8 @@ export const getGlobalRedisClient = () => {
 
 export const pubClient = getGlobalRedisClient();
 export const pubClientPool = genericPool.createPool(redisFactory, {
-  max: 15,
-  min: 4,
+  max: 35,
+  min: 15,
 });
 
 const app = express();
