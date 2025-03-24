@@ -123,15 +123,6 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
 
   newRedisClient.on('ready', () => {
     logger.info('Redis ready');
-
-    if (newRedisClient instanceof Cluster) {
-      logger.error('Refreshing Redis Cluster slots cache');
-      try {
-        newRedisClient?.refreshSlotsCache();
-      } catch (error) {
-        logger.error('Error refreshing Redis Cluster slots cache:', error);
-      }
-    }
   });
 
   newRedisClient.on('error', (error) => {
