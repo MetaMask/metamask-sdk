@@ -251,6 +251,28 @@ app.post('/evt', async (_req, res) => {
       return res.status(400).json({ error: 'event is required' });
     }
 
+    // Define allowed events and methods
+    const allowedEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
+    const allowedMethods = [
+      'eth_sendTransaction',
+      'wallet_switchEthereumChain',
+      'personal_sign',
+      'eth_signTypedData_v4',
+      'wallet_requestPermissions',
+      'wallet_watchAsset',
+      'metamask_connectSign',
+    ];
+
+    // Filter: only allow specific events with specific methods, drop others silently
+    if (
+      !allowedEvents.includes(body.event) ||
+      !body.params ||
+      !body.params.method ||
+      !allowedMethods.includes(body.params.method)
+    ) {
+      return res.json({ success: true });
+    }
+
     if (!body.event.startsWith('sdk_')) {
       logger.error(`Wrong event name: ${body.event}`);
       return res.status(400).json({ error: 'wrong event name' });
