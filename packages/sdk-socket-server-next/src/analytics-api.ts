@@ -288,9 +288,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     // Filter: drop RPC events with unallowed methods silently, let all else through
     if (toCheckEvents.includes(body.event) && 
-        (!body.params || 
-         !body.params.method || 
-         !allowedMethods.includes(body.params.method))) {
+        (!body.method || !allowedMethods.includes(body.method))) {
       return res.json({ success: true });
     }
 
