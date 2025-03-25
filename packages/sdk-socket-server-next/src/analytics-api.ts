@@ -272,6 +272,25 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
+    const toCheckEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
+    const allowedMethods = [
+      "eth_sendTransaction",
+      "wallet_switchEthereumChain",
+      "personal_sign",
+      "eth_signTypedData_v4",
+      "wallet_requestPermissions",
+      "wallet_watchAsset",
+      "metamask_connectSign"
+    ];
+
+    // Filter: drop RPC events with unallowed methods silently, let all else through
+    if (toCheckEvents.includes(body.event) && 
+        (!body.params || 
+         !body.params.method || 
+         !allowedMethods.includes(body.params.method))) {
+      return res.json({ success: true });
+    }
+
     let channelId: string = body.id || 'sdk';
     // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
     let isExtensionEvent = body.from === 'extension';
