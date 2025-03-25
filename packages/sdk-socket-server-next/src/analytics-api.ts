@@ -25,6 +25,7 @@ import {
   incrementAnalyticsEvents,
   incrementRedisCacheOperation,
 } from './metrics';
+import genericPool from "generic-pool";
 
 const logger = getLogger();
 
@@ -54,8 +55,6 @@ if (redisNodes.length === 0) {
   process.exit(1);
 }
 
-let redisClient: Cluster | Redis | undefined;
-
 export const getRedisOptions = (
   isTls: boolean,
   password: string | undefined,
@@ -79,15 +78,6 @@ export const getRedisOptions = (
       const targetErrors = [/MOVED/, /READONLY/, /ETIMEDOUT/];
 
       logger.error('Redis reconnect error:', error);
-      if (error.message.includes('MOVED') && redisClient instanceof Cluster) {
-        logger.error('Refreshing Redis Cluster slots cache');
-        try {
-          redisClient?.refreshSlotsCache();
-        } catch (error) {
-          logger.error('Error refreshing Redis Cluster slots cache:', error);
-        }
-      }
-
       return targetErrors.some((targetError) =>
         targetError.test(error.message),
       );
@@ -99,83 +89,97 @@ export const getRedisOptions = (
   return options;
 };
 
-export const getRedisClient = () => {
-  if (!redisClient) {
-    if (redisCluster) {
-      logger.info('Connecting to Redis Cluster...');
+export const buildRedisClient = (usePipelining: boolean = true) => {
+  let newRedisClient: Cluster | Redis | undefined;
 
-      const redisOptions = getRedisOptions(
-        redisTLS,
-        process.env.REDIS_PASSWORD,
-      );
-      const redisClusterOptions: ClusterOptions = {
-        dnsLookup: (address, callback) => callback(null, address),
-        scaleReads: 'slave',
-        slotsRefreshTimeout: 5000,
-        showFriendlyErrorStack: true,
-        slotsRefreshInterval: 2000,
-        clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
-        enableAutoPipelining: true,
-        redisOptions,
-      };
+  if (redisCluster) {
+    logger.info('Connecting to Redis Cluster...');
 
-      logger.debug(
-        'Redis Cluster options:',
-        JSON.stringify(redisClusterOptions, null, 2),
-      );
+    const redisOptions = getRedisOptions(
+      redisTLS,
+      process.env.REDIS_PASSWORD,
+    );
+    const redisClusterOptions: ClusterOptions = {
+      dnsLookup: (address, callback) => callback(null, address),
+      scaleReads: 'slave',
+      slotsRefreshTimeout: 5000,
+      showFriendlyErrorStack: true,
+      slotsRefreshInterval: 2000,
+      clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
+      enableAutoPipelining: usePipelining,
+      redisOptions,
+    };
 
-      redisClient = new Cluster(redisNodes, redisClusterOptions);
-    } else {
-      logger.info('Connecting to single Redis node');
-      redisClient = new Redis(redisNodes[0]);
-    }
+    logger.debug(
+      'Redis Cluster options:',
+      JSON.stringify(redisClusterOptions, null, 2),
+    );
+
+    newRedisClient = new Cluster(redisNodes, redisClusterOptions);
+  } else {
+    logger.info('Connecting to single Redis node');
+    newRedisClient = new Redis(redisNodes[0]);
   }
 
-  redisClient.on('ready', () => {
+  newRedisClient.on('ready', () => {
     logger.info('Redis ready');
-
-    if (redisClient instanceof Cluster) {
-      logger.error('Refreshing Redis Cluster slots cache');
-      try {
-        redisClient?.refreshSlotsCache();
-      } catch (error) {
-        logger.error('Error refreshing Redis Cluster slots cache:', error);
-      }
-    }
   });
 
-  redisClient.on('error', (error) => {
+  newRedisClient.on('error', (error) => {
     logger.error('Redis error:', error);
   });
 
-  redisClient.on('connect', () => {
+  newRedisClient.on('connect', () => {
     logger.info('Connected to Redis Cluster successfully');
   });
 
-  redisClient.on('close', () => {
+  newRedisClient.on('close', () => {
     logger.info('Disconnected from Redis Cluster');
   });
 
-  redisClient.on('reconnecting', () => {
+  newRedisClient.on('reconnecting', () => {
     logger.info('Reconnecting to Redis Cluster');
   });
 
-  redisClient.on('end', () => {
+  newRedisClient.on('end', () => {
     logger.info('Redis Cluster connection ended');
   });
 
-  redisClient.on('wait', () => {
+  newRedisClient.on('wait', () => {
     logger.info('Redis Cluster waiting for connection');
   });
 
-  redisClient.on('select', (node) => {
+  newRedisClient.on('select', (node) => {
     logger.info('Redis Cluster selected node:', node);
   });
+
+  return newRedisClient;
+}
+
+const redisFactory = {
+  create: () => {
+    return Promise.resolve(buildRedisClient(false));
+  },
+  destroy: (client: Cluster | Redis) => {
+    return Promise.resolve(client.disconnect());
+  },
+};
+
+let redisClient: Cluster | Redis | undefined;
+
+export const getGlobalRedisClient = () => {
+  if (!redisClient) {
+    redisClient = buildRedisClient();
+  }
 
   return redisClient;
 };
 
-export const pubClient = getRedisClient();
+export const pubClient = getGlobalRedisClient();
+export const pubClientPool = genericPool.createPool(redisFactory, {
+  max: 35,
+  min: 15,
+});
 
 const app = express();
 
