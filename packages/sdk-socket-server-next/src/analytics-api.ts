@@ -279,7 +279,6 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       "personal_sign",
       "eth_signTypedData_v4",
       "wallet_requestPermissions",
-      "wallet_watchAsset",
       "metamask_connectSign"
     ];
 
