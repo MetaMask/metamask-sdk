@@ -77,10 +77,6 @@ export const handleJoinChannel = async ({
   hasRateLimit,
   callback,
 }: JoinChannelParams) => {
-  if (channelId === '9ff14555-f33a-4444-a211-5ba52cf9460d') {
-    return;
-  }
-
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
   try {

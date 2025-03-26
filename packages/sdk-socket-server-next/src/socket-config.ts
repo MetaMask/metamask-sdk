@@ -334,9 +334,6 @@ export const configureSocketServer = async (
           | ((error: string | null, result?: unknown) => void),
         callback?: (error: string | null, result?: unknown) => void,
       ) => {
-        const start = Date.now();
-        incrementJoinChannel();
-
         const params: JoinChannelParams = {
           channelId: 'temp', // default value to be overwritten
           socket,
@@ -380,6 +377,13 @@ export const configureSocketServer = async (
             result?: unknown,
           ) => void;
         }
+
+        if (params.channelId === '9ff14555-f33a-4444-a211-5ba52cf9460d') {
+          return;
+        }
+
+        const start = Date.now();
+        incrementJoinChannel();
 
         handleJoinChannel(params).catch((error) => {
           logger.error('Error joining channel:', error);
