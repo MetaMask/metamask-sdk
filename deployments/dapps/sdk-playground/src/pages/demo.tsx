@@ -302,7 +302,7 @@ export const Demo = () => {
       },
       {
         method: 'personal_sign',
-        params: ['Hello Wolrd', selectedAddress],
+        params: ['Hello World', selectedAddress],
       },
       {
         method: 'eth_sendTransaction',
