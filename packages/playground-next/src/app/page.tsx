@@ -13,6 +13,8 @@ export default function Home() {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [signature, setSignature] = useState<string>('');
+  const [signLoading, setSignLoading] = useState<boolean>(false);
 
   const getBalance = useCallback(async (address: string): Promise<string> => {
     const balance = await provider?.request({
@@ -38,10 +40,33 @@ export default function Home() {
       setIsLoading(true);
       await sdk?.terminate();
       setAccountInfo(null);
+      setSignature('');
     } catch (err) {
       console.error('Failed to terminate connection:', err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePersonalSign = async (): Promise<void> => {
+    if (!provider || !account) return;
+
+    try {
+      setSignLoading(true);
+      const message = `Hello from MetaMask SDK! ${Date.now()}`;
+      const hexMessage = `0x${Buffer.from(message).toString('hex')}`;
+
+      const result = await provider.request({
+        method: 'personal_sign',
+        params: [hexMessage, account]
+      });
+
+      setSignature(result as string);
+    } catch (err) {
+      console.error('Personal sign failed:', err);
+      setSignature('');
+    } finally {
+      setSignLoading(false);
     }
   };
 
@@ -81,6 +106,22 @@ export default function Home() {
           <div className={styles.address}>
             Balance: {accountInfo?.balance} Wei
           </div>
+
+          <button
+            className={styles.button}
+            onClick={handlePersonalSign}
+            disabled={signLoading}
+            style={{ marginBottom: '10px', marginTop: '10px' }}
+          >
+            {signLoading ? 'Signing...' : 'Personal Sign'}
+          </button>
+
+          {signature && (
+            <div className={styles.address} style={{ wordBreak: 'break-all' }}>
+              <strong>Signature:</strong> {signature}
+            </div>
+          )}
+
           <button
             className={styles.button}
             onClick={terminateConnection}
