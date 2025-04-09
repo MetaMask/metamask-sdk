@@ -1,9 +1,8 @@
-import { ModalLoader } from '@metamask/sdk-install-modal-web';
-
-import { i18n } from 'i18next';
-import { logger } from '../../utils/logger';
-import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import packageJson from '../../../package.json';
+import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
+import { logger } from '../../utils/logger';
+import ModalLoader from './Modal-web';
 
 const sdkWebInstallModal = ({
   link,
@@ -12,7 +11,7 @@ const sdkWebInstallModal = ({
   terminate,
   connectWithExtension,
   preferDesktop,
-  i18nInstance,
+  onAnalyticsEvent,
 }: {
   link: string;
   debug?: boolean;
@@ -20,7 +19,13 @@ const sdkWebInstallModal = ({
   installer: MetaMaskInstaller;
   terminate?: () => void;
   connectWithExtension?: () => void;
-  i18nInstance: i18n;
+  onAnalyticsEvent: ({
+    event,
+    params,
+  }: {
+    event: TrackingEvents;
+    params?: Record<string, unknown>;
+  }) => void;
 }) => {
   let modalLoader: ModalLoader | null = null;
   let div: HTMLDivElement | null = null;
@@ -76,25 +81,33 @@ const sdkWebInstallModal = ({
     document.body.appendChild(div);
     if (window.extension) {
       // When extension is available, we allow switching between extension and mobile
-      modalLoader.renderSelectModal({
-        i18nInstance,
-        parentElement: div,
-        connectWithExtension: () => {
-          unmount();
-          connectWithExtension?.();
-        },
-        onClose: unmount,
-        link,
-      });
+      modalLoader
+        .renderSelectModal({
+          parentElement: div,
+          connectWithExtension: () => {
+            unmount();
+            connectWithExtension?.();
+          },
+          onClose: unmount,
+          link,
+          preferDesktop: preferDesktop ?? false,
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     } else {
-      modalLoader.renderInstallModal({
-        i18nInstance,
-        parentElement: div,
-        preferDesktop: preferDesktop ?? false,
-        link,
-        metaMaskInstaller: installer,
-        onClose: unmount,
-      });
+      modalLoader
+        .renderInstallModal({
+          parentElement: div,
+          preferDesktop: preferDesktop ?? false,
+          link,
+          metaMaskInstaller: installer,
+          onClose: unmount,
+          onAnalyticsEvent,
+        })
+        .catch((err) => {
+          console.error(`[UI: InstallModal-web: sdkWebInstallModal()]`, err);
+        });
     }
   };
 

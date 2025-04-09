@@ -12,7 +12,8 @@ export const retrieveMessages = async ({
   channelId: string;
   clientType: ClientType;
 }): Promise<QueuedMessage[]> => {
-  const queueKey = `queue:${channelId}:${clientType}`;
+  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+  const queueKey = `queue:{${channelId}}:${clientType}`;
   try {
     const messageData = await pubClient.lrange(queueKey, 0, -1);
     const messages = messageData

@@ -13,7 +13,7 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.28.4",
+    "@metamask/sdk": "^0.30.0",
     "dotenv": "^16.4.5",
     "qrcode-terminal": "^0.12.0",
     "terminal-kit": "^3.1.1"
@@ -25,5 +25,8 @@
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }

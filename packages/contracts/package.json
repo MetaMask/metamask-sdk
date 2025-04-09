@@ -29,5 +29,8 @@
   },
   "dependencies": {
     "@truffle/hdwallet-provider": "^2.1.15"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }

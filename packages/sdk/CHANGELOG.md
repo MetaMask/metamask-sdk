@@ -6,6 +6,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.1]
+### Fixed
+- fix: Fix analytics for unwanted events when using extension ([#1219](https://github.com/MetaMask/metamask-sdk/pull/1219))
+
+## [0.32.0]
+### Added
+- feat(sdk): rollback @metamask/providers to 16.1.0 due to Next.js compatibility issues ([#1207](https://github.com/MetaMask/metamask-sdk/pull/1207))
+- feat(sdk): upgrade @metamask/providers to ^18.3.1 ([#1199](https://github.com/MetaMask/metamask-sdk/pull/1199))
+- feat: implement message size validation to prevent excessive payloads ([#1197](https://github.com/MetaMask/metamask-sdk/pull/1197))
+- feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
+
+### Fixed
+- fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk/pull/1202))
+
+## [0.31.5]
+### Added
+- feat: improves the react connected hook when using extension & emit terminate when using extension ([#1186](https://github.com/MetaMask/metamask-sdk/pull/1186))
+- chore: add analytics to install modal ([#1189](https://github.com/MetaMask/metamask-sdk/pull/1189))
+- feat: add MetaMask Flask provider support for EIP-6963 ([#1192](https://github.com/MetaMask/metamask-sdk/pull/1192))
+- chore: call getPermissions on accountsChanged when using extension ([#1185](https://github.com/MetaMask/metamask-sdk/pull/1185))
+
+### Fixed
+- Fix nextjs localstorage issue ([#1193](https://github.com/MetaMask/metamask-sdk/pull/1193))
+- fix(MetaMaskInstaller): replace delete with assignment to undefined for window.ethereum ([#1162](https://github.com/MetaMask/metamask-sdk/pull/1162))
+
+## [0.31.4]
+### Fixed
+- refactor(sdk): always send RPC requests via network and deeplink ([#1181](https://github.com/MetaMask/metamask-sdk/pull/1181))
+
+## [0.31.3]
+### Fixed
+- fix(analytics): improve dapp details tracking and SDK RPC request analytics ([#1179](https://github.com/MetaMask/metamask-sdk/pull/1179))
+
+## [0.31.2]
+### Fixed
+- fix: nextjs build fix pr ([#1163](https://github.com/MetaMask/metamask-sdk/pull/1163))
+- Set initial modal tab based on preferDesktop option ([#1158](https://github.com/MetaMask/metamask-sdk/pull/1158))
+
+## [0.31.1]
+### Changed
+- fix: Tell webpack about dynamic import + fixed polyfills ([#1151](https://github.com/MetaMask/metamask-sdk/pull/1151))
+- chore: removes sdk terminate when accountsChanged comes in empty ([#1148](https://github.com/MetaMask/metamask-sdk/pull/1148))
+
+## [0.31.0]
+### Changed
+- refactor(sdk-install-modal-web): migrate from i18next to custom SimpleI18n implementation ([#1141](https://github.com/MetaMask/metamask-sdk/pull/1141))
+- refactor(sdk-install-modal-web): migrate to StencilJS + Lazy Loading ([#1139](https://github.com/MetaMask/metamask-sdk/pull/1139))
+- refactor: replace qr-code-styling with smaller library ([#1129](https://github.com/MetaMask/metamask-sdk/pull/1129))
+
+## [0.30.3]
+### Changed
+- refactor(sdk): modernize wallet provider detection with EIP-6963 ([#1126](https://github.com/MetaMask/metamask-sdk/pull/1126))
+
+## [0.30.2]
+### Added
+- fix: potential security issue with secp256k1 ([#1111](https://github.com/MetaMask/metamask-sdk/pull/1111))
+- chore: remove the alert of 'SDK Connection has been terminated' ([#1095](https://github.com/MetaMask/metamask-sdk/pull/1095))
+- fix: chainId for sepolia in infura rpc map ([#1105](https://github.com/MetaMask/metamask-sdk/pull/1105))
+
+## [0.30.1]
+### Added
+- feat: deprecate getUniversalLink in favor or display_uri ([#1089](https://github.com/MetaMask/metamask-sdk/pull/1089))
+- feat: cleanup sdk dependencies ([#1088](https://github.com/MetaMask/metamask-sdk/pull/1088))
+
+## [0.30.0]
+### Added
+- feat: wallet_requestpermissions update local provider accounts ([#1081](https://github.com/MetaMask/metamask-sdk/pull/1081))
+- fix: connectAndSign send as hexString ([#1082](https://github.com/MetaMask/metamask-sdk/pull/1082))
+- feat: sdk integration improvements ([#1080](https://github.com/MetaMask/metamask-sdk/pull/1080))
+- feat: fake metamask wallet detection ([#1074](https://github.com/MetaMask/metamask-sdk/pull/1074))
+- fix: rpc protocol resetting after refresh ([#1079](https://github.com/MetaMask/metamask-sdk/pull/1079))
+
+## [0.29.3]
+### Added
+- fix: display_uri event malformed ([#1076](https://github.com/MetaMask/metamask-sdk/pull/1076))
+
 ## [0.29.2]
 ### Added
 - feat: default options for pure js and useDeeplink default to true ([#1070](https://github.com/MetaMask/metamask-sdk/pull/1070))
@@ -411,7 +487,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.1...HEAD
+[0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...@metamask/sdk@0.32.1
+[0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...@metamask/sdk@0.32.0
+[0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.4...@metamask/sdk@0.31.5
+[0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.3...@metamask/sdk@0.31.4
+[0.31.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.2...@metamask/sdk@0.31.3
+[0.31.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.1...@metamask/sdk@0.31.2
+[0.31.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.0...@metamask/sdk@0.31.1
+[0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.3...@metamask/sdk@0.31.0
+[0.30.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.2...@metamask/sdk@0.30.3
+[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.1...@metamask/sdk@0.30.2
+[0.30.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.30.0...@metamask/sdk@0.30.1
+[0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.3...@metamask/sdk@0.30.0
+[0.29.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.2...@metamask/sdk@0.29.3
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.1...@metamask/sdk@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.29.0...@metamask/sdk@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.28.4...@metamask/sdk@0.29.0

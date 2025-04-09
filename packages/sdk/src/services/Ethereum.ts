@@ -2,12 +2,15 @@ import { setGlobalProvider, shimWeb3 } from '@metamask/providers';
 import { Duplex } from 'readable-stream';
 import { SDKProvider } from '../provider/SDKProvider';
 import { logger } from '../utils/logger';
+import { MetaMaskSDK } from '../sdk';
+import { MetaMaskSDKEvent } from '../types/MetaMaskSDKEvents';
 
 export interface EthereumProps {
   shouldSetOnWindow: boolean;
   connectionStream: Duplex;
   shouldSendMetadata?: boolean;
   shouldShimWeb3: boolean;
+  sdkInstance: MetaMaskSDK;
 }
 
 export class Ethereum {
@@ -15,11 +18,14 @@ export class Ethereum {
 
   private provider: SDKProvider;
 
+  private sdkInstance: MetaMaskSDK;
+
   private constructor({
     shouldSetOnWindow,
     connectionStream,
     shouldSendMetadata = false,
     shouldShimWeb3,
+    sdkInstance,
   }: EthereumProps) {
     const provider = new SDKProvider({
       connectionStream,
@@ -29,29 +35,55 @@ export class Ethereum {
       autoRequestAccounts: false,
     });
 
-    const proxiedProvieer = new Proxy(provider, {
-      // some common libraries, e.g. web3@1.x, can confict with our API.
+    const proxiedProvider = new Proxy(provider, {
+      // some common libraries, e.g. web3@1.x, can conflict with our API.
       deleteProperty: () => true,
     });
 
-    this.provider = proxiedProvieer;
+    this.provider = proxiedProvider;
+    this.sdkInstance = sdkInstance;
 
+    // Add try-catch block around window modifications
     if (shouldSetOnWindow && typeof window !== 'undefined') {
-      setGlobalProvider(provider);
+      try {
+        setGlobalProvider(provider);
+      } catch (error) {
+        logger(
+          '[Ethereum] Unable to set global provider - window.ethereum may be read-only',
+          error,
+        );
+        // Continue execution without throwing
+      }
     }
 
     if (shouldShimWeb3 && typeof window !== 'undefined') {
-      shimWeb3(this.provider);
+      try {
+        shimWeb3(this.provider);
+      } catch (error) {
+        logger(
+          '[Ethereum] Unable to shim web3 - window.web3 may be read-only',
+          error,
+        );
+        // Continue execution without throwing
+      }
     }
+
+    // Propagate display_uri events to the SDK
+    this.provider.on('display_uri', (uri) => {
+      this.sdkInstance.emit(MetaMaskSDKEvent.DisplayURI, uri as string);
+    });
 
     this.provider.on('_initialized', () => {
       const info = {
         chainId: this.provider.getChainId(),
         isConnected: this.provider.isConnected(),
-        isMetaNask: this.provider.isMetaMask,
+        isMetaMask: this.provider.isMetaMask,
         selectedAddress: this.provider.getSelectedAddress(),
         networkVersion: this.provider.getNetworkVersion(),
       };
+
+      // Also emit initialized event on sdk.
+      this.sdkInstance.emit(MetaMaskSDKEvent.Initialized, info);
 
       logger(`[Ethereum: constructor()] provider initialized`, info);
     });

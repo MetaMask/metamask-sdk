@@ -1,36 +1,10 @@
 import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
-import * as fs from 'fs';
-
-const qrcode = require('qrcode-terminal');
 
 const options: MetaMaskSDKOptions = {
   shouldShimWeb3: false,
-  communicationServerUrl: 'http://192.168.50.10:4000',
   dappMetadata: {
     name: 'NodeJS example',
-  },
-  logging: {
-    sdk: false,
-  },
-  checkInstallationImmediately: false,
-  // Optional: customize modal text
-  modals: {
-    install: ({ link }) => {
-      qrcode.generate(link, { small: true }, (qr) => console.log(qr));
-      return {};
-    },
-    otp: () => {
-      return {
-        mount() {},
-        updateOTPValue: (otpValue) => {
-          if (otpValue !== '') {
-            console.debug(
-              `[CUSTOMIZE TEXT] Choose the following value on your metamask mobile wallet: ${otpValue}`,
-            );
-          }
-        },
-      };
-    },
+    url: 'http://localhost',
   },
 };
 

@@ -12,6 +12,9 @@ module.exports = {
   transform: {
     "^.+\\.[t|j]sx?$": "babel-jest",
   },
+  moduleNameMapper: {
+    '^@metamask/sdk$': '<rootDir>/../sdk/src',
+  },
   coverageThreshold: {
     global: {
       branches: 10,

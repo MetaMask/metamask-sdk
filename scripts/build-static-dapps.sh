@@ -1,14 +1,50 @@
 #!/bin/bash
 
-# Echo commands to the terminal output
-# set -x
-
-# stop on first error
-# set -e
+# Stop on first error
+set -e
 
 # Make sure to start from base workspace folder
 reldir="$( dirname -- "$0"; )";
 cd "$reldir/..";
+
+# Function to get the deployment folder name
+get_deployment_folder() {
+    local package_json_path="./package.json"
+    
+    if [ "$IS_RELEASE" = "true" ]; then
+        echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+    else
+        local branch_name=""
+        
+        # Send debug messages to stderr instead of stdout
+        >&2 echo "Debug: GITHUB_HEAD_REF = $GITHUB_HEAD_REF"
+        >&2 echo "Debug: GITHUB_REF = $GITHUB_REF"
+        >&2 echo "Debug: GITHUB_REF_NAME = $GITHUB_REF_NAME"
+        
+        if [ -n "$GITHUB_HEAD_REF" ]; then
+            # We're in a pull request
+            branch_name=$GITHUB_HEAD_REF
+        elif [ -n "$GITHUB_REF_NAME" ]; then
+            # We're in a push event or other workflow
+            branch_name=$GITHUB_REF_NAME
+        elif [ -n "$GITHUB_REF" ]; then
+            # Fallback to GITHUB_REF if GITHUB_REF_NAME is not set
+            branch_name=${GITHUB_REF#refs/heads/}
+        else
+            # Last resort: use git command
+            branch_name=$(git rev-parse --abbrev-ref HEAD)
+            if [ "$branch_name" = "HEAD" ]; then
+                >&2 echo "Error: Unable to determine branch name"
+                exit 1
+            fi
+        fi
+
+        >&2 echo "Debug: Determined branch_name = $branch_name"
+
+        # Only output the final result to stdout
+        echo "$branch_name" | sed 's/\//-/g'
+    fi
+}
 
 # Function to build a specific project
 build_project() {
@@ -19,21 +55,33 @@ build_project() {
 
     cd $project_path
     yarn install
+    
+    ## replace with the correct path
+    if [ "$IS_RELEASE" != "true" ]; then
+        echo "Running sdk-copy.sh for development build..."
+        sh sdk-copy.sh
+    else
+        echo "Skipping sdk-copy.sh for release build..."
+    fi
+
     yarn build
+    echo "Build completed for $project_name"
+
     cd -  # Return to the root directory
 }
 
-# Function to build and consolidate all projects
+# Function to build and consolidate all projects (placeholder)
 build_and_consolidate() {
     echo "Starting build process..."
 
-    yarn build # first build all workspace dependencies
+    if [ "$IS_RELEASE" != "true" ]; then
+        yarn build # first build all workspace dependencies
+    fi
 
     # Build projects
-    build_project "deployments/dapps/sdk-playground"
-    build_project "packages/examples/create-react-app"
+    build_project "packages/examples/react-demo"
     build_project "packages/examples/vuejs"
-    build_project "packages/examples/wagmi-demo-react"  # Added new project here
+    build_project "packages/examples/wagmi-demo-react"  
 
     # Special handling for Pure JS Example
     echo "Handling Pure JS Example..."
@@ -42,129 +90,151 @@ build_and_consolidate() {
     cd -
 
     # Continue building other projects
-    build_project "packages/examples/react-metamask-button"
-    build_project "packages/examples/react-with-custom-modal"
     build_project "packages/examples/with-web3onboard"
-
-    echo "Building Storybook Static..."
-    yarn workspace @metamask/sdk-ui build:storybook # then build storybook
 
     # Combine Deployments
     echo "Combining deployments..."
     # Create necessary directories in deployments
-    mkdir -p $deployment_dir/packages/examples/create-react-app/build
-    mkdir -p $deployment_dir/dapps/sdk-playground/build
-    mkdir -p $deployment_dir/packages/examples/vuejs/dist
-    mkdir -p $deployment_dir/packages/examples/pure-javascript
-    mkdir -p $deployment_dir/packages/examples/react-metamask-button/build
-    mkdir -p $deployment_dir/packages/examples/react-with-custom-modal/build
-    mkdir -p $deployment_dir/packages/examples/with-web3onboard/dist
-    mkdir -p $deployment_dir/packages/sdk-ui/storybook-static
-    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/dist # Create the new directory for wagmi-demo-react
+    mkdir -p $deployment_dir/packages/examples/react-demo/build
+    mkdir -p $deployment_dir/packages/examples/vuejs/build
+    mkdir -p $deployment_dir/packages/examples/pure-javascript/
+    mkdir -p $deployment_dir/packages/examples/with-web3onboard/build
+    mkdir -p $deployment_dir/packages/examples/wagmi-demo-react/build # Create the new directory for wagmi-demo-react
 
     # Copy build outputs to deployments
-    cp -r packages/examples/create-react-app/build/* $deployment_dir/packages/examples/create-react-app/build/
-    cp -r packages/examples/vuejs/dist/* $deployment_dir/packages/examples/vuejs/dist/
-    cp -r packages/examples/react-metamask-button/build/* $deployment_dir/packages/examples/react-metamask-button/build/
-    cp -r packages/examples/react-with-custom-modal/build/* $deployment_dir/packages/examples/react-with-custom-modal/build/
-    cp -r packages/examples/with-web3onboard/dist/* $deployment_dir/packages/examples/with-web3onboard/dist/
-    cp -r deployments/dapps/sdk-playground/build/* $deployment_dir/dapps/sdk-playground/build/
-    cp -r packages/sdk-ui/storybook-static/* $deployment_dir/packages/sdk-ui/storybook-static/
-    cp -r packages/examples/wagmi-demo-react/dist/* $deployment_dir/packages/examples/wagmi-demo-react/dist/  # Copy build output for the new project
-    cp -r packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
+    cp -rf packages/examples/react-demo/build/* $deployment_dir/packages/examples/react-demo/build/
+    cp -rf packages/examples/vuejs/build/* $deployment_dir/packages/examples/vuejs/build/
+    cp -rf packages/examples/with-web3onboard/build/* $deployment_dir/packages/examples/with-web3onboard/build/
+    cp -rf packages/examples/wagmi-demo-react/build/* $deployment_dir/packages/examples/wagmi-demo-react/build/  # Copy build output for the new project
+    cp -rf packages/examples/pure-javascript/* $deployment_dir/packages/examples/pure-javascript/
 }
 
+# Function to update index.html inside the deployment folder
 update_index_html() {
-    deployment_dir=$1
+    local deployment_dir=$1
+    local branch_name=$2
+    echo "Updating index.html in $deployment_dir"
+    echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>MetaMask SDK Deployment</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #f45c00; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        a { color: #333333; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask SDK Dapps</h1>
+    <h3>$branch_name</h3>
+    <ul>" > "$deployment_dir/index.html"
 
-    cp templates/index.html "$deployment_dir/index.html"
-    cp templates/version_info_placeholder.html "$deployment_dir/version_info.html"
+    # List all directories in the deployment directory, excluding index.html itself
+    for dir in "$deployment_dir"/*/; do
+        dir=${dir%*/}  # Remove trailing slash
+        dir_name=${dir##*/}  # Extract directory name
+        if [ "$dir_name" != "index.html" ]; then
+            if [ "$dir_name" = "pure-javascript" ]; then
+                echo "        <li><a href=\"$dir_name/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
+            else
+                echo "        <li><a href=\"$dir_name/build/index.html\">$dir_name</a></li>" >> "$deployment_dir/index.html"
+            fi
+        fi
+    done
 
-    # Cross-platform compatible sed command
-    if [[ "$(uname)" == "Darwin" ]]; then
-        echo "macOS detected. Using sed -i ''"
-        sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_VERSION_PLACEHOLDER/$sdkVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_COMM_LAYER_VERSION_PLACEHOLDER/$sdkCommLayerVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_REACT_VERSION_PLACEHOLDER/$sdkReactVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_UI_VERSION_PLACEHOLDER/$sdkUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_REACT_UI_VERSION_PLACEHOLDER/$sdkReactUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i '' "s/SDK_INSTALL_MODAL_WEB_VERSION_PLACEHOLDER/$sdkInstallModalWebVersion/g" "$deployment_dir/version_info.html"
-    else
-        # Linux does not require the empty string argument
-        echo "Linux detected. Using sed -i"
-        sed -i "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_VERSION_PLACEHOLDER/$sdkVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_COMM_LAYER_VERSION_PLACEHOLDER/$sdkCommLayerVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_REACT_VERSION_PLACEHOLDER/$sdkReactVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_UI_VERSION_PLACEHOLDER/$sdkUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_REACT_UI_VERSION_PLACEHOLDER/$sdkReactUiVersion/g" "$deployment_dir/version_info.html"
-        sed -i "s/SDK_INSTALL_MODAL_WEB_VERSION_PLACEHOLDER/$sdkInstallModalWebVersion/g" "$deployment_dir/version_info.html"
-    fi
+    echo "    </ul>
+</body>
+</html>" >> "$deployment_dir/index.html"
 
-    # Replace the placeholder in index.html with the contents of the version_info file
-    if [[ "$(uname)" == "Darwin" ]]; then
-        sed -i '' "/<!-- REPLACE_SDK_INFO_HEADER -->/{
-            r $deployment_dir/version_info.html
-            d
-        }" "$deployment_dir/index.html"
-    else
-        sed -i "/<!-- REPLACE_SDK_INFO_HEADER -->/{
-            r $deployment_dir/version_info.html
-            d
-        }" "$deployment_dir/index.html"
-    fi
-
-    rm "$deployment_dir/version_info.html"
-    # Last pass to make sure to replace RELEASE_VERSION_PLACEHOLDER with the actual version
-    if [[ "$(uname)" == "Darwin" ]]; then
-        sed -i '' "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
-    else
-        sed -i "s/RELEASE_VERSION_PLACEHOLDER/$version/g" "$deployment_dir/index.html"
-    fi
-
-    cp "$deployment_dir/index.html" "$deployment_dir/release.html"
-
-    echo "Updated index.html with SDK version info."
+    echo "Updated index.html in $deployment_dir"
 }
 
-# Function to extract version from a specified package.json file
-get_version() {
-    package_json_path=$1  # Path to the package.json file
-    echo $(grep '"version":' "$package_json_path" | sed -E 's/.*"version": "([^"]+)".*/\1/')
+# Create an index.html file with links to all deployment folders
+create_index_html() {
+    local existing_folders="$1"
+    echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <title>MetaMask SDK Deployments</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #f45c00; }
+        ul { list-style-type: none; padding: 0; }
+        li { margin-bottom: 10px; }
+        a { color: #333333; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>MetaMask SDK Deployments</h1>
+    <ul>" > deployments/index.html
+
+    # List all directories in existing_folders, excluding index.html itself
+    for dir in $existing_folders; do
+        if [ "$dir" != "index.html" ]; then
+            echo "        <li><a href=\"$dir/packages/examples/index.html\">$dir</a></li>" >> deployments/index.html
+        fi
+    done
+
+    echo "    </ul>
+</body>
+</html>" >> deployments/index.html
+
+    echo "Created index.html with list of deployment folders"
 }
 
-# Extract version
-version=$(get_version "./package.json")
-sdkVersion=$(get_version "./packages/sdk/package.json")
-sdkCommLayerVersion=$(get_version "./packages/sdk-communication-layer/package.json")
-sdkReactVersion=$(get_version "./packages/sdk-react/package.json")
-sdkUiVersion=$(get_version "./packages/sdk-ui/package.json")
-sdkReactUiVersion=$(get_version "./packages/sdk-react-ui/package.json")
-sdkInstallModalWebVersion=$(get_version "./packages/sdk-install-modal-web/package.json")
-deployment_dir="deployments/$version"
 
-# Main build script
+# Main script
+echo "Starting deployment process..."
+echo "Using IS_RELEASE: $IS_RELEASE"
+
+if [ "$IS_RELEASE" = "true" ]; then
+    sh scripts/update-examples-dapps.sh
+fi
+
+# Determine the deployment folder - change this to detect if main or is_realease to hardcode folders
+if [ "$IS_RELEASE" = "true" ]; then
+    deployment_folder="prod"
+else
+    deployment_folder=$(get_deployment_folder)
+fi
+
+deployment_dir="deployments/$deployment_folder"
+
+echo "Deployment folder: $deployment_folder"
 echo "Deployment directory: $deployment_dir"
-echo "Starting build process..."
 
-echo "Main Monorepo Release version: $version"
-echo "SDK version: $sdkVersion"
-echo "SDK Communication Layer version: $sdkCommLayerVersion"
-echo "SDK React version: $sdkReactVersion"
-echo "SDK UI version: $sdkUiVersion"
-echo "SDK React UI version: $sdkReactUiVersion"
-echo "SDK Install Modal Web version: $sdkInstallModalWebVersion"
+# Create deployment directory
+mkdir -p "$deployment_dir"
 
-# Main script execution
+# Build and consolidate projects
 build_and_consolidate
-update_index_html "$deployment_dir"
 
-echo "Creating index.html in the root directory..."
-# use html meta tag to redirect to the latest release
+# Copy built files to deployment directory
+echo "Copying built files to $deployment_dir"
 
-echo "<meta http-equiv=\"refresh\" content=\"0; url=\"$version/index.html\">" > deployments/index.html
-# print content from index.html for debugging
-cat index.html
+# Update index.html
+update_index_html "$deployment_dir/packages/examples" "$deployment_folder" 
 
-echo "Deployment directory ready!"
+# Fetch the existing folders on the "gh-pages" branch and keep them as a list
+existing_folders=$(git ls-tree -d --name-only origin/gh-pages)
+
+echo "Existing folders on gh-pages branch:"
+echo "$existing_folders"
+
+if [[ ! "$existing_folders" =~ "$deployment_folder" ]]; then
+    existing_folders="$existing_folders $deployment_folder"
+fi
+
+# Update root index.html to point to the latest deployment
+echo "Updating root index.html"
+create_index_html "$existing_folders"
+
+echo "Deployment process completed! You can check it out here: https://metamask.github.io/metamask-sdk/$deployment_folder"

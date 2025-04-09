@@ -18,7 +18,6 @@ jest.mock('./setupRemoteConnectionAndInstaller');
 jest.mock('./setupStorage');
 jest.mock('./initializeProviderAndEventListeners');
 jest.mock('./handleAutoAndExtensionConnections');
-jest.mock('./initializeI18next');
 
 describe('performSDKInitialization', () => {
   let instance: MetaMaskSDK;

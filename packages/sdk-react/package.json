@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-react",
-  "version": "0.29.2",
+  "version": "0.32.1",
   "description": "A react component and react hooks to connect and use MetaMask",
   "homepage": "https://github.com/MetaMask/metamask-sdk",
   "bugs": {
@@ -34,7 +34,7 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
-    "dev": "rollup -c -w",
+    "dev": "rollup -c -w --bundleConfigAsCjs",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -98,6 +98,7 @@
     "rollup-plugin-dts": "^4.2.2",
     "rollup-plugin-jscc": "^2.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
+    "rollup-plugin-polyfill-node": "^0.13.0",
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.36.0",

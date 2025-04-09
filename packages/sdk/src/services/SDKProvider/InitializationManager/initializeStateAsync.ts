@@ -27,6 +27,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
      *
      */
     instance.state = {
+      accounts: null,
       autoRequestAccounts: false,
       providerStateRequested: false,
       chainId: '',
@@ -49,7 +50,7 @@ export async function initializeStateAsync(instance: SDKProvider) {
     let relayPersistence = false;
 
     let useCache = false;
-    const storageManager = getStorageManager({ enabled: true });
+    const storageManager = await getStorageManager({ enabled: true });
 
     // FIXME: currently set for backward compatibility so new sdk don't autoconnect with old wallet
     // Only use cache if relayPersistence is enabled for current channel.

@@ -49,9 +49,9 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   [RPC_METHODS.METAMASK_OPEN]: true,
 };
 
-export const lcAnalyticsRPCs = Object.keys(METHODS_TO_REDIRECT).map((method) =>
-  method.toLowerCase(),
-);
+export const lcAnalyticsRPCs = Object.keys(METHODS_TO_REDIRECT)
+  .filter((method) => METHODS_TO_REDIRECT[method] === true)
+  .map((method) => method.toLowerCase());
 
 // unsupported extension connectWith methods
 export const rpcWithAccountParam = [
@@ -66,8 +66,6 @@ export const STORAGE_PROVIDER_TYPE = 'providerType';
 export const STORAGE_DAPP_SELECTED_ADDRESS = '.MMSDK_cached_address';
 export const STORAGE_DAPP_CHAINID = '.MMSDK_cached_chainId';
 
-export const CONNECTWITH_RESPONSE_EVENT = 'connectWithResponse';
-
 export const EXTENSION_EVENTS = {
   CHAIN_CHANGED: 'chainChanged',
   ACCOUNTS_CHANGED: 'accountsChanged',
@@ -75,3 +73,5 @@ export const EXTENSION_EVENTS = {
   CONNECT: 'connect',
   CONNECTED: 'connected',
 };
+
+export const MAX_MESSAGE_LENGTH = 1_000_000; // 1MB limit

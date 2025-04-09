@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.0]
+### Uncategorized
+- fix(rndemos): update metro config to support eciesjs crypto imports ([#1147](https://github.com/MetaMask/metamask-sdk/pull/1147))
+- feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
+
+## [0.31.0]
+### Uncategorized
+- chore: improve build tooling and modernize dependencies ([#1128](https://github.com/MetaMask/metamask-sdk/pull/1128))
+
+## [0.30.2]
+### Added
+- fix: potential security issue with secp256k1 ([#1111](https://github.com/MetaMask/metamask-sdk/pull/1111))
+
+## [0.30.0]
+### Added
+- fix: rpc protocol resetting after refresh ([#1079](https://github.com/MetaMask/metamask-sdk/pull/1079))
+- Release 97.0.0 ([#1077](https://github.com/MetaMask/metamask-sdk/pull/1077))
+
 ## [0.29.2]
 ### Uncategorized
 - chore: bump .change files to 0.29.2 ([#1071](https://github.com/MetaMask/metamask-sdk/pull/1071))
@@ -270,7 +288,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.2...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.32.0...HEAD
+[0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.31.0...@metamask/sdk-communication-layer@0.32.0
+[0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.30.2...@metamask/sdk-communication-layer@0.31.0
+[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.30.0...@metamask/sdk-communication-layer@0.30.2
+[0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.2...@metamask/sdk-communication-layer@0.30.0
 [0.29.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.1...@metamask/sdk-communication-layer@0.29.2
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0...@metamask/sdk-communication-layer@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.29.0-wallet...@metamask/sdk-communication-layer@0.29.0

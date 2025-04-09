@@ -17,7 +17,10 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.29.1",
+    "@metamask/sdk": "^0.30.0",
     "serve": "13.0.2"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }

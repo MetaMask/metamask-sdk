@@ -117,7 +117,7 @@ describe('MetaMaskProvider Component', () => {
       });
 
       expect(mockSdkOn).toHaveBeenCalledTimes(2);
-      expect(mockProviderOn).toHaveBeenCalledTimes(6);
+      expect(mockProviderOn).toHaveBeenCalledTimes(7);
 
       expect(mockSdkOn.mock.calls).toEqual([
         ['service_status', expect.any(Function)],
@@ -126,6 +126,7 @@ describe('MetaMaskProvider Component', () => {
 
       expect(mockProviderOn.mock.calls).toEqual([
         ['_initialized', expect.any(Function)],
+        ['terminate', expect.any(Function)],
         ['connecting', expect.any(Function)],
         ['connect', expect.any(Function)],
         ['disconnect', expect.any(Function)],
@@ -144,7 +145,7 @@ describe('MetaMaskProvider Component', () => {
       cleanup();
 
       expect(mockSdkRemoveListener).toHaveBeenCalledTimes(2);
-      expect(mockProviderRemoveListener).toHaveBeenCalledTimes(6);
+      expect(mockProviderRemoveListener).toHaveBeenCalledTimes(7);
 
       expect(mockSdkRemoveListener.mock.calls).toEqual([
         ['service_status', expect.any(Function)],
@@ -156,6 +157,7 @@ describe('MetaMaskProvider Component', () => {
         ['connecting', expect.any(Function)],
         ['connect', expect.any(Function)],
         ['disconnect', expect.any(Function)],
+        ['terminate', expect.any(Function)],
         ['accountsChanged', expect.any(Function)],
         ['chainChanged', expect.any(Function)],
       ]);

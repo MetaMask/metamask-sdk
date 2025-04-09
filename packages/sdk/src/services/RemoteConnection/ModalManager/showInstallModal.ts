@@ -1,3 +1,4 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import {
   RemoteConnectionProps,
@@ -16,7 +17,6 @@ export function showInstallModal(
   link: string,
 ): void {
   state.installModal = options.modals.install?.({
-    i18nInstance: options.sdk.i18nInstance,
     link,
     preferDesktop: state.preferDesktop,
     installer: options.getMetaMaskInstaller(),
@@ -34,6 +34,22 @@ export function showInstallModal(
     connectWithExtension: () => {
       options.connectWithExtensionProvider?.();
       return false;
+    },
+    onAnalyticsEvent: ({
+      event,
+      params,
+    }: {
+      event: TrackingEvents;
+      params?: Record<string, any>;
+    }) => {
+      const extended = {
+        ...params,
+        sdkVersion: options.sdk.getVersion(),
+        dappId: options.dappMetadata?.name,
+        source: options._source,
+        url: options.dappMetadata?.url,
+      };
+      state.analytics?.send({ event, params: extended });
     },
   });
   state.installModal?.mount?.(link);

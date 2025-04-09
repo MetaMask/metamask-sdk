@@ -13,8 +13,8 @@
     "allow-scripts": ""
   },
   "dependencies": {
-    "@metamask/sdk": "^0.28.4",
-    "@metamask/sdk-react": "^0.28.4",
+    "@metamask/sdk": "^0.31.0",
+    "@metamask/sdk-react": "^0.30.0",
     "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
@@ -65,5 +65,8 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }

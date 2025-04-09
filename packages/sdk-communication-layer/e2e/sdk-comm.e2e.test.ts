@@ -73,7 +73,7 @@ export const getClient = ({ type, options }: { type: 'dApp' | 'wallet', options:
 
 describe('SDK Communication Layer', () => {
   let clientsReady = false;
-  const communicationServerUrl = 'https://metamask-sdk.api.cx.metamask.io/';
+  const communicationServerUrl = 'http://localhost:4000';
 
   describe('Protocol V1', () => {
     it('should establish client/mobile connection through comm server with remote key exchange', async () => {

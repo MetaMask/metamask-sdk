@@ -7,7 +7,6 @@ import {
 import debug from 'debug';
 
 import EventEmitter2 from 'eventemitter2';
-import { createInstance, i18n } from 'i18next';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
 import { PlatformManager } from './Platform/PlatfformManager';
@@ -27,6 +26,10 @@ import {
   RemoteConnection,
   RemoteConnectionProps,
 } from './services/RemoteConnection';
+import {
+  MetaMaskSDKEventPayload,
+  MetaMaskSDKEventType,
+} from './types/MetaMaskSDKEvents';
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { logger } from './utils/logger';
@@ -71,6 +74,11 @@ export interface MetaMaskSDKOptions {
    * If true, the SDK will prefer the desktop version of MetaMask over the mobile version.
    */
   preferDesktop?: boolean;
+
+  /**
+   * If true, the SDK will not display any modals or QR code UI.
+   */
+  headless?: boolean;
 
   /**
    * A function that will be called to open a deeplink to the MetaMask Mobile app.
@@ -118,12 +126,22 @@ export interface MetaMaskSDKOptions {
   extensionOnly?: boolean;
 
   /**
-   * Options for customizing the SDK UI.
+   * @deprecated Use the 'display_uri' event on the provider instead.
+   * Listen to this event to get the QR code URL and customize your UI.
+   * Example:
+   * sdk.getProvider().on('display_uri', (uri: string) => {
+   *   // Use the uri to display a QR code or customize your UI
+   * });
    */
   ui?: SDKUIOptions;
 
   /**
-   * An object that allows you to customize or translate each of the displayed modals. See the nodejs example for more information.
+   * @deprecated Use the 'display_uri' event on the provider instead.
+   * Listen to this event to get the QR code URL and customize your UI.
+   * Example:
+   * sdk.getProvider().on('display_uri', (uri: string) => {
+   *   // Use the uri to display a QR code or customize your UI
+   * });
    */
   modals?: RemoteConnectionProps['modals'];
 
@@ -185,8 +203,6 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private readonlyRPCCalls = false;
 
-  public i18nInstance: i18n = createInstance();
-
   public availableLanguages: string[] = ['en'];
 
   constructor(
@@ -200,6 +216,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       shouldShimWeb3: true,
       useDeeplink: true,
       extensionOnly: true,
+      headless: false,
       dappMetadata: {
         name: '',
         url: '',
@@ -256,16 +273,40 @@ export class MetaMaskSDK extends EventEmitter2 {
       });
   }
 
-  // TODO make method private to let dapp call connect() directly.
+  /**
+   * You can subscribe to the 'initialized' event to know when the SDK is ready or call connect() to start the connection process.
+   * @returns {Promise<void>} - A promise that resolves when the SDK is initialized.
+   */
   public async init() {
     return initializeMetaMaskSDK(this);
   }
 
+  /**
+   * Check if the active connection is done via the MetaMask browser extension/
+   * @returns {boolean} - True if the MetaMask browser extension is the active provider, false otherwise.
+   */
   isExtensionActive() {
     return this.extensionActive;
   }
 
-  async connect() {
+  /**
+   * Check if the MetaMask extension is potentially available in the current browser environment.
+   * This method is not the preferred way to detect MetaMask. Use EIP-6963 instead,
+   * as many extensions can fake the isMetaMask property. EIP-6963 provides more accurate provider detection.
+   * @returns {boolean} - True if MetaMask is potentially available, false otherwise.
+   */
+  checkExtensionAvailability(): boolean {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    return Boolean(window.ethereum?.isMetaMask);
+  }
+
+  /**
+   * Connect to MetaMask.
+   * @returns {Promise<string[]>} - A promise that resolves to an array of account addresses.
+   */
+  async connect(): Promise<string[]> {
     return connect(this);
   }
 
@@ -329,6 +370,10 @@ export class MetaMaskSDK extends EventEmitter2 {
     return this.sdkProvider;
   }
 
+  /**
+   * @deprecated use 'display_uri' event on from sdk instance instead.
+   * @returns {string} - The QRCode Link.
+   */
   getUniversalLink() {
     const universalLink = this.remoteConnection?.getUniversalLink();
 
@@ -393,5 +438,19 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   _getConnection() {
     return this.remoteConnection;
+  }
+
+  public emit<K extends MetaMaskSDKEventType>(
+    event: K,
+    payload: MetaMaskSDKEventPayload<K>,
+  ): boolean {
+    return super.emit(event, payload);
+  }
+
+  public on<K extends MetaMaskSDKEventType>(
+    event: K,
+    listener: (payload: MetaMaskSDKEventPayload<K>) => void,
+  ): this {
+    return super.on(event, listener) as this;
   }
 }

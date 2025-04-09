@@ -23,9 +23,6 @@
       "@metamask/sdk-communication-layer": [
         "../sdk-communication-layer/src"
       ],
-      "@metamask/sdk-install-modal-web": [
-        "../sdk-install-modal-web/src"
-      ],
       "@metamask/sdk-react": [
         "../sdk-react/src"
       ],
@@ -41,13 +38,16 @@
       "@metamask/sdk": [
         "../sdk/src"
       ],
-      "react": ["./node_modules/@types/react"]
+      "react": [
+        "./node_modules/@types/react"
+      ]
     }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx" ],
+    "**/*.tsx"
+  ],
   "exclude": [
     "node_modules"
   ],

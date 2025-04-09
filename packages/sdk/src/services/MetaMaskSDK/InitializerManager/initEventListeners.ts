@@ -1,9 +1,9 @@
 import {
   ConnectionStatus,
-  EventType,
   ServiceStatus,
 } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../../sdk';
+import { MetaMaskSDKEvent } from '../../../types/MetaMaskSDKEvents';
 
 /**
  * Initializes event listeners for MetaMask SDK's remote connection.
@@ -18,13 +18,16 @@ import { MetaMaskSDK } from '../../../sdk';
 export function initEventListeners(instance: MetaMaskSDK) {
   instance.remoteConnection
     ?.getConnector()
-    ?.on(EventType.CONNECTION_STATUS, (connectionStatus: ConnectionStatus) => {
-      instance.emit(EventType.CONNECTION_STATUS, connectionStatus);
-    });
+    ?.on(
+      MetaMaskSDKEvent.ConnectionStatus,
+      (connectionStatus: ConnectionStatus) => {
+        instance.emit(MetaMaskSDKEvent.ConnectionStatus, connectionStatus);
+      },
+    );
 
   instance.remoteConnection
     ?.getConnector()
-    ?.on(EventType.SERVICE_STATUS, (serviceStatus: ServiceStatus) => {
-      instance.emit(EventType.SERVICE_STATUS, serviceStatus);
+    ?.on(MetaMaskSDKEvent.ServiceStatus, (serviceStatus: ServiceStatus) => {
+      instance.emit(MetaMaskSDKEvent.ServiceStatus, serviceStatus);
     });
 }

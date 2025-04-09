@@ -29,7 +29,7 @@
     ]
   },
   "dependencies": {
-    "@metamask/sdk-react-ui": "^0.28.4",
+    "@metamask/sdk-react-ui": "^0.29.2",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -46,5 +46,8 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }

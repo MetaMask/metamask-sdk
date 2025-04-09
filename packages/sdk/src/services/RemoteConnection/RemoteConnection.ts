@@ -8,8 +8,8 @@ import {
   KeyInfo,
   RemoteCommunication,
   StorageManagerProps,
+  TrackingEvents,
 } from '@metamask/sdk-communication-layer';
-import { i18n } from 'i18next';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -43,30 +43,41 @@ export interface RemoteConnectionProps {
   storage?: StorageManagerProps;
   logging?: SDKLoggingOptions;
   preferDesktop?: boolean;
-  i18nInstance: i18n;
   // Prevent circular dependencies
   getMetaMaskInstaller: () => MetaMaskInstaller;
   connectWithExtensionProvider?: () => void;
+  /**
+   * @deprecated Use the 'display_uri' event on the provider instead.
+   * Listen to this event to get the QR code URL and customize your UI.
+   * Example:
+   * sdk.getProvider().on('display_uri', (uri: string) => {
+   *   // Use the uri to display a QR code or customize your UI
+   * });
+   */
   modals: {
     onPendingModalDisconnect?: () => void;
-    install?: (params: {
-      i18nInstance: i18n;
+    install?: (args: {
       link: string;
       debug?: boolean;
       preferDesktop?: boolean;
       installer: MetaMaskInstaller;
       terminate?: () => void;
       connectWithExtension?: () => void;
+      onAnalyticsEvent: ({
+        event,
+        params,
+      }: {
+        event: TrackingEvents;
+        params?: Record<string, unknown>;
+      }) => void;
     }) => {
       unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;
     };
     otp?: ({
-      i18nInstance,
       debug,
       onDisconnect,
     }: {
-      i18nInstance: i18n;
       debug?: boolean;
       onDisconnect?: () => void;
     }) => {
@@ -139,7 +150,9 @@ export class RemoteConnection {
     this.state.platformManager = options.platformManager;
 
     // Set default modals implementation
+    // @ts-error backward compatibility
     if (!options.modals.install) {
+      // @ts-error backward compatibility
       options.modals.install = InstallModal;
     }
 
@@ -172,10 +185,9 @@ export class RemoteConnection {
       this.options.ecies = eciesProps;
     }
     initializeConnector(this.state, this.options);
+    await this.getConnector()?.initFromDappStorage();
 
     setupListeners(this.state, this.options);
-
-    return this.getConnector()?.initFromDappStorage();
   }
 
   showActiveModal() {

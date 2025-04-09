@@ -2499,9 +2499,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-react-native@npm:^0.3.10":
-  version: 0.3.10
-  resolution: "@metamask/sdk-react-native@npm:0.3.10"
+"@metamask/sdk-react-native@npm:^0.3.12":
+  version: 0.3.12
+  resolution: "@metamask/sdk-react-native@npm:0.3.12"
   peerDependencies:
     react: ^18.2.0
     react-dom: ^18.2.0
@@ -2515,7 +2515,7 @@ __metadata:
       optional: false
     react-native:
       optional: true
-  checksum: adbca12afb1816973211812a0bac650fc1c185f7f024eaad9a854e78bb9d93c88fafc8d5aac2dd577c32d938a18a01dc5c6e4f410d608864307dc8141621b02b
+  checksum: ac5a15e857cc867ee9cf840806c6dfb21ab8628da24a74359f9025b974273abcce0b8e4c47166bdc3e15f7d20b7fc5862b9b5386747836b7f9ca2a72ec8de062
   languageName: node
   linkType: hard
 
@@ -5397,9 +5397,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elliptic@npm:6.5.4":
-  version: 6.5.4
-  resolution: "elliptic@npm:6.5.4"
+"elliptic@npm:6.6.1":
+  version: 6.6.1
+  resolution: "elliptic@npm:6.6.1"
   dependencies:
     bn.js: ^4.11.9
     brorand: ^1.1.0
@@ -5408,22 +5408,7 @@ __metadata:
     inherits: ^2.0.4
     minimalistic-assert: ^1.0.1
     minimalistic-crypto-utils: ^1.0.1
-  checksum: d56d21fd04e97869f7ffcc92e18903b9f67f2d4637a23c860492fbbff5a3155fd9ca0184ce0c865dd6eb2487d234ce9551335c021c376cd2d3b7cb749c7d10f4
-  languageName: node
-  linkType: hard
-
-"elliptic@npm:^6.5.3, elliptic@npm:^6.5.5":
-  version: 6.5.5
-  resolution: "elliptic@npm:6.5.5"
-  dependencies:
-    bn.js: ^4.11.9
-    brorand: ^1.1.0
-    hash.js: ^1.0.0
-    hmac-drbg: ^1.0.1
-    inherits: ^2.0.4
-    minimalistic-assert: ^1.0.1
-    minimalistic-crypto-utils: ^1.0.1
-  checksum: ec9105e4469eb3b32b0ee2579756c888ddf3f99d259aa0d65fccb906ee877768aaf8880caae73e3e669c9a4adeb3eb1945703aa974ec5000d2d33a239f4567eb
+  checksum: 27b14a52f68bbbc0720da259f712cb73e953f6d2047958cd02fb0d0ade2e83849dc39fb4af630889c67df8817e24237428cf59c4f4c07700f755b401149a7375
   languageName: node
   linkType: hard
 
@@ -10332,7 +10317,7 @@ __metadata:
     "@babel/core": ^7.20.0
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
-    "@metamask/sdk-react-native": ^0.3.10
+    "@metamask/sdk-react-native": ^0.3.12
     "@react-native-async-storage/async-storage": ^1.19.3
     "@react-native-community/eslint-config": ^3.2.0
     "@react-native/eslint-config": ^0.72.2

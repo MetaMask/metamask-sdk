@@ -8,6 +8,7 @@ import { PlatformManager } from '../../Platform/PlatfformManager';
 import { Ethereum } from '../Ethereum';
 import { RemoteConnection, RemoteConnectionProps } from './RemoteConnection';
 import { showActiveModal } from './ModalManager';
+import { cleanupConnector } from './ConnectionInitializer/cleanupConnector';
 
 jest.mock('../../Platform/MetaMaskInstaller');
 jest.mock('../../sdk');
@@ -16,6 +17,7 @@ jest.mock('./ConnectionInitializer');
 jest.mock('./EventListeners');
 jest.mock('./ModalManager');
 jest.mock('@metamask/sdk-communication-layer');
+jest.mock('./ConnectionInitializer/cleanupConnector');
 
 describe('RemoteConnection', () => {
   let options: RemoteConnectionProps;
@@ -196,10 +198,16 @@ describe('RemoteConnection', () => {
   });
 
   describe('disconnect', () => {
+    beforeEach(() => {
+      // Mock the cleanupConnector function to do nothing
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      (cleanupConnector as jest.Mock).mockImplementation(() => {});
+    });
+
     it('should call handleDisconnect on Ethereum provider when options.terminate is true', () => {
       const connection = new RemoteConnection(options);
       connection.state.connector = {
-        disconnect: jest.fn(),
+        disconnect: jest.fn().mockResolvedValue(undefined),
       } as unknown as RemoteCommunication;
 
       jest.spyOn(Ethereum, 'getProvider').mockReturnValue({
@@ -207,6 +215,10 @@ describe('RemoteConnection', () => {
       } as any);
 
       connection.disconnect({ terminate: true });
+
+      expect(Ethereum.getProvider().handleDisconnect).toHaveBeenCalledWith({
+        terminate: true,
+      });
 
       expect(connection.state.connector!.disconnect).toHaveBeenCalledWith({
         terminate: true,
@@ -217,7 +229,7 @@ describe('RemoteConnection', () => {
       const mockUnmount = jest.fn();
       const connection = new RemoteConnection(options);
       connection.state.connector = {
-        disconnect: jest.fn(),
+        disconnect: jest.fn().mockResolvedValue(undefined),
       } as unknown as RemoteCommunication;
 
       jest.spyOn(Ethereum, 'getProvider').mockReturnValue({
@@ -240,7 +252,7 @@ describe('RemoteConnection', () => {
       } as any);
 
       connection.state.connector = {
-        disconnect: jest.fn(),
+        disconnect: jest.fn().mockResolvedValue(undefined),
       } as unknown as RemoteCommunication;
       connection.state.otpAnswer = 'sample';
 
@@ -252,7 +264,7 @@ describe('RemoteConnection', () => {
     it('should call disconnect on connector when options.terminate is false', () => {
       const connection = new RemoteConnection(options);
       connection.state.connector = {
-        disconnect: jest.fn(),
+        disconnect: jest.fn().mockResolvedValue(undefined),
       } as unknown as RemoteCommunication;
 
       connection.disconnect({ terminate: false });
@@ -266,7 +278,7 @@ describe('RemoteConnection', () => {
       const mockUnmount = jest.fn();
       const connection = new RemoteConnection(options);
       connection.state.connector = {
-        disconnect: jest.fn(),
+        disconnect: jest.fn().mockResolvedValue(undefined),
       } as unknown as RemoteCommunication;
 
       connection.state.pendingModal = {

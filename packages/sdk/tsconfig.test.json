@@ -11,7 +11,10 @@
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "paths": {
+      "@metamask/sdk-install-modal-web/*": ["../sdk-install-modal-web/dist/*"]
+    }
   },
   "include": ["./src"],
   "exclude": ["node_modules", "dist"]

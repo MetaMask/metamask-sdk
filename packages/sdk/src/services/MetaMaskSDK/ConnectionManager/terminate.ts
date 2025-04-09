@@ -1,4 +1,3 @@
-import { EventType } from '@metamask/sdk-communication-layer';
 import {
   RPC_METHODS,
   STORAGE_DAPP_CHAINID,
@@ -6,6 +5,7 @@ import {
   STORAGE_PROVIDER_TYPE,
 } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
+import { MetaMaskSDKEvent } from '../../../types/MetaMaskSDKEvents';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
 import { logger } from '../../../utils/logger';
 
@@ -48,6 +48,11 @@ export async function terminate(instance: MetaMaskSDK) {
     }
 
     if (instance.options.extensionOnly) {
+      instance.emit(
+        MetaMaskSDKEvent.ProviderUpdate,
+        PROVIDER_UPDATE_TYPE.TERMINATE,
+      );
+
       logger(
         `[MetaMaskSDK: terminate()] extensionOnly --- prevent switching providers`,
       );
@@ -58,11 +63,18 @@ export async function terminate(instance: MetaMaskSDK) {
     instance.activeProvider = instance.sdkProvider;
     window.ethereum = instance.activeProvider;
     instance.extensionActive = false;
-    instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
+    instance.emit(
+      MetaMaskSDKEvent.ProviderUpdate,
+      PROVIDER_UPDATE_TYPE.TERMINATE,
+    );
     return;
   }
 
-  instance.emit(EventType.PROVIDER_UPDATE, PROVIDER_UPDATE_TYPE.TERMINATE);
+  instance.emit(
+    MetaMaskSDKEvent.ProviderUpdate,
+    PROVIDER_UPDATE_TYPE.TERMINATE,
+  );
+
   logger(
     `[MetaMaskSDK: terminate()] remoteConnection=${instance.remoteConnection}`,
   );

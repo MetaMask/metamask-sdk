@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.30.2]
+### Uncategorized
+- chore: force new version detection ([#1121](https://github.com/MetaMask/metamask-sdk/pull/1121))
+
+## [0.30.0]
+
 ## [0.29.1]
 ### Uncategorized
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
@@ -95,7 +101,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 - fix: linting changelog issue after updating scripts ([#509](https://github.com/MetaMask/metamask-sdk/pull/509))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.29.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.30.2...HEAD
+[0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.30.0...@metamask/sdk-ui@0.30.2
+[0.30.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.29.1...@metamask/sdk-ui@0.30.0
 [0.29.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.29.0...@metamask/sdk-ui@0.29.1
 [0.29.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.28.0...@metamask/sdk-ui@0.29.0
 [0.28.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-ui@0.26.0...@metamask/sdk-ui@0.28.0

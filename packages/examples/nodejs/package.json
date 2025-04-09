@@ -15,13 +15,15 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.28.4",
-    "qrcode-terminal": "^0.12.0"
+    "@metamask/sdk": "^0.30.0"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
     "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }
