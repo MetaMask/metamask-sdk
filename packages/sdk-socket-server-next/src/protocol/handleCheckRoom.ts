@@ -35,15 +35,26 @@ export const handleCheckRoom = async ({
 
   const room = io.sockets.adapter.rooms.get(channelId);
   const occupancy = room ? room.size : 0;
-  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
-  const channelOccupancyKey = `channel_occupancy:{${channelId}}`; 
-  const channelOccupancy =
-    (await pubClient.get(channelOccupancyKey)) ?? undefined;
 
-  logger.info(
-    `[check_room] occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,
-    { socketId, clientIp, channelId },
-  );
-  // Callback with null as the first argument, meaning "no error"
-  return callback(null, { occupancy, channelOccupancy });
+  try {
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${channelId}}`;
+    // Using pubClient wrapper to access redis
+    const channelOccupancy =
+      (await pubClient.get(channelOccupancyKey)) ?? undefined;
+
+    logger.info(
+      `[check_room] occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,
+      { socketId, clientIp, channelId },
+    );
+    // Callback with null as the first argument, meaning "no error"
+    return callback(null, { occupancy, channelOccupancy });
+  } catch (error) {
+    logger.error(`[check_room] Error for channelId=${channelId}: ${error}`, {
+      channelId,
+      socketId,
+      clientIp,
+    });
+    callback(error instanceof Error ? error : new Error('Unknown error occurred'), undefined);
+  }
 };

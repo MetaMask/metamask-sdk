@@ -6,6 +6,7 @@ import {
   Registry,
   Summary,
 } from 'prom-client';
+import { getLogger } from './logger';
 
 const register = new Registry();
 
@@ -385,3 +386,29 @@ export function observeLeaveChannelDuration(duration: number) {
 export function observeCheckRoomDuration(duration: number) {
   checkRoomDuration.observe(duration);
 }
+
+// Add a counter for overall migration progress
+let totalKeysMigrated = 0;
+
+// Add migration metrics to track conversion from old to new Redis key formats
+export const incrementKeyMigration = ({
+  migrationType,
+}: {
+  migrationType: string;
+}) => {
+  totalKeysMigrated++;
+  incrementRedisCacheOperation(`migration-${migrationType}`, true);
+
+  // Log migration progress when reaching certain thresholds
+  if (totalKeysMigrated % 100 === 0) {
+    getLogger().info(`Migration progress: ${totalKeysMigrated} total keys migrated so far`);
+  }
+};
+
+// Add a function to get migration stats for monitoring
+export const getMigrationStats = () => {
+  return {
+    totalKeysMigrated,
+    timestamp: new Date().toISOString(),
+  };
+};
