@@ -11,8 +11,40 @@ import {
 } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { ChannelConfig } from './handleJoinChannel';
+import { incrementKeyMigration } from '../metrics';
 
 const logger = getLogger();
+
+// Add backward compatibility helpers
+const getChannelConfigWithBackwardCompatibility = async ({
+  channelId,
+}: {
+  channelId: string;
+}) => {
+  try {
+    // Try new key format first using pubClient wrapper
+    const channelConfigKey = `channel_config:{${channelId}}`;
+    const legacyChannelConfigKey = `channel_config:${channelId}`;
+    let existingConfig = await pubClient.get(channelConfigKey);
+
+    // If not found, try legacy key
+    if (!existingConfig) {
+      existingConfig = await pubClient.get(legacyChannelConfigKey);
+
+      // If found with legacy key, migrate to new format
+      if (existingConfig) {
+        await pubClient.set(channelConfigKey, existingConfig, 'EX', config.channelExpiry);
+        incrementKeyMigration({ migrationType: 'channel-config' });
+        logger.info(`Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`);
+      }
+    }
+
+    return existingConfig ? JSON.parse(existingConfig) : null;
+  } catch (error) {
+    logger.error(`[getChannelConfigWithBackwardCompatibility] Error: ${error}`);
+    return null;
+  }
+}
 
 export type MessageParams = {
   io: Server;
@@ -60,10 +92,7 @@ export const handleMessage = async ({
   try {
     if (clientType) {
       // new protocol, get channelConfig
-      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
-      const channelConfigKey = `channel_config:{${channelId}}`;
-      const existingConfig = await pubClient.get(channelConfigKey);
-      channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
+      channelConfig = await getChannelConfigWithBackwardCompatibility({ channelId });
       ready = channelConfig?.ready ?? false;
     }
 
@@ -89,6 +118,7 @@ export const handleMessage = async ({
         ready = true;
         channelConfig = { ...channelConfig, ready };
 
+        // Update channel config with pubClient wrapper
         await pubClient.set(
           `channel_config:{${channelId}}`,
           JSON.stringify(channelConfig),
@@ -114,7 +144,7 @@ export const handleMessage = async ({
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';
-      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})  
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
       const queueKey = `queue:{${channelId}}:${otherQueue}`;
       const persistedMsg: QueuedMessage = {
         message,
@@ -126,6 +156,8 @@ export const handleMessage = async ({
         `[handleMessage] persisting message in queue ${queueKey}`,
         persistedMsg,
       );
+
+      // Use pubClient wrapper for persistence
       await pubClient.rpush(queueKey, JSON.stringify(persistedMsg));
       await pubClient.expire(queueKey, config.msgExpiry);
     }

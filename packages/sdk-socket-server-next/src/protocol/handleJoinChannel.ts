@@ -1,12 +1,13 @@
 // protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient, pubClientPool } from '../analytics-api';
+import { pubClient } from '../analytics-api';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { retrieveMessages } from './retrieveMessages';
+import { incrementKeyMigration } from '../metrics';
 
 const logger = getLogger();
 
@@ -79,6 +80,7 @@ export const handleJoinChannel = async ({
 }: JoinChannelParams) => {
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
+
   try {
     let from = context ?? MISSING_CONTEXT;
     if (context?.indexOf('metamask-mobile') !== -1) {
@@ -117,11 +119,28 @@ export const handleJoinChannel = async ({
     let channelConfig: ChannelConfig | null = null;
     // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
     const channelOccupancyKey = `channel_occupancy:{${channelId}}`;
+    const legacyChannelOccupancyKey = `channel_occupancy:${channelId}`;
 
     if (clientType) {
       // New protocol when clientType is available
       const channelConfigKey = `channel_config:{${channelId}}`;
-      const existingConfig = await pubClient.get(channelConfigKey);
+      const legacyChannelConfigKey = `channel_config:${channelId}`;
+
+      // Try new key format first using pubClient wrapper
+      let existingConfig = await pubClient.get(channelConfigKey);
+
+      // If not found with new key, try legacy key
+      if (!existingConfig) {
+        existingConfig = await pubClient.get(legacyChannelConfigKey);
+
+        // If found with legacy key, migrate to new key format
+        if (existingConfig) {
+          await pubClient.set(channelConfigKey, existingConfig, 'EX', config.channelExpiry);
+          incrementKeyMigration({ migrationType: 'channel-config-join' });
+          logger.info(`Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`);
+        }
+      }
+
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
       const now = Date.now();
 
@@ -182,19 +201,30 @@ export const handleJoinChannel = async ({
           JSON.stringify(channelConfig),
         );
 
-        const client = await pubClientPool.acquire();
-
-        await client.setex(
+        // Always write to new key format using pubClient wrapper
+        await pubClient.setex(
           channelConfigKey,
           config.channelExpiry,
           JSON.stringify(channelConfig),
         ); // 1 week expiration
-
-        await pubClientPool.release(client);
       }
     }
 
-    const sRedisChannelOccupancy = await pubClient.get(channelOccupancyKey);
+    // Try new key format first using pubClient wrapper
+    let sRedisChannelOccupancy = await pubClient.get(channelOccupancyKey);
+
+    // If not found with new key, try legacy key
+    if (!sRedisChannelOccupancy) {
+      sRedisChannelOccupancy = await pubClient.get(legacyChannelOccupancyKey);
+
+      // If found with legacy key, migrate to new key format
+      if (sRedisChannelOccupancy) {
+        await pubClient.set(channelOccupancyKey, sRedisChannelOccupancy, 'EX', config.channelExpiry);
+        incrementKeyMigration({ migrationType: 'channel-occupancy' });
+        logger.info(`Migrated channel occupancy from ${legacyChannelOccupancyKey} to ${channelOccupancyKey}`);
+      }
+    }
+
     let channelOccupancy = 0;
 
     logger.debug(
@@ -208,7 +238,7 @@ export const handleJoinChannel = async ({
         `[handleJoinChannel] ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
 
-      await pubClient.set(channelOccupancyKey, 0);
+      await pubClient.set(channelOccupancyKey, '0');
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -347,5 +377,6 @@ export const handleJoinChannel = async ({
       socketId,
       clientIp,
     });
+    callback?.(error instanceof Error ? error.message : 'Unknown error occurred', undefined);
   }
 };

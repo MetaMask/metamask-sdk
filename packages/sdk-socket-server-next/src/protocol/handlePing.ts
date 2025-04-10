@@ -43,7 +43,7 @@ export const handlePing = async ({
   );
 
   if (clientType) {
-    // Check for pending messages
+    // Check for pending messages - retrieveMessages now uses the connection pool internally
     const messages = await retrieveMessages({ channelId, clientType });
     if (messages.length > 0) {
       logger.debug(

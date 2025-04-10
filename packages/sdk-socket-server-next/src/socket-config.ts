@@ -68,7 +68,9 @@ export const configureSocketServer = async (
 
   const subClient = pubClient.duplicate();
 
-  subClient.on('error', (error) => {
+  // Note: pubClient.duplicate() returns a real Redis client instance (not a wrapper)
+  // because Socket.io adapter requires EventEmitter methods like .on()
+  subClient.on('error', (error: Error) => {
     logger.error('Redis subClient error:', error);
   });
 
@@ -76,7 +78,8 @@ export const configureSocketServer = async (
     logger.info('Redis subClient ready');
   });
 
-  const adapter = createAdapter(pubClient, subClient);
+  // createAdapter requires real Redis clients with EventEmitter support
+  const adapter = createAdapter(pubClient.duplicate(), subClient);
 
   type SocketJoinChannelParams = {
     channelId: string;
@@ -107,6 +110,7 @@ export const configureSocketServer = async (
     // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
     const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
 
+    // We can use pubClient directly since it's now a wrapper around the pool
     const channelOccupancy = await pubClient.incrby(channelOccupancyKey, 1);
     logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -119,14 +123,13 @@ export const configureSocketServer = async (
       // Ignore invalid room IDs
       return;
     }
-  
-    const client = await pubClientPool.acquire();
 
     // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
     const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
 
+    // We can use pubClient directly since it's now a wrapper around the pool
     // Decrement the number of clients in the room
-    const channelOccupancy = await client.incrby(channelOccupancyKey, -1);
+    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, -1);
 
     logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -135,10 +138,9 @@ export const configureSocketServer = async (
     if (channelOccupancy <= 0) {
       logger.debug(`'leave-room' room ${roomId} was deleted`);
       // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
-      const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
 
-      // remove from redis
-      await client.del(channelOccupancyKey);
+      // remove from redis - use pubClient wrapper that handles pool management internally
+      await pubClient.del(channelOccupancyKey);
     } else {
       logger.info(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
@@ -146,8 +148,6 @@ export const configureSocketServer = async (
       // Inform the room of the disconnection
       io.to(roomId).emit(`clients_disconnected-${roomId}`);
     }
-
-    await pubClientPool.release(client);
   });
 
   io.on('connection', (socket: Socket) => {
