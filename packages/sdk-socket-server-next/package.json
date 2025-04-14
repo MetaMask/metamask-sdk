@@ -19,6 +19,7 @@
     "build:pre-tsc": "echo 'N/A'",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
+    "clean:redis": "docker compose down -v && docker compose up -d cache",
     "docker:redis": "docker compose up redis-cluster-init",
     "docker:redis:check": "yarn docker:redis && docker compose up check-redis",
     "debug": "nodemon --exec 'NODE_ENV=development ts-node --transpile-only src/index.ts'",

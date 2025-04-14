@@ -14,6 +14,7 @@ import { getLogger } from './logger';
 import { readMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
 import { cleanupAndExit } from './utils';
+import { analyticsRedirectMiddleware } from './middleware-analytics-redirect';
 
 const server = http.createServer(app);
 const logger = getLogger();
@@ -55,6 +56,8 @@ configureSocketServer(server)
     app.get('/version', (_req, res) => {
       res.send({ version: packageJson.version });
     });
+
+    app.use(analyticsRedirectMiddleware);
 
     const port: number = Number(process.env.PORT) || 4000;
     server.listen(port, () => {
