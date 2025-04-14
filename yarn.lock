@@ -10654,6 +10654,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/analytics-server@workspace:packages/analytics-server":
+  version: 0.0.0-use.local
+  resolution: "@metamask/analytics-server@workspace:packages/analytics-server"
+  dependencies:
+    "@lavamoat/allow-scripts": ^2.3.1
+    "@types/analytics-node": ^3.1.13
+    "@types/body-parser": ^1.19.4
+    "@types/cors": ^2.8.15
+    "@types/express": ^4.17.20
+    "@types/node": ^20.4.1
+    "@typescript-eslint/eslint-plugin": ^4.20.0
+    "@typescript-eslint/parser": ^4.20.0
+    analytics-node: ^6.2.0
+    body-parser: ^1.20.2
+    cors: ^2.8.5
+    dotenv: ^16.3.1
+    eslint: ^7.30.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-prettier: ^3.4.0
+    express: ^4.18.2
+    express-rate-limit: ^7.1.5
+    helmet: ^5.1.1
+    ioredis: ^5.6.0
+    prettier: ^2.8.8
+    ts-node: ^10.9.1
+    typescript: ^4.3.2
+    winston: ^3.11.0
+  languageName: unknown
+  linkType: soft
+
 "@metamask/auto-changelog@npm:3.1.0":
   version: 3.1.0
   resolution: "@metamask/auto-changelog@npm:3.1.0"
@@ -22464,6 +22494,12 @@ __metadata:
   checksum: 4dc13714e316e67537c8b31bc063f99a1d9d9a497eb4bbd55191ac0dcd5e4985bbb71570352ad6f1e76684fb6d790928f96ba3b2d4fd6e10024be9612fe3f001
   languageName: node
   linkType: hard
+
+"analytics-client@workspace:packages/analytics-client":
+  version: 0.0.0-use.local
+  resolution: "analytics-client@workspace:packages/analytics-client"
+  languageName: unknown
+  linkType: soft
 
 "analytics-node@npm:^6.2.0":
   version: 6.2.0
