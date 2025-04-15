@@ -1,13 +1,13 @@
 // protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import { rateLimiter } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
-import { retrieveMessages } from './retrieveMessages';
 import { incrementKeyMigration } from '../metrics';
+import { retrieveMessages } from './retrieveMessages';
 
 const logger = getLogger();
 
@@ -135,9 +135,16 @@ export const handleJoinChannel = async ({
 
         // If found with legacy key, migrate to new key format
         if (existingConfig) {
-          await pubClient.set(channelConfigKey, existingConfig, 'EX', config.channelExpiry);
+          await pubClient.set(
+            channelConfigKey,
+            existingConfig,
+            'EX',
+            config.channelExpiry,
+          );
           incrementKeyMigration({ migrationType: 'channel-config-join' });
-          logger.info(`Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`);
+          logger.info(
+            `Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`,
+          );
         }
       }
 
@@ -219,9 +226,16 @@ export const handleJoinChannel = async ({
 
       // If found with legacy key, migrate to new key format
       if (sRedisChannelOccupancy) {
-        await pubClient.set(channelOccupancyKey, sRedisChannelOccupancy, 'EX', config.channelExpiry);
+        await pubClient.set(
+          channelOccupancyKey,
+          sRedisChannelOccupancy,
+          'EX',
+          config.channelExpiry,
+        );
         incrementKeyMigration({ migrationType: 'channel-occupancy' });
-        logger.info(`Migrated channel occupancy from ${legacyChannelOccupancyKey} to ${channelOccupancyKey}`);
+        logger.info(
+          `Migrated channel occupancy from ${legacyChannelOccupancyKey} to ${channelOccupancyKey}`,
+        );
       }
     }
 
@@ -377,6 +391,10 @@ export const handleJoinChannel = async ({
       socketId,
       clientIp,
     });
-    callback?.(error instanceof Error ? error.message : 'Unknown error occurred', undefined);
+
+    callback?.(
+      error instanceof Error ? error.message : 'Unknown error occurred',
+      undefined,
+    );
   }
 };

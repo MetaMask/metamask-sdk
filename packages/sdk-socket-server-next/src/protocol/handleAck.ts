@@ -1,9 +1,9 @@
 import { Server, Socket } from 'socket.io';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { getLogger } from '../logger';
 import { ClientType } from '../socket-config';
-import { QueuedMessage } from './handleMessage';
 import { incrementKeyMigration } from '../metrics';
+import { QueuedMessage } from './handleMessage';
 
 const logger = getLogger();
 
@@ -44,7 +44,9 @@ export const handleAck = async ({
 
       if (legacyRawMessages.length > 0) {
         incrementKeyMigration({ migrationType: 'ack-queue' });
-        logger.info(`Migrating ${legacyRawMessages.length} messages from ${legacyQueueKey} to ${queueKey}`);
+        logger.info(
+          `Migrating ${legacyRawMessages.length} messages from ${legacyQueueKey} to ${queueKey}`,
+        );
 
         // Use pipeline for efficiency - note: pipeline uses global Redis client in wrapper
         const pipeline = pubClient.pipeline();

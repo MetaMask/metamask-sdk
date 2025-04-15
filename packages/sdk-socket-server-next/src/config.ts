@@ -54,4 +54,5 @@ export const hasRateLimit = process.env.RATE_LIMITER === 'true';
 export const redisCluster = process.env.REDIS_CLUSTER === 'true';
 export const redisTLS = process.env.REDIS_TLS === 'true';
 
-export const analyticsServerUrl = process.env.ANALYTICS_SERVER_URL || 'http://localhost:2002';
+export const analyticsServerUrl =
+  process.env.ANALYTICS_SERVER_URL || 'http://localhost:2002';

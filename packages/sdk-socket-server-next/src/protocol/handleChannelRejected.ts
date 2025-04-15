@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { config } from '../config';
 import { getLogger } from '../logger';
 import { ChannelConfig } from './handleJoinChannel';
@@ -103,6 +103,10 @@ export const handleChannelRejected = async (
         clientIp,
       },
     );
-    callback?.(error instanceof Error ? error.message : 'Unknown error occurred', undefined);
+
+    callback?.(
+      error instanceof Error ? error.message : 'Unknown error occurred',
+      undefined,
+    );
   }
 };

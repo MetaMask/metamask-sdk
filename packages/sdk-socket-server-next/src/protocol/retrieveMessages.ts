@@ -1,8 +1,8 @@
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { getLogger } from '../logger';
 import { ClientType } from '../socket-config';
-import { QueuedMessage } from './handleMessage';
 import { incrementKeyMigration } from '../metrics';
+import { QueuedMessage } from './handleMessage';
 
 const logger = getLogger();
 
@@ -29,7 +29,9 @@ export const retrieveMessages = async ({
       // If found messages in legacy format, migrate them to new format
       if (legacyMessageData.length > 0) {
         incrementKeyMigration({ migrationType: 'message-queue' });
-        logger.info(`Migrating ${legacyMessageData.length} messages from ${legacyQueueKey} to ${queueKey}`);
+        logger.info(
+          `Migrating ${legacyMessageData.length} messages from ${legacyQueueKey} to ${queueKey}`,
+        );
 
         // Use pipeline for efficiency - note: pipeline uses global client in wrapper
         const pipeline = pubClient.pipeline();

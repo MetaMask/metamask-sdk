@@ -1,12 +1,11 @@
 // socket-config.ts
-/* eslint-disable node/no-process-env */
 import { Server as HTTPServer } from 'http';
 import { hostname } from 'os';
 import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient, pubClientPool } from './analytics-api';
+import { pubClient, getGlobalRedisClient } from './redis';
 import { getLogger } from './logger';
 import { ACKParams, handleAck } from './protocol/handleAck';
 import {
@@ -66,20 +65,22 @@ export const configureSocketServer = async (
     `Start socket server with rate limiter: ${hasRateLimit} - isDevelopment: ${isDevelopment}`,
   );
 
-  const subClient = pubClient.duplicate();
+  const basePubClient = getGlobalRedisClient();
+  const baseSubClient = getGlobalRedisClient().duplicate();
 
-  // Note: pubClient.duplicate() returns a real Redis client instance (not a wrapper)
-  // because Socket.io adapter requires EventEmitter methods like .on()
-  subClient.on('error', (error: Error) => {
-    logger.error('Redis subClient error:', error);
+  await new Promise<void>((resolve, reject) => {
+    baseSubClient.on('ready', () => {
+      logger.info('Redis subClient ready for adapter');
+      resolve();
+    });
+
+    baseSubClient.on('error', (error: Error) => {
+      logger.error('Redis subClient error before adapter creation:', error);
+      reject(error);
+    });
   });
 
-  subClient.on('ready', () => {
-    logger.info('Redis subClient ready');
-  });
-
-  // createAdapter requires real Redis clients with EventEmitter support
-  const adapter = createAdapter(pubClient.duplicate(), subClient);
+  const adapter = createAdapter(basePubClient.duplicate(), baseSubClient);
 
   type SocketJoinChannelParams = {
     channelId: string;
@@ -208,13 +209,15 @@ export const configureSocketServer = async (
           ) => void;
         }
 
-        handleJoinChannel(params).catch((error) => {
-          logger.error('Error creating channel:', error);
-          incrementCreateChannelError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observeCreateChannelDuration(duration);
-        });
+        handleJoinChannel(params)
+          .catch((error) => {
+            logger.error('Error creating channel:', error);
+            incrementCreateChannelError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observeCreateChannelDuration(duration);
+          });
       },
     );
 
@@ -239,13 +242,15 @@ export const configureSocketServer = async (
           ackId,
           clientType,
         };
-        handleAck(ackParams).catch((error) => {
-          logger.error('Error handling ack:', error);
-          incrementAckError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observeAckDuration(duration);
-        });
+        handleAck(ackParams)
+          .catch((error) => {
+            logger.error('Error handling ack:', error);
+            incrementAckError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observeAckDuration(duration);
+          });
       },
     );
 
@@ -284,13 +289,15 @@ export const configureSocketServer = async (
           return;
         }
 
-        handleMessage(params).catch((error) => {
-          logger.error('Error handling message:', error);
-          incrementMessageError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observeMessageDuration(duration);
-        });
+        handleMessage(params)
+          .catch((error) => {
+            logger.error('Error handling message:', error);
+            incrementMessageError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observeMessageDuration(duration);
+          });
       },
     );
 
@@ -315,13 +322,15 @@ export const configureSocketServer = async (
           io,
           clientType,
           callback,
-        }).catch((error) => {
-          logger.error('Error handling ping:', error);
-          incrementPingError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observePingDuration(duration);
-        });
+        })
+          .catch((error) => {
+            logger.error('Error handling ping:', error);
+            incrementPingError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observePingDuration(duration);
+          });
       },
     );
 
@@ -385,13 +394,15 @@ export const configureSocketServer = async (
         const start = Date.now();
         incrementJoinChannel();
 
-        handleJoinChannel(params).catch((error) => {
-          logger.error('Error joining channel:', error);
-          incrementJoinChannelError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observeJoinChannelDuration(duration);
-        });
+        handleJoinChannel(params)
+          .catch((error) => {
+            logger.error('Error joining channel:', error);
+            incrementJoinChannelError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observeJoinChannelDuration(duration);
+          });
       },
     );
 
@@ -404,11 +415,12 @@ export const configureSocketServer = async (
         const start = Date.now();
         incrementRejected();
 
-        handleChannelRejected({ ...params, io, socket }, callback).catch(
-          (error) => {
+        handleChannelRejected({ ...params, io, socket }, callback)
+          .catch((error) => {
             logger.error('Error rejecting channel:', error);
             incrementRejectedError();
-          }).finally(() => {
+          })
+          .finally(() => {
             const duration = Date.now() - start;
             observeRejectedDuration(duration);
           });
@@ -449,13 +461,15 @@ export const configureSocketServer = async (
         const start = Date.now();
         incrementCheckRoom();
 
-        handleCheckRoom({ channelId, io, socket, callback }).catch((error) => {
-          logger.error('Error checking room:', error);
-          incrementCheckRoomError();
-        }).finally(() => {
-          const duration = Date.now() - start;
-          observeCheckRoomDuration(duration);
-        });
+        handleCheckRoom({ channelId, io, socket, callback })
+          .catch((error) => {
+            logger.error('Error checking room:', error);
+            incrementCheckRoomError();
+          })
+          .finally(() => {
+            const duration = Date.now() - start;
+            observeCheckRoomDuration(duration);
+          });
       },
     );
   });

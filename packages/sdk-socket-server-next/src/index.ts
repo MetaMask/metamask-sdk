@@ -7,14 +7,11 @@ dotenv.config();
 
 // Load config
 import { instrument } from '@socket.io/admin-ui';
-import packageJson from '../package.json';
 import { isDevelopment, withAdminUI } from './config';
-import { app } from './analytics-api';
+import { app } from './app';
 import { getLogger } from './logger';
-import { readMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
 import { cleanupAndExit } from './utils';
-import { analyticsRedirectMiddleware } from './middleware-analytics-redirect';
 
 const server = http.createServer(app);
 const logger = getLogger();
@@ -35,7 +32,7 @@ process.on('unhandledRejection', (reason, promise) => {
 configureSocketServer(server)
   .then((ioServer) => {
     logger.info(
-      `socker.io server started development=${isDevelopment} adminUI=${withAdminUI}`,
+      `socket.io server started development=${isDevelopment} adminUI=${withAdminUI}`,
     );
 
     if (withAdminUI) {
@@ -46,18 +43,6 @@ configureSocketServer(server)
         mode: 'development',
       });
     }
-
-    // Make sure to protect the endpoint to be only available within the cluster for prometheus
-    app.get('/metrics', async (_req, res) => {
-      res.set('Content-Type', 'text/plain');
-      res.send(await readMetrics());
-    });
-
-    app.get('/version', (_req, res) => {
-      res.send({ version: packageJson.version });
-    });
-
-    app.use(analyticsRedirectMiddleware);
 
     const port: number = Number(process.env.PORT) || 4000;
     server.listen(port, () => {

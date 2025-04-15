@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import {
@@ -10,8 +10,8 @@ import {
   setLastConnectionErrorTimestamp,
 } from '../rate-limiter';
 import { ClientType, MISSING_CONTEXT } from '../socket-config';
-import { ChannelConfig } from './handleJoinChannel';
 import { incrementKeyMigration } from '../metrics';
+import { ChannelConfig } from './handleJoinChannel';
 
 const logger = getLogger();
 
@@ -33,9 +33,16 @@ const getChannelConfigWithBackwardCompatibility = async ({
 
       // If found with legacy key, migrate to new format
       if (existingConfig) {
-        await pubClient.set(channelConfigKey, existingConfig, 'EX', config.channelExpiry);
+        await pubClient.set(
+          channelConfigKey,
+          existingConfig,
+          'EX',
+          config.channelExpiry,
+        );
         incrementKeyMigration({ migrationType: 'channel-config' });
-        logger.info(`Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`);
+        logger.info(
+          `Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`,
+        );
       }
     }
 
@@ -44,7 +51,7 @@ const getChannelConfigWithBackwardCompatibility = async ({
     logger.error(`[getChannelConfigWithBackwardCompatibility] Error: ${error}`);
     return null;
   }
-}
+};
 
 export type MessageParams = {
   io: Server;
@@ -92,7 +99,9 @@ export const handleMessage = async ({
   try {
     if (clientType) {
       // new protocol, get channelConfig
-      channelConfig = await getChannelConfigWithBackwardCompatibility({ channelId });
+      channelConfig = await getChannelConfigWithBackwardCompatibility({
+        channelId,
+      });
       ready = channelConfig?.ready ?? false;
     }
 

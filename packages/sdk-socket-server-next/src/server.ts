@@ -1,4 +1,4 @@
-import { app } from './analytics-api';
+import { app } from './app';
 import { getMigrationStats } from './metrics';
 
 // Add migration status endpoint to track key migration progress

@@ -272,10 +272,10 @@ export function incrementAnalyticsEvents(
   sdkVersion: string,
 ) {
   analyticsEventsTotal.inc({
-    from: from,
+    from,
     with_channel_id: withChannelId ? 'true' : 'false',
     event_name: eventName,
-    platform: platform,
+    platform,
     sdk_version: sdkVersion,
   });
 }
@@ -396,12 +396,14 @@ export const incrementKeyMigration = ({
 }: {
   migrationType: string;
 }) => {
-  totalKeysMigrated++;
+  totalKeysMigrated += 1;
   incrementRedisCacheOperation(`migration-${migrationType}`, true);
 
   // Log migration progress when reaching certain thresholds
   if (totalKeysMigrated % 100 === 0) {
-    getLogger().info(`Migration progress: ${totalKeysMigrated} total keys migrated so far`);
+    getLogger().info(
+      `Migration progress: ${totalKeysMigrated} total keys migrated so far`,
+    );
   }
 };
 

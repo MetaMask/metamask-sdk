@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
-import { pubClient } from './analytics-api';
+import { pubClient } from './redis';
 
 import { createLogger } from './logger';
 
@@ -46,7 +46,9 @@ async function testRedisOperations() {
     if (fetchedValue === value) {
       logger.info('✅ Redis operations completed successfully');
     } else {
-      logger.error(`❌ Redis value mismatch: expected '${value}', got '${fetchedValue}'`);
+      logger.error(
+        `❌ Redis value mismatch: expected '${value}', got '${fetchedValue}'`,
+      );
     }
   } catch (error) {
     logger.error('❌ Redis operation failed:', error);

@@ -1,26 +1,9 @@
 /* eslint-disable node/no-process-env */
-import crypto from 'crypto';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import express from 'express';
-import { rateLimit } from 'express-rate-limit';
-import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
-import {
-  config,
-  hasRateLimit,
-  isDevelopment,
-  isDevelopmentServer,
-  REDIS_DEBUG_LOGS,
-  redisCluster,
-  redisTLS,
-} from './config';
+import genericPool from 'generic-pool';
+import { redisCluster, redisTLS } from './config';
 import { getLogger } from './logger';
-import {
-  incrementRedisCacheOperation,
-  incrementKeyMigration,
-} from './metrics';
-import genericPool from "generic-pool";
+import { incrementRedisCacheOperation } from './metrics'; // Keep metrics import if used by Redis logic
 
 const logger = getLogger();
 
@@ -42,7 +25,8 @@ if (process.env.REDIS_NODES) {
 }
 logger.info('Redis nodes:', redisNodes);
 
-if (redisNodes.length === 0) {
+if (redisNodes.length === 0 && process.env.NODE_ENV !== 'test') {
+  // Allow test env without redis
   logger.error('No Redis nodes found');
   process.exit(1);
 }
@@ -71,13 +55,13 @@ export const getRedisOptions = (
     },
     reconnectOnError: (error) => {
       const targetErrors = [
-        /MOVED/,
-        /READONLY/,
-        /ETIMEDOUT/,
-        /ECONNRESET/,
-        /ECONNREFUSED/,
-        /EPIPE/,
-        /ENOTFOUND/,
+        /MOVED/u,
+        /READONLY/u,
+        /ETIMEDOUT/u,
+        /ECONNRESET/u,
+        /ECONNREFUSED/u,
+        /EPIPE/u,
+        /ENOTFOUND/u,
       ];
 
       logger.error('Redis reconnect error:', error);
@@ -92,26 +76,35 @@ export const getRedisOptions = (
   return options;
 };
 
-export const buildRedisClient = (usePipelining: boolean = true) => {
+// Cache created clients to reduce connection churn
+const redisClientCache = new Map<string, Cluster | Redis>();
+
+export const buildRedisClient = (usePipelining = true) => {
   let newRedisClient: Cluster | Redis | undefined;
 
   // Only log connection attempts at debug level unless first time
   const logLevel = redisClientCache.size > 0 ? 'debug' : 'info';
 
+  if (redisNodes.length === 0) {
+    logger.warn(
+      'Skipping Redis client creation as no nodes are defined (likely test environment)',
+    );
+    return undefined; // Return undefined if no nodes
+  }
+
   if (redisCluster) {
     logger[logLevel]('Connecting to Redis Cluster...');
 
-    const redisOptions = getRedisOptions(
-      redisTLS,
-      process.env.REDIS_PASSWORD,
-    );
+    const redisOptions = getRedisOptions(redisTLS, process.env.REDIS_PASSWORD);
     const redisClusterOptions: ClusterOptions = {
       dnsLookup: (address, callback) => callback(null, address),
       scaleReads: 'slave',
       slotsRefreshTimeout: 10000,
       showFriendlyErrorStack: true,
       slotsRefreshInterval: 5000,
-      natMap: process.env.REDIS_NAT_MAP ? JSON.parse(process.env.REDIS_NAT_MAP) : undefined,
+      natMap: process.env.REDIS_NAT_MAP
+        ? JSON.parse(process.env.REDIS_NAT_MAP)
+        : undefined,
       redisOptions: {
         ...redisOptions,
         // Queues commands when disconnected from Redis, executing them when connection is restored
@@ -126,7 +119,9 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
       },
       clusterRetryStrategy: (times) => {
         const delay = Math.min(times * 100, 5000);
-        logger.info(`Redis Cluster retry attempt ${times} with delay ${delay}ms`);
+        logger.info(
+          `Redis Cluster retry attempt ${times} with delay ${delay}ms`,
+        );
         return delay;
       },
       enableAutoPipelining: usePipelining,
@@ -153,10 +148,13 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
   });
 
   // Use connectionId to track individual connections in logs without excessive output
-  const connectionId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  const connectionId =
+    Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 
   // Log only once at initialization instead of separate events
-  logger.debug(`Redis connection ${connectionId} initialized - events will be handled silently`);
+  logger.debug(
+    `Redis connection ${connectionId} initialized - events will be handled silently`,
+  );
 
   // Remove these individual event logs to reduce noise
   // These events still happen but we don't log each occurrence
@@ -177,29 +175,38 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
   });
 
   return newRedisClient;
-}
-
-// Cache created clients to reduce connection churn
-const redisClientCache = new Map<string, Cluster | Redis>();
+};
 
 const redisFactory = {
-  create: () => {
+  create: async () => {
     // Create a unique key for this client
-    const cacheKey = `redis-client-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+    const cacheKey = `redis-client-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 15)}`;
 
     // Only log once per 50 clients to reduce noise (increased from 10)
-    const shouldLog = redisClientCache.size % 50 === 0 || redisClientCache.size === 0;
+    const shouldLog =
+      redisClientCache.size % 50 === 0 || redisClientCache.size === 0;
     if (shouldLog) {
-      logger.info(`Redis pool: Creating client (cache size: ${redisClientCache.size})`);
+      logger.info(
+        `Redis pool: Creating client (cache size: ${redisClientCache.size})`,
+      );
     }
 
     const client = buildRedisClient(false);
+    if (!client) {
+      // Handle case where client couldn't be built (e.g., no nodes)
+      logger.error('Failed to create Redis client in factory');
+      // Depending on desired behavior, you might throw an error or return a mock/null client
+      // For now, let's throw to make the issue explicit
+      throw new Error('Failed to build Redis client in pool factory');
+    }
     redisClientCache.set(cacheKey, client);
 
     // Add client-specific reference to allow cleanup
     (client as any).__cacheKey = cacheKey;
 
-    return Promise.resolve(client);
+    return client; // Resolve with the client directly
   },
   destroy: (client: Cluster | Redis) => {
     // Get cache key from client if available
@@ -209,9 +216,12 @@ const redisFactory = {
     }
 
     // Only log once per 50 clients to reduce noise (increased from 10)
-    const shouldLog = redisClientCache.size % 50 === 0 || redisClientCache.size === 0;
+    const shouldLog =
+      redisClientCache.size % 50 === 0 || redisClientCache.size === 0;
     if (shouldLog) {
-      logger.info(`Redis pool: Destroying client (cache size: ${redisClientCache.size})`);
+      logger.info(
+        `Redis pool: Destroying client (cache size: ${redisClientCache.size})`,
+      );
     }
 
     return Promise.resolve(client.disconnect());
@@ -225,6 +235,10 @@ export const getGlobalRedisClient = () => {
     redisClient = buildRedisClient();
   }
 
+  // Ensure redisClient is defined before returning
+  if (!redisClient) {
+    throw new Error('Global Redis client could not be initialized.');
+  }
   return redisClient;
 };
 
@@ -240,46 +254,36 @@ export const pubClientPool = genericPool.createPool(redisFactory, {
 
 /**
  * PooledClientWrapper - A Redis client wrapper that uses the connection pool internally
- *
- * This class provides a drop-in replacement for the direct Redis client,
- * but ensures that all operations properly acquire and release connections from the pool.
- *
- * Benefits:
- * - Better resource management by using connection pooling consistently
- * - Prevention of connection leaks during high traffic
- * - More scalable approach for a socket server
- * - Maintains backward compatibility with existing code
- *
- * Implementation strategy:
- * - Each Redis method acquires a client from the pool
- * - Executes the operation
- * - Always releases the client back to the pool (using try/finally)
- * - This allows legacy code to continue working with minimal changes
- *
- * Special cases:
- * - duplicate(): Uses global client for socket.io Redis adapter, which needs persistent connections
- * - pipeline(): Currently uses global client as a temporary solution
- *
- * Future improvements:
- * - Address pipeline operations to also use the pool properly
+ * ... (rest of the class definition as before) ...
  */
 class PooledClientWrapper {
   async get(key: string): Promise<string | null> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.get(key);
+      const value = await client.get(key);
+      incrementRedisCacheOperation('pooled-get', Boolean(value)); // Example metric integration
+      return value;
     } finally {
       await pubClientPool.release(client);
     }
   }
 
-  async set(key: string, value: string, mode?: string, duration?: string | number): Promise<'OK'> {
+  async set(
+    key: string,
+    value: string,
+    mode?: string,
+    duration?: string | number,
+  ): Promise<'OK'> {
     const client = await pubClientPool.acquire();
     try {
+      let result: 'OK';
       if (mode === 'EX' && duration) {
-        return await client.set(key, value, mode, duration);
+        result = await client.set(key, value, mode, duration);
+      } else {
+        result = await client.set(key, value);
       }
-      return await client.set(key, value);
+      incrementRedisCacheOperation('pooled-set', true);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -288,7 +292,9 @@ class PooledClientWrapper {
   async setex(key: string, seconds: number, value: string): Promise<'OK'> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.setex(key, seconds, value);
+      const result = await client.setex(key, seconds, value);
+      incrementRedisCacheOperation('pooled-setex', true);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -297,7 +303,9 @@ class PooledClientWrapper {
   async incrby(key: string, increment: number): Promise<number> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.incrby(key, increment);
+      const result = await client.incrby(key, increment);
+      incrementRedisCacheOperation('pooled-incrby', true);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -306,7 +314,9 @@ class PooledClientWrapper {
   async del(key: string): Promise<number> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.del(key);
+      const result = await client.del(key);
+      incrementRedisCacheOperation('pooled-del', result > 0);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -324,7 +334,9 @@ class PooledClientWrapper {
   async lrange(key: string, start: number, stop: number): Promise<string[]> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.lrange(key, start, stop);
+      const result = await client.lrange(key, start, stop);
+      incrementRedisCacheOperation('pooled-lrange', result.length > 0);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -333,7 +345,9 @@ class PooledClientWrapper {
   async lset(key: string, index: number, value: string): Promise<'OK'> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.lset(key, index, value);
+      const result = await client.lset(key, index, value);
+      incrementRedisCacheOperation('pooled-lset', true);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -342,7 +356,9 @@ class PooledClientWrapper {
   async lrem(key: string, count: number, value: string): Promise<number> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.lrem(key, count, value);
+      const result = await client.lrem(key, count, value);
+      incrementRedisCacheOperation('pooled-lrem', result > 0);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -351,7 +367,9 @@ class PooledClientWrapper {
   async rpush(key: string, ...values: string[]): Promise<number> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.rpush(key, ...values);
+      const result = await client.rpush(key, ...values);
+      incrementRedisCacheOperation('pooled-rpush', true);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -360,7 +378,9 @@ class PooledClientWrapper {
   async expire(key: string, seconds: number): Promise<number> {
     const client = await pubClientPool.acquire();
     try {
-      return await client.expire(key, seconds);
+      const result = await client.expire(key, seconds);
+      incrementRedisCacheOperation('pooled-expire', result > 0);
+      return result;
     } finally {
       await pubClientPool.release(client);
     }
@@ -377,7 +397,6 @@ class PooledClientWrapper {
   disconnect(): void {
     // This is a no-op for the wrapper
     // The actual client disconnects are managed by the pool
-    return;
   }
 
   pipeline(): any {
@@ -393,66 +412,25 @@ class PooledClientWrapper {
 // Export the wrapper as pubClient
 export const pubClient = new PooledClientWrapper();
 
-const app = express();
+// Add Redis health checking and recovery
+let redisHealthCheckInterval: NodeJS.Timeout | undefined;
+let consecutiveRedisErrors = 0;
+const MAX_CONSECUTIVE_ERRORS = 10;
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cors());
-app.options('*', cors());
-app.use(helmet());
-app.disable('x-powered-by');
-
-if (hasRateLimit) {
-  // Conditionally apply the rate limiting middleware to all requests.
-  let windowMin = 1; // every 1minute
-  try {
-    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
-      windowMin = parseInt(
-        process.env.RATE_LIMITER_HTTP_WINDOW_MINUTE ?? '1',
-        10,
-      );
-    }
-  } catch (error) {
-    // Ignore parsing errors
-  }
-  let limit = 100_000; // 100,000 requests per minute by default (unlimited...)
-  try {
-    if (process.env.RATE_LIMITER_HTTP_LIMIT) {
-      limit = parseInt(process.env.RATE_LIMITER_HTTP_LIMIT, 10);
-    }
-  } catch (error) {
-    // Ignore parsing errors
-  }
-
-  const limiterConfig = {
-    windowMs: windowMin * 60 * 1000,
-    limit,
-    legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
-    // store: ... , // Use an external store for consistency across multiple server instances.
-  };
-  const limiter = rateLimit(limiterConfig);
-
-  logger.info('Rate limiter enabled', limiterConfig);
-  app.use(limiter);
-}
-
-async function inspectRedis(key?: string) {
-  if (key && typeof key === 'string') {
+export async function inspectRedis(key?: string) {
+  const REDIS_DEBUG_LOGS = process.env.REDIS_DEBUG_LOGS === 'true';
+  if (REDIS_DEBUG_LOGS && key && typeof key === 'string') {
     // pubClient is a wrapper around the pool, so this is safe
     const value = await pubClient.get(key);
     logger.debug(`inspectRedis Key: ${key}, Value: ${value}`);
   }
 }
 
-// Add Redis health checking and recovery
-let redisHealthCheckInterval: NodeJS.Timeout;
-let consecutiveRedisErrors = 0;
-const MAX_CONSECUTIVE_ERRORS = 10;
-
 // Update the monitorRedisHealth function to use the wrapper
 export const monitorRedisHealth = () => {
   if (redisHealthCheckInterval) {
     clearInterval(redisHealthCheckInterval);
+    redisHealthCheckInterval = undefined; // Clear the interval ID
   }
 
   // Track health status to only log changes
@@ -465,36 +443,49 @@ export const monitorRedisHealth = () => {
 
       // Only log when recovering from errors
       if (consecutiveRedisErrors > 0) {
-        logger.info(`Redis health restored after ${consecutiveRedisErrors} consecutive errors`);
+        logger.info(
+          `Redis health restored after ${consecutiveRedisErrors} consecutive errors`,
+        );
         consecutiveRedisErrors = 0;
+        isHealthy = true;
+      } else if (!isHealthy) {
+        // Log once when becoming healthy again if it wasn't before
+        logger.info('Redis health check passed after previous failures.');
         isHealthy = true;
       }
     } catch (error) {
-      consecutiveRedisErrors++;
+      consecutiveRedisErrors += 1;
 
       // Only log the first error or milestone errors
-      if (consecutiveRedisErrors === 1 || consecutiveRedisErrors % 5 === 0) {
-        logger.error(`Redis health check failed (${consecutiveRedisErrors}/${MAX_CONSECUTIVE_ERRORS}):`, error);
-        isHealthy = false;
+      if (isHealthy || consecutiveRedisErrors % 5 === 0) {
+        // Log first time it fails or every 5th failure
+        logger.error(
+          `Redis health check failed (${consecutiveRedisErrors}/${MAX_CONSECUTIVE_ERRORS}):`,
+          error,
+        );
+        isHealthy = false; // Mark as unhealthy
       }
 
       // If too many consecutive errors, attempt to rebuild the Redis client
       if (consecutiveRedisErrors >= MAX_CONSECUTIVE_ERRORS) {
-        logger.warn(`Rebuilding Redis client after ${consecutiveRedisErrors} consecutive errors`);
-        try {
-          // The pool will handle reconnection internally
-          // Just log that we're attempting recovery
-          logger.info('Redis client pool recovery attempted');
-          consecutiveRedisErrors = 0;
-        } catch (rebuildError) {
-          logger.error('Failed to rebuild Redis client:', rebuildError);
-        }
+        logger.warn(
+          `Attempting Redis client pool recovery after ${consecutiveRedisErrors} consecutive errors`,
+        );
+        // The pool should handle reconnection automatically based on its strategy.
+        // We don't need to explicitly rebuild here, just reset the counter maybe?
+        // For now, just log the attempt and reset counter to prevent spamming logs.
+        consecutiveRedisErrors = 0; // Reset error count after logging recovery attempt
       }
     }
   }, 30000); // Check every 30 seconds
 };
 
 // Start monitoring when the module is loaded
-monitorRedisHealth();
-
-export { app }; // Export only app now
+// Only start if not in test environment or if redis nodes are configured
+if (process.env.NODE_ENV !== 'test' || redisNodes.length > 0) {
+  monitorRedisHealth();
+} else {
+  logger.info(
+    'Skipping Redis health monitoring in test environment without nodes.',
+  );
+}

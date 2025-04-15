@@ -50,9 +50,7 @@ export const setIsShuttingDown = (value: boolean) => {
 
 export const getIsShuttingDown = () => isShuttingDown;
 
-export const cleanupAndExit = async (
-  server: Server,
-): Promise<void> => {
+export const cleanupAndExit = async (server: Server): Promise<void> => {
   if (isShuttingDown) {
     logger.info(`cleanupAndExit already in progress`);
     return;

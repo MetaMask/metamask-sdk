@@ -26,15 +26,17 @@ yarn debug
    - Adjust the `.env` file with the correct settings as per your project requirements.
 
 2. **Start the REDIS cluster**:
+
    - For standard development, use: `yarn start`
    - For debugging with more verbose output, use: `yarn debug`
 
 3. **Check cluster status**:
+
    - Use the command: `yarn docker:redis:check`
    - This command sets up a local redis cluster and connect to it to make sure everything is working.
 
 4. **Start the SDK Socket Server via docker**:
-    - Use the command: `yarn docker:debug`
+   - Use the command: `yarn docker:debug`
 
 ### Using Ngrok for External Access
 

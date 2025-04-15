@@ -1,7 +1,7 @@
 import { validate } from 'uuid';
 import { Server, Socket } from 'socket.io';
 import { getLogger } from '../logger';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 
 const logger = getLogger();
 
@@ -55,6 +55,10 @@ export const handleCheckRoom = async ({
       socketId,
       clientIp,
     });
-    callback(error instanceof Error ? error : new Error('Unknown error occurred'), undefined);
+
+    return callback(
+      error instanceof Error ? error : new Error('Unknown error occurred'),
+      undefined,
+    );
   }
 };
