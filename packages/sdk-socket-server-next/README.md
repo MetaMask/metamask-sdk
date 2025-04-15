@@ -25,7 +25,7 @@ This mode runs the development server (`yarn debug` via `nodemon`) _inside_ the 
 **Setup & Run:**
 
 ```bash
-# 1. Start background services (Redis, Prometheus, Grafana)
+# 1. Start background services (Redis, Prometheus, Grafana, Loki)
 docker compose up -d cache prometheus grafana loki promtail
 
 # 2. Start the development application server in the foreground
