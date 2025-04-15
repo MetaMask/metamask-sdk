@@ -19,7 +19,6 @@ This mode runs the development server (`yarn debug` via `nodemon`) *inside* the 
 *   ✅ Automatic code reloading on file changes (via `appdev` service)
 *   ✅ Includes Prometheus/Grafana monitoring
 *   ✅ Runs app in a containerized environment (closer to production)
-*   ❌ Debugging requires attaching to the Docker container process
 
 **Setup & Run:**
 
