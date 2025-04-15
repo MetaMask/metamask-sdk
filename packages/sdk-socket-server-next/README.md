@@ -1,88 +1,83 @@
-# SDK Socket Server - Local Development & Simulation Guide
+# SDK Socket Server - Dockerized Development & Simulation Guide
 
-This guide explains how to set up and run the SDK socket server for different purposes:
-1.  **Local Development:** For quick coding, debugging, and testing with auto-reloading code changes.
+This guide explains how to set up and run the SDK socket server using Docker Compose for different purposes:
+1.  **Development Mode (Docker + Auto-Reload):** For coding and debugging within a Docker container, using auto-reloading code changes and integrated monitoring.
 2.  **Scalable Environment Simulation:** For testing the application in a multi-instance setup with load balancing, a Redis cluster, and integrated monitoring.
 
 ## Prerequisites
 
-- Node.js and Yarn installed
+- Node.js and Yarn installed (for dependency management, though code runs in Docker)
 - Docker and Docker Compose installed
 - Ngrok account and CLI tool installed (optional, for external access testing)
-- Copy `.env.sample` to `.env` and configure as needed.
+- Copy `.env.sample` to `.env` and configure as needed (Note: `REDIS_NODES` in `.env` is ignored by Docker services, which use overrides in `docker-compose.yml`).
 
-## Mode 1: Local Development (Fast Iteration)
+## Mode 1: Development (Docker + Auto-Reload + Monitoring)
 
-This mode is ideal for active development and debugging. It uses your local Node.js environment for the application (with `nodemon` for auto-reload) and a single Redis instance running in Docker.
+This mode runs the development server (`yarn debug` via `nodemon`) *inside* the `appdev` Docker container, which mounts your local code. It uses the `cache` Redis instance and integrates with Prometheus/Grafana.
 
 **Features:**
-*   ✅ Fast startup
-*   ✅ Automatic code reloading on file changes (`yarn debug`)
-*   ✅ Easy debugging using standard Node.js tools
-*   ❌ Does not simulate scaling or load balancing
-*   ❌ Does not include Prometheus/Grafana monitoring out-of-the-box
+*   ✅ Automatic code reloading on file changes (via `appdev` service)
+*   ✅ Includes Prometheus/Grafana monitoring
+*   ✅ Runs app in a containerized environment (closer to production)
+*   ❌ Debugging requires attaching to the Docker container process
 
 **Setup & Run:**
 
 ```bash
-# 1. Start the single Redis instance ('cache') in Docker
-docker compose up -d cache
+# 1. Start background services (Redis, Prometheus, Grafana)
+docker compose up -d cache prometheus grafana
 
-# 2. Run the application locally using nodemon for auto-reload
-yarn debug
+# 2. Start the development application server in the foreground
+# Logs will stream directly to your terminal.
+# Use Ctrl+C to stop.
+docker compose up appdev
 ```
 
-Your application server will be available (likely at `http://localhost:4000`) and will automatically restart when you modify and save source files.
+*   **Access Server:** `http://localhost:4000`
+*   **Access Prometheus:** `http://localhost:9090`. Check `Status` -> `Targets`. You should see the `appdev` job scraping `appdev:4000`.
+*   **Access Grafana:** `http://localhost:3444` (Login: `gadmin` / `admin`). Use the `Prometheus` datasource.
+*   **View Logs:** Logs stream directly when running `docker compose up appdev`. If you later run it with `-d`, use `docker compose logs -f appdev`.
 
 ## Mode 2: Scalable Environment Simulation (Docker Compose)
 
-This mode uses Docker Compose to run the entire stack, simulating a production-like deployment with multiple application instances, a Redis cluster, a load balancer (Nginx), and monitoring tools (Prometheus, Grafana).
+This mode simulates a production-like deployment with multiple app instances (`app1`, `app2`, `app3`), Redis cluster, load balancer (`nginx`), and monitoring.
 
 **Features:**
 *   ✅ Simulates horizontal scaling (`app1`, `app2`, `app3`)
-*   ✅ Includes a load balancer (`nginx`)
-*   ✅ Uses a multi-node Redis Cluster (`redis-master1..3`) for HA/scaling tests
-*   ✅ Integrates Prometheus for metrics scraping from all app instances
-*   ✅ Integrates Grafana for metrics visualization
-*   ❌ **NO** automatic code reloading for `app1`, `app2`, `app3` (requires image rebuild)
-*   ❌ Slower startup compared to local development
+*   ✅ Includes load balancer (`nginx`) & Redis Cluster (`redis-master1..3`)
+*   ✅ Integrates Prometheus (scraping `app1..3`) & Grafana
+*   ❌ **NO** automatic code reloading for `app1..3` (requires image rebuild)
+*   ❌ Slower startup
 
 **Setup & Run:**
 
-This mode requires building the application images first.
-
 ```bash
 # 1. (Optional) Build/Rebuild application images if code has changed
-docker compose build app1 app2 app3 # Add other services if their Dockerfiles changed
+docker compose build app1 app2 app3
 
-# 2. Initialize the Redis Cluster (only needed once or after clearing volumes)
+# 2. Initialize Redis Cluster (if needed)
 docker compose up redis-cluster-init
 
-# 3. Start all services for the scalable environment in the background
+# 3. Start all services for the scalable environment
 docker compose up -d redis-master1 redis-master2 redis-master3 app1 app2 app3 nginx prometheus grafana
-
-# Optional: Check Redis Cluster Status
-# yarn docker:redis:check
 ```
 
-**Accessing the System:**
+*   **Access Application:** Via Nginx load balancer at `http://localhost:8080`.
+*   **Access Prometheus:** `http://localhost:9090` (Check `Status` -> `Targets`. You should see `socket-server-scaled` job scraping `app1..3`. The `appdev` target will likely be DOWN unless you explicitly started it).
+*   **Access Grafana:** `http://localhost:3444` (Login: `gadmin` / `admin`).
 
-*   **Application:** Access via the Nginx load balancer at `http://localhost:8080`.
-*   **Prometheus:** `http://localhost:9090` (Check `Status` -> `Targets`)
-*   **Grafana:** `http://localhost:3000` (Login: `admin` / `admin`. Explore `Prometheus` datasource)
-
-**Deploying Code Changes in this Mode:**
-Since `app1`, `app2`, `app3` run from pre-built Docker images, changes to your local source code **are not** automatically reflected. To deploy changes:
-1.  Stop the running app containers (optional, but recommended): `docker compose stop app1 app2 app3`
-2.  Rebuild the application images: `docker compose build app1 app2 app3`
-3.  Restart the services to use the new images: `docker compose up -d --force-recreate app1 app2 app3`
+**Deploying Code Changes in Mode 2:**
+Requires image rebuild and container restart:
+1.  `docker compose stop app1 app2 app3`
+2.  `docker compose build app1 app2 app3`
+3.  `docker compose up -d --force-recreate app1 app2 app3`
 
 ## Using Ngrok for External Access
 
-If you need to expose either your local development server (`Mode 1`) or the Dockerized load balancer (`Mode 2`) to the internet (e.g., for testing with MetaMask Mobile):
+If you need to expose either the development server (`Mode 1`) or the Dockerized load balancer (`Mode 2`) to the internet:
 
 1.  **Identify the Port:**
-    *   Mode 1 (`yarn debug`): Typically `4000`
+    *   Mode 1 (`appdev`): `4000`
     *   Mode 2 (Nginx): `8080`
 2.  **Start Ngrok:**
     ```bash
@@ -93,11 +88,11 @@ If you need to expose either your local development server (`Mode 1`) or the Doc
     ```
 3.  Note the generated `https` URL from Ngrok.
 4.  **Configure MetaMask Mobile:** Set `MM_SDK.SERVER_URL` in the app to the Ngrok `https` URL.
-5.  **Configure Your DApp (if applicable):** Ensure your DApp points to the correct server URL (either the local URL for Mode 1 or the Ngrok URL).
+5.  **Configure Your DApp (if applicable):** Ensure your DApp points to the correct server URL.
 
 ## Additional Notes
 
-- **Environment Variables**: Ensure `.env` is correctly configured for database connections, secrets, etc.
-- **Redis Data**: Redis data is persisted in Docker volumes (`cache_data`, `redis_cluster_data`, etc. - check `docker-compose.yml`). Use `docker compose down -v` to remove data volumes when stopping containers if you need a clean slate.
+- **Environment Variables**: Other variables from `.env` are still loaded by services with `env_file: - .env`.
+- **Redis Data**: Redis data is persisted in Docker volumes. Use `docker compose down -v` to remove data volumes.
 - **Logs**: Check container logs using `docker compose logs <service_name>` (e.g., `docker compose logs app1`).
 - **Security**: Be cautious when exposing services via Ngrok.

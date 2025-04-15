@@ -16,6 +16,11 @@ services:
     command: yarn debug
     ports:
       - '4000:4000'
+    environment:
+      - REDIS_NODES=redis://cache:6379
+      - NODE_ENV=development
+    depends_on:
+      - cache
 
   app1:
     build:
@@ -28,7 +33,12 @@ services:
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
 
   app2:
     build:
@@ -41,7 +51,12 @@ services:
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
 
   app3:
     build:
@@ -54,7 +69,12 @@ services:
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
 
   redis-master1:
     image: redis:7.2-alpine
@@ -125,35 +145,30 @@ services:
     ports:
       # Expose Prometheus UI on host port 9090
       - '9090:9090'
-    depends_on:
-      # Ensure apps are running before Prometheus tries to scrape them
-      - app1
-      - app2
-      - app3
     restart: unless-stopped # Optional: ensures Prometheus restarts if it stops unexpectedly
 
   grafana:
     image: grafana/grafana:10.1.5 # Pinned version for stability
     ports:
-      # Expose Grafana UI on host port 3000
-      - '3000:3000'
+      # Expose Grafana UI on host port 3444
+      - '3444:3000'
     volumes:
       # Mount a named volume for persistent Grafana data (dashboards, etc.)
       - grafana_data:/var/lib/grafana
-      # You could optionally mount provisioning folders here later if needed
-      # - ./grafana/provisioning:/etc/grafana/provisioning
+      # Mount provisioning configuration
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      # Mount dashboard definition files
+      - ./grafana/dashboards:/var/lib/grafana/dashboards/json
     environment:
-      # Default Grafana admin credentials
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-      # Auto-configure Prometheus datasource on startup
-      - GF_DATASOURCES_DEFAULT_DATASOURCE_ENABLED=true
-      - GF_DATASOURCES_DEFAULT_NAME=Prometheus
-      - GF_DATASOURCES_DEFAULT_TYPE=prometheus
-      # Points to the 'prometheus' service within the Docker network
-      - GF_DATASOURCES_DEFAULT_URL=http://prometheus:9090
-      - GF_DATASOURCES_DEFAULT_ACCESS=proxy # Grafana backend proxies requests
-      - GF_DATASOURCES_DEFAULT_IS_DEFAULT=true # Make it the default datasource
+      # Use environment variables for credentials, fallback to defaults
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-gadmin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      # Auto-configure Prometheus datasource on startup (using provisioning file now)
+      # - GF_DATASOURCES_NAME=Prometheus
+      # - GF_DATASOURCES_TYPE=prometheus
+      # - GF_DATASOURCES_URL=http://prometheus:9090
+      # - GF_DATASOURCES_ACCESS=proxy # Grafana backend proxies requests
+      # - GF_DATASOURCES_IS_DEFAULT=true # Make it the default datasource
       # Optional: Allow anonymous viewing of dashboards
       # - GF_AUTH_ANONYMOUS_ENABLED=true
       # - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer

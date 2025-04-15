@@ -5,12 +5,12 @@ global:
 
 # Scrape configurations: Defines targets to monitor
 scrape_configs:
-  # Job definition for scraping the socket server application instances
-  - job_name: 'socket-server'
-    # Use Docker's internal DNS to find the services defined in docker-compose.yml
-    # Prometheus will automatically try to scrape the '/metrics' endpoint on these targets.
+  # Job for scraping the scaled application instances (Mode 2)
+  - job_name: 'socket-server-scaled'
     static_configs:
-      - targets:
-          - 'app1:4000' # Service name 'app1' on internal port 4000
-          - 'app2:4000' # Service name 'app2' on internal port 4000
-          - 'app3:4000' # Service name 'app3' on internal port 4000 
+      - targets: ['app1:4000', 'app2:4000', 'app3:4000']
+
+  # Job for scraping the containerized development instance (Mode 1)
+  - job_name: 'appdev'
+    static_configs:
+      - targets: ['appdev:4000'] # Target the 'appdev' service name on its internal port 
