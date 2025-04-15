@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "*.js"
+    // Include test files if applicable and not covered by the main tsconfig
+    // "test/**/*.ts"
+  ],
+  "compilerOptions": {
+    "noEmit": true // Important: ESLint only needs parsing, not compilation output
+  }
+}

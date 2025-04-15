@@ -1,5 +1,5 @@
+import { type OriginatorInfo } from '@metamask/sdk-types'; // Use types package
 import { MessageType } from './MessageType';
-import { OriginatorInfo } from './OriginatorInfo';
 
 export interface RemoteMessage {
   type: MessageType;

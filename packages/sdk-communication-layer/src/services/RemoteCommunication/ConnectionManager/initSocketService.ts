@@ -1,11 +1,11 @@
+import { type OriginatorInfo } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
-import { ECIESProps } from '../../../ECIES';
+import { type ECIESProps } from '../../../ECIES';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { SocketService } from '../../../SocketService';
 import { DEFAULT_SERVER_URL } from '../../../config';
 import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { EventType } from '../../../types/EventType';
-import { OriginatorInfo } from '../../../types/OriginatorInfo';
 import { logger } from '../../../utils/logger';
 import {
   handleAuthorizedEvent,
@@ -111,7 +111,7 @@ export function initSocketService({
     title,
     source: state.dappMetadata?.source,
     dappId,
-    icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
+    icon: state.dappMetadata?.iconUrl,
     platform: state.platformType,
     apiVersion: packageJson.version,
     connector: state.dappMetadata?.connector,
@@ -125,14 +125,8 @@ export function initSocketService({
     [EventType.AUTHORIZED]: handleAuthorizedEvent(instance),
     [EventType.MESSAGE]: handleMessageEvent(instance),
     [EventType.CHANNEL_PERSISTENCE]: handleFullPersistenceEvent(instance),
-    [EventType.CLIENTS_CONNECTED]: handleClientsConnectedEvent(
-      instance,
-      communicationLayerPreference,
-    ),
-    [EventType.KEYS_EXCHANGED]: handleKeysExchangedEvent(
-      instance,
-      communicationLayerPreference,
-    ),
+    [EventType.CLIENTS_CONNECTED]: handleClientsConnectedEvent(instance),
+    [EventType.KEYS_EXCHANGED]: handleKeysExchangedEvent(instance),
     [EventType.SOCKET_DISCONNECTED]: handleSocketDisconnectedEvent(instance),
     [EventType.SOCKET_RECONNECT]: handleSocketReconnectEvent(instance),
     [EventType.CLIENTS_DISCONNECTED]: handleClientsDisconnectedEvent(instance),

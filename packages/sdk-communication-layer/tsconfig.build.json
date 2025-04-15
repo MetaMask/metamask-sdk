@@ -2,5 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {},
   "include": ["./src", "package.json"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
+  "references": [{ "path": "../sdk-types" }, { "path": "../analytics-client" }]
 }

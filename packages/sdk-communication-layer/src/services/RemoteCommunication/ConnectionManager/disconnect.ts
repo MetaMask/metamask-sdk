@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
+import { SendAnalytics } from '@metamask/analytics-client';
+import { TrackingEvents } from '@metamask/sdk-types';
 import { logger } from '../../../utils/logger';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { DisconnectOptions } from '../../../types/DisconnectOptions';
 import { MessageType } from '../../../types/MessageType';
 import { encryptAndSendMessage } from '../../SocketService/MessageHandlers';
-import { SendAnalytics } from '../../../Analytics';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 
 /**
  * Handles the disconnection process for a RemoteCommunication instance Depending on the provided options, it can terminate the connection and clear related configurations or simply disconnect.
@@ -64,7 +64,7 @@ export async function disconnect({
               );
               resolve(true);
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
               reject(error);
             });
         }

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json", // Assuming analytics-server has a tsconfig.json
+  "include": [
+    "src/**/*.ts",
+    "*.js"
+    // Include test files if applicable
+  ],
+  "compilerOptions": {
+    "noEmit": true
+  }
+} 

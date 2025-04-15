@@ -1,19 +1,17 @@
 import crossFetch from 'cross-fetch';
-import { CommunicationLayerPreference } from './types/CommunicationLayerPreference';
-import { OriginatorInfo } from './types/OriginatorInfo';
-import { TrackingEvents } from './types/TrackingEvent';
-import { logger } from './utils/logger';
+import { type OriginatorInfo, TrackingEvent } from '@metamask/sdk-types'; // Use types package
 
-export interface AnalyticsProps {
+// Changed to type as per lint rule
+export type AnalyticsProps = {
   id: string;
-  event: TrackingEvents;
-  originatorInfo?: OriginatorInfo;
-  commLayer?: CommunicationLayerPreference;
+  event: TrackingEvent; // Reverted back to enum type
+  originatorInfo?: OriginatorInfo; // Now uses local type
+  // commLayer?: CommunicationLayerPreference; // Removed prop
   sdkVersion?: string;
   commLayerVersion?: string;
   walletVersion?: string;
   params?: Record<string, unknown>;
-}
+};
 
 // Buffer for storing events
 let analyticsBuffer: AnalyticsProps[] = [];
@@ -63,10 +61,6 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
 
   const body = JSON.stringify(flatParams);
 
-  logger.RemoteCommunication(
-    `[sendBufferedEvents] Sending ${analyticsBuffer.length} analytics events to ${serverUrl}`,
-  );
-
   try {
     const response = await crossFetch(serverUrl, {
       method: 'POST',
@@ -77,14 +71,22 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
       body,
     });
 
-    const text = await response.text();
-    logger.RemoteCommunication(`[sendBufferedEvents] Response: ${text}`);
+    // Check if the request was successful before clearing the buffer
+    if (!response.ok) {
+      // Log a warning if the request failed
+      console.warn(
+        `[Analytics] Failed to send analytics event: ${response.status} ${response.statusText}`,
+      );
+      // Optionally, handle the error differently, e.g., retry or log more details
+      // For now, we proceed to clear the buffer even on failure to prevent buildup
+    }
 
     // Clear the processed buffer --- operation is atomic and no race condition can happen since we use a separate buffer
     // eslint-disable-next-line require-atomic-updates
     analyticsBuffer.length = 0;
   } catch (error) {
-    console.warn(`Error sending analytics`, error);
+    // console.warn is kept as a basic logging mechanism for now
+    console.warn(`[Analytics] Error sending analytics`, error);
   }
 }
 

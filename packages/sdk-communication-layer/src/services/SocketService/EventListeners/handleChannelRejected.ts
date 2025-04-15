@@ -1,8 +1,8 @@
-import { SendAnalytics } from '../../../Analytics';
+import { SendAnalytics } from '@metamask/analytics-client';
+import { TrackingEvents } from '@metamask/sdk-types';
 import { SocketService } from '../../../SocketService';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 
 import packageJson from '../../../../package.json';
@@ -39,16 +39,12 @@ export function handleChannelRejected(
         event: TrackingEvents.REJECTED,
         ...instance.remote.state.originatorInfo,
         sdkVersion: instance.remote.state.sdkVersion,
-        commLayer: instance.state.communicationLayerPreference,
         commLayerVersion: packageJson.version,
         walletVersion: instance.remote.state.walletInfo?.version,
       },
       instance.remote.state.analyticsServerUrl,
-    ).catch((error) => {
-      console.error(
-        `handleChannelRejected:: Error emitting analytics event`,
-        error,
-      );
+    ).catch((_error: unknown) => {
+      // ignore error
     });
 
     // Terminate the channel

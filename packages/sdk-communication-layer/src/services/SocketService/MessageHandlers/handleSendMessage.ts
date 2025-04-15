@@ -1,7 +1,7 @@
-import { SendAnalytics } from '../../../Analytics';
+import { TrackingEvents } from '@metamask/sdk-types';
+import { SendAnalytics } from '@metamask/analytics-client';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
@@ -84,7 +84,7 @@ export async function handleSendMessage(
           },
         },
         instance.remote.state.analyticsServerUrl,
-      ).catch((err) => {
+      ).catch((err: unknown) => {
         console.error(`[handleSendMessage] Cannot send analytics`, err);
       });
     }

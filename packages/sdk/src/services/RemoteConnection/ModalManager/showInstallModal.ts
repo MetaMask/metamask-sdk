@@ -1,4 +1,4 @@
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { TrackingEvent } from '@metamask/sdk-types';
 import { logger } from '../../../utils/logger';
 import {
   RemoteConnectionProps,
@@ -39,8 +39,8 @@ export function showInstallModal(
       event,
       params,
     }: {
-      event: TrackingEvents;
-      params?: Record<string, any>;
+      event: TrackingEvent;
+      params?: Record<string, unknown>;
     }) => {
       const extended = {
         ...params,

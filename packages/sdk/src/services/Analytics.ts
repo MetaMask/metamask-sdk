@@ -1,11 +1,15 @@
 import {
   DEFAULT_SERVER_URL,
-  SendAnalytics,
-  AnalyticsProps,
-  TrackingEvents,
+  // TrackingEvents, // Removed - now from sdk-types
 } from '@metamask/sdk-communication-layer';
-import { logger } from '../utils/logger';
+import {
+  SendAnalytics,
+  type AnalyticsProps,
+  // type OriginatorInfo, // Removed - now from sdk-types
+} from '@metamask/analytics-client';
+import { TrackingEvent, type OriginatorInfo } from '@metamask/sdk-types'; // Import from types package
 import packageJson from '../../package.json';
+import { logger } from '../utils/logger';
 
 export const ANALYTICS_CONSTANTS = {
   DEFAULT_ID: 'sdk',
@@ -17,7 +21,7 @@ export class Analytics {
 
   private enabled: boolean;
 
-  private readonly originatorInfo: Readonly<AnalyticsProps['originatorInfo']>;
+  private readonly originatorInfo: Readonly<OriginatorInfo>;
 
   constructor({
     serverUrl,
@@ -25,7 +29,7 @@ export class Analytics {
     originatorInfo,
   }: {
     serverUrl: string;
-    originatorInfo: AnalyticsProps['originatorInfo'];
+    originatorInfo: OriginatorInfo;
     enabled?: boolean;
   }) {
     this.serverURL = serverUrl;
@@ -37,7 +41,7 @@ export class Analytics {
     event,
     params,
   }: {
-    event: TrackingEvents;
+    event: TrackingEvent;
     params?: Record<string, unknown>;
   }) {
     if (!this.enabled) {
@@ -48,7 +52,7 @@ export class Analytics {
       id: ANALYTICS_CONSTANTS.DEFAULT_ID,
       event,
       sdkVersion: packageJson.version,
-      ...this.originatorInfo,
+      originatorInfo: this.originatorInfo,
       params,
     };
     logger(`[Analytics: send()] event: ${event}`, props);
