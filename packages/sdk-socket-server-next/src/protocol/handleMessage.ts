@@ -128,8 +128,9 @@ export const handleMessage = async ({
         channelConfig = { ...channelConfig, ready };
 
         // Update channel config with pubClient wrapper
-        await pubClient.set(
+        await pubClient.setex(
           `channel_config:{${channelId}}`,
+          config.channelExpiry, // Refresh expiry when setting ready flag
           JSON.stringify(channelConfig),
         );
 

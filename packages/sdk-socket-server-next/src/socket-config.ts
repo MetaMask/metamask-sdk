@@ -5,20 +5,8 @@ import { createAdapter } from '@socket.io/redis-adapter';
 
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient, getGlobalRedisClient } from './redis';
+import { config } from './config';
 import { getLogger } from './logger';
-import { ACKParams, handleAck } from './protocol/handleAck';
-import {
-  ChannelRejectedParams,
-  handleChannelRejected,
-} from './protocol/handleChannelRejected';
-import { handleCheckRoom } from './protocol/handleCheckRoom';
-import {
-  handleJoinChannel,
-  JoinChannelParams,
-} from './protocol/handleJoinChannel';
-import { handleMessage, MessageParams } from './protocol/handleMessage';
-import { handlePing } from './protocol/handlePing';
 import {
   incrementAck,
   incrementAckError,
@@ -47,6 +35,19 @@ import {
   setSocketIoServerTotalClients,
   setSocketIoServerTotalRooms,
 } from './metrics';
+import { ACKParams, handleAck } from './protocol/handleAck';
+import {
+  ChannelRejectedParams,
+  handleChannelRejected,
+} from './protocol/handleChannelRejected';
+import { handleCheckRoom } from './protocol/handleCheckRoom';
+import {
+  handleJoinChannel,
+  JoinChannelParams,
+} from './protocol/handleJoinChannel';
+import { handleMessage, MessageParams } from './protocol/handleMessage';
+import { handlePing } from './protocol/handlePing';
+import { getGlobalRedisClient, pubClient } from './redis';
 
 const logger = getLogger();
 
@@ -116,6 +117,13 @@ export const configureSocketServer = async (
     logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
+
+    // If incrby created the key (occupancy is 1), set an initial expiry
+    if (channelOccupancy === 1) {
+      // eslint-disable-line no-lonely-if
+      await pubClient.expire(channelOccupancyKey, config.channelExpiry);
+      logger.debug(`'join-room' set initial expiry for ${channelOccupancyKey}`);
+    }
   });
 
   io.of('/').adapter.on('leave-room', async (roomId, socketId) => {

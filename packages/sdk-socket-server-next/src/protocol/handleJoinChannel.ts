@@ -252,7 +252,8 @@ export const handleJoinChannel = async ({
         `[handleJoinChannel] ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
 
-      await pubClient.set(channelOccupancyKey, '0');
+      // Set with expiry to ensure the key doesn't live indefinitely if join fails later
+      await pubClient.setex(channelOccupancyKey, config.channelExpiry, '0');
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet

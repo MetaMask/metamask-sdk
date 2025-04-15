@@ -40,7 +40,7 @@
     {
       "datasource": {
         "type": "loki",
-        "uid": "sS52nlJVz" 
+        "uid": "sS52nlJVz"
       },
       "gridPos": {
         "h": 20,
@@ -63,7 +63,7 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "sS52nlJVz" 
+            "uid": "sS52nlJVz"
           },
           "editorMode": "code",
           "expr": "{job=\"socket-server-dev\"}",
@@ -92,4 +92,4 @@
   "uid": "container-logs-dashboard",
   "version": 1,
   "weekStart": ""
-} 
+}
