@@ -52741,6 +52741,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"web3-errors@npm:^1.2.0, web3-errors@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "web3-errors@npm:1.3.1"
+  dependencies:
+    web3-types: ^1.10.0
+  checksum: 74efaa571a26ca590a2d1eefa33e73fcb870cb465c40430620514d34624731c895718815b5190a8eb248a5f14452672d48131830f555b934ab12448ab19bd39c
+  languageName: node
+  linkType: hard
+
 "web3-eth-abi@npm:^4.1.1":
   version: 4.1.1
   resolution: "web3-eth-abi@npm:4.1.1"
@@ -52913,15 +52922,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"web3-types@npm:^1.10.0, web3-types@npm:^1.6.0":
+  version: 1.10.0
+  resolution: "web3-types@npm:1.10.0"
+  checksum: a7e1a67dc0629073a55c096574cf60e4ba140a5b06558ed37b49403cf2100f973a389d2434ee0fbc510c0f874a69aca90c9c91cb98ee2c75927331f4c191c5bb
+  languageName: node
+  linkType: hard
+
 "web3-utils@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "web3-utils@npm:4.0.5"
+  version: 4.3.3
+  resolution: "web3-utils@npm:4.3.3"
   dependencies:
     ethereum-cryptography: ^2.0.0
-    web3-errors: ^1.1.1
-    web3-types: ^1.1.1
-    web3-validator: ^2.0.1
-  checksum: bf4b49b6aaec4444d430e89a84ec4adede828ff363be941c5ba0b13781c8778bbbb4a2f58133173c245b42c8133612e27591ec58558c8507a96f5b0b9c780439
+    eventemitter3: ^5.0.1
+    web3-errors: ^1.3.1
+    web3-types: ^1.10.0
+    web3-validator: ^2.0.6
+  checksum: 7ba4fa6caae6e393e2ecbca7c7d36011c4a115658a4ab16a49cd52a5542f6dc2ad30766b8b8d908e1d68be800455554e8f87ae19c5e8ed8581987dc0fff55b7b
   languageName: node
   linkType: hard
 
@@ -52935,6 +52952,19 @@ __metadata:
     web3-types: ^1.1.1
     zod: ^3.21.4
   checksum: 4382a0d034751ca04d3f919efd4f1115abecee8541585179158662e46dd10b051c4ee29c885067d7aeff618dec971c4a2075baeb7df63249e3ed5b2d5695b782
+  languageName: node
+  linkType: hard
+
+"web3-validator@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "web3-validator@npm:2.0.6"
+  dependencies:
+    ethereum-cryptography: ^2.0.0
+    util: ^0.12.5
+    web3-errors: ^1.2.0
+    web3-types: ^1.6.0
+    zod: ^3.21.4
+  checksum: 15981ffce73cfa75c07f1ce0dbf65fe35fbdedc3ce19876e829b71a2a0e98aaf3aae90df764e6da7df3ff098d8fbf2ab37f58652fa93d7c3f8cb93b00f608c14
   languageName: node
   linkType: hard
 
