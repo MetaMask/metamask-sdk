@@ -9,7 +9,7 @@ import {
   resetRateLimits,
   setLastConnectionErrorTimestamp,
 } from '../rate-limiter';
-import { ClientType, MISSING_CONTEXT } from '../socket-config';
+import { ClientType, MISSING_CONTEXT } from '../socket-types';
 import { incrementKeyMigration } from '../metrics';
 import { ChannelConfig } from './handleJoinChannel';
 

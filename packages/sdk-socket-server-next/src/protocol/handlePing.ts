@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { isDevelopment } from '../config';
 import { getLogger } from '../logger';
-import { ClientType } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { retrieveMessages } from './retrieveMessages';
 
 const logger = getLogger();

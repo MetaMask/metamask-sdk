@@ -434,36 +434,37 @@ export const monitorRedisHealth = () => {
   }
 
   // Track health status to only log changes
-  let isHealthy = true;
+  let isHealthy = false; // Initialize to false to ensure the first success logs
 
   redisHealthCheckInterval = setInterval(async () => {
     try {
       // Direct ping with no custom timeout - keep it simple
       await pubClient.ping();
 
-      // Only log when recovering from errors
-      if (consecutiveRedisErrors > 0) {
-        logger.info(
-          `Redis health restored after ${consecutiveRedisErrors} consecutive errors`,
-        );
+      // Health check succeeded
+      if (!isHealthy) {
+        // Transitioning from unhealthy to healthy
+        const logMessage =
+          consecutiveRedisErrors > 0
+            ? `Redis health restored after ${consecutiveRedisErrors} consecutive errors` // Recovered from errors
+            : 'Redis health check passed.'; // Initial success
+        logger.info(logMessage);
+
         consecutiveRedisErrors = 0;
         isHealthy = true;
-      } else if (!isHealthy) {
-        // Log once when becoming healthy again if it wasn't before
-        logger.info('Redis health check passed after previous failures.');
-        isHealthy = true;
       }
+      // If isHealthy was already true, do nothing (steady healthy state)
     } catch (error) {
       consecutiveRedisErrors += 1;
 
-      // Only log the first error or milestone errors
+      // Only log the first error transition or milestone errors
       if (isHealthy || consecutiveRedisErrors % 5 === 0) {
-        // Log first time it fails or every 5th failure
+        // Log first time it fails (isHealthy was true) or every 5th failure
         logger.error(
           `Redis health check failed (${consecutiveRedisErrors}/${MAX_CONSECUTIVE_ERRORS}):`,
           error,
         );
-        isHealthy = false; // Mark as unhealthy
+        isHealthy = false; // Mark as unhealthy now
       }
 
       // If too many consecutive errors, attempt to rebuild the Redis client

@@ -48,12 +48,11 @@ import {
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
 import { getGlobalRedisClient, pubClient } from './redis';
+import { ClientType } from './socket-types';
 
 const logger = getLogger();
 
 export const MISSING_CONTEXT = '___MISSING_CONTEXT___';
-
-export type ClientType = 'dapp' | 'wallet';
 
 export const configureSocketServer = async (
   server: HTTPServer,

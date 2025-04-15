@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { pubClient } from '../redis';
 import { getLogger } from '../logger';
-import { ClientType } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { incrementKeyMigration } from '../metrics';
 import { QueuedMessage } from './handleMessage';
 
