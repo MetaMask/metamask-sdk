@@ -23,7 +23,8 @@ export const handleAck = async ({
   socket,
   clientType,
 }: ACKParams): Promise<void> => {
-  const queueKey = `queue:${channelId}:${clientType}`;
+  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+  const queueKey = `queue:{${channelId}}:${clientType}`;
   let messages: string[] = [];
 
   const socketId = socket.id;

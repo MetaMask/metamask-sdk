@@ -89,7 +89,7 @@ export class PlatformManager {
     return this.state.platformType === PlatformType.MobileWeb;
   }
 
-  isNotBrowser() {
+  static isNotBrowser() {
     return (
       typeof window === 'undefined' ||
       !window?.navigator ||
@@ -99,12 +99,20 @@ export class PlatformManager {
     );
   }
 
-  isNodeJS() {
-    return this.isNotBrowser() && !this.isReactNative();
+  isNotBrowser() {
+    return PlatformManager.isNotBrowser();
+  }
+
+  static isBrowser() {
+    return !this.isNotBrowser();
   }
 
   isBrowser() {
-    return !this.isNotBrowser();
+    return PlatformManager.isBrowser();
+  }
+
+  isNodeJS() {
+    return this.isNotBrowser() && !this.isReactNative();
   }
 
   isUseDeepLink() {
