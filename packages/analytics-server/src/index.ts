@@ -87,7 +87,7 @@ app.post('/evt', async (req, res) => {
             return res.json({ success: true });
         }
 
-        let channelId: string = body.id || 'sdk';
+        const channelId: string = body.id || 'sdk';
         let isExtensionEvent = body.from === 'extension';
 
         if (typeof channelId !== 'string') {

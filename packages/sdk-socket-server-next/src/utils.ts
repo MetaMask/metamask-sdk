@@ -1,5 +1,6 @@
 import { Server as HttpServer } from 'http';
 import { getLogger } from './logger';
+import { getGlobalRedisClient, pubClientPool } from './redis';
 
 const logger = getLogger();
 
@@ -58,17 +59,27 @@ export const cleanupAndExit = async (server: Server): Promise<void> => {
   isShuttingDown = true;
 
   try {
+    logger.info('Starting server cleanup...');
     // CloseServer will block until all clients have disconnected.
-    const serverCloseResult = await closeServer(server);
-    logger.info(`serverCloseResult: ${serverCloseResult}`);
+    await closeServer(server);
+    logger.info(`HTTP server closed.`);
 
-    if ((serverCloseResult as any) instanceof Error) {
-      throw new Error(`Error during server shutdown: ${serverCloseResult}`);
+    logger.info('Draining Redis connection pool...');
+    await pubClientPool.drain();
+    logger.info('Redis connection pool drained.');
+    await pubClientPool.clear();
+    logger.info('Redis connection pool cleared.');
+
+    const globalRedisClient = getGlobalRedisClient();
+    if (globalRedisClient && globalRedisClient.status === 'ready') {
+      logger.info('Disconnecting global Redis client...');
+      await globalRedisClient.quit();
+      logger.info('Global Redis client disconnected.');
     }
   } catch (error) {
-    logger.error(`cleanupAndExit error: ${error}`);
+    logger.error(`Error during cleanup: ${error}`);
   } finally {
-    logger.info(`cleanupAndExit done`);
+    logger.info(`Cleanup finished. Exiting process.`);
     process.exit(0);
   }
 };
