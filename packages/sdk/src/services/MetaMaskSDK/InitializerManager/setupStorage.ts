@@ -15,9 +15,6 @@ export async function setupStorageManager(instance: MetaMaskSDK) {
   const { options } = instance;
 
   if (options.storage?.enabled === true && !options.storage.storageManager) {
-    options.storage.storageManager = getStorageManager(
-      // instance.platformManager,
-      options.storage,
-    );
+    options.storage.storageManager = await getStorageManager(options.storage);
   }
 }
