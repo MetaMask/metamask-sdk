@@ -1,4 +1,3 @@
-/* eslint-disable import/first */
 import dotenv from 'dotenv';
 
 // Dotenv must be loaded before importing local files
@@ -13,7 +12,9 @@ import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import { createLogger } from './logger';
 
-const logger = createLogger(process.env.NODE_ENV === 'development');
+const IS_DEV = process.env.NODE_ENV === 'development';
+
+const logger = createLogger(IS_DEV);
 
 const app = express();
 
@@ -27,6 +28,8 @@ app.disable('x-powered-by');
 // Rate limiting configuration
 const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
+    // This high limit is effectively unused as rate limiting is primarily handled
+    // at the infrastructure level (e.g., Cloudflare). It was retained from a previous configuration.
     max: 100000, // limit each IP to 100,000 requests per windowMs
     legacyHeaders: false,
 });
@@ -34,11 +37,11 @@ const limiter = rateLimit({
 app.use(limiter);
 
 const analytics = new Analytics(
-    process.env.NODE_ENV === 'development'
+    IS_DEV
         ? process.env.SEGMENT_API_KEY_DEBUG || ''
         : process.env.SEGMENT_API_KEY_PRODUCTION || '',
     {
-        flushInterval: process.env.NODE_ENV === 'development' ? 1000 : 10000,
+        flushInterval: IS_DEV ? 1000 : 10000,
         errorHandler: (err: Error) => {
             logger.error(`ERROR> Analytics-node flush failed: ${err}`);
         },
@@ -46,7 +49,7 @@ const analytics = new Analytics(
 );
 
 app.get('/', (req, res) => {
-    if (process.env.NODE_ENV === 'development') {
+    if (IS_DEV) {
         logger.info(`health check from`, {
             'x-forwarded-for': req.headers['x-forwarded-for'],
             'cf-connecting-ip': req.headers['cf-connecting-ip'],
