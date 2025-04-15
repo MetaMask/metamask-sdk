@@ -46,7 +46,7 @@ export function handleClientsConnectedEvent(
           walletVersion: state.walletInfo?.version,
           commLayerVersion: packageJson.version,
         },
-        state.communicationServerUrl,
+        state.analyticsServerUrl,
       ).catch((err) => {
         console.error(`Cannot send analytics`, err);
       });

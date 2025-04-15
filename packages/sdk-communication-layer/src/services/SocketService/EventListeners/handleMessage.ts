@@ -227,7 +227,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
                 from: 'mobile',
               },
             },
-            instance.remote.state.communicationServerUrl,
+            instance.remote.state.analyticsServerUrl,
           ).catch((err) => {
             console.error(`Cannot send analytics`, err);
           });

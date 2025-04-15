@@ -99,9 +99,9 @@ async function sendBufferedEvents(parameters: AnalyticsProps) {
 // Modified SendAnalytics to add events to buffer instead of sending directly
 export const SendAnalytics = async (
   parameters: AnalyticsProps,
-  socketServerUrl: string,
+  analyticsServerUrl: string,
 ) => {
-  targetUrl = socketServerUrl;
+  targetUrl = analyticsServerUrl;
 
   // Safely add the analytics event to the buffer
   addToBuffer(parameters);

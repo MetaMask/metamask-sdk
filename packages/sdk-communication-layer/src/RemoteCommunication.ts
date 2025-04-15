@@ -5,6 +5,7 @@ import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
 import {
   CHANNEL_MAX_WAITING_TIME,
+  DEFAULT_ANALYTICS_SERVER_URL,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
 } from './config';
@@ -57,6 +58,7 @@ export interface RemoteCommunicationProps {
   transports?: string[];
   analytics?: boolean;
   communicationServerUrl?: string;
+  analyticsServerUrl?: string;
   ecies?: ECIESProps;
   sdkVersion?: string;
   storage?: StorageManagerProps;
@@ -89,6 +91,7 @@ export interface RemoteCommunicationState {
   reconnection: boolean;
   dappMetadata?: DappMetadataWithSource;
   communicationServerUrl: string;
+  analyticsServerUrl: string;
   context: string;
   storageManager?: SessionStorageManager;
   storageOptions?: StorageManagerProps;
@@ -119,6 +122,7 @@ export class RemoteCommunication extends EventEmitter2 {
     reconnection: false,
     originatorInfoSent: false,
     communicationServerUrl: DEFAULT_SERVER_URL,
+    analyticsServerUrl: DEFAULT_ANALYTICS_SERVER_URL,
     context: '',
     persist: false,
     // Keep track if the other side is connected to the socket
@@ -155,6 +159,7 @@ export class RemoteCommunication extends EventEmitter2 {
       storage,
       sdkVersion,
       communicationServerUrl = DEFAULT_SERVER_URL,
+      analyticsServerUrl = DEFAULT_ANALYTICS_SERVER_URL,
       logging,
       autoConnect = {
         timeout: CHANNEL_MAX_WAITING_TIME,
@@ -171,6 +176,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this.state.isOriginator = !otherPublicKey;
     this.state.relayPersistence = relayPersistence;
     this.state.communicationServerUrl = communicationServerUrl;
+    this.state.analyticsServerUrl = analyticsServerUrl;
     this.state.context = context;
     this.state.terminated = false;
     this.state.sdkVersion = sdkVersion;
