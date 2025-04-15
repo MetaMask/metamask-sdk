@@ -120,3 +120,6 @@ packages/devreact/webpack.config.json
 
 # Local Netlify folder
 .netlify
+
+# Turborepo
+.turbo

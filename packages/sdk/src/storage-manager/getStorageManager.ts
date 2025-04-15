@@ -3,28 +3,25 @@ import {
   StorageManager,
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
+import { PlatformManager } from '../Platform/PlatfformManager';
 
-/* #if _NODEJS
-import { StorageManagerNode as SMDyn } from './StorageManagerNode';
-//#elif _WEB
-import { StorageManagerWeb as SMDyn } from './StorageManagerWeb';
-//#elif _REACTNATIVE
-import { StorageManagerAS as SMDyn } from './StorageManagerAS';
-//#else */
-// This is ONLY used during development with devnext/devreactnative or via transpiling
-import { StorageManagerAS as SMDyn } from './StorageManagerAS';
-// eslint-disable-next-line spaced-comment
-//#endif
-
-export const getStorageManager = (
-  // platformManager: PlatformManager,
+export const getStorageManager = async (
   options: StorageManagerProps,
-): StorageManager => {
-  // TODO uncomment and test to use similar dynamic imports for each platforms and drop support for JSCC
-  // Currently might have an issue with NextJS and server side rendering
-  // if (platformManager.isNotBrowser()) {
-  //   const { StorageManagerNode } = await import('./StorageManagerNode');
-  //   return new StorageManagerNode(options);
-  // }
-  return new SMDyn(options);
+): Promise<StorageManager> => {
+  if (PlatformManager.isBrowser()) {
+    const { StorageManagerWeb } = await import('./StorageManagerWeb');
+    return new StorageManagerWeb(options);
+  }
+
+  const noopStorageManager: StorageManager = {
+    persistChannelConfig: async () => undefined,
+    getPersistedChannelConfig: async () => undefined,
+    persistAccounts: async () => undefined,
+    getCachedAccounts: async () => [],
+    persistChainId: async () => undefined,
+    getCachedChainId: async () => undefined,
+    terminate: async () => undefined,
+  } as StorageManager;
+
+  return Promise.resolve(noopStorageManager);
 };

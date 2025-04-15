@@ -60,7 +60,8 @@ export const handleMessage = async ({
   try {
     if (clientType) {
       // new protocol, get channelConfig
-      const channelConfigKey = `channel_config:${channelId}`;
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+      const channelConfigKey = `channel_config:{${channelId}}`;
       const existingConfig = await pubClient.get(channelConfigKey);
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
       ready = channelConfig?.ready ?? false;
@@ -89,7 +90,7 @@ export const handleMessage = async ({
         channelConfig = { ...channelConfig, ready };
 
         await pubClient.set(
-          `channel_config:${channelId}`,
+          `channel_config:{${channelId}}`,
           JSON.stringify(channelConfig),
         );
 
@@ -113,7 +114,8 @@ export const handleMessage = async ({
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';
-      const queueKey = `queue:${channelId}:${otherQueue}`;
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})  
+      const queueKey = `queue:{${channelId}}:${otherQueue}`;
       const persistedMsg: QueuedMessage = {
         message,
         ackId,

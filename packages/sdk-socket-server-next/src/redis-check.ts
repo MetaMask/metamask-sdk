@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
-import { getRedisClient } from './analytics-api';
+import { getGlobalRedisClient } from './analytics-api';
 
 import { createLogger } from './logger';
 
@@ -34,7 +34,7 @@ if (redisNodes.length === 0) {
 async function testRedisOperations() {
   try {
     // Connect to Redis
-    const cluster = getRedisClient();
+    const cluster = getGlobalRedisClient();
     logger.info('Connected to Redis Cluster successfully');
 
     // Set a key in Redis

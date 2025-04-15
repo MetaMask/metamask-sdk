@@ -1,4 +1,4 @@
-import { Component, Prop, h, Event, EventEmitter, State, Watch, Element } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Element, Watch } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
@@ -21,6 +21,8 @@ export class SelectModal {
 
   @Prop() sdkVersion?: string;
 
+  @Prop() preferDesktop: boolean;
+
   private i18nInstance: SimpleI18n;
 
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
@@ -29,12 +31,15 @@ export class SelectModal {
 
   @State() tab: number = 1;
 
+  @State() isDefaultTab: boolean = true;
+
   @Element() el: HTMLElement;
 
   @State() private translationsLoaded: boolean = false;
 
   constructor() {
     this.i18nInstance = new SimpleI18n();
+    this.setTab(this.preferDesktop ? 1 : 2);
   }
 
   async connectedCallback() {
@@ -54,30 +59,20 @@ export class SelectModal {
 
   setTab(tab: number) {
     this.tab = tab;
-  }
-
-  @Watch('link')
-  updateLink(newLink: string) {
-    const svgElement = encodeQR(newLink, "svg", {
-      ecc: "medium",
-      scale: 2
-    })
-
-    if (!this.el.shadowRoot) {
-      return;
-    }
-
-    const qrcodeDiv = this.el.shadowRoot.querySelector("#sdk-mm-qrcode");
-
-    if (!qrcodeDiv) {
-      return;
-    }
-
-    qrcodeDiv.innerHTML = svgElement
+    this.isDefaultTab = false;
   }
 
   disconnectedCallback() {
     this.onClose();
+  }
+
+  @Watch('preferDesktop')
+  updatePreferDesktop(newValue: boolean) {
+    if (newValue) {
+      this.setTab(1);
+    } else {
+      this.setTab(2);
+    }
   }
 
   render() {
@@ -88,6 +83,13 @@ export class SelectModal {
     const t = (key: string) => this.i18nInstance.t(key);
 
     const sdkVersion = this.sdkVersion
+
+    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab
+
+    const svgElement = encodeQR(this.link, "svg", {
+      ecc: "medium",
+      scale: 2
+    })
 
     return (
       <WidgetWrapper className="select-modal">
@@ -108,19 +110,19 @@ export class SelectModal {
               <div class='flexContainer'>
                 <div
                   onClick={() => this.setTab(1)}
-                  class={`tab flexItem ${this.tab === 1 ? 'tabactive' : ''}`}
+                  class={`tab flexItem ${currentTab === 1 ? 'tabactive' : ''}`}
                 >
                   {t('DESKTOP')}
                 </div>
                 <div
                   onClick={() => this.setTab(2)}
-                  class={`tab flexItem ${this.tab === 2 ? 'tabactive' : ''}`}
+                  class={`tab flexItem ${currentTab === 2 ? 'tabactive' : ''}`}
                 >
                   {t('MOBILE')}
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 1 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 1 ? 'none' : 'block' }}>
               <div class='flexContainer'>
                 <div
                   class='flexItem'
@@ -129,7 +131,7 @@ export class SelectModal {
                     marginTop: '4',
                   }}
                 >
-                  <div class='center' id="sdk-mm-qrcode" />
+                  <div class='center' id="sdk-mm-qrcode" innerHTML={svgElement} />
                   <div class='connectMobileText'>
                     {t('SCAN_TO_CONNECT')}
                     <br />
@@ -140,7 +142,7 @@ export class SelectModal {
                 </div>
               </div>
             </div>
-            <div style={{ display: this.tab === 2 ? 'none' : 'block' }}>
+            <div style={{ display: currentTab === 2 ? 'none' : 'block' }}>
               <div
                 style={{
                   display: 'flex',
@@ -155,7 +157,7 @@ export class SelectModal {
                 {t('SELECT_MODAL.CRYPTO_TAKE_CONTROL_TEXT')}
               </div>
 
-              <button class='button' onClick={this.connectWithExtensionHandler}>
+              <button class='button' onClick={() => this.connectWithExtensionHandler()}>
                 <ConnectIcon />
                 <span class='installExtensionText'>
                   {t('CONNECT_WITH_EXTENSION')}
