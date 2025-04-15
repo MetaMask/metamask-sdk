@@ -25,7 +25,7 @@ This mode runs the development server (`yarn debug` via `nodemon`) *inside* the 
 
 ```bash
 # 1. Start background services (Redis, Prometheus, Grafana)
-docker compose up -d cache prometheus grafana
+docker compose up -d cache prometheus grafana loki promtail
 
 # 2. Start the development application server in the foreground
 # Logs will stream directly to your terminal.
@@ -59,7 +59,7 @@ docker compose build app1 app2 app3
 docker compose up redis-cluster-init
 
 # 3. Start all services for the scalable environment
-docker compose up -d redis-master1 redis-master2 redis-master3 app1 app2 app3 nginx prometheus grafana
+docker compose up -d redis-master1 redis-master2 redis-master3 app1 app2 app3 nginx prometheus grafana loki promtail
 ```
 
 *   **Access Application:** Via Nginx load balancer at `http://localhost:8080`.
