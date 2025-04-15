@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/sdk-communication-layer';
+import { SendAnalytics } from '@metamask/analytics-client';
 import { STORAGE_PROVIDER_TYPE } from '../../../config';
 import { MetaMaskSDK } from '../../../sdk';
 import { connectWithExtensionProvider } from '../ProviderManager';
@@ -8,12 +8,11 @@ jest.mock('../ProviderManager', () => ({
   connectWithExtensionProvider: jest.fn(),
 }));
 
-jest.mock('@metamask/sdk-communication-layer', () => ({
-  SendAnalytics: jest.fn(),
-  TrackingEvents: {
-    SDK_EXTENSION_UTILIZED: 'SDK_EXTENSION_UTILIZED',
-  },
+jest.mock('@metamask/analytics-client', () => ({
+  SendAnalytics: jest.fn().mockResolvedValue(undefined),
 }));
+
+const mockSendAnalytics = SendAnalytics as jest.Mock;
 
 describe('handleAutoAndExtensionConnections', () => {
   let instance: MetaMaskSDK;
@@ -21,7 +20,6 @@ describe('handleAutoAndExtensionConnections', () => {
     () => new Promise((resolve) => setTimeout(resolve, 0)),
   );
   const mockIsDesktopWeb = jest.fn();
-  const mockSendAnalytics = SendAnalytics as jest.Mock;
   const mockConnectWithExtensionProvider =
     connectWithExtensionProvider as jest.Mock;
   const localStorageMock = {
@@ -31,7 +29,7 @@ describe('handleAutoAndExtensionConnections', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockConnectWithExtensionProvider.mockResolvedValue(undefined);
-    mockSendAnalytics.mockResolvedValue(undefined);
+    mockSendAnalytics.mockClear();
 
     global.localStorage = localStorageMock as any;
 
