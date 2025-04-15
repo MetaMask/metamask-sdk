@@ -47,5 +47,8 @@
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }
