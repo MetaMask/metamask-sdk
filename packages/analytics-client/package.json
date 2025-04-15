@@ -1,4 +1,27 @@
 {
   "name": "analytics-client",
-  "packageManager": "yarn@3.5.1"
+  "packageManager": "yarn@3.5.1",
+  "scripts": {
+    "build": "tsc",
+    "build:dev": "echo 'Na'",
+    "dev": "echo 'Na'",
+    "build:post-tsc": "echo 'Na'",
+    "build:pre-tsc": "echo 'Na'",
+    "size": "echo 'Na'",
+    "clean": "echo 'Na'",
+    "lint": "echo 'Na'",
+    "lint:changelog": "echo 'Na'",
+    "lint:eslint": "echo 'Na'",
+    "lint:fix": "echo 'Na'",
+    "lint:misc": "echo 'Na'",
+    "publish:preview": "echo 'Na'",
+    "prepack": "echo 'Na'",
+    "reset": "echo 'Na'",
+    "test": "echo 'Na'",
+    "test:e2e": "echo 'Na'",
+    "test:coverage": "echo 'Na'",
+    "test:ci": "echo 'Na'",
+    "test:dev": "echo 'Na'",
+    "watch": "echo 'Na'"
+  }
 }
