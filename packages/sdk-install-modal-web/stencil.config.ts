@@ -9,6 +9,11 @@ export const config: Config = {
       type: 'dist',
       isPrimaryPackageOutputTarget: true,
     },
+    {
+      type: 'www',
+      serviceWorker: null,
+      baseUrl: 'http://localhost:4444/'
+    }
   ],
   enableCache: true,
   buildEs5: false,

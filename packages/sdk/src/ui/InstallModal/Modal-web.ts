@@ -1,11 +1,16 @@
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
   parentElement: Element;
-  onClose: () => void;
+  onClose: (shouldTerminate?: boolean) => void;
   metaMaskInstaller: {
     startDesktopOnboarding: () => void;
   };
+  onAnalyticsEvent: (event: {
+    event: TrackingEvents;
+    params?: Record<string, unknown>;
+  }) => void;
 }
 
 export interface PendingWidgetProps extends Components.MmPendingModal {
@@ -75,11 +80,17 @@ export default class ModalLoader {
     modal.link = props.link;
     modal.preferDesktop = props.preferDesktop;
     modal.sdkVersion = props.sdkVersion ?? this.sdkVersion;
-    modal.addEventListener('close', props.onClose);
+    modal.addEventListener('close', ({ detail: { shouldTerminate } }) =>
+      props.onClose(shouldTerminate),
+    );
+
     modal.addEventListener(
       'startDesktopOnboarding',
       props.metaMaskInstaller.startDesktopOnboarding,
     );
+
+    modal.addEventListener('trackAnalytics', ((e: CustomEvent) =>
+      props.onAnalyticsEvent?.(e.detail)) as EventListener);
     props.parentElement.appendChild(modal);
   }
 

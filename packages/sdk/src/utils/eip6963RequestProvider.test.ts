@@ -32,13 +32,42 @@ describe('eip6963RequestProvider', () => {
     );
   });
 
-  it('should resolve with valid provider', async () => {
+  it('should resolve with valid provider for MetaMask Main', async () => {
     const mockProvider: SDKProvider = {} as SDKProvider;
     const mockInfo: EIP6963ProviderInfo = {
       uuid: 'a1d2c588-106f-4d05-958d-5e7d6c57c822',
       name: 'MetaMask Main',
       icon: 'icon-path',
       rdns: 'io.metamask',
+    };
+    const mockEventDetail: EIP6963ProviderDetail = {
+      info: mockInfo,
+      provider: mockProvider,
+    };
+
+    (window.addEventListener as jest.Mock).mockImplementationOnce(
+      (eventName, callback) => {
+        if (eventName === EIP6963EventNames.Announce) {
+          callback({
+            type: EIP6963EventNames.Announce,
+            detail: mockEventDetail,
+          });
+        }
+      },
+    );
+
+    const requestProviderPromise = await eip6963RequestProvider();
+
+    expect(requestProviderPromise).toBe(mockProvider);
+  });
+
+  it('should resolve with valid provider for MetaMask Flask', async () => {
+    const mockProvider: SDKProvider = {} as SDKProvider;
+    const mockInfo: EIP6963ProviderInfo = {
+      uuid: 'a1d2c588-106f-4d05-958d-5e7d6c57c822',
+      name: 'MetaMask Flask',
+      icon: 'icon-path',
+      rdns: 'io.metamask.flask',
     };
     const mockEventDetail: EIP6963ProviderDetail = {
       info: mockInfo,

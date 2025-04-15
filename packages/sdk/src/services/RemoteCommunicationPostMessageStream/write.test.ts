@@ -1,9 +1,9 @@
-import { Ethereum } from '../Ethereum'; // Adjust the import based on your project structure
 import { RemoteCommunicationPostMessageStream } from '../../PostMessageStream/RemoteCommunicationPostMessageStream'; // Adjust the import based on your project structure
-import { METHODS_TO_REDIRECT } from '../../config';
+import { MAX_MESSAGE_LENGTH, METHODS_TO_REDIRECT } from '../../config';
 import * as loggerModule from '../../utils/logger'; // Adjust the import based on your project structure
-import { write } from './write'; // Adjust the import based on your project structure
+import { Ethereum } from '../Ethereum'; // Adjust the import based on your project structure
 import { extractMethod } from './extractMethod';
+import { write } from './write'; // Adjust the import based on your project structure
 
 jest.mock('./extractMethod');
 jest.mock('../Ethereum');
@@ -162,11 +162,22 @@ describe('write function', () => {
       mockIsMobileWeb.mockReturnValue(false);
       mockIsSecure.mockReturnValue(true);
       mockGetChannelId.mockReturnValue('some_channel_id');
+      mockIsMetaMaskInstalled.mockReturnValue(true);
+      mockGetKeyInfo.mockReturnValue({ ecies: { public: 'test_public_key' } });
+      mockHasDeeplinkProtocol.mockReturnValue(false);
     });
 
     it('should redirect if method exists in METHODS_TO_REDIRECT', async () => {
       mockExtractMethod.mockReturnValue({
         method: Object.keys(METHODS_TO_REDIRECT)[0],
+        data: {
+          data: {
+            jsonrpc: '2.0',
+            method: Object.keys(METHODS_TO_REDIRECT)[0],
+            params: [],
+          },
+        },
+        triggeredInstaller: false,
       });
 
       await write(
@@ -237,6 +248,73 @@ describe('write function', () => {
       );
 
       expect(spyLogger).toHaveBeenCalled();
+    });
+  });
+
+  describe('Message Size Validation', () => {
+    it('should reject messages exceeding MAX_MESSAGE_LENGTH', async () => {
+      mockGetChannelId.mockReturnValue('some_channel_id');
+      mockIsReady.mockReturnValue(true);
+      mockIsConnected.mockReturnValue(true);
+
+      // Mock extractMethod to return large data
+      const largeData = {
+        jsonrpc: '2.0',
+        method: 'eth_call',
+        params: ['x'.repeat(MAX_MESSAGE_LENGTH + 1)],
+      };
+
+      mockExtractMethod.mockReturnValue({
+        method: 'eth_call',
+        data: {
+          data: largeData,
+        },
+      });
+
+      await write(
+        mockRemoteCommunicationPostMessageStream,
+        { jsonrpc: '2.0', method: 'eth_call' },
+        'utf8',
+        callback,
+      );
+
+      // Don't test for exact error message, just verify it contains the key parts
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: expect.stringMatching(
+            /Message size \d+ exceeds maximum allowed size of \d+ bytes/u,
+          ),
+        }),
+      );
+      expect(mockSendMessage).not.toHaveBeenCalled();
+    });
+
+    it('should accept messages within MAX_MESSAGE_LENGTH', async () => {
+      mockGetChannelId.mockReturnValue('some_channel_id');
+      mockIsReady.mockReturnValue(true);
+      mockIsConnected.mockReturnValue(true);
+
+      // Mock extractMethod to return valid-sized data
+      mockExtractMethod.mockReturnValue({
+        method: 'eth_call',
+        data: {
+          data: {
+            jsonrpc: '2.0',
+            method: 'eth_call',
+            params: ['x'.repeat(100)],
+          },
+        },
+      });
+
+      await write(
+        mockRemoteCommunicationPostMessageStream,
+        { jsonrpc: '2.0', method: 'eth_call' },
+        'utf8',
+        callback,
+      );
+
+      expect(callback).toHaveBeenCalledWith();
+      expect(mockSendMessage).toHaveBeenCalled();
     });
   });
 });

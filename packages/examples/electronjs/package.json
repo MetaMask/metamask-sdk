@@ -17,5 +17,8 @@
     "@metamask/sdk": "^0.30.0",
     "qrcode": "^1.5.3",
     "typescript": "^5.1.6"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
   }
 }
