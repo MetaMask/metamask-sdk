@@ -43,5 +43,8 @@
     "last 2 versions",
     "not dead",
     "not ie 11"
-  ]
+  ],
+  "resolutions": {
+    "elliptic": "6.6.1"
+  }
 }

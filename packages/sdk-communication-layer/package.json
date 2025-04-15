@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.31.0",
+  "version": "0.32.0",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -25,6 +25,7 @@
     "build:clean": "yarn clean && yarn build",
     "build": "yarn build:types && rollup -c --bundleConfigAsCjs",
     "build:dev": "yarn build:types && NODE_ENV=dev rollup -c --bundleConfigAsCjs",
+    "dev": "concurrently \"tsc --watch\" \"rollup -c --bundleConfigAsCjs -w\"",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "size": "size-limit",
@@ -69,6 +70,7 @@
     "@types/uuid": "^9.0.0",
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
+    "concurrently": "^9.1.2",
     "cross-fetch": "^4.0.0",
     "eciesjs": "^0.4.11",
     "eslint": "^7.30.0",
