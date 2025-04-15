@@ -9,7 +9,7 @@ dotenv.config();
 import { instrument } from '@socket.io/admin-ui';
 import packageJson from '../package.json';
 import { isDevelopment, withAdminUI } from './config';
-import { analytics, app } from './analytics-api';
+import { app } from './analytics-api';
 import { getLogger } from './logger';
 import { readMetrics } from './metrics';
 import { configureSocketServer } from './socket-config';
@@ -21,11 +21,11 @@ const logger = getLogger();
 
 // Register event listeners for process termination events
 process.on('SIGINT', async () => {
-  await cleanupAndExit(server, analytics);
+  await cleanupAndExit(server);
 });
 
 process.on('SIGTERM', async () => {
-  await cleanupAndExit(server, analytics);
+  await cleanupAndExit(server);
 });
 
 process.on('unhandledRejection', (reason, promise) => {

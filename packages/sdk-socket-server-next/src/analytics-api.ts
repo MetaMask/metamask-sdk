@@ -1,6 +1,5 @@
 /* eslint-disable node/no-process-env */
 import crypto from 'crypto';
-import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
@@ -9,7 +8,6 @@ import helmet from 'helmet';
 import { Cluster, ClusterOptions, Redis, RedisOptions } from 'ioredis';
 import {
   config,
-  EVENTS_DEBUG_LOGS,
   hasRateLimit,
   isDevelopment,
   isDevelopmentServer,
@@ -18,20 +16,13 @@ import {
   redisTLS,
 } from './config';
 import { getLogger } from './logger';
-import { ChannelInfo, extractChannelInfo } from './utils';
-import { evtMetricsMiddleware } from './middleware-metrics';
 import {
-  incrementAnalyticsError,
-  incrementAnalyticsEvents,
   incrementRedisCacheOperation,
   incrementKeyMigration,
 } from './metrics';
 import genericPool from "generic-pool";
 
 const logger = getLogger();
-
-// SDK version prev 0.27.0 uses 'sdk' as the default id, below value is the sha1 hash of 'sdk'
-const SDK_EXTENSION_DEFAULT_ID = '5a374dcd2e5eb762b527af3a5bab6072a4d24493';
 
 // Initialize Redis Cluster client
 let redisNodes: {
@@ -453,272 +444,6 @@ async function inspectRedis(key?: string) {
   }
 }
 
-const analytics = new Analytics(
-  isDevelopment || isDevelopmentServer
-    ? process.env.SEGMENT_API_KEY_DEBUG || ''
-    : process.env.SEGMENT_API_KEY_PRODUCTION || '',
-  {
-    flushInterval: isDevelopment ? 1000 : 10000,
-    errorHandler: (err: Error) => {
-      logger.error(`ERROR> Analytics-node flush failed: ${err}`);
-    },
-  },
-);
-
-app.get('/', (req, res) => {
-  if (process.env.NODE_ENV === 'development') {
-    logger.info(`health check from`, {
-      'x-forwarded-for': req.headers['x-forwarded-for'],
-      'cf-connecting-ip': req.headers['cf-connecting-ip'],
-    });
-  }
-
-  res.json({ success: true });
-});
-
-// Redirect /debug to /evt for backwards compatibility
-app.post('/debug', (req, _res, next) => {
-  req.url = '/evt'; // Redirect to /evt
-  next(); // Pass control to the next handler (which will be /evt)
-});
-
-// Add Redis key backward compatibility helper
-const getWithBackwardCompatibility = async ({
-  newKey,
-  oldKey,
-}: {
-  newKey: string;
-  oldKey: string;
-}) => {
-  // pubClient is now a wrapper that acquires and releases clients from the pool automatically
-  let value = await pubClient.get(newKey);
-  if (!value) {
-    // Try old key format if new key returns nothing
-    value = await pubClient.get(oldKey);
-    if (value) {
-      // If found with old key, migrate to new format
-      await pubClient.set(newKey, value, 'EX', config.channelExpiry.toString());
-      incrementKeyMigration({ migrationType: 'channel-id' });
-      logger.info(`Migrated key from ${oldKey} to ${newKey}`);
-    }
-  }
-  return value;
-}
-
-app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
-  try {
-    const { body } = _req;
-
-    if (!body.event) {
-      logger.error(`Event is required`);
-      incrementAnalyticsError('MissingEventError');
-      return res.status(400).json({ error: 'event is required' });
-    }
-
-    if (!body.event.startsWith('sdk_')) {
-      logger.error(`Wrong event name: ${body.event}`);
-      incrementAnalyticsError('WrongEventNameError');
-      return res.status(400).json({ error: 'wrong event name' });
-    }
-
-    const toCheckEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
-    const allowedMethods = [
-      "eth_sendTransaction",
-      "wallet_switchEthereumChain",
-      "personal_sign",
-      "eth_signTypedData_v4",
-      "wallet_requestPermissions",
-      "metamask_connectSign"
-    ];
-
-    // Filter: drop RPC events with unallowed methods silently, let all else through
-    if (toCheckEvents.includes(body.event) &&
-        (!body.method || !allowedMethods.includes(body.method))) {
-      return res.json({ success: true });
-    }
-
-    let channelId: string = body.id || 'sdk';
-    // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
-    let isExtensionEvent = body.from === 'extension';
-
-    if (typeof channelId !== 'string') {
-      logger.error(`Received event with invalid channelId: ${channelId}`, body);
-      incrementAnalyticsError('InvalidChannelIdError');
-      return res.status(400).json({ status: 'error' });
-    }
-
-    let isAnonUser = false;
-
-    if (channelId === 'sdk') {
-      isAnonUser = true;
-      isExtensionEvent = true;
-    }
-
-    logger.debug(
-      `Received event /evt channelId=${channelId} isExtensionEvent=${isExtensionEvent}`,
-      body,
-    );
-
-    let userIdHash = isAnonUser
-      ? crypto.createHash('sha1').update(channelId).digest('hex')
-      : await getWithBackwardCompatibility({
-          newKey: `{${channelId}}:id`,
-          oldKey: channelId,
-        });
-
-    incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
-
-    if (!userIdHash) {
-      userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
-      logger.info(
-        `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash} - creating new channelId`,
-      );
-
-      if (!isExtensionEvent) {
-        // Always write to the new format
-        await pubClient.set(
-          `{${channelId}}:id`,
-          userIdHash,
-          'EX',
-          config.channelExpiry.toString(),
-        );
-      }
-    }
-
-    if (REDIS_DEBUG_LOGS) {
-      await inspectRedis(channelId);
-      await inspectRedis(`{${channelId}}:id`);
-    }
-
-    let channelInfo: ChannelInfo | null;
-    const cachedChannelInfo = isAnonUser
-      ? null
-      : await getWithBackwardCompatibility({
-          newKey: `{${userIdHash}}:info`,
-          oldKey: userIdHash,
-        });
-
-    incrementRedisCacheOperation(
-      'analytics-get-channel-info',
-      !!cachedChannelInfo,
-    );
-
-    if (cachedChannelInfo) {
-      logger.debug(
-        `Found cached channel info for ${userIdHash}`,
-        cachedChannelInfo,
-      );
-      channelInfo = JSON.parse(cachedChannelInfo);
-    } else {
-      logger.info(
-        `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash}`,
-      );
-
-      // Extract channelInfo from any events if available
-      channelInfo = extractChannelInfo(body);
-
-      if (!channelInfo) {
-        logger.info(
-          `event: ${body.event} channelId: ${channelId}  - Invalid channelInfo format - event will be ignored`,
-          JSON.stringify(body, null, 2),
-        );
-        // always return success
-        return res.json({ success: true });
-      }
-
-      // Save the channelInfo in Redis
-      logger.info(
-        `Adding channelInfo for event=${body.event} channelId=${channelId} userIdHash=${userIdHash} expiry=${config.channelExpiry}`,
-        channelInfo,
-      );
-
-      if (!isExtensionEvent) {
-        // Always write to the new format
-        await pubClient.set(
-          `{${userIdHash}}:info`,
-          JSON.stringify(channelInfo),
-          'EX',
-          config.channelExpiry.toString(),
-        );
-      }
-    }
-
-    if (REDIS_DEBUG_LOGS) {
-      await inspectRedis(userIdHash);
-      await inspectRedis(`{${userIdHash}}:info`);
-    }
-
-    const event = {
-      userId: userIdHash,
-      event: body.event,
-      properties: {
-        userId: userIdHash,
-        ...body.properties,
-        // Apply channelInfo properties
-        ...channelInfo,
-      },
-    };
-
-    if (!event.properties.dappId) {
-      // Prevent "N/A" in url and ensure a valid dappId
-      const newDappId =
-        event.properties.url && event.properties.url !== 'N/A'
-          ? event.properties.url
-          : event.properties.title || 'N/A';
-      event.properties.dappId = newDappId;
-      logger.debug(
-        `event: ${event.event} - dappId missing - replacing with '${newDappId}'`,
-        event,
-      );
-    }
-
-    // Define properties to be excluded
-    const propertiesToExclude: string[] = ['icon', 'originationInfo', 'id'];
-
-    for (const property in body) {
-      if (
-        Object.prototype.hasOwnProperty.call(body, property) &&
-        body[property] &&
-        !propertiesToExclude.includes(property)
-      ) {
-        event.properties[property] = body[property];
-      }
-    }
-
-    if (EVENTS_DEBUG_LOGS) {
-      logger.debug('Event object:', event);
-    }
-
-    incrementAnalyticsEvents(
-      body.from,
-      !isAnonUser,
-      event.event,
-      body.platform,
-      body.sdkVersion,
-    );
-
-    analytics.track(event, function (err: Error) {
-      if (EVENTS_DEBUG_LOGS) {
-        logger.info('Segment batch', JSON.stringify({ event }, null, 2));
-      } else {
-        logger.info('Segment batch', { event });
-      }
-
-      if (err) {
-        incrementAnalyticsError('SegmentError');
-        logger.error('Segment error:', err);
-      }
-    });
-
-    return res.json({ success: true });
-  } catch (error) {
-    incrementAnalyticsError(
-      error instanceof Error ? error.constructor.name : 'UnknownError',
-    );
-    return res.json({ error });
-  }
-});
-
 // Add Redis health checking and recovery
 let redisHealthCheckInterval: NodeJS.Timeout;
 let consecutiveRedisErrors = 0;
@@ -772,4 +497,4 @@ export const monitorRedisHealth = () => {
 // Start monitoring when the module is loaded
 monitorRedisHealth();
 
-export { analytics, app };
+export { app }; // Export only app now

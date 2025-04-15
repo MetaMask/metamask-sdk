@@ -52,7 +52,6 @@ export const getIsShuttingDown = () => isShuttingDown;
 
 export const cleanupAndExit = async (
   server: Server,
-  analytics: Analytics,
 ): Promise<void> => {
   if (isShuttingDown) {
     logger.info(`cleanupAndExit already in progress`);
@@ -61,19 +60,12 @@ export const cleanupAndExit = async (
   isShuttingDown = true;
 
   try {
-    const flushAnalyticsResult = await flushAnalytics(analytics);
-    logger.info(`flushAnalyticsResult: ${flushAnalyticsResult}`);
-
     // CloseServer will block until all clients have disconnected.
     const serverCloseResult = await closeServer(server);
     logger.info(`serverCloseResult: ${serverCloseResult}`);
 
     if ((serverCloseResult as any) instanceof Error) {
       throw new Error(`Error during server shutdown: ${serverCloseResult}`);
-    }
-
-    if (flushAnalyticsResult instanceof Error) {
-      throw new Error(`Error on exitGracefully: ${flushAnalyticsResult}`);
     }
   } catch (error) {
     logger.error(`cleanupAndExit error: ${error}`);
