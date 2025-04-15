@@ -1,4 +1,4 @@
-import { SendAnalytics, AnalyticsProps } from './Analytics';
+import { type OriginatorInfo, TrackingEvents } from '@metamask/sdk-types';
 import { ECIES, ECIESProps } from './ECIES';
 import {
   RemoteCommunication,
@@ -23,13 +23,11 @@ import { EventType } from './types/EventType';
 import { KeyInfo } from './types/KeyInfo';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
 import { MessageType } from './types/MessageType';
-import { OriginatorInfo } from './types/OriginatorInfo';
 import { PlatformType } from './types/PlatformType';
 import { ServiceStatus } from './types/ServiceStatus';
 import { WalletInfo } from './types/WalletInfo';
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { StorageManager, StorageManagerProps } from './types/StorageManager';
-import { TrackingEvents } from './types/TrackingEvent';
 import { KeyExchangeMessageType } from './types/KeyExchangeMessageType';
 
 export type {
@@ -50,7 +48,6 @@ export type {
   StorageManager,
   StorageManagerProps,
   WalletInfo,
-  AnalyticsProps,
 };
 
 export {
@@ -61,11 +58,10 @@ export {
   DEFAULT_SESSION_TIMEOUT_MS,
   ECIES,
   EventType,
+  KeyExchangeMessageType,
   MessageType,
   PlatformType,
   RemoteCommunication,
-  KeyExchangeMessageType,
-  SendAnalytics,
   SocketService,
   TrackingEvents,
 };

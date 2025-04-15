@@ -8,8 +8,8 @@ import {
   KeyInfo,
   RemoteCommunication,
   StorageManagerProps,
-  TrackingEvents,
 } from '@metamask/sdk-communication-layer';
+import { TrackingEvent } from '@metamask/sdk-types';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
 import { MetaMaskSDK } from '../../sdk';
@@ -67,7 +67,7 @@ export interface RemoteConnectionProps {
         event,
         params,
       }: {
-        event: TrackingEvents;
+        event: TrackingEvent;
         params?: Record<string, unknown>;
       }) => void;
     }) => {

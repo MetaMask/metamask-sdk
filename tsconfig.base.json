@@ -3,6 +3,7 @@
     "rootDir": ".",
     "target": "ES6",
     "moduleResolution": "node",
+    "strict": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -13,13 +14,15 @@
     "lib": ["es2017", "dom"],
     "baseUrl": ".",
     "paths": {
-      "@metamask/sdk": ["packages/sdk/src/index.ts"],
-      "@metamask/sdk-communication-layer": [
-        "packages/sdk-communication-layer/src/index.ts"
-      ],
-      "@metamask/sdk-install-modal-web": ["packages/sdk-install-modal-web/src/index.ts"],
-      "@metamask/sdk-react": ["packages/sdk-react/src/index.ts"],
-      "@metamask/sdk-react-native": ["packages/sdk-react-native/src/index.ts"]
+      // "@metamask/sdk": ["packages/sdk/src/index.ts"],
+      // "@metamask/sdk-communication-layer": [
+      //   "packages/sdk-communication-layer/src/index.ts"
+      // ],
+      // "@metamask/analytics-client": ["packages/analytics-client/src/index.ts"],
+      // "@metamask/sdk-types": ["packages/sdk-types/src/index.ts"],
+      // "@metamask/sdk-install-modal-web": ["packages/sdk-install-modal-web/src/index.ts"],
+      // "@metamask/sdk-react": ["packages/sdk-react/src/index.ts"],
+      // "@metamask/sdk-react-native": ["packages/sdk-react-native/src/index.ts"]
     }
   },
   "exclude": ["**/node_modules","dist"]

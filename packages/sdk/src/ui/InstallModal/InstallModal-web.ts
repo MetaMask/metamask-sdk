@@ -1,4 +1,4 @@
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { TrackingEvent } from '@metamask/sdk-types';
 import packageJson from '../../../package.json';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { logger } from '../../utils/logger';
@@ -23,7 +23,7 @@ const sdkWebInstallModal = ({
     event,
     params,
   }: {
-    event: TrackingEvents;
+    event: TrackingEvent;
     params?: Record<string, unknown>;
   }) => void;
 }) => {

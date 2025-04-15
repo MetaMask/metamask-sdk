@@ -16,7 +16,7 @@
   "module": "dist/node/es/metamask-sdk-communication-layer.js",
   "browser": "dist/browser/es/metamask-sdk-communication-layer.js",
   "react-native": "dist/react-native/es/metamask-sdk-communication-layer.js",
-  "types": "dist/types/src/index.d.ts",
+  "types": "dist/types/packages/sdk-communication-layer/src/index.d.ts",
   "files": [
     "/dist"
   ],
@@ -29,7 +29,7 @@
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
     "size": "size-limit",
-    "clean": "rimraf ./dist",
+    "clean": "rimraf ./dist && rimraf tsconfig.build.tsbuildinfo",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-communication-layer",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -46,6 +46,8 @@
     "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
+    "@metamask/analytics-client": "workspace:^",
+    "@metamask/sdk-types": "workspace:^",
     "bufferutil": "^4.0.8",
     "date-fns": "^2.29.3",
     "debug": "^4.3.4",
@@ -55,10 +57,12 @@
   "devDependencies": {
     "@jest/globals": "^29.3.1",
     "@lavamoat/allow-scripts": "^2.3.1",
+    "@metamask/analytics-client": "workspace:^",
     "@metamask/auto-changelog": "3.1.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",
+    "@metamask/sdk-types": "workspace:^",
     "@rollup/plugin-commonjs": "^25.0.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
@@ -71,7 +75,6 @@
     "@typescript-eslint/eslint-plugin": "^4.26.0",
     "@typescript-eslint/parser": "^4.26.0",
     "concurrently": "^9.1.2",
-    "cross-fetch": "^4.0.0",
     "eciesjs": "^0.4.11",
     "eslint": "^7.30.0",
     "eslint-config-prettier": "^8.3.0",
@@ -99,10 +102,9 @@
     "stream-browserify": "^3.0.0",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "typescript": "^5.6.3"
+    "typescript": "^4.3.5"
   },
   "peerDependencies": {
-    "cross-fetch": "^4.0.0",
     "eciesjs": "*",
     "eventemitter2": "^6.4.9",
     "readable-stream": "^3.6.2",

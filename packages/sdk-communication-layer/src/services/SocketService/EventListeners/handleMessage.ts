@@ -1,11 +1,11 @@
+import { SendAnalytics } from '@metamask/analytics-client';
+import { TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
-import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
 import { MessageType } from '../../../types/MessageType';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { lcLogguedRPCs } from '../MessageHandlers';
 
@@ -228,7 +228,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
               },
             },
             instance.remote.state.analyticsServerUrl,
-          ).catch((err) => {
+          ).catch((err: unknown) => {
             console.error(`Cannot send analytics`, err);
           });
         }

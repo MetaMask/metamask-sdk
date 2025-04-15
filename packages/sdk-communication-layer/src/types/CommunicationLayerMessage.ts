@@ -1,6 +1,6 @@
+import { type OriginatorInfo } from '@metamask/sdk-types';
 import { KeyExchangeMessageType } from './KeyExchangeMessageType';
 import { MessageType } from './MessageType';
-import { OriginatorInfo } from './OriginatorInfo';
 import { WalletInfo } from './WalletInfo';
 
 export interface CommunicationLayerMessage {

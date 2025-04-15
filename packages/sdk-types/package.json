@@ -1,7 +1,7 @@
 {
-  "name": "@metamask/analytics-client",
+  "name": "@metamask/sdk-types",
   "version": "0.1.0",
-  "description": "Client library for sending analytics events for MetaMask SDK",
+  "description": "Shared TypeScript types for MetaMask SDK packages",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
     "url": "https://github.com/MetaMask/metamask-sdk/issues"
@@ -9,7 +9,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk.git",
-    "directory": "packages/analytics-client"
+    "directory": "packages/sdk-types"
   },
   "license": "MIT",
   "author": "MetaMask",
@@ -24,30 +24,27 @@
     "build:clean": "rimraf ./dist && rimraf tsconfig.tsbuildinfo",
     "clean": "rimraf ./dist && rimraf tsconfig.tsbuildinfo",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:eslint": "eslint src --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
-    "@metamask/sdk-types": "workspace:^",
-    "cross-fetch": "^4.0.0"
-  },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@types/analytics-node": "^3.1.13",
-    "@types/body-parser": "^1.19.4",
-    "@types/cors": "^2.8.15",
-    "@types/express": "^4.17.20",
-    "@types/node": "^20.4.1",
-    "@typescript-eslint/eslint-plugin": "^4.20.0",
-    "@typescript-eslint/parser": "^4.20.0",
-    "eslint": "^7.30.0",
+    "@metamask/eslint-config": "^12.1.0",
+    "@metamask/eslint-config-nodejs": "^12.1.0",
+    "@metamask/eslint-config-typescript": "^12.1.0",
+    "@types/node": "^18.11.18",
+    "@typescript-eslint/eslint-plugin": "^5.48.1",
+    "@typescript-eslint/parser": "^5.48.1",
+    "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsdoc": "^39.6.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8",
-    "rimraf": "^6.0.1",
-    "ts-node": "^10.9.1",
+    "rimraf": "^3.0.2",
     "typescript": "^4.3.5"
   },
   "publishConfig": {
