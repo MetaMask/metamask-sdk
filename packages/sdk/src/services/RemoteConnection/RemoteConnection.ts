@@ -8,6 +8,7 @@ import {
   KeyInfo,
   RemoteCommunication,
   StorageManagerProps,
+  TrackingEvents,
 } from '@metamask/sdk-communication-layer';
 import { MetaMaskInstaller } from '../../Platform/MetaMaskInstaller';
 import { PlatformManager } from '../../Platform/PlatfformManager';
@@ -55,13 +56,20 @@ export interface RemoteConnectionProps {
    */
   modals: {
     onPendingModalDisconnect?: () => void;
-    install?: (params: {
+    install?: (args: {
       link: string;
       debug?: boolean;
       preferDesktop?: boolean;
       installer: MetaMaskInstaller;
       terminate?: () => void;
       connectWithExtension?: () => void;
+      onAnalyticsEvent: ({
+        event,
+        params,
+      }: {
+        event: TrackingEvents;
+        params?: Record<string, unknown>;
+      }) => void;
     }) => {
       unmount?: (shouldTerminate?: boolean) => void;
       mount?: (link: string) => void;

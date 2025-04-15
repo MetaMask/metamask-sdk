@@ -21,6 +21,7 @@ const config = {
   resolver: {
     extraNodeModules: {
       ...require('node-libs-react-native'),
+      'node:crypto': require.resolve('react-native-crypto'),
     },
     sourceExts: ['jsx', 'js', 'ts', 'tsx', 'cjs', 'json'], //add here
   },

@@ -35,8 +35,10 @@ export const handleCheckRoom = async ({
 
   const room = io.sockets.adapter.rooms.get(channelId);
   const occupancy = room ? room.size : 0;
+  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+  const channelOccupancyKey = `channel_occupancy:{${channelId}}`; 
   const channelOccupancy =
-    (await pubClient.hget('channels', channelId)) ?? undefined;
+    (await pubClient.get(channelOccupancyKey)) ?? undefined;
 
   logger.info(
     `[check_room] occupancy=${occupancy}, channelOccupancy=${channelOccupancy}`,

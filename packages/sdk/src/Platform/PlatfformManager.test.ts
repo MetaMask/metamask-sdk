@@ -407,14 +407,12 @@ describe('PlatformManager', () => {
     });
 
     it('should return true if isNotBrowser returns false', () => {
-      jest.spyOn(platformManager, 'isNotBrowser').mockReturnValue(false);
-
+      jest.spyOn(PlatformManager, 'isNotBrowser').mockReturnValue(false);
       expect(platformManager.isBrowser()).toBe(true);
     });
 
     it('should return false if isNotBrowser returns true', () => {
-      jest.spyOn(platformManager, 'isNotBrowser').mockReturnValue(true);
-
+      jest.spyOn(PlatformManager, 'isNotBrowser').mockReturnValue(true);
       expect(platformManager.isBrowser()).toBe(false);
     });
   });
