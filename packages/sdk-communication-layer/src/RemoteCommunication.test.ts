@@ -22,10 +22,18 @@ describe('RemoteCommunication', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    const mockDappMetadata = {
+      name: 'Mock DApp',
+      url: 'http://mockdapp.com',
+      // Add other required fields if necessary, using mock values
+      source: 'test',
+    };
+
     remoteCommunicationInstance = new RemoteCommunication({
       platformType: 'metamask-mobile',
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       context: 'some-context',
+      dappMetadata: mockDappMetadata,
     });
   });
 

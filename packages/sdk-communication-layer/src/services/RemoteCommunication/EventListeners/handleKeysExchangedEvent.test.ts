@@ -1,14 +1,13 @@
-import { SendAnalytics } from '../../../Analytics';
+import { SendAnalytics } from '@metamask/analytics-client';
+import { OriginatorInfo } from '@metamask/sdk-types';
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
-import { OriginatorInfo } from '../../../types/OriginatorInfo';
-import { setLastActiveDate } from '../StateManger';
 import { logger } from '../../../utils/logger';
+import { setLastActiveDate } from '../StateManger';
 import { handleKeysExchangedEvent } from './handleKeysExchangedEvent';
 
-jest.mock('../../../Analytics', () => {
+jest.mock('@metamask/analytics-client', () => {
   return {
     SendAnalytics: jest.fn().mockResolvedValue(undefined),
   };
@@ -50,10 +49,7 @@ describe('handleKeysExchangedEvent', () => {
   });
 
   it('should log diagnostic information', () => {
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -64,10 +60,7 @@ describe('handleKeysExchangedEvent', () => {
   });
 
   it('should update the instance connection status to LINKED', () => {
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -80,10 +73,7 @@ describe('handleKeysExchangedEvent', () => {
   });
 
   it('should send a READY message if the instance is not the originator', () => {
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: false,
       originatorInfo: {} as OriginatorInfo,
@@ -96,10 +86,7 @@ describe('handleKeysExchangedEvent', () => {
 
   it('should send an ORIGINATOR_INFO message if the instance is the originator and originatorInfo has not been sent', () => {
     instance.state.originatorInfoSent = false;
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -115,10 +102,7 @@ describe('handleKeysExchangedEvent', () => {
   });
 
   it('should attempt to send analytics when analytics is enabled', () => {
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -130,10 +114,7 @@ describe('handleKeysExchangedEvent', () => {
 
   it('should not attempt to send analytics when analytics is disabled', () => {
     instance.state.analytics = false;
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -144,10 +125,7 @@ describe('handleKeysExchangedEvent', () => {
   });
 
   it('should set the last active date', () => {
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -159,10 +137,7 @@ describe('handleKeysExchangedEvent', () => {
 
   it('should log an error when sending analytics fails', async () => {
     (SendAnalytics as jest.Mock).mockRejectedValue(new Error('Mock error'));
-    const handler = handleKeysExchangedEvent(
-      instance,
-      CommunicationLayerPreference.SOCKET,
-    );
+    const handler = handleKeysExchangedEvent(instance);
     handler({
       isOriginator: true,
       originatorInfo: {} as OriginatorInfo,
@@ -171,7 +146,7 @@ describe('handleKeysExchangedEvent', () => {
 
     await expect(SendAnalytics).rejects.toThrow('Mock error');
     expect(console.error).toHaveBeenCalledWith(
-      'Cannot send analytics',
+      'Failed to send analytics key exchanged event',
       expect.anything(),
     );
   });
