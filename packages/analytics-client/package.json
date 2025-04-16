@@ -2,7 +2,7 @@
   "name": "@metamask/sdk-analytics-client",
   "packageManager": "yarn@3.5.1",
   "scripts": {
-    "build": "tsc",
+    "build": "echo 'Na'",
     "build:dev": "echo 'Na'",
     "dev": "echo 'Na'",
     "build:post-tsc": "echo 'Na'",
