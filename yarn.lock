@@ -11197,6 +11197,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/sdk-analytics-client@workspace:packages/analytics-client":
+  version: 0.0.0-use.local
+  resolution: "@metamask/sdk-analytics-client@workspace:packages/analytics-client"
+  languageName: unknown
+  linkType: soft
+
 "@metamask/sdk-communication-layer@npm:0.11.1":
   version: 0.11.1
   resolution: "@metamask/sdk-communication-layer@npm:0.11.1"
@@ -22494,12 +22500,6 @@ __metadata:
   checksum: 4dc13714e316e67537c8b31bc063f99a1d9d9a497eb4bbd55191ac0dcd5e4985bbb71570352ad6f1e76684fb6d790928f96ba3b2d4fd6e10024be9612fe3f001
   languageName: node
   linkType: hard
-
-"analytics-client@workspace:packages/analytics-client":
-  version: 0.0.0-use.local
-  resolution: "analytics-client@workspace:packages/analytics-client"
-  languageName: unknown
-  linkType: soft
 
 "analytics-node@npm:^6.2.0":
   version: 6.2.0
