@@ -29,7 +29,7 @@ const WithSDKConfig = ({ children }: { children: React.ReactNode }) => {
       debug={true}
       sdkOptions={{
         communicationServerUrl: socketServer,
-        enableAnalytics: true,
+        enableAnalytics: false,
         // Display desktop tab instead of qrcode tab
         preferDesktop: false,
         infuraAPIKey,
