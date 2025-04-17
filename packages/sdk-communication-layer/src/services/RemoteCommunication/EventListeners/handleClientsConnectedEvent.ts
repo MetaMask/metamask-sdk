@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
 import { RemoteCommunication } from '../../../RemoteCommunication';
@@ -28,6 +28,19 @@ export function handleClientsConnectedEvent(instance: RemoteCommunication) {
     );
 
     if (state.analytics && state.channelId) {
+
+      if (!state.isOriginator) {
+        trackEvent({
+          name: 'sdk_connection_established',
+          transport_type: 'websocket',
+        })
+      } else {
+        trackEvent({
+          name: 'wallet_connection_request_received',
+          platform: 'mobile',
+        })
+      }
+      
       SendAnalytics(
         {
           id: state.channelId,

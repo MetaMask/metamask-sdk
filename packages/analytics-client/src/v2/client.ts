@@ -84,8 +84,6 @@ export type BaseAnalyticsProps = {
     id: string;
     originatorInfo?: OriginatorInfo; // Now uses local type
     sdkVersion?: string;
-    commLayerVersion?: string;
-    walletVersion?: string;
     // TODO What is this?
     anonId: string;
 };
