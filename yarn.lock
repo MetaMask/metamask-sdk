@@ -10700,6 +10700,7 @@ __metadata:
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^3.4.0
+    openapi-fetch: ^0.13.5
     prettier: ^2.8.8
     rimraf: ^6.0.1
     ts-node: ^10.9.1
@@ -42672,6 +42673,22 @@ __metadata:
   bin:
     openai: bin/cli
   checksum: 5a65897daadbac30b452c16b8d7342db14e701feafa6f2294dde05ec95e404dd5b93b8ade0c4a39667819e6ec00215c248889bb69767730e656442b0d6c68ce3
+  languageName: node
+  linkType: hard
+
+"openapi-fetch@npm:^0.13.5":
+  version: 0.13.5
+  resolution: "openapi-fetch@npm:0.13.5"
+  dependencies:
+    openapi-typescript-helpers: ^0.0.15
+  checksum: 7f6947d074d3a66fbc1641e46b20652cc92412e6b3238259a29ad72ef6eca5b4ac7529826ff97660fc6ebc8c38f2f151ad66e9e93f16b0736bec5c150f73b06f
+  languageName: node
+  linkType: hard
+
+"openapi-typescript-helpers@npm:^0.0.15":
+  version: 0.0.15
+  resolution: "openapi-typescript-helpers@npm:0.0.15"
+  checksum: feec0f25d708aaacc086dafd3e21001329b47984f30e24877b34d053fbccd52f3b3a19b1715fda2ed5afaca7056872576eed7de8f64855d2472507dc6df626ca
   languageName: node
   linkType: hard
 
