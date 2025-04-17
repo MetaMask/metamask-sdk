@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { TrackingEvents } from '@metamask/sdk-types';
 import { SocketService } from '../../../SocketService';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
@@ -31,6 +31,11 @@ export function handleChannelRejected(
       `[SocketService: handleChannelRejected()] context=${instance.state.context} channelId=${channelId} isOriginator=${instance.state.isOriginator} ready=${instance.remote.state.ready}`,
       instance.remote.state.originatorInfo,
     );
+
+    trackEvent({
+      name: 'wallet_connection_user_rejected',
+      platform: 'mobile',
+    })
 
     // Emit analytics event
     SendAnalytics(

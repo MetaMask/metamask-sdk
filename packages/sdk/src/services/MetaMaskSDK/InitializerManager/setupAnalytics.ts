@@ -2,6 +2,7 @@ import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
 import { type OriginatorInfo } from '@metamask/sdk-types';
 import { Analytics } from '../../Analytics';
 import { MetaMaskSDK } from '../../../sdk';
+import { initAnalyticsClient } from '@metamask/analytics-client';
 
 /**
  * Sets up the analytics instance for the MetaMask SDK.
@@ -33,5 +34,15 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
     serverUrl: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
     enabled: options.enableAnalytics,
     originatorInfo: originator,
+  });
+
+  initAnalyticsClient({
+    originatorInfo: originator,
+    sdkVersion: instance.getVersion(),
+    // TODO Set ID and anonId
+    id: 'TODO: SET ID',
+    anonId: 'TODO: SET ANON ID',
+    pushInterval: 1000,
+    analyticsUrl: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
   });
 }

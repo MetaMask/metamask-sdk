@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { TrackingEvents } from '@metamask/sdk-types';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
@@ -101,6 +101,18 @@ export const handleJoinChannelResults = async (
     remote.state.ready = true;
     remote.state.authorized = true;
     remote.emit(EventType.AUTHORIZED);
+
+    if (isOriginator) {
+      trackEvent({
+        name: 'wallet_connection_user_approved',
+        platform: 'mobile',
+      })
+    } else {
+      trackEvent({
+        name: 'sdk_connection_established',
+        transport_type: 'websocket',
+      })
+    }
 
     SendAnalytics(
       {

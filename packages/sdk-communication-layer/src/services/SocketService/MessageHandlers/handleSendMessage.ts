@@ -1,5 +1,5 @@
 import { TrackingEvents } from '@metamask/sdk-types';
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { logger } from '../../../utils/logger';
@@ -74,6 +74,10 @@ export async function handleSendMessage(
       message.method &&
       lcLogguedRPCs.includes(message.method.toLowerCase())
     ) {
+      trackEvent({
+        name: 'sdk_action_requested',
+        action: message.method,
+      })
       SendAnalytics(
         {
           id: instance.remote.state.channelId ?? '',
