@@ -23,8 +23,12 @@
     "build:types": "tsc --project tsconfig.json --emitDeclarationOnly --outDir dist/types",
     "build:clean": "rimraf ./dist && rimraf tsconfig.tsbuildinfo",
     "clean": "rimraf ./dist && rimraf tsconfig.tsbuildinfo",
+    "test": "echo N/A",
+    "test:unit": "echo N/A",
+    "allow-scripts": "echo N/a",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:changelog": "echo na",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "typecheck": "tsc --noEmit"
