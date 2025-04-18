@@ -1,10 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
+    "composite": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "strict": true,
     "outDir": "dist",
     "target": "es6",
     "esModuleInterop": true,
@@ -16,10 +17,25 @@
     "skipLibCheck": true,
     "types": ["node"],
     "paths": {
-      "@metamask/sdk-install-modal-web/*": ["../sdk-install-modal-web/dist/*"]
+      // Remove specific path mapping here, rely on base and references
+      // "@metamask/sdk-install-modal-web/*": ["../sdk-install-modal-web/dist/*"]
     }
     // "typeRoots": ["packages/sdk/src/types/global.d.ts", "src/types/global.d.ts"]
   },
-  "include": ["./src", "./tools"],
-  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"]
+  "include": ["./src", "./tools", "./package.json"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts"],
+  "references": [
+    {
+      "path": "../sdk-types"
+    },
+    {
+      "path": "../analytics-client"
+    },
+    {
+      "path": "../sdk-communication-layer"
+    },
+    {
+      "path": "../sdk-install-modal-web"
+    }
+  ]
 }

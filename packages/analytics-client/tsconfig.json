@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true
+    // Override or add any specific compiler options for this package if needed
+    // e.g., "lib": ["es2020", "dom"]
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts" // Exclude tests from main build if separate test command used
+  ],
+  "references": [
+    // Add references to other workspace packages this package depends on
+    { "path": "../sdk-types" } // Added reference to sdk-types
+  ]
+}

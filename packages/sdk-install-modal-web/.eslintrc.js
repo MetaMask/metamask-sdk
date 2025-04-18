@@ -11,6 +11,8 @@ module.exports = {
   ignorePatterns: [
     '.eslintrc.js',
     'dist',
+    'build',
+    'wwww',
     'rollup.config.js',
     '**/coverage/**',
     'postcss.config.js',

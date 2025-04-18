@@ -1,4 +1,4 @@
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { TrackingEvent } from '@metamask/sdk-types';
 import type { Components } from '@metamask/sdk-install-modal-web';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
@@ -8,7 +8,7 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
     startDesktopOnboarding: () => void;
   };
   onAnalyticsEvent: (event: {
-    event: TrackingEvents;
+    event: TrackingEvent;
     params?: Record<string, unknown>;
   }) => void;
 }

@@ -1,4 +1,4 @@
-import { SendAnalytics } from '../../../Analytics';
+import { SendAnalytics } from '@metamask/analytics-client';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { EventType } from '../../../types/EventType';
@@ -9,7 +9,7 @@ jest.mock('../../../../package.json', () => ({
   version: 'mockVersion',
 }));
 
-jest.mock('../../../Analytics', () => ({
+jest.mock('@metamask/analytics-client', () => ({
   SendAnalytics: jest.fn(() => Promise.resolve()),
 }));
 

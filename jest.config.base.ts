@@ -90,7 +90,15 @@ const config: JestConfigWithTsJest = {
   ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  // moduleNameMapper: {
+  //   '^@metamask/sdk$': '<rootDir>/packages/sdk/src/index.ts',
+  //   '^@metamask/sdk-communication-layer$': '<rootDir>/packages/sdk-communication-layer/src/index.ts',
+  //   '^@metamask/analytics-client$': '<rootDir>/packages/analytics-client/src/index.ts',
+  //   '^@metamask/sdk-types$': '<rootDir>/packages/sdk-types/src/index.ts',
+  //   '^@metamask/sdk-install-modal-web$': '<rootDir>/packages/sdk-install-modal-web/src/index.ts',
+  //   '^@metamask/sdk-react$': '<rootDir>/packages/sdk-react/src/index.ts',
+  //   // Add react-native if needed
+  // },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -176,7 +184,7 @@ const config: JestConfigWithTsJest = {
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\/]+$'],
+  transformIgnorePatterns: ['/node_modules/', '\\\\.pnp\\\\.[^\\\\/]+$'],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,
