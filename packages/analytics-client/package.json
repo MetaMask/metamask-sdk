@@ -25,6 +25,7 @@
     "clean": "rimraf ./dist && rimraf tsconfig.tsbuildinfo",
     "test": "echo N/A",
     "test:unit": "echo N/A",
+    "test:ci": "echo N/A",
     "allow-scripts": "echo N/a",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:eslint": "eslint . --cache --ext js,ts",
