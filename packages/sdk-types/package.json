@@ -28,6 +28,7 @@
     "lint:changelog": "echo na",
     "test": "echo N/A",
     "test:unit": "echo N/A",
+    "test:ci": "echo N/A",
     "allow-scripts": "echo N/a",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
