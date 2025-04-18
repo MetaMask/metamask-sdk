@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { type OriginatorInfo, TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
 import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
@@ -63,6 +63,18 @@ export function handleKeysExchangedEvent(instance: RemoteCommunication) {
     setLastActiveDate(instance, new Date());
 
     if (state.analytics && state.channelId) {
+      if (state.isOriginator) {
+        trackEvent({
+          name: 'wallet_connection_user_approved',
+          platform: 'mobile',
+        })
+      } else {
+        trackEvent({
+          name: 'sdk_connection_established',
+          transport_type: 'websocket',
+        })
+      }
+        
       SendAnalytics(
         {
           id: state.channelId,
