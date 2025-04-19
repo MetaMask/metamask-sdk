@@ -3,10 +3,10 @@ import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
 
-import crypto from 'crypto';
 import Analytics from 'analytics-node';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import crypto from 'crypto';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
@@ -30,7 +30,7 @@ const limiter = rateLimit({
     windowMs: 60 * 1000, // 1 minute
     // This high limit is effectively unused as rate limiting is primarily handled
     // at the infrastructure level (e.g., Cloudflare). It was retained from a previous configuration.
-    max: 100000, // limit each IP to 100,000 requests per windowMs
+    max: 20, // limit each IP to max requests per windowMs
     legacyHeaders: false,
 });
 
@@ -95,10 +95,7 @@ app.post('/evt', async (req, res) => {
             return res.status(400).json({ status: 'error' });
         }
 
-        let isAnonUser = false;
-
         if (channelId === 'sdk') {
-            isAnonUser = true;
             isExtensionEvent = true;
         }
 
@@ -107,9 +104,7 @@ app.post('/evt', async (req, res) => {
             body,
         );
 
-        const userIdHash = isAnonUser
-            ? crypto.createHash('sha1').update(channelId).digest('hex')
-            : crypto.createHash('sha1').update(channelId).digest('hex');
+        const userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
 
         const event = {
             userId: userIdHash,
@@ -171,4 +166,4 @@ app.listen(port, () => {
     logger.info(`Analytics server listening on port ${port}`);
 });
 
-export { app }; 
+export { app };

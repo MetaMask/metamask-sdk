@@ -1,12 +1,13 @@
 // protocol/handleJoinChannel.ts
 import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
-import { pubClient } from '../redis';
 import { MAX_CLIENTS_PER_ROOM, config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
-import { rateLimiter } from '../rate-limiter';
-import { ClientType, MISSING_CONTEXT } from '../socket-config';
 import { incrementKeyMigration } from '../metrics';
+import { rateLimiter } from '../rate-limiter';
+import { pubClient } from '../redis';
+import { MISSING_CONTEXT } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { retrieveMessages } from './retrieveMessages';
 
 const logger = getLogger();

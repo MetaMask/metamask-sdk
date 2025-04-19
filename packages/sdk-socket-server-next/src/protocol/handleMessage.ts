@@ -1,16 +1,17 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { pubClient } from '../redis';
 import { config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
+import { incrementKeyMigration } from '../metrics';
 import {
   increaseRateLimits,
   rateLimiterMessage,
   resetRateLimits,
   setLastConnectionErrorTimestamp,
 } from '../rate-limiter';
-import { ClientType, MISSING_CONTEXT } from '../socket-types';
-import { incrementKeyMigration } from '../metrics';
+import { pubClient } from '../redis';
+import { MISSING_CONTEXT } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { ChannelConfig } from './handleJoinChannel';
 
 const logger = getLogger();
