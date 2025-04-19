@@ -81,7 +81,7 @@ export function handleKeysExchangedEvent(
           commLayerVersion: packageJson.version,
           walletVersion: state.walletInfo?.version,
         },
-        state.communicationServerUrl,
+        state.analyticsServerUrl,
       ).catch((err) => {
         console.error(`Cannot send analytics`, err);
       });

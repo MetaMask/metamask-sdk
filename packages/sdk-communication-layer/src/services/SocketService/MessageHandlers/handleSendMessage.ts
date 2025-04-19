@@ -83,7 +83,7 @@ export async function handleSendMessage(
             from: 'mobile',
           },
         },
-        instance.remote.state.communicationServerUrl,
+        instance.remote.state.analyticsServerUrl,
       ).catch((err) => {
         console.error(`[handleSendMessage] Cannot send analytics`, err);
       });

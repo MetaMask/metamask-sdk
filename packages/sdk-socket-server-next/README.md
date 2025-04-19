@@ -1,65 +1,101 @@
-# Debug SDK Socket Server Locally
+# SDK Socket Server - Dockerized Development & Simulation Guide
 
-This guide provides instructions for setting up and debugging the SDK socket server locally, as well as using Docker Compose for broader testing, including integration with MetaMask Mobile app.
+This guide explains how to set up and run the SDK socket server using Docker Compose for different purposes:
+
+1.  **Development Mode (Docker + Auto-Reload):** For coding and debugging within a Docker container, using auto-reloading code changes and integrated monitoring.
+2.  **Scalable Environment Simulation:** For testing the application in a multi-instance setup with load balancing, a Redis cluster, and integrated monitoring.
 
 ## Prerequisites
 
-- Node.js and Yarn installed
-- Docker and Docker Compose installed (for Docker-based setup)
-- Ngrok account and CLI tool installed (for external access testing)
+- Node.js and Yarn installed (for dependency management, though code runs in Docker)
+- Docker and Docker Compose installed
+- Ngrok account and CLI tool installed (optional, for external access testing)
+- Copy `.env.sample` to `.env` and configure as needed (Note: `REDIS_NODES` in `.env` is ignored by Docker services, which use overrides in `docker-compose.yml`).
 
-## QuickStart
+## Mode 1: Development (Docker + Auto-Reload + Monitoring)
+
+This mode runs the development server (`yarn debug` via `nodemon`) _inside_ the `appdev` Docker container, which mounts your local code. It uses the `cache` Redis instance and integrates with Prometheus/Grafana.
+
+**Features:**
+
+- ✅ Automatic code reloading on file changes (via `appdev` service)
+- ✅ Includes Prometheus/Grafana monitoring
+- ✅ Runs app in a containerized environment (closer to production)
+
+**Setup & Run:**
 
 ```bash
-# start local redis server
-docker compose up -d cache
-yarn debug
+# 1. Start background services (Redis, Prometheus, Grafana, Loki)
+docker compose up -d cache prometheus grafana loki promtail
+
+# 2. Start the development application server in the foreground
+# Logs will stream directly to your terminal.
+# Use Ctrl+C to stop.
+docker compose up appdev
 ```
 
-## Local Setup
+- **Access Server:** `http://localhost:4000`
+- **Access Prometheus:** `http://localhost:9090`. Check `Status` -> `Targets`. You should see the `appdev` job scraping `appdev:4000`.
+- **Access Grafana:** `http://localhost:3444` (Login: `gadmin` / `admin`). Use the `Prometheus` datasource.
+- **View Logs:** Logs stream directly when running `docker compose up appdev`. If you later run it with `-d`, use `docker compose logs -f appdev`.
 
-### Initial Configuration
+## Mode 2: Scalable Environment Simulation (Docker Compose)
 
-1. **Set Up Environment Variables**:
+This mode simulates a production-like deployment with multiple app instances (`app1`, `app2`, `app3`), Redis cluster, load balancer (`nginx`), and monitoring.
 
-   - Copy the sample environment file: `cp .env.sample .env`
-   - Adjust the `.env` file with the correct settings as per your project requirements.
+**Features:**
 
-2. **Start the REDIS cluster**:
-   - For standard development, use: `yarn start`
-   - For debugging with more verbose output, use: `yarn debug`
+- ✅ Simulates horizontal scaling (`app1`, `app2`, `app3`)
+- ✅ Includes load balancer (`nginx`) & Redis Cluster (`redis-master1..3`)
+- ✅ Integrates Prometheus (scraping `app1..3`) & Grafana
+- ❌ **NO** automatic code reloading for `app1..3` (requires image rebuild)
+- ❌ Slower startup
 
-3. **Check cluster status**:
-   - Use the command: `yarn docker:redis:check`
-   - This command sets up a local redis cluster and connect to it to make sure everything is working.
+**Setup & Run:**
 
-4. **Start the SDK Socket Server via docker**:
-    - Use the command: `yarn docker:debug`
+```bash
+# 1. (Optional) Build/Rebuild application images if code has changed
+docker compose build app1 app2 app3
 
-### Using Ngrok for External Access
+# 2. Initialize Redis Cluster (if needed)
+docker compose up redis-cluster-init
 
-To expose your local server to the internet, particularly for testing with mobile apps like MetaMask Mobile, use Ngrok.
+# 3. Start all services for the scalable environment
+docker compose up -d redis-master1 redis-master2 redis-master3 app1 app2 app3 nginx prometheus grafana loki promtail
+```
 
-1. **Start Ngrok**:
+- **Access Application:** Via Nginx load balancer at `http://localhost:8080`.
+- **Access Prometheus:** `http://localhost:9090` (Check `Status` -> `Targets`. You should see `socket-server-scaled` job scraping `app1..3`. The `appdev` target will likely be DOWN unless you explicitly started it).
+- **Access Grafana:** `http://localhost:3444` (Login: `gadmin` / `admin`).
 
-   - Run the command: `ngrok http 4000`
-   - Note the generated https (and http) URL, which will be used in the MetaMask Mobile app settings.
+**Deploying Code Changes in Mode 2:**
+Requires image rebuild and container restart:
 
-2. **Configure MetaMask Mobile App**:
+1.  `docker compose stop app1 app2 app3`
+2.  `docker compose build app1 app2 app3`
+3.  `docker compose up -d --force-recreate app1 app2 app3`
 
-   - Set `MM_SDK.SERVER_URL` in the MetaMask app to the https URL provided by Ngrok.
+## Using Ngrok for External Access
 
-3. **Configure Your DApp**:
-   - Set the `communicationServerUrl` in your DApp's SDK options to your local IP or `localhost` with port 4000. For example: `communicationServerUrl: "http://{yourLocalIP | localhost}:4000"`
+If you need to expose either the development server (`Mode 1`) or the Dockerized load balancer (`Mode 2`) to the internet:
 
-### Ngrok Configuration
-
-Follow the same Ngrok setup as mentioned in the Local Setup section above to expose your Docker Compose-based server.
+1.  **Identify the Port:**
+    - Mode 1 (`appdev`): `4000`
+    - Mode 2 (Nginx): `8080`
+2.  **Start Ngrok:**
+    ```bash
+    # For Mode 1
+    ngrok http 4000
+    # For Mode 2
+    ngrok http 8080
+    ```
+3.  Note the generated `https` URL from Ngrok.
+4.  **Configure MetaMask Mobile:** Set `MM_SDK.SERVER_URL` in the app to the Ngrok `https` URL.
+5.  **Configure Your DApp (if applicable):** Ensure your DApp points to the correct server URL.
 
 ## Additional Notes
 
-- **Environment-Specific Configuration**: The development mode includes additional debugging tools and settings, while the production mode is streamlined for performance.
-- **Redis Setup**: Ensure that Redis is properly configured and running when using Docker Compose.
-- **Logs and Monitoring**: Monitor the logs for any error messages or warnings during startup or operation of the server.
-- **Security Considerations**: When using Ngrok, be aware that your server is publicly accessible. Ensure that you do not expose sensitive data or endpoints.
-- **Troubleshooting**: If you encounter issues, verify your Docker Compose and Ngrok configurations. Check for network connectivity issues and ensure that all containers are running as expected.
+- **Environment Variables**: Other variables from `.env` are still loaded by services with `env_file: - .env`.
+- **Redis Data**: Redis data is persisted in Docker volumes. Use `docker compose down -v` to remove data volumes.
+- **Logs**: Check container logs using `docker compose logs <service_name>` (e.g., `docker compose logs app1`).
+- **Security**: Be cautious when exposing services via Ngrok.

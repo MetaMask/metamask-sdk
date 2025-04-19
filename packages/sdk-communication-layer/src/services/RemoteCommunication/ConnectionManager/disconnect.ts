@@ -37,7 +37,7 @@ export async function disconnect({
             id: instance.state.channelId ?? '',
             event: TrackingEvents.TERMINATED,
           },
-          instance.state.communicationServerUrl,
+          instance.state.analyticsServerUrl,
         ).catch((err) => {
           console.error(`[handleSendMessage] Cannot send analytics`, err);
         });

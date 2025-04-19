@@ -114,7 +114,7 @@ export const handleJoinChannelResults = async (
         commLayerVersion: packageJson.version,
         walletVersion: instance.remote.state.walletInfo?.version,
       },
-      state.communicationServerUrl,
+      remote.state.analyticsServerUrl,
     ).catch((err) => {
       console.error(`Cannot send analytics`, err);
     });

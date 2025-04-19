@@ -43,7 +43,7 @@ export function handleChannelRejected(
         commLayerVersion: packageJson.version,
         walletVersion: instance.remote.state.walletInfo?.version,
       },
-      instance.remote.state.communicationServerUrl,
+      instance.remote.state.analyticsServerUrl,
     ).catch((error) => {
       console.error(
         `handleChannelRejected:: Error emitting analytics event`,

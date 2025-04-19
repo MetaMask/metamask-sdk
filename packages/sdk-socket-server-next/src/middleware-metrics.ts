@@ -1,21 +1,25 @@
-import { NextFunction, Request, Response } from 'express';
 import {
-    setAnalyticsRequestDuration,
-    setAnalyticsRequestsTotal,
+  NextFunction,
+  Request as ExpressRequest,
+  Response as ExpressResponse,
+} from 'express';
+import {
+  setAnalyticsRequestDuration,
+  setAnalyticsRequestsTotal,
 } from './metrics';
 
 export function evtMetricsMiddleware(
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  _req: ExpressRequest,
+  res: ExpressResponse,
+  next: NextFunction,
 ): void {
-    const startTime = Date.now();
+  const startTime = Date.now();
 
-    res.on('finish', () => {
-        const duration = (Date.now() - startTime) / 1000;
-        setAnalyticsRequestsTotal(res.statusCode);
-        setAnalyticsRequestDuration(duration);
-    });
+  res.on('finish', () => {
+    const duration = (Date.now() - startTime) / 1000;
+    setAnalyticsRequestsTotal(res.statusCode);
+    setAnalyticsRequestDuration(duration);
+  });
 
-    next();
+  next();
 }

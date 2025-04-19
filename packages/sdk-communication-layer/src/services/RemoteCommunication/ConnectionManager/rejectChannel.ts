@@ -56,7 +56,7 @@ export async function rejectChannel({
       commLayerVersion: packageJson.version,
       walletVersion: state.walletInfo?.version,
     },
-    state.communicationServerUrl,
+    state.analyticsServerUrl,
   ).catch((error) => {
     console.error(`rejectChannel:: Error emitting analytics event`, error);
   });

@@ -7,6 +7,11 @@ services:
       - ./:/usr/src/app
     working_dir: /usr/src/app
     command: yarn debug:redis
+    labels:
+      - "logging=promtail"
+      - "service=check-redis"
+      - "job=debug"
+      - "env=development"
 
   appdev:
     image: node:latest
@@ -16,45 +21,88 @@ services:
     command: yarn debug
     ports:
       - '4000:4000'
+    environment:
+      - REDIS_NODES=redis://cache:6379
+      - NODE_ENV=development
+    depends_on:
+      - cache
+    labels:
+      - "logging=promtail"
+      - "service=appdev"
+      - "job=socket-server-dev"
+      - "env=development"
 
   app1:
     build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=${NODE_ENV:-production}
+      context: ../../
+      dockerfile: ./packages/sdk-socket-server-next/Dockerfile
     ports:
       - '4002:4000'
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
+      - NODE_ENV=development
+      - PORT=9000
+      - SENTRY_DSN=
+    labels:
+      - "logging=promtail"
+      - "service=app1"
+      - "job=socket-server-scaled"
+      - "env=production"
 
   app2:
     build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=${NODE_ENV:-production}
+      context: ../../
+      dockerfile: ./packages/sdk-socket-server-next/Dockerfile
     ports:
       - '4003:4000'
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
+      - NODE_ENV=development
+      - PORT=9000
+      - SENTRY_DSN=
+    labels:
+      - "logging=promtail"
+      - "service=app2"
+      - "job=socket-server-scaled"
+      - "env=production"
 
   app3:
     build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=${NODE_ENV:-production}
+      context: ../../
+      dockerfile: ./packages/sdk-socket-server-next/Dockerfile
     ports:
       - '4004:4000'
     env_file:
       - .env
     depends_on:
-      - cache
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    environment:
+      - REDIS_NODES=redis://redis-master1:6379,redis://redis-master2:6379,redis://redis-master3:6379
+      - REDIS_CLUSTER=true
+      - NODE_ENV=development
+      - PORT=9000
+      - SENTRY_DSN=
+    labels:
+      - "logging=promtail"
+      - "service=app3"
+      - "job=socket-server-scaled"
+      - "env=production"
 
   redis-master1:
     image: redis:7.2-alpine
@@ -63,6 +111,11 @@ services:
       - REDIS_ROLE=master
     ports:
       - "6380:6379"
+    labels:
+      - "logging=promtail"
+      - "service=redis-master1"
+      - "job=redis-cluster"
+      - "env=production"
 
   redis-master2:
     image: redis:7.2-alpine
@@ -71,6 +124,11 @@ services:
       - REDIS_ROLE=master
     ports:
       - "6381:6379"
+    labels:
+      - "logging=promtail"
+      - "service=redis-master2"
+      - "job=redis-cluster"
+      - "env=production"
 
   redis-master3:
     image: redis:7.2-alpine
@@ -79,6 +137,11 @@ services:
       - REDIS_ROLE=master
     ports:
       - "6382:6379"
+    labels:
+      - "logging=promtail"
+      - "service=redis-master3"
+      - "job=redis-cluster"
+      - "env=production"
 
   redis-cluster-init:
     image: redis:7.2-alpine
@@ -96,6 +159,11 @@ services:
     command: redis-server --maxmemory 100mb --maxmemory-policy volatile-lru --loglevel debug
     ports:
       - "${DOCKER_ENV_LOCAL_REDIS_PORT:-6379}:6379"
+    labels:
+      - "logging=promtail"
+      - "service=cache"
+      - "job=redis-dev"
+      - "env=development"
 
   nginx:
     image: nginx:latest
@@ -107,3 +175,72 @@ services:
       - app1
       - app2
       - app3
+
+  prometheus:
+    image: prom/prometheus:v2.47.2 # Pinned version for stability
+    volumes:
+      # Mount the configuration file
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      # Mount a named volume for persistent Prometheus data
+      - prometheus_data:/prometheus
+    command:
+      # Standard Prometheus startup command with config file and storage path
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--web.enable-lifecycle' # Allows config reload via API
+    ports:
+      # Expose Prometheus UI on host port 9090
+      - '9090:9090'
+    restart: unless-stopped # Optional: ensures Prometheus restarts if it stops unexpectedly
+
+  grafana:
+    image: grafana/grafana:10.1.5 # Pinned version for stability
+    ports:
+      # Expose Grafana UI on host port 3444
+      - '3444:3000'
+    volumes:
+      # Mount a named volume for persistent Grafana data (dashboards, etc.)
+      - grafana_data:/var/lib/grafana
+      # Mount provisioning configuration (datasources and dashboards)
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      # Mount dashboard definition files (used by dashboard provisioning)
+      - ./grafana/dashboards:/var/lib/grafana/dashboards/json
+    environment:
+      # Use environment variables for credentials, fallback to defaults
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-gadmin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+    depends_on:
+      # Ensure Prometheus and Loki are running before Grafana starts
+      - prometheus
+      - loki
+    restart: unless-stopped # Optional: ensures Grafana restarts if it stops unexpectedly
+
+  loki:
+    image: grafana/loki:2.9.0
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+      - loki_data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+# Define named volumes for persistent storage
+# Data stored here will survive container removal (docker compose down)
+# Use `docker compose down -v` to remove the volumes as well
+volumes:
+  grafana_data: {}
+  prometheus_data: {}
+  loki_data: {}

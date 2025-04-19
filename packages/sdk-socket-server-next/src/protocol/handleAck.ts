@@ -1,7 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import { pubClient } from '../analytics-api';
+import { pubClient } from '../redis';
 import { getLogger } from '../logger';
-import { ClientType } from '../socket-config';
+import { ClientType } from '../socket-types';
+import { incrementKeyMigration } from '../metrics';
 import { QueuedMessage } from './handleMessage';
 
 const logger = getLogger();
@@ -23,16 +24,47 @@ export const handleAck = async ({
   socket,
   clientType,
 }: ACKParams): Promise<void> => {
-  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+  // Force keys into the same hash slot in Redis Cluster, using a hash tag
   const queueKey = `queue:{${channelId}}:${clientType}`;
+  // Legacy key without hash tag for backward compatibility
+  const legacyQueueKey = `queue:${channelId}:${clientType}`;
+
   let messages: string[] = [];
 
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
+
   try {
-    // Retrieve all messages to find and remove the specified one
-    const rawMessages = await pubClient.lrange(queueKey, 0, -1);
-    messages = rawMessages.map((item) =>
+    // Try new format first using pubClient wrapper
+    let rawMessages = await pubClient.lrange(queueKey, 0, -1);
+
+    // If no messages found with new format, try legacy format and migrate if needed
+    if (rawMessages.length === 0) {
+      const legacyRawMessages = await pubClient.lrange(legacyQueueKey, 0, -1);
+
+      if (legacyRawMessages.length > 0) {
+        incrementKeyMigration({ migrationType: 'ack-queue' });
+        logger.info(
+          `Migrating ${legacyRawMessages.length} messages from ${legacyQueueKey} to ${queueKey}`,
+        );
+
+        // Use pipeline for efficiency - note: pipeline uses global Redis client in wrapper
+        const pipeline = pubClient.pipeline();
+
+        // Add all messages to the new queue
+        for (const msg of legacyRawMessages) {
+          pipeline.rpush(queueKey, msg);
+        }
+
+        // Set expiry on the new queue
+        pipeline.expire(queueKey, 3600); // 1 hour expiry
+
+        // Process from legacy messages in this run
+        rawMessages = legacyRawMessages;
+      }
+    }
+
+    messages = rawMessages.map((item: string) =>
       Array.isArray(item) ? item[1] : item,
     );
 

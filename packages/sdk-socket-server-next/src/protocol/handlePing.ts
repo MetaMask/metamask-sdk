@@ -2,7 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { validate } from 'uuid';
 import { isDevelopment } from '../config';
 import { getLogger } from '../logger';
-import { ClientType } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { retrieveMessages } from './retrieveMessages';
 
 const logger = getLogger();
@@ -43,7 +43,7 @@ export const handlePing = async ({
   );
 
   if (clientType) {
-    // Check for pending messages
+    // Check for pending messages - retrieveMessages now uses the connection pool internally
     const messages = await retrieveMessages({ channelId, clientType });
     if (messages.length > 0) {
       logger.debug(
