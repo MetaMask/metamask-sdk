@@ -15,6 +15,11 @@ jest.mock('../services/PlatfformManager/openDeeplink');
 
 describe('PlatformManager', () => {
   let platformManager: PlatformManager;
+  const originalNavigator = Object.getOwnPropertyDescriptor(
+    global,
+    'navigator',
+  );
+  const originalWindow = Object.getOwnPropertyDescriptor(global, 'window');
 
   const mockGetPlatformType = getPlatformType as jest.MockedFunction<
     typeof getPlatformType
@@ -36,6 +41,23 @@ describe('PlatformManager', () => {
       preferredOpenLink: undefined,
       debug: false,
     });
+  });
+
+  afterEach(() => {
+    // Restore original properties after each test
+    if (originalNavigator) {
+      Object.defineProperty(global, 'navigator', originalNavigator);
+    } else {
+      // @ts-expect-error - Deleting property for cleanup
+      delete global.navigator;
+    }
+
+    if (originalWindow) {
+      Object.defineProperty(global, 'window', originalWindow);
+    } else {
+      // @ts-expect-error - Deleting property for cleanup
+      delete global.window;
+    }
   });
 
   describe('constructor', () => {
@@ -98,23 +120,27 @@ describe('PlatformManager', () => {
     });
 
     it('should return true if the environment is React Native', () => {
-      global.navigator = {
-        product: 'ReactNative',
-      } as any;
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'ReactNative' },
+        writable: true,
+        configurable: true,
+      });
 
-      global.window = {
-        navigator: {
-          product: 'ReactNative',
-        },
-      } as any;
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { product: 'ReactNative' } },
+        writable: true,
+        configurable: true,
+      });
 
       expect(platformManager.isReactNative()).toBe(true);
     });
 
     it('should return false if the environment is not React Native', () => {
-      global.navigator = {
-        product: 'Gecko',
-      } as any;
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'Gecko' },
+        writable: true,
+        configurable: true,
+      });
 
       expect(platformManager.isReactNative()).toBe(false);
     });
@@ -152,29 +178,47 @@ describe('PlatformManager', () => {
     });
 
     it('should return true if environment is a desktop web browser', () => {
-      jest
-        .spyOn(platformManager, 'isNotBrowser')
-        .mockImplementation()
-        .mockReturnValue(false);
+      // Ensure window and navigator exist for Bowser/platform checks if needed by underlying logic
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { userAgent: 'Test Desktop Agent' } },
+        writable: true,
+        configurable: true,
+      });
 
-      jest
-        .spyOn(platformManager, 'isMobileWeb')
-        .mockImplementation()
-        .mockReturnValue(false);
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'Test Desktop Agent', product: 'Gecko' }, // Mock non-RN navigator
+        writable: true,
+        configurable: true,
+      });
+
+      // Mock dependencies of isDesktopWeb if necessary
+      // Assuming isDesktopWeb = !isNotBrowser && !isMobileWeb
+      jest.spyOn(platformManager, 'isNotBrowser').mockReturnValue(false);
+      jest.spyOn(platformManager, 'isMobileWeb').mockReturnValue(false);
+      // Also mock isMobile if isDesktopWeb depends on it
+      jest.spyOn(platformManager, 'isMobile').mockReturnValue(false);
 
       expect(platformManager.isDesktopWeb()).toBe(true);
     });
 
     it('should return false if environment is not a desktop web browser', () => {
-      jest
-        .spyOn(platformManager, 'isNotBrowser')
-        .mockImplementation()
-        .mockReturnValue(false);
+      // Ensure window and navigator exist
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { userAgent: 'Test Mobile Agent' } },
+        writable: true,
+        configurable: true,
+      });
 
-      jest
-        .spyOn(platformManager, 'isMobileWeb')
-        .mockImplementation()
-        .mockReturnValue(true);
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'Test Mobile Agent', product: 'Gecko' }, // Mock non-RN navigator
+        writable: true,
+        configurable: true,
+      });
+
+      jest.spyOn(platformManager, 'isNotBrowser').mockReturnValue(false); // It is a browser
+      jest.spyOn(platformManager, 'isMobileWeb').mockReturnValue(true); // It is mobile web
+      // Also mock isMobile if isDesktopWeb depends on it
+      jest.spyOn(platformManager, 'isMobile').mockReturnValue(true);
 
       expect(platformManager.isDesktopWeb()).toBe(false);
     });
@@ -183,11 +227,18 @@ describe('PlatformManager', () => {
   describe('isMobile', () => {
     beforeEach(() => {
       jest.clearAllMocks();
-      global.window = {
-        navigator: {
-          userAgent: 'some-user-agent',
-        },
-      } as any;
+      // Need to define window/navigator here as well for Bowser
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { userAgent: 'some-user-agent' } },
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'some-user-agent' },
+        writable: true,
+        configurable: true,
+      });
 
       platformManager = new PlatformManager({
         useDeepLink: false,
@@ -281,31 +332,76 @@ describe('PlatformManager', () => {
     });
 
     it('should return false if window is undefined', () => {
-      global.window = undefined as any;
+      Object.defineProperty(global, 'window', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
+
       expect(platformManager.isMetaMaskMobileWebView()).toBe(false);
     });
 
     it('should return true if window.ReactNativeWebView exists and userAgent ends with MetaMaskMobile', () => {
-      global.window = { ReactNativeWebView: {} } as any;
-      global.navigator = { userAgent: 'someStringMetaMaskMobile' } as any;
+      Object.defineProperty(global, 'window', {
+        value: { ReactNativeWebView: {} },
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'someStringMetaMaskMobile' },
+        writable: true,
+        configurable: true,
+      });
+
       expect(platformManager.isMetaMaskMobileWebView()).toBe(true);
     });
 
     it('should return false if window.ReactNativeWebView does not exist', () => {
-      global.window = {} as any;
-      global.navigator = { userAgent: 'someStringMetaMaskMobile' } as any;
+      Object.defineProperty(global, 'window', {
+        value: {}, // Missing ReactNativeWebView
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'someStringMetaMaskMobile' },
+        writable: true,
+        configurable: true,
+      });
+
       expect(platformManager.isMetaMaskMobileWebView()).toBe(false);
     });
 
     it('should return false if userAgent does not end with MetaMaskMobile', () => {
-      global.window = { ReactNativeWebView: {} } as any;
-      global.navigator = { userAgent: 'someString' } as any;
+      Object.defineProperty(global, 'window', {
+        value: { ReactNativeWebView: {} },
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'someString' }, // Doesn't end with MetaMaskMobile
+        writable: true,
+        configurable: true,
+      });
+
       expect(platformManager.isMetaMaskMobileWebView()).toBe(false);
     });
 
     it('should return false if neither condition is met', () => {
-      global.window = {} as any;
-      global.navigator = { userAgent: 'someString' } as any;
+      Object.defineProperty(global, 'window', {
+        value: {}, // Missing ReactNativeWebView
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { userAgent: 'someString' }, // Doesn't end with MetaMaskMobile
+        writable: true,
+        configurable: true,
+      });
+
       expect(platformManager.isMetaMaskMobileWebView()).toBe(false);
     });
   });
@@ -330,6 +426,7 @@ describe('PlatformManager', () => {
       platformManager.state = {
         platformType: PlatformType.DesktopWeb,
       } as any;
+
       expect(platformManager.isMobileWeb()).toBe(false);
     });
   });
@@ -343,35 +440,73 @@ describe('PlatformManager', () => {
     });
 
     it('should return true when window is undefined', () => {
-      global.window = undefined as any;
+      Object.defineProperty(global, 'window', {
+        value: undefined,
+        writable: true,
+        configurable: true,
+      });
 
-      expect(platformManager.isNotBrowser()).toBe(true);
+      expect(PlatformManager.isNotBrowser()).toBe(true);
     });
 
     it('should return true when window.navigator is undefined', () => {
-      global.window = {} as any;
+      Object.defineProperty(global, 'window', {
+        value: {}, // No navigator property
+        writable: true,
+        configurable: true,
+      });
 
-      expect(platformManager.isNotBrowser()).toBe(true);
+      expect(PlatformManager.isNotBrowser()).toBe(true);
     });
 
     it('should return true when global.navigator.product is ReactNative', () => {
-      global.navigator = { product: 'ReactNative' } as any;
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'ReactNative' },
+        writable: true,
+        configurable: true,
+      });
 
-      expect(platformManager.isNotBrowser()).toBe(true);
+      // Ensure window exists but doesn't interfere
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { product: 'Gecko' } }, // Different product on window.navigator
+        writable: true,
+        configurable: true,
+      });
+
+      expect(PlatformManager.isNotBrowser()).toBe(true);
     });
 
     it('should return true when navigator.product is ReactNative', () => {
-      global.window = {} as any;
-      global.window.navigator = { product: 'ReactNative' } as any;
+      // Ensure global.navigator doesn't interfere
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'Gecko' }, // Different product on global.navigator
+        writable: true,
+        configurable: true,
+      });
 
-      expect(platformManager.isNotBrowser()).toBe(true);
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { product: 'ReactNative' } },
+        writable: true,
+        configurable: true,
+      });
+
+      expect(PlatformManager.isNotBrowser()).toBe(true);
     });
 
     it('should return false otherwise', () => {
-      global.window = { navigator: {} } as any;
-      global.navigator = {} as any;
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { product: 'Gecko' } }, // Regular browser
+        writable: true,
+        configurable: true,
+      });
 
-      expect(platformManager.isNotBrowser()).toBe(false);
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'Gecko' }, // Regular browser
+        writable: true,
+        configurable: true,
+      });
+
+      expect(PlatformManager.isNotBrowser()).toBe(false);
     });
   });
 
@@ -406,12 +541,32 @@ describe('PlatformManager', () => {
       });
     });
 
-    it('should return true if isNotBrowser returns false', () => {
+    // Note: This test now needs to mock the *static* isNotBrowser method
+    it('should return true if PlatformManager.isNotBrowser returns false', () => {
+      // Need to ensure navigator/window are defined for the static method to potentially use them
+      Object.defineProperty(global, 'window', {
+        value: { navigator: { product: 'Gecko' } },
+        writable: true,
+        configurable: true,
+      });
+
+      Object.defineProperty(global, 'navigator', {
+        value: { product: 'Gecko' },
+        writable: true,
+        configurable: true,
+      });
       jest.spyOn(PlatformManager, 'isNotBrowser').mockReturnValue(false);
       expect(platformManager.isBrowser()).toBe(true);
     });
 
-    it('should return false if isNotBrowser returns true', () => {
+    it('should return false if PlatformManager.isNotBrowser returns true', () => {
+      // Ensure window/navigator are set up for a non-browser scenario if needed
+      Object.defineProperty(global, 'window', {
+        value: undefined, // Example non-browser scenario
+        writable: true,
+        configurable: true,
+      });
+      // global.navigator might also need setting depending on isNotBrowser logic
       jest.spyOn(PlatformManager, 'isNotBrowser').mockReturnValue(true);
       expect(platformManager.isBrowser()).toBe(false);
     });

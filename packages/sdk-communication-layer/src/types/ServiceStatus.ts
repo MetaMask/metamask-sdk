@@ -1,7 +1,7 @@
+import { type OriginatorInfo } from '@metamask/sdk-types';
 import { ChannelConfig } from './ChannelConfig';
 import { ConnectionStatus } from './ConnectionStatus';
 import { KeyInfo } from './KeyInfo';
-import { OriginatorInfo } from './OriginatorInfo';
 
 export interface ServiceStatus {
   keyInfo?: KeyInfo;

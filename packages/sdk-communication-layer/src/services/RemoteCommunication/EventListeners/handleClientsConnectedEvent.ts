@@ -1,10 +1,9 @@
-import { logger } from '../../../utils/logger';
+import { SendAnalytics } from '@metamask/analytics-client';
+import { TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
-import { SendAnalytics } from '../../../Analytics';
 import { RemoteCommunication } from '../../../RemoteCommunication';
-import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { EventType } from '../../../types/EventType';
-import { TrackingEvents } from '../../../types/TrackingEvent';
+import { logger } from '../../../utils/logger';
 
 /**
  * Creates and returns an event handler function for the "CLIENTS_CONNECTED" event. This handler function manages the connected clients for a given RemoteCommunication instance.
@@ -16,13 +15,9 @@ import { TrackingEvents } from '../../../types/TrackingEvent';
  * 4. The "CLIENTS_CONNECTED" event is emitted to inform other parts of the system about the successful connection of clients.
  *
  * @param instance The instance of RemoteCommunication for which the event handler function is being created.
- * @param communicationLayerPreference The preferred communication layer used for this connection.
  * @returns A function that acts as the event handler for the "CLIENTS_CONNECTED" event.
  */
-export function handleClientsConnectedEvent(
-  instance: RemoteCommunication,
-  communicationLayerPreference: CommunicationLayerPreference,
-) {
+export function handleClientsConnectedEvent(instance: RemoteCommunication) {
   return () => {
     const { state } = instance;
     // Propagate the event to manage different loading states on the ui.
@@ -32,22 +27,20 @@ export function handleClientsConnectedEvent(
       } keysExchanged=${state.communicationLayer?.getKeyInfo()?.keysExchanged}`,
     );
 
-    if (state.analytics) {
-      const requestEvent = state.isOriginator
-        ? TrackingEvents.REQUEST
-        : TrackingEvents.REQUEST_MOBILE;
+    if (state.analytics && state.channelId) {
       SendAnalytics(
         {
-          id: state.channelId ?? '',
-          event: state.reconnection ? TrackingEvents.RECONNECT : requestEvent,
+          id: state.channelId,
+          event: state.isOriginator
+            ? TrackingEvents.REQUEST
+            : TrackingEvents.RECONNECT,
           ...state.originatorInfo,
-          commLayer: communicationLayerPreference,
           sdkVersion: state.sdkVersion,
           walletVersion: state.walletInfo?.version,
           commLayerVersion: packageJson.version,
         },
         state.analyticsServerUrl,
-      ).catch((err) => {
+      ).catch((err: unknown) => {
         console.error(`Cannot send analytics`, err);
       });
     }

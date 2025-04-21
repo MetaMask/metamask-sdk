@@ -1,5 +1,6 @@
 import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
+import { type OriginatorInfo } from '@metamask/sdk-types';
 import packageJson from '../package.json';
 import { ECIESProps } from './ECIES';
 import { SocketService } from './SocketService';
@@ -31,7 +32,6 @@ import { DappMetadataWithSource } from './types/DappMetadata';
 import { DisconnectOptions } from './types/DisconnectOptions';
 import { EventType } from './types/EventType';
 import { CommunicationLayerLoggingOptions } from './types/LoggingOptions';
-import { OriginatorInfo } from './types/OriginatorInfo';
 import { PlatformType } from './types/PlatformType';
 import { ServiceStatus } from './types/ServiceStatus';
 import {
@@ -53,7 +53,7 @@ export interface RemoteCommunicationProps {
   privateKey?: string;
   reconnect?: boolean;
   relayPersistence?: boolean; // Used by wallet to start the connection with relayPersistence and avoid the key exchange.
-  dappMetadata?: DappMetadataWithSource;
+  dappMetadata: DappMetadataWithSource;
   walletInfo?: WalletInfo;
   transports?: string[];
   analytics?: boolean;
@@ -89,7 +89,7 @@ export interface RemoteCommunicationState {
   originatorInfo?: OriginatorInfo;
   originatorInfoSent: boolean;
   reconnection: boolean;
-  dappMetadata?: DappMetadataWithSource;
+  dappMetadata: DappMetadataWithSource;
   communicationServerUrl: string;
   analyticsServerUrl: string;
   context: string;
@@ -136,95 +136,70 @@ export class RemoteCommunication extends EventEmitter2 {
     // 2) If I am Dapp (isOriginator==true) then other side is MetaMask
     // Should not be set directly, use this.setConnectionStatus() instead to always emit events.
     _connectionStatus: ConnectionStatus.DISCONNECTED,
-  };
+  } as RemoteCommunicationState;
 
   constructor(options: RemoteCommunicationProps) {
     super();
 
     this._options = options;
 
-    const {
-      platformType,
-      communicationLayerPreference,
-      otherPublicKey,
-      reconnect,
-      walletInfo,
-      dappMetadata,
-      protocolVersion,
-      transports,
-      context,
-      relayPersistence,
-      ecies,
-      analytics = false,
-      storage,
-      sdkVersion,
-      communicationServerUrl = DEFAULT_SERVER_URL,
-      analyticsServerUrl = DEFAULT_ANALYTICS_SERVER_URL,
-      logging,
-      autoConnect = {
+    this.state = {
+      ...this.state,
+      otherPublicKey: options.otherPublicKey,
+      dappMetadata: options.dappMetadata,
+      walletInfo: options.walletInfo,
+      transports: options.transports,
+      platformType: options.platformType,
+      analytics: options?.analytics ?? false,
+      protocolVersion: options.protocolVersion ?? 1,
+      isOriginator: !options.otherPublicKey,
+      relayPersistence: options.relayPersistence,
+      communicationServerUrl:
+        options.communicationServerUrl ?? DEFAULT_SERVER_URL,
+      analyticsServerUrl:
+        options.analyticsServerUrl ?? DEFAULT_ANALYTICS_SERVER_URL,
+      context: options.context,
+      storageManager: options.storage?.storageManager,
+      sdkVersion: options.sdkVersion,
+      storageOptions: options.storage,
+      autoConnectOptions: options.autoConnect ?? {
         timeout: CHANNEL_MAX_WAITING_TIME,
       },
-    } = options;
-
-    this.state.otherPublicKey = otherPublicKey;
-    this.state.dappMetadata = dappMetadata;
-    this.state.walletInfo = walletInfo;
-    this.state.transports = transports;
-    this.state.platformType = platformType;
-    this.state.analytics = analytics;
-    this.state.protocolVersion = protocolVersion ?? 1;
-    this.state.isOriginator = !otherPublicKey;
-    this.state.relayPersistence = relayPersistence;
-    this.state.communicationServerUrl = communicationServerUrl;
-    this.state.analyticsServerUrl = analyticsServerUrl;
-    this.state.context = context;
-    this.state.terminated = false;
-    this.state.sdkVersion = sdkVersion;
+      debug: options.logging?.remoteLayer === true,
+      logging: options.logging,
+    };
 
     this.setMaxListeners(50);
 
     this.setConnectionStatus(ConnectionStatus.DISCONNECTED);
-    if (storage?.duration) {
+    if (options.storage?.duration) {
       this.state.sessionDuration = DEFAULT_SESSION_TIMEOUT_MS;
     }
-    this.state.storageOptions = storage;
-    this.state.autoConnectOptions = autoConnect;
-    this.state.debug = logging?.remoteLayer === true;
 
     // Enable loggers early
-    if (logging?.remoteLayer === true) {
+    if (options.logging?.remoteLayer === true) {
       debug.enable('RemoteCommunication:Layer');
     }
 
-    if (logging?.serviceLayer === true) {
+    if (options.logging?.serviceLayer === true) {
       debug.enable('SocketService:Layer');
     }
 
-    if (logging?.eciesLayer === true) {
+    if (options.logging?.eciesLayer === true) {
       debug.enable('ECIES:Layer');
     }
 
-    if (logging?.keyExchangeLayer === true) {
+    if (options.logging?.keyExchangeLayer === true) {
       debug.enable('KeyExchange:Layer');
     }
 
-    this.state.logging = logging;
-
-    if (storage?.storageManager) {
-      this.state.storageManager = storage.storageManager;
-    }
-
-    logger.RemoteCommunication(
-      `[RemoteCommunication: constructor()] protocolVersion=${protocolVersion} relayPersistence=${relayPersistence} isOriginator=${this.state.isOriginator} communicationLayerPreference=${communicationLayerPreference} otherPublicKey=${otherPublicKey} reconnect=${reconnect}`,
-    );
-
     if (!this.state.isOriginator) {
       initSocketService({
-        communicationLayerPreference,
-        otherPublicKey,
-        reconnect,
-        ecies,
-        communicationServerUrl,
+        communicationLayerPreference: CommunicationLayerPreference.SOCKET,
+        otherPublicKey: this.state.otherPublicKey,
+        reconnect: this._options.reconnect,
+        ecies: this._options.ecies,
+        communicationServerUrl: this.state.communicationServerUrl,
         instance: this,
       });
     }

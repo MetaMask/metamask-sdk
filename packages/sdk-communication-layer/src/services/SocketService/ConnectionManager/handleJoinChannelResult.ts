@@ -1,3 +1,5 @@
+import { SendAnalytics } from '@metamask/analytics-client';
+import { TrackingEvents } from '@metamask/sdk-types';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { KeyExchangeMessageType } from '../../../types/KeyExchangeMessageType';
@@ -6,8 +8,6 @@ import { ChannelConfig } from '../../../types/ChannelConfig';
 import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { logger } from '../../../utils/logger';
-import { SendAnalytics } from '../../../Analytics';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 
 import packageJson from '../../../../package.json';
 
@@ -79,8 +79,8 @@ export const handleJoinChannelResults = async (
       .sendMessage({
         type: KeyExchangeMessageType.KEY_HANDSHAKE_ACK,
       })
-      .catch((err) => {
-        console.error(err);
+      .catch((err: unknown) => {
+        console.error(`SocketService.handleJoinChannelResult() Error: ${err}`);
       });
 
     instance.state.socket?.emit(MessageType.PING, {
@@ -110,12 +110,11 @@ export const handleJoinChannelResults = async (
           : TrackingEvents.CONNECTED_MOBILE,
         ...instance.remote.state.originatorInfo,
         sdkVersion: instance.remote.state.sdkVersion,
-        commLayer: instance.state.communicationLayerPreference,
         commLayerVersion: packageJson.version,
         walletVersion: instance.remote.state.walletInfo?.version,
       },
       remote.state.analyticsServerUrl,
-    ).catch((err) => {
+    ).catch((err: unknown) => {
       console.error(`Cannot send analytics`, err);
     });
   }

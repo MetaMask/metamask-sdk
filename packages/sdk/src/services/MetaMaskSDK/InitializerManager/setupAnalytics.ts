@@ -1,4 +1,5 @@
 import { DEFAULT_SERVER_URL } from '@metamask/sdk-communication-layer';
+import { type OriginatorInfo } from '@metamask/sdk-types';
 import { Analytics } from '../../Analytics';
 import { MetaMaskSDK } from '../../../sdk';
 
@@ -17,18 +18,20 @@ export async function setupAnalytics(instance: MetaMaskSDK) {
 
   const platformType = instance.platformManager?.getPlatformType();
 
+  const originator: OriginatorInfo = {
+    url: options.dappMetadata.url ?? '',
+    title: options.dappMetadata.name ?? '',
+    dappId:
+      typeof window === 'undefined' || typeof window.location === 'undefined'
+        ? options.dappMetadata?.name ?? options.dappMetadata?.url ?? 'N/A'
+        : window.location.hostname,
+    platform: platformType ?? '',
+    source: options._source ?? '',
+  };
+
   instance.analytics = new Analytics({
     serverUrl: options.communicationServerUrl ?? DEFAULT_SERVER_URL,
     enabled: options.enableAnalytics,
-    originatorInfo: {
-      url: options.dappMetadata.url ?? '',
-      title: options.dappMetadata.name ?? '',
-      dappId:
-        typeof window === 'undefined' || typeof window.location === 'undefined'
-          ? options.dappMetadata?.name ?? options.dappMetadata?.url ?? 'N/A'
-          : window.location.hostname,
-      platform: platformType ?? '',
-      source: options._source ?? '',
-    },
+    originatorInfo: originator,
   });
 }

@@ -1,13 +1,11 @@
+import { SendAnalytics } from '@metamask/analytics-client';
+import { type OriginatorInfo, TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
-import { SendAnalytics } from '../../../Analytics';
 import { DEFAULT_SESSION_TIMEOUT_MS } from '../../../config';
 import { RemoteCommunication } from '../../../RemoteCommunication';
 import { ChannelConfig } from '../../../types/ChannelConfig';
-import { CommunicationLayerPreference } from '../../../types/CommunicationLayerPreference';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
 import { MessageType } from '../../../types/MessageType';
-import { OriginatorInfo } from '../../../types/OriginatorInfo';
-import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { setLastActiveDate } from '../StateManger';
 
@@ -29,13 +27,9 @@ import { setLastActiveDate } from '../StateManger';
  *    b. The state variable `originatorInfoSent` is updated to indicate that the originator information has been transmitted.
  *
  * @param instance The `RemoteCommunication` instance for which the event handler function is being created.
- * @param communicationLayerPreference The communication layer preference, used for analytics.
  * @returns A function that acts as the event handler for the "keys_exchanged" event, expecting a message containing details about the key exchange.
  */
-export function handleKeysExchangedEvent(
-  instance: RemoteCommunication,
-  communicationLayerPreference: CommunicationLayerPreference,
-) {
+export function handleKeysExchangedEvent(instance: RemoteCommunication) {
   return (message: {
     isOriginator: boolean;
     originatorInfo: OriginatorInfo;
@@ -77,13 +71,12 @@ export function handleKeysExchangedEvent(
             : TrackingEvents.CONNECTED_MOBILE,
           ...state.originatorInfo,
           sdkVersion: state.sdkVersion,
-          commLayer: communicationLayerPreference,
           commLayerVersion: packageJson.version,
           walletVersion: state.walletInfo?.version,
         },
         state.analyticsServerUrl,
-      ).catch((err) => {
-        console.error(`Cannot send analytics`, err);
+      ).catch((err: unknown) => {
+        console.error('Failed to send analytics key exchanged event', err);
       });
     }
 

@@ -90,13 +90,26 @@ export class PlatformManager {
   }
 
   static isNotBrowser() {
-    return (
-      typeof window === 'undefined' ||
-      !window?.navigator ||
-      (typeof global !== 'undefined' &&
-        global?.navigator?.product === 'ReactNative') ||
-      navigator?.product === 'ReactNative'
-    );
+    // Check if window or window.navigator is missing
+    if (typeof window === 'undefined' || !window?.navigator) {
+      return true;
+    }
+
+    // Check if global.navigator indicates React Native (for environments where window might be mocked but global reflects RN)
+    if (
+      typeof global !== 'undefined' &&
+      global?.navigator?.product === 'ReactNative'
+    ) {
+      return true;
+    }
+
+    // Check if window.navigator indicates React Native
+    if (window.navigator?.product === 'ReactNative') {
+      return true;
+    }
+
+    // Otherwise, it's likely a browser environment
+    return false;
   }
 
   isNotBrowser() {

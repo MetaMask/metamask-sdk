@@ -1,24 +1,27 @@
+import { SendAnalytics } from '@metamask/analytics-client'; // Removed unused AnalyticsProps
 import {
-  SendAnalytics,
+  type OriginatorInfo,
   TrackingEvents,
-  AnalyticsProps,
-} from '@metamask/sdk-communication-layer';
+  type TrackingEvent,
+} from '@metamask/sdk-types'; // Use types package, import OriginatorInfo
 import * as loggerModule from '../utils/logger';
 import { Analytics } from './Analytics';
 // Replace with your actual import path
-jest.mock('@metamask/sdk-communication-layer');
+jest.mock('@metamask/analytics-client', () => ({
+  SendAnalytics: jest.fn(),
+}));
 
 const mockSendAnalytics = SendAnalytics as jest.Mock;
 interface Props {
   serverUrl: string;
-  originatorInfo: AnalyticsProps['originatorInfo'];
+  originatorInfo: OriginatorInfo; // Use OriginatorInfo directly
   enabled?: boolean;
 }
 
 describe('Analytics', () => {
   let props: {
     serverUrl: string;
-    originatorInfo: AnalyticsProps['originatorInfo'];
+    originatorInfo: OriginatorInfo; // Use OriginatorInfo directly
     enabled?: boolean;
   };
   const spyLogger = jest.spyOn(loggerModule, 'logger');
@@ -59,7 +62,7 @@ describe('Analytics', () => {
   describe('send()', () => {
     it('should send analytics when enabled', () => {
       const analytics = new Analytics({ ...props, enabled: true });
-      const event: TrackingEvents = TrackingEvents.AUTHORIZED;
+      const event: TrackingEvent = TrackingEvents.AUTHORIZED; // Use type TrackingEvent
       analytics.send({ event });
       expect(mockSendAnalytics).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -71,7 +74,7 @@ describe('Analytics', () => {
 
     it('should not send analytics when disabled', () => {
       const analytics = new Analytics({ ...props, enabled: false });
-      const event: TrackingEvents = TrackingEvents.AUTHORIZED;
+      const event: TrackingEvent = TrackingEvents.AUTHORIZED; // Use type TrackingEvent
       analytics.send({ event });
       expect(mockSendAnalytics).not.toHaveBeenCalled();
     });
@@ -81,7 +84,7 @@ describe('Analytics', () => {
         mockSendAnalytics.mockRejectedValue(new Error('Send failed'));
 
         const analytics = new Analytics({ ...props });
-        const event: TrackingEvents = TrackingEvents.AUTHORIZED;
+        const event: TrackingEvent = TrackingEvents.AUTHORIZED; // Use type TrackingEvent
 
         await analytics.send({ event });
 

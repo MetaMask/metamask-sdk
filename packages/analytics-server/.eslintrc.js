@@ -1,19 +1,30 @@
+const path = require('path');
+
+/**
+ * @type {import('eslint').Linter.Config}
+ */
 module.exports = {
+  extends: [
+    '@metamask/eslint-config-nodejs', // Use nodejs config for server
+    '@metamask/eslint-config-typescript',
+    '../../.eslintrc.js' // Extend the root config
+  ],
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
+  parserOptions: {
+    project: [path.resolve(__dirname, 'tsconfig.eslint.json')], // Point to eslint tsconfig
+  },
+
+  ignorePatterns: [
+    '.prettierrc.js',
+    '**/.eslintrc.js',
+    '**/jest.config.ts',
+    '**/dist*/',
   ],
-  env: {
-    node: true,
-    es6: true,
-  },
+  
+  // Remove env and basic rules as they are likely handled by extended configs
+  // Keep specific overrides if necessary
   rules: {
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-  },
+    'node/no-process-env': 'off',
+  }
 }; 
