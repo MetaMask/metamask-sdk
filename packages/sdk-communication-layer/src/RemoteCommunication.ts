@@ -159,6 +159,7 @@ export class RemoteCommunication extends EventEmitter2 {
       analyticsServerUrl:
         options.analyticsServerUrl ?? DEFAULT_ANALYTICS_SERVER_URL,
       context: options.context,
+      storageManager: options.storage?.storageManager,
       sdkVersion: options.sdkVersion,
       storageOptions: options.storage,
       autoConnectOptions: options.autoConnect ?? {
