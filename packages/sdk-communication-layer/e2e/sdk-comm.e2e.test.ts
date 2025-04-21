@@ -59,6 +59,10 @@ export const getClient = ({ type, options }: { type: 'dApp' | 'wallet', options:
     reconnect: false,
     relayPersistence: true,
     analytics: true,
+    dappMetadata: {
+      name: `${type}-test`,
+      url: 'http://example.com',
+    },
     logging: {
       eciesLayer: true,
       keyExchangeLayer: true,

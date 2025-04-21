@@ -25,7 +25,6 @@ module.exports = {
   // Remove env and basic rules as they are likely handled by extended configs
   // Keep specific overrides if necessary
   rules: {
-    // Example override (if needed):
-    // '@typescript-eslint/no-explicit-any': 'warn',
+    'node/no-process-env': 'off',
   }
 }; 
