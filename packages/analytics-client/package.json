@@ -36,7 +36,8 @@
   },
   "dependencies": {
     "@metamask/sdk-types": "workspace:^",
-    "cross-fetch": "^4.0.0"
+    "cross-fetch": "^4.0.0",
+    "openapi-fetch": "^0.13.5"
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",

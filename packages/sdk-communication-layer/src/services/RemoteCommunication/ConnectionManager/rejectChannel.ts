@@ -1,6 +1,6 @@
 // packages/sdk-communication-layer/src/services/RemoteCommunication/ConnectionManager/connectToChannel.ts
 import { validate } from 'uuid';
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { TrackingEvents } from '@metamask/sdk-types';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
@@ -47,6 +47,11 @@ export async function rejectChannel({
   }
 
   // Send analytics event
+  trackEvent({
+    name: 'sdk_connection_rejected',
+    transport_type: 'websocket',
+  });
+  
   SendAnalytics(
     {
       id: channelId,

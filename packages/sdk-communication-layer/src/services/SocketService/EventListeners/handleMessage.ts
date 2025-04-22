@@ -1,4 +1,4 @@
-import { SendAnalytics } from '@metamask/analytics-client';
+import { SendAnalytics, trackEvent } from '@metamask/analytics-client';
 import { TrackingEvents } from '@metamask/sdk-types';
 import packageJson from '../../../../package.json';
 import { SocketService } from '../../../SocketService';
@@ -212,6 +212,11 @@ export function handleMessage(instance: SocketService, channelId: string) {
           instance.remote.state.analytics &&
           lcLogguedRPCs.includes(initialRPCMethod.method.toLowerCase())
         ) {
+          trackEvent({
+            name: 'sdk_action_succeeded',
+            action: initialRPCMethod.method,
+          })
+
           SendAnalytics(
             {
               id: instance.remote.state.channelId ?? '',
