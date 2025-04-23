@@ -10979,17 +10979,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/json-rpc-engine@npm:^10.0.2":
-  version: 10.0.2
-  resolution: "@metamask/json-rpc-engine@npm:10.0.2"
-  dependencies:
-    "@metamask/rpc-errors": ^7.0.2
-    "@metamask/safe-event-emitter": ^3.0.0
-    "@metamask/utils": ^11.0.1
-  checksum: db561d6ffe4de041dc2fe79c6d1eb098bd9eb444864568c4781f3227e6c7e33563ac2858caadb14f6b58facbf189fe0f50725adbc29f3b2641b787e550e548e6
-  languageName: node
-  linkType: hard
-
 "@metamask/json-rpc-engine@npm:^7.0.0":
   version: 7.3.3
   resolution: "@metamask/json-rpc-engine@npm:7.3.3"
@@ -11032,18 +11021,6 @@ __metadata:
     "@metamask/utils": ^8.3.0
     readable-stream: ^3.6.2
   checksum: ff11ad3ff0ec27530efc53c4e6543661648f437dacdd58797449307e20dbc428b479cd8d1e9767797268b98d0445bd6f1986820a8c855faeef01d5c03b55323b
-  languageName: node
-  linkType: hard
-
-"@metamask/json-rpc-middleware-stream@npm:^8.0.6":
-  version: 8.0.6
-  resolution: "@metamask/json-rpc-middleware-stream@npm:8.0.6"
-  dependencies:
-    "@metamask/json-rpc-engine": ^10.0.2
-    "@metamask/safe-event-emitter": ^3.0.0
-    "@metamask/utils": ^11.0.1
-    readable-stream: ^3.6.2
-  checksum: e004de7a8090afc0441b9bf661106ac07a550862f6e824bfebcb14b46eea7551beeaeab4c39ac810beee0f53ad1032344a99eef1c0f5f118fe8d388e7e0c5014
   languageName: node
   linkType: hard
 
@@ -11149,27 +11126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/providers@npm:^18.3.1":
-  version: 18.3.1
-  resolution: "@metamask/providers@npm:18.3.1"
-  dependencies:
-    "@metamask/json-rpc-engine": ^10.0.2
-    "@metamask/json-rpc-middleware-stream": ^8.0.6
-    "@metamask/object-multiplex": ^2.0.0
-    "@metamask/rpc-errors": ^7.0.2
-    "@metamask/safe-event-emitter": ^3.1.1
-    "@metamask/utils": ^11.0.1
-    detect-browser: ^5.2.0
-    extension-port-stream: ^4.1.0
-    fast-deep-equal: ^3.1.3
-    is-stream: ^2.0.0
-    readable-stream: ^3.6.2
-  peerDependencies:
-    webextension-polyfill: ^0.10.0 || ^0.11.0 || ^0.12.0
-  checksum: 626112e3bdaa3b63c041ac0d280777419109a1ed2a6cdd50c1b3c7700c53d2e342f93748244a58a74d2e94357fe9eed1137317acff4df9ee0586798e02cfe00d
-  languageName: node
-  linkType: hard
-
 "@metamask/rpc-errors@npm:^6.0.0, @metamask/rpc-errors@npm:^6.1.0":
   version: 6.1.0
   resolution: "@metamask/rpc-errors@npm:6.1.0"
@@ -11187,16 +11143,6 @@ __metadata:
     "@metamask/utils": ^8.3.0
     fast-safe-stringify: ^2.0.6
   checksum: a9223c3cb9ab05734ea0dda990597f90a7cdb143efa0c026b1a970f2094fe5fa3c341ed39b1e7623be13a96b98fb2c697ef51a2e2b87d8f048114841d35ee0a9
-  languageName: node
-  linkType: hard
-
-"@metamask/rpc-errors@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "@metamask/rpc-errors@npm:7.0.2"
-  dependencies:
-    "@metamask/utils": ^11.0.1
-    fast-safe-stringify: ^2.0.6
-  checksum: 262a1ab57121e277eb979325d8e4335b9f4194c5acd0138ee0032db35b4e20ea0423badb5dad4bdf6abb85d22b476377f17911a54f82b3b1a2bdffc36654d028
   languageName: node
   linkType: hard
 
@@ -11667,6 +11613,7 @@ __metadata:
     eslint-plugin-prettier: ^3.4.0
     express: ^4.18.2
     express-rate-limit: ^7.1.5
+    generic-pool: ^3.9.0
     helmet: ^5.1.1
     ioredis: ^5.3.2
     jest: ^29.6.4
@@ -11896,7 +11843,7 @@ __metadata:
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
     "@metamask/onboarding": ^1.0.1
-    "@metamask/providers": ^18.3.1
+    "@metamask/providers": 16.1.0
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
     "@paulmillr/qr": ^0.2.1
@@ -11965,34 +11912,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/superstruct@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@metamask/superstruct@npm:3.1.0"
-  checksum: 00e4d0c0aae8b25ccc1885c1db0bb4ed1590010570140c255e4deee3bf8a10c859c8fce5e475b4ae09c8a56316207af87585b91f7f5a5c028d668ccd111f19e3
-  languageName: node
-  linkType: hard
-
 "@metamask/swappable-obj-proxy@npm:^2.1.0":
   version: 2.1.0
   resolution: "@metamask/swappable-obj-proxy@npm:2.1.0"
   checksum: b15cebee7fb189d1143d3a755a38a7d88f56f91e1277425a51f63c50c432dfb4e6e22650ef67474ae4ef2a97344231af00be6780f126c47d401a23c8a8fb3c9c
-  languageName: node
-  linkType: hard
-
-"@metamask/utils@npm:^11.0.1":
-  version: 11.0.1
-  resolution: "@metamask/utils@npm:11.0.1"
-  dependencies:
-    "@ethereumjs/tx": ^4.2.0
-    "@metamask/superstruct": ^3.1.0
-    "@noble/hashes": ^1.3.1
-    "@scure/base": ^1.1.3
-    "@types/debug": ^4.1.7
-    debug: ^4.3.4
-    pony-cause: ^2.1.10
-    semver: ^7.5.4
-    uuid: ^9.0.1
-  checksum: a5072f87157f6763328767bf1ddc01deb94e13f32af58d0993e0450e7e211fb29882280a1013cbdc7752b152a662be3d9beef8129a9097dba7d465389c398b3c
   languageName: node
   linkType: hard
 
@@ -26531,15 +26454,15 @@ __metadata:
   linkType: hard
 
 "cross-spawn@npm:^6.0.0, cross-spawn@npm:^6.0.5":
-  version: 6.0.5
-  resolution: "cross-spawn@npm:6.0.5"
+  version: 6.0.6
+  resolution: "cross-spawn@npm:6.0.6"
   dependencies:
     nice-try: ^1.0.4
     path-key: ^2.0.1
     semver: ^5.5.0
     shebang-command: ^1.2.0
     which: ^1.2.9
-  checksum: f893bb0d96cd3d5751d04e67145bdddf25f99449531a72e82dcbbd42796bbc8268c1076c6b3ea51d4d455839902804b94bc45dfb37ecbb32ea8e54a6741c3ab9
+  checksum: a6e2e5b04a0e0f806c1df45f92cd079b65f95fbe5a7650ee1ab60318c33a6c156a8a2f8b6898f57764f7363ec599a0625e9855dfa78d52d2d73dbd32eb11c25e
   languageName: node
   linkType: hard
 
@@ -28436,9 +28359,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elliptic@npm:6.5.4, elliptic@npm:^6.5.3":
-  version: 6.5.4
-  resolution: "elliptic@npm:6.5.4"
+"elliptic@npm:6.6.1":
+  version: 6.6.1
+  resolution: "elliptic@npm:6.6.1"
   dependencies:
     bn.js: ^4.11.9
     brorand: ^1.1.0
@@ -28447,37 +28370,7 @@ __metadata:
     inherits: ^2.0.4
     minimalistic-assert: ^1.0.1
     minimalistic-crypto-utils: ^1.0.1
-  checksum: d56d21fd04e97869f7ffcc92e18903b9f67f2d4637a23c860492fbbff5a3155fd9ca0184ce0c865dd6eb2487d234ce9551335c021c376cd2d3b7cb749c7d10f4
-  languageName: node
-  linkType: hard
-
-"elliptic@npm:^6.5.5":
-  version: 6.5.5
-  resolution: "elliptic@npm:6.5.5"
-  dependencies:
-    bn.js: ^4.11.9
-    brorand: ^1.1.0
-    hash.js: ^1.0.0
-    hmac-drbg: ^1.0.1
-    inherits: ^2.0.4
-    minimalistic-assert: ^1.0.1
-    minimalistic-crypto-utils: ^1.0.1
-  checksum: ec9105e4469eb3b32b0ee2579756c888ddf3f99d259aa0d65fccb906ee877768aaf8880caae73e3e669c9a4adeb3eb1945703aa974ec5000d2d33a239f4567eb
-  languageName: node
-  linkType: hard
-
-"elliptic@npm:^6.5.7":
-  version: 6.6.0
-  resolution: "elliptic@npm:6.6.0"
-  dependencies:
-    bn.js: ^4.11.9
-    brorand: ^1.1.0
-    hash.js: ^1.0.0
-    hmac-drbg: ^1.0.1
-    inherits: ^2.0.4
-    minimalistic-assert: ^1.0.1
-    minimalistic-crypto-utils: ^1.0.1
-  checksum: e912349b883e694bfe65005214237a470c9a098a6ba36fd24396d0ab07feb399920c0738aeed1aed6cf5dca9c64fd479e212faed3a75c9d81453671ef0de5157
+  checksum: 27b14a52f68bbbc0720da259f712cb73e953f6d2047958cd02fb0d0ade2e83849dc39fb4af630889c67df8817e24237428cf59c4f4c07700f755b401149a7375
   languageName: node
   linkType: hard
 
@@ -31870,17 +31763,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"extension-port-stream@npm:^4.1.0":
-  version: 4.2.0
-  resolution: "extension-port-stream@npm:4.2.0"
-  dependencies:
-    readable-stream: ^3.6.2 || ^4.4.2
-  peerDependencies:
-    webextension-polyfill: ^0.10.0 || ^0.11.0 || ^0.12.0
-  checksum: 85559c82e3f3aa21462e234b30b7d53872708893664cd03f2f848af556cf0730cf2243b089efc9d40bbe9a4f73bd8fd19684db5a985329b0c4402b4f2fe26358
-  languageName: node
-  linkType: hard
-
 "extract-zip@npm:2.0.1, extract-zip@npm:^2.0.1":
   version: 2.0.1
   resolution: "extract-zip@npm:2.0.1"
@@ -32008,9 +31890,9 @@ __metadata:
   linkType: hard
 
 "fast-loops@npm:^1.1.3":
-  version: 1.1.3
-  resolution: "fast-loops@npm:1.1.3"
-  checksum: b674378ba2ed8364ca1a00768636e88b22201c8d010fa62a8588a4cace04f90bac46714c13cf638be82b03438d2fe813600da32291fb47297a1bd7fa6cef0cee
+  version: 1.1.4
+  resolution: "fast-loops@npm:1.1.4"
+  checksum: 8031a20f465ef35ac4ad98258470250636112d34f7e4efcb4ef21f3ced99df95a1ef1f0d6943df729a1e3e12a9df9319f3019df8cc1a0e0ed5a118bd72e505f9
   languageName: node
   linkType: hard
 
@@ -32925,7 +32807,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"generic-pool@npm:3.9.0":
+"generic-pool@npm:3.9.0, generic-pool@npm:^3.9.0":
   version: 3.9.0
   resolution: "generic-pool@npm:3.9.0"
   checksum: 3d89e9b2018d2e3bbf44fec78c76b2b7d56d6a484237aa9daf6ff6eedb14b0899dadd703b5d810219baab2eb28e5128fb18b29e91e602deb2eccac14492d8ca8
@@ -52859,6 +52741,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"web3-errors@npm:^1.2.0, web3-errors@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "web3-errors@npm:1.3.1"
+  dependencies:
+    web3-types: ^1.10.0
+  checksum: 74efaa571a26ca590a2d1eefa33e73fcb870cb465c40430620514d34624731c895718815b5190a8eb248a5f14452672d48131830f555b934ab12448ab19bd39c
+  languageName: node
+  linkType: hard
+
 "web3-eth-abi@npm:^4.1.1":
   version: 4.1.1
   resolution: "web3-eth-abi@npm:4.1.1"
@@ -53031,15 +52922,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"web3-types@npm:^1.10.0, web3-types@npm:^1.6.0":
+  version: 1.10.0
+  resolution: "web3-types@npm:1.10.0"
+  checksum: a7e1a67dc0629073a55c096574cf60e4ba140a5b06558ed37b49403cf2100f973a389d2434ee0fbc510c0f874a69aca90c9c91cb98ee2c75927331f4c191c5bb
+  languageName: node
+  linkType: hard
+
 "web3-utils@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "web3-utils@npm:4.0.5"
+  version: 4.3.3
+  resolution: "web3-utils@npm:4.3.3"
   dependencies:
     ethereum-cryptography: ^2.0.0
-    web3-errors: ^1.1.1
-    web3-types: ^1.1.1
-    web3-validator: ^2.0.1
-  checksum: bf4b49b6aaec4444d430e89a84ec4adede828ff363be941c5ba0b13781c8778bbbb4a2f58133173c245b42c8133612e27591ec58558c8507a96f5b0b9c780439
+    eventemitter3: ^5.0.1
+    web3-errors: ^1.3.1
+    web3-types: ^1.10.0
+    web3-validator: ^2.0.6
+  checksum: 7ba4fa6caae6e393e2ecbca7c7d36011c4a115658a4ab16a49cd52a5542f6dc2ad30766b8b8d908e1d68be800455554e8f87ae19c5e8ed8581987dc0fff55b7b
   languageName: node
   linkType: hard
 
@@ -53053,6 +52952,19 @@ __metadata:
     web3-types: ^1.1.1
     zod: ^3.21.4
   checksum: 4382a0d034751ca04d3f919efd4f1115abecee8541585179158662e46dd10b051c4ee29c885067d7aeff618dec971c4a2075baeb7df63249e3ed5b2d5695b782
+  languageName: node
+  linkType: hard
+
+"web3-validator@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "web3-validator@npm:2.0.6"
+  dependencies:
+    ethereum-cryptography: ^2.0.0
+    util: ^0.12.5
+    web3-errors: ^1.2.0
+    web3-types: ^1.6.0
+    zod: ^3.21.4
+  checksum: 15981ffce73cfa75c07f1ce0dbf65fe35fbdedc3ce19876e829b71a2a0e98aaf3aae90df764e6da7df3ff098d8fbf2ab37f58652fa93d7c3f8cb93b00f608c14
   languageName: node
   linkType: hard
 
@@ -53149,8 +53061,8 @@ __metadata:
   linkType: hard
 
 "webpack-dev-middleware@npm:^5.3.1":
-  version: 5.3.3
-  resolution: "webpack-dev-middleware@npm:5.3.3"
+  version: 5.3.4
+  resolution: "webpack-dev-middleware@npm:5.3.4"
   dependencies:
     colorette: ^2.0.10
     memfs: ^3.4.3
@@ -53159,7 +53071,7 @@ __metadata:
     schema-utils: ^4.0.0
   peerDependencies:
     webpack: ^4.0.0 || ^5.0.0
-  checksum: dd332cc6da61222c43d25e5a2155e23147b777ff32fdf1f1a0a8777020c072fbcef7756360ce2a13939c3f534c06b4992a4d659318c4a7fe2c0530b52a8a6621
+  checksum: 90cf3e27d0714c1a745454a1794f491b7076434939340605b9ee8718ba2b85385b120939754e9fdbd6569811e749dee53eec319e0d600e70e0b0baffd8e3fb13
   languageName: node
   linkType: hard
 

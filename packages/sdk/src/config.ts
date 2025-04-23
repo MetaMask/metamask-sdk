@@ -49,9 +49,9 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   [RPC_METHODS.METAMASK_OPEN]: true,
 };
 
-export const lcAnalyticsRPCs = Object.keys(METHODS_TO_REDIRECT).map((method) =>
-  method.toLowerCase(),
-);
+export const lcAnalyticsRPCs = Object.keys(METHODS_TO_REDIRECT)
+  .filter((method) => METHODS_TO_REDIRECT[method] === true)
+  .map((method) => method.toLowerCase());
 
 // unsupported extension connectWith methods
 export const rpcWithAccountParam = [

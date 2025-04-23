@@ -13,8 +13,8 @@ export default function Home() {
   const { sdk, connected, connecting, provider, account } = useSDK();
   const [accountInfo, setAccountInfo] = useState<AccountInfo | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [rpcResponse, setRpcResponse] = useState<any>();
-  const [rpcError, setRpcError] = useState<any>();
+  const [signature, setSignature] = useState<string>('');
+  const [signLoading, setSignLoading] = useState<boolean>(false);
 
   const getBalance = useCallback(async (address: string): Promise<string> => {
     const balance = await provider?.request({
@@ -40,6 +40,7 @@ export default function Home() {
       setIsLoading(true);
       await sdk?.terminate();
       setAccountInfo(null);
+      setSignature('');
     } catch (err) {
       console.error('Failed to terminate connection:', err);
     } finally {
@@ -47,21 +48,25 @@ export default function Home() {
     }
   };
 
-  const personalSign = async (): Promise<void> => {
-    if (!provider) {
-      setRpcError('Provider not found');
-      return;
-    }
+  const handlePersonalSign = async (): Promise<void> => {
+    if (!provider || !account) return;
 
     try {
-      const response = await provider?.request({
+      setSignLoading(true);
+      const message = `Hello from MetaMask SDK! ${Date.now()}`;
+      const hexMessage = `0x${Buffer.from(message).toString('hex')}`;
+
+      const result = await provider.request({
         method: 'personal_sign',
-        params: ['Hello, world!', account]
+        params: [hexMessage, account]
       });
-      setRpcResponse(response);
-    } catch (error) {
-      console.log('CAUGHT THIS ERROR: ', error);
-      setRpcError(error);
+
+      setSignature(result as string);
+    } catch (err) {
+      console.error('Personal sign failed:', err);
+      setSignature('');
+    } finally {
+      setSignLoading(false);
     }
   };
 
@@ -115,13 +120,22 @@ export default function Home() {
           <div className={styles.address}>
             Balance: {accountInfo?.balance} Wei
           </div>
+
           <button
             className={styles.button}
-            onClick={personalSign}
-            disabled={isLoading}
+            onClick={handlePersonalSign}
+            disabled={signLoading}
+            style={{ marginBottom: '10px', marginTop: '10px' }}
           >
-            Personal Sign
+            {signLoading ? 'Signing...' : 'Personal Sign'}
           </button>
+
+          {signature && (
+            <div className={styles.address} style={{ wordBreak: 'break-all' }}>
+              <strong>Signature:</strong> {signature}
+            </div>
+          )}
+
           <button
             className={styles.button}
             onClick={terminateConnection}

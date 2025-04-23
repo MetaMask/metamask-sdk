@@ -1,7 +1,7 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
 import { pubClient } from '../analytics-api';
-import { config, isDevelopment, MAX_MESSAGE_LENGTH } from '../config';
+import { config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
 import {
   increaseRateLimits,
@@ -58,24 +58,10 @@ export const handleMessage = async ({
   let ready = false; // Determines if the keys have been exchanged and both side support the full protocol
 
   try {
-    // Add message size validation
-    const messageSize = typeof message === 'string'
-      ? message.length
-      : JSON.stringify(message).length;
-
-    if (messageSize > MAX_MESSAGE_LENGTH) {
-      logger.warn(`[handleMessage] Message size ${messageSize} exceeds limit of ${MAX_MESSAGE_LENGTH} bytes`, {
-        channelId,
-        socketId,
-        clientIp,
-      });
-      callback?.(`Message size ${messageSize} exceeds maximum allowed size of ${MAX_MESSAGE_LENGTH} bytes`);
-      return;
-    }
-
     if (clientType) {
       // new protocol, get channelConfig
-      const channelConfigKey = `channel_config:${channelId}`;
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+      const channelConfigKey = `channel_config:{${channelId}}`;
       const existingConfig = await pubClient.get(channelConfigKey);
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
       ready = channelConfig?.ready ?? false;
@@ -104,7 +90,7 @@ export const handleMessage = async ({
         channelConfig = { ...channelConfig, ready };
 
         await pubClient.set(
-          `channel_config:${channelId}`,
+          `channel_config:{${channelId}}`,
           JSON.stringify(channelConfig),
         );
 
@@ -128,7 +114,8 @@ export const handleMessage = async ({
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';
-      const queueKey = `queue:${channelId}:${otherQueue}`;
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})  
+      const queueKey = `queue:{${channelId}}:${otherQueue}`;
       const persistedMsg: QueuedMessage = {
         message,
         ackId,
