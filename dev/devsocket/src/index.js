@@ -1,18 +1,25 @@
-import readline from 'readline';
-import { io } from 'socket.io-client';
-import dotenv from 'dotenv';
+const readline = require('readline');
+const { io } = require('socket.io-client');
 
-dotenv.config();
-
+/** @type {string} */
 const socketServer = process.env.SOCKET_SERVER || 'http://localhost:4000';
 
-export const main = async () => {
+/**
+ * Main application function
+ * @returns {Promise<void>}
+ */
+const main = async () => {
+  /** @type {import('socket.io-client').Socket} */
   const socket = io(socketServer, {
     transports: ['websocket'],
     autoConnect: true,
     withCredentials: true,
   });
 
+  /**
+   * Handles user input for room commands
+   * @returns {void}
+   */
   const waitForRoomInput = () => {
     const rl = readline.createInterface({
       input: process.stdin,
@@ -20,7 +27,7 @@ export const main = async () => {
     });
 
     rl.question('Enter command: ', (command) => {
-      // command format: <connand> <args>
+      // command format: <command> <args>
       // join <room_id>
       // create <room_id>
       // check <room_id>
@@ -38,7 +45,10 @@ export const main = async () => {
         console.log(`Left room: ${roomId}`);
       } else if (cmd === 'check') {
         const [roomId] = args;
-        socket.emit('check_room', roomId, (result: unknown) => {
+        /**
+         * @param {unknown} result
+         */
+        socket.emit('check_room', roomId, (result) => {
           console.log(`Check room ${roomId} -> ${result} `);
         });
       } else if (cmd === 'create') {
@@ -58,6 +68,11 @@ export const main = async () => {
     });
   };
 
+  /**
+   * Logs all socket events
+   * @param {string} event - The event name
+   * @param {...any} args - Event arguments
+   */
   socket.onAny((event, ...args) => {
     console.log(`socket.onAny event=${event}`, args);
   });
@@ -67,12 +82,19 @@ export const main = async () => {
     waitForRoomInput();
   });
 
+  /**
+   * Handles socket disconnection
+   * @param {string} reason - Reason for disconnection
+   */
   socket.on('disconnect', (reason) => {
     console.log(`Disconnected: ${reason}`);
     // Optional: Implement reconnection logic here if needed
   });
 
   // Handle connection errors
+  /**
+   * @param {Error} error - Connection error
+   */
   socket.on('connect_error', (error) => {
     console.error('Connection error:', error);
   });
