@@ -53,13 +53,17 @@ t.describe('Analytics Integration', () => {
 
     analytics = new Analytics('http://127.0.0.2');
     analytics.enable();
-    analytics.track(event.name, { ...event });
+    analytics.setGlobalProperty('sdk_version', event.sdk_version);
+    analytics.setGlobalProperty('anon_id', event.anon_id);
+    analytics.setGlobalProperty('platform', event.platform);
+    analytics.setGlobalProperty('integration_type', event.integration_type);
+    analytics.track(event.name, { dapp_id: 'some-non-global-property' });
 
     // Wait for the Sender to flush the event (baseIntervalMs = 200ms + buffer)
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Verify the captured payload
-    t.expect(captured).toEqual([event]);
+    t.expect(captured).toEqual([{ ...event, dapp_id: 'some-non-global-property' }]);
 
     scope.done();
   });
