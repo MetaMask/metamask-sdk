@@ -1,10 +1,7 @@
-import { AnalyticsClient } from './client';
+import Analytics from './analytics';
 
-// const baseUrl = 'https://mm-sdk-analytics.dev-api.cx.metamask.io/';
-const baseUrl = 'http://127.0.0.1:8000';
+const client = new Analytics('https://mm-sdk-analytics.api.cx.metamask.io/');
 
-const client = new AnalyticsClient(baseUrl);
-
-export const analytics = client;
+export const analytics = client; // FIXME: use default export
 
 export default client;
