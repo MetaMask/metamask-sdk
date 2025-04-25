@@ -20,9 +20,6 @@
     "@metamask/sdk-ui": {
         "stable": "0.26.0"
     },
-    "@metamask/sdk-lab": {
-        "stable": "0.1.5"
-    },
     "metamask-unity-sdk": {
         "stable": "2.1.0"
     },
