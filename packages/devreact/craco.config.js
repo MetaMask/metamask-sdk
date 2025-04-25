@@ -12,7 +12,6 @@ const packagesToTranspile = [
   resolvePackage('../sdk'),
   resolvePackage('../sdk-react'),
   resolvePackage('../sdk-react-ui'),
-  resolvePackage('../sdk-lab'),
   resolvePackage('../sdk-ui'),
   require.resolve('react-native-gesture-handler'),
   require.resolve('react-native-svg'),

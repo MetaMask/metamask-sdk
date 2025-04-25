@@ -27,7 +27,6 @@ const nextConfig = withExpo({
     '@metamask/sdk-react',
     '@metamask/sdk-react-ui',
     '@metamask/sdk-ui',
-    '@metamask/sdk-lab',
     // Add more React Native / Expo packages here...
   ],
   experimental: {

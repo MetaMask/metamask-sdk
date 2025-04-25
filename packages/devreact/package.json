@@ -5,7 +5,6 @@
   "dependencies": {
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
-    "@metamask/sdk-lab": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
     "@metamask/sdk-ui": "workspace:^",
     "@react-native/assets-registry": "^0.74.0",

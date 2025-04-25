@@ -1,12 +1,13 @@
-import { ChainRPC } from '@metamask/sdk-lab';
 import { useSDK } from '@metamask/sdk-react';
-import { MetaMaskButton, SDKStatus, RPCHistoryViewer } from '@metamask/sdk-ui';
+import { MetaMaskButton, SDKStatus, RPCHistoryViewer, ChainRPC } from '@metamask/sdk-ui';
 import { ethers } from 'ethers';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
+import { SiweMessage } from 'siwe';
+
+
 import SimpleABI from '../abi/Simple.json';
 import { getSignParams } from '../utils/sign-utils';
-import { SiweMessage } from 'siwe';
 
 const Demo = () => {
   const { sdk, connected, connecting, readOnlyCalls, provider, chainId } =
