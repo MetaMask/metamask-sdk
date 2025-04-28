@@ -1,4 +1,5 @@
 // packages/sdk-communication-layer/src/services/RemoteCommunication/ConnectionManager/connectToChannel.ts
+import { analytics } from '@metamask/sdk-analytics';
 import { validate } from 'uuid';
 import { logger } from '../../../utils/logger';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
@@ -56,4 +57,10 @@ export async function connectToChannel({
   };
   state.channelConfig = newChannelConfig;
   state.storageManager?.persistChannelConfig(newChannelConfig);
+
+  if (!state.isOriginator) {
+    analytics.track('wallet_connection_user_approved', {
+      anon_id: state.originatorInfo?.anonId,
+    });
+  }
 }

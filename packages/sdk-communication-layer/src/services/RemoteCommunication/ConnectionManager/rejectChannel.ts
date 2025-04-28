@@ -1,4 +1,5 @@
 // packages/sdk-communication-layer/src/services/RemoteCommunication/ConnectionManager/connectToChannel.ts
+import { analytics } from '@metamask/sdk-analytics';
 import { validate } from 'uuid';
 import { RemoteCommunicationState } from '../../../RemoteCommunication';
 import { EventType } from '../../../types/EventType';
@@ -59,6 +60,10 @@ export async function rejectChannel({
     state.communicationServerUrl,
   ).catch((error) => {
     console.error(`rejectChannel:: Error emitting analytics event`, error);
+  });
+
+  analytics.track('wallet_connection_user_rejected', {
+    anon_id: state.originatorInfo?.anonId,
   });
 
   // emit reject event

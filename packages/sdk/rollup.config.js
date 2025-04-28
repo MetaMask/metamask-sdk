@@ -28,7 +28,7 @@ const bundledDeps = [
 ];
 
 // Shared dependencies that should be deduplicated
-const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross-fetch'];
+const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross-fetch', '@metamask/sdk-analytics'];
 
 
 // Filter function to exclude bundled dependencies

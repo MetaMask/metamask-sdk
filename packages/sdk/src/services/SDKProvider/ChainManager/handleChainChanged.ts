@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
 
@@ -35,6 +36,10 @@ export function handleChainChanged({
   logger(
     `[SDKProvider: handleChainChanged()] chainId=${chainId} networkVersion=${networkVersion}`,
   );
+
+  analytics.track('sdk_used_chain', {
+    caip_chain_id: `eip155:${parseInt(chainId ?? '0x1', 16)}`,
+  });
 
   // FIXME on RN IOS networkVersion is sometime missing? why?
   let forcedNetworkVersion = networkVersion;

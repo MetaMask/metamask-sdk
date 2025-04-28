@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { EventType } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
@@ -61,11 +62,19 @@ export async function connectWithModalInstaller(
       },
     );
 
+    const connectionTimeout = setTimeout(() => {
+      analytics.track('sdk_connection_failed', {
+        transport_type: 'websocket',
+      });
+    }, 60_000);
+
     state.connector.once(EventType.AUTHORIZED, () => {
+      clearTimeout(connectionTimeout);
       resolve();
     });
 
     state.connector.once(EventType.REJECTED, () => {
+      clearTimeout(connectionTimeout);
       reject(EventType.REJECTED);
     });
 

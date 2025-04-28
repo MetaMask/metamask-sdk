@@ -8,4 +8,5 @@ export interface OriginatorInfo {
   source?: string;
   apiVersion?: string;
   connector?: string;
+  anonId?: string; // FIXME: make this required
 }

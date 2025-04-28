@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import {
   DEFAULT_SESSION_TIMEOUT_MS,
   EventType,
@@ -56,6 +57,10 @@ export async function startConnection(
 
     // Establish socket connection
     provider.emit('connecting');
+
+    analytics.track('sdk_connection_initiated', {
+      transport_type: 'websocket',
+    });
 
     const channelConfig = await state.connector?.originatorSessionConnect();
     logger(
@@ -187,11 +192,19 @@ export async function startConnection(
           return;
         }
 
+        const connectionTimeout = setTimeout(() => {
+          analytics.track('sdk_connection_failed', {
+            transport_type: 'websocket',
+          });
+        }, 60_000);
+
         state.connector?.once(EventType.AUTHORIZED, () => {
+          clearTimeout(connectionTimeout);
           resolve();
         });
 
         state.connector?.once(EventType.REJECTED, () => {
+          clearTimeout(connectionTimeout);
           reject(EventType.REJECTED);
         });
       });

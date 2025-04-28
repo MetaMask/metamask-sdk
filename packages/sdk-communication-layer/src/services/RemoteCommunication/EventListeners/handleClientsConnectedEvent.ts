@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { logger } from '../../../utils/logger';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
@@ -49,6 +50,12 @@ export function handleClientsConnectedEvent(
         state.communicationServerUrl,
       ).catch((err) => {
         console.error(`Cannot send analytics`, err);
+      });
+    }
+
+    if (state.isOriginator) {
+      analytics.track('sdk_connection_established', {
+        transport_type: 'websocket',
       });
     }
 

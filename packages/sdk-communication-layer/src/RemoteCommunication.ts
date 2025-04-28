@@ -1,3 +1,4 @@
+import { analytics as analyticsV2 } from '@metamask/sdk-analytics';
 import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
 import packageJson from '../package.json';
@@ -294,8 +295,26 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
-    return sendMessage(this, message);
+  async sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
+    if (this.state.isOriginator && message.method) {
+      analyticsV2.track('sdk_action_requested', { action: message.method });
+    }
+
+    try {
+      const ok = await sendMessage(this, message);
+
+      // FIXME: this is in the wrong place
+      if (this.state.isOriginator && message.method) {
+        analyticsV2.track('sdk_action_succeeded', { action: message.method });
+      }
+
+      return ok;
+    } catch (error) {
+      if (this.state.isOriginator && message.method) {
+        analyticsV2.track('sdk_action_failed', { action: message.method });
+      }
+      throw error;
+    }
   }
 
   async testStorage() {
