@@ -5,7 +5,7 @@ import { useState } from 'react';
 import Web from 'web3';
 import './App.css';
 import { MetaMaskButton } from '@metamask/sdk-ui';
-import { ChainRPC, RPCHistoryViewer } from '@metamask/sdk-lab';
+import { RPCHistoryViewer } from '@metamask/sdk-ui';
 
 declare global {
   interface Window {

@@ -15,7 +15,6 @@
     "packages/sdk-react-native",
     "packages/sdk-react-ui",
     "packages/sdk-ui",
-    "packages/sdk-lab",
     "packages/devsocket",
     "packages/devreact",
     "packages/devreactnative",
