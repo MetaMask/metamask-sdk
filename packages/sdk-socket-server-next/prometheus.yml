@@ -1,0 +1,16 @@
+# Global Prometheus configuration
+global:
+  scrape_interval: 15s # How often to scrape targets
+  evaluation_interval: 15s # How often to evaluate alerting rules (if any)
+
+# Scrape configurations: Defines targets to monitor
+scrape_configs:
+  # Job for scraping the scaled application instances (Mode 2)
+  - job_name: 'socket-server-scaled'
+    static_configs:
+      - targets: ['app1:4000', 'app2:4000', 'app3:4000']
+
+  # Job for scraping the containerized development instance (Mode 1)
+  - job_name: 'appdev'
+    static_configs:
+      - targets: ['appdev:4000'] # Target the 'appdev' service name on its internal port 

@@ -18,6 +18,8 @@
     "packages/devsocket",
     "packages/devreact",
     "packages/devreactnative",
+    "packages/analytics-server",
+    "packages/analytics-client",
     "packages/devnext",
     "packages/deve2e",
     "packages/playground-next"

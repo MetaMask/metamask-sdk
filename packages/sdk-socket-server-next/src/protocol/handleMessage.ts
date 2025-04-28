@@ -1,18 +1,58 @@
 import { Server, Socket } from 'socket.io';
 import { v4 as uuidv4 } from 'uuid';
-import { pubClient } from '../analytics-api';
 import { config, isDevelopment } from '../config';
 import { getLogger } from '../logger';
+import { incrementKeyMigration } from '../metrics';
 import {
   increaseRateLimits,
   rateLimiterMessage,
   resetRateLimits,
   setLastConnectionErrorTimestamp,
 } from '../rate-limiter';
-import { ClientType, MISSING_CONTEXT } from '../socket-config';
+import { pubClient } from '../redis';
+import { MISSING_CONTEXT } from '../socket-config';
+import { ClientType } from '../socket-types';
 import { ChannelConfig } from './handleJoinChannel';
 
 const logger = getLogger();
+
+// Add backward compatibility helpers
+const getChannelConfigWithBackwardCompatibility = async ({
+  channelId,
+}: {
+  channelId: string;
+}) => {
+  try {
+    // Try new key format first using pubClient wrapper
+    const channelConfigKey = `channel_config:{${channelId}}`;
+    const legacyChannelConfigKey = `channel_config:${channelId}`;
+    let existingConfig = await pubClient.get(channelConfigKey);
+
+    // If not found, try legacy key
+    if (!existingConfig) {
+      existingConfig = await pubClient.get(legacyChannelConfigKey);
+
+      // If found with legacy key, migrate to new format
+      if (existingConfig) {
+        await pubClient.set(
+          channelConfigKey,
+          existingConfig,
+          'EX',
+          config.channelExpiry,
+        );
+        incrementKeyMigration({ migrationType: 'channel-config' });
+        logger.info(
+          `Migrated channel config from ${legacyChannelConfigKey} to ${channelConfigKey}`,
+        );
+      }
+    }
+
+    return existingConfig ? JSON.parse(existingConfig) : null;
+  } catch (error) {
+    logger.error(`[getChannelConfigWithBackwardCompatibility] Error: ${error}`);
+    return null;
+  }
+};
 
 export type MessageParams = {
   io: Server;
@@ -60,10 +100,9 @@ export const handleMessage = async ({
   try {
     if (clientType) {
       // new protocol, get channelConfig
-      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
-      const channelConfigKey = `channel_config:{${channelId}}`;
-      const existingConfig = await pubClient.get(channelConfigKey);
-      channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
+      channelConfig = await getChannelConfigWithBackwardCompatibility({
+        channelId,
+      });
       ready = channelConfig?.ready ?? false;
     }
 
@@ -89,8 +128,10 @@ export const handleMessage = async ({
         ready = true;
         channelConfig = { ...channelConfig, ready };
 
-        await pubClient.set(
+        // Update channel config with pubClient wrapper
+        await pubClient.setex(
           `channel_config:{${channelId}}`,
+          config.channelExpiry, // Refresh expiry when setting ready flag
           JSON.stringify(channelConfig),
         );
 
@@ -114,7 +155,7 @@ export const handleMessage = async ({
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';
-      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})  
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
       const queueKey = `queue:{${channelId}}:${otherQueue}`;
       const persistedMsg: QueuedMessage = {
         message,
@@ -126,6 +167,8 @@ export const handleMessage = async ({
         `[handleMessage] persisting message in queue ${queueKey}`,
         persistedMsg,
       );
+
+      // Use pubClient wrapper for persistence
       await pubClient.rpush(queueKey, JSON.stringify(persistedMsg));
       await pubClient.expire(queueKey, config.msgExpiry);
     }

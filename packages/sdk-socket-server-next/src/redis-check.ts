@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 // Dotenv must be loaded before importing local files
 dotenv.config();
-import { getGlobalRedisClient } from './analytics-api';
+import { pubClient } from './redis';
 
 import { createLogger } from './logger';
 
@@ -33,26 +33,25 @@ if (redisNodes.length === 0) {
 
 async function testRedisOperations() {
   try {
-    // Connect to Redis
-    const cluster = getGlobalRedisClient();
-    logger.info('Connected to Redis Cluster successfully');
-
-    // Set a key in Redis
+    // Test Redis connectivity via pubClient wrapper
     const key = 'testKey';
     const value = 'Hello, Redis!';
-    logger.info(`Setting ${key} in Redis`);
-    await cluster.set(key, value, 'EX', 60); // Set key to expire in 60 seconds
-    logger.info(`Set ${key} in Redis`);
 
-    // Get the key from Redis
-    const fetchedValue = await cluster.get(key);
-    logger.info(`Got value from Redis: ${fetchedValue}`);
+    // Set, get, delete as a single operation test
+    logger.info('Testing Redis operations...');
+    await pubClient.set(key, value, 'EX', '60');
+    const fetchedValue = await pubClient.get(key);
+    await pubClient.del(key);
 
-    // Disconnect from Redis
-    cluster.disconnect();
-    logger.info('Disconnected from Redis Cluster');
+    if (fetchedValue === value) {
+      logger.info('✅ Redis operations completed successfully');
+    } else {
+      logger.error(
+        `❌ Redis value mismatch: expected '${value}', got '${fetchedValue}'`,
+      );
+    }
   } catch (error) {
-    logger.error('Redis operation failed:', error);
+    logger.error('❌ Redis operation failed:', error);
   }
 }
 

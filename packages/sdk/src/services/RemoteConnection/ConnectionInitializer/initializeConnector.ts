@@ -31,6 +31,7 @@ export function initializeConnector(
     dappMetadata: { ...options.dappMetadata, source: options._source },
     analytics: options.enableAnalytics,
     communicationServerUrl: options.communicationServerUrl,
+    analyticsServerUrl: options.communicationServerUrl,
     sdkVersion: packageJson.version,
     context: 'dapp',
     ecies: options.ecies,
