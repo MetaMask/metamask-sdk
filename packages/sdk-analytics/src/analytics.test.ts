@@ -1,7 +1,9 @@
-import * as t from 'vitest';
-import Analytics from './analytics';
 import nock from 'nock';
-import * as schema from './schema';
+/* eslint-disable-next-line id-length */
+import * as t from 'vitest';
+
+import Analytics from './analytics';
+import type * as schema from './schema';
 
 t.describe('Analytics Integration', () => {
   let analytics: Analytics;
@@ -17,6 +19,7 @@ t.describe('Analytics Integration', () => {
   };
 
   t.afterAll(() => {
+    /* eslint-disable-next-line import-x/no-named-as-default-member */
     nock.cleanAll();
   });
 
@@ -28,7 +31,11 @@ t.describe('Analytics Integration', () => {
         return true; // Accept any body to proceed with the intercept
       })
       .optionally()
-      .reply(200, { status: 'success' }, { 'Content-Type': 'application/json' });
+      .reply(
+        200,
+        { status: 'success' },
+        { 'Content-Type': 'application/json' },
+      );
 
     analytics = new Analytics('http://127.0.0.1');
     analytics.track(event.name, { ...event });
@@ -49,7 +56,11 @@ t.describe('Analytics Integration', () => {
         captured = body; // Capture the request body directly
         return true; // Accept any body to proceed with the intercept
       })
-      .reply(200, { status: 'success' }, { 'Content-Type': 'application/json' });
+      .reply(
+        200,
+        { status: 'success' },
+        { 'Content-Type': 'application/json' },
+      );
 
     analytics = new Analytics('http://127.0.0.2');
     analytics.enable();
@@ -63,7 +74,9 @@ t.describe('Analytics Integration', () => {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Verify the captured payload
-    t.expect(captured).toEqual([{ ...event, dapp_id: 'some-non-global-property' }]);
+    t.expect(captured).toEqual([
+      { ...event, dapp_id: 'some-non-global-property' },
+    ]);
 
     scope.done();
   });

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 type SenderOptions<T> = {
   batchSize: number;
   baseIntervalMs: number;
@@ -9,14 +10,17 @@ type SenderOptions<T> = {
  * It also uses exponential backoff to handle errors.
  */
 class Sender<T> {
-  private sendFn: (batch: T[]) => Promise<void>;
+  private readonly sendFn: (batch: T[]) => Promise<void>;
 
   private batch: T[] = [];
 
-  private batchSize: number;
-  private baseIntervalMs: number;
+  private readonly batchSize: number;
+
+  private readonly baseIntervalMs: number;
+
   private currentIntervalMs: number;
-  private maxIntervalMs: number = 30_000; // 30 seconds
+
+  private readonly maxIntervalMs: number = 30_000; // 30 seconds
 
   private intervalId: NodeJS.Timeout | null = null;
 
@@ -29,32 +33,37 @@ class Sender<T> {
     this.sendFn = options.sendFn;
   }
 
-  public enqueue(item: T) {
+  public enqueue(item: T): void {
     this.batch.push(item);
     if (this.batch.length >= this.batchSize && !this.isSending) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.flush();
     }
   }
 
-  public start() {
-    if (this.intervalId) return;
+  public start(): void {
+    if (this.intervalId) {
+      return;
+    }
     this.scheduleNextSend();
   }
 
-  private scheduleNextSend() {
+  private scheduleNextSend(): void {
     if (this.intervalId) {
       clearTimeout(this.intervalId);
     }
-    this.intervalId = setTimeout(() => this.flush(), this.currentIntervalMs);
+    this.intervalId = setTimeout(() => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.flush();
+    }, this.currentIntervalMs);
   }
 
-  private async flush() {
-    if (this.isSending || this.batch.length === 0) return;
-
+  private async flush(): Promise<void> {
+    if (this.isSending || this.batch.length === 0) {
+      return;
+    }
     this.isSending = true;
-
     const current = [...this.batch];
-
     this.batch = [];
 
     try {
@@ -62,7 +71,10 @@ class Sender<T> {
       this.currentIntervalMs = this.baseIntervalMs; // reset on success
     } catch {
       this.batch = [...current, ...this.batch];
-      this.currentIntervalMs = Math.min(this.currentIntervalMs * 2, this.maxIntervalMs); // exponential backoff on error
+      this.currentIntervalMs = Math.min(
+        this.currentIntervalMs * 2,
+        this.maxIntervalMs,
+      ); // exponential backoff on error
     } finally {
       this.isSending = false;
       this.scheduleNextSend();
