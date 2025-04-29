@@ -6,8 +6,8 @@ const config = createConfig(
   {
     // The TypeScript config disables certain rules that you want to keep for
     // non-TypeScript files, so it should be added in an override.
-    files: ['src/**/*.ts', '!src/schema.ts'],
-    ignores: ['dist/**', 'node_modules/**'],
+    files: ['src/**/*.ts'],
+    ignores: ['dist/**', 'node_modules/**', 'src/schema.ts'],
     extends: [
       // This should be added last unless you know what you're doing.
       ...base,

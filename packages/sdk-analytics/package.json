@@ -6,8 +6,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --dts",
-    "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint": "eslint src --ext .ts,.tsx --ignore-pattern 'src/schema.ts'",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix --ignore-pattern 'src/schema.ts'",
     "test": "vitest",
     "test:ci": "vitest --run",
     "allow-scripts": ""
