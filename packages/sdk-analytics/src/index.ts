@@ -1,7 +1,12 @@
 import Analytics from './analytics';
 
-const client = new Analytics('https://mm-sdk-analytics.api.cx.metamask.io/');
+// Cross environment variable for the analytics endpoint
+const METAMASK_ANALYTICS_ENDPOINT =
+process.env.METAMASK_ANALYTICS_ENDPOINT ||
+process.env.NEXT_PUBLIC_METAMASK_ANALYTICS_ENDPOINT ||
+'https://mm-sdk-analytics.api.cx.metamask.io/';
 
-export const analytics = client; // FIXME: use default export
 
-export default client;
+const client = new Analytics(METAMASK_ANALYTICS_ENDPOINT);
+
+export const analytics = client;
