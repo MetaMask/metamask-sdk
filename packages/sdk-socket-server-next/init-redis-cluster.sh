@@ -16,13 +16,6 @@ check_redis() {
     done
 }
 
-# Function to reset a Redis node's cluster state
-reset_redis() {
-    echo "Resetting Redis node '$1:$2'..."
-    redis-cli -h "$1" -p "$2" cluster reset hard
-    echo "Redis node '$1:$2' reset successfully."
-}
-
 # Wait for all Redis nodes to be ready
 echo "Checking readiness of Redis nodes..."
 
@@ -31,11 +24,6 @@ check_redis "redis-master1" "6379"
 check_redis "redis-master2" "6379"
 check_redis "redis-master3" "6379"
 
-# Reset all Redis nodes
-echo "Resetting Redis nodes..."
-reset_redis "redis-master1" "6379"
-reset_redis "redis-master2" "6379"
-reset_redis "redis-master3" "6379"
 
 # Since we can't pass arrays to redis-cli, we build the cluster create command manually
 echo "All Redis nodes are ready. Creating Redis Cluster..."
@@ -43,6 +31,7 @@ echo "yes" | redis-cli --cluster create \
     redis-master1:6379 \
     redis-master2:6379 \
     redis-master3:6379 \
-    --cluster-replicas 0
+    --cluster-replicas 0 \
+    --cluster-yes
 
 echo "Redis Cluster created successfully."
