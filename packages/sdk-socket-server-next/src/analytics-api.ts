@@ -90,13 +90,21 @@ export const getRedisOptions = (
       // Handle other potentially recoverable errors that might warrant a reconnect attempt.
       // READONLY might occur if connected to a replica that lost its master.
       // ETIMEDOUT indicates a connection timeout.
-      // eslint-disable-next-line require-unicode-regexp
-      const reconnectableErrors = [/READONLY/, /ETIMEDOUT/];
+      // ECONNRESET indicates that the connection was reset.
+      // ECONNREFUSED indicates that the connection was refused.
+      // EPIPE indicates that the connection was broken.
+      // ENOTFOUND indicates that the host was not found.
+      const reconnectableErrors = [
+        /READONLY/u,
+        /ETIMEDOUT/u,
+        /ECONNRESET/u,
+        /ECONNREFUSED/u,
+        /EPIPE/u,
+        /ENOTFOUND/u,
+      ];
 
-      // Log these as actual errors because they indicate a potential connection problem.
       logger.error('Redis reconnect error:', error);
 
-      // Return true to signal ioredis that a reconnect attempt should be made for these errors.
       return reconnectableErrors.some((targetError) =>
         targetError.test(errorMessage),
       );
@@ -114,10 +122,7 @@ export const buildRedisClient = () => {
   if (redisCluster) {
     logger.info('Connecting to Redis Cluster...');
 
-    const redisOptions = getRedisOptions(
-      redisTLS,
-      process.env.REDIS_PASSWORD,
-    );
+    const redisOptions = getRedisOptions(redisTLS, process.env.REDIS_PASSWORD);
     const redisClusterOptions: ClusterOptions = {
       dnsLookup: (address, callback) => callback(null, address),
       scaleReads: 'slave',
@@ -284,21 +289,23 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     const toCheckEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
     const allowedMethods = [
-      "eth_sendTransaction",
-      "wallet_switchEthereumChain",
-      "personal_sign",
-      "eth_signTypedData_v4",
-      "wallet_requestPermissions",
-      "metamask_connectSign"
+      'eth_sendTransaction',
+      'wallet_switchEthereumChain',
+      'personal_sign',
+      'eth_signTypedData_v4',
+      'wallet_requestPermissions',
+      'metamask_connectSign',
     ];
 
     // Filter: drop RPC events with unallowed methods silently, let all else through
-    if (toCheckEvents.includes(body.event) && 
-        (!body.method || !allowedMethods.includes(body.method))) {
+    if (
+      toCheckEvents.includes(body.event) &&
+      (!body.method || !allowedMethods.includes(body.method))
+    ) {
       return res.json({ success: true });
     }
 
-    let channelId: string = body.id || 'sdk';
+    const channelId: string = body.id || 'sdk';
     // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
     let isExtensionEvent = body.from === 'extension';
 
@@ -324,7 +331,10 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       ? crypto.createHash('sha1').update(channelId).digest('hex')
       : await pubClient.get(channelId);
 
-    incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
+    incrementRedisCacheOperation(
+      'analytics-get-channel-id',
+      Boolean(userIdHash),
+    );
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
@@ -353,7 +363,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     incrementRedisCacheOperation(
       'analytics-get-channel-info',
-      !!cachedChannelInfo,
+      Boolean(cachedChannelInfo),
     );
 
     if (cachedChannelInfo) {
