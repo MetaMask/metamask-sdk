@@ -80,8 +80,6 @@ export const getRedisOptions = (
       // Logging it as a critical error and triggering a full reconnect is usually not needed.
       // eslint-disable-next-line require-unicode-regexp
       if (/MOVED/.test(errorMessage)) {
-        // Log at a lower level (e.g., debug or info) if you want visibility during resharding/migrations
-        logger.debug(`Redis Cluster redirection: ${errorMessage}`);
         // Return false because MOVED is handled by the client's redirection logic,
         // it doesn't inherently mean the connection is broken and needs a full reconnect sequence.
         return false;
