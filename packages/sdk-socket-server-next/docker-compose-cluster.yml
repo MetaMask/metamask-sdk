@@ -1,0 +1,78 @@
+services:
+  app1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4002:4000'
+    env_file:
+      - .env
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4003:4000'
+    env_file:
+      - .env
+
+  app3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=${NODE_ENV:-production}
+    ports:
+      - '4004:4000'
+    env_file:
+      - .env
+
+  redis-master1:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6380:6379"
+
+  redis-master2:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6381:6379"
+
+  redis-master3:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+    environment:
+      - REDIS_ROLE=master
+    ports:
+      - "6382:6379"
+
+  redis-cluster-init:
+    image: redis:7.2-alpine
+    volumes:
+      - ./init-redis-cluster.sh:/usr/local/bin/init-redis-cluster.sh
+    depends_on:
+      - redis-master1
+      - redis-master2
+      - redis-master3
+    entrypoint: ["/bin/sh", "/usr/local/bin/init-redis-cluster.sh"]
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - app1
+      - app2
+      - app3

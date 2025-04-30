@@ -74,12 +74,32 @@ export const getRedisOptions = (
     maxRetriesPerRequest: 4,
     retryStrategy: (times) => Math.min(times * 30, 1000),
     reconnectOnError: (error) => {
-      // eslint-disable-next-line require-unicode-regexp
-      const targetErrors = [/MOVED/, /READONLY/, /ETIMEDOUT/];
+      const errorMessage = error.message;
 
+      // Check specifically for the MOVED error.
+      // ioredis cluster client handles MOVED internally by redirecting.
+      // Logging it as a critical error and triggering a full reconnect is usually not needed.
+      // eslint-disable-next-line require-unicode-regexp
+      if (/MOVED/.test(errorMessage)) {
+        // Log at a lower level (e.g., debug or info) if you want visibility during resharding/migrations
+        logger.debug(`Redis Cluster redirection: ${errorMessage}`);
+        // Return false because MOVED is handled by the client's redirection logic,
+        // it doesn't inherently mean the connection is broken and needs a full reconnect sequence.
+        return false;
+      }
+
+      // Handle other potentially recoverable errors that might warrant a reconnect attempt.
+      // READONLY might occur if connected to a replica that lost its master.
+      // ETIMEDOUT indicates a connection timeout.
+      // eslint-disable-next-line require-unicode-regexp
+      const reconnectableErrors = [/READONLY/, /ETIMEDOUT/];
+
+      // Log these as actual errors because they indicate a potential connection problem.
       logger.error('Redis reconnect error:', error);
-      return targetErrors.some((targetError) =>
-        targetError.test(error.message),
+
+      // Return true to signal ioredis that a reconnect attempt should be made for these errors.
+      return reconnectableErrors.some((targetError) =>
+        targetError.test(errorMessage),
       );
     },
   };
@@ -169,7 +189,7 @@ let redisClient: Cluster | Redis | undefined;
 
 export const getGlobalRedisClient = () => {
   if (!redisClient) {
-    redisClient = buildRedisClient();
+    redisClient = buildRedisClient(false);
   }
 
   return redisClient;
