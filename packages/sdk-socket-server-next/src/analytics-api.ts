@@ -25,7 +25,6 @@ import {
   incrementAnalyticsEvents,
   incrementRedisCacheOperation,
 } from './metrics';
-import genericPool from "generic-pool";
 
 const logger = getLogger();
 
@@ -109,7 +108,7 @@ export const getRedisOptions = (
   return options;
 };
 
-export const buildRedisClient = (usePipelining: boolean = true) => {
+export const buildRedisClient = () => {
   let newRedisClient: Cluster | Redis | undefined;
 
   if (redisCluster) {
@@ -126,7 +125,7 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
       showFriendlyErrorStack: true,
       slotsRefreshInterval: 2000,
       clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
-      enableAutoPipelining: usePipelining,
+      enableAutoPipelining: false,
       redisOptions,
     };
 
@@ -174,32 +173,19 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
   });
 
   return newRedisClient;
-}
-
-const redisFactory = {
-  create: () => {
-    return Promise.resolve(buildRedisClient(false));
-  },
-  destroy: (client: Cluster | Redis) => {
-    return Promise.resolve(client.disconnect());
-  },
 };
 
 let redisClient: Cluster | Redis | undefined;
 
 export const getGlobalRedisClient = () => {
   if (!redisClient) {
-    redisClient = buildRedisClient(false);
+    redisClient = buildRedisClient();
   }
 
   return redisClient;
 };
 
 export const pubClient = getGlobalRedisClient();
-export const pubClientPool = genericPool.createPool(redisFactory, {
-  max: 35,
-  min: 15,
-});
 
 const app = express();
 
