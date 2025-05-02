@@ -25,7 +25,6 @@ import {
   incrementAnalyticsEvents,
   incrementRedisCacheOperation,
 } from './metrics';
-import genericPool from "generic-pool";
 
 const logger = getLogger();
 
@@ -74,12 +73,38 @@ export const getRedisOptions = (
     maxRetriesPerRequest: 4,
     retryStrategy: (times) => Math.min(times * 30, 1000),
     reconnectOnError: (error) => {
+      const errorMessage = error.message;
+
+      // Check specifically for the MOVED error.
+      // ioredis cluster client handles MOVED internally by redirecting.
+      // Logging it as a critical error and triggering a full reconnect is usually not needed.
       // eslint-disable-next-line require-unicode-regexp
-      const targetErrors = [/MOVED/, /READONLY/, /ETIMEDOUT/];
+      if (/MOVED/.test(errorMessage)) {
+        // Return false because MOVED is handled by the client's redirection logic,
+        // it doesn't inherently mean the connection is broken and needs a full reconnect sequence.
+        return false;
+      }
+
+      // Handle other potentially recoverable errors that might warrant a reconnect attempt.
+      // READONLY might occur if connected to a replica that lost its master.
+      // ETIMEDOUT indicates a connection timeout.
+      // ECONNRESET indicates that the connection was reset.
+      // ECONNREFUSED indicates that the connection was refused.
+      // EPIPE indicates that the connection was broken.
+      // ENOTFOUND indicates that the host was not found.
+      const reconnectableErrors = [
+        /READONLY/u,
+        /ETIMEDOUT/u,
+        /ECONNRESET/u,
+        /ECONNREFUSED/u,
+        /EPIPE/u,
+        /ENOTFOUND/u,
+      ];
 
       logger.error('Redis reconnect error:', error);
-      return targetErrors.some((targetError) =>
-        targetError.test(error.message),
+
+      return reconnectableErrors.some((targetError) =>
+        targetError.test(errorMessage),
       );
     },
   };
@@ -89,16 +114,13 @@ export const getRedisOptions = (
   return options;
 };
 
-export const buildRedisClient = (usePipelining: boolean = true) => {
+export const buildRedisClient = () => {
   let newRedisClient: Cluster | Redis | undefined;
 
   if (redisCluster) {
     logger.info('Connecting to Redis Cluster...');
 
-    const redisOptions = getRedisOptions(
-      redisTLS,
-      process.env.REDIS_PASSWORD,
-    );
+    const redisOptions = getRedisOptions(redisTLS, process.env.REDIS_PASSWORD);
     const redisClusterOptions: ClusterOptions = {
       dnsLookup: (address, callback) => callback(null, address),
       scaleReads: 'slave',
@@ -106,7 +128,7 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
       showFriendlyErrorStack: true,
       slotsRefreshInterval: 2000,
       clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
-      enableAutoPipelining: usePipelining,
+      enableAutoPipelining: false,
       redisOptions,
     };
 
@@ -154,15 +176,6 @@ export const buildRedisClient = (usePipelining: boolean = true) => {
   });
 
   return newRedisClient;
-}
-
-const redisFactory = {
-  create: () => {
-    return Promise.resolve(buildRedisClient(false));
-  },
-  destroy: (client: Cluster | Redis) => {
-    return Promise.resolve(client.disconnect());
-  },
 };
 
 let redisClient: Cluster | Redis | undefined;
@@ -176,10 +189,6 @@ export const getGlobalRedisClient = () => {
 };
 
 export const pubClient = getGlobalRedisClient();
-export const pubClientPool = genericPool.createPool(redisFactory, {
-  max: 35,
-  min: 15,
-});
 
 const app = express();
 
@@ -278,21 +287,23 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     const toCheckEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
     const allowedMethods = [
-      "eth_sendTransaction",
-      "wallet_switchEthereumChain",
-      "personal_sign",
-      "eth_signTypedData_v4",
-      "wallet_requestPermissions",
-      "metamask_connectSign"
+      'eth_sendTransaction',
+      'wallet_switchEthereumChain',
+      'personal_sign',
+      'eth_signTypedData_v4',
+      'wallet_requestPermissions',
+      'metamask_connectSign',
     ];
 
     // Filter: drop RPC events with unallowed methods silently, let all else through
-    if (toCheckEvents.includes(body.event) && 
-        (!body.method || !allowedMethods.includes(body.method))) {
+    if (
+      toCheckEvents.includes(body.event) &&
+      (!body.method || !allowedMethods.includes(body.method))
+    ) {
       return res.json({ success: true });
     }
 
-    let channelId: string = body.id || 'sdk';
+    const channelId: string = body.id || 'sdk';
     // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
     let isExtensionEvent = body.from === 'extension';
 
@@ -318,7 +329,10 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       ? crypto.createHash('sha1').update(channelId).digest('hex')
       : await pubClient.get(channelId);
 
-    incrementRedisCacheOperation('analytics-get-channel-id', !!userIdHash);
+    incrementRedisCacheOperation(
+      'analytics-get-channel-id',
+      Boolean(userIdHash),
+    );
 
     if (!userIdHash) {
       userIdHash = crypto.createHash('sha1').update(channelId).digest('hex');
@@ -347,7 +361,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
 
     incrementRedisCacheOperation(
       'analytics-get-channel-info',
-      !!cachedChannelInfo,
+      Boolean(cachedChannelInfo),
     );
 
     if (cachedChannelInfo) {
