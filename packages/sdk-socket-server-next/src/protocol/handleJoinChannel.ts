@@ -228,7 +228,7 @@ export const handleJoinChannel = async ({
       await socket.join(channelId);
     }
 
-    // Dirty fix for race condition between socket.join and pubClient.get
+    // TODO: Dirty fix for race condition between socket.join and pubClient.get
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     channelOccupancy = parseInt(
