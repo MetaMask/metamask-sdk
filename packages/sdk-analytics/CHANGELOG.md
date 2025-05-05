@@ -6,9 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2]
+### Added
+- Add New Analytics Client ([#1270](https://github.com/MetaMask/metamask-sdk/pull/1270))
+
+### Fixed
+- fix: correct sdk analytics lint issued and package scope fix ([#1281](https://github.com/MetaMask/metamask-sdk/pull/1281))
+- fix: make the package public ([#1279](https://github.com/MetaMask/metamask-sdk/pull/1279))
+
 ## [0.0.0]
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.2...HEAD
+[0.0.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.0...@metamask/sdk-analytics@0.0.2
 [0.0.0]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-analytics@0.0.0
