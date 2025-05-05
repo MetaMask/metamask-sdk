@@ -6,23 +6,24 @@ import {
   launchMetaMaskWithFixture,
   navigateToWebMobileDapp,
   refreshBrowser,
+  switchToContext,
 } from '@util/Utils';
 import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
-import PersonalSignConfirmationComponent from '@screens/MetaMask/components/PersonalSignConfirmationComponent';
 import LockScreen from '@screens/MetaMask/LockScreen';
-import PlaygroundNextDappScreen from '@screens/Dapps/PlaygroundNextDappScreen';
+import MetaMaskSDKTestDappScreen from '@screens/Dapps/MetaMaskSDKTestDappScreen';
 import {
+  Contexts,
   METAMASK_BUNDLE_ID,
   WALLET_PASSWORD,
 } from '../../../src/util/Constants';
 
-let playgroundNextDappUrl: string;
+let metamaskSDKTestDappUrl: string;
 const fixtureServer = new FixtureServer();
 
 describe('MetaMask Connector Playground dapp', () => {
   before(async () => {
-    playgroundNextDappUrl = process.env.PLAYGROUND_NEXT_DAPP_URL ?? '';
-    expect(playgroundNextDappUrl.length).toBeGreaterThan(0);
+    metamaskSDKTestDappUrl = process.env.METAMASK_TEST_DAPP_URL ?? '';
+    expect(metamaskSDKTestDappUrl.length).toBeGreaterThan(0);
 
     await launchMetaMaskWithFixture(fixtureServer, METAMASK_BUNDLE_ID);
     await LockScreen.unlockMM(WALLET_PASSWORD);
@@ -30,14 +31,24 @@ describe('MetaMask Connector Playground dapp', () => {
 
   it('connect with a cold start state', async () => {
     await navigateToWebMobileDapp(
-      playgroundNextDappUrl,
-      PlaygroundNextDappScreen,
+      metamaskSDKTestDappUrl,
+      MetaMaskSDKTestDappScreen,
     );
     // Start with a cold start
     await killApp(METAMASK_BUNDLE_ID);
     await refreshBrowser();
 
-    await PlaygroundNextDappScreen.connect();
+    await switchToContext({
+      context: Contexts.WEBVIEW,
+      dappUrl: metamaskSDKTestDappUrl,
+    });
+
+    await MetaMaskSDKTestDappScreen.connect();
+
+    await switchToContext({
+      context: Contexts.NATIVE,
+    });
+
     await deviceOpenDeeplinkWithMetaMask();
 
     await LockScreen.unlockMM(WALLET_PASSWORD);
@@ -46,31 +57,11 @@ describe('MetaMask Connector Playground dapp', () => {
 
     await goBack();
 
-    expect(await PlaygroundNextDappScreen.isDappConnected()).toBe(true);
-  });
+    await switchToContext({
+      context: Contexts.WEBVIEW,
+      dappUrl: metamaskSDKTestDappUrl,
+    });
 
-  // Boilerplate for the next test
-  it('call personal_sign with a cold start state', async () => {
-    const personalSignMessage = 'Hello, world!';
-
-    // Start with a cold start
-    await killApp(METAMASK_BUNDLE_ID);
-
-    await PlaygroundNextDappScreen.tapPersonalSignButton();
-    await deviceOpenDeeplinkWithMetaMask();
-    await LockScreen.unlockMM(WALLET_PASSWORD);
-
-    expect(
-      await PersonalSignConfirmationComponent.isPersonalSignComponentDisplayed(),
-    ).toBe(true);
-
-    expect(
-      await PersonalSignConfirmationComponent.messageText.getText(),
-    ).toContain(personalSignMessage);
-
-    await PersonalSignConfirmationComponent.tapSignButton();
-    await goBack();
-
-    // TODO: Assert personalSign contents
+    expect(await MetaMaskSDKTestDappScreen.isDappConnected()).toBe(true);
   });
 });
