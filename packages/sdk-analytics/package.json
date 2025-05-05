@@ -14,6 +14,7 @@
     "allow-scripts": ""
   },
   "devDependencies": {
+    "@metamask/auto-changelog": "^3.4.3",
     "@metamask/eslint-config": "^14.0.0",
     "@metamask/eslint-config-typescript": "^14.0.0",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
