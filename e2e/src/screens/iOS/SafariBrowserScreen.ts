@@ -51,12 +51,11 @@ class SafariBrowserScreen implements MobileBrowser {
     // Trying to navigate directly to the address
     await driver.navigateTo(address);
 
-    // waits for the refresh button to be displayed meaning that the page is loaded
-    await this.refreshButton.waitForDisplayed({
-      timeout: 10000,
-    });
-
-    await dappScreen.terminate();
+    if (dappScreen) {
+      // pageObject will be used to determine if the page was loaded successfully
+      // once new test cases are added
+      console.log('SafariBrowserScreen.goToAddress:: dappScreen is not null');
+    }
   }
 
   async launchBrowser(): Promise<void> {

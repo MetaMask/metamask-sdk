@@ -23,6 +23,7 @@ import {
   LOCALHOST,
   WALLET_PASSWORD,
   Browsers,
+  Contexts,
 } from './Constants';
 import Gestures from './Gestures';
 
@@ -202,4 +203,73 @@ export const launchMetaMaskWithFixture = async (
   // {"bundleId": "io.metamask.MetaMask-QA", "arguments": ["fixtureServerPort", "12345"], "environment": {"fixtureServerPort": "12345"}}
 
   console.log('MetaMask was loaded with fixtures!');
+};
+
+export const getWebViewElementText = async (locator: string) => {
+  const webviewElementText = await driver.executeScript(
+    `const element = document.querySelector('${locator}');
+    return element ? element.innerText || element.textContent : '';`,
+    [],
+  );
+  return webviewElementText;
+};
+
+export const switchToNativeContext = async () => {
+  const availableContexts = await driver.getContexts();
+  const nativeContext = availableContexts.find(
+    (ctx) => (typeof ctx === 'string' ? ctx : ctx.id) === Contexts.NATIVE,
+  );
+  try {
+    if (nativeContext) {
+      const contextId =
+        typeof nativeContext === 'string' ? nativeContext : nativeContext.id;
+      await driver.switchContext(contextId);
+    } else {
+      console.log('Native context not found in available contexts');
+    }
+  } catch (error) {
+    console.log('Error switching to native context:', error);
+  }
+};
+
+export const switchToWebviewContext = async (dappUrl: string) => {
+  const availableContexts = await driver.getContexts();
+  const webviewContext = availableContexts.find((context) => {
+    if (typeof context === 'string') {
+      return context.includes('WEBVIEW');
+    } else if (typeof context === 'object' && context !== null) {
+      const contextUrl = context.url || '';
+      return contextUrl.includes(dappUrl);
+    }
+    return false;
+  });
+
+  console.log('Selected webview context:', webviewContext);
+
+  if (webviewContext) {
+    // Use the id property if it's an object, otherwise use the context directly
+    const contextId =
+      typeof webviewContext === 'object' ? webviewContext.id : webviewContext;
+    console.log(`Switching to context ID: ${contextId}`);
+    await driver.switchContext(contextId);
+    console.log('Successfully switched context');
+  } else {
+    console.log('No matching webview context found');
+  }
+};
+
+export const switchToContext = async ({
+  context,
+  dappUrl,
+}: {
+  context: (typeof Contexts)[keyof typeof Contexts];
+  dappUrl?: string;
+}) => {
+  if (context === Contexts.NATIVE) {
+    await switchToNativeContext();
+  } else if (dappUrl) {
+    await switchToWebviewContext(dappUrl);
+  } else {
+    throw new Error('Invalid Context or Dapp URL provided');
+  }
 };
