@@ -5,19 +5,25 @@ export type Dapp = {
 
   terminateButton: ChainablePromiseElement;
 
-  signTypedDataV3Button?: ChainablePromiseElement;
-
-  signTypedDataV4Button?: ChainablePromiseElement;
-
   sendTransactionButton?: ChainablePromiseElement;
 
   personalSignButton?: ChainablePromiseElement;
 
+  clearUIStateButton?: ChainablePromiseElement;
+
+  switchToLineaSepoliaButton?: ChainablePromiseElement;
+
+  switchToMainnetButton?: ChainablePromiseElement;
+
+  switchToPolygonButton?: ChainablePromiseElement;
+
   connect(): Promise<void>;
-  signTypedDataV3?(): Promise<void>;
-  signTypedDataV4?(): Promise<void>;
-  personalSign?(): Promise<void>;
-  sendTransaction?(): Promise<void>;
-  isDappConnected(): Promise<boolean>;
   terminate(): Promise<void>;
+  sendTransaction?(): Promise<void>;
+  personalSign?(): Promise<void>;
+  clearUIState?(): Promise<void>;
+  switchToLineaSepolia?(): Promise<void>;
+  switchToMainnet?(): Promise<void>;
+  switchToPolygon?(): Promise<void>;
+  isDappConnected(): Promise<boolean>;
 };
