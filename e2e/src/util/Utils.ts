@@ -273,3 +273,46 @@ export const switchToContext = async ({
     throw new Error('Invalid Context or Dapp URL provided');
   }
 };
+
+/**
+ * Executes actions in the mobile (native) context, handling the context switching automatically
+ * @param actionFn - The function containing actions to perform in the native context
+ * @returns The result of the action function
+ */
+export const withMobileAction = async <T>(
+  actionFn: () => Promise<T>,
+): Promise<T> => {
+  // Switch to native context
+  await switchToContext({
+    context: Contexts.NATIVE,
+  });
+
+  // Execute the mobile actions
+  const result = await actionFn();
+
+  // Return the result
+  return result;
+};
+
+/**
+ * Executes actions in the web context, handling the context switching automatically
+ * @param dappUrl - The URL of the dapp to switch context to
+ * @param actionFn - The function containing actions to perform in the web context
+ * @returns The result of the action function
+ */
+export const withWebAction = async <T>(
+  dappUrl: string,
+  actionFn: () => Promise<T>,
+): Promise<T> => {
+  // Switch to webview context
+  await switchToContext({
+    context: Contexts.WEBVIEW,
+    dappUrl,
+  });
+
+  // Execute the web actions
+  const result = await actionFn();
+
+  // Return the result
+  return result;
+};

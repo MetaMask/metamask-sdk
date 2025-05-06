@@ -6,13 +6,13 @@ import {
   launchMetaMaskWithFixture,
   navigateToWebMobileDapp,
   refreshBrowser,
-  switchToContext,
+  withMobileAction,
+  withWebAction,
 } from '@util/Utils';
 import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
 import LockScreen from '@screens/MetaMask/LockScreen';
 import MetaMaskSDKTestDappScreen from '@screens/Dapps/MetaMaskSDKTestDappScreen';
 import {
-  Contexts,
   METAMASK_BUNDLE_ID,
   WALLET_PASSWORD,
 } from '../../../src/util/Constants';
@@ -38,30 +38,19 @@ describe('MetaMask Connector Playground dapp', () => {
     await killApp(METAMASK_BUNDLE_ID);
     await refreshBrowser();
 
-    await switchToContext({
-      context: Contexts.WEBVIEW,
-      dappUrl: metamaskSDKTestDappUrl,
+    await withWebAction(metamaskSDKTestDappUrl, async () => {
+      await MetaMaskSDKTestDappScreen.connect();
     });
 
-    await MetaMaskSDKTestDappScreen.connect();
-
-    await switchToContext({
-      context: Contexts.NATIVE,
+    await withMobileAction(async () => {
+      await deviceOpenDeeplinkWithMetaMask();
+      await LockScreen.unlockMM(WALLET_PASSWORD);
+      await ConnectModalComponent.tapConnectApproval();
+      await goBack();
     });
 
-    await deviceOpenDeeplinkWithMetaMask();
-
-    await LockScreen.unlockMM(WALLET_PASSWORD);
-
-    await ConnectModalComponent.tapConnectApproval();
-
-    await goBack();
-
-    await switchToContext({
-      context: Contexts.WEBVIEW,
-      dappUrl: metamaskSDKTestDappUrl,
+    await withWebAction(metamaskSDKTestDappUrl, async () => {
+      expect(await MetaMaskSDKTestDappScreen.isDappConnected()).toBe(true);
     });
-
-    expect(await MetaMaskSDKTestDappScreen.isDappConnected()).toBe(true);
   });
 });
