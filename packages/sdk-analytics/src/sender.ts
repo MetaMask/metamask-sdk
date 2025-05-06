@@ -1,13 +1,13 @@
 /* eslint-disable no-restricted-syntax */
 type SenderOptions<T> = {
   batchSize: number;
-  baseIntervalMs: number;
+  baseTimeoutMs: number;
   sendFn: (batch: T[]) => Promise<void>;
 };
 
 /**
- * Sender is a class that sends batches of events to the server in an interval.
- * It also uses exponential backoff to handle errors.
+ * Sender batches events and sends them to a server within a time window,
+ * with exponential backoff on errors.
  */
 class Sender<T> {
   private readonly sendFn: (batch: T[]) => Promise<void>;
@@ -16,68 +16,61 @@ class Sender<T> {
 
   private readonly batchSize: number;
 
-  private readonly baseIntervalMs: number;
+  private readonly baseTimeoutMs: number;
 
-  private currentIntervalMs: number;
+  private currentTimeoutMs: number;
 
-  private readonly maxIntervalMs: number = 30_000; // 30 seconds
+  private readonly maxTimeoutMs: number = 30_000;
 
-  private intervalId: NodeJS.Timeout | null = null;
+  private timeoutId: NodeJS.Timeout | null = null;
 
   private isSending: boolean = false;
 
   constructor(options: SenderOptions<T>) {
     this.batchSize = options.batchSize;
-    this.baseIntervalMs = options.baseIntervalMs;
-    this.currentIntervalMs = options.baseIntervalMs;
+    this.baseTimeoutMs = options.baseTimeoutMs;
+    this.currentTimeoutMs = options.baseTimeoutMs;
     this.sendFn = options.sendFn;
   }
 
   public enqueue(item: T): void {
     this.batch.push(item);
-    if (this.batch.length >= this.batchSize && !this.isSending) {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.flush();
-    }
+    this.schedule();
   }
 
-  public start(): void {
-    if (this.intervalId) {
-      return;
+  private schedule(): void {
+    // If the batch is not full and there is no scheduled flush, schedule a flush
+    if (this.batch.length > 0 && !this.timeoutId) {
+      this.timeoutId = setTimeout(() => {
+        this.timeoutId = null;
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        this.flush();
+      }, this.currentTimeoutMs);
     }
-    this.scheduleNextSend();
-  }
-
-  private scheduleNextSend(): void {
-    if (this.intervalId) {
-      clearTimeout(this.intervalId);
-    }
-    this.intervalId = setTimeout(() => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.flush();
-    }, this.currentIntervalMs);
   }
 
   private async flush(): Promise<void> {
     if (this.isSending || this.batch.length === 0) {
       return;
     }
+
     this.isSending = true;
-    const current = [...this.batch];
-    this.batch = [];
+    const current = [...this.batch.slice(0, this.batchSize)];
+    this.batch = this.batch.slice(this.batchSize);
 
     try {
       await this.sendFn(current);
-      this.currentIntervalMs = this.baseIntervalMs; // reset on success
-    } catch {
-      this.batch = [...current, ...this.batch];
-      this.currentIntervalMs = Math.min(
-        this.currentIntervalMs * 2,
-        this.maxIntervalMs,
-      ); // exponential backoff on error
+      this.currentTimeoutMs = this.baseTimeoutMs; // reset on success
+    } catch (error) {
+      console.error('Sender: Failed to send batch', error);
+      this.batch = [...current, ...this.batch]; // retry the batch
+      this.currentTimeoutMs = Math.min(
+        this.currentTimeoutMs * 2,
+        this.maxTimeoutMs,
+      ); // exponential backoff
     } finally {
       this.isSending = false;
-      this.scheduleNextSend();
+      this.schedule();
     }
   }
 }
