@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { EventType } from '@metamask/sdk-communication-layer';
 import { logger } from '../../../utils/logger';
 import { PROVIDER_UPDATE_TYPE } from '../../../types/ProviderUpdateType';
@@ -23,6 +24,12 @@ export async function connectWithModalInstaller(
   options: RemoteConnectionProps,
   linkParams: string,
 ) {
+  const connectionTimeout = setTimeout(() => {
+    analytics.track('sdk_connection_failed', {
+      transport_type: 'websocket',
+    });
+  }, 60_000);
+
   return new Promise<void>((resolve, reject) => {
     if (!state.connector) {
       reject(new Error('No connector available'));
@@ -54,6 +61,7 @@ export async function connectWithModalInstaller(
             code: 4001,
             message: 'User rejected the request.',
           };
+          clearTimeout(connectionTimeout);
           reject(rejected);
           return;
         }
@@ -62,10 +70,12 @@ export async function connectWithModalInstaller(
     );
 
     state.connector.once(EventType.AUTHORIZED, () => {
+      clearTimeout(connectionTimeout);
       resolve();
     });
 
     state.connector.once(EventType.REJECTED, () => {
+      clearTimeout(connectionTimeout);
       reject(EventType.REJECTED);
     });
 
@@ -75,6 +85,7 @@ export async function connectWithModalInstaller(
       );
 
       // Allow initializeProvider to complete and send the eth_requestAccounts
+      clearTimeout(connectionTimeout);
       resolve();
     });
   });
