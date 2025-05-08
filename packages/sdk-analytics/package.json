@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-analytics",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Analytics package for MetaMask SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,11 +8,13 @@
     "build": "tsup src/index.ts --dts",
     "lint": "eslint src --ext .ts,.tsx --ignore-pattern 'src/schema.ts'",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --ignore-pattern 'src/schema.ts'",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-analytics",
     "test": "vitest",
     "test:ci": "vitest --run",
     "allow-scripts": ""
   },
   "devDependencies": {
+    "@metamask/auto-changelog": "^3.4.3",
     "@metamask/eslint-config": "^14.0.0",
     "@metamask/eslint-config-typescript": "^14.0.0",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
@@ -31,7 +33,10 @@
     "typescript-eslint": "^8.6.0",
     "vitest": "^3.1.2"
   },
-  "private": true,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "license": "MIT",
   "dependencies": {
     "openapi-fetch": "^0.13.5"
