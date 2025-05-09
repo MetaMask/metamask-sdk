@@ -25,6 +25,7 @@ export function initializeConnector(
 
   // Check if existing channel config to re-use previous ecies key if not directly provided
   state.connector = new RemoteCommunication({
+    anonId: options.anonId,
     platformType: options.platformManager.getPlatformType(),
     communicationLayerPreference: options.communicationLayerPreference,
     transports: options.transports,

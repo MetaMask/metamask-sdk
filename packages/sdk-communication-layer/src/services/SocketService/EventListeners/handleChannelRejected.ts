@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
 import { ConnectionStatus } from '../../../types/ConnectionStatus';
@@ -49,6 +50,10 @@ export function handleChannelRejected(
         `handleChannelRejected:: Error emitting analytics event`,
         error,
       );
+    });
+
+    analytics.track('sdk_connection_rejected', {
+      transport_type: 'websocket',
     });
 
     // Terminate the channel

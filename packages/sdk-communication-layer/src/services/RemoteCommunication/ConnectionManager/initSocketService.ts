@@ -111,6 +111,7 @@ export function initSocketService({
     title,
     source: state.dappMetadata?.source,
     dappId,
+    anonId: state.anonId,
     icon: state.dappMetadata?.iconUrl || state.dappMetadata?.base64Icon,
     platform: state.platformType,
     apiVersion: packageJson.version,

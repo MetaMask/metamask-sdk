@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
@@ -205,6 +206,10 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   public availableLanguages: string[] = ['en'];
 
+  private _anonId: string | undefined;
+
+  private readonly ANON_ID_STORAGE_KEY = 'mm-sdk-anon-id';
+
   constructor(
     options: MetaMaskSDKOptions = {
       storage: {
@@ -396,6 +401,93 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   getVersion() {
     return packageJson.version;
+  }
+
+  getDappId() {
+    if (
+      typeof window === 'undefined' ||
+      typeof window.location === 'undefined'
+    ) {
+      return (
+        this.options.dappMetadata?.name ??
+        this.options.dappMetadata?.url ??
+        'N/A'
+      );
+    }
+
+    return window.location.hostname;
+  }
+
+  /**
+   * Get the anonymous ID for the SDK.
+   * This ID is used to track the user's activity across different sessions anonymously.
+   * @returns {Promise<string>} - A promise that resolves to the anonymous ID.
+   */
+  async getAnonId(): Promise<string> {
+    if (this._anonId) {
+      return this._anonId;
+    }
+
+    let anonId: string;
+    if (this.platformManager?.isBrowser()) {
+      anonId = this.getBrowserAnonId();
+    } else if (this.platformManager?.isReactNative()) {
+      anonId = await this.getReactNativeAnonId();
+    } else {
+      anonId = uuidv4();
+    }
+
+    this._anonId = anonId;
+    return anonId;
+  }
+
+  /**
+   * Retrieve or generate the anonymous ID for browser environments using localStorage.
+   * @returns {string} - The anonymous ID.
+   */
+  private getBrowserAnonId(): string {
+    const key = this.ANON_ID_STORAGE_KEY;
+    try {
+      const storedId = localStorage.getItem(key);
+      if (storedId) {
+        return storedId;
+      }
+      const newId = uuidv4();
+      localStorage.setItem(key, newId);
+      return newId;
+    } catch (e) {
+      console.error(
+        '[MetaMaskSDK: getBrowserAnonId()] LocalStorage access error:',
+        e,
+      );
+      return uuidv4();
+    }
+  }
+
+  /**
+   * Retrieve or generate the anonymous ID for React Native environments using AsyncStorage.
+   * @returns {Promise<string>} - A promise that resolves to the anonymous ID.
+   */
+  private async getReactNativeAnonId(): Promise<string> {
+    const key = this.ANON_ID_STORAGE_KEY;
+    try {
+      const AsyncStorage =
+        // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
+        require('@react-native-async-storage/async-storage').default;
+      const storedId = await AsyncStorage.getItem(key);
+      if (storedId) {
+        return storedId;
+      }
+      const newId = uuidv4();
+      await AsyncStorage.setItem(key, newId);
+      return newId;
+    } catch (e) {
+      console.error(
+        '[MetaMaskSDK: getReactNativeAnonId()] Error accessing AsyncStorage:',
+        e,
+      );
+      return uuidv4();
+    }
   }
 
   getWalletStatus() {

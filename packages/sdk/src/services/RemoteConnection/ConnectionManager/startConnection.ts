@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import {
   DEFAULT_SESSION_TIMEOUT_MS,
   EventType,
@@ -139,6 +140,7 @@ export async function startConnection(
       scheme: scheme ?? '',
       apiVersion: sdkVersion,
       dappId: dappId || url || 'N/A',
+      anonId: options.anonId,
       platform: platformType ?? '',
       source: options._source ?? '',
     };
@@ -177,21 +179,34 @@ export async function startConnection(
     // emit qrcode url link
     provider.emit('display_uri', qrcodeLink);
 
+    analytics.track('sdk_connection_initiated', {
+      transport_type: 'websocket',
+    });
+
     // first handle secure connection
     if (state.platformManager?.isSecure()) {
+      const connectionTimeout = setTimeout(() => {
+        analytics.track('sdk_connection_failed', {
+          transport_type: 'websocket',
+        });
+      }, 60_000);
+
       await connectWithDeeplink(state, encodedLinkParams);
       // wait for authorized event
       return new Promise((resolve, reject) => {
         if (state.connector?.isAuthorized()) {
+          clearTimeout(connectionTimeout);
           resolve();
           return;
         }
 
         state.connector?.once(EventType.AUTHORIZED, () => {
+          clearTimeout(connectionTimeout);
           resolve();
         });
 
         state.connector?.once(EventType.REJECTED, () => {
+          clearTimeout(connectionTimeout);
           reject(EventType.REJECTED);
         });
       });

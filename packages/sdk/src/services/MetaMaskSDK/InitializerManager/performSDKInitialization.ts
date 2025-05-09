@@ -7,6 +7,7 @@ import { logger } from '../../../utils/logger';
 import { handleAutoAndExtensionConnections } from './handleAutoAndExtensionConnections';
 import { initializeProviderAndEventListeners } from './initializeProviderAndEventListeners';
 import { setupAnalytics } from './setupAnalytics';
+import { setupAnalyticsV2 } from './setupAnalyticsV2';
 import { setupDappMetadata } from './setupDappMetadata';
 import { setupExtensionPreferences } from './setupExtensionPreferences';
 import { setupInfuraProvider } from './setupInfuraProvider';
@@ -99,6 +100,8 @@ export async function performSDKInitialization(instance: MetaMaskSDK) {
   await setupPlatformManager(instance);
 
   await setupAnalytics(instance);
+
+  await setupAnalyticsV2(instance);
 
   await setupStorageManager(instance);
 

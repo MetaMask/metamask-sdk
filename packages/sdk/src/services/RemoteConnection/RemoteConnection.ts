@@ -26,6 +26,7 @@ import { EventHandler, setupListeners } from './EventListeners';
 import { showActiveModal } from './ModalManager';
 
 export interface RemoteConnectionProps {
+  anonId: string;
   timer?: {
     runBackgroundTimer?: (cb: () => void, ms: number) => number;
     stopBackgroundTimer?: () => void;

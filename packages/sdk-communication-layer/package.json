@@ -46,6 +46,7 @@
     "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
+    "@metamask/sdk-analytics": "workspace:*",
     "bufferutil": "^4.0.8",
     "date-fns": "^2.29.3",
     "debug": "^4.3.4",

@@ -11137,7 +11137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-analytics@workspace:packages/sdk-analytics":
+"@metamask/sdk-analytics@workspace:*, @metamask/sdk-analytics@workspace:packages/sdk-analytics":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-analytics@workspace:packages/sdk-analytics"
   dependencies:
@@ -11206,6 +11206,7 @@ __metadata:
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
+    "@metamask/sdk-analytics": "workspace:*"
     "@rollup/plugin-commonjs": ^25.0.0
     "@rollup/plugin-json": ^6.0.0
     "@rollup/plugin-node-resolve": ^15.0.2
@@ -11787,6 +11788,7 @@ __metadata:
     "@metamask/eslint-config-typescript": ^6.0.0
     "@metamask/onboarding": ^1.0.1
     "@metamask/providers": 16.1.0
+    "@metamask/sdk-analytics": "workspace:*"
     "@metamask/sdk-communication-layer": "workspace:*"
     "@metamask/sdk-install-modal-web": "workspace:*"
     "@paulmillr/qr": ^0.2.1

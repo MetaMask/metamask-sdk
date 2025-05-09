@@ -24,6 +24,7 @@ export const mainCommunication = async () => {
   const communicationServerUrl = 'http://localhost:4000/';
 
   const remote = new RemoteCommunication({
+    anonId: '123',
     communicationLayerPreference,
     platformType: PlatformType.NonBrowser,
     communicationServerUrl,
@@ -44,6 +45,7 @@ export const mainCommunication = async () => {
   });
 
   const mmRemote = new RemoteCommunication({
+    anonId: '123',
     communicationLayerPreference,
     platformType: 'metamask-mobile',
     otherPublicKey: pubKey,

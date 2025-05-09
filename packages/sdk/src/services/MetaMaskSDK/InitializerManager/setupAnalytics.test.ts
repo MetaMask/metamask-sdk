@@ -26,6 +26,7 @@ describe('setupAnalytics', () => {
       platformManager: {
         getPlatformType: mockGetPlatformType,
       },
+      getDappId: jest.fn(() => 'some dapp id'),
     } as unknown as MetaMaskSDK;
   });
 
@@ -40,7 +41,8 @@ describe('setupAnalytics', () => {
         title: '',
         platform: '',
         source: '',
-        dappId: 'N/A',
+        dappId: 'some dapp id',
+        anonId: '',
       },
     });
   });
@@ -63,9 +65,10 @@ describe('setupAnalytics', () => {
       originatorInfo: {
         url: 'https://dapp.url',
         title: 'DApp Name',
-        dappId: 'DApp Name',
+        dappId: 'some dapp id',
         platform: 'web',
         source: 'custom-source',
+        anonId: '',
       },
     });
   });

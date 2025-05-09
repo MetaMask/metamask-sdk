@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
@@ -232,6 +233,26 @@ export function handleMessage(instance: SocketService, channelId: string) {
             console.error(`Cannot send analytics`, err);
           });
         }
+
+        if (lcLogguedRPCs.includes(initialRPCMethod.method.toLowerCase())) {
+          if (rpcMessage.error) {
+            // Detect user-rejected errors (EIP-1193 code 4001)
+            if (rpcMessage.error.code === 4001) {
+              analytics.track('sdk_action_rejected', {
+                action: initialRPCMethod.method,
+              });
+            } else {
+              analytics.track('sdk_action_failed', {
+                action: initialRPCMethod.method,
+              });
+            }
+          } else {
+            analytics.track('sdk_action_succeeded', {
+              action: initialRPCMethod.method,
+            });
+          }
+        }
+
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,
