@@ -8,65 +8,74 @@ t.describe('Sender', () => {
   let sender: Sender<string>;
 
   t.beforeEach(() => {
+    t.vi.useFakeTimers();
     sendFn = t.vi.fn().mockResolvedValue(undefined);
-    sender = new Sender({ batchSize: 2, baseIntervalMs: 50, sendFn });
+    sender = new Sender({ batchSize: 2, baseTimeoutMs: 50, sendFn });
   });
 
   t.afterEach(() => {
+    t.vi.useRealTimers();
     t.vi.clearAllMocks();
   });
 
-  t.it('should flush when batch size is reached', async () => {
-    sender.start();
+  t.it('should flush after timeout', async () => {
     sender.enqueue('event1');
-    sender.enqueue('event2');
-    t.expect(sendFn).toHaveBeenCalledWith(['event1', 'event2']); // Flush at batchSize
-  });
-
-  t.it('should flush periodically', async () => {
-    sender.start();
-    sender.enqueue('event1');
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    await t.vi.advanceTimersByTimeAsync(50);
     t.expect(sendFn).toHaveBeenCalledWith(['event1']);
   });
 
+  t.it('should flush twice with correct batch size', async () => {
+    sender.enqueue('event1');
+    sender.enqueue('event2');
+    sender.enqueue('event3');
+    t.expect(sendFn).toHaveBeenCalledTimes(0);
+
+    await t.vi.advanceTimersByTimeAsync(50);
+    t.expect(sendFn).toHaveBeenCalledTimes(1);
+    t.expect(sendFn).toHaveBeenCalledWith(['event1', 'event2']);
+
+    await t.vi.advanceTimersByTimeAsync(50);
+    t.expect(sendFn).toHaveBeenCalledTimes(2);
+    t.expect(sendFn).toHaveBeenCalledWith(['event3']);
+  });
+
   t.it(
-    'should handle failure and reset interval after successful send',
+    'should handle failure (with exponential backoff) and reset base timeout after successful send',
     async () => {
-      let sendCount = 0;
+      let shouldSendFail = true;
       sendFn = t.vi.fn().mockImplementation(async () => {
-        sendCount += 1;
-        return sendCount === 1
-          ? Promise.reject(new Error('Failed'))
-          : Promise.resolve();
+        if (shouldSendFail) {
+          return Promise.reject(new Error('Failed'));
+        }
+        return Promise.resolve();
       });
-      sender = new Sender({ batchSize: 100, baseIntervalMs: 50, sendFn }); // Short interval
-      sender.start();
+      sender = new Sender({ batchSize: 100, baseTimeoutMs: 50, sendFn });
+
+      shouldSendFail = true;
 
       sender.enqueue('event1');
       t.expect(sendFn).toHaveBeenCalledTimes(0);
 
       // Wait for initial send
-      await new Promise((resolve) => setTimeout(resolve, 51));
+      await t.vi.advanceTimersByTimeAsync(50);
       t.expect(sendFn).toHaveBeenCalledTimes(1);
+      t.expect(sendFn).toHaveBeenCalledWith(['event1']);
 
-      // Wait for first attempt + retry
-      await new Promise((resolve) => setTimeout(resolve, 101));
-      t.expect(sendFn).toHaveBeenCalledTimes(2); // First attempt fails, then succeeds
+      shouldSendFail = false;
 
-      // Wait for next scheduled send (should happen at original interval)
+      // Wait for second attempt
+      await t.vi.advanceTimersByTimeAsync(50);
+      t.expect(sendFn).toHaveBeenCalledTimes(1); // Confirms double timeout
+      await t.vi.advanceTimersByTimeAsync(50);
+      t.expect(sendFn).toHaveBeenCalledTimes(2); // Confirms double timeout
+      t.expect(sendFn).toHaveBeenCalledWith(['event1']);
+
       sender.enqueue('event2');
-      await new Promise((resolve) => setTimeout(resolve, 51));
+      await t.vi.advanceTimersByTimeAsync(50); // Confirms timeout reset
       t.expect(sendFn).toHaveBeenCalledTimes(3);
       t.expect(sendFn).toHaveBeenCalledWith(['event2']);
     },
   );
-
-  t.it('should not send when batch is empty', async () => {
-    sender.start();
-    await new Promise((resolve) => setTimeout(resolve, 51));
-    t.expect(sendFn).not.toHaveBeenCalled(); // No send if batch is empty
-  });
 
   t.it('should handle concurrent sends properly', async () => {
     let resolveSend!: (value?: unknown) => void;
@@ -77,19 +86,19 @@ t.describe('Sender', () => {
           resolveSend = resolve;
         }),
     );
-    sender = new Sender({ batchSize: 100, baseIntervalMs: 1000, sendFn });
-    sender.start();
+    sender = new Sender({ batchSize: 100, baseTimeoutMs: 1000, sendFn });
 
     sender.enqueue('event1');
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await t.vi.advanceTimersByTimeAsync(1000);
     t.expect(sendFn).toHaveBeenCalledWith(['event1']);
+    t.expect(sendFn).toHaveBeenCalledTimes(1);
 
     sender.enqueue('event2'); // Enqueue while sending
     resolveSend(); // Finish the first send
     await Promise.resolve(); // Allow async flush to complete
 
     // Wait for next scheduled send
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await t.vi.advanceTimersByTimeAsync(1000);
     t.expect(sendFn).toHaveBeenCalledWith(['event2']);
     t.expect(sendFn).toHaveBeenCalledTimes(2);
   });

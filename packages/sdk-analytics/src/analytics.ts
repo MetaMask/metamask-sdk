@@ -23,14 +23,11 @@ class Analytics {
       }
     };
 
-    this.sender = new Sender({ batchSize: 100, baseIntervalMs: 200, sendFn });
+    this.sender = new Sender({ batchSize: 100, baseTimeoutMs: 200, sendFn });
   }
 
   public enable(): void {
-    if (!this.enabled) {
-      this.enabled = true;
-      this.sender.start();
-    }
+    this.enabled = true;
   }
 
   public setGlobalProperty(key: string, value: string): void {
