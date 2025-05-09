@@ -36,6 +36,7 @@ describe('Analytics', () => {
         platform: 'web',
         source: 'custom-source',
         dappId: 'dapp-id',
+        anonId: 'anon-id',
       },
     };
   });

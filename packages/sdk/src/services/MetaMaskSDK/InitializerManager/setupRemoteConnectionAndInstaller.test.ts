@@ -44,6 +44,7 @@ describe('setupRemoteConnectionAndInstaller', () => {
       terminate: jest.fn(() => {
         return {};
       }),
+      getAnonId: jest.fn(() => Promise.resolve('mocked-anon-id')),
     } as unknown as MetaMaskSDK;
 
     metamaskBrowserExtension = {};
@@ -66,6 +67,7 @@ describe('setupRemoteConnectionAndInstaller', () => {
       storage: {
         enabled: true,
       },
+      anonId: 'mocked-anon-id',
       getMetaMaskInstaller: expect.any(Function),
       logging: {
         ...instance.options.logging,
