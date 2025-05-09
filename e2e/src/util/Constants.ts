@@ -6,6 +6,11 @@ export const Browsers = {
   CHROME: 'com.android.chrome',
 };
 
+export const Contexts = {
+  NATIVE: 'NATIVE_APP',
+  WEBVIEW: 'WEBVIEW',
+};
+
 export const BrowsersActivity = {
   CHROME: 'com.google.android.apps.chrome.Main',
 };

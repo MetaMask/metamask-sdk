@@ -1,22 +1,22 @@
-import { killApp, launchApp, launchMetaMask } from '../src/Utils';
-import LockScreen from '../src/screens/MetaMask/LockScreen';
-import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '../src/Constants';
-import BottomNavigationComponent from '../src/screens/MetaMask/components/BottomNavigationComponent';
-import SettingsScreen from '../src/screens/MetaMask/SettingsScreen';
-import GetStartedScreen from '../src/screens/MetaMask/GetStartedScreen';
-import WalletSetupScreen from '../src/screens/MetaMask/WalletSetupScreen';
-import OptinMetricsScreen from '../src/screens/MetaMask/OptinMetricsScreen';
-import TermsOfUseScreen from '../src/screens/MetaMask/TermsOfUseScreen';
-import ImportFromSeedScreen from '../src/screens/MetaMask/ImportFromSeedScreen';
-import Gestures from '../src/Gestures';
-import SecurityUpdatesScreen from '../src/screens/MetaMask/SecurityUpdates';
-import WelcomeComponent from '../src/screens/MetaMask/components/WelcomeComponent';
-import MetaMetricsComponent from '../src/screens/MetaMask/components/MetaMetricsComponent';
-import AndroidSettingsScreen from '../src/screens/Android/AndroidSettingsScreen';
-import AndroidSettingsOpeningLinksScreen from '../src/screens/Android/AndroidSettingsOpeningLinksScreen';
-import WalletReadyScreen from '../src/screens/MetaMask/WalletReadyScreen';
-import EnableSmartTransactionsComponent from '../src/screens/MetaMask/components/EnableSmartTransactionsComponent';
 import { driver } from '@wdio/globals';
+import { killApp, launchApp, launchMetaMask } from '@util/Utils';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import { NATIVE_OS_APPS, WALLET_PASSWORD, SRP } from '@util/Constants';
+import BottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
+import SettingsScreen from '@screens/MetaMask/SettingsScreen';
+import GetStartedScreen from '@screens/MetaMask/GetStartedScreen';
+import WalletSetupScreen from '@screens/MetaMask/WalletSetupScreen';
+import OptinMetricsScreen from '@screens/MetaMask/OptinMetricsScreen';
+import TermsOfUseScreen from '@screens/MetaMask/TermsOfUseScreen';
+import ImportFromSeedScreen from '@screens/MetaMask/ImportFromSeedScreen';
+import Gestures from '@util/Gestures';
+import SecurityUpdatesScreen from '@screens/MetaMask/SecurityUpdates';
+import WelcomeComponent from '@screens/MetaMask/components/WelcomeComponent';
+import MetaMetricsComponent from '@screens/MetaMask/components/MetaMetricsComponent';
+import AndroidSettingsScreen from '@screens/Android/AndroidSettingsScreen';
+import AndroidSettingsOpeningLinksScreen from '@screens/Android/AndroidSettingsOpeningLinksScreen';
+import WalletReadyScreen from '@screens/MetaMask/WalletReadyScreen';
+import EnableSmartTransactionsComponent from '@screens/MetaMask/components/EnableSmartTransactionsComponent';
 
 const goToSettingsAndClearAllConnections = async () => {
   try {
@@ -57,10 +57,6 @@ const setAndroidDefaultLinks = async () => {
   }
 };
 
-export const onboardMM = async () => {
-  await beforeHook();
-};
-
 export const beforeHook = async () => {
   if (driver.isAndroid) {
     await setAndroidDefaultLinks();
@@ -92,6 +88,10 @@ export const beforeHook = async () => {
   await driver.pause(1000);
   await MetaMetricsComponent.tapAgreeToMetaMetrics();
   // await WhatsNewComponent.closeModal();
+};
+
+export const onboardMM = async () => {
+  await beforeHook();
 };
 
 export const beforeEachHook = async () => {

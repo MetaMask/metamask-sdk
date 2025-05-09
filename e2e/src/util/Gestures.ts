@@ -1,4 +1,7 @@
-import { getCoordinatesAsPercentage, getCoordinatesForDeviceFromPercentage } from './Utils';
+import {
+  getCoordinatesAsPercentage,
+  getCoordinatesForDeviceFromPercentage,
+} from './Utils';
 import { ScreenPercentage } from './types';
 
 const Actions = {
@@ -114,11 +117,26 @@ export default class Gestures {
       y: location.y,
     });
 
-    await driver
-      .action('pointer', { parameters: { pointerType: 'touch' } })
-      .move({ x: tapLocation.x, y: tapLocation.y })
-      .down()
-      .up()
-      .perform();
+    // TODO: use this for BrowserStack
+    await driver.touchAction([
+      {
+        action: 'tap',
+        x: tapLocation.x,
+        y: tapLocation.y,
+      },
+    ]);
+
+    // try {
+    //   await driver
+    //     .action('pointer', { parameters: { pointerType: 'touch' } })
+    //     .move({ x: tapLocation.x, y: tapLocation.y })
+    //     .down()
+    //     .pause(100)
+    //     .up()
+    //     .perform();
+    // } catch (error) {
+    //   log.error(`Error tapping on coordinates: ${location.x}, ${location.y}`);
+    //   log.error(error);
+    // }
   }
 }

@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import { METAMASK_APP_NAME_ANDROID } from '../../Constants';
-import Gestures from '../../Gestures';
-import { getSelectorForPlatform } from '../../Utils';
-import { AndroidSelector } from '../../Selectors';
+import { METAMASK_APP_NAME_ANDROID } from '@util/Constants';
+import Gestures from '@util/Gestures';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector } from '@util/Selectors';
 
 class AndroidSettingsOpeningLinksScreen {
   get openingLinksMetaMaskAppOption(): ChainablePromiseElement {

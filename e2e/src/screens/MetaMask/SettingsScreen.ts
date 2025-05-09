@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import Gestures from '../../Gestures';
-import { getSelectorForPlatform } from '../../Utils';
-import { AndroidSelector, IOSSelector } from '../../Selectors';
+import Gestures from '@util/Gestures';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class SettingsScreen {
   get securityAndPrivacyButton(): ChainablePromiseElement {
@@ -77,7 +77,7 @@ class SettingsScreen {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().uiAutomatorAndText(''),
-        iosSelector: IOSSelector.by().iosClassChain(
+        iosSelector: IOSSelector.by().classChain(
           '**/XCUIElementTypeStaticText[`label == "No connections found"`]',
         ),
       }),

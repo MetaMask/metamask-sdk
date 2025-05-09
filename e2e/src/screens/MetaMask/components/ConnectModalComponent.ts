@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../../Utils';
-import { AndroidSelector, IOSSelector } from '../../../Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class ConnectModalComponent {
   get accountApprovalModalContainer(): ChainablePromiseElement {
@@ -44,6 +44,7 @@ class ConnectModalComponent {
       timeout: 10000,
     });
     await this.connectApprovalButton.click();
+    await driver.pause(1000); // Wait for the connection to be established
   }
 }
 

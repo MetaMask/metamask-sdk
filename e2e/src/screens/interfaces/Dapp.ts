@@ -1,26 +1,29 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { UnityDappElement } from '../../types';
-
 export type Dapp = {
-  connectButton: ChainablePromiseElement | UnityDappElement;
+  connectButton: ChainablePromiseElement;
+
+  terminateButton: ChainablePromiseElement;
+
+  sendTransactionButton?: ChainablePromiseElement;
+
+  personalSignButton?: ChainablePromiseElement;
+
+  clearUIStateButton?: ChainablePromiseElement;
+
+  switchToLineaSepoliaButton?: ChainablePromiseElement;
+
+  switchToMainnetButton?: ChainablePromiseElement;
+
+  switchToPolygonButton?: ChainablePromiseElement;
 
   connect(): Promise<void>;
-
-  signTypedDataV3Button?: ChainablePromiseElement | UnityDappElement;
-
-  signTypedDataV4Button?: ChainablePromiseElement | UnityDappElement;
-
-  sendTransactionButton?: ChainablePromiseElement | UnityDappElement;
-
-  personalSignButton?: ChainablePromiseElement | UnityDappElement;
-
-  signTypedDataV3?(): Promise<void>;
-  signTypedDataV4?(): Promise<void>;
-  personalSign?(): Promise<void>;
-  sendTransaction?(): Promise<void>;
-
-  terminateButton: ChainablePromiseElement | UnityDappElement;
-
   terminate(): Promise<void>;
+  sendTransaction?(): Promise<void>;
+  personalSign?(): Promise<void>;
+  clearUIState?(): Promise<void>;
+  switchToLineaSepolia?(): Promise<void>;
+  switchToMainnet?(): Promise<void>;
+  switchToPolygon?(): Promise<void>;
+  isDappConnected(): Promise<boolean>;
 };

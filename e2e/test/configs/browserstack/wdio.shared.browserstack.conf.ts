@@ -13,9 +13,6 @@ config.services = (config.services ? config.services : []).concat([
         buildName: 'SDK e2e PR regression',
       },
       browserstackLocal: true,
-      opts: {
-        forceLocal: 'true',
-      },
     },
   ],
 ]);

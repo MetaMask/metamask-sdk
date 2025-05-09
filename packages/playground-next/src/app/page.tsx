@@ -88,16 +88,30 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>Simple Web3 Dapp</h1>
+      <h1>Playground-Next Dapp</h1>
+
+      <h2>RPC Response</h2>
+      <p>{JSON.stringify(rpcResponse)}</p>
+      <h2>RPC Error</h2>
+      <p>{JSON.stringify(rpcError)}</p>
 
       {!connected ? (
-        <button
-          className={styles.button}
-          onClick={connectWallet}
-          disabled={isLoading || connecting}
+        <>
+          <button
+            className={styles.button}
+            onClick={connectWallet}
+            disabled={isLoading || connecting}
         >
           {isLoading || connecting ? 'Connecting...' : 'Connect MetaMask'}
         </button>
+        <button
+        className={styles.button}
+        onClick={terminateConnection}
+        disabled={isLoading}
+      >
+            {isLoading ? 'Terminating...' : 'Terminate Connection'}
+          </button>
+        </>
       ) : (
         <>
           <div className={styles.address}>
