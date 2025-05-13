@@ -1,7 +1,15 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskSDK } from '../../sdk';
 import { handleBatchMethod } from './handleBatchMethod';
+
+// Mock the analytics module
+jest.mock('@metamask/sdk-analytics', () => ({
+  analytics: {
+    track: jest.fn(),
+  },
+}));
 
 jest.mock('@metamask/providers', () => {
   return {
@@ -19,9 +27,14 @@ describe('handleBatchMethod', () => {
   let mockProvider: MetaMaskInpageProvider;
   let mockTarget: MetaMaskInpageProvider;
   const spyAnalytics = jest.fn();
+  let analyticsTrackMock: jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Reset the mocked analytics track function
+    analyticsTrackMock = analytics.track as jest.Mock;
+    analyticsTrackMock.mockClear();
 
     // Mocking localStorage for Node.js environment
     let store: { [key: string]: string } = {};
@@ -147,5 +160,117 @@ describe('handleBatchMethod', () => {
     });
 
     expect(spyAnalytics).not.toHaveBeenCalled();
+  });
+
+  it('should track successful RPC requests in batch with analytics', async () => {
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
+    (mockTarget.request as jest.Mock).mockResolvedValue('success');
+
+    await handleBatchMethod({
+      target: mockTarget,
+      args,
+      trackEvent: true,
+      sdkInstance,
+    });
+
+    expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_succeeded', {
+      action: args.method,
+    });
+    expect(analyticsTrackMock).toHaveBeenCalledTimes(2); // Called for each response
+  });
+
+  it('should track user rejected RPC requests (code 4001) in batch with analytics', async () => {
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
+    const errorResponse = {
+      error: {
+        code: 4001,
+        message: 'User rejected the request',
+      },
+    };
+    (mockTarget.request as jest.Mock).mockResolvedValue(errorResponse);
+
+    await handleBatchMethod({
+      target: mockTarget,
+      args,
+      trackEvent: true,
+      sdkInstance,
+    });
+
+    expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_rejected', {
+      action: args.method,
+    });
+    expect(analyticsTrackMock).toHaveBeenCalledTimes(2); // Called for each response
+  });
+
+  it('should track failed RPC requests in batch with analytics', async () => {
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
+    const errorResponse = {
+      error: {
+        code: 4000,
+        message: 'General error occurred',
+      },
+    };
+    (mockTarget.request as jest.Mock).mockResolvedValue(errorResponse);
+
+    await handleBatchMethod({
+      target: mockTarget,
+      args,
+      trackEvent: true,
+      sdkInstance,
+    });
+
+    expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_failed', {
+      action: args.method,
+    });
+    expect(analyticsTrackMock).toHaveBeenCalledTimes(2); // Called for each response
+  });
+
+  it('should track mixed success and failure responses in batch', async () => {
+    const params = [
+      { method: 'rpc1', params: [] },
+      { method: 'rpc2', params: [] },
+    ];
+    const args = { method: 'metamask_batch', params };
+    const successResponse = 'success';
+    const errorResponse = {
+      error: {
+        code: 4001,
+        message: 'User rejected the request',
+      },
+    };
+
+    // First call succeeds, second one gets rejected
+    (mockTarget.request as jest.Mock)
+      .mockResolvedValueOnce(successResponse)
+      .mockResolvedValueOnce(errorResponse);
+
+    await handleBatchMethod({
+      target: mockTarget,
+      args,
+      trackEvent: true,
+      sdkInstance,
+    });
+
+    // Check that both analytics events were called
+    expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_succeeded', {
+      action: args.method,
+    });
+
+    expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_rejected', {
+      action: args.method,
+    });
+    expect(analyticsTrackMock).toHaveBeenCalledTimes(2);
   });
 });

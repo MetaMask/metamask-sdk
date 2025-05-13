@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { TrackingEvents } from '@metamask/sdk-communication-layer';
 
@@ -73,9 +74,13 @@ export const wrapExtensionProvider = ({
           }
 
           let resp;
+          let caughtError: any = null;
           try {
             resp = await target.request(args);
             return resp;
+          } catch (error) {
+            caughtError = error;
+            throw error;
           } finally {
             if (trackEvent) {
               sdkInstance.analytics?.send({
@@ -86,6 +91,25 @@ export const wrapExtensionProvider = ({
                   id,
                 },
               });
+
+              // Check if an error was caught OR if the response object indicates an error
+              const responseIndicatesError =
+                resp &&
+                typeof resp === 'object' &&
+                resp !== null &&
+                'error' in resp;
+
+              if (caughtError || responseIndicatesError) {
+                // Determine if it's a user rejection (EIP-1193 specific code)
+                const errorObj = caughtError || (resp as any)?.error;
+                if (errorObj && errorObj.code === 4001) {
+                  analytics.track('sdk_action_rejected', { action: method });
+                } else {
+                  analytics.track('sdk_action_failed', { action: method });
+                }
+              } else {
+                analytics.track('sdk_action_succeeded', { action: method });
+              }
             }
           }
         };

@@ -10,6 +10,8 @@ import { connectWithModalInstaller } from './connectWithModalInstaller';
 jest.mock('../ModalManager/showInstallModal');
 
 describe('connectWithModalInstaller', () => {
+  jest.useFakeTimers();
+
   let state: RemoteConnectionState;
   let options: RemoteConnectionProps;
   let linkParams: string;
@@ -36,6 +38,10 @@ describe('connectWithModalInstaller', () => {
     } as unknown as RemoteConnectionProps;
 
     linkParams = 'some=test&params=here';
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   it('should reject the promise when no connector is available', async () => {
