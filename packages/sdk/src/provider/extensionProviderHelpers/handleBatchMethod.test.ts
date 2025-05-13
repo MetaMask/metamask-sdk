@@ -267,6 +267,7 @@ describe('handleBatchMethod', () => {
     expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_succeeded', {
       action: args.method,
     });
+
     expect(analyticsTrackMock).toHaveBeenCalledWith('sdk_action_rejected', {
       action: args.method,
     });
