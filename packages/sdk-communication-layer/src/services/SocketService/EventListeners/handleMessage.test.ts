@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { SocketService } from '../../../SocketService';
 import { EventType } from '../../../types/EventType';
 import { InternalEventType } from '../../../types/InternalEventType';
@@ -8,6 +9,16 @@ import * as ChannelManager from '../ChannelManager';
 import { handleMessage } from './handleMessage';
 
 jest.mock('../ChannelManager');
+jest.mock('@metamask/sdk-analytics', () => ({
+  analytics: {
+    track: jest.fn(),
+  },
+}));
+
+// Mock lcLogguedRPCs array
+jest.mock('../MessageHandlers', () => ({
+  lcLogguedRPCs: ['eth_sendtransaction'],
+}));
 
 const msgToDeEncrypt = 'encryptedMessage';
 
@@ -15,6 +26,7 @@ describe('handleMessage', () => {
   let instance: SocketService;
 
   const spyLogger = jest.spyOn(logger, 'SocketService');
+  const mockAnalyticsTrack = analytics.track as jest.Mock;
 
   const mockCheckSameId = ChannelManager.checkSameId as jest.Mock;
   const mockEmit = jest.fn();
@@ -47,6 +59,7 @@ describe('handleMessage', () => {
           getKeyInfo: mockGetKeyInfo,
           start: mockStart,
         },
+        rpcMethodTracker: {},
       },
       remote: {
         state: {},
@@ -191,6 +204,109 @@ describe('handleMessage', () => {
 
     expect(mockEmit).toHaveBeenCalledWith(EventType.MESSAGE, {
       message: { type: 'testType', data: 'testData' },
+    });
+  });
+
+  // New tests for analytics tracking
+  describe('RPC response analytics tracking', () => {
+    beforeEach(() => {
+      instance.state.isOriginator = true;
+      mockAreKeysExchanged.mockReturnValue(true);
+
+      // Setup RPC method tracker with a tracked method
+      instance.state.rpcMethodTracker = {
+        '123': {
+          id: '123',
+          method: 'eth_sendTransaction',
+          timestamp: Date.now(),
+        },
+      };
+    });
+
+    it('should track successful RPC responses', () => {
+      mockDecryptMessage.mockReturnValue(
+        JSON.stringify({
+          data: {
+            id: '123',
+            result: { success: true },
+          },
+        }),
+      );
+
+      const handler = handleMessage(instance, channelId);
+      handler({ ackId: 'testId', message: 'encrypted_message' });
+
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('sdk_action_succeeded', {
+        action: 'eth_sendTransaction',
+      });
+    });
+
+    it('should track failed RPC responses', () => {
+      mockDecryptMessage.mockReturnValue(
+        JSON.stringify({
+          data: {
+            id: '123',
+            error: {
+              code: 1000,
+              message: 'Transaction failed',
+            },
+          },
+        }),
+      );
+
+      const handler = handleMessage(instance, channelId);
+      handler({ ackId: 'testId', message: 'encrypted_message' });
+
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('sdk_action_failed', {
+        action: 'eth_sendTransaction',
+      });
+    });
+
+    it('should track rejected RPC responses', () => {
+      mockDecryptMessage.mockReturnValue(
+        JSON.stringify({
+          data: {
+            id: '123',
+            error: {
+              code: 4001,
+              message: 'User rejected the request',
+            },
+          },
+        }),
+      );
+
+      const handler = handleMessage(instance, channelId);
+      handler({ ackId: 'testId', message: 'encrypted_message' });
+
+      expect(mockAnalyticsTrack).toHaveBeenCalledWith('sdk_action_rejected', {
+        action: 'eth_sendTransaction',
+      });
+    });
+
+    it('should not track analytics for untracked RPC methods', () => {
+      // Mock a method that is not in the lcLogguedRPCs list
+      instance.state.rpcMethodTracker = {
+        '123': {
+          id: '123',
+          method: 'untracked_method',
+          timestamp: Date.now(),
+        },
+      };
+
+      mockDecryptMessage.mockReturnValue(
+        JSON.stringify({
+          data: {
+            id: '123',
+            result: { success: true },
+          },
+        }),
+      );
+
+      const handler = handleMessage(instance, channelId);
+      handler({ ackId: 'testId', message: 'encrypted_message' });
+
+      // Analytics.track should not be called for untracked methods
+      expect(mockAnalyticsTrack).not.toHaveBeenCalled();
     });
   });
 });
