@@ -1,6 +1,9 @@
 import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import {
+  TrackingEvents,
+  IGNORE_ANALYTICS_RPCS,
+} from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
 import { getPlatformDetails } from './handleUuid';
@@ -42,7 +45,9 @@ export const handleBatchMethod = async ({
         id,
       },
     });
+  }
 
+  if (!IGNORE_ANALYTICS_RPCS.includes(args.method)) {
     for (const response of responses) {
       if (response && typeof response === 'object' && 'error' in response) {
         const errorObj: any = (response as any).error;

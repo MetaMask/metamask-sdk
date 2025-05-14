@@ -8,6 +8,7 @@ import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
+  IGNORE_ANALYTICS_RPCS,
 } from './config';
 import {
   clean,
@@ -301,7 +302,12 @@ export class RemoteCommunication extends EventEmitter2 {
   }
 
   async sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
-    if (this.state.isOriginator && message.method) {
+    const shouldTrack =
+      this.state.isOriginator &&
+      message.method &&
+      !IGNORE_ANALYTICS_RPCS.includes(message.method);
+
+    if (shouldTrack) {
       analyticsV2.track('sdk_action_requested', { action: message.method });
     }
 
@@ -309,7 +315,7 @@ export class RemoteCommunication extends EventEmitter2 {
       const ok = await sendMessage(this, message);
       return ok;
     } catch (error) {
-      if (this.state.isOriginator && message.method) {
+      if (shouldTrack) {
         analyticsV2.track('sdk_action_failed', { action: message.method });
       }
       throw error;
