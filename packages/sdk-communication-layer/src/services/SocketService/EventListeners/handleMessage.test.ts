@@ -288,7 +288,7 @@ describe('handleMessage', () => {
       instance.state.rpcMethodTracker = {
         '123': {
           id: '123',
-          method: 'untracked_method',
+          method: 'eth_accounts',
           timestamp: Date.now(),
         },
       };

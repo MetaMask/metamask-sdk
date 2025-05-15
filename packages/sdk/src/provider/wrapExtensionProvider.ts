@@ -1,6 +1,9 @@
 import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import {
+  TrackingEvents,
+  IGNORE_ANALYTICS_RPCS,
+} from '@metamask/sdk-communication-layer';
 
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
@@ -91,7 +94,9 @@ export const wrapExtensionProvider = ({
                   id,
                 },
               });
+            }
 
+            if (!IGNORE_ANALYTICS_RPCS.includes(method)) {
               // Check if an error was caught OR if the response object indicates an error
               const responseIndicatesError =
                 resp &&
