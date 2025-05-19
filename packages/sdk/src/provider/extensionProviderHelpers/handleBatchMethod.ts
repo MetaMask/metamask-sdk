@@ -1,8 +1,5 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import {
-  TrackingEvents,
-  IGNORE_ANALYTICS_RPCS,
-} from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
 import { getPlatformDetails } from './handleUuid';
