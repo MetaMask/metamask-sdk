@@ -9,7 +9,7 @@ import { MessageType } from '../../../types/MessageType';
 import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { lcLogguedRPCs } from '../MessageHandlers';
-import { IGNORE_ANALYTICS_RPCS } from '../../../config';
+import { isAnalyticsTrackedRpcMethod } from '../../../config';
 
 /**
  * Returns a handler function to handle incoming messages.
@@ -235,7 +235,7 @@ export function handleMessage(instance: SocketService, channelId: string) {
           });
         }
 
-        if (!IGNORE_ANALYTICS_RPCS.includes(initialRPCMethod.method)) {
+        if (isAnalyticsTrackedRpcMethod(initialRPCMethod.method)) {
           if (rpcMessage.error) {
             // Detect user-rejected errors (EIP-1193 code 4001)
             if (rpcMessage.error.code === 4001) {

@@ -1,9 +1,5 @@
-import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import {
-  TrackingEvents,
-  IGNORE_ANALYTICS_RPCS,
-} from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
@@ -12,6 +8,7 @@ import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod'
 import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
 import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
 import { getPlatformDetails } from './extensionProviderHelpers/handleUuid';
+import { trackRpcOutcome } from './extensionProviderHelpers/analyticsHelper';
 
 export interface RequestArguments {
   method: string;
@@ -96,26 +93,7 @@ export const wrapExtensionProvider = ({
               });
             }
 
-            if (!IGNORE_ANALYTICS_RPCS.includes(method)) {
-              // Check if an error was caught OR if the response object indicates an error
-              const responseIndicatesError =
-                resp &&
-                typeof resp === 'object' &&
-                resp !== null &&
-                'error' in resp;
-
-              if (caughtError || responseIndicatesError) {
-                // Determine if it's a user rejection (EIP-1193 specific code)
-                const errorObj = caughtError || (resp as any)?.error;
-                if (errorObj && errorObj.code === 4001) {
-                  analytics.track('sdk_action_rejected', { action: method });
-                } else {
-                  analytics.track('sdk_action_failed', { action: method });
-                }
-              } else {
-                analytics.track('sdk_action_succeeded', { action: method });
-              }
-            }
+            trackRpcOutcome(method, resp, caughtError);
           }
         };
       } else if (propKey === 'getChainId') {
