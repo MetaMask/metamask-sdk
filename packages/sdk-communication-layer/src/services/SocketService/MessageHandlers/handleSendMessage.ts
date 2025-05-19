@@ -1,8 +1,10 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
 import { CommunicationLayerMessage } from '../../../types/CommunicationLayerMessage';
 import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
+import { isAnalyticsTrackedRpcMethod } from '../../../config';
 import { handleKeyHandshake, validateKeyExchange } from '../KeysManager';
 import { encryptAndSendMessage } from './encryptAndSendMessage';
 import { handleRpcReplies } from './handleRpcReplies';
@@ -88,6 +90,14 @@ export async function handleSendMessage(
         console.error(`[handleSendMessage] Cannot send analytics`, err);
       });
     }
+  }
+
+  if (
+    instance.remote.state.isOriginator &&
+    message.method &&
+    isAnalyticsTrackedRpcMethod(message.method)
+  ) {
+    analytics.track('sdk_action_requested', { action: message.method });
   }
 
   // Only makes sense on originator side.
