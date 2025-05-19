@@ -22,7 +22,7 @@ export const handleConnectWithMethod = async ({
       params: [],
     })) as string[];
 
-    if (!accounts.length) {
+    if (!Array.isArray(accounts) || !accounts.length) {
       throw new Error('SDK state invalid -- undefined accounts');
     }
 
@@ -34,7 +34,10 @@ export const handleConnectWithMethod = async ({
         method: currentRpcMethod,
         params: [currentRpcParams[0], accounts[0]],
       });
-    } else if (
+      return resp;
+    }
+
+    if (
       currentRpcMethod?.toLowerCase() ===
       RPC_METHODS.ETH_SENDTRANSACTION.toLowerCase()
     ) {
@@ -42,17 +45,21 @@ export const handleConnectWithMethod = async ({
         method: currentRpcMethod,
         params: [{ ...currentRpcParams[0], from: accounts[0] }],
       });
-    } else if (rpcWithAccountParam.includes(currentRpcMethod.toLowerCase())) {
+      return resp;
+    }
+
+    if (rpcWithAccountParam.includes(currentRpcMethod.toLowerCase())) {
       console.warn(
         `MetaMaskSDK connectWith method=${currentRpcMethod} -- not handled by the extension -- call separately`,
       );
       resp = accounts;
-    } else {
-      resp = await target.request({
-        method: currentRpcMethod,
-        params: currentRpcParams,
-      });
+      return resp;
     }
+
+    resp = await target.request({
+      method: currentRpcMethod,
+      params: currentRpcParams,
+    });
     return resp;
   } catch (error) {
     caughtError = error;
