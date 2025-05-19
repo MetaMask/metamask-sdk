@@ -261,7 +261,7 @@ describe('wrapExtensionProvider', () => {
       sdkInstance,
     });
     const args: RequestArguments = {
-      method: lcAnalyticsRPCs[0],
+      method: RPC_METHODS.PERSONAL_SIGN,
       params: ['param1'],
     };
     (mockProvider.request as jest.Mock).mockResolvedValue('success');
@@ -279,7 +279,7 @@ describe('wrapExtensionProvider', () => {
       sdkInstance,
     });
     const args: RequestArguments = {
-      method: lcAnalyticsRPCs[0],
+      method: RPC_METHODS.PERSONAL_SIGN,
       params: ['param1'],
     };
     const userRejectionError = new Error('User rejected');
@@ -300,7 +300,7 @@ describe('wrapExtensionProvider', () => {
       sdkInstance,
     });
     const args: RequestArguments = {
-      method: lcAnalyticsRPCs[0],
+      method: RPC_METHODS.PERSONAL_SIGN,
       params: ['param1'],
     };
     const generalError = new Error('General error');
@@ -321,7 +321,7 @@ describe('wrapExtensionProvider', () => {
       sdkInstance,
     });
     const args: RequestArguments = {
-      method: lcAnalyticsRPCs[0],
+      method: RPC_METHODS.PERSONAL_SIGN,
       params: ['param1'],
     };
     const errorResponse = {
@@ -345,7 +345,7 @@ describe('wrapExtensionProvider', () => {
       sdkInstance,
     });
     const args: RequestArguments = {
-      method: lcAnalyticsRPCs[0],
+      method: RPC_METHODS.PERSONAL_SIGN,
       params: ['param1'],
     };
     const errorResponse = {
