@@ -1,0 +1,1 @@
+{"version":3,"file":"handleSocketDisconnectedEvent.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/RemoteCommunication/EventListeners/handleSocketDisconnectedEvent.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,mBAAmB,EAAE,MAAM,8BAA8B,CAAC;AAEnE;;;;;GAKG;AACH,wBAAgB,6BAA6B,CAAC,QAAQ,EAAE,mBAAmB,cAS1E"}
