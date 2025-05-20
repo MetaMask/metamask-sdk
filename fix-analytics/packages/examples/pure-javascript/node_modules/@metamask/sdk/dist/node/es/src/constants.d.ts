@@ -1,0 +1,19 @@
+export declare enum ProviderConstants {
+    INPAGE = "metamask-inpage",
+    CONTENT_SCRIPT = "metamask-contentscript",
+    PROVIDER = "metamask-provider"
+}
+export declare const ErrorMessages: {
+    MANUAL_DISCONNECT: string;
+};
+export declare const DEFAULT_SDK_SOURCE = "direct";
+export declare const METAMASK_CONNECT_BASE_URL = "https://metamask.app.link/connect";
+export declare const METAMASK_DEEPLINK_BASE = "metamask://connect";
+export declare const METAMASK_EIP_6369_PROVIDER_INFO: {
+    NAME: string;
+    RDNS: string;
+};
+export declare const UUID_V4_REGEX: RegExp;
+export declare const ONE_MINUTE_IN_MS: number;
+export declare const ONE_HOUR_IN_MS: number;
+//# sourceMappingURL=constants.d.ts.map
