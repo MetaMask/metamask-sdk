@@ -12,7 +12,7 @@ import {
 import {
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
-  IGNORE_ANALYTICS_RPCS,
+  isAnalyticsTrackedRpcMethod,
 } from './config';
 import { AutoConnectOptions } from './types/AutoConnectOptions';
 import { AutoConnectType } from './types/AutoConnectType';
@@ -63,7 +63,7 @@ export {
   ConnectionStatus,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
-  IGNORE_ANALYTICS_RPCS,
+  isAnalyticsTrackedRpcMethod,
   ECIES,
   EventType,
   MessageType,

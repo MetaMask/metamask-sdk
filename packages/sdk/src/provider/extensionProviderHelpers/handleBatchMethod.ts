@@ -1,12 +1,9 @@
-import { analytics } from '@metamask/sdk-analytics';
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import {
-  TrackingEvents,
-  IGNORE_ANALYTICS_RPCS,
-} from '@metamask/sdk-communication-layer';
+import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
 import { getPlatformDetails } from './handleUuid';
+import { trackRpcOutcome } from './analyticsHelper';
 
 export const handleBatchMethod = async ({
   target,
@@ -47,20 +44,8 @@ export const handleBatchMethod = async ({
     });
   }
 
-  if (!IGNORE_ANALYTICS_RPCS.includes(args.method)) {
-    for (const response of responses) {
-      if (response && typeof response === 'object' && 'error' in response) {
-        const errorObj: any = (response as any).error;
-        // Detect user-rejected errors (EIP-1193 error code 4001)
-        if (errorObj && errorObj.code === 4001) {
-          analytics.track('sdk_action_rejected', { action: args.method });
-        } else {
-          analytics.track('sdk_action_failed', { action: args.method });
-        }
-      } else {
-        analytics.track('sdk_action_succeeded', { action: args.method });
-      }
-    }
+  for (const individualResp of responses) {
+    trackRpcOutcome(args.method, individualResp, null);
   }
 
   return responses;

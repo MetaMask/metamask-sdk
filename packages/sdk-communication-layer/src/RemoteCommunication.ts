@@ -8,7 +8,7 @@ import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
-  IGNORE_ANALYTICS_RPCS,
+  isAnalyticsTrackedRpcMethod,
 } from './config';
 import {
   clean,
@@ -305,7 +305,7 @@ export class RemoteCommunication extends EventEmitter2 {
     const shouldTrack =
       this.state.isOriginator &&
       message.method &&
-      !IGNORE_ANALYTICS_RPCS.includes(message.method);
+      isAnalyticsTrackedRpcMethod(message.method);
 
     if (shouldTrack) {
       analyticsV2.track('sdk_action_requested', { action: message.method });
