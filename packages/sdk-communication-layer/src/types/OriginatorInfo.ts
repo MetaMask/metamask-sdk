@@ -3,6 +3,7 @@ export interface OriginatorInfo {
   title: string;
   platform: string;
   dappId: string;
+  anonId?: string;
   icon?: string;
   scheme?: string;
   source?: string;

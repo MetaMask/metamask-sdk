@@ -23,7 +23,6 @@
     "@metamask/providers": "16.1.0",
     "@metamask/sdk": "workspace:^",
     "@metamask/sdk-communication-layer": "workspace:^",
-    "@metamask/sdk-lab": "workspace:^",
     "@metamask/sdk-react": "workspace:^",
     "@metamask/sdk-react-ui": "workspace:^",
     "@metamask/sdk-ui": "workspace:^",

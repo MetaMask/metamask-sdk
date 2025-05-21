@@ -28,7 +28,7 @@ const bundledDeps = [
 ];
 
 // Shared dependencies that should be deduplicated
-const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross-fetch'];
+const sharedDeps = ['eventemitter2', 'socket.io-client', 'debug', 'uuid', 'cross-fetch', '@metamask/sdk-analytics'];
 
 
 // Filter function to exclude bundled dependencies
@@ -59,7 +59,6 @@ const baseExternalDeps = [
   ...sharedDeps, // Exclude shared deps from bundle
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
-  '@metamask/providers',
 ];
 
 // Platform-specific externals
@@ -78,7 +77,6 @@ const sharedWarningHandler = (warning, warn) => {
   if (warning.code === 'CIRCULAR_DEPENDENCY') {
     const circularDependencyAllowList = [
       'semver',
-      'readable-stream',
       'detect-browser',
       'stream',
       'util-deprecate',

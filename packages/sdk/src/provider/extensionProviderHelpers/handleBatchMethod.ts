@@ -3,6 +3,7 @@ import { TrackingEvents } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { RequestArguments } from '../wrapExtensionProvider';
 import { getPlatformDetails } from './handleUuid';
+import { trackRpcOutcome } from './analyticsHelper';
 
 export const handleBatchMethod = async ({
   target,
@@ -42,5 +43,10 @@ export const handleBatchMethod = async ({
       },
     });
   }
+
+  for (const individualResp of responses) {
+    trackRpcOutcome(args.method, individualResp, null);
+  }
+
   return responses;
 };

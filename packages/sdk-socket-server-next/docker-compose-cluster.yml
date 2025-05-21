@@ -1,0 +1,81 @@
+version: '3'
+
+x-app-service: &app-service
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      - NODE_ENV=${NODE_ENV:-production}
+  env_file:
+    - .env
+  depends_on:
+    redis-cluster-init:
+      condition: service_completed_successfully
+
+x-redis-master: &redis-master
+  image: redis:7.2-alpine
+  command: redis-server --appendonly yes --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --port 6379
+  environment:
+    - REDIS_ROLE=master
+
+services:
+  app1:
+    <<: *app-service
+    ports:
+      - '4002:4000'
+
+  app2:
+    <<: *app-service
+    ports:
+      - '4003:4000'
+
+  app3:
+    <<: *app-service
+    ports:
+      - '4004:4000'
+
+  redis-master1:
+    <<: *redis-master
+    ports:
+      - "6380:6379"
+
+  redis-master2:
+    <<: *redis-master
+    ports:
+      - "6381:6379"
+
+  redis-master3:
+    <<: *redis-master
+    ports:
+      - "6382:6379"
+
+  redis-cluster-init:
+    image: redis:7.2-alpine
+    volumes:
+      - ./init-redis-cluster.sh:/usr/local/bin/init-redis-cluster.sh
+    depends_on:
+      redis-master1:
+        condition: service_started
+      redis-master2:
+        condition: service_started
+      redis-master3:
+        condition: service_started
+    entrypoint: ["/bin/sh", "/usr/local/bin/init-redis-cluster.sh"]
+    restart: "no"
+    deploy:
+      restart_policy:
+        condition: none
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - '8080:80'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      app1:
+        condition: service_started
+      app2:
+        condition: service_started
+      app3:
+        condition: service_started

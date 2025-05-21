@@ -1,5 +1,9 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { TrackingEvents } from '@metamask/sdk-communication-layer';
+import {
+  isAnalyticsTrackedRpcMethod,
+  TrackingEvents,
+} from '@metamask/sdk-communication-layer';
+import { analytics } from '@metamask/sdk-analytics';
 
 import { lcAnalyticsRPCs, RPC_METHODS } from '../config';
 import { MetaMaskSDK } from '../sdk';
@@ -8,6 +12,7 @@ import { handleBatchMethod } from './extensionProviderHelpers/handleBatchMethod'
 import { handleConnectSignMethod } from './extensionProviderHelpers/handleConnectSignMethod';
 import { handleConnectWithMethod } from './extensionProviderHelpers/handleConnectWithMethod';
 import { getPlatformDetails } from './extensionProviderHelpers/handleUuid';
+import { trackRpcOutcome } from './extensionProviderHelpers/analyticsHelper';
 
 export interface RequestArguments {
   method: string;
@@ -47,6 +52,10 @@ export const wrapExtensionProvider = ({
             });
           }
 
+          if (isAnalyticsTrackedRpcMethod(method)) {
+            analytics.track('sdk_action_requested', { action: method });
+          }
+
           if (method === RPC_METHODS.METAMASK_BATCH && Array.isArray(params)) {
             return handleBatchMethod({
               target,
@@ -73,9 +82,13 @@ export const wrapExtensionProvider = ({
           }
 
           let resp;
+          let caughtError: any = null;
           try {
             resp = await target.request(args);
             return resp;
+          } catch (error) {
+            caughtError = error;
+            throw error;
           } finally {
             if (trackEvent) {
               sdkInstance.analytics?.send({
@@ -87,6 +100,8 @@ export const wrapExtensionProvider = ({
                 },
               });
             }
+
+            trackRpcOutcome(method, resp, caughtError);
           }
         };
       } else if (propKey === 'getChainId') {

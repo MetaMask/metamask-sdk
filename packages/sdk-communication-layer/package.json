@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-communication-layer",
-  "version": "0.31.0",
+  "version": "0.33.0",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -46,6 +46,7 @@
     "watch": "rollup -c --bundleConfigAsCjs -w"
   },
   "dependencies": {
+    "@metamask/sdk-analytics": "workspace:*",
     "bufferutil": "^4.0.8",
     "date-fns": "^2.29.3",
     "debug": "^4.3.4",

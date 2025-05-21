@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0]
+### Added
+- Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
+- Integrate sdk-analytics with SDK ([#1289](https://github.com/MetaMask/metamask-sdk/pull/1289))
+
+### Fixed
+- Updates and Fixes to Analytics ([#1294](https://github.com/MetaMask/metamask-sdk/pull/1294))
+
+## [0.32.1]
+### Fixed
+- fix: Fix analytics for unwanted events when using extension ([#1219](https://github.com/MetaMask/metamask-sdk/pull/1219))
+
+## [0.32.0]
+### Added
+- feat(sdk): rollback @metamask/providers to 16.1.0 due to Next.js compatibility issues ([#1207](https://github.com/MetaMask/metamask-sdk/pull/1207))
+- feat(sdk): upgrade @metamask/providers to ^18.3.1 ([#1199](https://github.com/MetaMask/metamask-sdk/pull/1199))
+- feat: implement message size validation to prevent excessive payloads ([#1197](https://github.com/MetaMask/metamask-sdk/pull/1197))
+- feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
+
+### Fixed
+- fix: user rejection bug ([#1202](https://github.com/MetaMask/metamask-sdk/pull/1202))
+
 ## [0.31.5]
 ### Added
 - feat: improves the react connected hook when using extension & emit terminate when using extension ([#1186](https://github.com/MetaMask/metamask-sdk/pull/1186))
@@ -473,7 +495,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.0...HEAD
+[0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.1...@metamask/sdk@0.33.0
+[0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...@metamask/sdk@0.32.1
+[0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...@metamask/sdk@0.32.0
 [0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.4...@metamask/sdk@0.31.5
 [0.31.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.3...@metamask/sdk@0.31.4
 [0.31.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.2...@metamask/sdk@0.31.3

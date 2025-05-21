@@ -1,3 +1,4 @@
+import { analytics as analyticsV2 } from '@metamask/sdk-analytics';
 import debug from 'debug';
 import { EventEmitter2 } from 'eventemitter2';
 import packageJson from '../package.json';
@@ -7,6 +8,7 @@ import {
   CHANNEL_MAX_WAITING_TIME,
   DEFAULT_SERVER_URL,
   DEFAULT_SESSION_TIMEOUT_MS,
+  isAnalyticsTrackedRpcMethod,
 } from './config';
 import {
   clean,
@@ -45,6 +47,7 @@ import { rejectChannel } from './services/RemoteCommunication/ConnectionManager/
 type MetaMaskMobile = 'metamask-mobile';
 
 export interface RemoteCommunicationProps {
+  anonId: string;
   platformType: PlatformType | MetaMaskMobile;
   communicationLayerPreference: CommunicationLayerPreference;
   otherPublicKey?: string;
@@ -67,6 +70,7 @@ export interface RemoteCommunicationProps {
 
 export interface RemoteCommunicationState {
   ready: boolean;
+  anonId: string;
   authorized: boolean;
   isOriginator: boolean;
   paused: boolean;
@@ -107,6 +111,7 @@ export class RemoteCommunication extends EventEmitter2 {
   public state: RemoteCommunicationState = {
     // ready flag is turned on after we receive 'clients_ready' message, meaning key exchange is complete.
     ready: false,
+    anonId: '',
     // flag turned on once the connection has been authorized on the wallet.
     authorized: false,
     isOriginator: false,
@@ -140,6 +145,7 @@ export class RemoteCommunication extends EventEmitter2 {
     this._options = options;
 
     const {
+      anonId,
       platformType,
       communicationLayerPreference,
       otherPublicKey,
@@ -161,6 +167,7 @@ export class RemoteCommunication extends EventEmitter2 {
       },
     } = options;
 
+    this.state.anonId = anonId;
     this.state.otherPublicKey = otherPublicKey;
     this.state.dappMetadata = dappMetadata;
     this.state.walletInfo = walletInfo;
@@ -294,8 +301,25 @@ export class RemoteCommunication extends EventEmitter2 {
     });
   }
 
-  sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
-    return sendMessage(this, message);
+  async sendMessage(message: CommunicationLayerMessage): Promise<boolean> {
+    const shouldTrack =
+      this.state.isOriginator &&
+      message.method &&
+      isAnalyticsTrackedRpcMethod(message.method);
+
+    if (shouldTrack) {
+      analyticsV2.track('sdk_action_requested', { action: message.method });
+    }
+
+    try {
+      const ok = await sendMessage(this, message);
+      return ok;
+    } catch (error) {
+      if (shouldTrack) {
+        analyticsV2.track('sdk_action_failed', { action: message.method });
+      }
+      throw error;
+    }
   }
 
   async testStorage() {

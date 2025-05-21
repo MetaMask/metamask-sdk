@@ -23,6 +23,7 @@ describe('RemoteCommunication', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     remoteCommunicationInstance = new RemoteCommunication({
+      anonId: '123',
       platformType: 'metamask-mobile',
       communicationLayerPreference: CommunicationLayerPreference.SOCKET,
       context: 'some-context',

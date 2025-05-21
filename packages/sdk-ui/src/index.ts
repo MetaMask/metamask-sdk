@@ -21,6 +21,12 @@ import {
   RPCHistoryViewerProps,
 } from './components/rpc-history-viewer/rpc-history-viewer';
 import {
+  ChainRPC,
+  ChainRPCs,
+  RPCChainViewer,
+  RPCChainViewerProps
+} from './components/rpc-chain-viewer/rpc-chain-viewer';
+import {
   SDKConfigCard,
   SDKConfigCardProps,
 } from './components/sdk-config-card/sdk-config-card';
@@ -64,6 +70,9 @@ export type {
   SDKState,
   SDKConfigContextProps,
   RPCHistoryViewerProps,
+  ChainRPC,
+  ChainRPCs,
+  RPCChainViewerProps,
   SDKConfigCardProps,
   SDKConfigProps,
   SDKDebugPanelProps,
@@ -92,6 +101,7 @@ export {
   MetaMaskButton,
   PreviewScreen,
   RPCHistoryViewer,
+  RPCChainViewer,
   SDKConfig,
   SDKConfigCard,
   SDKDebugPanel,

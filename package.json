@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "108.0.0",
+  "version": "114.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -15,10 +15,9 @@
     "packages/sdk-react-native",
     "packages/sdk-react-ui",
     "packages/sdk-ui",
-    "packages/sdk-lab",
+    "packages/sdk-analytics",
     "packages/devsocket",
     "packages/devreact",
-    "packages/devexpo",
     "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e",
@@ -112,6 +111,7 @@
   "resolutions": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "secp256k1": "^5.0.1"
+    "secp256k1": "^5.0.1",
+    "elliptic": "6.6.1"
   }
 }

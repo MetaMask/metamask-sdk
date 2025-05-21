@@ -1,5 +1,8 @@
+import { analytics } from '@metamask/sdk-analytics';
 import { logger } from '../../../utils/logger';
 import { SDKProvider } from '../../../provider/SDKProvider';
+
+let _previousChainId: string | undefined;
 
 /**
  * Handles a change in the blockchain network for an SDKProvider instance.
@@ -43,6 +46,13 @@ export function handleChainChanged({
       `[SDKProvider: handleChainChanged()] forced network version to prevent provider error`,
     );
     forcedNetworkVersion = '1';
+  }
+
+  if (chainId !== _previousChainId) {
+    analytics.track('sdk_used_chain', {
+      caip_chain_id: `eip155:${parseInt(chainId ?? '0x1', 16)}`,
+    });
+    _previousChainId = chainId;
   }
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

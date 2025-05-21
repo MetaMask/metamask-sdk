@@ -1,3 +1,4 @@
+import { analytics } from '@metamask/sdk-analytics';
 import packageJson from '../../../../package.json';
 import { SendAnalytics } from '../../../Analytics';
 import { SocketService } from '../../../SocketService';
@@ -8,6 +9,7 @@ import { MessageType } from '../../../types/MessageType';
 import { TrackingEvents } from '../../../types/TrackingEvent';
 import { logger } from '../../../utils/logger';
 import { lcLogguedRPCs } from '../MessageHandlers';
+import { isAnalyticsTrackedRpcMethod } from '../../../config';
 
 /**
  * Returns a handler function to handle incoming messages.
@@ -232,6 +234,26 @@ export function handleMessage(instance: SocketService, channelId: string) {
             console.error(`Cannot send analytics`, err);
           });
         }
+
+        if (isAnalyticsTrackedRpcMethod(initialRPCMethod.method)) {
+          if (rpcMessage.error) {
+            // Detect user-rejected errors (EIP-1193 code 4001)
+            if (rpcMessage.error.code === 4001) {
+              analytics.track('sdk_action_rejected', {
+                action: initialRPCMethod.method,
+              });
+            } else {
+              analytics.track('sdk_action_failed', {
+                action: initialRPCMethod.method,
+              });
+            }
+          } else {
+            analytics.track('sdk_action_succeeded', {
+              action: initialRPCMethod.method,
+            });
+          }
+        }
+
         const rpcResult = {
           ...initialRPCMethod,
           result: rpcMessage.result,

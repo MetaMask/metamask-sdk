@@ -27,7 +27,6 @@
       "@metamask/sdk-react-ui": ["../sdk-react-ui/src"],
       "@metamask/sdk": ["../sdk/src"],
       "@metamask/sdk-ui": ["../sdk-ui/src"],
-      "@metamask/sdk-lab": ["../sdk-lab/src"],
       "react": ["./node_modules/@types/react"]
     }
   },
@@ -38,9 +37,6 @@
     },
     {
       "path": "../sdk-react/tsconfig.json"
-    },
-    {
-      "path": "../sdk-lab/tsconfig.json"
     },
     {
       "path": "../sdk-ui/tsconfig.json"

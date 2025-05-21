@@ -115,10 +115,12 @@ export const handleJoinChannel = async ({
     }
 
     let channelConfig: ChannelConfig | null = null;
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${channelId}}`;
 
     if (clientType) {
       // New protocol when clientType is available
-      const channelConfigKey = `channel_config:${channelId}`;
+      const channelConfigKey = `channel_config:{${channelId}}`;
       const existingConfig = await pubClient.get(channelConfigKey);
       channelConfig = existingConfig ? JSON.parse(existingConfig) : null;
       const now = Date.now();
@@ -188,7 +190,7 @@ export const handleJoinChannel = async ({
       }
     }
 
-    const sRedisChannelOccupancy = await pubClient.hget('channels', channelId);
+    const sRedisChannelOccupancy = await pubClient.get(channelOccupancyKey);
     let channelOccupancy = 0;
 
     logger.debug(
@@ -202,7 +204,7 @@ export const handleJoinChannel = async ({
         `[handleJoinChannel] ${channelId} from ${socketId} -- room not found -- creating it now`,
       );
 
-      await pubClient.hset('channels', channelId, 0);
+      await pubClient.set(channelOccupancyKey, 0);
     }
 
     // room should be < MAX_CLIENTS_PER_ROOM since we haven't joined yet
@@ -226,8 +228,11 @@ export const handleJoinChannel = async ({
       await socket.join(channelId);
     }
 
+    // Dirty fix for race condition between socket.join and pubClient.get
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
     channelOccupancy = parseInt(
-      (await pubClient.hget('channels', channelId)) ?? '1',
+      (await pubClient.get(channelOccupancyKey)) ?? '1',
       10,
     );
     //  Refresh the room occupancy -it should now matches channel occupancy

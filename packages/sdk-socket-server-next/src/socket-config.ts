@@ -21,6 +21,30 @@ import {
 import { handleMessage, MessageParams } from './protocol/handleMessage';
 import { handlePing } from './protocol/handlePing';
 import {
+  incrementAck,
+  incrementAckError,
+  incrementCheckRoom,
+  incrementCheckRoomError,
+  incrementCreateChannel,
+  incrementCreateChannelError,
+  incrementJoinChannel,
+  incrementJoinChannelError,
+  incrementLeaveChannel,
+  incrementLeaveChannelError,
+  incrementMessage,
+  incrementMessageError,
+  incrementPing,
+  incrementPingError,
+  incrementRejected,
+  incrementRejectedError,
+  observeAckDuration,
+  observeCheckRoomDuration,
+  observeCreateChannelDuration,
+  observeJoinChannelDuration,
+  observeLeaveChannelDuration,
+  observeMessageDuration,
+  observePingDuration,
+  observeRejectedDuration,
   setSocketIoServerTotalClients,
   setSocketIoServerTotalRooms,
 } from './metrics';
@@ -80,7 +104,10 @@ export const configureSocketServer = async (
       return;
     }
 
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, 1);
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
+    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, 1);
     logger.debug(
       `'join-room' socket ${socketId} has joined room ${roomId} --> channelOccupancy=${channelOccupancy}`,
     );
@@ -93,8 +120,11 @@ export const configureSocketServer = async (
       return;
     }
 
+    // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+    const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
     // Decrement the number of clients in the room
-    const channelOccupancy = await pubClient.hincrby('channels', roomId, -1);
+    const channelOccupancy = await pubClient.incrby(channelOccupancyKey, -1);
 
     logger.debug(
       `'leave-room' socket ${socketId} has left room ${roomId} --> channelOccupancy=${channelOccupancy}`,
@@ -102,8 +132,11 @@ export const configureSocketServer = async (
 
     if (channelOccupancy <= 0) {
       logger.debug(`'leave-room' room ${roomId} was deleted`);
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+      const channelOccupancyKey = `channel_occupancy:{${roomId}}`;
+
       // remove from redis
-      await pubClient.hdel('channels', roomId);
+      await pubClient.del(channelOccupancyKey);
     } else {
       logger.info(
         `'leave-room' Room ${roomId} kept alive with ${channelOccupancy} clients`,
@@ -134,6 +167,9 @@ export const configureSocketServer = async (
           | ((error: string | null, result?: unknown) => void),
         callback?: (error: string | null, result?: unknown) => void,
       ) => {
+        const start = Date.now();
+        incrementCreateChannel();
+
         const params: JoinChannelParams = {
           channelId: 'temp', // default value to be overwritten
           socket,
@@ -170,6 +206,10 @@ export const configureSocketServer = async (
 
         handleJoinChannel(params).catch((error) => {
           logger.error('Error creating channel:', error);
+          incrementCreateChannelError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observeCreateChannelDuration(duration);
         });
       },
     );
@@ -185,6 +225,9 @@ export const configureSocketServer = async (
         ackId: string;
         clientType: ClientType;
       }) => {
+        const start = Date.now();
+        incrementAck();
+
         const ackParams: ACKParams = {
           io,
           socket,
@@ -194,6 +237,10 @@ export const configureSocketServer = async (
         };
         handleAck(ackParams).catch((error) => {
           logger.error('Error handling ack:', error);
+          incrementAckError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observeAckDuration(duration);
         });
       },
     );
@@ -210,6 +257,9 @@ export const configureSocketServer = async (
         },
         callback: (error: string | null, result?: unknown) => void,
       ) => {
+        const start = Date.now();
+        incrementMessage();
+
         const { id, message, context, clientType, plaintext } = msg;
         const params: MessageParams = {
           channelId: id,
@@ -232,6 +282,10 @@ export const configureSocketServer = async (
 
         handleMessage(params).catch((error) => {
           logger.error('Error handling message:', error);
+          incrementMessageError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observeMessageDuration(duration);
         });
       },
     );
@@ -248,6 +302,9 @@ export const configureSocketServer = async (
         },
         callback: (error: string | null, result?: unknown) => void,
       ) => {
+        const start = Date.now();
+        incrementPing();
+
         handlePing({
           channelId: id,
           socket,
@@ -256,6 +313,10 @@ export const configureSocketServer = async (
           callback,
         }).catch((error) => {
           logger.error('Error handling ping:', error);
+          incrementPingError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observePingDuration(duration);
         });
       },
     );
@@ -313,8 +374,19 @@ export const configureSocketServer = async (
           ) => void;
         }
 
+        if (params.channelId === '9ff14555-f33a-4444-a211-5ba52cf9460d') {
+          return;
+        }
+
+        const start = Date.now();
+        incrementJoinChannel();
+
         handleJoinChannel(params).catch((error) => {
           logger.error('Error joining channel:', error);
+          incrementJoinChannelError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observeJoinChannelDuration(duration);
         });
       },
     );
@@ -325,24 +397,40 @@ export const configureSocketServer = async (
         params: ChannelRejectedParams,
         callback?: (error: string | null, result?: unknown) => void,
       ) => {
+        const start = Date.now();
+        incrementRejected();
+
         handleChannelRejected({ ...params, io, socket }, callback).catch(
           (error) => {
             logger.error('Error rejecting channel:', error);
-          },
-        );
+            incrementRejectedError();
+          }).finally(() => {
+            const duration = Date.now() - start;
+            observeRejectedDuration(duration);
+          });
       },
     );
 
     socket.on('leave_channel', (id: string) => {
-      // only leave if we are in the room
-      if (!socket.rooms.has(id)) {
-        logger.warn(`leave_channel ${id} not in room`);
-        return;
-      }
+      const start = Date.now();
+      incrementLeaveChannel();
 
-      logger.info(`leave_channel ${id}`, { id, socketId, clientIp });
-      socket.leave(id);
-      socket.broadcast.to(id).emit(`clients_disconnected-${id}`);
+      try {
+        // only leave if we are in the room
+        if (!socket.rooms.has(id)) {
+          logger.warn(`leave_channel ${id} not in room`);
+          return;
+        }
+
+        logger.info(`leave_channel ${id}`, { id, socketId, clientIp });
+        socket.leave(id);
+        socket.broadcast.to(id).emit(`clients_disconnected-${id}`);
+      } catch (error) {
+        incrementLeaveChannelError();
+      } finally {
+        const duration = Date.now() - start;
+        observeLeaveChannelDuration(duration);
+      }
     });
 
     socket.on(
@@ -354,8 +442,15 @@ export const configureSocketServer = async (
           result?: { occupancy: number; channelOccupancy?: string },
         ) => void,
       ) => {
+        const start = Date.now();
+        incrementCheckRoom();
+
         handleCheckRoom({ channelId, io, socket, callback }).catch((error) => {
           logger.error('Error checking room:', error);
+          incrementCheckRoomError();
+        }).finally(() => {
+          const duration = Date.now() - start;
+          observeCheckRoomDuration(duration);
         });
       },
     );

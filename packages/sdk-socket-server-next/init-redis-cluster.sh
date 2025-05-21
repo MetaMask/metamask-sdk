@@ -16,7 +16,6 @@ check_redis() {
     done
 }
 
-
 # Wait for all Redis nodes to be ready
 echo "Checking readiness of Redis nodes..."
 
@@ -32,6 +31,7 @@ echo "yes" | redis-cli --cluster create \
     redis-master1:6379 \
     redis-master2:6379 \
     redis-master3:6379 \
-    --cluster-replicas 0
+    --cluster-replicas 0 \
+    --cluster-yes
 
 echo "Redis Cluster created successfully."

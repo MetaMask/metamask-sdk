@@ -28,6 +28,9 @@ import {
 
 const logger = getLogger();
 
+// SDK version prev 0.27.0 uses 'sdk' as the default id, below value is the sha1 hash of 'sdk'
+const SDK_EXTENSION_DEFAULT_ID = '5a374dcd2e5eb762b527af3a5bab6072a4d24493';
+
 // Initialize Redis Cluster client
 let redisNodes: {
   host: string;
@@ -51,8 +54,6 @@ if (redisNodes.length === 0) {
   process.exit(1);
 }
 
-let redisClient: Cluster | Redis | undefined;
-
 export const getRedisOptions = (
   isTls: boolean,
   password: string | undefined,
@@ -68,13 +69,42 @@ export const getRedisOptions = (
   const options: RedisOptions = {
     ...(isTls && tlsOptions),
     connectTimeout: 30000,
+    keepAlive: 369,
     maxRetriesPerRequest: 4,
     retryStrategy: (times) => Math.min(times * 30, 1000),
     reconnectOnError: (error) => {
+      const errorMessage = error.message;
+
+      // Check specifically for the MOVED error.
+      // ioredis cluster client handles MOVED internally by redirecting.
+      // Logging it as a critical error and triggering a full reconnect is usually not needed.
       // eslint-disable-next-line require-unicode-regexp
-      const targetErrors = [/READONLY/, /ETIMEDOUT/];
-      return targetErrors.some((targetError) =>
-        targetError.test(error.message),
+      if (/MOVED/.test(errorMessage)) {
+        // Return false because MOVED is handled by the client's redirection logic,
+        // it doesn't inherently mean the connection is broken and needs a full reconnect sequence.
+        return false;
+      }
+
+      // Handle other potentially recoverable errors that might warrant a reconnect attempt.
+      // READONLY might occur if connected to a replica that lost its master.
+      // ETIMEDOUT indicates a connection timeout.
+      // ECONNRESET indicates that the connection was reset.
+      // ECONNREFUSED indicates that the connection was refused.
+      // EPIPE indicates that the connection was broken.
+      // ENOTFOUND indicates that the host was not found.
+      const reconnectableErrors = [
+        /READONLY/u,
+        /ETIMEDOUT/u,
+        /ECONNRESET/u,
+        /ECONNREFUSED/u,
+        /EPIPE/u,
+        /ENOTFOUND/u,
+      ];
+
+      logger.error('Redis reconnect error:', error);
+
+      return reconnectableErrors.some((targetError) =>
+        targetError.test(errorMessage),
       );
     },
   };
@@ -84,69 +114,81 @@ export const getRedisOptions = (
   return options;
 };
 
-export const getRedisClient = () => {
-  if (!redisClient) {
-    if (redisCluster) {
-      logger.info('Connecting to Redis Cluster...');
+export const buildRedisClient = () => {
+  let newRedisClient: Cluster | Redis | undefined;
 
-      const redisOptions = getRedisOptions(
-        redisTLS,
-        process.env.REDIS_PASSWORD,
-      );
-      const redisClusterOptions: ClusterOptions = {
-        dnsLookup: (address, callback) => callback(null, address),
-        slotsRefreshTimeout: 2000,
-        showFriendlyErrorStack: true,
-        slotsRefreshInterval: 4000,
-        clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
-        enableAutoPipelining: true,
-        redisOptions,
-      };
+  if (redisCluster) {
+    logger.info('Connecting to Redis Cluster...');
 
-      logger.debug(
-        'Redis Cluster options:',
-        JSON.stringify(redisClusterOptions, null, 2),
-      );
+    const redisOptions = getRedisOptions(redisTLS, process.env.REDIS_PASSWORD);
+    const redisClusterOptions: ClusterOptions = {
+      dnsLookup: (address, callback) => callback(null, address),
+      scaleReads: 'slave',
+      slotsRefreshTimeout: 5000,
+      showFriendlyErrorStack: true,
+      slotsRefreshInterval: 2000,
+      clusterRetryStrategy: (times) => Math.min(times * 30, 1000),
+      enableAutoPipelining: false,
+      redisOptions,
+    };
 
-      redisClient = new Cluster(redisNodes, redisClusterOptions);
-    } else {
-      logger.info('Connecting to single Redis node');
-      redisClient = new Redis(redisNodes[0]);
-    }
+    logger.debug(
+      'Redis Cluster options:',
+      JSON.stringify(redisClusterOptions, null, 2),
+    );
+
+    newRedisClient = new Cluster(redisNodes, redisClusterOptions);
+  } else {
+    logger.info('Connecting to single Redis node');
+    newRedisClient = new Redis(redisNodes[0]);
   }
 
-  redisClient.on('error', (error) => {
+  newRedisClient.on('ready', () => {
+    logger.info('Redis ready');
+  });
+
+  newRedisClient.on('error', (error) => {
     logger.error('Redis error:', error);
   });
 
-  redisClient.on('connect', () => {
+  newRedisClient.on('connect', () => {
     logger.info('Connected to Redis Cluster successfully');
   });
 
-  redisClient.on('close', () => {
+  newRedisClient.on('close', () => {
     logger.info('Disconnected from Redis Cluster');
   });
 
-  redisClient.on('reconnecting', () => {
+  newRedisClient.on('reconnecting', () => {
     logger.info('Reconnecting to Redis Cluster');
   });
 
-  redisClient.on('end', () => {
+  newRedisClient.on('end', () => {
     logger.info('Redis Cluster connection ended');
   });
 
-  redisClient.on('wait', () => {
+  newRedisClient.on('wait', () => {
     logger.info('Redis Cluster waiting for connection');
   });
 
-  redisClient.on('select', (node) => {
+  newRedisClient.on('select', (node) => {
     logger.info('Redis Cluster selected node:', node);
   });
+
+  return newRedisClient;
+};
+
+let redisClient: Cluster | Redis | undefined;
+
+export const getGlobalRedisClient = () => {
+  if (!redisClient) {
+    redisClient = buildRedisClient();
+  }
 
   return redisClient;
 };
 
-export const pubClient = getRedisClient();
+export const pubClient = getGlobalRedisClient();
 
 const app = express();
 
@@ -243,6 +285,24 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       return res.status(400).json({ error: 'wrong event name' });
     }
 
+    const toCheckEvents = ['sdk_rpc_request_done', 'sdk_rpc_request'];
+    const allowedMethods = [
+      'eth_sendTransaction',
+      'wallet_switchEthereumChain',
+      'personal_sign',
+      'eth_signTypedData_v4',
+      'wallet_requestPermissions',
+      'metamask_connectSign',
+    ];
+
+    // Filter: drop RPC events with unallowed methods silently, let all else through
+    if (
+      toCheckEvents.includes(body.event) &&
+      (!body.method || !allowedMethods.includes(body.method))
+    ) {
+      return res.json({ success: true });
+    }
+
     const channelId: string = body.id || 'sdk';
     // Prevent caching of events coming from extension since they are not re-using the same id and prevent increasing redis queue size.
     let isExtensionEvent = body.from === 'extension';
@@ -294,21 +354,15 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
       await inspectRedis(channelId);
     }
 
-    let channelInfo: ChannelInfo | null = null;
+    let channelInfo: ChannelInfo | null;
     const cachedChannelInfo = isAnonUser
       ? null
       : await pubClient.get(userIdHash);
 
-    // Potential issue because we may have a cached channel info but the url inside may be empty and dappId "N/A".
-    // We then need to actually fully parse the string and extract the channelInfo object to validate the url and dappId.
-    const hasCachedChannelInfo = Boolean(cachedChannelInfo);
-
     incrementRedisCacheOperation(
       'analytics-get-channel-info',
-      hasCachedChannelInfo,
+      Boolean(cachedChannelInfo),
     );
-
-    let hasValidCachedChannelInfo = false;
 
     if (cachedChannelInfo) {
       logger.debug(
@@ -316,18 +370,7 @@ app.post('/evt', evtMetricsMiddleware, async (_req, res) => {
         cachedChannelInfo,
       );
       channelInfo = JSON.parse(cachedChannelInfo);
-      hasValidCachedChannelInfo =
-        channelInfo !== null &&
-        Boolean(channelInfo.url && channelInfo.url.length > 0);
-
-      if (!hasValidCachedChannelInfo) {
-        logger.warn(
-          `event: ${body.event} channelId: ${channelId}  - empty cached channel info for ${userIdHash} dAppId=${channelInfo?.dappId}`,
-        );
-      }
-    }
-
-    if (!hasValidCachedChannelInfo) {
+    } else {
       logger.info(
         `event: ${body.event} channelId: ${channelId}  - No cached channel info found for ${userIdHash}`,
       );

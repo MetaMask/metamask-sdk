@@ -27,7 +27,8 @@ export const handleChannelRejected = async (
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
 
-  const channelConfigKey = `channel_config:${channelId}`;
+  // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
+  const channelConfigKey = `channel_config:{${channelId}}`;
   const existingConfig = await pubClient.get(channelConfigKey);
   let channelConfig: ChannelConfig | null = existingConfig
     ? (JSON.parse(existingConfig) as ChannelConfig)
