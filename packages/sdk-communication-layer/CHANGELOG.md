@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.0]
+### Added
+- Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
+- Refactor: backwards compatible originator info ([#1292](https://github.com/MetaMask/metamask-sdk/pull/1292))
+- Integrate sdk-analytics with SDK ([#1289](https://github.com/MetaMask/metamask-sdk/pull/1289))
+
+### Fixed
+- Updates and Fixes to Analytics ([#1294](https://github.com/MetaMask/metamask-sdk/pull/1294))
+
 ## [0.32.0]
 ### Uncategorized
 - fix(rndemos): update metro config to support eciesjs crypto imports ([#1147](https://github.com/MetaMask/metamask-sdk/pull/1147))
@@ -288,7 +297,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.32.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.33.0...HEAD
+[0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.32.0...@metamask/sdk-communication-layer@0.33.0
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.31.0...@metamask/sdk-communication-layer@0.32.0
 [0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.30.2...@metamask/sdk-communication-layer@0.31.0
 [0.30.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.30.0...@metamask/sdk-communication-layer@0.30.2

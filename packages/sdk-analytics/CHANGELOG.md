@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5]
+### Fixed
+- Updates and Fixes to Analytics ([#1294](https://github.com/MetaMask/metamask-sdk/pull/1294))
+
 ## [0.0.4]
 ### Fixed
 - Refactor sdk-analytics ([#1288](https://github.com/MetaMask/metamask-sdk/pull/1288))
@@ -26,7 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.4...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.5...HEAD
+[0.0.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.4...@metamask/sdk-analytics@0.0.5
 [0.0.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.3...@metamask/sdk-analytics@0.0.4
 [0.0.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.2...@metamask/sdk-analytics@0.0.3
 [0.0.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.0...@metamask/sdk-analytics@0.0.2
