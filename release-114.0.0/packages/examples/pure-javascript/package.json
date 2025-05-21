@@ -1,0 +1,26 @@
+{
+  "name": "@metamask/sdk-pure-javascript-example",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An example use of the MetaMask SDK on pure-javascript",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/sdk.git"
+  },
+  "license": "ISC",
+  "main": "src/index.js",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "start": "serve .",
+    "allow-scripts": "echo 'n/a'"
+  },
+  "dependencies": {
+    "@metamask/sdk": "^0.30.0",
+    "serve": "13.0.2"
+  },
+  "resolutions": {
+    "elliptic": "6.6.1"
+  }
+}
