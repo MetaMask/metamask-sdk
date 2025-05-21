@@ -1,11 +1,11 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { getSelectorForPlatform } from '../../Utils';
-import { MobileBrowser } from '../interfaces/MobileBrowser';
-import { IOSSelector } from '../../Selectors';
-import { Dapp } from '../interfaces/Dapp';
-import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../Constants';
+import { getSelectorForPlatform } from '@util/Utils';
+import { MobileBrowser } from '@screens/interfaces/MobileBrowser';
+import { IOSSelector } from '@util/Selectors';
+import { Browsers } from '@util/Constants';
+import { Dapp } from '@screens/interfaces/Dapp';
 
 class SafariBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {
@@ -45,49 +45,24 @@ class SafariBrowserScreen implements MobileBrowser {
     await driver.pause(500); // Wait for the page to refresh
   }
 
-  async goToAddress(address: string): Promise<void> {
+  async goToAddress(address: string, dappScreen: Dapp): Promise<void> {
+    await this.launchBrowser();
+
+    // Trying to navigate directly to the address
+    await driver.navigateTo(address);
+
+    if (dappScreen) {
+      // pageObject will be used to determine if the page was loaded successfully
+      // once new test cases are added
+      console.log('SafariBrowserScreen.goToAddress:: dappScreen is not null');
+    }
+  }
+
+  async launchBrowser(): Promise<void> {
     const currentAppState = await driver.queryAppState(Browsers.SAFARI);
     // 4 is the state for the app being running in the foreground
     if (currentAppState !== 4) {
       await driver.activateApp(Browsers.SAFARI);
-    }
-
-    const addressPrefix = address.substring(8, 16);
-    if (!(await this.urlAddressBar.getText()).includes(addressPrefix)) {
-      await this.urlAddressBar.click();
-      await this.urlAddressBar.clearValue();
-      await this.urlAddressBar.setValue(address);
-      await this.goButton.click();
-    }
-
-    // Figures out if a dapp is loaded on the mobile browser
-    const checkIfDappIsLoaded = async () => {
-      let retries = 20;
-      let isStopPageLoadButtonDisplayed =
-        await this.stopPageLoadingButton.isDisplayed();
-
-      if (!isStopPageLoadButtonDisplayed) {
-        return true;
-      }
-
-      while (isStopPageLoadButtonDisplayed && retries > 0) {
-        // Waits for 2 seconds before checking again
-        await driver.pause(2000);
-        isStopPageLoadButtonDisplayed =
-          await this.stopPageLoadingButton.isDisplayed();
-        retries -= 1;
-      }
-      return false;
-    };
-
-    let attempts = 0;
-
-    let isWebDappLoaded = await checkIfDappIsLoaded();
-
-    while (!isWebDappLoaded && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
-      await this.refreshPage();
-      isWebDappLoaded = await checkIfDappIsLoaded();
-      attempts += 1;
     }
   }
 }

@@ -1,17 +1,18 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '../../../Utils';
-import { AndroidSelector, IOSSelector } from '../../../Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { visibilityOf } from 'wdio-wait-for';
 
 class PersonalSignConfirmationComponent {
   get signButton(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-confirm-button"]',
+          '//android.widget.Button[@content-desc="Confirm"]',
         ),
         iosSelector: IOSSelector.by().predicateString(
-          'name == "tab-bar-item-Setting"',
+          'name == "confirm-button"',
         ),
       }),
     );
@@ -21,32 +22,50 @@ class PersonalSignConfirmationComponent {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.Button[@content-desc="request-signature-cancel-button"]',
+          '//android.widget.Button[@content-desc="Reject"]',
         ),
-      }),
-    );
-  }
-  
-  // TODO: add iOS locator
-  get messageText(): ChainablePromiseElement {
-    return $(
-      getSelectorForPlatform({
-        androidSelector: AndroidSelector.by().xpath(
-          '//android.widget.TextView[@text="Personal Sign"]',
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "cancel-button"',
         ),
       }),
     );
   }
 
-  // TODO: add iOS locator
-  get personalSignContainer(): ChainablePromiseElement {
+  // TODO: adapt this to get any type of message based on the dapp
+  get messageText(): ChainablePromiseElement {
     return $(
       getSelectorForPlatform({
         androidSelector: AndroidSelector.by().xpath(
-          '//android.view.ViewGroup[@resource-id="personal-signature-request"]',
+          '//android.widget.TextView[@text="Hello, world!"]',
+        ),
+        iosSelector: IOSSelector.by().xpath(
+          '//*[starts-with(@label, "Message ")]',
         ),
       }),
     );
+  }
+
+  get personalSignContainerTitle(): ChainablePromiseElement {
+    return $(
+      getSelectorForPlatform({
+        androidSelector: AndroidSelector.by().xpath(
+          '//android.view.ViewGroup[@resource-id="personal_sign"]',
+        ),
+        iosSelector: IOSSelector.by().predicateString(
+          'name == "personal_sign"',
+        ),
+      }),
+    );
+  }
+
+  async isPersonalSignComponentDisplayed(): Promise<boolean> {
+    const isPersonalSignComponentDisplayed = await driver.waitUntil(
+      visibilityOf(this.personalSignContainerTitle),
+      {
+        timeout: 10000,
+      },
+    );
+    return isPersonalSignComponentDisplayed;
   }
 
   async tapSignButton(): Promise<void> {
@@ -58,5 +77,6 @@ class PersonalSignConfirmationComponent {
   }
 }
 
-const personalSignConfirmationComponent = new PersonalSignConfirmationComponent();
+const personalSignConfirmationComponent =
+  new PersonalSignConfirmationComponent();
 export default personalSignConfirmationComponent;

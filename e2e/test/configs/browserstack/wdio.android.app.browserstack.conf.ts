@@ -1,7 +1,6 @@
 /* eslint-disable node/no-process-env */
 import path from 'path';
 import dotenv from 'dotenv';
-import { getOtherAppsPath } from '../../../src/helpers';
 import config from './wdio.shared.browserstack.conf';
 
 dotenv.config({ path: path.join(process.cwd(), '.android.env') });

@@ -13,8 +13,6 @@ config.capabilities = [
     'appium:platformVersion': '17.3',
     'appium:automationName': 'XCUITest',
     'appium:app': process.env.APP_PATH || '',
-    // Removing the otherApps capability for now while we work on the e2e refactor
-    // 'appium:otherApps': getOtherAppsPath(),
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     'appium:bundleId': process.env.BUNDLE_ID,
@@ -25,12 +23,19 @@ config.capabilities = [
     'appium:fullReset': true,
     'appium:settings[snapshotMaxDepth]': 62,
     'appium:settings[customSnapshotTimeout]': 50000,
+    'appium:includeSafariInWebviews': true,
+    'appium:fullContextList': true,
+    'appium:webviewConnectTimeout': 9000,
     'bstack:options': {
       deviceName: 'iPhone 15 Pro Max',
       platformVersion: '17.3',
       platformName: 'ios',
       realMobile: true,
       interactiveDebugging: true,
+      networkLogs: true,
+      networkLogsOptions: {
+        captureContent: true,
+      },
     },
   } as Capabilities.RemoteCapability,
 ];

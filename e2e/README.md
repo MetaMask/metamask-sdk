@@ -2,7 +2,7 @@
 
 ### Node version
 
-`nvm use 18`
+`nvm use 20`
 
 ### Setup:
 
@@ -12,38 +12,29 @@
 
 `export SRP=TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST`
 
-### Env files needed:
+## Create an iOS simulator and Android emulator
 
-.ios.env:
 
-- BUNDLE_ID=
-- DEVICE_NAME=
-- PLATFORM_VERSION=
-- APP_PATH=
-- AUTOMATION_NAME=
-- DEVICE_UDID=
+### Complete your platform related env files:
+`cp .ios.env.example .ios.env`
 
-.android.env:
-
-- BUNDLE_ID=
-- DEVICE_NAME=
-- PLATFORM_VERSION=
-- APP_PATH=
-- AUTOMATION_NAME=
-- APP_ACTIVITY=
+`cp .android.env.example .android.env`
 
 .dapps.env:
+```
+DEVNEXT_DAPP_URL=
+WAGMI_TEST_DAPP_URL=
+```
 
-- REACT_DAPP_URL=
-- TEST_DAPP_URL=
+# iOS
+### Create an iOS simulator
 
-.env:
+### Run tests on iOS:
 
-- BROWSERSTACK_USERNAME=
-- BROWSERSTACK_ACCESS_KEY=
+`yarn test:ios:jssdk:e2e:local`
 
-### Run tests:
+### Run tests on Android:
 
-`yarn test:ios`
+`yarn test:android:jssdk:e2e:local`
 
 #### Currently setup to run locally
