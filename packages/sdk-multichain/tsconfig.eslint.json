@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6",
+    "esModuleInterop": true,
+    "module": "ES2020",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "incremental": true,
+    "lib": ["DOM", "ES2016"],
+    "skipLibCheck": true,
+    "types": ["node", "jest"],
+    "paths": {
+      "@metamask/sdk-install-modal-web/*": ["../sdk-install-modal-web/dist/*"]
+    }
+  },
+  "include": ["./src/**/*.ts", "./tools/**/*.ts"]
+}

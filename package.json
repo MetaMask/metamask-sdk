@@ -21,7 +21,8 @@
     "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e",
-    "packages/playground-next"
+    "packages/playground-next",
+    "packages/sdk-multichain",
     "playground/react"
   ],
   "scripts": {
