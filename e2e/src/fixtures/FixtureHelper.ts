@@ -1,13 +1,12 @@
-import axios from 'axios';
-import { FIXTURE_SERVER_URL } from '../../src/Constants';
-import FixtureServer from './FixtureServer';
-import { FixtureBuilder } from './FixtureBuilder';
+import FixtureServer from '@fixtures/FixtureServer';
+import { FixtureBuilder } from '@fixtures/FixtureBuilder';
+import { FIXTURE_SERVER_URL } from '@util/Constants';
 
 // checks if server has already been started
 const isFixtureServerStarted = async () => {
   try {
-    const response = await axios.get(FIXTURE_SERVER_URL);
-    return response.status === 200;
+    const response = await fetch(FIXTURE_SERVER_URL);
+    return response.ok;
   } catch (error) {
     return false;
   }
@@ -22,10 +21,10 @@ export const loadFixture = async (
   const state = fixture || new FixtureBuilder().build();
   fixtureServer.loadJsonState(state);
   // Checks if state is loaded
-  const response = await axios.get(FIXTURE_SERVER_URL);
+  const response = await fetch(FIXTURE_SERVER_URL);
 
   // Throws if state is not properly loaded
-  if (response.status !== 200) {
+  if (!response.ok) {
     throw new Error('Not able to load fixtures');
   }
 };

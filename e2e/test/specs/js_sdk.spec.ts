@@ -1,36 +1,35 @@
-import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '../../src/Constants';
-import Utils from '../../src/Utils';
-import ChromeBrowserScreen from '../../src/screens/Android/ChromeBrowserScreen';
-import AndroidOpenWithComponent from '../../src/screens/Android/components/AndroidOpenWithComponent';
-import ReactNativeDappScreen from '../../src/screens/Dapps/ReactNativeDappScreen';
-import SdkPlaygroundDappScreen from '../../src/screens/Dapps/SdkPlaygroundDappScreen';
-import TestDappScreen from '../../src/screens/Dapps/TestDappScreen';
-import Web3OnBoardDappScreen from '../../src/screens/Dapps/Web3OnBoardDappScreen';
-import LockScreen from '../../src/screens/MetaMask/LockScreen';
-import SettingsScreen from '../../src/screens/MetaMask/SettingsScreen';
-import BottomNavigationComponent from '../../src/screens/MetaMask/components/BottomNavigationComponent';
-import ConnectModalComponent from '../../src/screens/MetaMask/components/ConnectModalComponent';
-import NetworkSwitchedModalComponent from '../../src/screens/MetaMask/components/NetworkSwitchedModalComponent';
-import SendTxModalComponent from '../../src/screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '../../src/screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '../../src/screens/MetaMask/components/SwitchNetworkModalComponent';
-import SafariBrowserScreen from '../../src/screens/iOS/SafariBrowserScreen';
-import IOSOpenInComponent from '../../src/screens/iOS/components/IOSOpenInComponent';
 import { beforeEachHook, beforeHook } from '../mocha.hooks';
-import DevnextJSDappScreen from '../../src/screens/Dapps/DevnextJSDappScreen';
-
+import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '@util/Constants';
+import { killApp, launchApp, launchMetaMask } from '@util/Utils';
+import ChromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
+import AndroidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
+import ReactNativeDappScreen from '@screens/Dapps/ReactNativeDappScreen';
+import SdkPlaygroundDappScreen from '@screens/Dapps/SdkPlaygroundDappScreen';
+import TestDappScreen from '@screens/Dapps/TestDappScreen';
+import Web3OnBoardDappScreen from '@screens/Dapps/Web3OnBoardDappScreen';
+import LockScreen from '@screens/MetaMask/LockScreen';
+import SettingsScreen from '@screens/MetaMask/SettingsScreen';
+import BottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
+import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
+import NetworkSwitchedModalComponent from '@screens/MetaMask/components/NetworkSwitchedModalComponent';
+import SendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
+import SignModalComponent from '@screens/MetaMask/components/SignModalComponent';
+import SwitchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
+import SafariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
+import IOSOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
+import DevnextJSDappScreen from '@screens/Dapps/DevnextJSDappScreen';
 
 /*
-* @deprecated
-* 
-* This test suite is deprecated and will be removed in the future.
-* It is currently being kept for reference purposes.
-* 
-* The tests within this suite were originally designed to test the MetaMask
-* JavaScript SDK. However, the current implementation of the SDK has changed,
-* and the tests are no longer applicable.
-* 
-*/ 
+ * @deprecated
+ *
+ * This test suite is deprecated and will be removed in the future.
+ * It is currently being kept for reference purposes.
+ *
+ * The tests within this suite were originally designed to test the MetaMask
+ * JavaScript SDK. However, the current implementation of the SDK has changed,
+ * and the tests are no longer applicable.
+ *
+ */
 describe.skip('JS SDK E2E', () => {
   before(async () => {
     await beforeHook();
@@ -44,8 +43,8 @@ describe.skip('JS SDK E2E', () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
+    await killApp(BROWSER_BUNDLE_ID);
+    await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
@@ -64,8 +63,8 @@ describe.skip('JS SDK E2E', () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
+    await killApp(BROWSER_BUNDLE_ID);
+    await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
@@ -97,7 +96,7 @@ describe.skip('JS SDK E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     await driver.pause(5000);
@@ -116,8 +115,8 @@ describe.skip('JS SDK E2E', () => {
     await driver.pause(5000);
 
     // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
+    await killApp(BROWSER_BUNDLE_ID);
+    await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen
@@ -150,7 +149,7 @@ describe.skip('JS SDK E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     await SdkPlaygroundDappScreen.signTypedDataV4();
@@ -165,7 +164,7 @@ describe.skip('JS SDK E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     await SdkPlaygroundDappScreen.switchToGoerliNetwork();
@@ -182,13 +181,13 @@ describe.skip('JS SDK E2E', () => {
       await NetworkSwitchedModalComponent.tapGotItButton();
 
       await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     if (driver.isAndroid) {
       await driver.pause(2000);
 
-      await Utils.launchMetaMask();
+      await launchMetaMask();
 
       await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
@@ -198,7 +197,7 @@ describe.skip('JS SDK E2E', () => {
 
       await driver.pause(1000);
 
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     await SdkPlaygroundDappScreen.sendBatchRpcCalls();
@@ -217,7 +216,7 @@ describe.skip('JS SDK E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
 
     await SdkPlaygroundDappScreen.sendTransaction();
@@ -233,14 +232,14 @@ describe.skip('JS SDK E2E', () => {
     await driver.pause(1000);
 
     if (driver.isIOS) {
-      await Utils.launchApp(BROWSER_BUNDLE_ID);
+      await launchApp(BROWSER_BUNDLE_ID);
     }
   });
 
   it.skip('Connect to the ReactNativeDemo Dapp', async () => {
     await driver.pause(5000);
 
-    await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
+    await launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
 
     await driver.pause(15000);
 
@@ -258,7 +257,7 @@ describe.skip('JS SDK E2E', () => {
 
     if (driver.isIOS) {
       await driver.pause(1000);
-      await Utils.launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
+      await launchApp(process.env.RN_TEST_APP_BUNDLE_ID ?? '');
     }
 
     await driver.pause(5000);
@@ -273,9 +272,9 @@ describe.skip('JS SDK E2E', () => {
 
     await driver.pause(5000);
     const metamaskBundleId = process.env.BUNDLE_ID as string;
-    await Utils.killApp(metamaskBundleId);
+    await killApp(metamaskBundleId);
 
-    await Utils.launchMetaMask();
+    await launchMetaMask();
 
     await driver.pause(5000);
     await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
@@ -294,8 +293,8 @@ describe.skip('JS SDK E2E', () => {
     await driver.pause(10000);
 
     // Kill and launch the mobile browser
-    await Utils.killApp(BROWSER_BUNDLE_ID);
-    await Utils.launchApp(BROWSER_BUNDLE_ID);
+    await killApp(BROWSER_BUNDLE_ID);
+    await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
       ? SafariBrowserScreen

@@ -30,7 +30,8 @@ export default function RootLayout({
             dappMetadata: {
               name: "Simple Web3 Dapp",
               url: dappUrl,
-            }
+            },
+            infuraAPIKey: process.env.NEXT_PUBLIC_INFURA_API_KEY || '',
           }}
         >
           <>{children}</>

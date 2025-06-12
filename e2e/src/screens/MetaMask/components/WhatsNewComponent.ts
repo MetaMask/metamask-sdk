@@ -1,7 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio';
-
-import { getSelectorForPlatform } from '../../../Utils';
-import { AndroidSelector, IOSSelector } from '../../../Selectors';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector, IOSSelector } from '@util/Selectors';
 
 class WhatsNewComponent {
   get closeModalButton(): ChainablePromiseElement {

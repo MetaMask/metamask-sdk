@@ -1,11 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
-import { getSelectorForPlatform } from '../../Utils';
-import { MobileBrowser } from '../interfaces/MobileBrowser';
-import { AndroidSelector } from '../../Selectors';
-import { Dapp } from '../interfaces/Dapp';
-import { Browsers, WEB_DAPP_LOAD_ATTEMPTS } from '../../../src/Constants';
-import { waitUntil } from 'webdriverio/build/commands/browser';
+import { MobileBrowser } from '@screens/interfaces/MobileBrowser';
+import { Dapp } from '@screens/interfaces/Dapp';
+import { getSelectorForPlatform } from '@util/Utils';
+import { AndroidSelector } from '@util/Selectors';
+import { Browsers } from '@util/Constants';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {
@@ -95,6 +94,8 @@ class ChromeBrowserScreen implements MobileBrowser {
       await driver.activateApp(Browsers.CHROME);
     }
 
+    await driver.setOrientation('PORTRAIT');
+
     await this.urlAddressBar.waitForDisplayed({
       timeout: 10000,
     });
@@ -105,62 +106,49 @@ class ChromeBrowserScreen implements MobileBrowser {
       await this.urlAddressBar.clearValue();
       await this.urlAddressBar.setValue(address);
       await driver.pressKeyCode(66);
-    } 
-
-    await this.refreshPage();
-
-    // Wait for the page to start loading
-    await driver.pause(3000);
-
-    const isWebDappLoaded = async () => {
-      let retries = 20;
-      // TODO: refactor this to use the page object
-      let isConnectButtonDisplayed = await ((await pageObject.connectButton) as ChainablePromiseElement).isDisplayed();
-
-      while (!isConnectButtonDisplayed && retries > 0) {
-        // Waits for 2 seconds before checking again
-        await driver.pause(2000);
-        isConnectButtonDisplayed = await ((await pageObject.connectButton) as ChainablePromiseElement).isDisplayed();
-        retries--;
-      }
-    };
-
-    let attempts = 0;
-
-    while (!isWebDappLoaded() && attempts < WEB_DAPP_LOAD_ATTEMPTS) {
-      await this.refreshPage();
-      attempts++;
     }
+
+    if (pageObject) {
+      // pageObject will be used to determine if the page was loaded successfully
+      // once new test cases are added
+      console.log('ChromeBrowserScreen.goToAddress:: PageObject is not null');
+    }
+
+    // await pageObject.terminate();
   }
 
   async tapSwitchTabsButton(): Promise<void> {
-    await (this.switchTabsButton).click();
+    await this.switchTabsButton.click();
   }
 
   async tapBrowserMoreOptionsButton(): Promise<void> {
-    await (this.browserMoreOptions).click();
+    await this.browserMoreOptions.click();
   }
 
   async tapCloseAllTabsButton(): Promise<void> {
-    await (this.closeAllTabsButton).click();
+    await this.closeAllTabsButton.click();
   }
 
   async tapConfirmCloseAllTabsButton(): Promise<void> {
-    await (this.confirmCloseAllTabsButton).click();
+    await this.confirmCloseAllTabsButton.click();
   }
 
   async tapNewTabButton(): Promise<void> {
-    await (this.newTabButton).click();
+    await this.newTabButton.click();
   }
 
   async refreshPage(): Promise<void> {
-    await (this.browserMoreOptions).click();
+    await this.browserMoreOptions.click();
     if (await this.stopRefreshingButton.isDisplayed()) {
       await this.stopRefreshingButton.click();
       await this.browserMoreOptions.click();
     }
     await this.refreshButton.click();
     await driver.pause(6000); // Wait for the page to refresh
+  }
+
+  async launchBrowser(): Promise<void> {
+    // TODO
   }
 }
 
