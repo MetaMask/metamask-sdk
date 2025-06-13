@@ -2,7 +2,7 @@ import React from 'react';
 import type { MouseEventHandler } from 'react';
 
 import './WalletList.css';
-import { WINDOW_POST_MESSAGE_ID } from '../sdk/SDK';
+import { WINDOW_POST_MESSAGE_ID } from '../constants';
 
 export type WalletMapEntry = {
   params: {
@@ -61,6 +61,7 @@ function WalletList({
                     {wallet.params.extensionId}
                   </p>
                   <button
+                    type="button"
                     onClick={handleWalletClick(wallet.params.extensionId)}
                     disabled={isConnected}
                   >

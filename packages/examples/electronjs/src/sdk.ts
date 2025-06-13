@@ -149,7 +149,16 @@ const connect = async () => {
       console.error(error);
     });
 };
-
+{
+  "method": "wallet_invokeMethod",
+  "params": {
+    "scope": "eip155:1",
+    "request": {
+      "method": "personal_sign",
+      "params": ["hola", "0x4Bbfvd9yRtdk2UjrvCr6Z8aLwj383Y3avVDqj5jeEVLb"]
+    }
+  }
+}
 // Personal Sign
 const personal_sign = async () => {
   const from = provider.getSelectedAddress();

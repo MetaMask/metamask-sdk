@@ -1,4 +1,7 @@
-import React, { useCallback, useState } from 'react';
+/* eslint-disable */
+
+import type React from 'react';
+import { useCallback, useState } from 'react';
 
 export enum INPUT_LABEL_TYPE {
   ADDRESS = 'Address',
@@ -56,6 +59,7 @@ const DynamicInputs: React.FC<DynamicInputsProps> = ({
 
       setConfirmedIndices((prev) => {
         const newSet = new Set<number>();
+        // biome-ignore lint/complexity/noForEach: <explanation>
         prev.forEach((idx) => {
           if (idx < indexToRemove) {
             newSet.add(idx);
@@ -76,7 +80,8 @@ const DynamicInputs: React.FC<DynamicInputsProps> = ({
         const isLastInput = index === inputArray.length - 1;
 
         return (
-          <div key={index} className="dynamic-input-row">
+          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+<div key={index} className="dynamic-input-row">
             <label>
               {label}:
               <input
@@ -94,6 +99,7 @@ const DynamicInputs: React.FC<DynamicInputsProps> = ({
 
             {isLastInput && !isConfirmed && inputArray.length < 5 && (
               <button
+                type="button"
                 id={`add-custom-${label.toLowerCase()}-button-${index}`}
                 onClick={addInput}
                 disabled={!input}
@@ -105,6 +111,7 @@ const DynamicInputs: React.FC<DynamicInputsProps> = ({
 
             {isConfirmed && (
               <button
+              type="button"
                 onClick={() => removeInput(index)}
                 className="remove-button"
               >
