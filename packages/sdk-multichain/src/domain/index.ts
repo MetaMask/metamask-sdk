@@ -1,3 +1,6 @@
+import type { MultichainSDKBase, MultichainSDKBaseOptions } from './multichain';
+import type { StoreOptions } from './store/adapter';
+
 // Direct exports to avoid circular dependencies
 export { EventEmitter } from './events';
 
@@ -18,3 +21,8 @@ export type {
 
 export type { default as EIP155 } from './multichain/api/eip155';
 export type { RpcMethod } from './multichain/api/types';
+
+
+
+export type CreateMultichainFN =
+  (options: MultichainSDKBaseOptions & { storage: StoreOptions }) => Promise<MultichainSDKBase>
