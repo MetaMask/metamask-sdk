@@ -83,6 +83,7 @@ export const openRPCExampleToJSON = (method: MethodObject) => {
 };
 
 
+
 function App() {
 	const [sessionMethodHistory, setSessionMethodHistory] = useState<
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -268,7 +269,7 @@ function App() {
 		revokeSession,
 		getSession,
 		invokeMethod,
-		extensionId: loadedExtensionId,
+    storage
 	} = useSDK({
 		onSessionChanged: handleSessionChangedNotification,
 		onWalletNotify: handleNotification,
@@ -771,7 +772,7 @@ function App() {
 						onClick={() => {
 							disconnect();
 							setExtensionId("");
-							localStorage.removeItem("extensionId");
+              storage?.removeExtensionId()
 						}}
 						data-testid="clear-extension-button"
 						id="clear-extension-button"

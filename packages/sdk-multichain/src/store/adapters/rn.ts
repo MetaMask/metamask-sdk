@@ -1,4 +1,4 @@
-import { StoreAdapter } from '../../domain/store';
+import { StoreAdapter } from "../../domain/store/adapter";
 
 export class StoreAdapterRN extends StoreAdapter {
   async getItem(key: string): Promise<string | null> {

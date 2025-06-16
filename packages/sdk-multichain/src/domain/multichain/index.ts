@@ -4,7 +4,6 @@ import type {
 import type { CaipAccountId, Json } from '@metamask/utils';
 
 import type EIP155 from './api/eip155';
-import type { StoreAdapter } from '../store/adapter';
 import type { StoreClient } from '../store/client';
 
 export type RPCAPI = {
@@ -71,5 +70,5 @@ export type MultichainSDKBaseOptions = Pick<
 >;
 
 export type MultichainSDKOptions = MultichainSDKBaseOptions & {
-  storage: StoreAdapter;
+  storage: StoreClient;
 };

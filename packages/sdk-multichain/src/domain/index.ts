@@ -3,9 +3,6 @@ export { EventEmitter } from './events';
 
 export { isNotBrowser, isReactNative } from './platform';
 
-export { StoreAdapter, StoreClient, Store } from './store';
-export type { StoreOptions } from './store';
-
 export { MultichainSDKBase } from './multichain';
 export type {
   RPCAPI,

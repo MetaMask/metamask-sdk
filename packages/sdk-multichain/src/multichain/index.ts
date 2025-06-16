@@ -21,7 +21,7 @@ import type {
   RPCAPI,
   InvokeMethodOptions,
 } from '../domain';
-import { Store } from '../domain';
+
 
 export class MultichainSDK implements MultichainSDKBase {
   private _transport!: Transport;
@@ -45,13 +45,16 @@ export class MultichainSDK implements MultichainSDKBase {
     return this._transport;
   }
 
-  private constructor(protected readonly options: MultichainSDKConstructor) {}
+  get storage() {
+    return this.options.storage;
+  }
 
-  static async create({ storage, ...options }: MultichainSDKOptions) {
-    const instance = new MultichainSDK({
-      ...options,
-      storage: new Store(storage),
-    });
+  private constructor(
+    protected readonly options: MultichainSDKConstructor
+  ) {}
+
+  static async create({ ...options }: MultichainSDKOptions) {
+    const instance = new MultichainSDK(options);
     return instance;
   }
 

@@ -28,7 +28,6 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 	const [extensionId, setExtensionId] = useState<string>(
 		METAMASK_PROD_CHROME_ID, // default to prod chrome extension id
 	);
-
 	/**
 	 * setup caip294:wallet_announce event listener
 	 * docs: https://github.com/ChainAgnostic/CAIPs/blob/bc4942857a8e04593ed92f7dc66653577a1c4435/CAIPs/caip-294.md#specification
@@ -105,9 +104,9 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 	// Auto-connect with stored extension ID
 	useEffect(() => {
 		const autoConnect = async () => {
-			const storedExtensionId = localStorage.getItem("extensionId");
-			if (storedExtensionId && sdk) {
-				try {
+      const storedExtensionId = await sdk?.storage.getExtensionId() ?? null;
+      if (storedExtensionId && sdk) {
+        try {
 					const connectionSuccess = await sdk.connect({extensionId:storedExtensionId});
           setIsConnected(connectionSuccess);
 					if (connectionSuccess) {
@@ -119,7 +118,7 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 					console.error("Error auto-connecting:", error);
 					setIsConnected(false);
 				}
-			}
+      }
 		};
 		// eslint-disable-next-line @typescript-eslint/no-floating-promises
 		autoConnect();
@@ -150,7 +149,7 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 					const connected = await sdk.connect({extensionId:newExtensionId});
 					setIsConnected(connected);
 					if (connected) {
-						localStorage.setItem("extensionId", newExtensionId);
+						sdk.storage.setExtensionId(newExtensionId);
 						setExtensionId(newExtensionId);
 					}
 				} catch (error) {
@@ -167,7 +166,7 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 			sdk.disconnect();
 			setIsConnected(false);
 			setCurrentSession(null);
-			localStorage.removeItem("extensionId");
+			sdk.storage.removeExtensionId();
 			setExtensionId("");
 		}
 	}, [sdk]);
@@ -232,5 +231,6 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 		revokeSession,
 		onNotification,
 		invokeMethod,
+    storage: sdk?.storage
 	};
 }

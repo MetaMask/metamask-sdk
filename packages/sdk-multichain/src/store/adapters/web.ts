@@ -1,15 +1,21 @@
-import { StoreAdapter } from '../../domain/store';
+import { StoreAdapter } from "../../domain/store/adapter";
 
 export class StoreAdapterWeb extends StoreAdapter {
+  private get internal() {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      throw new Error('localStorage is not available in this environment');
+    }
+    return window.localStorage;
+  }
   async getItem(key: string): Promise<string | null> {
-    throw new Error('Method not implemented.');
+    return this.internal.getItem(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.internal.setItem(key, value);
   }
 
   async deleteItem(key: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.internal.removeItem(key);
   }
 }

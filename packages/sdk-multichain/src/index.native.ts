@@ -1,5 +1,7 @@
-import type { MultichainSDKBaseOptions, StoreOptions } from './domain';
+import type { MultichainSDKBaseOptions } from './domain';
+import type { StoreOptions } from './domain/store/adapter';
 import { MultichainSDK } from './multichain';
+import { Store } from './store';
 
 export type * from './domain';
 
@@ -16,6 +18,6 @@ export async function createMetamaskSDK({
   const adapter = new StoreAdapterRN(storage);
   return MultichainSDK.create({
     ...options,
-    storage: adapter,
+    storage: new Store(adapter),
   });
 }
