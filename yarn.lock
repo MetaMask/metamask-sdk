@@ -11557,6 +11557,7 @@ __metadata:
     "@metamask/eslint-config-typescript": ^14.0.0
     "@metamask/multichain-api-client": ^0.6.0
     "@metamask/utils": ^11.4.0
+    "@react-native-async-storage/async-storage": ^1.19.6
     "@typescript-eslint/eslint-plugin": ^8.31.0
     "@typescript-eslint/parser": ^8.31.0
     esbuild: ^0.20.2

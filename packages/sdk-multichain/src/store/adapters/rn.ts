@@ -1,15 +1,16 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StoreAdapter } from "../../domain/store/adapter";
 
 export class StoreAdapterRN extends StoreAdapter {
   async getItem(key: string): Promise<string | null> {
-    throw new Error('Method not implemented.');
+    return AsyncStorage.getItem(key);
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return AsyncStorage.setItem(key, value);
   }
 
   async deleteItem(key: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    return AsyncStorage.removeItem(key);
   }
 }
