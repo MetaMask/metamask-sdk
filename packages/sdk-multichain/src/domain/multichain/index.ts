@@ -44,6 +44,8 @@ export abstract class MultichainSDKBase {
   abstract onNotification(listener: NotificationCallback): () => void;
 
   abstract invokeMethod(options: InvokeMethodOptions): Promise<Json>;
+
+  abstract storage: StoreClient;
 }
 
 export type MultichainSDKConstructor = {
