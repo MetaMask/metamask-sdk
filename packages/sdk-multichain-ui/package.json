@@ -1,0 +1,73 @@
+{
+  "name": "@metamask/multichain-sdk-ui",
+  "version": "0.0.0",
+  "description": "Multichain package for MetaMask SDK",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.js",
+  "collection": "dist/collection/collection-manifest.json",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "generate": "stencil generate",
+    "clean": "rimraf ./dist && rimraf ./loader",
+    "start": "stencil build --dev --watch --serve",
+    "dev": "stencil build --dev --watch --serve",
+    "build": "stencil build --prod",
+    "build:watch": "stencil build --watchAll",
+    "lint": "yarn lint:eslint && yarn lint:misc --check",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
+    "lint:eslint": "eslint . --cache --ext js,ts",
+    "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
+    "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
+    "test": "stencil test --spec --e2e",
+    "test:watch": "stencil test --spec --e2e --watchAll",
+    "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js",
+    "preversion": "yarn test",
+    "postversion": "git push --tags && yarn publish . --tag $npm_package_version && git push && echo \"Successfully released version $npm_package_version!\"",
+    "publish:preview": "yarn npm publish --tag preview",
+    "prepack": "../../scripts/prepack.sh",
+    "allow-scripts": ""
+  },
+  "devDependencies": {
+    "@metamask/auto-changelog": "^3.4.3",
+    "@metamask/eslint-config": "^14.0.0",
+    "@metamask/eslint-config-typescript": "^14.0.0",
+    "@stencil/core": "^4.22.2",
+    "@typescript-eslint/eslint-plugin": "^8.31.0",
+    "@typescript-eslint/parser": "^8.31.0",
+    "esbuild": "^0.20.2",
+    "esbuild-plugin-umd-wrapper": "^3.0.0",
+    "esbuild-visualizer": "^0.7.0",
+    "eslint": "^9.25.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^4.3.4",
+    "eslint-plugin-import-x": "^4.3.0",
+    "eslint-plugin-jsdoc": "^50.2.4",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-promise": "^7.1.0",
+    "nock": "^14.0.4",
+    "prettier": "^3.3.3",
+    "rimraf": "^6.0.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.6.0",
+    "unplugin-stencil": "^0.3.4",
+    "vitest": "^3.1.2"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@paulmillr/qr": "^0.2.1"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "webpack-dev-server>ws>bufferutil": false,
+      "webpack-dev-server>ws>utf-8-validate": false
+    }
+  }
+}

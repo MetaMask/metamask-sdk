@@ -23,6 +23,7 @@
     "packages/deve2e",
     "packages/playground-next",
     "packages/sdk-multichain",
+    "packages/sdk-multichain-ui",
     "playground/multichain-react"
   ],
   "scripts": {
