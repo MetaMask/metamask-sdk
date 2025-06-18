@@ -3,7 +3,7 @@ import type { StoreAdapter } from '../domain/store/adapter';
 import type { StoreClient } from '../domain/store/client';
 
 export type MultichainSDKConstructor = {
-  dapp: { name: string; url: string; logoUrl?: string };
+  dapp?: { name: string; url: string; logoUrl?: string };
   analytics: {enabled: false} | { enabled: true; integrationType: string };
   logging: { logLevel: 'debug' | 'info' | 'warn' | 'error' | 'verbose' };
   storage: StoreClient;

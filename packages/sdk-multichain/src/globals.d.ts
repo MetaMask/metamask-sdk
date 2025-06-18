@@ -8,7 +8,7 @@ declare module '@paulmillr/qr';
 declare global {
   interface Window {
     mmsdk?: MultichainSDK;
-    // ReactNativeWebView?: any;
+    ReactNativeWebView?: any;
     // sdkProvider: SDKProvider;
     // ethereum?: SDKProvider;
     // mmsdk?: MetaMaskSDK;

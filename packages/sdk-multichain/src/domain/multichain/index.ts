@@ -46,8 +46,9 @@ export abstract class MultichainSDKBase {
   abstract _initialized: boolean;
 }
 
+export type DappSettings = { name?: string; url?: string; logoUrl?: string }
 export type MultichainSDKConstructor = {
-  dapp: { name: string; url?: string; logoUrl?: string };
+  dapp: DappSettings;
   analytics: { enabled: false } | { enabled: true; integrationType: string };
   storage: StoreClient;
   ui: { headless: boolean };

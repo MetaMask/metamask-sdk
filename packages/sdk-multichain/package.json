@@ -56,7 +56,12 @@
   "license": "MIT",
   "dependencies": {
     "@metamask/multichain-api-client": "^0.6.0",
+    "@metamask/providers": "^22.1.0",
+    "@metamask/sdk-analytics": "workspace:^",
+    "@metamask/sdk-communication-layer": "workspace:^",
     "@metamask/utils": "^11.4.0",
-    "eventemitter2": "^6.4.9"
+    "bowser": "^2.11.0",
+    "eventemitter2": "^6.4.9",
+    "uuid": "^11.1.0"
   }
 }

@@ -11,6 +11,9 @@ import {
 	parseCaipChainId,
 	type CaipAccountId,
 } from "@metamask/utils";
+import type { MetaMaskInpageProvider } from "@metamask/providers";
+import { analytics } from '@metamask/sdk-analytics';
+
 import type { MultichainSDKBase } from "../domain/multichain";
 import type {
 	MultichainSDKConstructor,
@@ -24,10 +27,15 @@ import {
 	createLogger,
 	enableDebug,
 	isEnabled as isLoggerEnabled,
-} from "src/domain/logger";
+} from "../domain/logger";
+import { getPlatformType, isBrowser, isReactNative } from "../domain/platform";
+import { getAnonId, getDappId, getVersion } from "../utis";
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger("metamask-sdk:core");
+
+
+
 
 export class MultichainSDK implements MultichainSDKBase {
 	private _transport!: Transport;
@@ -80,6 +88,7 @@ export class MultichainSDK implements MultichainSDKBase {
 	}
 
 	get transport() {
+    //TODO: we probably want to extend those with new addings
 		if (!this._transport) {
 			const transport = getDefaultTransport(this.options.transport);
 			this._transport = transport;
@@ -95,11 +104,69 @@ export class MultichainSDK implements MultichainSDKBase {
 		return this._initialized;
 	}
 
+  private async setupAnalytics() {
+    if (!this.options.analytics.enabled) {
+      return
+    }
+    if (!isBrowser() && !isReactNative()) {
+      return;
+    }
+
+    const version = getVersion();
+    const dappId = getDappId(this.options.dapp);
+    const anonId = await getAnonId(this.storage);
+    const platform = getPlatformType();
+    const integrationType = this.options.analytics.integrationType;
+
+    analytics.setGlobalProperty('sdk_version', version);
+    analytics.setGlobalProperty('dapp_id', dappId);
+    analytics.setGlobalProperty('anon_id', anonId);
+    analytics.setGlobalProperty('platform', platform);
+    analytics.setGlobalProperty('integration_type', integrationType);
+
+    analytics.enable();
+    analytics.track('sdk_initialized', {});
+  }
+
+  private async setupDappMetadata() {
+    throw new Error("Not implemented");
+  }
+
+  private async setupInfuraProvider() {
+    throw new Error("Not implemented");
+  }
+
+  private async setupReadOnlyRPCProviders() {
+    throw new Error("Not implemented");
+  }
+
+  private async setupExtensionPreferences():Promise<{
+    preferExtension: boolean;
+    shouldReturn: boolean;
+    metamaskBrowserExtension: MetaMaskInpageProvider | undefined;
+}> {
+    //Preloads the extension related data
+    throw new Error("Not implemented");
+  }
+
 	private async init() {
 		if (typeof window !== "undefined" && window.mmsdk?.isInitialized) {
 			logger("MetaMaskSDK: init already initialized");
 		}
 		//initialize with try catch and return promise that resolves SDK
+
+    //Setup Analytics
+    await this.setupAnalytics();
+
+    // //Setup Dapp Metadata
+    // await this.setupDappMetadata();
+
+    // //Setup Infura Provider
+    // await this.setupInfuraProvider();
+
+    // //Setup Readonly RPC Providers
+    // await this.setupReadOnlyRPCProviders();
+
 	}
 
 	async connect(options: { extensionId?: string }): Promise<boolean> {
