@@ -9,4 +9,6 @@ export abstract class StoreClient {
 
   abstract removeExtensionId(): Promise<void>;
   abstract removeAnonId(): Promise<void>;
+
+  abstract getDebug(): Promise<string | null>;
 }

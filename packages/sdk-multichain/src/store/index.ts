@@ -33,4 +33,7 @@ export class Store implements StoreClient {
     return this.#adapter.deleteItem('anonId');
   }
 
+  async getDebug(): Promise<string | null> {
+    return this.#adapter.getItem('DEBUG');
+  }
 }

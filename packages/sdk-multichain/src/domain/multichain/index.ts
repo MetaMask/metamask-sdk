@@ -34,10 +34,7 @@ export abstract class MultichainSDKBase {
 
   abstract getSession(): Promise<SessionData | undefined>;
 
-  abstract createSession(
-    scopes: Scope[],
-    caipAccountIds: CaipAccountId[],
-  ): Promise<SessionData>;
+  abstract createSession(  scopes: Scope[], caipAccountIds: CaipAccountId[] ): Promise<SessionData>;
 
   abstract revokeSession(): Promise<void>;
 
@@ -46,12 +43,12 @@ export abstract class MultichainSDKBase {
   abstract invokeMethod(options: InvokeMethodOptions): Promise<Json>;
 
   abstract storage: StoreClient;
+  abstract _initialized: boolean;
 }
 
 export type MultichainSDKConstructor = {
-  dapp: { name: string; url: string; logoUrl?: string };
+  dapp: { name: string; url?: string; logoUrl?: string };
   analytics: { enabled: false } | { enabled: true; integrationType: string };
-  logging: { logLevel: 'debug' | 'info' | 'warn' | 'error' | 'verbose' };
   storage: StoreClient;
   ui: { headless: boolean };
   transport?: {
@@ -68,7 +65,7 @@ export type Scope<T extends RPCAPI = RPCAPI> =
 
 export type MultichainSDKBaseOptions = Pick<
   MultichainSDKConstructor,
-  'dapp' | 'analytics' | 'logging' | 'ui'
+  'dapp' | 'analytics' | 'ui'
 >;
 
 export type MultichainSDKOptions = MultichainSDKBaseOptions & {
