@@ -12,7 +12,7 @@ This guide provides instructions for setting up and debugging the SDK socket ser
 
 ```bash
 # start local redis server
-docker compose up -d cache
+docker compose up -d redis
 yarn debug
 ```
 

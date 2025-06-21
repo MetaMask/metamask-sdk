@@ -6,6 +6,7 @@ export const mainSDK = async () => {
     communicationServerUrl: 'http://localhost:4000/',
     dappMetadata: {
       name: 'NodeJS Console',
+      url: 'https://demos.metamask.io',
     },
   });
 

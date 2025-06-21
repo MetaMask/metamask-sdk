@@ -11530,7 +11530,7 @@ __metadata:
     "@metamask/eslint-config-jest": ^12.1.0
     "@metamask/eslint-config-typescript": ^6.0.0
     "@socket.io/admin-ui": ^0.5.1
-    "@socket.io/redis-adapter": ^8.3.0
+    "@socket.io/redis-adapter": ^7.2.0
     "@socket.io/redis-streams-adapter": ^0.2.2
     "@types/analytics-node": ^3.1.13
     "@types/body-parser": ^1.19.4
@@ -15800,6 +15800,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@socket.io/redis-adapter@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@socket.io/redis-adapter@npm:7.2.0"
+  dependencies:
+    debug: ~4.3.1
+    notepack.io: ~2.2.0
+    socket.io-adapter: ^2.4.0
+    uid2: 0.0.3
+  checksum: e597dc418da99af609c6d7560c2962f7446a1a840bbf7b7bb2c8a07da64c473d0b4db1d1fb7027f9886ee69ba46f08a5f3f225d61a3d60551b5b76702f90d5de
+  languageName: node
+  linkType: hard
+
 "@socket.io/redis-adapter@npm:^8.2.1":
   version: 8.2.1
   resolution: "@socket.io/redis-adapter@npm:8.2.1"
@@ -15810,19 +15822,6 @@ __metadata:
   peerDependencies:
     socket.io-adapter: ^2.4.0
   checksum: f0fc24a537b075ed6340a4adbd12631e3b55e867b8aa9203ed1cd5a28a4c97dc0dc3e65c00bbbe13ee6dc3bae382b6d9ed9ac44d4eb156f23965ee0e0ac9e6fd
-  languageName: node
-  linkType: hard
-
-"@socket.io/redis-adapter@npm:^8.3.0":
-  version: 8.3.0
-  resolution: "@socket.io/redis-adapter@npm:8.3.0"
-  dependencies:
-    debug: ~4.3.1
-    notepack.io: ~3.0.1
-    uid2: 1.0.0
-  peerDependencies:
-    socket.io-adapter: ^2.5.4
-  checksum: f93705acf88b9ed89e4cdd0dd432e121c72eedae1e2d30d6feaa1e3e4db0106eac5f01170333865bb3636cd603f87069a108cd5c2c7c342261804f15b0dc36b1
   languageName: node
   linkType: hard
 
@@ -27062,7 +27061,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:^4.3.7":
+"debug@npm:^4.3.7, debug@npm:~4.3.4":
   version: 4.3.7
   resolution: "debug@npm:4.3.7"
   dependencies:
@@ -41711,6 +41710,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"notepack.io@npm:~2.2.0":
+  version: 2.2.0
+  resolution: "notepack.io@npm:2.2.0"
+  checksum: e44ac029e42c050c572877f1fa3fe77af573a7394d7002980ce0e00ae45a7a9a157bc8f9d0f6a80345c53439e4f04c4cbd6db3582cc2541b5fb9a52c85360ceb
+  languageName: node
+  linkType: hard
+
 "notepack.io@npm:~3.0.1":
   version: 3.0.1
   resolution: "notepack.io@npm:3.0.1"
@@ -48665,6 +48671,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"socket.io-adapter@npm:^2.4.0":
+  version: 2.5.5
+  resolution: "socket.io-adapter@npm:2.5.5"
+  dependencies:
+    debug: ~4.3.4
+    ws: ~8.17.1
+  checksum: fc52253c31d5fec24abc9bcd8d6557545fd1604387c64328def142e9a3d31c92ee8635839d668454fcdc0e7bb0442e8655623879e07b127df12756c28ef7632e
+  languageName: node
+  linkType: hard
+
 "socket.io-adapter@npm:~2.5.2":
   version: 2.5.2
   resolution: "socket.io-adapter@npm:2.5.2"
@@ -51754,6 +51770,13 @@ __metadata:
   bin:
     uglifyjs: bin/uglifyjs
   checksum: 7b3897df38b6fc7d7d9f4dcd658599d81aa2b1fb0d074829dd4e5290f7318dbca1f4af2f45acb833b95b1fe0ed4698662ab61b87e94328eb4c0a0d3435baf924
+  languageName: node
+  linkType: hard
+
+"uid2@npm:0.0.3":
+  version: 0.0.3
+  resolution: "uid2@npm:0.0.3"
+  checksum: c8f64acfa94aa42d90c1a61ba9df0162f0db0d28c211e21cf5792b3d70b7ad9fd75d19c7cadcce81896ea111335e57e65891a3b6d0a1343a9adf45abf3d4c47d
   languageName: node
   linkType: hard
 

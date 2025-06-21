@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@socket.io/admin-ui": "^0.5.1",
-    "@socket.io/redis-adapter": "^8.3.0",
+    "@socket.io/redis-adapter": "^7.2.0",
     "@socket.io/redis-streams-adapter": "^0.2.2",
     "analytics-node": "^6.2.0",
     "body-parser": "^1.20.2",
