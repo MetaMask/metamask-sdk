@@ -13,7 +13,22 @@ const packageJson = require('./package.json');
  */
 const config = [
   {
-    external: ['react', 'react-dom', 'react-native'],
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      // Always externalize uuid and eciesjs
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      // Also externalize React dependencies
+      if (id === 'react' || id === 'react-dom' || id === 'react-native') {
+        return true;
+      }
+      return false;
+    },
     input: 'src/index.ts',
     output: [
       {
@@ -49,7 +64,22 @@ const config = [
     ],
   },
   {
-    external: ['react', 'react-dom', 'react-native'],
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      // Always externalize uuid and eciesjs
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      // Also externalize React dependencies
+      if (id === 'react' || id === 'react-dom' || id === 'react-native') {
+        return true;
+      }
+      return false;
+    },
     input: 'src/index.ts',
     output: [
       {

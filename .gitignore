@@ -31,6 +31,9 @@ e2e/browserstack.err
 e2e/local.log
 e2e/appium.log
 
+**/.yalc
+**/yalc.lock
+
 **/dist
 **/dist-webpack
 **/dist-tsc

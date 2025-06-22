@@ -190,7 +190,18 @@ const configs = [
       sourcemap: true,
       interop: 'auto',
     },
-    external: webExternalDeps,
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      // Always externalize uuid and eciesjs
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      return webExternalDeps.includes(id);
+    },
     plugins: getPlugins({ platform: 'web' }),
     onwarn: sharedWarningHandler,
   },
@@ -206,7 +217,18 @@ const configs = [
       globals: umdGlobals,
       interop: 'auto',
     },
-    external: webExternalDeps,
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      // Always externalize uuid and eciesjs for UMD
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      return webExternalDeps.includes(id);
+    },
     plugins: getPlugins({ platform: 'web' }),
     onwarn: sharedWarningHandler,
   },
@@ -220,7 +242,17 @@ const configs = [
       sourcemap: true,
       interop: 'auto',
     },
-    external: rnExternalDeps,
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      return rnExternalDeps.includes(id);
+    },
     plugins: getPlugins({ platform: 'rn' }),
     onwarn: sharedWarningHandler,
   },
@@ -242,7 +274,18 @@ const configs = [
         interop: 'auto',
       },
     ],
-    external: nodeExternalDeps,
+    // IMPORTANT: Using function-based external to handle sub-path imports
+    // This fixes React Native crypto polyfill issues where uuid and eciesjs
+    // were being bundled and couldn't access runtime crypto.getRandomValues
+    // See CRYPTO_POLYFILL_FIX.md for details
+    external: (id) => {
+      // Always externalize uuid and eciesjs
+      if (id === 'uuid' || id.startsWith('uuid/') || 
+          id === 'eciesjs' || id.startsWith('eciesjs/')) {
+        return true;
+      }
+      return nodeExternalDeps.includes(id);
+    },
     plugins: [
       ...getPlugins({ platform: 'node' }),
       nativePlugin({
