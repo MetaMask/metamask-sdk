@@ -1,7 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import { PlatformType } from '@metamask/sdk-communication-layer';
 import { MetaMaskSDK } from '../../sdk';
 import { base64Encode } from '../../utils/base64';
+import { uuidv4 } from '../../utils/uuid';
 
 interface DappIdentifier {
   url: string;

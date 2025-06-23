@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import {
   CommunicationLayerPreference,
@@ -6,7 +5,6 @@ import {
   StorageManagerProps,
 } from '@metamask/sdk-communication-layer';
 import debug from 'debug';
-
 import EventEmitter2 from 'eventemitter2';
 import packageJson from '../package.json';
 import { MetaMaskInstaller } from './Platform/MetaMaskInstaller';
@@ -34,6 +32,9 @@ import {
 import { SDKLoggingOptions } from './types/SDKLoggingOptions';
 import { SDKUIOptions } from './types/SDKUIOptions';
 import { logger } from './utils/logger';
+import { uuidv4 } from './utils/uuid';
+
+console.info(`sdk version: ${packageJson.version}`);
 
 export interface MetaMaskSDKOptions {
   /**

@@ -1,5 +1,4 @@
 import { PlatformType } from '@metamask/sdk-communication-layer';
-import Bowser from 'bowser';
 import { getPlatformType } from '../services/PlatfformManager/getPlatformType';
 import { isMetaMaskInstalled } from '../services/PlatfformManager/isMetaMaskInstalled';
 import { openDeeplink } from '../services/PlatfformManager/openDeeplink';
@@ -62,12 +61,20 @@ export class PlatformManager {
   }
 
   isMobile() {
-    const browser = Bowser.parse(window.navigator.userAgent);
+    if (typeof window === 'undefined' || !window.navigator) {
+      return false;
+    }
 
-    return (
-      browser?.platform?.type === 'mobile' ||
-      browser?.platform?.type === 'tablet'
-    );
+    const { userAgent } = window.navigator;
+
+    // Check for mobile devices
+    const mobileRegex =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/iu;
+
+    // Check for tablets (iPad is already in mobile regex, this catches Android tablets)
+    const tabletRegex = /(?:iPad|Android(?!.*Mobile)|Tablet)/iu;
+
+    return mobileRegex.test(userAgent) || tabletRegex.test(userAgent);
   }
 
   isSecure() {

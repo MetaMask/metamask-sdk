@@ -1,5 +1,3 @@
-import crossFetch from 'cross-fetch';
-
 let rpcId = 1;
 
 function getNextRpcId() {
@@ -12,6 +10,25 @@ interface RpcResponse {
   jsonrpc: string;
   result: unknown;
 }
+
+// Use native fetch, with fallback check for older environments
+const getFetchApi = () => {
+  if (typeof globalThis !== 'undefined' && globalThis.fetch) {
+    return globalThis.fetch;
+  }
+
+  if (typeof window !== 'undefined' && window.fetch) {
+    return window.fetch;
+  }
+
+  if (typeof global !== 'undefined' && global.fetch) {
+    return global.fetch;
+  }
+
+  throw new Error(
+    'Fetch API not available. Please use Node.js 18+ or a modern browser, or provide a fetch polyfill.',
+  );
+};
 
 export const rpcRequestHandler = async ({
   rpcEndpoint,
@@ -42,7 +59,8 @@ export const rpcRequestHandler = async ({
 
   let response;
   try {
-    response = await crossFetch(rpcEndpoint, {
+    const fetchApi = getFetchApi();
+    response = await fetchApi(rpcEndpoint, {
       method: 'POST',
       headers,
       body,

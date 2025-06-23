@@ -11221,7 +11221,6 @@ __metadata:
     bufferutil: ^4.0.8
     concurrently: ^9.1.2
     cross-fetch: ^4.0.0
-    date-fns: ^2.29.3
     debug: ^4.3.4
     eciesjs: ^0.4.11
     eslint: ^7.30.0
@@ -11807,11 +11806,9 @@ __metadata:
     "@types/uuid": ^10.0.0
     "@typescript-eslint/eslint-plugin": ^4.26.0
     "@typescript-eslint/parser": ^4.26.0
-    bowser: ^2.9.0
     browserify-zlib: ^0.2.0
     buffer: ^6.0.3
     concurrently: ^9.1.2
-    cross-fetch: ^4.0.0
     crypto-browserify: ^3.12.0
     debug: ^4.3.4
     eciesjs: ^0.4.11
@@ -11852,7 +11849,6 @@ __metadata:
     typescript: ^4.3.2
     url: ^0.11.0
     util: ^0.12.4
-    uuid: ^8.3.2
     webpack: ^5.0.0
   languageName: unknown
   linkType: soft
