@@ -1,8 +1,12 @@
 import { createMetamaskSDK } from "@metamask/multichain-sdk";
 
+const validCommands = ['connect'];
+
 (async () => {
-	try {
-		const sdk = await createMetamaskSDK({
+  try {
+    const [, , startType] = process.argv;
+    console.debug(`start NodeJS example`);
+    const sdk = await createMetamaskSDK({
 			dapp: {
         name: "playground",
         url: "https://playground.metamask.io",
@@ -12,34 +16,43 @@ import { createMetamaskSDK } from "@metamask/multichain-sdk";
       },
       ui: {
         headless: true,
-      },
-      storage: {
-        enabled: true,
-      },
+      }
 		});
+    if (!validCommands.includes(startType)) {
+      throw new Error("Invalid command");
+    }
+    if (startType === 'connect') {
+      const connected = await sdk.connect();
+      console.log('connect request accounts',  connected);
+    }
 	} catch (error) {
 		console.error(error);
 		process.exit(1);
 	}
 })();
 
-
-
-
-
-
-
 // import { MetaMaskSDK, MetaMaskSDKOptions, SDKProvider } from '@metamask/sdk';
 
-// const options: MetaMaskSDKOptions = {
-//   shouldShimWeb3: false,
-//   dappMetadata: {
-//     name: 'NodeJS example',
-//     url: 'http://localhost',
-//   },
+// const start = async (startType) => {
+//   console.debug(`start NodeJS example`);
+//   if (startType === 'connect') {
+//     const accounts = await sdk.connect();
+//     console.log('connect request accounts', accounts);
+//   } else {
+//     const hexSign = await sdk.connectAndSign({msg: "Hello from the NodeJS Example!"})
+//     console.log('connect and sign', hexSign);
+//   }
+//   const ethereum = sdk.getProvider();
+//   const signResponse = await ethereum.request({
+//     method: 'eth_signTypedData_v3',
+//     params: [ethereum.getSelectedAddress(), JSON.stringify(msgParams)],
+//   });
+//   console.log('eth_signTypedData_v3 response', signResponse);
 // };
-
-// const sdk = new MetaMaskSDK(options);
+// const startType = process.argv[2];
+// start(startType).catch((err) => {
+//   console.error(err);
+// });
 
 // const msgParams = {
 //   types: {

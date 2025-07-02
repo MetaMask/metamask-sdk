@@ -3,7 +3,8 @@ import type { StoreClient } from '../store/client';
 
 type LoggerNameSpaces =
   | 'metamask-sdk'
-  | 'metamask-sdk:core';
+  | 'metamask-sdk:core'
+  | 'metamask-sdk:provider';
 
 export const createLogger = (
   namespace: LoggerNameSpaces = 'metamask-sdk',

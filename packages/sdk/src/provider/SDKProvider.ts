@@ -56,7 +56,6 @@ export class SDKProvider extends MetaMaskInpageProvider {
       maxEventListeners: 100,
       shouldSendMetadata,
     });
-
     logger(
       `[SDKProvider: constructor()] autoRequestAccounts=${autoRequestAccounts}`,
     );

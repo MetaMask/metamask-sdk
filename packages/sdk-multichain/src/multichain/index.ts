@@ -11,10 +11,8 @@ import {
 	parseCaipChainId,
 	type CaipAccountId,
 } from "@metamask/utils";
-import type { MetaMaskInpageProvider } from "@metamask/providers";
 import { analytics } from '@metamask/sdk-analytics';
-
-import type { MultichainSDKBase } from "../domain/multichain";
+import { METHODS_TO_REDIRECT,  MultichainSDKBase, type RPC_URLS_MAP } from "../domain/multichain";
 import type {
 	MultichainSDKConstructor,
 	MultichainSDKOptions,
@@ -29,34 +27,38 @@ import {
 	isEnabled as isLoggerEnabled,
 } from "../domain/logger";
 import { getPlatformType, isBrowser, isReactNative } from "../domain/platform";
-import { getAnonId, getDappId, getVersion } from "../utis";
+import { getAnonId, getDappId, getInfuraRpcUrls, getVersion, setupDappMetadata, setupInfuraProvider, isMetaMaskInstalled, createConnectionLink } from "../utis";
+import { RPCClient } from "src/utis/rpc/client";
+import packageJson from '../../package.json';
+import { StoreClient } from "src/domain/store/client";
+import { createUIManager, type UIManager, type UIModalController } from "../domain";
+import { EventEmitter } from "../domain/events";
+import type { SDKEvents } from "../domain/events/types/sdk";
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger("metamask-sdk:core");
 
+export class MultichainSDK extends EventEmitter<SDKEvents> implements MultichainSDKBase {
+	private transport!: Transport;
+	private provider!: MultichainApiClient<RPCAPI>;
+	private isInitialized : boolean = false;
+  private readonly options: MultichainSDKConstructor;
+  public readonly storage: StoreClient;
+  private uiManager?: UIManager;
+  private activeModal?: UIModalController;
 
-
-
-export class MultichainSDK implements MultichainSDKBase {
-	private _transport!: Transport;
-	public _initialized = false;
-	private _provider!: MultichainApiClient<RPCAPI>;
-
-	private constructor(protected readonly options: MultichainSDKConstructor) {
-		if (!options.dapp?.url) {
-			// Automatically set dappMetadata on web env if not defined
-			if (typeof window !== "undefined" && typeof document !== "undefined") {
-				options.dapp = {
-					...options.dapp,
-					url: `${window.location.protocol}//${window.location.host}`,
-				};
-			} else {
-				throw new Error("You must provide dapp url");
-			}
-		}
+	private constructor(options: MultichainSDKConstructor) {
+    super();
+    const transport = getDefaultTransport(options.transport);
+    const withInfuraRPCMethods = setupInfuraProvider(options);
+    const withDappMetadata = setupDappMetadata(withInfuraRPCMethods);
+    this.options = withDappMetadata;
+    this.storage = options.storage;
+		this.provider = getMultichainClient({ transport });
+		this.transport = transport;
 	}
 
-	static async create({ ...options }: MultichainSDKOptions) {
+	static async create(options: MultichainSDKOptions) {
 		const instance = new MultichainSDK(options);
 		const isEnabled = await isLoggerEnabled(
 			"metamask-sdk:core",
@@ -65,10 +67,8 @@ export class MultichainSDK implements MultichainSDKBase {
 		if (isEnabled) {
 			enableDebug("metamask-sdk:core");
 		}
-		logger("MultichainSDK initialize");
 		try {
-			await await instance.init();
-			logger("MultichainSDK initialized");
+			await instance.init();
 			if (typeof window !== "undefined") {
 				window.mmsdk = instance;
 			}
@@ -78,36 +78,11 @@ export class MultichainSDK implements MultichainSDKBase {
 		return instance;
 	}
 
-	get provider() {
-		if (!this._provider) {
-			const transport = getDefaultTransport(this.options.transport);
-			this._transport = transport;
-			this._provider = getMultichainClient({ transport });
-		}
-		return this._provider;
-	}
-
-	get transport() {
-    //TODO: we probably want to extend those with new addings
-		if (!this._transport) {
-			const transport = getDefaultTransport(this.options.transport);
-			this._transport = transport;
-		}
-		return this._transport;
-	}
-
-	get storage() {
-		return this.options.storage;
-	}
-
-	get isInitialized() {
-		return this._initialized;
-	}
-
   private async setupAnalytics() {
     if (!this.options.analytics.enabled) {
       return
     }
+
     if (!isBrowser() && !isReactNative()) {
       return;
     }
@@ -115,6 +90,7 @@ export class MultichainSDK implements MultichainSDKBase {
     const version = getVersion();
     const dappId = getDappId(this.options.dapp);
     const anonId = await getAnonId(this.storage);
+
     const platform = getPlatformType();
     const integrationType = this.options.analytics.integrationType;
 
@@ -128,57 +104,121 @@ export class MultichainSDK implements MultichainSDKBase {
     analytics.track('sdk_initialized', {});
   }
 
-  private async setupDappMetadata() {
-    throw new Error("Not implemented");
-  }
-
-  private async setupInfuraProvider() {
-    throw new Error("Not implemented");
-  }
-
-  private async setupReadOnlyRPCProviders() {
-    throw new Error("Not implemented");
-  }
-
-  private async setupExtensionPreferences():Promise<{
-    preferExtension: boolean;
-    shouldReturn: boolean;
-    metamaskBrowserExtension: MetaMaskInpageProvider | undefined;
-}> {
-    //Preloads the extension related data
-    throw new Error("Not implemented");
-  }
-
 	private async init() {
 		if (typeof window !== "undefined" && window.mmsdk?.isInitialized) {
 			logger("MetaMaskSDK: init already initialized");
 		}
-		//initialize with try catch and return promise that resolves SDK
-
-    //Setup Analytics
     await this.setupAnalytics();
-
-    // //Setup Dapp Metadata
-    // await this.setupDappMetadata();
-
-    // //Setup Infura Provider
-    // await this.setupInfuraProvider();
-
-    // //Setup Readonly RPC Providers
-    // await this.setupReadOnlyRPCProviders();
-
+    await this.setupUI();
+    this.isInitialized = true;
 	}
 
-	async connect(options: { extensionId?: string }): Promise<boolean> {
-		const transport = getDefaultTransport(options);
-		this._provider = getMultichainClient({ transport });
-		this._transport = transport;
-		return await transport.connect();
+  private async setupUI() {
+    if (this.options.ui.headless) {
+      logger("UI disabled (headless mode)");
+      return;
+    }
+
+    try {
+      this.uiManager = await createUIManager({
+        headless: this.options.ui.headless,
+        debug: false, // You could add debug option to MultichainSDKConstructor
+      });
+      logger("UI manager initialized");
+    } catch (error) {
+      logger("Failed to initialize UI manager:", error);
+    }
+  }
+
+	async connect(options?: { extensionId?: string }): Promise<boolean> {
+    // Check if extension is available and preferred
+    if (this.uiManager?.isExtensionAvailable() && !options?.extensionId) {
+      try {
+        await this.uiManager.connectWithExtension?.();
+        return true;
+      } catch (error) {
+        logger("Extension connection failed, falling back to mobile connection:", error);
+      }
+    }
+
+    // Handle mobile connection with UI
+    if (!this.transport.isConnected) {
+      await this.startMobileConnection();
+      await this.transport.connect();
+    }
+    return this.transport.isConnected()
 	}
+
+  private async startMobileConnection(): Promise<void> {
+    // Generate connection link
+    const anonId = await getAnonId(this.storage);
+    const connectionLink = createConnectionLink({
+      channelId: 'temp-channel-id', // This should come from transport
+      pubKey: 'temp-pub-key', // This should come from transport
+      dapp: this.options.dapp,
+      anonId,
+      source: 'multichain-sdk',
+    });
+
+    // Emit display_uri event for custom handling
+    this.emit('display_uri', connectionLink);
+
+    // Show modal if UI is available
+    if (this.uiManager && !this.options.ui.headless) {
+      try {
+        this.activeModal = await this.uiManager.showConnectionModal({
+          link: connectionLink,
+          dapp: this.options.dapp,
+          sdkVersion: getVersion(),
+          onClose: (shouldTerminate) => {
+            if (shouldTerminate) {
+              this.emit('provider_update', 'terminate');
+            }
+          },
+          onConnect: () => {
+            this.emit('provider_update', 'initialized');
+          }
+        });
+      } catch (error) {
+        logger("Failed to show connection modal:", error);
+      }
+    }
+  }
 
 	async disconnect(): Promise<void> {
+    // Close any active modal
+    if (this.activeModal) {
+      this.activeModal.close();
+      this.activeModal = undefined;
+    }
 		this.transport.disconnect();
 	}
+
+  /**
+   * Check if MetaMask extension is available
+   */
+  isExtensionAvailable(): boolean {
+    return this.uiManager?.isExtensionAvailable() ?? false;
+  }
+
+  /**
+   * Get the current connection QR code link (if available)
+   */
+  getConnectionLink(): string | undefined {
+    // This would need to be stored when connection is initiated
+    // For now, return undefined - could be enhanced to store the last generated link
+    return undefined;
+  }
+
+  /**
+   * Close any active connection modal
+   */
+  closeModal(): void {
+    if (this.activeModal) {
+      this.activeModal.close(false);
+      this.activeModal = undefined;
+    }
+  }
 
 	onNotification(listener: NotificationCallback): () => void {
 		return this.provider.onNotification(listener);
@@ -240,7 +280,37 @@ export class MultichainSDK implements MultichainSDKBase {
 		return this.provider.createSession({ optionalScopes });
 	}
 
+
 	async invokeMethod(options: InvokeMethodOptions) {
+    const {request} = options;
+    let readonlyRPCMap: RPC_URLS_MAP = {};
+    const infuraAPIKey = this.options.api?.infuraAPIKey;
+    if (infuraAPIKey) {
+      const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
+      if (this.options.api?.readonlyRPCMap) {
+        readonlyRPCMap = {
+          ...this.options.api.readonlyRPCMap,
+          ...urlsWithToken,
+        };
+      } else {
+        readonlyRPCMap = urlsWithToken;
+      }
+    }
+
+    const platformType = getPlatformType();
+    const rpcEndpoint = readonlyRPCMap[options.scope];
+    const isReadOnlyMethod = !METHODS_TO_REDIRECT[request.method];
+    const sdkInfo = `Sdk/Javascript SdkVersion/${
+      packageJson.version
+    } Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${
+      this.options.dapp.name
+    }`;
+
+    if (rpcEndpoint && isReadOnlyMethod) {
+      const client = new RPCClient(rpcEndpoint, sdkInfo);
+      const response = await client.request(request.method, request.params);
+      return response;
+    }
 		// TODO: Expose types on multichain api package
 		return this.provider.invokeMethod(
 			options as InvokeMethodParams<RPCAPI, Scope, never>,

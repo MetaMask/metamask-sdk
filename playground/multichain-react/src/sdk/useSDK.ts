@@ -83,14 +83,11 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
         analytics: {
           enabled: false,
         },
-        logging: {
-          logLevel: "debug",
-        },
         ui: {
           headless: true,
         },
-        storage: {
-          enabled: true,
+        transport: {
+          extensionId: extensionId,
         },
       }).then(setSdk);
     }
@@ -107,7 +104,7 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
       const storedExtensionId = await sdk?.storage.getExtensionId() ?? null;
       if (storedExtensionId && sdk) {
         try {
-					const connectionSuccess = await sdk.connect({extensionId:storedExtensionId});
+					const connectionSuccess = await sdk.connect();
           setIsConnected(connectionSuccess);
 					if (connectionSuccess) {
 						setExtensionId(storedExtensionId);
@@ -146,7 +143,7 @@ export function useSDK({ onSessionChanged, onWalletNotify, onWalletAnnounce }: S
 		async (newExtensionId: string) => {
 			if (sdk) {
 				try {
-					const connected = await sdk.connect({extensionId:newExtensionId});
+					const connected = await sdk.connect();
 					setIsConnected(connected);
 					if (connected) {
 						sdk.storage.setExtensionId(newExtensionId);

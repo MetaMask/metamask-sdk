@@ -1,41 +1,11 @@
 import { EventEmitter2 } from 'eventemitter2';
+import { EventTypes } from './types';
 
-type SDKEvents = {
-  initialized: [
-    evt: {
-      chainId: string;
-      isConnected: boolean;
-      isMetaMask: boolean;
-      selectedAddress: string | null | undefined;
-      networkVersion: string | null | undefined;
-    },
-  ];
-  display_uri: [evt: string];
-  provider_update: [evt: 'terminate' | 'extension' | 'initialized'];
-  connection_status: [
-    // TODO: figure our something better than unknown
-    evt: unknown,
-  ];
-  service_status: [
-    // TODO: figure our something better than unknown
-    evt: unknown,
-  ];
-  connect_with_Response: [
-    // TODO: figure our something better than unknown
-    evt: unknown,
-  ];
-};
 
-type ExtensionEvents = {
-  chainChanged: [evt: unknown];
-  accountsChanged: [evt: unknown];
-  disconnect: [evt: unknown];
-  connect: [evt: unknown];
-  connected: [evt: unknown];
-};
+
 
 export class EventEmitter<
-  TEvents extends Record<string, unknown[]> = SDKEvents | ExtensionEvents,
+  TEvents extends Record<string, unknown[]> = EventTypes,
 > {
   readonly #emitter = new EventEmitter2();
 

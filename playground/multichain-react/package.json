@@ -4,6 +4,7 @@
     "access": "restricted",
     "registry": "https://registry.npmjs.org/"
   },
+  "type": "module",
   "version": "0.15.0",
   "description": "A test dapp for multichain api",
   "homepage": "https://metamask.github.io/test-dapp-multichain",

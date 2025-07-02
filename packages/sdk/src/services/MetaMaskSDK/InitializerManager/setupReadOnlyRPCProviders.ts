@@ -2,7 +2,7 @@ import { logger } from '../../../utils/logger';
 import { MetaMaskSDK } from '../../../sdk';
 
 export interface RPC_URLS_MAP {
-  [chainId: `0x${string}`]: string;
+  [chainId: string]: string; // CAIP-2 format: namespace:reference (e.g., "eip155:1", "starknet:SN_MAIN")
 }
 
 export const setupReadOnlyRPCProviders = async (instance: MetaMaskSDK) => {

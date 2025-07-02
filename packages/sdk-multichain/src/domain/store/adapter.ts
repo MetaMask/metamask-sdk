@@ -1,8 +1,4 @@
-export type StoreOptions = {
-  enabled: boolean;
-  debug?: boolean;
-  duration?: number;
-};
+export type StoreOptions = Record<string, any>;
 
 export abstract class StoreAdapter {
   constructor(public options?: StoreOptions) {}

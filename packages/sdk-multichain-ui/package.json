@@ -9,6 +9,21 @@
   "files": [
     "./dist"
   ],
+
+  "exports": {
+    ".": {
+      "types": "dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js",
+      "default": "./dist/index.cjs.js"
+    },
+    "./loader": {
+      "import": "./dist/loader/index.js",
+      "require": "./dist/loader/index.cjs.js",
+      "browser": "./dist/loader/index.es2017.js",
+      "default": "./dist/loader/index.cjs.js"
+    }
+  },
   "scripts": {
     "generate": "stencil generate",
     "clean": "rimraf ./dist && rimraf ./loader",

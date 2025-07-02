@@ -9,7 +9,7 @@
     "target": "es6",
     "esModuleInterop": true,
     "module": "ES2020",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "incremental": false,
     "lib": ["DOM", "ES2016"],

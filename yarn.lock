@@ -11592,6 +11592,7 @@ __metadata:
   resolution: "@metamask/multichain-node@workspace:playground/multichain-node"
   dependencies:
     "@metamask/multichain-sdk": "workspace:*"
+    "@metamask/sdk": "workspace:^"
     "@types/node": ^20.4.1
     ts-node: ^10.9.1
     tsup: ^8.0.1
@@ -11599,7 +11600,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/multichain-sdk-ui@workspace:packages/sdk-multichain-ui":
+"@metamask/multichain-sdk-ui@workspace:^, @metamask/multichain-sdk-ui@workspace:packages/sdk-multichain-ui":
   version: 0.0.0-use.local
   resolution: "@metamask/multichain-sdk-ui@workspace:packages/sdk-multichain-ui"
   dependencies:
@@ -11639,14 +11640,17 @@ __metadata:
     "@metamask/eslint-config": ^14.0.0
     "@metamask/eslint-config-typescript": ^14.0.0
     "@metamask/multichain-api-client": ^0.6.0
+    "@metamask/multichain-sdk-ui": "workspace:^"
     "@metamask/providers": ^22.1.0
     "@metamask/sdk-analytics": "workspace:^"
     "@metamask/sdk-communication-layer": "workspace:^"
     "@metamask/utils": ^11.4.0
+    "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
     "@typescript-eslint/eslint-plugin": ^8.31.0
     "@typescript-eslint/parser": ^8.31.0
     bowser: ^2.11.0
+    cross-fetch: ^4.1.0
     esbuild: ^0.20.2
     esbuild-plugin-umd-wrapper: ^3.0.0
     esbuild-visualizer: ^0.7.0
@@ -27752,6 +27756,15 @@ __metadata:
   dependencies:
     node-fetch: ^2.6.12
   checksum: 78f993fa099eaaa041122ab037fe9503ecbbcb9daef234d1d2e0b9230a983f64d645d088c464e21a247b825a08dc444a6e7064adfa93536d3a9454b4745b3632
+  languageName: node
+  linkType: hard
+
+"cross-fetch@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "cross-fetch@npm:4.1.0"
+  dependencies:
+    node-fetch: ^2.7.0
+  checksum: c02fa85d59f83e50dbd769ee472c9cc984060c403ee5ec8654659f61a525c1a655eef1c7a35e365c1a107b4e72d76e786718b673d1cb3c97f61d4644cb0a9f9d
   languageName: node
   linkType: hard
 

@@ -1,5 +1,6 @@
 import type { StoreClient } from "../domain/store/client";
 import type { StoreAdapter } from "../domain/store/adapter";
+import { ChannelConfig } from "@metamask/sdk-communication-layer";
 
 
 export class Store implements StoreClient {
@@ -15,6 +16,18 @@ export class Store implements StoreClient {
 
   async getExtensionId(): Promise<string | null> {
     return this.#adapter.getItem('extensionId');
+  }
+
+  async getChannelConfig(): Promise<ChannelConfig | null> {
+    const channelConfig = await this.#adapter.getItem('channelConfig');
+    if (!channelConfig) {
+      return null;
+    }
+    return JSON.parse(channelConfig)
+  }
+
+  async setChannelConfig(channelConfig: ChannelConfig): Promise<void> {
+    return this.#adapter.setItem('channelConfig', JSON.stringify(channelConfig));
   }
 
   async setAnonId(anonId: string): Promise<void> {
