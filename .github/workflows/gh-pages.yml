@@ -1,5 +1,5 @@
-name: Deploy to GitHub Pages
-
+  name: Deploy to GitHub Pages
+tab
 on:
   push:
     branches: [main]
@@ -12,7 +12,7 @@ on:
         default: false
   pull_request:
     types: [labeled]
-
+esc
 jobs:
 
   build-and-deploy:
