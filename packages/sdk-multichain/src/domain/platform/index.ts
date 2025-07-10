@@ -26,7 +26,6 @@ function isNotBrowser() {
 
 function isReactNative() {
   return (
-    isNotBrowser() &&
     typeof window !== 'undefined' &&
     window?.navigator &&
     window.navigator?.product === 'ReactNative'

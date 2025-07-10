@@ -196,7 +196,6 @@ t.describe('Platform Detection', () => {
     });
 
     t.it('should handle global navigator.product being ReactNative', () => {
-      t.vi.stubGlobal('window', undefined);
       t.vi.stubGlobal('global', {
         navigator: {
           product: 'ReactNative',
