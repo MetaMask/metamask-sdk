@@ -13,30 +13,38 @@ export enum PlatformType {
   ReactNative = 'react-native',
 }
 
-
 function isNotBrowser() {
-  return (
-    typeof window === 'undefined' ||
-    !window?.navigator ||
-    (typeof global !== 'undefined' &&
-      global?.navigator?.product === 'ReactNative') ||
-    navigator?.product === 'ReactNative'
-  );
+  if (typeof window === 'undefined') {
+    return true;
+  }
+  if (!window?.navigator) {
+    return true
+  }
+  if (typeof global !== 'undefined' &&
+    global?.navigator?.product === 'ReactNative') {
+    return true;
+  }
+  return navigator?.product === 'ReactNative'
 }
 
 function isReactNative() {
-  return (
-    typeof window !== 'undefined' &&
-    window?.navigator &&
-    window.navigator?.product === 'ReactNative'
-  ) ?? false;
+  const hasWindowNavigator = typeof window !== 'undefined' && window.navigator !== undefined;
+  const navigator = hasWindowNavigator ?
+    window.navigator :
+    undefined;
+
+  if (!navigator) {
+    return false;
+  }
+
+  return hasWindowNavigator && window.navigator?.product === 'ReactNative'
 }
 
 function isMetaMaskMobileWebView() {
   return (
     typeof window !== 'undefined' &&
     Boolean(window.ReactNativeWebView) &&
-    Boolean(navigator.userAgent.endsWith('MetaMaskMobile'))
+    Boolean(window.navigator.userAgent.endsWith('MetaMaskMobile'))
   );
 }
 
