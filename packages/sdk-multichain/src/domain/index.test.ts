@@ -222,7 +222,7 @@ t.describe("Logger", () => {
 
   t.beforeEach(() => {
     t.vi.clearAllMocks();
-    delete process.env.debug;
+    delete process.env.DEBUG;
     mockStoreClient.getDebug.mockClear();
   });
 
@@ -261,8 +261,8 @@ t.describe("Logger", () => {
   });
 
   t.describe('isEnabled', () => {
-    t.it('should return true when namespace is in process.env.debug', async () => {
-      process.env.debug = 'metamask-sdk:core';
+    t.it('should return true when namespace is in process.env.DEBUG', async () => {
+      process.env.DEBUG = 'metamask-sdk:core';
 
       const result = await isEnabled('metamask-sdk:core', mockStoreClient as any);
 
@@ -271,7 +271,7 @@ t.describe("Logger", () => {
     });
 
     t.it('should return true when wildcard matches namespace', async () => {
-      process.env.debug = 'metamask-sdk:*';
+      process.env.DEBUG = 'metamask-sdk:*';
 
       const result = await isEnabled('metamask-sdk:core', mockStoreClient as any);
 
@@ -279,22 +279,22 @@ t.describe("Logger", () => {
     });
 
     t.it('should return true when universal wildcard is used', async () => {
-      process.env.debug = '*';
+      process.env.DEBUG = '*';
 
       const result = await isEnabled('metamask-sdk', mockStoreClient as any);
 
       t.expect(result).toBe(true);
     });
 
-    t.it('should return false when namespace is not in process.env.debug', async () => {
-      process.env.debug = 'other-namespace';
+    t.it('should return false when namespace is not in process.env.DEBUG', async () => {
+      process.env.DEBUG = 'other-namespace';
 
       const result = await isEnabled('metamask-sdk:core', mockStoreClient as any);
 
       t.expect(result).toBe(false);
     });
 
-    t.it('should check storage when process.env.debug is not set', async () => {
+    t.it('should check storage when process.env.DEBUG is not set', async () => {
       mockStoreClient.getDebug.mockResolvedValue('metamask-sdk:provider');
 
       const result = await isEnabled('metamask-sdk:provider', mockStoreClient as any);
@@ -311,8 +311,8 @@ t.describe("Logger", () => {
       t.expect(result).toBe(false);
     });
 
-    t.it('should prioritize process.env.debug over storage', async () => {
-      process.env.debug = 'metamask-sdk:core';
+    t.it('should prioritize process.env.DEBUG over storage', async () => {
+      process.env.DEBUG = 'metamask-sdk:core';
       mockStoreClient.getDebug.mockResolvedValue('metamask-sdk:provider');
 
       const result = await isEnabled('metamask-sdk:core', mockStoreClient as any);

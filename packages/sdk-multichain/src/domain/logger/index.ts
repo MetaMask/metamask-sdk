@@ -78,9 +78,9 @@ export const isEnabled = async (
   namespace: LoggerNameSpaces,
   storage: StoreClient,
 ) => {
-  if (process?.env?.debug) {
-    const {debug} = process.env
-    return isNamespaceEnabled(debug, namespace);
+  if (process?.env?.DEBUG) {
+    const {DEBUG} = process.env
+    return isNamespaceEnabled(DEBUG, namespace);
   }
 
   const storageDebug = await storage.getDebug();
