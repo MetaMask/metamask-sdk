@@ -1,0 +1,167 @@
+import { v4 as uuidv4 } from 'uuid';
+import type { StoreClient } from '../domain/store/client';
+import packageJson from '../../package.json';
+import type { DappSettings, MultichainSDKConstructor, RPC_URLS_MAP } from '../domain/multichain';
+import { infuraRpcUrls } from 'src/domain/multichain/api/constants';
+
+export function getVersion() {
+  return packageJson.version;
+}
+
+export function getDappId(dapp?: DappSettings) {
+  if (
+    typeof window === 'undefined' ||
+    typeof window.location === 'undefined'
+  ) {
+      return (
+      dapp?.name ??
+      dapp?.url ??
+      'N/A'
+    );
+  }
+
+  return window.location.hostname;
+}
+
+export async function getAnonId(storage: StoreClient) {
+  const anonId = await storage.getAnonId();
+  if (anonId) {
+    return anonId;
+  }
+  const newAnonId = uuidv4();
+  await storage.setAnonId(newAnonId);
+  return newAnonId;
+}
+
+export function getInfuraRpcUrls(infuraAPIKey: string) {
+  return Object.keys(infuraRpcUrls).reduce((acc, key) => {
+    const typedKey = key as keyof typeof infuraRpcUrls;
+    acc[typedKey] = `${infuraRpcUrls[typedKey]}${infuraAPIKey}`;
+    return acc;
+  }, {} as RPC_URLS_MAP);
+}
+
+export const extractFavicon = () => {
+  if (typeof document === 'undefined') {
+    return undefined;
+  }
+
+  let favicon;
+  const nodeList = document.getElementsByTagName('link');
+  // eslint-disable-next-line @typescript-eslint/prefer-for-of
+  for (let i = 0; i < nodeList.length; i++) {
+    if (
+      nodeList[i].getAttribute('rel') === 'icon' ||
+      nodeList[i].getAttribute('rel') === 'shortcut icon'
+    ) {
+      favicon = nodeList[i].getAttribute('href');
+    }
+  }
+  return favicon;
+};
+
+export function setupInfuraProvider(options: MultichainSDKConstructor): MultichainSDKConstructor {
+  const infuraAPIKey = options.api?.infuraAPIKey;
+  if (!infuraAPIKey) {
+    return options
+  }
+  const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
+  if (options.api?.readonlyRPCMap) {
+    options.api.readonlyRPCMap = {
+      ...options.api.readonlyRPCMap,
+      ...urlsWithToken,
+    };
+  } else {
+    if (!options.api) {
+      options.api = {};
+    }
+    options.api.readonlyRPCMap = urlsWithToken;
+  }
+  return options
+}
+
+export function setupDappMetadata(options: MultichainSDKConstructor): MultichainSDKConstructor {
+  if (!options.dapp?.url) {
+    // Automatically set dappMetadata on web env if not defined
+    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      options.dapp = {
+        ...options.dapp,
+        url: `${window.location.protocol}//${window.location.host}`,
+      };
+    } else {
+      throw new Error("You must provide dapp url");
+    }
+  }
+  const BASE_64_ICON_MAX_LENGTH = 163400;
+  // Check if iconUrl and url are valid
+  const urlPattern = /^(http|https):\/\/[^\s]*$/; // Regular expression for URLs starting with http:// or https://
+  if (options.dapp) {
+    if ('iconUrl' in options.dapp) {
+      if (
+        options.dapp.iconUrl &&
+        !urlPattern.test(options.dapp.iconUrl)
+      ) {
+        console.warn(
+          'Invalid dappMetadata.iconUrl: URL must start with http:// or https://',
+        );
+        options.dapp.iconUrl = undefined;
+      }
+    }
+    // This check ensures that the base64Icon string in the dappMetadata does not exceed 163,400 characters.
+    // The character limit is important because a longer base64-encoded string causes the connection to the mobile app to fail.
+    // Keeping the base64Icon string length below this threshold ensures reliable communication and functionality.
+    if ('base64Icon' in options.dapp) {
+      if (
+        options.dapp.base64Icon &&
+        options.dapp.base64Icon.length > BASE_64_ICON_MAX_LENGTH
+      ) {
+        console.warn(
+          'Invalid dappMetadata.base64Icon: Base64-encoded icon string length must be less than 163400 characters',
+        );
+
+        options.dapp.base64Icon = undefined;
+      }
+    }
+    if (
+      options.dapp.url &&
+      !urlPattern.test(options.dapp.url)
+    ) {
+      console.warn(
+        'Invalid dappMetadata.url: URL must start with http:// or https://',
+      );
+    }
+    const favicon = extractFavicon();
+
+    if (
+      favicon &&
+      !('iconUrl' in options.dapp) &&
+      !('base64Icon' in options.dapp)
+    ) {
+      const faviconUrl = `${window.location.protocol}//${window.location.host}${favicon}`;
+      // @ts-ignore
+      options.dapp.iconUrl = faviconUrl;
+    }
+  }
+  return options
+}
+
+/**
+ * Check if MetaMask extension is installed
+ */
+export function isMetaMaskInstalled(): boolean {
+	if (typeof window === 'undefined') {
+		return false;
+	}
+	return Boolean(window.ethereum?.isMetaMask);
+}
+
+/**
+ * Base64 encode string for URL params
+ */
+export function base64Encode(str: string): string {
+	if (typeof btoa !== 'undefined') {
+		return btoa(str);
+	}
+	// Node.js fallback
+	return Buffer.from(str).toString('base64');
+}

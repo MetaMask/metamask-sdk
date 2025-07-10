@@ -19,4 +19,6 @@ src/
 │   ├── events/       # Event-driven communication
 │   ├── platform/     # Platform detection utilities
 │   └── store/        # Storage abstractions
+├── multichain/       # Concrete implementations
+└── store/           # Storage implementations
 ```
