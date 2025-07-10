@@ -21,7 +21,7 @@
     "lint": "yarn biome lint ./src",
     "lint:ci": "yarn biome ci ./src",
     "lint:fix": "yarn biome format --write ./src",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-analytics",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/multichain-sdk",
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:watch": "vitest watch",
