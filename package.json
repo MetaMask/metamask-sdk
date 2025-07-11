@@ -21,7 +21,8 @@
     "packages/devreactnative",
     "packages/devnext",
     "packages/deve2e",
-    "packages/playground-next"
+    "packages/playground-next",
+    "packages/sdk-multichain"
   ],
   "scripts": {
     "build": "yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
