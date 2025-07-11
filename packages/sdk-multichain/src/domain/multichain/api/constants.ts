@@ -97,7 +97,7 @@ export const RPC_METHODS = {
   /** Add a new Ethereum chain */
   WALLET_ADDETHEREUMCHAIN: 'wallet_addEthereumChain',
   /** Switch to a different Ethereum chain */
-  WALLET_SWITCHETHETHEREUMCHAIN: 'wallet_switchEthereumChain',
+  WALLET_SWITCHETHEREUMCHAIN: 'wallet_switchEthereumChain',
   /** Request account access */
   ETH_REQUESTACCOUNTS: 'eth_requestAccounts',
   /** Get available accounts */
@@ -144,7 +144,7 @@ export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
   [RPC_METHODS.WALLET_GETPERMISSIONS]: true,
   [RPC_METHODS.WALLET_WATCHASSET]: true,
   [RPC_METHODS.WALLET_ADDETHEREUMCHAIN]: true,
-  [RPC_METHODS.WALLET_SWITCHETHETHEREUMCHAIN]: true,
+  [RPC_METHODS.WALLET_SWITCHETHEREUMCHAIN]: true,
   [RPC_METHODS.METAMASK_CONNECTSIGN]: true,
   [RPC_METHODS.METAMASK_CONNECTWITH]: true,
   [RPC_METHODS.PERSONAL_EC_RECOVER]: true,
