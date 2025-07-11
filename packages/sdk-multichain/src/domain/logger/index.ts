@@ -25,7 +25,6 @@ export const createLogger = (
   namespace: LoggerNameSpaces = 'metamask-sdk',
   color = '214',
 ) => {
-  debug.disable();
   const logger = debug(namespace);
   logger.color = color; // Yellow color (basic ANSI)
   return logger;
