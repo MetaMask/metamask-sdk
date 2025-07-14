@@ -1,4 +1,4 @@
-import type { ChannelConfig, StoreClient, StoreAdapter } from "../domain";
+import type {StoreClient, StoreAdapter } from "../domain";
 
 
 export class Store implements StoreClient {
@@ -14,18 +14,6 @@ export class Store implements StoreClient {
 
   async getExtensionId(): Promise<string | null> {
     return this.#adapter.getItem('extensionId');
-  }
-
-  async getChannelConfig(): Promise<ChannelConfig | null> {
-    const channelConfig = await this.#adapter.getItem('channelConfig');
-    if (!channelConfig) {
-      return null;
-    }
-    return JSON.parse(channelConfig)
-  }
-
-  async setChannelConfig(channelConfig: ChannelConfig): Promise<void> {
-    return this.#adapter.setItem('channelConfig', JSON.stringify(channelConfig));
   }
 
   async setAnonId(anonId: string): Promise<void> {

@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import { Store } from './index';
-import { StoreAdapter, type ChannelConfig } from '../domain';
+import { StoreAdapter } from '../domain';
 import { StoreAdapterWeb } from './adapters/web';
 import { StoreAdapterRN } from './adapters/rn';
 import { StoreAdapterNode } from './adapters/node';
@@ -118,64 +118,6 @@ function createStoreTests(
       await store.removeExtensionId();
       const afterRemove = await adapter.getItem('extensionId');
       t.expect(afterRemove).toBeNull();
-    });
-  });
-
-  t.describe(`${adapterName} getChannelConfig`, () => {
-    t.it('should return the channel config when it exists and is valid JSON', async () => {
-      const channelConfig: ChannelConfig = {
-        channelId: 'test-channel',
-        validUntil: Date.now() + 3600000,
-        otherKey: 'other-key',
-        localKey: 'local-key',
-        walletVersion: '1.0.0',
-        deeplinkProtocolAvailable: true,
-        relayPersistence: false,
-        lastActive: Date.now()
-      };
-
-      await adapter.setItem('channelConfig', JSON.stringify(channelConfig));
-      const result = await store.getChannelConfig();
-
-      t.expect(result).toEqual(channelConfig);
-    });
-
-    t.it('should return null when channel config does not exist', async () => {
-      const result = await store.getChannelConfig();
-      t.expect(result).toBeNull();
-    });
-
-    t.it('should throw an error when stored JSON is invalid', async () => {
-      await adapter.setItem('channelConfig', 'invalid-json');
-      await t.expect(store.getChannelConfig()).rejects.toThrow();
-    });
-  });
-
-  t.describe(`${adapterName} setChannelConfig`, () => {
-    t.it('should set the channel config successfully', async () => {
-      const channelConfig: ChannelConfig = {
-        channelId: 'test-channel',
-        validUntil: Date.now() + 3600000,
-        otherKey: 'other-key',
-        localKey: 'local-key'
-      };
-
-      await store.setChannelConfig(channelConfig);
-
-      const storedValue = await adapter.getItem('channelConfig');
-      t.expect(JSON.parse(storedValue!)).toEqual(channelConfig);
-    });
-
-    t.it('should handle minimal channel config', async () => {
-      const channelConfig: ChannelConfig = {
-        channelId: 'minimal-channel',
-        validUntil: Date.now() + 3600000
-      };
-
-      await store.setChannelConfig(channelConfig);
-
-      const storedValue = await adapter.getItem('channelConfig');
-      t.expect(JSON.parse(storedValue!)).toEqual(channelConfig);
     });
   });
 
