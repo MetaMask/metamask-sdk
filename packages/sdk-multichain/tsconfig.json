@@ -11,6 +11,7 @@
     "module": "ES2020",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
+    "useUnknownInCatchVariables": false,
     "incremental": false,
     "lib": ["DOM", "ES2016"],
     "skipLibCheck": true,
