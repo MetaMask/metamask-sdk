@@ -11,9 +11,10 @@ import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } f
  * - Using a regular icon URL
  * - Using a base64-encoded icon
  */
-export type DappSettings =
-  | { name?: string; url?: string; iconUrl?: string }
-  | { name?: string; url?: string; base64Icon?: string };
+export type DappSettings = {
+  name?: string;
+  url?: string;
+} & ({ iconUrl?: string } | { base64Icon?: string });
 
 /**
  * Constructor options for creating a Multichain SDK instance.

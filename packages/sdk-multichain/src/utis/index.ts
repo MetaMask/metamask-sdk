@@ -1,7 +1,8 @@
-import { v4 as uuidv4 } from 'uuid';
+import * as uuid from 'uuid';
 import type { StoreClient } from '../domain/store/client';
 import packageJson from '../../package.json';
 import { getInfuraRpcUrls, type DappSettings, type MultichainSDKConstructor } from '../domain/multichain';
+import { getPlatformType, PlatformType } from '../domain/platform';
 
 export function getVersion() {
   return packageJson.version;
@@ -27,7 +28,7 @@ export async function getAnonId(storage: StoreClient) {
   if (anonId) {
     return anonId;
   }
-  const newAnonId = uuidv4();
+  const newAnonId = uuid.v4();
   await storage.setAnonId(newAnonId);
   return newAnonId;
 }
@@ -63,19 +64,22 @@ export function setupInfuraProvider(options: MultichainSDKConstructor): Multicha
       ...options.api.readonlyRPCMap,
       ...urlsWithToken,
     };
-  } else {
-    if (!options.api) {
-      options.api = {};
-    }
+  } else if (options.api){
     options.api.readonlyRPCMap = urlsWithToken;
   }
   return options
 }
 
 export function setupDappMetadata(options: MultichainSDKConstructor): MultichainSDKConstructor {
+  const platform = getPlatformType();
+  const isBrowser =
+    platform === PlatformType.DesktopWeb ||
+    platform === PlatformType.MobileWeb ||
+    platform === PlatformType.MetaMaskMobileWebview
+
   if (!options.dapp?.url) {
-    // Automatically set dappMetadata on web env if not defined
-    if (typeof window !== "undefined" && typeof document !== "undefined") {
+      // Automatically set dappMetadata on web env if not defined
+    if (isBrowser) {
       options.dapp = {
         ...options.dapp,
         url: `${window.location.protocol}//${window.location.host}`,
@@ -123,12 +127,12 @@ export function setupDappMetadata(options: MultichainSDKConstructor): Multichain
       );
     }
     const favicon = extractFavicon();
-
     if (
       favicon &&
       !('iconUrl' in options.dapp) &&
       !('base64Icon' in options.dapp)
     ) {
+
       const faviconUrl = `${window.location.protocol}//${window.location.host}${favicon}`;
       // @ts-ignore
       options.dapp.iconUrl = faviconUrl;
@@ -145,15 +149,4 @@ export function isMetaMaskInstalled(): boolean {
 		return false;
 	}
 	return Boolean(window.ethereum?.isMetaMask);
-}
-
-/**
- * Base64 encode string for URL params
- */
-export function base64Encode(str: string): string {
-	if (typeof btoa !== 'undefined') {
-		return btoa(str);
-	}
-	// Node.js fallback
-	return Buffer.from(str).toString('base64');
 }
