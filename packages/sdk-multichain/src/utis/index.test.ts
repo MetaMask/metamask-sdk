@@ -6,14 +6,13 @@ import * as utils from '.';
 import { Store } from '../store';
 import { MultichainSDKConstructor } from '../domain/multichain';
 import { PlatformType, getPlatformType } from '../domain/platform';
-import { base64Encode } from '../../../sdk/src/utils/base64';
 
 
 
 vi.mock('../domain/platform', async () =>     {
   const actual = await vi.importActual('../domain/platform') as any;
   return {
-...actual,
+    ...actual,
     getPlatformType:t.vi.fn(),
   }
 });

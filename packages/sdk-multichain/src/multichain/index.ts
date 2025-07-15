@@ -3,7 +3,6 @@ import {
   getMultichainClient,
   type MultichainApiClient,
   type SessionData,
-  type Transport,
 } from "@metamask/multichain-api-client";
 import {
   parseCaipAccountId,
@@ -43,22 +42,19 @@ type OptionalScopes = Record<
 >;
 
 export class MultichainSDK extends EventEmitter<SDKEvents> implements MultichainSDKBase {
-  private transport!: Transport;
   private provider!: MultichainApiClient<RPCAPI>;
   private readonly options: MultichainSDKConstructor;
   public readonly storage: StoreClient;
   private readonly rpcClient: RPCClient;
+  public  isInitialized: boolean = false;
 
   private constructor(options: MultichainSDKConstructor) {
     super();
-    const transport = getDefaultTransport(options.transport);
+
     const withInfuraRPCMethods = setupInfuraProvider(options);
     const withDappMetadata = setupDappMetadata(withInfuraRPCMethods);
     this.options = withDappMetadata;
     this.storage = options.storage;
-    this.provider = getMultichainClient({ transport });
-    this.transport = transport;
-
     const platformType = getPlatformType();
     const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version
       } Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name
@@ -71,7 +67,14 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
     );
   }
 
+  private get transport() {
+    const transport = getDefaultTransport(this.options.transport);
+    this.provider = getMultichainClient({ transport });
+    return transport
+  }
+
   static async create(options: MultichainSDKOptions) {
+
     const instance = new MultichainSDK(options);
     const isEnabled = await isLoggerEnabled(
       "metamask-sdk:core",
@@ -122,41 +125,28 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
     analytics.track('sdk_initialized', {});
   }
 
-  private async init() {
+  async init() {
     if (typeof window !== "undefined" && window.mmsdk?.isInitialized) {
       logger("MetaMaskSDK: init already initialized");
     }
     await this.setupAnalytics();
+    this.isInitialized = true;
   }
 
-  async connect(): Promise<boolean> {
-    // Handle mobile connection with UI
-    if (!this.transport.isConnected) {
-      await this.transport.connect();
-    }
-    return this.transport.isConnected()
-  }
-
-  async disconnect(): Promise<void> {
-    this.transport.disconnect();
-  }
-
-  onNotification(listener: NotificationCallback) {
-    return this.provider.onNotification(listener);
-  }
-
-  async getSession() {
-    return this.provider.getSession();
-  }
-
-  async revokeSession() {
-    return this.provider.revokeSession();
-  }
-
-  async createSession(
+  async connect(
     scopes: Scope[],
     caipAccountIds: CaipAccountId[],
   ): Promise<SessionData> {
+    if (!this.transport.isConnected) {
+      await this.transport.connect();
+    }
+    const session = await this.provider.getSession()
+    if (session) {
+      // TODO!
+      // It could be that the session we have has different permissions
+      // We should check if and trigger a new session if needed
+      return session;
+    }
 
     const optionalScopes = scopes.reduce<OptionalScopes>((prev, scope) => ({
       ...prev,
@@ -183,7 +173,6 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
       }
     }, []);
 
-
     for (const account of validAccounts) {
       for (const scopeKey of Object.keys(optionalScopes)) {
         const scope = scopeKey as Scope;
@@ -196,8 +185,23 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
         }
       }
     }
-
     return this.provider.createSession({ optionalScopes });
+  }
+
+  async disconnect(): Promise<void> {
+    this.transport.disconnect();
+  }
+
+  onNotification(listener: NotificationCallback) {
+    return this.provider.onNotification(listener);
+  }
+
+  async getSession() {
+    return this.provider.getSession();
+  }
+
+  async revokeSession() {
+    return this.provider.revokeSession();
   }
 
   async invokeMethod(options: InvokeMethodOptions) {
