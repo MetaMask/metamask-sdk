@@ -143,3 +143,5 @@ export type MultichainSDKOptions = MultichainSDKBaseOptions & {
 export type CreateMultichainFN = ( options: MultichainSDKBaseOptions ) => Promise<MultichainSDKBase>;
 
 export type * from './api/types';
+export * from './api/constants';
+export * from './api/infura';

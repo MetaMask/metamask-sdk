@@ -1,6 +1,8 @@
 import { StoreAdapter } from "../../domain";
 
 export class StoreAdapterWeb extends StoreAdapter {
+  readonly platform = 'web'
+
   private get internal() {
     if (typeof window === 'undefined' || !window.localStorage) {
       throw new Error('localStorage is not available in this environment');
@@ -12,10 +14,10 @@ export class StoreAdapterWeb extends StoreAdapter {
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    this.internal.setItem(key, value);
+    return this.internal.setItem(key, value);
   }
 
   async deleteItem(key: string): Promise<void> {
-    this.internal.removeItem(key);
+    return this.internal.removeItem(key);
   }
 }

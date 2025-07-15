@@ -1,4 +1,4 @@
-import { Json } from "@metamask/utils";
+import type { Json } from "@metamask/utils";
 import type EIP155 from "./eip155";
 
 /**
@@ -42,22 +42,6 @@ export type RPCAPI = {
 };
 
 /**
- * Represents a notification object for RPC communication.
- *
- * Notifications are one-way messages sent from the server to the client
- * that don't require a response. They follow the JSON-RPC 2.0 specification
- * for notification messages.
- */
-export type Notification = {
-  /** The name of the method being called */
-  method: string;
-  /** Optional parameters for the method call */
-  params?: Json;
-  /** JSON-RPC version identifier (typically "2.0") */
-  jsonrpc?: string;
-};
-
-/**
  * Callback function type for handling incoming notifications.
  *
  * This type defines the signature for functions that process notification
@@ -65,7 +49,7 @@ export type Notification = {
  *
  * @param notification - The notification object to handle
  */
-export type NotificationCallback = (notification: Notification) => void;
+export type NotificationCallback = (notification: unknown) => void;
 
 /**
  * Options for invoking RPC methods with specific scope and request parameters.
@@ -97,4 +81,17 @@ export type RPC_URLS_MAP = {
   [chainId: `${string}:${string}`]: string;
 };
 
-
+/**
+ * Represents the structure of a JSON-RPC response.
+ *
+ * This type defines the expected format of JSON-RPC responses from RPC endpoints.
+ * It includes the unique identifier for the request, the JSON-RPC version used,
+ * and the result of the RPC call.
+ *
+ * @property id - The unique identifier for the request
+ * @property jsonrpc - The JSON-RPC version used
+ * @property result - The result of the RPC call JSON
+ */
+export type RPCResponse = {
+  id: number, jsonrpc: string, result: unknown
+}

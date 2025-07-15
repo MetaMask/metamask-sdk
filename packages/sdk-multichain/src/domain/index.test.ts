@@ -3,9 +3,7 @@
 import * as t from 'vitest'
 import Bowser from 'bowser';
 
-import { EventEmitter,ExtensionEvents, SDKEvents, getPlatformType, PlatformType, createLogger, enableDebug, isEnabled } from './';
-
-
+import { EventEmitter,type ExtensionEvents, type SDKEvents, getPlatformType, PlatformType, createLogger, enableDebug, isEnabled } from './';
 
 
 const parseMock = t.vi.fn();

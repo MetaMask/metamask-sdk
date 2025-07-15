@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { StoreClient } from '../domain/store/client';
 import packageJson from '../../package.json';
-import type { DappSettings, MultichainSDKConstructor, RPC_URLS_MAP } from '../domain/multichain';
-import { infuraRpcUrls } from 'src/domain/multichain/api/constants';
+import { getInfuraRpcUrls, type DappSettings, type MultichainSDKConstructor } from '../domain/multichain';
 
 export function getVersion() {
   return packageJson.version;
@@ -33,13 +32,6 @@ export async function getAnonId(storage: StoreClient) {
   return newAnonId;
 }
 
-export function getInfuraRpcUrls(infuraAPIKey: string) {
-  return Object.keys(infuraRpcUrls).reduce((acc, key) => {
-    const typedKey = key as keyof typeof infuraRpcUrls;
-    acc[typedKey] = `${infuraRpcUrls[typedKey]}${infuraAPIKey}`;
-    return acc;
-  }, {} as RPC_URLS_MAP);
-}
 
 export const extractFavicon = () => {
   if (typeof document === 'undefined') {
