@@ -1,142 +1,112 @@
-import {
-  getCoordinatesAsPercentage,
-  getCoordinatesForDeviceFromPercentage,
-} from './Utils';
-import { ScreenPercentage } from './types';
+import { ChainablePromiseElement } from 'webdriverio';
 
-const Actions = {
-  LONG_PRESS: 'longPress',
-  MOVE_TO: 'moveTo',
-  RELEASE: 'release',
-  WAIT: 'wait',
-  TAP: 'tap',
-  DOUBLE_TAP: 'doubleTap',
-  KEY_DOWN: 'keyDown',
-  KEY_UP: 'keyUp',
-  PAUSE: 'pause',
-  PRESS: 'press',
-  POINTER_MOVE: 'pointerMove',
-  POINTER_DOWN: 'pointerDown',
-  POINTER_UP: 'pointerUp',
+import { driver } from '@wdio/globals';
+
+import { getDeviceCoordinates } from './utils';
+import { ScreenPercentage, Coordinates } from './types';
+import { Actions, ActionTypes, ActionSource } from './constants';
+
+// Currently broken with the latest XCUITest
+const swipeIOSByPercentage = async (
+  from: ScreenPercentage,
+  to: ScreenPercentage,
+): Promise<void> => {
+  const fromPercentage = (await getDeviceCoordinates(from)) as Coordinates;
+  const toPercentage = (await getDeviceCoordinates(to)) as Coordinates;
+
+  await driver
+    .action('pointer', { parameters: { pointerType: 'touch' } })
+    .move({ x: fromPercentage.x, y: fromPercentage.y })
+    .down()
+    .move({ x: toPercentage.x, y: toPercentage.y })
+    .up()
+    .perform();
 };
 
-const ActionTypes = {
-  POINTER: 'pointer',
-  KEY: 'key',
+const swipeAndroidByPercentage = async (
+  from: ScreenPercentage,
+  to: ScreenPercentage,
+): Promise<void> => {
+  const [fromPercentage, toPercentage] = (await getDeviceCoordinates({
+    from,
+    to,
+  })) as [Coordinates, Coordinates];
+
+  await driver.performActions([
+    {
+      type: ActionTypes.POINTER,
+      id: ActionSource.FINDER_1,
+      actions: [
+        { type: 'pause', duration: 1000 },
+        {
+          type: Actions.POINTER_MOVE,
+          duration: 0,
+          x: fromPercentage.x,
+          y: fromPercentage.y,
+        },
+        { type: Actions.POINTER_DOWN, button: 0 },
+        { type: Actions.PAUSE, duration: 100 },
+        {
+          type: Actions.POINTER_MOVE,
+          duration: 1000,
+          x: toPercentage.x,
+          y: toPercentage.y,
+        },
+        { type: Actions.POINTER_UP, button: 0 },
+      ],
+    },
+  ]);
 };
 
-const ActionSource = {
-  KEYBOARD: 'keyboard',
-  FINDER_1: 'finger1',
+export const swipeByPercentage = async (
+  from: ScreenPercentage,
+  to: ScreenPercentage,
+) => {
+  if (driver.isIOS) {
+    await swipeIOSByPercentage(from, to);
+  } else {
+    await swipeAndroidByPercentage(from, to);
+  }
 };
 
-export default class Gestures {
-  static async swipeByPercentage(from: ScreenPercentage, to: ScreenPercentage) {
-    if (driver.isIOS) {
-      await this.swipeIOSByPercentage(from, to);
-    } else {
-      await this.swipeAndroidByPercentage(from, to);
-    }
+export const tapDeviceKey = async (key: string): Promise<void> => {
+  await driver.performActions([
+    {
+      type: ActionTypes.KEY,
+      id: ActionSource.KEYBOARD,
+      actions: [
+        { type: Actions.KEY_DOWN, value: key },
+        { type: Actions.PAUSE, duration: 100 },
+        { type: Actions.KEY_UP, value: key },
+      ],
+    },
+  ]);
+};
+
+export const tapOnCoordinatesByPercentage = async (
+  location: ScreenPercentage,
+): Promise<void> => {
+  const tapLocation = (await getDeviceCoordinates(location)) as Coordinates;
+
+  // TODO: use this for BrowserStack
+  await driver.touchAction([
+    {
+      action: 'tap',
+      x: tapLocation.x,
+      y: tapLocation.y,
+    },
+  ]);
+};
+
+export const hideKeyboardWithTap = async (): Promise<void> => {
+  await tapOnCoordinatesByPercentage({ x: 1, y: 40 });
+};
+
+export const swipeToElement = async (element: ChainablePromiseElement) => {
+  let isElementDisplayed = await element.isDisplayed();
+
+  while (!isElementDisplayed) {
+    await swipeByPercentage({ x: 50, y: 70 }, { x: 50, y: 5 });
+    isElementDisplayed = await element.isDisplayed();
   }
-
-  // Currently broken with the latest XCUITest
-  static async swipeIOSByPercentage(
-    from: ScreenPercentage,
-    to: ScreenPercentage,
-  ): Promise<void> {
-    const fromPercentage = await getCoordinatesForDeviceFromPercentage(from);
-    const toPercentage = await getCoordinatesForDeviceFromPercentage(to);
-
-    await driver
-      .action('pointer', { parameters: { pointerType: 'touch' } })
-      .move({ x: fromPercentage.x, y: fromPercentage.y })
-      .down()
-      .move({ x: toPercentage.x, y: toPercentage.y })
-      .up()
-      .perform();
-  }
-
-  static async swipeAndroidByPercentage(
-    from: ScreenPercentage,
-    to: ScreenPercentage,
-  ): Promise<void> {
-    const [fromPercentage, toPercentage] = await getCoordinatesAsPercentage(
-      from,
-      to,
-    );
-
-    await driver.performActions([
-      {
-        type: ActionTypes.POINTER,
-        id: ActionSource.FINDER_1,
-        actions: [
-          { type: 'pause', duration: 1000 },
-          {
-            type: Actions.POINTER_MOVE,
-            duration: 0,
-            x: fromPercentage.x,
-            y: fromPercentage.y,
-          },
-          { type: Actions.POINTER_DOWN, button: 0 },
-          { type: Actions.PAUSE, duration: 100 },
-          {
-            type: Actions.POINTER_MOVE,
-            duration: 1000,
-            x: toPercentage.x,
-            y: toPercentage.y,
-          },
-          { type: Actions.POINTER_UP, button: 0 },
-        ],
-      },
-    ]);
-  }
-
-  static async tapDeviceKey(key: string): Promise<void> {
-    await driver.performActions([
-      {
-        type: ActionTypes.KEY,
-        id: ActionSource.KEYBOARD,
-        actions: [
-          { type: Actions.KEY_DOWN, value: key },
-          { type: Actions.PAUSE, duration: 100 },
-          { type: Actions.KEY_UP, value: key },
-        ],
-      },
-    ]);
-  }
-
-  static async hideKeyboardWithTap(): Promise<void> {
-    await Gestures.tapOnCoordinatesByPercentage({ x: 1, y: 40 });
-  }
-
-  static async tapOnCoordinatesByPercentage(
-    location: ScreenPercentage,
-  ): Promise<void> {
-    const tapLocation = await getCoordinatesForDeviceFromPercentage({
-      x: location.x,
-      y: location.y,
-    });
-
-    // TODO: use this for BrowserStack
-    await driver.touchAction([
-      {
-        action: 'tap',
-        x: tapLocation.x,
-        y: tapLocation.y,
-      },
-    ]);
-
-    // try {
-    //   await driver
-    //     .action('pointer', { parameters: { pointerType: 'touch' } })
-    //     .move({ x: tapLocation.x, y: tapLocation.y })
-    //     .down()
-    //     .pause(100)
-    //     .up()
-    //     .perform();
-    // } catch (error) {
-    //   log.error(`Error tapping on coordinates: ${location.x}, ${location.y}`);
-    //   log.error(error);
-    // }
-  }
-}
+};

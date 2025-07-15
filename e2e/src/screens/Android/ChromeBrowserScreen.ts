@@ -2,9 +2,9 @@ import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import { MobileBrowser } from '@screens/interfaces/MobileBrowser';
 import { Dapp } from '@screens/interfaces/Dapp';
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector } from '@util/Selectors';
-import { Browsers } from '@util/Constants';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector } from '@util/selectors';
+import { Browsers } from '@util/constants';
 
 class ChromeBrowserScreen implements MobileBrowser {
   get urlAddressBar(): ChainablePromiseElement {

@@ -1,22 +1,14 @@
-import { beforeEachHook, beforeHook } from '../../mocha.hooks';
-import { WALLET_PASSWORD } from '@util/Constants';
-import { launchApp } from '@util/Utils';
-import AndroidSDKDappScreen from '@screens/Dapps/AndroidSDKDappScreen';
-import LockScreen from '@screens/MetaMask/LockScreen';
-import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
-import SendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '@screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
+import { WALLET_PASSWORD } from '@util/constants';
+import { launchApp } from '@util/utils';
+import androidSDKDappScreen from '@screens/Dapps/AndroidSDKDappScreen';
+import lockScreen from '@screens/MetaMask/LockScreen';
+import connectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
+import sendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
+import signModalComponent from '@screens/MetaMask/components/SignModalComponent';
+import switchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
 
+// THIS SWUITE IS CURRENTLY NOT IN USE AS ANDROID SDK WAS DEPRECATED
 describe.skip('Android SDK (native) E2E', () => {
-  before(async () => {
-    await beforeHook();
-  });
-
-  beforeEach(async () => {
-    await beforeEachHook();
-  });
-
   it('Smoke Testing on the AndroidSDK Test Dapp', async () => {
     await driver.pause(5000);
 
@@ -24,17 +16,17 @@ describe.skip('Android SDK (native) E2E', () => {
 
     await driver.pause(5000);
 
-    await AndroidSDKDappScreen.connect();
+    await androidSDKDappScreen.connect();
 
     await driver.pause(3000);
 
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
-      await ConnectModalComponent.connectApprovalButton,
+      await connectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
 
-    await ConnectModalComponent.tapConnectApproval();
+    await connectModalComponent.tapConnectApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
@@ -43,33 +35,32 @@ describe.skip('Android SDK (native) E2E', () => {
 
     await driver.pause(5000);
 
-    await AndroidSDKDappScreen.sign();
-    await AndroidSDKDappScreen.sign2();
+    await androidSDKDappScreen.sign();
+    await androidSDKDappScreen.sign2();
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
-    await AndroidSDKDappScreen.goBack();
+    await androidSDKDappScreen.goBack();
 
-    await AndroidSDKDappScreen.batchSigning();
-    await AndroidSDKDappScreen.batchSigning();
+    await androidSDKDappScreen.batchSigning();
+    await androidSDKDappScreen.batchSigning();
 
-    await SignModalComponent.tapSignApproval();
-    await SignModalComponent.tapSignApproval();
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
-    await AndroidSDKDappScreen.goBack();
+    await androidSDKDappScreen.goBack();
 
-    await AndroidSDKDappScreen.sendTransaction();
-    await AndroidSDKDappScreen.sendTransaction2();
+    await androidSDKDappScreen.sendTransaction();
+    await androidSDKDappScreen.sendTransaction2();
 
-    await SendTxModalComponent.reject();
+    await sendTxModalComponent.reject();
 
-    await AndroidSDKDappScreen.goBack();
+    await androidSDKDappScreen.goBack();
 
-    await AndroidSDKDappScreen.switchChain();
-    await AndroidSDKDappScreen.switchChain2();
+    await androidSDKDappScreen.switchChain();
+    await androidSDKDappScreen.switchChain2();
 
-    await SwitchNetworkModalComponent.switchNetwork();
+    await switchNetworkModalComponent.switchNetwork();
 
     await driver.pause(1000);
   });

@@ -5,9 +5,10 @@ import {
   WDIO_IOS_PREDICATE_STRING,
   WDIO_RESOURCE_ID,
   WDIO_XPATH,
-} from './Constants';
+} from './constants';
 
 class WDIOSelector {
+  // '#myId'
   /*
    * Returns the locator for the given accessibilityId
    * @param accessibilityId: string

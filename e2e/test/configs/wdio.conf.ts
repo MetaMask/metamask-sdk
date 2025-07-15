@@ -23,6 +23,7 @@ moduleAlias.addAliases({
   '@util': resolve(__dirname, '../../src/util'),
   '@screens': resolve(__dirname, '../../src/screens'),
   '@specs': resolve(__dirname, '../../test/specs'),
+  '@test': resolve(__dirname, '../../test'),
 });
 
 export const config: Options.Testrunner = {

@@ -1,3 +1,29 @@
+export const Actions = {
+  LONG_PRESS: 'longPress',
+  MOVE_TO: 'moveTo',
+  RELEASE: 'release',
+  WAIT: 'wait',
+  TAP: 'tap',
+  DOUBLE_TAP: 'doubleTap',
+  KEY_DOWN: 'keyDown',
+  KEY_UP: 'keyUp',
+  PAUSE: 'pause',
+  PRESS: 'press',
+  POINTER_MOVE: 'pointerMove',
+  POINTER_DOWN: 'pointerDown',
+  POINTER_UP: 'pointerUp',
+};
+
+export const ActionTypes = {
+  POINTER: 'pointer',
+  KEY: 'key',
+};
+
+export const ActionSource = {
+  KEYBOARD: 'keyboard',
+  FINDER_1: 'finger1',
+};
+
 export const WALLET_PASSWORD =
   (process.env.WALLET_PASSWORD as string) || '123123123';
 

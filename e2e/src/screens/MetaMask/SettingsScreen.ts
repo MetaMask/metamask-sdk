@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import Gestures from '@util/Gestures';
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { swipeByPercentage } from '@util/gestures';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector, IOSSelector } from '@util/selectors';
 
 class SettingsScreen {
   get securityAndPrivacyButton(): ChainablePromiseElement {
@@ -109,8 +109,8 @@ class SettingsScreen {
     let isDisplayed = await this.manageConnectionsButton.isDisplayed();
     while (!isDisplayed) {
       // Swipe down twice
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
-      await Gestures.swipeByPercentage({ x: 50, y: 60 }, { x: 50, y: 5 });
+      await swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      await swipeByPercentage({ x: 50, y: 60 }, { x: 50, y: 5 });
       isDisplayed = await this.manageConnectionsButton.isDisplayed();
     }
     await this.tapManageConnections();

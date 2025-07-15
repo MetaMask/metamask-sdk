@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 import { driver } from '@wdio/globals';
 import { visibilityOf } from 'wdio-wait-for';
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector, IOSSelector } from '@util/selectors';
 import MainScreen from '@screens/MetaMask/MainScreen';
 
 class LockScreen {
@@ -39,7 +39,7 @@ class LockScreen {
           '//*[@resource-id="log-in-button"]/android.widget.Button',
         ),
         iosSelector: IOSSelector.by().predicateString(
-          'label == "UNLOCK" AND name == "UNLOCK"',
+          'label == "Unlock" AND name == "Unlock"',
         ),
       }),
     );

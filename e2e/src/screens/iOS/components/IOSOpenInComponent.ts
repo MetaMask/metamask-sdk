@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { IOSSelector } from '@util/Selectors';
-import { getSelectorForPlatform } from '@util/Utils';
+import { IOSSelector } from '@util/selectors';
+import { getSelectorForPlatform } from '@util/utils';
 
 class IOSOpenInComponent {
   get open(): ChainablePromiseElement {

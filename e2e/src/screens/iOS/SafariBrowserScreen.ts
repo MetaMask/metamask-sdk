@@ -1,10 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
 import { driver } from '@wdio/globals';
-import { getSelectorForPlatform } from '@util/Utils';
+import { getSelectorForPlatform } from '@util/utils';
 import { MobileBrowser } from '@screens/interfaces/MobileBrowser';
-import { IOSSelector } from '@util/Selectors';
-import { Browsers } from '@util/Constants';
+import { IOSSelector } from '@util/selectors';
+import { Browsers } from '@util/constants';
 import { Dapp } from '@screens/interfaces/Dapp';
 
 class SafariBrowserScreen implements MobileBrowser {
