@@ -94,8 +94,8 @@ t.describe('RPCClient', () => {
 
     t.it('should return headers with Metamask-Sdk-Info when RPC endpoint includes infura', () => {
       const infuraEndpoint = 'https://mainnet.infura.io/v3/test-key';
-      const headers = (rpcClient as any).getHeaders(infuraEndpoint);
-      t.expect(headers).toEqual(headers);
+      const currentHeaders = (rpcClient as any).getHeaders(infuraEndpoint);
+      t.expect(currentHeaders).toEqual(headers);
     });
   });
 
