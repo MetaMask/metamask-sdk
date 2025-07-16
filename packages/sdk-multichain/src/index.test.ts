@@ -239,9 +239,12 @@ function createMultiplatformTestCase(
       t.it(`${platform} should handle session upgrades`, async () => {
         // Get mocks from the module mock
         const multichainModule = await import('@metamask/multichain-api-client');
+        const mockTransport = (multichainModule as any).__mockTransport;
         const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
-        // Mock no session scenario
+
+        mockTransport.isConnected = false;
+        mockTransport.connect.mockResolvedValue(true);
         mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
         sdk = await createSDK(options);
@@ -250,8 +253,8 @@ function createMultiplatformTestCase(
         t.expect(sdk.isInitialized).toBe(true);
         t.expect(sdk.session).not.toBeUndefined();
 
-
         const mockedSessionUpgradeData: SessionData = {
+          ...mockSessionData,
           sessionScopes: {
             'eip155:1': {
               methods: ['eth_sendTransaction', 'eth_accounts'],
@@ -259,8 +262,26 @@ function createMultiplatformTestCase(
               accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
             },
           },
-          expiry: new Date(Date.now() + 3600000).toISOString(),
         };
+
+        const scopes = ['eip155:137'] as Scope[];
+        const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
+        const result = await sdk.connect(scopes, caipAccountIds);
+
+        t.expect(mockTransport.connect).toHaveBeenCalled();
+        t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+        t.expect(mockMultichainClient.revokeSession).toHaveBeenCalled();
+        t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
+          optionalScopes: {
+            'eip155:137': {
+              methods: [],
+              notifications: [],
+              accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
+            },
+          },
+        });
+        t.expect(result).toEqual(mockedSessionUpgradeData);
+
 
       })
 
@@ -345,6 +366,7 @@ function createMultiplatformTestCase(
 
         t.expect(mockTransport.connect).toHaveBeenCalled();
         t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+        t.expect(mockMultichainClient.revokeSession).not.toHaveBeenCalled();
         t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
           optionalScopes: {
             'eip155:1': {
