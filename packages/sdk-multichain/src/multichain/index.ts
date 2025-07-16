@@ -46,7 +46,8 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
   private readonly options: MultichainSDKConstructor;
   public readonly storage: StoreClient;
   private readonly rpcClient: RPCClient;
-  public  isInitialized: boolean = false;
+  public isInitialized: boolean = false;
+  public session: SessionData | undefined;
 
   private constructor(options: MultichainSDKConstructor) {
     super();
@@ -65,12 +66,22 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
       this.options.api,
       sdkInfo
     );
+
+    this.provider = getMultichainClient({ transport: this.transport });
   }
 
   private get transport() {
-    const transport = getDefaultTransport(this.options.transport);
-    this.provider = getMultichainClient({ transport });
-    return transport
+    const platformType = getPlatformType();
+    if (
+      platformType === PlatformType.DesktopWeb ||
+      platformType === PlatformType.MetaMaskMobileWebview ||
+      platformType === PlatformType.MobileWeb) {
+      //Direct support for web and externally connectable
+      const transport = getDefaultTransport(this.options.transport);
+      return transport;
+    }
+    //Mobile wallet protocol support
+    throw new Error('Not implemented');
   }
 
   static async create(options: MultichainSDKOptions) {
@@ -130,6 +141,7 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
       logger("MetaMaskSDK: init already initialized");
     }
     await this.setupAnalytics();
+    this.session = await this.provider.getSession();
     this.isInitialized = true;
   }
 
@@ -139,13 +151,6 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
   ): Promise<SessionData> {
     if (!this.transport.isConnected) {
       await this.transport.connect();
-    }
-    const session = await this.provider.getSession()
-    if (session) {
-      // TODO!
-      // It could be that the session we have has different permissions
-      // We should check if and trigger a new session if needed
-      return session;
     }
 
     const optionalScopes = scopes.reduce<OptionalScopes>((prev, scope) => ({
@@ -177,7 +182,7 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
       for (const scopeKey of Object.keys(optionalScopes)) {
         const scope = scopeKey as Scope;
         const scopeDetails = parseCaipChainId(scope);
-        if (scopeDetails.namespace === account.chain.namespace) {
+        if (scopeDetails.namespace === account.chain.namespace && scopeDetails.reference === account.chain.reference) {
           const scopeData = optionalScopes[scope];
           if (scopeData) {
             scopeData.accounts.push(account.address as CaipAccountId);
@@ -185,19 +190,28 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
         }
       }
     }
-    return this.provider.createSession({ optionalScopes });
+
+    const session = await this.provider.getSession()
+    if (session) {
+      const noOverlap = Object.keys(session.sessionScopes).every(scope => scopes.includes(scope as Scope));
+      if (noOverlap) {
+        // No overlap between existing and new scopes, return the existing session
+        return session;
+      }
+      // Scopes have overlap, revoke the session and create new one
+      await this.provider.revokeSession();
+    }
+    this.session = await this.provider.createSession({ optionalScopes });
+    return this.session;
+
   }
 
   async disconnect(): Promise<void> {
-    this.transport.disconnect();
+    return this.transport.disconnect();
   }
 
   onNotification(listener: NotificationCallback) {
     return this.provider.onNotification(listener);
-  }
-
-  async getSession() {
-    return this.provider.getSession();
   }
 
   async revokeSession() {

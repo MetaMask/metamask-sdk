@@ -120,6 +120,8 @@ export class RPCClient {
       } else {
         readonlyRPCMap = urlsWithToken;
       }
+    } else {
+      readonlyRPCMap = readonlyRPCMapConfig ?? {};
     }
     const rpcEndpoint = readonlyRPCMap[options.scope];
     const isReadOnlyMethod = !METHODS_TO_REDIRECT[request.method];

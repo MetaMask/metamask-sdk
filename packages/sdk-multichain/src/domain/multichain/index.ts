@@ -55,6 +55,7 @@ export type MultichainSDKConstructor = {
 /* c8 ignore start */
 export abstract class MultichainSDKBase {
   public abstract isInitialized: boolean;
+  public abstract session: SessionData | undefined;
 
   /**
    * Establishes a connection to the multichain provider, or re-use existing session
@@ -72,14 +73,6 @@ export abstract class MultichainSDKBase {
    * @returns Promise that resolves when disconnection is complete
    */
   abstract disconnect(): Promise<void>;
-
-  /**
-   * Retrieves the current session data.
-   *
-   * @returns Promise that resolves to the current session data, or undefined if no session exists
-   */
-  abstract getSession(): Promise<SessionData | undefined>;
-
   /**
    * Revokes the current session.
    *
