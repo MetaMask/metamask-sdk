@@ -193,12 +193,16 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
 
     const session = await this.provider.getSession()
     if (session) {
-      const noOverlap = Object.keys(session.sessionScopes).every(scope => scopes.includes(scope as Scope));
-      if (noOverlap) {
-        // No overlap between existing and new scopes, return the existing session
+      const existingScopes = Object.keys(session.sessionScopes).sort();
+      const scopesMatch =
+        existingScopes.every(scope => scopes.includes(scope as Scope)) &&
+        scopes.every(scope => existingScopes.includes(scope));
+
+      if (scopesMatch) {
+        // Existing session has exactly the same scopes as requested, reuse it
         return session;
       }
-      // Scopes have overlap, revoke the session and create new one
+      // Scopes don't match (different set), revoke the session and create new one
       await this.provider.revokeSession();
     }
     this.session = await this.provider.createSession({ optionalScopes });

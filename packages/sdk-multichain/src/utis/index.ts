@@ -39,7 +39,7 @@ export const extractFavicon = () => {
     return undefined;
   }
 
-  let favicon:string | null = null
+  let favicon:string | undefined = undefined
   const nodeList = document.getElementsByTagName('link');
   // eslint-disable-next-line @typescript-eslint/prefer-for-of
   for (let i = 0; i < nodeList.length; i++) {
@@ -47,7 +47,7 @@ export const extractFavicon = () => {
       nodeList[i].getAttribute('rel') === 'icon' ||
       nodeList[i].getAttribute('rel') === 'shortcut icon'
     ) {
-      favicon = nodeList[i].getAttribute('href');
+      favicon = nodeList[i].getAttribute('href') ?? undefined;
     }
   }
   return favicon;
