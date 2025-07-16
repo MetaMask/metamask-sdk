@@ -60,14 +60,12 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
     const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version
       } Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name
       }`;
-
+    this.provider = getMultichainClient({ transport: this.transport });
     this.rpcClient = new RPCClient(
       this.provider,
       this.options.api,
       sdkInfo
     );
-
-    this.provider = getMultichainClient({ transport: this.transport });
   }
 
   private get transport() {
