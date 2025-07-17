@@ -3,13 +3,12 @@ import fs from 'fs'
 import path from 'path';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
 import { Store } from './index';
-import { StoreAdapter } from '../domain';
+import type { StoreAdapter } from '../domain';
 import { StoreAdapterWeb } from './adapters/web';
 import { StoreAdapterRN } from './adapters/rn';
 import { StoreAdapterNode } from './adapters/node';
+import { StorageGetErr, StorageSetErr, StorageDeleteErr } from '../domain/errors/storage';
 
 /**
  * Dummy mocked storage to keep track of data between tests
@@ -131,6 +130,32 @@ function createStoreTests(
     t.it('should return null when debug value does not exist', async () => {
       const result = await store.getDebug();
       t.expect(result).toBeNull();
+    });
+  });
+
+  // Error handling tests
+  t.describe(`${adapterName} error handling`, () => {
+    t.it('should throw StorageGetErr when fetching a key fails', async () => {
+      const errorMessage = 'getItem failed';
+      t.vi.spyOn(adapter, 'getItem').mockRejectedValue(new Error(errorMessage));
+      await t.expect(store.getAnonId()).rejects.toBeInstanceOf(StorageGetErr);
+      await t.expect(store.getExtensionId()).rejects.toBeInstanceOf(StorageGetErr);
+      await t.expect(store.getDebug()).rejects.toBeInstanceOf(StorageGetErr);
+    });
+
+    t.it('should throw StorageSetErr when setting a key fails', async () => {
+      const errorMessage = 'setItem failed';
+      t.vi.spyOn(adapter, 'setItem').mockRejectedValue(new Error(errorMessage));
+      await t.expect(store.setAnonId('test-id')).rejects.toThrow(StorageSetErr);
+      await t.expect(store.setExtensionId('test-id')).rejects.toThrow(StorageSetErr);
+      await t.expect(store.setExtensionId('test-id')).rejects.toThrow(StorageSetErr);
+    });
+
+    t.it('should throw StorageDeleteErr when removing a key fails', async () => {
+      const errorMessage = 'deleteItem failed';
+      t.vi.spyOn(adapter, 'deleteItem').mockRejectedValue(new Error(errorMessage));
+      await t.expect(store.removeAnonId()).rejects.toThrow(StorageDeleteErr);
+      await t.expect(store.removeExtensionId()).rejects.toThrow(StorageDeleteErr);
     });
   });
 }

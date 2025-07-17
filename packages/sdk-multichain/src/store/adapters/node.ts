@@ -5,7 +5,7 @@ import path from 'path';
 const CONFIG_FILE = path.resolve(process.cwd(), '.metamask.json');
 
 export class StoreAdapterNode extends StoreAdapter {
-
+  readonly platform = 'node'
 
   private safeParse(contents: string): Record<string, string> {
     try {

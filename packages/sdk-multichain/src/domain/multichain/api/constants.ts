@@ -1,5 +1,5 @@
 /* c8 ignore start */
-import { RPC_URLS_MAP } from "./types";
+import type { RPC_URLS_MAP } from "./types";
 
 export const infuraRpcUrls: RPC_URLS_MAP = {
   // ###### Ethereum ######

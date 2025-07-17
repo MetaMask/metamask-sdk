@@ -11,9 +11,10 @@ import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } f
  * - Using a regular icon URL
  * - Using a base64-encoded icon
  */
-export type DappSettings =
-  | { name?: string; url?: string; iconUrl?: string }
-  | { name?: string; url?: string; base64Icon?: string };
+export type DappSettings = {
+  name?: string;
+  url?: string;
+} & ({ iconUrl?: string } | { base64Icon?: string });
 
 /**
  * Constructor options for creating a Multichain SDK instance.
@@ -53,12 +54,18 @@ export type MultichainSDKConstructor = {
  */
 /* c8 ignore start */
 export abstract class MultichainSDKBase {
+  public abstract isInitialized: boolean;
+  public abstract session: SessionData | undefined;
+
   /**
-   * Establishes a connection to the multichain provider.
+   * Establishes a connection to the multichain provider, or re-use existing session
    *
-   * @returns Promise that resolves to true if connection is successful, false otherwise
+   * @returns Promise that resolves to the session data
    */
-  abstract connect(): Promise<boolean>;
+  abstract connect(
+    scopes: Scope[],
+    caipAccountIds: CaipAccountId[],
+  ): Promise<SessionData>;
 
   /**
    * Disconnects from the multichain provider.
@@ -66,26 +73,6 @@ export abstract class MultichainSDKBase {
    * @returns Promise that resolves when disconnection is complete
    */
   abstract disconnect(): Promise<void>;
-
-  /**
-   * Retrieves the current session data.
-   *
-   * @returns Promise that resolves to the current session data, or undefined if no session exists
-   */
-  abstract getSession(): Promise<SessionData | undefined>;
-
-  /**
-   * Creates a new session with the specified scopes and account IDs.
-   *
-   * @param scopes - Array of blockchain scopes to request access to
-   * @param caipAccountIds - Array of CAIP account IDs to associate with the session
-   * @returns Promise that resolves to the created session data
-   */
-  abstract createSession(
-    scopes: Scope[],
-    caipAccountIds: CaipAccountId[],
-  ): Promise<SessionData>;
-
   /**
    * Revokes the current session.
    *
@@ -143,3 +130,5 @@ export type MultichainSDKOptions = MultichainSDKBaseOptions & {
 export type CreateMultichainFN = ( options: MultichainSDKBaseOptions ) => Promise<MultichainSDKBase>;
 
 export type * from './api/types';
+export * from './api/constants';
+export * from './api/infura';

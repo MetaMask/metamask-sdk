@@ -1,3 +1,4 @@
+import { StorageDeleteErr, StorageGetErr, StorageSetErr } from "../domain/errors/storage";
 import type {StoreClient, StoreAdapter } from "../domain";
 
 
@@ -9,30 +10,86 @@ export class Store implements StoreClient {
   }
 
   async getAnonId(): Promise<string | null> {
-    return this.#adapter.getItem('anonId');
+    try {
+      return await this.#adapter.getItem('anonId');
+    } catch (err) {
+      throw new StorageGetErr(
+        this.#adapter.platform,
+        'anonId',
+        err.message
+      );
+    }
   }
 
   async getExtensionId(): Promise<string | null> {
-    return this.#adapter.getItem('extensionId');
+    try {
+      return await this.#adapter.getItem('extensionId');
+    } catch (err) {
+      throw new StorageGetErr(
+        this.#adapter.platform,
+        'extensionId',
+        err.message
+      );
+    }
   }
 
   async setAnonId(anonId: string): Promise<void> {
-    return this.#adapter.setItem('anonId', anonId);
+    try {
+      return await this.#adapter.setItem('anonId', anonId);
+    } catch (err) {
+      throw new StorageSetErr(
+        this.#adapter.platform,
+        'anonId',
+        err.message
+      );
+    }
   }
 
   async setExtensionId(extensionId: string): Promise<void> {
-    return this.#adapter.setItem('extensionId', extensionId);
+    try {
+      return await this.#adapter.setItem('extensionId', extensionId);
+    } catch (err) {
+      throw new StorageSetErr(
+        this.#adapter.platform,
+        'extensionId',
+        err.message
+      );
+    }
   }
 
   async removeExtensionId(): Promise<void> {
-    return this.#adapter.deleteItem('extensionId');
+    try {
+      return await this.#adapter.deleteItem('extensionId');
+    } catch (err) {
+      throw new StorageDeleteErr(
+        this.#adapter.platform,
+        'extensionId',
+        err.message
+      );
+    }
   }
 
   async removeAnonId(): Promise<void> {
-    return this.#adapter.deleteItem('anonId');
+    try {
+      return await this.#adapter.deleteItem('anonId');
+    } catch (err) {
+      throw new StorageDeleteErr(
+        this.#adapter.platform,
+        'anonId',
+        err.message
+      );
+    }
   }
 
   async getDebug(): Promise<string | null> {
-    return this.#adapter.getItem('DEBUG');
+    try {
+      return await this.#adapter.getItem('DEBUG');
+    } catch (err) {
+      throw new StorageGetErr(
+        this.#adapter.platform,
+        'DEBUG',
+        err.message
+      );
+    }
   }
 }
