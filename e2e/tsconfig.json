@@ -27,7 +27,8 @@
       "@util/*": ["src/util/*"],
       "@specs/*": ["test/specs/*"],
       "@screens/*": ["src/screens/*"],
-      "@fixtures/*": ["src/fixtures/*"]
+      "@fixtures/*": ["src/fixtures/*"],
+      "@test/*": ["test/*"]
     }
   },
   "include": ["test", "src", "node_modules/@types/mocha/index.d.ts"],

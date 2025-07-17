@@ -5,6 +5,9 @@ function getGanachePort() {
   return process.env.GANACHE_PORT || '8585';
 }
 
+export const DEFAULT_FIXTURE_ACCOUNT =
+  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3';
+
 /**
  * FixtureBuilder class provides a fluent interface for building fixture data.
  */
@@ -18,79 +21,72 @@ export class FixtureBuilder {
   withDefaultFixture() {
     this.fixture = {
       state: {
-        /*
         legalNotices: {
           newPrivacyPolicyToastClickedOrClosed: true,
           newPrivacyPolicyToastShownDate: Date.now(),
         },
-
-         */
         collectibles: {
           favorites: {},
         },
         engine: {
           backgroundState: {
             AccountTrackerController: {
-              accounts: {
-                '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
-                  balance: '0x0',
-                },
-              },
               accountsByChainId: {
                 64: {
-                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                  [DEFAULT_FIXTURE_ACCOUNT]: {
                     balance: '0x0',
                   },
                 },
                 1: {
-                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
+                  [DEFAULT_FIXTURE_ACCOUNT]: {
                     balance: '0x0',
                   },
                 },
               },
-              _U: 0,
-              _V: 1,
-              _X: null,
             },
             AddressBookController: {
               addressBook: {},
             },
-            AssetsContractController: {},
             NftController: {
               allNftContracts: {},
               allNfts: {},
               ignoredNfts: [],
             },
             TokenListController: {
-              tokenList: {
-                '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f': {
-                  address: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
-                  symbol: 'SNX',
-                  decimals: 18,
-                  name: 'Synthetix Network Token',
-                  iconUrl:
-                    'https://static.cx.metamask.io/api/v1/tokenIcons/1/0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png',
-                  type: 'erc20',
-                  aggregators: [
-                    'Aave',
-                    'Bancor',
-                    'CMC',
-                    'Crypto.com',
-                    'CoinGecko',
-                    '1inch',
-                    'PMM',
-                    'Synthetix',
-                    'Zerion',
-                    'Lifi',
+              tokensChainsCache: {
+                '0x1': {
+                  data: [
+                    {
+                      '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f': {
+                        address: '0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f',
+                        symbol: 'SNX',
+                        decimals: 18,
+                        name: 'Synthetix Network Token',
+                        iconUrl:
+                          'https://static.cx.metamask.io/api/v1/tokenIcons/1/0xc011a73ee8576fb46f5e1c5751ca3b9fe0af2a6f.png',
+                        type: 'erc20',
+                        aggregators: [
+                          'Aave',
+                          'Bancor',
+                          'CMC',
+                          'Crypto.com',
+                          'CoinGecko',
+                          '1inch',
+                          'PMM',
+                          'Synthetix',
+                          'Zerion',
+                          'Lifi',
+                        ],
+                        occurrences: 10,
+                        fees: {
+                          '0x5fd79d46eba7f351fe49bff9e87cdea6c821ef9f': 0,
+                          '0xda4ef8520b1a57d7d63f1e249606d1a459698876': 0,
+                        },
+                      },
+                    },
                   ],
-                  occurrences: 10,
-                  fees: {
-                    '0x5fd79d46eba7f351fe49bff9e87cdea6c821ef9f': 0,
-                    '0xda4ef8520b1a57d7d63f1e249606d1a459698876': 0,
-                  },
                 },
               },
-              tokensChainsCache: {},
               preventPollingOnNetworkRestart: false,
             },
             CurrencyRateController: {
@@ -108,7 +104,7 @@ export class FixtureBuilder {
                 '{"cipher":"ynNI8tAH4fcpmXo8S88A/3T3Dd1w0LY5ftpL59gW0ObYxovgFhrtKpRe/WD7WU42KwGBNKVicB9W9at4ePgOJGS6IMWr//C3jh0vKQTabkDzDy1ZfSvztRxGpVjmrnU3fC5B0eq/MBMSrgu8Bww309pk5jghyRfzp9YsG0ONo1CXUm2brQo/eRve7i9aDbiGXiEK0ch0BO7AvZPGMhHtYRrrOro4QrDVHGUgAF5SA1LD4dv/2AB8ctHwn4YbUmICieqlhJhprx3CNOJ086g7vPQOr21T4IbvtTumFaTibfoD3GWHQo11CvE04z3cN3rRERriP7bww/tZOe8OAMFGWANkmOJHwPPwEo1NBr6w3GD2VObEmqNhXeNc6rrM23Vm1JU40Hl+lVKubnbT1vujdGLmOpDY0GdekscQQrETEQJfhKlXIT0wwyPoLwR+Ja+GjyOhBr0nfWVoVoVrcTUwAk5pStBMt+5OwDRpP29L1+BL9eMwDgKpjVXRTh4MGagKYmFc6eKDf6jV0Yt9pG+jevv5IuyhwX0TRtfQCGgRTtS7oxhDQPxGqu01rr+aI7vGMfRQpaKEEXEWVmMaqCmktyUV35evK9h/xv1Yif00XBll55ShxN8t2/PnATvZxFKQfjJe5f/monbwf8rpfXHuFoh8M9hzjbcS5eh/TPYZZu1KltpeHSIAh5C+4aFyZw0e1DeAg/wdRO3PhBrVztsHSyISHlRdfEyw7QF4Lemr++2MVR1dTxS2I5mUEHjh+hmp64euH1Vb/RUppXlmE8t1RYYXfcsF2DlRwPswP739E/EpVtY3Syf/zOTyHyrOJBldzw22sauIzt8Q5Fe5qA/hGRWiejjK31P/P5j7wEKY7vrOJB1LWNXHSuSjffx9Ai9E","iv":"d5dc0252424ac0c08ca49ef320d09569","salt":"feAPSGdL4R2MVj2urJFl4A==","lib":"original"}',
               keyrings: [
                 {
-                  accounts: ['0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3'],
+                  accounts: [DEFAULT_FIXTURE_ACCOUNT],
                   index: 0,
                   type: 'HD Key Tree',
                 },
@@ -116,43 +112,94 @@ export class FixtureBuilder {
             },
             NetworkController: {
               selectedNetworkClientId: 'mainnet',
-              providerConfig: {
-                type: 'mainnet',
-                chainId: '0x1',
-                ticker: 'ETH',
-              },
               networksMetadata: {
-                goerli: {
-                  EIPS: {},
-                  status: 'unknown',
-                },
-                'linea-goerli': {
-                  EIPS: {},
-                  status: 'unknown',
-                },
-                'linea-sepolia': {
-                  EIPS: {},
-                  status: 'unknown',
-                },
-                'linea-mainnet': {
-                  EIPS: {},
-                  status: 'unknown',
-                },
                 mainnet: {
-                  EIPS: {},
-                  status: 'unknown',
+                  status: 'available',
+                  EIPS: {
+                    1559: true,
+                  },
                 },
-                sepolia: {
-                  EIPS: {},
-                  status: 'unknown',
+                networkId1: {
+                  status: 'available',
+                  EIPS: {
+                    1559: true,
+                  },
                 },
               },
-              networkConfigurations: {
-                networkId1: {
-                  rpcUrl: `http://localhost:${getGanachePort()}`,
-                  chainId: '1337',
-                  ticker: 'ETH',
-                  nickname: 'Localhost',
+              networkConfigurationsByChainId: {
+                '0x1': {
+                  chainId: '0x1',
+                  rpcEndpoints: [
+                    {
+                      networkClientId: 'mainnet',
+                      url: 'https://mainnet.infura.io/v3/{infuraProjectId}',
+                      type: 'infura',
+                      name: 'Ethereum Network default RPC',
+                    },
+                  ],
+                  defaultRpcEndpointIndex: 0,
+                  blockExplorerUrls: ['https://etherscan.io'],
+                  defaultBlockExplorerUrlIndex: 0,
+                  name: 'Ethereum Main Network',
+                  nativeCurrency: 'ETH',
+                },
+                '0x539': {
+                  chainId: '0x539',
+                  rpcEndpoints: [
+                    {
+                      networkClientId: 'networkId1',
+                      url: `http://localhost:${getGanachePort()}`,
+                      type: 'custom',
+                      name: 'Local RPC',
+                    },
+                  ],
+                  defaultRpcEndpointIndex: 0,
+                  defaultBlockExplorerUrlIndex: 0,
+                  blockExplorerUrls: ['https://test.io'],
+                  name: 'Localhost',
+                  nativeCurrency: 'ETH',
+                },
+                '0xaa36a7': {
+                  blockExplorerUrls: [],
+                  chainId: '0xaa36a7',
+                  defaultRpcEndpointIndex: 0,
+                  name: 'Sepolia',
+                  nativeCurrency: 'SepoliaETH',
+                  rpcEndpoints: [
+                    {
+                      networkClientId: 'sepolia',
+                      type: 'infura',
+                      url: 'https://sepolia.infura.io/v3/{infuraProjectId}',
+                    },
+                  ],
+                },
+                '0xe705': {
+                  blockExplorerUrls: [],
+                  chainId: '0xe705',
+                  defaultRpcEndpointIndex: 0,
+                  name: 'Linea Sepolia',
+                  nativeCurrency: 'LineaETH',
+                  rpcEndpoints: [
+                    {
+                      networkClientId: 'linea-sepolia',
+                      type: 'infura',
+                      url: 'https://linea-sepolia.infura.io/v3/{infuraProjectId}',
+                    },
+                  ],
+                },
+                '0xe708': {
+                  blockExplorerUrls: [],
+                  chainId: '0xe708',
+                  defaultRpcEndpointIndex: 0,
+                  name: 'Linea Main Network',
+                  nativeCurrency: 'LineaETH',
+                  rpcEndpoints: [
+                    {
+                      networkClientId: 'linea-mainnet',
+                      type: 'infura',
+                      url: 'https://linea-mainnet.infura.io/v3/{infuraProjectId}',
+                    },
+                  ],
                 },
               },
             },
@@ -182,7 +229,7 @@ export class FixtureBuilder {
               internalAccounts: {
                 accounts: {
                   '4d7a5e0b-b261-4aed-8126-43972b0fa0a1': {
-                    address: '0x76cf1cdd1fcc252442b50d6e97207228aa4aefc3',
+                    address: DEFAULT_FIXTURE_ACCOUNT,
                     id: '4d7a5e0b-b261-4aed-8126-43972b0fa0a1',
                     metadata: {
                       name: 'Account 1',
@@ -194,98 +241,49 @@ export class FixtureBuilder {
                     options: {},
                     methods: [
                       'personal_sign',
-                      'eth_sign',
                       'eth_signTransaction',
                       'eth_signTypedData_v1',
                       'eth_signTypedData_v3',
                       'eth_signTypedData_v4',
                     ],
                     type: 'eip155:eoa',
+                    scopes: ['eip155:0'],
                   },
                 },
                 selectedAccount: '4d7a5e0b-b261-4aed-8126-43972b0fa0a1',
               },
             },
+            AccountTreeController: {
+              accountTree: {
+                wallets: {},
+              },
+            },
             PreferencesController: {
               featureFlags: {},
               identities: {
-                '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
-                  address: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
+                [DEFAULT_FIXTURE_ACCOUNT]: {
+                  address: DEFAULT_FIXTURE_ACCOUNT,
                   name: 'Account 1',
                   importTime: 1684232000456,
                 },
               },
-              ipfsGateway: 'https://cloudflare-ipfs.com/ipfs/',
+              ipfsGateway: 'https://dweb.link/ipfs/',
               lostIdentities: {},
-              selectedAddress: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
+              selectedAddress: DEFAULT_FIXTURE_ACCOUNT,
               useTokenDetection: true,
               useNftDetection: true,
               displayNftMedia: true,
               useSafeChainsListValidation: false,
               isMultiAccountBalancesEnabled: true,
-              disabledRpcMethodPreferences: {
-                eth_sign: false,
-              },
               showTestNetworks: true,
-              _U: 0,
-              _V: 1,
-              _W: {
-                featureFlags: {},
-                frequentRpcList: [],
-                identities: {
-                  '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3': {
-                    address: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
-                    name: 'Account 1',
-                    importTime: 1684232000456,
-                  },
-                },
-                ipfsGateway: 'https://cloudflare-ipfs.com/ipfs/',
-                lostIdentities: {},
-                selectedAddress: '0x76cf1CdD1fcC252442b50D6e97207228aA4aefC3',
-                useTokenDetection: true,
-                useNftDetection: false,
-                displayNftMedia: true,
-                useSafeChainsListValidation: false,
-                isMultiAccountBalancesEnabled: true,
-                disabledRpcMethodPreferences: {
-                  eth_sign: false,
-                },
-                showTestNetworks: true,
-                showIncomingTransactions: {
-                  '0x1': true,
-                  '0x5': true,
-                  '0x38': true,
-                  '0x61': true,
-                  '0xa': true,
-                  '0xa869': true,
-                  '0x1a4': true,
-                  '0x89': true,
-                  '0x13881': true,
-                  '0xa86a': true,
-                  '0xfa': true,
-                  '0xfa2': true,
-                  '0xaa36a7': true,
-                  '0xe704': true,
-                  '0xe705': true,
-                  '0xe708': true,
-                  '0x504': true,
-                  '0x507': true,
-                  '0x505': true,
-                  '0x64': true,
-                },
-              },
-              _X: null,
             },
             TokenBalancesController: {
-              contractBalances: {},
+              tokenBalances: {},
             },
             TokenRatesController: {
               marketData: {},
             },
             TokensController: {
-              tokens: [],
-              ignoredTokens: [],
-              detectedTokens: [],
               allTokens: {},
               allIgnoredTokens: {},
               allDetectedTokens: {},
@@ -293,7 +291,6 @@ export class FixtureBuilder {
             TransactionController: {
               methodData: {},
               transactions: [],
-              internalTransactions: [],
               swapsTransactions: {},
             },
             SwapsController: {
@@ -325,7 +322,6 @@ export class FixtureBuilder {
               approvalTransaction: null,
               aggregatorMetadataLastFetched: 0,
               quotesLastFetched: 0,
-              topAssetsLastFetched: 0,
               error: {
                 key: null,
                 description: null,
@@ -333,7 +329,7 @@ export class FixtureBuilder {
               topAggId: null,
               tokensLastFetched: 0,
               isInPolling: false,
-              pollingCyclesLeft: 3,
+              pollingCyclesLeft: 4,
               quoteRefreshSeconds: null,
               usedGasEstimate: null,
               usedCustomGas: null,
@@ -355,8 +351,6 @@ export class FixtureBuilder {
               gasFeeEstimatesByChainId: {},
               nonRPCGasFeeApisDisabled: false,
             },
-            TokenDetectionController: {},
-            NftDetectionController: {},
             PermissionController: {
               subjects: {},
             },
@@ -364,6 +358,45 @@ export class FixtureBuilder {
               pendingApprovals: {},
               pendingApprovalCount: 0,
               approvalFlows: [],
+            },
+            UserStorageController: {},
+            NotificationServicesController: {
+              subscriptionAccountsSeen: [],
+              isMetamaskNotificationsFeatureSeen: false,
+              isNotificationServicesEnabled: false,
+              isFeatureAnnouncementsEnabled: false,
+              metamaskNotificationsList: [],
+              metamaskNotificationsReadList: [],
+              isUpdatingMetamaskNotifications: false,
+              isFetchingMetamaskNotifications: false,
+              isUpdatingMetamaskNotificationsAccount: [],
+              isCheckingAccountsPresence: false,
+            },
+            MultichainNetworkController: {
+              selectedMultichainNetworkChainId:
+                'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+              multichainNetworkConfigurationsByChainId: {
+                'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp': {
+                  chainId: 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
+                  name: 'Solana Mainnet',
+                  nativeCurrency:
+                    'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp/token:EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+                  isEvm: false,
+                },
+              },
+              isEvmSelected: true,
+              networksWithTransactionActivity: {},
+            },
+            MultichainAssetsController: {
+              accountsAssets: {},
+              assetsMetadata: {},
+            },
+            MultichainAssetsRatesController: {
+              conversionRates: {},
+            },
+            CronJobController: {
+              jobs: {},
+              events: {},
             },
           },
         },
@@ -377,7 +410,7 @@ export class FixtureBuilder {
           whitelist: [],
           tabs: [
             {
-              url: 'https://home.metamask.io/',
+              url: 'https://google.com',
               id: 1692550481062,
             },
           ],
@@ -392,7 +425,7 @@ export class FixtureBuilder {
           signMessageModalVisible: true,
         },
         settings: {
-          searchEngine: 'DuckDuckGo',
+          searchEngine: 'Google',
           primaryCurrency: 'ETH',
           lockTime: 30000,
           useBlockieIcon: true,
@@ -557,6 +590,8 @@ export class FixtureBuilder {
           selectedRegionAgg: null,
           selectedPaymentMethodAgg: null,
           getStartedAgg: false,
+          getStartedSell: false,
+          getStartedDeposit: false,
           authenticationUrls: [],
           activationKeys: [],
         },
@@ -582,9 +617,6 @@ export class FixtureBuilder {
         },
         security: {
           allowLoginWithRememberMe: false,
-          automaticSecurityChecksEnabled: false,
-          hasUserSelectedAutomaticSecurityCheckOption: true,
-          isAutomaticSecurityChecksModalOpen: false,
         },
         experimentalSettings: {
           securityAlertsEnabled: true,
@@ -592,26 +624,14 @@ export class FixtureBuilder {
         inpageProvider: {
           networkId: '1',
         },
-        /* WORKS BUT IT'S VERY SLOW
-        _persist: {
-          rehydrated: true,
-          version: -1,
-        },
-         */
-
-        /* Works but slow as well (object has bo context)
-        _persist: {
-          // rehydrated: true,
-          // version: -1,
-        }, */
       },
       asyncState: {
         '@MetaMask:existingUser': 'true',
+        '@MetaMask:OptinMetaMetricsUISeen': 'true',
         '@MetaMask:onboardingWizard': 'explored',
         '@MetaMask:UserTermsAcceptedv1.0': 'true',
         '@MetaMask:WhatsNewAppVersionSeen': '7.24.3',
-        '@MetaMask:passcodeDisabled': true,
-        '@MetaMask:biometryChoiceDisabled': true,
+        '@MetaMask:solanaFeatureModalShown': 'true',
       },
     };
     return this;

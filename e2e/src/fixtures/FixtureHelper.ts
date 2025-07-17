@@ -1,6 +1,6 @@
 import FixtureServer from '@fixtures/FixtureServer';
 import { FixtureBuilder } from '@fixtures/FixtureBuilder';
-import { FIXTURE_SERVER_URL } from '@util/Constants';
+import { FIXTURE_SERVER_URL } from '@util/constants';
 
 // checks if server has already been started
 const isFixtureServerStarted = async () => {

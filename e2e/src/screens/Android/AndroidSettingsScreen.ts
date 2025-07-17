@@ -1,13 +1,13 @@
 import { ChainablePromiseArray, ChainablePromiseElement } from 'webdriverio';
 
 import { $$ } from '@wdio/globals';
-import Gestures from '@util/Gestures';
-import { getSelectorForPlatform } from '@util/Utils';
+import { swipeByPercentage } from '@util/gestures';
+import { getSelectorForPlatform } from '@util/utils';
 import {
   IS_RUNNING_IN_BROWSER_STACK,
   METAMASK_APP_NAME_ANDROID,
-} from '@util/Constants';
-import { AndroidSelector } from '@util/Selectors';
+} from '@util/constants';
+import { AndroidSelector } from '@util/selectors';
 
 class AndroidSettingsScreen {
   get metaMaskQALinksButton(): ChainablePromiseElement {
@@ -114,7 +114,7 @@ class AndroidSettingsScreen {
     let isMetaMaskLinksButtonDisplayed =
       await this.metaMaskQALinksButton.isDisplayed();
     while (!isMetaMaskLinksButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      await swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
       isMetaMaskLinksButtonDisplayed =
         await this.metaMaskQALinksButton.isDisplayed();
     }

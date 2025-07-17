@@ -1,12 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import {
-  getSelectorForPlatform,
-  scrollToElement,
-  getWebViewElementText,
-} from '@util/Utils';
+import { getSelectorForPlatform, getWebViewElementText } from '@util/utils';
+import { swipeToElement } from '@util/gestures';
 import { Dapp } from '@screens/interfaces/Dapp';
-import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { AndroidSelector, IOSSelector } from '@util/selectors';
 
 class MetaMaskSDKTestDappScreen implements Dapp {
   private connectionStatusLocator = '[data-testid="connection-status"]';
@@ -118,12 +115,12 @@ class MetaMaskSDKTestDappScreen implements Dapp {
   }
 
   async terminate(): Promise<void> {
-    await scrollToElement(this.terminateButton);
+    await swipeToElement(this.terminateButton);
     await this.terminateButton.click();
   }
 
   async tapPersonalSignButton(): Promise<void> {
-    await scrollToElement(this.personalSignButton);
+    await swipeToElement(this.personalSignButton);
     await this.personalSignButton.click();
   }
 

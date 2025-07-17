@@ -2,10 +2,8 @@ import ADB from 'appium-adb';
 import { driver } from '@wdio/globals';
 import LockScreen from '@screens/MetaMask/LockScreen';
 import { Dapp } from '@screens/interfaces/Dapp';
-import SafariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
-import ChromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
-import AndroidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
-import iOSOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
+import safariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
+import chromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
 import { loadFixture, startFixtureServer } from '@fixtures/FixtureHelper';
 import { FixtureBuilder } from '@fixtures/FixtureBuilder';
 import FixtureServer from '@fixtures/FixtureServer';
@@ -24,17 +22,14 @@ import {
   WALLET_PASSWORD,
   Browsers,
   Contexts,
-} from './Constants';
-import Gestures from './Gestures';
+} from './constants';
+import { tapOnCoordinatesByPercentage } from './gestures';
 
-export const deviceOpenDeeplinkWithMetaMask = async () => {
-  if (PLATFORM === Platforms.IOS) {
-    await iOSOpenInComponent.tapOpen();
-  } else {
-    await AndroidOpenWithComponent.tapOpenWithMetaMask();
-  }
-};
-
+/**
+ * Returns the selector for the given platform
+ * @param locator - The locator to get the selector for
+ * @returns The selector for the given platform
+ */
 export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   const platformSelector =
     PLATFORM === Platforms.IOS ? locator.iosSelector : locator.androidSelector;
@@ -45,6 +40,10 @@ export const getSelectorForPlatform = (locator: MetaMaskElementSelector) => {
   return platformSelector;
 };
 
+/**
+ * Launches the mobile browser for the given platform
+ * @returns void
+ */
 export const launchMobileBrowser = async () => {
   if (driver.isIOS) {
     await driver.activateApp(Browsers.SAFARI);
@@ -53,41 +52,51 @@ export const launchMobileBrowser = async () => {
   }
 };
 
+/**
+ * Restarts the MetaMask app and unlocks it with the given password
+ * @returns void
+ */
 export const restartAndUnlockMetaMask = async () => {
   await driver.terminateApp(METAMASK_BUNDLE_ID);
   await driver.activateApp(METAMASK_BUNDLE_ID);
   await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
 };
 
+/**
+ * Navigates to the given web mobile dapp
+ * @param dappUrl - The URL of the dapp to navigate to
+ * @param dappScreen - The screen of the dapp to navigate to
+ * @returns void
+ */
 export const navigateToWebMobileDapp = async (
   dappUrl: string,
   dappScreen: Dapp,
 ) => {
   const browserScreen = driver.isIOS
-    ? SafariBrowserScreen
-    : ChromeBrowserScreen;
+    ? safariBrowserScreen
+    : chromeBrowserScreen;
 
   // await launchMobileBrowser();
   await browserScreen.goToAddress(dappUrl, dappScreen);
 };
 
+/**
+ * Refreshes the browser
+ * @returns void
+ */
 export const refreshBrowser = async () => {
   const browserScreen = driver.isIOS
-    ? SafariBrowserScreen
-    : ChromeBrowserScreen;
+    ? safariBrowserScreen
+    : chromeBrowserScreen;
 
   await browserScreen.refreshPage();
 };
 
-export const scrollToElement = async (element: ChainablePromiseElement) => {
-  let isElementDisplayed = await element.isDisplayed();
-
-  while (!isElementDisplayed) {
-    await Gestures.swipeByPercentage({ x: 50, y: 70 }, { x: 50, y: 5 });
-    isElementDisplayed = await element.isDisplayed();
-  }
-};
-
+/**
+ * Launches the app with the given bundleId
+ * @param bundleId - The bundleId of the app to launch
+ * @returns void
+ */
 export const launchApp = async (bundleId: string) => {
   // Location can be either url for web test dapp or bundleId for native app
   console.log(`Launching ${PLATFORM} DAPP with bundleId: ${bundleId}`);
@@ -98,75 +107,98 @@ export const launchApp = async (bundleId: string) => {
   }
 };
 
+/**
+ * Launches the MetaMask app
+ * @returns void
+ */
 export const launchMetaMask = async () => {
   console.log(`Launching MetaMask on ${PLATFORM}`);
   await driver.activateApp(METAMASK_BUNDLE_ID);
 };
 
+/**
+ * Goes back to the previous screen
+ * @returns void
+ */
 export const goBack = async () => {
   const browserToOpen = driver.isIOS ? Browsers.SAFARI : Browsers.CHROME;
 
   await driver.pause(2500);
-  await Gestures.tapOnCoordinatesByPercentage({ x: 50, y: 80 });
+  await tapOnCoordinatesByPercentage({ x: 50, y: 80 });
   await driver.pause(500);
   await launchApp(browserToOpen);
 };
 
-/*
+/**
  * Kills the process of the dapp with the given bundleId
  * Not the same as the dappTerminate that cleans a session
- * */
+ * @param bundleId - The bundleId of the app to kill
+ * @returns void
+ */
 export const killApp = async (bundleId: string) => {
   console.log(`Terminating ${PLATFORM} DAPP with bundleId: ${bundleId}`);
   await driver.terminateApp(bundleId);
 };
 
+/**
+ * Returns the screen size of the device
+ * @returns The screen size of the device
+ */
 export const getScreenSize = async (): Promise<BrowserSize> => {
   return await driver.getWindowSize();
 };
 
-/*
- * Returns the coordinates in the device screen for a given percentage
- * Ex:
- * x = 50% of the screen width
- * y = 50% of the screen height
- * Device size: 1000x1000
+/**
+ * Converts screen percentage coordinates to actual device coordinates
  *
- * returns: {x: 5000, y: 5000}
- * */
-export const getCoordinatesForDeviceFromPercentage = async (
-  percentage: ScreenPercentage,
-): Promise<Coordinates> => {
+ * @param percentages - Single percentage point or from/to percentage points for swipe
+ * @returns Single coordinate or array of coordinates based on input
+ *
+ * Examples:
+ * 1. Single point:
+ *    Input: {x: 50, y: 50}
+ *    Output: {x: 500, y: 500} (on a 1000x1000 device)
+ *
+ * 2. Two points (swipe):
+ *    Input: from: {x: 20, y: 80}, to: {x: 80, y: 20}
+ *    Output: [{x: 200, y: 800}, {x: 800, y: 200}] (on a 1000x1000 device)
+ */
+export const getDeviceCoordinates = async (
+  percentages: ScreenPercentage | { from: Coordinates; to: Coordinates },
+): Promise<Coordinates | [Coordinates, Coordinates]> => {
   const DEVICE_SIZE = await getScreenSize();
-  const x = Math.round((DEVICE_SIZE.width * percentage.x) / 100);
-  const y = Math.round((DEVICE_SIZE.height * percentage.y) / 100);
-  return { x, y };
+
+  // Handle single point case
+  if ('x' in percentages && 'y' in percentages) {
+    const x = Math.round((DEVICE_SIZE.width * percentages.x) / 100);
+    const y = Math.round((DEVICE_SIZE.height * percentages.y) / 100);
+    return { x, y };
+  }
+  // Handle from/to case (swipe)
+  else if ('from' in percentages && 'to' in percentages) {
+    const { from, to } = percentages;
+    const x1 = Math.round((DEVICE_SIZE.width * from.x) / 100);
+    const y1 = Math.round((DEVICE_SIZE.height * from.y) / 100);
+    const x2 = Math.round((DEVICE_SIZE.width * to.x) / 100);
+    const y2 = Math.round((DEVICE_SIZE.height * to.y) / 100);
+    return [
+      { x: x1, y: y1 },
+      { x: x2, y: y2 },
+    ];
+  }
+
+  throw new Error('Invalid input format for coordinate conversion');
 };
 
-export const getCoordinatesAsPercentage = async (
-  from: Coordinates,
-  to: Coordinates,
-): Promise<[Coordinates, Coordinates]> => {
-  const DEVICE_SIZE = await getScreenSize();
-  const x1Percentage = Math.round((DEVICE_SIZE.width * from.x) / 100);
-  const y1Percentage = Math.round((DEVICE_SIZE.height * from.y) / 100);
-  const x2Percentage = Math.round((DEVICE_SIZE.width * to.x) / 100);
-  const y2Percentage = Math.round((DEVICE_SIZE.height * to.y) / 100);
-  return [
-    { x: x1Percentage, y: y1Percentage },
-    { x: x2Percentage, y: y2Percentage },
-  ];
-};
-
-/*
- * WIP! This function is not working as expected
+/**
  * Launches MetaMask with a fixture
  * This means that MM will load in a fully onboarded state
  *
  * Disclaimer: iOS does not support launching with a fixture for the time being
- *
- * @param {FixtureServer} fixtureServer - server fixture running in the background
- * */
+ * @param fixtureServer - server fixture running in the background
+ * @param bundleId - The bundleId of the app to launch
+ * @returns void
+ */
 export const launchMetaMaskWithFixture = async (
   fixtureServer: FixtureServer,
   bundleId: string,
@@ -200,11 +232,14 @@ export const launchMetaMaskWithFixture = async (
     },
   ]);
 
-  // {"bundleId": "io.metamask.MetaMask-QA", "arguments": ["fixtureServerPort", "12345"], "environment": {"fixtureServerPort": "12345"}}
-
   console.log('MetaMask was loaded with fixtures!');
 };
 
+/**
+ * Returns the text of the given webview element
+ * @param locator - The locator of the webview element
+ * @returns The text of the given webview element
+ */
 export const getWebViewElementText = async (locator: string) => {
   const webviewElementText = await driver.executeScript(
     `const element = document.querySelector('${locator}');
@@ -214,6 +249,10 @@ export const getWebViewElementText = async (locator: string) => {
   return webviewElementText;
 };
 
+/**
+ * Switches to the native context
+ * @returns void
+ */
 export const switchToNativeContext = async () => {
   const availableContexts = await driver.getContexts();
   const nativeContext = availableContexts.find(
@@ -232,6 +271,11 @@ export const switchToNativeContext = async () => {
   }
 };
 
+/**
+ * Switches to the webview context
+ * @param dappUrl - The URL of the dapp to switch context to
+ * @returns void
+ */
 export const switchToWebviewContext = async (dappUrl: string) => {
   const availableContexts = await driver.getContexts();
   const webviewContext = availableContexts.find((context) => {
@@ -258,6 +302,12 @@ export const switchToWebviewContext = async (dappUrl: string) => {
   }
 };
 
+/**
+ * Switches to the given context
+ * @param context - The context to switch to
+ * @param dappUrl - The URL of the dapp to switch context to
+ * @returns void
+ */
 export const switchToContext = async ({
   context,
   dappUrl,

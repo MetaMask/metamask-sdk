@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector } from '@util/Selectors';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector } from '@util/selectors';
 
 class AndroidOpenWithComponent {
   get openWithMetaMaskQA(): ChainablePromiseElement {

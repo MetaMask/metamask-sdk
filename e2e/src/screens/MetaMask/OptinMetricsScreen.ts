@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
 
-import Gestures from '@util/Gestures';
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector, IOSSelector } from '@util/Selectors';
+import { swipeByPercentage } from '@util/gestures';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector, IOSSelector } from '@util/selectors';
 
 class OptinMetricsScreen {
   get acceptOptinMetrics(): ChainablePromiseElement {
@@ -18,7 +18,7 @@ class OptinMetricsScreen {
 
   async tapAgreeOptinMetrics(): Promise<void> {
     if (!(await this.isAcceptOptinMetricsEnabled())) {
-      await Gestures.swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
+      await swipeByPercentage({ x: 50, y: 50 }, { x: 50, y: 5 });
     }
     await this.acceptOptinMetrics.click();
   }

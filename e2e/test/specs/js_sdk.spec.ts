@@ -1,23 +1,22 @@
-import { beforeEachHook, beforeHook } from '../mocha.hooks';
-import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '@util/Constants';
-import { killApp, launchApp, launchMetaMask } from '@util/Utils';
-import ChromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
-import AndroidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
-import ReactNativeDappScreen from '@screens/Dapps/ReactNativeDappScreen';
-import SdkPlaygroundDappScreen from '@screens/Dapps/SdkPlaygroundDappScreen';
-import TestDappScreen from '@screens/Dapps/TestDappScreen';
-import Web3OnBoardDappScreen from '@screens/Dapps/Web3OnBoardDappScreen';
-import LockScreen from '@screens/MetaMask/LockScreen';
-import SettingsScreen from '@screens/MetaMask/SettingsScreen';
-import BottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
-import ConnectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
-import NetworkSwitchedModalComponent from '@screens/MetaMask/components/NetworkSwitchedModalComponent';
-import SendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
-import SignModalComponent from '@screens/MetaMask/components/SignModalComponent';
-import SwitchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
-import SafariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
-import IOSOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
-import DevnextJSDappScreen from '@screens/Dapps/DevnextJSDappScreen';
+import { BROWSER_BUNDLE_ID, WALLET_PASSWORD } from '@util/constants';
+import { killApp, launchApp, launchMetaMask } from '@util/utils';
+import chromeBrowserScreen from '@screens/Android/ChromeBrowserScreen';
+import androidOpenWithComponent from '@screens/Android/components/AndroidOpenWithComponent';
+import reactNativeDappScreen from '@screens/Dapps/ReactNativeDappScreen';
+import sdkPlaygroundDappScreen from '@screens/Dapps/SdkPlaygroundDappScreen';
+import testDappScreen from '@screens/Dapps/TestDappScreen';
+import web3OnBoardDappScreen from '@screens/Dapps/Web3OnBoardDappScreen';
+import lockScreen from '@screens/MetaMask/LockScreen';
+import settingsScreen from '@screens/MetaMask/SettingsScreen';
+import bottomNavigationComponent from '@screens/MetaMask/components/BottomNavigationComponent';
+import connectModalComponent from '@screens/MetaMask/components/ConnectModalComponent';
+import networkSwitchedModalComponent from '@screens/MetaMask/components/NetworkSwitchedModalComponent';
+import sendTxModalComponent from '@screens/MetaMask/components/SendTxModalComponent';
+import signModalComponent from '@screens/MetaMask/components/SignModalComponent';
+import switchNetworkModalComponent from '@screens/MetaMask/components/SwitchNetworkModalComponent';
+import safariBrowserScreen from '@screens/iOS/SafariBrowserScreen';
+import iosOpenInComponent from '@screens/iOS/components/IOSOpenInComponent';
+import devnextJSDappScreen from '@screens/Dapps/DevnextJSDappScreen';
 
 /*
  * @deprecated
@@ -31,14 +30,6 @@ import DevnextJSDappScreen from '@screens/Dapps/DevnextJSDappScreen';
  *
  */
 describe.skip('JS SDK E2E', () => {
-  before(async () => {
-    await beforeHook();
-  });
-
-  beforeEach(async () => {
-    await beforeEachHook();
-  });
-
   it('E2E on devnext', async () => {
     await driver.pause(5000);
 
@@ -47,12 +38,12 @@ describe.skip('JS SDK E2E', () => {
     await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
+      ? safariBrowserScreen
+      : chromeBrowserScreen;
 
     const devnextDappUrl = process.env.DEVNEXT_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(devnextDappUrl, DevnextJSDappScreen);
+    await browserScreen.goToAddress(devnextDappUrl, devnextJSDappScreen);
     // TODO: Make the devnext pom and continue writing tests
 
     await driver.pause(5000);
@@ -67,32 +58,32 @@ describe.skip('JS SDK E2E', () => {
     await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
+      ? safariBrowserScreen
+      : chromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
     const dappUrl = process.env.WEB3_ON_BOARD_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(dappUrl, DevnextJSDappScreen);
+    await browserScreen.goToAddress(dappUrl, web3OnBoardDappScreen);
 
-    await Web3OnBoardDappScreen.connect();
+    await web3OnBoardDappScreen.connect();
 
-    await Web3OnBoardDappScreen.tapMetaMaskConnectButton();
+    await web3OnBoardDappScreen.tapMetaMaskConnectButton();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
     await driver.pause(5000);
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
-      await ConnectModalComponent.connectApprovalButton,
+      await connectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
 
-    await ConnectModalComponent.tapConnectApproval();
+    await connectModalComponent.tapConnectApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
@@ -100,15 +91,15 @@ describe.skip('JS SDK E2E', () => {
     }
 
     await driver.pause(5000);
-    await Web3OnBoardDappScreen.sign();
+    await web3OnBoardDappScreen.sign();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
   });
 
   it.skip('Connect to the SDK Playground Dapp', async () => {
@@ -119,66 +110,66 @@ describe.skip('JS SDK E2E', () => {
     await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
+      ? safariBrowserScreen
+      : chromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
     const dappUrl = process.env.SDK_PLAYGROUND_DAPP_URL ?? '';
 
-    await browserScreen.goToAddress(dappUrl, DevnextJSDappScreen);
+    await browserScreen.goToAddress(dappUrl, devnextJSDappScreen);
 
-    await SdkPlaygroundDappScreen.terminate();
+    await sdkPlaygroundDappScreen.terminate();
 
-    await SdkPlaygroundDappScreen.connect();
+    await sdkPlaygroundDappScreen.connect();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
     await driver.pause(5000);
 
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
-      await ConnectModalComponent.connectApprovalButton,
+      await connectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
 
-    await ConnectModalComponent.tapConnectApproval();
+    await connectModalComponent.tapConnectApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
       await launchApp(BROWSER_BUNDLE_ID);
     }
 
-    await SdkPlaygroundDappScreen.signTypedDataV4();
+    await sdkPlaygroundDappScreen.signTypedDataV4();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
       await launchApp(BROWSER_BUNDLE_ID);
     }
 
-    await SdkPlaygroundDappScreen.switchToGoerliNetwork();
+    await sdkPlaygroundDappScreen.switchToGoerliNetwork();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SwitchNetworkModalComponent.switchNetwork();
+    await switchNetworkModalComponent.switchNetwork();
 
     if (driver.isIOS) {
-      await NetworkSwitchedModalComponent.tapGotItButton();
+      await networkSwitchedModalComponent.tapGotItButton();
 
       await driver.pause(1000);
       await launchApp(BROWSER_BUNDLE_ID);
@@ -189,45 +180,45 @@ describe.skip('JS SDK E2E', () => {
 
       await launchMetaMask();
 
-      await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+      await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
       await driver.pause(3000);
 
-      await NetworkSwitchedModalComponent.tapGotItButton();
+      await networkSwitchedModalComponent.tapGotItButton();
 
       await driver.pause(1000);
 
       await launchApp(BROWSER_BUNDLE_ID);
     }
 
-    await SdkPlaygroundDappScreen.sendBatchRpcCalls();
+    await sdkPlaygroundDappScreen.sendBatchRpcCalls();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
       await launchApp(BROWSER_BUNDLE_ID);
     }
 
-    await SdkPlaygroundDappScreen.sendTransaction();
+    await sdkPlaygroundDappScreen.sendTransaction();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SendTxModalComponent.reject();
+    await sendTxModalComponent.reject();
 
     await driver.pause(1000);
 
@@ -243,17 +234,17 @@ describe.skip('JS SDK E2E', () => {
 
     await driver.pause(15000);
 
-    await ReactNativeDappScreen.connect();
+    await reactNativeDappScreen.connect();
 
     await driver.pause(5000);
 
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
-      await ConnectModalComponent.connectApprovalButton,
+      await connectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
 
-    await ConnectModalComponent.tapConnectApproval();
+    await connectModalComponent.tapConnectApproval();
 
     if (driver.isIOS) {
       await driver.pause(1000);
@@ -261,10 +252,10 @@ describe.skip('JS SDK E2E', () => {
     }
 
     await driver.pause(5000);
-    await ReactNativeDappScreen.sign();
+    await reactNativeDappScreen.sign();
 
     await driver.pause(5000);
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
   });
 
   it.skip('Clear all connections', async () => {
@@ -277,13 +268,13 @@ describe.skip('JS SDK E2E', () => {
     await launchMetaMask();
 
     await driver.pause(5000);
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
     await driver.pause(5000);
 
     try {
-      await BottomNavigationComponent.tapSettingsButton();
-      await SettingsScreen.clearAllConnections();
-      await BottomNavigationComponent.tapHomeButton();
+      await bottomNavigationComponent.tapSettingsButton();
+      await settingsScreen.clearAllConnections();
+      await bottomNavigationComponent.tapHomeButton();
     } catch (e) {
       console.log('No Connections to clear', e.message);
     }
@@ -297,74 +288,74 @@ describe.skip('JS SDK E2E', () => {
     await launchApp(BROWSER_BUNDLE_ID);
 
     const browserScreen = driver.isIOS
-      ? SafariBrowserScreen
-      : ChromeBrowserScreen;
+      ? safariBrowserScreen
+      : chromeBrowserScreen;
 
     // Get and navigate to the Dapp URL
     const testDappUrl = process.env.TEST_DAPP_URL ?? '';
 
     if (driver.isAndroid) {
-      await (browserScreen as typeof ChromeBrowserScreen).tapSwitchTabsButton();
+      await (browserScreen as typeof chromeBrowserScreen).tapSwitchTabsButton();
       await (
-        browserScreen as typeof ChromeBrowserScreen
+        browserScreen as typeof chromeBrowserScreen
       ).tapBrowserMoreOptionsButton();
 
       await (
-        browserScreen as typeof ChromeBrowserScreen
+        browserScreen as typeof chromeBrowserScreen
       ).tapCloseAllTabsButton();
 
       await (
-        browserScreen as typeof ChromeBrowserScreen
+        browserScreen as typeof chromeBrowserScreen
       ).tapConfirmCloseAllTabsButton();
-      await (browserScreen as typeof ChromeBrowserScreen).tapNewTabButton();
+      await (browserScreen as typeof chromeBrowserScreen).tapNewTabButton();
     }
 
-    await browserScreen.goToAddress(testDappUrl, DevnextJSDappScreen);
+    await browserScreen.goToAddress(testDappUrl, devnextJSDappScreen);
 
     await driver.pause(5000);
 
-    await TestDappScreen.terminate();
+    await testDappScreen.terminate();
     await driver.pause(1000);
-    await TestDappScreen.connect();
+    await testDappScreen.connect();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
     await driver.pause(5000);
 
-    await LockScreen.unlockMMifLocked(WALLET_PASSWORD);
+    await lockScreen.unlockMMifLocked(WALLET_PASSWORD);
 
     await expect(
-      await ConnectModalComponent.connectApprovalButton,
+      await connectModalComponent.connectApprovalButton,
     ).toBeDisplayed();
 
-    await ConnectModalComponent.tapConnectApproval();
+    await connectModalComponent.tapConnectApproval();
 
-    await TestDappScreen.signTypedDataV3();
+    await testDappScreen.signTypedDataV3();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
-    await TestDappScreen.personalSign();
+    await testDappScreen.personalSign();
 
     if (driver.isAndroid) {
-      await AndroidOpenWithComponent.tapOpenWithMetaMaskQA();
+      await androidOpenWithComponent.tapOpenWithMetaMaskQA();
     } else if (driver.isIOS) {
-      await IOSOpenInComponent.tapOpen();
+      await iosOpenInComponent.tapOpen();
     }
 
     await driver.pause(5000);
 
-    await SignModalComponent.tapSignApproval();
-    await SignModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
+    await signModalComponent.tapSignApproval();
 
     await driver.pause(2000);
   });

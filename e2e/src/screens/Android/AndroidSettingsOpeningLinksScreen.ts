@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio';
-import { METAMASK_APP_NAME_ANDROID } from '@util/Constants';
-import Gestures from '@util/Gestures';
-import { getSelectorForPlatform } from '@util/Utils';
-import { AndroidSelector } from '@util/Selectors';
+import { METAMASK_APP_NAME_ANDROID } from '@util/constants';
+import { swipeByPercentage } from '@util/gestures';
+import { getSelectorForPlatform } from '@util/utils';
+import { AndroidSelector } from '@util/selectors';
 
 class AndroidSettingsOpeningLinksScreen {
   get openingLinksMetaMaskAppOption(): ChainablePromiseElement {
@@ -80,7 +80,7 @@ class AndroidSettingsOpeningLinksScreen {
       await this.openingLinksMetaMaskAppOption.isDisplayed();
 
     while (!isMetaMaskLinksButtonDisplayed) {
-      await Gestures.swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
+      await swipeByPercentage({ x: 50, y: 90 }, { x: 50, y: 5 });
       isMetaMaskLinksButtonDisplayed =
         await this.openingLinksMetaMaskAppOption.isDisplayed();
     }
