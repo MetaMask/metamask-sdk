@@ -18,9 +18,9 @@
     "build": "yarn clean && npx tsup",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
-    "lint": "yarn biome lint ./src",
-    "lint:ci": "yarn biome ci ./src",
-    "lint:fix": "yarn biome format --write ./src",
+    "lint": "yarn biome lint  --max-diagnostics 1000 ./src",
+    "lint:ci": "yarn biome ci  --max-diagnostics 1000 ./src",
+    "lint:fix": "yarn biome format  --max-diagnostics 1000 --write ./src",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/multichain-sdk",
     "test": "vitest run",
     "test:unit": "vitest run",
@@ -49,12 +49,14 @@
   "license": "MIT",
   "dependencies": {
     "@metamask/multichain-api-client": "^0.6.4",
+    "@metamask/onboarding": "^1.0.1",
     "@metamask/sdk-analytics": "workspace:^",
+    "@metamask/sdk-install-modal-web": "workspace:^",
     "@metamask/utils": "^11.4.0",
     "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.11.0",
     "cross-fetch": "^4.1.0",
-    "eventemitter2": "^6.4.9",
+    "eventemitter3": "^5.0.1",
     "uuid": "^11.1.0"
   }
 }

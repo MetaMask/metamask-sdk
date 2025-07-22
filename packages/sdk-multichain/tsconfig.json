@@ -13,7 +13,7 @@
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
     "incremental": false,
-    "lib": ["DOM", "ES2016"],
+    "lib": ["DOM", "ES2020"],
     "skipLibCheck": true,
     "types": ["node"],
     "paths": {

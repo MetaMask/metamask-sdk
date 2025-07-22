@@ -1,5 +1,8 @@
-import type { ExtensionEvents } from './extension';
-import type { SDKEvents } from './sdk';
+import type { SessionData } from "@metamask/multichain-api-client";
 
-export type EventTypes = SDKEvents | ExtensionEvents;
-export type { SDKEvents, ExtensionEvents };
+export type SDKEvents = {
+	display_uri: [evt: string];
+	sessionChanged: [evt: SessionData | undefined];
+};
+
+export type EventTypes = SDKEvents;
