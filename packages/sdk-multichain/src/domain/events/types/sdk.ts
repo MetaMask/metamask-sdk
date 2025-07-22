@@ -1,3 +1,3 @@
 export type SDKEvents = {
-  display_uri: [evt: string];
+	display_uri: [evt: string];
 };
