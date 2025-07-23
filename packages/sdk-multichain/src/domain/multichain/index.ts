@@ -1,8 +1,8 @@
-import type { SessionData } from '@metamask/multichain-api-client';
-import type { CaipAccountId, Json } from '@metamask/utils';
+import type { SessionData } from "@metamask/multichain-api-client";
+import type { CaipAccountId, Json } from "@metamask/utils";
 
-import type { StoreClient } from '../store/client';
-import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } from './api/types';
+import type { StoreClient } from "../store/client";
+import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } from "./api/types";
 
 /**
  * Configuration settings for the dapp using the SDK.
@@ -12,8 +12,8 @@ import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } f
  * - Using a base64-encoded icon
  */
 export type DappSettings = {
-  name?: string;
-  url?: string;
+	name?: string;
+	url?: string;
 } & ({ iconUrl?: string } | { base64Icon?: string });
 
 /**
@@ -24,26 +24,26 @@ export type DappSettings = {
  * analytics, storage, UI preferences, and transport options.
  */
 export type MultichainSDKConstructor = {
-  /** Dapp identification and branding settings */
-  dapp: DappSettings;
-  /** Optional API configuration for external services */
-  api?: {
-    /** The Infura API key to use for RPC requests */
-    infuraAPIKey?: string;
-    /** A map of RPC URLs to use for read-only requests */
-    readonlyRPCMap?: RPC_URLS_MAP;
-  };
-  /** Analytics configuration */
-  analytics: { enabled: false } | { enabled: true; integrationType: string };
-  /** Storage client for persisting SDK data */
-  storage: StoreClient;
-  /** UI configuration options */
-  ui: { headless: boolean };
-  /** Optional transport configuration */
-  transport?: {
-    /** Extension ID for browser extension transport */
-    extensionId?: string;
-  };
+	/** Dapp identification and branding settings */
+	dapp: DappSettings;
+	/** Optional API configuration for external services */
+	api?: {
+		/** The Infura API key to use for RPC requests */
+		infuraAPIKey?: string;
+		/** A map of RPC URLs to use for read-only requests */
+		readonlyRPCMap?: RPC_URLS_MAP;
+	};
+	/** Analytics configuration */
+	analytics: { enabled: false } | { enabled: true; integrationType: string };
+	/** Storage client for persisting SDK data */
+	storage: StoreClient;
+	/** UI configuration options */
+	ui: { headless: boolean };
+	/** Optional transport configuration */
+	transport?: {
+		/** Extension ID for browser extension transport */
+		extensionId?: string;
+	};
 };
 
 /**
@@ -54,56 +54,53 @@ export type MultichainSDKConstructor = {
  */
 /* c8 ignore start */
 export abstract class MultichainSDKBase {
-  public abstract isInitialized: boolean;
-  public abstract session: SessionData | undefined;
+	public abstract isInitialized: boolean;
+	public abstract session: SessionData | undefined;
 
-  /**
-   * Establishes a connection to the multichain provider, or re-use existing session
-   *
-   * @returns Promise that resolves to the session data
-   */
-  abstract connect(
-    scopes: Scope[],
-    caipAccountIds: CaipAccountId[],
-  ): Promise<SessionData>;
+	/**
+	 * Establishes a connection to the multichain provider, or re-use existing session
+	 *
+	 * @returns Promise that resolves to the session data
+	 */
+	abstract connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<SessionData>;
 
-  /**
-   * Disconnects from the multichain provider.
-   *
-   * @returns Promise that resolves when disconnection is complete
-   */
-  abstract disconnect(): Promise<void>;
-  /**
-   * Revokes the current session.
-   *
-   * @returns Promise that resolves when the session has been revoked
-   */
-  abstract revokeSession(): Promise<void>;
+	/**
+	 * Disconnects from the multichain provider.
+	 *
+	 * @returns Promise that resolves when disconnection is complete
+	 */
+	abstract disconnect(): Promise<void>;
+	/**
+	 * Revokes the current session.
+	 *
+	 * @returns Promise that resolves when the session has been revoked
+	 */
+	abstract revokeSession(): Promise<void>;
 
-  /**
-   * Registers a listener for incoming notifications.
-   *
-   * @param listener - Callback function to handle notifications
-   * @returns Function to remove the listener
-   */
-  abstract onNotification(listener: NotificationCallback): () => void;
+	/**
+	 * Registers a listener for incoming notifications.
+	 *
+	 * @param listener - Callback function to handle notifications
+	 * @returns Function to remove the listener
+	 */
+	abstract onNotification(listener: NotificationCallback): () => void;
 
-  /**
-   * Invokes an RPC method with the specified options.
-   *
-   * @param options - The method invocation options including scope and request details
-   * @returns Promise that resolves to the method result
-   */
-  abstract invokeMethod(options: InvokeMethodOptions): Promise<Json>;
+	/**
+	 * Invokes an RPC method with the specified options.
+	 *
+	 * @param options - The method invocation options including scope and request details
+	 * @returns Promise that resolves to the method result
+	 */
+	abstract invokeMethod(options: InvokeMethodOptions): Promise<Json>;
 
-  /**
-   * Storage client instance for persisting SDK data.
-   */
-  abstract readonly storage: StoreClient;
+	/**
+	 * Storage client instance for persisting SDK data.
+	 */
+	abstract readonly storage: StoreClient;
 }
 /* c8 ignore end */
 
-export type { SessionData } from '@metamask/multichain-api-client';
+export type { SessionData } from "@metamask/multichain-api-client";
 
 /**
  * Base options for Multichain SDK configuration.
@@ -111,10 +108,7 @@ export type { SessionData } from '@metamask/multichain-api-client';
  * This type includes the core configuration options excluding storage,
  * which is handled separately in the full SDK options.
  */
-export type MultichainSDKBaseOptions = Pick<
-  MultichainSDKConstructor,
-  'dapp' | 'analytics' | 'ui' | 'transport'
->;
+export type MultichainSDKBaseOptions = Pick<MultichainSDKConstructor, "dapp" | "analytics" | "ui" | "transport">;
 
 /**
  * Complete options for Multichain SDK configuration.
@@ -123,12 +117,12 @@ export type MultichainSDKBaseOptions = Pick<
  * providing all necessary options for SDK initialization.
  */
 export type MultichainSDKOptions = MultichainSDKBaseOptions & {
-  /** Storage client for persisting SDK data */
-  storage: StoreClient;
+	/** Storage client for persisting SDK data */
+	storage: StoreClient;
 };
 
-export type CreateMultichainFN = ( options: MultichainSDKBaseOptions ) => Promise<MultichainSDKBase>;
+export type CreateMultichainFN = (options: MultichainSDKBaseOptions) => Promise<MultichainSDKBase>;
 
-export type * from './api/types';
-export * from './api/constants';
-export * from './api/infura';
+export type * from "./api/types";
+export * from "./api/constants";
+export * from "./api/infura";
