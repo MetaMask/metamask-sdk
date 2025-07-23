@@ -1,5 +1,5 @@
 /* c8 ignore start */
-import type { RPC_URLS_MAP } from "./types";
+import type { RPC_URLS_MAP } from './types';
 
 export const infuraRpcUrls: RPC_URLS_MAP = {
   // ###### Ethereum ######
@@ -63,8 +63,6 @@ export const infuraRpcUrls: RPC_URLS_MAP = {
   // Alfajores Testnet
   'eip155:44787': 'https://celo-alfajores.infura.io/v3/',
 };
-
-
 
 /**
  * Standard RPC method names used in the MetaMask ecosystem.

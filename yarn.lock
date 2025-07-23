@@ -11220,7 +11220,9 @@ __metadata:
     "@biomejs/biome": 2.0.0
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/multichain-api-client": ^0.6.4
+    "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"
+    "@metamask/sdk-install-modal-web": "workspace:^"
     "@metamask/utils": ^11.4.0
     "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
@@ -11228,7 +11230,7 @@ __metadata:
     bowser: ^2.11.0
     cross-fetch: ^4.1.0
     esbuild-plugin-umd-wrapper: ^3.0.0
-    eventemitter2: ^6.4.9
+    eventemitter3: ^5.0.1
     jsdom: ^26.1.0
     nock: ^14.0.4
     prettier: ^3.3.3
@@ -11544,7 +11546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
@@ -22632,9 +22634,9 @@ __metadata:
   linkType: hard
 
 "agent-base@npm:^7.1.2":
-  version: 7.1.4
-  resolution: "agent-base@npm:7.1.4"
-  checksum: 86a7f542af277cfbd77dd61e7df8422f90bac512953709003a1c530171a9d019d072e2400eab2b59f84b49ab9dd237be44315ca663ac73e82b3922d10ea5eafa
+  version: 7.1.3
+  resolution: "agent-base@npm:7.1.3"
+  checksum: 87bb7ee54f5ecf0ccbfcba0b07473885c43ecd76cb29a8db17d6137a19d9f9cd443a2a7c5fd8a3f24d58ad8145f9eb49116344a66b107e1aeab82cf2383f4753
   languageName: node
   linkType: hard
 
@@ -39847,6 +39849,7 @@ __metadata:
     "@babel/core": ^7.23.5
     "@babel/plugin-syntax-flow": ^7.21.4
     "@babel/plugin-transform-react-jsx": ^7.21.5
+    "@biomejs/biome": 2.0.0
     "@commitlint/cli": ^17.6.7
     "@commitlint/config-conventional": ^17.6.7
     "@lavamoat/allow-scripts": ^2.3.1

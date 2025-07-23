@@ -1,6 +1,5 @@
-
-import { BaseErr } from "./base";
-import type {  StorageErrorCodes } from "./types";
+import { BaseErr } from './base';
+import type { StorageErrorCodes } from './types';
 
 export class StorageGetErr extends BaseErr<'Storage', StorageErrorCodes> {
   static readonly code = 60;
@@ -9,10 +8,7 @@ export class StorageGetErr extends BaseErr<'Storage', StorageErrorCodes> {
     public readonly key: string,
     public readonly reason: string,
   ) {
-    super(
-      `StorageErr${StorageGetErr.code}: ${platform} storage get error in key: ${key} - ${reason}`,
-      StorageGetErr.code
-    );
+    super(`StorageErr${StorageGetErr.code}: ${platform} storage get error in key: ${key} - ${reason}`, StorageGetErr.code);
   }
 }
 
@@ -23,10 +19,7 @@ export class StorageSetErr extends BaseErr<'Storage', StorageErrorCodes> {
     public readonly key: string,
     public readonly reason: string,
   ) {
-    super(
-      `StorageErr${StorageSetErr.code}: ${platform} storage set error in key: ${key} - ${reason}`,
-      StorageSetErr.code
-    );
+    super(`StorageErr${StorageSetErr.code}: ${platform} storage set error in key: ${key} - ${reason}`, StorageSetErr.code);
   }
 }
 
@@ -37,9 +30,6 @@ export class StorageDeleteErr extends BaseErr<'Storage', StorageErrorCodes> {
     public readonly key: string,
     public readonly reason: string,
   ) {
-    super(
-      `StorageErr${StorageDeleteErr.code}: ${platform} storage delete error in key: ${key} - ${reason}`,
-      StorageDeleteErr.code
-    );
+    super(`StorageErr${StorageDeleteErr.code}: ${platform} storage delete error in key: ${key} - ${reason}`, StorageDeleteErr.code);
   }
 }

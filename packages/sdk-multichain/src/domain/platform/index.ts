@@ -18,41 +18,32 @@ function isNotBrowser() {
     return true;
   }
   if (!window?.navigator) {
-    return true
-  }
-  if (typeof global !== 'undefined' &&
-    global?.navigator?.product === 'ReactNative') {
     return true;
   }
-  return navigator?.product === 'ReactNative'
+  if (typeof global !== 'undefined' && global?.navigator?.product === 'ReactNative') {
+    return true;
+  }
+  return navigator?.product === 'ReactNative';
 }
 
 function isReactNative() {
   const hasWindowNavigator = typeof window !== 'undefined' && window.navigator !== undefined;
-  const navigator = hasWindowNavigator ?
-    window.navigator :
-    undefined;
+  const navigator = hasWindowNavigator ? window.navigator : undefined;
 
   if (!navigator) {
     return false;
   }
 
-  return hasWindowNavigator && window.navigator?.product === 'ReactNative'
+  return hasWindowNavigator && window.navigator?.product === 'ReactNative';
 }
 
 function isMetaMaskMobileWebView() {
-  return (
-    typeof window !== 'undefined' &&
-    Boolean(window.ReactNativeWebView) &&
-    Boolean(window.navigator.userAgent.endsWith('MetaMaskMobile'))
-  );
+  return typeof window !== 'undefined' && Boolean(window.ReactNativeWebView) && Boolean(window.navigator.userAgent.endsWith('MetaMaskMobile'));
 }
 
 function isMobile() {
   const browser = Bowser.parse(window.navigator.userAgent);
-  return (
-    browser?.platform?.type === 'mobile' || browser?.platform?.type === 'tablet'
-  );
+  return browser?.platform?.type === 'mobile' || browser?.platform?.type === 'tablet';
 }
 
 /**
@@ -72,4 +63,14 @@ export function getPlatformType() {
     return PlatformType.MobileWeb;
   }
   return PlatformType.DesktopWeb;
+}
+
+/**
+ * Check if MetaMask extension is installed
+ */
+export function isMetamaskExtensionInstalled(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  return Boolean(window.ethereum?.isMetaMask);
 }

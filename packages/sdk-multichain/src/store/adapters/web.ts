@@ -1,7 +1,7 @@
-import { StoreAdapter } from "../../domain";
+import { StoreAdapter } from '../../domain';
 
 export class StoreAdapterWeb extends StoreAdapter {
-  readonly platform = 'web'
+  readonly platform = 'web';
 
   private get internal() {
     if (typeof window === 'undefined' || !window.localStorage) {

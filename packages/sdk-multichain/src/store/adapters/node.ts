@@ -1,16 +1,16 @@
-import { StoreAdapter } from "../../domain";
-import fs from 'fs'
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
+import { StoreAdapter } from '../../domain';
 
 const CONFIG_FILE = path.resolve(process.cwd(), '.metamask.json');
 
 export class StoreAdapterNode extends StoreAdapter {
-  readonly platform = 'node'
+  readonly platform = 'node';
 
   private safeParse(contents: string): Record<string, string> {
     try {
       return JSON.parse(contents);
-    } catch (e) {
+    } catch (_e) {
       return {};
     }
   }

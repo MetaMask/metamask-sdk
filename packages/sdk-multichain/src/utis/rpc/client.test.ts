@@ -1,17 +1,7 @@
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import {
-  type MultichainSDKConstructor,
-  type InvokeMethodOptions,
-  type Scope,
-  RPC_METHODS,
-  RPCInvokeMethodErr,
-  RPCReadonlyResponseErr,
-  RPCHttpErr,
-  RPCReadonlyRequestErr,
-} from '../../domain';
+import { type InvokeMethodOptions, type ModalFactoryOptions, RPC_METHODS, RPCHttpErr, RPCInvokeMethodErr, RPCReadonlyRequestErr, RPCReadonlyResponseErr } from '../../domain';
 import type { RPCClient } from './client';
-
 
 // Mock cross-fetch with proper implementation
 vi.mock('cross-fetch', () => {
@@ -30,13 +20,12 @@ vi.mock('./client', async () => {
   };
 });
 
-
 t.describe('RPCClient', () => {
   let mockProvider: any;
-  let mockConfig: MultichainSDKConstructor['api'];
+  let mockConfig: ModalFactoryOptions['api'];
   let sdkInfo: string;
   let rpcClient: RPCClient;
-  let rpcClientModule: typeof RPCClient
+  let rpcClientModule: typeof RPCClient;
   let defaultHeaders: Record<string, string>;
   let headers: Record<string, string>;
   let mockFetch: any;
@@ -50,7 +39,7 @@ t.describe('RPCClient', () => {
         method: 'eth_getBalance',
         params: { address: '0x123', blockNumber: 'latest' },
       },
-    }
+    };
     mockProvider = {
       invokeMethod: t.vi.fn(),
     };
@@ -72,11 +61,11 @@ t.describe('RPCClient', () => {
     defaultHeaders = {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-    }
+    };
     headers = {
       ...defaultHeaders,
       'Metamask-Sdk-Info': sdkInfo,
-    }
+    };
   });
 
   t.afterEach(async () => {
@@ -100,8 +89,6 @@ t.describe('RPCClient', () => {
   });
 
   t.describe('invokeMethod', () => {
-
-
     t.describe('redirect to provider cases', () => {
       t.it('should not redirect to provider for readonly methods', async () => {
         // Mock successful fetch response
@@ -122,14 +109,11 @@ t.describe('RPCClient', () => {
 
         t.expect(result).toBe('0x1234567890abcdef');
         t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
-        t.expect(mockFetch).toHaveBeenCalledWith(
-          'https://mainnet.infura.io/v3/test-infura-key',
-          {
-            method: 'POST',
-            headers: headers,
-            body: t.expect.stringContaining('"method":"eth_getBalance"'),
-          }
-        );
+        t.expect(mockFetch).toHaveBeenCalledWith('https://mainnet.infura.io/v3/test-infura-key', {
+          method: 'POST',
+          headers: headers,
+          body: t.expect.stringContaining('"method":"eth_getBalance"'),
+        });
         t.expect(mockResponse.json).toHaveBeenCalled();
       });
 
@@ -190,14 +174,11 @@ t.describe('RPCClient', () => {
         t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
 
         // Should still use Infura URL since infuraAPIKey is provided
-        t.expect(mockFetch).toHaveBeenCalledWith(
-          'https://mainnet.infura.io/v3/test-infura-key',
-          {
-            method: 'POST',
-            headers: headers,
-            body: t.expect.stringMatching('"method":"eth_getBalance"'),
-          }
-        );
+        t.expect(mockFetch).toHaveBeenCalledWith('https://mainnet.infura.io/v3/test-infura-key', {
+          method: 'POST',
+          headers: headers,
+          body: t.expect.stringMatching('"method":"eth_getBalance"'),
+        });
       });
 
       t.it('should use only default headers when RPC endpoint does not include infura and custom readonly RPC is provided', async () => {
@@ -226,14 +207,11 @@ t.describe('RPCClient', () => {
         const result = await clientWithCustomRPC.invokeMethod(baseOptions);
         t.expect(result).toBe('0x123456account12345');
         t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
-        t.expect(mockFetch).toHaveBeenCalledWith(
-          'https://custom-ethereum-node.com/rpc',
-          {
-            method: 'POST',
-            headers: defaultHeaders,
-            body: t.expect.stringMatching(/^\{"jsonrpc":"2\.0","method":"eth_accounts","id":\d+\}$/),
-          }
-        );
+        t.expect(mockFetch).toHaveBeenCalledWith('https://custom-ethereum-node.com/rpc', {
+          method: 'POST',
+          headers: defaultHeaders,
+          body: t.expect.stringMatching(/^\{"jsonrpc":"2\.0","method":"eth_accounts","id":\d+\}$/),
+        });
       });
 
       t.it('should redirect to provider for methods in METHODS_TO_REDIRECT', async () => {
