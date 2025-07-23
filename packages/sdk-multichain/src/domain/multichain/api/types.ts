@@ -1,5 +1,4 @@
-import type { Json } from "@metamask/utils";
-import type EIP155 from "./eip155";
+import type EIP155 from './eip155';
 
 /**
  * Represents a blockchain scope identifier in CAIP format.
@@ -10,10 +9,7 @@ import type EIP155 from "./eip155";
  *
  * @template T - The RPC API type to extract available scopes from
  */
-export type Scope<T extends RPCAPI = RPCAPI> =
-  | `eip155:${string}`
-  | `solana:${string}`
-  | `${Extract<keyof T, string>}:${string}`;
+export type Scope<T extends RPCAPI = RPCAPI> = `eip155:${string}` | `solana:${string}` | `${Extract<keyof T, string>}:${string}`;
 
 /**
  * Represents a generic RPC (Remote Procedure Call) method function type.
@@ -69,7 +65,6 @@ export type InvokeMethodOptions = {
   };
 };
 
-
 /**
  * Mapping of CAIP chain IDs to their corresponding RPC URLs.
  *
@@ -93,5 +88,7 @@ export type RPC_URLS_MAP = {
  * @property result - The result of the RPC call JSON
  */
 export type RPCResponse = {
-  id: number, jsonrpc: string, result: unknown
-}
+  id: number;
+  jsonrpc: string;
+  result: unknown;
+};
