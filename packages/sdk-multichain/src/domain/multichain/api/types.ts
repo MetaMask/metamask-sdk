@@ -33,8 +33,8 @@ export type RpcMethod<Params, Return> = (params: Params) => Promise<Return> | Re
  * blockchain standards to be added in the future.
  */
 export type RPCAPI = {
-  /** EIP-155 compliant RPC methods for Ethereum-based chains */
-  eip155: EIP155;
+	/** EIP-155 compliant RPC methods for Ethereum-based chains */
+	eip155: EIP155;
 };
 
 /**
@@ -54,15 +54,15 @@ export type NotificationCallback = (notification: unknown) => void;
  * callers to specify both the blockchain scope and the specific request details.
  */
 export type InvokeMethodOptions = {
-  /** The blockchain scope/standard to use for the method call */
-  scope: Scope;
-  /** The request details including method name and parameters */
-  request: {
-    /** The name of the RPC method to invoke */
-    method: string;
-    /** The parameters to pass to the RPC method */
-    params: unknown;
-  };
+	/** The blockchain scope/standard to use for the method call */
+	scope: Scope;
+	/** The request details including method name and parameters */
+	request: {
+		/** The name of the RPC method to invoke */
+		method: string;
+		/** The parameters to pass to the RPC method */
+		params: unknown;
+	};
 };
 
 /**
@@ -72,8 +72,8 @@ export type InvokeMethodOptions = {
  * for different blockchain networks using CAIP-2 format identifiers.
  */
 export type RPC_URLS_MAP = {
-  /** CAIP-2 format chain ID mapped to its RPC URL (e.g., "eip155:1" -> "https://...") */
-  [chainId: `${string}:${string}`]: string;
+	/** CAIP-2 format chain ID mapped to its RPC URL (e.g., "eip155:1" -> "https://...") */
+	[chainId: `${string}:${string}`]: string;
 };
 
 /**
@@ -88,7 +88,7 @@ export type RPC_URLS_MAP = {
  * @property result - The result of the RPC call JSON
  */
 export type RPCResponse = {
-  id: number;
-  jsonrpc: string;
-  result: unknown;
+	id: number;
+	jsonrpc: string;
+	result: unknown;
 };
