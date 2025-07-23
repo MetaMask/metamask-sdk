@@ -6,7 +6,7 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"includes": ["**", "!**/node_modules/**", "!**/dist/**"],
+		"includes": ["packages/sdk-multichain/src/**", "!**/node_modules/**", "!**/dist/**"],
 		"ignoreUnknown": false
 	},
 	"formatter": {
@@ -22,7 +22,7 @@
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "single"
 		}
 	},
 	"assist": {

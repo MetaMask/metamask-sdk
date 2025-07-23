@@ -1,49 +1,49 @@
-import Bowser from "bowser";
+import Bowser from 'bowser';
 
 export enum PlatformType {
 	// React Native or Nodejs
-	NonBrowser = "nodejs",
+	NonBrowser = 'nodejs',
 	// MetaMask Mobile in-app browser
-	MetaMaskMobileWebview = "in-app-browser",
+	MetaMaskMobileWebview = 'in-app-browser',
 	// Desktop Browser
-	DesktopWeb = "web-desktop",
+	DesktopWeb = 'web-desktop',
 	// Mobile Browser
-	MobileWeb = "web-mobile",
+	MobileWeb = 'web-mobile',
 	// ReactNative
-	ReactNative = "react-native",
+	ReactNative = 'react-native',
 }
 
 function isNotBrowser() {
-	if (typeof window === "undefined") {
+	if (typeof window === 'undefined') {
 		return true;
 	}
 	if (!window?.navigator) {
 		return true;
 	}
-	if (typeof global !== "undefined" && global?.navigator?.product === "ReactNative") {
+	if (typeof global !== 'undefined' && global?.navigator?.product === 'ReactNative') {
 		return true;
 	}
-	return navigator?.product === "ReactNative";
+	return navigator?.product === 'ReactNative';
 }
 
 function isReactNative() {
-	const hasWindowNavigator = typeof window !== "undefined" && window.navigator !== undefined;
+	const hasWindowNavigator = typeof window !== 'undefined' && window.navigator !== undefined;
 	const navigator = hasWindowNavigator ? window.navigator : undefined;
 
 	if (!navigator) {
 		return false;
 	}
 
-	return hasWindowNavigator && window.navigator?.product === "ReactNative";
+	return hasWindowNavigator && window.navigator?.product === 'ReactNative';
 }
 
 function isMetaMaskMobileWebView() {
-	return typeof window !== "undefined" && Boolean(window.ReactNativeWebView) && Boolean(window.navigator.userAgent.endsWith("MetaMaskMobile"));
+	return typeof window !== 'undefined' && Boolean(window.ReactNativeWebView) && Boolean(window.navigator.userAgent.endsWith('MetaMaskMobile'));
 }
 
 function isMobile() {
 	const browser = Bowser.parse(window.navigator.userAgent);
-	return browser?.platform?.type === "mobile" || browser?.platform?.type === "tablet";
+	return browser?.platform?.type === 'mobile' || browser?.platform?.type === 'tablet';
 }
 
 /**

@@ -1,6 +1,6 @@
-import type { Json } from "@metamask/utils";
-import fetch from "cross-fetch";
-import type { InvokeMethodParams, MultichainApiClient } from "@metamask/multichain-api-client";
+import type { Json } from '@metamask/utils';
+import fetch from 'cross-fetch';
+import type { InvokeMethodParams, MultichainApiClient } from '@metamask/multichain-api-client';
 
 import {
 	type InvokeMethodOptions,
@@ -15,7 +15,7 @@ import {
 	RPCReadonlyRequestErr,
 	RPCInvokeMethodErr,
 	getInfuraRpcUrls,
-} from "../../domain";
+} from '../../domain';
 
 let rpcId = 1;
 
@@ -27,7 +27,7 @@ export function getNextRpcId() {
 export class RPCClient {
 	constructor(
 		private readonly provider: MultichainApiClient<RPCAPI>,
-		private readonly config: MultichainSDKConstructor["api"],
+		private readonly config: MultichainSDKConstructor['api'],
 		private readonly sdkInfo: string,
 	) {}
 
@@ -61,13 +61,13 @@ export class RPCClient {
 
 	private getHeaders(rpcEndpoint: string) {
 		const defaultHeaders = {
-			Accept: "application/json",
-			"Content-Type": "application/json",
+			Accept: 'application/json',
+			'Content-Type': 'application/json',
 		};
-		if (rpcEndpoint.includes("infura")) {
+		if (rpcEndpoint.includes('infura')) {
 			return {
 				...defaultHeaders,
-				"Metamask-Sdk-Info": this.sdkInfo,
+				'Metamask-Sdk-Info': this.sdkInfo,
 			};
 		}
 		return defaultHeaders;
@@ -76,12 +76,12 @@ export class RPCClient {
 	private async runReadOnlyMethod(options: InvokeMethodOptions, rpcEndpoint: string) {
 		const { request } = options;
 		const body = JSON.stringify({
-			jsonrpc: "2.0",
+			jsonrpc: '2.0',
 			method: request.method,
 			params: request.params,
 			id: getNextRpcId(),
 		});
-		const rpcRequest = await this.fetch(rpcEndpoint, body, "POST", this.getHeaders(rpcEndpoint));
+		const rpcRequest = await this.fetch(rpcEndpoint, body, 'POST', this.getHeaders(rpcEndpoint));
 		const response = await this.parseResponse(rpcRequest);
 		return response;
 	}

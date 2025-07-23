@@ -1,4 +1,4 @@
-declare module "@paulmillr/qr";
+declare module '@paulmillr/qr';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export declare const mmsdk: any;
 declare global {

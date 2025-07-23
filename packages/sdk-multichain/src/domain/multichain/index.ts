@@ -1,8 +1,8 @@
-import type { SessionData } from "@metamask/multichain-api-client";
-import type { CaipAccountId, Json } from "@metamask/utils";
+import type { SessionData } from '@metamask/multichain-api-client';
+import type { CaipAccountId, Json } from '@metamask/utils';
 
-import type { StoreClient } from "../store/client";
-import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } from "./api/types";
+import type { StoreClient } from '../store/client';
+import type { InvokeMethodOptions, NotificationCallback, RPC_URLS_MAP, Scope } from './api/types';
 
 /**
  * Configuration settings for the dapp using the SDK.
@@ -100,7 +100,7 @@ export abstract class MultichainSDKBase {
 }
 /* c8 ignore end */
 
-export type { SessionData } from "@metamask/multichain-api-client";
+export type { SessionData } from '@metamask/multichain-api-client';
 
 /**
  * Base options for Multichain SDK configuration.
@@ -108,7 +108,7 @@ export type { SessionData } from "@metamask/multichain-api-client";
  * This type includes the core configuration options excluding storage,
  * which is handled separately in the full SDK options.
  */
-export type MultichainSDKBaseOptions = Pick<MultichainSDKConstructor, "dapp" | "analytics" | "ui" | "transport">;
+export type MultichainSDKBaseOptions = Pick<MultichainSDKConstructor, 'dapp' | 'analytics' | 'ui' | 'transport'>;
 
 /**
  * Complete options for Multichain SDK configuration.
@@ -123,6 +123,6 @@ export type MultichainSDKOptions = MultichainSDKBaseOptions & {
 
 export type CreateMultichainFN = (options: MultichainSDKBaseOptions) => Promise<MultichainSDKBase>;
 
-export type * from "./api/types";
-export * from "./api/constants";
-export * from "./api/infura";
+export * from './api/constants';
+export * from './api/infura';
+export type * from './api/types';

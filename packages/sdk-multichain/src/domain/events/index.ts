@@ -1,6 +1,6 @@
-import { EventEmitter2 } from "eventemitter2";
+import { EventEmitter2 } from 'eventemitter2';
 
-import type { EventTypes } from "./types";
+import type { EventTypes } from './types';
 
 /**
  * A type-safe event emitter that provides a strongly-typed wrapper around EventEmitter2.
@@ -61,4 +61,4 @@ export class EventEmitter<TEvents extends Record<string, unknown[]> = EventTypes
 	}
 }
 
-export type * from "./types";
+export type * from './types';

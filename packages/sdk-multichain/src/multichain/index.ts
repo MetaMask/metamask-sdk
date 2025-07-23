@@ -1,19 +1,19 @@
-import { getDefaultTransport, getMultichainClient, type MultichainApiClient, type SessionData } from "@metamask/multichain-api-client";
-import { parseCaipAccountId, parseCaipChainId, type CaipAccountId } from "@metamask/utils";
-import { analytics } from "@metamask/sdk-analytics";
-import type { MultichainSDKBase } from "../domain/multichain";
-import type { MultichainSDKConstructor, MultichainSDKOptions, NotificationCallback, Scope, RPCAPI, InvokeMethodOptions } from "../domain";
-import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from "../domain/logger";
-import { getPlatformType, PlatformType } from "../domain/platform";
-import { getAnonId, getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from "../utis";
-import { RPCClient } from "../utis/rpc/client";
-import packageJson from "../../package.json";
-import type { StoreClient } from "../domain/store/client";
-import { EventEmitter } from "../domain/events";
-import type { SDKEvents } from "../domain/events/types/sdk";
+import { getDefaultTransport, getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
+import { analytics } from '@metamask/sdk-analytics';
+import { type CaipAccountId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
+import packageJson from '../../package.json';
+import type { MultichainSDKConstructor, MultichainSDKOptions, NotificationCallback, Scope, RPCAPI, InvokeMethodOptions } from '../domain';
+import { EventEmitter } from '../domain/events';
+import type { SDKEvents } from '../domain/events/types/sdk';
+import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
+import type { MultichainSDKBase } from '../domain/multichain';
+import { getPlatformType, PlatformType } from '../domain/platform';
+import type { StoreClient } from '../domain/store/client';
+import { getAnonId, getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from '../utis';
+import { RPCClient } from '../utis/rpc/client';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
-const logger = createLogger("metamask-sdk:core");
+const logger = createLogger('metamask-sdk:core');
 
 type OptionalScopes = Record<Scope, { methods: string[]; notifications: string[]; accounts: CaipAccountId[] }>;
 
@@ -48,22 +48,22 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
 			return transport;
 		}
 		//Mobile wallet protocol support
-		throw new Error("Not implemented");
+		throw new Error('Not implemented');
 	}
 
 	static async create(options: MultichainSDKOptions) {
 		const instance = new MultichainSDK(options);
-		const isEnabled = await isLoggerEnabled("metamask-sdk:core", instance.storage);
+		const isEnabled = await isLoggerEnabled('metamask-sdk:core', instance.storage);
 		if (isEnabled) {
-			enableDebug("metamask-sdk:core");
+			enableDebug('metamask-sdk:core');
 		}
 		try {
 			await instance.init();
-			if (typeof window !== "undefined") {
+			if (typeof window !== 'undefined') {
 				window.mmsdk = instance;
 			}
 		} catch (err) {
-			logger("MetaMaskSDK error during initialization", err);
+			logger('MetaMaskSDK error during initialization', err);
 		}
 		return instance;
 	}
@@ -87,18 +87,18 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
 		const anonId = await getAnonId(this.storage);
 
 		const integrationType = this.options.analytics.integrationType;
-		analytics.setGlobalProperty("sdk_version", version);
-		analytics.setGlobalProperty("dapp_id", dappId);
-		analytics.setGlobalProperty("anon_id", anonId);
-		analytics.setGlobalProperty("platform", platform);
-		analytics.setGlobalProperty("integration_type", integrationType);
+		analytics.setGlobalProperty('sdk_version', version);
+		analytics.setGlobalProperty('dapp_id', dappId);
+		analytics.setGlobalProperty('anon_id', anonId);
+		analytics.setGlobalProperty('platform', platform);
+		analytics.setGlobalProperty('integration_type', integrationType);
 		analytics.enable();
-		analytics.track("sdk_initialized", {});
+		analytics.track('sdk_initialized', {});
 	}
 
 	async init() {
-		if (typeof window !== "undefined" && window.mmsdk?.isInitialized) {
-			logger("MetaMaskSDK: init already initialized");
+		if (typeof window !== 'undefined' && window.mmsdk?.isInitialized) {
+			logger('MetaMaskSDK: init already initialized');
 		}
 		await this.setupAnalytics();
 		this.session = await this.provider.getSession();
