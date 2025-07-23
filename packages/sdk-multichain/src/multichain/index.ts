@@ -1,128 +1,141 @@
-import {
-  getDefaultTransport,
-  getMultichainClient,
-  type MultichainApiClient,
-  type SessionData,
-} from "@metamask/multichain-api-client";
-import {
-  parseCaipAccountId,
-  parseCaipChainId,
-  type CaipAccountId,
-} from "@metamask/utils";
+import { type CreateSessionParams, getDefaultTransport, getMultichainClient, type MultichainApiClient, type SessionData, type Transport } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
-import { MultichainSDKBase } from "../domain/multichain";
-import type {
-  MultichainSDKConstructor,
-  MultichainSDKOptions,
-  NotificationCallback,
-  Scope,
-  RPCAPI,
-  InvokeMethodOptions,
-} from "../domain";
-import {
-  createLogger,
-  enableDebug,
-  isEnabled as isLoggerEnabled,
-} from "../domain/logger";
-import { getPlatformType, PlatformType } from "../domain/platform";
-import { getAnonId, getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from "../utis";
-import { RPCClient } from "src/utis/rpc/client";
+import type { CaipAccountId, Json } from '@metamask/utils';
 import packageJson from '../../package.json';
-import { StoreClient } from "src/domain/store/client";
-import { EventEmitter } from "../domain/events";
-import type { SDKEvents } from "../domain/events/types/sdk";
+import { type InvokeMethodOptions, type ModalFactoryConnectOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
+import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
+import { MultichainCore, type SDKState } from '../domain/multichain';
+import { getPlatformType, PlatformType } from '../domain/platform';
+import { MWPClientTransport } from './mwp';
+import { RPCClient } from './rpc/client';
+import { addValidAccounts, getAnonId, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
+
+export enum TrackingEvents {
+  REQUEST = 'sdk_connect_request_started',
+  REQUEST_MOBILE = 'sdk_connect_request_started_mobile',
+  RECONNECT = 'sdk_reconnect_request_started',
+  CONNECTED = 'sdk_connection_established',
+  CONNECTED_MOBILE = 'sdk_connection_established_mobile',
+  AUTHORIZED = 'sdk_connection_authorized',
+  REJECTED = 'sdk_connection_rejected',
+  TERMINATED = 'sdk_connection_terminated',
+  DISCONNECTED = 'sdk_disconnected',
+  SDK_USE_EXTENSION = 'sdk_use_extension',
+  SDK_RPC_REQUEST = 'sdk_rpc_request',
+  SDK_RPC_REQUEST_RECEIVED = 'sdk_rpc_request_received',
+  SDK_RPC_REQUEST_DONE = 'sdk_rpc_request_done',
+  SDK_EXTENSION_UTILIZED = 'sdk_extension_utilized',
+  SDK_USE_INAPP_BROWSER = 'sdk_use_inapp_browser',
+}
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
-const logger = createLogger("metamask-sdk:core");
+const logger = createLogger('metamask-sdk:core');
 
+let __provider: MultichainApiClient<RPCAPI> | undefined;
+let __transport: Transport | undefined;
 
-type OptionalScopes = Record<
-  Scope,
-  { methods: string[]; notifications: string[]; accounts: CaipAccountId[] }
->;
+export class MultichainSDK extends MultichainCore {
+  public state: SDKState;
+  private listeners: (() => void)[] = [];
 
-export class MultichainSDK extends EventEmitter<SDKEvents> implements MultichainSDKBase {
-  private provider!: MultichainApiClient<RPCAPI>;
-  private readonly options: MultichainSDKConstructor;
-  public readonly storage: StoreClient;
-  private readonly rpcClient: RPCClient;
-  public isInitialized: boolean = false;
-  public session: SessionData | undefined;
+  /**
+   * Static method to reset global state - useful for testing
+   * @internal
+   */
+  static resetGlobals() {
+    __provider = undefined;
+    __transport = undefined;
+  }
 
-  private constructor(options: MultichainSDKConstructor) {
-    super();
+  private get client() {
+    const platformType = getPlatformType();
+    const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version} Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name}`;
+    return new RPCClient(this.provider, this.options.api, sdkInfo);
+  }
 
+  get provider() {
+    if (!__provider) {
+      throw new Error('Provider not initialized, establish connection first');
+    }
+    return __provider;
+  }
+
+  get transport() {
+    if (!__transport) {
+      throw new Error('Transport not initialized, establish connection first');
+    }
+    return __transport;
+  }
+
+  private async getCurrentSession(): Promise<SessionData | undefined> {
+    try {
+      //TODO: We should report to the multichain api team that when there's no extension installed
+      // getSession timeouts and should be just undefined
+      // Thats why we need this function, to compensate that
+      let validSession: SessionData | undefined;
+      const session = await this.provider.getSession();
+      if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
+        validSession = session;
+      }
+      return validSession;
+    } catch (err) {
+      logger('MetaMaskSDK error during getCurrentSession', err);
+      return undefined;
+    }
+  }
+
+  get storage() {
+    return this.options.storage;
+  }
+
+  private constructor(options: MultichainOptions) {
     const withInfuraRPCMethods = setupInfuraProvider(options);
     const withDappMetadata = setupDappMetadata(withInfuraRPCMethods);
-    this.options = withDappMetadata;
-    this.storage = options.storage;
-    const platformType = getPlatformType();
-    const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version
-      } Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name
-      }`;
-    this.provider = getMultichainClient({ transport: this.transport });
-    this.rpcClient = new RPCClient(
-      this.provider,
-      this.options.api,
-      sdkInfo
-    );
+    const allOptions = {
+      ...withDappMetadata,
+      ui: {
+        ...withDappMetadata.ui,
+        preferExtension: withDappMetadata.ui.preferExtension ?? true,
+        preferDesktop: withDappMetadata.ui.preferDesktop ?? false,
+        headless: withDappMetadata.ui.headless ?? false,
+      },
+      analytics: {
+        ...(options.analytics ?? {}),
+        enabled: options.analytics?.enabled !== undefined ? options.analytics.enabled : true,
+        integrationType: 'unknown',
+      },
+    };
+    super(allOptions);
+    this.state = 'pending';
   }
 
-  private get transport() {
-    const platformType = getPlatformType();
-    if (
-      platformType === PlatformType.DesktopWeb ||
-      platformType === PlatformType.MetaMaskMobileWebview ||
-      platformType === PlatformType.MobileWeb) {
-      //Direct support for web and externally connectable
-      const transport = getDefaultTransport(this.options.transport);
-      return transport;
-    }
-    //Mobile wallet protocol support
-    throw new Error('Not implemented');
-  }
-
-  static async create(options: MultichainSDKOptions) {
-
+  static async create(options: MultichainOptions) {
     const instance = new MultichainSDK(options);
-    const isEnabled = await isLoggerEnabled(
-      "metamask-sdk:core",
-      instance.storage,
-    );
+    const isEnabled = await isLoggerEnabled('metamask-sdk:core', instance.options.storage);
     if (isEnabled) {
-      enableDebug("metamask-sdk:core");
+      enableDebug('metamask-sdk:core');
     }
-    try {
-      await instance.init();
-      if (typeof window !== "undefined") {
-        window.mmsdk = instance;
-      }
-    } catch (err) {
-      logger("MetaMaskSDK error during initialization", err);
-    }
+    await instance.init();
     return instance;
   }
 
   private async setupAnalytics() {
-    if (!this.options.analytics.enabled) {
-      return
+    if (!this.options.analytics?.enabled) {
+      return;
     }
 
     const platform = getPlatformType();
-    const isBrowser =
-      platform === PlatformType.MetaMaskMobileWebview ||
-      platform === PlatformType.DesktopWeb ||
-      platform === PlatformType.MobileWeb;
+    const isBrowser = platform === PlatformType.MetaMaskMobileWebview || platform === PlatformType.DesktopWeb || platform === PlatformType.MobileWeb;
 
     const isReactNative = platform === PlatformType.ReactNative;
 
     if (!isBrowser && !isReactNative) {
-      return
+      return;
     }
 
     const version = getVersion();
     const dappId = getDappId(this.options.dapp);
-    const anonId = await getAnonId(this.storage);
+    const anonId = await getAnonId(this.options.storage);
 
     const integrationType = this.options.analytics.integrationType;
     analytics.setGlobalProperty('sdk_version', version);
@@ -134,93 +147,196 @@ export class MultichainSDK extends EventEmitter<SDKEvents> implements Multichain
     analytics.track('sdk_initialized', {});
   }
 
-  async init() {
-    if (typeof window !== "undefined" && window.mmsdk?.isInitialized) {
-      logger("MetaMaskSDK: init already initialized");
+  private async onTransportNotification(data: any) {
+    if (data.method === 'session_changed') {
+      const session = data.params.session;
+      //TODO: We also should report this as an issue, sessions with no sessionScopes should be undefined, is there any reason
+      //why the object comes empty?
+      if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
+        this.emit('sessionChanged', session);
+      } else {
+        this.emit('sessionChanged', undefined);
+      }
     }
-    await this.setupAnalytics();
-    this.session = await this.provider.getSession();
-    this.isInitialized = true;
   }
 
-  async connect(
-    scopes: Scope[],
-    caipAccountIds: CaipAccountId[],
-  ): Promise<SessionData> {
-    if (!this.transport.isConnected) {
-      await this.transport.connect();
-    }
-
-    const optionalScopes = scopes.reduce<OptionalScopes>((prev, scope) => ({
-      ...prev,
-      [scope]: {
-        methods: [],
-        notifications: [],
-        accounts: [],
-      },
-    }), {});
-
-    const validAccounts = caipAccountIds.reduce<ReturnType<typeof parseCaipAccountId>[]>((caipAccounts, caipAccountId) => {
-      try {
-        return [
-          ...caipAccounts,
-          parseCaipAccountId(caipAccountId)
-        ]
-      } catch (err) {
-        const stringifiedAccountId = JSON.stringify(caipAccountId);
-        console.error(
-          `Invalid CAIP account ID: ${stringifiedAccountId}`,
-          err,
-        );
-        return caipAccounts;
+  private async initialTransport() {
+    const transportType = await this.storage.getTransport();
+    if (transportType) {
+      if (transportType === TransportType.Browser) {
+        return getDefaultTransport(this.options.transport);
+      } else if (transportType === TransportType.MPW) {
+        return MWPClientTransport;
+      } else {
+        await this.storage.removeTransport();
       }
-    }, []);
+    }
+    return undefined;
+  }
 
-    for (const account of validAccounts) {
-      for (const scopeKey of Object.keys(optionalScopes)) {
-        const scope = scopeKey as Scope;
-        const scopeDetails = parseCaipChainId(scope);
-        if (scopeDetails.namespace === account.chain.namespace && scopeDetails.reference === account.chain.reference) {
-          const scopeData = optionalScopes[scope];
-          if (scopeData) {
-            scopeData.accounts.push(account.address as CaipAccountId);
-          }
+  private async setupTransport() {
+    const initialTransport = await this.initialTransport();
+    if (initialTransport) {
+      __transport = initialTransport;
+    }
+    if (__transport) {
+      const listener = __transport.onNotification(this.onTransportNotification);
+      if (!__transport.isConnected()) {
+        await __transport.connect();
+      }
+      __provider = getMultichainClient({ transport: __transport });
+      this.listeners.push(listener);
+      const session = await this.getCurrentSession();
+      if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
+        this.emit('sessionChanged', session);
+      }
+    }
+  }
+
+  async init() {
+    try {
+      if (typeof window !== 'undefined' && window.mmsdk?.isInitialized) {
+        logger('MetaMaskSDK: init already initialized');
+      } else {
+        await this.setupAnalytics();
+        await this.setupTransport();
+        this.state = 'loaded';
+        if (typeof window !== 'undefined') {
+          window.mmsdk = this;
         }
       }
+    } catch (error) {
+      logger('MetaMaskSDK error during initialization', error);
+    }
+  }
+
+  private get hasExtension() {
+    if (typeof window !== 'undefined') {
+      return window.ethereum?.isMetaMask ?? false;
+    }
+    return false;
+  }
+
+  private async onConnectionSuccess(type: TransportType, transport: Transport, params: ModalFactoryConnectOptions) {
+    if (!transport.isConnected()) {
+      await transport.connect();
     }
 
-    const session = await this.provider.getSession()
-    if (session) {
-      const existingScopes = Object.keys(session.sessionScopes).sort();
-      const scopesMatch =
-        existingScopes.every(scope => scopes.includes(scope as Scope)) &&
-        scopes.every(scope => existingScopes.includes(scope));
+    __transport = transport;
+    __provider = getMultichainClient({ transport });
 
-      if (scopesMatch) {
-        // Existing session has exactly the same scopes as requested, reuse it
-        return session;
-      }
-      // Scopes don't match (different set), revoke the session and create new one
+    await this.storage.setTransport(type);
+
+    const session = await this.getCurrentSession();
+    const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
+    const proposedScopes = params.scopes;
+
+    const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+
+    if (isSameScopes) {
+      this.emit('sessionChanged', session);
+      return;
+    }
+
+    if (session) {
       await this.provider.revokeSession();
     }
-    this.session = await this.provider.createSession({ optionalScopes });
-    return this.session;
 
+    const { scopes, caipAccountIds } = params;
+    const optionalScopes = addValidAccounts(getOptionalScopes(scopes), getValidAccounts(caipAccountIds));
+    const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+
+    const newSession = await this.provider.createSession(sessionRequest);
+    this.emit('sessionChanged', newSession);
+  }
+
+  private getTransportForPlatformType(platformType: PlatformType) {
+    if (__transport) {
+      return __transport;
+    }
+    if (platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb) {
+      return getDefaultTransport(this.options.transport);
+    }
+    return MWPClientTransport;
+  }
+
+  async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {
+    const {
+      ui: { factory, ...uiProperties },
+    } = this.options;
+    const { preferExtension = false, preferDesktop = false, headless = false } = uiProperties;
+    const platformType = getPlatformType();
+    const transport = await this.getTransportForPlatformType(platformType);
+    const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;
+    const existingSession = await this.getCurrentSession();
+
+    if (isWeb) {
+      if (existingSession) {
+        return this.onConnectionSuccess(TransportType.Browser, transport, {
+          scopes,
+          caipAccountIds,
+        });
+      }
+
+      if (this.hasExtension && preferExtension) {
+        return this.onConnectionSuccess(TransportType.Browser, transport, {
+          scopes,
+          caipAccountIds,
+        });
+      }
+
+      const link = this.options.dapp.url ?? this.options.dapp.name ?? 'dummy';
+      if (!this.hasExtension) {
+        if (preferExtension) {
+          // render install modal with extension tab selected
+          return factory.renderInstallModal(link, false);
+        }
+        // Doesn't have extension so we show install modal in the preferDesktop value
+        return factory.renderInstallModal(link, preferDesktop);
+      }
+
+      if (!preferExtension) {
+        // Has extension but we don't automatically chooose extension so we should show
+        return factory.renderSelectModal(link, true, async () => {
+          //This callback is after the user clicked extension in the select tab
+          return this.onConnectionSuccess(TransportType.Browser, transport, {
+            scopes,
+            caipAccountIds,
+          });
+        });
+      }
+
+      //We have extension and extension is the prefferred
+      return this.onConnectionSuccess(TransportType.Browser, transport, {
+        scopes,
+        caipAccountIds,
+      });
+    } else if (platformType === PlatformType.NonBrowser) {
+      return this.onConnectionSuccess(TransportType.MPW, transport, {
+        scopes,
+        caipAccountIds,
+      });
+    }
+
+    throw new Error('Not implemented');
   }
 
   async disconnect(): Promise<void> {
-    return this.transport.disconnect();
+    await __transport?.disconnect();
+    await __provider?.revokeSession();
+
+    this.listeners.forEach((listener) => listener());
+
+    __transport = undefined;
+    __provider = undefined;
+
+    this.emit('sessionChanged', undefined);
+    this.listeners = [];
+
+    await this.storage.removeTransport();
   }
 
-  onNotification(listener: NotificationCallback) {
-    return this.provider.onNotification(listener);
-  }
-
-  async revokeSession() {
-    return this.provider.revokeSession();
-  }
-
-  async invokeMethod(options: InvokeMethodOptions) {
-    return this.rpcClient.invokeMethod(options);
+  async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
+    return this.client.invokeMethod(options);
   }
 }

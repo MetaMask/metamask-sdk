@@ -1,24 +1,21 @@
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import packageJson from '../../package.json';
-
-import * as utils from '.';
+import type { MultichainOptions } from '../domain/multichain';
+import { getPlatformType, PlatformType } from '../domain/platform';
 import { Store } from '../store';
-import { MultichainSDKConstructor } from '../domain/multichain';
-import { PlatformType, getPlatformType } from '../domain/platform';
+import * as utils from '.';
 
-
-
-vi.mock('../domain/platform', async () =>     {
-  const actual = await vi.importActual('../domain/platform') as any;
+vi.mock('../domain/platform', async () => {
+  const actual = (await vi.importActual('../domain/platform')) as any;
   return {
     ...actual,
-    getPlatformType:t.vi.fn(),
-  }
+    getPlatformType: t.vi.fn(),
+  };
 });
 
 t.describe('Utils', () => {
-  let options: MultichainSDKConstructor;
+  let options: MultichainOptions;
 
   t.beforeEach(() => {
     t.vi.clearAllMocks();
@@ -29,8 +26,8 @@ t.describe('Utils', () => {
       },
       api: {
         infuraAPIKey: 'testKey',
-      }
-    } as MultichainSDKConstructor;
+      },
+    } as MultichainOptions;
   });
 
   t.describe('getDappId', () => {
@@ -82,7 +79,7 @@ t.describe('Utils', () => {
         t.vi.clearAllMocks();
         // For some reason mock only works with vi.mock not t.vi.mock ¿?
         vi.mock('uuid', () => ({
-          v4: vi.fn(() => 'test-uuid-value')
+          v4: vi.fn(() => 'test-uuid-value'),
         }));
 
         const storeClassMock = t.vi.mocked(Store);
@@ -94,7 +91,7 @@ t.describe('Utils', () => {
           deleteItem: t.vi.fn(async (key: string) => {
             data.delete(key);
           }),
-          platform: 'web'
+          platform: 'web',
         });
         getAnonIdStorageMock = t.vi.spyOn(storageMock, 'getAnonId');
         setAnonIdStorageMock = t.vi.spyOn(storageMock, 'setAnonId');
@@ -120,14 +117,13 @@ t.describe('Utils', () => {
         });
       });
     });
-
   });
 
-  t.describe("getSDKVersion", () => {
+  t.describe('getSDKVersion', () => {
     t.it('should get SDK version', () => {
       t.expect(utils.getVersion()).toBe(packageJson.version);
     });
-  })
+  });
 
   t.describe('extractFavicon', () => {
     t.it('should return undefined if document is undefined', () => {
@@ -140,8 +136,7 @@ t.describe('Utils', () => {
       global.document = {
         getElementsByTagName: t.vi.fn().mockReturnValue([
           {
-            getAttribute: (attr: string) =>
-              attr === 'rel' ? 'icon' : '/favicon.ico',
+            getAttribute: (attr: string) => (attr === 'rel' ? 'icon' : '/favicon.ico'),
           },
         ]),
       } as any;
@@ -153,8 +148,7 @@ t.describe('Utils', () => {
       global.document = {
         getElementsByTagName: t.vi.fn().mockReturnValue([
           {
-            getAttribute: (attr: string) =>
-              attr === 'rel' ? 'shortcut icon' : '/favicon.ico',
+            getAttribute: (attr: string) => (attr === 'rel' ? 'shortcut icon' : '/favicon.ico'),
           },
         ]),
       } as any;
@@ -174,8 +168,7 @@ t.describe('Utils', () => {
       global.document = {
         getElementsByTagName: t.vi.fn().mockReturnValue([
           {
-            getAttribute: (attr: string) =>
-              attr === 'rel' ? 'something else' : '/favicon.ico',
+            getAttribute: (attr: string) => (attr === 'rel' ? 'something else' : '/favicon.ico'),
           },
         ]),
       } as any;
@@ -185,7 +178,6 @@ t.describe('Utils', () => {
   });
 
   t.describe('setupInfuraProvider', () => {
-
     t.it('should not set up infura provider if infuraAPIKey is not provided', async () => {
       options.api!.infuraAPIKey = undefined;
       await utils.setupInfuraProvider(options);
@@ -198,8 +190,8 @@ t.describe('Utils', () => {
     });
 
     t.it('Should allow customizing the readonlyRPCMap + merge with defaults', async () => {
-      const customChainId = 'eip155:12345'
-      const customEndpoint = 'https://mainnet.infura.io/12345'
+      const customChainId = 'eip155:12345';
+      const customEndpoint = 'https://mainnet.infura.io/12345';
       options.api!.readonlyRPCMap = {
         [customChainId]: customEndpoint,
       };
@@ -207,30 +199,28 @@ t.describe('Utils', () => {
       t.expect(options.api?.readonlyRPCMap?.['eip155:1']).toBe(`https://mainnet.infura.io/v3/testKey`);
       t.expect(options.api?.readonlyRPCMap?.[customChainId]).toBe(customEndpoint);
     });
-
   });
 
   t.describe('setupDappMetadata', () => {
-
     t.beforeEach(() => {
       // Mock the document object to avoid undefined errors
       global.document = {
-        getElementsByTagName: t.vi.fn().mockReturnValue([])
+        getElementsByTagName: t.vi.fn().mockReturnValue([]),
       } as any;
 
       t.vi.spyOn(utils, 'extractFavicon').mockReturnValue('xd');
-    })
+    });
 
     t.afterEach(() => {
       t.vi.restoreAllMocks();
-    })
+    });
 
     t.it('should attach dappMetadata to the instance if valid', async () => {
       (options.dapp as any).iconUrl = 'https://example.com/favicon.ico';
       options.dapp.url = 'https://example.com';
       const originalDappOptions = {
-        ...options.dapp
-      }
+        ...options.dapp,
+      };
       await utils.setupDappMetadata(options);
       t.expect(options.dapp).toStrictEqual(originalDappOptions);
     });
@@ -238,32 +228,28 @@ t.describe('Utils', () => {
     t.it('should set iconUrl to undenied if it does not start with http:// or https:// and favicon is undefined', async () => {
       (options.dapp as any).iconUrl = 'ftp://example.com/favicon.ico';
       options.dapp.url = 'https://example.com';
-      const consoleWarnSpy = t.vi.spyOn(console, 'warn')
+      const consoleWarnSpy = t.vi.spyOn(console, 'warn');
 
       await utils.setupDappMetadata(options);
 
       t.expect((options.dapp as any).iconUrl).toBeUndefined();
-      t.expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'Invalid dappMetadata.iconUrl: URL must start with http:// or https://',
-      );
+      t.expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid dappMetadata.iconUrl: URL must start with http:// or https://');
     });
 
     t.it('should set url to undenied if it does not start with http:// or https:// and favicon is undefined', async () => {
       options.dapp.url = 'wrong';
-      const consoleWarnSpy = t.vi.spyOn(console, 'warn')
+      const consoleWarnSpy = t.vi.spyOn(console, 'warn');
 
       await utils.setupDappMetadata(options);
 
       t.expect((options.dapp as any).iconUrl).toBeUndefined();
-      t.expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'Invalid dappMetadata.url: URL must start with http:// or https://',
-      );
+      t.expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid dappMetadata.url: URL must start with http:// or https://');
     });
 
     t.it('should prove that dapp is mandatory is platform is not browser', async () => {
       (options.dapp as any) = undefined;
       await t.expect(() => utils.setupDappMetadata(options)).toThrow('You must provide dapp url');
-    })
+    });
 
     t.it('should prove that dapp is optional is platform is browser', async () => {
       (getPlatformType as any).mockReturnValue(PlatformType.DesktopWeb);
@@ -274,13 +260,13 @@ t.describe('Utils', () => {
         },
       });
       (options.dapp as any) = undefined;
-      utils.setupDappMetadata(options)
+      utils.setupDappMetadata(options);
       t.expect(options.dapp.url).toBe('https://example.com');
-    })
+    });
 
-   t.it('should set base64Icon to undefined if its length exceeds 163400 characters', async () => {
+    t.it('should set base64Icon to undefined if its length exceeds 163400 characters', async () => {
       const longString = new Array(163401).fill('a').join('');
-      const consoleWarnSpy = t.vi.spyOn(console, 'warn')
+      const consoleWarnSpy = t.vi.spyOn(console, 'warn');
 
       options.dapp = {
         iconUrl: 'https://example.com/favicon.ico',
@@ -291,9 +277,7 @@ t.describe('Utils', () => {
       await utils.setupDappMetadata(options);
 
       t.expect((options.dapp as any).base64Icon).toBeUndefined();
-      t.expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'Invalid dappMetadata.base64Icon: Base64-encoded icon string length must be less than 163400 characters',
-      );
+      t.expect(consoleWarnSpy).toHaveBeenCalledWith('Invalid dappMetadata.base64Icon: Base64-encoded icon string length must be less than 163400 characters');
     });
 
     t.it('should set iconUrl to the extracted favicon if iconUrl and base64Icon are not provided', async () => {
@@ -328,12 +312,11 @@ t.describe('Utils', () => {
   });
 
   t.describe('isMetaMaskInstalled', () => {
-
     t.it('should return true if MetaMask is installed', () => {
       t.vi.stubGlobal('window', {
-        ethereum : {
+        ethereum: {
           isMetaMask: true,
-        }
+        },
       });
       t.expect(utils.isMetaMaskInstalled()).toBe(true);
     });
@@ -342,8 +325,5 @@ t.describe('Utils', () => {
       t.vi.stubGlobal('window', undefined);
       t.expect(utils.isMetaMaskInstalled()).toBe(false);
     });
-
   });
-
-
-})
+});

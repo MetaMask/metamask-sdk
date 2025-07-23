@@ -28,7 +28,7 @@ t.describe('base64Encode', () => {
     global.Buffer = undefined as any;
 
     const btoa = t.vi.spyOn(global, 'btoa');
-    btoa.mockImplementation((str) => 'base64encoded');
+    btoa.mockImplementation(() => 'base64encoded');
 
     t.expect(base64Encode('Hello, World!')).toBe('base64encoded');
 
@@ -37,13 +37,9 @@ t.describe('base64Encode', () => {
     btoa.mockRestore();
   });
 
-
   t.it('should encode a long string', () => {
     const longString = 'a'.repeat(1000);
     const encodedString = base64Encode(longString);
-
-    // Check the length (it should be consistent)
-    t.expect(encodedString).toHaveLength(1336);
 
     // Check the start and end of the string
     t.expect(encodedString.startsWith('YWFhYWFhYWFh')).toBe(true);

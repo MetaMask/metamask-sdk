@@ -6,12 +6,13 @@
 		"useIgnoreFile": false
 	},
 	"files": {
-		"includes": ["**", "!**/node_modules/**", "!**/dist/**"],
+		"includes": ["packages/sdk-multichain/src/**", "!**/node_modules/**", "!**/dist/**"],
 		"ignoreUnknown": false
 	},
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab",
+		"indentStyle": "space",
+		"indentWidth": 2,
 		"lineWidth": 180
 	},
 	"linter": {
@@ -22,7 +23,7 @@
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"quoteStyle": "single"
 		}
 	},
 	"assist": {

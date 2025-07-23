@@ -6,10 +6,7 @@ type EIP155 = {
     personal_sign: RpcMethod<{ message: string; account: string }, string>;
     eth_accounts: RpcMethod<void, string[]>;
     eth_chainId: RpcMethod<void, string>;
-    eth_sendTransaction: RpcMethod<
-      { to: string; value?: string; data?: string },
-      string
-    >;
+    eth_sendTransaction: RpcMethod<{ to: string; value?: string; data?: string }, string>;
     eth_call: RpcMethod<{ to: string; data?: string }, string>;
     eth_getBalance: RpcMethod<{ address: string; blockNumber: string }, string>;
     wallet_switchEthereumChain: RpcMethod<{ chainId: string }, void>;
@@ -30,14 +27,8 @@ type EIP155 = {
       },
       void
     >;
-    signAndSendTransaction: RpcMethod<
-      { to: string; value?: string; data?: string },
-      string
-    >;
-    signTransaction: RpcMethod<
-      { to: string; value?: string; data?: string },
-      string
-    >;
+    signAndSendTransaction: RpcMethod<{ to: string; value?: string; data?: string }, string>;
+    signTransaction: RpcMethod<{ to: string; value?: string; data?: string }, string>;
     signMessage: RpcMethod<{ message: string }, string>;
     signIn: RpcMethod<{ message: string }, string>;
   };
