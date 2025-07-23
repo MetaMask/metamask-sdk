@@ -1,5 +1,5 @@
-import { infuraRpcUrls } from "./constants";
-import type { RPC_URLS_MAP } from "./types";
+import { infuraRpcUrls } from './constants';
+import type { RPC_URLS_MAP } from './types';
 
 export function getInfuraRpcUrls(infuraAPIKey: string) {
 	return Object.keys(infuraRpcUrls).reduce((acc, key) => {

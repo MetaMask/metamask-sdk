@@ -1,12 +1,12 @@
-import debug from "debug";
+import debug from 'debug';
 
-import type { StoreClient } from "../store/client";
+import type { StoreClient } from '../store/client';
 
 /**
  * Supported debug namespace types for the MetaMask SDK logger.
  * These namespaces help categorize and filter debug output.
  */
-export type LoggerNameSpaces = "metamask-sdk" | "metamask-sdk:core" | "metamask-sdk:provider";
+export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider';
 
 /**
  * Creates a debug logger instance with the specified namespace and color.
@@ -18,7 +18,7 @@ export type LoggerNameSpaces = "metamask-sdk" | "metamask-sdk:core" | "metamask-
  * @param color - The ANSI color code to use for log output (default: '214' for yellow)
  * @returns A configured debug logger instance
  */
-export const createLogger = (namespace: LoggerNameSpaces = "metamask-sdk", color = "214") => {
+export const createLogger = (namespace: LoggerNameSpaces = 'metamask-sdk', color = '214') => {
 	const logger = debug(namespace);
 	logger.color = color; // Yellow color (basic ANSI)
 	return logger;
@@ -32,7 +32,7 @@ export const createLogger = (namespace: LoggerNameSpaces = "metamask-sdk", color
  *
  * @param namespace - The debug namespace to enable
  */
-export const enableDebug = (namespace: LoggerNameSpaces = "metamask-sdk") => {
+export const enableDebug = (namespace: LoggerNameSpaces = 'metamask-sdk') => {
 	debug.enable(namespace);
 };
 
@@ -48,7 +48,7 @@ export const enableDebug = (namespace: LoggerNameSpaces = "metamask-sdk") => {
  * @returns True if the namespace should have debug logging enabled, false otherwise
  */
 function isNamespaceEnabled(debugValue: string, namespace: LoggerNameSpaces) {
-	return debugValue.includes(namespace) || debugValue.includes("metamask-sdk:*") || debugValue.includes("*");
+	return debugValue.includes(namespace) || debugValue.includes('metamask-sdk:*') || debugValue.includes('*');
 }
 
 /**

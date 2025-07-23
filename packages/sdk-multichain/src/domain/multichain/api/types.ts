@@ -1,4 +1,4 @@
-import type EIP155 from "./eip155";
+import type EIP155 from './eip155';
 
 /**
  * Represents a blockchain scope identifier in CAIP format.

@@ -1,4 +1,4 @@
-import type { RpcMethod } from "./types";
+import type { RpcMethod } from './types';
 
 //TODO: We probably want to avoid having to declare this and use the types from somewhere else
 type EIP155 = {
@@ -32,7 +32,7 @@ type EIP155 = {
 		signMessage: RpcMethod<{ message: string }, string>;
 		signIn: RpcMethod<{ message: string }, string>;
 	};
-	events: ["eth_subscription"];
+	events: ['eth_subscription'];
 };
 
 export default EIP155;

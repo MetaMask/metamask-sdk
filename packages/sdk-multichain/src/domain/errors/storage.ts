@@ -1,10 +1,10 @@
-import { BaseErr } from "./base";
-import type { StorageErrorCodes } from "./types";
+import { BaseErr } from './base';
+import type { StorageErrorCodes } from './types';
 
-export class StorageGetErr extends BaseErr<"Storage", StorageErrorCodes> {
+export class StorageGetErr extends BaseErr<'Storage', StorageErrorCodes> {
 	static readonly code = 60;
 	constructor(
-		public readonly platform: "web" | "rn" | "node",
+		public readonly platform: 'web' | 'rn' | 'node',
 		public readonly key: string,
 		public readonly reason: string,
 	) {
@@ -12,10 +12,10 @@ export class StorageGetErr extends BaseErr<"Storage", StorageErrorCodes> {
 	}
 }
 
-export class StorageSetErr extends BaseErr<"Storage", StorageErrorCodes> {
+export class StorageSetErr extends BaseErr<'Storage', StorageErrorCodes> {
 	static readonly code = 61;
 	constructor(
-		public readonly platform: "web" | "rn" | "node",
+		public readonly platform: 'web' | 'rn' | 'node',
 		public readonly key: string,
 		public readonly reason: string,
 	) {
@@ -23,10 +23,10 @@ export class StorageSetErr extends BaseErr<"Storage", StorageErrorCodes> {
 	}
 }
 
-export class StorageDeleteErr extends BaseErr<"Storage", StorageErrorCodes> {
+export class StorageDeleteErr extends BaseErr<'Storage', StorageErrorCodes> {
 	static readonly code = 62;
 	constructor(
-		public readonly platform: "web" | "rn" | "node",
+		public readonly platform: 'web' | 'rn' | 'node',
 		public readonly key: string,
 		public readonly reason: string,
 	) {

@@ -1,13 +1,13 @@
-import * as t from "vitest";
-import { vi } from "vitest";
-import { JSDOM as Page } from "jsdom";
-import { createMetamaskSDK as createMetamaskSDKWeb } from "./index.browser";
-import { MultichainSDKBaseOptions, MultichainSDKBase } from "./domain";
-import { MultichainSDK } from "./multichain";
-import * as loggerModule from "./domain/logger";
-import * as analyticsModule from "@metamask/sdk-analytics";
-import type { SessionData } from "@metamask/multichain-api-client";
-import type { Scope } from "./domain/multichain/api/types";
+import type { SessionData } from '@metamask/multichain-api-client';
+import * as analyticsModule from '@metamask/sdk-analytics';
+import { JSDOM as Page } from 'jsdom';
+import * as t from 'vitest';
+import { vi } from 'vitest';
+import type { MultichainSDKBase, MultichainSDKBaseOptions } from './domain';
+import * as loggerModule from './domain/logger';
+import type { Scope } from './domain/multichain/api/types';
+import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
+import { MultichainSDK } from './multichain';
 
 type NativeStorageStub = {
 	data: Map<string, string>;
@@ -18,7 +18,7 @@ type NativeStorageStub = {
 };
 
 // Mock the multichain-api-client with proper implementations
-vi.mock("@metamask/multichain-api-client", () => {
+vi.mock('@metamask/multichain-api-client', () => {
 	const mockTransport = {
 		connect: vi.fn().mockResolvedValue(true),
 		disconnect: vi.fn().mockResolvedValue(undefined),
@@ -49,7 +49,7 @@ vi.mock("@metamask/multichain-api-client", () => {
 	};
 });
 
-vi.mock("./domain/logger", () => {
+vi.mock('./domain/logger', () => {
 	const mockLogger = vi.fn();
 	return {
 		createLogger: vi.fn(() => mockLogger),
@@ -59,10 +59,10 @@ vi.mock("./domain/logger", () => {
 	};
 });
 
-t.vi.mock("@metamask/sdk-analytics");
+t.vi.mock('@metamask/sdk-analytics');
 
 function createMultiplatformTestCase(
-	platform: "web" | "node" | "rn",
+	platform: 'web' | 'node' | 'rn',
 	options: MultichainSDKBaseOptions,
 	createSDK: (options: MultichainSDKBaseOptions) => Promise<MultichainSDKBase>,
 	setupMocks?: (options: NativeStorageStub) => void,
@@ -77,10 +77,10 @@ function createMultiplatformTestCase(
 		// Mock session data for testing
 		const mockSessionData: SessionData = {
 			sessionScopes: {
-				"eip155:1": {
-					methods: ["eth_sendTransaction", "eth_accounts"],
-					notifications: ["accountsChanged", "chainChanged"],
-					accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+				'eip155:1': {
+					methods: ['eth_sendTransaction', 'eth_accounts'],
+					notifications: ['accountsChanged', 'chainChanged'],
+					accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 				},
 			},
 			expiry: new Date(Date.now() + 3600000).toISOString(),
@@ -95,7 +95,7 @@ function createMultiplatformTestCase(
 			t.vi.unstubAllGlobals();
 
 			// Get mocks from the module mock
-			const multichainModule = await import("@metamask/multichain-api-client");
+			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockTransport = (multichainModule as any).__mockTransport;
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 			const mockGetDefaultTransport = (multichainModule as any).__mockGetDefaultTransport;
@@ -133,7 +133,7 @@ function createMultiplatformTestCase(
 				}),
 			};
 
-			nativeStorageStub.data.set("DEBUG", "metamask-sdk:*");
+			nativeStorageStub.data.set('DEBUG', 'metamask-sdk:*');
 
 			setupMocks?.(nativeStorageStub);
 
@@ -141,8 +141,8 @@ function createMultiplatformTestCase(
 			t.vi.mocked(analyticsModule.analytics).setGlobalProperty = t.vi.fn();
 			t.vi.mocked(analyticsModule.analytics).enable = t.vi.fn();
 			t.vi.mocked(analyticsModule.analytics).track = t.vi.fn();
-			setupAnalyticsSpy = t.vi.spyOn(MultichainSDK.prototype as any, "setupAnalytics");
-			initSpy = t.vi.spyOn(MultichainSDK.prototype as any, "init");
+			setupAnalyticsSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'setupAnalytics');
+			initSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'init');
 		});
 
 		t.afterEach(() => {
@@ -157,7 +157,7 @@ function createMultiplatformTestCase(
 			t.vi.unstubAllGlobals();
 		});
 
-		t.describe("init", () => {
+		t.describe('init', () => {
 			t.it(`${platform} should call setupAnalytics if analytics is ENABLED and trigger analytics.enable and init evt`, async () => {
 				options.analytics.enabled = true;
 				sdk = await createSDK(options);
@@ -165,7 +165,7 @@ function createMultiplatformTestCase(
 				t.expect(initSpy).toHaveBeenCalled();
 				t.expect(setupAnalyticsSpy).toHaveBeenCalled();
 				t.expect(analyticsModule.analytics.enable).toHaveBeenCalled();
-				t.expect(analyticsModule.analytics.track).toHaveBeenCalledWith("sdk_initialized", {});
+				t.expect(analyticsModule.analytics.track).toHaveBeenCalledWith('sdk_initialized', {});
 			});
 
 			t.it(`${platform} should NOT call analytics.enable if analytics is DISABLED`, async () => {
@@ -188,13 +188,13 @@ function createMultiplatformTestCase(
 				t.expect(initSpy).toHaveBeenCalled();
 				t.expect(setupAnalyticsSpy).toHaveBeenCalled();
 				t.expect(sdk.isInitialized).toBe(true);
-				t.expect(loggerModule.enableDebug).toHaveBeenCalledWith("metamask-sdk:core");
+				t.expect(loggerModule.enableDebug).toHaveBeenCalledWith('metamask-sdk:core');
 			});
 			t.it(`${platform} should properly initialize provider and get session during init`, async () => {
 				sdk = await createSDK(options);
 
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 				const mockGetDefaultTransport = (multichainModule as any).__mockGetDefaultTransport;
@@ -210,7 +210,7 @@ function createMultiplatformTestCase(
 				t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
 			});
 			t.it(`${platform} Should gracefully handle init errors by just logging them and return non initialized sdk`, async () => {
-				const testError = new Error("Test error");
+				const testError = new Error('Test error');
 				initSpy.mockImplementation(() => {
 					throw testError;
 				});
@@ -224,14 +224,14 @@ function createMultiplatformTestCase(
 				const mockLogger = (loggerModule as any).__mockLogger;
 
 				// Verify that the logger was called with the error
-				t.expect(mockLogger).toHaveBeenCalledWith("MetaMaskSDK error during initialization", testError);
+				t.expect(mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during initialization', testError);
 			});
 		});
 
-		t.describe("session", () => {
+		t.describe('session', () => {
 			t.it(`${platform} should handle session upgrades`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -248,16 +248,16 @@ function createMultiplatformTestCase(
 				const mockedSessionUpgradeData: SessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction", "eth_accounts"],
-							notifications: ["accountsChanged", "chainChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction', 'eth_accounts'],
+							notifications: ['accountsChanged', 'chainChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
 
-				const scopes = ["eip155:137"] as Scope[];
-				const caipAccountIds = ["eip155:137:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:137'] as Scope[];
+				const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 				const result = await sdk.connect(scopes, caipAccountIds);
 
 				t.expect(mockTransport.connect).toHaveBeenCalled();
@@ -265,10 +265,10 @@ function createMultiplatformTestCase(
 				t.expect(mockMultichainClient.revokeSession).toHaveBeenCalled();
 				t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 					optionalScopes: {
-						"eip155:137": {
+						'eip155:137': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x1234567890abcdef1234567890abcdef12345678"],
+							accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				});
@@ -277,7 +277,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle session retrieval when no session exists`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 				// Mock no session scenario
@@ -293,9 +293,9 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle provider errors during session retrieval`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
-				const sessionError = new Error("Session error");
+				const sessionError = new Error('Session error');
 
 				// Clear previous calls and set up the error mock
 				t.vi.clearAllMocks();
@@ -310,7 +310,7 @@ function createMultiplatformTestCase(
 				const mockLogger = (loggerModule as any).__mockLogger;
 
 				// Verify that the logger was called with the error
-				t.expect(mockLogger).toHaveBeenCalledWith("MetaMaskSDK error during initialization", sessionError);
+				t.expect(mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during initialization', sessionError);
 			});
 		});
 
@@ -321,7 +321,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should connect transport and create session when not connected`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -333,10 +333,10 @@ function createMultiplatformTestCase(
 				const newSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
@@ -345,8 +345,8 @@ function createMultiplatformTestCase(
 				// Create a new SDK instance with the mock configured correctly
 				const testSdk = await createSDK(options);
 
-				const scopes = ["eip155:1"] as Scope[];
-				const caipAccountIds = ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:1'] as Scope[];
+				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 				const result = await testSdk.connect(scopes, caipAccountIds);
 
@@ -355,10 +355,10 @@ function createMultiplatformTestCase(
 				t.expect(mockMultichainClient.revokeSession).not.toHaveBeenCalled();
 				t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 					optionalScopes: {
-						"eip155:1": {
+						'eip155:1': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x1234567890abcdef1234567890abcdef12345678"],
+							accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				});
@@ -367,7 +367,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should skip transport connection when already connected`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -378,17 +378,17 @@ function createMultiplatformTestCase(
 				const newSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
 				mockMultichainClient.createSession.mockResolvedValue(newSessionData);
 
-				const scopes = ["eip155:1"] as Scope[];
-				const caipAccountIds = ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:1'] as Scope[];
+				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 				const result = await sdk.connect(scopes, caipAccountIds);
 
@@ -399,7 +399,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle invalid CAIP account IDs gracefully`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -407,32 +407,32 @@ function createMultiplatformTestCase(
 				mockMultichainClient.getSession.mockResolvedValue(undefined);
 
 				// Mock console.error to capture invalid account ID errors
-				const consoleErrorSpy = t.vi.spyOn(console, "error").mockImplementation(() => {});
+				const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 				const newSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
 							accounts: [],
 						},
 					},
 				};
 				mockMultichainClient.createSession.mockResolvedValue(newSessionData);
 
-				const scopes = ["eip155:1"] as Scope[];
-				const caipAccountIds = ["invalid-account-id", "eip155:1:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:1'] as Scope[];
+				const caipAccountIds = ['invalid-account-id', 'eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 				const result = await sdk.connect(scopes, caipAccountIds);
 
 				t.expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid CAIP account ID: "invalid-account-id"', t.expect.any(Error));
 				t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 					optionalScopes: {
-						"eip155:1": {
+						'eip155:1': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x1234567890abcdef1234567890abcdef12345678"],
+							accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				});
@@ -443,7 +443,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should return existing session when scopes don't overlap`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -452,17 +452,17 @@ function createMultiplatformTestCase(
 				const existingSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:137": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:137:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:137': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
 				mockMultichainClient.getSession.mockResolvedValue(existingSessionData);
 
-				const scopes = ["eip155:137"] as Scope[]; // Different scope than existing session
-				const caipAccountIds = ["eip155:137:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:137'] as Scope[]; // Different scope than existing session
+				const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 				const result = await sdk.connect(scopes, caipAccountIds);
 
@@ -474,7 +474,7 @@ function createMultiplatformTestCase(
 
 			t.it(`should ${platform} simulate sesion upgrade by adding new session scopes to connect`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -483,10 +483,10 @@ function createMultiplatformTestCase(
 				const existingSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
@@ -494,10 +494,10 @@ function createMultiplatformTestCase(
 				const newSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
@@ -505,8 +505,8 @@ function createMultiplatformTestCase(
 				mockMultichainClient.getSession.mockResolvedValue(existingSessionData);
 				mockMultichainClient.createSession.mockResolvedValue(newSessionData);
 
-				const scopes = ["eip155:137"] as Scope[]; // Same scope as existing session
-				const caipAccountIds = ["eip155:137:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session
+				const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 				const result = await sdk.connect(scopes, caipAccountIds);
 
@@ -514,10 +514,10 @@ function createMultiplatformTestCase(
 				t.expect(mockMultichainClient.revokeSession).toHaveBeenCalled();
 				t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 					optionalScopes: {
-						"eip155:137": {
+						'eip155:137': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x1234567890abcdef1234567890abcdef12345678"],
+							accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				});
@@ -526,7 +526,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle multiple scopes and accounts correctly`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -536,36 +536,36 @@ function createMultiplatformTestCase(
 				const newSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
-						"eip155:137": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:137:0x9876543210fedcba9876543210fedcba98765432"],
+						'eip155:137': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:137:0x9876543210fedcba9876543210fedcba98765432'],
 						},
 					},
 				};
 				mockMultichainClient.createSession.mockResolvedValue(newSessionData);
 
-				const scopes = ["eip155:1", "eip155:137"] as Scope[];
-				const caipAccountIds = ["eip155:1:0x1234567890abcdef1234567890abcdef12345678", "eip155:137:0x9876543210fedcba9876543210fedcba98765432"] as any;
+				const scopes = ['eip155:1', 'eip155:137'] as Scope[];
+				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x9876543210fedcba9876543210fedcba98765432'] as any;
 
 				const result = await sdk.connect(scopes, caipAccountIds);
 
 				t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 					optionalScopes: {
-						"eip155:1": {
+						'eip155:1': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x1234567890abcdef1234567890abcdef12345678"],
+							accounts: ['0x1234567890abcdef1234567890abcdef12345678'],
 						},
-						"eip155:137": {
+						'eip155:137': {
 							methods: [],
 							notifications: [],
-							accounts: ["0x9876543210fedcba9876543210fedcba98765432"],
+							accounts: ['0x9876543210fedcba9876543210fedcba98765432'],
 						},
 					},
 				});
@@ -574,41 +574,41 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle transport connection errors`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 
 				// Reset the transport mock to simulate connection failure
 				mockTransport.isConnected = false;
-				const connectionError = new Error("Failed to connect transport");
+				const connectionError = new Error('Failed to connect transport');
 				mockTransport.connect.mockRejectedValue(connectionError);
 
-				const scopes = ["eip155:1"] as Scope[];
-				const caipAccountIds = ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:1'] as Scope[];
+				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow("Failed to connect transport");
+				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to connect transport');
 			});
 
 			t.it(`${platform} should handle session creation errors`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 				mockTransport.isConnected = true;
 				mockMultichainClient.getSession.mockResolvedValue(undefined);
 
-				const sessionError = new Error("Failed to create session");
+				const sessionError = new Error('Failed to create session');
 				mockMultichainClient.createSession.mockRejectedValue(sessionError);
 
-				const scopes = ["eip155:1"] as Scope[];
-				const caipAccountIds = ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"] as any;
+				const scopes = ['eip155:1'] as Scope[];
+				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow("Failed to create session");
+				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to create session');
 			});
 
 			t.it(`${platform} should handle session revocation errors`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
@@ -617,22 +617,22 @@ function createMultiplatformTestCase(
 				const existingSessionData = {
 					...mockSessionData,
 					sessionScopes: {
-						"eip155:1": {
-							methods: ["eth_sendTransaction"],
-							notifications: ["accountsChanged"],
-							accounts: ["eip155:1:0x1234567890abcdef1234567890abcdef12345678"],
+						'eip155:1': {
+							methods: ['eth_sendTransaction'],
+							notifications: ['accountsChanged'],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 						},
 					},
 				};
 
 				mockMultichainClient.getSession.mockResolvedValue(existingSessionData);
 
-				const revocationError = new Error("Failed to revoke session");
+				const revocationError = new Error('Failed to revoke session');
 				mockMultichainClient.revokeSession.mockRejectedValue(revocationError);
 
-				const scopes = ["eip155:137"] as Scope[]; // Same scope as existing session to trigger revocation
-				const caipAccountIds = ["eip155:137:0x1234567890abcdef1234567890abcdef12345678"] as any;
-				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow("Failed to revoke session");
+				const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
+				const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
+				await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to revoke session');
 			});
 		});
 
@@ -643,7 +643,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should disconnect transport successfully`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 
 				mockTransport.disconnect.mockResolvedValue(undefined);
@@ -655,13 +655,13 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle disconnect errors`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockTransport = (multichainModule as any).__mockTransport;
 
-				const disconnectError = new Error("Failed to disconnect transport");
+				const disconnectError = new Error('Failed to disconnect transport');
 				mockTransport.disconnect.mockRejectedValue(disconnectError);
 
-				await t.expect(sdk.disconnect()).rejects.toThrow("Failed to disconnect transport");
+				await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
 			});
 		});
 
@@ -672,7 +672,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should register notification listener`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 				const mockListener = t.vi.fn();
@@ -693,7 +693,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should revoke session successfully`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 				mockMultichainClient.revokeSession.mockResolvedValue(undefined);
@@ -705,13 +705,13 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle revoke session errors`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
-				const revokeError = new Error("Failed to revoke session");
+				const revokeError = new Error('Failed to revoke session');
 				mockMultichainClient.revokeSession.mockRejectedValue(revokeError);
 
-				await t.expect(sdk.revokeSession()).rejects.toThrow("Failed to revoke session");
+				await t.expect(sdk.revokeSession()).rejects.toThrow('Failed to revoke session');
 			});
 		});
 
@@ -722,11 +722,11 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should invoke method successfully`, async () => {
 				// Get mocks from the module mock
-				const multichainModule = await import("@metamask/multichain-api-client");
+				const multichainModule = await import('@metamask/multichain-api-client');
 				const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 				// Mock the RPCClient response
-				const mockResponse = { result: "success" };
+				const mockResponse = { result: 'success' };
 
 				// We need to mock the invokeMethod on the rpcClient
 				// Since rpcClient is private, we'll access it through the sdk instance
@@ -738,8 +738,8 @@ function createMultiplatformTestCase(
 				(sdk as any).rpcClient = mockRpcClient;
 
 				const options = {
-					scope: "eip155:1",
-					method: "eth_accounts",
+					scope: 'eip155:1',
+					method: 'eth_accounts',
 					params: [],
 				} as any;
 
@@ -751,7 +751,7 @@ function createMultiplatformTestCase(
 
 			t.it(`${platform} should handle invoke method errors`, async () => {
 				// Mock the RPCClient response
-				const mockError = new Error("Failed to invoke method");
+				const mockError = new Error('Failed to invoke method');
 
 				// We need to mock the invokeMethod on the rpcClient
 				const mockRpcClient = {
@@ -762,24 +762,24 @@ function createMultiplatformTestCase(
 				(sdk as any).rpcClient = mockRpcClient;
 
 				const options = {
-					scope: "eip155:1",
-					method: "eth_accounts",
+					scope: 'eip155:1',
+					method: 'eth_accounts',
 					params: [],
 				} as any;
 
-				await t.expect(sdk.invokeMethod(options)).rejects.toThrow("Failed to invoke method");
+				await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
 			});
 		});
 	});
 }
 
-t.describe("MultichainSDK", () => {
+t.describe('MultichainSDK', () => {
 	createMultiplatformTestCase(
-		"web",
+		'web',
 		{
 			dapp: {
-				name: "Test Dapp",
-				url: "https://test.dapp",
+				name: 'Test Dapp',
+				url: 'https://test.dapp',
 			},
 			analytics: {
 				enabled: false,
@@ -790,19 +790,19 @@ t.describe("MultichainSDK", () => {
 		},
 		createMetamaskSDKWeb,
 		(nativeStorageStub) => {
-			const dom = new Page("<!DOCTYPE html><p>Hello world</p>", { url: "https://dapp.io/" });
+			const dom = new Page('<!DOCTYPE html><p>Hello world</p>', { url: 'https://dapp.io/' });
 			const globalStub = {
 				...dom.window,
 				addEventListener: t.vi.fn(),
 				removeEventListener: t.vi.fn(),
 				localStorage: nativeStorageStub,
 			};
-			t.vi.stubGlobal("navigator", {
+			t.vi.stubGlobal('navigator', {
 				...dom.window.navigator,
-				product: "Chrome",
+				product: 'Chrome',
 			});
-			t.vi.stubGlobal("window", globalStub);
-			t.vi.stubGlobal("location", dom.window.location);
+			t.vi.stubGlobal('window', globalStub);
+			t.vi.stubGlobal('location', dom.window.location);
 		},
 	);
 });

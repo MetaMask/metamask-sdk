@@ -1,4 +1,4 @@
-import type { ErrorCodes } from "./types";
+import type { ErrorCodes } from './types';
 
 export abstract class BaseErr<C extends string, T extends ErrorCodes> extends Error {
 	constructor(
