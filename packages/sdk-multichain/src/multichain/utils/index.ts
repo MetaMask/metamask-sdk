@@ -1,5 +1,4 @@
 import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
-import * as uuid from 'uuid';
 import packageJson from '../../../package.json';
 import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData, type StoreClient } from '../../domain';
 
@@ -11,16 +10,6 @@ export function getDappId(dapp?: DappSettings) {
 	}
 
 	return window.location.hostname;
-}
-
-export async function getAnonId(storage: StoreClient) {
-	const anonId = await storage.getAnonId();
-	if (anonId) {
-		return anonId;
-	}
-	const newAnonId = uuid.v4();
-	await storage.setAnonId(newAnonId);
-	return newAnonId;
 }
 
 export function getVersion() {

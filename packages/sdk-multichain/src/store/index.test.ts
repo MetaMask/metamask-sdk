@@ -56,9 +56,9 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 			t.expect(result).toBe('test-anon-id');
 		});
 
-		t.it('should return null when anonymous ID does not exist', async () => {
+		t.it('should return a new when anonymous ID does not exist', async () => {
 			const result = await store.getAnonId();
-			t.expect(result).toBeNull();
+			t.expect(result).not.toBeNull();
 		});
 	});
 

@@ -2,7 +2,7 @@
 import type { TransportType } from '../multichain';
 
 export abstract class StoreClient {
-	abstract getAnonId(): Promise<string | null>;
+	abstract getAnonId(): Promise<string>;
 
 	abstract getExtensionId(): Promise<string | null>;
 	abstract setExtensionId(extensionId: string): Promise<void>;

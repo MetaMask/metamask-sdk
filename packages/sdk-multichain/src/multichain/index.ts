@@ -8,7 +8,7 @@ import { MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, PlatformType } from '../domain/platform';
 import { MWPClientTransport } from './mwp';
 import { RPCClient } from './rpc/client';
-import { addValidAccounts, getAnonId, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
+import { addValidAccounts, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -117,7 +117,7 @@ export class MultichainSDK extends MultichainCore {
 
 		const version = getVersion();
 		const dappId = getDappId(this.options.dapp);
-		const anonId = await getAnonId(this.options.storage);
+		const anonId = await this.storage.getAnonId();
 
 		const integrationType = this.options.analytics.integrationType;
 		analytics.setGlobalProperty('sdk_version', version);

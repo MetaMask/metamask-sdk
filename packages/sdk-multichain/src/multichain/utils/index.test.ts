@@ -67,57 +67,6 @@ t.describe('Utils', () => {
 			const dappSettings = {};
 			t.expect(utils.getDappId(dappSettings)).toBe('N/A');
 		});
-
-		t.describe('Anonymous ID Management', () => {
-			const mockUuidValue = 'test-uuid-value';
-			const data = new Map<string, string>();
-			const mockAnonId = 'test-anon-id';
-			let storageMock: StoreClient;
-			let getAnonIdStorageMock: t.MockInstance<() => Promise<string | null>>;
-			let setAnonIdStorageMock: t.MockInstance<(anonId: string) => Promise<void>>;
-
-			t.beforeEach(async () => {
-				t.vi.clearAllMocks();
-				// For some reason mock only works with vi.mock not t.vi.mock ¿?
-				vi.mock('uuid', () => ({
-					v4: vi.fn(() => 'test-uuid-value'),
-				}));
-
-				const storeClassMock = t.vi.mocked(Store);
-				storageMock = new storeClassMock({
-					getItem: t.vi.fn(async (key: string) => data.get(key) || null),
-					setItem: t.vi.fn(async (key: string, value: string) => {
-						data.set(key, value);
-					}),
-					deleteItem: t.vi.fn(async (key: string) => {
-						data.delete(key);
-					}),
-					platform: 'web',
-				});
-				getAnonIdStorageMock = t.vi.spyOn(storageMock, 'getAnonId');
-				setAnonIdStorageMock = t.vi.spyOn(storageMock, 'setAnonId');
-			});
-
-			t.afterEach(() => {
-				t.vi.clearAllMocks();
-				data.clear();
-			});
-
-			t.describe('getAnonId', () => {
-				t.it('should return existing _anonId if already set', async () => {
-					await storageMock.setAnonId(mockAnonId);
-					const anonId = await utils.getAnonId(storageMock);
-					t.expect(anonId).toBe(mockAnonId);
-					t.expect(getAnonIdStorageMock).toHaveBeenCalled();
-				});
-				t.it('should generate new anonId if not set', async () => {
-					const anonId = await utils.getAnonId(storageMock);
-					t.expect(anonId).toBe(mockUuidValue);
-					t.expect(getAnonIdStorageMock).toHaveBeenCalled();
-					t.expect(setAnonIdStorageMock).toHaveBeenCalledWith(mockUuidValue);
-				});
-			});
-		});
 	});
 
 	t.describe('getSDKVersion', () => {

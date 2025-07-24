@@ -1,3 +1,5 @@
+import * as uuid from 'uuid';
+
 import type { StoreAdapter, StoreClient, TransportType } from '../domain';
 import { StorageDeleteErr, StorageGetErr, StorageSetErr } from '../domain/errors/storage';
 import { getTransportType } from '../domain/multichain';
@@ -37,9 +39,15 @@ export class Store implements StoreClient {
 		}
 	}
 
-	async getAnonId(): Promise<string | null> {
+	async getAnonId(): Promise<string> {
 		try {
-			return await this.#adapter.getItem('anonId');
+			const anonId = await this.#adapter.getItem('anonId');
+			if (anonId) {
+				return anonId;
+			}
+			const newAnonId = uuid.v4();
+			await this.#adapter.setItem('anonId', newAnonId);
+			return newAnonId;
 		} catch (err) {
 			throw new StorageGetErr(this.#adapter.platform, 'anonId', err.message);
 		}
