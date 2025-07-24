@@ -63,7 +63,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(sdk.storage).toBeDefined();
 			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
 			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('sessionChanged', mockSessionData);
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
 
 			const mockedSessionUpgradeData: SessionData = {
 				...mockSessionData,
@@ -88,7 +88,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				optionalScopes: mockedSessionUpgradeData.sessionScopes,
 			});
 			// sessionChanged should be emitted with the full session data returned from createSession, not just the scopes
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('sessionChanged', mockedSessionUpgradeData);
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockedSessionUpgradeData);
 		});
 
 		t.it(`${platform} should handle session retrieval when no session exists`, async () => {

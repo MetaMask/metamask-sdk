@@ -137,9 +137,9 @@ export class MultichainSDK extends MultichainCore {
 			//TODO: We also should report this as an issue, sessions with no sessionScopes should be undefined, is there any reason
 			//why the object comes empty?
 			if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
-				this.emit('sessionChanged', session);
+				this.emit('session_changed', session);
 			} else {
-				this.emit('sessionChanged', undefined);
+				this.emit('session_changed', undefined);
 			}
 		}
 	}
@@ -172,7 +172,7 @@ export class MultichainSDK extends MultichainCore {
 			this.listeners.push(listener);
 			const session = await this.getCurrentSession();
 			if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
-				this.emit('sessionChanged', session);
+				this.emit('session_changed', session);
 			}
 		}
 	}
@@ -218,7 +218,7 @@ export class MultichainSDK extends MultichainCore {
 		const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
 
 		if (isSameScopes) {
-			this.emit('sessionChanged', session);
+			this.emit('session_changed', session);
 			return;
 		}
 
@@ -231,7 +231,7 @@ export class MultichainSDK extends MultichainCore {
 		const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 
 		const newSession = await this.provider.createSession(sessionRequest);
-		this.emit('sessionChanged', newSession);
+		this.emit('session_changed', newSession);
 	}
 
 	private getTransportForPlatformType(platformType: PlatformType) {
@@ -314,7 +314,7 @@ export class MultichainSDK extends MultichainCore {
 		__transport = undefined;
 		__provider = undefined;
 
-		this.emit('sessionChanged', undefined);
+		this.emit('session_changed', undefined);
 		this.listeners = [];
 
 		await this.storage.removeTransport();
