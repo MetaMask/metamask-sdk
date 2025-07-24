@@ -71,9 +71,6 @@ export class UIModule extends ModalFactory {
 		await preload();
 		const container = this.getMountedContainer();
 		const modalProps: InstallWidgetProps = {
-			onAnalyticsEvent: () => {
-				//TODO: Remove in a later PR
-			},
 			onClose: this.unload.bind(this),
 			metaMaskInstaller: {
 				startDesktopOnboarding: () => {

@@ -144,7 +144,6 @@ t.describe('UIModule', () => {
 				expect(document.body.contains(mockContainer)).toBe(true);
 
 				expect(mockFactoryOptions.installModal.render).toHaveBeenCalledWith({
-					onAnalyticsEvent: expect.any(Function),
 					onClose: expect.any(Function),
 					metaMaskInstaller: {
 						startDesktopOnboarding: expect.any(Function),

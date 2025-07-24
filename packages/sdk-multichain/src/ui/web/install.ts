@@ -13,8 +13,6 @@ export class InstallModal extends AbstractInstallModal {
 
 		modal.addEventListener('startDesktopOnboarding', options.metaMaskInstaller.startDesktopOnboarding);
 
-		modal.addEventListener('trackAnalytics', ((e: CustomEvent) => options.onAnalyticsEvent?.(e.detail)) as EventListener);
-
 		return {
 			mount: () => {
 				options.parentElement?.appendChild(modal);
