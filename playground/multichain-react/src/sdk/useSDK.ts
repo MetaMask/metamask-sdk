@@ -60,7 +60,7 @@ export function useSDK({ extensionId }: SDKOptions) {
 		return () => {
 			unsubscribe1?.();
 		};
-	}, [sdk, setCurrentSession]);
+	}, [sdk]);
 
 	useEffect(() => {
 		if (extensionId && currentExtensionId !== extensionId) {
@@ -83,7 +83,7 @@ export function useSDK({ extensionId }: SDKOptions) {
 					setError(error.message);
 				});
 		}
-	}, [sdk, extensionId, currentExtensionId, setSdk, setCurrentExtensionId]);
+	}, [sdk, extensionId, currentExtensionId]);
 
 	const disconnect = useCallback(async () => {
 		await sdk?.disconnect();

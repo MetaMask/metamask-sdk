@@ -5,5 +5,5 @@
  * @returns The escaped string that is safe to use as an HTML ID.
  */
 export const escapeHtmlId = (value: string): string => {
-  return value.replace(/:/gu, '-');
+	return value.replace(/:/gu, "-");
 };

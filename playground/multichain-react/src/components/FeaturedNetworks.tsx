@@ -1,25 +1,18 @@
 /* eslint-disable */
-import type { Scope } from '@metamask/multichain-sdk';
+import type { Scope } from "@metamask/multichain-sdk";
 // biome-ignore lint/style/useImportType: <explanation>
-import React from 'react';
+import React from "react";
 
-import { FEATURED_NETWORKS } from '../constants/networks';
-import { escapeHtmlId } from '../helpers/IdHelpers';
-
+import { FEATURED_NETWORKS } from "../constants/networks";
+import { escapeHtmlId } from "../helpers/IdHelpers";
 
 type FeaturedNetworksProps = {
 	selectedScopes: Record<string, boolean>;
-	setSelectedScopes: React.Dispatch<
-		React.SetStateAction<Record<string, boolean>>
-	>;
+	setSelectedScopes: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isExternallyConnectableConnected: boolean;
-}
+};
 
-export const FeaturedNetworks: React.FC<FeaturedNetworksProps> = ({
-	selectedScopes,
-	setSelectedScopes,
-	isExternallyConnectableConnected,
-}) => {
+export const FeaturedNetworks: React.FC<FeaturedNetworksProps> = ({ selectedScopes, setSelectedScopes, isExternallyConnectableConnected }) => {
 	const featuredNetworks = Object.entries(FEATURED_NETWORKS);
 	return (
 		<div className="space-y-2">
