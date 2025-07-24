@@ -25,7 +25,7 @@
     "test": "vitest run",
     "test:unit": "vitest run",
     "test:watch": "vitest watch",
-    "test:ci": "vitest run --coverage --coverage.reporter=html --silent",
+    "test:ci": "vitest run --coverage --coverage.reporter=text --silent",
     "allow-scripts": ""
   },
   "devDependencies": {
