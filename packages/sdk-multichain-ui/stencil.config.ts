@@ -8,11 +8,23 @@ export const config: Config = {
     {
       type: 'dist',
       isPrimaryPackageOutputTarget: true,
+      copy: [
+        {
+          src: 'assets',
+          dest: 'assets'
+        }
+      ]
     },
     {
       type: 'www',
       serviceWorker: null,
-      baseUrl: 'http://localhost:4444/'
+      baseUrl: 'http://localhost:4444/',
+      copy: [
+        {
+          src: 'assets',
+          dest: 'assets'
+        }
+      ]
     }
   ],
   enableCache: true,

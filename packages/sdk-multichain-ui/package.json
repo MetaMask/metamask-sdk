@@ -9,7 +9,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/MetaMask/metamask-sdk.git",
-    "directory": "packages/sdk-install-modal-web"
+    "directory": "packages/sdk-multichain-ui"
   },
   "author": "MetaMask",
   "packageManager": "yarn@3.5.0",
@@ -35,7 +35,7 @@
     "build:release": "yarn version && stencil build",
     "clean": "rimraf ./dist && rimraf ./loader",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
+    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-multichain-ui",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
@@ -87,6 +87,7 @@
     }
   },
   "dependencies": {
-    "@paulmillr/qr": "^0.2.1"
+    "@paulmillr/qr": "^0.2.1",
+    "qr-code-styling": "^1.9.2"
   }
 }

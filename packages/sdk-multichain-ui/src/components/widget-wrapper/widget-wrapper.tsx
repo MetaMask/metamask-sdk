@@ -2,7 +2,7 @@ import { h, ChildNode } from '@stencil/core';
 import './resetStyles.css';
 
 const widgetWrapperStyle = {
-  fontFamily: 'Roboto, sans-serif',
+  fontFamily: '"Euclid Circular B", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
 };
 
 export const WidgetWrapper = ({

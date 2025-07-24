@@ -15,8 +15,9 @@ const defaultTranslations: TranslationDict = {
   "CONNECT_WITH_METAMASK": "Connect with Metamask",
   "USE_EXTENSION": "Use extension",
   "USE_MOBILE":"Use mobile",
-  "ONE_CLICK_CONNECT": "Connect in one clikc to the Metamask extension",
-  "CONNECT_WITH_EXTENSION": "Connect With MetaMask Extension",
+  "ONE_CLICK_CONNECT": "Connect in one click to the MetaMask extension.",
+  "CONNECT_WITH_EXTENSION": "Connect With Extension",
+  "SCAN_TO_CONNECT": "Scan to connect with the MetaMask mobile app.",
   /**
    * In use
    */
@@ -24,7 +25,6 @@ const defaultTranslations: TranslationDict = {
   "DESKTOP": "Desktop",
   "MOBILE": "Mobile",
   "META_MASK_MOBILE_APP": "MetaMask mobile app",
-  "SCAN_TO_CONNECT": "Scan to connect and sign with",
   "INSTALL_MODAL": {
     "TRUSTED_BY_USERS": "Trusted by over 30 million users to buy, store, send and swap crypto securely",
     "LEADING_CRYPTO_WALLET": "The leading crypto wallet & gateway to blockchain apps built on Ethereum Mainnet, Polygon, Optimism, and many other networks",

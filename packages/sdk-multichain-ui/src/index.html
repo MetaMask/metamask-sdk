@@ -32,34 +32,13 @@
     </style>
   </head>
   <body>
-    <div class="nav">
-      <a href="#install">Install Modal</a>
-      <a href="#pending">Pending Modal</a>
-      <a href="#select">Select Modal</a>
-    </div>
 
     <div class="component-container">
       <div id="install" style="display: none">
-        <h2>Install Modal</h2>
         <mm-install-modal
           link="https://example.com/install"
           sdk-version="1.0.0"
-          prefer-desktop="true"
-        ></mm-install-modal>
-      </div>
-
-      <div id="pending" style="display: none">
-        <h2>Pending Modal</h2>
-        <mm-pending-modal></mm-pending-modal>
-      </div>
-
-      <div id="select" style="display: none">
-        <h2>Select Modal</h2>
-        <mm-select-modal
-          link="https://example.com/select"
-          sdk-version="1.0.0"
-          prefer-desktop="true"
-        ></mm-select-modal>
+          prefer-desktop="true" />
       </div>
     </div>
 
@@ -74,7 +53,6 @@
           componentDiv.style.display = 'block';
         }
       }
-
       window.addEventListener('hashchange', showComponent);
       showComponent();
     </script>
