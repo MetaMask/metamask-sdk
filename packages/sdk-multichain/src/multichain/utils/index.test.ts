@@ -2,16 +2,16 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import packageJson from '../../package.json';
-import type { MultichainOptions } from '../domain/multichain';
-import { getPlatformType, PlatformType } from '../domain/platform';
+import packageJson from '../../../package.json';
+import type { MultichainOptions } from '../../domain/multichain';
+import { getPlatformType, isMetamaskExtensionInstalled, PlatformType } from '../../domain/platform';
 import * as utils from '.';
 
-vi.mock('../domain/platform', async () => {
-	const actual = (await vi.importActual('../domain/platform')) as any;
+vi.mock('../../domain/platform', async () => {
+	const actual = (await vi.importActual('../../domain/platform')) as any;
 	return {
 		...actual,
-		getPlatformType: t.vi.fn(),
+		getPlatformType: vi.fn(),
 	};
 });
 
@@ -202,7 +202,8 @@ t.describe('Utils', () => {
 		});
 
 		t.it('should prove that dapp is optional is platform is browser', async () => {
-			(getPlatformType as any).mockReturnValue(PlatformType.DesktopWeb);
+			const mockGetPlatformType = t.vi.mocked(getPlatformType);
+			mockGetPlatformType.mockReturnValue(PlatformType.DesktopWeb);
 			t.vi.stubGlobal('window', {
 				location: {
 					protocol: 'https:',
@@ -261,19 +262,19 @@ t.describe('Utils', () => {
 		});
 	});
 
-	t.describe('isMetaMaskInstalled', () => {
+	t.describe('isMetamaskExtensionInstalled', () => {
 		t.it('should return true if MetaMask is installed', () => {
 			t.vi.stubGlobal('window', {
 				ethereum: {
 					isMetaMask: true,
 				},
 			});
-			t.expect(utils.isMetaMaskInstalled()).toBe(true);
+			t.expect(isMetamaskExtensionInstalled()).toBe(true);
 		});
 
 		t.it('should return false if MetaMask is not installed', () => {
 			t.vi.stubGlobal('window', undefined);
-			t.expect(utils.isMetaMaskInstalled()).toBe(false);
+			t.expect(isMetamaskExtensionInstalled()).toBe(false);
 		});
 	});
 });

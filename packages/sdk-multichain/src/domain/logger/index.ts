@@ -6,7 +6,7 @@ import type { StoreClient } from '../store/client';
  * Supported debug namespace types for the MetaMask SDK logger.
  * These namespaces help categorize and filter debug output.
  */
-export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider';
+export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider' | 'metamask-sdk:ui';
 
 /**
  * Creates a debug logger instance with the specified namespace and color.
@@ -64,7 +64,7 @@ function isNamespaceEnabled(debugValue: string, namespace: LoggerNameSpaces) {
  * @returns Promise that resolves to true if debug logging is enabled, false otherwise
  */
 export const isEnabled = async (namespace: LoggerNameSpaces, storage: StoreClient) => {
-	if (process?.env?.DEBUG) {
+	if ('process' in globalThis && process?.env?.DEBUG) {
 		const { DEBUG } = process.env;
 		return isNamespaceEnabled(DEBUG, namespace);
 	}

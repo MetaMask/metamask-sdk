@@ -1,6 +1,4 @@
-import { EventEmitter2 } from 'eventemitter2';
-
-import type { EventTypes } from './types';
+import { EventEmitter as EventEmitter3 } from 'eventemitter3';
 
 /**
  * A type-safe event emitter that provides a strongly-typed wrapper around EventEmitter2.
@@ -11,8 +9,8 @@ import type { EventTypes } from './types';
  * @template TEvents - A record type mapping event names to their argument types.
  *                    Each key represents an event name, and the value is a tuple of argument types.
  */
-export class EventEmitter<TEvents extends Record<string, unknown[]> = EventTypes> {
-	readonly #emitter = new EventEmitter2();
+export class EventEmitter<TEvents extends Record<string, unknown[]>> {
+	readonly #emitter = new EventEmitter3();
 
 	/**
 	 * Emits an event with the specified name and arguments.
@@ -34,19 +32,9 @@ export class EventEmitter<TEvents extends Record<string, unknown[]> = EventTypes
 	 */
 	on<TEventName extends keyof TEvents & string>(eventName: TEventName, handler: (...eventArg: TEvents[TEventName]) => void) {
 		this.#emitter.on(eventName, handler);
-	}
-
-	/**
-	 * Sets the maximum number of listeners that can be registered for any single event.
-	 *
-	 * This is useful for preventing memory leaks when many listeners are registered.
-	 * By default, EventEmitter2 will warn if more than 10 listeners are registered
-	 * for a single event.
-	 *
-	 * @param maxListeners - The maximum number of listeners per event (0 means unlimited)
-	 */
-	setMaxListeners(maxListeners: number) {
-		this.#emitter.setMaxListeners(maxListeners);
+		return () => {
+			this.off(eventName, handler);
+		};
 	}
 
 	/**

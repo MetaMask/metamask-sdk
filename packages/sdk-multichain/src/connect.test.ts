@@ -1,0 +1,285 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
+import fs from 'node:fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { JSDOM as Page } from 'jsdom';
+import * as t from 'vitest';
+import type { MultiChainFNOptions, MultichainCore, Scope } from './domain';
+// Carefull, order of import matters to keep mocks working
+import { createTest, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
+import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
+import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
+import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
+import { Store } from './store';
+import * as nodeStorage from './store/adapters/node';
+import * as rnStorage from './store/adapters/rn';
+import * as webStorage from './store/adapters/web';
+
+function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+	const { beforeEach, afterEach } = options;
+	const originalSdkOptions = sdkOptions;
+	let sdk: MultichainCore;
+
+	t.describe(`${platform} tests`, () => {
+		let mockedData: MockedData;
+		let testOptions: T;
+		const transportString = platform === 'web' ? 'browser' : 'mwp';
+
+		t.beforeEach(async () => {
+			mockedData = await beforeEach();
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			// Set the transport type as a string in storage (this is how it's stored)
+			testOptions = {
+				...originalSdkOptions,
+				analytics: {
+					...originalSdkOptions.analytics,
+					enabled: platform !== 'node',
+					integrationType: 'test',
+				},
+				storage: new Store(mockedData.nativeStorageStub),
+			};
+		});
+
+		t.afterEach(async () => {
+			await afterEach(mockedData);
+		});
+
+		t.it(`${platform} should connect transport and create session when not connected`, async () => {
+			// Get mocks from the module mock
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockMultichainClient.getSession.mockResolvedValue(undefined);
+			mockMultichainClient.createSession.mockResolvedValue(mockSessionData);
+			mockedData.mockTransport.isConnected.mockReturnValue(false);
+
+			// Create a new SDK instance with the mock configured correctly
+			const sdk = await createSDK(testOptions);
+
+			t.expect(sdk.state).toBe('loaded');
+			t.expect(sdk.provider).toBeDefined();
+			t.expect(sdk.transport).toBeDefined();
+			t.expect(sdk.storage).toBeDefined();
+			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
+			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+			t.expect(mockedData.emitSpy).not.toHaveBeenCalled();
+
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+
+			await sdk.connect(scopes, caipAccountIds);
+
+			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
+			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+			t.expect(mockMultichainClient.revokeSession).not.toHaveBeenCalled();
+			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
+				optionalScopes: {
+					'eip155:1': {
+						methods: [],
+						notifications: [],
+						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+					},
+				},
+			});
+		});
+
+		t.it(`${platform} should skip transport connection when already connected`, async () => {
+			// Get mocks from the module mock
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+
+			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+
+			sdk = await createSDK(testOptions);
+			t.expect(sdk.provider).toBeDefined();
+			t.expect(sdk.transport).toBeDefined();
+			t.expect(sdk.storage).toBeDefined();
+			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
+			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('sessionChanged', mockSessionData);
+
+			mockedData.mockTransport.connect.mockReset();
+
+			await sdk.connect(scopes, caipAccountIds);
+			t.expect(mockedData.mockTransport.connect).not.toHaveBeenCalled();
+		});
+
+		t.it(`${platform} should handle invalid CAIP account IDs gracefully`, async () => {
+			// Get mocks from the module mock
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockedData.mockTransport.isConnected.mockReturnValue(false);
+			mockMultichainClient.getSession.mockResolvedValue(undefined);
+
+			// Mock console.error to capture invalid account ID errors
+			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
+
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['invalid-account-id', 'eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			sdk = await createSDK(testOptions);
+			await sdk.connect(scopes, caipAccountIds);
+
+			t.expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid CAIP account ID: "invalid-account-id"', t.expect.any(Error));
+			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
+				optionalScopes: {
+					'eip155:1': {
+						methods: [],
+						notifications: [],
+						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+					},
+				},
+			});
+			consoleErrorSpy.mockRestore();
+		});
+
+		t.it(`${platform} should handle transport connection errors`, async () => {
+			const connectionError = new Error('Failed to connect transport');
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+			mockedData.mockTransport.isConnected.mockReturnValue(false);
+			mockedData.mockTransport.connect.mockRejectedValue(connectionError);
+
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			sdk = await createSDK(testOptions);
+			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to connect transport');
+		});
+
+		t.it(`${platform} should handle session creation errors`, async () => {
+			// Get mocks from the module mock
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockMultichainClient.getSession.mockResolvedValue(undefined);
+
+			const sessionError = new Error('Failed to create session');
+			mockMultichainClient.createSession.mockRejectedValue(sessionError);
+
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			sdk = await createSDK(testOptions);
+			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to create session');
+		});
+
+		t.it(`${platform} should handle session revocation errors`, async () => {
+			// Get mocks from the module mock
+			const multichainModule = await import('@metamask/multichain-api-client');
+			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+
+			const existingSessionData = {
+				...mockSessionData,
+				sessionScopes: {
+					'eip155:1': {
+						methods: ['eth_sendTransaction'],
+						notifications: ['accountsChanged'],
+						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+					},
+				},
+			};
+
+			mockMultichainClient.getSession.mockResolvedValue(existingSessionData);
+
+			const revocationError = new Error('Failed to revoke session');
+			mockMultichainClient.revokeSession.mockRejectedValue(revocationError);
+
+			const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
+			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			sdk = await createSDK(testOptions);
+			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to revoke session');
+		});
+
+		t.it(`${platform} should disconnect transport successfully`, async () => {
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+
+			sdk = await createSDK(testOptions);
+			await sdk.disconnect();
+			t.expect(mockedData.mockTransport.disconnect).toHaveBeenCalled();
+		});
+
+		t.it(`${platform} should handle disconnect errors`, async () => {
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			const disconnectError = new Error('Failed to disconnect transport');
+			mockedData.mockTransport.disconnect.mockRejectedValue(disconnectError);
+			sdk = await createSDK(testOptions);
+			await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
+		});
+	});
+}
+
+const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
+
+const baseTestOptions = { options: { dapp: exampleDapp }, tests: testSuite };
+
+createTest({
+	...baseTestOptions,
+	platform: 'node',
+	createSDK: createMetamaskSDKNode,
+	setupMocks: (nativeStorageStub) => {
+		const memfs = new Map<string, any>();
+		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
+		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
+		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
+		t.vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
+			return nativeStorageStub as any;
+		});
+	},
+});
+
+createTest({
+	...baseTestOptions,
+	platform: 'rn',
+	createSDK: createMetamaskSDKRN,
+	setupMocks: (nativeStorageStub) => {
+		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
+		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
+		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.deleteItem(key));
+		t.vi.spyOn(rnStorage, 'StoreAdapterRN').mockImplementation(() => {
+			return nativeStorageStub as any;
+		});
+	},
+});
+
+createTest({
+	...baseTestOptions,
+	platform: 'web',
+	createSDK: createMetamaskSDKWeb,
+	setupMocks: (nativeStorageStub) => {
+		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
+			url: exampleDapp.url,
+		});
+		const globalStub = {
+			...dom.window,
+			addEventListener: t.vi.fn(),
+			removeEventListener: t.vi.fn(),
+			localStorage: nativeStorageStub,
+			ethereum: {
+				isMetaMask: true,
+			},
+		};
+		t.vi.stubGlobal('navigator', {
+			...dom.window.navigator,
+			product: 'Chrome',
+			language: 'en-US',
+		});
+		t.vi.stubGlobal('window', globalStub);
+		t.vi.stubGlobal('location', dom.window.location);
+		t.vi.stubGlobal('document', dom.window.document);
+		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+		t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
+			return nativeStorageStub as any;
+		});
+	},
+});

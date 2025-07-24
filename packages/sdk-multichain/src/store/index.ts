@@ -1,5 +1,8 @@
-import type { StoreAdapter, StoreClient } from '../domain';
+import * as uuid from 'uuid';
+
+import type { StoreAdapter, StoreClient, TransportType } from '../domain';
 import { StorageDeleteErr, StorageGetErr, StorageSetErr } from '../domain/errors/storage';
+import { getTransportType } from '../domain/multichain';
 
 export class Store implements StoreClient {
 	readonly #adapter: StoreAdapter;
@@ -8,9 +11,43 @@ export class Store implements StoreClient {
 		this.#adapter = adapter;
 	}
 
-	async getAnonId(): Promise<string | null> {
+	async getTransport(): Promise<TransportType | null> {
 		try {
-			return await this.#adapter.getItem('anonId');
+			const transport = await this.#adapter.getItem('multichain-transport');
+			if (!transport) {
+				return null;
+			}
+			return getTransportType(transport);
+		} catch (err) {
+			throw new StorageGetErr(this.#adapter.platform, 'multichain-transport', err.message);
+		}
+	}
+
+	async setTransport(transport: TransportType): Promise<void> {
+		try {
+			await this.#adapter.setItem('multichain-transport', transport);
+		} catch (err) {
+			throw new StorageSetErr(this.#adapter.platform, 'multichain-transport', err.message);
+		}
+	}
+
+	async removeTransport(): Promise<void> {
+		try {
+			await this.#adapter.deleteItem('multichain-transport');
+		} catch (err) {
+			throw new StorageDeleteErr(this.#adapter.platform, 'multichain-transport', err.message);
+		}
+	}
+
+	async getAnonId(): Promise<string> {
+		try {
+			const anonId = await this.#adapter.getItem('anonId');
+			if (anonId) {
+				return anonId;
+			}
+			const newAnonId = uuid.v4();
+			await this.#adapter.setItem('anonId', newAnonId);
+			return newAnonId;
 		} catch (err) {
 			throw new StorageGetErr(this.#adapter.platform, 'anonId', err.message);
 		}

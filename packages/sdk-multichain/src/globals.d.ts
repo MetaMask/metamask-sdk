@@ -1,5 +1,6 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: required in here */
 declare module '@paulmillr/qr';
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export declare const mmsdk: any;
 declare global {
 	interface Window {

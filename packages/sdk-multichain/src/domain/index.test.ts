@@ -1,7 +1,9 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import Bowser from 'bowser';
 import * as t from 'vitest';
 
-import { createLogger, EventEmitter, type ExtensionEvents, enableDebug, getPlatformType, isEnabled, PlatformType, type SDKEvents } from './';
+import { createLogger, EventEmitter, enableDebug, getPlatformType, isEnabled, PlatformType, type SDKEvents } from './';
 
 const parseMock = t.vi.fn();
 // Mock Bowser at the top level
@@ -12,14 +14,12 @@ t.vi.mock('bowser', () => ({
 }));
 
 t.describe('Platform Detection', () => {
-	let mockBowser: { parse: t.MockedFunction<any> };
-
 	t.beforeEach(() => {
 		// Reset mocks
 		t.vi.clearAllMocks();
 		t.vi.unstubAllGlobals();
 		// Get the mocked instance - Bowser is a default export
-		mockBowser = t.vi.mocked(Bowser);
+		t.vi.mocked(Bowser);
 	});
 
 	t.describe('getPlatformType', () => {
@@ -413,91 +413,6 @@ t.describe('EventEmitter', () => {
 				t.expect(() => {
 					eventEmitter.off('display_uri', handler);
 				}).not.toThrow();
-			});
-			t.it('should not leak memory when handlers are removed', () => {
-				const handlers: Array<() => void> = [];
-
-				// Set a higher limit to avoid warnings
-				eventEmitter.setMaxListeners(200);
-
-				// Add many handlers
-				for (let i = 0; i < 100; i++) {
-					const handler = t.vi.fn();
-					handlers.push(handler);
-					eventEmitter.on('display_uri', handler);
-				}
-
-				// Remove all handlers
-				handlers.forEach((handler) => {
-					eventEmitter.off('display_uri', handler);
-				});
-
-				// Emit should not call any handlers
-				eventEmitter.emit('display_uri', 'should not be handled');
-
-				handlers.forEach((handler) => {
-					t.expect(handler).not.toHaveBeenCalled();
-				});
-			});
-		});
-
-		t.describe('ExtensionEvents', () => {
-			let eventEmitter: EventEmitter<ExtensionEvents>;
-			t.beforeEach(() => {
-				eventEmitter = new EventEmitter();
-			});
-
-			t.it('should emit chainChanged event with unknown argument', () => {
-				const handler = t.vi.fn();
-				eventEmitter.on('chainChanged', handler);
-
-				const chainData = { chainId: '0x1', networkName: 'mainnet' };
-				eventEmitter.emit('chainChanged', chainData);
-
-				t.expect(handler).toHaveBeenCalledWith(chainData);
-				t.expect(handler).toHaveBeenCalledTimes(1);
-			});
-
-			t.it('should emit chainChanged event with various data types', () => {
-				const handler = t.vi.fn();
-				eventEmitter.on('chainChanged', handler);
-
-				// Test with string
-				eventEmitter.emit('chainChanged', 'chain-id');
-				t.expect(handler).toHaveBeenCalledWith('chain-id');
-
-				// Test with number
-				eventEmitter.emit('chainChanged', 1);
-				t.expect(handler).toHaveBeenCalledWith(1);
-
-				// Test with null
-				eventEmitter.emit('chainChanged', null);
-				t.expect(handler).toHaveBeenCalledWith(null);
-
-				t.expect(handler).toHaveBeenCalledTimes(3);
-			});
-
-			t.it('should register handlers for chainChanged event', () => {
-				const handler = t.vi.fn();
-
-				eventEmitter.on('chainChanged', handler);
-				eventEmitter.emit('chainChanged', { chainId: '0x89' });
-
-				t.expect(handler).toHaveBeenCalledWith({ chainId: '0x89' });
-			});
-
-			t.it('should remove specific handlers for chainChanged event', () => {
-				const handler1 = t.vi.fn();
-				const handler2 = t.vi.fn();
-
-				eventEmitter.on('chainChanged', handler1);
-				eventEmitter.on('chainChanged', handler2);
-
-				eventEmitter.off('chainChanged', handler1);
-				eventEmitter.emit('chainChanged', { chainId: '0x1' });
-
-				t.expect(handler1).not.toHaveBeenCalled();
-				t.expect(handler2).toHaveBeenCalledWith({ chainId: '0x1' });
 			});
 		});
 	});

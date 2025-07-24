@@ -1,12 +1,8 @@
-import * as uuid from 'uuid';
-import packageJson from '../../package.json';
-import { type DappSettings, getInfuraRpcUrls, type MultichainOptions } from '../domain/multichain';
-import { getPlatformType, PlatformType } from '../domain/platform';
-import type { StoreClient } from '../domain/store/client';
+import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
+import packageJson from '../../../package.json';
+import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData } from '../../domain';
 
-export function getVersion() {
-	return packageJson.version;
-}
+export type OptionalScopes = Record<Scope, SessionData['sessionScopes'][Scope]>;
 
 export function getDappId(dapp?: DappSettings) {
 	if (typeof window === 'undefined' || typeof window.location === 'undefined') {
@@ -16,14 +12,23 @@ export function getDappId(dapp?: DappSettings) {
 	return window.location.hostname;
 }
 
-export async function getAnonId(storage: StoreClient) {
-	const anonId = await storage.getAnonId();
-	if (anonId) {
-		return anonId;
-	}
-	const newAnonId = uuid.v4();
-	await storage.setAnonId(newAnonId);
-	return newAnonId;
+export function getVersion() {
+	return packageJson.version;
+}
+
+export function getOptionalScopes(scopes: Scope[]) {
+	return scopes.reduce<OptionalScopes>(
+		(prev, scope) => ({
+			// biome-ignore lint/performance/noAccumulatingSpread: Needed
+			...prev,
+			[scope]: {
+				methods: [],
+				notifications: [],
+				accounts: [],
+			},
+		}),
+		{},
+	);
 }
 
 export const extractFavicon = () => {
@@ -107,12 +112,76 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
 	return options;
 }
 
+export function getValidAccounts(caipAccountIds: CaipAccountId[]) {
+	return caipAccountIds.reduce<ReturnType<typeof parseCaipAccountId>[]>((caipAccounts, caipAccountId) => {
+		try {
+			// biome-ignore lint/performance/noAccumulatingSpread: Needed
+			return [...caipAccounts, parseCaipAccountId(caipAccountId)];
+		} catch (err) {
+			const stringifiedAccountId = JSON.stringify(caipAccountId);
+			console.error(`Invalid CAIP account ID: ${stringifiedAccountId}`, err);
+			return caipAccounts;
+		}
+	}, []);
+}
+
 /**
- * Check if MetaMask extension is installed
+ * Adds valid accounts to their corresponding scopes based on chain namespace and reference.
+ * Returns a new OptionalScopes object without modifying the input.
+ *
+ * @param optionalScopes - The scopes to add accounts to
+ * @param validAccounts - Array of parsed valid accounts
+ * @returns A new OptionalScopes object with accounts added to matching scopes
  */
-export function isMetaMaskInstalled(): boolean {
-	if (typeof window === 'undefined') {
-		return false;
+export function addValidAccounts(optionalScopes: OptionalScopes, validAccounts: ReturnType<typeof getValidAccounts>): OptionalScopes {
+	if (!optionalScopes || !validAccounts?.length) {
+		return optionalScopes;
 	}
-	return Boolean(window.ethereum?.isMetaMask);
+
+	const result: OptionalScopes = Object.fromEntries(
+		Object.entries(optionalScopes).map(([scope, scopeData]) => [
+			scope,
+			{
+				methods: [...(scopeData?.methods ?? [])],
+				notifications: [...(scopeData?.notifications ?? [])],
+				accounts: [...(scopeData?.accounts ?? [])],
+			},
+		]),
+	);
+
+	// Group accounts by their chain identifier for efficient lookup
+	const accountsByChain = new Map<string, CaipAccountId[]>();
+	for (const account of validAccounts) {
+		const chainKey = `${account.chain.namespace}:${account.chain.reference}`;
+		const accountId = `${account.chainId}:${account.address}` as CaipAccountId;
+
+		if (!accountsByChain.has(chainKey)) {
+			accountsByChain.set(chainKey, []);
+		}
+		accountsByChain.get(chainKey)?.push(accountId);
+	}
+
+	// Add accounts to matching scopes
+	for (const [scopeKey, scopeData] of Object.entries(result)) {
+		if (!scopeData?.accounts) {
+			continue;
+		}
+
+		try {
+			const scope = scopeKey as CaipChainId;
+			const scopeDetails = parseCaipChainId(scope);
+			const chainKey = `${scopeDetails.namespace}:${scopeDetails.reference}`;
+
+			const matchingAccounts = accountsByChain.get(chainKey);
+			if (matchingAccounts) {
+				const existingAccounts = new Set(scopeData.accounts);
+				const newAccounts = matchingAccounts.filter((account) => !existingAccounts.has(account));
+				scopeData.accounts.push(...newAccounts);
+			}
+		} catch (error) {
+			console.error(`Invalid scope format: ${scopeKey}`, error);
+		}
+	}
+
+	return result;
 }

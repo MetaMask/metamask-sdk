@@ -49,12 +49,14 @@
   "license": "MIT",
   "dependencies": {
     "@metamask/multichain-api-client": "^0.6.4",
+    "@metamask/onboarding": "^1.0.1",
     "@metamask/sdk-analytics": "workspace:^",
+    "@metamask/sdk-install-modal-web": "workspace:^",
     "@metamask/utils": "^11.4.0",
     "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.11.0",
     "cross-fetch": "^4.1.0",
-    "eventemitter2": "^6.4.9",
+    "eventemitter3": "^5.0.1",
     "uuid": "^11.1.0"
   }
 }

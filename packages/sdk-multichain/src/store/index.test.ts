@@ -1,9 +1,12 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import fs from 'node:fs';
 import path from 'node:path';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as t from 'vitest';
 import type { StoreAdapter } from '../domain';
 import { StorageDeleteErr, StorageGetErr, StorageSetErr } from '../domain/errors/storage';
+import { TransportType } from '../domain/multichain';
 import { StoreAdapterNode } from './adapters/node';
 import { StoreAdapterRN } from './adapters/rn';
 import { StoreAdapterWeb } from './adapters/web';
@@ -55,9 +58,9 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 			t.expect(result).toBe('test-anon-id');
 		});
 
-		t.it('should return null when anonymous ID does not exist', async () => {
+		t.it('should return a new when anonymous ID does not exist', async () => {
 			const result = await store.getAnonId();
-			t.expect(result).toBeNull();
+			t.expect(result).not.toBeNull();
 		});
 	});
 
@@ -127,6 +130,63 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 		});
 	});
 
+	t.describe(`${adapterName} getTransport`, () => {
+		t.it('should return the transport value when it exists - Browser', async () => {
+			await adapter.setItem('multichain-transport', 'browser');
+			const result = await store.getTransport();
+			t.expect(result).toBe(TransportType.Browser);
+		});
+
+		t.it('should return the transport value when it exists - MPW', async () => {
+			await adapter.setItem('multichain-transport', 'mwp');
+			const result = await store.getTransport();
+			t.expect(result).toBe(TransportType.MPW);
+		});
+
+		t.it('should return UNKNOWN for unknown transport types', async () => {
+			await adapter.setItem('multichain-transport', 'unknown-transport');
+			const result = await store.getTransport();
+			t.expect(result).toBe(TransportType.UNKNOWN);
+		});
+
+		t.it('should return null when transport does not exist', async () => {
+			const result = await store.getTransport();
+			t.expect(result).toBeNull();
+		});
+	});
+
+	t.describe(`${adapterName} setTransport`, () => {
+		t.it('should set the transport successfully - Browser', async () => {
+			await store.setTransport(TransportType.Browser);
+			const result = await adapter.getItem('multichain-transport');
+			t.expect(result).toBe('browser');
+		});
+
+		t.it('should set the transport successfully - MPW', async () => {
+			await store.setTransport(TransportType.MPW);
+			const result = await adapter.getItem('multichain-transport');
+			t.expect(result).toBe('mwp');
+		});
+
+		t.it('should set the transport successfully - UNKNOWN', async () => {
+			await store.setTransport(TransportType.UNKNOWN);
+			const result = await adapter.getItem('multichain-transport');
+			t.expect(result).toBe('unknown');
+		});
+	});
+
+	t.describe(`${adapterName} removeTransport`, () => {
+		t.it('should remove the transport successfully', async () => {
+			await adapter.setItem('multichain-transport', 'browser');
+			const beforeRemove = await adapter.getItem('multichain-transport');
+			t.expect(beforeRemove).toBe('browser');
+
+			await store.removeTransport();
+			const afterRemove = await adapter.getItem('multichain-transport');
+			t.expect(afterRemove).toBeNull();
+		});
+	});
+
 	// Error handling tests
 	t.describe(`${adapterName} error handling`, () => {
 		t.it('should throw StorageGetErr when fetching a key fails', async () => {
@@ -135,6 +195,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 			await t.expect(store.getAnonId()).rejects.toBeInstanceOf(StorageGetErr);
 			await t.expect(store.getExtensionId()).rejects.toBeInstanceOf(StorageGetErr);
 			await t.expect(store.getDebug()).rejects.toBeInstanceOf(StorageGetErr);
+			await t.expect(store.getTransport()).rejects.toBeInstanceOf(StorageGetErr);
 		});
 
 		t.it('should throw StorageSetErr when setting a key fails', async () => {
@@ -142,7 +203,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 			t.vi.spyOn(adapter, 'setItem').mockRejectedValue(new Error(errorMessage));
 			await t.expect(store.setAnonId('test-id')).rejects.toThrow(StorageSetErr);
 			await t.expect(store.setExtensionId('test-id')).rejects.toThrow(StorageSetErr);
-			await t.expect(store.setExtensionId('test-id')).rejects.toThrow(StorageSetErr);
+			await t.expect(store.setTransport(TransportType.Browser)).rejects.toThrow(StorageSetErr);
 		});
 
 		t.it('should throw StorageDeleteErr when removing a key fails', async () => {
@@ -150,6 +211,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 			t.vi.spyOn(adapter, 'deleteItem').mockRejectedValue(new Error(errorMessage));
 			await t.expect(store.removeAnonId()).rejects.toThrow(StorageDeleteErr);
 			await t.expect(store.removeExtensionId()).rejects.toThrow(StorageDeleteErr);
+			await t.expect(store.removeTransport()).rejects.toThrow(StorageDeleteErr);
 		});
 	});
 }

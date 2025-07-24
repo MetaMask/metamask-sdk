@@ -64,3 +64,13 @@ export function getPlatformType() {
 	}
 	return PlatformType.DesktopWeb;
 }
+
+/**
+ * Check if MetaMask extension is installed
+ */
+export function isMetamaskExtensionInstalled(): boolean {
+	if (typeof window === 'undefined') {
+		return false;
+	}
+	return Boolean(window.ethereum?.isMetaMask);
+}

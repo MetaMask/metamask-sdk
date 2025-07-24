@@ -1,8 +1,10 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import {
 	type InvokeMethodOptions,
-	type MultichainSDKConstructor,
+	type MultichainOptions,
 	RPC_METHODS,
 	RPCHttpErr,
 	RPCInvokeMethodErr,
@@ -31,7 +33,7 @@ vi.mock('./client', async () => {
 
 t.describe('RPCClient', () => {
 	let mockProvider: any;
-	let mockConfig: MultichainSDKConstructor['api'];
+	let mockConfig: MultichainOptions['api'];
 	let sdkInfo: string;
 	let rpcClient: RPCClient;
 	let rpcClientModule: typeof RPCClient;

@@ -1,20 +1,20 @@
+import type { InvokeMethodParams, MultichainApiClient } from '@metamask/multichain-api-client';
 import type { Json } from '@metamask/utils';
 import fetch from 'cross-fetch';
-import type { InvokeMethodParams, MultichainApiClient } from '@metamask/multichain-api-client';
 
 import {
+	getInfuraRpcUrls,
 	type InvokeMethodOptions,
-	type MultichainSDKConstructor,
+	METHODS_TO_REDIRECT,
+	type MultichainOptions,
 	type RPC_URLS_MAP,
 	type RPCAPI,
+	RPCHttpErr,
+	RPCInvokeMethodErr,
+	RPCReadonlyRequestErr,
+	RPCReadonlyResponseErr,
 	type RPCResponse,
 	type Scope,
-	METHODS_TO_REDIRECT,
-	RPCReadonlyResponseErr,
-	RPCHttpErr,
-	RPCReadonlyRequestErr,
-	RPCInvokeMethodErr,
-	getInfuraRpcUrls,
 } from '../../domain';
 
 let rpcId = 1;
@@ -27,7 +27,7 @@ export function getNextRpcId() {
 export class RPCClient {
 	constructor(
 		private readonly provider: MultichainApiClient<RPCAPI>,
-		private readonly config: MultichainSDKConstructor['api'],
+		private readonly config: MultichainOptions['api'],
 		private readonly sdkInfo: string,
 	) {}
 
@@ -90,7 +90,7 @@ export class RPCClient {
 		const { request } = options;
 		const { config } = this;
 		const { infuraAPIKey, readonlyRPCMap: readonlyRPCMapConfig } = config ?? {};
-		let readonlyRPCMap: RPC_URLS_MAP = {};
+		let readonlyRPCMap: RPC_URLS_MAP = readonlyRPCMapConfig ?? {};
 		if (infuraAPIKey) {
 			const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
 			if (readonlyRPCMapConfig) {
@@ -101,8 +101,6 @@ export class RPCClient {
 			} else {
 				readonlyRPCMap = urlsWithToken;
 			}
-		} else {
-			readonlyRPCMap = readonlyRPCMapConfig ?? {};
 		}
 		const rpcEndpoint = readonlyRPCMap[options.scope];
 		const isReadOnlyMethod = !METHODS_TO_REDIRECT[request.method];
