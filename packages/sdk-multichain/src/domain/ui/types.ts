@@ -6,9 +6,6 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
 	metaMaskInstaller: {
 		startDesktopOnboarding: () => void;
 	};
-	//TODO: remove this as its no longer needed
-	// biome-ignore lint/suspicious/noExplicitAny: will be removed soon
-	onAnalyticsEvent: (event: { event: any; params?: Record<string, unknown> }) => void;
 }
 
 export interface PendingWidgetProps extends Components.MmPendingModal {
