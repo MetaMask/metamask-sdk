@@ -1,16 +1,21 @@
-import { Component, Prop, h, Event, EventEmitter, State, Watch, Element } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Element } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
-import AdvantagesListItem from '../misc/AdvantagesListItem';
-import WalletIcon from '../misc/WalletIcon';
-import HeartIcon from '../misc/HeartIcon';
-import LockIcon from '../misc/LockIcon';
 import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
-import Logo from '../misc/Logo';
-import encodeQR from '@paulmillr/qr';
+
+import QRCodeStyling, {
+  DrawType,
+  DotType,
+  CornerSquareType,
+  Options,
+  ErrorCorrectionLevel,
+  Mode,
+  TypeNumber,
+} from "qr-code-styling";
+
 import { SimpleI18n } from '../misc/simple-i18n';
-import { TrackingEvents } from '../misc/tracking-events';
+import SVG from '../../assets/fox.svg'
 
 @Component({
   tag: 'mm-install-modal',
@@ -28,16 +33,11 @@ export class InstallModal {
   @Prop() preferDesktop: boolean;
 
   private i18nInstance: SimpleI18n;
+  private qrCodeContainer: HTMLDivElement | undefined;
 
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
   @Event() startDesktopOnboarding: EventEmitter;
-
-  @Event() trackAnalytics: EventEmitter<{ event: TrackingEvents, params?: Record<string, unknown> }>;
-
-  @State() tab: number = 1;
-
-  @State() isDefaultTab: boolean = true;
 
   @Element() el: HTMLElement;
 
@@ -46,21 +46,13 @@ export class InstallModal {
   constructor() {
     this.onClose = this.onClose.bind(this);
     this.onStartDesktopOnboardingHandler = this.onStartDesktopOnboardingHandler.bind(this);
-    this.setTab = this.setTab.bind(this);
     this.render = this.render.bind(this);
-    this.setTab(this.preferDesktop ? 1 : 2);
 
     this.i18nInstance = new SimpleI18n();
   }
 
   componentDidLoad() {
-    this.trackAnalytics.emit({
-      event: TrackingEvents.SDK_MODAL_VIEWED,
-      params: {
-        extensionInstalled: false,
-        tab: this.tab === 1 ? 'desktop' : 'mobile',
-      },
-    });
+    this.generateQRCode();
   }
 
   async connectedCallback() {
@@ -70,13 +62,52 @@ export class InstallModal {
     this.translationsLoaded = true;
   }
 
-  @Watch('preferDesktop')
-  updatePreferDesktop(newValue: boolean) {
-    if (newValue) {
-      this.setTab(1);
-    } else {
-      this.setTab(2);
+  private generateQRCode() {
+    if (!this.qrCodeContainer || !this.link) {
+      return;
     }
+
+    const options: Options = {
+      width: 165,
+      height: 165,
+      type: 'svg' as DrawType,
+      data: this.link,
+      image: SVG,
+      imageOptions: {
+        hideBackgroundDots: true,
+        imageSize: 1,
+        crossOrigin: 'anonymous',
+      },
+      dotsOptions: {
+        color: '#222222',
+        type: 'square' as DotType,
+        gradient: undefined,
+        roundSize: false,
+      },
+      cornersSquareOptions: {
+        color: '#222222',
+        type: 'square' as CornerSquareType,
+        gradient: undefined
+      },
+      cornersDotOptions: {
+        color: '#bf5208',
+      },
+      backgroundOptions: {
+        color: 'transparent',
+      },
+      qrOptions: {
+        typeNumber: 0 as TypeNumber,
+        mode: 'Byte' as Mode,
+        errorCorrectionLevel: 'Q' as ErrorCorrectionLevel
+      },
+    };
+
+    const qrCode = new QRCodeStyling(options);
+
+    this.qrCodeContainer.innerHTML = '';
+
+    // Append the QR code to the container
+    qrCode.append(this.qrCodeContainer);
   }
 
   onClose(shouldTerminate = false) {
@@ -84,28 +115,7 @@ export class InstallModal {
   }
 
   onStartDesktopOnboardingHandler() {
-    this.trackAnalytics.emit({
-      event: TrackingEvents.SDK_MODAL_BUTTON_CLICKED,
-      params: {
-        button_type: 'install_extension',
-        tab: 'desktop',
-      },
-    });
     this.startDesktopOnboarding.emit();
-  }
-
-  setTab(newTab: number, isUserAction: boolean = false) {
-    if (isUserAction) {
-      this.trackAnalytics.emit({
-        event: TrackingEvents.SDK_MODAL_TOGGLE_CHANGED,
-        params: {
-          toggle: this.tab === 1 ? 'desktop_to_mobile' : 'mobile_to_desktop',
-        },
-      });
-    }
-    
-    this.tab = newTab;
-    this.isDefaultTab = false;
   }
 
   render() {
@@ -114,12 +124,9 @@ export class InstallModal {
     }
 
     const t = (key: string) => this.i18nInstance.t(key);
-    const currentTab = this.isDefaultTab ? this.preferDesktop ? 1 : 2 : this.tab;
 
-    const svgElement = encodeQR(this.link, "svg", {
-      ecc: "medium",
-      scale: 2
-    });
+    // Determine which section should be shown first based on preferDesktop
+    const showExtensionFirst = this.preferDesktop;
 
     return (
       <WidgetWrapper className="install-model">
@@ -132,83 +139,80 @@ export class InstallModal {
               </span>
             </div>
           </div>
-          <div class='logoContainer'>
-            <Logo />
+          <div class='modalHeader'>
+            <h2 class='modalTitle'>{t('CONNECT_WITH_METAMASK')}</h2>
           </div>
-          <div>
-            <div class='tabcontainer'>
-              <div class='flexContainer'>
-                <div
-                  onClick={() => this.setTab(1, true)}
-                  class={`tab flexItem ${currentTab === 1 ? 'tabactive': ''}`}
-                >
-                  {t('DESKTOP')}
-                </div>
-                <div
-                  onClick={() => this.setTab(2, true)}
-                  class={`tab flexItem ${currentTab === 2 ? 'tabactive': ''}`}
-                >
-                  {t('MOBILE')}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: currentTab === 1 ? 'none' : 'block' }}>
-              <div class='flexContainer'>
-                <div
-                  class='flexItem'
-                  style={{
-                    textAlign: 'center',
-                    marginTop: '4',
-                  }}
-                >
-                  {
-                    svgElement && (
-                      <div id="sdk-mm-qrcode" class='center' innerHTML={svgElement} />
-                    )
-                  }
-                  <div class='connectMobileText'>
-                    {t('SCAN_TO_CONNECT')} <br />
-                    <span class='blue'>
-                      <b>{t('META_MASK_MOBILE_APP')}</b>
+
+          <div class='modalContent'>
+            {!showExtensionFirst ? (
+              // Extension first, then mobile
+              <div>
+                {/* Extension Section */}
+                <div class='connectionSection'>
+                  <h3 class='sectionTitle'>{t('USE_EXTENSION')}</h3>
+                  <p class='sectionDescription'>{t('ONE_CLICK_CONNECT')}</p>
+
+                  <button
+                    class='button extensionButton'
+                    onClick={() => this.onStartDesktopOnboardingHandler()}
+                  >
+                    <InstallIcon />
+                    <span class='buttonText'>
+                      {t('CONNECT_WITH_EXTENSION')}
                     </span>
+                  </button>
+                </div>
+
+                <div class='sectionDivider'></div>
+
+                {/* Mobile Section */}
+                <div class='connectionSection'>
+                  <h3 class='sectionTitle'>{t('USE_MOBILE')}</h3>
+                  <p class='sectionDescription'>{t('SCAN_TO_CONNECT')}</p>
+
+                  <div class='qrContainer'>
+                    <div id="sdk-mm-qrcode" class='qrCode' ref={(el) => { if (el) this.qrCodeContainer = el; }} />
                   </div>
                 </div>
               </div>
-            </div>
-            <div style={{ display: currentTab === 2 ? 'none' : 'block' }}>
-              <div class='item'>
-                <AdvantagesListItem
-                  Icon={HeartIcon}
-                  text={t('INSTALL_MODAL.TRUSTED_BY_USERS')}
-                />
-              </div>
-              <div class='item'>
-                <AdvantagesListItem
-                  Icon={WalletIcon}
-                  text={t('INSTALL_MODAL.LEADING_CRYPTO_WALLET')}
-                />
-              </div>
-              <div class='item'>
-                <AdvantagesListItem
-                  Icon={LockIcon}
-                  text={t('INSTALL_MODAL.CONTROL_DIGITAL_INTERACTIONS')}
-                />
-              </div>
+            ) : (
+              // Mobile first, then extension
+              <div>
+                {/* Mobile Section */}
+                <div class='connectionSection'>
+                  <h3 class='sectionTitle'>{t('USE_MOBILE')}</h3>
+                  <p class='sectionDescription'>{t('SCAN_TO_CONNECT')}</p>
 
-              <button
-                class='button'
-                onClick={() => this.onStartDesktopOnboardingHandler()}
-              >
-                <InstallIcon />
-                <span class='installExtensionText'>
-                  {t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION')}
-                </span>
-              </button>
-            </div>
+                  <div class='qrContainer'>
+                    <div id="sdk-mm-qrcode" class='qrCode' ref={(el) => { if (el) this.qrCodeContainer = el; }} />
+                  </div>
+                </div>
+
+                <div class='sectionDivider'></div>
+
+                {/* Extension Section */}
+                <div class='connectionSection'>
+                  <h3 class='sectionTitle'>{t('USE_EXTENSION')}</h3>
+                  <p class='sectionDescription'>{t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION')}</p>
+
+                  <button
+                    class='button extensionButton'
+                    onClick={() => this.onStartDesktopOnboardingHandler()}
+                  >
+                    <InstallIcon />
+                    <span class='buttonText'>
+                      {t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION')}
+                    </span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
+
           <SDKVersion version={this.sdkVersion} />
         </div>
     </WidgetWrapper>
     )
   }
 }
+
