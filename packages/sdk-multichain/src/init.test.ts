@@ -117,7 +117,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(sdk.state).toBe('loaded');
 
 			// Check that sessionChanged event was emitted with the expected session data during initialization
-			t.expect(emitSpy).toHaveBeenCalledWith('sessionChanged', mockSessionData);
+			t.expect(emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
 
 			// Restore the spy
 			emitSpy.mockRestore();
