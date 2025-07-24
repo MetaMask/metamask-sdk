@@ -6,6 +6,8 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
 	metaMaskInstaller: {
 		startDesktopOnboarding: () => void;
 	};
+	//TODO: remove this as its no longer needed
+	// biome-ignore lint/suspicious/noExplicitAny: will be removed soon
 	onAnalyticsEvent: (event: { event: any; params?: Record<string, unknown> }) => void;
 }
 
@@ -31,6 +33,8 @@ export type RenderedModal = {
 /**
  * Abstract Modal class with shared functionality across all models
  */
+
+// biome-ignore lint/suspicious/noExplicitAny: Expected here
 export abstract class Modal<T extends Record<string, any>> {
 	abstract instance?: HTMLMmInstallModalElement | HTMLMmSelectModalElement | HTMLMmPendingModalElement;
 	abstract render(options: T): Promise<RenderedModal>;

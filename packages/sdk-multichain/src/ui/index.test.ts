@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -87,12 +89,6 @@ t.describe('UIModule', () => {
 	});
 
 	describe('Platform detection properties', () => {
-		let uiModule: UIModule;
-
-		beforeEach(() => {
-			uiModule = new UIModule(mockFactoryOptions);
-		});
-
 		it('should correctly identify mobile platform (React Native)', async () => {
 			const { getPlatformType } = await import('../domain');
 			t.vi.mocked(getPlatformType).mockReturnValue(PlatformType.ReactNative);
@@ -270,19 +266,15 @@ t.describe('UIModule', () => {
 			};
 
 			const uiModule = new UIModule(errorOptions);
-			const container = document.createElement('div');
-
 			await expect(uiModule.renderInstallModal('https://example.com', false)).rejects.toThrow('Render failed');
 		});
 	});
 
 	describe('Modal lifecycle', () => {
 		let uiModule: UIModule;
-		let container: HTMLDivElement;
 
 		beforeEach(() => {
 			uiModule = new UIModule(mockFactoryOptions);
-			container = document.createElement('div');
 		});
 
 		it('should properly unmount previous modal when rendering new one', async () => {
@@ -404,15 +396,10 @@ t.describe('UIModule', () => {
 	});
 
 	describe('updateQRCode method testing', () => {
-		let mockUIModule: UIModule;
-		let container: HTMLDivElement;
 		let mockInstallModal: any;
 		let mockSelectModal: any;
 
 		beforeEach(() => {
-			mockUIModule = new UIModule(mockFactoryOptions);
-			container = document.createElement('div');
-
 			// Create mock modal elements that simulate the DOM structure
 			mockInstallModal = {
 				link: '',
@@ -556,9 +543,6 @@ t.describe('UIModule', () => {
 		});
 
 		describe('Integration with UIModule modals', () => {
-			let mockInstallModalInstance: any;
-			let mockSelectModalInstance: any;
-
 			beforeEach(() => {
 				// Store the original createElement method to avoid recursion
 				const originalCreateElement = dom.window.document.createElement.bind(dom.window.document);

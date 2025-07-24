@@ -129,6 +129,8 @@ export class MultichainSDK extends MultichainCore {
 		analytics.track('sdk_initialized', {});
 	}
 
+	//TODO: Find better ways to type this, if its worth or just use unknown
+	// biome-ignore lint/suspicious/noExplicitAny: Figure out later
 	private async onTransportNotification(data: any) {
 		if (data.method === 'session_changed') {
 			const session = data.params.session;
@@ -246,7 +248,7 @@ export class MultichainSDK extends MultichainCore {
 		const {
 			ui: { factory, ...uiProperties },
 		} = this.options;
-		const { preferExtension = false, preferDesktop = false, headless = false } = uiProperties;
+		const { preferExtension = false, preferDesktop = false, headless: _headless = false } = uiProperties;
 		const platformType = getPlatformType();
 		const transport = await this.getTransportForPlatformType(platformType);
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;

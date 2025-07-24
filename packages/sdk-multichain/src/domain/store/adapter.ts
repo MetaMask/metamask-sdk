@@ -1,4 +1,5 @@
 /* c8 ignore start */
+// biome-ignore lint/suspicious/noExplicitAny: Needed here
 export type StoreOptions = Record<string, any>;
 
 export abstract class StoreAdapter {

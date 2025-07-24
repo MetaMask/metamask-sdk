@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import fs from 'node:fs';
 import path from 'node:path';
 import AsyncStorage from '@react-native-async-storage/async-storage';

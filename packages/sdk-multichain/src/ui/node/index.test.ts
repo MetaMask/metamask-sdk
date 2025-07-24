@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import encodeQR from '@paulmillr/qr';
 import * as t from 'vitest';
 import { vi } from 'vitest';

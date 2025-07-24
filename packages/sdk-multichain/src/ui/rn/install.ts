@@ -2,7 +2,7 @@ import { AbstractInstallModal, type InstallWidgetProps, type SelectWidgetProps }
 
 export class InstallModal extends AbstractInstallModal {
 	instance!: HTMLMmInstallModalElement;
-	async render({ link, ...rest }: InstallWidgetProps | SelectWidgetProps) {
+	async render(_options: InstallWidgetProps | SelectWidgetProps) {
 		return {
 			mount: () => {},
 			unmount: () => {},

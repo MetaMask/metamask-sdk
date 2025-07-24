@@ -8,6 +8,7 @@ export type ModalTypes = 'installModal' | 'selectModal' | 'pendingModal';
  * Record type that maps modal names to their corresponding Modal instances.
  * Used to store different types of modals that can be created by the factory.
  */
+// biome-ignore lint/suspicious/noExplicitAny: Needed here
 export type FactoryModals = Record<ModalTypes, Modal<any>>;
 
 /**

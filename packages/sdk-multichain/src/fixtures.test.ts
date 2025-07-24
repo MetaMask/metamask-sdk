@@ -1,4 +1,5 @@
-/** @biome-ignore lint/suspicious/noExplicitAny: testing requires this  */
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 /**
  * Test fixtures and utilities for the Multichain SDK tests
  * This file is excluded from test discovery via vitest.config.ts

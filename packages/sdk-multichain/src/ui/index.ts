@@ -21,10 +21,7 @@ export async function preload() {
 export class UIModule extends ModalFactory {
 	private modal!: RenderedModal;
 	private readonly platform: PlatformType = getPlatformType();
-	private onAnalyticsEvent(evt: any) {
-		//TODO: finish implementation for Analytics
-		console.log('onAnalyticsEvent', evt);
-	}
+
 	private unload() {
 		if (this.modal) {
 			this.modal.unmount();
@@ -74,7 +71,9 @@ export class UIModule extends ModalFactory {
 		await preload();
 		const container = this.getMountedContainer();
 		const modalProps: InstallWidgetProps = {
-			onAnalyticsEvent: this.onAnalyticsEvent.bind(this),
+			onAnalyticsEvent: () => {
+				//TODO: Remove in a later PR
+			},
 			onClose: this.unload.bind(this),
 			metaMaskInstaller: {
 				startDesktopOnboarding: () => {
@@ -100,7 +99,7 @@ export class UIModule extends ModalFactory {
 			sdkVersion: getVersion(),
 			displayOTP: true,
 			otpCode: '123456',
-			updateOTPValue: (otpValue: string): void => {
+			updateOTPValue: (_otpValue: string): void => {
 				throw new Error('Function not implemented.');
 			},
 		};

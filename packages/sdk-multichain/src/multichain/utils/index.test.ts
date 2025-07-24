@@ -1,10 +1,10 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import packageJson from '../../../package.json';
 import type { MultichainOptions } from '../../domain/multichain';
 import { getPlatformType, isMetamaskExtensionInstalled, PlatformType } from '../../domain/platform';
-import type { StoreClient } from '../../domain/store/client';
-import { Store } from '../../store';
 import * as utils from '.';
 
 vi.mock('../../domain/platform', async () => {

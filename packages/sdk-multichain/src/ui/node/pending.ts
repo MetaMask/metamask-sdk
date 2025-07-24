@@ -4,7 +4,7 @@ const logger = createLogger('metamask-sdk:ui');
 
 export class PendingModal extends AbstractPendingModal {
 	instance!: HTMLMmPendingModalElement;
-	async render({ otpCode, ...rest }: PendingWidgetProps) {
+	async render(_options: PendingWidgetProps) {
 		return {
 			mount: () => {},
 			unmount: () => {},

@@ -1,6 +1,6 @@
 import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
 import packageJson from '../../../package.json';
-import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData, type StoreClient } from '../../domain';
+import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData } from '../../domain';
 
 export type OptionalScopes = Record<Scope, SessionData['sessionScopes'][Scope]>;
 
@@ -19,6 +19,7 @@ export function getVersion() {
 export function getOptionalScopes(scopes: Scope[]) {
 	return scopes.reduce<OptionalScopes>(
 		(prev, scope) => ({
+			// biome-ignore lint/performance/noAccumulatingSpread: Needed
 			...prev,
 			[scope]: {
 				methods: [],
@@ -114,6 +115,7 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
 export function getValidAccounts(caipAccountIds: CaipAccountId[]) {
 	return caipAccountIds.reduce<ReturnType<typeof parseCaipAccountId>[]>((caipAccounts, caipAccountId) => {
 		try {
+			// biome-ignore lint/performance/noAccumulatingSpread: Needed
 			return [...caipAccounts, parseCaipAccountId(caipAccountId)];
 		} catch (err) {
 			const stringifiedAccountId = JSON.stringify(caipAccountId);
@@ -156,7 +158,7 @@ export function addValidAccounts(optionalScopes: OptionalScopes, validAccounts: 
 		if (!accountsByChain.has(chainKey)) {
 			accountsByChain.set(chainKey, []);
 		}
-		accountsByChain.get(chainKey)!.push(accountId);
+		accountsByChain.get(chainKey)?.push(accountId);
 	}
 
 	// Add accounts to matching scopes
@@ -167,14 +169,14 @@ export function addValidAccounts(optionalScopes: OptionalScopes, validAccounts: 
 
 		try {
 			const scope = scopeKey as CaipChainId;
-			const scopeDetails = parseCaipChainId(scope as any);
+			const scopeDetails = parseCaipChainId(scope);
 			const chainKey = `${scopeDetails.namespace}:${scopeDetails.reference}`;
 
 			const matchingAccounts = accountsByChain.get(chainKey);
 			if (matchingAccounts) {
 				const existingAccounts = new Set(scopeData.accounts);
 				const newAccounts = matchingAccounts.filter((account) => !existingAccounts.has(account));
-				scopeData.accounts.push(...(newAccounts as any));
+				scopeData.accounts.push(...newAccounts);
 			}
 		} catch (error) {
 			console.error(`Invalid scope format: ${scopeKey}`, error);

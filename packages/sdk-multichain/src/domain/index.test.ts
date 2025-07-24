@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import Bowser from 'bowser';
 import * as t from 'vitest';
 
@@ -12,14 +14,12 @@ t.vi.mock('bowser', () => ({
 }));
 
 t.describe('Platform Detection', () => {
-	let mockBowser: { parse: t.MockedFunction<any> };
-
 	t.beforeEach(() => {
 		// Reset mocks
 		t.vi.clearAllMocks();
 		t.vi.unstubAllGlobals();
 		// Get the mocked instance - Bowser is a default export
-		mockBowser = t.vi.mocked(Bowser);
+		t.vi.mocked(Bowser);
 	});
 
 	t.describe('getPlatformType', () => {
