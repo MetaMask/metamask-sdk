@@ -3,6 +3,7 @@
   "version": "0.0.5",
   "description": "Analytics package for MetaMask SDK",
   "main": "dist/index.js",
+  "module":"dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --dts",
