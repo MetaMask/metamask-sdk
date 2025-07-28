@@ -36,9 +36,7 @@ const config = [
         sourcemap: true,
       },
     ],
-    external: [
-      external(),
-    ],
+    external: [],
     plugins: [
       external(),
       resolve({
