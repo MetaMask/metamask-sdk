@@ -193,7 +193,7 @@ export class InstallModal {
                 {/* Extension Section */}
                 <div class='connectionSection'>
                   <h3 class='sectionTitle'>{t('USE_EXTENSION')}</h3>
-                  <p class='sectionDescription'>{t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION')}</p>
+                  <p class='sectionDescription'>{t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION_TEXT')}</p>
 
                   <button
                     class='button extensionButton'
@@ -201,7 +201,7 @@ export class InstallModal {
                   >
                     <InstallIcon />
                     <span class='buttonText'>
-                      {t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION')}
+                      {t('INSTALL_MODAL.INSTALL_META_MASK_EXTENSION_BUTTON')}
                     </span>
                   </button>
                 </div>

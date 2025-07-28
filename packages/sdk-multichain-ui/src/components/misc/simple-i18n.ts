@@ -29,7 +29,8 @@ const defaultTranslations: TranslationDict = {
     "TRUSTED_BY_USERS": "Trusted by over 30 million users to buy, store, send and swap crypto securely",
     "LEADING_CRYPTO_WALLET": "The leading crypto wallet & gateway to blockchain apps built on Ethereum Mainnet, Polygon, Optimism, and many other networks",
     "CONTROL_DIGITAL_INTERACTIONS": "Puts you in control of your digital interactions by making power of cryptography more accessible",
-    "INSTALL_META_MASK_EXTENSION": "Install MetaMask Extension"
+    "INSTALL_META_MASK_EXTENSION_BUTTON": "Install MetaMask Extension",
+    "INSTALL_META_MASK_EXTENSION_TEXT": "Install and try the MetaMask browser extension."
   },
   "PENDING_MODAL": {
     "OPEN_META_MASK_SELECT_CODE": "Please open the MetaMask wallet app and select the code on the screen OR disconnect",
