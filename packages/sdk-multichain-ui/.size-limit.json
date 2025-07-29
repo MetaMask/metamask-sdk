@@ -1,0 +1,6 @@
+[
+  {
+    "path": "dist/components/*.js",
+    "limit": "30 KB"
+  }
+]

@@ -1,0 +1,191 @@
+/* Euclid Circular B Font Faces */
+@font-face {
+  font-family: 'Euclid Circular B';
+  src: url('../assets/fonts/Euclid Circular B Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.flexContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.flexItem11 {
+  flex: 11;
+  justify-content: center;
+  align-items: center;
+}
+
+.flexItem1 {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.button {
+  margin-top: 41.5px;
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  background:#0376C9;
+  border-radius: 32px;
+  color: white;
+  border: 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.backdrop {
+  visibility: visible;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 99998;
+  background: rgba(0, 0, 0, 0.87);
+  opacity: 0.3;
+}
+
+.modal {
+  visibility: visible;
+  position: fixed;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  top: 50%;
+  max-width: 360px;
+  width: 460px;
+  min-width: 300px;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 11px 15px -7px, rgba(0, 0, 0, 0.14) 0px 24px 38px 3px, rgba(0, 0, 0, 0.12) 0px 9px 46px 8px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sectionDivider {
+  height:1px;
+  background-color:#B7BBC866;
+  margin-top:17px;
+  margin-bottom:10px;
+}
+
+.closeButtonContainer {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  padding: 10px;
+  user-select: none;
+}
+
+.buttonText {
+  margin-left:10px;
+}
+
+.closeButton {
+  color: #BBC0C5;
+  cursor: pointer;
+  user-select: none;
+}
+
+
+
+.right {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+
+#sdk-mm-qrcode {
+  margin-top:10px;
+  margin-bottom:10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+#sdk-mm-qrcode svg {
+  width: 100% !important;
+  height: auto !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  stroke: none !important;
+  stroke-width: 0 !important;
+  background: transparent !important;
+}
+
+
+* {
+  font-family: 'Euclid Circular B', sans-serif;
+}
+
+.modalTitle {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0px;
+  line-height: 24px;
+  color: #141618;
+  margin-top: 4px;
+  text-align: center;
+  user-select: none;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom:0px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.sectionDescription {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 5px;
+  color:#6A737D;
+}
+
+.extensionButton {
+  padding:15px 20px;
+  margin-top:15px;
+  margin-bottom:0px;
+}
+
+.qrContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.qrCode {
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.version-title {
+
+  text-align: center;
+  font-size: 10px;
+  font-weight: 400;
+  margin-top: 5px;
+  color:#6A737D;
+}
