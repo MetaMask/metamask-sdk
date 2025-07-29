@@ -91,7 +91,7 @@ export class InstallModal {
         gradient: undefined
       },
       cornersDotOptions: {
-        color: '#bf5208',
+        color: '#ff5c16',
       },
       backgroundOptions: {
         color: 'transparent',
