@@ -9,5 +9,5 @@ yarn install
 and
 
 ```bash
-yarn start
+yarn start connect
 ```

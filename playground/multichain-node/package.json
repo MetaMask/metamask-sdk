@@ -7,8 +7,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start:connect": "ts-node src/index.ts connect",
-    "start:sign": "ts-node src/index.ts sign",
+    "start": "ts-node src/index.ts",
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "rm -rf dist .sdk-comm",
     "test": "echo \"Error: no test specified\" && exit 1",
