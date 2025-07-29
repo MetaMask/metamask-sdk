@@ -15,7 +15,7 @@ export class OTPCodeModal extends AbstractOTPCodeModal {
 			unmount: () => {},
 			sync: (otpValue: string) => {
 				if (otpValue !== '') {
-					logger(`[UI: pendingModal-react: OTPCodeModal()] Choose the following value on your metamask mobile wallet: ${otpValue}`);
+					logger(`[UI: otpCodeModal-rn: OTPCodeModal()] Choose the following value on your metamask mobile wallet: ${otpValue}`);
 				}
 			},
 		};
