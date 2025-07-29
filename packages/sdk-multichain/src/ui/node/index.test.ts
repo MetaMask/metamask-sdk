@@ -4,7 +4,7 @@ import encodeQR from '@paulmillr/qr';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import { AbstractInstallModal, AbstractPendingModal, type Modal } from '../../domain';
+import { AbstractInstallModal, AbstractOTPCodeModal, type Modal } from '../../domain';
 import * as NodeModals from './';
 
 vi.mock('@paulmillr/qr', () => {
@@ -22,8 +22,7 @@ t.describe('Node Modals', () => {
 
 	t.it('Check Modal instances', () => {
 		t.expect(NodeModals.installModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(NodeModals.selectModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(NodeModals.pendingModal).toBeInstanceOf(AbstractPendingModal);
+		t.expect(NodeModals.otpCodeModal).toBeInstanceOf(AbstractOTPCodeModal);
 	});
 
 	t.it('rendering InstallModal on Node', async () => {
@@ -33,7 +32,6 @@ t.describe('Node Modals', () => {
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
-			onAnalyticsEvent: vi.fn(),
 			metaMaskInstaller: {
 				startDesktopOnboarding: vi.fn(),
 			},
@@ -47,36 +45,19 @@ t.describe('Node Modals', () => {
 		t.expect(logSpy).toHaveBeenCalledWith('qrcode');
 	});
 
-	t.it('Rendering PendingModal on Node', async () => {
+	t.it('Rendering OTPCodeModal on Node', async () => {
 		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await NodeModals.pendingModal.render({
-			otpCode: '123456',
+		modal = await NodeModals.otpCodeModal.render({
+			sdkVersion: '1.0.0',
+			preferDesktop: false,
 			onClose: vi.fn(),
 			updateOTPValue: vi.fn(),
+			link: 'https://example.com',
 		});
 		t.expect(modal).toBeDefined();
 		t.expect(modal.unmount).toBeDefined();
 		t.expect(modal.mount).toBeDefined();
 		t.expect(modal.sync).toBeDefined();
-		modal.mount();
-
-		await new Promise((resolve) => setTimeout(resolve, 100));
-
-		modal.sync!('123456');
-	});
-
-	t.it('Rendering SelectModal on Node', async () => {
-		//TODO:selectModal  Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await NodeModals.selectModal.render({
-			link: 'https://example.com',
-			sdkVersion: '1.0.0',
-			preferDesktop: false,
-			onClose: vi.fn(),
-			connect: vi.fn(),
-		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
 		modal.mount();
 	});
 });

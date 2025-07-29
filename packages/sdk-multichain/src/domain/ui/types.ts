@@ -1,4 +1,4 @@
-import type { Components } from '@metamask/sdk-install-modal-web';
+import type { Components } from '@metamask/sdk-multichain-ui';
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
 	parentElement?: Element;
@@ -8,17 +8,12 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
 	};
 }
 
-export interface PendingWidgetProps extends Components.MmPendingModal {
+//TODO: Extend from the right component once modal is implemented
+export interface OTPCodeWidgetProps extends Components.MmInstallModal {
 	parentElement?: Element;
 	onClose: () => void;
 	onDisconnect?: () => void;
 	updateOTPValue: (otpValue: string) => void;
-}
-
-export interface SelectWidgetProps extends Components.MmSelectModal {
-	parentElement?: Element;
-	onClose: (shouldTerminate?: boolean) => void;
-	connect: () => void;
 }
 
 export type RenderedModal = {
@@ -33,21 +28,16 @@ export type RenderedModal = {
 
 // biome-ignore lint/suspicious/noExplicitAny: Expected here
 export abstract class Modal<T extends Record<string, any>> {
-	abstract instance?: HTMLMmInstallModalElement | HTMLMmSelectModalElement | HTMLMmPendingModalElement;
+	abstract instance?: HTMLMmInstallModalElement | undefined;
 	abstract render(options: T): Promise<RenderedModal>;
 
 	updateQRCode(link: string) {
 		const installModal = this.instance?.querySelector('mm-install-modal') as HTMLMmInstallModalElement | null;
 		if (installModal) {
 			installModal.link = link;
-		} else {
-			const selectModal = this.instance?.querySelector('mm-select-modal') as HTMLMmSelectModalElement | null;
-			if (selectModal) {
-				selectModal.link = link;
-			}
 		}
 	}
 }
 
-export abstract class AbstractInstallModal extends Modal<InstallWidgetProps | SelectWidgetProps> {}
-export abstract class AbstractPendingModal extends Modal<PendingWidgetProps> {}
+export abstract class AbstractInstallModal extends Modal<InstallWidgetProps> {}
+export abstract class AbstractOTPCodeModal extends Modal<OTPCodeWidgetProps> {}

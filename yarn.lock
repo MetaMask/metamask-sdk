@@ -11222,7 +11222,7 @@ __metadata:
     "@metamask/multichain-api-client": ^0.6.4
     "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"
-    "@metamask/sdk-install-modal-web": "workspace:^"
+    "@metamask/sdk-multichain-ui": "workspace:^"
     "@metamask/utils": ^11.4.0
     "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.19.6
@@ -11546,7 +11546,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:^, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
+"@metamask/sdk-install-modal-web@workspace:*, @metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
@@ -11579,7 +11579,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui":
+"@metamask/sdk-multichain-ui@workspace:^, @metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui"
   dependencies:

@@ -4,7 +4,7 @@ import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import { AbstractInstallModal, AbstractPendingModal, type Modal } from '../../domain';
+import { AbstractInstallModal, AbstractOTPCodeModal, type Modal } from '../../domain';
 import * as WebModals from './';
 
 t.describe('WEB Modals', () => {
@@ -35,8 +35,7 @@ t.describe('WEB Modals', () => {
 
 	t.it('Check Modal instances', () => {
 		t.expect(WebModals.installModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(WebModals.selectModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(WebModals.pendingModal).toBeInstanceOf(AbstractPendingModal);
+		t.expect(WebModals.otpCodeModal).toBeInstanceOf(AbstractOTPCodeModal);
 	});
 
 	t.it('rendering InstallModal on Web', async () => {
@@ -46,7 +45,6 @@ t.describe('WEB Modals', () => {
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
-			onAnalyticsEvent: vi.fn(),
 			metaMaskInstaller: {
 				startDesktopOnboarding: vi.fn(),
 			},
@@ -58,35 +56,20 @@ t.describe('WEB Modals', () => {
 		modal.mount();
 	});
 
-	t.it('Rendering PendingModal on Web', async () => {
+	t.it('Rendering OTPCodeModal on Web', async () => {
 		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await WebModals.pendingModal.render({
+		modal = await WebModals.otpCodeModal.render({
 			parentElement: document.getElementById('root')!,
-			otpCode: '123456',
+			sdkVersion: '1.0.0',
+			preferDesktop: false,
 			onClose: vi.fn(),
 			updateOTPValue: vi.fn(),
-			onDisconnect: vi.fn(),
+			link: 'https://example.com',
 		});
 		t.expect(modal).toBeDefined();
 		t.expect(modal.unmount).toBeDefined();
 		t.expect(modal.mount).toBeDefined();
 		t.expect(modal.sync).toBeDefined();
-		modal.mount();
-	});
-
-	t.it('Rendering SelectModal on Web', async () => {
-		//TODO:selectModal  Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await WebModals.selectModal.render({
-			parentElement: document.getElementById('root')!,
-			link: 'https://example.com',
-			sdkVersion: '1.0.0',
-			preferDesktop: false,
-			onClose: vi.fn(),
-			connect: vi.fn(),
-		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
 		modal.mount();
 	});
 });
