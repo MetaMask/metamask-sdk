@@ -8,6 +8,7 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
 	};
 }
 
+//TODO: Extend from the right component once modal is implemented
 export interface OTPCodeWidgetProps extends Components.MmInstallModal {
 	parentElement?: Element;
 	onClose: () => void;
