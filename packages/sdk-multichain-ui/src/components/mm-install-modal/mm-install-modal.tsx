@@ -145,7 +145,7 @@ export class InstallModal {
           </div>
 
           <div class='modalContent'>
-            {!showExtensionFirst ? (
+            {showExtensionFirst ? (
               // Extension first, then mobile
               <div>
                 {/* Extension Section */}
