@@ -1,13 +1,13 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { getPlatformType, getVersion, type InstallWidgetProps, ModalFactory, type PendingWidgetProps, PlatformType, type RenderedModal, type SelectWidgetProps } from '../domain';
+import { getPlatformType, getVersion, type InstallWidgetProps, ModalFactory, type OTPCodeWidgetProps, PlatformType, type RenderedModal } from '../domain';
 
-let __instance: typeof import('@metamask/sdk-install-modal-web/dist/loader/index.js') | undefined;
+let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.js') | undefined;
 
 /**
  * Preload install modal custom elements only once
  */
 export async function preload() {
-	__instance ??= await import('@metamask/sdk-install-modal-web/dist/loader/index.js')
+	__instance ??= await import('@metamask/sdk-multichain-ui/dist/loader/index.js')
 		.then((loader) => {
 			loader.defineCustomElements();
 			return Promise.resolve(loader);
@@ -87,40 +87,11 @@ export class UIModule extends ModalFactory {
 		this.modal.mount();
 	}
 
-	public async renderPendingModal() {
+	public async renderOTPCodeModal() {
 		await preload();
-		const container = this.getMountedContainer();
-		const modalProps: PendingWidgetProps = {
-			onClose: this.unload.bind(this),
-			parentElement: container,
-			sdkVersion: getVersion(),
-			displayOTP: true,
-			otpCode: '123456',
-			updateOTPValue: (_otpValue: string): void => {
-				throw new Error('Function not implemented.');
-			},
-		};
-		this.modal = await this.options.pendingModal.render(modalProps);
-		this.modal.mount();
-	}
-
-	public async renderSelectModal(link: string, preferDesktop: boolean, connect: () => Promise<void>) {
-		await preload();
-		const container = this.getMountedContainer();
-		const modalProps: SelectWidgetProps = {
-			onClose: this.unload.bind(this),
-			parentElement: container,
-			sdkVersion: getVersion(),
-			connect: () => {
-				if (this.modal) {
-					this.modal.unmount();
-				}
-				return connect();
-			},
-			link,
-			preferDesktop,
-		};
-		this.modal = await this.options.selectModal.render(modalProps);
+		// biome-ignore lint/suspicious/noExplicitAny: Temporary workaround until modal is implemented
+		const modalProps: OTPCodeWidgetProps = {} as any;
+		this.modal = await this.options.otpCodeModal.render(modalProps);
 		this.modal.mount();
 	}
 }

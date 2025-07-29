@@ -1,7 +1,5 @@
 import { InstallModal } from './install';
-import { PendingModal } from './pending';
-import { SelectModal } from './select';
+import { OTPCodeModal } from './otp';
 
 export const installModal = new InstallModal();
-export const pendingModal = new PendingModal();
-export const selectModal = new SelectModal();
+export const otpCodeModal = new OTPCodeModal();

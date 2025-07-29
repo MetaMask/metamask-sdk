@@ -3,7 +3,7 @@
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import { AbstractInstallModal, AbstractPendingModal, type Modal } from '../../domain';
+import { AbstractInstallModal, AbstractOTPCodeModal, type Modal } from '../../domain';
 import * as RNModals from './';
 
 t.describe('RN Modals', () => {
@@ -15,8 +15,7 @@ t.describe('RN Modals', () => {
 
 	t.it('Check Modal instances', () => {
 		t.expect(RNModals.installModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(RNModals.selectModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(RNModals.pendingModal).toBeInstanceOf(AbstractPendingModal);
+		t.expect(RNModals.otpCodeModal).toBeInstanceOf(AbstractOTPCodeModal);
 	});
 
 	t.it('rendering InstallModal on RN', async () => {
@@ -25,7 +24,6 @@ t.describe('RN Modals', () => {
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
-			onAnalyticsEvent: vi.fn(),
 			metaMaskInstaller: {
 				startDesktopOnboarding: vi.fn(),
 			},
@@ -37,32 +35,19 @@ t.describe('RN Modals', () => {
 		modal.mount();
 	});
 
-	t.it('Rendering PendingModal on RN', async () => {
+	t.it('Rendering OTPCodeModal on RN', async () => {
 		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await RNModals.pendingModal.render({
-			otpCode: '123456',
+		modal = await RNModals.otpCodeModal.render({
+			sdkVersion: '1.0.0',
+			preferDesktop: false,
 			onClose: vi.fn(),
 			updateOTPValue: vi.fn(),
+			link: 'https://example.com',
 		});
 		t.expect(modal).toBeDefined();
 		t.expect(modal.unmount).toBeDefined();
 		t.expect(modal.mount).toBeDefined();
 		t.expect(modal.sync).toBeDefined();
-		modal.mount();
-	});
-
-	t.it('Rendering SelectModal on RN', async () => {
-		//TODO:selectModal  Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await RNModals.selectModal.render({
-			link: 'https://example.com',
-			sdkVersion: '1.0.0',
-			preferDesktop: false,
-			onClose: vi.fn(),
-			connect: vi.fn(),
-		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
 		modal.mount();
 	});
 });

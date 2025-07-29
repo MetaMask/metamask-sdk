@@ -3,7 +3,7 @@ import type { CaipAccountId } from '@metamask/utils';
 import type { MultichainOptions, Scope, SessionData } from '../multichain';
 import type { Modal } from './types';
 
-export type ModalTypes = 'installModal' | 'selectModal' | 'pendingModal';
+export type ModalTypes = 'installModal' | 'otpCodeModal';
 /**
  * Record type that maps modal names to their corresponding Modal instances.
  * Used to store different types of modals that can be created by the factory.
@@ -43,8 +43,7 @@ export type ModalFactoryOptions = Pick<MultichainOptions, 'mobile' | 'transport'
  */
 export abstract class ModalFactory<T extends FactoryModals = FactoryModals> {
 	abstract renderInstallModal(link: string, preferDesktop: boolean): Promise<void>;
-	abstract renderSelectModal(link: string, preferDesktop: boolean, connect: () => Promise<void>): Promise<void>;
-	abstract renderPendingModal(): Promise<void>;
+	abstract renderOTPCodeModal(): Promise<void>;
 	/**
 	 * Creates a new modal factory instance.
 	 * @param options - The modals configuration object
@@ -54,7 +53,7 @@ export abstract class ModalFactory<T extends FactoryModals = FactoryModals> {
 	}
 
 	private validateModals() {
-		const requiredModals = ['installModal', 'selectModal', 'pendingModal'];
+		const requiredModals = ['installModal', 'otpCodeModal'];
 		const missingModals = requiredModals.filter((modal) => !this.options[modal as ModalTypes]);
 		if (missingModals.length > 0) {
 			throw new Error(`Missing required modals: ${missingModals.join(', ')}`);

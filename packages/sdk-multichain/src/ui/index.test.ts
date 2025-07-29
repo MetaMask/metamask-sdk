@@ -13,7 +13,7 @@ vi.mock('@metamask/onboarding', () => ({
 	},
 }));
 
-vi.mock('@metamask/sdk-install-modal-web/dist/loader/index.js', () => ({
+vi.mock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
 	defineCustomElements: vi.fn(),
 }));
 
@@ -57,10 +57,7 @@ t.describe('UIModule', () => {
 			installModal: {
 				render: t.vi.fn().mockResolvedValue(mockModal),
 			},
-			selectModal: {
-				render: t.vi.fn().mockResolvedValue(mockModal),
-			},
-			pendingModal: {
+			otpCodeModal: {
 				render: t.vi.fn().mockResolvedValue(mockModal),
 			},
 		};
@@ -73,14 +70,14 @@ t.describe('UIModule', () => {
 
 	describe('Constructor validation', () => {
 		it('should throw an exception if required modals are not present', () => {
-			expect(() => new UIModule({} as any)).toThrow('Missing required modals: installModal, selectModal, pendingModal');
+			expect(() => new UIModule({} as any)).toThrow('Missing required modals: installModal, otpCodeModal');
 		});
 
 		it('should throw an exception if only some modals are missing', () => {
 			const partialOptions = {
 				installModal: mockFactoryOptions.installModal,
 			};
-			expect(() => new UIModule(partialOptions as any)).toThrow('Missing required modals: selectModal, pendingModal');
+			expect(() => new UIModule(partialOptions as any)).toThrow('Missing required modals: otpCodeModal');
 		});
 
 		it('should create successfully with all required modals', () => {
@@ -175,82 +172,12 @@ t.describe('UIModule', () => {
 			});
 		});
 
-		describe('renderPendingModal', () => {
-			it('should render pending modal with correct props', async () => {
-				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
+		describe('renderOTPCodeModal', () => {
+			it('should render OTP code modal with placeholder props', async () => {
+				await uiModule.renderOTPCodeModal();
 
-				await uiModule.renderPendingModal();
-
-				expect(document.body.contains(mockContainer)).toBe(true);
-				expect(mockFactoryOptions.pendingModal.render).toHaveBeenCalledWith({
-					onClose: expect.any(Function),
-					parentElement: mockContainer,
-					sdkVersion: '1.0.0',
-					displayOTP: true,
-					otpCode: '123456',
-					updateOTPValue: expect.any(Function),
-				});
+				expect(mockFactoryOptions.otpCodeModal.render).toHaveBeenCalledWith({});
 				expect(mockModal.mount).toHaveBeenCalled();
-			});
-
-			it('should handle onClose callback correctly', async () => {
-				await uiModule.renderPendingModal();
-
-				const renderCall = mockFactoryOptions.pendingModal.render.mock.calls[0][0];
-				renderCall.onClose();
-
-				expect(mockModal.unmount).toHaveBeenCalled();
-			});
-
-			it('should throw error for updateOTPValue function', async () => {
-				await uiModule.renderPendingModal();
-
-				const renderCall = mockFactoryOptions.pendingModal.render.mock.calls[0][0];
-
-				expect(() => renderCall.updateOTPValue('123456')).toThrow('Function not implemented.');
-			});
-		});
-
-		describe('renderSelectModal', () => {
-			it('should render select modal with correct props', async () => {
-				const link = 'https://example.com';
-				const preferDesktop = false;
-				const mockConnect = t.vi.fn().mockResolvedValue(undefined);
-				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
-
-				await uiModule.renderSelectModal(link, preferDesktop, mockConnect);
-
-				expect(document.body.contains(mockContainer)).toBe(true);
-				expect(mockFactoryOptions.selectModal.render).toHaveBeenCalledWith({
-					onClose: expect.any(Function),
-					parentElement: mockContainer,
-					sdkVersion: '1.0.0',
-					connect: expect.any(Function),
-					link,
-					preferDesktop,
-				});
-				expect(mockModal.mount).toHaveBeenCalled();
-			});
-
-			it('should handle connect callback correctly', async () => {
-				const mockConnect = t.vi.fn().mockResolvedValue(undefined);
-				await uiModule.renderSelectModal('https://example.com', false, mockConnect);
-
-				const renderCall = mockFactoryOptions.selectModal.render.mock.calls[0][0];
-				await renderCall.connect();
-
-				expect(mockModal.unmount).toHaveBeenCalled();
-				expect(mockConnect).toHaveBeenCalled();
-			});
-
-			it('should handle onClose callback correctly', async () => {
-				const mockConnect = t.vi.fn();
-				await uiModule.renderSelectModal('https://example.com', false, mockConnect);
-
-				const renderCall = mockFactoryOptions.selectModal.render.mock.calls[0][0];
-				renderCall.onClose();
-
-				expect(mockModal.unmount).toHaveBeenCalled();
 			});
 		});
 	});
@@ -286,10 +213,10 @@ t.describe('UIModule', () => {
 				mount: t.vi.fn(),
 				unmount: t.vi.fn(),
 			};
-			mockFactoryOptions.pendingModal.render.mockResolvedValue(secondModal);
+			mockFactoryOptions.otpCodeModal.render.mockResolvedValue(secondModal);
 
 			// Render second modal
-			await uiModule.renderPendingModal();
+			await uiModule.renderOTPCodeModal();
 
 			// First modal should be unmounted, second modal should be mounted
 			expect(firstModal.unmount).not.toHaveBeenCalled(); // Because we're using the same mock
@@ -308,8 +235,8 @@ t.describe('UIModule', () => {
 			const testError = new Error('Failed to load modal customElements');
 
 			// Temporarily unmock the module and re-mock it to throw an error
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
 				throw testError;
 			});
 
@@ -325,8 +252,8 @@ t.describe('UIModule', () => {
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -335,8 +262,8 @@ t.describe('UIModule', () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// Mock the module to fail
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
 				throw new Error('Test import failure');
 			});
 
@@ -356,8 +283,8 @@ t.describe('UIModule', () => {
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -366,8 +293,8 @@ t.describe('UIModule', () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// First, cause preload to fail
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
 				throw new Error('Module load failed');
 			});
 
@@ -378,7 +305,7 @@ t.describe('UIModule', () => {
 			const uiModule = new FreshUIModule(mockFactoryOptions);
 			const container = document.createElement('div');
 
-			await expect(uiModule.renderInstallModal(container, 'https://example.com', false)).resolves.not.toThrow();
+			await expect(uiModule.renderInstallModal('https://example.com', false)).resolves.not.toThrow();
 
 			// Verify the modal was rendered despite preload failure
 			expect(mockFactoryOptions.installModal.render).toHaveBeenCalled();
@@ -387,8 +314,8 @@ t.describe('UIModule', () => {
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-install-modal-web/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-install-modal-web/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -396,16 +323,10 @@ t.describe('UIModule', () => {
 
 	describe('updateQRCode method testing', () => {
 		let mockInstallModal: any;
-		let mockSelectModal: any;
 
 		beforeEach(() => {
 			// Create mock modal elements that simulate the DOM structure
 			mockInstallModal = {
-				link: '',
-				querySelector: t.vi.fn(),
-			};
-
-			mockSelectModal = {
 				link: '',
 				querySelector: t.vi.fn(),
 			};
@@ -449,47 +370,7 @@ t.describe('UIModule', () => {
 				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-install-modal');
 			});
 
-			it('should update QR code link for select modal when install modal is not found', async () => {
-				class TestSelectModal extends Modal<any> {
-					instance: any;
-
-					constructor() {
-						super();
-						this.instance = {
-							querySelector: t.vi.fn((selector: string) => {
-								if (selector === 'mm-install-modal') {
-									return null; // No install modal found
-								}
-								if (selector === 'mm-select-modal') {
-									return mockSelectModal;
-								}
-								return null;
-							}),
-						};
-					}
-
-					async render() {
-						return {
-							mount: t.vi.fn(),
-							unmount: t.vi.fn(),
-							sync: t.vi.fn(),
-						};
-					}
-				}
-
-				const testModal = new TestSelectModal();
-				const newLink = 'https://metamask.app.link/dapp/selectlink';
-
-				// Call updateQRCode method
-				testModal.updateQRCode(newLink);
-
-				// Verify the select modal's link was updated
-				expect(mockSelectModal.link).toBe(newLink);
-				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-install-modal');
-				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-select-modal');
-			});
-
-			it('should handle case where neither install nor select modal is found', async () => {
+			it('should handle case where install modal is not found', async () => {
 				class TestNoModal extends Modal<any> {
 					instance: any;
 
@@ -515,9 +396,8 @@ t.describe('UIModule', () => {
 				// Call updateQRCode method - should not throw even if no modals are found
 				expect(() => testModal.updateQRCode(newLink)).not.toThrow();
 
-				// Verify both selectors were tried
+				// Verify selector was tried
 				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-install-modal');
-				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-select-modal');
 			});
 
 			it('should handle case where instance is undefined', async () => {
@@ -553,14 +433,6 @@ t.describe('UIModule', () => {
 
 					if (tagName === 'mm-install-modal') {
 						// Add properties that mm-install-modal should have
-						(element as any).link = '';
-						(element as any).sdkVersion = '';
-						(element as any).preferDesktop = false;
-						(element as any).addEventListener = t.vi.fn();
-					}
-
-					if (tagName === 'mm-select-modal') {
-						// Add properties that mm-select-modal should have
 						(element as any).link = '';
 						(element as any).sdkVersion = '';
 						(element as any).preferDesktop = false;
@@ -613,62 +485,6 @@ t.describe('UIModule', () => {
 
 				// Render the modal
 				await testUIModule.renderInstallModal(initialLink, false);
-
-				// Verify the modal was rendered with the initial link
-				expect(modalWithUpdateQRCode.render).toHaveBeenCalledWith(expect.objectContaining({ link: initialLink }));
-
-				// Verify initial link was set
-				expect(modalWithUpdateQRCode.instance.link).toBe(initialLink);
-
-				// Test updateQRCode functionality
-				modalWithUpdateQRCode.updateQRCode(updatedLink);
-				expect(modalWithUpdateQRCode.updateQRCode).toHaveBeenCalledWith(updatedLink);
-				expect(modalWithUpdateQRCode.instance.link).toBe(updatedLink);
-			});
-
-			it('should support updateQRCode on select modal through UIModule', async () => {
-				const initialLink = 'https://metamask.app.link/select-initial';
-				const updatedLink = 'https://metamask.app.link/select-updated';
-
-				// Create modal factory options with real modal-like behavior
-				const modalWithUpdateQRCode = {
-					instance: undefined as any,
-					render: t.vi.fn().mockImplementation(async (options: any) => {
-						const modal = document.createElement('mm-select-modal') as any;
-						modal.link = options.link;
-						modal.sdkVersion = options.sdkVersion;
-						modal.preferDesktop = options.preferDesktop;
-
-						return {
-							mount: t.vi.fn(() => {
-								options.parentElement.appendChild(modal);
-								modalWithUpdateQRCode.instance = modal;
-							}),
-							unmount: t.vi.fn(() => {
-								if (options.parentElement.contains(modal)) {
-									options.parentElement.removeChild(modal);
-								}
-							}),
-						};
-					}),
-					updateQRCode: t.vi.fn((link: string) => {
-						// Simulate the real updateQRCode behavior - update the modal instance directly
-						if (modalWithUpdateQRCode.instance) {
-							modalWithUpdateQRCode.instance.link = link;
-						}
-					}),
-				};
-
-				const testFactoryOptions = {
-					...mockFactoryOptions,
-					selectModal: modalWithUpdateQRCode,
-				};
-
-				const testUIModule = new UIModule(testFactoryOptions);
-				const mockConnect = t.vi.fn();
-
-				// Render the modal
-				await testUIModule.renderSelectModal(initialLink, false, mockConnect);
 
 				// Verify the modal was rendered with the initial link
 				expect(modalWithUpdateQRCode.render).toHaveBeenCalledWith(expect.objectContaining({ link: initialLink }));
