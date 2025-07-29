@@ -75,8 +75,9 @@ export class InstallModal {
       image: SVG,
       imageOptions: {
         hideBackgroundDots: true,
-        imageSize: 1,
+        imageSize:0.7,
         crossOrigin: 'anonymous',
+        margin:5
       },
       dotsOptions: {
         color: '#222222',
@@ -144,7 +145,7 @@ export class InstallModal {
           </div>
 
           <div class='modalContent'>
-            {showExtensionFirst ? (
+            {!showExtensionFirst ? (
               // Extension first, then mobile
               <div>
                 {/* Extension Section */}
