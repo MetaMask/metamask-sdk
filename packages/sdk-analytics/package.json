@@ -3,9 +3,10 @@
   "version": "0.0.5",
   "description": "Analytics package for MetaMask SDK",
   "main": "dist/index.js",
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --dts",
+    "build": "tsup src/index.ts --dts --format esm,cjs",
     "lint": "eslint src --ext .ts,.tsx --ignore-pattern 'src/schema.ts'",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --ignore-pattern 'src/schema.ts'",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-analytics",
