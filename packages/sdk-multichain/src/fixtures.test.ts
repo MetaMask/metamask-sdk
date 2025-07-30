@@ -5,11 +5,23 @@
  * This file is excluded from test discovery via vitest.config.ts
  */
 
+// Additional imports for standardized setup functions
+import fs from 'node:fs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { JSDOM as Page } from 'jsdom';
 import type { Transport } from '@metamask/multichain-api-client';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import type { MultiChainFNOptions, MultichainCore, SessionData } from '../src/domain';
 import { MultichainSDK } from '../src/multichain';
+import * as nodeStorage from './store/adapters/node';
+import * as rnStorage from './store/adapters/rn';
+import * as webStorage from './store/adapters/web';
+
+// Import createSDK functions for convenience
+import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
+import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
+import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 
 // Mock logger at the top level
 vi.mock('./domain/logger', () => {
@@ -114,6 +126,85 @@ export const mockSessionData: SessionData = {
 		},
 	},
 	expiry: new Date(Date.now() + 3600000).toISOString(),
+};
+
+// Standardized setup functions for each platform
+export const setupNodeMocks = (nativeStorageStub: NativeStorageStub) => {
+	const memfs = new Map<string, any>();
+	t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
+	t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
+	t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
+	t.vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
+		return nativeStorageStub as any;
+	});
+};
+
+export const setupRNMocks = (nativeStorageStub: NativeStorageStub) => {
+	t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
+	t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
+	t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.deleteItem(key));
+	t.vi.spyOn(rnStorage, 'StoreAdapterRN').mockImplementation(() => {
+		return nativeStorageStub as any;
+	});
+};
+
+export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
+	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
+		url: dappUrl,
+	});
+	const globalStub = {
+		...dom.window,
+		addEventListener: t.vi.fn(),
+		removeEventListener: t.vi.fn(),
+		localStorage: nativeStorageStub,
+		ethereum: {
+			isMetaMask: true,
+		},
+	};
+	t.vi.stubGlobal('navigator', {
+		...dom.window.navigator,
+		product: 'Chrome',
+		language: 'en-US',
+	});
+	t.vi.stubGlobal('window', globalStub);
+	t.vi.stubGlobal('location', dom.window.location);
+	t.vi.stubGlobal('document', dom.window.document);
+	t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+	t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+	t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
+		return nativeStorageStub as any;
+	});
+};
+
+// Helper functions to create standardized test configurations
+export const runTestsInNodeEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
+	return createTest({
+		platform: 'node',
+		createSDK: createMetamaskSDKNode,
+		options,
+		setupMocks: setupNodeMocks,
+		tests: testSuite,
+	});
+};
+
+export const runTestsInRNEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
+	return createTest({
+		platform: 'rn',
+		createSDK: createMetamaskSDKRN,
+		options,
+		setupMocks: setupRNMocks,
+		tests: testSuite,
+	});
+};
+
+export const runTestsInWebEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
+	return createTest({
+		platform: 'web',
+		createSDK: createMetamaskSDKWeb,
+		options,
+		setupMocks: (nativeStorageStub) => setupWebMocks(nativeStorageStub, dappUrl),
+		tests: testSuite,
+	});
 };
 
 export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMocks, cleanupMocks, tests }) => {
