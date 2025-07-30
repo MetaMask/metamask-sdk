@@ -1,0 +1,62 @@
+/* eslint-disable */
+
+import type React from 'react';
+import { useCallback } from 'react';
+
+export enum INPUT_LABEL_TYPE {
+	ADDRESS = 'Address',
+	SCOPE = 'Scope',
+	CAIP_ACCOUNT_ID = 'CAIP Address',
+}
+
+type DynamicInputsProps = {
+	inputArray: string[];
+	availableOptions: { name: string; value: string }[];
+	setInputArray: React.Dispatch<React.SetStateAction<string[]>>;
+	label: INPUT_LABEL_TYPE;
+};
+
+const DynamicInputs: React.FC<DynamicInputsProps> = ({ inputArray, setInputArray, label, availableOptions }) => {
+	const handleCheckboxChange = useCallback(
+		(value: string, isChecked: boolean) => {
+			if (isChecked) {
+				// Add to array if not already present
+				setInputArray((prev) => Array.from(new Set([...prev, value])));
+			} else {
+				// Remove from array
+				setInputArray((prev) => prev.filter((item) => item !== value));
+			}
+		},
+		[setInputArray],
+	);
+
+	return (
+		<div className="space-y-3">
+			<h3 className="text-lg font-medium text-gray-800">{label}s:</h3>
+			<div className="flex flex-wrap gap-4">
+				{availableOptions.map((option) => {
+					const isChecked = inputArray.includes(option.value);
+					return (
+						<label key={`checkbox-${option.value}`} className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+							<input
+								type="checkbox"
+								checked={isChecked}
+								onChange={(e) => handleCheckboxChange(option.value, e.target.checked)}
+								className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+							/>
+							<span className="text-gray-700 select-none">{option.name}</span>
+						</label>
+					);
+				})}
+			</div>
+			{inputArray.length > 0 && (
+				<div className="text-sm text-gray-500 mt-2">
+					Selected: {inputArray.length} {label.toLowerCase()}
+					{inputArray.length !== 1 ? 's' : ''}
+				</div>
+			)}
+		</div>
+	);
+};
+
+export default DynamicInputs;

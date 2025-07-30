@@ -97,7 +97,6 @@ export class MultichainSDK extends MultichainCore {
 		if (isEnabled) {
 			enableDebug('metamask-sdk:core');
 		}
-		await instance.init();
 		return instance;
 	}
 
@@ -270,27 +269,15 @@ export class MultichainSDK extends MultichainCore {
 			}
 
 			const link = this.options.dapp.url ?? this.options.dapp.name ?? 'dummy';
+
 			if (!this.hasExtension) {
-				if (preferExtension) {
-					// render install modal with extension tab selected
-					return factory.renderInstallModal(link, false);
-				}
-				// Doesn't have extension so we show install modal in the preferDesktop value
 				return factory.renderInstallModal(link, preferDesktop);
 			}
 
-			if (!preferExtension) {
-				// Has extension but we don't automatically chooose extension so we should show
-				return factory.renderSelectModal(link, true, async () => {
-					//This callback is after the user clicked extension in the select tab
-					return this.onConnectionSuccess(TransportType.Browser, transport, {
-						scopes,
-						caipAccountIds,
-					});
-				});
+			if (this.hasExtension && !preferExtension) {
+				return factory.renderInstallModal(link, preferDesktop);
 			}
 
-			//We have extension and extension is the prefferred
 			return this.onConnectionSuccess(TransportType.Browser, transport, {
 				scopes,
 				caipAccountIds,

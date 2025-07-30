@@ -127,7 +127,7 @@ export class InstallModal {
     const t = (key: string) => this.i18nInstance.t(key);
 
     // Determine which section should be shown first based on preferDesktop
-    const showExtensionFirst = this.preferDesktop;
+    const showExtensionFirst = !this.preferDesktop;
 
     return (
       <WidgetWrapper className="install-model">

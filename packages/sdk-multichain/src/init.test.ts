@@ -10,9 +10,6 @@ import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import { MultichainSDK } from './multichain';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
@@ -59,11 +56,13 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 		t.it(`${platform} should automatically initialise the SDK after creation`, async () => {
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 			t.expect(mockedData.initSpy).toHaveBeenCalled();
 		});
 
 		t.it(`${platform} should enable analytics by default if platform is not nodejs`, async () => {
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 			t.expect(mockedData.setupAnalyticsSpy).toHaveBeenCalled();
 
 			if (platform !== 'web') {
@@ -78,6 +77,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should NOT call analytics.enable if analytics is DISABLED`, async () => {
 			(testOptions.analytics as any).enabled = false;
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 			t.expect(sdk).toBeDefined();
 			t.expect(mockedData.initSpy).toHaveBeenCalled();
 			t.expect(mockedData.setupAnalyticsSpy).toHaveBeenCalled();
@@ -89,6 +89,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const mockLogger = (loggerModule as any).__mockLogger;
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 			t.expect(sdk).toBeDefined();
 			t.expect(mockLogger).not.toHaveBeenCalled();
 
@@ -104,7 +105,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			sdk = await createSDK(testOptions);
-
+			await sdk.init();
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.provider).toBeDefined();
@@ -123,6 +124,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const emitSpy = t.vi.spyOn(MultichainSDK.prototype, 'emit');
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('loaded');
@@ -142,6 +144,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			});
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('pending');

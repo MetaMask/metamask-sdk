@@ -12,9 +12,6 @@ import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import { Store } from './store';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 vi.mock('cross-fetch', () => {
 	const mockFetch = vi.fn();
@@ -72,7 +69,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			(multichainModule as any).__mockInvokeResponse.mockResolvedValue(mockResponse);
 
 			sdk = await createSDK(testOptions);
-
+			await sdk.init();
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 
 			const options = {
@@ -103,6 +100,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 					infuraAPIKey: '1234567890',
 				},
 			});
+			await sdk.init();
 
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 			const options = {
@@ -121,6 +119,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const mockError = new Error('Failed to invoke method');
 			(multichainModule as any).__mockInvokeResponse.mockRejectedValue(mockError);
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 			const options = {
 				scope: 'eip155:1',
 				request: {

@@ -10,10 +10,6 @@ import { createTest, type MockedData, mockSessionData, type TestSuiteOptions } f
 import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
-
 import * as loggerModule from './domain/logger';
 import { Store } from './store';
 
@@ -67,6 +63,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
 
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(sdk.provider).toBeDefined();
@@ -111,7 +108,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockMultichainClient.getSession.mockResolvedValue(undefined);
 
 			sdk = await createSDK(testOptions);
-
+			await sdk.init();
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(sdk.provider).toBeDefined();
@@ -132,7 +129,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockMultichainClient.getSession.mockRejectedValue(sessionError);
 
 			sdk = await createSDK(testOptions);
-
+			await sdk.init();
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state === 'loaded').toBe(true);
 

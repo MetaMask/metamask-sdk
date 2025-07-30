@@ -63,7 +63,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 			// Create a new SDK instance with the mock configured correctly
 			const sdk = await createSDK(testOptions);
-
+			await sdk.init();
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
@@ -104,6 +104,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
@@ -131,6 +133,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['invalid-account-id', 'eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await sdk.connect(scopes, caipAccountIds);
 
 			t.expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid CAIP account ID: "invalid-account-id"', t.expect.any(Error));
@@ -158,6 +162,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to connect transport');
 		});
 
@@ -175,6 +181,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to create session');
 		});
 
@@ -204,6 +212,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
 			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow('Failed to revoke session');
 		});
 
@@ -212,6 +222,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await sdk.disconnect();
 			t.expect(mockedData.mockTransport.disconnect).toHaveBeenCalled();
 		});
@@ -221,6 +233,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const disconnectError = new Error('Failed to disconnect transport');
 			mockedData.mockTransport.disconnect.mockRejectedValue(disconnectError);
 			sdk = await createSDK(testOptions);
+			await sdk.init();
+
 			await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
 		});
 	});
