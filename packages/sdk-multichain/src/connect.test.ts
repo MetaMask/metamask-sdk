@@ -11,9 +11,6 @@ import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import { Store } from './store';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
@@ -36,7 +33,18 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
-				storage: new Store(mockedData.nativeStorageStub),
+				storage: new Store({
+					platform: platform as 'web' | 'rn' | 'node',
+					get(key) {
+						return Promise.resolve(mockedData.nativeStorageStub.getItem(key));
+					},
+					set(key, value) {
+						return Promise.resolve(mockedData.nativeStorageStub.setItem(key, value));
+					},
+					delete(key) {
+						return Promise.resolve(mockedData.nativeStorageStub.removeItem(key));
+					},
+				}),
 			};
 		});
 
@@ -226,13 +234,16 @@ createTest({
 	...baseTestOptions,
 	platform: 'node',
 	createSDK: createMetamaskSDKNode,
-	setupMocks: (nativeStorageStub) => {
+	setupMocks: () => {
 		const memfs = new Map<string, any>();
-		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-		t.vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
-			return nativeStorageStub as any;
+		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => {
+			return memfs.has(path.toString());
+		});
+		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => {
+			return memfs.set(path.toString(), data);
+		});
+		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => {
+			return memfs.get(path.toString());
 		});
 	},
 });
@@ -242,11 +253,14 @@ createTest({
 	platform: 'rn',
 	createSDK: createMetamaskSDKRN,
 	setupMocks: (nativeStorageStub) => {
-		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
-		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.deleteItem(key));
-		t.vi.spyOn(rnStorage, 'StoreAdapterRN').mockImplementation(() => {
-			return nativeStorageStub as any;
+		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => {
+			return nativeStorageStub.getItem(key);
+		});
+		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => {
+			return nativeStorageStub.setItem(key, value);
+		});
+		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => {
+			return nativeStorageStub.removeItem(key);
 		});
 	},
 });
@@ -256,9 +270,7 @@ createTest({
 	platform: 'web',
 	createSDK: createMetamaskSDKWeb,
 	setupMocks: (nativeStorageStub) => {
-		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
-			url: exampleDapp.url,
-		});
+		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', { url: exampleDapp.url });
 		const globalStub = {
 			...dom.window,
 			addEventListener: t.vi.fn(),
@@ -278,8 +290,8 @@ createTest({
 		t.vi.stubGlobal('document', dom.window.document);
 		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
-		t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
-			return nativeStorageStub as any;
-		});
+		// t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
+		// 	return nativeStorageStub as any;
+		// });
 	},
 });

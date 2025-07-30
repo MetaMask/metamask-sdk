@@ -3,15 +3,15 @@ import { StoreAdapter } from '../../domain';
 
 export class StoreAdapterRN extends StoreAdapter {
 	readonly platform = 'rn';
-	async getItem(key: string): Promise<string | null> {
+	async get(key: string): Promise<string | null> {
 		return AsyncStorage.getItem(key);
 	}
 
-	async setItem(key: string, value: string): Promise<void> {
+	async set(key: string, value: string): Promise<void> {
 		return AsyncStorage.setItem(key, value);
 	}
 
-	async deleteItem(key: string): Promise<void> {
+	async delete(key: string): Promise<void> {
 		return AsyncStorage.removeItem(key);
 	}
 }

@@ -53,7 +53,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 
 	t.describe(`${adapterName} getAnonId`, () => {
 		t.it('should return the anonymous ID when it exists', async () => {
-			await adapter.setItem('anonId', 'test-anon-id');
+			await adapter.set('anonId', 'test-anon-id');
 			const result = await store.getAnonId();
 			t.expect(result).toBe('test-anon-id');
 		});
@@ -67,26 +67,26 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 	t.describe(`${adapterName} setAnonId`, () => {
 		t.it('should set the anonymous ID successfully', async () => {
 			await store.setAnonId('new-anon-id');
-			const result = await adapter.getItem('anonId');
+			const result = await adapter.get('anonId');
 			t.expect(result).toBe('new-anon-id');
 		});
 	});
 
 	t.describe(`${adapterName} removeAnonId`, () => {
 		t.it('should remove the anonymous ID successfully', async () => {
-			await adapter.setItem('anonId', 'test-anon-id');
-			const beforeRemove = await adapter.getItem('anonId');
+			await adapter.set('anonId', 'test-anon-id');
+			const beforeRemove = await adapter.get('anonId');
 			t.expect(beforeRemove).toBe('test-anon-id');
 
 			await store.removeAnonId();
-			const afterRemove = await adapter.getItem('anonId');
+			const afterRemove = await adapter.get('anonId');
 			t.expect(afterRemove).toBeNull();
 		});
 	});
 
 	t.describe(`${adapterName} getExtensionId`, () => {
 		t.it('should return the extension ID when it exists', async () => {
-			await adapter.setItem('extensionId', 'test-extension-id');
+			await adapter.set('extensionId', 'test-extension-id');
 			const result = await store.getExtensionId();
 			t.expect(result).toBe('test-extension-id');
 		});
@@ -100,26 +100,26 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 	t.describe(`${adapterName} setExtensionId`, () => {
 		t.it('should set the extension ID successfully', async () => {
 			await store.setExtensionId('new-extension-id');
-			const result = await adapter.getItem('extensionId');
+			const result = await adapter.get('extensionId');
 			t.expect(result).toBe('new-extension-id');
 		});
 	});
 
 	t.describe(`${adapterName} removeExtensionId`, () => {
 		t.it('should remove the extension ID successfully', async () => {
-			await adapter.setItem('extensionId', 'test-extension-id');
-			const beforeRemove = await adapter.getItem('extensionId');
+			await adapter.set('extensionId', 'test-extension-id');
+			const beforeRemove = await adapter.get('extensionId');
 			t.expect(beforeRemove).toBe('test-extension-id');
 
 			await store.removeExtensionId();
-			const afterRemove = await adapter.getItem('extensionId');
+			const afterRemove = await adapter.get('extensionId');
 			t.expect(afterRemove).toBeNull();
 		});
 	});
 
 	t.describe(`${adapterName} getDebug`, () => {
 		t.it('should return the debug value when it exists', async () => {
-			await adapter.setItem('DEBUG', 'metamask-sdk:*');
+			await adapter.set('DEBUG', 'metamask-sdk:*');
 			const result = await store.getDebug();
 			t.expect(result).toBe('metamask-sdk:*');
 		});
@@ -132,19 +132,19 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 
 	t.describe(`${adapterName} getTransport`, () => {
 		t.it('should return the transport value when it exists - Browser', async () => {
-			await adapter.setItem('multichain-transport', 'browser');
+			await adapter.set('multichain-transport', 'browser');
 			const result = await store.getTransport();
 			t.expect(result).toBe(TransportType.Browser);
 		});
 
 		t.it('should return the transport value when it exists - MPW', async () => {
-			await adapter.setItem('multichain-transport', 'mwp');
+			await adapter.set('multichain-transport', 'mwp');
 			const result = await store.getTransport();
 			t.expect(result).toBe(TransportType.MPW);
 		});
 
 		t.it('should return UNKNOWN for unknown transport types', async () => {
-			await adapter.setItem('multichain-transport', 'unknown-transport');
+			await adapter.set('multichain-transport', 'unknown-transport');
 			const result = await store.getTransport();
 			t.expect(result).toBe(TransportType.UNKNOWN);
 		});
@@ -158,31 +158,31 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 	t.describe(`${adapterName} setTransport`, () => {
 		t.it('should set the transport successfully - Browser', async () => {
 			await store.setTransport(TransportType.Browser);
-			const result = await adapter.getItem('multichain-transport');
+			const result = await adapter.get('multichain-transport');
 			t.expect(result).toBe('browser');
 		});
 
 		t.it('should set the transport successfully - MPW', async () => {
 			await store.setTransport(TransportType.MPW);
-			const result = await adapter.getItem('multichain-transport');
+			const result = await adapter.get('multichain-transport');
 			t.expect(result).toBe('mwp');
 		});
 
 		t.it('should set the transport successfully - UNKNOWN', async () => {
 			await store.setTransport(TransportType.UNKNOWN);
-			const result = await adapter.getItem('multichain-transport');
+			const result = await adapter.get('multichain-transport');
 			t.expect(result).toBe('unknown');
 		});
 	});
 
 	t.describe(`${adapterName} removeTransport`, () => {
 		t.it('should remove the transport successfully', async () => {
-			await adapter.setItem('multichain-transport', 'browser');
-			const beforeRemove = await adapter.getItem('multichain-transport');
+			await adapter.set('multichain-transport', 'browser');
+			const beforeRemove = await adapter.get('multichain-transport');
 			t.expect(beforeRemove).toBe('browser');
 
 			await store.removeTransport();
-			const afterRemove = await adapter.getItem('multichain-transport');
+			const afterRemove = await adapter.get('multichain-transport');
 			t.expect(afterRemove).toBeNull();
 		});
 	});
@@ -191,7 +191,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 	t.describe(`${adapterName} error handling`, () => {
 		t.it('should throw StorageGetErr when fetching a key fails', async () => {
 			const errorMessage = 'getItem failed';
-			t.vi.spyOn(adapter, 'getItem').mockRejectedValue(new Error(errorMessage));
+			t.vi.spyOn(adapter, 'get').mockRejectedValue(new Error(errorMessage));
 			await t.expect(store.getAnonId()).rejects.toBeInstanceOf(StorageGetErr);
 			await t.expect(store.getExtensionId()).rejects.toBeInstanceOf(StorageGetErr);
 			await t.expect(store.getDebug()).rejects.toBeInstanceOf(StorageGetErr);
@@ -200,7 +200,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 
 		t.it('should throw StorageSetErr when setting a key fails', async () => {
 			const errorMessage = 'setItem failed';
-			t.vi.spyOn(adapter, 'setItem').mockRejectedValue(new Error(errorMessage));
+			t.vi.spyOn(adapter, 'set').mockRejectedValue(new Error(errorMessage));
 			await t.expect(store.setAnonId('test-id')).rejects.toThrow(StorageSetErr);
 			await t.expect(store.setExtensionId('test-id')).rejects.toThrow(StorageSetErr);
 			await t.expect(store.setTransport(TransportType.Browser)).rejects.toThrow(StorageSetErr);
@@ -208,7 +208,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 
 		t.it('should throw StorageDeleteErr when removing a key fails', async () => {
 			const errorMessage = 'deleteItem failed';
-			t.vi.spyOn(adapter, 'deleteItem').mockRejectedValue(new Error(errorMessage));
+			t.vi.spyOn(adapter, 'delete').mockRejectedValue(new Error(errorMessage));
 			await t.expect(store.removeAnonId()).rejects.toThrow(StorageDeleteErr);
 			await t.expect(store.removeExtensionId()).rejects.toThrow(StorageDeleteErr);
 			await t.expect(store.removeTransport()).rejects.toThrow(StorageDeleteErr);

@@ -62,13 +62,17 @@ vi.mock('@metamask/multichain-api-client', () => {
 	};
 });
 
+type GetItem = (key: string) => string | null;
+type SetItem = (key: string, value: string) => void;
+type RemoveItem = (key: string) => void;
+type Clear = () => void;
+
 export type NativeStorageStub = {
-	platform: 'web' | 'rn' | 'node';
 	data: Map<string, string>;
-	getItem: t.Mock<(key: string) => Promise<string | null>>;
-	setItem: t.Mock<(key: string, value: string) => Promise<void>>;
-	deleteItem: t.Mock<(key: string) => Promise<void>>;
-	clear: t.Mock<() => void>;
+	getItem: t.Mock<GetItem>;
+	setItem: t.Mock<SetItem>;
+	removeItem: t.Mock<RemoveItem>;
+	clear: t.Mock<Clear>;
 };
 
 export type MockedData = {
@@ -161,18 +165,17 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 		mockMultichainClient.createSession.mockResolvedValue(mockSessionData);
 		mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
-		// Create storage stub
+		// Create storage stub using the mocked class
 		nativeStorageStub = {
-			platform,
 			data: new Map<string, string>(),
-			getItem: vi.fn((key: string) => Promise.resolve(nativeStorageStub.data.get(key) || null)),
-			setItem: vi.fn((key: string, value: string) => {
+			getItem: t.vi.fn((key: string) => nativeStorageStub.data.get(key) || null),
+			setItem: t.vi.fn((key: string, value: string) => {
 				nativeStorageStub.data.set(key, value);
 			}),
-			deleteItem: vi.fn((key: string) => {
+			removeItem: t.vi.fn((key: string) => {
 				nativeStorageStub.data.delete(key);
 			}),
-			clear: vi.fn(() => {
+			clear: t.vi.fn(() => {
 				nativeStorageStub.data.clear();
 			}),
 		};

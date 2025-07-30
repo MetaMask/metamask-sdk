@@ -39,7 +39,18 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
-				storage: new Store(mockedData.nativeStorageStub),
+				storage: new Store({
+					platform: platform as 'web' | 'rn' | 'node',
+					get(key) {
+						return Promise.resolve(mockedData.nativeStorageStub.getItem(key));
+					},
+					set(key, value) {
+						return Promise.resolve(mockedData.nativeStorageStub.setItem(key, value));
+					},
+					delete(key) {
+						return Promise.resolve(mockedData.nativeStorageStub.removeItem(key));
+					},
+				}),
 			};
 		});
 
@@ -142,14 +153,11 @@ createTest({
 	...baseTestOptions,
 	platform: 'node',
 	createSDK: createMetamaskSDKNode,
-	setupMocks: (nativeStorageStub) => {
+	setupMocks: () => {
 		const memfs = new Map<string, any>();
 		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
 		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
 		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-		t.vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
-			return nativeStorageStub as any;
-		});
 	},
 });
 
@@ -160,10 +168,7 @@ createTest({
 	setupMocks: (nativeStorageStub) => {
 		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
 		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.deleteItem(key));
-		t.vi.spyOn(rnStorage, 'StoreAdapterRN').mockImplementation(() => {
-			return nativeStorageStub as any;
-		});
+		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
 	},
 });
 
@@ -194,8 +199,5 @@ createTest({
 		t.vi.stubGlobal('document', dom.window.document);
 		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
-		t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
-			return nativeStorageStub as any;
-		});
 	},
 });

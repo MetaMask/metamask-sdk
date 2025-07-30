@@ -15,7 +15,7 @@ export class StoreAdapterNode extends StoreAdapter {
 		}
 	}
 
-	async getItem(key: string): Promise<string | null> {
+	async get(key: string): Promise<string | null> {
 		if (!fs.existsSync(CONFIG_FILE)) {
 			return null;
 		}
@@ -27,7 +27,7 @@ export class StoreAdapterNode extends StoreAdapter {
 		return null;
 	}
 
-	async setItem(key: string, value: string): Promise<void> {
+	async set(key: string, value: string): Promise<void> {
 		if (!fs.existsSync(CONFIG_FILE)) {
 			fs.writeFileSync(CONFIG_FILE, '{}');
 		}
@@ -37,7 +37,7 @@ export class StoreAdapterNode extends StoreAdapter {
 		fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 	}
 
-	async deleteItem(key: string): Promise<void> {
+	async delete(key: string): Promise<void> {
 		if (!fs.existsSync(CONFIG_FILE)) {
 			return;
 		}

@@ -9,15 +9,15 @@ export class StoreAdapterWeb extends StoreAdapter {
 		}
 		return window.localStorage;
 	}
-	async getItem(key: string): Promise<string | null> {
+	async get(key: string): Promise<string | null> {
 		return this.internal.getItem(key);
 	}
 
-	async setItem(key: string, value: string): Promise<void> {
+	async set(key: string, value: string): Promise<void> {
 		return this.internal.setItem(key, value);
 	}
 
-	async deleteItem(key: string): Promise<void> {
+	async delete(key: string): Promise<void> {
 		return this.internal.removeItem(key);
 	}
 }
