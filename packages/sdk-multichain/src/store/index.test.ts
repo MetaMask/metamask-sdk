@@ -11,6 +11,7 @@ import { StoreAdapterNode } from './adapters/node';
 import { StoreAdapterRN } from './adapters/rn';
 import { StoreAdapterWeb } from './adapters/web';
 import { Store } from './index';
+import { IDBFactory as FakeIndexedDB } from 'fake-indexeddb';
 
 /**
  * Dummy mocked storage to keep track of data between tests
@@ -42,6 +43,7 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 
 	t.afterEach(async () => {
 		nativeStorageStub.data.clear();
+
 		cleanupMocks?.();
 	});
 
@@ -246,16 +248,55 @@ t.describe(`Store with WebAdapter`, () => {
 		() => {
 			t.vi.stubGlobal('window', {
 				localStorage: nativeStorageStub,
+				indexedDB: new FakeIndexedDB(),
 			});
 		},
 	);
 
-	t.it("Should throw an exception if we try using the store with a browser that doesn't support localStorage", async () => {
+	t.it("Should throw an exception if we try using the store with a browser that doesn't support IndexedDB", async () => {
 		t.vi.stubGlobal('window', {
-			localStorage: null,
+			indexedDB: null,
 		});
 		const store = new Store(new StoreAdapterWeb());
 		await t.expect(() => store.getAnonId()).rejects.toThrow();
+	});
+
+	t.it('Should support multiple StoreAdapterWeb instances with different suffixes', async () => {
+		// Create two adapters with different store names
+		const adapter1 = new StoreAdapterWeb('-1');
+		const adapter2 = new StoreAdapterWeb('-2');
+
+		const store1 = new Store(adapter1);
+		const store2 = new Store(adapter2);
+
+		// Both stores should work independently
+		await store1.setAnonId('test-id-1');
+		await store2.setAnonId('test-id-2');
+
+		const result1 = await store1.getAnonId();
+		const result2 = await store2.getAnonId();
+
+		t.expect(result1).toBe('test-id-1');
+		t.expect(result2).toBe('test-id-2');
+	});
+
+	t.it('Should support multiple concurrent instances of different store names and same dbSuffix', async () => {
+		const databaseSuffix = '-kv-store';
+		const sdkAdapter = new StoreAdapterWeb(databaseSuffix);
+		const mwpAdapter = new StoreAdapterWeb(databaseSuffix, 'key-value-pairs');
+
+		const store1 = new Store(sdkAdapter);
+		const store2 = new Store(mwpAdapter);
+
+		// Both stores should work independently
+		await store1.setAnonId('test-id-1');
+		await store2.setAnonId('test-id-2');
+
+		const result1 = await store1.getAnonId();
+		const result2 = await store2.getAnonId();
+
+		t.expect(result1).toBe('test-id-1');
+		t.expect(result2).toBe('test-id-2');
 	});
 });
 

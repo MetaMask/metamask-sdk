@@ -1,18 +1,9 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
-import fs from 'node:fs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import type { MultiChainFNOptions, MultichainCore } from './domain';
-import { createTest, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
-import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
-import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
-import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
 import { MultichainSDK } from './multichain';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
@@ -157,51 +148,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
-const baseTestOptions = { options: { dapp: exampleDapp }, tests: testSuite };
+const baseTestOptions = { dapp: exampleDapp };
 
-createTest({
-	...baseTestOptions,
-	platform: 'node',
-	createSDK: createMetamaskSDKNode,
-	setupMocks: () => {
-		const memfs = new Map<string, any>();
-		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'rn',
-	createSDK: createMetamaskSDKRN,
-	setupMocks: (nativeStorageStub) => {
-		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
-		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'web',
-	createSDK: createMetamaskSDKWeb,
-	setupMocks: (nativeStorageStub) => {
-		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
-			url: 'https://dapp.io/',
-		});
-		const globalStub = {
-			...dom.window,
-			addEventListener: t.vi.fn(),
-			removeEventListener: t.vi.fn(),
-			localStorage: nativeStorageStub,
-		};
-		t.vi.stubGlobal('navigator', {
-			...dom.window.navigator,
-			product: 'Chrome',
-		});
-		t.vi.stubGlobal('window', globalStub);
-		t.vi.stubGlobal('location', dom.window.location);
-		t.vi.stubGlobal('document', dom.window.document);
-	},
-});
+runTestsInNodeEnv(baseTestOptions, testSuite);
+runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, 'https://dapp.io/');
