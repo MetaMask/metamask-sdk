@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.1]
+### Fixed
+- chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
+
 ## [0.33.0]
 ### Added
 - Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
@@ -495,7 +499,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.1...HEAD
+[0.33.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.0...@metamask/sdk@0.33.1
 [0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.1...@metamask/sdk@0.33.0
 [0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...@metamask/sdk@0.32.1
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.31.5...@metamask/sdk@0.32.0
