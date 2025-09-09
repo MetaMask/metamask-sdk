@@ -39911,7 +39911,7 @@ __metadata:
     "@types/readable-stream": ^4.0.10
     "@typescript-eslint/eslint-plugin": ^4.28.1
     "@typescript-eslint/parser": ^4.28.1
-    debug: ^4.3.4
+    debug: 4.3.4
     eslint: ^7.30.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4
