@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@metamask/sdk": "workspace:^",
-    "debug": "^4.3.4",
+    "debug": "4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0"
