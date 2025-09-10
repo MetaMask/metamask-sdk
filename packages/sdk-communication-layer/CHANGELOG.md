@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.33.1]
 ### Fixed
 - chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
-
-
 ## [0.33.0]
 ### Added
 - Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
