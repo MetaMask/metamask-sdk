@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.1]
+### Uncategorized
+- fix: Rollback Release 115.0.0 and fix issue ([#1344](https://github.com/MetaMask/metamask-sdk/pull/1344))
+- Release 115.0.0 ([#1343](https://github.com/MetaMask/metamask-sdk/pull/1343))
+- chore: pin `debug` package to exact version due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
+
 ## [0.33.0]
 ### Added
 - Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
@@ -297,7 +303,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.33.0...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.33.1...HEAD
+[0.33.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.33.0...@metamask/sdk-communication-layer@0.33.1
 [0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.32.0...@metamask/sdk-communication-layer@0.33.0
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.31.0...@metamask/sdk-communication-layer@0.32.0
 [0.31.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.30.2...@metamask/sdk-communication-layer@0.31.0
