@@ -7,10 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.33.1]
-### Uncategorized
-- fix: Rollback Release 115.0.0 and fix issue ([#1344](https://github.com/MetaMask/metamask-sdk/pull/1344))
-- Release 115.0.0 ([#1343](https://github.com/MetaMask/metamask-sdk/pull/1343))
-- chore: pin `debug` package to exact version due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
+### Fixed
+- chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
+
 
 ## [0.33.0]
 ### Added
