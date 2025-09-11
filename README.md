@@ -46,6 +46,13 @@ See the full list of [JavaScript SDK options](https://docs.metamask.io/sdk/refer
 
 ## Contributing
 
+## Community Support
+
+If you need help, consider visiting the [MetaMask Help Center](https://support.metamask.io/).
+
+Please avoid opening GitHub Issues for general questions — use the official help resources instead.
+
+
 To contribute to MetaMask SDK, see the [contribution guidelines](./docs/contributing.md).
 
 ## Contacts
