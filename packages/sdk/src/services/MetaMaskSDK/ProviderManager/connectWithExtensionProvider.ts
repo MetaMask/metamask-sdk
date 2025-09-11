@@ -37,12 +37,27 @@ export async function connectWithExtensionProvider(instance: MetaMaskSDK) {
       `[MetaMaskSDK: connectWithExtensionProvider()] accounts=${accounts}`,
     );
   } catch (err) {
-    // ignore error
     console.warn(
       `[MetaMaskSDK: connectWithExtensionProvider()] can't request accounts error`,
       err,
     );
-    return;
+
+    // Emit appropriate events for connection rejection/cancellation
+    instance.emit(MetaMaskSDKEvent.ConnectWithResponse, { error: err });
+
+    if (instance.options.enableAnalytics) {
+      instance.analytics?.send({ event: TrackingEvents.REJECTED });
+    }
+
+    // Restore original provider if extension connection failed
+    if (instance.sdkProvider) {
+      instance.activeProvider = instance.sdkProvider;
+      if (typeof window !== 'undefined') {
+        window.ethereum = instance.sdkProvider;
+      }
+    }
+
+    throw err; // Re-throw to allow calling code to handle the error
   }
 
   // remember setting for next time (until terminated)
