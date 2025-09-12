@@ -24,7 +24,8 @@ jobs:
     needs: check-workflows
     uses: ./.github/workflows/lint-build-test.yml
     secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      CODECOV_TOKEN: ${{ 183314ea2ae482e13a6fbe583f523fdd9768759f
+ }}
 
   sonarcloud-scan:
     name: Run SonarCloud Scan
