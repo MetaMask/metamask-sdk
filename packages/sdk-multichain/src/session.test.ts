@@ -81,7 +81,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				optionalScopes: mockedSessionUpgradeData.sessionScopes,
 			});
 
-			mockedData.mockTransport.triggerNotification({
+			mockedData.mockTransport.__triggerNotification({
 				method: 'session_changed',
 				params: {
 					session: mockedSessionUpgradeData,

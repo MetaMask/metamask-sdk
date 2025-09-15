@@ -264,7 +264,7 @@ export type MockedData = {
 	emitSpy: t.MockInstance<MultichainSDK['emit']>;
 	showInstallModalSpy: t.MockInstance<any>;
 	nativeStorageStub: NativeStorageStub;
-	mockTransport: t.Mocked<Transport>;
+	mockTransport: t.Mocked<Transport & { __triggerNotification: (data: any) => void }>;
 	mockMultichainClient: any;
 	mockWebSocket: any;
 	mockDappClient: t.Mocked<DappClient>;
@@ -408,27 +408,29 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 
 		const initialTransportSpy = {
 			initialTransport: true,
-			_isConnected: false,
-			_notificationCallback: null as ((data: any) => void) | null,
+
 			connect: vi.fn(() => {
-				initialTransportSpy._isConnected = true;
+				initialTransportSpy.__isConnected = true;
 			}),
 			disconnect: vi.fn(() => {
-				initialTransportSpy._isConnected = false;
+				initialTransportSpy.__isConnected = false;
 			}),
 			isConnected: vi.fn(() => {
-				return initialTransportSpy._isConnected;
+				return initialTransportSpy.__isConnected;
 			}),
 			request: vi.fn(),
 			onNotification: vi.fn((callback: (data: any) => void) => {
-				initialTransportSpy._notificationCallback = callback;
+				initialTransportSpy.__notificationCallback = callback;
 				return () => {
-					initialTransportSpy._notificationCallback = null;
+					initialTransportSpy.__notificationCallback = null;
 				};
 			}),
-			triggerNotification: vi.fn((data: any) => {
-				if (initialTransportSpy._notificationCallback) {
-					initialTransportSpy._notificationCallback(data);
+
+			__isConnected: false,
+			__notificationCallback: null as ((data: any) => void) | null,
+			__triggerNotification: vi.fn((data: any) => {
+				if (initialTransportSpy.__notificationCallback) {
+					initialTransportSpy.__notificationCallback(data);
 				}
 			}),
 		};

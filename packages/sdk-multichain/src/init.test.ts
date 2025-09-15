@@ -111,7 +111,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('loaded');
 
-			mockedData.mockTransport.triggerNotification({
+			mockedData.mockTransport.__triggerNotification({
 				method: 'session_changed',
 				params: {
 					session: mockSessionData,
