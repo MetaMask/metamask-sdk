@@ -7,12 +7,9 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface MmInstallModal {
-        /**
-          * The QR code link
-         */
-        "link": string;
         "preferDesktop": boolean;
         "sdkVersion"?: string;
+        "sessionRequest": {id: string, expiresAt: number};
     }
 }
 export interface MmInstallModalCustomEvent<T> extends CustomEvent<T> {
@@ -23,6 +20,7 @@ declare global {
     interface HTMLMmInstallModalElementEventMap {
         "close": { shouldTerminate?: boolean };
         "startDesktopOnboarding": any;
+        "createSessionRequest": any;
     }
     interface HTMLMmInstallModalElement extends Components.MmInstallModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMmInstallModalElementEventMap>(type: K, listener: (this: HTMLMmInstallModalElement, ev: MmInstallModalCustomEvent<HTMLMmInstallModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -44,14 +42,12 @@ declare global {
 }
 declare namespace LocalJSX {
     interface MmInstallModal {
-        /**
-          * The QR code link
-         */
-        "link"?: string;
         "onClose"?: (event: MmInstallModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
+        "onCreateSessionRequest"?: (event: MmInstallModalCustomEvent<any>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
         "preferDesktop"?: boolean;
         "sdkVersion"?: string;
+        "sessionRequest"?: {id: string, expiresAt: number};
     }
     interface IntrinsicElements {
         "mm-install-modal": MmInstallModal;

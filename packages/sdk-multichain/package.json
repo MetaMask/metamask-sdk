@@ -51,7 +51,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@metamask/multichain-api-client": "^0.6.4",
+    "@metamask/mobile-wallet-protocol-core": "^0.1.0",
+    "@metamask/multichain-api-client": "^0.6.5",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/sdk-analytics": "workspace:^",
     "@metamask/sdk-multichain-ui": "workspace:^",

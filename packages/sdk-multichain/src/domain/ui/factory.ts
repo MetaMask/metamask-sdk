@@ -2,6 +2,7 @@ import type { Transport } from '@metamask/multichain-api-client';
 import type { CaipAccountId } from '@metamask/utils';
 import type { MultichainOptions, Scope, SessionData } from '../multichain';
 import type { Modal } from './types';
+import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 
 export type ModalTypes = 'installModal' | 'otpCodeModal';
 /**
@@ -42,7 +43,14 @@ export type ModalFactoryOptions = Pick<MultichainOptions, 'mobile' | 'transport'
  * @template T - Type of modals this factory can create, defaults to FactoryModals
  */
 export abstract class ModalFactory<T extends FactoryModals = FactoryModals> {
-	abstract renderInstallModal(link: string, preferDesktop: boolean): Promise<void>;
+	abstract unload(success: false, error: Error): void;
+	abstract unload(success: true, error?: Error): void;
+
+	abstract renderInstallModal(
+		preferDesktop: boolean,
+		createSessionRequest: () => Promise<SessionRequest>,
+		successCallback: (success: boolean, error?: Error) => void,
+	): Promise<void>;
 	abstract renderOTPCodeModal(): Promise<void>;
 	/**
 	 * Creates a new modal factory instance.

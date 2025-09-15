@@ -1,4 +1,4 @@
-import { Component, Prop, h, Event, EventEmitter, State, Element } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Element, Watch } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
@@ -23,10 +23,7 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  /**
-   * The QR code link
-   */
-  @Prop() link: string;
+  @Prop() sessionRequest: {id: string, expiresAt: number}
 
   @Prop() sdkVersion?: string;
 
@@ -38,6 +35,8 @@ export class InstallModal {
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
   @Event() startDesktopOnboarding: EventEmitter;
+
+  @Event() createSessionRequest: EventEmitter;
 
   @Element() el: HTMLElement;
 
@@ -52,7 +51,7 @@ export class InstallModal {
   }
 
   componentDidLoad() {
-    this.generateQRCode();
+    this.generateQRCode(this.sessionRequest);
   }
 
   async connectedCallback() {
@@ -62,22 +61,18 @@ export class InstallModal {
     this.translationsLoaded = true;
   }
 
-  private generateQRCode() {
-    if (!this.qrCodeContainer || !this.link) {
+  private generateQRCode(sessionRequest: {id: string, expiresAt: number}) {
+    if (!this.qrCodeContainer) {
       return;
     }
-
     const options: Options = {
-      width: 165,
-      height: 165,
       type: 'svg' as DrawType,
-      data: this.link,
+      data: JSON.stringify(sessionRequest),
       image: SVG,
       imageOptions: {
         hideBackgroundDots: true,
-        imageSize:0.7,
         crossOrigin: 'anonymous',
-        margin:5
+        imageSize:0.3,
       },
       dotsOptions: {
         color: '#222222',
@@ -102,12 +97,8 @@ export class InstallModal {
         errorCorrectionLevel: 'Q' as ErrorCorrectionLevel
       },
     };
-
     const qrCode = new QRCodeStyling(options);
-
     this.qrCodeContainer.innerHTML = '';
-
-    // Append the QR code to the container
     qrCode.append(this.qrCodeContainer);
   }
 
@@ -117,6 +108,11 @@ export class InstallModal {
 
   onStartDesktopOnboardingHandler() {
     this.startDesktopOnboarding.emit();
+  }
+
+  @Watch('sessionRequest')
+  updateSessionRequest(sessionRequest: {id: string, expiresAt: number}) {
+    this.generateQRCode(sessionRequest);
   }
 
   render() {

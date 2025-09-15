@@ -1,13 +1,16 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { getPlatformType, getVersion, type InstallWidgetProps, ModalFactory, type OTPCodeWidgetProps, PlatformType, type RenderedModal } from '../domain';
+import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 
-let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.js') | undefined;
+// @ts-ignore
+let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js') | undefined;
 
 /**
  * Preload install modal custom elements only once
  */
 export async function preload() {
-	__instance ??= await import('@metamask/sdk-multichain-ui/dist/loader/index.js')
+	// @ts-ignore
+	__instance ??= await import('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js')
 		.then((loader) => {
 			loader.defineCustomElements();
 			return Promise.resolve(loader);
@@ -21,11 +24,11 @@ export async function preload() {
 export class UIModule extends ModalFactory {
 	private modal!: RenderedModal;
 	private readonly platform: PlatformType = getPlatformType();
+	private successCallback!: (success: boolean, error?: Error) => void;
 
-	private unload() {
-		if (this.modal) {
-			this.modal.unmount();
-		}
+	unload(success: boolean, error?: Error) {
+		this.modal?.unmount(success, error);
+		this.successCallback?.(success, error);
 	}
 
 	/**
@@ -67,21 +70,26 @@ export class UIModule extends ModalFactory {
 		return container;
 	}
 
-	public async renderInstallModal(link: string, preferDesktop: boolean) {
+	public async renderInstallModal(preferDesktop: boolean, createSessionRequest: () => Promise<SessionRequest>, successCallback: (success: boolean, error?: Error) => void) {
 		await preload();
+
+		this.successCallback = successCallback;
+
 		const container = this.getMountedContainer();
+		const sessionRequest = await createSessionRequest();
 		const modalProps: InstallWidgetProps = {
-			onClose: this.unload.bind(this),
-			metaMaskInstaller: {
-				startDesktopOnboarding: () => {
-					new MetaMaskOnboarding().startOnboarding();
-					this.modal.unmount();
-				},
+			onClose: () => {
+				this.unload(true);
+			},
+			startDesktopOnboarding: () => {
+				new MetaMaskOnboarding().startOnboarding();
+				this.unload(true);
 			},
 			parentElement: container,
-			link,
+			sessionRequest,
 			preferDesktop,
 			sdkVersion: getVersion(),
+			createSessionRequest,
 		};
 		this.modal = await this.options.installModal.render(modalProps);
 		this.modal.mount();
