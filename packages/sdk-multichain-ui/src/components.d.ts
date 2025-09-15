@@ -9,7 +9,7 @@ export namespace Components {
     interface MmInstallModal {
         "preferDesktop": boolean;
         "sdkVersion"?: string;
-        "sessionRequest": {id: string, expiresAt: number};
+        "sessionRequest"?: {id: string, expiresAt: number};
     }
 }
 export interface MmInstallModalCustomEvent<T> extends CustomEvent<T> {

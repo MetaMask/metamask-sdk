@@ -23,7 +23,7 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  @Prop() sessionRequest: {id: string, expiresAt: number}
+  @Prop() sessionRequest?: {id: string, expiresAt: number}
 
   @Prop() sdkVersion?: string;
 
