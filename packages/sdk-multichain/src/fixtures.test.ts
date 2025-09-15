@@ -440,9 +440,6 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 		// Clear all mocks first
 		t.vi.clearAllMocks();
 
-		// Reset global SDK state
-		//	MultichainSDK.resetGlobals();
-
 		// Reset multichain client mocks with default implementations
 		mockMultichainClient.createSession.mockResolvedValue(mockSessionData);
 		mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
@@ -497,9 +494,6 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 		mocks.initSpy?.mockRestore();
 		mocks.emitSpy?.mockRestore();
 		mocks.showInstallModalSpy?.mockRestore();
-
-		// Reset global SDK state
-		MultichainSDK.resetGlobals();
 
 		// Clear all mocks
 		t.vi.clearAllMocks();

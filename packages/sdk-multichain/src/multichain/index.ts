@@ -16,12 +16,11 @@ import { keymanager } from './mwp/KeyManager';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
-
-let __provider: MultichainApiClient<RPCAPI> | undefined;
-let __transport: Transport | undefined;
-let __dappClient: DappClient | undefined;
-
 export class MultichainSDK extends MultichainCore {
+	private __provider: MultichainApiClient<RPCAPI> | undefined = undefined;
+	private __transport: Transport | undefined = undefined;
+	private __dappClient: DappClient | undefined = undefined;
+
 	public state: SDKState;
 	private listener: (() => void | Promise<void>) | undefined;
 
@@ -32,24 +31,24 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	get provider() {
-		if (!__provider) {
+		if (!this.__provider) {
 			throw new Error('Provider not initialized, establish connection first');
 		}
-		return __provider;
+		return this.__provider;
 	}
 
 	get transport() {
-		if (!__transport) {
+		if (!this.__transport) {
 			throw new Error('Transport not initialized, establish connection first');
 		}
-		return __transport;
+		return this.__transport;
 	}
 
 	get dappClient() {
-		if (!__dappClient) {
+		if (!this.__dappClient) {
 			throw new Error('DappClient not initialized, establish connection first');
 		}
-		return __dappClient;
+		return this.__dappClient;
 	}
 
 	async getCurrentSession(): Promise<SessionData | undefined> {
@@ -90,6 +89,7 @@ export class MultichainSDK extends MultichainCore {
 				integrationType: 'unknown',
 			},
 		};
+
 		super(allOptions);
 		this.state = 'pending';
 	}
@@ -168,8 +168,8 @@ export class MultichainSDK extends MultichainCore {
 				const websocket = typeof window !== 'undefined' ? WebSocket : (await import('ws')).WebSocket;
 				const transport = await WebSocketTransport.create({ url: MWP_RELAY_URL, kvstore, websocket });
 				const dappClient = new DappClient({ transport, sessionstore, keymanager });
-				__dappClient = dappClient;
-				return new MWPTransport(__dappClient, kvstore);
+				this.__dappClient = dappClient;
+				return new MWPTransport(this.__dappClient, kvstore);
 			} else {
 				await this.storage.removeTransport();
 			}
@@ -181,16 +181,16 @@ export class MultichainSDK extends MultichainCore {
 		const storedTransport = await this.getStoredTransport();
 		if (storedTransport) {
 			//Assign the transport to the global state
-			__transport = storedTransport;
-			await __transport.connect();
+			this.__transport = storedTransport;
+			await this.__transport.connect();
 		}
 		//If we have a transport, we can setup the provider and the listeners
-		if (__transport) {
+		if (this.__transport) {
 			//provider will auto connect to the transport
-			__provider = getMultichainClient({ transport: __transport });
+			this.__provider = getMultichainClient({ transport: this.__transport });
 
 			//Add event listeners to the transport
-			this.listener = __transport.onNotification(this.onTransportNotification.bind(this));
+			this.listener = this.__transport.onNotification(this.onTransportNotification.bind(this));
 
 			//If we have a session, we can emit the session_changed event
 			const session = await this.getCurrentSession();
@@ -292,9 +292,9 @@ export class MultichainSDK extends MultichainCore {
 		this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 		const apiClient = getMultichainClient({ transport: apiTransport });
 
-		__transport = apiTransport;
-		__provider = apiClient;
-		__dappClient = dappClient;
+		this.__transport = apiTransport;
+		this.__provider = apiClient;
+		this.__dappClient = dappClient;
 
 		await this.options.storage.setTransport(TransportType.MPW);
 	}
@@ -305,7 +305,7 @@ export class MultichainSDK extends MultichainCore {
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
 
-		if (__transport?.isConnected()) {
+		if (this.__transport?.isConnected()) {
 			const existingSession = await this.getCurrentSession();
 			if (existingSession) {
 				return this.onConnectionSuccess({ scopes, caipAccountIds });
@@ -317,9 +317,9 @@ export class MultichainSDK extends MultichainCore {
 			await this.storage.setTransport(TransportType.Browser);
 			const transport = await getDefaultTransport(this.options.transport);
 			this.listener = transport.onNotification(this.onTransportNotification.bind(this));
-			__transport = transport;
-			await __transport.connect();
-			__provider = getMultichainClient({ transport: __transport });
+			this.__transport = transport;
+			await this.__transport.connect();
+			this.__provider = getMultichainClient({ transport: this.__transport });
 			return this.onConnectionSuccess({ scopes, caipAccountIds });
 		}
 
@@ -335,14 +335,15 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async disconnect(): Promise<void> {
-		await __transport?.disconnect();
-		await __provider?.revokeSession();
-		await __dappClient?.disconnect();
+		await this.__transport?.disconnect();
+		await this.__provider?.revokeSession();
+		await this.__dappClient?.disconnect();
 
 		this.listener?.();
 
-		__transport = undefined;
-		__provider = undefined;
+		this.__transport = undefined;
+		this.__provider = undefined;
+		this.__dappClient = undefined;
 
 		this.emit('session_changed', undefined);
 		this.listener = undefined;
