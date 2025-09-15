@@ -53,19 +53,10 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			// Get mocks from the module mock
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
-
-			mockedData.mockTransport.connect.mockResolvedValue();
 			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			sdk = await createSDK(testOptions);
-
-			t.expect(sdk.state).toBe('loaded');
-			t.expect(sdk.provider).toBeDefined();
-			t.expect(sdk.transport).toBeDefined();
-			t.expect(sdk.storage).toBeDefined();
-			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
-			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
+			(mockedData.mockTransport as any)._isConnected = true;
 
 			const mockedSessionUpgradeData: SessionData = {
 				...mockSessionData,
@@ -88,6 +79,13 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(mockMultichainClient.revokeSession).toHaveBeenCalled();
 			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
 				optionalScopes: mockedSessionUpgradeData.sessionScopes,
+			});
+
+			mockedData.mockTransport.triggerNotification({
+				method: 'session_changed',
+				params: {
+					session: mockedSessionUpgradeData,
+				},
 			});
 			// sessionChanged should be emitted with the full session data returned from createSession, not just the scopes
 			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockedSessionUpgradeData);
@@ -138,7 +136,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
-const baseTestOptions = { dapp: exampleDapp };
+const baseTestOptions = { dapp: exampleDapp } as any;
 
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);

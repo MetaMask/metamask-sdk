@@ -1,4 +1,4 @@
-import type { MultichainApiClient, Transport } from '@metamask/multichain-api-client';
+import type { MultichainApiClient, SessionData, Transport } from '@metamask/multichain-api-client';
 import type { CaipAccountId, Json } from '@metamask/utils';
 import { EventEmitter, type SDKEvents } from '../events';
 import type { StoreClient } from '../store/client';
@@ -25,7 +25,7 @@ export abstract class MultichainCore extends EventEmitter<SDKEvents> {
 	abstract provider: MultichainApiClient<RPCAPI>;
 	abstract transport: Transport;
 
-	abstract init(): Promise<void>;
+	abstract getCurrentSession(): Promise<SessionData | undefined>;
 	/**
 	 * Establishes a connection to the multichain provider, or re-use existing session
 	 *

@@ -2,9 +2,9 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore } from './domain';
+import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore, Scope } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
+import { mockSessionData, runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
 import { Store } from './store';
 
 vi.mock('cross-fetch', () => {
@@ -55,17 +55,16 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			await afterEach(mockedData);
 		});
 
-		t.it(`${platform} should invoke method successfully from provider`, async () => {
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
+		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
 			// Mock the RPCClient response
-			const mockResponse = { result: 'success' };
-			(multichainModule as any).__mockInvokeResponse.mockResolvedValue(mockResponse);
+			const mockResponse = { id: 1, jsonrpc: '2.0' as const, result: 'success' };
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.request.mockResolvedValue(mockResponse);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			sdk = await createSDK(testOptions);
-
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
-
 			const options = {
 				scope: 'eip155:1',
 				request: { method: 'eth_accounts', params: [] },
@@ -73,6 +72,23 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const result = await sdk.invokeMethod(options);
 			t.expect(providerInvokeMethodSpy).toHaveBeenCalledWith(options);
 			t.expect(result).toEqual(mockResponse);
+		});
+
+		t.it(`${platform} should reject invoke if no active session or provider is available`, async () => {
+			mockedData.nativeStorageStub.removeItem('multichain-transport');
+
+			mockedData.mockTransport.isConnected.mockReturnValue(false);
+			mockedData.mockTransport.connect.mockResolvedValue();
+			mockedData.mockMultichainClient.getSession.mockResolvedValue(undefined);
+
+			sdk = await createSDK(testOptions);
+
+			const options = {
+				scope: 'eip155:1',
+				request: { method: 'eth_accounts', params: [] },
+			} as InvokeMethodOptions;
+
+			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Provider not initialized, establish connection first');
 		});
 
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
@@ -108,9 +124,11 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should handle invoke method errors`, async () => {
-			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockError = new Error('Failed to invoke method');
-			(multichainModule as any).__mockInvokeResponse.mockRejectedValue(mockError);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.request.mockRejectedValue(mockError);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 			sdk = await createSDK(testOptions);
 			const options = {
 				scope: 'eip155:1',
@@ -126,8 +144,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
-const baseTestOptions = { dapp: exampleDapp };
+const baseTestOptions = { dapp: exampleDapp } as any;
 
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
-runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);

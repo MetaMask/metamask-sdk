@@ -6,7 +6,6 @@
  */
 
 // Additional imports for standardized setup functions
-import fs from 'node:fs';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JSDOM as Page } from 'jsdom';
 import type { Transport } from '@metamask/multichain-api-client';
@@ -14,14 +13,13 @@ import * as t from 'vitest';
 import { vi } from 'vitest';
 import type { MultiChainFNOptions, MultichainCore, SessionData } from '../src/domain';
 import { MultichainSDK } from '../src/multichain';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 // Import createSDK functions for convenience
 import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
+import * as nodeStorage from './store/adapters/node';
+import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 // Mock logger at the top level
 vi.mock('./domain/logger', () => {
@@ -43,6 +41,166 @@ vi.mock('@metamask/sdk-analytics', () => ({
 	},
 }));
 
+// Mock sdk-multichain-ui loader to prevent CJS loading crash
+vi.mock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', () => ({
+	defineCustomElements: vi.fn(),
+}));
+
+vi.mock('../src/multichain/mwp/index.ts', () => {
+	const mwpMock = vi.fn();
+	const createSessionRequest = vi.fn(() => {
+		return {
+			id: '1234',
+			expiresAt: new Date(Date.now() + 60 * 1000),
+		};
+	});
+	return {
+		MWPTransport: mwpMock,
+		createSessionRequest,
+		__mockMWPTransport: mwpMock,
+		__mockCreateSessionRequest: createSessionRequest,
+	};
+});
+
+// Mock DappClient with event emitter functionality
+vi.mock('@metamask/mobile-wallet-protocol-dapp-client', () => {
+	// Create a factory function that returns a new mock instance with event handling
+	const createMockDappClient = () => {
+		const eventListeners = new Map<string, Array<{ handler: (...args: any[]) => void; once: boolean }>>();
+
+		const mockDappClient = {
+			connect: vi.fn(() => {
+				mockDappClient.emit('connected');
+				return Promise.resolve();
+			}),
+			disconnect: vi.fn(() => {
+				mockDappClient.emit('disconnected');
+				return Promise.resolve();
+			}),
+			sendRequest: vi.fn(),
+			resume: vi.fn(),
+
+			// Event handling methods
+			once: vi.fn((event: string, handler: (...args: any[]) => void) => {
+				if (!eventListeners.has(event)) {
+					eventListeners.set(event, []);
+				}
+				eventListeners.get(event)!.push({ handler, once: true });
+			}),
+
+			on: vi.fn((event: string, handler: (...args: any[]) => void) => {
+				if (!eventListeners.has(event)) {
+					eventListeners.set(event, []);
+				}
+				eventListeners.get(event)!.push({ handler, once: false });
+			}),
+
+			off: vi.fn((event: string, handler?: (...args: any[]) => void) => {
+				if (!eventListeners.has(event)) return;
+
+				if (handler) {
+					// Remove specific handler
+					const listeners = eventListeners.get(event)!;
+					const index = listeners.findIndex((listener) => listener.handler === handler);
+					if (index !== -1) {
+						listeners.splice(index, 1);
+					}
+				} else {
+					// Remove all handlers for this event
+					eventListeners.delete(event);
+				}
+			}),
+
+			// Method to emit events (for testing purposes)
+			emit: vi.fn((event: string, ...args: any[]) => {
+				if (!eventListeners.has(event)) return;
+
+				const listeners = eventListeners.get(event)!;
+				// Create a copy to iterate over, as 'once' handlers will modify the original array
+				const listenersToCall = [...listeners];
+
+				listenersToCall.forEach(({ handler, once }) => {
+					try {
+						handler(...args);
+					} catch (error) {
+						console.error(`Error in event handler for '${event}':`, error);
+					}
+
+					// Remove 'once' handlers after calling them
+					if (once) {
+						const index = listeners.findIndex((l) => l.handler === handler);
+						if (index !== -1) {
+							listeners.splice(index, 1);
+						}
+					}
+				});
+			}),
+
+			// Helper methods for testing
+			getEventListeners: vi.fn((event?: string) => {
+				if (event) {
+					return eventListeners.get(event) || [];
+				}
+				return Object.fromEntries(eventListeners);
+			}),
+
+			clearEventListeners: vi.fn((event?: string) => {
+				if (event) {
+					eventListeners.delete(event);
+				} else {
+					eventListeners.clear();
+				}
+			}),
+		};
+
+		return mockDappClient;
+	};
+
+	// Create a shared instance for backward compatibility
+	const sharedMockDappClient = createMockDappClient();
+
+	return {
+		DappClient: vi.fn().mockImplementation(() => sharedMockDappClient),
+		__mockDappClient: sharedMockDappClient,
+		__createMockDappClient: createMockDappClient,
+	};
+});
+
+// Mock WebSocket at the top level
+const createMockWebSocket = () => {
+	const mockWS = {
+		CONNECTING: 0,
+		OPEN: 1,
+		CLOSING: 2,
+		CLOSED: 3,
+		readyState: 1,
+		url: '',
+		protocol: '',
+		bufferedAmount: 0,
+		extensions: '',
+		binaryType: 'blob' as BinaryType,
+		onopen: null as ((event: Event) => void) | null,
+		onmessage: null as ((event: MessageEvent) => void) | null,
+		onerror: null as ((event: Event) => void) | null,
+		onclose: null as ((event: CloseEvent) => void) | null,
+		send: vi.fn(),
+		close: vi.fn(),
+		addEventListener: vi.fn(),
+		removeEventListener: vi.fn(),
+		dispatchEvent: vi.fn(),
+	};
+	return mockWS;
+};
+
+vi.mock('ws', () => ({
+	default: vi.fn().mockImplementation(() => createMockWebSocket()),
+	WebSocket: vi.fn().mockImplementation(() => createMockWebSocket()),
+}));
+
+// Mock native WebSocket for browser environments
+const mockWebSocketConstructor = vi.fn().mockImplementation(() => createMockWebSocket());
+vi.stubGlobal('WebSocket', mockWebSocketConstructor);
+
 // Mock the MWPClientTransport
 vi.mock('./multichain/client', () => ({
 	MWPClientTransport: {
@@ -55,9 +213,14 @@ vi.mock('./multichain/client', () => ({
 }));
 
 // Mock multichain client at the top level with factory functions
-// Mock multichain client at the top level with factory functions
 vi.mock('@metamask/multichain-api-client', () => {
-	const invokeResponse = vi.fn();
+	let currentTransport: Transport | undefined;
+
+	const transport = vi.fn();
+	const invokeResponse = vi.fn((req: any) => {
+		return currentTransport?.request(req);
+	});
+
 	const mockMultichainClient = {
 		createSession: vi.fn(),
 		getSession: vi.fn(),
@@ -66,11 +229,19 @@ vi.mock('@metamask/multichain-api-client', () => {
 		extendsRpcApi: vi.fn(),
 		onNotification: vi.fn(),
 	};
+
 	return {
-		getMultichainClient: vi.fn(() => mockMultichainClient),
+		getMultichainClient: vi.fn(({ transport: transportToMock }) => {
+			currentTransport = transportToMock;
+			return mockMultichainClient;
+		}),
+		getDefaultTransport: vi.fn(() => {
+			currentTransport = transport();
+			return currentTransport;
+		}),
 		// Export the mocks so tests can access them
 		__mockMultichainClient: mockMultichainClient,
-		__mockInvokeResponse: invokeResponse,
+		__mockTransport: transport,
 	};
 });
 
@@ -91,9 +262,13 @@ export type MockedData = {
 	initSpy: t.MockInstance<MultichainSDK['init']>;
 	setupAnalyticsSpy: t.MockInstance<MultichainSDK['setupAnalytics']>;
 	emitSpy: t.MockInstance<MultichainSDK['emit']>;
+	showInstallModalSpy: t.MockInstance<any>;
 	nativeStorageStub: NativeStorageStub;
 	mockTransport: t.Mocked<Transport>;
 	mockMultichainClient: any;
+	mockWebSocket: any;
+	mockDappClient: t.Mocked<DappClient>;
+	mockLogger: t.MockInstance<debug.Debugger>;
 };
 
 export type TestSuiteOptions<T extends MultiChainFNOptions> = {
@@ -130,22 +305,32 @@ export const mockSessionData: SessionData = {
 
 // Standardized setup functions for each platform
 export const setupNodeMocks = (nativeStorageStub: NativeStorageStub) => {
-	const memfs = new Map<string, any>();
-	t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-	t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-	t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
+	// Mock console.log to prevent QR codes from displaying in test output
+	t.vi.spyOn(console, 'log').mockImplementation(() => {});
+	t.vi.spyOn(console, 'clear').mockImplementation(() => {});
+
 	t.vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
-		return nativeStorageStub as any;
+		const __storage = {
+			get: t.vi.fn((key: string) => nativeStorageStub.getItem(key)),
+			set: t.vi.fn((key: string, value: string) => nativeStorageStub.setItem(key, value)),
+			delete: t.vi.fn((key: string) => nativeStorageStub.removeItem(key)),
+			platform: 'node' as const,
+			get storage() {
+				return __storage;
+			},
+		} as any;
+		return __storage;
 	});
 };
 
 export const setupRNMocks = (nativeStorageStub: NativeStorageStub) => {
+	// Mock console.log to prevent QR codes from displaying in test output (for consistency)
+	t.vi.spyOn(console, 'log').mockImplementation(() => {});
+	t.vi.spyOn(console, 'clear').mockImplementation(() => {});
+
 	t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
 	t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-	t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.deleteItem(key));
-	t.vi.spyOn(rnStorage, 'StoreAdapterRN').mockImplementation(() => {
-		return nativeStorageStub as any;
-	});
+	t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
 };
 
 export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
@@ -171,9 +356,6 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 	t.vi.stubGlobal('document', dom.window.document);
 	t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 	t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
-	t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
-		return nativeStorageStub as any;
-	});
 };
 
 // Helper functions to create standardized test configurations
@@ -212,45 +394,54 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 	let setupAnalyticsSpy!: t.MockInstance<MultichainSDK['setupAnalytics']>;
 	let initSpy!: t.MockInstance<MultichainSDK['init']>;
 	let emitSpy!: t.MockInstance<MultichainSDK['emit']>;
-
-	const initialTransportSpy = {
-		_isConnected: false,
-		connect: vi.fn(() => {
-			initialTransportSpy._isConnected = true;
-		}),
-		disconnect: vi.fn(() => {
-			initialTransportSpy._isConnected = false;
-		}),
-		isConnected: vi.fn(() => initialTransportSpy._isConnected),
-		request: vi.fn(),
-		onNotification: vi.fn(() => {
-			return () => {};
-		}),
-	};
-
-	// Helper function to reset transport state
-	const resetTransportSpy = () => {
-		initialTransportSpy._isConnected = false;
-		initialTransportSpy.connect.mockClear();
-		initialTransportSpy.disconnect.mockClear();
-		initialTransportSpy.isConnected.mockClear();
-		initialTransportSpy.request.mockClear();
-		initialTransportSpy.onNotification.mockClear();
-	};
+	let showInstallModalSpy!: t.MockInstance<any>;
+	let dappClientMock!: t.Mocked<DappClient>;
+	let mockLogger!: t.MockInstance<debug.Debugger>;
 
 	async function beforeEach() {
+		const mockMultichainClient = ((await import('@metamask/multichain-api-client')) as any).__mockMultichainClient;
+		const mwpTransportMock = ((await import('./multichain/mwp/index.ts')) as any).__mockMWPTransport;
+		const defaultTransportMock = ((await import('@metamask/multichain-api-client')) as any).__mockTransport;
+
+		mockLogger = ((await import('./domain/logger')) as any).__mockLogger;
+		dappClientMock = ((await import('@metamask/mobile-wallet-protocol-dapp-client')) as any).__mockDappClient;
+
+		const initialTransportSpy = {
+			initialTransport: true,
+			_isConnected: false,
+			_notificationCallback: null as ((data: any) => void) | null,
+			connect: vi.fn(() => {
+				initialTransportSpy._isConnected = true;
+			}),
+			disconnect: vi.fn(() => {
+				initialTransportSpy._isConnected = false;
+			}),
+			isConnected: vi.fn(() => {
+				return initialTransportSpy._isConnected;
+			}),
+			request: vi.fn(),
+			onNotification: vi.fn((callback: (data: any) => void) => {
+				initialTransportSpy._notificationCallback = callback;
+				return () => {
+					initialTransportSpy._notificationCallback = null;
+				};
+			}),
+			triggerNotification: vi.fn((data: any) => {
+				if (initialTransportSpy._notificationCallback) {
+					initialTransportSpy._notificationCallback(data);
+				}
+			}),
+		};
+
+		defaultTransportMock.mockImplementation(() => initialTransportSpy);
+
+		mwpTransportMock.mockImplementation(() => initialTransportSpy);
+
 		// Clear all mocks first
 		t.vi.clearAllMocks();
 
-		// Reset transport spy state
-		resetTransportSpy();
-
 		// Reset global SDK state
-		MultichainSDK.resetGlobals();
-
-		// Get mocks from the module mock
-		const multichainModule = await import('@metamask/multichain-api-client');
-		const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+		//	MultichainSDK.resetGlobals();
 
 		// Reset multichain client mocks with default implementations
 		mockMultichainClient.createSession.mockResolvedValue(mockSessionData);
@@ -278,8 +469,8 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 		initSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'init');
 		setupAnalyticsSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'setupAnalytics');
 		emitSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'emit');
-		t.vi.spyOn(MultichainSDK.prototype as any, 'initialTransport').mockResolvedValue(initialTransportSpy);
-		t.vi.spyOn(MultichainSDK.prototype as any, 'getTransportForPlatformType').mockReturnValue(initialTransportSpy);
+		showInstallModalSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'showInstallModal');
+
 		// Setup platform-specific mocks
 		setupMocks?.(nativeStorageStub);
 
@@ -287,9 +478,13 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 			initSpy,
 			setupAnalyticsSpy,
 			emitSpy,
+			showInstallModalSpy,
 			nativeStorageStub,
 			mockTransport: initialTransportSpy as any,
 			mockMultichainClient,
+			mockWebSocket: mockWebSocketConstructor,
+			mockDappClient: dappClientMock,
+			mockLogger,
 		};
 	}
 
@@ -301,25 +496,13 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 		mocks.setupAnalyticsSpy?.mockRestore();
 		mocks.initSpy?.mockRestore();
 		mocks.emitSpy?.mockRestore();
-
-		// Reset transport spy state
-		resetTransportSpy();
+		mocks.showInstallModalSpy?.mockRestore();
 
 		// Reset global SDK state
 		MultichainSDK.resetGlobals();
 
-		// Reset multichain client mock functions
-		if (mocks.mockMultichainClient) {
-			mocks.mockMultichainClient.createSession.mockClear();
-			mocks.mockMultichainClient.getSession.mockClear();
-			mocks.mockMultichainClient.revokeSession.mockClear();
-			mocks.mockMultichainClient.invokeMethod.mockClear();
-			mocks.mockMultichainClient.onNotification.mockClear();
-		}
-
 		// Clear all mocks
 		t.vi.clearAllMocks();
-		t.vi.resetAllMocks();
 
 		// Run custom cleanup
 		cleanupMocks?.();

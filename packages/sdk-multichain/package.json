@@ -32,6 +32,7 @@
     "@biomejs/biome": "2.0.0",
     "@metamask/auto-changelog": "^3.4.3",
     "@react-native-async-storage/async-storage": "^1.23.1",
+    "@types/ws": "^8.18.1",
     "@vitest/coverage-v8": "^3.2.4",
     "esbuild-plugin-umd-wrapper": "^3.0.0",
     "jsdom": "^26.1.0",
@@ -52,6 +53,7 @@
   "license": "MIT",
   "dependencies": {
     "@metamask/mobile-wallet-protocol-core": "^0.1.0",
+    "@metamask/mobile-wallet-protocol-dapp-client": "^0.1.0",
     "@metamask/multichain-api-client": "^0.6.5",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/sdk-analytics": "workspace:^",
@@ -60,7 +62,9 @@
     "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.11.0",
     "cross-fetch": "^4.1.0",
+    "eciesjs": "^0.4.15",
     "eventemitter3": "^5.0.1",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "ws": "^8.18.3"
   }
 }
