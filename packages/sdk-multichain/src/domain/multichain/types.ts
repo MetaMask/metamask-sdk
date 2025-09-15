@@ -57,6 +57,8 @@ export type MultichainOptions = {
 
 export type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
 	ui?: Omit<MultichainOptions['ui'], 'factory'>;
+} & {
+	storage?: StoreClient;
 };
 
 /**

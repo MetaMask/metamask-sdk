@@ -1,7 +1,9 @@
 /* c8 ignore start */
+import type { StoreAdapter } from '../store';
 import type { TransportType } from '../multichain';
 
 export abstract class StoreClient {
+	abstract adapter: StoreAdapter;
 	abstract getAnonId(): Promise<string>;
 
 	abstract getExtensionId(): Promise<string | null>;
