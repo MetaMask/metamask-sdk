@@ -4,7 +4,7 @@ import encodeQR from '@paulmillr/qr';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import { AbstractInstallModal, AbstractOTPCodeModal, type Modal } from '../../domain';
+import type { Modal } from '../../../domain';
 import * as NodeModals from './';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 
@@ -15,13 +15,24 @@ vi.mock('@paulmillr/qr', () => {
 });
 
 t.describe('Node Modals', () => {
-	let modal: Awaited<ReturnType<Modal<any>['render']>> | undefined;
+	let sessionRequest: SessionRequest;
+	let modal: Modal | undefined;
 	let consoleLogSpy: any;
 
 	t.beforeAll(() => {
 		t.vi.useFakeTimers();
 		// Mock console.log to prevent QR codes from displaying in test output
 		consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+	});
+
+	t.beforeEach(() => {
+		sessionRequest = {
+			id: crypto.randomUUID(),
+			channel: 'test',
+			publicKeyB64: 'test',
+			expiresAt: Date.now() + 1000,
+			mode: 'trusted',
+		};
 	});
 
 	t.afterAll(() => {
@@ -33,33 +44,22 @@ t.describe('Node Modals', () => {
 		consoleLogSpy.mockClear();
 	});
 
-	t.it('Check Modal instances', () => {
-		t.expect(NodeModals.installModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(NodeModals.otpCodeModal).toBeInstanceOf(AbstractOTPCodeModal);
-	});
-
 	t.it('rendering InstallModal on Node', async () => {
-		const sessionRequest: SessionRequest = {
-			id: crypto.randomUUID(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: Date.now() + 1000,
-		};
-		modal = await NodeModals.installModal.render({
-			sessionRequest,
+		const installModal = new NodeModals.InstallModal({
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
 			createSessionRequest: vi.fn().mockResolvedValue(sessionRequest),
+			updateSessionRequest: vi.fn(),
+			sessionRequest,
 		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
-		t.expect((modal as any).sync).not.toBeDefined();
-		modal.mount();
+		t.expect(installModal.unmount).toBeDefined();
+		t.expect(installModal.mount).toBeDefined();
+		installModal.mount();
 		t.expect(encodeQR).toHaveBeenCalledWith(JSON.stringify(sessionRequest), 'ascii');
 		t.expect(consoleLogSpy).toHaveBeenCalledWith('qrcode');
+		modal = installModal;
 	});
 
 	t.it('rendering InstallModal on Node and renew session after a second', async () => {
@@ -69,33 +69,32 @@ t.describe('Node Modals', () => {
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: initialExpiresAt,
+			mode: 'trusted',
 		};
-
 		// Create a new session request for renewal with a different ID and later expiration
 		const renewedSessionRequest: SessionRequest = {
 			id: crypto.randomUUID(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: Date.now() + 2000,
+			mode: 'trusted',
 		};
 
 		const createSessionRequestMock = t.vi.fn().mockResolvedValueOnce(renewedSessionRequest); // Only mock the renewal call
-
-		modal = await NodeModals.installModal.render({
+		const installModal = new NodeModals.InstallModal({
 			sessionRequest,
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
 			createSessionRequest: createSessionRequestMock,
+			updateSessionRequest: vi.fn(),
 		});
 
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
-		t.expect((modal as any).sync).not.toBeDefined();
+		t.expect(installModal.unmount).toBeDefined();
+		t.expect(installModal.mount).toBeDefined();
 
-		modal.mount();
+		installModal.mount();
 		t.expect(encodeQR).toHaveBeenCalledWith(JSON.stringify(sessionRequest), 'ascii');
 		t.expect(consoleLogSpy).toHaveBeenCalledWith('qrcode');
 
@@ -116,27 +115,29 @@ t.describe('Node Modals', () => {
 
 		// Verify that the QR code was regenerated with the renewed session request
 		t.expect(encodeQR).toHaveBeenLastCalledWith(JSON.stringify(renewedSessionRequest), 'ascii');
+
+		modal = installModal;
 	});
 
 	t.it('Rendering OTPCodeModal on Node', async () => {
-		const sessionRequest: SessionRequest = {
-			id: crypto.randomUUID(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: Date.now() + 1000,
-		};
+		const otpCode = '123456';
+
 		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await NodeModals.otpCodeModal.render({
+		const otpCodeModal = new NodeModals.OTPCodeModal({
+			otpCode,
+			parentElement: undefined,
+			onClose: vi.fn() as any,
+			createOTPCode: vi.fn().mockResolvedValue(otpCode),
+			updateOTPCode: vi.fn() as any,
+			onDisconnect: vi.fn() as any,
 			sdkVersion: '1.0.0',
-			preferDesktop: false,
-			onClose: vi.fn(),
-			updateOTPValue: vi.fn(),
-			sessionRequest,
 		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
-		t.expect(modal.sync).toBeDefined();
-		modal.mount();
+
+		t.expect(otpCodeModal).toBeDefined();
+		t.expect(otpCodeModal.unmount).toBeDefined();
+		t.expect(otpCodeModal.mount).toBeDefined();
+		otpCodeModal.mount();
+
+		modal = otpCodeModal;
 	});
 });

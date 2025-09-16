@@ -9,18 +9,30 @@ export namespace Components {
     interface MmInstallModal {
         "preferDesktop": boolean;
         "sdkVersion"?: string;
-        "sessionRequest"?: {id: string, expiresAt: number};
+        "sessionRequest": any;
+    }
+    interface MmOtpModal {
+        /**
+          * The QR code link
+         */
+        "displayOTP"?: boolean;
+        "otpCode": string;
+        "sdkVersion"?: string;
     }
 }
 export interface MmInstallModalCustomEvent<T> extends CustomEvent<T> {
     detail: T;
     target: HTMLMmInstallModalElement;
 }
+export interface MmOtpModalCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMmOtpModalElement;
+}
 declare global {
     interface HTMLMmInstallModalElementEventMap {
         "close": { shouldTerminate?: boolean };
         "startDesktopOnboarding": any;
-        "createSessionRequest": any;
+        "updateSessionRequest": any;
     }
     interface HTMLMmInstallModalElement extends Components.MmInstallModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMmInstallModalElementEventMap>(type: K, listener: (this: HTMLMmInstallModalElement, ev: MmInstallModalCustomEvent<HTMLMmInstallModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -36,21 +48,53 @@ declare global {
         prototype: HTMLMmInstallModalElement;
         new (): HTMLMmInstallModalElement;
     };
+    interface HTMLMmOtpModalElementEventMap {
+        "close": any;
+        "disconnect": any;
+        "updateOTPCode": { otpCode: string };
+    }
+    interface HTMLMmOtpModalElement extends Components.MmOtpModal, HTMLStencilElement {
+        addEventListener<K extends keyof HTMLMmOtpModalElementEventMap>(type: K, listener: (this: HTMLMmOtpModalElement, ev: MmOtpModalCustomEvent<HTMLMmOtpModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
+        addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLMmOtpModalElementEventMap>(type: K, listener: (this: HTMLMmOtpModalElement, ev: MmOtpModalCustomEvent<HTMLMmOtpModalElementEventMap[K]>) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener<K extends keyof HTMLElementEventMap>(type: K, listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any, options?: boolean | EventListenerOptions): void;
+        removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void;
+    }
+    var HTMLMmOtpModalElement: {
+        prototype: HTMLMmOtpModalElement;
+        new (): HTMLMmOtpModalElement;
+    };
     interface HTMLElementTagNameMap {
         "mm-install-modal": HTMLMmInstallModalElement;
+        "mm-otp-modal": HTMLMmOtpModalElement;
     }
 }
 declare namespace LocalJSX {
     interface MmInstallModal {
         "onClose"?: (event: MmInstallModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
-        "onCreateSessionRequest"?: (event: MmInstallModalCustomEvent<any>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
+        "onUpdateSessionRequest"?: (event: MmInstallModalCustomEvent<any>) => void;
         "preferDesktop"?: boolean;
         "sdkVersion"?: string;
-        "sessionRequest"?: {id: string, expiresAt: number};
+        "sessionRequest"?: any;
+    }
+    interface MmOtpModal {
+        /**
+          * The QR code link
+         */
+        "displayOTP"?: boolean;
+        "onClose"?: (event: MmOtpModalCustomEvent<any>) => void;
+        "onDisconnect"?: (event: MmOtpModalCustomEvent<any>) => void;
+        "onUpdateOTPCode"?: (event: MmOtpModalCustomEvent<{ otpCode: string }>) => void;
+        "otpCode"?: string;
+        "sdkVersion"?: string;
     }
     interface IntrinsicElements {
         "mm-install-modal": MmInstallModal;
+        "mm-otp-modal": MmOtpModal;
     }
 }
 export { LocalJSX as JSX };
@@ -58,6 +102,7 @@ declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
             "mm-install-modal": LocalJSX.MmInstallModal & JSXBase.HTMLAttributes<HTMLMmInstallModalElement>;
+            "mm-otp-modal": LocalJSX.MmOtpModal & JSXBase.HTMLAttributes<HTMLMmOtpModalElement>;
         }
     }
 }

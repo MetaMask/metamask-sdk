@@ -188,7 +188,6 @@ export class MultichainSDK extends MultichainCore {
 		if (this.__transport) {
 			//provider will auto connect to the transport
 			this.__provider = getMultichainClient({ transport: this.__transport });
-
 			//Add event listeners to the transport
 			this.listener = this.__transport.onNotification(this.onTransportNotification.bind(this));
 

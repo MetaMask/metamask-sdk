@@ -1,6 +1,7 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { getPlatformType, getVersion, type InstallWidgetProps, ModalFactory, type OTPCodeWidgetProps, PlatformType, type RenderedModal } from '../domain';
+import { getPlatformType, getVersion, type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType } from '../domain';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import type { FactoryModals, ModalTypes } from './modals/types';
 
 // @ts-ignore
 let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js') | undefined;
@@ -21,13 +22,29 @@ export async function preload() {
 		});
 }
 
-export class UIModule extends ModalFactory {
-	private modal!: RenderedModal;
+export class ModalFactory<T extends FactoryModals = FactoryModals> {
+	public modal!: Modal;
 	private readonly platform: PlatformType = getPlatformType();
 	private successCallback!: (success: boolean, error?: Error) => void;
 
+	/**
+	 * Creates a new modal factory instance.
+	 * @param options - The modals configuration object
+	 */
+	constructor(protected readonly options: T) {
+		this.validateModals();
+	}
+
+	private validateModals() {
+		const requiredModals = ['InstallModal', 'OTPCodeModal'];
+		const missingModals = requiredModals.filter((modal) => !this.options[modal as ModalTypes]);
+		if (missingModals.length > 0) {
+			throw new Error(`Missing required modals: ${missingModals.join(', ')}`);
+		}
+	}
+
 	unload(success: boolean, error?: Error) {
-		this.modal?.unmount(success, error);
+		this.modal?.unmount();
 		this.successCallback?.(success, error);
 	}
 
@@ -70,14 +87,24 @@ export class UIModule extends ModalFactory {
 		return container;
 	}
 
-	public async renderInstallModal(preferDesktop: boolean, createSessionRequest: () => Promise<SessionRequest>, successCallback: (success: boolean, error?: Error) => void) {
+	public async renderInstallModal(
+		preferDesktop: boolean,
+		createSessionRequest: () => Promise<SessionRequest>,
+		successCallback: (success: boolean, error?: Error) => void,
+		updateSessionRequest: (sessionRequest: SessionRequest) => void,
+	) {
+		this.modal?.unmount();
 		await preload();
-
 		this.successCallback = successCallback;
 
-		const container = this.getMountedContainer();
+		const parentElement = this.getMountedContainer();
 		const sessionRequest = await createSessionRequest();
+
 		const modalProps: InstallWidgetProps = {
+			parentElement,
+			preferDesktop,
+			sessionRequest,
+			sdkVersion: getVersion(),
 			onClose: () => {
 				this.unload(true);
 			},
@@ -85,21 +112,35 @@ export class UIModule extends ModalFactory {
 				new MetaMaskOnboarding().startOnboarding();
 				this.unload(true);
 			},
-			parentElement: container,
-			sessionRequest,
-			preferDesktop,
-			sdkVersion: getVersion(),
 			createSessionRequest,
+			updateSessionRequest,
 		};
-		this.modal = await this.options.installModal.render(modalProps);
-		this.modal.mount();
+		const modal = new this.options.InstallModal(modalProps);
+		this.modal = modal;
+		modal.mount();
 	}
 
-	public async renderOTPCodeModal() {
+	public async renderOTPCodeModal(createOTPCode: () => Promise<OTPCode>, successCallback: (success: boolean, error?: Error) => void, updateOTPCode: (otpCode: OTPCode) => void) {
+		this.modal?.unmount();
 		await preload();
-		// biome-ignore lint/suspicious/noExplicitAny: Temporary workaround until modal is implemented
-		const modalProps: OTPCodeWidgetProps = {} as any;
-		this.modal = await this.options.otpCodeModal.render(modalProps);
-		this.modal.mount();
+		this.successCallback = successCallback;
+
+		const container = this.getMountedContainer();
+		const otpCode = await createOTPCode();
+
+		const modalProps: OTPCodeWidgetProps = {
+			parentElement: container,
+			sdkVersion: getVersion(),
+			otpCode,
+			onClose: () => {
+				this.unload(true);
+			},
+			createOTPCode,
+			updateOTPCode,
+		};
+
+		const modal = new this.options.OTPCodeModal(modalProps);
+		this.modal = modal;
+		modal.mount();
 	}
 }

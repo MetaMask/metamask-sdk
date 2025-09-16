@@ -1,40 +1,30 @@
 import encodeQR from '@paulmillr/qr';
-import { AbstractInstallModal, createLogger, type InstallWidgetProps } from '../../domain';
+import { createLogger } from '../../../domain';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { AbstractInstallModal } from '../base/AbstractInstallModal';
 
 const logger = createLogger('metamask-sdk:ui');
 
 export class InstallModal extends AbstractInstallModal {
-	instance!: HTMLMmInstallModalElement;
 	private expirationInterval: NodeJS.Timeout | null = null;
-	private currentSessionRequest: SessionRequest | null = null;
-	private createSessionRequestFn: (() => Promise<SessionRequest>) | null = null;
 	private lastLoggedCountdown: number = -1;
 	private currentQRCode: string = '';
 
-	async render({ sessionRequest, createSessionRequest }: InstallWidgetProps) {
-		// The sessionRequest from props is actually a UISessionRequest, but we need the full one
-		this.createSessionRequestFn = createSessionRequest;
-		// Get the full session request for QR code generation
-		this.currentSessionRequest = sessionRequest as SessionRequest;
+	mount() {
+		if (!this.sessionRequest) {
+			throw new Error('Session request is required');
+		}
+		const { sessionRequest } = this;
+		this.generateQRCode(sessionRequest);
+		this.displayQRWithCountdown();
+		this.startExpirationCheck();
+	}
 
-		// Generate initial QR code
-		this.generateQRCode(sessionRequest as SessionRequest);
-
-		return {
-			mount: () => {
-				this.displayQRWithCountdown();
-				this.startExpirationCheck();
-			},
-			unmount: () => {
-				console.clear();
-				this.stopExpirationCheck();
-				this.currentSessionRequest = null;
-				this.createSessionRequestFn = null;
-				this.lastLoggedCountdown = -1;
-				this.currentQRCode = '';
-			},
-		};
+	unmount(): void {
+		console.clear();
+		this.stopExpirationCheck();
+		this.lastLoggedCountdown = -1;
+		this.currentQRCode = '';
 	}
 
 	private generateQRCode(sessionRequest: SessionRequest) {
@@ -46,10 +36,10 @@ export class InstallModal extends AbstractInstallModal {
 	}
 
 	private displayQRWithCountdown() {
-		if (!this.currentSessionRequest || !this.currentQRCode) return;
+		if (!this.sessionRequest || !this.currentQRCode) return;
 
 		const now = Date.now();
-		const remainingMs = this.currentSessionRequest.expiresAt - now;
+		const remainingMs = this.sessionRequest.expiresAt - now;
 		const remainingTime = this.formatRemainingTime(remainingMs);
 		const isExpired = remainingMs <= 0;
 
@@ -106,12 +96,12 @@ export class InstallModal extends AbstractInstallModal {
 		this.stopExpirationCheck();
 
 		this.expirationInterval = setInterval(async () => {
-			if (!this.currentSessionRequest || !this.createSessionRequestFn) {
+			if (!this.sessionRequest) {
 				return;
 			}
 
 			const now = Date.now();
-			const remainingMs = this.currentSessionRequest.expiresAt - now;
+			const remainingMs = this.sessionRequest.expiresAt - now;
 			const remainingSeconds = Math.floor(remainingMs / 1000);
 
 			// Update console display every second
@@ -124,13 +114,13 @@ export class InstallModal extends AbstractInstallModal {
 				this.lastLoggedCountdown = remainingSeconds;
 			}
 
-			if (now >= this.currentSessionRequest.expiresAt) {
+			if (now >= this.sessionRequest.expiresAt) {
 				logger('[UI: InstallModal-nodejs()] ⏰ QR code EXPIRED! Generating new one...');
 
 				try {
 					// Generate new session request
-					const newSessionRequest = await this.createSessionRequestFn();
-					this.currentSessionRequest = newSessionRequest;
+					const newSessionRequest = await this.options.createSessionRequest();
+					this.sessionRequest = newSessionRequest;
 					this.lastLoggedCountdown = -1; // Reset countdown logging
 
 					// Generate new QR code

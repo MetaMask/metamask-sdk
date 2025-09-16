@@ -23,7 +23,7 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  @Prop() sessionRequest?: {id: string, expiresAt: number}
+  @Prop() sessionRequest: any
 
   @Prop() sdkVersion?: string;
 
@@ -36,7 +36,7 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
-  @Event() createSessionRequest: EventEmitter;
+  @Event() updateSessionRequest: EventEmitter;
 
   @Element() el: HTMLElement;
 
@@ -111,7 +111,7 @@ export class InstallModal {
   }
 
   @Watch('sessionRequest')
-  updateSessionRequest(sessionRequest: {id: string, expiresAt: number}) {
+  updateSessionRequestHandler(sessionRequest:any) {
     this.generateQRCode(sessionRequest);
   }
 

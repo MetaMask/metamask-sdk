@@ -22,21 +22,6 @@ async function waitForInstallModal(sdk: MultichainCore) {
 	t.expect(onShowInstallModal).toHaveBeenCalled();
 }
 
-async function waitForUnload(sdk: MultichainCore) {
-	const onUnload = t.vi.spyOn((sdk as any).options.ui.factory, 'unload');
-	let attempts = 5;
-	while (attempts > 0) {
-		try {
-			t.expect(onUnload).toHaveBeenCalled();
-			break;
-		} catch {
-			attempts--;
-			await new Promise((resolve) => setTimeout(resolve, 100));
-		}
-	}
-	t.expect(onUnload).toHaveBeenCalled();
-}
-
 async function expectUIFactoryRenderInstallModal(sdk: MultichainCore) {
 	const onRenderInstallModal = t.vi.spyOn((sdk as any).options.ui.factory, 'renderInstallModal');
 
@@ -51,38 +36,6 @@ async function expectUIFactoryRenderInstallModal(sdk: MultichainCore) {
 		}
 	}
 	t.expect(onRenderInstallModal).toHaveBeenCalled();
-}
-
-async function waitForMWPSetup(sdk: MultichainCore) {
-	const onSetupMWP = t.vi.spyOn(sdk as any, 'setupMWP');
-	let attempts = 5;
-	while (attempts > 0) {
-		try {
-			t.expect(onSetupMWP).toHaveBeenCalled();
-			t.expect(onSetupMWP).resolves.toBeUndefined();
-			break;
-		} catch {
-			attempts--;
-			await new Promise((resolve) => setTimeout(resolve, 100));
-		}
-	}
-	t.expect(onSetupMWP).toHaveBeenCalled();
-	t.expect(onSetupMWP).resolves.toBeUndefined();
-}
-
-async function waitForConnectionSuccess(sdk: MultichainCore) {
-	const onConnectionSuccess = t.vi.spyOn(sdk as any, 'onConnectionSuccess');
-	let attempts = 5;
-	while (attempts > 0) {
-		try {
-			t.expect(onConnectionSuccess).toHaveBeenCalled();
-			break;
-		} catch {
-			attempts--;
-			await new Promise((resolve) => setTimeout(resolve, 100));
-		}
-	}
-	t.expect(onConnectionSuccess).toHaveBeenCalled();
 }
 
 function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
