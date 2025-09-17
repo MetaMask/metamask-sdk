@@ -372,7 +372,7 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 			delete: t.vi.fn((key: string) => {
 				return nativeStorageStub.removeItem(key);
 			}),
-			platform: 'node' as const,
+			platform: 'web' as const,
 			get storage() {
 				return __storage;
 			},
