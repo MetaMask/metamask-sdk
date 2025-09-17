@@ -79,6 +79,9 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
+			// wait for fake-indexeddb to catch up
+			await Promise.resolve();
+
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk.state).toBe('loaded');
@@ -98,6 +101,9 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should emit sessionChanged event when existing valid session is found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+
+			// wait for fake-indexeddb to catch up
+			await Promise.resolve();
 
 			const onNotification = t.vi.fn();
 

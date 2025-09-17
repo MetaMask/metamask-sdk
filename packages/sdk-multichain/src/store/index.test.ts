@@ -1,5 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
+import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as t from 'vitest';
 import type { StoreAdapter } from '../domain';
@@ -227,6 +229,7 @@ t.describe(`Store with WebAdapter`, () => {
 		() => {
 			t.vi.stubGlobal('window', {
 				localStorage: nativeStorageStub,
+				indexedDB: new IDBFactory(),
 			});
 		},
 	);

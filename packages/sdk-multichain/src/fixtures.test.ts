@@ -4,7 +4,8 @@
  * Test fixtures and utilities for the Multichain SDK tests
  * This file is excluded from test discovery via vitest.config.ts
  */
-
+import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 // Additional imports for standardized setup functions
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JSDOM as Page } from 'jsdom';
@@ -20,6 +21,7 @@ import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import * as nodeStorage from './store/adapters/node';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
+import { updateIndexedDBMock } from '../tests/indexedDBMock';
 
 // Mock logger at the top level
 vi.mock('./domain/logger', () => {
@@ -341,7 +343,7 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 		...dom.window,
 		addEventListener: t.vi.fn(),
 		removeEventListener: t.vi.fn(),
-		localStorage: nativeStorageStub,
+		indexedDB: new IDBFactory(),
 		ethereum: {
 			isMetaMask: true,
 		},
@@ -356,6 +358,22 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 	t.vi.stubGlobal('document', dom.window.document);
 	t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 	t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+
+	const originalSetItem = nativeStorageStub.setItem;
+	nativeStorageStub.setItem = t.vi.fn((key: string, value: string) => {
+		originalSetItem(key, value);
+		updateIndexedDBMock(key, value).catch((err) => {
+			console.error('Failed to update indexedDB', err);
+		});
+	});
+
+	const originalRemoveItem = nativeStorageStub.removeItem;
+	nativeStorageStub.removeItem = t.vi.fn((key: string) => {
+		originalRemoveItem(key);
+		updateIndexedDBMock(key, null).catch((err) => {
+			console.error('Failed to update indexedDB', err);
+		});
+	});
 };
 
 // Helper functions to create standardized test configurations
