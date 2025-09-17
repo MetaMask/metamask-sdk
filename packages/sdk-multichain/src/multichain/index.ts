@@ -13,6 +13,7 @@ import { type SessionRequest, SessionStore, WebSocketTransport } from '@metamask
 import { MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { keymanager } from './mwp/KeyManager';
+import type { AbstractInstallModal } from '../ui/modals/base/AbstractInstallModal';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -254,6 +255,7 @@ export class MultichainSDK extends MultichainCore {
 		await this.setupMWP();
 
 		return new Promise<void>((resolve, reject) => {
+			//TODO: Improve this to manage Untrusted flows with otpCode modal
 			this.options.ui.factory.renderInstallModal(
 				desktopPreferred,
 				() => {
@@ -271,6 +273,9 @@ export class MultichainSDK extends MultichainCore {
 					} else {
 						reject(error);
 					}
+				},
+				(sessionRequest: SessionRequest, modal: AbstractInstallModal) => {
+					modal.updateSessionRequest(sessionRequest);
 				},
 			);
 		});

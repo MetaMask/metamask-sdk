@@ -2,6 +2,8 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { getPlatformType, getVersion, type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType } from '../domain';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import type { FactoryModals, ModalTypes } from './modals/types';
+import type { AbstractInstallModal } from './modals/base/AbstractInstallModal';
+import type { AbstractOTPCodeModal } from './modals/base/AbstractOTPModal';
 
 // @ts-ignore
 let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js') | undefined;
@@ -91,7 +93,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		preferDesktop: boolean,
 		createSessionRequest: () => Promise<SessionRequest>,
 		successCallback: (success: boolean, error?: Error) => void,
-		updateSessionRequest: (sessionRequest: SessionRequest) => void,
+		updateSessionRequest: (sessionRequest: SessionRequest, modal: AbstractInstallModal) => void,
 	) {
 		this.modal?.unmount();
 		await preload();
@@ -100,7 +102,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		const parentElement = this.getMountedContainer();
 		const sessionRequest = await createSessionRequest();
 
-		const modalProps: InstallWidgetProps = {
+		const modal = new this.options.InstallModal({
 			parentElement,
 			preferDesktop,
 			sessionRequest,
@@ -113,14 +115,18 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 				this.unload(true);
 			},
 			createSessionRequest,
-			updateSessionRequest,
-		};
-		const modal = new this.options.InstallModal(modalProps);
+			updateSessionRequest: (sessionRequest: SessionRequest) => updateSessionRequest(sessionRequest, modal),
+		});
+
 		this.modal = modal;
 		modal.mount();
 	}
 
-	public async renderOTPCodeModal(createOTPCode: () => Promise<OTPCode>, successCallback: (success: boolean, error?: Error) => void, updateOTPCode: (otpCode: OTPCode) => void) {
+	public async renderOTPCodeModal(
+		createOTPCode: () => Promise<OTPCode>,
+		successCallback: (success: boolean, error?: Error) => void,
+		updateOTPCode: (otpCode: OTPCode, modal: AbstractOTPCodeModal) => void,
+	) {
 		this.modal?.unmount();
 		await preload();
 		this.successCallback = successCallback;
@@ -128,7 +134,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		const container = this.getMountedContainer();
 		const otpCode = await createOTPCode();
 
-		const modalProps: OTPCodeWidgetProps = {
+		const modal = new this.options.OTPCodeModal({
 			parentElement: container,
 			sdkVersion: getVersion(),
 			otpCode,
@@ -136,10 +142,9 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 				this.unload(true);
 			},
 			createOTPCode,
-			updateOTPCode,
-		};
+			updateOTPCode: (otpCode: OTPCode) => updateOTPCode(otpCode, modal),
+		});
 
-		const modal = new this.options.OTPCodeModal(modalProps);
 		this.modal = modal;
 		modal.mount();
 	}

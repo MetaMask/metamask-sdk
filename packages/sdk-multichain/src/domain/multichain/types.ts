@@ -1,7 +1,7 @@
 import type { StoreClient } from '../store';
-import type { ModalFactory } from '../ui';
 import type { MultichainCore } from '.';
 import type { RPC_URLS_MAP } from './api/types';
+import type { ModalFactory } from '../../ui';
 
 export type { SessionData } from '@metamask/multichain-api-client';
 
