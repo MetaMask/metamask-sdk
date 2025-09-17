@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import type { Modal } from '../../../domain';
 import * as WebModals from './';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { v4 } from 'uuid';
 
 t.describe('WEB Modals', () => {
 	let modal: Modal | undefined;
@@ -33,7 +34,7 @@ t.describe('WEB Modals', () => {
 
 	t.beforeEach(() => {
 		sessionRequest = {
-			id: crypto.randomUUID(),
+			id: v4(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: Date.now() + 1000,

@@ -7,6 +7,7 @@ import { vi } from 'vitest';
 import type { Modal } from '../../../domain';
 import * as NodeModals from './';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { v4 } from 'uuid';
 
 vi.mock('@paulmillr/qr', () => {
 	return {
@@ -27,7 +28,7 @@ t.describe('Node Modals', () => {
 
 	t.beforeEach(() => {
 		sessionRequest = {
-			id: crypto.randomUUID(),
+			id: v4(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: Date.now() + 1000,
@@ -65,7 +66,7 @@ t.describe('Node Modals', () => {
 	t.it('rendering InstallModal on Node and renew session after a second', async () => {
 		const initialExpiresAt = Date.now() + 1000;
 		const sessionRequest: SessionRequest = {
-			id: crypto.randomUUID(),
+			id: v4(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: initialExpiresAt,
@@ -73,7 +74,7 @@ t.describe('Node Modals', () => {
 		};
 		// Create a new session request for renewal with a different ID and later expiration
 		const renewedSessionRequest: SessionRequest = {
-			id: crypto.randomUUID(),
+			id: v4(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: Date.now() + 2000,

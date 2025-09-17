@@ -6,6 +6,7 @@ import { vi } from 'vitest';
 import type { Modal } from '../../../domain';
 import * as RNModals from './';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { v4 } from 'uuid';
 
 t.describe('RN Modals', () => {
 	let sessionRequest: SessionRequest;
@@ -13,7 +14,7 @@ t.describe('RN Modals', () => {
 
 	t.beforeEach(() => {
 		sessionRequest = {
-			id: crypto.randomUUID(),
+			id: v4(),
 			channel: 'test',
 			publicKeyB64: 'test',
 			expiresAt: Date.now() + 1000,
