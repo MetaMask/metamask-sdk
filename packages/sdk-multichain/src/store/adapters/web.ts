@@ -23,7 +23,6 @@ export class StoreAdapterWeb extends StoreAdapter {
 		super();
 
 		const dbName = `${StoreAdapterWeb.DB_NAME}${dbNameSuffix}`;
-
 		this.dbPromise = new Promise((resolve, reject) => {
 			try {
 				const request = this.internal.open(dbName, 1);
@@ -47,11 +46,15 @@ export class StoreAdapterWeb extends StoreAdapter {
 		const { storeName } = this;
 		const db = await this.dbPromise;
 		return new Promise((resolve, reject) => {
-			const tx = db.transaction(storeName, 'readonly');
-			const store = tx.objectStore(storeName);
-			const request = store.get(key);
-			request.onerror = () => reject(new Error('Failed to get value from IndexedDB.'));
-			request.onsuccess = () => resolve((request.result as string) ?? null);
+			try {
+				const tx = db.transaction(storeName, 'readonly');
+				const store = tx.objectStore(storeName);
+				const request = store.get(key);
+				request.onerror = () => reject(new Error('Failed to get value from IndexedDB.'));
+				request.onsuccess = () => resolve((request.result as string) ?? null);
+			} catch (error) {
+				reject(error);
+			}
 		});
 	}
 
@@ -59,11 +62,15 @@ export class StoreAdapterWeb extends StoreAdapter {
 		const { storeName } = this;
 		const db = await this.dbPromise;
 		return new Promise((resolve, reject) => {
-			const tx = db.transaction(storeName, 'readwrite');
-			const store = tx.objectStore(storeName);
-			const request = store.put(value, key);
-			request.onerror = () => reject(new Error('Failed to set value in IndexedDB.'));
-			request.onsuccess = () => resolve();
+			try {
+				const tx = db.transaction(storeName, 'readwrite');
+				const store = tx.objectStore(storeName);
+				const request = store.put(value, key);
+				request.onerror = () => reject(new Error('Failed to set value in IndexedDB.'));
+				request.onsuccess = () => resolve();
+			} catch (error) {
+				reject(error);
+			}
 		});
 	}
 
@@ -71,11 +78,15 @@ export class StoreAdapterWeb extends StoreAdapter {
 		const { storeName } = this;
 		const db = await this.dbPromise;
 		return new Promise((resolve, reject) => {
-			const tx = db.transaction(storeName, 'readwrite');
-			const store = tx.objectStore(storeName);
-			const request = store.delete(key);
-			request.onerror = () => reject(new Error('Failed to delete value from IndexedDB.'));
-			request.onsuccess = () => resolve();
+			try {
+				const tx = db.transaction(storeName, 'readwrite');
+				const store = tx.objectStore(storeName);
+				const request = store.delete(key);
+				request.onerror = () => reject(new Error('Failed to delete value from IndexedDB.'));
+				request.onsuccess = () => resolve();
+			} catch (error) {
+				reject(error);
+			}
 		});
 	}
 }
