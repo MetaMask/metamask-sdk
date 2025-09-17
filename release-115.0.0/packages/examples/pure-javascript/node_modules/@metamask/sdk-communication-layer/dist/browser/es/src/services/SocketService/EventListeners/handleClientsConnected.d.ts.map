@@ -1,0 +1,1 @@
+{"version":3,"file":"handleClientsConnected.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/SocketService/EventListeners/handleClientsConnected.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,aAAa,EAAE,MAAM,wBAAwB,CAAC;AAGvD;;;;;;;;GAQG;AACH,wBAAgB,sBAAsB,CACpC,QAAQ,EAAE,aAAa,EACvB,SAAS,EAAE,MAAM,SAEE,MAAM,mBAoE1B"}
