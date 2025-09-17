@@ -23,7 +23,6 @@ import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import * as nodeStorage from './store/adapters/node';
 import * as webStorage from './store/adapters/web';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
-import { StoreAdapterWeb } from './store/adapters/web';
 
 // Mock logger at the top level
 vi.mock('./domain/logger', () => {
