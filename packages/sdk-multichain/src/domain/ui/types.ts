@@ -31,10 +31,14 @@ export abstract class Modal<R = unknown, T = unknown> {
 	constructor(protected readonly options: T) {}
 
 	get data() {
+		// biome-ignore lint/suspicious/noExplicitAny: expected
 		if ('sessionRequest' in (this.options as any)) {
+			// biome-ignore lint/suspicious/noExplicitAny: expected
 			return (this.options as any).sessionRequest;
 		}
+		// biome-ignore lint/suspicious/noExplicitAny: expected
 		if ('otpCode' in (this.options as any)) {
+			// biome-ignore lint/suspicious/noExplicitAny: expected
 			return (this.options as any).otpCode;
 		}
 
@@ -42,10 +46,14 @@ export abstract class Modal<R = unknown, T = unknown> {
 	}
 
 	set data(data: R extends OTPCode ? OTPCode : R extends SessionRequest ? SessionRequest : R) {
+		// biome-ignore lint/suspicious/noExplicitAny: expected
 		if ('sessionRequest' in (this.options as any)) {
+			// biome-ignore lint/suspicious/noExplicitAny: expected
 			(this.options as any).sessionRequest = data;
 		}
+		// biome-ignore lint/suspicious/noExplicitAny: expected
 		if ('otpCode' in (this.options as any)) {
+			// biome-ignore lint/suspicious/noExplicitAny: expected
 			(this.options as any).otpCode = data;
 		}
 	}

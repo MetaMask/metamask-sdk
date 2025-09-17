@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore, Scope } from './domain';
+import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { mockSessionData, runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
 import { Store } from './store';

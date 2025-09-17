@@ -18,6 +18,7 @@ module.exports = {
     'loader',
     '.stencil',
     'stencil.config.ts',
+    'www'
   ],
 
   parserOptions: {

@@ -3,7 +3,6 @@
 import * as t from 'vitest';
 import type { MultiChainFNOptions, MultichainCore } from './domain';
 import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
-import { MultichainSDK } from './multichain';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';

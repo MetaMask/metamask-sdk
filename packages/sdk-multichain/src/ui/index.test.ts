@@ -469,8 +469,6 @@ t.describe('ModalFactory', () => {
 
 			// Test that modal rendering still works even when preload fails
 			const uiModule = new FreshUIModule(mockFactoryOptions);
-			const container = document.createElement('div');
-
 			const sessionRequest: SessionRequest = {
 				id: crypto.randomUUID(),
 				channel: 'test',

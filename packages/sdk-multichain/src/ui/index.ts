@@ -1,5 +1,5 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { getPlatformType, getVersion, type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType } from '../domain';
+import { getPlatformType, getVersion, type Modal, type OTPCode, PlatformType } from '../domain';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import type { FactoryModals, ModalTypes } from './modals/types';
 import type { AbstractInstallModal } from './modals/base/AbstractInstallModal';

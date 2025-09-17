@@ -1,6 +1,6 @@
 import type { Transport, TransportRequest, TransportResponse } from '@metamask/multichain-api-client';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
-import { ErrorCode, ProtocolError, SessionStore } from '@metamask/mobile-wallet-protocol-core';
+import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 import type { StoreAdapter } from 'src/domain';
@@ -98,7 +98,7 @@ export class MWPTransport implements Transport {
 	 * Checks if the transport is connected
 	 */
 	isConnected(): boolean {
-		//required if state is not made public in dappClient
+		// biome-ignore lint/suspicious/noExplicitAny:  required if state is not made public in dappClient
 		return (this.dappClient as any).state === 'CONNECTED';
 	}
 
