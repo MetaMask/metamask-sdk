@@ -236,8 +236,8 @@ t.describe(`Store with WebAdapter`, () => {
 
 	t.it("Should throw an exception if we try using the store with a browser that doesn't support localStorage", async () => {
 		t.vi.stubGlobal('window', {
-			localStorage: nativeStorageStub,
-			indexedDB: new IDBFactory(),
+			localStorage: undefined,
+			indexedDB: undefined,
 		});
 		const store = new Store(new StoreAdapterWeb());
 		await t.expect(() => store.getAnonId()).rejects.toThrow();
