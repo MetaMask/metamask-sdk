@@ -254,29 +254,25 @@ export class MultichainSDK extends MultichainCore {
 		await this.setupMWP();
 
 		return new Promise<void>((resolve, reject) => {
-			const render = new Promise((_, rejectUIFactory) => {
-				return this.options.ui.factory.renderInstallModal(
-					desktopPreferred,
-					() => {
-						return new Promise<SessionRequest>((resolveSession) => {
-							this.dappClient.on('connected', () => {
-								this.options.ui.factory.unload(true);
-							});
-							this.dappClient.once('session_request', resolveSession);
-							this.transport.connect().catch(rejectUIFactory);
+			this.options.ui.factory.renderInstallModal(
+				desktopPreferred,
+				() => {
+					return new Promise<SessionRequest>((resolveSession) => {
+						this.dappClient.on('connected', () => {
+							this.options.ui.factory.unload(true);
 						});
-					},
-					(success: boolean, error?: Error) => {
-						if (success) {
-							this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
-						} else {
-							reject(error);
-						}
-					},
-				);
-			});
-
-			render.then(() => resolve()).catch(reject);
+						this.dappClient.once('session_request', resolveSession);
+						this.transport.connect().catch(reject);
+					});
+				},
+				(success: boolean, error?: Error) => {
+					if (success) {
+						this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
+					} else {
+						reject(error);
+					}
+				},
+			);
 		});
 	}
 
