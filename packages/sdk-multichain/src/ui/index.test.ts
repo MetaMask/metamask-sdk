@@ -8,7 +8,7 @@ import { ModalFactory } from './index';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import { AbstractInstallModal } from './modals/base/AbstractInstallModal';
 import type { FactoryModals } from './modals/types';
-
+import { v4 } from 'uuid';
 // Mock external dependencies
 vi.mock('@metamask/onboarding', () => ({
 	default: class MockMetaMaskOnboarding {
@@ -177,7 +177,7 @@ t.describe('ModalFactory', () => {
 		describe('renderInstallModal', () => {
 			it('should render install modal with correct props', async () => {
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -208,7 +208,7 @@ t.describe('ModalFactory', () => {
 
 			it('should renew sessionrequest qrCode after expiration automatically', async () => {
 				let sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 100,
@@ -217,7 +217,7 @@ t.describe('ModalFactory', () => {
 
 				const createSessionRequestMock = t.vi.fn(() => {
 					sessionRequest = {
-						id: crypto.randomUUID(),
+						id: v4(),
 						channel: 'test',
 						publicKeyB64: 'test',
 						expiresAt: Date.now() + 100,
@@ -255,7 +255,7 @@ t.describe('ModalFactory', () => {
 
 			it('should handle onClose callback correctly', async () => {
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -278,7 +278,7 @@ t.describe('ModalFactory', () => {
 
 			it('should handle desktop onboarding correctly', async () => {
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -329,7 +329,7 @@ t.describe('ModalFactory', () => {
 
 			const uiModule = new ModalFactory(errorOptions);
 			const sessionRequest: SessionRequest = {
-				id: crypto.randomUUID(),
+				id: v4(),
 				channel: 'test',
 				publicKeyB64: 'test',
 				expiresAt: Date.now() + 1000,
@@ -356,7 +356,7 @@ t.describe('ModalFactory', () => {
 		it('should properly unmount previous modal when rendering new one', async () => {
 			// Render first modal
 			const sessionRequest: SessionRequest = {
-				id: crypto.randomUUID(),
+				id: v4(),
 				channel: 'test',
 				publicKeyB64: 'test',
 				expiresAt: Date.now() + 1000,
@@ -470,7 +470,7 @@ t.describe('ModalFactory', () => {
 			// Test that modal rendering still works even when preload fails
 			const uiModule = new FreshUIModule(mockFactoryOptions);
 			const sessionRequest: SessionRequest = {
-				id: crypto.randomUUID(),
+				id: v4(),
 				channel: 'test',
 				publicKeyB64: 'test',
 				expiresAt: Date.now() + 1000,
@@ -535,7 +535,7 @@ t.describe('ModalFactory', () => {
 
 				const testModal = new TestInstallModal();
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -567,7 +567,7 @@ t.describe('ModalFactory', () => {
 
 				const testModal = new TestNoModal();
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -591,7 +591,7 @@ t.describe('ModalFactory', () => {
 
 				const testModal = new TestUndefinedModal();
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -627,7 +627,7 @@ t.describe('ModalFactory', () => {
 
 			it('should support updateQRCode on install modal through ModalFactory', async () => {
 				const sessionRequest: SessionRequest = {
-					id: crypto.randomUUID(),
+					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
@@ -636,7 +636,7 @@ t.describe('ModalFactory', () => {
 
 				const newSessionRequest: SessionRequest = {
 					...sessionRequest,
-					id: crypto.randomUUID(),
+					id: v4(),
 				};
 
 				const mockInstallModalMount = vi.fn<() => HTMLMmInstallModalElement>().mockImplementation(function (this: AbstractInstallModal) {
