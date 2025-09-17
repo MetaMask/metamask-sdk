@@ -3,9 +3,12 @@
 import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Modal, PlatformType } from '../domain';
-import { UIModule } from './index';
-
+import { type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType } from '../domain';
+import { ModalFactory } from './index';
+import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { AbstractInstallModal } from './modals/base/AbstractInstallModal';
+import type { FactoryModals } from './modals/types';
+import { v4 } from 'uuid';
 // Mock external dependencies
 vi.mock('@metamask/onboarding', () => ({
 	default: class MockMetaMaskOnboarding {
@@ -27,9 +30,12 @@ vi.mock('../domain', async () => {
 	};
 });
 
-t.describe('UIModule', () => {
-	let mockModal: any;
-	let mockFactoryOptions: any;
+t.describe('ModalFactory', () => {
+	let mockModal: Modal<SessionRequest, InstallWidgetProps> | Modal<OTPCode, OTPCodeWidgetProps>;
+	let mockModalOptions: t.Mock<() => InstallWidgetProps | OTPCodeWidgetProps>;
+	let mockData: t.Mock<() => SessionRequest | OTPCode>;
+
+	let mockFactoryOptions: FactoryModals;
 	let dom: InstanceType<typeof Page>;
 
 	t.beforeEach(() => {
@@ -40,27 +46,65 @@ t.describe('UIModule', () => {
 			url: 'https://test.dapp/',
 		});
 
-		// Setup global DOM environment
-		t.vi.stubGlobal('window', dom.window);
-		t.vi.stubGlobal('document', dom.window.document);
-		t.vi.stubGlobal('navigator', dom.window.navigator);
+		const globalStub = {
+			...dom.window,
+			addEventListener: t.vi.fn(),
+			removeEventListener: t.vi.fn(),
+			localStorage: {
+				data: new Map<string, string>(),
+				getItem: t.vi.fn((key: string) => globalStub.localStorage.data.get(key) || null),
+				setItem: t.vi.fn((key: string, value: string) => {
+					globalStub.localStorage.data.set(key, value);
+				}),
+				removeItem: t.vi.fn((key: string) => {
+					globalStub.localStorage.data.delete(key);
+				}),
+				clear: t.vi.fn(() => {
+					globalStub.localStorage.data.clear();
+				}),
+			},
+			ethereum: {
+				isMetaMask: true,
+			},
+		};
 
+		// Setup global DOM environment
+		t.vi.stubGlobal('navigator', {
+			...dom.window.navigator,
+			product: 'Chrome',
+			language: 'en-US',
+		});
+		t.vi.stubGlobal('location', dom.window.location);
+		t.vi.stubGlobal('document', dom.window.document);
+		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+
+		mockData = t.vi.fn<() => SessionRequest | OTPCode>();
+		mockModalOptions = t.vi.fn<() => InstallWidgetProps | OTPCodeWidgetProps>();
 		// Mock rendered modal
 		mockModal = {
+			__data: mockData(),
+			__options: mockModalOptions(),
+			get data() {
+				return this.__data;
+			},
+			set data(data: SessionRequest | OTPCode) {
+				this.__data = data;
+			},
+			get options() {
+				return this.__options;
+			},
+			set options(options: InstallWidgetProps | OTPCodeWidgetProps) {
+				this.options = options;
+			},
 			mount: t.vi.fn(),
 			unmount: t.vi.fn(),
-			sync: t.vi.fn(),
-		};
+		} as any;
 
-		// Mock factory options with required modals
 		mockFactoryOptions = {
-			installModal: {
-				render: t.vi.fn().mockResolvedValue(mockModal),
-			},
-			otpCodeModal: {
-				render: t.vi.fn().mockResolvedValue(mockModal),
-			},
-		};
+			InstallModal: vi.fn().mockImplementation((options: InstallWidgetProps) => ({ ...mockModal, options })),
+			OTPCodeModal: vi.fn().mockImplementation((options: OTPCodeWidgetProps) => ({ ...mockModal, options })),
+		} as any;
 	});
 
 	afterEach(() => {
@@ -70,18 +114,18 @@ t.describe('UIModule', () => {
 
 	describe('Constructor validation', () => {
 		it('should throw an exception if required modals are not present', () => {
-			expect(() => new UIModule({} as any)).toThrow('Missing required modals: installModal, otpCodeModal');
+			expect(() => new ModalFactory({} as any)).toThrow('Missing required modals: InstallModal, OTPCodeModal');
 		});
 
 		it('should throw an exception if only some modals are missing', () => {
 			const partialOptions = {
-				installModal: mockFactoryOptions.installModal,
+				InstallModal: mockModal,
 			};
-			expect(() => new UIModule(partialOptions as any)).toThrow('Missing required modals: otpCodeModal');
+			expect(() => new ModalFactory(partialOptions as any)).toThrow('Missing required modals: OTPCodeModal');
 		});
 
 		it('should create successfully with all required modals', () => {
-			expect(() => new UIModule(mockFactoryOptions)).not.toThrow();
+			expect(() => new ModalFactory(mockFactoryOptions)).not.toThrow();
 		});
 	});
 
@@ -90,20 +134,20 @@ t.describe('UIModule', () => {
 			const { getPlatformType } = await import('../domain');
 			t.vi.mocked(getPlatformType).mockReturnValue(PlatformType.ReactNative);
 
-			const newUIModule = new UIModule(mockFactoryOptions);
-			expect(newUIModule.isMobile).toBe(true);
-			expect(newUIModule.isNode).toBe(false);
-			expect(newUIModule.isWeb).toBe(false);
+			const modalFactory = new ModalFactory(mockFactoryOptions);
+			expect(modalFactory.isMobile).toBe(true);
+			expect(modalFactory.isNode).toBe(false);
+			expect(modalFactory.isWeb).toBe(false);
 		});
 
 		it('should correctly identify Node.js platform', async () => {
 			const { getPlatformType } = await import('../domain');
 			t.vi.mocked(getPlatformType).mockReturnValue(PlatformType.NonBrowser);
 
-			const newUIModule = new UIModule(mockFactoryOptions);
-			expect(newUIModule.isMobile).toBe(false);
-			expect(newUIModule.isNode).toBe(true);
-			expect(newUIModule.isWeb).toBe(false);
+			const modalFactory = new ModalFactory(mockFactoryOptions);
+			expect(modalFactory.isMobile).toBe(false);
+			expect(modalFactory.isNode).toBe(true);
+			expect(modalFactory.isWeb).toBe(false);
 		});
 
 		it('should correctly identify web platforms', async () => {
@@ -113,60 +157,142 @@ t.describe('UIModule', () => {
 				const { getPlatformType } = await import('../domain');
 				t.vi.mocked(getPlatformType).mockReturnValue(platform);
 
-				const newUIModule = new UIModule(mockFactoryOptions);
-				expect(newUIModule.isMobile).toBe(false);
-				expect(newUIModule.isNode).toBe(false);
-				expect(newUIModule.isWeb).toBe(true);
+				const modalFactory = new ModalFactory(mockFactoryOptions);
+				expect(modalFactory.isMobile).toBe(false);
+				expect(modalFactory.isNode).toBe(false);
+				expect(modalFactory.isWeb).toBe(true);
 			}
 		});
 	});
 
 	describe('Modal rendering', () => {
-		let uiModule: UIModule;
+		let uiModule: ModalFactory;
 		let mockContainer: HTMLDivElement;
 
 		beforeEach(() => {
-			uiModule = new UIModule(mockFactoryOptions);
+			uiModule = new ModalFactory(mockFactoryOptions);
 			mockContainer = document.createElement('div');
 		});
 
 		describe('renderInstallModal', () => {
 			it('should render install modal with correct props', async () => {
-				const link = 'https://example.com';
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
 				const preferDesktop = true;
 				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
 
-				await uiModule.renderInstallModal(link, preferDesktop);
+				await uiModule.renderInstallModal(
+					preferDesktop,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				);
 
 				expect(document.body.contains(mockContainer)).toBe(true);
 
-				expect(mockFactoryOptions.installModal.render).toHaveBeenCalledWith({
-					onClose: expect.any(Function),
-					metaMaskInstaller: {
-						startDesktopOnboarding: expect.any(Function),
-					},
-					parentElement: mockContainer,
-					link,
-					preferDesktop,
-					sdkVersion: '1.0.0',
-				});
+				expect(mockFactoryOptions.InstallModal).toHaveBeenCalledWith(
+					expect.objectContaining({
+						parentElement: mockContainer,
+						sessionRequest,
+						preferDesktop,
+						sdkVersion: '1.0.0',
+					}),
+				);
 				expect(mockModal.mount).toHaveBeenCalled();
 			});
 
-			it('should handle onClose callback correctly', async () => {
-				await uiModule.renderInstallModal('https://example.com', false);
+			it('should renew sessionrequest qrCode after expiration automatically', async () => {
+				let sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 100,
+					mode: 'trusted',
+				};
 
-				const renderCall = mockFactoryOptions.installModal.render.mock.calls[0][0];
-				renderCall.onClose();
+				const createSessionRequestMock = t.vi.fn(() => {
+					sessionRequest = {
+						id: v4(),
+						channel: 'test',
+						publicKeyB64: 'test',
+						expiresAt: Date.now() + 100,
+						mode: 'trusted',
+					};
+					return Promise.resolve(sessionRequest);
+				});
+
+				const preferDesktop = true;
+				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
+
+				await uiModule.renderInstallModal(
+					preferDesktop,
+					createSessionRequestMock,
+					() => {},
+					() => {},
+				);
+
+				expect(mockFactoryOptions.InstallModal).toHaveBeenCalledWith(
+					expect.objectContaining({
+						parentElement: mockContainer,
+						sessionRequest,
+						preferDesktop,
+						sdkVersion: '1.0.0',
+					}),
+				);
+
+				expect(mockModal.mount).toHaveBeenCalled();
+				expect(document.body.contains(mockContainer)).toBe(true);
+
+				await new Promise((resolve) => setTimeout(resolve, 2000));
+
+				expect(createSessionRequestMock).toHaveBeenCalledTimes(1);
+			});
+
+			it('should handle onClose callback correctly', async () => {
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
+
+				await uiModule.renderInstallModal(
+					false,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				);
+
+				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
+
+				constructorArgs.onClose();
 
 				expect(mockModal.unmount).toHaveBeenCalled();
 			});
 
 			it('should handle desktop onboarding correctly', async () => {
-				await uiModule.renderInstallModal('https://example.com', true);
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
+				await uiModule.renderInstallModal(
+					false,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				);
 
-				const renderCall = mockFactoryOptions.installModal.render.mock.calls[0][0];
-				renderCall.metaMaskInstaller.startDesktopOnboarding();
+				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
+				constructorArgs.startDesktopOnboarding();
 
 				expect(mockModal.unmount).toHaveBeenCalled();
 			});
@@ -174,9 +300,13 @@ t.describe('UIModule', () => {
 
 		describe('renderOTPCodeModal', () => {
 			it('should render OTP code modal with placeholder props', async () => {
-				await uiModule.renderOTPCodeModal();
+				await uiModule.renderOTPCodeModal(
+					() => Promise.resolve('123456' as OTPCode),
+					() => {},
+					() => {},
+				);
 
-				expect(mockFactoryOptions.otpCodeModal.render).toHaveBeenCalledWith({});
+				expect(mockFactoryOptions.OTPCodeModal).toHaveBeenCalled();
 				expect(mockModal.mount).toHaveBeenCalled();
 			});
 		});
@@ -186,26 +316,58 @@ t.describe('UIModule', () => {
 		it('should handle modal rendering errors gracefully', async () => {
 			const errorOptions = {
 				...mockFactoryOptions,
-				installModal: {
-					render: t.vi.fn().mockRejectedValue(new Error('Render failed')),
-				},
 			};
+			vi.spyOn(errorOptions, 'InstallModal').mockImplementation(
+				() =>
+					({
+						mount: vi.fn().mockImplementation(() => {
+							throw new Error('Render failed');
+						}),
+						unmount: vi.fn(),
+					}) as any,
+			);
 
-			const uiModule = new UIModule(errorOptions);
-			await expect(uiModule.renderInstallModal('https://example.com', false)).rejects.toThrow('Render failed');
+			const uiModule = new ModalFactory(errorOptions);
+			const sessionRequest: SessionRequest = {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 1000,
+				mode: 'trusted',
+			};
+			await expect(
+				uiModule.renderInstallModal(
+					false,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				),
+			).rejects.toThrow('Render failed');
 		});
 	});
 
 	describe('Modal lifecycle', () => {
-		let uiModule: UIModule;
+		let uiModule: ModalFactory;
 
 		beforeEach(() => {
-			uiModule = new UIModule(mockFactoryOptions);
+			uiModule = new ModalFactory(mockFactoryOptions);
 		});
 
 		it('should properly unmount previous modal when rendering new one', async () => {
 			// Render first modal
-			await uiModule.renderInstallModal('https://example.com', false);
+			const sessionRequest: SessionRequest = {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 1000,
+				mode: 'trusted',
+			};
+			await uiModule.renderInstallModal(
+				false,
+				() => Promise.resolve(sessionRequest),
+				() => {},
+				() => {},
+			);
 			const firstModal = mockModal;
 
 			// Mock a new modal for the second render
@@ -213,13 +375,17 @@ t.describe('UIModule', () => {
 				mount: t.vi.fn(),
 				unmount: t.vi.fn(),
 			};
-			mockFactoryOptions.otpCodeModal.render.mockResolvedValue(secondModal);
+			(mockFactoryOptions.OTPCodeModal as any).mockReturnValue(secondModal);
 
 			// Render second modal
-			await uiModule.renderOTPCodeModal();
+			await uiModule.renderOTPCodeModal(
+				() => Promise.resolve('123456' as OTPCode),
+				() => {},
+				() => {},
+			);
 
 			// First modal should be unmounted, second modal should be mounted
-			expect(firstModal.unmount).not.toHaveBeenCalled(); // Because we're using the same mock
+			expect(firstModal.unmount).toHaveBeenCalled();
 			expect(secondModal.mount).toHaveBeenCalled();
 		});
 	});
@@ -235,8 +401,8 @@ t.describe('UIModule', () => {
 			const testError = new Error('Failed to load modal customElements');
 
 			// Temporarily unmock the module and re-mock it to throw an error
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', async () => {
 				throw testError;
 			});
 
@@ -252,8 +418,8 @@ t.describe('UIModule', () => {
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -262,8 +428,8 @@ t.describe('UIModule', () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// Mock the module to fail
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', async () => {
 				throw new Error('Test import failure');
 			});
 
@@ -283,8 +449,8 @@ t.describe('UIModule', () => {
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -293,29 +459,41 @@ t.describe('UIModule', () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// First, cause preload to fail
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', async () => {
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', async () => {
 				throw new Error('Module load failed');
 			});
 
 			// Re-import to get the fresh module with cleared singleton
-			const { UIModule: FreshUIModule } = (await t.vi.importActual('./index')) as any;
+			const { ModalFactory: FreshUIModule } = (await t.vi.importActual('./index')) as any;
 
 			// Test that modal rendering still works even when preload fails
 			const uiModule = new FreshUIModule(mockFactoryOptions);
-			const container = document.createElement('div');
-
-			await expect(uiModule.renderInstallModal('https://example.com', false)).resolves.not.toThrow();
+			const sessionRequest: SessionRequest = {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 1000,
+				mode: 'trusted',
+			};
+			await expect(
+				uiModule.renderInstallModal(
+					false,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				),
+			).resolves.not.toThrow();
 
 			// Verify the modal was rendered despite preload failure
-			expect(mockFactoryOptions.installModal.render).toHaveBeenCalled();
+			expect(mockFactoryOptions.InstallModal).toHaveBeenCalled();
 			expect(mockModal.mount).toHaveBeenCalled();
 
 			consoleErrorSpy.mockRestore();
 
 			// Restore the original mock
-			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.js');
-			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
+			t.vi.doUnmock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js');
+			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
 		});
@@ -335,11 +513,11 @@ t.describe('UIModule', () => {
 		describe('Generic Modal updateQRCode functionality', () => {
 			it('should update QR code link for install modal', async () => {
 				// Create a test modal instance that extends the Modal class
-				class TestInstallModal extends Modal<any> {
+				class TestInstallModal extends AbstractInstallModal {
 					instance: any;
 
 					constructor() {
-						super();
+						super({ sessionRequest: null } as any);
 						this.instance = {
 							querySelector: t.vi.fn((selector: string) => {
 								if (selector === 'mm-install-modal') {
@@ -350,78 +528,82 @@ t.describe('UIModule', () => {
 						};
 					}
 
-					async render() {
-						return {
-							mount: t.vi.fn(),
-							unmount: t.vi.fn(),
-							sync: t.vi.fn(),
-						};
-					}
+					mount() {}
+
+					unmount() {}
 				}
 
 				const testModal = new TestInstallModal();
-				const newLink = 'https://metamask.app.link/dapp/newlink';
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
 
 				// Call updateQRCode method
-				testModal.updateQRCode(newLink);
+				testModal.updateSessionRequest(sessionRequest);
 
 				// Verify the install modal's link was updated
-				expect(mockInstallModal.link).toBe(newLink);
-				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-install-modal');
+				expect(testModal.sessionRequest).toBe(sessionRequest);
 			});
 
 			it('should handle case where install modal is not found', async () => {
-				class TestNoModal extends Modal<any> {
+				class TestNoModal extends AbstractInstallModal {
 					instance: any;
 
 					constructor() {
-						super();
+						super({ sessionRequest: null } as any);
 						this.instance = {
 							querySelector: t.vi.fn(() => null), // No modals found
 						};
 					}
 
-					async render() {
-						return {
-							mount: t.vi.fn(),
-							unmount: t.vi.fn(),
-							sync: t.vi.fn(),
-						};
-					}
+					mount() {}
+
+					unmount() {}
 				}
 
 				const testModal = new TestNoModal();
-				const newLink = 'https://metamask.app.link/dapp/nomodal';
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
 
 				// Call updateQRCode method - should not throw even if no modals are found
-				expect(() => testModal.updateQRCode(newLink)).not.toThrow();
-
-				// Verify selector was tried
-				expect(testModal.instance.querySelector).toHaveBeenCalledWith('mm-install-modal');
+				expect(() => testModal.updateSessionRequest(sessionRequest)).not.toThrow();
 			});
 
 			it('should handle case where instance is undefined', async () => {
-				class TestUndefinedModal extends Modal<any> {
-					instance: undefined;
-
-					async render() {
-						return {
-							mount: t.vi.fn(),
-							unmount: t.vi.fn(),
-							sync: t.vi.fn(),
-						};
+				class TestUndefinedModal extends AbstractInstallModal {
+					constructor() {
+						super({ sessionRequest: null } as any);
 					}
+
+					mount() {}
+
+					unmount() {}
 				}
 
 				const testModal = new TestUndefinedModal();
-				const newLink = 'https://metamask.app.link/dapp/undefined';
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
 
 				// Call updateQRCode method - should not throw even if instance is undefined
-				expect(() => testModal.updateQRCode(newLink)).not.toThrow();
+				expect(() => testModal.updateSessionRequest(sessionRequest)).not.toThrow();
 			});
 		});
 
-		describe('Integration with UIModule modals', () => {
+		describe('Integration with ModalFactory modals', () => {
 			beforeEach(() => {
 				// Store the original createElement method to avoid recursion
 				const originalCreateElement = dom.window.document.createElement.bind(dom.window.document);
@@ -443,59 +625,67 @@ t.describe('UIModule', () => {
 				});
 			});
 
-			it('should support updateQRCode on install modal through UIModule', async () => {
-				const initialLink = 'https://metamask.app.link/initial';
-				const updatedLink = 'https://metamask.app.link/updated';
+			it('should support updateQRCode on install modal through ModalFactory', async () => {
+				const sessionRequest: SessionRequest = {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				};
+
+				const newSessionRequest: SessionRequest = {
+					...sessionRequest,
+					id: v4(),
+				};
+
+				const mockInstallModalMount = vi.fn<() => HTMLMmInstallModalElement>().mockImplementation(function (this: AbstractInstallModal) {
+					const modal = document.createElement('mm-install-modal');
+					modal.sessionRequest = this.options.sessionRequest;
+					modal.sdkVersion = this.options.sdkVersion;
+					modal.preferDesktop = this.options.preferDesktop;
+					this.options.parentElement?.appendChild(modal);
+					this.instance = modal;
+					return modal;
+				});
+
+				const mockInstallModalUnMount = vi.fn().mockImplementation(function (this: AbstractInstallModal) {
+					if (this.instance && this.options.parentElement?.contains(this.instance)) {
+						this.options.parentElement.removeChild(this.instance);
+					}
+				});
 
 				// Create modal factory options with real modal-like behavior
-				const modalWithUpdateQRCode = {
-					instance: undefined as any,
-					render: t.vi.fn().mockImplementation(async (options: any) => {
-						const modal = document.createElement('mm-install-modal') as any;
-						modal.link = options.link;
-						modal.sdkVersion = options.sdkVersion;
-						modal.preferDesktop = options.preferDesktop;
-
-						return {
-							mount: t.vi.fn(() => {
-								options.parentElement.appendChild(modal);
-								modalWithUpdateQRCode.instance = modal;
-							}),
-							unmount: t.vi.fn(() => {
-								if (options.parentElement.contains(modal)) {
-									options.parentElement.removeChild(modal);
-								}
-							}),
-						};
-					}),
-					updateQRCode: t.vi.fn((link: string) => {
-						// Simulate the real updateQRCode behavior - update the modal instance directly
-						if (modalWithUpdateQRCode.instance) {
-							modalWithUpdateQRCode.instance.link = link;
-						}
-					}),
-				};
+				class MockInstallModal extends AbstractInstallModal {
+					mount = mockInstallModalMount;
+					unmount = mockInstallModalUnMount;
+				}
 
 				const testFactoryOptions = {
 					...mockFactoryOptions,
-					installModal: modalWithUpdateQRCode,
+					InstallModal: vi.fn().mockImplementation((options: InstallWidgetProps) => new MockInstallModal(options)),
 				};
 
-				const testUIModule = new UIModule(testFactoryOptions);
+				const testUIModule = new ModalFactory(testFactoryOptions);
 
 				// Render the modal
-				await testUIModule.renderInstallModal(initialLink, false);
+				await testUIModule.renderInstallModal(
+					false,
+					() => Promise.resolve(sessionRequest),
+					() => {},
+					() => {},
+				);
 
 				// Verify the modal was rendered with the initial link
-				expect(modalWithUpdateQRCode.render).toHaveBeenCalledWith(expect.objectContaining({ link: initialLink }));
+				expect(testFactoryOptions.InstallModal).toHaveBeenCalledWith(expect.objectContaining({ sessionRequest }));
+				expect(mockInstallModalMount).toHaveBeenCalled();
 
 				// Verify initial link was set
-				expect(modalWithUpdateQRCode.instance.link).toBe(initialLink);
+				expect((testUIModule as any).modal?.sessionRequest).toBe(sessionRequest);
 
 				// Test updateQRCode functionality
-				modalWithUpdateQRCode.updateQRCode(updatedLink);
-				expect(modalWithUpdateQRCode.updateQRCode).toHaveBeenCalledWith(updatedLink);
-				expect(modalWithUpdateQRCode.instance.link).toBe(updatedLink);
+				(testUIModule as any).modal?.updateSessionRequest(newSessionRequest);
+				expect((testUIModule as any).modal?.sessionRequest).toBe(newSessionRequest);
 			});
 		});
 	});

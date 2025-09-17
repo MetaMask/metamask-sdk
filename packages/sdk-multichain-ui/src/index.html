@@ -32,13 +32,24 @@
     </style>
   </head>
   <body>
+    <div class="nav">
+      <a href="#install">Install Modal</a>
+      <a href="#otp">OTP Modal</a>
+    </div>
 
     <div class="component-container">
       <div id="install" style="display: none">
+        <h2>Install Modal</h2>
         <mm-install-modal
           link="https://example.com/install"
           sdk-version="1.0.0"
-          prefer-desktop="true" />
+          prefer-desktop="true"
+        ></mm-install-modal>
+      </div>
+
+      <div id="otp" style="display: none">
+        <h2>OTP Modal</h2>
+        <mm-otp-modal></mm-otp-modal>
       </div>
     </div>
 
@@ -53,6 +64,7 @@
           componentDiv.style.display = 'block';
         }
       }
+
       window.addEventListener('hashchange', showComponent);
       showComponent();
     </script>

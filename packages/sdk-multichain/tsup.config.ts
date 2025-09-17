@@ -23,6 +23,7 @@ const baseExternalDeps = [
   '@react-native-async-storage/async-storage',
   'extension-port-stream',
   '@metamask/utils',
+  'ws'
 ];
 
 // Platform-specific externals
