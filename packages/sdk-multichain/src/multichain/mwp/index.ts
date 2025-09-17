@@ -1,4 +1,4 @@
-import type { Transport, TransportResponse } from '@metamask/multichain-api-client';
+import type { Transport, TransportRequest, TransportResponse } from '@metamask/multichain-api-client';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
@@ -7,18 +7,49 @@ import type { StoreAdapter } from 'src/domain';
 
 const DEFAULT_REQUEST_TIMEOUT = 30000;
 
+type PendingRequests = {
+	resolve: (value: TransportResponse<unknown>) => void;
+	reject: (error: Error) => void;
+	timeout: NodeJS.Timeout;
+};
+
 /**
  * Mobile Wallet Protocol transport implementation
  * Bridges the MWP DappClient with the multichain API client Transport interface
  */
 export class MWPTransport implements Transport {
 	private __reqId = 0;
-	private pendingRequests = new Map<string, { resolve: (value: TransportResponse | PromiseLike<TransportResponse>) => void; reject: (error: Error) => void }>();
+	private pendingRequests = new Map<string, PendingRequests>();
 	private notificationCallbacks = new Set<(data: unknown) => void>();
 	private currentSessionRequest: SessionRequest | undefined;
 
+	private connectionPromise?: Promise<void>;
+
 	get sessionRequest() {
 		return this.currentSessionRequest;
+	}
+
+	private rejectRequest(id: string, error = new Error('Request rejected')): void {
+		const request = this.pendingRequests.get(id);
+		if (request) {
+			this.pendingRequests.delete(id);
+			clearTimeout(request.timeout);
+			request.reject(error);
+		}
+	}
+
+	private handleMessage(message: unknown): void {
+		if (typeof message === 'object' && message !== null && 'id' in message && typeof (message as Record<string, unknown>).id === 'string') {
+			const typedMessage = message as Record<string, unknown> & { id: string };
+			const request = this.pendingRequests.get(typedMessage.id);
+			if (request) {
+				clearTimeout(request.timeout);
+				request.resolve(message as TransportResponse<unknown>);
+				this.pendingRequests.delete(typedMessage.id);
+			}
+		} else {
+			this.notificationCallbacks.forEach((callback) => callback(message));
+		}
 	}
 
 	constructor(
@@ -26,21 +57,7 @@ export class MWPTransport implements Transport {
 		private kvstore: StoreAdapter,
 		private options: Required<{ requestTimeout: number }> = { requestTimeout: DEFAULT_REQUEST_TIMEOUT },
 	) {
-		this.dappClient.on('message', (message: any) => {
-			if ('id' in message && typeof message.id === 'string') {
-				const request = this.pendingRequests.get(message.id);
-				if (request) {
-					request.resolve(message);
-					this.pendingRequests.delete(message.id);
-				}
-			} else {
-				this.notify(message);
-			}
-		});
-	}
-
-	private notify(data: unknown): void {
-		this.notificationCallbacks.forEach((callback) => callback(data));
+		this.dappClient.on('message', this.handleMessage.bind(this));
 	}
 
 	/**
@@ -51,16 +68,19 @@ export class MWPTransport implements Transport {
 		if (this.isConnected()) {
 			return;
 		}
+
 		const { dappClient, kvstore } = this;
 		const sessionStore = new SessionStore(kvstore);
 		const [activeSession] = (await sessionStore.list()) ?? [];
-		if (activeSession) {
-			return dappClient.resume(activeSession.id);
-		} else {
-			return dappClient.connect({
-				mode: 'trusted',
-			});
-		}
+
+		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
+			const connection = activeSession ? dappClient.resume(activeSession.id) : dappClient.connect({ mode: 'trusted' });
+			connection.then(resolve).catch(reject);
+		});
+
+		return this.connectionPromise.then(() => {
+			this.connectionPromise = undefined;
+		});
 	}
 
 	/**
@@ -81,16 +101,22 @@ export class MWPTransport implements Transport {
 	/**
 	 * Sends a request through the Mobile Wallet Protocol
 	 */
-	async request(payload: any): Promise<any> {
-		const response = await new Promise((resolve, reject) => {
+	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(payload: TRequest): Promise<TResponse> {
+		const response = await new Promise<TResponse>((resolve, reject) => {
 			const request = {
 				id: `${this.__reqId++}`,
 				jsonrpc: '2.0',
 				...payload,
 			};
-			this.pendingRequests.set(request.id, { resolve, reject });
+
+			const timeout = setTimeout(() => {
+				this.rejectRequest(request.id, new Error(`Request timeout after ${this.options.requestTimeout}ms`));
+			}, this.options.requestTimeout);
+
+			this.pendingRequests.set(request.id, { resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
 			this.dappClient.sendRequest(request);
 		});
+
 		return response;
 	}
 
