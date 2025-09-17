@@ -16,10 +16,6 @@ export abstract class AbstractInstallModal extends Modal<SessionRequest, Install
 		this.sessionRequest = sessionRequest;
 		if (this.instance) {
 			this.instance.sessionRequest = sessionRequest;
-			// For stencil components, we might need to trigger a re-render
-			if (typeof (this.instance as any).forceUpdate === 'function') {
-				(this.instance as any).forceUpdate();
-			}
 		}
 	}
 }

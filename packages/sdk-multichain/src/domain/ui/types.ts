@@ -23,7 +23,7 @@ export interface OTPCodeWidgetProps extends Components.MmOtpModal {
  * Abstract Modal class with shared functionality across all models
  */
 export abstract class Modal<R = unknown, T = unknown> {
-	protected abstract instance?: HTMLMmInstallModalElement | undefined;
+	protected abstract instance?: HTMLMmInstallModalElement | HTMLMmOtpModalElement | undefined;
 
 	abstract mount(): void;
 	abstract unmount(): void;

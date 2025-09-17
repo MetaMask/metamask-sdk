@@ -120,7 +120,7 @@ export class InstallModal extends AbstractInstallModal {
 				try {
 					// Generate new session request
 					const newSessionRequest = await this.options.createSessionRequest();
-					this.sessionRequest = newSessionRequest;
+					this.updateSessionRequest(newSessionRequest);
 					this.lastLoggedCountdown = -1; // Reset countdown logging
 
 					// Generate new QR code

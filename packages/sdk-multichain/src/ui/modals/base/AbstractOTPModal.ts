@@ -1,7 +1,7 @@
 import { Modal, type OTPCode, type OTPCodeWidgetProps } from '../../../domain';
 
 export abstract class AbstractOTPCodeModal extends Modal<OTPCode, OTPCodeWidgetProps> {
-	protected instance?: HTMLMmInstallModalElement | undefined;
+	protected instance?: HTMLMmOtpModalElement | undefined;
 
 	get otpCode() {
 		return this.data;
@@ -12,9 +12,9 @@ export abstract class AbstractOTPCodeModal extends Modal<OTPCode, OTPCodeWidgetP
 	}
 
 	updateOTPCode(code: string) {
-		const installModal = this.instance?.querySelector('mm-otp-modal') as HTMLMmOtpModalElement | null;
-		if (installModal) {
-			this.otpCode = code;
+		this.otpCode = code;
+		if (this.instance) {
+			this.instance.otpCode = code;
 		}
 	}
 }

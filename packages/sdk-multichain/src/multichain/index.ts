@@ -9,7 +9,7 @@ import { getPlatformType, PlatformType } from '../domain/platform';
 import { MWPTransport } from './mwp';
 import { RPCClient } from './rpc/client';
 import { addValidAccounts, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
-import { type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
+import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
 import { MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { keymanager } from './mwp/KeyManager';
@@ -252,51 +252,72 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		await this.setupMWP();
-
-		return new Promise<void>((resolve, reject) => {
+		// biome-ignore lint/suspicious/noAsyncPromiseExecutor: ok
+		return new Promise<void>(async (resolve, reject) => {
 			//TODO: Improve this to manage Untrusted flows with otpCode modal
-			this.options.ui.factory.renderInstallModal(
-				desktopPreferred,
-				() => {
-					return new Promise<SessionRequest>((resolveSession) => {
-						this.dappClient.on('connected', () => {
-							this.options.ui.factory.unload(true);
+			try {
+				await this.setupMWP();
+				this.options.ui.factory.renderInstallModal(
+					desktopPreferred,
+					() => {
+						return new Promise<SessionRequest>((resolveSession) => {
+							this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
+								resolveSession(sessionRequest);
+							});
+							this.transport.connect().catch((err) => {
+								if (err instanceof ProtocolError) {
+									//Ignore Request expired errors to allow modal to regenerate expired qr codes
+									if (err.code !== ErrorCode.REQUEST_EXPIRED) {
+										reject(err);
+									}
+								} else {
+									reject(err);
+								}
+							});
 						});
-						this.dappClient.once('session_request', resolveSession);
-						this.transport.connect().catch(reject);
-					});
-				},
-				(success: boolean, error?: Error) => {
-					if (success) {
-						this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
-					} else {
-						reject(error);
-					}
-				},
-				(sessionRequest: SessionRequest, modal: AbstractInstallModal) => {
-					modal.updateSessionRequest(sessionRequest);
-				},
-			);
+					},
+					(success: boolean, error?: Error) => {
+						if (success) {
+							this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
+						} else {
+							reject(error);
+						}
+					},
+					(sessionRequest: SessionRequest, modal: AbstractInstallModal) => {
+						modal.updateSessionRequest(sessionRequest);
+					},
+				);
+			} catch (error) {
+				//ERror rendering the modal
+				debugger;
+				reject(error);
+			}
 		});
 	}
 
-	private async setupMWP() {
+	private async createDappClient() {
 		const { adapter: kvstore } = this.options.storage;
 		const sessionstore = new SessionStore(kvstore);
 		const websocket = typeof window !== 'undefined' ? WebSocket : (await import('ws')).WebSocket;
 		const transport = await WebSocketTransport.create({ url: MWP_RELAY_URL, kvstore, websocket });
 		const dappClient = new DappClient({ transport, sessionstore, keymanager });
+		return dappClient;
+	}
 
+	private async setupMWP() {
+		const { adapter: kvstore } = this.options.storage;
+		const dappClient = await this.createDappClient();
 		const apiTransport = new MWPTransport(dappClient, kvstore);
-		this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
-		const apiClient = getMultichainClient({ transport: apiTransport });
+		this.__dappClient ??= dappClient;
+		this.__transport ??= apiTransport;
 
-		this.__transport = apiTransport;
-		this.__provider = apiClient;
-		this.__dappClient = dappClient;
-
-		await this.options.storage.setTransport(TransportType.MPW);
+		this.dappClient.once('connected', () => {
+			const apiClient = getMultichainClient({ transport: this.transport });
+			this.__provider = apiClient;
+			this.listener = this.transport.onNotification(this.onTransportNotification.bind(this));
+			this.options.storage.setTransport(TransportType.MPW);
+			this.options.ui.factory.unload(true);
+		});
 	}
 
 	async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {

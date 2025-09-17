@@ -1,6 +1,6 @@
 import type { Transport, TransportRequest, TransportResponse } from '@metamask/multichain-api-client';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
-import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
+import { ErrorCode, ProtocolError, SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 import type { StoreAdapter } from 'src/domain';
@@ -29,6 +29,10 @@ export class MWPTransport implements Transport {
 		return this.currentSessionRequest;
 	}
 
+	private notifyCallbacks(data: unknown): void {
+		this.notificationCallbacks.forEach((callback) => callback(data));
+	}
+
 	private rejectRequest(id: string, error = new Error('Request rejected')): void {
 		const request = this.pendingRequests.get(id);
 		if (request) {
@@ -48,7 +52,7 @@ export class MWPTransport implements Transport {
 				this.pendingRequests.delete(typedMessage.id);
 			}
 		} else {
-			this.notificationCallbacks.forEach((callback) => callback(message));
+			this.notifyCallbacks(message);
 		}
 	}
 
@@ -78,7 +82,7 @@ export class MWPTransport implements Transport {
 			connection.then(resolve).catch(reject);
 		});
 
-		return this.connectionPromise.then(() => {
+		return this.connectionPromise.finally(() => {
 			this.connectionPromise = undefined;
 		});
 	}
