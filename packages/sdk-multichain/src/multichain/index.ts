@@ -288,8 +288,6 @@ export class MultichainSDK extends MultichainCore {
 					},
 				);
 			} catch (error) {
-				//ERror rendering the modal
-				debugger;
 				reject(error);
 			}
 		});
