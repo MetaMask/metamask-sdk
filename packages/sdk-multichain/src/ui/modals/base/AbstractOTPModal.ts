@@ -12,7 +12,7 @@ export abstract class AbstractOTPCodeModal extends Modal<OTPCode, OTPCodeWidgetP
 	}
 
 	updateOTPCode(code: string) {
-		const installModal = this.instance?.querySelector('mm-otpcode-modal') as HTMLMmOtpModalElement | null;
+		const installModal = this.instance?.querySelector('mm-otp-modal') as HTMLMmOtpModalElement | null;
 		if (installModal) {
 			this.otpCode = code;
 		}
