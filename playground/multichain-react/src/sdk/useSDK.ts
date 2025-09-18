@@ -1,105 +1,129 @@
 /* eslint-disable */
 
-import { createMetamaskSDK, type InvokeMethodOptions, type MultichainCore, type Scope, type SessionData } from '@metamask/multichain-sdk';
+import {
+  createMetamaskSDK,
+  type InvokeMethodOptions,
+  type MultichainCore,
+  type Scope,
+  type SessionData,
+} from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 export const METAMASK_PROD_CHROME_ID = 'nkbihfbeogaeaoehlefnkodbefgpgknn';
 
 type SDKOptions = {
-	onSessionChanged?: (session: SessionData | undefined) => void;
-	extensionId?: string;
+  onSessionChanged?: (session: SessionData | undefined) => void;
+  extensionId?: string;
 };
 
-export function useSDK({ extensionId }: SDKOptions) {
-	const [sdk, setSdk] = useState<MultichainCore>();
-	const [currentExtensionId, setCurrentExtensionId] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [currentSession, setCurrentSession] = useState<SessionData | undefined>(undefined);
+export function useSDK({ extensionId, onSessionChanged }: SDKOptions) {
+  const [sdk, setSdk] = useState<MultichainCore | null>(null);
+  const [session, setSession] = useState<SessionData | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
 
-	const initializeSDK = useCallback(async (extensionId?: string) => {
-		try {
-			const newSdk = await createMetamaskSDK({
-				dapp: {
-					name: 'playground',
-					url: 'https://playground.metamask.io',
-				},
-				analytics: {
-					enabled: false,
-				},
-				ui: {
-					headless: false,
-				},
-				...(extensionId && {
-					transport: {
-						extensionId: extensionId,
-					},
-				}),
-			});
+  // Use a ref to hold the onSessionChanged callback.
+  // This allows the callback to be updated without re-triggering the main effect.
+  const onSessionChangedRef = useRef(onSessionChanged);
+  useEffect(() => {
+    onSessionChangedRef.current = onSessionChanged;
+  }, [onSessionChanged]);
 
-			// Set up event listener immediately after SDK creation
-			const unsubscribe = newSdk.on('session_changed', (session) => {
-				setCurrentSession(session);
-			});
+  useEffect(() => {
+    let isCancelled = false;
+    let sdkInstance: MultichainCore | null = null;
+    let unsubscribe: (() => void) | undefined;
 
-			// Initialize the SDK if it's still pending
-			if (newSdk.state === 'pending') {
-				await newSdk.init();
-			}
+    const initialize = async () => {
+      // Reset state on re-initialization
+      setSdk(null);
+      setSession(undefined);
+      setError(null);
 
-			setSdk(newSdk);
-			return unsubscribe;
-		} catch (error: any) {
-			setError(error.message);
-			return undefined;
-		}
-	}, []);
+      try {
+        sdkInstance = await createMetamaskSDK({
+          dapp: {
+            name: 'playground',
+            url: 'https://playground.metamask.io',
+          },
+          analytics: {
+            enabled: false,
+          },
+          ...(extensionId && {
+            transport: {
+              extensionId: extensionId,
+            },
+          }),
+        });
 
-	useEffect(() => {
-		let unsubscribe: (() => void) | undefined;
+        if (isCancelled) {
+          await sdkInstance.disconnect();
+          return;
+        }
 
-		if (extensionId && currentExtensionId !== extensionId) {
-			setCurrentExtensionId(extensionId);
-			// Reinitialize SDK with new extension ID
-			initializeSDK(extensionId).then((unsub) => {
-				unsubscribe = unsub;
-			});
-		} else if (!sdk) {
-			// Initialize SDK for the first time
-			initializeSDK(extensionId).then((unsub) => {
-				unsubscribe = unsub;
-			});
-		}
+        unsubscribe = sdkInstance.on('session_changed', (newSession) => {
+          setSession(newSession);
+          onSessionChangedRef.current?.(newSession);
+        });
 
-		return () => {
-			unsubscribe?.();
-		};
-	}, [sdk, extensionId, currentExtensionId, initializeSDK]);
+        const currentSession = await sdkInstance.getCurrentSession();
+        if (currentSession && !isCancelled) {
+          setSession(currentSession);
+          onSessionChangedRef.current?.(currentSession);
+        }
 
-	const disconnect = useCallback(async () => {
-		await sdk?.disconnect();
-	}, [sdk]);
+        setSdk(sdkInstance);
+      } catch (e: any) {
+        if (!isCancelled) {
+          setError(e.message);
+        }
+      }
+    };
 
-	const connect = useCallback(
-		async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
-			await sdk?.connect(scopes, caipAccountIds);
-		},
-		[sdk],
-	);
+    initialize();
 
-	const invokeMethod = useCallback(
-		async (options: InvokeMethodOptions) => {
-			return sdk?.invokeMethod(options);
-		},
-		[sdk],
-	);
+    return () => {
+      isCancelled = true;
+      unsubscribe?.();
+      if (sdkInstance) {
+        sdkInstance.disconnect();
+      }
+    };
+  }, [extensionId]);
 
-	return {
-		isConnected: currentSession !== undefined,
-		session: currentSession,
-		error,
-		connect,
-		disconnect,
-		invokeMethod,
-		storage: sdk?.storage,
-	};
+  const disconnect = useCallback(async () => {
+    if (!sdk) {
+      throw new Error('SDK not initialized');
+    }
+    await sdk.disconnect();
+  }, [sdk]);
+
+  const connect = useCallback(
+    async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
+      if (!sdk) {
+        throw new Error('SDK not initialized');
+      }
+      return sdk.connect(scopes, caipAccountIds);
+    },
+    [sdk],
+  );
+
+  const invokeMethod = useCallback(
+    async (options: InvokeMethodOptions) => {
+      if (!sdk) {
+        throw new Error('SDK not initialized');
+      }
+      return sdk.invokeMethod(options);
+    },
+    [sdk],
+  );
+
+  return {
+    isConnected: session !== undefined,
+    session,
+    error,
+    connect,
+    disconnect,
+    invokeMethod,
+  };
 }
