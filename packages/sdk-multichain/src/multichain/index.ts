@@ -305,9 +305,10 @@ export class MultichainSDK extends MultichainCore {
 	private async setupMWP() {
 		const { adapter: kvstore } = this.options.storage;
 		const dappClient = await this.createDappClient();
+		this.__dappClient = dappClient;
+
 		const apiTransport = new MWPTransport(dappClient, kvstore);
-		this.__dappClient ??= dappClient;
-		this.__transport ??= apiTransport;
+		this.__transport = apiTransport;
 
 		this.dappClient.once('connected', () => {
 			const apiClient = getMultichainClient({ transport: this.transport });
