@@ -11,7 +11,7 @@ export class InstallModal extends AbstractInstallModal {
 		modal.sdkVersion = options.sdkVersion;
 		modal.addEventListener('close', ({ detail: { shouldTerminate } }) => options.onClose(shouldTerminate));
 		modal.addEventListener('startDesktopOnboarding', options.startDesktopOnboarding);
-
+		modal.sessionRequest = options.sessionRequest;
 		options.parentElement?.appendChild(modal);
 
 		this.instance = modal;
@@ -36,9 +36,10 @@ export class InstallModal extends AbstractInstallModal {
 			}
 
 			const now = Date.now();
-			if (now >= this.sessionRequest.expiresAt) {
+			if (this.instance && now >= this.sessionRequest.expiresAt) {
 				// Generate new session request
 				const newSessionRequest = await this.options.createSessionRequest();
+				this.instance.sessionRequest = newSessionRequest;
 				this.sessionRequest = newSessionRequest;
 			}
 		}, 1000); // Check every second
