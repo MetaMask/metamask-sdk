@@ -23,6 +23,7 @@ export class InstallModal extends AbstractInstallModal {
 		this.stopExpirationCheck();
 		if (modal && options.parentElement?.contains(modal)) {
 			options.parentElement.removeChild(modal);
+			this.instance = undefined;
 		}
 	}
 
