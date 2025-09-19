@@ -1,6 +1,6 @@
 /* eslint-disable */
 import type { Scope } from '@metamask/multichain-sdk';
-// biome-ignore lint/style/useImportType: <explanation>
+// biome-ignore lint/style/useImportType: ok
 import React from 'react';
 
 import { FEATURED_NETWORKS } from '../constants/networks';

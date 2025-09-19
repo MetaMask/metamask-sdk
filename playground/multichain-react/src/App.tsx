@@ -1,4 +1,4 @@
-import React, { useId } from 'react';
+import { useId } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import type { Scope, SessionData } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
@@ -70,7 +70,8 @@ function App() {
 
 	const availableOptions = Object.keys(FEATURED_NETWORKS).reduce<{ name: string; value: string }[]>((all, networkName) => {
 		const networkCaipValue = FEATURED_NETWORKS[networkName as keyof typeof FEATURED_NETWORKS];
-		return [...all, { name: networkName, value: networkCaipValue }];
+		all.push({ name: networkName, value: networkCaipValue });
+		return all;
 	}, []);
 
 	return (

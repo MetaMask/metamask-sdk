@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: ok */
 import MetaMaskOpenRPCDocument from '@metamask/api-specs';
 import type { Scope, SessionData } from '@metamask/multichain-sdk';
 import { type CaipAccountId, type CaipChainId, type CaipAccountAddress, parseCaipAccountId, type Json } from '@metamask/utils';
@@ -48,7 +49,6 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 	}, []);
 
 	const handleSessionChangedNotification = useCallback(
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		(notification: any) => {
 			if (notification.params?.sessionScopes) {
 				setInitialMethodsAndAccounts({
