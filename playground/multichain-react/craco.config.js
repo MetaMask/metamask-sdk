@@ -1,9 +1,8 @@
-import webpack from 'webpack';
-import { createRequire } from 'module';
-
+const webpack = require('webpack');
+const { createRequire } = require('module');
 const require = createRequire(import.meta.url);
 
-export default {
+module.exports = {
 	webpack: {
 		configure: (webpackConfig) => {
 			webpackConfig.resolve.fallback = {

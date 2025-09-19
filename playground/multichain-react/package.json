@@ -10,7 +10,6 @@
 	"bugs": {
 		"url": "https://github.com/MetaMask/test-dapp-multichain/issues"
 	},
-  "type": "module",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/MetaMask/test-dapp-multichain.git"
