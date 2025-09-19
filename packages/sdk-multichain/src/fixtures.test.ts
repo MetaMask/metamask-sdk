@@ -5,8 +5,6 @@
  * Test fixtures and utilities for the Multichain SDK tests
  * This file is excluded from test discovery via vitest.config.ts
  */
-import 'fake-indexeddb/auto';
-import { IDBFactory } from 'fake-indexeddb';
 // Additional imports for standardized setup functions
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JSDOM as Page } from 'jsdom';
@@ -337,7 +335,6 @@ export const setupRNMocks = (nativeStorageStub: NativeStorageStub) => {
 };
 
 export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
-	const factory = new IDBFactory();
 	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
 		url: dappUrl,
 	});
@@ -345,7 +342,6 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 		...dom.window,
 		addEventListener: t.vi.fn(),
 		removeEventListener: t.vi.fn(),
-		indexedDB: factory,
 		ethereum: {
 			isMetaMask: true,
 		},
