@@ -1,5 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
+import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as t from 'vitest';
 import type { StoreAdapter } from '../domain';
@@ -227,13 +229,15 @@ t.describe(`Store with WebAdapter`, () => {
 		() => {
 			t.vi.stubGlobal('window', {
 				localStorage: nativeStorageStub,
+				indexedDB: new IDBFactory(),
 			});
 		},
 	);
 
 	t.it("Should throw an exception if we try using the store with a browser that doesn't support localStorage", async () => {
 		t.vi.stubGlobal('window', {
-			localStorage: null,
+			localStorage: undefined,
+			indexedDB: undefined,
 		});
 		const store = new Store(new StoreAdapterWeb());
 		await t.expect(() => store.getAnonId()).rejects.toThrow();

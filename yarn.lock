@@ -11279,6 +11279,7 @@ __metadata:
     eciesjs: ^0.4.15
     esbuild-plugin-umd-wrapper: ^3.0.0
     eventemitter3: ^5.0.1
+    fake-indexeddb: ^6.0.1
     jsdom: ^26.1.0
     nock: ^14.0.4
     prettier: ^3.3.3
@@ -32145,6 +32146,13 @@ __metadata:
   version: 0.1.8
   resolution: "eyes@npm:0.1.8"
   checksum: c31703a92bf36ba75ee8d379ee7985c24ee6149f3a6175f44cec7a05b178c38bce9836d3ca48c9acb0329a960ac2c4b2ead4e60cdd4fe6e8c92cad7cd6913687
+  languageName: node
+  linkType: hard
+
+"fake-indexeddb@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "fake-indexeddb@npm:6.0.1"
+  checksum: c4b8a0576cf3165238494b67641539d4ff36194e038b36e6992449eb882923dfaadba78a62cfc7d5ae9a5c0ac2fa1e70af5cb6c2228dc764ac79b65f0e68e942
   languageName: node
   linkType: hard
 
