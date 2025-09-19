@@ -108,7 +108,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 			sessionRequest,
 			sdkVersion: getVersion(),
 			onClose: () => {
-				this.unload(true);
+				this.unload(false);
 			},
 			startDesktopOnboarding: () => {
 				new MetaMaskOnboarding().startOnboarding();
