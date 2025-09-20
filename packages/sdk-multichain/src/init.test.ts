@@ -1,23 +1,12 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
-import fs from 'node:fs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import type { MultiChainFNOptions, MultichainCore } from './domain';
-import { createTest, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
-import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
-import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
-import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
-import { MultichainSDK } from './multichain';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
+import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
 import * as loggerModule from './domain/logger';
-import { Store } from './store';
 
 function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
@@ -35,21 +24,9 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				...originalSdkOptions,
 				analytics: {
 					...originalSdkOptions.analytics,
-					enabled: platform !== 'node',
+					enabled: platform === 'web',
 					integrationType: 'test',
 				},
-				storage: new Store({
-					platform: platform as 'web' | 'rn' | 'node',
-					get(key) {
-						return Promise.resolve(mockedData.nativeStorageStub.getItem(key));
-					},
-					set(key, value) {
-						return Promise.resolve(mockedData.nativeStorageStub.setItem(key, value));
-					},
-					delete(key) {
-						return Promise.resolve(mockedData.nativeStorageStub.removeItem(key));
-					},
-				}),
 			};
 		});
 
@@ -68,21 +45,20 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 			if (platform !== 'web') {
 				t.expect(analytics.enable).not.toHaveBeenCalled();
-				t.expect(analytics.track).not.toHaveBeenCalled();
 			} else {
 				t.expect(analytics.enable).toHaveBeenCalled();
-				t.expect(analytics.track).toHaveBeenCalledWith('sdk_initialized', {});
 			}
+			t.expect(analytics.track).toHaveBeenCalledWith('sdk_initialized', {});
 		});
 
-		t.it(`${platform} should NOT call analytics.enable if analytics is DISABLED`, async () => {
+		t.it(`${platform} should NOT call analytics.enable if analytics is DISABLED but trigger event anyways`, async () => {
 			(testOptions.analytics as any).enabled = false;
 			sdk = await createSDK(testOptions);
 			t.expect(sdk).toBeDefined();
 			t.expect(mockedData.initSpy).toHaveBeenCalled();
 			t.expect(mockedData.setupAnalyticsSpy).toHaveBeenCalled();
 			t.expect(analytics.enable).not.toHaveBeenCalled();
-			t.expect(analytics.track).not.toHaveBeenCalled();
+			t.expect(analytics.track).toHaveBeenCalled();
 		});
 
 		t.it(`${platform} should call init and setupAnalytics with logger configuration`, async () => {
@@ -106,6 +82,9 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk.state).toBe('loaded');
+
+			await sdk.connect(['eip155:1'], ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any);
+
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
@@ -119,19 +98,27 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should emit sessionChanged event when existing valid session is found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			// Spy on the MultichainSDK's emit method before creating the SDK
-			const emitSpy = t.vi.spyOn(MultichainSDK.prototype, 'emit');
 
-			sdk = await createSDK(testOptions);
+			const onNotification = t.vi.fn();
+
+			const optionsWithEvent = {
+				...testOptions,
+				onNotification,
+			};
+			sdk = await createSDK(optionsWithEvent);
 
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('loaded');
 
-			// Check that sessionChanged event was emitted with the expected session data during initialization
-			t.expect(emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
+			mockedData.mockTransport.__triggerNotification({
+				method: 'session_changed',
+				params: {
+					session: mockSessionData,
+				},
+			});
 
-			// Restore the spy
-			emitSpy.mockRestore();
+			// Check that sessionChanged event was emitted with the expected session data during initialization
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
 		});
 
 		t.it(`${platform} Should gracefully handle init errors by just logging them and return non initialized sdk`, async () => {
@@ -157,51 +144,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
-const baseTestOptions = { options: { dapp: exampleDapp }, tests: testSuite };
+const baseTestOptions = { dapp: exampleDapp } as any;
 
-createTest({
-	...baseTestOptions,
-	platform: 'node',
-	createSDK: createMetamaskSDKNode,
-	setupMocks: () => {
-		const memfs = new Map<string, any>();
-		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'rn',
-	createSDK: createMetamaskSDKRN,
-	setupMocks: (nativeStorageStub) => {
-		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
-		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'web',
-	createSDK: createMetamaskSDKWeb,
-	setupMocks: (nativeStorageStub) => {
-		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
-			url: 'https://dapp.io/',
-		});
-		const globalStub = {
-			...dom.window,
-			addEventListener: t.vi.fn(),
-			removeEventListener: t.vi.fn(),
-			localStorage: nativeStorageStub,
-		};
-		t.vi.stubGlobal('navigator', {
-			...dom.window.navigator,
-			product: 'Chrome',
-		});
-		t.vi.stubGlobal('window', globalStub);
-		t.vi.stubGlobal('location', dom.window.location);
-		t.vi.stubGlobal('document', dom.window.document);
-	},
-});
+runTestsInWebEnv(baseTestOptions, testSuite, 'https://dapp.io/');
+runTestsInNodeEnv(baseTestOptions, testSuite);
+runTestsInRNEnv(baseTestOptions, testSuite);

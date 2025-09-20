@@ -6761,6 +6761,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ecies/ciphers@npm:^0.2.3":
+  version: 0.2.4
+  resolution: "@ecies/ciphers@npm:0.2.4"
+  peerDependencies:
+    "@noble/ciphers": ^1.0.0
+  checksum: 6300075ffce01765ad0ddcc26ed6150301cd448bc79b7a046cbd659c4bd6e3a05f207df2a09396cdf529bcc6ab921b26cb50483703c57f80f2d8898c369284f3
+  languageName: node
+  linkType: hard
+
 "@egjs/hammerjs@npm:^2.0.17":
   version: 2.0.17
   resolution: "@egjs/hammerjs@npm:2.0.17"
@@ -11206,10 +11215,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/multichain-api-client@npm:^0.6.4":
-  version: 0.6.4
-  resolution: "@metamask/multichain-api-client@npm:0.6.4"
-  checksum: 6368445238f4cc87fd82721039f4e6f3401c57a0f03691a313457f43c9efc521b33b918029a1eec3743274a45fc112cbd725aa893744c6fecb0fa857eae58163
+"@metamask/mobile-wallet-protocol-core@npm:^0.1.0, @metamask/mobile-wallet-protocol-core@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@metamask/mobile-wallet-protocol-core@npm:0.1.1"
+  dependencies:
+    centrifuge: ^5.3.5
+    eventemitter3: ^5.0.1
+    uuid: ^11.1.0
+  checksum: c19e17999d25b0872152961489560dc252ae7a7bbce058dadb86fccfbd8652db19fe98cc5c292f67508e92c9c429eb63489ff166deea5a0d8d370bee291a5d5a
+  languageName: node
+  linkType: hard
+
+"@metamask/mobile-wallet-protocol-dapp-client@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "@metamask/mobile-wallet-protocol-dapp-client@npm:0.1.1"
+  dependencies:
+    "@metamask/mobile-wallet-protocol-core": ^0.1.1
+    "@metamask/utils": ^9.1.0
+    uuid: ^11.1.0
+  checksum: 0e5a4476adeed037b6b6643ab4be617439437db555f6b3d04aeaa378e4b7ea45ed791eed0cde05df8306fea426a6eeae16e6bcd3e0970165408f46b6eb43d5c4
+  languageName: node
+  linkType: hard
+
+"@metamask/multichain-api-client@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "@metamask/multichain-api-client@npm:0.6.5"
+  checksum: d758e3e8037935582483e1709ec91d954cf9c2049131e4fdec74d8ad005df59c431104b0b694174205b398fa0e304f31dd4bfefddf6388d76d5bc15e7a4feb9a
   languageName: node
   linkType: hard
 
@@ -11232,16 +11263,20 @@ __metadata:
   dependencies:
     "@biomejs/biome": 2.0.0
     "@metamask/auto-changelog": ^3.4.3
-    "@metamask/multichain-api-client": ^0.6.4
+    "@metamask/mobile-wallet-protocol-core": ^0.1.0
+    "@metamask/mobile-wallet-protocol-dapp-client": ^0.1.0
+    "@metamask/multichain-api-client": ^0.6.5
     "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"
     "@metamask/sdk-multichain-ui": "workspace:^"
     "@metamask/utils": ^11.4.0
     "@paulmillr/qr": ^0.2.1
-    "@react-native-async-storage/async-storage": ^1.19.6
+    "@react-native-async-storage/async-storage": ^1.23.1
+    "@types/ws": ^8.18.1
     "@vitest/coverage-v8": ^3.2.4
     bowser: ^2.11.0
     cross-fetch: ^4.1.0
+    eciesjs: ^0.4.15
     esbuild-plugin-umd-wrapper: ^3.0.0
     eventemitter3: ^5.0.1
     jsdom: ^26.1.0
@@ -11252,6 +11287,9 @@ __metadata:
     typescript-eslint: ^8.6.0
     uuid: ^11.1.0
     vitest: ^3.1.2
+    ws: ^8.18.3
+  peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.23
   languageName: unknown
   linkType: soft
 
@@ -12241,6 +12279,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@metamask/utils@npm:^9.1.0":
+  version: 9.3.0
+  resolution: "@metamask/utils@npm:9.3.0"
+  dependencies:
+    "@ethereumjs/tx": ^4.2.0
+    "@metamask/superstruct": ^3.1.0
+    "@noble/hashes": ^1.3.1
+    "@scure/base": ^1.1.3
+    "@types/debug": ^4.1.7
+    debug: ^4.3.4
+    pony-cause: ^2.1.10
+    semver: ^7.5.4
+    uuid: ^9.0.1
+  checksum: f720b0f7bdd46054aa88d15a9702e1de6d7200a1ca1d4f6bc48761b039f1bbffb46ac88bc87fe79e66128c196d424f3b9ef071b3cb4b40139223786d56da35e0
+  languageName: node
+  linkType: hard
+
 "@motionone/animation@npm:^10.15.1":
   version: 10.15.1
   resolution: "@motionone/animation@npm:10.15.1"
@@ -12734,6 +12789,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/ciphers@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@noble/ciphers@npm:1.3.0"
+  checksum: 19722c35475df9bc78db60d261d0b5ef8a6d722561efc2135453f943eaa421b492195dc666e3e4df2b755bca3739e04f04b9c660198559f5dd05d3cfbf1b9e92
+  languageName: node
+  linkType: hard
+
 "@noble/curves@npm:1.0.0, @noble/curves@npm:~1.0.0":
   version: 1.0.0
   resolution: "@noble/curves@npm:1.0.0"
@@ -12767,6 +12829,15 @@ __metadata:
   dependencies:
     "@noble/hashes": 1.5.0
   checksum: 258f3feb2a6098cf35521562ecb7d452fd728e8a008ff9f1ef435184f9d0c782ceb8f7b7fa8df3317c3be7a19f53995ee124cd05c8080b130bd42e3cb072f24d
+  languageName: node
+  linkType: hard
+
+"@noble/curves@npm:^1.9.1":
+  version: 1.9.7
+  resolution: "@noble/curves@npm:1.9.7"
+  dependencies:
+    "@noble/hashes": 1.8.0
+  checksum: 65acad44ac6944ab96471109087d6cfcbcaa251faad6295961be9a5ace220634f4b7c74a96d1ee2274ad3880ea953d8e8259893ed8c906c831ef29f5c04ec9cc
   languageName: node
   linkType: hard
 
@@ -12804,6 +12875,13 @@ __metadata:
   version: 1.5.0
   resolution: "@noble/hashes@npm:1.5.0"
   checksum: 9cc031d5c888c455bfeef76af649b87f75380a4511405baea633c1e4912fd84aff7b61e99716f0231d244c9cfeda1fafd7d718963e6a0c674ed705e9b1b4f76b
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:1.8.0, @noble/hashes@npm:^1.8.0":
+  version: 1.8.0
+  resolution: "@noble/hashes@npm:1.8.0"
+  checksum: c94e98b941963676feaba62475b1ccfa8341e3f572adbb3b684ee38b658df44100187fa0ef4220da580b13f8d27e87d5492623c8a02ecc61f23fb9960c7918f5
   languageName: node
   linkType: hard
 
@@ -13895,6 +13973,17 @@ __metadata:
   peerDependencies:
     react-native: ^0.0.0-0 || >=0.60 <1.0
   checksum: bbf0f49c4441361d24f5c7a236862757d1addb7332d4c11ed7238b7023e882d2280290059602d9099cee094f60aeb11aad3f2017652ab6e143544e61dccadb73
+  languageName: node
+  linkType: hard
+
+"@react-native-async-storage/async-storage@npm:^1.23.1":
+  version: 1.24.0
+  resolution: "@react-native-async-storage/async-storage@npm:1.24.0"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.60 <1.0
+  checksum: 7e56a2e97f48332f57c56ebf473b763c7ca2b1ef82f4b5f8e1c73350231ec91b8eafc4e4d1f972c4c1005da0d304816fa725dc6f07a8a7543e90f8bd16c22ab4
   languageName: node
   linkType: hard
 
@@ -20045,6 +20134,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ws@npm:^8.18.1":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
+  dependencies:
+    "@types/node": "*"
+  checksum: 0331b14cde388e2805af66cad3e3f51857db8e68ed91e5b99750915e96fe7572e58296dc99999331bbcf08f0ff00a227a0bb214e991f53c2a5aca7b0e71173fa
+  languageName: node
+  linkType: hard
+
 "@types/ws@npm:^8.5.5":
   version: 8.5.5
   resolution: "@types/ws@npm:8.5.5"
@@ -25483,6 +25581,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"centrifuge@npm:^5.3.5":
+  version: 5.4.0
+  resolution: "centrifuge@npm:5.4.0"
+  dependencies:
+    events: ^3.3.0
+    protobufjs: ^7.2.5
+  checksum: 0a0c3b0393c797fddb67854cbdb8f0bc5d5d5e2d6b28cc1bfa9bf25412b284cc8c4df52feebacd9ca7fa15c6047a817f53aa20eac944ff2a6b5f0cc7ff44c62b
+  languageName: node
+  linkType: hard
+
 "chai@npm:^5.2.0":
   version: 5.2.0
   resolution: "chai@npm:5.2.0"
@@ -28648,6 +28756,18 @@ __metadata:
     "@noble/curves": ^1.6.0
     "@noble/hashes": ^1.5.0
   checksum: ef98528b8af23b013dd432b43cc1a378d58621f887a7db234ebc997006e16ab9ffa0ea973bf2195aa63dbfa996afa9e3a8f8410b6e3d5c3808365a3d02b1141a
+  languageName: node
+  linkType: hard
+
+"eciesjs@npm:^0.4.15":
+  version: 0.4.15
+  resolution: "eciesjs@npm:0.4.15"
+  dependencies:
+    "@ecies/ciphers": ^0.2.3
+    "@noble/ciphers": ^1.3.0
+    "@noble/curves": ^1.9.1
+    "@noble/hashes": ^1.8.0
+  checksum: 133a0ded69da0579d7082fe89b6a15225cf5cf503f653438355c2106cfc42576ab75835421f6a1ad099b9b802f389fc0077e72a951fd0e7dbc5c1e5220457ac9
   languageName: node
   linkType: hard
 
@@ -45120,6 +45240,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"protobufjs@npm:^7.2.5":
+  version: 7.5.4
+  resolution: "protobufjs@npm:7.5.4"
+  dependencies:
+    "@protobufjs/aspromise": ^1.1.2
+    "@protobufjs/base64": ^1.1.2
+    "@protobufjs/codegen": ^2.0.4
+    "@protobufjs/eventemitter": ^1.1.0
+    "@protobufjs/fetch": ^1.1.0
+    "@protobufjs/float": ^1.0.2
+    "@protobufjs/inquire": ^1.1.0
+    "@protobufjs/path": ^1.1.2
+    "@protobufjs/pool": ^1.1.0
+    "@protobufjs/utf8": ^1.1.0
+    "@types/node": ">=13.7.0"
+    long: ^5.0.0
+  checksum: 53bf83b9a726b05d43da35bb990dba7536759787dccea9a67b8f31be9df470ba17f1f1b982ca19956cfc7726f3ec7e0e883ca4ad93b5ec753cc025a637fc704f
+  languageName: node
+  linkType: hard
+
 "proxy-addr@npm:~2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -55205,6 +55345,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 91d4d35bc99ff6df483bdf029b9ea4bfd7af1f16fc91231a96777a63d263e1eabf486e13a2353970efc534f9faa43bdbf9ee76525af22f4752cbc5ebda333975
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.18.3":
+  version: 8.18.3
+  resolution: "ws@npm:8.18.3"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: d64ef1631227bd0c5fe21b3eb3646c9c91229402fb963d12d87b49af0a1ef757277083af23a5f85742bae1e520feddfb434cb882ea59249b15673c16dc3f36e0
   languageName: node
   linkType: hard
 

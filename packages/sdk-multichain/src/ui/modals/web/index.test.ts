@@ -4,11 +4,14 @@ import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import { AbstractInstallModal, AbstractOTPCodeModal, type Modal } from '../../domain';
+import type { Modal } from '../../../domain';
 import * as WebModals from './';
+import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { v4 } from 'uuid';
 
 t.describe('WEB Modals', () => {
-	let modal: Awaited<ReturnType<Modal<any>['render']>> | undefined;
+	let modal: Modal | undefined;
+	let sessionRequest: SessionRequest;
 
 	t.beforeAll(() => {
 		const dom = new Page("<!DOCTYPE html><div id='root'></div>", {
@@ -29,47 +32,56 @@ t.describe('WEB Modals', () => {
 		t.vi.stubGlobal('document', dom.window.document);
 	});
 
+	t.beforeEach(() => {
+		sessionRequest = {
+			id: v4(),
+			channel: 'test',
+			publicKeyB64: 'test',
+			expiresAt: Date.now() + 1000,
+			mode: 'trusted',
+		};
+	});
+
 	t.afterEach(() => {
 		modal?.unmount();
 	});
 
-	t.it('Check Modal instances', () => {
-		t.expect(WebModals.installModal).toBeInstanceOf(AbstractInstallModal);
-		t.expect(WebModals.otpCodeModal).toBeInstanceOf(AbstractOTPCodeModal);
-	});
-
 	t.it('rendering InstallModal on Web', async () => {
-		modal = await WebModals.installModal.render({
+		const installModal = new WebModals.InstallModal({
 			parentElement: document.getElementById('root')!,
-			link: 'https://example.com',
+			sessionRequest,
 			sdkVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: vi.fn(),
-			metaMaskInstaller: {
-				startDesktopOnboarding: vi.fn(),
-			},
+			startDesktopOnboarding: vi.fn(),
+			createSessionRequest: vi.fn().mockResolvedValue(sessionRequest),
+			updateSessionRequest: vi.fn(),
 		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
-		t.expect((modal as any).sync).not.toBeDefined();
-		modal.mount();
+
+		t.expect(installModal).toBeDefined();
+		t.expect(installModal.unmount).toBeDefined();
+		t.expect(installModal.mount).toBeDefined();
+		installModal.mount();
+
+		modal = installModal;
 	});
 
 	t.it('Rendering OTPCodeModal on Web', async () => {
-		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
-		modal = await WebModals.otpCodeModal.render({
+		const otpCodeModal = new WebModals.OTPCodeModal({
 			parentElement: document.getElementById('root')!,
 			sdkVersion: '1.0.0',
-			preferDesktop: false,
 			onClose: vi.fn(),
-			updateOTPValue: vi.fn(),
-			link: 'https://example.com',
+			createOTPCode: vi.fn().mockResolvedValue('123456'),
+			updateOTPCode: vi.fn(),
+			otpCode: '123456',
 		});
-		t.expect(modal).toBeDefined();
-		t.expect(modal.unmount).toBeDefined();
-		t.expect(modal.mount).toBeDefined();
-		t.expect(modal.sync).toBeDefined();
-		modal.mount();
+
+		t.expect(otpCodeModal).toBeDefined();
+		t.expect(otpCodeModal.unmount).toBeDefined();
+		t.expect(otpCodeModal.mount).toBeDefined();
+
+		otpCodeModal.mount();
+
+		modal = otpCodeModal;
 	});
 });
