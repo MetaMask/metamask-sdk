@@ -4,7 +4,7 @@ import type { CaipAccountId, Json } from '@metamask/utils';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type ModalFactoryConnectOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
-import { MultichainCore, type SDKState } from '../domain/multichain';
+import { type ConnectionRequest, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, PlatformType } from '../domain/platform';
 import { MWPTransport } from './mwp';
 import { RPCClient } from './rpc/client';
@@ -260,9 +260,19 @@ export class MultichainSDK extends MultichainCore {
 				this.options.ui.factory.renderInstallModal(
 					desktopPreferred,
 					() => {
-						return new Promise<SessionRequest>((resolveSession) => {
+						return new Promise<ConnectionRequest>((resolveConnectionRequest) => {
 							this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
-								resolveSession(sessionRequest);
+								const connectionRequest: ConnectionRequest = {
+									sessionRequest,
+									metadata: {
+										dapp: this.options.dapp,
+										sdk: {
+											version: getVersion(),
+											platform: getPlatformType(),
+										},
+									},
+								};
+								resolveConnectionRequest(connectionRequest);
 							});
 							this.transport.connect().catch((err) => {
 								if (err instanceof ProtocolError) {
@@ -282,9 +292,6 @@ export class MultichainSDK extends MultichainCore {
 						} else {
 							reject(error);
 						}
-					},
-					(sessionRequest: SessionRequest, modal: AbstractInstallModal) => {
-						modal.updateSessionRequest(sessionRequest);
 					},
 				);
 			} catch (error) {

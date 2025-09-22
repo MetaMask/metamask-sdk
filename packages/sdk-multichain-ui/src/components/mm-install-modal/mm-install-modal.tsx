@@ -23,7 +23,9 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  @Prop() link: any
+  @Prop() link: string
+
+  @Prop() expiresIn: number;
 
   @Prop() sdkVersion?: string;
 
@@ -37,6 +39,8 @@ export class InstallModal {
   @Event() startDesktopOnboarding: EventEmitter;
 
   @Event() updateLink: EventEmitter;
+
+  @Event() updateExpiresIn: EventEmitter;
 
   @Element() el: HTMLElement;
 
@@ -113,6 +117,11 @@ export class InstallModal {
   @Watch('link')
   updateLinkHandler(link:string) {
     this.generateQRCode(link);
+  }
+
+  @Watch('expiresIn')
+  updateExpiresInHandler(expiresIn: number) {
+    console.debug('QRCode expires in:', expiresIn);
   }
 
   render() {

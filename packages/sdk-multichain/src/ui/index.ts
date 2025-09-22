@@ -1,8 +1,6 @@
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { getPlatformType, getVersion, type Modal, type OTPCode, PlatformType } from '../domain';
-import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import { type ConnectionRequest, getPlatformType, getVersion, type Modal, type OTPCode, PlatformType } from '../domain';
 import type { FactoryModals, ModalTypes } from './modals/types';
-import type { AbstractInstallModal } from './modals/base/AbstractInstallModal';
 import type { AbstractOTPCodeModal } from './modals/base/AbstractOTPModal';
 
 // @ts-ignore
@@ -89,33 +87,41 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		return container;
 	}
 
-	public async renderInstallModal(
-		preferDesktop: boolean,
-		createSessionRequest: () => Promise<SessionRequest>,
-		successCallback: (success: boolean, error?: Error) => void,
-		updateSessionRequest: (sessionRequest: SessionRequest, modal: AbstractInstallModal) => void,
-	) {
+	private async generateQRCode(connectionRequest: ConnectionRequest) {
+		const json = JSON.stringify(connectionRequest);
+		const urlEncoded = encodeURIComponent(json);
+		return `metamask://connect/mwp?p=${urlEncoded}`;
+	}
+
+	private onCloseModal() {
+		this.unload(true);
+	}
+
+	private onStartDesktopOnboarding() {
+		new MetaMaskOnboarding().startOnboarding();
+		this.unload(true);
+	}
+
+	public async renderInstallModal(preferDesktop: boolean, createConnectionRequest: () => Promise<ConnectionRequest>, successCallback: (success: boolean, error?: Error) => void) {
 		this.modal?.unmount();
 		await preload();
 		this.successCallback = successCallback;
 
 		const parentElement = this.getMountedContainer();
-		const sessionRequest = await createSessionRequest();
+		const connectionRequest = await createConnectionRequest();
+		const qrCodeLink = await this.generateQRCode(connectionRequest);
 
 		const modal = new this.options.InstallModal({
+			expiresIn: (Date.now() - connectionRequest.sessionRequest.expiresAt) / 1000,
+			connectionRequest,
 			parentElement,
 			preferDesktop,
-			sessionRequest,
+			link: qrCodeLink,
 			sdkVersion: getVersion(),
-			onClose: () => {
-				this.unload(false);
-			},
-			startDesktopOnboarding: () => {
-				new MetaMaskOnboarding().startOnboarding();
-				this.unload(true);
-			},
-			createSessionRequest,
-			updateSessionRequest: (sessionRequest: SessionRequest) => updateSessionRequest(sessionRequest, modal),
+			generateQRCode: this.generateQRCode.bind(this),
+			onClose: this.onCloseModal.bind(this),
+			startDesktopOnboarding: this.onStartDesktopOnboarding.bind(this),
+			createConnectionRequest,
 		});
 
 		this.modal = modal;

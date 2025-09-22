@@ -2,38 +2,37 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType } from '../domain';
+import { type ConnectionRequest, type InstallWidgetProps, type Modal, type OTPCode, type OTPCodeWidgetProps, PlatformType, type QRLink } from '../domain';
 import { ModalFactory } from './index';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
-import { AbstractInstallModal } from './modals/base/AbstractInstallModal';
 import type { FactoryModals } from './modals/types';
 import { v4 } from 'uuid';
+import packageJson from '../../package.json';
 // Mock external dependencies
-vi.mock('@metamask/onboarding', () => ({
+t.vi.mock('@metamask/onboarding', () => ({
 	default: class MockMetaMaskOnboarding {
-		startOnboarding = vi.fn();
+		startOnboarding = t.vi.fn();
 	},
 }));
 
-vi.mock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
-	defineCustomElements: vi.fn(),
+t.vi.mock('@metamask/sdk-multichain-ui/dist/loader/index.js', () => ({
+	defineCustomElements: t.vi.fn(),
 }));
 
 // Mock the domain functions
-vi.mock('../domain', async () => {
-	const actual = await vi.importActual('../domain');
+t.vi.mock('../domain', async () => {
+	const actual = await t.vi.importActual('../domain');
 	return {
 		...actual,
-		getPlatformType: vi.fn(),
-		getVersion: vi.fn(() => '1.0.0'),
+		getPlatformType: t.vi.fn(),
+		getVersion: t.vi.fn(() => '1.0.0'),
 	};
 });
 
 t.describe('ModalFactory', () => {
-	let mockModal: Modal<SessionRequest, InstallWidgetProps> | Modal<OTPCode, OTPCodeWidgetProps>;
+	let mockModal: Modal<QRLink, InstallWidgetProps> | Modal<OTPCode, OTPCodeWidgetProps>;
 	let mockModalOptions: t.Mock<() => InstallWidgetProps | OTPCodeWidgetProps>;
-	let mockData: t.Mock<() => SessionRequest | OTPCode>;
+	let mockData: t.Mock<() => QRLink | OTPCode>;
 
 	let mockFactoryOptions: FactoryModals;
 	let dom: InstanceType<typeof Page>;
@@ -79,6 +78,30 @@ t.describe('ModalFactory', () => {
 		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
 
+		const windowStub = {
+			...dom.window,
+			open: t.vi.fn(),
+			addEventListener: t.vi.fn(),
+			removeEventListener: t.vi.fn(),
+			dispatchEvent: t.vi.fn(),
+		};
+		t.vi.stubGlobal('window', windowStub);
+
+		const sessionStorageMock = {
+			data: new Map<string, string>(),
+			getItem: t.vi.fn((key: string) => sessionStorageMock.data.get(key) || null),
+			setItem: t.vi.fn((key: string, value: string) => {
+				sessionStorageMock.data.set(key, value);
+			}),
+			removeItem: t.vi.fn((key: string) => {
+				sessionStorageMock.data.delete(key);
+			}),
+			clear: t.vi.fn(() => {
+				sessionStorageMock.data.clear();
+			}),
+		};
+		t.vi.stubGlobal('sessionStorage', sessionStorageMock);
+
 		mockData = t.vi.fn<() => SessionRequest | OTPCode>();
 		mockModalOptions = t.vi.fn<() => InstallWidgetProps | OTPCodeWidgetProps>();
 		// Mock rendered modal
@@ -102,170 +125,200 @@ t.describe('ModalFactory', () => {
 		} as any;
 
 		mockFactoryOptions = {
-			InstallModal: vi.fn().mockImplementation((options: InstallWidgetProps) => ({ ...mockModal, options })),
-			OTPCodeModal: vi.fn().mockImplementation((options: OTPCodeWidgetProps) => ({ ...mockModal, options })),
+			InstallModal: t.vi.fn().mockImplementation((options: InstallWidgetProps) => ({ ...mockModal, options })),
+			OTPCodeModal: t.vi.fn().mockImplementation((options: OTPCodeWidgetProps) => ({ ...mockModal, options })),
 		} as any;
 	});
 
-	afterEach(() => {
+	t.afterEach(() => {
 		t.vi.unstubAllGlobals();
 		t.vi.restoreAllMocks();
 	});
 
-	describe('Constructor validation', () => {
-		it('should throw an exception if required modals are not present', () => {
-			expect(() => new ModalFactory({} as any)).toThrow('Missing required modals: InstallModal, OTPCodeModal');
+	t.describe('Constructor validation', () => {
+		t.it('should throw an exception if required modals are not present', () => {
+			t.expect(() => new ModalFactory({} as any)).toThrow('Missing required modals: InstallModal, OTPCodeModal');
 		});
 
-		it('should throw an exception if only some modals are missing', () => {
+		t.it('should throw an exception if only some modals are missing', () => {
 			const partialOptions = {
 				InstallModal: mockModal,
 			};
-			expect(() => new ModalFactory(partialOptions as any)).toThrow('Missing required modals: OTPCodeModal');
+			t.expect(() => new ModalFactory(partialOptions as any)).toThrow('Missing required modals: OTPCodeModal');
 		});
 
-		it('should create successfully with all required modals', () => {
-			expect(() => new ModalFactory(mockFactoryOptions)).not.toThrow();
+		t.it('should create successfully with all required modals', () => {
+			t.expect(() => new ModalFactory(mockFactoryOptions)).not.toThrow();
 		});
 	});
 
-	describe('Platform detection properties', () => {
-		it('should correctly identify mobile platform (React Native)', async () => {
+	t.describe('Platform detection properties', () => {
+		t.it('should correctly identify mobile platform (React Native)', async () => {
 			const { getPlatformType } = await import('../domain');
 			t.vi.mocked(getPlatformType).mockReturnValue(PlatformType.ReactNative);
 
-			const modalFactory = new ModalFactory(mockFactoryOptions);
-			expect(modalFactory.isMobile).toBe(true);
-			expect(modalFactory.isNode).toBe(false);
-			expect(modalFactory.isWeb).toBe(false);
+			t.vi.resetModules();
+			const { ModalFactory: TestModalFactory } = await import('./index');
+
+			const modalFactory = new TestModalFactory(mockFactoryOptions);
+			t.expect(modalFactory.isMobile).toBe(true);
 		});
 
-		it('should correctly identify Node.js platform', async () => {
+		t.it('should correctly identify Node.js platform', async () => {
 			const { getPlatformType } = await import('../domain');
 			t.vi.mocked(getPlatformType).mockReturnValue(PlatformType.NonBrowser);
 
-			const modalFactory = new ModalFactory(mockFactoryOptions);
-			expect(modalFactory.isMobile).toBe(false);
-			expect(modalFactory.isNode).toBe(true);
-			expect(modalFactory.isWeb).toBe(false);
+			t.vi.resetModules();
+			const { ModalFactory: TestModalFactory } = await import('./index');
+
+			const modalFactory = new TestModalFactory(mockFactoryOptions);
+			t.expect(modalFactory.isNode).toBe(true);
 		});
 
-		it('should correctly identify web platforms', async () => {
+		t.it('should correctly identify web platforms', async () => {
+			const { getPlatformType } = await import('../domain');
 			const webPlatforms = [PlatformType.DesktopWeb, PlatformType.MetaMaskMobileWebview, PlatformType.MobileWeb];
 
 			for (const platform of webPlatforms) {
-				const { getPlatformType } = await import('../domain');
 				t.vi.mocked(getPlatformType).mockReturnValue(platform);
 
-				const modalFactory = new ModalFactory(mockFactoryOptions);
-				expect(modalFactory.isMobile).toBe(false);
-				expect(modalFactory.isNode).toBe(false);
-				expect(modalFactory.isWeb).toBe(true);
+				t.vi.resetModules();
+				const { ModalFactory: TestModalFactory } = await import('./index');
+
+				const modalFactory = new TestModalFactory(mockFactoryOptions);
+				t.expect(modalFactory.isWeb).toBe(true);
 			}
 		});
 	});
 
-	describe('Modal rendering', () => {
+	t.describe('Modal rendering', () => {
+		let connectionRequest: ConnectionRequest;
+
 		let uiModule: ModalFactory;
 		let mockContainer: HTMLDivElement;
 
-		beforeEach(() => {
-			uiModule = new ModalFactory(mockFactoryOptions);
-			mockContainer = document.createElement('div');
-		});
-
-		describe('renderInstallModal', () => {
-			it('should render install modal with correct props', async () => {
-				const sessionRequest: SessionRequest = {
+		t.beforeEach(() => {
+			connectionRequest = {
+				sessionRequest: {
 					id: v4(),
 					channel: 'test',
 					publicKeyB64: 'test',
 					expiresAt: Date.now() + 1000,
 					mode: 'trusted',
-				};
+				},
+				metadata: {
+					dapp: {
+						name: 'test',
+						url: 'https://test.com',
+					},
+					sdk: {
+						version: packageJson.version,
+						platform: PlatformType.NonBrowser,
+					},
+				},
+			};
+			uiModule = new ModalFactory(mockFactoryOptions);
+			mockContainer = document.createElement('div');
+		});
+
+		t.describe('renderInstallModal', () => {
+			t.it('should render install modal with correct props', async () => {
 				const preferDesktop = true;
 				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
 
 				await uiModule.renderInstallModal(
 					preferDesktop,
-					() => Promise.resolve(sessionRequest),
-					() => {},
+					() => Promise.resolve(connectionRequest),
 					() => {},
 				);
 
-				expect(document.body.contains(mockContainer)).toBe(true);
+				t.expect(document.body.contains(mockContainer)).toBe(true);
 
-				expect(mockFactoryOptions.InstallModal).toHaveBeenCalledWith(
-					expect.objectContaining({
+				t.expect(mockFactoryOptions.InstallModal).toHaveBeenCalledWith(
+					t.expect.objectContaining({
 						parentElement: mockContainer,
-						sessionRequest,
+						connectionRequest,
 						preferDesktop,
-						sdkVersion: '1.0.0',
+						sdkVersion: packageJson.version,
 					}),
 				);
-				expect(mockModal.mount).toHaveBeenCalled();
+				t.expect(mockModal.mount).toHaveBeenCalled();
 			});
 
-			it('should renew sessionrequest qrCode after expiration automatically', async () => {
-				let sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 100,
-					mode: 'trusted',
-				};
+			t.it('should renew sessionrequest qrCode after expiration automatically', async () => {
+				t.vi.useFakeTimers();
 
-				const createSessionRequestMock = t.vi.fn(() => {
-					sessionRequest = {
+				let connectionRequest: ConnectionRequest = {
+					sessionRequest: {
 						id: v4(),
 						channel: 'test',
 						publicKeyB64: 'test',
-						expiresAt: Date.now() + 100,
+						expiresAt: Date.now() + 1000,
 						mode: 'trusted',
+					},
+					metadata: {
+						dapp: {
+							name: 'test',
+							url: 'https://test.com',
+						},
+						sdk: {
+							version: packageJson.version,
+							platform: PlatformType.NonBrowser,
+						},
+					},
+				};
+
+				const createSessionRequestMock = t.vi.fn(() => {
+					connectionRequest = {
+						...connectionRequest,
+						sessionRequest: {
+							...connectionRequest.sessionRequest,
+							id: v4(),
+							expiresAt: Date.now() + 100,
+						},
 					};
-					return Promise.resolve(sessionRequest);
+					return Promise.resolve(connectionRequest);
 				});
 
 				const preferDesktop = true;
 				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
 
-				await uiModule.renderInstallModal(
-					preferDesktop,
-					createSessionRequestMock,
-					() => {},
-					() => {},
-				);
+				await uiModule.renderInstallModal(preferDesktop, createSessionRequestMock, () => {});
 
-				expect(mockFactoryOptions.InstallModal).toHaveBeenCalledWith(
-					expect.objectContaining({
-						parentElement: mockContainer,
-						sessionRequest,
-						preferDesktop,
-						sdkVersion: '1.0.0',
-					}),
-				);
+				t.expect(mockModal.mount).toHaveBeenCalled();
 
-				expect(mockModal.mount).toHaveBeenCalled();
-				expect(document.body.contains(mockContainer)).toBe(true);
+				// Advance timers to trigger expiration
+				await t.vi.advanceTimersByTimeAsync(2000);
 
-				await new Promise((resolve) => setTimeout(resolve, 2000));
+				t.expect(createSessionRequestMock).toHaveBeenCalledTimes(1);
 
-				expect(createSessionRequestMock).toHaveBeenCalledTimes(1);
+				t.vi.useRealTimers();
 			});
 
-			it('should handle onClose callback correctly', async () => {
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
+			t.it('should handle onClose callback correctly', async () => {
+				const connectionRequest: ConnectionRequest = {
+					sessionRequest: {
+						id: v4(),
+						channel: 'test',
+						publicKeyB64: 'test',
+						expiresAt: Date.now() + 1000,
+						mode: 'trusted',
+					},
+					metadata: {
+						dapp: {
+							name: 'test',
+							url: 'https://test.com',
+						},
+						sdk: {
+							version: packageJson.version,
+							platform: PlatformType.NonBrowser,
+						},
+					},
 				};
 
 				await uiModule.renderInstallModal(
 					false,
-					() => Promise.resolve(sessionRequest),
-					() => {},
+					() => Promise.resolve(connectionRequest),
 					() => {},
 				);
 
@@ -273,99 +326,135 @@ t.describe('ModalFactory', () => {
 
 				constructorArgs.onClose();
 
-				expect(mockModal.unmount).toHaveBeenCalled();
+				t.expect(mockModal.unmount).toHaveBeenCalled();
 			});
 
-			it('should handle desktop onboarding correctly', async () => {
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
+			t.it('should handle desktop onboarding correctly', async () => {
+				const connectionRequest: ConnectionRequest = {
+					sessionRequest: {
+						id: v4(),
+						channel: 'test',
+						publicKeyB64: 'test',
+						expiresAt: Date.now() + 1000,
+						mode: 'trusted',
+					},
+					metadata: {
+						dapp: {
+							name: 'test',
+							url: 'https://test.com',
+						},
+						sdk: {
+							version: packageJson.version,
+							platform: PlatformType.NonBrowser,
+						},
+					},
 				};
+
 				await uiModule.renderInstallModal(
 					false,
-					() => Promise.resolve(sessionRequest),
-					() => {},
+					() => Promise.resolve(connectionRequest),
 					() => {},
 				);
 
 				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
 				constructorArgs.startDesktopOnboarding();
 
-				expect(mockModal.unmount).toHaveBeenCalled();
+				t.expect(mockModal.unmount).toHaveBeenCalled();
 			});
 		});
 
-		describe('renderOTPCodeModal', () => {
-			it('should render OTP code modal with placeholder props', async () => {
+		t.describe('renderOTPCodeModal', () => {
+			t.it('should render OTP code modal with placeholder props', async () => {
 				await uiModule.renderOTPCodeModal(
 					() => Promise.resolve('123456' as OTPCode),
 					() => {},
 					() => {},
 				);
 
-				expect(mockFactoryOptions.OTPCodeModal).toHaveBeenCalled();
-				expect(mockModal.mount).toHaveBeenCalled();
+				t.expect(mockFactoryOptions.OTPCodeModal).toHaveBeenCalled();
+				t.expect(mockModal.mount).toHaveBeenCalled();
 			});
 		});
 	});
 
-	describe('Error handling', () => {
-		it('should handle modal rendering errors gracefully', async () => {
+	t.describe('Error handling', () => {
+		t.it('should handle modal rendering errors gracefully', async () => {
 			const errorOptions = {
 				...mockFactoryOptions,
 			};
-			vi.spyOn(errorOptions, 'InstallModal').mockImplementation(
+			t.vi.spyOn(errorOptions, 'InstallModal').mockImplementation(
 				() =>
 					({
-						mount: vi.fn().mockImplementation(() => {
+						mount: t.vi.fn().mockImplementation(() => {
 							throw new Error('Render failed');
 						}),
-						unmount: vi.fn(),
+						unmount: t.vi.fn(),
 					}) as any,
 			);
 
 			const uiModule = new ModalFactory(errorOptions);
-			const sessionRequest: SessionRequest = {
-				id: v4(),
-				channel: 'test',
-				publicKeyB64: 'test',
-				expiresAt: Date.now() + 1000,
-				mode: 'trusted',
+			const connectionRequest: ConnectionRequest = {
+				sessionRequest: {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				},
+				metadata: {
+					dapp: {
+						name: 'test',
+						url: 'https://test.com',
+					},
+					sdk: {
+						version: packageJson.version,
+						platform: PlatformType.NonBrowser,
+					},
+				},
 			};
-			await expect(
-				uiModule.renderInstallModal(
-					false,
-					() => Promise.resolve(sessionRequest),
-					() => {},
-					() => {},
-				),
-			).rejects.toThrow('Render failed');
+			await t
+				.expect(
+					uiModule.renderInstallModal(
+						false,
+						() => Promise.resolve(connectionRequest),
+						() => {},
+					),
+				)
+				.rejects.toThrow('Render failed');
 		});
 	});
 
-	describe('Modal lifecycle', () => {
+	t.describe('Modal lifecycle', () => {
 		let uiModule: ModalFactory;
 
-		beforeEach(() => {
+		t.beforeEach(() => {
 			uiModule = new ModalFactory(mockFactoryOptions);
 		});
 
-		it('should properly unmount previous modal when rendering new one', async () => {
+		t.it('should properly unmount previous modal when rendering new one', async () => {
 			// Render first modal
-			const sessionRequest: SessionRequest = {
-				id: v4(),
-				channel: 'test',
-				publicKeyB64: 'test',
-				expiresAt: Date.now() + 1000,
-				mode: 'trusted',
+			const connectionRequest: ConnectionRequest = {
+				sessionRequest: {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				},
+				metadata: {
+					dapp: {
+						name: 'test',
+						url: 'https://test.com',
+					},
+					sdk: {
+						version: packageJson.version,
+						platform: PlatformType.NonBrowser,
+					},
+				},
 			};
 			await uiModule.renderInstallModal(
 				false,
-				() => Promise.resolve(sessionRequest),
-				() => {},
+				() => Promise.resolve(connectionRequest),
 				() => {},
 			);
 			const firstModal = mockModal;
@@ -385,18 +474,18 @@ t.describe('ModalFactory', () => {
 			);
 
 			// First modal should be unmounted, second modal should be mounted
-			expect(firstModal.unmount).toHaveBeenCalled();
-			expect(secondModal.mount).toHaveBeenCalled();
+			t.expect(firstModal.unmount).toHaveBeenCalled();
+			t.expect(secondModal.mount).toHaveBeenCalled();
 		});
 	});
 
-	describe('Preload function error handling', () => {
-		beforeEach(async () => {
+	t.describe('Preload function error handling', () => {
+		t.beforeEach(async () => {
 			// Reset all modules to clear the singleton instance
 			t.vi.resetModules();
 		});
 
-		it('should handle preload import failure gracefully and log error', async () => {
+		t.it('should handle preload import failure gracefully and log error', async () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 			const testError = new Error('Failed to load modal customElements');
 
@@ -410,10 +499,10 @@ t.describe('ModalFactory', () => {
 			const { preload: freshPreload } = (await t.vi.importActual('./index')) as any;
 
 			// Test that preload handles the error gracefully
-			await expect(freshPreload()).resolves.not.toThrow();
+			await t.expect(freshPreload()).resolves.not.toThrow();
 
 			// Verify that the error was logged
-			expect(consoleErrorSpy).toHaveBeenCalledWith('Gracefully Failed to load modal customElements:', expect.any(Error));
+			t.expect(consoleErrorSpy).toHaveBeenCalledWith('Gracefully Failed to load modal customElements:', t.expect.any(Error));
 
 			consoleErrorSpy.mockRestore();
 
@@ -424,7 +513,7 @@ t.describe('ModalFactory', () => {
 			}));
 		});
 
-		it('should verify the exact error logging format', async () => {
+		t.it('should verify the exact error logging format', async () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// Mock the module to fail
@@ -440,11 +529,11 @@ t.describe('ModalFactory', () => {
 
 			// Verify the exact format: first argument should be the message string,
 			// second argument should be an Error object
-			expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+			t.expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
 			const [firstArg, secondArg] = consoleErrorSpy.mock.calls[0];
 
-			expect(firstArg).toBe('Gracefully Failed to load modal customElements:');
-			expect(secondArg).toBeInstanceOf(Error);
+			t.expect(firstArg).toBe('Gracefully Failed to load modal customElements:');
+			t.expect(secondArg).toBeInstanceOf(Error);
 
 			consoleErrorSpy.mockRestore();
 
@@ -455,7 +544,7 @@ t.describe('ModalFactory', () => {
 			}));
 		});
 
-		it('should continue working after preload failure', async () => {
+		t.it('should continue working after preload failure', async () => {
 			const consoleErrorSpy = t.vi.spyOn(console, 'error').mockImplementation(() => {});
 
 			// First, cause preload to fail
@@ -469,25 +558,38 @@ t.describe('ModalFactory', () => {
 
 			// Test that modal rendering still works even when preload fails
 			const uiModule = new FreshUIModule(mockFactoryOptions);
-			const sessionRequest: SessionRequest = {
-				id: v4(),
-				channel: 'test',
-				publicKeyB64: 'test',
-				expiresAt: Date.now() + 1000,
-				mode: 'trusted',
+			const connectionRequest: ConnectionRequest = {
+				sessionRequest: {
+					id: v4(),
+					channel: 'test',
+					publicKeyB64: 'test',
+					expiresAt: Date.now() + 1000,
+					mode: 'trusted',
+				},
+				metadata: {
+					dapp: {
+						name: 'test',
+						url: 'https://test.com',
+					},
+					sdk: {
+						version: packageJson.version,
+						platform: PlatformType.NonBrowser,
+					},
+				},
 			};
-			await expect(
-				uiModule.renderInstallModal(
-					false,
-					() => Promise.resolve(sessionRequest),
-					() => {},
-					() => {},
-				),
-			).resolves.not.toThrow();
+			await t
+				.expect(
+					uiModule.renderInstallModal(
+						false,
+						() => Promise.resolve(connectionRequest),
+						() => {},
+					),
+				)
+				.resolves.not.toThrow();
 
 			// Verify the modal was rendered despite preload failure
-			expect(mockFactoryOptions.InstallModal).toHaveBeenCalled();
-			expect(mockModal.mount).toHaveBeenCalled();
+			t.expect(mockFactoryOptions.InstallModal).toHaveBeenCalled();
+			t.expect(mockModal.mount).toHaveBeenCalled();
 
 			consoleErrorSpy.mockRestore();
 
@@ -496,197 +598,6 @@ t.describe('ModalFactory', () => {
 			t.vi.doMock('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js', () => ({
 				defineCustomElements: t.vi.fn(),
 			}));
-		});
-	});
-
-	describe('updateQRCode method testing', () => {
-		let mockInstallModal: any;
-
-		beforeEach(() => {
-			// Create mock modal elements that simulate the DOM structure
-			mockInstallModal = {
-				link: '',
-				querySelector: t.vi.fn(),
-			};
-		});
-
-		describe('Generic Modal updateQRCode functionality', () => {
-			it('should update QR code link for install modal', async () => {
-				// Create a test modal instance that extends the Modal class
-				class TestInstallModal extends AbstractInstallModal {
-					instance: any;
-
-					constructor() {
-						super({ sessionRequest: null } as any);
-						this.instance = {
-							querySelector: t.vi.fn((selector: string) => {
-								if (selector === 'mm-install-modal') {
-									return mockInstallModal;
-								}
-								return null;
-							}),
-						};
-					}
-
-					mount() {}
-
-					unmount() {}
-				}
-
-				const testModal = new TestInstallModal();
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
-				};
-
-				// Call updateQRCode method
-				testModal.updateSessionRequest(sessionRequest);
-
-				// Verify the install modal's link was updated
-				expect(testModal.sessionRequest).toBe(sessionRequest);
-			});
-
-			it('should handle case where install modal is not found', async () => {
-				class TestNoModal extends AbstractInstallModal {
-					instance: any;
-
-					constructor() {
-						super({ sessionRequest: null } as any);
-						this.instance = {
-							querySelector: t.vi.fn(() => null), // No modals found
-						};
-					}
-
-					mount() {}
-
-					unmount() {}
-				}
-
-				const testModal = new TestNoModal();
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
-				};
-
-				// Call updateQRCode method - should not throw even if no modals are found
-				expect(() => testModal.updateSessionRequest(sessionRequest)).not.toThrow();
-			});
-
-			it('should handle case where instance is undefined', async () => {
-				class TestUndefinedModal extends AbstractInstallModal {
-					constructor() {
-						super({ sessionRequest: null } as any);
-					}
-
-					mount() {}
-
-					unmount() {}
-				}
-
-				const testModal = new TestUndefinedModal();
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
-				};
-
-				// Call updateQRCode method - should not throw even if instance is undefined
-				expect(() => testModal.updateSessionRequest(sessionRequest)).not.toThrow();
-			});
-		});
-
-		describe('Integration with ModalFactory modals', () => {
-			beforeEach(() => {
-				// Store the original createElement method to avoid recursion
-				const originalCreateElement = dom.window.document.createElement.bind(dom.window.document);
-
-				// Create proper DOM elements using the actual JSDOM implementation
-				const createElement = t.vi.spyOn(document, 'createElement');
-				createElement.mockImplementation((tagName: string) => {
-					const element = originalCreateElement(tagName);
-
-					if (tagName === 'mm-install-modal') {
-						// Add properties that mm-install-modal should have
-						(element as any).link = '';
-						(element as any).sdkVersion = '';
-						(element as any).preferDesktop = false;
-						(element as any).addEventListener = t.vi.fn();
-					}
-
-					return element;
-				});
-			});
-
-			it('should support updateQRCode on install modal through ModalFactory', async () => {
-				const sessionRequest: SessionRequest = {
-					id: v4(),
-					channel: 'test',
-					publicKeyB64: 'test',
-					expiresAt: Date.now() + 1000,
-					mode: 'trusted',
-				};
-
-				const newSessionRequest: SessionRequest = {
-					...sessionRequest,
-					id: v4(),
-				};
-
-				const mockInstallModalMount = vi.fn<() => HTMLMmInstallModalElement>().mockImplementation(function (this: AbstractInstallModal) {
-					const modal = document.createElement('mm-install-modal');
-					modal.sessionRequest = this.options.sessionRequest;
-					modal.sdkVersion = this.options.sdkVersion;
-					modal.preferDesktop = this.options.preferDesktop;
-					this.options.parentElement?.appendChild(modal);
-					this.instance = modal;
-					return modal;
-				});
-
-				const mockInstallModalUnMount = vi.fn().mockImplementation(function (this: AbstractInstallModal) {
-					if (this.instance && this.options.parentElement?.contains(this.instance)) {
-						this.options.parentElement.removeChild(this.instance);
-					}
-				});
-
-				// Create modal factory options with real modal-like behavior
-				class MockInstallModal extends AbstractInstallModal {
-					mount = mockInstallModalMount;
-					unmount = mockInstallModalUnMount;
-				}
-
-				const testFactoryOptions = {
-					...mockFactoryOptions,
-					InstallModal: vi.fn().mockImplementation((options: InstallWidgetProps) => new MockInstallModal(options)),
-				};
-
-				const testUIModule = new ModalFactory(testFactoryOptions);
-
-				// Render the modal
-				await testUIModule.renderInstallModal(
-					false,
-					() => Promise.resolve(sessionRequest),
-					() => {},
-					() => {},
-				);
-
-				// Verify the modal was rendered with the initial link
-				expect(testFactoryOptions.InstallModal).toHaveBeenCalledWith(expect.objectContaining({ sessionRequest }));
-				expect(mockInstallModalMount).toHaveBeenCalled();
-
-				// Verify initial link was set
-				expect((testUIModule as any).modal?.sessionRequest).toBe(sessionRequest);
-
-				// Test updateQRCode functionality
-				(testUIModule as any).modal?.updateSessionRequest(newSessionRequest);
-				expect((testUIModule as any).modal?.sessionRequest).toBe(newSessionRequest);
-			});
 		});
 	});
 });

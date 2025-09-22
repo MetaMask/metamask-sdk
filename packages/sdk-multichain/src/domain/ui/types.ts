@@ -1,14 +1,16 @@
-import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import type { Components } from '@metamask/sdk-multichain-ui';
+import type { ConnectionRequest } from '../multichain';
 
 export type OTPCode = string;
+export type QRLink = string;
 
 export interface InstallWidgetProps extends Components.MmInstallModal {
 	parentElement?: Element;
+	connectionRequest: ConnectionRequest;
 	onClose: (shouldTerminate?: boolean) => void;
 	startDesktopOnboarding: () => void;
-	createSessionRequest: () => Promise<SessionRequest>;
-	updateSessionRequest: (sessionRequest: SessionRequest) => void;
+	createConnectionRequest: () => Promise<ConnectionRequest>;
+	generateQRCode: (connectionRequest: ConnectionRequest) => Promise<QRLink>;
 }
 
 export interface OTPCodeWidgetProps extends Components.MmOtpModal {
@@ -19,10 +21,12 @@ export interface OTPCodeWidgetProps extends Components.MmOtpModal {
 	updateOTPCode: (otpValue: string) => void;
 }
 
+type ModalData = { link: QRLink } | { otpCode: OTPCode };
+
 /**
  * Abstract Modal class with shared functionality across all models
  */
-export abstract class Modal<R = unknown, T = unknown> {
+export abstract class Modal<R extends OTPCode | QRLink = OTPCode | QRLink, T extends ModalData = ModalData> {
 	protected abstract instance?: HTMLMmInstallModalElement | HTMLMmOtpModalElement | undefined;
 
 	abstract mount(): void;
@@ -31,30 +35,24 @@ export abstract class Modal<R = unknown, T = unknown> {
 	constructor(protected readonly options: T) {}
 
 	get data() {
-		// biome-ignore lint/suspicious/noExplicitAny: expected
-		if ('sessionRequest' in (this.options as any)) {
-			// biome-ignore lint/suspicious/noExplicitAny: expected
-			return (this.options as any).sessionRequest;
+		if ('link' in this.options) {
+			return this.options.link as R;
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: expected
-		if ('otpCode' in (this.options as any)) {
-			// biome-ignore lint/suspicious/noExplicitAny: expected
-			return (this.options as any).otpCode;
+
+		if ('otpCode' in this.options) {
+			return this.options.otpCode as R;
 		}
 
 		throw new Error('Invalid options');
 	}
 
-	set data(data: R extends OTPCode ? OTPCode : R extends SessionRequest ? SessionRequest : R) {
-		// biome-ignore lint/suspicious/noExplicitAny: expected
-		if ('sessionRequest' in (this.options as any)) {
-			// biome-ignore lint/suspicious/noExplicitAny: expected
-			(this.options as any).sessionRequest = data;
+	set data(data: R) {
+		if ('link' in this.options) {
+			this.options.link = data;
 		}
-		// biome-ignore lint/suspicious/noExplicitAny: expected
-		if ('otpCode' in (this.options as any)) {
-			// biome-ignore lint/suspicious/noExplicitAny: expected
-			(this.options as any).otpCode = data;
+
+		if ('otpCode' in this.options) {
+			this.options.otpCode = data;
 		}
 	}
 }

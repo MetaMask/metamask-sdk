@@ -1,7 +1,11 @@
+import type { ConnectionRequest, QRLink } from 'src/domain';
 import { AbstractInstallModal } from '../base/AbstractInstallModal';
 
 export class InstallModal extends AbstractInstallModal {
-	private expirationInterval: NodeJS.Timeout | null = null;
+	renderQRCode(link: QRLink, connectionRequest: ConnectionRequest): void {
+		//This part is done by the install modal web, managed by the Modal
+		throw new Error('Method not implemented.');
+	}
 
 	mount() {
 		const { options } = this;
@@ -15,7 +19,7 @@ export class InstallModal extends AbstractInstallModal {
 		options.parentElement?.appendChild(modal);
 
 		this.instance = modal;
-		this.startExpirationCheck();
+		this.startExpirationCheck(options.connectionRequest);
 	}
 
 	unmount() {
@@ -24,32 +28,6 @@ export class InstallModal extends AbstractInstallModal {
 		if (modal && options.parentElement?.contains(modal)) {
 			options.parentElement.removeChild(modal);
 			this.instance = undefined;
-		}
-	}
-
-	private startExpirationCheck() {
-		// Clear any existing interval
-		this.stopExpirationCheck();
-
-		this.expirationInterval = setInterval(async () => {
-			if (!this.instance) {
-				return;
-			}
-
-			const now = Date.now();
-			if (this.instance && now >= this.sessionRequest.expiresAt) {
-				// Generate new session request
-				const newSessionRequest = await this.options.createSessionRequest();
-				this.instance.sessionRequest = newSessionRequest;
-				this.sessionRequest = newSessionRequest;
-			}
-		}, 1000); // Check every second
-	}
-
-	private stopExpirationCheck() {
-		if (this.expirationInterval) {
-			clearInterval(this.expirationInterval);
-			this.expirationInterval = null;
 		}
 	}
 }
