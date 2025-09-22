@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
+/** biome-ignore-all lint/suspicious/noAsyncPromiseExecutor: ok for tests */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 /**
  * Test fixtures and utilities for the Multichain SDK tests
  * This file is excluded from test discovery via vitest.config.ts
  */
-
 // Additional imports for standardized setup functions
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JSDOM as Page } from 'jsdom';
@@ -19,6 +19,7 @@ import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
 import * as nodeStorage from './store/adapters/node';
+import * as webStorage from './store/adapters/web';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 // Mock logger at the top level
@@ -341,7 +342,6 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 		...dom.window,
 		addEventListener: t.vi.fn(),
 		removeEventListener: t.vi.fn(),
-		localStorage: nativeStorageStub,
 		ethereum: {
 			isMetaMask: true,
 		},
@@ -356,6 +356,24 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 	t.vi.stubGlobal('document', dom.window.document);
 	t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 	t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+	t.vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
+		const __storage = {
+			get: t.vi.fn((key: string) => {
+				return nativeStorageStub.getItem(key);
+			}),
+			set: t.vi.fn((key: string, value: string) => {
+				return nativeStorageStub.setItem(key, value);
+			}),
+			delete: t.vi.fn((key: string) => {
+				return nativeStorageStub.removeItem(key);
+			}),
+			platform: 'web' as const,
+			get storage() {
+				return __storage;
+			},
+		} as any;
+		return __storage;
+	});
 };
 
 // Helper functions to create standardized test configurations
