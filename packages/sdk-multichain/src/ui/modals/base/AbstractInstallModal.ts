@@ -42,8 +42,10 @@ export abstract class AbstractInstallModal extends Modal<QRLink, InstallWidgetPr
 	protected startExpirationCheck(connectionRequest: ConnectionRequest) {
 		this.stopExpirationCheck();
 
+		let currentConnectionRequest: ConnectionRequest = connectionRequest;
+
 		this.expirationInterval = setInterval(async () => {
-			const { sessionRequest } = connectionRequest;
+			const { sessionRequest } = currentConnectionRequest;
 			const now = Date.now();
 			const remainingMs = sessionRequest.expiresAt - now;
 
@@ -57,12 +59,10 @@ export abstract class AbstractInstallModal extends Modal<QRLink, InstallWidgetPr
 
 			if (now >= sessionRequest.expiresAt) {
 				logger('[UI: InstallModal-nodejs()] ⏰ QR code EXPIRED! Generating new one...');
-
 				try {
 					// Generate new session request
-					const connectionRequest = await this.options.createConnectionRequest();
-					const generateQRCode = await this.options.generateQRCode(connectionRequest);
-
+					currentConnectionRequest = await this.options.createConnectionRequest();
+					const generateQRCode = await this.options.generateQRCode(currentConnectionRequest);
 					this.lastLoggedCountdown = -1; // Reset countdown logging
 
 					//Update local instances with new data
@@ -70,10 +70,13 @@ export abstract class AbstractInstallModal extends Modal<QRLink, InstallWidgetPr
 					this.updateExpiresIn(remainingSeconds);
 
 					// Render QRCode on each platform
-					this.renderQRCode(generateQRCode, connectionRequest);
+					this.renderQRCode(generateQRCode, currentConnectionRequest);
 				} catch (error) {
 					logger(`[UI: InstallModal-nodejs()] ❌ Error generating new QR code: ${error}`);
 				}
+			} else {
+				const generateQRCode = await this.options.generateQRCode(currentConnectionRequest);
+				this.renderQRCode(generateQRCode, currentConnectionRequest);
 			}
 		}, 1000);
 	}

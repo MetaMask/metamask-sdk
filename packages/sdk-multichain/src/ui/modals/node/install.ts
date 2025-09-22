@@ -5,35 +5,32 @@ import { formatRemainingTime, shouldLogCountdown } from '../base/utils';
 
 const logger = createLogger('metamask-sdk:ui');
 
-function displayQRWithCountdown(qrCodeLink: QRLink, expiresAt: number) {
-	const now = Date.now();
-	const remainingMs = expiresAt - now;
-	const remainingTime = formatRemainingTime(remainingMs);
-	const isExpired = remainingMs <= 0;
-	const qrCode = encodeQR(qrCodeLink, 'ascii');
-
-	// Clear console and display QR code with live countdown
-	console.clear();
-	console.log(qrCode);
-
-	if (isExpired) {
-		console.log('EXPIRED - Generating new QR code...');
-	} else {
-		console.log(`EXPIRES IN: ${remainingTime}`);
-	}
-}
-
 export class InstallModal extends AbstractInstallModal {
+	private displayQRWithCountdown(qrCodeLink: QRLink, expiresInSeconds: number) {
+		const isExpired = expiresInSeconds <= 0;
+		const qrCode = encodeQR(qrCodeLink, 'ascii');
+
+		// Clear console and display QR code with live countdown
+		console.clear();
+		console.log(qrCode);
+
+		if (isExpired) {
+			console.log('EXPIRED - Generating new QR code...');
+		} else {
+			console.log(`EXPIRES IN: ${expiresInSeconds}`);
+		}
+	}
 	renderQRCode(link: QRLink, connectionRequest: ConnectionRequest): void {
 		const { sessionRequest } = connectionRequest;
 		const expiresIn = sessionRequest.expiresAt - Date.now();
-		const shouldLog = shouldLogCountdown(expiresIn);
+		const expiresInSeconds = Math.floor(expiresIn / 1000);
+		const shouldLog = shouldLogCountdown(expiresInSeconds);
 
-		displayQRWithCountdown(link, sessionRequest.expiresAt);
+		this.displayQRWithCountdown(link, this.instance?.expiresIn ?? expiresInSeconds);
 
 		if (shouldLog) {
 			const formattedTime = formatRemainingTime(expiresIn);
-			logger(`[UI: InstallModal-nodejs()] QR code expires in: ${formattedTime} (${expiresIn}s)`);
+			logger(`[UI: InstallModal-nodejs()] QR code expires in: ${formattedTime} (${expiresIn}ms)`);
 		}
 	}
 

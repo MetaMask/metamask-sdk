@@ -99,7 +99,7 @@ t.describe('WEB Modals', () => {
 				connectionRequest,
 				link: 'qrcode',
 				generateQRCode: vi.fn().mockResolvedValue('qrcode'),
-				expiresIn: (Date.now() - connectionRequest.sessionRequest.expiresAt) / 1000,
+				expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 				parentElement: document.body,
 			});
 		});

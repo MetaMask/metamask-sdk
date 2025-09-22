@@ -37,6 +37,9 @@ t.describe('AbstractInstallModal', () => {
 			onClose: t.vi.fn(),
 			createConnectionRequest: t.vi.fn(),
 			generateQRCode: t.vi.fn(),
+			startDesktopOnboarding: t.vi.fn(),
+			preferDesktop: false,
+			expiresIn: (mockConnectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 		});
 		modal.instance = { link: '', expiresIn: 0 };
 	});
@@ -109,29 +112,36 @@ t.describe('AbstractInstallModal', () => {
 		});
 
 		t.it('should start expiration check and regenerate QR code when expired', async () => {
+			const expireInSeconds = 2;
+			const expirationDate = Date.now() + expireInSeconds * 1000;
+			const connectionRequestToExpire: ConnectionRequest = {
+				...mockConnectionRequest,
+				sessionRequest: { ...mockConnectionRequest.sessionRequest, expiresAt: expirationDate },
+			};
+
 			const createConnectionRequestMock = t.vi.fn().mockResolvedValue({
-				sessionRequest: { expiresAt: Date.now() + 100000, id: 'new-session-id' },
+				sessionRequest: { expiresAt: Date.now() + 60000, id: 'new-session-id' },
 			});
 			const generateQRCodeMock = t.vi.fn().mockResolvedValue('new-link');
 
 			modal = new TestInstallModal({
-				...modal.options,
+				...(modal as any).options,
 				createConnectionRequest: createConnectionRequestMock,
 				generateQRCode: generateQRCodeMock,
 			});
 			const renderQRCodeMock = t.vi.spyOn(modal, 'renderQRCode');
 
-			(modal as any).startExpirationCheck(mockConnectionRequest);
+			(modal as any).startExpirationCheck(connectionRequestToExpire);
 
 			// Fast-forward time to just before expiration
-			await t.vi.advanceTimersByTimeAsync(99000);
+			await t.vi.advanceTimersByTimeAsync((expireInSeconds - 1) * 1000);
 			t.expect(createConnectionRequestMock).not.toHaveBeenCalled();
+			t.expect(generateQRCodeMock).toHaveBeenCalledTimes(1);
 
 			// Fast-forward time to after expiration
-			await t.vi.advanceTimersByTimeAsync(1001);
-
+			await t.vi.advanceTimersByTimeAsync(1000);
 			t.expect(createConnectionRequestMock).toHaveBeenCalledTimes(1);
-			t.expect(generateQRCodeMock).toHaveBeenCalledTimes(1);
+			t.expect(generateQRCodeMock).toHaveBeenCalledTimes(2);
 			t.expect(renderQRCodeMock).toHaveBeenCalledWith('new-link', t.expect.any(Object));
 			t.expect(modal.link).toBe('new-link');
 		});

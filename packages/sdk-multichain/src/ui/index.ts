@@ -112,7 +112,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		const qrCodeLink = await this.generateQRCode(connectionRequest);
 
 		const modal = new this.options.InstallModal({
-			expiresIn: (Date.now() - connectionRequest.sessionRequest.expiresAt) / 1000,
+			expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 			connectionRequest,
 			parentElement,
 			preferDesktop,

@@ -134,7 +134,7 @@ t.describe('Node Modals', () => {
 			connectionRequest,
 			link: 'qrcode',
 			generateQRCode: vi.fn().mockResolvedValue('qrcode'),
-			expiresIn: (Date.now() - connectionRequest.sessionRequest.expiresAt) / 1000,
+			expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 		});
 
 		t.expect(installModal.unmount).toBeDefined();
