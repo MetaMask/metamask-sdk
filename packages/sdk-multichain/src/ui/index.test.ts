@@ -77,6 +77,7 @@ t.describe('ModalFactory', () => {
 		t.vi.stubGlobal('document', dom.window.document);
 		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+		t.vi.stubGlobal('CustomEvent', dom.window.CustomEvent);
 
 		const windowStub = {
 			...dom.window,
@@ -84,6 +85,7 @@ t.describe('ModalFactory', () => {
 			addEventListener: t.vi.fn(),
 			removeEventListener: t.vi.fn(),
 			dispatchEvent: t.vi.fn(),
+			CustomEvent: dom.window.CustomEvent,
 		};
 		t.vi.stubGlobal('window', windowStub);
 
