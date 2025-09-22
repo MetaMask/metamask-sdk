@@ -15,10 +15,11 @@ export class InstallModal extends AbstractInstallModal {
 		modal.sdkVersion = options.sdkVersion;
 		modal.addEventListener('close', ({ detail: { shouldTerminate } }) => options.onClose(shouldTerminate));
 		modal.addEventListener('startDesktopOnboarding', options.startDesktopOnboarding);
-		modal.sessionRequest = options.sessionRequest;
-		options.parentElement?.appendChild(modal);
+		modal.link = options.link;
 
 		this.instance = modal;
+		options.parentElement?.appendChild(modal);
+
 		this.startExpirationCheck(options.connectionRequest);
 	}
 
