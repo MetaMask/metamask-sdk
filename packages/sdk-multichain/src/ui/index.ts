@@ -25,7 +25,7 @@ export async function preload() {
 export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	public modal!: Modal;
 	private readonly platform: PlatformType = getPlatformType();
-	private successCallback!: (success: boolean, error?: Error) => void;
+	private successCallback!: (error?: Error) => void;
 
 	/**
 	 * Creates a new modal factory instance.
@@ -43,9 +43,9 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		}
 	}
 
-	unload(success: boolean, error?: Error) {
+	unload(error?: Error) {
 		this.modal?.unmount();
-		this.successCallback?.(success, error);
+		this.successCallback?.(error);
 	}
 
 	/**
@@ -94,15 +94,15 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	}
 
 	private onCloseModal() {
-		this.unload(true);
+		this.unload(new Error('User closed modal'));
 	}
 
 	private onStartDesktopOnboarding() {
+		this.modal?.unmount();
 		new MetaMaskOnboarding().startOnboarding();
-		this.unload(true);
 	}
 
-	public async renderInstallModal(preferDesktop: boolean, createConnectionRequest: () => Promise<ConnectionRequest>, successCallback: (success: boolean, error?: Error) => void) {
+	public async renderInstallModal(preferDesktop: boolean, createConnectionRequest: () => Promise<ConnectionRequest>, successCallback: (error?: Error) => void) {
 		this.modal?.unmount();
 		await preload();
 		this.successCallback = successCallback;
@@ -130,7 +130,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 
 	public async renderOTPCodeModal(
 		createOTPCode: () => Promise<OTPCode>,
-		successCallback: (success: boolean, error?: Error) => void,
+		successCallback: (error?: Error) => void,
 		updateOTPCode: (otpCode: OTPCode, modal: AbstractOTPCodeModal) => void,
 	) {
 		this.modal?.unmount();
@@ -144,9 +144,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 			parentElement: container,
 			sdkVersion: getVersion(),
 			otpCode,
-			onClose: () => {
-				this.unload(true);
-			},
+			onClose: this.onCloseModal.bind(this),
 			createOTPCode,
 			updateOTPCode: (otpCode: OTPCode) => updateOTPCode(otpCode, modal),
 		});

@@ -1,5 +1,5 @@
 import type { StoreClient } from '../store';
-import type { MultichainCore } from '.';
+import type { MultichainCore, SessionData } from '.';
 import type { RPC_URLS_MAP } from './api/types';
 import type { ModalFactory } from '../../ui';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
@@ -62,10 +62,11 @@ export type MultichainOptions = {
 	transport?: {
 		/** Extension ID for browser extension transport */
 		extensionId?: string;
+		onResumeSession?: (session: SessionData) => void;
 	};
 };
 
-export type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
+type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
 	ui?: Omit<MultichainOptions['ui'], 'factory'>;
 } & {
 	storage?: StoreClient;

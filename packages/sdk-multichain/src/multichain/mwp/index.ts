@@ -1,11 +1,11 @@
-import type { Transport, TransportRequest, TransportResponse } from '@metamask/multichain-api-client';
+import { TransportTimeoutError, type Transport, type TransportRequest, type TransportResponse } from '@metamask/multichain-api-client';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 import type { StoreAdapter } from 'src/domain';
 
-const DEFAULT_REQUEST_TIMEOUT = 30000;
+const DEFAULT_REQUEST_TIMEOUT = 10000;
 
 type PendingRequests = {
 	resolve: (value: TransportResponse<unknown>) => void;
@@ -43,16 +43,20 @@ export class MWPTransport implements Transport {
 	}
 
 	private handleMessage(message: unknown): void {
-		if (typeof message === 'object' && message !== null && 'id' in message && typeof (message as Record<string, unknown>).id === 'string') {
-			const typedMessage = message as Record<string, unknown> & { id: string };
-			const request = this.pendingRequests.get(typedMessage.id);
-			if (request) {
-				clearTimeout(request.timeout);
-				request.resolve(message as TransportResponse<unknown>);
-				this.pendingRequests.delete(typedMessage.id);
+		if (typeof message === 'object' && message !== null && 'data' in message) {
+			const messagePayload = message.data as Record<string, unknown>;
+
+			if ('id' in messagePayload && typeof messagePayload.id === 'string') {
+				const request = this.pendingRequests.get(messagePayload.id);
+				if (request) {
+					clearTimeout(request.timeout);
+					request.resolve(messagePayload as TransportResponse<unknown>);
+					this.pendingRequests.delete(messagePayload.id);
+					return;
+				}
+			} else {
+				this.notifyCallbacks(message);
 			}
-		} else {
-			this.notifyCallbacks(message);
 		}
 	}
 
@@ -75,11 +79,23 @@ export class MWPTransport implements Transport {
 
 		const { dappClient, kvstore } = this;
 		const sessionStore = new SessionStore(kvstore);
-		const [activeSession] = (await sessionStore.list()) ?? [];
 
 		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
-			const connection = activeSession ? dappClient.resume(activeSession.id) : dappClient.connect({ mode: 'trusted' });
-			connection.then(resolve).catch(reject);
+			sessionStore
+				.list()
+				.then(([activeSession]) => {
+					const connection = activeSession ? dappClient.resume(activeSession.id) : dappClient.connect({ mode: 'trusted' });
+					connection
+						.then(() => {
+							//Resuming connections will not trigger the session request event, needed by sdk
+							if (activeSession) {
+								this.dappClient.emit('session_request', activeSession);
+							}
+							resolve();
+						})
+						.catch(reject);
+				})
+				.catch(reject);
 		});
 
 		return this.connectionPromise.finally(() => {
@@ -112,15 +128,12 @@ export class MWPTransport implements Transport {
 				jsonrpc: '2.0',
 				...payload,
 			};
-
 			const timeout = setTimeout(() => {
-				this.rejectRequest(request.id, new Error(`Request timeout after ${this.options.requestTimeout}ms`));
+				this.rejectRequest(request.id, new TransportTimeoutError());
 			}, this.options.requestTimeout);
-
 			this.pendingRequests.set(request.id, { resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
 			this.dappClient.sendRequest(request);
 		});
-
 		return response;
 	}
 
