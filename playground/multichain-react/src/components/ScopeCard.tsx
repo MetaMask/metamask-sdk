@@ -3,7 +3,7 @@ import MetaMaskOpenRPCDocument from '@metamask/api-specs';
 import type { Scope, SessionData } from '@metamask/multichain-sdk';
 import { type CaipAccountId, type CaipChainId, type CaipAccountAddress, parseCaipAccountId, type Json } from '@metamask/utils';
 import type { OpenrpcDocument, MethodObject } from '@open-rpc/meta-schema';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { METHODS_REQUIRING_PARAM_INJECTION, injectParams } from '../constants/methods';
 import { getNetworkName } from '../constants/networks';
 import { escapeHtmlId } from '../helpers/IdHelpers';
@@ -58,7 +58,11 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 		},
 		[setInitialMethodsAndAccounts],
 	);
-	const { invokeMethod } = useSDK({ onSessionChanged: handleSessionChangedNotification });
+	const { invokeMethod, session } = useSDK();
+
+	useEffect(() => {
+		handleSessionChangedNotification(session);
+	}, [session]);
 
 	const [invokeMethodResults, setInvokeMethodResults] = useState<Record<string, Record<string, { result: any; request: any }[]>>>({});
 	const [selectedAccount, setSelectedAccount] = useState<CaipAccountId | undefined>(accounts?.length ? accounts[0] : undefined);

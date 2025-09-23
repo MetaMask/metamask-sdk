@@ -1,8 +1,6 @@
-import { useId } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Scope, SessionData } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
-import { METAMASK_PROD_CHROME_ID } from './constants';
 import { useSDK } from './sdk';
 import DynamicInputs, { INPUT_LABEL_TYPE } from './components/DynamicInputs';
 import { FEATURED_NETWORKS } from './constants/networks';
@@ -12,19 +10,9 @@ import { Buffer } from 'buffer';
 global.Buffer = Buffer;
 
 function App() {
-	const id = useId();
 	const [customScopes, setCustomScopes] = useState<string[]>(['eip155:1']);
 	const [caipAccountIds, setCaipAccountIds] = useState<CaipAccountId[]>([]);
-	const [extensionId, setExtensionId] = useState<string>(METAMASK_PROD_CHROME_ID);
-
-	const {
-		isConnected,
-		session,
-		connect: sdkConnect,
-		disconnect: sdkDisconnect,
-	} = useSDK({
-		extensionId,
-	});
+	const { isConnected, session, connect: sdkConnect, disconnect: sdkDisconnect } = useSDK();
 
 	useEffect(() => {
 		if (session) {
@@ -35,7 +23,7 @@ function App() {
 			const allAccounts: CaipAccountId[] = [];
 			for (const scope of scopes) {
 				const { accounts } = session.sessionScopes[scope as keyof typeof session.sessionScopes] ?? {};
-				if (accounts) {
+				if (accounts && accounts.length > 0) {
 					allAccounts.push(...accounts);
 				}
 			}
@@ -48,13 +36,11 @@ function App() {
 		if (!session) return false;
 		const sessionScopes = Object.keys(session.sessionScopes);
 		const currentScopes = customScopes.filter((scope) => scope.length);
-
 		if (sessionScopes.length !== currentScopes.length) return true;
-
 		return !sessionScopes.every((scope) => currentScopes.includes(scope)) || !currentScopes.every((scope) => sessionScopes.includes(scope));
 	};
 
-	const connect = async () => {
+	const connect = useCallback(async () => {
 		try {
 			const selectedScopesArray = customScopes.filter((scope) => scope.length);
 			const filteredAccountIds = caipAccountIds.filter((addr) => addr.trim() !== '');
@@ -62,7 +48,7 @@ function App() {
 		} catch (error) {
 			console.error('Error creating session:', error);
 		}
-	};
+	}, [customScopes, caipAccountIds]);
 
 	const disconnect = useCallback(async () => {
 		await sdkDisconnect();
@@ -79,20 +65,6 @@ function App() {
 			<div className="max-w-6xl w-full p-8">
 				<h1 className="text-slate-800 text-4xl font-bold mb-8 text-center">MetaMask MultiChain API Test Dapp</h1>
 				<section className="bg-white rounded-lg p-8 mb-6 shadow-sm">
-					<label className="flex flex-col gap-2 mb-4">
-						<span className="text-gray-700 font-medium">Extension ID:</span>
-						<input
-							type="text"
-							placeholder="Enter extension ID"
-							value={extensionId}
-							onChange={(evt) => setExtensionId(evt.target.value)}
-							disabled={true}
-							readOnly={true}
-							data-testid="extension-id-input"
-							id={id}
-							className="p-2 border border-gray-300 rounded text-base bg-gray-50"
-						/>
-					</label>
 					<div className="mb-4">
 						<DynamicInputs availableOptions={availableOptions} inputArray={customScopes} setInputArray={setCustomScopes} label={INPUT_LABEL_TYPE.SCOPE} />
 					</div>
