@@ -1,7 +1,6 @@
 /* eslint-disable */
 
 import type React from 'react';
-import { useCallback } from 'react';
 
 export enum INPUT_LABEL_TYPE {
 	ADDRESS = 'Address',
@@ -12,24 +11,11 @@ export enum INPUT_LABEL_TYPE {
 type DynamicInputsProps = {
 	inputArray: string[];
 	availableOptions: { name: string; value: string }[];
-	setInputArray: React.Dispatch<React.SetStateAction<string[]>>;
+	handleCheckboxChange: (value: string, isChecked: boolean) => void;
 	label: INPUT_LABEL_TYPE;
 };
 
-const DynamicInputs: React.FC<DynamicInputsProps> = ({ inputArray, setInputArray, label, availableOptions }) => {
-	const handleCheckboxChange = useCallback(
-		(value: string, isChecked: boolean) => {
-			if (isChecked) {
-				// Add to array if not already present
-				setInputArray((prev) => Array.from(new Set([...prev, value])));
-			} else {
-				// Remove from array
-				setInputArray((prev) => prev.filter((item) => item !== value));
-			}
-		},
-		[setInputArray],
-	);
-
+const DynamicInputs: React.FC<DynamicInputsProps> = ({ inputArray, handleCheckboxChange, label, availableOptions }) => {
 	return (
 		<div className="space-y-3">
 			<h3 className="text-lg font-medium text-gray-800">{label}s:</h3>
@@ -49,12 +35,6 @@ const DynamicInputs: React.FC<DynamicInputsProps> = ({ inputArray, setInputArray
 					);
 				})}
 			</div>
-			{inputArray.length > 0 && (
-				<div className="text-sm text-gray-500 mt-2">
-					Selected: {inputArray.length} {label.toLowerCase()}
-					{inputArray.length !== 1 ? 's' : ''}
-				</div>
-			)}
 		</div>
 	);
 };

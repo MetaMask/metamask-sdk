@@ -10,7 +10,6 @@ export const FEATURED_NETWORKS = {
 	'Polygon Mainnet': 'eip155:137',
 	'zkSync Era Mainnet': 'eip155:324',
 	'Base Mainnet': 'eip155:8453',
-	Localhost: 'eip155:1337',
 	'Solana Mainnet': 'solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp',
 } as const;
 
