@@ -5,7 +5,7 @@ import type { StoreClient } from '../store/client';
 import type { InvokeMethodOptions, RPCAPI, Scope } from './api/types';
 import type { MultichainOptions } from './types';
 
-export type SDKState = 'pending' | 'loaded' | 'disconnected' | 'connected';
+export type SDKState = 'pending' | 'loaded' | 'disconnected' | 'connected' | 'connecting';
 
 export enum TransportType {
 	Browser = 'browser',

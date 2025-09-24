@@ -84,16 +84,13 @@ export class MWPTransport implements Transport {
 			sessionStore
 				.list()
 				.then(([activeSession]) => {
-					const connection = activeSession ? dappClient.resume(activeSession.id) : dappClient.connect({ mode: 'trusted' });
-					connection
-						.then(() => {
-							//Resuming connections will not trigger the session request event, needed by sdk
-							if (activeSession) {
-								this.dappClient.emit('session_request', activeSession);
-							}
-							resolve();
-						})
-						.catch(reject);
+					let connection: Promise<void>;
+					if (activeSession) {
+						connection = dappClient.resume(activeSession.id);
+					} else {
+						connection = dappClient.connect({ mode: 'trusted' });
+					}
+					connection.then(resolve).catch(reject);
 				})
 				.catch(reject);
 		});

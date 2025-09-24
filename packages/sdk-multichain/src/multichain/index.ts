@@ -157,6 +157,7 @@ export class MultichainSDK extends MultichainCore {
 				const apiTransport = new MWPTransport(dappClient, kvstore);
 				this.__dappClient = dappClient;
 				this.__transport = apiTransport;
+				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 				return apiTransport;
 			} else {
 				await this.storage.removeTransport();
@@ -180,11 +181,13 @@ export class MultichainSDK extends MultichainCore {
 			const session = await this.getActiveSession();
 			this.__provider = getMultichainClient({ transport });
 			//Add event listeners to the transport
-			this.listener = transport.onNotification(this.onTransportNotification.bind(this));
 			if (session && Object.keys(session.sessionScopes ?? {}).length > 0) {
 				// No listeners can exist in here so we need onResumeSession event on constructor
 				this.options.transport?.onResumeSession?.(session);
 			}
+			this.state = 'connected';
+		} else {
+			this.state = 'loaded';
 		}
 	}
 
@@ -195,7 +198,6 @@ export class MultichainSDK extends MultichainCore {
 			} else {
 				await this.setupAnalytics();
 				await this.setupTransport();
-				this.state = 'loaded';
 				analytics.track('sdk_initialized', {});
 				if (typeof window !== 'undefined') {
 					window.mmsdk = this;
@@ -215,6 +217,7 @@ export class MultichainSDK extends MultichainCore {
 
 	private async onConnectionSuccess(params: ModalFactoryConnectOptions) {
 		try {
+			this.state = 'connected';
 			const session = await this.getCurrentSession();
 			const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
 			const proposedScopes = params.scopes;
@@ -273,6 +276,7 @@ export class MultichainSDK extends MultichainCore {
 							if (!error) {
 								this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
 							} else {
+								this.state = 'disconnected';
 								reject(error);
 							}
 						},
@@ -309,6 +313,7 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {
+		this.state = 'connecting';
 		const { ui } = this.options;
 		const platformType = getPlatformType();
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;
