@@ -54,22 +54,28 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 		const sdkInstance = await sdk;
 		setState(sdkInstance.state);
 		return sdkInstance.disconnect();
-	}, []);
+	}, [sdk]);
 
-	const connect = useCallback(async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
-		const sdkInstance = await sdk;
-		setState(sdkInstance.state);
-		await sdkInstance.connect(scopes, caipAccountIds);
-		setState(sdkInstance.state);
-		const newSession = await sdkInstance.getCurrentSession();
-		setSession(newSession);
-	}, []);
+	const connect = useCallback(
+		async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
+			const sdkInstance = await sdk;
+			setState(sdkInstance.state);
+			await sdkInstance.connect(scopes, caipAccountIds);
+			setState(sdkInstance.state);
+			const newSession = await sdkInstance.getCurrentSession();
+			setSession(newSession);
+		},
+		[sdk],
+	);
 
-	const invokeMethod = useCallback(async (options: InvokeMethodOptions) => {
-		const sdkInstance = await sdk;
-		setState(sdkInstance.state);
-		return sdkInstance.invokeMethod(options);
-	}, []);
+	const invokeMethod = useCallback(
+		async (options: InvokeMethodOptions) => {
+			const sdkInstance = await sdk;
+			setState(sdkInstance.state);
+			return sdkInstance.invokeMethod(options);
+		},
+		[sdk],
+	);
 
 	return (
 		<SDKContext.Provider

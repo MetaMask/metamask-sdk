@@ -54,7 +54,7 @@ function App() {
 		const selectedScopesArray = customScopes.filter((scope) => scope.length);
 		const filteredAccountIds = caipAccountIds.filter((addr) => addr.trim() !== '');
 		return sdkConnect(selectedScopesArray as Scope[], filteredAccountIds as CaipAccountId[]);
-	}, [customScopes, caipAccountIds]);
+	}, [customScopes, caipAccountIds, sdkConnect]);
 
 	const disconnect = useCallback(async () => {
 		await sdkDisconnect();

@@ -62,7 +62,7 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 
 	useEffect(() => {
 		handleSessionChangedNotification(session);
-	}, [session]);
+	}, [session, handleSessionChangedNotification]);
 
 	const [invokeMethodResults, setInvokeMethodResults] = useState<Record<string, Record<string, { result: any; request: any }[]>>>({});
 	const [selectedAccount, setSelectedAccount] = useState<CaipAccountId | undefined>(accounts?.length ? accounts[0] : undefined);
