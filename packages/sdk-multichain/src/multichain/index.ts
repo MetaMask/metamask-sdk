@@ -147,7 +147,10 @@ export class MultichainSDK extends MultichainCore {
 		const transportType = await this.storage.getTransport();
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
-				return getDefaultTransport(this.options.transport);
+				const apiTransport = getDefaultTransport(this.options.transport);
+				this.__transport = apiTransport;
+				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
+				return apiTransport;
 			} else if (transportType === TransportType.MPW) {
 				const { adapter: kvstore } = this.options.storage;
 				const sessionstore = new SessionStore(kvstore);
@@ -184,8 +187,10 @@ export class MultichainSDK extends MultichainCore {
 			if (session && Object.keys(session.sessionScopes ?? {}).length > 0) {
 				// No listeners can exist in here so we need onResumeSession event on constructor
 				this.options.transport?.onResumeSession?.(session);
+				this.state = 'connected';
+			} else {
+				this.state = 'loaded';
 			}
-			this.state = 'connected';
 		} else {
 			this.state = 'loaded';
 		}
@@ -205,6 +210,7 @@ export class MultichainSDK extends MultichainCore {
 			}
 		} catch (error) {
 			logger('MetaMaskSDK error during initialization', error);
+			this.state = 'loaded';
 		}
 	}
 
