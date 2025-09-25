@@ -98,7 +98,6 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	}
 
 	private onStartDesktopOnboarding() {
-		this.modal?.unmount();
 		new MetaMaskOnboarding().startOnboarding();
 	}
 
