@@ -1,6 +1,6 @@
 import { Modal, type OTPCode, type OTPCodeWidgetProps } from '../../../domain';
 
-export abstract class AbstractOTPCodeModal extends Modal<OTPCode, OTPCodeWidgetProps> {
+export abstract class AbstractOTPCodeModal extends Modal<OTPCodeWidgetProps, OTPCode> {
 	protected instance?: HTMLMmOtpModalElement | undefined;
 
 	get otpCode() {

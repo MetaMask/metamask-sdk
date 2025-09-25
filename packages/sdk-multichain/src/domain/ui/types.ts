@@ -21,37 +21,36 @@ export interface OTPCodeWidgetProps extends Components.MmOtpModal {
 	updateOTPCode: (otpValue: string) => void;
 }
 
-type ModalData = { link: QRLink } | { otpCode: OTPCode };
-
+export type DataType = OTPCode | QRLink;
 /**
  * Abstract Modal class with shared functionality across all models
  */
-export abstract class Modal<R extends OTPCode | QRLink = OTPCode | QRLink, T extends ModalData = ModalData> {
+export abstract class Modal<Options, Data extends DataType = DataType> {
 	protected abstract instance?: HTMLMmInstallModalElement | HTMLMmOtpModalElement | undefined;
 
 	abstract mount(): void;
 	abstract unmount(): void;
 
-	constructor(protected readonly options: T) {}
+	constructor(protected readonly options: Options) {}
 
 	get data() {
-		if ('link' in this.options) {
-			return this.options.link as R;
+		if (typeof this.options === 'object' && this.options && 'link' in this.options) {
+			return this.options.link as Data;
 		}
 
-		if ('otpCode' in this.options) {
-			return this.options.otpCode as R;
+		if (typeof this.options === 'object' && this.options && 'otpCode' in this.options) {
+			return this.options.otpCode as Data;
 		}
 
 		throw new Error('Invalid options');
 	}
 
-	set data(data: R) {
-		if ('link' in this.options) {
+	set data(data: Data) {
+		if (typeof this.options === 'object' && this.options && 'link' in this.options) {
 			this.options.link = data;
 		}
 
-		if ('otpCode' in this.options) {
+		if (typeof this.options === 'object' && this.options && 'otpCode' in this.options) {
 			this.options.otpCode = data;
 		}
 	}

@@ -3,7 +3,7 @@ import { formatRemainingTime, shouldLogCountdown } from './utils';
 
 const logger = createLogger('metamask-sdk:ui');
 
-export abstract class AbstractInstallModal extends Modal<QRLink, InstallWidgetProps> {
+export abstract class AbstractInstallModal extends Modal<InstallWidgetProps, QRLink> {
 	protected instance?: HTMLMmInstallModalElement | undefined;
 	private expirationInterval: NodeJS.Timeout | null = null;
 	private lastLoggedCountdown: number = -1;

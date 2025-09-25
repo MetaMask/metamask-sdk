@@ -23,7 +23,7 @@ export async function preload() {
 }
 
 export class ModalFactory<T extends FactoryModals = FactoryModals> {
-	public modal!: Modal;
+	public modal!: Modal<any>;
 	private readonly platform: PlatformType = getPlatformType();
 	private successCallback!: (error?: Error) => void;
 
