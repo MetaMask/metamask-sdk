@@ -222,6 +222,9 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async onConnectionSuccess(params: ModalFactoryConnectOptions) {
+		if (!this.transport.isConnected()) {
+			await this.transport.connect();
+		}
 		try {
 			this.state = 'connected';
 			const session = await this.getCurrentSession();
@@ -231,6 +234,9 @@ export class MultichainSDK extends MultichainCore {
 			if (isSameScopes) {
 				this.emit('wallet_sessionChanged', session);
 				return;
+			}
+			if (session) {
+				await this.transport.request({ method: 'wallet_revokeSession', params: session });
 			}
 			const { scopes, caipAccountIds } = params;
 			const optionalScopes = addValidAccounts(getOptionalScopes(scopes), getValidAccounts(caipAccountIds));

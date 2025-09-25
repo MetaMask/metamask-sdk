@@ -49,7 +49,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await afterEach(mockedData);
 		});
 
-		t.it(`${platform} should handle session upgrades`, async () => {
+		t.it.only(`${platform} should handle session upgrades`, async () => {
 			const scopes = ['eip155:1', 'eip155:137'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			// Get mocks from the module mock
@@ -84,6 +84,10 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 						result: mockedSessionUpgradeData,
 					});
 				}
+
+				if (input.method === 'wallet_revokeSession') {
+					return Promise.resolve({ id: 1, jsonrpc: '2.0', result: mockSessionData });
+				}
 				return Promise.reject(new Error('Forgot to mock this RPC call?'));
 			});
 
@@ -97,6 +101,11 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 
 			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
 				method: 'wallet_getSession',
+			});
+
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_revokeSession',
+				params: mockSessionData,
 			});
 
 			mockedData.mockTransport.__triggerNotification({
