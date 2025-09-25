@@ -361,7 +361,7 @@ t.describe('ModalFactory', () => {
 				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
 				constructorArgs.startDesktopOnboarding();
 
-				t.expect(mockModal.unmount).toHaveBeenCalled();
+				t.expect(mockModal.unmount).not.toHaveBeenCalled();
 			});
 		});
 
