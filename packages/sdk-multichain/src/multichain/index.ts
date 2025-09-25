@@ -24,12 +24,6 @@ export class MultichainSDK extends MultichainCore {
 	public state: SDKState;
 	private listener: (() => void | Promise<void>) | undefined;
 
-	private get client() {
-		const platformType = getPlatformType();
-		const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version} Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name}`;
-		return new RPCClient(this.provider, this.options.api, sdkInfo);
-	}
-
 	get provider() {
 		if (!this.__provider) {
 			throw new Error('Provider not initialized, establish connection first');
@@ -210,7 +204,6 @@ export class MultichainSDK extends MultichainCore {
 			}
 		} catch (error) {
 			logger('MetaMaskSDK error during initialization', error);
-			this.state = 'loaded';
 		}
 	}
 
@@ -374,6 +367,9 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
-		return this.client.invokeMethod(options);
+		const platformType = getPlatformType();
+		const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version} Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name}`;
+		const client = new RPCClient(this.provider, this.options.api, sdkInfo);
+		return client.invokeMethod(options);
 	}
 }

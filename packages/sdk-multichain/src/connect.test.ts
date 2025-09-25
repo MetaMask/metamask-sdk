@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import type { MultiChainFNOptions, MultichainCore, Scope } from './domain';
+import type { MultichainOptions, MultichainCore, Scope } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
 import { Store } from './store';
@@ -38,7 +38,7 @@ async function expectUIFactoryRenderInstallModal(sdk: MultichainCore) {
 	t.expect(onRenderInstallModal).toHaveBeenCalled();
 }
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -340,10 +340,6 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
-			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
-
 			const existingSessionData = {
 				...mockSessionData,
 				sessionScopes: {

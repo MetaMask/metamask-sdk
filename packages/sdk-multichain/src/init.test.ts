@@ -1,14 +1,14 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import type { MultiChainFNOptions, MultichainCore } from './domain';
+import type { MultichainOptions, MultichainCore } from './domain';
 import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
 import * as loggerModule from './domain/logger';
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -77,11 +77,24 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should properly initialize if existing session transport if found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
 
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
 			sdk = await createSDK(testOptions);
 
-			t.expect(sdk.state).toBe('loaded');
+			t.expect(sdk.state).toBe('connected');
 
 			await sdk.connect(['eip155:1'], ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any);
 
@@ -98,27 +111,37 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should emit sessionChanged event when existing valid session is found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
 
-			const onNotification = t.vi.fn();
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
+			const onResumeSession = t.vi.fn();
 
 			const optionsWithEvent = {
 				...testOptions,
-				onNotification,
+				transport: {
+					...(testOptions.transport ?? {}),
+					onResumeSession,
+				},
 			};
 			sdk = await createSDK(optionsWithEvent);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state).toBe('loaded');
-
-			mockedData.mockTransport.__triggerNotification({
-				method: 'session_changed',
-				params: {
-					session: mockSessionData,
-				},
-			});
+			t.expect(sdk.state).toBe('connected');
 
 			// Check that sessionChanged event was emitted with the expected session data during initialization
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
+			t.expect(onResumeSession).toHaveBeenCalledWith(mockSessionData);
 		});
 
 		t.it(`${platform} Should gracefully handle init errors by just logging them and return non initialized sdk`, async () => {

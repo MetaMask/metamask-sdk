@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore } from './domain';
+import type { InvokeMethodOptions, MultichainOptions, MultichainCore } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { mockSessionData, runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
 import { Store } from './store';
@@ -15,7 +15,7 @@ vi.mock('cross-fetch', () => {
 	};
 });
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -92,6 +92,22 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
 			// Mock the RPCClient response
 			const mockJsonResponse = { result: 'success' };
 			const fetchModule = await import('cross-fetch');
@@ -111,6 +127,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				},
 			});
 
+			t.expect(sdk.state).toBe('connected');
+
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 			const options = {
 				scope: 'eip155:1',
@@ -126,9 +144,21 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		t.it(`${platform} should handle invoke method errors`, async () => {
 			const mockError = new Error('Failed to invoke method');
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.request.mockRejectedValue(mockError);
 			mockedData.mockTransport.isConnected.mockReturnValue(true);
-			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
 			sdk = await createSDK(testOptions);
 			const options = {
 				scope: 'eip155:1',
@@ -137,6 +167,10 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 					params: [],
 				},
 			} as InvokeMethodOptions;
+			t.expect(sdk.state).toBe('connected');
+			t.expect(sdk.provider).toBeDefined();
+			mockedData.mockTransport.request.mockRejectedValue(mockError);
+
 			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
 		});
 	});

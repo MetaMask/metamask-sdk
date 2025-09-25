@@ -49,7 +49,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await afterEach(mockedData);
 		});
 
-		t.it.only(`${platform} should handle session upgrades`, async () => {
+		t.it(`${platform} should handle session upgrades`, async () => {
 			const scopes = ['eip155:1', 'eip155:137'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			// Get mocks from the module mock
@@ -151,7 +151,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			});
 		});
 
-		t.it(`${platform} should handle provider errors during session retrieval`, async () => {
+		t.it.only(`${platform} should handle provider errors during session retrieval`, async () => {
 			// Get mocks from the module mock
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
@@ -168,7 +168,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state === 'loaded').toBe(true);
+			t.expect(sdk.state === 'pending').toBe(true);
 
 			// Access the mock logger from the module
 			const mockLogger = (loggerModule as any).__mockLogger;
