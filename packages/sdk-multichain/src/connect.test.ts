@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import type { MultiChainFNOptions, MultichainCore, Scope } from './domain';
+import type { MultichainOptions, MultichainCore, Scope } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
 import { Store } from './store';
@@ -38,7 +38,7 @@ async function expectUIFactoryRenderInstallModal(sdk: MultichainCore) {
 	t.expect(onRenderInstallModal).toHaveBeenCalled();
 }
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -85,7 +85,16 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 			mockMultichainClient.getSession.mockResolvedValue(undefined);
 			mockMultichainClient.createSession.mockResolvedValue(mockSessionData);
-
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_createSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 			// Create a new SDK instance with the mock configured correctly
 			const sdk = await createSDK(testOptions);
 			const onConnectionSuccessSpy = t.vi.spyOn(sdk as any, 'onConnectionSuccess');
@@ -120,7 +129,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				await showModalPromise;
 
 				// Should have unloaded the modal and calling successCallback
-				t.expect(unloadSpy).toHaveBeenCalledWith(true);
+				t.expect(unloadSpy).toHaveBeenCalledWith();
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 			await connectPromise;
@@ -135,23 +144,22 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 
-			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
-				optionalScopes: {
-					'eip155:1': {
-						methods: [],
-						notifications: [],
-						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_createSession',
+				params: {
+					optionalScopes: {
+						...mockSessionData.sessionScopes,
 					},
 				},
 			});
 
 			mockedData.mockTransport.__triggerNotification({
-				method: 'session_changed',
+				method: 'wallet_sessionChanged',
 				params: {
 					session: mockSessionData,
 				},
 			});
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockSessionData);
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('wallet_sessionChanged', mockSessionData);
 		});
 
 		t.it(`${platform} should skip transport connection when already connected`, async () => {
@@ -160,7 +168,17 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			const scopes = ['eip155:1'] as Scope[];
@@ -170,7 +188,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
-			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
+			t.expect(mockedData.mockTransport.connect).not.toHaveBeenCalled();
 			mockedData.mockTransport.connect.mockReset();
 
 			await sdk.connect(scopes, caipAccountIds);
@@ -185,7 +203,16 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
 			mockMultichainClient.getSession.mockResolvedValue(undefined);
-
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 			// Mock console.error to capture invalid account ID errors
 
 			const scopes = ['eip155:1'] as Scope[];
@@ -215,7 +242,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				await showModalPromise;
 
 				// Should have unloaded the modal and calling successCallback
-				t.expect(unloadSpy).toHaveBeenCalledWith(true);
+				t.expect(unloadSpy).toHaveBeenCalledWith();
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 			await connectPromise;
@@ -227,12 +254,15 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			}
 
 			t.expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid CAIP account ID: "invalid-account-id"', t.expect.any(Error));
-			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
-				optionalScopes: {
-					'eip155:1': {
-						methods: [],
-						notifications: [],
-						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_createSession',
+				params: {
+					optionalScopes: {
+						'eip155:1': {
+							methods: [],
+							notifications: [],
+							accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+						},
 					},
 				},
 			});
@@ -256,10 +286,23 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 
-			mockMultichainClient.getSession.mockResolvedValue(undefined);
 			const sessionError = new Error('Failed to create session');
+
+			mockMultichainClient.getSession.mockResolvedValue(undefined);
 			mockMultichainClient.createSession.mockRejectedValue(sessionError);
 
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({ id: 1, jsonrpc: '2.0', result: undefined });
+				}
+				if (input.method === 'wallet_revokeSession') {
+					return Promise.resolve({ id: 1, jsonrpc: '2.0', result: mockSessionData });
+				}
+				if (input.method === 'wallet_createSession') {
+					return Promise.reject(sessionError);
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			sdk = await createSDK(testOptions);
@@ -287,7 +330,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				await showModalPromise;
 
 				// Should have unloaded the modal and calling successCallback
-				t.expect(unloadSpy).toHaveBeenCalledWith(true);
+				t.expect(unloadSpy).toHaveBeenCalledWith();
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 			await connectPromise;
@@ -297,10 +340,6 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
-			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
-
 			const existingSessionData = {
 				...mockSessionData,
 				sessionScopes: {
@@ -312,10 +351,22 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				},
 			};
 
-			mockMultichainClient.getSession.mockResolvedValue(existingSessionData);
-
 			const revocationError = new Error('Failed to revoke session');
-			mockMultichainClient.revokeSession.mockRejectedValue(revocationError);
+
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: existingSessionData,
+					});
+				}
+
+				if (input.method === 'wallet_revokeSession') {
+					return Promise.reject(revocationError);
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 
 			const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
 			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
@@ -344,7 +395,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				await showModalPromise;
 
 				// Should have unloaded the modal and calling successCallback
-				t.expect(unloadSpy).toHaveBeenCalledWith(true);
+				t.expect(unloadSpy).toHaveBeenCalledWith();
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 			await connectPromise;
@@ -399,7 +450,7 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				await showModalPromise;
 
 				// Should have unloaded the modal and calling successCallback
-				t.expect(unloadSpy).toHaveBeenCalledWith(true);
+				t.expect(unloadSpy).toHaveBeenCalledWith();
 				t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
 			}
 			await connectPromise;

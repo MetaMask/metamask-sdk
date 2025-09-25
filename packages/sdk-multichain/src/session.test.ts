@@ -1,14 +1,14 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import type { MultiChainFNOptions, MultichainCore, Scope, SessionData } from './domain';
+import type { MultichainOptions, MultichainCore, Scope, SessionData } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
 
 import * as loggerModule from './domain/logger';
 import { Store } from './store';
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -50,51 +50,90 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should handle session upgrades`, async () => {
+			const scopes = ['eip155:1', 'eip155:137'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 			// Get mocks from the module mock
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
-			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
-
-			sdk = await createSDK(testOptions);
-			(mockedData.mockTransport as any)._isConnected = true;
-
 			const mockedSessionUpgradeData: SessionData = {
 				...mockSessionData,
 				sessionScopes: {
 					...mockSessionData.sessionScopes,
 					'eip155:137': {
+						accounts: ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'],
 						methods: [],
 						notifications: [],
-						accounts: ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'],
 					},
 				},
 			};
-			const scopes = ['eip155:1', 'eip155:137'] as Scope[];
-			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+
+				if (input.method === 'wallet_createSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockedSessionUpgradeData,
+					});
+				}
+
+				if (input.method === 'wallet_revokeSession') {
+					return Promise.resolve({ id: 1, jsonrpc: '2.0', result: mockSessionData });
+				}
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
+
+			sdk = await createSDK(testOptions);
+			(mockedData.mockTransport as any)._isConnected = true;
+
 			// Mock createSession to return the upgraded session data
-			mockMultichainClient.createSession.mockResolvedValue(mockedSessionUpgradeData);
+			mockMultichainClient.createSession.mockResolvedValue({ data: mockedSessionUpgradeData });
 
 			await sdk.connect(scopes, caipAccountIds);
 
-			t.expect(mockMultichainClient.revokeSession).toHaveBeenCalled();
-			t.expect(mockMultichainClient.createSession).toHaveBeenCalledWith({
-				optionalScopes: mockedSessionUpgradeData.sessionScopes,
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_getSession',
+			});
+
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_revokeSession',
+				params: mockSessionData,
 			});
 
 			mockedData.mockTransport.__triggerNotification({
-				method: 'session_changed',
+				method: 'wallet_sessionChanged',
 				params: {
 					session: mockedSessionUpgradeData,
 				},
 			});
 			// sessionChanged should be emitted with the full session data returned from createSession, not just the scopes
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('session_changed', mockedSessionUpgradeData);
+			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('wallet_sessionChanged', mockedSessionUpgradeData);
 		});
 
 		t.it(`${platform} should handle session retrieval when no session exists`, async () => {
 			// Get mocks from the module mock
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: undefined,
+					});
+				}
+
+				return Promise.reject(new Error('Forgot to mock this RPC call?'));
+			});
 
 			// Mock no session scenario
 			mockMultichainClient.getSession.mockResolvedValue(undefined);
@@ -107,7 +146,9 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
 			t.expect(sdk.state).toBe('loaded');
-			t.expect(mockMultichainClient.getSession).toHaveBeenCalled();
+			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
+				method: 'wallet_getSession',
+			});
 		});
 
 		t.it(`${platform} should handle provider errors during session retrieval`, async () => {
@@ -118,18 +159,22 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 			// Clear previous calls and set up the error mock
 			t.vi.clearAllMocks();
+
+			mockedData.mockTransport.request.mockImplementation(() => {
+				return Promise.reject(sessionError);
+			});
 			mockMultichainClient.getSession.mockRejectedValue(sessionError);
 
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state === 'loaded').toBe(true);
+			t.expect(sdk.state === 'pending').toBe(true);
 
 			// Access the mock logger from the module
 			const mockLogger = (loggerModule as any).__mockLogger;
 
 			// Verify that the logger was called with the error
-			t.expect(mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during getCurrentSession', sessionError);
+			t.expect(mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during initialization', sessionError);
 		});
 	});
 }

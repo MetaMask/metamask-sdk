@@ -11,7 +11,7 @@ import { JSDOM as Page } from 'jsdom';
 import type { Transport } from '@metamask/multichain-api-client';
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { MultiChainFNOptions, MultichainCore, SessionData } from '../src/domain';
+import type { MultichainOptions, MultichainCore, SessionData } from '../src/domain';
 import { MultichainSDK } from '../src/multichain';
 
 // Import createSDK functions for convenience
@@ -272,7 +272,7 @@ export type MockedData = {
 	mockLogger: t.MockInstance<debug.Debugger>;
 };
 
-export type TestSuiteOptions<T extends MultiChainFNOptions> = {
+export type TestSuiteOptions<T extends MultichainOptions> = {
 	platform: string;
 	createSDK: Options<T>['createSDK'];
 	options: Options<T>['options'];
@@ -281,7 +281,7 @@ export type TestSuiteOptions<T extends MultiChainFNOptions> = {
 	storage: NativeStorageStub;
 };
 
-export type Options<T extends MultiChainFNOptions> = {
+export type Options<T extends MultichainOptions> = {
 	platform: 'web' | 'node' | 'rn';
 	options: T;
 	createSDK: (options: T) => Promise<MultichainCore>;
@@ -290,15 +290,15 @@ export type Options<T extends MultiChainFNOptions> = {
 	tests: (options: TestSuiteOptions<T>) => void;
 };
 
-export type CreateTestFN = <T extends MultiChainFNOptions>(options: Options<T>) => void;
+export type CreateTestFN = <T extends MultichainOptions>(options: Options<T>) => void;
 
 // Mock session data for testing
 export const mockSessionData: SessionData = {
 	sessionScopes: {
 		'eip155:1': {
+			accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 			methods: [],
 			notifications: [],
-			accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
 		},
 	},
 	expiry: new Date(Date.now() + 3600000).toISOString(),
@@ -377,7 +377,7 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 };
 
 // Helper functions to create standardized test configurations
-export const runTestsInNodeEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
+export const runTestsInNodeEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
 	return createTest({
 		platform: 'node',
 		createSDK: createMetamaskSDKNode,
@@ -387,7 +387,7 @@ export const runTestsInNodeEnv = <T extends MultiChainFNOptions>(options: T, tes
 	});
 };
 
-export const runTestsInRNEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
+export const runTestsInRNEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
 	return createTest({
 		platform: 'rn',
 		createSDK: createMetamaskSDKRN,
@@ -397,7 +397,7 @@ export const runTestsInRNEnv = <T extends MultiChainFNOptions>(options: T, testS
 	});
 };
 
-export const runTestsInWebEnv = <T extends MultiChainFNOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
+export const runTestsInWebEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
 	return createTest({
 		platform: 'web',
 		createSDK: createMetamaskSDKWeb,

@@ -1,7 +1,9 @@
 import type { StoreClient } from '../store';
-import type { MultichainCore } from '.';
+import type { MultichainCore, SessionData } from '.';
 import type { RPC_URLS_MAP } from './api/types';
 import type { ModalFactory } from '../../ui';
+import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import type { PlatformType } from '../platform';
 
 export type { SessionData } from '@metamask/multichain-api-client';
 
@@ -16,6 +18,14 @@ export type DappSettings = {
 	name?: string;
 	url?: string;
 } & ({ iconUrl?: string } | { base64Icon?: string });
+
+export type ConnectionRequest = {
+	sessionRequest: SessionRequest;
+	metadata: {
+		dapp: DappSettings;
+		sdk: { version: string; platform: PlatformType };
+	};
+};
 
 /**
  * Constructor options for creating a Multichain SDK instance.
@@ -52,10 +62,11 @@ export type MultichainOptions = {
 	transport?: {
 		/** Extension ID for browser extension transport */
 		extensionId?: string;
+		onResumeSession?: (session: SessionData) => void;
 	};
 };
 
-export type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
+type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
 	ui?: Omit<MultichainOptions['ui'], 'factory'>;
 } & {
 	storage?: StoreClient;

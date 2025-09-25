@@ -4,7 +4,7 @@ import type { CaipAccountId, Json } from '@metamask/utils';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type ModalFactoryConnectOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
-import { MultichainCore, type SDKState } from '../domain/multichain';
+import { type ConnectionRequest, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, PlatformType } from '../domain/platform';
 import { MWPTransport } from './mwp';
 import { RPCClient } from './rpc/client';
@@ -13,7 +13,6 @@ import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketT
 import { MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { keymanager } from './mwp/KeyManager';
-import type { AbstractInstallModal } from '../ui/modals/base/AbstractInstallModal';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -24,12 +23,6 @@ export class MultichainSDK extends MultichainCore {
 
 	public state: SDKState;
 	private listener: (() => void | Promise<void>) | undefined;
-
-	private get client() {
-		const platformType = getPlatformType();
-		const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version} Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name}`;
-		return new RPCClient(this.provider, this.options.api, sdkInfo);
-	}
 
 	get provider() {
 		if (!this.__provider) {
@@ -132,29 +125,15 @@ export class MultichainSDK extends MultichainCore {
 		analytics.enable();
 	}
 
-	private async onTransportNotification(data: unknown) {
-		if (typeof data !== 'object') return;
-		if (!data) return;
-
-		if (!('method' in data)) {
-			return;
-		}
-
-		if (!('params' in data)) {
-			return;
-		}
-
-		// biome-ignore lint/suspicious/noExplicitAny: Ok
-		if (!('session' in (data as any).params)) {
-			return;
-		}
-
-		if (data && data.method === 'session_changed') {
-			// biome-ignore lint/suspicious/noExplicitAny: Ok
-			const session = (data.params as any)?.session;
-			//TODO: We also should report this as an issue, sessions with no sessionScopes should be undefined, is there any reason
-			//why the object comes empty?
-			this.emit('session_changed', Object.keys(session?.sessionScopes ?? {}).length > 0 ? session : undefined);
+	private async onTransportNotification(payload: unknown) {
+		if (typeof payload === 'object' && payload !== null && 'data' in payload) {
+			const data = payload.data as Record<string, unknown>;
+			if ('method' in data && data.method === 'wallet_sessionChanged') {
+				const session = data.params as SessionData;
+				this.emit('wallet_sessionChanged', Object.keys(session?.sessionScopes ?? {}).length > 0 ? session : undefined);
+			} else {
+				this.emit(data.method as string, data.params);
+			}
 		}
 	}
 
@@ -162,15 +141,21 @@ export class MultichainSDK extends MultichainCore {
 		const transportType = await this.storage.getTransport();
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
-				return getDefaultTransport(this.options.transport);
+				const apiTransport = getDefaultTransport(this.options.transport);
+				this.__transport = apiTransport;
+				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
+				return apiTransport;
 			} else if (transportType === TransportType.MPW) {
 				const { adapter: kvstore } = this.options.storage;
 				const sessionstore = new SessionStore(kvstore);
 				const websocket = typeof window !== 'undefined' ? WebSocket : (await import('ws')).WebSocket;
 				const transport = await WebSocketTransport.create({ url: MWP_RELAY_URL, kvstore, websocket });
 				const dappClient = new DappClient({ transport, sessionstore, keymanager });
+				const apiTransport = new MWPTransport(dappClient, kvstore);
 				this.__dappClient = dappClient;
-				return new MWPTransport(this.__dappClient, kvstore);
+				this.__transport = apiTransport;
+				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
+				return apiTransport;
 			} else {
 				await this.storage.removeTransport();
 			}
@@ -178,25 +163,30 @@ export class MultichainSDK extends MultichainCore {
 		return undefined;
 	}
 
-	private async setupTransport() {
-		const storedTransport = await this.getStoredTransport();
-		if (storedTransport) {
-			//Assign the transport to the global state
-			this.__transport = storedTransport;
-			await this.__transport.connect();
+	private async getActiveSession() {
+		if (!this.transport.isConnected()) {
+			await this.transport.connect();
 		}
-		//If we have a transport, we can setup the provider and the listeners
-		if (this.__transport) {
-			//provider will auto connect to the transport
-			this.__provider = getMultichainClient({ transport: this.__transport });
-			//Add event listeners to the transport
-			this.listener = this.__transport.onNotification(this.onTransportNotification.bind(this));
+		const request = await this.transport.request({ method: 'wallet_getSession' });
+		const response = request.result as SessionData;
+		return response;
+	}
 
-			//If we have a session, we can emit the session_changed event
-			const session = await this.getCurrentSession();
-			if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
-				this.emit('session_changed', session);
+	private async setupTransport() {
+		const transport = await this.getStoredTransport();
+		if (transport) {
+			const session = await this.getActiveSession();
+			this.__provider = getMultichainClient({ transport });
+			//Add event listeners to the transport
+			if (session && Object.keys(session.sessionScopes ?? {}).length > 0) {
+				// No listeners can exist in here so we need onResumeSession event on constructor
+				this.options.transport?.onResumeSession?.(session);
+				this.state = 'connected';
+			} else {
+				this.state = 'loaded';
 			}
+		} else {
+			this.state = 'loaded';
 		}
 	}
 
@@ -207,7 +197,6 @@ export class MultichainSDK extends MultichainCore {
 			} else {
 				await this.setupAnalytics();
 				await this.setupTransport();
-				this.state = 'loaded';
 				analytics.track('sdk_initialized', {});
 				if (typeof window !== 'undefined') {
 					window.mmsdk = this;
@@ -226,70 +215,79 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async onConnectionSuccess(params: ModalFactoryConnectOptions) {
+		if (!this.transport.isConnected()) {
+			await this.transport.connect();
+		}
 		try {
+			this.state = 'connected';
 			const session = await this.getCurrentSession();
 			const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
 			const proposedScopes = params.scopes;
-
 			const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
 			if (isSameScopes) {
-				this.emit('session_changed', session);
+				this.emit('wallet_sessionChanged', session);
 				return;
 			}
-
 			if (session) {
-				await this.provider.revokeSession();
+				await this.transport.request({ method: 'wallet_revokeSession', params: session });
 			}
-
 			const { scopes, caipAccountIds } = params;
 			const optionalScopes = addValidAccounts(getOptionalScopes(scopes), getValidAccounts(caipAccountIds));
 			const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-			const newSession = await this.provider.createSession(sessionRequest);
-			this.emit('session_changed', newSession);
+			const newSessionRequest = await this.transport.request({ method: 'wallet_createSession', params: sessionRequest });
+			const newSession = newSessionRequest.result as SessionData;
+			this.options.transport?.onResumeSession?.(newSession);
+			this.emit('wallet_sessionChanged', newSession);
 		} catch (error) {
 			logger('MetaMaskSDK error during onConnectionSuccess', error);
 		}
 	}
 
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		// biome-ignore lint/suspicious/noAsyncPromiseExecutor: ok
-		return new Promise<void>(async (resolve, reject) => {
-			//TODO: Improve this to manage Untrusted flows with otpCode modal
-			try {
-				await this.setupMWP();
-				this.options.ui.factory.renderInstallModal(
-					desktopPreferred,
-					() => {
-						return new Promise<SessionRequest>((resolveSession) => {
-							this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
-								resolveSession(sessionRequest);
-							});
-							this.transport.connect().catch((err) => {
-								if (err instanceof ProtocolError) {
-									//Ignore Request expired errors to allow modal to regenerate expired qr codes
-									if (err.code !== ErrorCode.REQUEST_EXPIRED) {
+		let connectionRequest: ConnectionRequest | undefined;
+		return new Promise<void>((resolve, reject) => {
+			this.setupMWP()
+				.then(() => {
+					this.options.ui.factory.renderInstallModal(
+						desktopPreferred,
+						() => {
+							return new Promise<ConnectionRequest>((resolveConnectionRequest) => {
+								this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
+									connectionRequest = {
+										sessionRequest,
+										metadata: {
+											dapp: this.options.dapp,
+											sdk: {
+												version: getVersion(),
+												platform: getPlatformType(),
+											},
+										},
+									};
+									resolveConnectionRequest(connectionRequest);
+								});
+								this.transport.connect().catch((err) => {
+									if (err instanceof ProtocolError) {
+										//Ignore Request expired errors to allow modal to regenerate expired qr codes
+										if (err.code !== ErrorCode.REQUEST_EXPIRED) {
+											reject(err);
+										}
+									} else {
 										reject(err);
 									}
-								} else {
-									reject(err);
-								}
+								});
 							});
-						});
-					},
-					(success: boolean, error?: Error) => {
-						if (success) {
-							this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
-						} else {
-							reject(error);
-						}
-					},
-					(sessionRequest: SessionRequest, modal: AbstractInstallModal) => {
-						modal.updateSessionRequest(sessionRequest);
-					},
-				);
-			} catch (error) {
-				reject(error);
-			}
+						},
+						(error?: Error) => {
+							if (!error) {
+								this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
+							} else {
+								this.state = 'disconnected';
+								reject(error);
+							}
+						},
+					);
+				})
+				.catch(reject);
 		});
 	}
 
@@ -315,18 +313,19 @@ export class MultichainSDK extends MultichainCore {
 			this.__provider = apiClient;
 			this.listener = this.transport.onNotification(this.onTransportNotification.bind(this));
 			this.options.storage.setTransport(TransportType.MPW);
-			this.options.ui.factory.unload(true);
+			this.options.ui.factory.unload();
 		});
 	}
 
 	async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {
+		this.state = 'connecting';
 		const { ui } = this.options;
 		const platformType = getPlatformType();
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
 
 		if (this.__transport?.isConnected()) {
-			const existingSession = await this.getCurrentSession();
+			const existingSession = await this.getActiveSession();
 			if (existingSession) {
 				return this.onConnectionSuccess({ scopes, caipAccountIds });
 			}
@@ -338,7 +337,6 @@ export class MultichainSDK extends MultichainCore {
 			const transport = await getDefaultTransport(this.options.transport);
 			this.listener = transport.onNotification(this.onTransportNotification.bind(this));
 			this.__transport = transport;
-			await this.__transport.connect();
 			this.__provider = getMultichainClient({ transport: this.__transport });
 			return this.onConnectionSuccess({ scopes, caipAccountIds });
 		}
@@ -355,23 +353,23 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async disconnect(): Promise<void> {
-		await this.__transport?.disconnect();
-		await this.__provider?.revokeSession();
-		await this.__dappClient?.disconnect();
-
 		this.listener?.();
 
+		await this.__transport?.disconnect();
+		await this.storage.removeTransport();
+
+		this.emit('wallet_sessionChanged', undefined);
+
+		this.listener = undefined;
 		this.__transport = undefined;
 		this.__provider = undefined;
 		this.__dappClient = undefined;
-
-		this.emit('session_changed', undefined);
-		this.listener = undefined;
-
-		await this.storage.removeTransport();
 	}
 
 	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
-		return this.client.invokeMethod(options);
+		const platformType = getPlatformType();
+		const sdkInfo = `Sdk/Javascript SdkVersion/${packageJson.version} Platform/${platformType} dApp/${this.options.dapp.url ?? this.options.dapp.name} dAppTitle/${this.options.dapp.name}`;
+		const client = new RPCClient(this.provider, this.options.api, sdkInfo);
+		return client.invokeMethod(options);
 	}
 }

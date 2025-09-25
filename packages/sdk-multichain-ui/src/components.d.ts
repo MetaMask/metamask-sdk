@@ -7,9 +7,10 @@
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
     interface MmInstallModal {
+        "expiresIn": number;
+        "link": string;
         "preferDesktop": boolean;
         "sdkVersion"?: string;
-        "sessionRequest": any;
     }
     interface MmOtpModal {
         /**
@@ -32,7 +33,8 @@ declare global {
     interface HTMLMmInstallModalElementEventMap {
         "close": { shouldTerminate?: boolean };
         "startDesktopOnboarding": any;
-        "updateSessionRequest": any;
+        "updateLink": string;
+        "updateExpiresIn": number;
     }
     interface HTMLMmInstallModalElement extends Components.MmInstallModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMmInstallModalElementEventMap>(type: K, listener: (this: HTMLMmInstallModalElement, ev: MmInstallModalCustomEvent<HTMLMmInstallModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -74,12 +76,14 @@ declare global {
 }
 declare namespace LocalJSX {
     interface MmInstallModal {
+        "expiresIn"?: number;
+        "link"?: string;
         "onClose"?: (event: MmInstallModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
-        "onUpdateSessionRequest"?: (event: MmInstallModalCustomEvent<any>) => void;
+        "onUpdateExpiresIn"?: (event: MmInstallModalCustomEvent<number>) => void;
+        "onUpdateLink"?: (event: MmInstallModalCustomEvent<string>) => void;
         "preferDesktop"?: boolean;
         "sdkVersion"?: string;
-        "sessionRequest"?: any;
     }
     interface MmOtpModal {
         /**

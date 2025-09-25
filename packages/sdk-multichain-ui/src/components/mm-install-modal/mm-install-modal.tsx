@@ -23,7 +23,9 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  @Prop() sessionRequest: any
+  @Prop() link: string
+
+  @Prop() expiresIn: number;
 
   @Prop() sdkVersion?: string;
 
@@ -36,7 +38,9 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
-  @Event() updateSessionRequest: EventEmitter;
+  @Event() updateLink: EventEmitter<string>;
+
+  @Event() updateExpiresIn: EventEmitter<number>;
 
   @Element() el: HTMLElement;
 
@@ -51,7 +55,7 @@ export class InstallModal {
   }
 
   componentDidLoad() {
-    this.generateQRCode(this.sessionRequest);
+    this.generateQRCode(this.link);
   }
 
   async connectedCallback() {
@@ -61,13 +65,13 @@ export class InstallModal {
     this.translationsLoaded = true;
   }
 
-  private generateQRCode(sessionRequest: {id: string, expiresAt: number}) {
+  private generateQRCode(data: string) {
     if (!this.qrCodeContainer) {
       return;
     }
     const options: Options = {
+      data,
       type: 'svg' as DrawType,
-      data: JSON.stringify(sessionRequest),
       image: SVG,
       imageOptions: {
         hideBackgroundDots: true,
@@ -110,9 +114,14 @@ export class InstallModal {
     this.startDesktopOnboarding.emit();
   }
 
-  @Watch('sessionRequest')
-  updateSessionRequestHandler(sessionRequest:any) {
-    this.generateQRCode(sessionRequest);
+  @Watch('link')
+  updateLinkHandler(link:string) {
+    this.generateQRCode(link);
+  }
+
+  @Watch('expiresIn')
+  updateExpiresInHandler(expiresIn: number) {
+    console.debug('QRCode expires in:', expiresIn);
   }
 
   render() {

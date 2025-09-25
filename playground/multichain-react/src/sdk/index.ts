@@ -1,1 +1,1 @@
-export { useSDK } from './useSDK';
+export { useSDK } from './SDKProvider';

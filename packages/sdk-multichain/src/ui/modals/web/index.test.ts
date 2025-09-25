@@ -4,19 +4,42 @@ import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import type { Modal } from '../../../domain';
+import { type ConnectionRequest, PlatformType, type Modal } from '../../../domain';
 import * as WebModals from './';
-import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import { v4 } from 'uuid';
+
+const dom = new Page("<!DOCTYPE html><div id='root'></div>", {
+	url: 'https://dapp.io/',
+});
+class CustomEvent extends dom.window.Event {
+	detail: any;
+	constructor(type: string, options?: CustomEventInit) {
+		super(type, options);
+		this.detail = options?.detail;
+	}
+}
 
 t.describe('WEB Modals', () => {
 	let modal: Modal | undefined;
-	let sessionRequest: SessionRequest;
+	let connectionRequest: ConnectionRequest;
 
 	t.beforeAll(() => {
 		const dom = new Page("<!DOCTYPE html><div id='root'></div>", {
 			url: 'https://dapp.io/',
 		});
+
+		// JSDOM does not implement CustomEvent, so we need to polyfill it.
+		if (typeof global.CustomEvent === 'undefined') {
+			global.CustomEvent = class CustomEvent<T> extends Event {
+				detail: T;
+
+				constructor(type: string, options?: CustomEventInit<T>) {
+					super(type, options);
+					this.detail = options?.detail as T;
+				}
+			} as any;
+		}
+
 		const globalStub = {
 			...dom.window,
 			addEventListener: t.vi.fn(),
@@ -33,12 +56,24 @@ t.describe('WEB Modals', () => {
 	});
 
 	t.beforeEach(() => {
-		sessionRequest = {
-			id: v4(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: Date.now() + 1000,
-			mode: 'trusted',
+		connectionRequest = {
+			sessionRequest: {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 1000,
+				mode: 'trusted',
+			},
+			metadata: {
+				dapp: {
+					name: 'test',
+					url: 'https://test.com',
+				},
+				sdk: {
+					version: '1.0.0',
+					platform: PlatformType.NonBrowser,
+				},
+			},
 		};
 	});
 
@@ -46,24 +81,63 @@ t.describe('WEB Modals', () => {
 		modal?.unmount();
 	});
 
-	t.it('rendering InstallModal on Web', async () => {
-		const installModal = new WebModals.InstallModal({
-			parentElement: document.getElementById('root')!,
-			sessionRequest,
-			sdkVersion: '1.0.0',
-			preferDesktop: false,
-			onClose: vi.fn(),
-			startDesktopOnboarding: vi.fn(),
-			createSessionRequest: vi.fn().mockResolvedValue(sessionRequest),
-			updateSessionRequest: vi.fn(),
+	t.describe('InstallModal', () => {
+		let installModal: WebModals.InstallModal;
+		let onClose: () => void;
+		let onStartDesktopOnboarding: () => void;
+
+		t.beforeEach(() => {
+			onClose = vi.fn();
+			onStartDesktopOnboarding = vi.fn();
+
+			installModal = new WebModals.InstallModal({
+				sdkVersion: '1.0.0',
+				preferDesktop: false,
+				onClose,
+				startDesktopOnboarding: onStartDesktopOnboarding,
+				createConnectionRequest: vi.fn().mockResolvedValue(connectionRequest),
+				connectionRequest,
+				link: 'qrcode',
+				generateQRCode: vi.fn().mockResolvedValue('qrcode'),
+				expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
+				parentElement: document.body,
+			});
 		});
 
-		t.expect(installModal).toBeDefined();
-		t.expect(installModal.unmount).toBeDefined();
-		t.expect(installModal.mount).toBeDefined();
-		installModal.mount();
+		t.it('should mount and unmount the modal from the DOM', () => {
+			installModal.mount();
+			let modalElement = document.querySelector('mm-install-modal');
+			t.expect(modalElement).not.toBeNull();
 
-		modal = installModal;
+			installModal.unmount();
+			modalElement = document.querySelector('mm-install-modal');
+			t.expect(modalElement).toBeNull();
+		});
+
+		t.it('should set properties on the modal element', () => {
+			installModal.mount();
+			const modalElement = document.querySelector('mm-install-modal');
+			t.expect(modalElement?.preferDesktop).toBe(false);
+			t.expect(modalElement?.sdkVersion).toBe('1.0.0');
+		});
+
+		t.it('should handle close event', () => {
+			installModal.mount();
+			const modalElement = document.querySelector('mm-install-modal');
+			modalElement?.addEventListener('close', (event: any) => {
+				onClose(event.detail.shouldTerminate);
+			});
+			modalElement?.dispatchEvent(new CustomEvent('close', { detail: { shouldTerminate: true } }));
+		});
+
+		t.it('should handle startDesktopOnboarding event', () => {
+			installModal.mount();
+			const modalElement = document.querySelector('mm-install-modal');
+			modalElement?.addEventListener('startDesktopOnboarding', () => {
+				onStartDesktopOnboarding();
+			});
+			modalElement?.dispatchEvent(new CustomEvent('startDesktopOnboarding'));
+		});
 	});
 
 	t.it('Rendering OTPCodeModal on Web', async () => {

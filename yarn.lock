@@ -11547,10 +11547,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/multichain-api-client@npm:^0.6.5":
-  version: 0.6.5
-  resolution: "@metamask/multichain-api-client@npm:0.6.5"
-  checksum: d758e3e8037935582483e1709ec91d954cf9c2049131e4fdec74d8ad005df59c431104b0b694174205b398fa0e304f31dd4bfefddf6388d76d5bc15e7a4feb9a
+"@metamask/multichain-api-client@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@metamask/multichain-api-client@npm:0.8.0"
+  checksum: 2bf2808b2c3603976c32e756bd562522d48d658893dc2e29051f86e4f3bad99a5a0c65ab5bb6f6a7ea1f8719534f66362029cc071992cb48d86196ad0a0f265d
   languageName: node
   linkType: hard
 
@@ -11575,7 +11575,7 @@ __metadata:
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/mobile-wallet-protocol-core": ^0.1.0
     "@metamask/mobile-wallet-protocol-dapp-client": ^0.1.0
-    "@metamask/multichain-api-client": ^0.6.5
+    "@metamask/multichain-api-client": ^0.8.0
     "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"
     "@metamask/sdk-multichain-ui": "workspace:^"

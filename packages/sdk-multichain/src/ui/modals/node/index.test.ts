@@ -4,9 +4,10 @@ import encodeQR from '@paulmillr/qr';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 
-import type { Modal } from '../../../domain';
+import { type ConnectionRequest, type Modal, PlatformType } from '../../../domain';
 import * as NodeModals from './';
-import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
+import packageJson from '../../../../package.json';
+
 import { v4 } from 'uuid';
 
 vi.mock('@paulmillr/qr', () => {
@@ -16,7 +17,7 @@ vi.mock('@paulmillr/qr', () => {
 });
 
 t.describe('Node Modals', () => {
-	let sessionRequest: SessionRequest;
+	let connectionRequest: ConnectionRequest;
 	let modal: Modal | undefined;
 	let consoleLogSpy: any;
 
@@ -27,12 +28,24 @@ t.describe('Node Modals', () => {
 	});
 
 	t.beforeEach(() => {
-		sessionRequest = {
-			id: v4(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: Date.now() + 1000,
-			mode: 'trusted',
+		connectionRequest = {
+			sessionRequest: {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 1000,
+				mode: 'trusted',
+			},
+			metadata: {
+				dapp: {
+					name: 'test',
+					url: 'https://test.com',
+				},
+				sdk: {
+					version: packageJson.version,
+					platform: PlatformType.NonBrowser,
+				},
+			},
 		};
 	});
 
@@ -43,64 +56,96 @@ t.describe('Node Modals', () => {
 	t.afterEach(() => {
 		modal?.unmount();
 		consoleLogSpy.mockClear();
+		(encodeQR as any).mockClear();
 	});
 
-	t.it('rendering InstallModal on Node', async () => {
+	t.it('should render QR code and expiration time to the console', async () => {
+		const expiresIn = (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000;
 		const installModal = new NodeModals.InstallModal({
-			sdkVersion: '1.0.0',
+			sdkVersion: packageJson.version,
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
-			createSessionRequest: vi.fn().mockResolvedValue(sessionRequest),
-			updateSessionRequest: vi.fn(),
-			sessionRequest,
+			createConnectionRequest: vi.fn().mockResolvedValue(connectionRequest),
+			connectionRequest,
+			link: 'test-link',
+			generateQRCode: vi.fn().mockResolvedValue('test-link'),
+			expiresIn,
 		});
-		t.expect(installModal.unmount).toBeDefined();
-		t.expect(installModal.mount).toBeDefined();
+
 		installModal.mount();
-		t.expect(encodeQR).toHaveBeenCalledWith(JSON.stringify(sessionRequest), 'ascii');
-		t.expect(consoleLogSpy).toHaveBeenCalledWith('qrcode');
+
+		t.expect(encodeQR).toHaveBeenCalledWith('test-link', 'ascii');
+		t.expect(consoleLogSpy).toHaveBeenCalledWith('qrcode'); // 'qrcode' is the mocked return value of encodeQR
+		t.expect(consoleLogSpy).toHaveBeenCalledWith(t.expect.stringContaining('EXPIRES IN:'));
+
 		modal = installModal;
 	});
 
 	t.it('rendering InstallModal on Node and renew session after a second', async () => {
 		const initialExpiresAt = Date.now() + 1000;
-		const sessionRequest: SessionRequest = {
-			id: v4(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: initialExpiresAt,
-			mode: 'trusted',
-		};
-		// Create a new session request for renewal with a different ID and later expiration
-		const renewedSessionRequest: SessionRequest = {
-			id: v4(),
-			channel: 'test',
-			publicKeyB64: 'test',
-			expiresAt: Date.now() + 2000,
-			mode: 'trusted',
+		const connectionRequest: ConnectionRequest = {
+			sessionRequest: {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: initialExpiresAt,
+				mode: 'trusted',
+			},
+			metadata: {
+				dapp: {
+					name: 'test',
+					url: 'https://test.com',
+				},
+				sdk: {
+					version: packageJson.version,
+					platform: PlatformType.NonBrowser,
+				},
+			},
 		};
 
-		const createSessionRequestMock = t.vi.fn().mockResolvedValueOnce(renewedSessionRequest); // Only mock the renewal call
+		const renewedConnectionRequest: ConnectionRequest = {
+			sessionRequest: {
+				id: v4(),
+				channel: 'test',
+				publicKeyB64: 'test',
+				expiresAt: Date.now() + 2000,
+				mode: 'trusted',
+			},
+			metadata: {
+				dapp: {
+					name: 'test',
+					url: 'https://test.com',
+				},
+				sdk: {
+					version: packageJson.version,
+					platform: PlatformType.NonBrowser,
+				},
+			},
+		};
+
+		const createConnectionRequestMock = vi.fn().mockResolvedValue(renewedConnectionRequest); // Only mock the renewal call
 		const installModal = new NodeModals.InstallModal({
-			sessionRequest,
-			sdkVersion: '1.0.0',
+			sdkVersion: packageJson.version,
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
-			createSessionRequest: createSessionRequestMock,
-			updateSessionRequest: vi.fn(),
+			createConnectionRequest: createConnectionRequestMock,
+			connectionRequest,
+			link: 'qrcode',
+			generateQRCode: vi.fn().mockResolvedValue('qrcode'),
+			expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 		});
 
 		t.expect(installModal.unmount).toBeDefined();
 		t.expect(installModal.mount).toBeDefined();
 
 		installModal.mount();
-		t.expect(encodeQR).toHaveBeenCalledWith(JSON.stringify(sessionRequest), 'ascii');
+		t.expect(encodeQR).toHaveBeenCalledWith('qrcode', 'ascii');
 		t.expect(consoleLogSpy).toHaveBeenCalledWith('qrcode');
 
 		// Verify initial call count
-		t.expect(createSessionRequestMock).toHaveBeenCalledTimes(0);
+		t.expect(createConnectionRequestMock).toHaveBeenCalledTimes(0);
 
 		// Store the initial call count for encodeQR
 		const initialEncodeQRCallCount = (encodeQR as any).mock.calls.length;
@@ -109,13 +154,13 @@ t.describe('Node Modals', () => {
 		await t.vi.advanceTimersByTimeAsync(1100);
 
 		// Verify that createSessionRequest was called for renewal
-		t.expect(createSessionRequestMock).toHaveBeenCalledTimes(1);
+		t.expect(createConnectionRequestMock).toHaveBeenCalledTimes(1);
 
 		// Verify that encodeQR was called again (for renewal)
 		t.expect(encodeQR).toHaveBeenCalledTimes(initialEncodeQRCallCount + 1);
 
 		// Verify that the QR code was regenerated with the renewed session request
-		t.expect(encodeQR).toHaveBeenLastCalledWith(JSON.stringify(renewedSessionRequest), 'ascii');
+		t.expect(encodeQR).toHaveBeenLastCalledWith('qrcode', 'ascii');
 
 		modal = installModal;
 	});
@@ -131,7 +176,7 @@ t.describe('Node Modals', () => {
 			createOTPCode: vi.fn().mockResolvedValue(otpCode),
 			updateOTPCode: vi.fn() as any,
 			onDisconnect: vi.fn() as any,
-			sdkVersion: '1.0.0',
+			sdkVersion: packageJson.version,
 		});
 
 		t.expect(otpCodeModal).toBeDefined();
