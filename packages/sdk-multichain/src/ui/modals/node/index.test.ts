@@ -18,7 +18,7 @@ vi.mock('@paulmillr/qr', () => {
 
 t.describe('Node Modals', () => {
 	let connectionRequest: ConnectionRequest;
-	let modal: Modal | undefined;
+	let modal: Modal<any> | undefined;
 	let consoleLogSpy: any;
 
 	t.beforeAll(() => {

@@ -8,7 +8,7 @@ import { v4 } from 'uuid';
 
 t.describe('RN Modals', () => {
 	let connectionRequest: ConnectionRequest;
-	let modal: Modal | undefined;
+	let modal: Modal<any> | undefined;
 
 	t.beforeEach(() => {
 		connectionRequest = {

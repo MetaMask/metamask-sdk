@@ -53,8 +53,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@metamask/mobile-wallet-protocol-core": "^0.1.0",
-    "@metamask/mobile-wallet-protocol-dapp-client": "^0.1.0",
+    "@metamask/mobile-wallet-protocol-core": "^0.2.0",
+    "@metamask/mobile-wallet-protocol-dapp-client": "^0.2.0",
     "@metamask/multichain-api-client": "^0.8.0",
     "@metamask/onboarding": "^1.0.1",
     "@metamask/sdk-analytics": "workspace:^",

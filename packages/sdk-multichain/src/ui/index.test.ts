@@ -30,7 +30,7 @@ t.vi.mock('../domain', async () => {
 });
 
 t.describe('ModalFactory', () => {
-	let mockModal: Modal<QRLink, InstallWidgetProps> | Modal<OTPCode, OTPCodeWidgetProps>;
+	let mockModal: Modal<InstallWidgetProps, QRLink> | Modal<OTPCodeWidgetProps, OTPCode>;
 	let mockModalOptions: t.Mock<() => InstallWidgetProps | OTPCodeWidgetProps>;
 	let mockData: t.Mock<() => QRLink | OTPCode>;
 

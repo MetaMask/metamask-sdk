@@ -11525,25 +11525,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/mobile-wallet-protocol-core@npm:^0.1.0, @metamask/mobile-wallet-protocol-core@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@metamask/mobile-wallet-protocol-core@npm:0.1.1"
+"@metamask/mobile-wallet-protocol-core@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@metamask/mobile-wallet-protocol-core@npm:0.2.0"
   dependencies:
     centrifuge: ^5.3.5
     eventemitter3: ^5.0.1
     uuid: ^11.1.0
-  checksum: c19e17999d25b0872152961489560dc252ae7a7bbce058dadb86fccfbd8652db19fe98cc5c292f67508e92c9c429eb63489ff166deea5a0d8d370bee291a5d5a
+  checksum: 963a4c8aabae2318bab973055125d1474a29451dc013e87744e3a04608982934b9916c1d28699207c11604386348b6c2ed007125ed9a0ee2c98d0604b9358c4f
   languageName: node
   linkType: hard
 
-"@metamask/mobile-wallet-protocol-dapp-client@npm:^0.1.0":
-  version: 0.1.1
-  resolution: "@metamask/mobile-wallet-protocol-dapp-client@npm:0.1.1"
+"@metamask/mobile-wallet-protocol-dapp-client@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@metamask/mobile-wallet-protocol-dapp-client@npm:0.2.0"
   dependencies:
-    "@metamask/mobile-wallet-protocol-core": ^0.1.1
+    "@metamask/mobile-wallet-protocol-core": ^0.2.0
     "@metamask/utils": ^9.1.0
     uuid: ^11.1.0
-  checksum: 0e5a4476adeed037b6b6643ab4be617439437db555f6b3d04aeaa378e4b7ea45ed791eed0cde05df8306fea426a6eeae16e6bcd3e0970165408f46b6eb43d5c4
+  checksum: 86b00f92160738a063a662f5ca3cd4c47ba60f05ec927bc6b49fb0c5efdf64b058efa8ea867009eb6eec404bdada85e39bd414fd11e87bc3f5ef207ee9622c4b
   languageName: node
   linkType: hard
 
@@ -11573,8 +11573,8 @@ __metadata:
   dependencies:
     "@biomejs/biome": 2.0.0
     "@metamask/auto-changelog": ^3.4.3
-    "@metamask/mobile-wallet-protocol-core": ^0.1.0
-    "@metamask/mobile-wallet-protocol-dapp-client": ^0.1.0
+    "@metamask/mobile-wallet-protocol-core": ^0.2.0
+    "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.0
     "@metamask/multichain-api-client": ^0.8.0
     "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"

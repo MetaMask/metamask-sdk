@@ -20,7 +20,7 @@ class CustomEvent extends dom.window.Event {
 }
 
 t.describe('WEB Modals', () => {
-	let modal: Modal | undefined;
+	let modal: Modal<any> | undefined;
 	let connectionRequest: ConnectionRequest;
 
 	t.beforeAll(() => {
@@ -124,10 +124,9 @@ t.describe('WEB Modals', () => {
 		t.it('should handle close event', () => {
 			installModal.mount();
 			const modalElement = document.querySelector('mm-install-modal');
-			modalElement?.addEventListener('close', (event: any) => {
-				onClose(event.detail.shouldTerminate);
-			});
-			modalElement?.dispatchEvent(new CustomEvent('close', { detail: { shouldTerminate: true } }));
+			modalElement?.addEventListener('close', onClose);
+			modalElement?.dispatchEvent(new CustomEvent('close', { detail: { shouldTerminate: true } }) as any);
+			t.expect(onClose).toHaveBeenCalledWith(new CustomEvent('close', { detail: { shouldTerminate: true } }));
 		});
 
 		t.it('should handle startDesktopOnboarding event', () => {
@@ -136,7 +135,7 @@ t.describe('WEB Modals', () => {
 			modalElement?.addEventListener('startDesktopOnboarding', () => {
 				onStartDesktopOnboarding();
 			});
-			modalElement?.dispatchEvent(new CustomEvent('startDesktopOnboarding'));
+			modalElement?.dispatchEvent(new CustomEvent('startDesktopOnboarding') as any);
 		});
 	});
 
