@@ -151,7 +151,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			});
 		});
 
-		t.it.only(`${platform} should handle provider errors during session retrieval`, async () => {
+		t.it(`${platform} should handle provider errors during session retrieval`, async () => {
 			// Get mocks from the module mock
 			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;

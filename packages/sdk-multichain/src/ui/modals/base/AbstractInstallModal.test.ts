@@ -3,9 +3,9 @@ import type { ConnectionRequest, QRLink } from '../../../domain';
 
 import { AbstractInstallModal } from './AbstractInstallModal';
 
+const mountMock = t.vi.fn();
+const unmountMock = t.vi.fn();
 class TestInstallModal extends AbstractInstallModal {
-	public instance: any;
-
 	// Make protected methods public for testing
 	public updateLink(link: QRLink): void {
 		super.updateLink(link);
@@ -16,8 +16,16 @@ class TestInstallModal extends AbstractInstallModal {
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	renderQRCode(link: QRLink, connectionRequest: ConnectionRequest): void {
+	renderQRCode(): void {
 		// mock
+	}
+
+	mount(): void {
+		mountMock();
+	}
+
+	unmount(): void {
+		unmountMock();
 	}
 }
 
@@ -41,7 +49,7 @@ t.describe('AbstractInstallModal', () => {
 			preferDesktop: false,
 			expiresIn: (mockConnectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
 		});
-		modal.instance = { link: '', expiresIn: 0 };
+		(modal as any).instance = { link: '', expiresIn: 0 };
 	});
 
 	t.describe('QR Code Link Management', () => {
@@ -56,11 +64,11 @@ t.describe('AbstractInstallModal', () => {
 			// Update link via `updateLink()` method and verify both data and instance are updated
 			modal.updateLink('updated-link-method');
 			t.expect(modal.link).toBe('updated-link-method');
-			t.expect(modal.instance.link).toBe('updated-link-method');
+			t.expect((modal as any).instance.link).toBe('updated-link-method');
 		});
 
 		t.it('should handle undefined instance gracefully when updating link', () => {
-			modal.instance = undefined;
+			(modal as any).instance = undefined;
 			modal.updateLink('another-link');
 			t.expect(modal.link).toBe('another-link');
 			// No error should be thrown
@@ -85,19 +93,19 @@ t.describe('AbstractInstallModal', () => {
 		t.it('should handle expiration time updates correctly', () => {
 			// Update with positive expiration time and verify instance update
 			modal.updateExpiresIn(120);
-			t.expect(modal.instance.expiresIn).toBe(120);
+			t.expect((modal as any).instance.expiresIn).toBe(120);
 
 			// Handle negative expiration time (should not update instance)
 			modal.updateExpiresIn(-10);
-			t.expect(modal.instance.expiresIn).toBe(120);
+			t.expect((modal as any).instance.expiresIn).toBe(120);
 
 			// Handle zero expiration time
 			modal.updateExpiresIn(0);
-			t.expect(modal.instance.expiresIn).toBe(0);
+			t.expect((modal as any).instance.expiresIn).toBe(0);
 		});
 
 		t.it('should handle undefined instance gracefully', () => {
-			modal.instance = undefined;
+			(modal as any).instance = undefined;
 			t.expect(() => modal.updateExpiresIn(100)).not.toThrow();
 		});
 	});
