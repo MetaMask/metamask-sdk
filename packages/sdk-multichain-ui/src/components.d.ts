@@ -33,8 +33,8 @@ declare global {
     interface HTMLMmInstallModalElementEventMap {
         "close": { shouldTerminate?: boolean };
         "startDesktopOnboarding": any;
-        "updateLink": any;
-        "updateExpiresIn": any;
+        "updateLink": string;
+        "updateExpiresIn": number;
     }
     interface HTMLMmInstallModalElement extends Components.MmInstallModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLMmInstallModalElementEventMap>(type: K, listener: (this: HTMLMmInstallModalElement, ev: MmInstallModalCustomEvent<HTMLMmInstallModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
@@ -80,8 +80,8 @@ declare namespace LocalJSX {
         "link"?: string;
         "onClose"?: (event: MmInstallModalCustomEvent<{ shouldTerminate?: boolean }>) => void;
         "onStartDesktopOnboarding"?: (event: MmInstallModalCustomEvent<any>) => void;
-        "onUpdateExpiresIn"?: (event: MmInstallModalCustomEvent<any>) => void;
-        "onUpdateLink"?: (event: MmInstallModalCustomEvent<any>) => void;
+        "onUpdateExpiresIn"?: (event: MmInstallModalCustomEvent<number>) => void;
+        "onUpdateLink"?: (event: MmInstallModalCustomEvent<string>) => void;
         "preferDesktop"?: boolean;
         "sdkVersion"?: string;
     }

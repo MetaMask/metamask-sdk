@@ -38,9 +38,9 @@ export class InstallModal {
 
   @Event() startDesktopOnboarding: EventEmitter;
 
-  @Event() updateLink: EventEmitter;
+  @Event() updateLink: EventEmitter<string>;
 
-  @Event() updateExpiresIn: EventEmitter;
+  @Event() updateExpiresIn: EventEmitter<number>;
 
   @Element() el: HTMLElement;
 
