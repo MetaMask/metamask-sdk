@@ -1,9 +1,9 @@
 /* eslint-disable */
 
-import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type MultichainCore, type Scope, type SessionData } from '@metamask/multichain-sdk';
+import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type Scope, type SessionData } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
 import type React from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { METAMASK_PROD_CHROME_ID } from '../constants';
 
 const SDKContext = createContext<
@@ -71,17 +71,20 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 		return sdkInstance.invokeMethod(options);
 	}, []);
 
-	const value = {
-		session,
-		state,
-		isConnected: session !== undefined,
-		error,
-		connect,
-		disconnect,
-		invokeMethod,
-	};
-
-	return <SDKContext.Provider value={value}>{children}</SDKContext.Provider>;
+	return (
+		<SDKContext.Provider
+			value={{
+				session,
+				state,
+				error,
+				connect,
+				disconnect,
+				invokeMethod,
+			}}
+		>
+			{children}
+		</SDKContext.Provider>
+	);
 };
 
 export const useSDK = () => {
