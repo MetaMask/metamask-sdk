@@ -36,6 +36,22 @@ describe('RemoteCommunicationPostMessageStream', () => {
     );
   });
 
+  it('should initialize with hideReturnToAppModal option', () => {
+    const instanceWithOption = new RemoteCommunicationPostMessageStream({
+      name: ProviderConstants.PROVIDER,
+      remote: mockRemoteCommunication,
+      deeplinkProtocol: false,
+      platformManager: mockPlatformManager,
+      hideReturnToAppModal: true,
+    });
+
+    expect(instanceWithOption.state.hideReturnToAppModal).toBe(true);
+  });
+
+  it('should have hideReturnToAppModal as false by default', () => {
+    expect(instance.state.hideReturnToAppModal).toBe(false);
+  });
+
   it('should call _write properly', async () => {
     const chunk = 'someData';
     const encoding = 'utf8';

@@ -148,7 +148,9 @@ export async function startConnection(
 
     let linkParams = `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
-    }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}`;
+    }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}&hr=${
+      state.hideReturnToAppModal ? 1 : 0
+    }`;
 
     if (connectWith) {
       const base64Rpc = base64Encode(JSON.stringify(connectWith));

@@ -59,4 +59,38 @@ describe('getPostMessageStream', () => {
       platformManager: fakePlatformManager,
     });
   });
+
+  it('should pass hideReturnToAppModal from remoteConnection state', () => {
+    const fakeConnector = {};
+    const fakePlatformManager = {};
+    const hideReturnToAppModal = true;
+    mockRemoteConnection.mockImplementation(
+      () =>
+        ({
+          getConnector: jest.fn().mockReturnValue(fakeConnector),
+          getPlatformManager: jest.fn().mockReturnValue(fakePlatformManager),
+          state: {
+            deeplinkProtocol: false,
+            hideReturnToAppModal,
+          },
+        } as any),
+    );
+
+    const result = getPostMessageStream({
+      name: ProviderConstants.CONTENT_SCRIPT,
+      remoteConnection: new RemoteConnection({
+        getConnector: jest.fn().mockReturnValue(fakeConnector),
+      } as any),
+      debug: false,
+    } as any);
+
+    expect(result).toBeInstanceOf(RemoteCommunicationPostMessageStream);
+    expect(mockPostMessageStream).toHaveBeenCalledWith({
+      name: ProviderConstants.CONTENT_SCRIPT,
+      remote: fakeConnector,
+      deeplinkProtocol: false,
+      platformManager: fakePlatformManager,
+      hideReturnToAppModal,
+    });
+  });
 });

@@ -199,6 +199,33 @@ describe('MetaMaskSDK', () => {
       expect(sdk.options).toMatchObject(options);
     });
 
+    it('should initialize with hideReturnToAppModal option', () => {
+      const options: MetaMaskSDKOptions = {
+        hideReturnToAppModal: true,
+        dappMetadata: {
+          name: 'Test DApp',
+          url: 'http://test-dapp.com',
+        },
+      };
+
+      sdk = new MetaMaskSDK(options);
+
+      expect(sdk.options.hideReturnToAppModal).toBe(true);
+    });
+
+    it('should have hideReturnToAppModal as undefined by default', () => {
+      const options: MetaMaskSDKOptions = {
+        dappMetadata: {
+          name: 'Test DApp',
+          url: 'http://test-dapp.com',
+        },
+      };
+
+      sdk = new MetaMaskSDK(options);
+
+      expect(sdk.options.hideReturnToAppModal).toBeUndefined();
+    });
+
     it('should set max listeners', () => {
       expect(sdk.getMaxListeners()).toBe(50);
     });

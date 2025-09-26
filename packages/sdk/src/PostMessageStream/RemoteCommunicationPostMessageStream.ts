@@ -14,6 +14,7 @@ interface RemoteCommunicationPostMessageStreamState {
   _name: any;
   remote: RemoteCommunication | null;
   deeplinkProtocol: boolean;
+  hideReturnToAppModal?: boolean;
   platformManager: PlatformManager | null;
 }
 
@@ -25,6 +26,7 @@ export class RemoteCommunicationPostMessageStream
     _name: null,
     remote: null,
     deeplinkProtocol: false,
+    hideReturnToAppModal: false,
     platformManager: null,
   };
 
@@ -32,10 +34,12 @@ export class RemoteCommunicationPostMessageStream
     name,
     remote,
     deeplinkProtocol,
+    hideReturnToAppModal,
     platformManager,
   }: {
     name: ProviderConstants;
     deeplinkProtocol: boolean;
+    hideReturnToAppModal?: boolean;
     remote: RemoteCommunication;
     platformManager: PlatformManager;
   }) {
@@ -45,6 +49,8 @@ export class RemoteCommunicationPostMessageStream
     this.state._name = name;
     this.state.remote = remote;
     this.state.deeplinkProtocol = deeplinkProtocol;
+    this.state.hideReturnToAppModal =
+      hideReturnToAppModal ?? this.state.hideReturnToAppModal;
     this.state.platformManager = platformManager;
 
     this._onMessage = this._onMessage.bind(this);
