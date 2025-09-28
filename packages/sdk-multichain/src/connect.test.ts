@@ -52,6 +52,15 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		let testOptions: T;
 
 		t.beforeEach(async () => {
+			const uiOptions: MultichainOptions['ui'] =
+				platform === 'web-mobile'
+					? {
+							...originalSdkOptions.ui,
+							preferDesktop: false,
+							preferExtension: false,
+						}
+					: originalSdkOptions.ui;
+
 			mockedData = await beforeEach();
 			// Set the transport type as a string in storage (this is how it's stored)
 			testOptions = {
@@ -61,6 +70,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
+				ui: uiOptions,
 				storage: new Store({
 					platform: platform as 'web' | 'rn' | 'node',
 					get(key) {

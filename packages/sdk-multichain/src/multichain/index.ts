@@ -422,7 +422,7 @@ export class MultichainSDK extends MultichainCore {
 					}
 				});
 
-				this.transport.connect({ scopes, caipAccountIds }).then(resolve).catch(reject);
+				this.transport.connect({ scopes, caipAccountIds }).catch(reject);
 			});
 		}
 

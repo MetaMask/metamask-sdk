@@ -28,6 +28,14 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		const transportString = platform === 'web' ? 'browser' : 'mwp';
 
 		t.beforeEach(async () => {
+			const uiOptions: MultichainOptions['ui'] =
+				platform === 'web-mobile'
+					? {
+							...originalSdkOptions.ui,
+							preferDesktop: false,
+							preferExtension: false,
+						}
+					: originalSdkOptions.ui;
 			mockedData = await beforeEach();
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 			// Set the transport type as a string in storage (this is how it's stored)
@@ -38,6 +46,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
+				ui: uiOptions,
 				storage: new Store({
 					platform: platform as 'web' | 'rn' | 'node',
 					get(key) {
@@ -163,7 +172,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
-runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);

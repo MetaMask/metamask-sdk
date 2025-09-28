@@ -105,7 +105,7 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
     ...dom.window.navigator,
 		product: 'Chrome',
 		language: 'en-US',
-    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+    userAgent: 'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
   }
 
 	// Mock location with proper href setter to avoid JSDOM navigation errors
@@ -125,6 +125,7 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
 			isMetaMask: true,
 		},
 		location: mockLocation,
+    navigator
 	};
 
   vi.stubGlobal('navigator', navigator);

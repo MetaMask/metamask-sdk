@@ -21,9 +21,19 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		const transportString = platform === 'web' ? 'browser' : 'mwp';
 
 		t.beforeEach(async () => {
+			const uiOptions: MultichainOptions['ui'] =
+				platform === 'web-mobile'
+					? {
+							...originalSdkOptions.ui,
+							preferDesktop: false,
+							preferExtension: false,
+						}
+					: originalSdkOptions.ui;
+
 			mockedData = await beforeEach();
 			testOptions = {
 				...originalSdkOptions,
+				ui: uiOptions,
 				analytics: {
 					...originalSdkOptions.analytics,
 					enabled: platform === 'web',
@@ -140,7 +150,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-runTestsInWebEnv(baseTestOptions, testSuite, 'https://dapp.io/');
-runTestsInWebMobileEnv(baseTestOptions, testSuite, 'https://dapp.io/');
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
