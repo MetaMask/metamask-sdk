@@ -108,6 +108,15 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
     userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
   }
 
+	// Mock location with proper href setter to avoid JSDOM navigation errors
+	const mockLocation = {
+		...dom.window.location,
+		set href(value: string) {
+			// Mock the href setter to avoid JSDOM navigation errors
+			// In tests, we just track that it was called instead of actually navigating
+		},
+	};
+
   const globalStub = {
 		...dom.window,
 		addEventListener: t.vi.fn(),
@@ -115,12 +124,12 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
 		ethereum: {
 			isMetaMask: true,
 		},
-    navigator
+		location: mockLocation,
 	};
 
   vi.stubGlobal('navigator', navigator);
 	vi.stubGlobal('window', globalStub);
-	vi.stubGlobal('location', dom.window.location);
+	vi.stubGlobal('location', mockLocation);
 	vi.stubGlobal('document', dom.window.document);
 	vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
 	vi.stubGlobal('requestAnimationFrame', t.vi.fn());
@@ -143,4 +152,3 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
 		return __storage;
 	});
 };
-

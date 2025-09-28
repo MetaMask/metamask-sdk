@@ -3,7 +3,7 @@
 import * as t from 'vitest';
 import type { MultichainOptions, MultichainCore, Scope, SessionData } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 import { Store } from './store';
 import { mockSessionData, mockSessionRequestData } from '../tests/data';
 import type { TestSuiteOptions, MockedData } from '../tests/types';
@@ -46,7 +46,8 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 	let sdk: MultichainCore;
 
 	t.describe(`${platform} tests`, () => {
-		const transportString = platform === 'web' ? 'browser' : 'mwp';
+		const isWebEnv = platform === 'web' || platform === 'web-mobile';
+		const transportString = isWebEnv ? 'browser' : 'mwp';
 		let mockedData: MockedData;
 		let testOptions: T;
 
@@ -128,14 +129,14 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(() => sdk.provider).toThrow();
 			t.expect(() => sdk.transport).toThrow();
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				// Platform web is browser with metamask extension, won't have install modal
 				showModalPromise = waitForInstallModal(sdk);
 			}
 
 			const connectPromise = sdk.connect(scopes, caipAccountIds);
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				(mockedData.mockDappClient as any).__state = 'CONNECTED';
 				//For MWP we simulate a connection with DappClient after showing the QRCode
 				await expectUIFactoryRenderInstallModal(sdk);
@@ -163,7 +164,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				},
 			};
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				t.expect(mockedData.mockDappClient.state).toBe('CONNECTED');
 				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(t.expect.objectContaining(expectedSessionResponse));
 			} else {
@@ -180,7 +181,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
 			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
 
-			if (platform === 'web') {
+			if (isWebEnv) {
 				await mockedData.mockDefaultTransport.connect();
 			} else {
 				await mockedData.mockDappClient.connect();
@@ -191,7 +192,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.storage).toBeDefined();
 			t.expect(sdk.state).toBe('connected');
 
-			if (platform === 'web') {
+			if (isWebEnv) {
 				t.expect(mockedData.mockDefaultTransport.__isConnected).toBe(true);
 				t.expect(mockedData.mockDefaultTransport.connect).toHaveBeenCalled();
 				mockedData.mockDefaultTransport.connect.mockClear();
@@ -203,7 +204,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 
 			await sdk.connect(scopes, caipAccountIds);
 
-			if (platform === 'web') {
+			if (isWebEnv) {
 				t.expect(mockedData.mockDefaultTransport.__isConnected).toBe(true);
 				t.expect(mockedData.mockDefaultTransport.connect).not.toHaveBeenCalled();
 			} else {
@@ -232,13 +233,13 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(() => sdk.transport).toThrow();
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				showModalPromise = waitForInstallModal(sdk);
 			}
 
 			const connectPromise = sdk.connect(scopes, caipAccountIds);
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				//For MWP we simulate a connection with DappClient after showing the QRCode
 				await expectUIFactoryRenderInstallModal(sdk);
 				// Connect to MWP using dappClient mock
@@ -257,7 +258,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				t.expect(mockedData.mockDappClient.state).toBe('CONNECTED');
 			} else {
 				t.expect(mockedData.mockDefaultTransport.__isConnected).toBe(true);
@@ -287,13 +288,13 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(() => sdk.transport).toThrow();
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				showModalPromise = waitForInstallModal(sdk);
 			}
 
 			const connectPromise = sdk.connect(scopes, caipAccountIds);
 
-			if (platform !== 'web') {
+			if (!isWebEnv) {
 				(mockedData.mockDappClient as any).__state = 'CONNECTED';
 				//For MWP we simulate a connection with DappClient after showing the QRCode
 				await expectUIFactoryRenderInstallModal(sdk);
@@ -346,7 +347,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			sdk = await createSDK(testOptions);
 			await sdk.disconnect();
 
-			if (platform === 'web') {
+			if (isWebEnv) {
 				t.expect(mockedData.mockDefaultTransport.disconnect).toHaveBeenCalled();
 			} else {
 				t.expect(mockedData.mockDappClient.disconnect).toHaveBeenCalled();
@@ -364,7 +365,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.mockWalletCreateSession.mockResolvedValue(mockSessionData);
 			mockedData.mockWalletRevokeSession.mockResolvedValue(undefined);
 
-			if (platform === 'web') {
+			if (isWebEnv) {
 				mockedData.mockDefaultTransport.disconnect.mockRejectedValue(disconnectError);
 			} else {
 				mockedData.mockDappClient.disconnect.mockRejectedValue(disconnectError);
@@ -386,3 +387,4 @@ const baseTestOptions = {
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
 runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);

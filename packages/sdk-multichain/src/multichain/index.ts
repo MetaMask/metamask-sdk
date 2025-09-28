@@ -354,7 +354,7 @@ export class MultichainSDK extends MultichainCore {
 		this.state = 'connecting';
 		const { ui } = this.options;
 		const platformType = getPlatformType();
-		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb || platformType === PlatformType.MobileWeb;
+		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb;
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
 
 		if (this.__transport?.isConnected()) {

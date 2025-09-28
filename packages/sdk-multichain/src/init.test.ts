@@ -2,7 +2,7 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import type { MultichainOptions, MultichainCore } from './domain';
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
@@ -141,5 +141,6 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 const baseTestOptions = { dapp: exampleDapp } as any;
 
 runTestsInWebEnv(baseTestOptions, testSuite, 'https://dapp.io/');
+runTestsInWebMobileEnv(baseTestOptions, testSuite, 'https://dapp.io/');
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);

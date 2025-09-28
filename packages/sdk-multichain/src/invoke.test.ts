@@ -4,7 +4,7 @@ import * as t from 'vitest';
 import { vi } from 'vitest';
 import type { InvokeMethodOptions, MultichainOptions, MultichainCore, Scope } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 import { Store } from './store';
 import { mockSessionData, mockSessionRequestData } from '../tests/data';
 import type { TestSuiteOptions, MockedData } from '../tests/types';
@@ -164,5 +164,6 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 const baseTestOptions = { dapp: exampleDapp } as any;
 
 runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);

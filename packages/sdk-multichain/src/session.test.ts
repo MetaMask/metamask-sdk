@@ -3,7 +3,7 @@
 import * as t from 'vitest';
 import type { MultichainOptions, MultichainCore, Scope, SessionData } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 
 import { Store } from './store';
 
@@ -137,3 +137,4 @@ const baseTestOptions = { dapp: exampleDapp } as any;
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
 runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
