@@ -1,4 +1,7 @@
-
+/**
+ * This file mocks Analytics package in the SDK
+ * Allowing us to know if specific events triggered or not
+ */
 import * as t from 'vitest';
 
 t.vi.mock('@metamask/sdk-analytics', () => ({

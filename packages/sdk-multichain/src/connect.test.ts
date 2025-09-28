@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import type { MultichainOptions, MultichainCore, Scope } from './domain';
+import type { MultichainOptions, MultichainCore, Scope, SessionData } from './domain';
 // Carefull, order of import matters to keep mocks working
 import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
 import { Store } from './store';
@@ -311,123 +311,69 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await t.expect(mockedData.mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during onConnectionSuccess', sessionError);
 		});
 
-		// t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {
-		// 	const existingSessionData = {
-		// 		...mockSessionData,
-		// 		sessionScopes: {
-		// 			'eip155:1': {
-		// 				methods: ['eth_sendTransaction'],
-		// 				notifications: ['accountsChanged'],
-		// 				accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
-		// 			},
-		// 		},
-		// 	};
+		t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {
+			const existingSessionData: SessionData = {
+				...mockSessionData,
+				sessionScopes: {
+					'eip155:1': {
+						methods: ['eth_sendTransaction'],
+						notifications: ['accountsChanged'],
+						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
+					},
+				},
+			};
 
-		// 	const revocationError = new Error('Failed to revoke session');
+			const revocationError = new Error('Failed to revoke session');
 
-		// 	mockedData.mockTransport.request.mockImplementation((input: any) => {
-		// 		if (input.method === 'wallet_getSession') {
-		// 			return Promise.resolve({
-		// 				id: 1,
-		// 				jsonrpc: '2.0',
-		// 				result: existingSessionData,
-		// 			});
-		// 		}
+			mockedData.mockWalletGetSession.mockResolvedValue(existingSessionData);
+			mockedData.mockWalletRevokeSession.mockRejectedValue(revocationError);
 
-		// 		if (input.method === 'wallet_revokeSession') {
-		// 			return Promise.reject(revocationError);
-		// 		}
-		// 		return Promise.reject(new Error('Forgot to mock this RPC call?'));
-		// 	});
+			const scopes = ['eip155:137'] as Scope[]; // Different scope to trigger upgrade
+			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-		// 	const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
-		// 	const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
-		// 	sdk = await createSDK(testOptions);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			sdk = await createSDK(testOptions);
 
-		// 	const onConnectionSuccessSpy = t.vi.spyOn(sdk as any, 'onConnectionSuccess');
+			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow(revocationError);
 
-		// 	let showModalPromise!: Promise<void>;
-		// 	let unloadSpy!: t.MockInstance<() => void>;
+			await t.expect(mockedData.mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during onConnectionSuccess', revocationError);
+		});
 
-		// 	if (platform !== 'web') {
-		// 		unloadSpy = t.vi.spyOn((sdk as any).options.ui.factory, 'unload');
-		// 		showModalPromise = waitForInstallModal(sdk);
-		// 	}
+		t.it(`${platform} should disconnect transport successfully`, async () => {
+			mockedData.mockWalletGetSession.mockResolvedValue(mockSessionData);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 
-		// 	const connectPromise = sdk.connect(scopes, caipAccountIds);
+			sdk = await createSDK(testOptions);
+			await sdk.disconnect();
 
-		// 	if (platform !== 'web') {
-		// 		//For MWP we simulate a connection with DappClient after showing the QRCode
-		// 		await expectUIFactoryRenderInstallModal(sdk);
+			if (platform === 'web') {
+				t.expect(mockedData.mockDefaultTransport.disconnect).toHaveBeenCalled();
+			} else {
+				t.expect(mockedData.mockDappClient.disconnect).toHaveBeenCalled();
+			}
+		});
 
-		// 		//Emit session_request QRCode back to Modal
-		// 		await mockedData.mockDappClient.emit('session_request', mockSessionData);
-		// 		// Connect to MWP using dappClient mock
-		// 		await mockedData.mockDappClient.connect();
-		// 		await showModalPromise;
+		t.it(`${platform} should handle disconnect errors`, async () => {
+			const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
+			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-		// 		// Should have unloaded the modal and calling successCallback
-		// 		t.expect(unloadSpy).toHaveBeenCalledWith();
-		// 		t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
-		// 	}
-		// 	await connectPromise;
+			const disconnectError = new Error('Failed to disconnect transport');
 
-		// 	// Now test the connect flow with session creation error
-		// 	await t.expect(mockedData.mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during onConnectionSuccess', revocationError);
-		// });
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockWalletGetSession.mockResolvedValue(mockSessionData);
+			mockedData.mockWalletCreateSession.mockResolvedValue(mockSessionData);
+			mockedData.mockWalletRevokeSession.mockResolvedValue(undefined);
 
-		// t.it(`${platform} should disconnect transport successfully`, async () => {
-		// 	const multichainModule = await import('@metamask/multichain-api-client');
-		// 	const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+			if (platform === 'web') {
+				mockedData.mockDefaultTransport.disconnect.mockRejectedValue(disconnectError);
+			} else {
+				mockedData.mockDappClient.disconnect.mockRejectedValue(disconnectError);
+			}
 
-		// 	mockedData.mockTransport.isConnected.mockReturnValue(true);
-		// 	mockMultichainClient.getSession.mockResolvedValue(undefined);
-		// 	mockMultichainClient.revokeSession.mockReset();
-
-		// 	mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-
-		// 	sdk = await createSDK(testOptions);
-		// 	await sdk.disconnect();
-		// 	t.expect(mockedData.mockTransport.disconnect).toHaveBeenCalled();
-		// });
-
-		// t.it(`${platform} should handle disconnect errors`, async () => {
-		// 	const scopes = ['eip155:137'] as Scope[]; // Same scope as existing session to trigger revocation
-		// 	const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
-
-		// 	const disconnectError = new Error('Failed to disconnect transport');
-		// 	mockedData.mockTransport.disconnect.mockRejectedValue(disconnectError);
-
-		// 	sdk = await createSDK(testOptions);
-		// 	const onConnectionSuccessSpy = t.vi.spyOn(sdk as any, 'onConnectionSuccess');
-
-		// 	let showModalPromise!: Promise<void>;
-		// 	let unloadSpy!: t.MockInstance<() => void>;
-
-		// 	if (platform !== 'web') {
-		// 		unloadSpy = t.vi.spyOn((sdk as any).options.ui.factory, 'unload');
-		// 		showModalPromise = waitForInstallModal(sdk);
-		// 	}
-
-		// 	const connectPromise = sdk.connect(scopes, caipAccountIds);
-
-		// 	if (platform !== 'web') {
-		// 		//For MWP we simulate a connection with DappClient after showing the QRCode
-		// 		await expectUIFactoryRenderInstallModal(sdk);
-
-		// 		//Emit session_request QRCode back to Modal
-		// 		await mockedData.mockDappClient.emit('session_request', mockSessionData);
-		// 		// Connect to MWP using dappClient mock
-		// 		await mockedData.mockDappClient.connect();
-		// 		await showModalPromise;
-
-		// 		// Should have unloaded the modal and calling successCallback
-		// 		t.expect(unloadSpy).toHaveBeenCalledWith();
-		// 		t.expect(onConnectionSuccessSpy).toHaveBeenCalled();
-		// 	}
-		// 	await connectPromise;
-		// 	await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
-		// });
+			sdk = await createSDK(testOptions);
+			await sdk.connect(scopes, caipAccountIds);
+			await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
+		});
 	});
 }
 

@@ -1,109 +1,39 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/suspicious/noAsyncPromiseExecutor: ok for tests */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
+
 /**
- * Test fixtures and utilities for the Multichain SDK tests
- * This file is excluded from test discovery via vitest.config.ts
+ * Fixtures files, allows us to create a standardized test configuration for each platform
+ * Allows us to run the tests in Node, React Native and Web without changing the overall logic or having to add manual testing
+ *
+ * We first have mocks in tests/mocks/index.ts, in that file we declare all the mocked packages and data that is needed to run the tests
+ *
+ * We also have tests/env/index.ts, that file contains everything that is needed to virtualize the environment for each platform, mocking window object,
+ * and whatever else is required by the platform
+ *
+ * Finally we have the createTest function, that is used to create the test configuration for each platform, and the runTestsInNodeEnv, runTestsInRNEnv and runTestsInWebEnv functions,
+ * that are used to run the tests for each platform.
  */
-// Additional imports for standardized setup functions
 
 import './mocks';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { JSDOM as Page } from 'jsdom';
-
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import type { MultichainOptions } from '../src/domain';
 import { MultichainSDK } from '../src/multichain';
-import { MWPTransport } from '../src/multichain/transports/mwp';
 
 // Import createSDK functions for convenience
 import { createMetamaskSDK as createMetamaskSDKWeb } from '../src/index.browser';
 import { createMetamaskSDK as createMetamaskSDKRN } from '../src/index.native';
 import { createMetamaskSDK as createMetamaskSDKNode } from '../src/index.node';
-import * as nodeStorage from '../src/store/adapters/node';
-import * as webStorage from '../src/store/adapters/web';
 import type { NativeStorageStub, MockedData, TestSuiteOptions, CreateTestFN } from '../tests/types';
 
 import { getDefaultTransport, TransportResponse } from '@metamask/multichain-api-client';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
-
+import { setupNodeMocks, setupRNMocks, setupWebMocks } from './env';
 
 export const TRANSPORT_REQUEST_RESPONSE_DELAY = 25;
 
-// Standardized setup functions for each platform
-export const setupNodeMocks = (nativeStorageStub: NativeStorageStub) => {
-	// Mock console.log to prevent QR codes from displaying in test output
-	vi.spyOn(console, 'log').mockImplementation(() => {});
-	vi.spyOn(console, 'clear').mockImplementation(() => {});
-
-	vi.spyOn(nodeStorage, 'StoreAdapterNode').mockImplementation(() => {
-		const __storage = {
-			get: t.vi.fn((key: string) => nativeStorageStub.getItem(key)),
-			set: t.vi.fn((key: string, value: string) => nativeStorageStub.setItem(key, value)),
-			delete: t.vi.fn((key: string) => nativeStorageStub.removeItem(key)),
-			platform: 'node' as const,
-			get storage() {
-				return __storage;
-			},
-		} as any;
-		return __storage;
-	});
-};
-
-export const setupRNMocks = (nativeStorageStub: NativeStorageStub) => {
-	// Mock console.log to prevent QR codes from displaying in test output (for consistency)
-	vi.spyOn(console, 'log').mockImplementation(() => {});
-	vi.spyOn(console, 'clear').mockImplementation(() => {});
-
-	vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
-	vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-	vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
-};
-
-export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
-	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
-		url: dappUrl,
-	});
-	const globalStub = {
-		...dom.window,
-		addEventListener: t.vi.fn(),
-		removeEventListener: t.vi.fn(),
-		ethereum: {
-			isMetaMask: true,
-		},
-	};
-	vi.stubGlobal('navigator', {
-		...dom.window.navigator,
-		product: 'Chrome',
-		language: 'en-US',
-	});
-	vi.stubGlobal('window', globalStub);
-	vi.stubGlobal('location', dom.window.location);
-	vi.stubGlobal('document', dom.window.document);
-	vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
-	vi.stubGlobal('requestAnimationFrame', t.vi.fn());
-	vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
-		const __storage = {
-			get: t.vi.fn((key: string) => {
-				return nativeStorageStub.getItem(key);
-			}),
-			set: t.vi.fn((key: string, value: string) => {
-				return nativeStorageStub.setItem(key, value);
-			}),
-			delete: t.vi.fn((key: string) => {
-				return nativeStorageStub.removeItem(key);
-			}),
-			platform: 'web' as const,
-			get storage() {
-				return __storage;
-			},
-		} as any;
-		return __storage;
-	});
-};
 
 // Helper functions to create standardized test configurations
 export const runTestsInNodeEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {

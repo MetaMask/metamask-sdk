@@ -1,37 +1,3 @@
-
-
-// t.vi.mock('@metamask/mobile-wallet-protocol-core', async () => {
-//   const {SessionStore, ...actual} = await import('@metamask/mobile-wallet-protocol-core');
-//   let store = new Map<string, string>();
-//   return {
-//     ...actual,
-//     get SessionStore() {
-//       const storageProps = {
-
-//         get: t.vi.fn(() => Promise.resolve(store.get('session') ?? null)),
-//         set: t.vi.fn((key: string, value: string) => {
-//           store.set(key, value)
-//           return  Promise.resolve()
-//         }),
-//         delete: t.vi.fn((key) => {
-//           store.delete(key)
-//           return Promise.resolve()
-//         }),
-//       }
-//       const instance = new SessionStore(storageProps)
-//       return instance;
-//     },
-//     __mockSessionStore: SessionStore,
-//     __mockStorage: store,
-//   }
-// })
-
-
-// t.vi.mock('../../src/multichain/transports/mwp');
-
-
-
-
 import * as t from 'vitest';
 
 type PendingRequests = {
