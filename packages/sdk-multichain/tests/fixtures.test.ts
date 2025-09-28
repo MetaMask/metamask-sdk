@@ -30,7 +30,7 @@ import type { NativeStorageStub, MockedData, TestSuiteOptions, CreateTestFN } fr
 import { getDefaultTransport, TransportResponse } from '@metamask/multichain-api-client';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
-import { setupNodeMocks, setupRNMocks, setupWebMocks } from './env';
+import { setupNodeMocks, setupRNMocks, setupWebMobileMocks, setupWebMocks } from './env';
 
 export const TRANSPORT_REQUEST_RESPONSE_DELAY = 25;
 
@@ -66,6 +66,15 @@ export const runTestsInWebEnv = <T extends MultichainOptions>(options: T, testSu
 	});
 };
 
+export const runTestsInWebMobileEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
+	return createTest({
+		platform: 'web-mobile',
+		createSDK: createMetamaskSDKWeb,
+		options,
+		setupMocks: (nativeStorageStub) => setupWebMobileMocks(nativeStorageStub, dappUrl),
+		tests: testSuite,
+	});
+};
 export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMocks, cleanupMocks, tests }) => {
   const mockWalletGetSession = t.vi.fn(() => Promise.reject('Please mock mockWalletGetSession')) as any;
   const mockWalletCreateSession = t.vi.fn(() => Promise.reject('Please mock mockWalletCreateSession')) as any;

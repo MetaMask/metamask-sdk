@@ -50,7 +50,7 @@ export type TestSuiteOptions<T extends MultichainOptions> = {
 };
 
 export type Options<T extends MultichainOptions> = {
-	platform: 'web' | 'node' | 'rn';
+	platform: 'web' | 'node' | 'rn' | 'web-mobile';
 	options: T;
 	createSDK: (options: T) => Promise<MultichainCore>;
 	setupMocks?: (options: NativeStorageStub) => void;

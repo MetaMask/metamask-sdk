@@ -47,7 +47,7 @@ export const setupRNMocks = (nativeStorageStub: NativeStorageStub) => {
 };
 
 /**
- * Virtualize nodejs environments, mocking everything needed to run the tests in Web with Chrome extension available
+ * Virtualize wev environments, mocking everything needed to run the tests in Web with Chrome extension available
  */
 export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
 	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
@@ -66,6 +66,59 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 		product: 'Chrome',
 		language: 'en-US',
 	});
+	vi.stubGlobal('window', globalStub);
+	vi.stubGlobal('location', dom.window.location);
+	vi.stubGlobal('document', dom.window.document);
+	vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+	vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+	vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
+		const __storage = {
+			get: t.vi.fn((key: string) => {
+				return nativeStorageStub.getItem(key);
+			}),
+			set: t.vi.fn((key: string, value: string) => {
+				return nativeStorageStub.setItem(key, value);
+			}),
+			delete: t.vi.fn((key: string) => {
+				return nativeStorageStub.removeItem(key);
+			}),
+			platform: 'web' as const,
+			get storage() {
+				return __storage;
+			},
+		} as any;
+		return __storage;
+	});
+};
+
+
+
+/**
+ * Virtualize wev environments, mocking everything needed to run the tests in Web with Chrome extension available
+ */
+export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'https://test.dapp') => {
+	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
+		url: dappUrl,
+	});
+
+	const navigator = {
+    ...dom.window.navigator,
+		product: 'Chrome',
+		language: 'en-US',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1',
+  }
+
+  const globalStub = {
+		...dom.window,
+		addEventListener: t.vi.fn(),
+		removeEventListener: t.vi.fn(),
+		ethereum: {
+			isMetaMask: true,
+		},
+    navigator
+	};
+
+  vi.stubGlobal('navigator', navigator);
 	vi.stubGlobal('window', globalStub);
 	vi.stubGlobal('location', dom.window.location);
 	vi.stubGlobal('document', dom.window.document);
