@@ -2,10 +2,12 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { InvokeMethodOptions, MultichainOptions, MultichainCore } from './domain';
+import type { InvokeMethodOptions, MultichainOptions, MultichainCore, Scope } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { mockSessionData, runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv } from '../tests/fixtures.test';
 import { Store } from './store';
+import { mockSessionData, mockSessionRequestData } from '../tests/data';
+import type { TestSuiteOptions, MockedData } from '../tests/types';
 
 vi.mock('cross-fetch', () => {
 	const mockFetch = vi.fn();
@@ -56,14 +58,25 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		});
 
 		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
-			// Mock the RPCClient response
-			const mockResponse = { id: 1, jsonrpc: '2.0' as const, result: 'success' };
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.request.mockResolvedValue(mockResponse);
-			mockedData.mockTransport.isConnected.mockReturnValue(true);
-			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
+			mockedData.mockWalletCreateSession.mockImplementation(() => mockSessionData);
+			mockedData.mockWalletInvokeMethod.mockImplementation(() => 'success');
 
 			sdk = await createSDK(testOptions);
+
+			t.expect(sdk.state).toBe('loaded');
+
+			await sdk.connect(scopes, caipAccountIds);
+
+			t.expect(sdk.state).toBe('connected');
+			t.expect(sdk.storage).toBeDefined();
+			t.expect(sdk.transport).toBeDefined();
+
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 			const options = {
 				scope: 'eip155:1',
@@ -71,43 +84,23 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			} as InvokeMethodOptions;
 			const result = await sdk.invokeMethod(options);
 			t.expect(providerInvokeMethodSpy).toHaveBeenCalledWith(options);
-			t.expect(result).toEqual(mockResponse);
+			t.expect(result).toEqual('success');
 		});
 
 		t.it(`${platform} should reject invoke if no active session or provider is available`, async () => {
-			mockedData.nativeStorageStub.removeItem('multichain-transport');
-
-			mockedData.mockTransport.isConnected.mockReturnValue(false);
-			mockedData.mockTransport.connect.mockResolvedValue();
-			mockedData.mockMultichainClient.getSession.mockResolvedValue(undefined);
-
 			sdk = await createSDK(testOptions);
-
 			const options = {
 				scope: 'eip155:1',
 				request: { method: 'eth_accounts', params: [] },
 			} as InvokeMethodOptions;
-
 			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Provider not initialized, establish connection first');
 		});
 
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.isConnected.mockReturnValue(true);
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockSessionData,
-					});
-				}
-				return Promise.resolve({
-					id: 1,
-					jsonrpc: '2.0',
-					result: undefined,
-				});
-			});
+			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+
 			// Mock the RPCClient response
 			const mockJsonResponse = { result: 'success' };
 			const fetchModule = await import('cross-fetch');
@@ -144,21 +137,12 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		t.it(`${platform} should handle invoke method errors`, async () => {
 			const mockError = new Error('Failed to invoke method');
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.isConnected.mockReturnValue(true);
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockSessionData,
-					});
-				}
-				return Promise.resolve({
-					id: 1,
-					jsonrpc: '2.0',
-					result: undefined,
-				});
-			});
+
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+			mockedData.mockWalletInvokeMethod.mockRejectedValue(mockError);
+
 			sdk = await createSDK(testOptions);
 			const options = {
 				scope: 'eip155:1',
@@ -169,7 +153,6 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			} as InvokeMethodOptions;
 			t.expect(sdk.state).toBe('connected');
 			t.expect(sdk.provider).toBeDefined();
-			mockedData.mockTransport.request.mockRejectedValue(mockError);
 
 			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
 		});

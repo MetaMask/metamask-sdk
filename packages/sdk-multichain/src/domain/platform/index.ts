@@ -74,3 +74,8 @@ export function isMetamaskExtensionInstalled(): boolean {
 	}
 	return Boolean(window.ethereum?.isMetaMask);
 }
+
+export function isSecure() {
+	const platformType = getPlatformType();
+	return isReactNative() || platformType === PlatformType.MobileWeb;
+}

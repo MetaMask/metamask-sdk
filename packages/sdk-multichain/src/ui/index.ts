@@ -2,6 +2,7 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { type ConnectionRequest, getPlatformType, getVersion, type Modal, type OTPCode, PlatformType } from '../domain';
 import type { FactoryModals, ModalTypes } from './modals/types';
 import type { AbstractOTPCodeModal } from './modals/base/AbstractOTPModal';
+import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';
 
 // @ts-ignore
 let __instance: typeof import('@metamask/sdk-multichain-ui/dist/loader/index.cjs.js') | undefined;
@@ -23,6 +24,7 @@ export async function preload() {
 }
 
 export class ModalFactory<T extends FactoryModals = FactoryModals> {
+	// biome-ignore lint/suspicious/noExplicitAny: Expected here
 	public modal!: Modal<any>;
 	private readonly platform: PlatformType = getPlatformType();
 	private successCallback!: (error?: Error) => void;
@@ -87,10 +89,16 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		return container;
 	}
 
-	private async generateQRCode(connectionRequest: ConnectionRequest) {
+	createDeeplink(connectionRequest: ConnectionRequest) {
 		const json = JSON.stringify(connectionRequest);
 		const urlEncoded = encodeURIComponent(json);
-		return `metamask://connect/mwp?p=${urlEncoded}`;
+		return `${METAMASK_DEEPLINK_BASE}/mwp?p=${urlEncoded}`;
+	}
+
+	createUniversalLink(connectionRequest: ConnectionRequest) {
+		const json = JSON.stringify(connectionRequest);
+		const urlEncoded = encodeURIComponent(json);
+		return `${METAMASK_CONNECT_BASE_URL}/mwp?p=${urlEncoded}`;
 	}
 
 	private onCloseModal() {
@@ -108,7 +116,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 
 		const parentElement = this.getMountedContainer();
 		const connectionRequest = await createConnectionRequest();
-		const qrCodeLink = await this.generateQRCode(connectionRequest);
+		const qrCodeLink = this.createDeeplink(connectionRequest);
 
 		const modal = new this.options.InstallModal({
 			expiresIn: (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000,
@@ -117,7 +125,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 			preferDesktop,
 			link: qrCodeLink,
 			sdkVersion: getVersion(),
-			generateQRCode: this.generateQRCode.bind(this),
+			generateQRCode: async (request) => this.createDeeplink(request),
 			onClose: this.onCloseModal.bind(this),
 			startDesktopOnboarding: this.onStartDesktopOnboarding.bind(this),
 			createConnectionRequest,

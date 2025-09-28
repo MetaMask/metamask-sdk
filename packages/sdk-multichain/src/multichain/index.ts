@@ -1,24 +1,32 @@
-import { type CreateSessionParams, getDefaultTransport, getMultichainClient, type MultichainApiClient, type SessionData, type Transport } from '@metamask/multichain-api-client';
+import {
+	type CreateSessionParams,
+	getDefaultTransport,
+	getMultichainClient,
+	type MultichainApiClient,
+	type SessionData,
+	type TransportResponse,
+} from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type ModalFactoryConnectOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
-import { type ConnectionRequest, MultichainCore, type SDKState } from '../domain/multichain';
-import { getPlatformType, PlatformType } from '../domain/platform';
-import { MWPTransport } from './mwp';
+import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
+import { getPlatformType, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
 import { addValidAccounts, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
 import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
 import { MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
-import { keymanager } from './mwp/KeyManager';
+
+import { MWPTransport } from './transports/mwp';
+import { keymanager } from './transports/mwp/KeyManager';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
 export class MultichainSDK extends MultichainCore {
 	private __provider: MultichainApiClient<RPCAPI> | undefined = undefined;
-	private __transport: Transport | undefined = undefined;
+	private __transport: ExtendedTransport | undefined = undefined;
 	private __dappClient: DappClient | undefined = undefined;
 
 	public state: SDKState;
@@ -43,23 +51,6 @@ export class MultichainSDK extends MultichainCore {
 			throw new Error('DappClient not initialized, establish connection first');
 		}
 		return this.__dappClient;
-	}
-
-	async getCurrentSession(): Promise<SessionData | undefined> {
-		try {
-			//TODO: We should report to the multichain api team that when there's no extension installed
-			// getSession timeouts and should be just undefined
-			// Thats why we need this function, to compensate that
-			let validSession: SessionData | undefined;
-			const session = await this.provider.getSession();
-			if (Object.keys(session?.sessionScopes ?? {}).length > 0) {
-				validSession = session;
-			}
-			return validSession;
-		} catch (err) {
-			logger('MetaMaskSDK error during getCurrentSession', err);
-			return undefined;
-		}
 	}
 
 	get storage() {
@@ -141,16 +132,13 @@ export class MultichainSDK extends MultichainCore {
 		const transportType = await this.storage.getTransport();
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
-				const apiTransport = getDefaultTransport(this.options.transport);
+				const apiTransport = getDefaultTransport();
 				this.__transport = apiTransport;
 				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 				return apiTransport;
 			} else if (transportType === TransportType.MPW) {
 				const { adapter: kvstore } = this.options.storage;
-				const sessionstore = new SessionStore(kvstore);
-				const websocket = typeof window !== 'undefined' ? WebSocket : (await import('ws')).WebSocket;
-				const transport = await WebSocketTransport.create({ url: MWP_RELAY_URL, kvstore, websocket });
-				const dappClient = new DappClient({ transport, sessionstore, keymanager });
+				const dappClient = await this.createDappClient();
 				const apiTransport = new MWPTransport(dappClient, kvstore);
 				this.__dappClient = dappClient;
 				this.__transport = apiTransport;
@@ -176,6 +164,9 @@ export class MultichainSDK extends MultichainCore {
 		const transport = await this.getStoredTransport();
 		if (transport) {
 			const session = await this.getActiveSession();
+			if (!this.transport.isConnected()) {
+				await this.transport.connect();
+			}
 			this.__provider = getMultichainClient({ transport });
 			//Add event listeners to the transport
 			if (session && Object.keys(session.sessionScopes ?? {}).length > 0) {
@@ -214,21 +205,40 @@ export class MultichainSDK extends MultichainCore {
 		return false;
 	}
 
-	private async onConnectionSuccess(params: ModalFactoryConnectOptions) {
-		if (!this.transport.isConnected()) {
-			await this.transport.connect();
-		}
+	async getCurrentSession(): Promise<SessionData | undefined> {
 		try {
-			this.state = 'connected';
-			const session = await this.getCurrentSession();
-			const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
-			const proposedScopes = params.scopes;
-			const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
-			if (isSameScopes) {
-				this.emit('wallet_sessionChanged', session);
-				return;
+			//TODO: We should report to the multichain api team that when there's no extension installed
+			// getSession timeouts and should be just undefined
+			// Thats why we need this function, to compensate that
+			let validSession: SessionData | undefined;
+			const session = (await this.transport.request({ method: 'wallet_getSession' })) as TransportResponse<SessionData>;
+
+			if (Object.keys(session?.result?.sessionScopes ?? {}).length > 0) {
+				validSession = session.result;
 			}
+			return validSession;
+		} catch (err) {
+			logger('MetaMaskSDK error during getCurrentSession', err);
+			return undefined;
+		}
+	}
+
+	private async onConnectionSuccess(params: ModalFactoryConnectOptions) {
+		try {
+			if (!this.transport.isConnected()) {
+				await this.transport.connect();
+			}
+			this.state = 'connected';
+			this.__provider = getMultichainClient({ transport: this.transport });
+			const session = await this.getCurrentSession();
 			if (session) {
+				const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
+				const proposedScopes = params.scopes;
+				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+				if (isSameScopes) {
+					this.emit('wallet_sessionChanged', session);
+					return;
+				}
 				await this.transport.request({ method: 'wallet_revokeSession', params: session });
 			}
 			const { scopes, caipAccountIds } = params;
@@ -238,22 +248,27 @@ export class MultichainSDK extends MultichainCore {
 			const newSession = newSessionRequest.result as SessionData;
 			this.options.transport?.onResumeSession?.(newSession);
 			this.emit('wallet_sessionChanged', newSession);
-		} catch (error) {
-			logger('MetaMaskSDK error during onConnectionSuccess', error);
+		} catch (err) {
+			logger('MetaMaskSDK error during onConnectionSuccess', err);
+			throw err;
 		}
 	}
 
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		let connectionRequest: ConnectionRequest | undefined;
 		return new Promise<void>((resolve, reject) => {
 			this.setupMWP()
 				.then(() => {
+					this.dappClient.once('connected', () => {
+						this.options.storage.setTransport(TransportType.MPW);
+						this.options.ui.factory.unload();
+					});
+					// Use Connection Modal
 					this.options.ui.factory.renderInstallModal(
 						desktopPreferred,
 						() => {
 							return new Promise<ConnectionRequest>((resolveConnectionRequest) => {
 								this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
-									connectionRequest = {
+									resolveConnectionRequest({
 										sessionRequest,
 										metadata: {
 											dapp: this.options.dapp,
@@ -262,10 +277,9 @@ export class MultichainSDK extends MultichainCore {
 												platform: getPlatformType(),
 											},
 										},
-									};
-									resolveConnectionRequest(connectionRequest);
+									});
 								});
-								this.transport.connect().catch((err) => {
+								this.transport.connect({ scopes, caipAccountIds }).catch((err) => {
 									if (err instanceof ProtocolError) {
 										//Ignore Request expired errors to allow modal to regenerate expired qr codes
 										if (err.code !== ErrorCode.REQUEST_EXPIRED) {
@@ -304,17 +318,36 @@ export class MultichainSDK extends MultichainCore {
 		const { adapter: kvstore } = this.options.storage;
 		const dappClient = await this.createDappClient();
 		this.__dappClient = dappClient;
-
 		const apiTransport = new MWPTransport(dappClient, kvstore);
 		this.__transport = apiTransport;
+		this.listener = this.transport.onNotification(this.onTransportNotification.bind(this));
+	}
 
-		this.dappClient.once('connected', () => {
-			const apiClient = getMultichainClient({ transport: this.transport });
-			this.__provider = apiClient;
-			this.listener = this.transport.onNotification(this.onTransportNotification.bind(this));
-			this.options.storage.setTransport(TransportType.MPW);
-			this.options.ui.factory.unload();
-		});
+	private openDeeplink(deeplink: string, universalLink: string) {
+		const { mobile } = this.options;
+		const useDeeplink = mobile && mobile.useDeeplink !== undefined ? mobile.useDeeplink : true;
+		if (useDeeplink) {
+			if (typeof window !== 'undefined') {
+				// We don't need to open a deeplink in a new tab
+				// It avoid the browser to display a blank page
+				window.location.href = deeplink;
+			}
+		} else if (typeof document !== 'undefined') {
+			// Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
+			// Using 'window.open' causes issues on iOS in non-Safari browsers and
+			// WebViews where a blank tab is left behind after connecting.
+			// This is especially bad in some WebView scenarios (e.g. following a
+			// link from Twitter) where the user doesn't have any mechanism for
+			// closing the blank tab.
+			// For whatever reason, links with a target of "_blank" don't suffer
+			// from this problem, and programmatically clicking a detached link
+			// element with the same attributes also avoids the issue.
+			const link = document.createElement('a');
+			link.href = universalLink;
+			link.target = '_self';
+			link.rel = 'noreferrer noopener';
+			link.click();
+		}
 	}
 
 	async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {
@@ -334,22 +367,66 @@ export class MultichainSDK extends MultichainCore {
 		//2. If is web, has extension and preferExtension is true, directly connect with the extension
 		if (isWeb && this.hasExtension && preferExtension) {
 			await this.storage.setTransport(TransportType.Browser);
-			const transport = await getDefaultTransport(this.options.transport);
+			const transport = getDefaultTransport();
 			this.listener = transport.onNotification(this.onTransportNotification.bind(this));
 			this.__transport = transport;
-			this.__provider = getMultichainClient({ transport: this.__transport });
 			return this.onConnectionSuccess({ scopes, caipAccountIds });
 		}
 
 		// Determine preferred option for install modal
-		let preferredOption: boolean;
+		let isDesktopPreferred: boolean;
 		if (isWeb) {
-			preferredOption = this.hasExtension ? preferDesktop : !preferExtension || preferDesktop;
+			isDesktopPreferred = this.hasExtension ? preferDesktop : !preferExtension || preferDesktop;
 		} else {
-			preferredOption = preferDesktop;
+			isDesktopPreferred = preferDesktop;
 		}
 
-		return this.showInstallModal(preferredOption, scopes, caipAccountIds);
+		const secure = isSecure();
+		if (secure && !isDesktopPreferred) {
+			await this.setupMWP();
+			//We need to return a promise that resolves when we get the wallet_createSession response event
+			return new Promise<void>((resolve, reject) => {
+				this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
+					const connectionRequest = {
+						sessionRequest,
+						metadata: {
+							dapp: this.options.dapp,
+							sdk: {
+								version: getVersion(),
+								platform: getPlatformType(),
+							},
+						},
+					};
+					const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);
+					const universalLink = this.options.ui.factory.createUniversalLink(connectionRequest);
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(deeplink, '_self');
+					} else {
+						this.openDeeplink(deeplink, universalLink);
+					}
+				});
+				this.transport.onNotification((payload) => {
+					if (typeof payload === 'object' && payload !== null) {
+						if ('method' in payload && payload.method === 'wallet_createSession') {
+							//TODO: is it .params or .result?
+							// biome-ignore lint/suspicious/noExplicitAny: Expected here
+							const session = ((payload as any).params || (payload as any).result) as SessionData;
+
+							if (session) {
+								// Initial request will be what resolves the connection when options is specified
+								this.options.transport?.onResumeSession?.(session);
+								this.emit('wallet_sessionChanged', session);
+								resolve();
+							}
+						}
+					}
+				});
+
+				this.transport.connect({ scopes, caipAccountIds }).then(resolve).catch(reject);
+			});
+		}
+
+		return this.showInstallModal(isDesktopPreferred, scopes, caipAccountIds);
 	}
 
 	async disconnect(): Promise<void> {
