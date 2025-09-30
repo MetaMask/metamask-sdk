@@ -223,7 +223,7 @@ describe('MetaMaskSDK', () => {
 
       sdk = new MetaMaskSDK(options);
 
-      expect(sdk.options.hideReturnToAppNotification).toBeUndefined();
+      expect(sdk.options.hideReturnToAppNotification).toBeFalsy();
     });
 
     it('should set max listeners', () => {
