@@ -45,6 +45,14 @@ export class MWPTransport implements ExtendedTransport {
 		private options: { requestTimeout: number; connectionTimeout: number } = { requestTimeout: DEFAULT_REQUEST_TIMEOUT, connectionTimeout: DEFAULT_CONNECTION_TIMEOUT },
 	) {
 		this.dappClient.on('message', this.handleMessage.bind(this));
+
+		if (typeof window !== 'undefined') {
+			window.addEventListener('focus', () => {
+				if (!this.isConnected()) {
+					this.dappClient.reconnect();
+				}
+			});
+		}
 	}
 
 	private notifyCallbacks(data: unknown): void {

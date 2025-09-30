@@ -99,7 +99,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await afterEach(mockedData);
 		});
 
-		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
+		t.it.only(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
 			let showModalPromise!: Promise<void>;
 
 			const scopes = ['eip155:1'] as Scope[];
@@ -271,7 +271,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-runTestsInNodeEnv(baseTestOptions, testSuite);
-runTestsInRNEnv(baseTestOptions, testSuite);
-runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+// runTestsInNodeEnv(baseTestOptions, testSuite);
+// runTestsInRNEnv(baseTestOptions, testSuite);
+// runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);

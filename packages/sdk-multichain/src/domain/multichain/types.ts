@@ -1,5 +1,5 @@
 import type { StoreClient } from '../store';
-import type { MultichainCore, SessionData } from '.';
+import type { MultichainCore } from '.';
 import type { RPC_URLS_MAP, Scope } from './api/types';
 import type { ModalFactory } from '../../ui';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';

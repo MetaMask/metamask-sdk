@@ -100,7 +100,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
 
 			sdk = await createSDK(testOptions);
-			t.expect(sdk.state).toBe('loaded');
+			t.expect(sdk.state).toBe('connected');
 
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();

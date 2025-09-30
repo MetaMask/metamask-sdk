@@ -189,6 +189,17 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			}
 		});
 
+		t.it(`${platform} should reconnect to the same transport when already connected in the past`, async () => {
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
+
+			sdk = await createSDK(testOptions);
+			t.expect(sdk.state).toBe('connected');
+			t.expect(sdk.transport).toBeDefined();
+			t.expect(sdk.storage).toBeDefined();
+		});
+
 		t.it(`${platform} should skip transport connection when already connected`, async () => {
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
@@ -395,6 +406,26 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await sdk.connect(scopes, caipAccountIds);
 			await t.expect(sdk.disconnect()).rejects.toThrow('Failed to disconnect transport');
 		});
+
+		if (platform === 'web-mobile') {
+			t.it(`${platform} should reconnect to mwp when comming back from Mobile app`, async () => {
+				mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+				mockedData.mockWalletGetSession.mockResolvedValue(mockSessionData);
+				mockedData.mockWalletCreateSession.mockResolvedValue(mockSessionData);
+				mockedData.mockWalletRevokeSession.mockResolvedValue(undefined);
+
+				sdk = await createSDK(testOptions);
+
+				t.expect(sdk.state).toBe('connected');
+
+				t.expect(mockedData.mockDappClient.state).toBe('CONNECTED');
+				await mockedData.mockDappClient.disconnect();
+				t.expect(mockedData.mockDappClient.state).toBe('DISCONNECTED');
+
+				window.dispatchEvent(new Event('focus'));
+				t.expect(mockedData.mockDappClient.reconnect).toHaveBeenCalled();
+			});
+		}
 	});
 }
 

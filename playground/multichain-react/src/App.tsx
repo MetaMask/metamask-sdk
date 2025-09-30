@@ -69,7 +69,6 @@ function App() {
 	const isDisconnected = state === 'disconnected' || state === 'pending' || state === 'loaded';
 	const isConnected = state === 'connected';
 	const isConnecting = state === 'connecting';
-	debugger;
 	return (
 		<div className="min-h-screen bg-gray-50 flex justify-center">
 			<div className="max-w-6xl w-full p-8">

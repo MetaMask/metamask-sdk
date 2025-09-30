@@ -222,6 +222,11 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
         set state(state: string) {
           mockDappClient.__state = state;
         },
+        reconnect:t.vi.fn(async() => {
+          mockDappClient.emit('connected');
+          mockDappClient.state = 'CONNECTED' as any;
+          return Promise.resolve();
+        }),
         resume:t.vi.fn(async() => {
           mockDappClient.emit('connected');
           mockDappClient.state = 'CONNECTED' as any;
@@ -252,6 +257,7 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
         }),
         disconnect:t.vi.fn(async () => {
           mockDappClient.emit('disconnected');
+          mockDappClient.state = 'DISCONNECTED' as any;
           return Promise.resolve();
         }),
         sendRequest:t.vi.fn(async (request: any) => {
@@ -478,7 +484,6 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 			};
 		} catch (error) {
 			console.error('Error in beforeEach', error);
-			debugger;
 			throw error;
 		}
 	}

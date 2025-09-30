@@ -53,13 +53,16 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 	const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
 		url: dappUrl,
 	});
+
+	// Properly bind event methods to maintain context
 	const globalStub = {
 		...dom.window,
-		addEventListener: t.vi.fn(),
-		removeEventListener: t.vi.fn(),
+		addEventListener: dom.window.addEventListener.bind(dom.window),
+		removeEventListener: dom.window.removeEventListener.bind(dom.window),
+		dispatchEvent: dom.window.dispatchEvent.bind(dom.window),
 		ethereum: {
 			isMetaMask: true,
-		},
+		}
 	};
 	vi.stubGlobal('navigator', {
 		...dom.window.navigator,
@@ -70,7 +73,9 @@ export const setupWebMocks = (nativeStorageStub: NativeStorageStub, dappUrl = 'h
 	vi.stubGlobal('location', dom.window.location);
 	vi.stubGlobal('document', dom.window.document);
 	vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+	vi.stubGlobal('Event', dom.window.Event);
 	vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+	vi.stubGlobal('dispatchEvent', dom.window.dispatchEvent.bind(dom.window));
 	vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
 		const __storage = {
 			get: t.vi.fn((key: string) => {
@@ -102,11 +107,11 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
 	});
 
 	const navigator = {
-    ...dom.window.navigator,
+		...dom.window.navigator,
 		product: 'Chrome',
 		language: 'en-US',
-    userAgent: 'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
-  }
+		userAgent: 'Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36',
+	}
 
 	// Mock location with proper href setter to avoid JSDOM navigation errors
 	const mockLocation = {
@@ -117,23 +122,27 @@ export const setupWebMobileMocks = (nativeStorageStub: NativeStorageStub, dappUr
 		},
 	};
 
-  const globalStub = {
+	// Properly bind event methods to maintain context
+	const globalStub = {
 		...dom.window,
-		addEventListener: t.vi.fn(),
-		removeEventListener: t.vi.fn(),
+		addEventListener: dom.window.addEventListener.bind(dom.window),
+		removeEventListener: dom.window.removeEventListener.bind(dom.window),
+		dispatchEvent: dom.window.dispatchEvent.bind(dom.window),
 		ethereum: {
 			isMetaMask: true,
 		},
 		location: mockLocation,
-    navigator
+		navigator
 	};
 
-  vi.stubGlobal('navigator', navigator);
+	vi.stubGlobal('navigator', navigator);
 	vi.stubGlobal('window', globalStub);
 	vi.stubGlobal('location', mockLocation);
 	vi.stubGlobal('document', dom.window.document);
 	vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
+	vi.stubGlobal('Event', dom.window.Event);
 	vi.stubGlobal('requestAnimationFrame', t.vi.fn());
+	vi.stubGlobal('dispatchEvent', dom.window.dispatchEvent.bind(dom.window));
 	vi.spyOn(webStorage, 'StoreAdapterWeb').mockImplementation(() => {
 		const __storage = {
 			get: t.vi.fn((key: string) => {
