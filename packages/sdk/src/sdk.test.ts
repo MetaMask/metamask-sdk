@@ -213,7 +213,7 @@ describe('MetaMaskSDK', () => {
       expect(sdk.options.hideReturnToAppNotification).toBe(true);
     });
 
-    it('should have hideReturnToAppNotification as undefined by default', () => {
+    it('should have hideReturnToAppNotification as false by default', () => {
       const options: MetaMaskSDKOptions = {
         dappMetadata: {
           name: 'Test DApp',

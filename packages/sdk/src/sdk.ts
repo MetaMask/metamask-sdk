@@ -269,6 +269,10 @@ export class MetaMaskSDK extends EventEmitter2 {
       options._source = DEFAULT_SDK_SOURCE;
     }
 
+    if (this.options.hideReturnToAppNotification === undefined) {
+      this.options.hideReturnToAppNotification = false;
+    }
+
     // Automatically initialize the SDK to keep the same behavior as before
     this.init()
       .then(() => {
