@@ -14,7 +14,7 @@ interface RemoteCommunicationPostMessageStreamState {
   _name: any;
   remote: RemoteCommunication | null;
   deeplinkProtocol: boolean;
-  hideReturnToAppModal?: boolean;
+  hideReturnToAppNotification?: boolean;
   platformManager: PlatformManager | null;
 }
 
@@ -26,7 +26,7 @@ export class RemoteCommunicationPostMessageStream
     _name: null,
     remote: null,
     deeplinkProtocol: false,
-    hideReturnToAppModal: false,
+    hideReturnToAppNotification: false,
     platformManager: null,
   };
 
@@ -34,12 +34,12 @@ export class RemoteCommunicationPostMessageStream
     name,
     remote,
     deeplinkProtocol,
-    hideReturnToAppModal,
+    hideReturnToAppNotification,
     platformManager,
   }: {
     name: ProviderConstants;
     deeplinkProtocol: boolean;
-    hideReturnToAppModal?: boolean;
+    hideReturnToAppNotification?: boolean;
     remote: RemoteCommunication;
     platformManager: PlatformManager;
   }) {
@@ -49,8 +49,8 @@ export class RemoteCommunicationPostMessageStream
     this.state._name = name;
     this.state.remote = remote;
     this.state.deeplinkProtocol = deeplinkProtocol;
-    this.state.hideReturnToAppModal =
-      hideReturnToAppModal ?? this.state.hideReturnToAppModal;
+    this.state.hideReturnToAppNotification =
+      hideReturnToAppNotification ?? this.state.hideReturnToAppNotification;
     this.state.platformManager = platformManager;
 
     this._onMessage = this._onMessage.bind(this);

@@ -224,13 +224,13 @@ describe('startConnection', () => {
     });
   });
 
-  describe('hideReturnToAppModal URL parameter', () => {
+  describe('hideReturnToAppNotification URL parameter', () => {
     beforeEach(() => {
       mockIsSecure.mockReturnValue(true);
     });
 
-    it('should pass hr=1 when hideReturnToAppModal is true', async () => {
-      state.hideReturnToAppModal = true;
+    it('should pass hr=1 when hideReturnToAppNotification is true', async () => {
+      state.hideReturnToAppNotification = true;
 
       await startConnection(state, options);
 
@@ -238,8 +238,8 @@ describe('startConnection', () => {
       expect(state.qrcodeLink).toContain('hr=1');
     });
 
-    it('should pass hr=0 when hideReturnToAppModal is false', async () => {
-      state.hideReturnToAppModal = false;
+    it('should pass hr=0 when hideReturnToAppNotification is false', async () => {
+      state.hideReturnToAppNotification = false;
 
       await startConnection(state, options);
 
@@ -247,8 +247,8 @@ describe('startConnection', () => {
       expect(state.qrcodeLink).toContain('hr=0');
     });
 
-    it('should pass hr=0 when hideReturnToAppModal is undefined', async () => {
-      state.hideReturnToAppModal = undefined;
+    it('should pass hr=0 when hideReturnToAppNotification is undefined', async () => {
+      state.hideReturnToAppNotification = undefined;
 
       await startConnection(state, options);
 
@@ -258,7 +258,7 @@ describe('startConnection', () => {
 
     it('should include hr parameter in connectWith scenarios', async () => {
       mockIsSecure.mockReturnValue(false);
-      state.hideReturnToAppModal = true;
+      state.hideReturnToAppNotification = true;
       const connectWith = {
         method: 'eth_sign',
         params: ['0x123456', '0xabcdef'],

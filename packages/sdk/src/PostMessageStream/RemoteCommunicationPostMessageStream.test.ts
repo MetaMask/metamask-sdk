@@ -36,20 +36,20 @@ describe('RemoteCommunicationPostMessageStream', () => {
     );
   });
 
-  it('should initialize with hideReturnToAppModal option', () => {
+  it('should initialize with hideReturnToAppNotification option', () => {
     const instanceWithOption = new RemoteCommunicationPostMessageStream({
       name: ProviderConstants.PROVIDER,
       remote: mockRemoteCommunication,
       deeplinkProtocol: false,
       platformManager: mockPlatformManager,
-      hideReturnToAppModal: true,
+      hideReturnToAppNotification: true,
     });
 
-    expect(instanceWithOption.state.hideReturnToAppModal).toBe(true);
+    expect(instanceWithOption.state.hideReturnToAppNotification).toBe(true);
   });
 
-  it('should have hideReturnToAppModal as false by default', () => {
-    expect(instance.state.hideReturnToAppModal).toBe(false);
+  it('should have hideReturnToAppNotification as false by default', () => {
+    expect(instance.state.hideReturnToAppNotification).toBe(false);
   });
 
   it('should call _write properly', async () => {

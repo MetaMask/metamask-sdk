@@ -199,9 +199,9 @@ describe('MetaMaskSDK', () => {
       expect(sdk.options).toMatchObject(options);
     });
 
-    it('should initialize with hideReturnToAppModal option', () => {
+    it('should initialize with hideReturnToAppNotification option', () => {
       const options: MetaMaskSDKOptions = {
-        hideReturnToAppModal: true,
+        hideReturnToAppNotification: true,
         dappMetadata: {
           name: 'Test DApp',
           url: 'http://test-dapp.com',
@@ -210,10 +210,10 @@ describe('MetaMaskSDK', () => {
 
       sdk = new MetaMaskSDK(options);
 
-      expect(sdk.options.hideReturnToAppModal).toBe(true);
+      expect(sdk.options.hideReturnToAppNotification).toBe(true);
     });
 
-    it('should have hideReturnToAppModal as undefined by default', () => {
+    it('should have hideReturnToAppNotification as undefined by default', () => {
       const options: MetaMaskSDKOptions = {
         dappMetadata: {
           name: 'Test DApp',
@@ -223,7 +223,7 @@ describe('MetaMaskSDK', () => {
 
       sdk = new MetaMaskSDK(options);
 
-      expect(sdk.options.hideReturnToAppModal).toBeUndefined();
+      expect(sdk.options.hideReturnToAppNotification).toBeUndefined();
     });
 
     it('should set max listeners', () => {

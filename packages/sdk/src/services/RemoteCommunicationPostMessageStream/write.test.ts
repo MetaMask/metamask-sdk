@@ -318,7 +318,7 @@ describe('write function', () => {
     });
   });
 
-  describe('hideReturnToAppModal URL parameter', () => {
+  describe('hideReturnToAppNotification URL parameter', () => {
     beforeEach(() => {
       mockIsReady.mockReturnValue(true);
       mockIsConnected.mockReturnValue(true);
@@ -342,8 +342,8 @@ describe('write function', () => {
       });
     });
 
-    it('should include hr=1 in URL when hideReturnToAppModal is true', async () => {
-      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppModal =
+    it('should include hr=1 in URL when hideReturnToAppNotification is true', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
         true;
 
       await write(
@@ -360,8 +360,8 @@ describe('write function', () => {
       );
     });
 
-    it('should include hr=0 in URL when hideReturnToAppModal is false', async () => {
-      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppModal =
+    it('should include hr=0 in URL when hideReturnToAppNotification is false', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
         false;
 
       await write(
@@ -378,8 +378,8 @@ describe('write function', () => {
       );
     });
 
-    it('should include hr=0 in URL when hideReturnToAppModal is undefined', async () => {
-      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppModal =
+    it('should include hr=0 in URL when hideReturnToAppNotification is undefined', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
         undefined;
 
       await write(

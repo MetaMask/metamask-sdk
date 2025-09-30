@@ -149,7 +149,7 @@ export async function startConnection(
     let linkParams = `channelId=${channelId}&v=2&comm=${
       state.communicationLayerPreference ?? ''
     }&pubkey=${pubKey}${qrCodeOrigin}&originatorInfo=${base64OriginatorInfo}&hr=${
-      state.hideReturnToAppModal ? 1 : 0
+      state.hideReturnToAppNotification ? 1 : 0
     }`;
 
     if (connectWith) {

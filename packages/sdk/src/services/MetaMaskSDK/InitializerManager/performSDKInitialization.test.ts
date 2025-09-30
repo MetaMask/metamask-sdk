@@ -57,7 +57,7 @@ describe('performSDKInitialization', () => {
       injectProvider: true,
       shouldShimWeb3: true,
       useDeeplink: true,
-      hideReturnToAppModal: false,
+      hideReturnToAppNotification: false,
       storage: {
         enabled: true,
       },

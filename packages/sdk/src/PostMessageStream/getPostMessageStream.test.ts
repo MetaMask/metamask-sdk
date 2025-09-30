@@ -60,10 +60,10 @@ describe('getPostMessageStream', () => {
     });
   });
 
-  it('should pass hideReturnToAppModal from remoteConnection state', () => {
+  it('should pass hideReturnToAppNotification from remoteConnection state', () => {
     const fakeConnector = {};
     const fakePlatformManager = {};
-    const hideReturnToAppModal = true;
+    const hideReturnToAppNotification = true;
     mockRemoteConnection.mockImplementation(
       () =>
         ({
@@ -71,7 +71,7 @@ describe('getPostMessageStream', () => {
           getPlatformManager: jest.fn().mockReturnValue(fakePlatformManager),
           state: {
             deeplinkProtocol: false,
-            hideReturnToAppModal,
+            hideReturnToAppNotification,
           },
         } as any),
     );
@@ -90,7 +90,7 @@ describe('getPostMessageStream', () => {
       remote: fakeConnector,
       deeplinkProtocol: false,
       platformManager: fakePlatformManager,
-      hideReturnToAppModal,
+      hideReturnToAppNotification,
     });
   });
 });

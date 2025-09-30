@@ -93,7 +93,7 @@ export interface RemoteConnectionState {
   connector?: RemoteCommunication;
   qrcodeLink?: string;
   useDeeplink?: boolean;
-  hideReturnToAppModal?: boolean;
+  hideReturnToAppNotification?: boolean;
   developerMode: boolean;
   analytics?: Analytics;
   authorized: boolean;
@@ -147,7 +147,7 @@ export class RemoteConnection {
     this.state.analytics = options.analytics;
     this.state.preferDesktop = options.preferDesktop ?? false;
     this.state.useDeeplink = options.sdk.options.useDeeplink;
-    this.state.hideReturnToAppModal = options.sdk.options.hideReturnToAppModal;
+    this.state.hideReturnToAppNotification = options.sdk.options.hideReturnToAppNotification;
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;

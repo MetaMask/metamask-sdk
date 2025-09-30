@@ -25,7 +25,7 @@ export const getPostMessageStream = ({
     name,
     remote: remoteConnection?.getConnector(),
     deeplinkProtocol: remoteConnection?.state.deeplinkProtocol,
-    hideReturnToAppModal: remoteConnection?.state.hideReturnToAppModal,
+    hideReturnToAppNotification: remoteConnection?.state.hideReturnToAppNotification,
     platformManager: remoteConnection?.getPlatformManager(),
   });
 };

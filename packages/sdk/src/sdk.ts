@@ -95,7 +95,7 @@ export interface MetaMaskSDKOptions {
    * If true, MetaMask Mobile will hide the modal that invites the user to return to the app after performing an action on MetaMask Mobile.
    * This should be used when the app is loaded in an iframe inside the MetaMask Mobile browser.
    */
-  hideReturnToAppModal?: boolean;
+  hideReturnToAppNotification?: boolean;
 
   /**
    * If true, the SDK will shim the window.web3 object with the provider returned by the SDK (useful for compatibility with older browser).
@@ -226,7 +226,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       enableAnalytics: true,
       shouldShimWeb3: true,
       useDeeplink: true,
-      hideReturnToAppModal: false,
+      hideReturnToAppNotification: false,
       extensionOnly: true,
       headless: false,
       dappMetadata: {
