@@ -147,7 +147,9 @@ export class RemoteConnection {
     this.state.analytics = options.analytics;
     this.state.preferDesktop = options.preferDesktop ?? false;
     this.state.useDeeplink = options.sdk.options.useDeeplink;
-    this.state.hideReturnToAppNotification = options.sdk.options.hideReturnToAppNotification;
+    this.state.hideReturnToAppNotification =
+      options.sdk.options.hideReturnToAppNotification;
+
     this.state.communicationLayerPreference =
       options.communicationLayerPreference;
     this.state.platformManager = options.platformManager;
