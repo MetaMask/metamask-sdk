@@ -283,6 +283,7 @@ export class MultichainSDK extends MultichainCore {
 			this.setupMWP()
 				.then(() => {
 					this.dappClient.once('connected', () => {
+						this.storage.setTransport(TransportType.MPW);
 						this.options.ui.factory.unload();
 					});
 					// Use Connection Modal
@@ -316,13 +317,6 @@ export class MultichainSDK extends MultichainCore {
 						},
 						async (error?: Error) => {
 							this.options.ui.factory.modal?.unmount();
-
-							// if (this.transport instanceof MWPTransport) {
-							// 	await this.storage.setTransport(TransportType.MPW);
-							// } else {
-							// 	await this.storage.setTransport(TransportType.Browser);
-							// }
-
 							if (!error) {
 								this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
 							} else {

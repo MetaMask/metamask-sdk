@@ -198,6 +198,8 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state).toBe('connected');
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
+
+			await t.expect(sdk.storage.getTransport()).resolves.toBe(transportString);
 		});
 
 		t.it(`${platform} should skip transport connection when already connected`, async () => {
@@ -238,6 +240,8 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				t.expect(mockedData.mockDappClient.state).toBe('CONNECTED');
 				t.expect(mockedData.mockDappClient.connect).not.toHaveBeenCalled();
 			}
+
+			await t.expect(sdk.storage.getTransport()).resolves.toBe(transportString);
 		});
 
 		t.it(`${platform} should handle invalid CAIP account IDs gracefully`, async () => {
@@ -297,6 +301,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				t.expect(mockedData.mockDefaultTransport.__isConnected).toBe(true);
 			}
 
+			await t.expect(sdk.storage.getTransport()).resolves.toBe(transportString);
 			t.expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid CAIP account ID: "invalid-account-id"', t.expect.any(Error));
 		});
 
