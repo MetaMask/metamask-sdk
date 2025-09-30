@@ -11536,14 +11536,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/mobile-wallet-protocol-dapp-client@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@metamask/mobile-wallet-protocol-dapp-client@npm:0.2.0"
+"@metamask/mobile-wallet-protocol-dapp-client@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@metamask/mobile-wallet-protocol-dapp-client@npm:0.2.1"
   dependencies:
     "@metamask/mobile-wallet-protocol-core": ^0.2.0
     "@metamask/utils": ^9.1.0
     uuid: ^11.1.0
-  checksum: 86b00f92160738a063a662f5ca3cd4c47ba60f05ec927bc6b49fb0c5efdf64b058efa8ea867009eb6eec404bdada85e39bd414fd11e87bc3f5ef207ee9622c4b
+  checksum: 947b6758507093520d54ea618bdc1e01e42bcd995a2f4b16b8504b139c2aec41d192680d7880ecdb2aa9d676f6a3205a6c708e7bb1f2b44fb57ec8715d34385d
   languageName: node
   linkType: hard
 
@@ -11574,7 +11574,7 @@ __metadata:
     "@biomejs/biome": 2.0.0
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/mobile-wallet-protocol-core": ^0.2.0
-    "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.0
+    "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.1
     "@metamask/multichain-api-client": ^0.8.0
     "@metamask/onboarding": ^1.0.1
     "@metamask/sdk-analytics": "workspace:^"
@@ -11953,7 +11953,7 @@ __metadata:
     "@metamask/api-specs": ^0.14.0
     "@metamask/auto-changelog": ^3.4.3
     "@metamask/multichain-sdk": "workspace:^"
-    "@metamask/utils": ^11.0.0
+    "@metamask/utils": ^11.8.1
     "@open-rpc/meta-schema": ^1.14.9
     "@open-rpc/schema-utils-js": ^2.0.5
     "@solana/web3.js": ^1.98.0
@@ -12555,25 +12555,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/utils@npm:^11.0.0":
-  version: 11.8.0
-  resolution: "@metamask/utils@npm:11.8.0"
-  dependencies:
-    "@ethereumjs/tx": ^4.2.0
-    "@metamask/superstruct": ^3.1.0
-    "@noble/hashes": ^1.3.1
-    "@scure/base": ^1.1.3
-    "@types/debug": ^4.1.7
-    "@types/lodash": ^4.17.20
-    debug: ^4.3.4
-    lodash: ^4.17.21
-    pony-cause: ^2.1.10
-    semver: ^7.5.4
-    uuid: ^9.0.1
-  checksum: 61f0eb5f9066ea7f59637389910698d78e48fc810669d156dc1cfea879699cbc12644933ee04929dfc14bc100440a241003a1b68de9e0c41f292c4f290af1ae6
-  languageName: node
-  linkType: hard
-
 "@metamask/utils@npm:^11.4.0":
   version: 11.4.2
   resolution: "@metamask/utils@npm:11.4.2"
@@ -12589,6 +12570,25 @@ __metadata:
     semver: ^7.5.4
     uuid: ^9.0.1
   checksum: 11061a93f49684563a14caaaab2d8dbb969c907dbc24358cf188dd10ec00ac91e5d04369ef605e9d78e75f8ad53d9a0fbdb65f2325b12ef6c8db85bb46160dff
+  languageName: node
+  linkType: hard
+
+"@metamask/utils@npm:^11.8.1":
+  version: 11.8.1
+  resolution: "@metamask/utils@npm:11.8.1"
+  dependencies:
+    "@ethereumjs/tx": ^4.2.0
+    "@metamask/superstruct": ^3.1.0
+    "@noble/hashes": ^1.3.1
+    "@scure/base": ^1.1.3
+    "@types/debug": ^4.1.7
+    "@types/lodash": ^4.17.20
+    debug: ^4.3.4
+    lodash: ^4.17.21
+    pony-cause: ^2.1.10
+    semver: ^7.5.4
+    uuid: ^9.0.1
+  checksum: 4a2a355c7875eea28ba5750ba771d3b2aa966e77acbac9b7966e7e154cf81fd2c4c9bc08e5a0382a1b743ad6f441eb259ca4720585ef00c0b23f1582207f43c1
   languageName: node
   linkType: hard
 

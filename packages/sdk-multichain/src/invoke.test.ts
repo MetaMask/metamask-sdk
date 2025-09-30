@@ -17,12 +17,46 @@ vi.mock('cross-fetch', () => {
 	};
 });
 
+async function waitForInstallModal(sdk: MultichainCore) {
+	const onShowInstallModal = t.vi.spyOn(sdk as any, 'showInstallModal');
+
+	let attempts = 5;
+	while (attempts > 0) {
+		try {
+			t.expect(onShowInstallModal).toHaveBeenCalled();
+			break;
+		} catch {
+			attempts--;
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
+	}
+	t.expect(onShowInstallModal).toHaveBeenCalled();
+}
+
+async function expectUIFactoryRenderInstallModal(sdk: MultichainCore) {
+	const onRenderInstallModal = t.vi.spyOn((sdk as any).options.ui.factory, 'renderInstallModal');
+
+	let attempts = 5;
+	while (attempts > 0) {
+		try {
+			t.expect(onRenderInstallModal).toHaveBeenCalled();
+			break;
+		} catch {
+			attempts--;
+			await new Promise((resolve) => setTimeout(resolve, 100));
+		}
+	}
+	t.expect(onRenderInstallModal).toHaveBeenCalled();
+}
+
 function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
 
 	t.describe(`${platform} tests`, () => {
+		const isMWPPlatform = platform === 'web-mobile' || platform === 'rn' || platform === 'node';
+
 		let mockedData: MockedData;
 		let testOptions: T;
 		const transportString = platform === 'web' ? 'browser' : 'mwp';
@@ -37,7 +71,6 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 						}
 					: originalSdkOptions.ui;
 			mockedData = await beforeEach();
-			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 			// Set the transport type as a string in storage (this is how it's stored)
 			testOptions = {
 				...originalSdkOptions,
@@ -67,20 +100,50 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		});
 
 		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
+			let showModalPromise!: Promise<void>;
+
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
 			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
 			mockedData.mockWalletCreateSession.mockImplementation(() => mockSessionData);
-			mockedData.mockWalletInvokeMethod.mockImplementation(() => 'success');
+			mockedData.mockWalletInvokeMethod.mockImplementation(() => {
+				return {
+					id: 1,
+					jsonrpc: '2.0',
+					result: 'success',
+				};
+			});
 
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk.state).toBe('loaded');
+			t.expect(() => sdk.provider).toThrow();
+			t.expect(() => sdk.transport).toThrow();
 
-			await sdk.connect(scopes, caipAccountIds);
+			if (platform !== 'web' && platform !== 'web-mobile') {
+				// Platform web is browser with metamask extension, won't have install modal
+				showModalPromise = waitForInstallModal(sdk);
+			}
+
+			const connectPromise = sdk.connect(scopes, caipAccountIds);
+
+			if (isMWPPlatform) {
+				if (platform !== 'web-mobile') {
+					(mockedData.mockDappClient as any).__state = 'CONNECTED';
+					//For MWP we simulate a connection with DappClient after showing the QRCode
+					await expectUIFactoryRenderInstallModal(sdk);
+				}
+
+				if (platform !== 'web-mobile') {
+					// Connect to MWP using dappClient mock
+					mockedData.mockDappClient.connect();
+					await showModalPromise;
+				} else {
+				}
+			}
+			await connectPromise;
 
 			t.expect(sdk.state).toBe('connected');
 			t.expect(sdk.storage).toBeDefined();
@@ -88,12 +151,18 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 			const options = {
+				id: 1,
 				scope: 'eip155:1',
 				request: { method: 'eth_accounts', params: [] },
 			} as InvokeMethodOptions;
+
 			const result = await sdk.invokeMethod(options);
 			t.expect(providerInvokeMethodSpy).toHaveBeenCalledWith(options);
-			t.expect(result).toEqual('success');
+			t.expect(result).toEqual({
+				id: 1,
+				jsonrpc: '2.0',
+				result: 'success',
+			});
 		});
 
 		t.it(`${platform} should reject invoke if no active session or provider is available`, async () => {
@@ -106,9 +175,12 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		});
 
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
-			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+
 			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
 			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+			mockedData.mockWalletCreateSession.mockImplementation(() => mockSessionData);
 
 			// Mock the RPCClient response
 			const mockJsonResponse = { result: 'success' };
@@ -129,6 +201,33 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				},
 			});
 
+			t.expect(sdk.state).toBe('loaded');
+			t.expect(() => sdk.provider).toThrow();
+			t.expect(() => sdk.transport).toThrow();
+			let showModalPromise!: Promise<void>;
+
+			if (platform !== 'web' && platform !== 'web-mobile') {
+				// Platform web is browser with metamask extension, won't have install modal
+				showModalPromise = waitForInstallModal(sdk);
+			}
+
+			const connectPromise = sdk.connect(scopes, caipAccountIds);
+
+			if (isMWPPlatform) {
+				if (platform !== 'web-mobile') {
+					(mockedData.mockDappClient as any).__state = 'CONNECTED';
+					//For MWP we simulate a connection with DappClient after showing the QRCode
+					await expectUIFactoryRenderInstallModal(sdk);
+				}
+
+				if (platform !== 'web-mobile') {
+					// Connect to MWP using dappClient mock
+					mockedData.mockDappClient.connect();
+					await showModalPromise;
+				} else {
+				}
+			}
+			await connectPromise;
 			t.expect(sdk.state).toBe('connected');
 
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');

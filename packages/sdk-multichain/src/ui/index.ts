@@ -27,7 +27,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	// biome-ignore lint/suspicious/noExplicitAny: Expected here
 	public modal!: Modal<any>;
 	private readonly platform: PlatformType = getPlatformType();
-	private successCallback!: (error?: Error) => void;
+	private successCallback!: (error?: Error) => Promise<void>;
 
 	/**
 	 * Creates a new modal factory instance.
@@ -45,9 +45,8 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		}
 	}
 
-	unload(error?: Error) {
-		this.modal?.unmount();
-		this.successCallback?.(error);
+	async unload(error?: Error) {
+		await this.successCallback?.(error);
 	}
 
 	/**
@@ -101,15 +100,15 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		return `${METAMASK_CONNECT_BASE_URL}/mwp?p=${urlEncoded}`;
 	}
 
-	private onCloseModal() {
-		this.unload(new Error('User closed modal'));
+	private async onCloseModal(shouldTerminate = true) {
+		return this.unload(shouldTerminate ? new Error('User closed modal') : undefined);
 	}
 
 	private onStartDesktopOnboarding() {
 		new MetaMaskOnboarding().startOnboarding();
 	}
 
-	public async renderInstallModal(preferDesktop: boolean, createConnectionRequest: () => Promise<ConnectionRequest>, successCallback: (error?: Error) => void) {
+	public async renderInstallModal(preferDesktop: boolean, createConnectionRequest: () => Promise<ConnectionRequest>, successCallback: (error?: Error) => Promise<void>) {
 		this.modal?.unmount();
 		await preload();
 		this.successCallback = successCallback;
@@ -137,7 +136,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 
 	public async renderOTPCodeModal(
 		createOTPCode: () => Promise<OTPCode>,
-		successCallback: (error?: Error) => void,
+		successCallback: (error?: Error) => Promise<void>,
 		updateOTPCode: (otpCode: OTPCode, modal: AbstractOTPCodeModal) => void,
 	) {
 		this.modal?.unmount();

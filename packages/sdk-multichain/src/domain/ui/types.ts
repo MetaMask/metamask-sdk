@@ -15,7 +15,7 @@ export interface InstallWidgetProps extends Components.MmInstallModal {
 
 export interface OTPCodeWidgetProps extends Components.MmOtpModal {
 	parentElement?: Element;
-	onClose: () => void;
+	onClose: () => Promise<void>;
 	onDisconnect?: () => void;
 	createOTPCode: () => Promise<OTPCode>;
 	updateOTPCode: (otpValue: string) => void;

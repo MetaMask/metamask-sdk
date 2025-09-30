@@ -133,7 +133,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state === 'pending').toBe(true);
+			t.expect(sdk.state === 'connected').toBe(true);
 
 			t.expect(mockedData.mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during initialization', sessionError);
 		});

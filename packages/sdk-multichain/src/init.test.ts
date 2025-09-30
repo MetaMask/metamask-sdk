@@ -110,19 +110,22 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
 
-			const onResumeSession = t.vi.fn();
+			const onNotification = t.vi.fn();
 			const optionsWithEvent = {
 				...testOptions,
 				transport: {
 					...(testOptions.transport ?? {}),
-					onResumeSession,
+					onNotification: onNotification,
 				},
 			};
 			sdk = await createSDK(optionsWithEvent);
 
 			t.expect(sdk).toBeDefined();
 			t.expect(sdk.state).toBe('connected');
-			t.expect(onResumeSession).toHaveBeenCalledWith(mockSessionData);
+			t.expect(onNotification).toHaveBeenCalledWith({
+				method: 'wallet_sessionChanged',
+				params: mockSessionData,
+			});
 		});
 
 		t.it(`${platform} Should gracefully handle init errors by just logging them and return non initialized sdk`, async () => {

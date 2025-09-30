@@ -12,7 +12,7 @@ global.Buffer = Buffer;
 function App() {
 	const [customScopes, setCustomScopes] = useState<string[]>(['eip155:1']);
 	const [caipAccountIds, setCaipAccountIds] = useState<CaipAccountId[]>([]);
-	const { state, session, connect: sdkConnect, disconnect: sdkDisconnect } = useSDK();
+	const { error, state, session, connect: sdkConnect, disconnect: sdkDisconnect } = useSDK();
 
 	const handleCheckboxChange = useCallback(
 		(value: string, isChecked: boolean) => {
@@ -27,13 +27,13 @@ function App() {
 
 	useEffect(() => {
 		if (session) {
-			const scopes = Object.keys(session.sessionScopes);
+			const scopes = Object.keys(session?.sessionScopes ?? {});
 			setCustomScopes(scopes);
 
 			// Accumulate all accounts from all scopes
 			const allAccounts: CaipAccountId[] = [];
 			for (const scope of scopes) {
-				const { accounts } = session.sessionScopes[scope as keyof typeof session.sessionScopes] ?? {};
+				const { accounts } = session.sessionScopes?.[scope as keyof typeof session.sessionScopes] ?? {};
 				if (accounts && accounts.length > 0) {
 					allAccounts.push(...accounts);
 				}
@@ -44,7 +44,7 @@ function App() {
 
 	const scopesHaveChanged = useCallback(() => {
 		if (!session) return false;
-		const sessionScopes = Object.keys(session.sessionScopes);
+		const sessionScopes = Object.keys(session?.sessionScopes ?? {});
 		const currentScopes = customScopes.filter((scope) => scope.length);
 		if (sessionScopes.length !== currentScopes.length) return true;
 		return !sessionScopes.every((scope) => currentScopes.includes(scope)) || !currentScopes.every((scope) => sessionScopes.includes(scope));
@@ -69,7 +69,7 @@ function App() {
 	const isDisconnected = state === 'disconnected' || state === 'pending' || state === 'loaded';
 	const isConnected = state === 'connected';
 	const isConnecting = state === 'connecting';
-
+	debugger;
 	return (
 		<div className="min-h-screen bg-gray-50 flex justify-center">
 			<div className="max-w-6xl w-full p-8">
@@ -101,6 +101,12 @@ function App() {
 						</button>
 					)}
 				</section>
+				{error && (
+					<section className="bg-white rounded-lg p-8 mb-6 shadow-sm">
+						<h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
+						<p className="text-gray-700">{error.message.toString()}</p>
+					</section>
+				)}
 				<section className="bg-white rounded-lg p-8 mb-6 shadow-sm">
 					{Object.keys(session?.sessionScopes ?? {}).length > 0 && (
 						<section className="mb-6">

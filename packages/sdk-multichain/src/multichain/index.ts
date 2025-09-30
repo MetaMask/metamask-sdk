@@ -29,8 +29,19 @@ export class MultichainSDK extends MultichainCore {
 	private __transport: ExtendedTransport | undefined = undefined;
 	private __dappClient: DappClient | undefined = undefined;
 
-	public state: SDKState;
+	public __state: SDKState = 'pending';
 	private listener: (() => void | Promise<void>) | undefined;
+
+	get state() {
+		return this.__state;
+	}
+	set state(value: SDKState) {
+		this.__state = value;
+		this.options.transport?.onNotification?.({
+			method: 'stateChanged',
+			params: value,
+		});
+	}
 
 	get provider() {
 		if (!this.__provider) {
@@ -76,7 +87,6 @@ export class MultichainSDK extends MultichainCore {
 		};
 
 		super(allOptions);
-		this.state = 'pending';
 	}
 
 	static async create(options: MultichainOptions) {
@@ -129,13 +139,19 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async getStoredTransport() {
+		const { ui } = this.options;
+		const { preferExtension = true, headless: _headless = false } = ui;
+
 		const transportType = await this.storage.getTransport();
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
-				const apiTransport = getDefaultTransport();
-				this.__transport = apiTransport;
-				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
-				return apiTransport;
+				//Check if the user still have the extension or not return the transport
+				if (this.hasExtension && preferExtension) {
+					const apiTransport = getDefaultTransport();
+					this.__transport = apiTransport;
+					this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
+					return apiTransport;
+				}
 			} else if (transportType === TransportType.MPW) {
 				const { adapter: kvstore } = this.options.storage;
 				const dappClient = await this.createDappClient();
@@ -144,17 +160,14 @@ export class MultichainSDK extends MultichainCore {
 				this.__transport = apiTransport;
 				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 				return apiTransport;
-			} else {
-				await this.storage.removeTransport();
 			}
+			await this.storage.removeTransport();
 		}
+
 		return undefined;
 	}
 
 	private async getActiveSession() {
-		if (!this.transport.isConnected()) {
-			await this.transport.connect();
-		}
 		const request = await this.transport.request({ method: 'wallet_getSession' });
 		const response = request.result as SessionData;
 		return response;
@@ -163,15 +176,20 @@ export class MultichainSDK extends MultichainCore {
 	private async setupTransport() {
 		const transport = await this.getStoredTransport();
 		if (transport) {
-			const session = await this.getActiveSession();
 			if (!this.transport.isConnected()) {
+				this.state = 'connecting';
 				await this.transport.connect();
+				this.state = 'connected';
 			}
+			const session = await this.getActiveSession();
 			this.__provider = getMultichainClient({ transport });
 			//Add event listeners to the transport
 			if (session && Object.keys(session.sessionScopes ?? {}).length > 0) {
 				// No listeners can exist in here so we need onResumeSession event on constructor
-				this.options.transport?.onResumeSession?.(session);
+				this.options.transport?.onNotification?.({
+					method: 'wallet_sessionChanged',
+					params: session,
+				});
 				this.state = 'connected';
 			} else {
 				this.state = 'loaded';
@@ -228,9 +246,10 @@ export class MultichainSDK extends MultichainCore {
 			if (!this.transport.isConnected()) {
 				await this.transport.connect();
 			}
-			this.state = 'connected';
+
 			this.__provider = getMultichainClient({ transport: this.transport });
 			const session = await this.getCurrentSession();
+
 			if (session) {
 				const currentScopes = Object.keys(session?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = params.scopes;
@@ -246,11 +265,16 @@ export class MultichainSDK extends MultichainCore {
 			const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 			const newSessionRequest = await this.transport.request({ method: 'wallet_createSession', params: sessionRequest });
 			const newSession = newSessionRequest.result as SessionData;
-			this.options.transport?.onResumeSession?.(newSession);
+			this.options.transport?.onNotification?.({
+				method: 'wallet_sessionChanged',
+				params: newSession,
+			});
 			this.emit('wallet_sessionChanged', newSession);
 		} catch (err) {
 			logger('MetaMaskSDK error during onConnectionSuccess', err);
 			throw err;
+		} finally {
+			this.state = this.transport.isConnected() ? 'connected' : 'disconnected';
 		}
 	}
 
@@ -259,7 +283,6 @@ export class MultichainSDK extends MultichainCore {
 			this.setupMWP()
 				.then(() => {
 					this.dappClient.once('connected', () => {
-						this.options.storage.setTransport(TransportType.MPW);
 						this.options.ui.factory.unload();
 					});
 					// Use Connection Modal
@@ -291,11 +314,20 @@ export class MultichainSDK extends MultichainCore {
 								});
 							});
 						},
-						(error?: Error) => {
+						async (error?: Error) => {
+							this.options.ui.factory.modal?.unmount();
+
+							if (this.transport instanceof MWPTransport) {
+								this.storage.setTransport(TransportType.MPW);
+							} else {
+								this.storage.setTransport(TransportType.Browser);
+							}
+
 							if (!error) {
 								this.onConnectionSuccess({ scopes, caipAccountIds }).then(resolve).catch(reject);
 							} else {
 								this.state = 'disconnected';
+								this.options.ui.factory.modal?.unmount();
 								reject(error);
 							}
 						},
@@ -385,7 +417,31 @@ export class MultichainSDK extends MultichainCore {
 		if (secure && !isDesktopPreferred) {
 			await this.setupMWP();
 			//We need to return a promise that resolves when we get the wallet_createSession response event
-			return new Promise<void>((resolve, reject) => {
+			const connection = new Promise<void>((resolve, reject) => {
+				this.dappClient.on('message', (payload: any) => {
+					const data = payload.data as Record<string, unknown>;
+					if (typeof data === 'object' && data !== null) {
+						if ('method' in data && data.method === 'wallet_createSession') {
+							//TODO: is it .params or .result?
+							// biome-ignore lint/suspicious/noExplicitAny: Expected here
+							const session = ((data as any).params || (data as any).result) as SessionData;
+
+							if (session) {
+								// Initial request will be what resolves the connection when options is specified
+								this.options.transport?.onNotification?.(payload.data);
+								this.emit('wallet_sessionChanged', session);
+								resolve();
+							}
+						} else if ('error' in data) {
+							const error = data.error as { message?: string; code?: number };
+							reject(new Error(error.message ?? 'Unknown error'));
+						} else {
+						}
+					}
+				});
+				this.dappClient.once('connected', () => {
+					this.state = 'connected';
+				});
 				this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
 					const connectionRequest = {
 						sessionRequest,
@@ -405,28 +461,26 @@ export class MultichainSDK extends MultichainCore {
 						this.openDeeplink(deeplink, universalLink);
 					}
 				});
-				this.transport.onNotification((payload) => {
-					if (typeof payload === 'object' && payload !== null) {
-						if ('method' in payload && payload.method === 'wallet_createSession') {
-							//TODO: is it .params or .result?
-							// biome-ignore lint/suspicious/noExplicitAny: Expected here
-							const session = ((payload as any).params || (payload as any).result) as SessionData;
-
-							if (session) {
-								// Initial request will be what resolves the connection when options is specified
-								this.options.transport?.onResumeSession?.(session);
-								this.emit('wallet_sessionChanged', session);
-								resolve();
-							}
-						}
-					}
+				this.transport.connect({ scopes, caipAccountIds }).catch((err) => {
+					console.log('transport.connect caught error', err);
+					return reject(err);
 				});
-
-				this.transport.connect({ scopes, caipAccountIds }).catch(reject);
 			});
+
+			const awaited = await connection;
+			this.__provider = getMultichainClient({ transport: this.transport });
+			return awaited;
 		}
 
 		return this.showInstallModal(isDesktopPreferred, scopes, caipAccountIds);
+	}
+
+	public override emit(event: string, args: any): void {
+		this.options.transport?.onNotification?.({
+			method: event,
+			params: args,
+		});
+		super.emit(event, args);
 	}
 
 	async disconnect(): Promise<void> {
@@ -436,6 +490,7 @@ export class MultichainSDK extends MultichainCore {
 		await this.storage.removeTransport();
 
 		this.emit('wallet_sessionChanged', undefined);
+		this.emit('stateChanged', 'disconnected');
 
 		this.listener = undefined;
 		this.__transport = undefined;

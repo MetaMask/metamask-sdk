@@ -70,7 +70,7 @@ export type MultichainOptions = {
 	transport?: {
 		/** Extension ID for browser extension transport */
 		extensionId?: string;
-		onResumeSession?: (session: SessionData) => void;
+		onNotification?: (notification: unknown) => void;
 	};
 };
 
