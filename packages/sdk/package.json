@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk",
-  "version": "0.33.0",
+  "version": "0.33.1",
   "description": "",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {
@@ -57,7 +57,7 @@
     "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.9.0",
     "cross-fetch": "^4.0.0",
-    "debug": "^4.3.4",
+    "debug": "4.3.4",
     "eciesjs": "^0.4.11",
     "eth-rpc-errors": "^4.0.3",
     "eventemitter2": "^6.4.9",

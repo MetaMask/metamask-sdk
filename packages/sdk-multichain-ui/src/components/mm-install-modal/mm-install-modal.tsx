@@ -1,4 +1,4 @@
-import { Component, Prop, h, Event, EventEmitter, State, Element } from '@stencil/core';
+import { Component, Prop, h, Event, EventEmitter, State, Element, Watch } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
@@ -23,10 +23,9 @@ import SVG from '../../assets/fox.svg'
   shadow: true,
 })
 export class InstallModal {
-  /**
-   * The QR code link
-   */
-  @Prop() link: string;
+  @Prop() link: string
+
+  @Prop() expiresIn: number;
 
   @Prop() sdkVersion?: string;
 
@@ -38,6 +37,10 @@ export class InstallModal {
   @Event() close: EventEmitter<{ shouldTerminate?: boolean }>;
 
   @Event() startDesktopOnboarding: EventEmitter;
+
+  @Event() updateLink: EventEmitter<string>;
+
+  @Event() updateExpiresIn: EventEmitter<number>;
 
   @Element() el: HTMLElement;
 
@@ -52,7 +55,7 @@ export class InstallModal {
   }
 
   componentDidLoad() {
-    this.generateQRCode();
+    this.generateQRCode(this.link);
   }
 
   async connectedCallback() {
@@ -62,22 +65,18 @@ export class InstallModal {
     this.translationsLoaded = true;
   }
 
-  private generateQRCode() {
-    if (!this.qrCodeContainer || !this.link) {
+  private generateQRCode(data: string) {
+    if (!this.qrCodeContainer) {
       return;
     }
-
     const options: Options = {
-      width: 165,
-      height: 165,
+      data,
       type: 'svg' as DrawType,
-      data: this.link,
       image: SVG,
       imageOptions: {
         hideBackgroundDots: true,
-        imageSize:0.7,
         crossOrigin: 'anonymous',
-        margin:5
+        imageSize:0.3,
       },
       dotsOptions: {
         color: '#222222',
@@ -102,12 +101,8 @@ export class InstallModal {
         errorCorrectionLevel: 'Q' as ErrorCorrectionLevel
       },
     };
-
     const qrCode = new QRCodeStyling(options);
-
     this.qrCodeContainer.innerHTML = '';
-
-    // Append the QR code to the container
     qrCode.append(this.qrCodeContainer);
   }
 
@@ -117,6 +112,16 @@ export class InstallModal {
 
   onStartDesktopOnboardingHandler() {
     this.startDesktopOnboarding.emit();
+  }
+
+  @Watch('link')
+  updateLinkHandler(link:string) {
+    this.generateQRCode(link);
+  }
+
+  @Watch('expiresIn')
+  updateExpiresInHandler(expiresIn: number) {
+    console.debug('QRCode expires in:', expiresIn);
   }
 
   render() {

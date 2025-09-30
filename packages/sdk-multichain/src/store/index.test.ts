@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
-import fs from 'node:fs';
-import path from 'node:path';
+import 'fake-indexeddb/auto';
+import { IDBFactory } from 'fake-indexeddb';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as t from 'vitest';
 import type { StoreAdapter } from '../domain';
@@ -217,25 +217,8 @@ function createStoreTests(adapterName: string, createAdapter: () => StoreAdapter
 }
 
 t.describe(`Store with NodeAdapter`, () => {
-	// Test with Node Adapter and mocked file system
-	createStoreTests(
-		'NodeAdapter',
-		() => new StoreAdapterNode(),
-		async () => {
-			const memfs = new Map<string, any>();
-			t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-			t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-			t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-		},
-	);
-
-	t.it('Should gracefully manage deleteItem even if the config file does not exist', async () => {
-		const CONFIG_FILE = path.resolve(process.cwd(), '.metamask.json');
-		t.vi.spyOn(fs, 'existsSync').mockImplementation(() => false);
-		const store = new Store(new StoreAdapterNode());
-		await store.removeExtensionId();
-		t.expect(fs.existsSync).toHaveBeenCalledWith(CONFIG_FILE);
-	});
+	// Test with Node Adapter - now uses in-memory storage
+	createStoreTests('NodeAdapter', () => new StoreAdapterNode());
 });
 
 t.describe(`Store with WebAdapter`, () => {
@@ -246,13 +229,15 @@ t.describe(`Store with WebAdapter`, () => {
 		() => {
 			t.vi.stubGlobal('window', {
 				localStorage: nativeStorageStub,
+				indexedDB: new IDBFactory(),
 			});
 		},
 	);
 
 	t.it("Should throw an exception if we try using the store with a browser that doesn't support localStorage", async () => {
 		t.vi.stubGlobal('window', {
-			localStorage: null,
+			localStorage: undefined,
+			indexedDB: undefined,
 		});
 		const store = new Store(new StoreAdapterWeb());
 		await t.expect(() => store.getAnonId()).rejects.toThrow();

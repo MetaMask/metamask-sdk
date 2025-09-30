@@ -1,20 +1,11 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
-import fs from 'node:fs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { JSDOM as Page } from 'jsdom';
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { InvokeMethodOptions, MultiChainFNOptions, MultichainCore } from './domain';
+import type { InvokeMethodOptions, MultichainOptions, MultichainCore } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { createTest, type MockedData, type TestSuiteOptions } from './fixtures.test';
-import { createMetamaskSDK as createMetamaskSDKWeb } from './index.browser';
-import { createMetamaskSDK as createMetamaskSDKRN } from './index.native';
-import { createMetamaskSDK as createMetamaskSDKNode } from './index.node';
+import { mockSessionData, runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, type TestSuiteOptions } from './fixtures.test';
 import { Store } from './store';
-import * as nodeStorage from './store/adapters/node';
-import * as rnStorage from './store/adapters/rn';
-import * as webStorage from './store/adapters/web';
 
 vi.mock('cross-fetch', () => {
 	const mockFetch = vi.fn();
@@ -24,7 +15,7 @@ vi.mock('cross-fetch', () => {
 	};
 });
 
-function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
 	const originalSdkOptions = sdkOptions;
 	let sdk: MultichainCore;
@@ -64,17 +55,16 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			await afterEach(mockedData);
 		});
 
-		t.it(`${platform} should invoke method successfully from provider`, async () => {
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
+		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
 			// Mock the RPCClient response
-			const mockResponse = { result: 'success' };
-			(multichainModule as any).__mockInvokeResponse.mockResolvedValue(mockResponse);
+			const mockResponse = { id: 1, jsonrpc: '2.0' as const, result: 'success' };
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.request.mockResolvedValue(mockResponse);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
 
 			sdk = await createSDK(testOptions);
-
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
-
 			const options = {
 				scope: 'eip155:1',
 				request: { method: 'eth_accounts', params: [] },
@@ -84,7 +74,40 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 			t.expect(result).toEqual(mockResponse);
 		});
 
+		t.it(`${platform} should reject invoke if no active session or provider is available`, async () => {
+			mockedData.nativeStorageStub.removeItem('multichain-transport');
+
+			mockedData.mockTransport.isConnected.mockReturnValue(false);
+			mockedData.mockTransport.connect.mockResolvedValue();
+			mockedData.mockMultichainClient.getSession.mockResolvedValue(undefined);
+
+			sdk = await createSDK(testOptions);
+
+			const options = {
+				scope: 'eip155:1',
+				request: { method: 'eth_accounts', params: [] },
+			} as InvokeMethodOptions;
+
+			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Provider not initialized, establish connection first');
+		});
+
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
 			// Mock the RPCClient response
 			const mockJsonResponse = { result: 'success' };
 			const fetchModule = await import('cross-fetch');
@@ -104,6 +127,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 				},
 			});
 
+			t.expect(sdk.state).toBe('connected');
+
 			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
 			const options = {
 				scope: 'eip155:1',
@@ -117,9 +142,23 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 		});
 
 		t.it(`${platform} should handle invoke method errors`, async () => {
-			const multichainModule = await import('@metamask/multichain-api-client');
 			const mockError = new Error('Failed to invoke method');
-			(multichainModule as any).__mockInvokeResponse.mockRejectedValue(mockError);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockTransport.isConnected.mockReturnValue(true);
+			mockedData.mockTransport.request.mockImplementation((input: any) => {
+				if (input.method === 'wallet_getSession') {
+					return Promise.resolve({
+						id: 1,
+						jsonrpc: '2.0',
+						result: mockSessionData,
+					});
+				}
+				return Promise.resolve({
+					id: 1,
+					jsonrpc: '2.0',
+					result: undefined,
+				});
+			});
 			sdk = await createSDK(testOptions);
 			const options = {
 				scope: 'eip155:1',
@@ -128,6 +167,10 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 					params: [],
 				},
 			} as InvokeMethodOptions;
+			t.expect(sdk.state).toBe('connected');
+			t.expect(sdk.provider).toBeDefined();
+			mockedData.mockTransport.request.mockRejectedValue(mockError);
+
 			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
 		});
 	});
@@ -135,57 +178,8 @@ function testSuite<T extends MultiChainFNOptions>({ platform, createSDK, options
 
 const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
-const baseTestOptions = { options: { dapp: exampleDapp }, tests: testSuite };
+const baseTestOptions = { dapp: exampleDapp } as any;
 
-createTest({
-	...baseTestOptions,
-	platform: 'node',
-	createSDK: createMetamaskSDKNode,
-	setupMocks: () => {
-		const memfs = new Map<string, any>();
-		t.vi.spyOn(fs, 'existsSync').mockImplementation((path) => memfs.has(path.toString()));
-		t.vi.spyOn(fs, 'writeFileSync').mockImplementation((path, data) => memfs.set(path.toString(), data));
-		t.vi.spyOn(fs, 'readFileSync').mockImplementation((path) => memfs.get(path.toString()));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'rn',
-	createSDK: createMetamaskSDKRN,
-	setupMocks: (nativeStorageStub) => {
-		t.vi.spyOn(AsyncStorage, 'getItem').mockImplementation(async (key) => nativeStorageStub.getItem(key));
-		t.vi.spyOn(AsyncStorage, 'setItem').mockImplementation(async (key, value) => nativeStorageStub.setItem(key, value));
-		t.vi.spyOn(AsyncStorage, 'removeItem').mockImplementation(async (key) => nativeStorageStub.removeItem(key));
-	},
-});
-
-createTest({
-	...baseTestOptions,
-	platform: 'web',
-	createSDK: createMetamaskSDKWeb,
-	setupMocks: (nativeStorageStub) => {
-		const dom = new Page('<!DOCTYPE html><p>Hello world</p>', {
-			url: exampleDapp.url,
-		});
-		const globalStub = {
-			...dom.window,
-			addEventListener: t.vi.fn(),
-			removeEventListener: t.vi.fn(),
-			localStorage: nativeStorageStub,
-			ethereum: {
-				isMetaMask: true,
-			},
-		};
-		t.vi.stubGlobal('navigator', {
-			...dom.window.navigator,
-			product: 'Chrome',
-			language: 'en-US',
-		});
-		t.vi.stubGlobal('window', globalStub);
-		t.vi.stubGlobal('location', dom.window.location);
-		t.vi.stubGlobal('document', dom.window.document);
-		t.vi.stubGlobal('HTMLElement', dom.window.HTMLElement);
-		t.vi.stubGlobal('requestAnimationFrame', t.vi.fn());
-	},
-});
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInNodeEnv(baseTestOptions, testSuite);
+runTestsInRNEnv(baseTestOptions, testSuite);

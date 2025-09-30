@@ -1,11 +1,11 @@
-import type { MultichainApiClient, Transport } from '@metamask/multichain-api-client';
+import type { MultichainApiClient, SessionData, Transport } from '@metamask/multichain-api-client';
 import type { CaipAccountId, Json } from '@metamask/utils';
 import { EventEmitter, type SDKEvents } from '../events';
 import type { StoreClient } from '../store/client';
 import type { InvokeMethodOptions, RPCAPI, Scope } from './api/types';
 import type { MultichainOptions } from './types';
 
-export type SDKState = 'pending' | 'loaded' | 'disconnected' | 'connected';
+export type SDKState = 'pending' | 'loaded' | 'disconnected' | 'connected' | 'connecting';
 
 export enum TransportType {
 	Browser = 'browser',
@@ -25,7 +25,7 @@ export abstract class MultichainCore extends EventEmitter<SDKEvents> {
 	abstract provider: MultichainApiClient<RPCAPI>;
 	abstract transport: Transport;
 
-	abstract init(): Promise<void>;
+	abstract getCurrentSession(): Promise<SessionData | undefined>;
 	/**
 	 * Establishes a connection to the multichain provider, or re-use existing session
 	 *

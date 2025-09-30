@@ -1,6 +1,6 @@
 {
   "name": "metamask-sdk-monorepo",
-  "version": "114.0.0",
+  "version": "115.0.0",
   "private": true,
   "repository": {
     "type": "git",
@@ -24,7 +24,8 @@
     "packages/deve2e",
     "packages/playground-next",
     "packages/sdk-multichain",
-    "playground/multichain-node"
+    "playground/multichain-node",
+    "playground/multichain-react"
   ],
   "scripts": {
     "build": "yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
@@ -107,7 +108,7 @@
   },
   "packageManager": "yarn@3.5.1",
   "dependencies": {
-    "debug": "^4.3.4",
+    "debug": "4.3.4",
     "execa": "^5.0.0",
     "openai": "^4.24.0",
     "ts-node": "^10.9.1"
