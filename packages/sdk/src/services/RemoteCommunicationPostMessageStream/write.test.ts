@@ -317,4 +317,83 @@ describe('write function', () => {
       expect(mockSendMessage).toHaveBeenCalled();
     });
   });
+
+  describe('hideReturnToAppNotification URL parameter', () => {
+    beforeEach(() => {
+      mockIsReady.mockReturnValue(true);
+      mockIsConnected.mockReturnValue(true);
+      mockIsAuthorized.mockReturnValue(true);
+      mockIsMobileWeb.mockReturnValue(false);
+      mockIsSecure.mockReturnValue(true);
+      mockGetChannelId.mockReturnValue('some_channel_id');
+      mockIsMetaMaskInstalled.mockReturnValue(true);
+      mockGetKeyInfo.mockReturnValue({ ecies: { public: 'test_public_key' } });
+      mockHasDeeplinkProtocol.mockReturnValue(false);
+      mockExtractMethod.mockReturnValue({
+        method: Object.keys(METHODS_TO_REDIRECT)[0],
+        data: {
+          data: {
+            jsonrpc: '2.0',
+            method: Object.keys(METHODS_TO_REDIRECT)[0],
+            params: [],
+          },
+        },
+        triggeredInstaller: false,
+      });
+    });
+
+    it('should include hr=1 in URL when hideReturnToAppNotification is true', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
+        true;
+
+      await write(
+        mockRemoteCommunicationPostMessageStream,
+        { jsonrpc: '2.0', method: Object.keys(METHODS_TO_REDIRECT)[0] },
+        'utf8',
+        callback,
+      );
+
+      expect(mockOpenDeeplink).toHaveBeenCalledWith(
+        expect.stringContaining('hr=1'),
+        expect.stringContaining('hr=1'),
+        '_self',
+      );
+    });
+
+    it('should include hr=0 in URL when hideReturnToAppNotification is false', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
+        false;
+
+      await write(
+        mockRemoteCommunicationPostMessageStream,
+        { jsonrpc: '2.0', method: Object.keys(METHODS_TO_REDIRECT)[0] },
+        'utf8',
+        callback,
+      );
+
+      expect(mockOpenDeeplink).toHaveBeenCalledWith(
+        expect.stringContaining('hr=0'),
+        expect.stringContaining('hr=0'),
+        '_self',
+      );
+    });
+
+    it('should include hr=0 in URL when hideReturnToAppNotification is undefined', async () => {
+      mockRemoteCommunicationPostMessageStream.state.hideReturnToAppNotification =
+        undefined;
+
+      await write(
+        mockRemoteCommunicationPostMessageStream,
+        { jsonrpc: '2.0', method: Object.keys(METHODS_TO_REDIRECT)[0] },
+        'utf8',
+        callback,
+      );
+
+      expect(mockOpenDeeplink).toHaveBeenCalledWith(
+        expect.stringContaining('hr=0'),
+        expect.stringContaining('hr=0'),
+        '_self',
+      );
+    });
+  });
 });

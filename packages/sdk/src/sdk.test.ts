@@ -199,6 +199,33 @@ describe('MetaMaskSDK', () => {
       expect(sdk.options).toMatchObject(options);
     });
 
+    it('should initialize with hideReturnToAppNotification option', () => {
+      const options: MetaMaskSDKOptions = {
+        hideReturnToAppNotification: true,
+        dappMetadata: {
+          name: 'Test DApp',
+          url: 'http://test-dapp.com',
+        },
+      };
+
+      sdk = new MetaMaskSDK(options);
+
+      expect(sdk.options.hideReturnToAppNotification).toBe(true);
+    });
+
+    it('should have hideReturnToAppNotification as false by default', () => {
+      const options: MetaMaskSDKOptions = {
+        dappMetadata: {
+          name: 'Test DApp',
+          url: 'http://test-dapp.com',
+        },
+      };
+
+      sdk = new MetaMaskSDK(options);
+
+      expect(sdk.options.hideReturnToAppNotification).toBe(false);
+    });
+
     it('should set max listeners', () => {
       expect(sdk.getMaxListeners()).toBe(50);
     });

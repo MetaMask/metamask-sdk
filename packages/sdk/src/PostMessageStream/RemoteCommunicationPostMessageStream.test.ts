@@ -36,6 +36,22 @@ describe('RemoteCommunicationPostMessageStream', () => {
     );
   });
 
+  it('should initialize with hideReturnToAppNotification option', () => {
+    const instanceWithOption = new RemoteCommunicationPostMessageStream({
+      name: ProviderConstants.PROVIDER,
+      remote: mockRemoteCommunication,
+      deeplinkProtocol: false,
+      platformManager: mockPlatformManager,
+      hideReturnToAppNotification: true,
+    });
+
+    expect(instanceWithOption.state.hideReturnToAppNotification).toBe(true);
+  });
+
+  it('should have hideReturnToAppNotification as false by default', () => {
+    expect(instance.state.hideReturnToAppNotification).toBe(false);
+  });
+
   it('should call _write properly', async () => {
     const chunk = 'someData';
     const encoding = 'utf8';

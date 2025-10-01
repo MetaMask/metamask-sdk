@@ -100,7 +100,9 @@ export async function write(
 
     const pubKey = instance.state.remote?.getKeyInfo()?.ecies.public ?? '';
     let urlParams = encodeURI(
-      `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2`,
+      `channelId=${channelId}&pubkey=${pubKey}&comm=socket&t=d&v=2&hr=${
+        instance.state.hideReturnToAppNotification ? 1 : 0
+      }`,
     );
 
     if (activeDeeplinkProtocol) {

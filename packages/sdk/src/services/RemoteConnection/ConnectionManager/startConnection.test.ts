@@ -223,4 +223,55 @@ describe('startConnection', () => {
       );
     });
   });
+
+  describe('hideReturnToAppNotification URL parameter', () => {
+    beforeEach(() => {
+      mockIsSecure.mockReturnValue(true);
+    });
+
+    it('should pass hr=1 when hideReturnToAppNotification is true', async () => {
+      state.hideReturnToAppNotification = true;
+
+      await startConnection(state, options);
+
+      // Vérifier que le QR code link contient hr=1
+      expect(state.qrcodeLink).toContain('hr=1');
+    });
+
+    it('should pass hr=0 when hideReturnToAppNotification is false', async () => {
+      state.hideReturnToAppNotification = false;
+
+      await startConnection(state, options);
+
+      // Vérifier que le QR code link contient hr=0
+      expect(state.qrcodeLink).toContain('hr=0');
+    });
+
+    it('should pass hr=0 when hideReturnToAppNotification is undefined', async () => {
+      state.hideReturnToAppNotification = undefined;
+
+      await startConnection(state, options);
+
+      // Vérifier que le QR code link contient hr=0
+      expect(state.qrcodeLink).toContain('hr=0');
+    });
+
+    it('should include hr parameter in connectWith scenarios', async () => {
+      mockIsSecure.mockReturnValue(false);
+      state.hideReturnToAppNotification = true;
+      const connectWith = {
+        method: 'eth_sign',
+        params: ['0x123456', '0xabcdef'],
+        id: '123',
+      };
+
+      await startConnection(state, options, { connectWith });
+
+      expect(mockConnectWithModalInstaller).toHaveBeenCalledWith(
+        state,
+        options,
+        expect.stringContaining('hr=1'),
+      );
+    });
+  });
 });
