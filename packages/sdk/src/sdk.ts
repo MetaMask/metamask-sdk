@@ -181,6 +181,32 @@ export interface MetaMaskSDKOptions {
   };
 }
 
+/**
+ * Default options for the MetaMask SDK.
+ */
+export const defaultMetaMaskSDKOptions: MetaMaskSDKOptions = {
+  storage: {
+    enabled: true,
+  },
+  injectProvider: true,
+  forceInjectProvider: false,
+  enableAnalytics: true,
+  shouldShimWeb3: true,
+  useDeeplink: true,
+  hideReturnToAppNotification: false,
+  extensionOnly: true,
+  headless: false,
+  dappMetadata: {
+    name: '',
+    url: '',
+    iconUrl: '',
+  },
+  _source: DEFAULT_SDK_SOURCE,
+  i18nOptions: {
+    enabled: false,
+  },
+};
+
 export class MetaMaskSDK extends EventEmitter2 {
   public options: MetaMaskSDKOptions;
 
@@ -216,35 +242,15 @@ export class MetaMaskSDK extends EventEmitter2 {
 
   private readonly ANON_ID_STORAGE_KEY = 'mm-sdk-anon-id';
 
-  constructor(
-    options: MetaMaskSDKOptions = {
-      storage: {
-        enabled: true,
-      },
-      injectProvider: true,
-      forceInjectProvider: false,
-      enableAnalytics: true,
-      shouldShimWeb3: true,
-      useDeeplink: true,
-      hideReturnToAppNotification: false,
-      extensionOnly: true,
-      headless: false,
-      dappMetadata: {
-        name: '',
-        url: '',
-        iconUrl: '',
-      },
-      _source: DEFAULT_SDK_SOURCE,
-      i18nOptions: {
-        enabled: false,
-      },
-    },
-  ) {
+  constructor(options?: MetaMaskSDKOptions) {
     super();
     debug.disable(); // initially disabled
 
-    const developerMode = options.logging?.developerMode === true;
-    const debugEnabled = options.logging?.sdk || developerMode;
+    // Merge user options with default options
+    this.options = { ...defaultMetaMaskSDKOptions, ...options };
+
+    const developerMode = this.options.logging?.developerMode === true;
+    const debugEnabled = this.options.logging?.sdk || developerMode;
 
     if (debugEnabled) {
       debug.enable('MM_SDK');
@@ -252,25 +258,17 @@ export class MetaMaskSDK extends EventEmitter2 {
     logger(`[MetaMaskSDK: constructor()]: begin.`);
     this.setMaxListeners(50);
 
-    if (!options.dappMetadata?.url) {
+    // If dappMetadata.url is undefined or empty string, try to set it automatically for web environments
+    if (!this.options.dappMetadata?.url) {
       // Automatically set dappMetadata on web env.
       if (typeof window !== 'undefined' && typeof document !== 'undefined') {
-        options.dappMetadata = {
-          ...options.dappMetadata,
+        this.options.dappMetadata = {
+          ...this.options.dappMetadata,
           url: `${window.location.protocol}//${window.location.host}`,
         };
       } else {
         throw new Error(`You must provide dAppMetadata url`);
       }
-    }
-
-    this.options = options;
-    if (!this.options._source) {
-      options._source = DEFAULT_SDK_SOURCE;
-    }
-
-    if (this.options.hideReturnToAppNotification === undefined) {
-      this.options.hideReturnToAppNotification = false;
     }
 
     // Automatically initialize the SDK to keep the same behavior as before
