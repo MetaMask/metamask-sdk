@@ -3,34 +3,63 @@ import type { CaipAccountId } from '@metamask/utils';
 import type { ExtendedTransport, RPCAPI, Scope, SessionData } from 'src/domain';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from 'src/multichain/utils';
 
+const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
+
 export class DefaultTransport implements ExtendedTransport {
+	#notificationCallbacks: Set<(data: unknown) => void> = new Set();
 	#requestId = 0;
 	#transport: Transport = getDefaultTransport();
+	#defaultRequestOptions = {
+		timeout: DEFAULT_REQUEST_TIMEOUT,
+	};
+
+	#notifyCallbacks(data: unknown) {
+		for (const cb of this.#notificationCallbacks) {
+			try {
+				cb(data);
+			} catch (err) {
+				console.log('[WindowPostMessageTransport] notifyCallbacks error:', err);
+			}
+		}
+	}
 
 	async connect(options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
 		await this.#transport.connect();
+
 		//Get wallet session
-		const sessionRequest = await this.request({ method: 'wallet_getSession' });
+		const sessionRequest = await this.request({ method: 'wallet_getSession' }, this.#defaultRequestOptions);
 		let walletSession = sessionRequest.result as SessionData;
 		if (walletSession && options) {
 			const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 			const proposedScopes = options?.scopes ?? [];
 			const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
 			if (!isSameScopes) {
-				await this.request({ method: 'wallet_revokeSession', params: walletSession });
+				await this.request({ method: 'wallet_revokeSession', params: walletSession }, this.#defaultRequestOptions);
 				const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-				const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+				const response = await this.request({ method: 'wallet_createSession', params: sessionRequest }, this.#defaultRequestOptions);
+				if (response.error) {
+					throw new Error(response.error.message);
+				}
 				walletSession = response.result as SessionData;
 			}
-		} else {
+		} else if (!walletSession) {
 			const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 			const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-			await this.request({ method: 'wallet_createSession', params: sessionRequest });
+			const response = await this.request({ method: 'wallet_createSession', params: sessionRequest }, this.#defaultRequestOptions);
+			if (response.error) {
+				throw new Error(response.error.message);
+			}
+			walletSession = response.result as SessionData;
 		}
+		this.#notifyCallbacks({
+			method: 'wallet_sessionChanged',
+			params: walletSession,
+		});
 	}
 
 	async disconnect(): Promise<void> {
+		this.#notificationCallbacks.clear();
 		return this.#transport.disconnect();
 	}
 
@@ -39,15 +68,14 @@ export class DefaultTransport implements ExtendedTransport {
 	}
 
 	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options?: { timeout?: number }) {
-		const requestWithId = {
-			...request,
-			jsonrpc: '2.0',
-			id: `${this.#requestId++}`,
-		};
-		return this.#transport.request(requestWithId, options) as Promise<TResponse>;
+		return this.#transport.request(request, options) as Promise<TResponse>;
 	}
 
 	onNotification(callback: (data: unknown) => void) {
-		return this.#transport.onNotification(callback);
+		this.#transport.onNotification(callback);
+		this.#notificationCallbacks.add(callback);
+		return () => {
+			this.#notificationCallbacks.delete(callback);
+		};
 	}
 }
