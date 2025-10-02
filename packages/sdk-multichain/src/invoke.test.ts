@@ -143,7 +143,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			});
 		});
 
-		t.it.only(
+		t.it(
 			`${platform} should reject invoke in case of failure in RPCClient`,
 			async () => {
 				const scopes = ['eip155:1'] as Scope[];
