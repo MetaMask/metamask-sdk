@@ -46,6 +46,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	}
 
 	async unload(error?: Error) {
+		this.modal?.unmount();
 		await this.successCallback?.(error);
 	}
 
