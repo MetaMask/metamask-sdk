@@ -1,9 +1,11 @@
 import type { StoreClient } from '../store';
-import type { MultichainCore, SessionData } from '.';
-import type { RPC_URLS_MAP } from './api/types';
+import type { MultichainCore } from '.';
+import type { RPC_URLS_MAP, Scope } from './api/types';
 import type { ModalFactory } from '../../ui';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import type { PlatformType } from '../platform';
+import type { Transport } from '@metamask/multichain-api-client';
+import type { CaipAccountId } from '@metamask/utils';
 
 export type { SessionData } from '@metamask/multichain-api-client';
 
@@ -56,13 +58,19 @@ export type MultichainOptions = {
 		preferDesktop?: boolean;
 	};
 	mobile?: {
+		preferredOpenLink?: (deeplink: string, target?: string) => void;
+		/**
+		 * The `MetaMaskSDK` constructor option `useDeeplink: boolean` controls which type of link is used:
+		 * -   If `true`, the SDK will attempt to use the `metamask://` deeplink.
+		 * -   If `false` (the default for web), the SDK will use the `https://metamask.app.link` universal link.
+		 */
 		useDeeplink?: boolean;
 	};
 	/** Optional transport configuration */
 	transport?: {
 		/** Extension ID for browser extension transport */
 		extensionId?: string;
-		onResumeSession?: (session: SessionData) => void;
+		onNotification?: (notification: unknown) => void;
 	};
 };
 
@@ -79,3 +87,7 @@ type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
  * providing all necessary options for SDK initialization.
  */
 export type CreateMultichainFN = (options: MultiChainFNOptions) => Promise<MultichainCore>;
+
+export type ExtendedTransport = Omit<Transport, 'connect'> & {
+	connect: (props?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }) => Promise<void>;
+};

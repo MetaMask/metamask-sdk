@@ -1,16 +1,16 @@
 /* eslint-disable */
 
-import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type Scope, type SessionData } from '@metamask/multichain-sdk';
+import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type Scope, type SessionData, type MultichainCore } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
 import type React from 'react';
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { METAMASK_PROD_CHROME_ID } from '../constants';
 
 const SDKContext = createContext<
 	| {
 			session: SessionData | undefined;
 			state: SDKState;
-			error: string | null;
+			error: Error | null;
 			connect: (scopes: Scope[], caipAccountIds: CaipAccountId[]) => Promise<void>;
 			disconnect: () => Promise<void>;
 			invokeMethod: (options: InvokeMethodOptions) => Promise<any>;
@@ -18,63 +18,70 @@ const SDKContext = createContext<
 	| undefined
 >(undefined);
 
+let sdk: MultichainCore | null = null;
+
 export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 	const [state, setState] = useState<SDKState>('pending');
 	const [session, setSession] = useState<SessionData | undefined>(undefined);
-	const [error, setError] = useState<string | null>(null);
+	const [error, setError] = useState<Error | null>(null);
 
-	const sdk = useMemo(() => {
-		setState('pending');
-		const response = createMetamaskSDK({
-			dapp: {
-				name: 'playground',
-				url: 'https://playground.metamask.io',
-			},
-			analytics: {
-				enabled: false,
-			},
-			transport: {
-				extensionId: METAMASK_PROD_CHROME_ID,
-				onResumeSession: (resumedSession: SessionData) => {
-					console.log('session resumed', resumedSession);
-					setSession(resumedSession);
+	const sdkPromise = useMemo(async () => {
+		if (!sdk) {
+			sdk = await createMetamaskSDK({
+				dapp: {
+					name: 'playground',
+					url: 'https://playground.metamask.io',
 				},
-			},
-		});
-		response.then((sdk) => {
-			setState(sdk.state);
-			sdk.on('wallet_sessionChanged', (newSession) => {
-				setSession(newSession);
+				analytics: {
+					enabled: false,
+				},
+				transport: {
+					extensionId: METAMASK_PROD_CHROME_ID,
+					onNotification: (notification: unknown) => {
+						const payload = notification as Record<string, unknown>;
+						if (payload.method === 'wallet_sessionChanged' || payload.method === 'wallet_createSession' || payload.method === 'wallet_getSession') {
+							setSession(payload.params as SessionData);
+						} else if (payload.method === 'stateChanged') {
+							setState(payload.params as SDKState);
+						}
+					},
+				},
 			});
-		});
-		return response;
+		}
+		return sdk;
 	}, []);
 
 	const disconnect = useCallback(async () => {
-		const sdkInstance = await sdk;
-		setState(sdkInstance.state);
-		return sdkInstance.disconnect();
-	}, [sdk]);
+		try {
+			const sdkInstance = await sdkPromise;
+			return sdkInstance.disconnect();
+		} catch (error) {
+			setError(error);
+		}
+	}, [sdkPromise]);
 
 	const connect = useCallback(
 		async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
-			const sdkInstance = await sdk;
-			setState(sdkInstance.state);
-			await sdkInstance.connect(scopes, caipAccountIds);
-			setState(sdkInstance.state);
-			const newSession = await sdkInstance.getCurrentSession();
-			setSession(newSession);
+			try {
+				const sdkInstance = await sdkPromise;
+				await sdkInstance.connect(scopes, caipAccountIds);
+			} catch (error) {
+				setError(error);
+			}
 		},
-		[sdk],
+		[sdkPromise],
 	);
 
 	const invokeMethod = useCallback(
 		async (options: InvokeMethodOptions) => {
-			const sdkInstance = await sdk;
-			setState(sdkInstance.state);
-			return sdkInstance.invokeMethod(options);
+			try {
+				const sdkInstance = await sdkPromise;
+				return sdkInstance.invokeMethod(options);
+			} catch (error) {
+				setError(error);
+			}
 		},
-		[sdk],
+		[sdkPromise],
 	);
 
 	return (

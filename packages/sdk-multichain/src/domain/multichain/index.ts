@@ -25,7 +25,6 @@ export abstract class MultichainCore extends EventEmitter<SDKEvents> {
 	abstract provider: MultichainApiClient<RPCAPI>;
 	abstract transport: Transport;
 
-	abstract getCurrentSession(): Promise<SessionData | undefined>;
 	/**
 	 * Establishes a connection to the multichain provider, or re-use existing session
 	 *

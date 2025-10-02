@@ -30,7 +30,7 @@ t.vi.mock('../domain', async () => {
 });
 
 t.describe('ModalFactory', () => {
-	let mockModal: Modal<QRLink, InstallWidgetProps> | Modal<OTPCode, OTPCodeWidgetProps>;
+	let mockModal: Modal<InstallWidgetProps, QRLink> | Modal<OTPCodeWidgetProps, OTPCode>;
 	let mockModalOptions: t.Mock<() => InstallWidgetProps | OTPCodeWidgetProps>;
 	let mockData: t.Mock<() => QRLink | OTPCode>;
 
@@ -220,6 +220,7 @@ t.describe('ModalFactory', () => {
 				},
 			};
 			uiModule = new ModalFactory(mockFactoryOptions);
+			//uiModule.modal = mockModal;
 			mockContainer = document.createElement('div');
 		});
 
@@ -231,7 +232,7 @@ t.describe('ModalFactory', () => {
 				await uiModule.renderInstallModal(
 					preferDesktop,
 					() => Promise.resolve(connectionRequest),
-					() => {},
+					async () => {},
 				);
 
 				t.expect(document.body.contains(mockContainer)).toBe(true);
@@ -285,7 +286,7 @@ t.describe('ModalFactory', () => {
 				const preferDesktop = true;
 				t.vi.spyOn(uiModule as any, 'getContainer').mockReturnValue(mockContainer);
 
-				await uiModule.renderInstallModal(preferDesktop, createSessionRequestMock, () => {});
+				await uiModule.renderInstallModal(preferDesktop, createSessionRequestMock, async () => {});
 
 				t.expect(mockModal.mount).toHaveBeenCalled();
 
@@ -321,14 +322,15 @@ t.describe('ModalFactory', () => {
 				await uiModule.renderInstallModal(
 					false,
 					() => Promise.resolve(connectionRequest),
-					() => {},
+					async () => {},
 				);
 
 				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
 
-				constructorArgs.onClose();
+				await constructorArgs.onClose();
 
-				t.expect(mockModal.unmount).toHaveBeenCalled();
+				// Multichain SDK is what will close the modal instead
+				t.expect(mockModal.unmount).not.toHaveBeenCalled();
 			});
 
 			t.it('should handle desktop onboarding correctly', async () => {
@@ -355,10 +357,11 @@ t.describe('ModalFactory', () => {
 				await uiModule.renderInstallModal(
 					false,
 					() => Promise.resolve(connectionRequest),
-					() => {},
+					async () => {},
 				);
 
 				const constructorArgs = (mockFactoryOptions.InstallModal as any).mock.calls[0][0];
+
 				constructorArgs.startDesktopOnboarding();
 
 				t.expect(mockModal.unmount).not.toHaveBeenCalled();
@@ -369,7 +372,7 @@ t.describe('ModalFactory', () => {
 			t.it('should render OTP code modal with placeholder props', async () => {
 				await uiModule.renderOTPCodeModal(
 					() => Promise.resolve('123456' as OTPCode),
-					() => {},
+					async () => {},
 					() => {},
 				);
 
@@ -419,7 +422,7 @@ t.describe('ModalFactory', () => {
 					uiModule.renderInstallModal(
 						false,
 						() => Promise.resolve(connectionRequest),
-						() => {},
+						async () => {},
 					),
 				)
 				.rejects.toThrow('Render failed');
@@ -457,7 +460,7 @@ t.describe('ModalFactory', () => {
 			await uiModule.renderInstallModal(
 				false,
 				() => Promise.resolve(connectionRequest),
-				() => {},
+				async () => {},
 			);
 			const firstModal = mockModal;
 
@@ -471,7 +474,7 @@ t.describe('ModalFactory', () => {
 			// Render second modal
 			await uiModule.renderOTPCodeModal(
 				() => Promise.resolve('123456' as OTPCode),
-				() => {},
+				async () => {},
 				() => {},
 			);
 

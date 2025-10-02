@@ -3,10 +3,13 @@
 import * as t from 'vitest';
 import type { MultichainOptions, MultichainCore, Scope, SessionData } from './domain';
 // Carefull, order of import matters to keep mocks working
-import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, type MockedData, mockSessionData, type TestSuiteOptions } from './fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 
-import * as loggerModule from './domain/logger';
 import { Store } from './store';
+
+import type { TestSuiteOptions, MockedData } from '../tests/types';
+import { mockSessionData, mockSessionRequestData } from '../tests/data';
+import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 
 function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
@@ -19,8 +22,15 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		const transportString = platform === 'web' ? 'browser' : 'mwp';
 
 		t.beforeEach(async () => {
+			const uiOptions: MultichainOptions['ui'] =
+				platform === 'web-mobile'
+					? {
+							...originalSdkOptions.ui,
+							preferDesktop: false,
+							preferExtension: false,
+						}
+					: originalSdkOptions.ui;
 			mockedData = await beforeEach();
-			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 
 			// Set the transport type as a string in storage (this is how it's stored)
 			testOptions = {
@@ -30,6 +40,8 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
+				ui: uiOptions,
+
 				storage: new Store({
 					platform: platform as 'web' | 'rn' | 'node',
 					get(key) {
@@ -52,9 +64,6 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		t.it(`${platform} should handle session upgrades`, async () => {
 			const scopes = ['eip155:1', 'eip155:137'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678', 'eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
-			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 			const mockedSessionUpgradeData: SessionData = {
 				...mockSessionData,
 				sessionScopes: {
@@ -66,115 +75,143 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 					},
 				},
 			};
-			mockMultichainClient.getSession.mockResolvedValue(mockSessionData);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockedSessionUpgradeData);
 
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockSessionData,
-					});
-				}
-
-				if (input.method === 'wallet_createSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockedSessionUpgradeData,
-					});
-				}
-
-				if (input.method === 'wallet_revokeSession') {
-					return Promise.resolve({ id: 1, jsonrpc: '2.0', result: mockSessionData });
-				}
-				return Promise.reject(new Error('Forgot to mock this RPC call?'));
-			});
+			t.vi.spyOn(SessionStore.prototype, 'list').mockImplementation(async () => Promise.resolve([await (mockedData as any).mockWalletGetSession()]));
 
 			sdk = await createSDK(testOptions);
-			(mockedData.mockTransport as any)._isConnected = true;
 
-			// Mock createSession to return the upgraded session data
-			mockMultichainClient.createSession.mockResolvedValue({ data: mockedSessionUpgradeData });
+			t.expect(sdk.state).toBe('connected');
+			t.expect(sdk.transport).toBeDefined();
+			t.expect(() => sdk.provider).toThrow();
+			t.expect(sdk.storage).toBeDefined();
+			await t.expect(sdk.storage.getTransport()).resolves.toBe(transportString);
+
+			mockedData.mockDefaultTransport.request.mockClear();
+			mockedData.mockDappClient.sendRequest.mockClear();
 
 			await sdk.connect(scopes, caipAccountIds);
 
-			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
-				method: 'wallet_getSession',
-			});
+			if (platform === 'web') {
+				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						jsonrpc: '2.0',
+						method: 'wallet_getSession',
+					}),
 
-			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
-				method: 'wallet_revokeSession',
-				params: mockSessionData,
-			});
+					undefined,
+				);
+				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_revokeSession',
+						params: mockSessionData,
+					}),
+					undefined,
+				);
 
-			mockedData.mockTransport.__triggerNotification({
-				method: 'wallet_sessionChanged',
-				params: {
-					session: mockedSessionUpgradeData,
-				},
-			});
-			// sessionChanged should be emitted with the full session data returned from createSession, not just the scopes
-			t.expect(mockedData.emitSpy).toHaveBeenCalledWith('wallet_sessionChanged', mockedSessionUpgradeData);
+				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_createSession',
+						params: {
+							optionalScopes: mockedSessionUpgradeData.sessionScopes,
+						},
+					}),
+					undefined,
+				);
+			} else {
+				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_getSession',
+					}),
+				);
+				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_revokeSession',
+						params: mockSessionData,
+					}),
+				);
+				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_createSession',
+						params: {
+							optionalScopes: mockedSessionUpgradeData.sessionScopes,
+						},
+					}),
+				);
+			}
 		});
 
 		t.it(`${platform} should handle session retrieval when no session exists`, async () => {
-			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
-			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: undefined,
-					});
-				}
-
-				return Promise.reject(new Error('Forgot to mock this RPC call?'));
-			});
-
-			// Mock no session scenario
-			mockMultichainClient.getSession.mockResolvedValue(undefined);
+			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
+			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
 
 			sdk = await createSDK(testOptions);
+			t.expect(sdk.state).toBe('connected');
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state).toBe('loaded');
-			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
-			t.expect(sdk.state).toBe('loaded');
-			t.expect(mockedData.mockTransport.request).toHaveBeenCalledWith({
-				method: 'wallet_getSession',
-			});
+
+			await sdk.connect(scopes, caipAccountIds);
+
+			/**
+			 * We expect the default transport to be called when on web and mobile wallet protocol for the rest
+			 */
+			if (platform === 'web') {
+				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						jsonrpc: '2.0',
+						method: 'wallet_getSession',
+					}),
+					undefined,
+				);
+				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_createSession',
+						params: {
+							optionalScopes: mockSessionData.sessionScopes,
+						},
+					}),
+					undefined,
+				);
+			} else {
+				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
+					t.expect.objectContaining({
+						method: 'wallet_createSession',
+						params: {
+							optionalScopes: {},
+						},
+					}),
+				);
+			}
 		});
 
 		t.it(`${platform} should handle provider errors during session retrieval`, async () => {
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+
 			// Get mocks from the module mock
-			const multichainModule = await import('@metamask/multichain-api-client');
-			const mockMultichainClient = (multichainModule as any).__mockMultichainClient;
 			const sessionError = new Error('Session error');
-
-			// Clear previous calls and set up the error mock
-			t.vi.clearAllMocks();
-
-			mockedData.mockTransport.request.mockImplementation(() => {
-				return Promise.reject(sessionError);
-			});
-			mockMultichainClient.getSession.mockRejectedValue(sessionError);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletCreateSession.mockRejectedValue(sessionError);
+			mockedData.mockWalletGetSession.mockRejectedValue(sessionError);
 
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state === 'pending').toBe(true);
+			t.expect(sdk.state === 'loaded').toBe(true);
 
-			// Access the mock logger from the module
-			const mockLogger = (loggerModule as any).__mockLogger;
+			await t.expect(() => sdk.connect(scopes, caipAccountIds)).rejects.toThrow(sessionError);
 
-			// Verify that the logger was called with the error
-			t.expect(mockLogger).toHaveBeenCalledWith('MetaMaskSDK error during initialization', sessionError);
+			t.expect(sdk.state === 'loaded').toBe(true);
 		});
 	});
 }
@@ -186,3 +223,4 @@ const baseTestOptions = { dapp: exampleDapp } as any;
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
 runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);

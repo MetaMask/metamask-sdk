@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: ok in tests */
 import * as t from 'vitest';
 import type { ConnectionRequest, QRLink } from '../../../domain';
 

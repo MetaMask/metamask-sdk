@@ -2,11 +2,13 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
 import type { MultichainOptions, MultichainCore } from './domain';
-import { runTestsInNodeEnv, type MockedData, mockSessionData, type TestSuiteOptions, runTestsInRNEnv, runTestsInWebEnv } from './fixtures.test';
+import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobileEnv } from '../tests/fixtures.test';
 
 // Carefull, order of import matters to keep mocks working
 import { analytics } from '@metamask/sdk-analytics';
 import * as loggerModule from './domain/logger';
+import type { TestSuiteOptions, MockedData } from '../tests/types';
+import { mockSessionData, mockSessionRequestData } from '../tests/data';
 
 function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
@@ -19,9 +21,19 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		const transportString = platform === 'web' ? 'browser' : 'mwp';
 
 		t.beforeEach(async () => {
+			const uiOptions: MultichainOptions['ui'] =
+				platform === 'web-mobile'
+					? {
+							...originalSdkOptions.ui,
+							preferDesktop: false,
+							preferExtension: false,
+						}
+					: originalSdkOptions.ui;
+
 			mockedData = await beforeEach();
 			testOptions = {
 				...originalSdkOptions,
+				ui: uiOptions,
 				analytics: {
 					...originalSdkOptions.analytics,
 					enabled: platform === 'web',
@@ -74,74 +86,52 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(loggerModule.enableDebug).toHaveBeenCalledWith('metamask-sdk:core');
 		});
 
+		t.it(`${platform} should properly initialize if no transport is found during init`, async () => {
+			sdk = await createSDK(testOptions);
+			t.expect(sdk.state).toBe('loaded');
+			t.expect(() => sdk.transport).toThrow();
+		});
+
 		t.it(`${platform} should properly initialize if existing session transport if found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockSessionData,
-					});
-				}
 
-				return Promise.resolve({
-					id: 1,
-					jsonrpc: '2.0',
-					result: undefined,
-				});
-			});
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
+
 			sdk = await createSDK(testOptions);
 
 			t.expect(sdk.state).toBe('connected');
 
-			await sdk.connect(['eip155:1'], ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any);
-
 			t.expect(sdk.transport).toBeDefined();
-			t.expect(sdk.provider).toBeDefined();
 			t.expect(sdk.storage).toBeDefined();
-
-			// Verify that the session was retrieved during initialization
-			t.expect(mockedData.mockMultichainClient.getSession).toHaveBeenCalled();
-			t.expect(mockedData.mockTransport.isConnected).toHaveBeenCalled();
-			t.expect(mockedData.mockTransport.connect).toHaveBeenCalled();
 		});
 
-		t.it(`${platform} should emit sessionChanged event when existing valid session is found during init`, async () => {
+		t.it(`${platform} should emit stateChanged event when existing valid session is found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockTransport.request.mockImplementation((input: any) => {
-				if (input.method === 'wallet_getSession') {
-					return Promise.resolve({
-						id: 1,
-						jsonrpc: '2.0',
-						result: mockSessionData,
-					});
-				}
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
 
-				return Promise.resolve({
-					id: 1,
-					jsonrpc: '2.0',
-					result: undefined,
-				});
-			});
-			const onResumeSession = t.vi.fn();
-
+			const onNotification = t.vi.fn();
 			const optionsWithEvent = {
 				...testOptions,
 				transport: {
 					...(testOptions.transport ?? {}),
-					onResumeSession,
+					onNotification: onNotification,
 				},
 			};
 			sdk = await createSDK(optionsWithEvent);
 
 			t.expect(sdk).toBeDefined();
-			t.expect(sdk.state).toBe('connected');
 
-			// Check that sessionChanged event was emitted with the expected session data during initialization
-			t.expect(onResumeSession).toHaveBeenCalledWith(mockSessionData);
+			t.expect(sdk.state).toBe('connected');
+			t.expect(onNotification).toHaveBeenCalledWith({
+				method: 'stateChanged',
+				params: 'connected',
+			});
 		});
 
 		t.it(`${platform} Should gracefully handle init errors by just logging them and return non initialized sdk`, async () => {
@@ -169,6 +159,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-runTestsInWebEnv(baseTestOptions, testSuite, 'https://dapp.io/');
 runTestsInNodeEnv(baseTestOptions, testSuite);
 runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
