@@ -31,13 +31,13 @@ export type MockedData = {
 	mockLogger: t.MockInstance<debug.Debugger>;
 
 	// Mocking RPC method responses for all transports
-	mockWalletGetSession: t.MockInstance<(request: any) => SessionData>;
-	mockWalletCreateSession: t.MockInstance<(request: any) => SessionData>;
-	mockWalletRevokeSession: t.MockInstance<(request: any) => void>;
-	mockWalletInvokeMethod: t.MockInstance<(request: any) => void>;
+	mockWalletGetSession: t.MockInstance<(request: any) => Promise<SessionData>>;
+	mockWalletCreateSession: t.MockInstance<(request: any) => Promise<SessionData>>;
+	mockWalletRevokeSession: t.MockInstance<(request: any) => Promise<void>>;
+	mockWalletInvokeMethod: t.MockInstance<(request: any) => Promise<any>>;
 
 	// Mocking MWP session request
-	mockSessionRequest: t.MockInstance<() => SessionRequest>;
+	mockSessionRequest: t.MockInstance<() => Promise<SessionRequest>>;
 };
 
 export type TestSuiteOptions<T extends MultichainOptions> = {

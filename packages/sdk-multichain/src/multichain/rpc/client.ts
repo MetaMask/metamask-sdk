@@ -3,6 +3,7 @@ import type { Json } from '@metamask/utils';
 import fetch from 'cross-fetch';
 
 import {
+	type ExtendedTransport,
 	getInfuraRpcUrls,
 	type InvokeMethodOptions,
 	METHODS_TO_REDIRECT,

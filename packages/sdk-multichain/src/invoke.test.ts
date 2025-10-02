@@ -8,6 +8,7 @@ import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobi
 import { Store } from './store';
 import { mockSessionData, mockSessionRequestData } from '../tests/data';
 import type { TestSuiteOptions, MockedData } from '../tests/types';
+import { RPCClient } from './multichain/rpc/client';
 
 vi.mock('cross-fetch', () => {
 	const mockFetch = vi.fn();
@@ -99,16 +100,14 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			await afterEach(mockedData);
 		});
 
-		t.it.only(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
-			let showModalPromise!: Promise<void>;
-
+		t.it(`${platform} should invoke method successfully from provider with an active session and connected transport`, async () => {
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
-			mockedData.mockWalletGetSession.mockImplementation(() => undefined as any);
-			mockedData.mockWalletCreateSession.mockImplementation(() => mockSessionData);
-			mockedData.mockWalletInvokeMethod.mockImplementation(() => {
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => undefined as any);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletInvokeMethod.mockImplementation(async () => {
 				return {
 					id: 1,
 					jsonrpc: '2.0',
@@ -122,34 +121,13 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(() => sdk.provider).toThrow();
 			t.expect(() => sdk.transport).toThrow();
 
-			if (platform !== 'web' && platform !== 'web-mobile') {
-				// Platform web is browser with metamask extension, won't have install modal
-				showModalPromise = waitForInstallModal(sdk);
-			}
-
-			const connectPromise = sdk.connect(scopes, caipAccountIds);
-
-			if (isMWPPlatform) {
-				if (platform !== 'web-mobile') {
-					(mockedData.mockDappClient as any).__state = 'CONNECTED';
-					//For MWP we simulate a connection with DappClient after showing the QRCode
-					await expectUIFactoryRenderInstallModal(sdk);
-				}
-
-				if (platform !== 'web-mobile') {
-					// Connect to MWP using dappClient mock
-					mockedData.mockDappClient.connect();
-					await showModalPromise;
-				} else {
-				}
-			}
-			await connectPromise;
+			await sdk.connect(scopes, caipAccountIds);
 
 			t.expect(sdk.state).toBe('connected');
 			t.expect(sdk.storage).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 
-			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
+			const providerInvokeMethodSpy = t.vi.spyOn(RPCClient.prototype, 'invokeMethod');
 			const options = {
 				id: 1,
 				scope: 'eip155:1',
@@ -165,22 +143,33 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			});
 		});
 
-		t.it(`${platform} should reject invoke if no active session or provider is available`, async () => {
+		t.it(`${platform} should reject invoke in case of failure in RPCClient`, async () => {
+			const scopes = ['eip155:1'] as Scope[];
+			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletInvokeMethod.mockRejectedValue(new Error('Failed to invoke method'));
+
 			sdk = await createSDK(testOptions);
+			await sdk.connect(scopes, caipAccountIds);
+			t.expect(sdk.state).toBe('connected');
+
 			const options = {
 				scope: 'eip155:1',
 				request: { method: 'eth_accounts', params: [] },
 			} as InvokeMethodOptions;
-			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Provider not initialized, establish connection first');
+
+			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('RPCErr53: RPC Client invoke method reason (Failed to invoke method)');
 		});
 
 		t.it(`${platform} should invoke readonly method successfully from client if infuraAPIKey exists`, async () => {
 			const scopes = ['eip155:1'] as Scope[];
 			const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
 
-			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
-			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
-			mockedData.mockWalletCreateSession.mockImplementation(() => mockSessionData);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
 
 			// Mock the RPCClient response
 			const mockJsonResponse = { result: 'success' };
@@ -204,40 +193,14 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state).toBe('loaded');
 			t.expect(() => sdk.provider).toThrow();
 			t.expect(() => sdk.transport).toThrow();
-			let showModalPromise!: Promise<void>;
 
-			if (platform !== 'web' && platform !== 'web-mobile') {
-				// Platform web is browser with metamask extension, won't have install modal
-				showModalPromise = waitForInstallModal(sdk);
-			}
+			await sdk.connect(scopes, caipAccountIds);
 
-			const connectPromise = sdk.connect(scopes, caipAccountIds);
-
-			if (isMWPPlatform) {
-				if (platform !== 'web-mobile') {
-					(mockedData.mockDappClient as any).__state = 'CONNECTED';
-					//For MWP we simulate a connection with DappClient after showing the QRCode
-					await expectUIFactoryRenderInstallModal(sdk);
-				}
-
-				if (platform !== 'web-mobile') {
-					// Connect to MWP using dappClient mock
-					mockedData.mockDappClient.connect();
-					await showModalPromise;
-				} else {
-				}
-			}
-			await connectPromise;
 			t.expect(sdk.state).toBe('connected');
 
-			const providerInvokeMethodSpy = t.vi.spyOn(sdk.provider, 'invokeMethod');
-			const options = {
-				scope: 'eip155:1',
-				request: { method: 'eth_accounts', params: [] },
-			} as InvokeMethodOptions;
+			const options = { scope: 'eip155:1', request: { method: 'eth_accounts', params: [] } } as InvokeMethodOptions;
 			const result = await sdk.invokeMethod(options);
 
-			t.expect(providerInvokeMethodSpy).not.toHaveBeenCalled();
 			t.expect(mockFetch).toHaveBeenCalled();
 			t.expect(result).toEqual(mockJsonResponse);
 		});
@@ -247,9 +210,10 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
 
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockSessionRequest.mockImplementation(() => mockSessionRequestData);
-			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
 			mockedData.mockWalletInvokeMethod.mockRejectedValue(mockError);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
 
 			sdk = await createSDK(testOptions);
 			const options = {
@@ -260,7 +224,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				},
 			} as InvokeMethodOptions;
 			t.expect(sdk.state).toBe('connected');
-			t.expect(sdk.provider).toBeDefined();
+			t.expect(() => sdk.provider).toThrow();
 
 			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
 		});
@@ -271,7 +235,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-// runTestsInNodeEnv(baseTestOptions, testSuite);
-// runTestsInRNEnv(baseTestOptions, testSuite);
-// runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInNodeEnv(baseTestOptions, testSuite);
+runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);

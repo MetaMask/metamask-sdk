@@ -31,6 +31,7 @@ import { getDefaultTransport, TransportResponse } from '@metamask/multichain-api
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 import { setupNodeMocks, setupRNMocks, setupWebMobileMocks, setupWebMocks } from './env';
+import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 
 export const TRANSPORT_REQUEST_RESPONSE_DELAY = 50;
 
@@ -138,7 +139,7 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 				}),
 				request: t.vi.fn(async (payload) => {
 					try {
-            const id = payload.id ?? requestId++;
+            const id = `${payload.id ?? requestId++}`;
 
 						if (payload.method === 'wallet_getSession') {
 							const result = await  mockWalletGetSession();
@@ -207,11 +208,8 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 			emitSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'emit');
 			showInstallModalSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'showInstallModal');
 
-			mwpCoreActual.__mockStorage = nativeStorageStub.data;
 
-			// const storageMock = await import('@metamask/mobile-wallet-protocol-core') as any;
-			// vi.spyOn(storageMock.__mockSessionStore, 'list')
-			//   .mockImplementation(async () => Promise.resolve([await mockSessionRequest()]));
+			mwpCoreActual.__mockStorage = nativeStorageStub.data;
 
       const eventListeners = new Map<string, Array<{ handler: (...args: any[]) => void; once: boolean }>>();
       const mockDappClient = {
@@ -230,11 +228,10 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
         resume:t.vi.fn(async() => {
           mockDappClient.emit('connected');
           mockDappClient.state = 'CONNECTED' as any;
+          await mockDappClient.sendRequest({ id: `${this.__reqId++}`, jsonrpc: '2.0', method: 'wallet_getSession', params: [] });
           return Promise.resolve();
         }),
         connect:t.vi.fn(async (data: any) => {
-          try {
-            console.log('mockDappClient.connect start');
             //Establish the connection automatically
             mockDappClient.emit('connected');
             (mockDappClient as any).state = 'CONNECTED' as any;
@@ -244,16 +241,8 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
             mockDappClient.emit('session_request', sessionRequest);
 
             if (data?.initialPayload) {
-              //Allow the initial wallet_createSession request to be sent
-              console.log('mockDappClient.connect awaiting sendRequest');
               await mockDappClient.sendRequest(data.initialPayload);
-              console.log('mockDappClient.connect sendRequest finished');
             }
-            console.log('mockDappClient.connect end');
-          } catch (err) {
-            console.error('mockDappClient.connect caught error', err);
-            return Promise.reject(err);
-          }
         }),
         disconnect:t.vi.fn(async () => {
           mockDappClient.emit('disconnected');
@@ -262,7 +251,7 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
         }),
         sendRequest:t.vi.fn(async (request: any) => {
           try  {
-            const id = request.id ?? requestId++;
+            const id = `${request.id ?? requestId++}`;
             if (request.method === 'wallet_getSession') {
               return new Promise<void>((resolve, reject) => {
                 const req = {
@@ -295,7 +284,6 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
                return new Promise<void>((resolve, reject) => {
                 const req = {
                   resolve: (result: any) => {
-                    console.log('mockDappClient.sendRequest wallet_createSession resolving');
                     mockDappClient.emit('message', {
                       data: {
                         id,
@@ -306,16 +294,24 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
                     });
                     resolve();
                   },
-                  reject: reject, timeout: null as any
+                  reject: (err) => {
+                    mockDappClient.emit('message', {
+                      data: {
+                        id,
+                        jsonrpc: '2.0',
+                        method: 'wallet_createSession',
+                        error: err,
+                      },
+                    });
+                    resolve()
+                  }, timeout: null as any
                 }
                 pendingRequests.set(id,req );
                 setTimeout(async () => {
                   try {
-                   console.log('mockDappClient.sendRequest wallet_createSession calling mockWalletCreateSession');
                    const result =await  mockWalletCreateSession();
                    req.resolve(result);
                   } catch (err) {
-                   console.error('mockDappClient.sendRequest wallet_createSession caught error', err);
                    req.reject(err)
                   }
                  }, TRANSPORT_REQUEST_RESPONSE_DELAY);

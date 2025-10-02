@@ -8,7 +8,7 @@ import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobi
 import { analytics } from '@metamask/sdk-analytics';
 import * as loggerModule from './domain/logger';
 import type { TestSuiteOptions, MockedData } from '../tests/types';
-import { mockSessionData } from '../tests/data';
+import { mockSessionData, mockSessionRequestData } from '../tests/data';
 
 function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
@@ -95,7 +95,10 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		t.it(`${platform} should properly initialize if existing session transport if found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
 
 			sdk = await createSDK(testOptions);
 
@@ -105,10 +108,12 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.storage).toBeDefined();
 		});
 
-		t.it(`${platform} should emit sessionChanged event when existing valid session is found during init`, async () => {
+		t.it(`${platform} should emit stateChanged event when existing valid session is found during init`, async () => {
 			// Set the transport type as a string in storage (this is how it's stored)
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			mockedData.mockWalletGetSession.mockImplementation(() => mockSessionData);
+			mockedData.mockSessionRequest.mockImplementation(async () => mockSessionRequestData);
+			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
+			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
 
 			const onNotification = t.vi.fn();
 			const optionsWithEvent = {
@@ -121,10 +126,11 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			sdk = await createSDK(optionsWithEvent);
 
 			t.expect(sdk).toBeDefined();
+
 			t.expect(sdk.state).toBe('connected');
 			t.expect(onNotification).toHaveBeenCalledWith({
-				method: 'wallet_sessionChanged',
-				params: mockSessionData,
+				method: 'stateChanged',
+				params: 'connected',
 			});
 		});
 

@@ -79,3 +79,10 @@ export function isSecure() {
 	const platformType = getPlatformType();
 	return isReactNative() || platformType === PlatformType.MobileWeb;
 }
+
+export function hasExtension() {
+	if (typeof window !== 'undefined') {
+		return window.ethereum?.isMetaMask ?? false;
+	}
+	return false;
+}

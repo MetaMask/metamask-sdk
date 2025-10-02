@@ -39,7 +39,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 					extensionId: METAMASK_PROD_CHROME_ID,
 					onNotification: (notification: unknown) => {
 						const payload = notification as Record<string, unknown>;
-						if (payload.method === 'wallet_sessionChanged') {
+						if (payload.method === 'wallet_sessionChanged' || payload.method === 'wallet_createSession' || payload.method === 'wallet_getSession') {
 							setSession(payload.params as SessionData);
 						} else if (payload.method === 'stateChanged') {
 							setState(payload.params as SDKState);

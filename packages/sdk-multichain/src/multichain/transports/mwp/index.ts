@@ -7,10 +7,11 @@ import type { ExtendedTransport, RPCAPI, Scope, SessionData, StoreAdapter } from
 import type { CaipAccountId } from '@metamask/utils';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
 
-const DEFAULT_REQUEST_TIMEOUT = 30000;
-const DEFAULT_CONNECTION_TIMEOUT = 30000;
+const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
+const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
 
 type PendingRequests = {
+	method: string;
 	resolve: (value: TransportResponse<unknown>) => void;
 	reject: (error: Error) => void;
 	timeout: NodeJS.Timeout;
@@ -45,13 +46,14 @@ export class MWPTransport implements ExtendedTransport {
 		private options: { requestTimeout: number; connectionTimeout: number } = { requestTimeout: DEFAULT_REQUEST_TIMEOUT, connectionTimeout: DEFAULT_CONNECTION_TIMEOUT },
 	) {
 		this.dappClient.on('message', this.handleMessage.bind(this));
-
 		if (typeof window !== 'undefined') {
-			window.addEventListener('focus', () => {
-				if (!this.isConnected()) {
-					this.dappClient.reconnect();
-				}
-			});
+			window.addEventListener('focus', this.onWindowFocus.bind(this));
+		}
+	}
+
+	private onWindowFocus(): void {
+		if (!this.isConnected()) {
+			this.dappClient.reconnect();
 		}
 	}
 
@@ -68,19 +70,27 @@ export class MWPTransport implements ExtendedTransport {
 		}
 	}
 
-	private handleMessage(message: unknown): void {
-		if (typeof message === 'object' && message !== null && 'data' in message) {
-			const messagePayload = message.data as Record<string, unknown>;
-			if ('id' in messagePayload && typeof messagePayload.id === 'string') {
-				const request = this.pendingRequests.get(messagePayload.id);
-				if (request) {
-					clearTimeout(request.timeout);
-					request.resolve(messagePayload as TransportResponse<unknown>);
-					this.pendingRequests.delete(messagePayload.id);
+	private handleMessage(message: any): void {
+		if (typeof message === 'object') {
+			if ('data' in message) {
+				const messagePayload = message.data;
+				if ('id' in messagePayload && typeof messagePayload.id === 'string') {
+					const request = this.pendingRequests.get(messagePayload.id);
+					if (request) {
+						const requestWithName = {
+							...messagePayload,
+							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
+						};
+						clearTimeout(request.timeout);
+						request.resolve(requestWithName as TransportResponse<unknown>);
+						this.pendingRequests.delete(messagePayload.id);
+						return;
+					}
+				} else if ('name' in message && message.name === 'metamask-multichain-provider' && message.data.method === 'wallet_sessionChanged') {
+					this.notifyCallbacks(message.data);
 					return;
 				}
 			}
-			this.notifyCallbacks(message);
 		}
 	}
 
@@ -89,10 +99,6 @@ export class MWPTransport implements ExtendedTransport {
 	 * Note: This is a simplified implementation that expects the DappClient to be provided externally
 	 */
 	async connect(options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
-		if (this.isConnected()) {
-			return;
-		}
-
 		const { dappClient, kvstore } = this;
 		const sessionStore = new SessionStore(kvstore);
 
@@ -106,59 +112,64 @@ export class MWPTransport implements ExtendedTransport {
 
 		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
 			let connection: Promise<void>;
-			let unsubscribe: () => void;
+
 			if (session) {
-				connection = dappClient.resume(session.id);
-			} else {
-				if (options) {
-					const optionalScopes = addValidAccounts(getOptionalScopes(options.scopes ?? []), getValidAccounts(options.caipAccountIds ?? []));
-					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-					const request = { id: `${this.__reqId++}`, jsonrpc: '2.0', method: 'wallet_createSession', params: sessionRequest };
-
-					this.dappClient.once('message', (payload) => {
-						if (typeof payload === 'object' && payload !== null && 'data' in payload) {
-							const data = payload.data as Record<string, unknown>;
-							if ('method' in data && data.method === 'wallet_createSession') {
-								//TODO: is it .params or .result?
-								const session = (data.params || data.result) as SessionData;
-								if (session) {
-									this.notifyCallbacks(payload);
-									// Initial request will be what resolves the connection when options is specified
-									resolve();
+				connection = new Promise<void>((resumeResolve, resumeReject) => {
+					this.dappClient.once('connected', async () => {
+						try {
+							const sessionRequest = await this.request({ method: 'wallet_getSession' });
+							let walletSession = sessionRequest.result as SessionData;
+							debugger;
+							if (options) {
+								const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
+								const proposedScopes = options?.scopes ?? [];
+								const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+								if (!isSameScopes) {
+									await this.request({ method: 'wallet_revokeSession', params: walletSession });
+									const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+									const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+									const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+									walletSession = response.result as SessionData;
 								}
 							}
+							this.notifyCallbacks({
+								method: 'wallet_sessionChanged',
+								params: walletSession,
+							});
+							resumeResolve();
+						} catch (err) {
+							resumeReject(err);
 						}
 					});
-
-					unsubscribe = this.onNotification((payload) => {
-						if (typeof payload === 'object' && payload !== null && 'data' in payload) {
-							const data = payload.data as Record<string, unknown>;
-							if ('method' in data && data.method === 'wallet_createSession') {
-								//TODO: is it .params or .result?
-								const session = (data.params || data.result) as SessionData;
-								if (session) {
-									// Initial request will be what resolves the connection when options is specified
-									resolve();
-								}
-							}
-						}
-					});
-					connection = dappClient.connect({ mode: 'trusted', initialPayload: request });
-				} else {
-					connection = dappClient.connect({ mode: 'trusted' });
-				}
-			}
-			connection
-				.then(() => {
-					// Resolve connection only if we did not also request an initial request
-					if (!options) {
-						resolve();
-					}
-				})
-				.catch(reject)
-				.finally(() => {
-					unsubscribe?.();
+					dappClient.resume(session.id);
 				});
+			} else {
+				connection = new Promise<void>((resolveConnection, rejectConnection) => {
+					this.dappClient.on('message', async (message: any) => {
+						if (typeof message === 'object') {
+							if ('data' in message) {
+								const messagePayload = message.data;
+								if ('id' in messagePayload && typeof messagePayload.id === 'string') {
+									if (messagePayload.method === 'wallet_createSession') {
+										if (messagePayload.error) {
+											return rejectConnection(messagePayload.error);
+										}
+										this.notifyCallbacks(message.data);
+										return resolveConnection();
+									}
+								}
+							}
+						}
+					});
+					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
+
+					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
+				});
+			}
+
+			connection.then(resolve).catch(reject);
 		});
 
 		return this.connectionPromise.finally(() => {
@@ -184,18 +195,19 @@ export class MWPTransport implements ExtendedTransport {
 	/**
 	 * Sends a request through the Mobile Wallet Protocol
 	 */
-	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(payload: TRequest): Promise<TResponse> {
+	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(payload: TRequest, options?: { timeout?: number }): Promise<TResponse> {
+		this.__reqId += 1;
 		const response = await new Promise<TResponse>((resolve, reject) => {
 			const request = {
-				id: `${this.__reqId++}`,
 				jsonrpc: '2.0',
+				id: `${this.__reqId}`,
 				...payload,
 			};
 			const timeout = setTimeout(() => {
 				this.rejectRequest(request.id, new TransportTimeoutError());
-			}, this.options.requestTimeout);
+			}, options?.timeout ?? this.options.requestTimeout);
 
-			this.pendingRequests.set(request.id, { resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
+			this.pendingRequests.set(request.id, { method: payload.method, resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
 			this.dappClient.sendRequest(request).catch(reject);
 		});
 		return response;
