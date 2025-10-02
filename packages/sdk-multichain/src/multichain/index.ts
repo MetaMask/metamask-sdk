@@ -247,6 +247,9 @@ export class MultichainSDK extends MultichainCore {
 			this.options.ui.factory.renderInstallModal(
 				desktopPreferred,
 				async () => {
+					if (this.dappClient.state === 'CONNECTED' || this.dappClient.state === 'CONNECTING') {
+						await this.dappClient.disconnect();
+					}
 					return new Promise<ConnectionRequest>((resolveConnectionRequest) => {
 						this.dappClient.on('session_request', (sessionRequest: SessionRequest) => {
 							resolveConnectionRequest({
