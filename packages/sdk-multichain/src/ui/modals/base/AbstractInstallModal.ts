@@ -47,7 +47,7 @@ export abstract class AbstractInstallModal extends Modal<InstallWidgetProps, QRL
 		this.expirationInterval = setInterval(async () => {
 			const { sessionRequest } = currentConnectionRequest;
 			const now = Date.now();
-			const remainingMs = sessionRequest.expiresAt - now;
+			const remainingMs = sessionRequest.expiresAt - now - 55000;
 
 			const remainingSeconds = Math.floor(remainingMs / 1000);
 
@@ -58,6 +58,7 @@ export abstract class AbstractInstallModal extends Modal<InstallWidgetProps, QRL
 			}
 
 			if (now >= sessionRequest.expiresAt) {
+				this.stopExpirationCheck();
 				logger('[UI: InstallModal-nodejs()] ⏰ QR code EXPIRED! Generating new one...');
 				try {
 					// Generate new session request

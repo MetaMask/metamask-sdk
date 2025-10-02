@@ -21,12 +21,14 @@ export class InstallModal extends AbstractInstallModal {
 			console.log(`EXPIRES IN: ${formattedTime}`);
 		}
 	}
+
 	renderQRCode(link: QRLink, connectionRequest: ConnectionRequest): void {
 		const { sessionRequest } = connectionRequest;
 		const expiresIn = sessionRequest.expiresAt - Date.now();
 		const expiresInSeconds = Math.floor(expiresIn / 1000);
 		const shouldLog = shouldLogCountdown(expiresInSeconds);
 		const formattedTime = formatRemainingTime(expiresIn);
+		this.startExpirationCheck(connectionRequest);
 
 		this.displayQRWithCountdown(link, expiresIn);
 
@@ -41,7 +43,6 @@ export class InstallModal extends AbstractInstallModal {
 		}
 		const { link, connectionRequest } = this;
 		this.renderQRCode(link, connectionRequest);
-		this.startExpirationCheck(connectionRequest);
 	}
 
 	unmount(): void {

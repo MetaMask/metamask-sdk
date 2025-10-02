@@ -28,7 +28,6 @@ export class MWPTransport implements ExtendedTransport {
 	private __pendingRequests = new Map<string, PendingRequests>();
 	private notificationCallbacks = new Set<(data: unknown) => void>();
 	private currentSessionRequest: SessionRequest | undefined;
-	private connectionPromise?: Promise<void>;
 
 	get pendingRequests() {
 		return this.__pendingRequests;
@@ -139,7 +138,7 @@ export class MWPTransport implements ExtendedTransport {
 		} catch {}
 
 		let timeout: NodeJS.Timeout;
-		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
+		const connectionPromise = new Promise<void>((resolve, reject) => {
 			let connection: Promise<void>;
 			if (session) {
 				connection = new Promise<void>((resumeResolve, resumeReject) => {
@@ -175,14 +174,15 @@ export class MWPTransport implements ExtendedTransport {
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
 			}
+
 			timeout = setTimeout(() => {
 				reject(new TransportTimeoutError());
 			}, this.options.connectionTimeout);
+
 			connection.then(resolve).catch(reject);
 		});
 
-		return this.connectionPromise.finally(() => {
-			this.connectionPromise = undefined;
+		return connectionPromise.finally(() => {
 			if (timeout) {
 				clearTimeout(timeout);
 			}
