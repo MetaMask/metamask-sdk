@@ -138,6 +138,7 @@ export class MWPTransport implements ExtendedTransport {
 			}
 		} catch {}
 
+		let timeout: NodeJS.Timeout;
 		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
 			let connection: Promise<void>;
 			if (session) {
@@ -174,7 +175,7 @@ export class MWPTransport implements ExtendedTransport {
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
 			}
-			setTimeout(() => {
+			timeout = setTimeout(() => {
 				reject(new TransportTimeoutError());
 			}, this.options.connectionTimeout);
 			connection.then(resolve).catch(reject);
@@ -182,6 +183,9 @@ export class MWPTransport implements ExtendedTransport {
 
 		return this.connectionPromise.finally(() => {
 			this.connectionPromise = undefined;
+			if (timeout) {
+				clearTimeout(timeout);
+			}
 		});
 	}
 
