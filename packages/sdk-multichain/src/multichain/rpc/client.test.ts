@@ -32,7 +32,7 @@ vi.mock('./client', async () => {
 });
 
 t.describe('RPCClient', () => {
-	let mockProvider: any;
+	let mockTransport: any;
 	let mockConfig: MultichainOptions['api'];
 	let sdkInfo: string;
 	let rpcClient: RPCClient;
@@ -40,7 +40,7 @@ t.describe('RPCClient', () => {
 	let defaultHeaders: Record<string, string>;
 	let headers: Record<string, string>;
 	let mockFetch: any;
-	let baseOptions: InvokeMethodOptions;
+	let baseOptions: any;
 
 	t.beforeEach(async () => {
 		const clientModule = await import('./client');
@@ -51,8 +51,8 @@ t.describe('RPCClient', () => {
 				params: { address: '0x123', blockNumber: 'latest' },
 			},
 		};
-		mockProvider = {
-			invokeMethod: t.vi.fn(),
+		mockTransport = {
+			request: t.vi.fn(),
 		};
 		mockConfig = {
 			infuraAPIKey: 'test-infura-key',
@@ -61,13 +61,13 @@ t.describe('RPCClient', () => {
 			},
 		};
 		sdkInfo = 'Sdk/Javascript SdkVersion/1.0.0 Platform/web';
-		rpcClient = new clientModule.RPCClient(mockProvider, mockConfig, sdkInfo);
+		rpcClient = new clientModule.RPCClient(mockTransport, mockConfig, sdkInfo);
 		rpcClientModule = clientModule.RPCClient;
 		// Get mock fetch from the module mock
 		const fetchModule = await import('cross-fetch');
 		mockFetch = (fetchModule as any).__mockFetch;
 		// Reset mocks
-		mockProvider.invokeMethod.mockClear();
+		mockTransport.request.mockClear();
 		mockFetch.mockClear();
 		defaultHeaders = {
 			Accept: 'application/json',
@@ -119,7 +119,7 @@ t.describe('RPCClient', () => {
 				const result = await rpcClient.invokeMethod(baseOptions);
 
 				t.expect(result).toBe('0x1234567890abcdef');
-				t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
+				t.expect(mockTransport.request).not.toHaveBeenCalled();
 				t.expect(mockFetch).toHaveBeenCalledWith('https://mainnet.infura.io/v3/test-infura-key', {
 					method: 'POST',
 					headers: headers,
@@ -164,7 +164,7 @@ t.describe('RPCClient', () => {
 					infuraAPIKey: 'test-infura-key',
 					// No readonlyRPCMap provided
 				};
-				const clientWithoutRPCMap = new rpcClientModule(mockProvider, configWithoutRPCMap, sdkInfo);
+				const clientWithoutRPCMap = new rpcClientModule(mockTransport, configWithoutRPCMap, sdkInfo);
 
 				const mockJsonResponse = {
 					jsonrpc: '2.0',
@@ -182,7 +182,7 @@ t.describe('RPCClient', () => {
 				const result = await clientWithoutRPCMap.invokeMethod(baseOptions);
 
 				t.expect(result).toBe('0xabcdef123456');
-				t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
+				t.expect(mockTransport.request).not.toHaveBeenCalled();
 
 				// Should still use Infura URL since infuraAPIKey is provided
 				t.expect(mockFetch).toHaveBeenCalledWith('https://mainnet.infura.io/v3/test-infura-key', {
@@ -198,7 +198,7 @@ t.describe('RPCClient', () => {
 						'eip155:1': 'https://custom-ethereum-node.com/rpc',
 					},
 				};
-				const clientWithCustomRPC = new rpcClientModule(mockProvider, configWithCustomRPC, sdkInfo);
+				const clientWithCustomRPC = new rpcClientModule(mockTransport, configWithCustomRPC, sdkInfo);
 				const mockJsonResponse = {
 					jsonrpc: '2.0',
 					result: '0x123456account12345',
@@ -217,7 +217,7 @@ t.describe('RPCClient', () => {
 
 				const result = await clientWithCustomRPC.invokeMethod(baseOptions);
 				t.expect(result).toBe('0x123456account12345');
-				t.expect(mockProvider.invokeMethod).not.toHaveBeenCalled();
+				t.expect(mockTransport.request).not.toHaveBeenCalled();
 				t.expect(mockFetch).toHaveBeenCalledWith('https://custom-ethereum-node.com/rpc', {
 					method: 'POST',
 					headers: defaultHeaders,
@@ -233,10 +233,13 @@ t.describe('RPCClient', () => {
 						params: { to: '0x123', value: '0x100' },
 					},
 				};
-				mockProvider.invokeMethod.mockResolvedValue('0xhash');
+				mockTransport.request.mockResolvedValue({ result: '0xhash' });
 				const result = await rpcClient.invokeMethod(redirectOptions);
 				t.expect(result).toBe('0xhash');
-				t.expect(mockProvider.invokeMethod).toHaveBeenCalledWith(redirectOptions);
+				t.expect(mockTransport.request).toHaveBeenCalledWith({
+					method: 'wallet_invokeMethod',
+					params: redirectOptions,
+				});
 				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
 
@@ -248,10 +251,13 @@ t.describe('RPCClient', () => {
 						params: { message: 'hello world' },
 					},
 				};
-				mockProvider.invokeMethod.mockResolvedValue('0xsignature');
+				mockTransport.request.mockResolvedValue({ result: '0xsignature' });
 				const result = await rpcClient.invokeMethod(signOptions);
 				t.expect(result).toBe('0xsignature');
-				t.expect(mockProvider.invokeMethod).toHaveBeenCalledWith(signOptions);
+				t.expect(mockTransport.request).toHaveBeenCalledWith({
+					method: 'wallet_invokeMethod',
+					params: signOptions,
+				});
 				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
 
@@ -263,19 +269,25 @@ t.describe('RPCClient', () => {
 						params: { address: '0x123', blockNumber: 'latest' },
 					},
 				};
-				mockProvider.invokeMethod.mockResolvedValue('0xbalance');
+				mockTransport.request.mockResolvedValue({ result: '0xbalance' });
 				const result = await rpcClient.invokeMethod(noRpcOptions);
 				t.expect(result).toBe('0xbalance');
-				t.expect(mockProvider.invokeMethod).toHaveBeenCalledWith(noRpcOptions);
+				t.expect(mockTransport.request).toHaveBeenCalledWith({
+					method: 'wallet_invokeMethod',
+					params: noRpcOptions,
+				});
 				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
 
 			t.it('should redirect to provider when no infura API key and no custom RPC map', async () => {
-				const noConfigClient = new rpcClientModule(mockProvider, {}, sdkInfo);
-				mockProvider.invokeMethod.mockResolvedValue('0xfallback');
+				const noConfigClient = new rpcClientModule(mockTransport, {}, sdkInfo);
+				mockTransport.request.mockResolvedValue({ result: '0xfallback' });
 				const result = await noConfigClient.invokeMethod(baseOptions);
 				t.expect(result).toBe('0xfallback');
-				t.expect(mockProvider.invokeMethod).toHaveBeenCalledWith(baseOptions);
+				t.expect(mockTransport.request).toHaveBeenCalledWith({
+					method: 'wallet_invokeMethod',
+					params: baseOptions,
+				});
 				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
 
@@ -287,7 +299,7 @@ t.describe('RPCClient', () => {
 						params: { to: '0x123', value: '0x100' },
 					},
 				};
-				mockProvider.invokeMethod.mockRejectedValue(new Error('Provider error'));
+				mockTransport.request.mockRejectedValue(new Error('Provider error'));
 				await t.expect(rpcClient.invokeMethod(redirectOptions)).rejects.toBeInstanceOf(RPCInvokeMethodErr);
 				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
