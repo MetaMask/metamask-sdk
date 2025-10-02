@@ -8,7 +8,7 @@ import type { CaipAccountId } from '@metamask/utils';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
-const CONNECTION_GRACE_PERIOD = 10 * 1000;
+const CONNECTION_GRACE_PERIOD = 60 * 1000;
 
 const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT + CONNECTION_GRACE_PERIOD;
 
