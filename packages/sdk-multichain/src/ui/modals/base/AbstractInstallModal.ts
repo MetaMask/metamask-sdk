@@ -47,7 +47,7 @@ export abstract class AbstractInstallModal extends Modal<InstallWidgetProps, QRL
 		this.expirationInterval = setInterval(async () => {
 			const { sessionRequest } = currentConnectionRequest;
 			const now = Date.now();
-			const remainingMs = sessionRequest.expiresAt - now - 55000;
+			const remainingMs = sessionRequest.expiresAt - now;
 
 			const remainingSeconds = Math.floor(remainingMs / 1000);
 
