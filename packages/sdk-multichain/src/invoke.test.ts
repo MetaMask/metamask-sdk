@@ -239,7 +239,7 @@ const exampleDapp = { name: 'Test Dapp', url: 'https://test.dapp' };
 
 const baseTestOptions = { dapp: exampleDapp } as any;
 
-// runTestsInNodeEnv(baseTestOptions, testSuite);
-// runTestsInRNEnv(baseTestOptions, testSuite);
-// runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
+runTestsInNodeEnv(baseTestOptions, testSuite);
+runTestsInRNEnv(baseTestOptions, testSuite);
+runTestsInWebEnv(baseTestOptions, testSuite, exampleDapp.url);
 runTestsInWebMobileEnv(baseTestOptions, testSuite, exampleDapp.url);
