@@ -1,8 +1,9 @@
-import type { InvokeMethodParams, MultichainApiClient } from '@metamask/multichain-api-client';
+import type { InvokeMethodParams } from '@metamask/multichain-api-client';
 import type { Json } from '@metamask/utils';
 import fetch from 'cross-fetch';
 
 import {
+	type ExtendedTransport,
 	getInfuraRpcUrls,
 	type InvokeMethodOptions,
 	METHODS_TO_REDIRECT,
@@ -26,7 +27,7 @@ export function getNextRpcId() {
 
 export class RPCClient {
 	constructor(
-		private readonly provider: MultichainApiClient<RPCAPI>,
+		private readonly transport: ExtendedTransport,
 		private readonly config: MultichainOptions['api'],
 		private readonly sdkInfo: string,
 	) {}
@@ -109,8 +110,14 @@ export class RPCClient {
 			return response;
 		}
 		try {
-			const response = await this.provider.invokeMethod(options as InvokeMethodParams<RPCAPI, Scope, never>);
-			return response;
+			const response = await this.transport.request({
+				method: 'wallet_invokeMethod',
+				params: options,
+			});
+			if (response.error) {
+				throw new RPCInvokeMethodErr(`RPC Request failed with code ${response.error.code}: ${response.error.message}`);
+			}
+			return response.result;
 		} catch (error) {
 			throw new RPCInvokeMethodErr(error.message);
 		}
