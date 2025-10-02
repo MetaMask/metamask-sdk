@@ -8,7 +8,9 @@ import type { CaipAccountId } from '@metamask/utils';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
-const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT;
+const CONNECTION_GRACE_PERIOD = 10 * 1000;
+
+const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT + CONNECTION_GRACE_PERIOD;
 
 type PendingRequests = {
 	method: string;
@@ -172,6 +174,9 @@ export class MWPTransport implements ExtendedTransport {
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
 			}
+			setTimeout(() => {
+				reject(new TransportTimeoutError());
+			}, this.options.connectionTimeout);
 			connection.then(resolve).catch(reject);
 		});
 
