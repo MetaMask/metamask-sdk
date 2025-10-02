@@ -435,15 +435,22 @@ export class MultichainSDK extends MultichainCore {
 
 		const client = new RPCClient(this.provider, this.options.api, sdkInfo);
 		const secure = isSecure();
+		const shouldOpenDeeplink = secure && !preferDesktop;
 
-		if (secure && !preferDesktop) {
-			if (this.options.mobile?.preferredOpenLink) {
-				this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
-			} else {
-				this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
-			}
+		// Call the client invoke method first
+		const invokePromise = client.invokeMethod(request);
+
+		// Schedule the deeplink to open 100ms after the invoke method is called
+		if (shouldOpenDeeplink) {
+			setTimeout(() => {
+				if (this.options.mobile?.preferredOpenLink) {
+					this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
+				} else {
+					this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
+				}
+			}, 1000);
 		}
 
-		return client.invokeMethod(request);
+		return invokePromise;
 	}
 }
