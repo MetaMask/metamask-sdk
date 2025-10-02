@@ -70,23 +70,23 @@ export class MWPTransport implements ExtendedTransport {
 		}
 	}
 
-	private handleMessage(message: any): void {
-		if (typeof message === 'object') {
+	private handleMessage(message: unknown): void {
+		if (typeof message === 'object' && message !== null) {
 			if ('data' in message) {
-				const messagePayload = message.data;
+				const messagePayload = message.data as Record<string, unknown>;
 				if ('id' in messagePayload && typeof messagePayload.id === 'string') {
 					const request = this.pendingRequests.get(messagePayload.id);
 					if (request) {
 						const requestWithName = {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
-						};
+						} as unknown as TransportResponse<unknown>;
 						clearTimeout(request.timeout);
-						request.resolve(requestWithName as TransportResponse<unknown>);
+						request.resolve(requestWithName);
 						this.pendingRequests.delete(messagePayload.id);
 						return;
 					}
-				} else if ('name' in message && message.name === 'metamask-multichain-provider' && message.data.method === 'wallet_sessionChanged') {
+				} else if ('name' in message && message.name === 'metamask-multichain-provider' && messagePayload.method === 'wallet_sessionChanged') {
 					this.notifyCallbacks(message.data);
 					return;
 				}
@@ -119,7 +119,6 @@ export class MWPTransport implements ExtendedTransport {
 						try {
 							const sessionRequest = await this.request({ method: 'wallet_getSession' });
 							let walletSession = sessionRequest.result as SessionData;
-							debugger;
 							if (options) {
 								const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 								const proposedScopes = options?.scopes ?? [];
@@ -145,10 +144,10 @@ export class MWPTransport implements ExtendedTransport {
 				});
 			} else {
 				connection = new Promise<void>((resolveConnection, rejectConnection) => {
-					this.dappClient.on('message', async (message: any) => {
-						if (typeof message === 'object') {
+					this.dappClient.on('message', async (message: unknown) => {
+						if (typeof message === 'object' && message !== null) {
 							if ('data' in message) {
-								const messagePayload = message.data;
+								const messagePayload = message.data as Record<string, unknown>;
 								if ('id' in messagePayload && typeof messagePayload.id === 'string') {
 									if (messagePayload.method === 'wallet_createSession') {
 										if (messagePayload.error) {

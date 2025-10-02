@@ -1,13 +1,13 @@
-import { type CreateSessionParams, getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
+import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
 import packageJson from '../../package.json';
-import { type InvokeMethodOptions, type ModalFactoryConnectOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
+import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
 import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
-import { addValidAccounts, getDappId, getOptionalScopes, getValidAccounts, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
+import { getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
 import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';

@@ -44,7 +44,6 @@ export class DefaultTransport implements ExtendedTransport {
 			jsonrpc: '2.0',
 			id: `${this.#requestId++}`,
 		};
-		debugger;
 		return this.#transport.request(requestWithId, options) as Promise<TResponse>;
 	}
 
