@@ -260,10 +260,12 @@ export class MultichainSDK extends MultichainCore {
 								},
 							});
 						});
+
 						this.transport
 							.connect({ scopes, caipAccountIds })
 							.then(() => {
 								this.options.ui.factory.unload();
+								this.options.ui.factory.modal?.unmount();
 							})
 							.catch((err) => {
 								if (err instanceof ProtocolError) {
@@ -279,10 +281,8 @@ export class MultichainSDK extends MultichainCore {
 					});
 				},
 				async (error?: Error) => {
-					this.options.ui.factory.modal?.unmount();
 					if (!error) {
 						await this.storage.setTransport(TransportType.MPW);
-						//this.__provider = getMultichainClient({ transport: this.transport });
 						this.state = 'connected';
 						resolve();
 					} else {
@@ -321,8 +321,6 @@ export class MultichainSDK extends MultichainCore {
 							// Initial request will be what resolves the connection when options is specified
 							this.options.transport?.onNotification?.(payload.data);
 							this.emit('wallet_sessionChanged', session);
-							this.state = 'connected';
-							return resolve();
 						}
 					}
 				}
@@ -347,7 +345,13 @@ export class MultichainSDK extends MultichainCore {
 				}
 			});
 			this.state = 'connecting';
-			this.transport.connect({ scopes, caipAccountIds }).catch(reject);
+			this.transport
+				.connect({ scopes, caipAccountIds })
+				.then(() => {
+					this.state = 'connected';
+					return resolve();
+				})
+				.catch(reject);
 		});
 	}
 

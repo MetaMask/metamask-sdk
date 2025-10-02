@@ -94,6 +94,32 @@ export class MWPTransport implements ExtendedTransport {
 		}
 	}
 
+	private async onResumeSuccess(resumeResolve: () => void, resumeReject: (err: Error) => void, options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
+		try {
+			const sessionRequest = await this.request({ method: 'wallet_getSession' });
+			let walletSession = sessionRequest.result as SessionData;
+			if (options) {
+				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
+				const proposedScopes = options?.scopes ?? [];
+				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+				if (!isSameScopes) {
+					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+					await this.request({ method: 'wallet_revokeSession', params: walletSession });
+					walletSession = response.result as SessionData;
+				}
+			}
+			this.notifyCallbacks({
+				method: 'wallet_sessionChanged',
+				params: walletSession,
+			});
+			resumeResolve();
+		} catch (err) {
+			resumeReject(err);
+		}
+	}
+
 	/**
 	 * Establishes a connection using the Mobile Wallet Protocol
 	 * Note: This is a simplified implementation that expects the DappClient to be provided externally
@@ -112,35 +138,16 @@ export class MWPTransport implements ExtendedTransport {
 
 		this.connectionPromise ??= new Promise<void>((resolve, reject) => {
 			let connection: Promise<void>;
-
 			if (session) {
 				connection = new Promise<void>((resumeResolve, resumeReject) => {
-					this.dappClient.once('connected', async () => {
-						try {
-							const sessionRequest = await this.request({ method: 'wallet_getSession' });
-							let walletSession = sessionRequest.result as SessionData;
-							if (options) {
-								const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
-								const proposedScopes = options?.scopes ?? [];
-								const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
-								if (!isSameScopes) {
-									await this.request({ method: 'wallet_revokeSession', params: walletSession });
-									const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
-									const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-									const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
-									walletSession = response.result as SessionData;
-								}
-							}
-							this.notifyCallbacks({
-								method: 'wallet_sessionChanged',
-								params: walletSession,
-							});
-							resumeResolve();
-						} catch (err) {
-							resumeReject(err);
-						}
-					});
-					dappClient.resume(session.id);
+					if (this.dappClient.state === 'CONNECTED') {
+						this.onResumeSuccess(resumeResolve, resumeReject, options);
+					} else {
+						this.dappClient.once('connected', async () => {
+							this.onResumeSuccess(resumeResolve, resumeReject, options);
+						});
+						dappClient.resume(session.id);
+					}
 				});
 			} else {
 				connection = new Promise<void>((resolveConnection, rejectConnection) => {
@@ -148,14 +155,12 @@ export class MWPTransport implements ExtendedTransport {
 						if (typeof message === 'object' && message !== null) {
 							if ('data' in message) {
 								const messagePayload = message.data as Record<string, unknown>;
-								if ('id' in messagePayload && typeof messagePayload.id === 'string') {
-									if (messagePayload.method === 'wallet_createSession') {
-										if (messagePayload.error) {
-											return rejectConnection(messagePayload.error);
-										}
-										this.notifyCallbacks(message.data);
-										return resolveConnection();
+								if (messagePayload.method === 'wallet_createSession' || messagePayload.method === 'wallet_sessionChanged') {
+									if (messagePayload.error) {
+										return rejectConnection(messagePayload.error);
 									}
+									this.notifyCallbacks(message.data);
+									return resolveConnection();
 								}
 							}
 						}
@@ -167,7 +172,6 @@ export class MWPTransport implements ExtendedTransport {
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
 			}
-
 			connection.then(resolve).catch(reject);
 		});
 
