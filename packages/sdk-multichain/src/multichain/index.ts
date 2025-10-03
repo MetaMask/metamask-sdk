@@ -23,7 +23,7 @@ export class MultichainSDK extends MultichainCore {
 	private __provider: MultichainApiClient<RPCAPI> | undefined = undefined;
 	private __transport: ExtendedTransport | undefined = undefined;
 	private __dappClient: DappClient | undefined = undefined;
-
+	private __beforeUnloadListener: (() => void) | undefined;
 	public __state: SDKState = 'pending';
 	private listener: (() => void | Promise<void>) | undefined;
 
@@ -241,16 +241,26 @@ export class MultichainSDK extends MultichainCore {
 		}
 	}
 
-	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		if (typeof window !== 'undefined') {
-			window.addEventListener('beforeunload', async () => {
-				if (this.options.ui.factory.modal) {
-					//Modal is still visible, remove storage to prevent glitch with "connecting" state
-					await this.storage.removeTransport();
-				}
-				logger('beforeunload');
-			});
+	private async onBeforeUnload() {
+		if (this.options.ui.factory.modal) {
+			//Modal is still visible, remove storage to prevent glitch with "connecting" state
+			await this.storage.removeTransport();
 		}
+	}
+
+	private createBeforeUnloadListener() {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('beforeunload', this.onBeforeUnload.bind(this));
+		}
+		return () => {
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('beforeunload', this.onBeforeUnload.bind(this));
+			}
+		};
+	}
+	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
+		// create the listener only once to avoid memory leaks
+		this.__beforeUnloadListener ??= this.createBeforeUnloadListener();
 		return new Promise<void>((resolve, reject) => {
 			// Use Connection Modal
 			this.options.ui.factory.renderInstallModal(
@@ -421,6 +431,7 @@ export class MultichainSDK extends MultichainCore {
 
 	async disconnect(): Promise<void> {
 		this.listener?.();
+		this.__beforeUnloadListener?.();
 
 		await this.__transport?.disconnect();
 		await this.storage.removeTransport();
@@ -429,6 +440,7 @@ export class MultichainSDK extends MultichainCore {
 		this.emit('stateChanged', 'disconnected');
 
 		this.listener = undefined;
+		this.__beforeUnloadListener = undefined;
 		this.__transport = undefined;
 		this.__provider = undefined;
 		this.__dappClient = undefined;
