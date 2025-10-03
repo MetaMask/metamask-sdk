@@ -6,7 +6,7 @@ import type { StoreClient } from '../store/client';
  * Supported debug namespace types for the MetaMask SDK logger.
  * These namespaces help categorize and filter debug output.
  */
-export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider' | 'metamask-sdk:ui';
+export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider' | 'metamask-sdk:ui' | 'metamask-sdk:transport';
 
 /**
  * Creates a debug logger instance with the specified namespace and color.

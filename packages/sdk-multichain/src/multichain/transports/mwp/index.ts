@@ -3,7 +3,7 @@ import type { Session, SessionRequest } from '@metamask/mobile-wallet-protocol-c
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
-import type { ExtendedTransport, RPCAPI, Scope, SessionData, StoreAdapter } from '../../../domain';
+import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData, type StoreAdapter } from '../../../domain';
 import type { CaipAccountId } from '@metamask/utils';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
 
@@ -18,6 +18,8 @@ type PendingRequests = {
 	reject: (error: Error) => void;
 	timeout: NodeJS.Timeout;
 };
+
+const logger = createLogger('metamask-sdk:transport');
 
 /**
  * Mobile Wallet Protocol transport implementation
@@ -46,6 +48,7 @@ export class MWPTransport implements ExtendedTransport {
 		private kvstore: StoreAdapter,
 		private options: { requestTimeout: number; connectionTimeout: number } = { requestTimeout: DEFAULT_REQUEST_TIMEOUT, connectionTimeout: DEFAULT_CONNECTION_TIMEOUT },
 	) {
+		logger('MWPTransport created');
 		this.dappClient.on('message', this.handleMessage.bind(this));
 		if (typeof window !== 'undefined') {
 			window.addEventListener('focus', this.onWindowFocus.bind(this));
@@ -53,18 +56,22 @@ export class MWPTransport implements ExtendedTransport {
 	}
 
 	private onWindowFocus(): void {
+		logger('onWindowFocus', this.isConnected());
 		if (!this.isConnected()) {
+			logger('reconnecting...');
 			this.dappClient.reconnect();
 		}
 	}
 
 	private notifyCallbacks(data: unknown): void {
+		logger('notifyCallbacks', data);
 		this.notificationCallbacks.forEach((callback) => callback(data));
 	}
 
 	private rejectRequest(id: string, error = new Error('Request rejected')): void {
 		const request = this.pendingRequests.get(id);
 		if (request) {
+			logger(`rejectRequest ${id}`, request.method, error);
 			this.pendingRequests.delete(id);
 			clearTimeout(request.timeout);
 			request.reject(error);
@@ -72,6 +79,7 @@ export class MWPTransport implements ExtendedTransport {
 	}
 
 	private handleMessage(message: unknown): void {
+		logger('handleMessage', message);
 		if (typeof message === 'object' && message !== null) {
 			if ('data' in message) {
 				const messagePayload = message.data as Record<string, unknown>;
@@ -82,6 +90,7 @@ export class MWPTransport implements ExtendedTransport {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
 						} as unknown as TransportResponse<unknown>;
+						logger(`resolving request ${messagePayload.id}`, requestWithName);
 						clearTimeout(request.timeout);
 						request.resolve(requestWithName);
 						this.pendingRequests.delete(messagePayload.id);
@@ -96,6 +105,7 @@ export class MWPTransport implements ExtendedTransport {
 	}
 
 	private async onResumeSuccess(resumeResolve: () => void, resumeReject: (err: Error) => void, options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
+		logger('onResumeSuccess', options);
 		try {
 			const sessionRequest = await this.request({ method: 'wallet_getSession' });
 			let walletSession = sessionRequest.result as SessionData;
@@ -103,10 +113,13 @@ export class MWPTransport implements ExtendedTransport {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
 				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+				logger('onResumeSuccess isSameScopes', isSameScopes, currentScopes, proposedScopes);
 				if (!isSameScopes) {
 					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+					logger('onResumeSuccess creating a new session', sessionRequest);
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+					logger('onResumeSuccess revoking old session', walletSession);
 					await this.request({ method: 'wallet_revokeSession', params: walletSession });
 					walletSession = response.result as SessionData;
 				}
@@ -115,8 +128,10 @@ export class MWPTransport implements ExtendedTransport {
 				method: 'wallet_sessionChanged',
 				params: walletSession,
 			});
+			logger('onResumeSuccess finished');
 			resumeResolve();
 		} catch (err) {
+			logger('onResumeSuccess error', err);
 			resumeReject(err);
 		}
 	}
@@ -133,6 +148,7 @@ export class MWPTransport implements ExtendedTransport {
 		try {
 			const [activeSession] = await sessionStore.list();
 			if (activeSession) {
+				logger('active session found', activeSession);
 				session = activeSession;
 			}
 		} catch {}
@@ -141,17 +157,22 @@ export class MWPTransport implements ExtendedTransport {
 		const connectionPromise = new Promise<void>((resolve, reject) => {
 			let connection: Promise<void>;
 			if (session) {
+				logger('resuming session...');
 				connection = new Promise<void>((resumeResolve, resumeReject) => {
 					if (this.dappClient.state === 'CONNECTED') {
+						logger('already connected, onResumeSuccess');
 						this.onResumeSuccess(resumeResolve, resumeReject, options);
 					} else {
+						logger('connecting...');
 						this.dappClient.once('connected', async () => {
+							logger('connected');
 							this.onResumeSuccess(resumeResolve, resumeReject, options);
 						});
 						dappClient.resume(session.id);
 					}
 				});
 			} else {
+				logger('creating new session...');
 				connection = new Promise<void>((resolveConnection, rejectConnection) => {
 					this.dappClient.on('message', async (message: unknown) => {
 						if (typeof message === 'object' && message !== null) {
@@ -159,8 +180,10 @@ export class MWPTransport implements ExtendedTransport {
 								const messagePayload = message.data as Record<string, unknown>;
 								if (messagePayload.method === 'wallet_createSession' || messagePayload.method === 'wallet_sessionChanged') {
 									if (messagePayload.error) {
+										logger('connection error', messagePayload.error);
 										return rejectConnection(messagePayload.error);
 									}
+									logger('session created/changed');
 									this.notifyCallbacks(message.data);
 									return resolveConnection();
 								}
@@ -171,11 +194,13 @@ export class MWPTransport implements ExtendedTransport {
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
 
+					logger('connecting with new session request', request);
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
 			}
 
 			timeout = setTimeout(() => {
+				logger('connection timeout');
 				reject(new TransportTimeoutError());
 			}, this.options.connectionTimeout);
 
@@ -193,6 +218,7 @@ export class MWPTransport implements ExtendedTransport {
 	 * Disconnects from the Mobile Wallet Protocol
 	 */
 	async disconnect(): Promise<void> {
+		logger('disconnecting...');
 		return this.dappClient.disconnect();
 	}
 
@@ -215,6 +241,7 @@ export class MWPTransport implements ExtendedTransport {
 				id: `${this.__reqId}`,
 				...payload,
 			};
+			logger('sending request', request);
 			const timeout = setTimeout(() => {
 				this.rejectRequest(request.id, new TransportTimeoutError());
 			}, options?.timeout ?? this.options.requestTimeout);
@@ -229,8 +256,10 @@ export class MWPTransport implements ExtendedTransport {
 	 * Registers a callback for notifications from the wallet
 	 */
 	onNotification(callback: (data: unknown) => void): () => void {
+		logger('onNotification registered');
 		this.notificationCallbacks.add(callback);
 		return () => {
+			logger('onNotification unregistered');
 			this.notificationCallbacks.delete(callback);
 		};
 	}

@@ -115,6 +115,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			//Expect to find all the transport mocks DISCONNECTED
 			t.expect(mockedData.mockDefaultTransport.__isConnected).toBe(false);
 			t.expect(mockedData.mockDappClient.state).toBe('DISCONNECTED');
+			t.expect(sdk.state === 'disconnected').toBe(true);
 
 			mockedData.mockDefaultTransport.connect.mockClear();
 			(mockedData.mockDappClient as any).connect.mockClear();
@@ -265,6 +266,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(() => sdk.transport).toThrow();
 
 			await t.expect(() => sdk.connect(scopes, caipAccountIds)).rejects.toThrow(sessionError);
+			t.expect(sdk.state === 'disconnected').toBe(true);
 		});
 
 		t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {

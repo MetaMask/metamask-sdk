@@ -1,7 +1,8 @@
 import { type CreateSessionParams, getDefaultTransport, type Transport, type TransportRequest, type TransportResponse } from '@metamask/multichain-api-client';
 import type { CaipAccountId } from '@metamask/utils';
-import type { ExtendedTransport, RPCAPI, Scope, SessionData } from 'src/domain';
+import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData } from 'src/domain';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from 'src/multichain/utils';
+const logger = createLogger('metamask-sdk:transport');
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 
