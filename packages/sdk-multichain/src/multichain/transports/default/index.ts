@@ -8,7 +8,6 @@ const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 
 export class DefaultTransport implements ExtendedTransport {
 	#notificationCallbacks: Set<(data: unknown) => void> = new Set();
-	#requestId = 0;
 	#transport: Transport = getDefaultTransport();
 	#defaultRequestOptions = {
 		timeout: DEFAULT_REQUEST_TIMEOUT,
@@ -79,7 +78,7 @@ export class DefaultTransport implements ExtendedTransport {
 		return this.#transport.isConnected();
 	}
 
-	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options?: { timeout?: number }) {
+	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options: { timeout?: number } = this.#defaultRequestOptions) {
 		logger('request', request);
 		return this.#transport.request(request, options) as Promise<TResponse>;
 	}
