@@ -3,7 +3,7 @@ import type { Session, SessionRequest } from '@metamask/mobile-wallet-protocol-c
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
-import type { ExtendedTransport, RPCAPI, Scope, SessionData, StoreAdapter } from '../../../domain';
+import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData, type StoreAdapter } from '../../../domain';
 import type { CaipAccountId } from '@metamask/utils';
 import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
 
@@ -18,6 +18,8 @@ type PendingRequests = {
 	reject: (error: Error) => void;
 	timeout: NodeJS.Timeout;
 };
+
+const logger = createLogger('metamask-sdk:transport');
 
 /**
  * Mobile Wallet Protocol transport implementation
@@ -82,14 +84,18 @@ export class MWPTransport implements ExtendedTransport {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
 						} as unknown as TransportResponse<unknown>;
+						const notification = {
+							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
+							params: requestWithName.result,
+						};
 						clearTimeout(request.timeout);
+						this.notifyCallbacks(notification);
 						request.resolve(requestWithName);
 						this.pendingRequests.delete(messagePayload.id);
 						return;
 					}
-				} else if ('name' in message && message.name === 'metamask-multichain-provider' && messagePayload.method === 'wallet_sessionChanged') {
+				} else {
 					this.notifyCallbacks(message.data);
-					return;
 				}
 			}
 		}
@@ -98,8 +104,11 @@ export class MWPTransport implements ExtendedTransport {
 	private async onResumeSuccess(resumeResolve: () => void, resumeReject: (err: Error) => void, options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
 		try {
 			const sessionRequest = await this.request({ method: 'wallet_getSession' });
+			if (sessionRequest.error) {
+				return resumeReject(new Error(sessionRequest.error.message));
+			}
 			let walletSession = sessionRequest.result as SessionData;
-			if (options) {
+			if (walletSession && options) {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
 				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
@@ -107,17 +116,28 @@ export class MWPTransport implements ExtendedTransport {
 					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+					if (response.error) {
+						return resumeReject(new Error(response.error.message));
+					}
 					await this.request({ method: 'wallet_revokeSession', params: walletSession });
 					walletSession = response.result as SessionData;
 				}
+			} else if (!walletSession) {
+				const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+				const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+				if (response.error) {
+					return resumeReject(new Error(response.error.message));
+				}
+				walletSession = response.result as SessionData;
 			}
 			this.notifyCallbacks({
 				method: 'wallet_sessionChanged',
 				params: walletSession,
 			});
-			resumeResolve();
+			return resumeResolve();
 		} catch (err) {
-			resumeReject(err);
+			return resumeReject(err);
 		}
 	}
 
@@ -133,6 +153,7 @@ export class MWPTransport implements ExtendedTransport {
 		try {
 			const [activeSession] = await sessionStore.list();
 			if (activeSession) {
+				logger('active session found', activeSession);
 				session = activeSession;
 			}
 		} catch {}

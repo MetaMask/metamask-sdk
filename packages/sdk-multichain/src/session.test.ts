@@ -209,7 +209,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 
 			await t.expect(() => sdk.connect(scopes, caipAccountIds)).rejects.toThrow(sessionError);
 
-			t.expect(sdk.state === 'loaded').toBe(true);
+			t.expect(sdk.state === 'disconnected').toBe(true);
 		});
 	});
 }

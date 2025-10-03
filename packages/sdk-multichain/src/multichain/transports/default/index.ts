@@ -7,7 +7,6 @@ const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 
 export class DefaultTransport implements ExtendedTransport {
 	#notificationCallbacks: Set<(data: unknown) => void> = new Set();
-	#requestId = 0;
 	#transport: Transport = getDefaultTransport();
 	#defaultRequestOptions = {
 		timeout: DEFAULT_REQUEST_TIMEOUT,
@@ -28,6 +27,9 @@ export class DefaultTransport implements ExtendedTransport {
 
 		//Get wallet session
 		const sessionRequest = await this.request({ method: 'wallet_getSession' }, this.#defaultRequestOptions);
+		if (sessionRequest.error) {
+			throw new Error(sessionRequest.error.message);
+		}
 		let walletSession = sessionRequest.result as SessionData;
 		if (walletSession && options) {
 			const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
@@ -67,7 +69,7 @@ export class DefaultTransport implements ExtendedTransport {
 		return this.#transport.isConnected();
 	}
 
-	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options?: { timeout?: number }) {
+	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options: { timeout?: number } = this.#defaultRequestOptions) {
 		return this.#transport.request(request, options) as Promise<TResponse>;
 	}
 
