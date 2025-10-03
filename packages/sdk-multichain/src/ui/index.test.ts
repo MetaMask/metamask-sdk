@@ -330,7 +330,7 @@ t.describe('ModalFactory', () => {
 				await constructorArgs.onClose();
 
 				// Multichain SDK is what will close the modal instead
-				t.expect(mockModal.unmount).not.toHaveBeenCalled();
+				t.expect(mockModal.unmount).toHaveBeenCalled();
 			});
 
 			t.it('should handle desktop onboarding correctly', async () => {

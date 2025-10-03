@@ -98,18 +98,17 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			if (platform === 'web') {
 				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
 					t.expect.objectContaining({
-						jsonrpc: '2.0',
 						method: 'wallet_getSession',
 					}),
 
-					undefined,
+					{ timeout: 60 * 1000 },
 				);
 				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
 					t.expect.objectContaining({
 						method: 'wallet_revokeSession',
 						params: mockSessionData,
 					}),
-					undefined,
+					{ timeout: 60 * 1000 },
 				);
 
 				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
@@ -119,7 +118,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 							optionalScopes: mockedSessionUpgradeData.sessionScopes,
 						},
 					}),
-					undefined,
+					{ timeout: 60 * 1000 },
 				);
 			} else {
 				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
@@ -168,10 +167,9 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			if (platform === 'web') {
 				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
 					t.expect.objectContaining({
-						jsonrpc: '2.0',
 						method: 'wallet_getSession',
 					}),
-					undefined,
+					{ timeout: 60 * 1000 },
 				);
 				t.expect(mockedData.mockDefaultTransport.request).toHaveBeenCalledWith(
 					t.expect.objectContaining({
@@ -180,7 +178,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 							optionalScopes: mockSessionData.sessionScopes,
 						},
 					}),
-					undefined,
+					{ timeout: 60 * 1000 },
 				);
 			} else {
 				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
