@@ -15,6 +15,7 @@ export class DefaultTransport implements ExtendedTransport {
 	};
 
 	#notifyCallbacks(data: unknown) {
+		logger('notifyCallbacks', data);
 		for (const cb of this.#notificationCallbacks) {
 			try {
 				cb(data);
@@ -25,16 +26,23 @@ export class DefaultTransport implements ExtendedTransport {
 	}
 
 	async connect(options?: { scopes: Scope[]; caipAccountIds: CaipAccountId[] }): Promise<void> {
+		logger('connecting...', options);
 		await this.#transport.connect();
 
 		//Get wallet session
 		const sessionRequest = await this.request({ method: 'wallet_getSession' }, this.#defaultRequestOptions);
+		if (sessionRequest.error) {
+			throw new Error(sessionRequest.error.message);
+		}
 		let walletSession = sessionRequest.result as SessionData;
+		logger('current wallet session', walletSession);
 		if (walletSession && options) {
 			const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 			const proposedScopes = options?.scopes ?? [];
 			const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
+			logger('isSameScopes', isSameScopes);
 			if (!isSameScopes) {
+				logger('scopes are different, revoking session and creating a new one');
 				await this.request({ method: 'wallet_revokeSession', params: walletSession }, this.#defaultRequestOptions);
 				const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
@@ -45,6 +53,7 @@ export class DefaultTransport implements ExtendedTransport {
 				walletSession = response.result as SessionData;
 			}
 		} else if (!walletSession) {
+			logger('no session found, creating a new one');
 			const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 			const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 			const response = await this.request({ method: 'wallet_createSession', params: sessionRequest }, this.#defaultRequestOptions);
@@ -57,9 +66,11 @@ export class DefaultTransport implements ExtendedTransport {
 			method: 'wallet_sessionChanged',
 			params: walletSession,
 		});
+		logger('connected');
 	}
 
 	async disconnect(): Promise<void> {
+		logger('disconnecting...');
 		this.#notificationCallbacks.clear();
 		return this.#transport.disconnect();
 	}
@@ -69,13 +80,16 @@ export class DefaultTransport implements ExtendedTransport {
 	}
 
 	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(request: TRequest, options?: { timeout?: number }) {
+		logger('request', request);
 		return this.#transport.request(request, options) as Promise<TResponse>;
 	}
 
 	onNotification(callback: (data: unknown) => void) {
+		logger('onNotification registered');
 		this.#transport.onNotification(callback);
 		this.#notificationCallbacks.add(callback);
 		return () => {
+			logger('onNotification unregistered');
 			this.#notificationCallbacks.delete(callback);
 		};
 	}

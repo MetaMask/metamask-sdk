@@ -90,15 +90,19 @@ export class MWPTransport implements ExtendedTransport {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
 						} as unknown as TransportResponse<unknown>;
+						const notification = {
+							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
+							params: requestWithName.result,
+						};
 						logger(`resolving request ${messagePayload.id}`, requestWithName);
 						clearTimeout(request.timeout);
+						this.notifyCallbacks(notification);
 						request.resolve(requestWithName);
 						this.pendingRequests.delete(messagePayload.id);
 						return;
 					}
-				} else if ('name' in message && message.name === 'metamask-multichain-provider' && messagePayload.method === 'wallet_sessionChanged') {
+				} else {
 					this.notifyCallbacks(message.data);
-					return;
 				}
 			}
 		}
@@ -108,8 +112,13 @@ export class MWPTransport implements ExtendedTransport {
 		logger('onResumeSuccess', options);
 		try {
 			const sessionRequest = await this.request({ method: 'wallet_getSession' });
+			if (sessionRequest.error) {
+				logger('onResumeSuccess error', sessionRequest.error);
+				resumeReject(new Error(sessionRequest.error.message));
+				return;
+			}
 			let walletSession = sessionRequest.result as SessionData;
-			if (options) {
+			if (walletSession && options) {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
 				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
@@ -119,10 +128,21 @@ export class MWPTransport implements ExtendedTransport {
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					logger('onResumeSuccess creating a new session', sessionRequest);
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+					if (response.error) {
+						resumeReject(new Error(response.error.message));
+					}
 					logger('onResumeSuccess revoking old session', walletSession);
 					await this.request({ method: 'wallet_revokeSession', params: walletSession });
 					walletSession = response.result as SessionData;
 				}
+			} else if (!walletSession) {
+				const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+				const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
+				if (response.error) {
+					resumeReject(new Error(response.error.message));
+				}
+				walletSession = response.result as SessionData;
 			}
 			this.notifyCallbacks({
 				method: 'wallet_sessionChanged',

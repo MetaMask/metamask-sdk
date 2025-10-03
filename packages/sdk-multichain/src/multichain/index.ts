@@ -288,15 +288,18 @@ export class MultichainSDK extends MultichainCore {
 							.then(() => {
 								this.options.ui.factory.unload();
 								this.options.ui.factory.modal?.unmount();
+								this.state = 'connected';
 							})
 							.catch((err) => {
 								if (err instanceof ProtocolError) {
 									//Ignore Request expired errors to allow modal to regenerate expired qr codes
 									if (err.code !== ErrorCode.REQUEST_EXPIRED) {
+										this.state = 'disconnected';
 										reject(err);
 									}
 									// If request is expires, the QRCode will automatically be regenerated we can ignore this case
 								} else {
+									this.state = 'disconnected';
 									reject(err);
 								}
 							});
