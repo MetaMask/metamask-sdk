@@ -114,8 +114,7 @@ export class MWPTransport implements ExtendedTransport {
 			const sessionRequest = await this.request({ method: 'wallet_getSession' });
 			if (sessionRequest.error) {
 				logger('onResumeSuccess error', sessionRequest.error);
-				resumeReject(new Error(sessionRequest.error.message));
-				return;
+				return resumeReject(new Error(sessionRequest.error.message));
 			}
 			let walletSession = sessionRequest.result as SessionData;
 			if (walletSession && options) {
@@ -129,7 +128,7 @@ export class MWPTransport implements ExtendedTransport {
 					logger('onResumeSuccess creating a new session', sessionRequest);
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
 					if (response.error) {
-						resumeReject(new Error(response.error.message));
+						return resumeReject(new Error(response.error.message));
 					}
 					logger('onResumeSuccess revoking old session', walletSession);
 					await this.request({ method: 'wallet_revokeSession', params: walletSession });
@@ -140,7 +139,7 @@ export class MWPTransport implements ExtendedTransport {
 				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 				const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
 				if (response.error) {
-					resumeReject(new Error(response.error.message));
+					return resumeReject(new Error(response.error.message));
 				}
 				walletSession = response.result as SessionData;
 			}
@@ -149,10 +148,10 @@ export class MWPTransport implements ExtendedTransport {
 				params: walletSession,
 			});
 			logger('onResumeSuccess finished');
-			resumeResolve();
+			return resumeResolve();
 		} catch (err) {
 			logger('onResumeSuccess error', err);
-			resumeReject(err);
+			return resumeReject(err);
 		}
 	}
 
