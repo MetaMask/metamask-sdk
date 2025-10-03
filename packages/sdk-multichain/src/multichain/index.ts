@@ -242,6 +242,15 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
+		if (typeof window !== 'undefined') {
+			window.addEventListener('beforeunload', async () => {
+				if (this.options.ui.factory.modal) {
+					//Modal is still visible, remove storage to prevent glitch with "connecting" state
+					await this.storage.removeTransport();
+				}
+				logger('beforeunload');
+			});
+		}
 		return new Promise<void>((resolve, reject) => {
 			// Use Connection Modal
 			this.options.ui.factory.renderInstallModal(
