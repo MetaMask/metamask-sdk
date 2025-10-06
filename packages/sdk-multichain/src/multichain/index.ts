@@ -249,11 +249,11 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private createBeforeUnloadListener() {
-		if (typeof window !== 'undefined') {
+		if (typeof window !== 'undefined' && typeof window.addEventListener !== 'undefined') {
 			window.addEventListener('beforeunload', this.onBeforeUnload.bind(this));
 		}
 		return () => {
-			if (typeof window !== 'undefined') {
+			if (typeof window !== 'undefined' && typeof window.removeEventListener !== 'undefined') {
 				window.removeEventListener('beforeunload', this.onBeforeUnload.bind(this));
 			}
 		};
