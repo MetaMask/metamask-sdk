@@ -165,10 +165,8 @@ export class MultichainSDK extends MultichainCore {
 			if (!this.transport.isConnected()) {
 				this.state = 'connecting';
 				await this.transport.connect();
-				this.state = 'connected';
-			} else {
-				this.state = 'connected';
 			}
+			this.state = 'connected';
 		} else {
 			this.state = 'loaded';
 		}
@@ -187,6 +185,8 @@ export class MultichainSDK extends MultichainCore {
 				}
 			}
 		} catch (error) {
+			await this.storage.removeTransport();
+			this.state = 'pending';
 			logger('MetaMaskSDK error during initialization', error);
 		}
 	}
@@ -288,15 +288,18 @@ export class MultichainSDK extends MultichainCore {
 							.then(() => {
 								this.options.ui.factory.unload();
 								this.options.ui.factory.modal?.unmount();
+								this.state = 'connected';
 							})
 							.catch((err) => {
 								if (err instanceof ProtocolError) {
 									//Ignore Request expired errors to allow modal to regenerate expired qr codes
 									if (err.code !== ErrorCode.REQUEST_EXPIRED) {
+										this.state = 'disconnected';
 										reject(err);
 									}
 									// If request is expires, the QRCode will automatically be regenerated we can ignore this case
 								} else {
+									this.state = 'disconnected';
 									reject(err);
 								}
 							});
@@ -305,10 +308,8 @@ export class MultichainSDK extends MultichainCore {
 				async (error?: Error) => {
 					if (!error) {
 						await this.storage.setTransport(TransportType.MPW);
-						this.state = 'connected';
 						resolve();
 					} else {
-						this.state = 'disconnected';
 						await this.storage.removeTransport();
 						reject(error);
 					}
@@ -366,15 +367,20 @@ export class MultichainSDK extends MultichainCore {
 					this.openDeeplink(deeplink, universalLink);
 				}
 			});
-			this.state = 'connecting';
-			this.transport
-				.connect({ scopes, caipAccountIds })
-				.then(() => {
-					this.state = 'connected';
-					return resolve();
-				})
-				.catch(reject);
+			this.transport.connect({ scopes, caipAccountIds }).then(resolve).catch(reject);
 		});
+	}
+
+	private async handleConnection(promise: Promise<void>) {
+		this.state = 'connecting';
+		return promise
+			.then(() => {
+				this.state = 'connected';
+			})
+			.catch((err) => {
+				this.state = 'disconnected';
+				return Promise.reject(err);
+			});
 	}
 
 	async connect(scopes: Scope[], caipAccountIds: CaipAccountId[]): Promise<void> {
@@ -384,23 +390,14 @@ export class MultichainSDK extends MultichainCore {
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
 
 		if (this.__transport?.isConnected()) {
-			return this.__transport.connect({ scopes, caipAccountIds });
+			return this.handleConnection(this.__transport.connect({ scopes, caipAccountIds }));
 		}
 
 		if (isWeb && hasExtension() && preferExtension) {
 			//If metamask extension is available, connect to it
 			const defaultTransport = await this.setupDefaultTransport();
 			// Web transport has no initial payload
-			return defaultTransport
-				.connect()
-				.then(() => {
-					this.state = 'connected';
-					return Promise.resolve();
-				})
-				.catch((err) => {
-					this.state = 'loaded';
-					return Promise.reject(err);
-				});
+			return this.handleConnection(defaultTransport.connect({ scopes, caipAccountIds }));
 		}
 
 		// Connection will now be InstallModal + QRCodes or Deeplinks, both require mwp
@@ -417,11 +414,11 @@ export class MultichainSDK extends MultichainCore {
 		const secure = isSecure();
 		if (secure && !isDesktopPreferred) {
 			// Desktop is not preferred option, so we use deeplinks (mobile web)
-			return this.deeplinkConnect(scopes, caipAccountIds);
+			return this.handleConnection(this.deeplinkConnect(scopes, caipAccountIds));
 		}
 
 		// Show install modal for RN, Web + Node
-		return this.showInstallModal(isDesktopPreferred, scopes, caipAccountIds);
+		return this.handleConnection(this.showInstallModal(isDesktopPreferred, scopes, caipAccountIds));
 	}
 
 	public override emit(event: string, args: any): void {
