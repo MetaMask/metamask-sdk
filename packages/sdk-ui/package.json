@@ -29,6 +29,8 @@
     "build:storybook": "sb build",
     "storybook": "storybook dev -p 6226",
     "deploy-storybook": "gh-pages -d storybook-static",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-ui",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-ui",
     "lint": "echo 'n/a'",
     "lint:eslint": "eslint . --cache \"src/**/*.{js,ts,tsx}\"",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-ui",

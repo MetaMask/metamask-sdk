@@ -35,6 +35,8 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
     "dev": "rollup -c -w --bundleConfigAsCjs",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-react",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-react",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react",
     "lint:eslint": "eslint . --cache --ext js,ts",
