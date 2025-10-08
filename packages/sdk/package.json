@@ -32,6 +32,7 @@
     "size": "node bundle-size && size-limit",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk",
     "lint:eslint": "eslint . --cache --ext js,ts",

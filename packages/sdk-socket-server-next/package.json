@@ -26,6 +26,7 @@
     "docker:debug": "yarn docker:redis && docker compose up appdev",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-socket-server-scale",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-socket-server-scale",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-socket-server-scale",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-socket-server-scale",
     "lint:eslint": "eslint .",

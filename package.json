@@ -35,6 +35,7 @@
     "build:tsc": "tsc --build --force tsconfig.json",
     "changelog:update": "yarn workspaces foreach --all --no-private --parallel --interlaced --verbose run changelog:update",
     "changelog:validate": "yarn workspaces foreach --all --no-private --parallel --interlaced --verbose run changelog:validate",
+    "changelog:format": "yarn workspaces foreach --all --no-private --parallel --interlaced --verbose run changelog:format",
     "clean": "yarn workspaces foreach --no-private run clean",
     "postinstall": "patch-package",
     "link-packages": "./scripts/link-packages.sh",

@@ -26,6 +26,7 @@
     "dev": "rollup -c -w",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-react-native",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-react-native",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-react-native",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react-native",
     "lint:eslint": "eslint . --cache --ext js,ts",

@@ -32,6 +32,7 @@
     "clean": "rimraf ./dist",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-communication-layer",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-communication-layer",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-communication-layer",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-communication-layer",
     "lint:eslint": "eslint . --cache --ext js,ts",

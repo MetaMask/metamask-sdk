@@ -36,6 +36,7 @@
     "clean": "rimraf ./dist && rimraf ./loader",
     "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-install-modal-web",
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-install-modal-web",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-install-modal-web",
     "lint:eslint": "eslint . --cache --ext js,ts",
