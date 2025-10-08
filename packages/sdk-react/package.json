@@ -46,7 +46,7 @@
     "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js"
   },
   "dependencies": {
-    "@metamask/sdk": "workspace:^",
+    "@metamask/sdk": "0.33.1",
     "debug": "4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",

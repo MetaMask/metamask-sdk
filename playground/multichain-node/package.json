@@ -14,8 +14,8 @@
     "allow-scripts": "echo 'n/a'"
   },
   "dependencies": {
-    "@metamask/multichain-sdk": "workspace:*",
-    "@metamask/sdk": "workspace:^"
+    "@metamask/multichain-sdk": "^0.0.0",
+    "@metamask/sdk": "^0.33.1"
   },
   "devDependencies": {
     "@types/node": "^20.4.1",
