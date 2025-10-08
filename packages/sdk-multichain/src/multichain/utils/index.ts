@@ -1,4 +1,4 @@
-import * as pako from 'pako';
+import { deflate } from 'pako';
 import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
 import packageJson from '../../../package.json';
 import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData } from '../../domain';
@@ -25,7 +25,7 @@ function base64Encode(str: string): string {
  * Returns a base64-encoded compressed string
  */
 export function compressString(str: string): string {
-	const compressed = pako.deflateRaw(str);
+	const compressed = deflate(str);
 
 	// Convert Uint8Array to string for base64 encoding
 	const binaryString = String.fromCharCode.apply(null, Array.from(compressed));
