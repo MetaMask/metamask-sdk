@@ -115,6 +115,14 @@ export const sharedStyles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
+  buttonCancell: {
+		backgroundColor: colors.red600,
+		paddingVertical: 12,
+		paddingHorizontal: 20,
+		borderRadius: 6,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
 	buttonText: {
 		color: colors.white,
 		fontSize: 16,
@@ -161,7 +169,7 @@ export const sharedStyles = StyleSheet.create({
 		fontWeight: '500',
 	},
 	badgeBlue: {
-		backgroundColor: colors.blue50,
+		backgroundColor: colors.blue500,
 	},
 	badgeTextBlue: {
 		color: colors.blue700,

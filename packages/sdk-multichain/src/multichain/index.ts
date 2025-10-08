@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noAsyncPromiseExecutor: <explanation> */
 import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
@@ -328,7 +329,7 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async deeplinkConnect(scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<void>(async (resolve, reject) => {
 			this.dappClient.on('message', (payload: any) => {
 				const data = payload.data as Record<string, unknown>;
 				if (typeof data === 'object' && data !== null) {
@@ -348,26 +349,50 @@ export class MultichainSDK extends MultichainCore {
 					}
 				}
 			});
-			this.dappClient.once('session_request', (sessionRequest: SessionRequest) => {
-				const connectionRequest = {
-					sessionRequest,
-					metadata: {
-						dapp: this.options.dapp,
-						sdk: {
-							version: getVersion(),
-							platform: getPlatformType(),
+
+			let timeout: NodeJS.Timeout | undefined;
+
+			if (!this.transport.isConnected()) {
+				this.dappClient.once('session_request', (sessionRequest: SessionRequest) => {
+					const connectionRequest = {
+						sessionRequest,
+						metadata: {
+							dapp: this.options.dapp,
+							sdk: { version: getVersion(), platform: getPlatformType() },
 						},
-					},
-				};
-				const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);
-				const universalLink = this.options.ui.factory.createUniversalLink(connectionRequest);
-				if (this.options.mobile?.preferredOpenLink) {
-					this.options.mobile.preferredOpenLink(deeplink, '_self');
-				} else {
-					this.openDeeplink(deeplink, universalLink);
-				}
-			});
-			this.transport.connect({ scopes, caipAccountIds }).then(resolve).catch(reject);
+					};
+					const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);
+					const universalLink = this.options.ui.factory.createUniversalLink(connectionRequest);
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(deeplink, '_self');
+					} else {
+						this.openDeeplink(deeplink, universalLink);
+					}
+				});
+			} else {
+				timeout = setTimeout(() => {
+					const deeplink = this.options.ui.factory.createDeeplink();
+					const universalLink = this.options.ui.factory.createUniversalLink();
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(deeplink, '_self');
+					} else {
+						this.openDeeplink(deeplink, universalLink);
+					}
+				}, 250);
+			}
+
+			this.transport
+				.connect({ scopes, caipAccountIds })
+				.then(resolve)
+				.catch((err) => {
+					this.storage.removeTransport();
+					reject(err);
+				})
+				.finally(() => {
+					if (timeout) {
+						clearTimeout(timeout);
+					}
+				});
 		});
 	}
 
@@ -388,8 +413,9 @@ export class MultichainSDK extends MultichainCore {
 		const platformType = getPlatformType();
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb;
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
+		const secure = isSecure();
 
-		if (this.__transport?.isConnected()) {
+		if (this.__transport?.isConnected() && !secure) {
 			return this.handleConnection(this.__transport.connect({ scopes, caipAccountIds }));
 		}
 
@@ -404,14 +430,8 @@ export class MultichainSDK extends MultichainCore {
 		await this.setupMWP();
 
 		// Determine preferred option for install modal
-		let isDesktopPreferred: boolean;
-		if (isWeb) {
-			isDesktopPreferred = hasExtension() ? preferDesktop : !preferExtension || preferDesktop;
-		} else {
-			isDesktopPreferred = preferDesktop;
-		}
+		const isDesktopPreferred = hasExtension() ? preferDesktop : !preferExtension || preferDesktop;
 
-		const secure = isSecure();
 		if (secure && !isDesktopPreferred) {
 			// Desktop is not preferred option, so we use deeplinks (mobile web)
 			return this.handleConnection(this.deeplinkConnect(scopes, caipAccountIds));
@@ -463,13 +483,18 @@ export class MultichainSDK extends MultichainCore {
 		const invokePromise = client.invokeMethod(request);
 
 		// Schedule the deeplink to open 100ms after the invoke method is called
-		if (shouldOpenDeeplink) {
-			if (this.options.mobile?.preferredOpenLink) {
-				this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
-			} else {
-				this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
-			}
-		}
+		await new Promise((resolve) => {
+			setTimeout(() => {
+				if (shouldOpenDeeplink) {
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
+					} else {
+						this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
+					}
+				}
+				resolve(void 0);
+			}, 100);
+		});
 
 		return invokePromise as Promise<Json>;
 	}

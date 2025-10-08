@@ -88,9 +88,14 @@ export default function Page() {
 					</View>
 
 					{isConnecting && (
-						<TouchableOpacity onPress={connect} style={sharedStyles.button} disabled>
+						<>
+            <TouchableOpacity onPress={connect} style={sharedStyles.button} disabled>
 							<Text style={sharedStyles.buttonText}>Connecting...</Text>
 						</TouchableOpacity>
+            <TouchableOpacity onPress={disconnect} style={sharedStyles.buttonCancell}>
+							<Text style={sharedStyles.buttonText}>Cancell</Text>
+						</TouchableOpacity>
+            </>
 					)}
 
 					{isDisconnected && (

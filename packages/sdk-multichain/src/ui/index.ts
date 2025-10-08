@@ -90,16 +90,22 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 		return container;
 	}
 
-	createDeeplink(connectionRequest: ConnectionRequest) {
-    const json = JSON.stringify(connectionRequest);
-    const compressed = compressString(json);
-    const urlEncoded = encodeURIComponent(compressed);
-    return `${METAMASK_DEEPLINK_BASE}/mwp?p=${urlEncoded}&c=1`;
+	createDeeplink(connectionRequest?: ConnectionRequest) {
+		if (!connectionRequest) {
+			return `${METAMASK_DEEPLINK_BASE}`;
+		}
+		const json = JSON.stringify(connectionRequest);
+		const compressed = compressString(json);
+		const urlEncoded = encodeURIComponent(compressed);
+		return `${METAMASK_DEEPLINK_BASE}/mwp?p=${urlEncoded}&c=1`;
 	}
 
-	createUniversalLink(connectionRequest: ConnectionRequest) {
+	createUniversalLink(connectionRequest?: ConnectionRequest) {
+		if (!connectionRequest) {
+			return `${METAMASK_CONNECT_BASE_URL}`;
+		}
 		const json = JSON.stringify(connectionRequest);
-    const compressed = compressString(json);
+		const compressed = compressString(json);
 		const urlEncoded = encodeURIComponent(compressed);
 		return `${METAMASK_CONNECT_BASE_URL}/mwp?p=${urlEncoded}&c=1`;
 	}
