@@ -59,7 +59,6 @@
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "^3.1.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",

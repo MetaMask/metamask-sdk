@@ -10,8 +10,12 @@ fi
 package_name="$1"
 shift  # remove package name from arguments
 
+# Get the script directory and find the root node_modules
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
 if [[ "${GITHUB_REF:-}" =~ '^release/' ]]; then
-  yarn auto-changelog validate --prettier --tag-prefix "${package_name}@" --rc "$@"
+  "${ROOT_DIR}/node_modules/.bin/auto-changelog" validate --prettier --tag-prefix "${package_name}@" --rc "$@"
 else
-  yarn auto-changelog validate --prettier --tag-prefix "${package_name}@" "$@"
+  "${ROOT_DIR}/node_modules/.bin/auto-changelog" validate --prettier --tag-prefix "${package_name}@" "$@"
 fi

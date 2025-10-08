@@ -53,7 +53,6 @@
   },
   "devDependencies": {
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "3.1.0",
     "@size-limit/preset-big-lib": "^11.0.2",
     "@stencil/core": "^4.22.2",
     "@types/i18n": "^0.13.12",

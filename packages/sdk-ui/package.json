@@ -69,7 +69,6 @@
     "@babel/preset-flow": "^7.23.3",
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
-    "@metamask/auto-changelog": "^3.4.3",
     "@react-native-async-storage/async-storage": "^1.19.6",
     "@react-native-community/eslint-config": "^3.2.0",
     "@rollup/plugin-babel": "^6.0.4",

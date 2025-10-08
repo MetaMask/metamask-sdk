@@ -32,7 +32,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
-    "@metamask/auto-changelog": "^3.4.3",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@types/jsdom": "^21.1.7",
     "@types/ws": "^8.18.1",
