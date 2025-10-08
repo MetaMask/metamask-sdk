@@ -19,6 +19,15 @@ This React Native application is a complete port of the multichain-react web tes
 - Expo CLI
 - iOS Simulator (for iOS development) or Android Studio (for Android development)
 
+## Building from local
+
+From the project root:
+
+```bash
+# Build dependencies
+yarn ibuild
+```
+
 ## Installation
 
 From the project root:
