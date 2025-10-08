@@ -10,7 +10,6 @@
     "changelog:validate": "../../scripts/validate-changelog.sh devnext",
     "changelog:format": "../../scripts/format-changelog.sh devnext",
     "lint": "yarn lint:eslint",
-    "lint:changelog": "../../scripts/validate-changelog.sh devnext",
     "lint:eslint": "eslint . --cache --ext js,ts,tsx",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",

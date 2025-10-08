@@ -22,7 +22,6 @@
     "build": "DISABLE_ESLINT_PLUGIN=true craco build",
     "eject": "react-scripts eject",
     "lint": "yarn biome lint ./src",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/multichain-sdk",
     "lint:ci": "yarn biome ci ./src",
     "lint:fix": "yarn biome format --write ./src",
     "prepack": "./scripts/prepack.sh",

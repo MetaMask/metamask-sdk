@@ -28,7 +28,6 @@
     "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-socket-server-scale",
     "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-socket-server-scale",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-socket-server-scale",
     "lint:eslint": "eslint .",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",

@@ -34,7 +34,6 @@
     "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-ui",
     "lint": "echo 'n/a'",
     "lint:eslint": "eslint . --cache \"src/**/*.{js,ts,tsx}\"",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-ui",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
     "test": "echo 'n/a'",

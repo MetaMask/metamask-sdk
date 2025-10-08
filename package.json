@@ -42,7 +42,6 @@
     "prepare": "husky install",
     "dev:core": "turbo run dev --parallel --filter=@metamask/sdk-communication-layer --filter=@metamask/sdk --filter=@metamask/sdk-react",
     "lint": "yarn workspaces foreach --no-private run lint",
-    "lint:changelogs": "yarn workspaces foreach --no-private run lint:changelog",
     "lint:eslint": "yarn workspaces foreach --no-private run lint:eslint",
     "lint:fix": "yarn workspaces foreach --no-private run lint:fix",
     "lint:misc": "yarn workspaces foreach --no-private run lint:misc",

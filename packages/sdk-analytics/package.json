@@ -12,7 +12,6 @@
     "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-analytics",
     "lint": "eslint src --ext .ts,.tsx --ignore-pattern 'src/schema.ts'",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --ignore-pattern 'src/schema.ts'",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-analytics",
     "test": "vitest",
     "test:ci": "vitest --run",
     "allow-scripts": ""
