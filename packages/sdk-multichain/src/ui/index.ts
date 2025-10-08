@@ -2,6 +2,7 @@ import MetaMaskOnboarding from '@metamask/onboarding';
 import { type ConnectionRequest, getPlatformType, getVersion, type Modal, type OTPCode, PlatformType } from '../domain';
 import type { FactoryModals, ModalTypes } from './modals/types';
 import type { AbstractOTPCodeModal } from './modals/base/AbstractOTPModal';
+import { compressString } from '../multichain/utils';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';
 
 // @ts-ignore
@@ -90,15 +91,17 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 	}
 
 	createDeeplink(connectionRequest: ConnectionRequest) {
-		const json = JSON.stringify(connectionRequest);
-		const urlEncoded = encodeURIComponent(json);
-		return `${METAMASK_DEEPLINK_BASE}/mwp?p=${urlEncoded}`;
+    const json = JSON.stringify(connectionRequest);
+    const compressed = compressString(json);
+    const urlEncoded = encodeURIComponent(compressed);
+    return `${METAMASK_DEEPLINK_BASE}/mwp?p=${urlEncoded}&c=1`;
 	}
 
 	createUniversalLink(connectionRequest: ConnectionRequest) {
 		const json = JSON.stringify(connectionRequest);
-		const urlEncoded = encodeURIComponent(json);
-		return `${METAMASK_CONNECT_BASE_URL}/mwp?p=${urlEncoded}`;
+    const compressed = compressString(json);
+		const urlEncoded = encodeURIComponent(compressed);
+		return `${METAMASK_CONNECT_BASE_URL}/mwp?p=${urlEncoded}&c=1`;
 	}
 
 	private async onCloseModal(shouldTerminate = true) {
