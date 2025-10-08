@@ -1,8 +1,37 @@
+import * as pako from 'pako';
 import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
 import packageJson from '../../../package.json';
 import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData } from '../../domain';
 
 export type OptionalScopes = Record<Scope, SessionData['sessionScopes'][Scope]>;
+
+/**
+ * Cross-platform base64 encoding
+ * Works in browser, Node.js, and React Native environments
+ */
+function base64Encode(str: string): string {
+	if (typeof btoa !== 'undefined') {
+		// Browser and React Native with polyfills
+		return btoa(str);
+	} else if (typeof Buffer !== 'undefined') {
+		// Node.js
+		return Buffer.from(str).toString('base64');
+  }
+	throw new Error('No base64 encoding method available');
+}
+
+/**
+ * Compress a string using pako (deflateRaw)
+ * Returns a base64-encoded compressed string
+ */
+export function compressString(str: string): string {
+	const compressed = pako.deflateRaw(str);
+
+	// Convert Uint8Array to string for base64 encoding
+	const binaryString = String.fromCharCode.apply(null, Array.from(compressed));
+	return base64Encode(binaryString);
+}
+
 
 export function getDappId(dapp?: DappSettings) {
 	if (typeof window === 'undefined' || typeof window.location === 'undefined') {
