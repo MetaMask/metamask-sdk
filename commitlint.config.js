@@ -5,6 +5,6 @@ module.exports = {
   },
   ignores: [
     // Commits starting with "Release X.Y.Z" are ignored
-    (commit) => /^Release \d+\.\d+\.\d+/u.test(commit),
+    (commit) => /^(Initialize|Update) Release \d+\.\d+\.\d+/u.test(commit),
   ],
 };
