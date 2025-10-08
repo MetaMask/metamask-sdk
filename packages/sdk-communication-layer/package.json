@@ -30,6 +30,9 @@
     "build:pre-tsc": "echo 'N/A'",
     "size": "size-limit",
     "clean": "rimraf ./dist",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-communication-layer",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-communication-layer",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-communication-layer",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-communication-layer",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -56,7 +59,6 @@
   "devDependencies": {
     "@jest/globals": "^29.3.1",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "3.1.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",

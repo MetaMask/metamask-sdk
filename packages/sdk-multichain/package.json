@@ -18,6 +18,9 @@
     "build": "yarn clean && npx tsup",
     "build:post-tsc": "echo 'N/A'",
     "build:pre-tsc": "echo 'N/A'",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/multichain-sdk",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/multichain-sdk",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/multichain-sdk",
     "lint": "yarn biome lint ./src",
     "lint:ci": "yarn biome ci ./src",
     "lint:fix": "yarn biome format --write ./src",
@@ -30,7 +33,6 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.0",
-    "@metamask/auto-changelog": "^3.4.3",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@types/jsdom": "^21.1.7",
     "@types/ws": "^8.18.1",

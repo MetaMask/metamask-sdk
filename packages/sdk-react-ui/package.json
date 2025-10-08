@@ -34,6 +34,9 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
     "dev": "rollup -c -w",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-react-ui",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-react-ui",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-react-ui",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react-ui",
     "lint:eslint": "eslint . --cache --ext js,ts",
@@ -57,7 +60,6 @@
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "^3.1.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",

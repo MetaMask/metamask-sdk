@@ -11127,48 +11127,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/auto-changelog@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@metamask/auto-changelog@npm:3.1.0"
-  dependencies:
-    diff: ^5.0.0
-    execa: ^5.1.1
-    semver: ^7.3.5
-    yargs: ^17.0.1
-  bin:
-    auto-changelog: dist/cli.js
-  checksum: cd3c833100c19a80e0b7ae8c174fbbe225700eef5fbabd9b0d6c4b439c8af839792111a17d9ddf2e1939839736413afd7402d2cc08ece373622b5a410da5e9fe
-  languageName: node
-  linkType: hard
-
-"@metamask/auto-changelog@npm:^2.3.0":
-  version: 2.6.1
-  resolution: "@metamask/auto-changelog@npm:2.6.1"
-  dependencies:
-    diff: ^5.0.0
-    execa: ^5.1.1
-    semver: ^7.3.5
-    yargs: ^17.0.1
-  bin:
-    auto-changelog: dist/cli.js
-  checksum: 6ae84de492e4aec710ff2dd793f258b7cc3aba3fdeb416c0d3ab55a156da61b4ccd3272e9a6608f32b71695dc42b527a380ce62566e387240665556c8da26de3
-  languageName: node
-  linkType: hard
-
-"@metamask/auto-changelog@npm:^3.1.0":
-  version: 3.2.0
-  resolution: "@metamask/auto-changelog@npm:3.2.0"
-  dependencies:
-    diff: ^5.0.0
-    execa: ^5.1.1
-    semver: ^7.3.5
-    yargs: ^17.0.1
-  bin:
-    auto-changelog: dist/cli.js
-  checksum: 7cd19400bb60d478455fbf9ffe7c295b21df64764a01f90776beda04bfa46242f34751112b862b4bd5955f04a7d28cfa7d6b2e745f3d3baaccda7c493f761658
-  languageName: node
-  linkType: hard
-
 "@metamask/auto-changelog@npm:^3.4.3":
   version: 3.4.3
   resolution: "@metamask/auto-changelog@npm:3.4.3"
@@ -11601,7 +11559,6 @@ __metadata:
   resolution: "@metamask/multichain-sdk@workspace:packages/sdk-multichain"
   dependencies:
     "@biomejs/biome": 2.0.0
-    "@metamask/auto-changelog": ^3.4.3
     "@metamask/mobile-wallet-protocol-core": ^0.2.0
     "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.1
     "@metamask/multichain-api-client": ^0.8.0
@@ -11781,7 +11738,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-analytics@workspace:packages/sdk-analytics"
   dependencies:
-    "@metamask/auto-changelog": ^3.4.3
     "@metamask/eslint-config": ^14.0.0
     "@metamask/eslint-config-typescript": ^14.0.0
     "@typescript-eslint/eslint-plugin": ^8.31.0
@@ -11809,7 +11765,6 @@ __metadata:
   dependencies:
     "@jest/globals": ^29.3.1
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -11907,7 +11862,6 @@ __metadata:
   resolution: "@metamask/sdk-install-modal-web@workspace:packages/sdk-install-modal-web"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
     "@paulmillr/qr": ^0.2.1
     "@size-limit/preset-big-lib": ^11.0.2
     "@stencil/core": ^4.22.2
@@ -11980,7 +11934,6 @@ __metadata:
     "@lavamoat/allow-scripts": ^3.0.4
     "@lavamoat/preinstall-always-fail": ^2.0.0
     "@metamask/api-specs": ^0.14.0
-    "@metamask/auto-changelog": ^3.4.3
     "@metamask/multichain-sdk": "workspace:^"
     "@metamask/utils": ^11.8.1
     "@open-rpc/meta-schema": ^1.14.9
@@ -12015,7 +11968,6 @@ __metadata:
   resolution: "@metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
     "@paulmillr/qr": ^0.2.1
     "@size-limit/preset-big-lib": ^11.0.2
     "@stencil/core": ^4.22.2
@@ -12049,7 +12001,6 @@ __metadata:
   resolution: "@metamask/sdk-react-native@workspace:packages/sdk-react-native"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -12107,7 +12058,6 @@ __metadata:
     "@babel/core": ^7.23.5
     "@headlessui/react": ^1.6.6
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -12166,7 +12116,6 @@ __metadata:
     "@babel/preset-react": ^7.23.3
     "@babel/preset-typescript": ^7.23.3
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": ^3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -12239,7 +12188,6 @@ __metadata:
   resolution: "@metamask/sdk-socket-server-scale@workspace:packages/sdk-socket-server-next"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config-jest": ^12.1.0
     "@metamask/eslint-config-typescript": ^6.0.0
     "@socket.io/admin-ui": ^0.5.1
@@ -12302,7 +12250,6 @@ __metadata:
     "@babel/preset-flow": ^7.23.3
     "@babel/preset-react": ^7.23.3
     "@babel/preset-typescript": ^7.23.3
-    "@metamask/auto-changelog": ^3.4.3
     "@metamask/controller-utils": ^5.0.2
     "@metamask/design-tokens": ^1.12.0
     "@metamask/network-controller": ^16.0.0
@@ -12416,7 +12363,6 @@ __metadata:
     "@babel/runtime": ^7.26.0
     "@jest/globals": ^29.3.1
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": 3.1.0
     "@metamask/eslint-config": ^6.0.0
     "@metamask/eslint-config-nodejs": ^6.0.0
     "@metamask/eslint-config-typescript": ^6.0.0
@@ -29348,7 +29294,6 @@ __metadata:
   resolution: "devsocket@workspace:packages/devsocket"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
-    "@metamask/auto-changelog": ^2.3.0
     "@metamask/eslint-config-jest": ^12.1.0
     "@metamask/eslint-config-typescript": ^6.0.0
     "@socket.io/admin-ui": ^0.5.1
