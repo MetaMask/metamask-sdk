@@ -225,25 +225,65 @@ export class MWPTransport implements ExtendedTransport {
 		return (this.dappClient as any).state === 'CONNECTED';
 	}
 
+	private sessionStoreKey = 'cache_wallet_getSession';
+
+	private async fetchCachedWalletSession(request: { jsonrpc: string; id: string } & TransportRequest): Promise<TransportResponse | undefined> {
+		if (request.method === 'wallet_getSession') {
+			const walletGetSession = await this.kvstore.get(this.sessionStoreKey);
+			if (walletGetSession) {
+				const walletSession = JSON.parse(walletGetSession) as SessionData;
+				if (walletSession.expiry && new Date(walletSession.expiry) < new Date()) {
+					return {
+						id: request.id,
+						jsonrpc: '2.0',
+						result: walletSession,
+						method: request.method,
+					} as TransportResponse;
+				}
+			}
+		}
+	}
+
+	private async storeWalletSession(request: { jsonrpc: string; id: string } & TransportRequest, response: TransportResponse): Promise<void> {
+		if (request.method === 'wallet_getSession') {
+			await this.kvstore.set(this.sessionStoreKey, JSON.stringify(response));
+		}
+	}
+
 	/**
 	 * Sends a request through the Mobile Wallet Protocol
 	 */
 	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(payload: TRequest, options?: { timeout?: number }): Promise<TResponse> {
-		this.__reqId += 1;
-		const response = await new Promise<TResponse>((resolve, reject) => {
-			const request = {
-				jsonrpc: '2.0',
-				id: `${this.__reqId}`,
-				...payload,
-			};
+		const request = {
+			jsonrpc: '2.0',
+			id: `${this.__reqId++}`,
+			...payload,
+		};
+
+		const cachedWalletSession = await this.fetchCachedWalletSession(request);
+		if (cachedWalletSession) {
+			return cachedWalletSession as TResponse;
+		}
+
+		return new Promise<TResponse>((resolve, reject) => {
 			const timeout = setTimeout(() => {
 				this.rejectRequest(request.id, new TransportTimeoutError());
 			}, options?.timeout ?? this.options.requestTimeout);
 
-			this.pendingRequests.set(request.id, { method: payload.method, resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
+			this.pendingRequests.set(request.id, {
+				method: request.method,
+				resolve: async (response: TransportResponse<unknown>) => {
+					if (request.method === 'wallet_getSession') {
+						await this.storeWalletSession(request, response);
+					}
+					return resolve(response as TResponse);
+				},
+				reject,
+				timeout,
+			});
+
 			this.dappClient.sendRequest(request).catch(reject);
 		});
-		return response;
 	}
 
 	/**
