@@ -121,7 +121,8 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 					{ timeout: 60 * 1000 },
 				);
 			} else {
-				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
+				//Session is cached in storage so we don't need to call the getSession method
+				t.expect(mockedData.mockDappClient.sendRequest).not.toHaveBeenCalledWith(
 					t.expect.objectContaining({
 						method: 'wallet_getSession',
 					}),
