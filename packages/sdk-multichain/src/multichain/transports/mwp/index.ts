@@ -9,10 +9,14 @@ import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../uti
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 const CONNECTION_GRACE_PERIOD = 60 * 1000;
-
 const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT + CONNECTION_GRACE_PERIOD;
+const SESSION_STORE_KEY = 'cache_wallet_getSession';
+
+const CACHED_METHOD_LIST = ['wallet_getSession', 'wallet_createSession', 'wallet_sessionChanged'];
+const CACHED_RESET_METHOD_LIST = ['wallet_revokeSession'];
 
 type PendingRequests = {
+	request: { jsonrpc: string; id: string } & TransportRequest;
 	method: string;
 	resolve: (value: TransportResponse<unknown>) => void;
 	reject: (error: Error) => void;
@@ -83,11 +87,17 @@ export class MWPTransport implements ExtendedTransport {
 						const requestWithName = {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
-						} as unknown as TransportResponse<unknown>;
+						} as unknown as { jsonrpc: string; id: string } & TransportResponse<unknown>;
+
 						const notification = {
+							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
 							params: requestWithName.result,
 						};
+
+						// if (CACHED_METHOD_LIST.includes(notification.method)) {
+						// 	this.storeWalletSession(request.request, notification as unknown as TransportResponse);
+						// }
 						clearTimeout(request.timeout);
 						this.notifyCallbacks(notification);
 						request.resolve(requestWithName);
@@ -174,6 +184,10 @@ export class MWPTransport implements ExtendedTransport {
 				});
 			} else {
 				connection = new Promise<void>((resolveConnection, rejectConnection) => {
+					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
+
 					this.dappClient.on('message', async (message: unknown) => {
 						if (typeof message === 'object' && message !== null) {
 							if ('data' in message) {
@@ -183,14 +197,12 @@ export class MWPTransport implements ExtendedTransport {
 										return rejectConnection(messagePayload.error);
 									}
 									this.notifyCallbacks(message.data);
+									await this.storeWalletSession(request, messagePayload as TransportResponse);
 									return resolveConnection();
 								}
 							}
 						}
 					});
-					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
-					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
 
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
@@ -225,28 +237,26 @@ export class MWPTransport implements ExtendedTransport {
 		return (this.dappClient as any).state === 'CONNECTED';
 	}
 
-	private sessionStoreKey = 'cache_wallet_getSession';
-
 	private async fetchCachedWalletSession(request: { jsonrpc: string; id: string } & TransportRequest): Promise<TransportResponse | undefined> {
 		if (request.method === 'wallet_getSession') {
-			const walletGetSession = await this.kvstore.get(this.sessionStoreKey);
+			const walletGetSession = await this.kvstore.get(SESSION_STORE_KEY);
 			if (walletGetSession) {
-				const walletSession = JSON.parse(walletGetSession) as SessionData;
-				if (walletSession.expiry && new Date(walletSession.expiry) < new Date()) {
-					return {
-						id: request.id,
-						jsonrpc: '2.0',
-						result: walletSession,
-						method: request.method,
-					} as TransportResponse;
-				}
+				const walletSession = JSON.parse(walletGetSession);
+				return {
+					id: request.id,
+					jsonrpc: '2.0',
+					result: walletSession.params || walletSession.result,
+					method: request.method,
+				} as TransportResponse;
 			}
 		}
 	}
 
-	private async storeWalletSession(request: { jsonrpc: string; id: string } & TransportRequest, response: TransportResponse): Promise<void> {
-		if (request.method === 'wallet_getSession') {
-			await this.kvstore.set(this.sessionStoreKey, JSON.stringify(response));
+	private async storeWalletSession(request: TransportRequest, response: TransportResponse): Promise<void> {
+		if (CACHED_METHOD_LIST.includes(request.method)) {
+			await this.kvstore.set(SESSION_STORE_KEY, JSON.stringify(response));
+		} else if (CACHED_RESET_METHOD_LIST.includes(request.method)) {
+			await this.kvstore.delete(SESSION_STORE_KEY);
 		}
 	}
 
@@ -262,6 +272,7 @@ export class MWPTransport implements ExtendedTransport {
 
 		const cachedWalletSession = await this.fetchCachedWalletSession(request);
 		if (cachedWalletSession) {
+			this.notifyCallbacks(cachedWalletSession);
 			return cachedWalletSession as TResponse;
 		}
 
@@ -271,9 +282,10 @@ export class MWPTransport implements ExtendedTransport {
 			}, options?.timeout ?? this.options.requestTimeout);
 
 			this.pendingRequests.set(request.id, {
+				request,
 				method: request.method,
 				resolve: async (response: TransportResponse<unknown>) => {
-					if (request.method === 'wallet_getSession') {
+					if (CACHED_METHOD_LIST.includes(request.method)) {
 						await this.storeWalletSession(request, response);
 					}
 					return resolve(response as TResponse);
