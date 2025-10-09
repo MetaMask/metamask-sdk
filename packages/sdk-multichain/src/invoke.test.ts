@@ -230,7 +230,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state).toBe('connected');
 			t.expect(() => sdk.provider).toThrow();
 
-			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('Failed to invoke method');
+			await t.expect(sdk.invokeMethod(options)).rejects.toThrow('RPCErr53: RPC Client invoke method reason (Failed to invoke method)');
 		});
 	});
 }

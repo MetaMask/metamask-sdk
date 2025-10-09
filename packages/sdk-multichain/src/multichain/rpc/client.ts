@@ -6,6 +6,7 @@ import {
 	type ExtendedTransport,
 	getInfuraRpcUrls,
 	type InvokeMethodOptions,
+	isSecure,
 	METHODS_TO_REDIRECT,
 	type MultichainOptions,
 	type RPC_URLS_MAP,
@@ -17,6 +18,8 @@ import {
 	type RPCResponse,
 	type Scope,
 } from '../../domain';
+import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';
+import { openDeeplink } from '../utils';
 
 let rpcId = 1;
 
@@ -28,7 +31,7 @@ export function getNextRpcId() {
 export class RPCClient {
 	constructor(
 		private readonly transport: ExtendedTransport,
-		private readonly config: MultichainOptions['api'],
+		private readonly config: MultichainOptions,
 		private readonly sdkInfo: string,
 	) {}
 
@@ -88,9 +91,13 @@ export class RPCClient {
 	}
 
 	async invokeMethod(options: InvokeMethodOptions) {
-		const { request } = options;
 		const { config } = this;
-		const { infuraAPIKey, readonlyRPCMap: readonlyRPCMapConfig } = config ?? {};
+		const { request } = options;
+		const { api, ui, mobile } = config;
+
+		const { preferDesktop = false, headless: _headless = false } = ui ?? {};
+		const { infuraAPIKey, readonlyRPCMap: readonlyRPCMapConfig } = api ?? {};
+
 		let readonlyRPCMap: RPC_URLS_MAP = readonlyRPCMapConfig ?? {};
 		if (infuraAPIKey) {
 			const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
@@ -110,10 +117,25 @@ export class RPCClient {
 			return response;
 		}
 		try {
-			const response = await this.transport.request({
+			const request = this.transport.request({
 				method: 'wallet_invokeMethod',
 				params: options,
 			});
+
+			const secure = isSecure();
+			const shouldOpenDeeplink = secure && !preferDesktop;
+
+			if (shouldOpenDeeplink) {
+				setTimeout(() => {
+					if (mobile?.preferredOpenLink) {
+						mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
+					} else {
+						openDeeplink(this.config, METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
+					}
+				}, 250);
+			}
+
+			const response = await request;
 			if (response.error) {
 				throw new RPCInvokeMethodErr(`RPC Request failed with code ${response.error.code}: ${response.error.message}`);
 			}

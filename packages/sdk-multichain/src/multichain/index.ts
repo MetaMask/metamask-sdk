@@ -8,7 +8,7 @@ import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../doma
 import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
-import { getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
+import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
 import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
 import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
@@ -215,33 +215,6 @@ export class MultichainSDK extends MultichainCore {
 		await this.storage.setTransport(TransportType.MPW);
 	}
 
-	private openDeeplink(deeplink: string, universalLink: string) {
-		const { mobile } = this.options;
-		const useDeeplink = mobile && mobile.useDeeplink !== undefined ? mobile.useDeeplink : true;
-		if (useDeeplink) {
-			if (typeof window !== 'undefined') {
-				// We don't need to open a deeplink in a new tab
-				// It avoid the browser to display a blank page
-				window.location.href = deeplink;
-			}
-		} else if (typeof document !== 'undefined') {
-			// Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
-			// Using 'window.open' causes issues on iOS in non-Safari browsers and
-			// WebViews where a blank tab is left behind after connecting.
-			// This is especially bad in some WebView scenarios (e.g. following a
-			// link from Twitter) where the user doesn't have any mechanism for
-			// closing the blank tab.
-			// For whatever reason, links with a target of "_blank" don't suffer
-			// from this problem, and programmatically clicking a detached link
-			// element with the same attributes also avoids the issue.
-			const link = document.createElement('a');
-			link.href = universalLink;
-			link.target = '_self';
-			link.rel = 'noreferrer noopener';
-			link.click();
-		}
-	}
-
 	private async onBeforeUnload() {
 		if (this.options.ui.factory.modal) {
 			//Modal is still visible, remove storage to prevent glitch with "connecting" state
@@ -366,7 +339,7 @@ export class MultichainSDK extends MultichainCore {
 					if (this.options.mobile?.preferredOpenLink) {
 						this.options.mobile.preferredOpenLink(deeplink, '_self');
 					} else {
-						this.openDeeplink(deeplink, universalLink);
+						openDeeplink(this.options, deeplink, universalLink);
 					}
 				});
 			} else {
@@ -376,7 +349,7 @@ export class MultichainSDK extends MultichainCore {
 					if (this.options.mobile?.preferredOpenLink) {
 						this.options.mobile.preferredOpenLink(deeplink, '_self');
 					} else {
-						this.openDeeplink(deeplink, universalLink);
+						openDeeplink(this.options, deeplink, universalLink);
 					}
 				}, 250);
 			}
@@ -464,38 +437,11 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async invokeMethod(request: InvokeMethodOptions): Promise<Json> {
-		const {
-			options: {
-				ui: { preferDesktop = false, headless: _headless = false },
-			},
-			sdkInfo,
-			transport,
-		} = this;
+		const { sdkInfo, transport } = this;
 
 		this.__provider ??= getMultichainClient({ transport });
 
-		const client = new RPCClient(this.transport, this.options.api, sdkInfo);
-		const secure = isSecure();
-
-		const shouldOpenDeeplink = secure && !preferDesktop;
-
-		// Call the client invoke method first
-		const invokePromise = client.invokeMethod(request);
-
-		// Schedule the deeplink to open 100ms after the invoke method is called
-		await new Promise((resolve) => {
-			setTimeout(() => {
-				if (shouldOpenDeeplink) {
-					if (this.options.mobile?.preferredOpenLink) {
-						this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
-					} else {
-						this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
-					}
-				}
-				resolve(void 0);
-			}, 100);
-		});
-
-		return invokePromise as Promise<Json>;
+		const client = new RPCClient(this.transport, this.options, sdkInfo);
+		return client.invokeMethod(request) as Promise<Json>;
 	}
 }
