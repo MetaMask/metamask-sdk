@@ -20,6 +20,9 @@
   ],
   "scripts": {
     "build": "DISABLE_ESLINT_PLUGIN=true craco build",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-multichain-react",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-multichain-react",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-multichain-react",
     "eject": "react-scripts eject",
     "lint": "yarn biome lint ./src",
     "lint:ci": "yarn biome ci ./src",
