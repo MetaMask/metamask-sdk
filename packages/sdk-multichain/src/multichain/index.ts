@@ -389,7 +389,15 @@ export class MultichainSDK extends MultichainCore {
 		const secure = isSecure();
 
 		if (this.__transport?.isConnected() && !secure) {
-			return this.handleConnection(this.__transport.connect({ scopes, caipAccountIds }));
+			return this.handleConnection(
+				this.__transport.connect({ scopes, caipAccountIds }).then(() => {
+					if (this.__transport instanceof MWPTransport) {
+						return this.storage.setTransport(TransportType.MPW);
+					} else {
+						return this.storage.setTransport(TransportType.Browser);
+					}
+				}),
+			);
 		}
 
 		if (isWeb && hasExtension() && preferExtension) {
