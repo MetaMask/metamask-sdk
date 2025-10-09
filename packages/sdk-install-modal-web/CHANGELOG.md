@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: format all changelogs
+- chore: deduplicate changelog validation
+- add format changelog scripts
+- move auto-changelog to root and update scripts
+- update changelog scripts to match core
+- feat: adding mobile wallet protocol ([#1346](https://github.com/MetaMask/metamask-sdk/pull/1346))
+- Release 110.0.0 ([#1235](https://github.com/MetaMask/metamask-sdk/pull/1235))
+
 ## [0.32.1]
 
 ### Added

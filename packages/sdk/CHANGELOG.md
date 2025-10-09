@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: format sdk changelog
+- chore: deduplicate changelog validation
+- Merge branch 'ci/automated-release-changelog' into ci/automated-release-vibe
+- add format changelog scripts
+- move auto-changelog to root and update scripts
+- update changelog scripts to match core
+- specify versions on workspace packages
+- feat: Add option to hide return modal ([#1350](https://github.com/MetaMask/metamask-sdk/pull/1350))
+
 ## [0.33.1]
 
 ### Fixed

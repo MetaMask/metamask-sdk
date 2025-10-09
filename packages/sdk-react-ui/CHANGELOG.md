@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: format all changelogs
+- chore: deduplicate changelog validation
+- Merge branch 'ci/automated-release-changelog' into ci/automated-release-vibe
+- add format changelog scripts
+- move auto-changelog to root and update scripts
+- update changelog scripts to match core
+- specify versions on workspace packages
+
 ## [0.29.2]
 
 ### Added

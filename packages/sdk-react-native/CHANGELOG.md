@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: format all changelogs
+- chore: deduplicate changelog validation
+- add format changelog scripts
+- move auto-changelog to root and update scripts
+- update changelog scripts to match core
+- refactor: replace qr-code-styling with smaller library ([#1129](https://github.com/MetaMask/metamask-sdk/pull/1129))
+
 ## [0.3.12]
 
 ### Uncategorized

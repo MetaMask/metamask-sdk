@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Uncategorized
+
+- chore: format all changelogs
+- chore: deduplicate changelog validation
+- add format changelog scripts
+- move auto-changelog to root and update scripts
+- update changelog scripts to match core
+- fix: missing export of esmodule on sdk-analytics ([#1334](https://github.com/MetaMask/metamask-sdk/pull/1334))
+
 ## [0.0.5]
 
 ### Fixed
