@@ -1,5 +1,4 @@
 # Changelog
-
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -7,78 +6,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Uncategorized
-
-- chore: format all changelogs
-- chore: deduplicate changelog validation
-- add format changelog scripts
-- move auto-changelog to root and update scripts
-- update changelog scripts to match core
-- fix: deprecating sdk-lab and relocating component into sdk-ui instead ([#1271](https://github.com/MetaMask/metamask-sdk/pull/1271))
-
 ## [0.30.2]
-
 ### Uncategorized
-
 - chore: force new version detection ([#1121](https://github.com/MetaMask/metamask-sdk/pull/1121))
 
 ## [0.30.0]
 
 ## [0.29.1]
-
 ### Uncategorized
-
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
 
 ## [0.29.0]
-
 ### Uncategorized
-
 - feat: auto activate deeplink protocol when wallet supports it ([#1056](https://github.com/MetaMask/metamask-sdk/pull/1056))
 
 ## [0.28.0]
-
 ### Uncategorized
-
 - feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
 
 ## [0.26.0]
-
 ### Uncategorized
-
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
 
 ## [0.20.5]
-
 ### Added
-
 - align version with sdk package
 - chore: create wagmi demo dapp ([#669](https://github.com/MetaMask/metamask-sdk/pull/669))
 
 ## [0.4.2]
-
 ### Uncategorized
-
 - feat: force change ([#848](https://github.com/MetaMask/metamask-sdk/pull/848))
 
 ## [0.4.1]
-
 ### Added
-
 - fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
 - feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
 
 ## [0.4.0]
-
 ### Added
-
 - feat: allow custom actions in MetaMask floating button ([#768](https://github.com/MetaMask/metamask-sdk/pull/768))
 - fix: adapt the "devreactnative" DApp for compatibility with new "metaMask/providers" version ([#757](https://github.com/MetaMask/metamask-sdk/pull/757))
 
 ## [0.3.0]
-
 ### Added
-
 - feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
 - Fix/sdk config provider ([#714](https://github.com/MetaMask/metamask-sdk/pull/714))
 - feat: expose channel id via hook + expose wallet status via sdk instance ([#704](https://github.com/MetaMask/metamask-sdk/pull/704))
@@ -86,58 +56,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: automated github pages publication ([#599](https://github.com/MetaMask/metamask-sdk/pull/599))
 
 ## [0.2.0]
-
 ### Added
-
 - Revert "Release 48.0.0" ([#686](https://github.com/MetaMask/metamask-sdk/pull/686))
 - Release 48.0.0 ([#684](https://github.com/MetaMask/metamask-sdk/pull/684))
 - feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
 - consensys.net -> consensys.io ([#605](https://github.com/MetaMask/metamask-sdk/pull/605))
 
 ## [0.1.6]
-
 ### Added
-
 - feat: ui quick swap and new rpc call metamask_open ([#572](https://github.com/MetaMask/metamask-sdk/pull/572))
 
 ## [0.1.5]
-
 ### Added
-
 - feat: more cross functional ui components ([#557](https://github.com/MetaMask/metamask-sdk/pull/557))
 
 ## [0.1.4]
-
 ### Added
-
 - fix: storybook setup ([#547](https://github.com/MetaMask/metamask-sdk/pull/547))
 - fix: storage UI and devreact ([#545](https://github.com/MetaMask/metamask-sdk/pull/545))
 
 ## [0.1.3]
-
 ### Added
-
 - feat: build setup for ui and lab ([#537](https://github.com/MetaMask/metamask-sdk/pull/537))
 - feat: publish sdk-ui ([#533](https://github.com/MetaMask/metamask-sdk/pull/533))
 
 ## [0.1.2]
-
 ### Uncategorized
-
 - feat: design system part3 ([#527](https://github.com/MetaMask/metamask-sdk/pull/527))
 - feat: update examples 0.12.2 ([#526](https://github.com/MetaMask/metamask-sdk/pull/526))
 
 ## [0.1.1]
-
 ### Uncategorized
-
 - chore: trigger release ([#524](https://github.com/MetaMask/metamask-sdk/pull/524))
 - chore: trigger release ([#523](https://github.com/MetaMask/metamask-sdk/pull/523))
 - Release 39.0.0 ([#522](https://github.com/MetaMask/metamask-sdk/pull/522))
 - feat: release 39.0.0 ([#520](https://github.com/MetaMask/metamask-sdk/pull/520))
 
 ### Added
-
 - chore: enable sdk-ui and sdk-lab to v0.1.0 ([#518](https://github.com/MetaMask/metamask-sdk/pull/518))
 - feat: design system part2 ([#517](https://github.com/MetaMask/metamask-sdk/pull/517))
 - feat: design system integration part1 ([#513](https://github.com/MetaMask/metamask-sdk/pull/513))
