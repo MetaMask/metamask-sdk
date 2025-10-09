@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -7,46 +8,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.33.1]
+
 ### Fixed
+
 - chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
 
 ## [0.33.0]
+
 ### Added
+
 - Add rpc ingore list to analytics ([#1293](https://github.com/MetaMask/metamask-sdk/pull/1293))
 - Refactor: backwards compatible originator info ([#1292](https://github.com/MetaMask/metamask-sdk/pull/1292))
 - Integrate sdk-analytics with SDK ([#1289](https://github.com/MetaMask/metamask-sdk/pull/1289))
 
 ### Fixed
+
 - Updates and Fixes to Analytics ([#1294](https://github.com/MetaMask/metamask-sdk/pull/1294))
 
 ## [0.32.0]
+
 ### Uncategorized
+
 - fix(rndemos): update metro config to support eciesjs crypto imports ([#1147](https://github.com/MetaMask/metamask-sdk/pull/1147))
 - feat: add turborepo for improved monorepo development experience ([#1195](https://github.com/MetaMask/metamask-sdk/pull/1195))
 
 ## [0.31.0]
+
 ### Uncategorized
+
 - chore: improve build tooling and modernize dependencies ([#1128](https://github.com/MetaMask/metamask-sdk/pull/1128))
 
 ## [0.30.2]
+
 ### Added
+
 - fix: potential security issue with secp256k1 ([#1111](https://github.com/MetaMask/metamask-sdk/pull/1111))
 
 ## [0.30.0]
+
 ### Added
+
 - fix: rpc protocol resetting after refresh ([#1079](https://github.com/MetaMask/metamask-sdk/pull/1079))
 - Release 97.0.0 ([#1077](https://github.com/MetaMask/metamask-sdk/pull/1077))
 
 ## [0.29.2]
+
 ### Uncategorized
+
 - chore: bump .change files to 0.29.2 ([#1071](https://github.com/MetaMask/metamask-sdk/pull/1071))
 
 ## [0.29.1]
+
 ### Uncategorized
+
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
 
 ## [0.29.0]
+
 ### Added
+
 - feat: event alignment with async protocol ([#1054](https://github.com/MetaMask/metamask-sdk/pull/1054))
 - feat: auto activate deeplink protocol when wallet supports it ([#1056](https://github.com/MetaMask/metamask-sdk/pull/1056))
 - feat: default web url metadata ([#1043](https://github.com/MetaMask/metamask-sdk/pull/1043))
@@ -54,58 +74,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: server events and dappid recovery ([#1044](https://github.com/MetaMask/metamask-sdk/pull/1044))
 
 ## [0.29.0-wallet]
+
 ### Added
+
 - feat: async termination of connection (using ack from server) ([#1022](https://github.com/MetaMask/metamask-sdk/pull/1022))
 - feat: handle connection reject event ([#1020](https://github.com/MetaMask/metamask-sdk/pull/1020))
 
 ## [0.28.2]
+
 ### Added
+
 - feat: socket reconnection optimization ([#994](https://github.com/MetaMask/metamask-sdk/pull/994))
 
 ## [0.28.1]
+
 ### Added
+
 - feat: full deeplink protocol ([#992](https://github.com/MetaMask/metamask-sdk/pull/992))
 
 ## [0.28.0]
+
 ### Added
+
 - feat: experimental deeplink protocoll ([#990](https://github.com/MetaMask/metamask-sdk/pull/990))
 - feat: revert socket server changes ([#985](https://github.com/MetaMask/metamask-sdk/pull/985))
 - feat: change the default value for 'dappId' to 'N/A' instead of an empty string ([#972](https://github.com/MetaMask/metamask-sdk/pull/972))
 
 ## [0.27.0]
+
 ### Added
+
 - feat: adds `connector` analytical property ([#947](https://github.com/MetaMask/metamask-sdk/pull/947))
 
 ## [0.26.4]
+
 ### Added
+
 - chore: update SDK dependencies to resolve version conflicts ([#921](https://github.com/MetaMask/metamask-sdk/pull/921))
 
 ## [0.26.2]
+
 ### Added
+
 - feat: cleanup leaking console logs ([#907](https://github.com/MetaMask/metamask-sdk/pull/907))
 
 ## [0.26.0]
+
 ### Added
+
 - feat: add script to align version before publishing ([#902](https://github.com/MetaMask/metamask-sdk/pull/902))
 - feat: update dev rn / expo and empty dappid ([#897](https://github.com/MetaMask/metamask-sdk/pull/897))
 - feat: prevent empty dappid ([#891](https://github.com/MetaMask/metamask-sdk/pull/891))
 - chore: improve unit tests coverage ([#888](https://github.com/MetaMask/metamask-sdk/pull/888))
 
 ## [0.20.5]
+
 ### Added
+
 - fix: ref crossfetch ([#871](https://github.com/MetaMask/metamask-sdk/pull/871))
 
 ## [0.20.4]
+
 ### Added
+
 - chore: update prepare-preview-builds CI job ([#869](https://github.com/MetaMask/metamask-sdk/pull/869))
 - fix: crossfetch version not matching comm layer ([#860](https://github.com/MetaMask/metamask-sdk/pull/860))
 
 ## [0.20.2]
+
 ### Added
+
 - skip version because of publishing issue
 
 ## [0.20.1]
+
 ### Added
+
 - feat: trigger new version ([#840](https://github.com/MetaMask/metamask-sdk/pull/840))
 - Revert "Release 63.0.0" ([#839](https://github.com/MetaMask/metamask-sdk/pull/839))
 - Release 62.0.0 ([#838](https://github.com/MetaMask/metamask-sdk/pull/838))
@@ -113,53 +157,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: release 62.0.0 ([#836](https://github.com/MetaMask/metamask-sdk/pull/836))
 
 ## [0.20.0]
+
 ### Added
+
 - feat: align version ([#835](https://github.com/MetaMask/metamask-sdk/pull/835))
 
 ## [0.19.0]
+
 ### Added
+
 - feat: full sdk persistence ([#823](https://github.com/MetaMask/metamask-sdk/pull/823))
 - feat: update the 'expo-demo' example dapp ([#824](https://github.com/MetaMask/metamask-sdk/pull/824))
 
 ## [0.18.5]
+
 ### Added
+
 - fix: preferDesktop and onboarding ([#807](https://github.com/MetaMask/metamask-sdk/pull/807))
 
 ## [0.18.4]
+
 ### Added
+
 - fix: prefer desktop ([#800](https://github.com/MetaMask/metamask-sdk/pull/800))
 - feat: logging initialization ([#799](https://github.com/MetaMask/metamask-sdk/pull/799))
 
 ## [0.18.2]
+
 ### Added
+
 - feat: sdk done event on dapp side ([#789](https://github.com/MetaMask/metamask-sdk/pull/789))
 
 ## [0.18.1]
+
 ### Added
+
 - fix: add correct param to sdk_rpc_request_received ([#781](https://github.com/MetaMask/metamask-sdk/pull/781))
 - feat: add rpc received event ([#780](https://github.com/MetaMask/metamask-sdk/pull/780))
 - feat: store account between refresh ([#779](https://github.com/MetaMask/metamask-sdk/pull/779))
 
 ## [0.18.0]
+
 ### Added
+
 - feat: update prod socket server url ([#774](https://github.com/MetaMask/metamask-sdk/pull/774))
 
 ## [0.17.0]
+
 ### Added
+
 - feat: update the "@metamask/providers" package to version 15.0.0 ([#752](https://github.com/MetaMask/metamask-sdk/pull/752))
 - feat: restrict rpc method analytics ([#755](https://github.com/MetaMask/metamask-sdk/pull/755))
 - feat: rpc event tracking ([#745](https://github.com/MetaMask/metamask-sdk/pull/745))
 - chore: disable logs when running unit tests in CI ([#727](https://github.com/MetaMask/metamask-sdk/pull/727))
 
 ## [0.16.0]
+
 ### Added
+
 - feat: activate sourcemap support in all packages and resolve issues ([#730](https://github.com/MetaMask/metamask-sdk/pull/730))
 - chore: reduce the bundle size ([#725](https://github.com/MetaMask/metamask-sdk/pull/725))
 - feat: sdk bundle size opt methodology ([#722](https://github.com/MetaMask/metamask-sdk/pull/722))
 - chore: use the 'debug' package as the new logger ([#716](https://github.com/MetaMask/metamask-sdk/pull/716))
 
 ## [0.15.0]
+
 ### Added
+
 - chore: sourcemaps ([#687](https://github.com/MetaMask/metamask-sdk/pull/687))
 - Revert "Release 48.0.0" ([#686](https://github.com/MetaMask/metamask-sdk/pull/686))
 - Release 48.0.0 ([#684](https://github.com/MetaMask/metamask-sdk/pull/684))
@@ -167,40 +231,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: permission system flow ([#675](https://github.com/MetaMask/metamask-sdk/pull/675))
 
 ## [0.14.3]
+
 ### Added
+
 - feat: new socket code ([#609](https://github.com/MetaMask/metamask-sdk/pull/609))
 
 ## [0.14.2]
+
 ### Added
+
 - feat: change the 'enableDebug' option to 'enableAnalytics' ([#604](https://github.com/MetaMask/metamask-sdk/pull/604))
 
 ## [0.14.1]
+
 ### Added
+
 - feat: graceful warning instead of throwing keyexchange ([#571](https://github.com/MetaMask/metamask-sdk/pull/571))
 
 ## [0.14.0]
+
 ### Added
+
 - feat: expo keyexchange status and track last rpc id ([#554](https://github.com/MetaMask/metamask-sdk/pull/554))
 
 ## [0.13.0]
+
 ### Added
+
 - Align version with sdk
 
 ## [0.12.3]
+
 ### Added
+
 - feat: add the option to add dapp icon in base64 format ([#521](https://github.com/MetaMask/metamask-sdk/pull/521))
 
 ## [0.12.2]
+
 ### Added
+
 - feat: add the option to add iconUrl to the dappMetadata ([#511](https://github.com/MetaMask/metamask-sdk/pull/511))
 - feat: optimize rollup builds ([#496](https://github.com/MetaMask/metamask-sdk/pull/496))
 
 ## [0.12.1]
+
 ### Added
+
 - feat: metamask/sdk-ui initial setup ([#487](https://github.com/MetaMask/metamask-sdk/pull/487))
 
 ## [0.12.0]
+
 ### Added
+
 - feat: set minimum required coverage to 50/100 ([#473](https://github.com/MetaMask/metamask-sdk/pull/473))
 - feat: socket handling optimization and devnext ui ([#468](https://github.com/MetaMask/metamask-sdk/pull/468))
 - feat: expose rpc history tracker ([#462](https://github.com/MetaMask/metamask-sdk/pull/462))
@@ -208,97 +290,137 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - feat: disable favicon in dappmetadata ([#467](https://github.com/MetaMask/metamask-sdk/pull/467))
 
 ## [0.11.1]
+
 ### Added
+
 - build: improve sdk bundle to work with nodejs strictmode ([#457](https://github.com/MetaMask/metamask-sdk/pull/457))
 
 ## [0.11.0]
+
 ### Added
+
 - build: optimize rollup output by env ([#450](https://github.com/MetaMask/metamask-sdk/pull/450))
 - fix: socket io event handler not initializing properly ([#446](https://github.com/MetaMask/metamask-sdk/pull/446))
 - feat: rename metamask_chainRPCs to metamask_batch and add unit tests ([#440](https://github.com/MetaMask/metamask-sdk/pull/440))
 
 ## [0.10.1]
+
 ### Added
+
 - feat: send sdk_extension_utilized analytics event when extension is selected from cached choice. ([#425](https://github.com/MetaMask/metamask-sdk/pull/425))
 
 ## [0.10.0]
+
 ### Added
+
 - feat: connection recovery edge case ([#411](https://github.com/MetaMask/metamask-sdk/pull/411))
 
 ## [0.9.0]
+
 ### Added
+
 - fix typos ([#401](https://github.com/MetaMask/metamask-sdk/pull/401))
 
 ## [0.8.0]
+
 ### Added
+
 - feat: adds contact form to npm packages ([#382](https://github.com/MetaMask/metamask-sdk/pull/382))
 
 ## [0.7.1]
+
 ### Added
+
 - fix: sdk connection request event ([#364](https://github.com/MetaMask/metamask-sdk/pull/364))
 
 ## [0.7.0]
+
 ### Added
+
 - feat: extend the time we resume the session without showing OTP ([#348](https://github.com/MetaMask/metamask-sdk/pull/348))
 - feat: add codecov to CI ([#343](https://github.com/MetaMask/metamask-sdk/pull/343))
 
 ## [0.6.2]
+
 ### Added
+
 - feat: add unit tests to the MetaMaskSDK class ([#319](https://github.com/MetaMask/metamask-sdk/pull/319))
 
 ## [0.6.1]
+
 ### Added
+
 - feat: align versions ([#323](https://github.com/MetaMask/metamask-sdk/pull/323))
 
 ## [0.6.0]
+
 ### Added
+
 - feat: improved event tracking ([#298](https://github.com/MetaMask/metamask-sdk/pull/298))
 - feat: add unit tests to the SocketService class ([#294](https://github.com/MetaMask/metamask-sdk/pull/294))
 - feat: refactor SocketService class for enhanced modularity and testability ([#292](https://github.com/MetaMask/metamask-sdk/pull/292))
 - feat: refactor RemoteCommunication class for enhanced modularity and testability ([#282](https://github.com/MetaMask/metamask-sdk/pull/282))
 
 ## [0.5.3]
+
 ### Added
+
 - feat: remove webrtc references ([#227](https://github.com/MetaMask/metamask-sdk/pull/227))
 - refactor: simplify connection flow ([#226](https://github.com/MetaMask/metamask-sdk/pull/226))
 - feat: cleanup obsolete walletconnect references ([#223](https://github.com/MetaMask/metamask-sdk/pull/223))
 - fix: initial connection promise potentially dangling with browser extension ([#218](https://github.com/MetaMask/metamask-sdk/pull/218))
 
 ## [0.5.2]
+
 ### Added
+
 - feat: optimize paused/resume flow ([#212](https://github.com/MetaMask/metamask-sdk/pull/212))
 
 ## [0.5.0]
+
 ### Added
+
 - feat: improved event tracking for extension and inappbrowser ([#200](https://github.com/MetaMask/metamask-sdk/pull/200))
 - feat: export sendanalytics from comm layer ([#198](https://github.com/MetaMask/metamask-sdk/pull/198))
 - fix: possible dangling promise on sendMessage (wallet side) ([#194](https://github.com/MetaMask/metamask-sdk/pull/194))
 - feat: sdk async init ([#191](https://github.com/MetaMask/metamask-sdk/pull/191))
 
 ## [0.4.2]
+
 ### Added
+
 - feat: add metamask-mobile platform-type for wallet compatibility ([#187](https://github.com/MetaMask/metamask-sdk/pull/187))
 
 ## [0.4.0]
+
 ### Added
+
 - feat: linter improvements ([#175](https://github.com/MetaMask/metamask-sdk/pull/175))
 - [FEAT] authorized improvements + typings ([#158](https://github.com/MetaMask/metamask-sdk/pull/158))
 
 ## [0.3.3]
+
 ### Added
+
 - [FEAT] wait for authorized event ([#147](https://github.com/MetaMask/metamask-sdk/pull/147))
 - [FEAT] choose between extennsion and mobile wallet ([#146](https://github.com/MetaMask/metamask-sdk/pull/146))
 
 ## [0.3.2]
+
 ### Added
+
 - [FIX] initial eth_requestAccounts ignored when refreshing session ([#139](https://github.com/MetaMask/metamask-sdk/pull/139))
 
 ## [0.3.0]
+
 ### Fixed
+
 - [FIX] reconnection instability ([#109](https://github.com/MetaMask/metamask-sdk/pull/109))
 
 ## [0.2.5]
+
 ### Added
+
 - [FEAT]: improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
 [Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-communication-layer@0.33.1...HEAD
