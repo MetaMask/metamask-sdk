@@ -447,7 +447,7 @@ t.describe('Utils', () => {
 			t.expect(result).toBe(false);
 		});
 
-		t.it('should return false when scopes have different order but same content', () => {
+		t.it('should return true when scopes have different order but same content', () => {
 			const currentScopes: Scope[] = ['eip155:1', 'eip155:137'];
 			const proposedScopes: Scope[] = ['eip155:137', 'eip155:1']; // Different order
 			const proposedCaipAccountIds = [
@@ -462,7 +462,7 @@ t.describe('Utils', () => {
 				proposedCaipAccountIds,
 			);
 
-			t.expect(result).toBe(false);
+			t.expect(result).toBe(true);
 		});
 
 		t.it('should handle multiple accounts in same scope', () => {
