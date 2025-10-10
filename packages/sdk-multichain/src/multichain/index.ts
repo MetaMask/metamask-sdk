@@ -154,6 +154,7 @@ export class MultichainSDK extends MultichainCore {
 				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 				return apiTransport;
 			}
+
 			await this.storage.removeTransport();
 		}
 
@@ -168,6 +169,11 @@ export class MultichainSDK extends MultichainCore {
 				await this.transport.connect();
 			}
 			this.state = 'connected';
+			if (this.transport instanceof MWPTransport) {
+				await this.storage.setTransport(TransportType.MPW);
+			} else {
+				await this.storage.setTransport(TransportType.Browser);
+			}
 		} else {
 			this.state = 'loaded';
 		}
@@ -216,8 +222,8 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async onBeforeUnload() {
-		if (this.options.ui.factory.modal) {
-			//Modal is still visible, remove storage to prevent glitch with "connecting" state
+		//Fixes glitch with "connecting" state when modal is still visible and we close screen or refresh
+		if (this.options.ui.factory.modal.isMounted) {
 			await this.storage.removeTransport();
 		}
 	}
@@ -232,6 +238,7 @@ export class MultichainSDK extends MultichainCore {
 			}
 		};
 	}
+
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
 		// create the listener only once to avoid memory leaks
 		this.__beforeUnloadListener ??= this.createBeforeUnloadListener();
@@ -263,6 +270,7 @@ export class MultichainSDK extends MultichainCore {
 								this.options.ui.factory.unload();
 								this.options.ui.factory.modal?.unmount();
 								this.state = 'connected';
+								return this.storage.setTransport(TransportType.MPW);
 							})
 							.catch((err) => {
 								if (err instanceof ProtocolError) {
