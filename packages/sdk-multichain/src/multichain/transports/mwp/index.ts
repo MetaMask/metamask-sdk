@@ -5,7 +5,7 @@ import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 
 import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData, type StoreAdapter } from '../../../domain';
 import type { CaipAccountId } from '@metamask/utils';
-import { addValidAccounts, getOptionalScopes, getValidAccounts } from '../../utils';
+import { addValidAccounts, getOptionalScopes, getValidAccounts, isSameScopesAndAccounts } from '../../utils';
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 const CONNECTION_GRACE_PERIOD = 60 * 1000;
@@ -111,8 +111,9 @@ export class MWPTransport implements ExtendedTransport {
 			if (walletSession && options) {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
-				const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
-				if (!isSameScopes) {
+        const proposedCaipAccountIds = options?.caipAccountIds ?? [];
+        const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
+        if (!hasSameScopesAndAccounts) {
 					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
