@@ -129,7 +129,9 @@ export class MWPTransport implements ExtendedTransport {
 					if (response.error) {
 						return resumeReject(new Error(response.error.message));
 					}
-					await this.request({ method: 'wallet_revokeSession', params: walletSession });
+					//TODO: Maybe find a better way to revoke sessions on wallet without triggering an empty notification
+					//Issue of this is it will send a session update event with an empty session and right after we may get the session recovered
+					//await this.request({ method: 'wallet_revokeSession', params: walletSession });
 					walletSession = response.result as SessionData;
 				}
 			} else if (!walletSession) {

@@ -129,12 +129,6 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 				);
 				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
 					t.expect.objectContaining({
-						method: 'wallet_revokeSession',
-						params: mockSessionData,
-					}),
-				);
-				t.expect(mockedData.mockDappClient.sendRequest).toHaveBeenCalledWith(
-					t.expect.objectContaining({
 						method: 'wallet_createSession',
 						params: {
 							optionalScopes: mockedSessionUpgradeData.sessionScopes,

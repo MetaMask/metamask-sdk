@@ -269,41 +269,6 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.state === 'disconnected').toBe(true);
 		});
 
-		t.it(`${platform} should handle session revocation errors on session upgrade`, async () => {
-			const existingSessionData: SessionData = {
-				...mockSessionData,
-				sessionScopes: {
-					'eip155:1': {
-						methods: ['eth_sendTransaction'],
-						notifications: ['accountsChanged'],
-						accounts: ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'],
-					},
-				},
-			};
-
-			const revocationError = new Error('Failed to revoke session');
-
-			mockedData.mockWalletCreateSession.mockResolvedValue(existingSessionData);
-			mockedData.mockWalletGetSession.mockResolvedValue(existingSessionData);
-			mockedData.mockWalletRevokeSession.mockImplementation(async () => {
-				throw revocationError;
-			});
-			t.vi.spyOn(SessionStore.prototype, 'list').mockImplementation(async () => Promise.resolve([await (mockedData as any).mockWalletGetSession()]));
-
-			const scopes = ['eip155:137'] as Scope[]; // Different scope to trigger upgrade
-			const caipAccountIds = ['eip155:137:0x1234567890abcdef1234567890abcdef12345678'] as any;
-
-			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
-			sdk = await createSDK(testOptions);
-
-			t.expect(sdk.state).toBe('connected');
-			t.expect(sdk.storage).toBeDefined();
-			t.expect(() => sdk.provider).toThrow();
-			t.expect(sdk.transport).toBeDefined();
-
-			await t.expect(sdk.connect(scopes, caipAccountIds)).rejects.toThrow(revocationError);
-		});
-
 		t.it(`${platform} should disconnect transport successfully`, async () => {
 			mockedData.mockWalletGetSession.mockResolvedValue(mockSessionData);
 			mockedData.nativeStorageStub.setItem('multichain-transport', transportString);
