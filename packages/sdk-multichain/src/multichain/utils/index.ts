@@ -141,6 +141,39 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
 	return options;
 }
 
+/**
+ * Enhanced scope checking function that validates both scopes and accounts
+ * @param currentScopes - Current scopes from the existing session
+ * @param proposedScopes - Proposed scopes from the connect options
+ * @param walletSession - The existing wallet session data
+ * @param proposedCaipAccountIds - Proposed account IDs from the connect options
+ * @returns true if scopes and accounts match, false otherwise
+ */
+export function isSameScopesAndAccounts(
+  currentScopes: Scope[],
+  proposedScopes: Scope[],
+  walletSession: SessionData,
+  proposedCaipAccountIds: CaipAccountId[],
+): boolean {
+  const isSameScopes =
+    currentScopes.every((scope) => proposedScopes.includes(scope)) &&
+    proposedScopes.every((scope) => currentScopes.includes(scope));
+
+  if (!isSameScopes) {
+    return false;
+  }
+
+  const existingAccountIds: CaipAccountId[] = Object.values(walletSession.sessionScopes)
+	  .filter(({ accounts }) => Boolean(accounts))
+	  .flatMap(({ accounts }) => accounts ?? []);
+
+  const allProposedAccountsIncluded = proposedCaipAccountIds.every(
+    (proposedAccountId) => existingAccountIds.includes(proposedAccountId),
+  );
+
+  return allProposedAccountsIncluded;
+}
+
 export function getValidAccounts(caipAccountIds: CaipAccountId[]) {
 	return caipAccountIds.reduce<ReturnType<typeof parseCaipAccountId>[]>((caipAccounts, caipAccountId) => {
 		try {
