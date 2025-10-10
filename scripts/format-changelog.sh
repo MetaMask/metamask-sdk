@@ -14,8 +14,10 @@ shift  # remove package name from arguments
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+# Format/fix the changelog using prettier
 if [[ "${GITHUB_REF:-}" =~ '^release/' ]]; then
-  "${ROOT_DIR}/node_modules/.bin/auto-changelog" validate --prettier --tag-prefix "${package_name}@" --rc "$@"
+  "${ROOT_DIR}/node_modules/.bin/auto-changelog" update --prettier --tag-prefix "${package_name}@" --rc "$@"
 else
-  "${ROOT_DIR}/node_modules/.bin/auto-changelog" validate --prettier --tag-prefix "${package_name}@" "$@"
+  "${ROOT_DIR}/node_modules/.bin/auto-changelog" update --prettier --tag-prefix "${package_name}@" "$@"
 fi
+

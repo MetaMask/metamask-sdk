@@ -35,8 +35,10 @@
     "build:pre-tsc": "echo 'N/A'",
     "clean": "rimraf dist",
     "dev": "rollup -c -w --bundleConfigAsCjs",
+    "changelog:update": "../../scripts/update-changelog.sh @metamask/sdk-react",
+    "changelog:validate": "../../scripts/validate-changelog.sh @metamask/sdk-react",
+    "changelog:format": "../../scripts/format-changelog.sh @metamask/sdk-react",
     "lint": "yarn lint:eslint && yarn lint:misc --check",
-    "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-react",
     "lint:eslint": "eslint . --cache --ext js,ts",
     "lint:fix": "yarn lint:eslint --fix && yarn lint:misc --write",
     "lint:misc": "prettier '**/*.json' '**/*.md' '!CHANGELOG.md' --ignore-path ../../.gitignore",
@@ -46,7 +48,7 @@
     "test:ci": "jest --coverage --passWithNoTests --setupFilesAfterEnv ./jest-preload.js"
   },
   "dependencies": {
-    "@metamask/sdk": "workspace:^",
+    "@metamask/sdk": "0.33.1",
     "debug": "4.3.4",
     "eth-rpc-errors": "^4.0.3",
     "rollup-plugin-node-builtins": "^2.1.2",
@@ -58,7 +60,6 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@lavamoat/allow-scripts": "^2.3.1",
-    "@metamask/auto-changelog": "^3.1.0",
     "@metamask/eslint-config": "^6.0.0",
     "@metamask/eslint-config-nodejs": "^6.0.0",
     "@metamask/eslint-config-typescript": "^6.0.0",

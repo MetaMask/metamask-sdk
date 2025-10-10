@@ -105,11 +105,11 @@ packages/examples/test1/ios/test1.xcworkspace/xcshareddata/IDEWorkspaceChecks.pl
 # See: https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
 **/.pnp.*
 **/.yarn/*
-**/!.yarn/patches
-**/!.yarn/plugins
-**/!.yarn/releases
-**/!.yarn/sdks
-**/!.yarn/versions
+!**/.yarn/patches
+!**/.yarn/plugins
+!**/.yarn/releases
+!**/.yarn/sdks
+!**/.yarn/versions
 packages/devnext/next.webpack.config.json
 packages/devreact/webpack.config.json
 .tool-versions
