@@ -163,12 +163,9 @@ export function isSameScopesAndAccounts(
     return false;
   }
 
-  const existingAccountIds: CaipAccountId[] = [];
-  for (const scopeObject of Object.values(walletSession.sessionScopes)) {
-    if (scopeObject.accounts) {
-      existingAccountIds.push(...scopeObject.accounts);
-    }
-  }
+  const existingAccountIds: CaipAccountId[] = Object.values(walletSession.sessionScopes)
+	  .filter(({ accounts }) => Boolean(accounts))
+	  .flatMap(({ accounts }) => accounts ?? []);
 
   const allProposedAccountsIncluded = proposedCaipAccountIds.every(
     (proposedAccountId) => existingAccountIds.includes(proposedAccountId),
