@@ -53,6 +53,55 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v2/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Track V2 namespaced events
+         * @description Endpoint to submit namespaced analytics events for the MetaMask SDK (version 2).
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody: {
+                content: {
+                    "application/json": components["schemas"]["EventV2"][];
+                };
+            };
+            responses: {
+                /** @description Events tracked successfully */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /**
+                             * @description Indicates the success of the event tracking.
+                             * @example success
+                             */
+                            status?: string;
+                        };
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -420,6 +469,47 @@ export interface components {
              * @enum {string}
              */
             platform: "extension" | "mobile";
+        };
+        EventV2: components["schemas"]["SDKConnectPayload"] | components["schemas"]["MobileSDKConnectV2Payload"];
+        SDKConnectPayload: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            namespace: "sdk/connect";
+            /** @enum {string} */
+            event_name: "sdk_initialized" | "sdk_connection_initiated" | "sdk_connection_established" | "sdk_connection_rejected" | "sdk_connection_failed" | "sdk_action_requested" | "sdk_action_succeeded" | "sdk_action_failed" | "sdk_action_rejected";
+            properties: components["schemas"]["SDKConnectProperties"];
+        };
+        MobileSDKConnectV2Payload: {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            namespace: "mobile/sdk-connect-v2";
+            /** @enum {string} */
+            event_name: "wallet_connection_request_received" | "wallet_connection_request_failed" | "wallet_connection_user_approved" | "wallet_connection_user_rejected" | "wallet_action_received" | "wallet_action_user_approved" | "wallet_action_user_rejected";
+            properties: components["schemas"]["MobileSDKConnectV2Properties"];
+        };
+        SDKConnectProperties: {
+            package_name: string;
+            package_version: string;
+            dapp_id: string;
+            /** Format: uuid */
+            anon_id: string;
+            /** @enum {string} */
+            platform: "web-desktop" | "web-mobile" | "nodejs" | "in-app-browser" | "react-native";
+            integration_type: string;
+            /** @enum {string} */
+            transport_type?: "direct" | "mwp-ws";
+            action?: string;
+            caip_chain_id?: string;
+        };
+        MobileSDKConnectV2Properties: {
+            /** Format: uuid */
+            anon_id: string;
+            /** @enum {string} */
+            platform: "mobile";
         };
     };
     responses: never;
