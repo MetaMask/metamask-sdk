@@ -60,7 +60,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 		} catch (error) {
 			setError(error);
 		}
-	}, [sdkRef.current]);
+	}, []);
 
 	const connect = useCallback(
 		async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
@@ -74,7 +74,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 				setError(error);
 			}
 		},
-		[sdkRef.current],
+		[],
 	);
 
 	const invokeMethod = useCallback(
@@ -89,7 +89,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 				setError(error);
 			}
 		},
-		[sdkRef.current],
+		[],
 	);
 
 	return (
