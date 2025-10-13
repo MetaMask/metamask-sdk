@@ -31,7 +31,7 @@ jobs:
     needs: lint-build-test
     uses: ./.github/workflows/sonar-cloud.yml
     secrets:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   is-release:
     name: Determine whether this is a release merge commit
@@ -44,7 +44,7 @@ jobs:
       - id: is-release
         uses: MetaMask/action-is-release@v1
         with:
-          commit-starts-with: 'Release [version]'
+          commit-starts-with: 'Release [version],Release v[version],Release/[version],Release/v[version],Release `[version]`'
 
   publish-release:
     name: Publish release
