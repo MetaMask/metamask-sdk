@@ -1,21 +1,22 @@
 /** biome-ignore-all lint/suspicious/noAsyncPromiseExecutor: <explanation> */
+
+import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
+import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
+import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
 import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
-import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
-import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
-import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
-import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
+import { DefaultTransport } from './transports/default';
 
 import { MWPTransport } from './transports/mwp';
 import { keymanager } from './transports/mwp/KeyManager';
-import { DefaultTransport } from './transports/default';
+import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -223,7 +224,7 @@ export class MultichainSDK extends MultichainCore {
 
 	private async onBeforeUnload() {
 		//Fixes glitch with "connecting" state when modal is still visible and we close screen or refresh
-		if (this.options.ui.factory.modal.isMounted) {
+		if (this.options.ui.factory.modal?.isMounted) {
 			await this.storage.removeTransport();
 		}
 	}
