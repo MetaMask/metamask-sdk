@@ -1,4 +1,3 @@
-import type { InvokeMethodParams } from '@metamask/multichain-api-client';
 import type { Json } from '@metamask/utils';
 import fetch from 'cross-fetch';
 
@@ -7,16 +6,13 @@ import {
 	getInfuraRpcUrls,
 	type InvokeMethodOptions,
 	isSecure,
-	METHODS_TO_REDIRECT,
 	type MultichainOptions,
 	type RpcUrlsMap,
-	type RPCAPI,
 	RPCHttpErr,
 	RPCInvokeMethodErr,
 	RPCReadonlyRequestErr,
 	RPCReadonlyResponseErr,
 	type RPCResponse,
-	type Scope,
 	EVM_RPC_PASSTHROUGH_METHODS,
 } from '../../domain';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';

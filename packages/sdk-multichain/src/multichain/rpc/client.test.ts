@@ -4,7 +4,6 @@ import * as t from 'vitest';
 import { vi } from 'vitest';
 import {
 	type InvokeMethodOptions,
-	type MultichainOptions,
 	RPC_METHODS,
 	RPCHttpErr,
 	RPCInvokeMethodErr,
@@ -171,7 +170,7 @@ t.describe('RPCClient', () => {
 		);
 
 		t.describe('redirect to provider cases', () => {
-			t.it.only('should not redirect to provider for passthrough methods', async () => {
+			t.it('should not redirect to provider for passthrough methods', async () => {
 				// Mock successful fetch response
 				const mockJsonResponse = {
 					jsonrpc: '2.0',

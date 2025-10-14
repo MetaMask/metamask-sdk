@@ -5,7 +5,7 @@ import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
-import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
+import { MWP_RELAY_URL } from 'src/config';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
