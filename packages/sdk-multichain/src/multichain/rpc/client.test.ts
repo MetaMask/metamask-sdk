@@ -33,7 +33,7 @@ vi.mock('./client', async () => {
 
 t.describe('RPCClient', () => {
 	let mockTransport: any;
-	let mockConfig: MultichainOptions['api'];
+	let mockConfig: any;
 	let sdkInfo: string;
 	let rpcClient: RPCClient;
 	let rpcClientModule: typeof RPCClient;
@@ -55,9 +55,11 @@ t.describe('RPCClient', () => {
 			request: t.vi.fn(),
 		};
 		mockConfig = {
-			infuraAPIKey: 'test-infura-key',
-			readonlyRPCMap: {
-				'eip155:1': 'https://custom-mainnet.com',
+			api: {
+				infuraAPIKey: 'test-infura-key',
+				readonlyRPCMap: {
+					'eip155:1': 'https://custom-mainnet.com',
+				},
 			},
 		};
 		sdkInfo = 'Sdk/Javascript SdkVersion/1.0.0 Platform/web';
@@ -161,9 +163,11 @@ t.describe('RPCClient', () => {
 
 			t.it('should use only Infura URLs when readonlyRPCMapConfig is not provided', async () => {
 				const configWithoutRPCMap = {
-					infuraAPIKey: 'test-infura-key',
-					// No readonlyRPCMap provided
-				};
+					api: {
+						infuraAPIKey: 'test-infura-key',
+						// No readonlyRPCMap provided
+					},
+				} as any;
 				const clientWithoutRPCMap = new rpcClientModule(mockTransport, configWithoutRPCMap, sdkInfo);
 
 				const mockJsonResponse = {
@@ -194,10 +198,12 @@ t.describe('RPCClient', () => {
 
 			t.it('should use only default headers when RPC endpoint does not include infura and custom readonly RPC is provided', async () => {
 				const configWithCustomRPC = {
-					readonlyRPCMap: {
-						'eip155:1': 'https://custom-ethereum-node.com/rpc',
+					api: {
+						readonlyRPCMap: {
+							'eip155:1': 'https://custom-ethereum-node.com/rpc',
+						},
 					},
-				};
+				} as any;
 				const clientWithCustomRPC = new rpcClientModule(mockTransport, configWithCustomRPC, sdkInfo);
 				const mockJsonResponse = {
 					jsonrpc: '2.0',
@@ -280,7 +286,7 @@ t.describe('RPCClient', () => {
 			});
 
 			t.it('should redirect to provider when no infura API key and no custom RPC map', async () => {
-				const noConfigClient = new rpcClientModule(mockTransport, {}, sdkInfo);
+				const noConfigClient = new rpcClientModule(mockTransport, {} as any, sdkInfo);
 				mockTransport.request.mockResolvedValue({ result: '0xfallback' });
 				const result = await noConfigClient.invokeMethod(baseOptions);
 				t.expect(result).toBe('0xfallback');

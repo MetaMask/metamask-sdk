@@ -1,20 +1,21 @@
 /* eslint-disable */
 
-import { createMetamaskSDK, type InvokeMethodOptions, type MultichainCore, type Scope, type SDKState, type SessionData } from '@metamask/multichain-sdk';
+import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type Scope, type SessionData, type MultichainCore } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
 import type React from 'react';
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { METAMASK_PROD_CHROME_ID } from '../constants';
+import { Linking } from 'react-native';
 
 const SDKContext = createContext<
 	| {
-		session: SessionData | undefined;
-		state: SDKState;
-		error: Error | null;
-		connect: (scopes: Scope[], caipAccountIds: CaipAccountId[]) => Promise<void>;
-		disconnect: () => Promise<void>;
-		invokeMethod: (options: InvokeMethodOptions) => Promise<any>;
-	}
+			session: SessionData | undefined;
+			state: SDKState;
+			error: Error | null;
+			connect: (scopes: Scope[], caipAccountIds: CaipAccountId[]) => Promise<void>;
+			disconnect: () => Promise<void>;
+			invokeMethod: (options: InvokeMethodOptions) => Promise<any>;
+	  }
 	| undefined
 >(undefined);
 
@@ -58,33 +59,39 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 			const sdkInstance = await sdkRef.current;
 			return sdkInstance.disconnect();
 		} catch (error) {
-			setError(error);
+			setError(error as Error);
 		}
-	}, []);
+	}, [sdkRef.current]);
 
-	const connect = useCallback(async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
-		try {
-			if (!sdkRef.current) {
-				throw new Error('SDK not initialized');
+	const connect = useCallback(
+		async (scopes: Scope[], caipAccountIds: CaipAccountId[]) => {
+			try {
+				if (!sdkRef.current) {
+					throw new Error('SDK not initialized');
+				}
+				const sdkInstance = await sdkRef.current;
+				await sdkInstance.connect(scopes, caipAccountIds);
+			} catch (error) {
+			setError(error as Error);
 			}
-			const sdkInstance = await sdkRef.current;
-			await sdkInstance.connect(scopes, caipAccountIds);
-		} catch (error) {
-			setError(error);
-		}
-	}, []);
+		},
+		[sdkRef.current],
+	);
 
-	const invokeMethod = useCallback(async (options: InvokeMethodOptions) => {
-		try {
-			if (!sdkRef.current) {
-				throw new Error('SDK not initialized');
+	const invokeMethod = useCallback(
+		async (options: InvokeMethodOptions) => {
+			try {
+				if (!sdkRef.current) {
+					throw new Error('SDK not initialized');
+				}
+				const sdkInstance = await sdkRef.current;
+				return sdkInstance.invokeMethod(options);
+			} catch (error) {
+			setError(error as Error);
 			}
-			const sdkInstance = await sdkRef.current;
-			return sdkInstance.invokeMethod(options);
-		} catch (error) {
-			setError(error);
-		}
-	}, []);
+		},
+		[sdkRef.current],
+	);
 
 	return (
 		<SDKContext.Provider
@@ -109,3 +116,4 @@ export const useSDK = () => {
 	}
 	return context;
 };
+

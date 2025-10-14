@@ -9,10 +9,14 @@ import { addValidAccounts, getOptionalScopes, getValidAccounts, isSameScopesAndA
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 const CONNECTION_GRACE_PERIOD = 60 * 1000;
-
 const DEFAULT_CONNECTION_TIMEOUT = DEFAULT_REQUEST_TIMEOUT + CONNECTION_GRACE_PERIOD;
+const SESSION_STORE_KEY = 'cache_wallet_getSession';
+
+const CACHED_METHOD_LIST = ['wallet_getSession', 'wallet_createSession', 'wallet_sessionChanged'];
+const CACHED_RESET_METHOD_LIST = ['wallet_revokeSession'];
 
 type PendingRequests = {
+	request: { jsonrpc: string; id: string } & TransportRequest;
 	method: string;
 	resolve: (value: TransportResponse<unknown>) => void;
 	reject: (error: Error) => void;
@@ -49,7 +53,7 @@ export class MWPTransport implements ExtendedTransport {
 		private options: { requestTimeout: number; connectionTimeout: number } = { requestTimeout: DEFAULT_REQUEST_TIMEOUT, connectionTimeout: DEFAULT_CONNECTION_TIMEOUT },
 	) {
 		this.dappClient.on('message', this.handleMessage.bind(this));
-		if (typeof window !== 'undefined') {
+		if (typeof window !== 'undefined' && typeof window.addEventListener !== 'undefined') {
 			window.addEventListener('focus', this.onWindowFocus.bind(this));
 		}
 	}
@@ -83,11 +87,17 @@ export class MWPTransport implements ExtendedTransport {
 						const requestWithName = {
 							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
-						} as unknown as TransportResponse<unknown>;
+						} as unknown as { jsonrpc: string; id: string } & TransportResponse<unknown>;
+
 						const notification = {
+							...messagePayload,
 							method: request.method === 'wallet_getSession' || request.method === 'wallet_createSession' ? 'wallet_sessionChanged' : request.method,
 							params: requestWithName.result,
 						};
+
+						// if (CACHED_METHOD_LIST.includes(notification.method)) {
+						// 	this.storeWalletSession(request.request, notification as unknown as TransportResponse);
+						// }
 						clearTimeout(request.timeout);
 						this.notifyCallbacks(notification);
 						request.resolve(requestWithName);
@@ -120,7 +130,9 @@ export class MWPTransport implements ExtendedTransport {
 					if (response.error) {
 						return resumeReject(new Error(response.error.message));
 					}
-					await this.request({ method: 'wallet_revokeSession', params: walletSession });
+					//TODO: Maybe find a better way to revoke sessions on wallet without triggering an empty notification
+					//Issue of this is it will send a session update event with an empty session and right after we may get the session recovered
+					//await this.request({ method: 'wallet_revokeSession', params: walletSession });
 					walletSession = response.result as SessionData;
 				}
 			} else if (!walletSession) {
@@ -175,6 +187,10 @@ export class MWPTransport implements ExtendedTransport {
 				});
 			} else {
 				connection = new Promise<void>((resolveConnection, rejectConnection) => {
+					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
+					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
+					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
+
 					this.dappClient.on('message', async (message: unknown) => {
 						if (typeof message === 'object' && message !== null) {
 							if ('data' in message) {
@@ -184,14 +200,12 @@ export class MWPTransport implements ExtendedTransport {
 										return rejectConnection(messagePayload.error);
 									}
 									this.notifyCallbacks(message.data);
+									await this.storeWalletSession(request, messagePayload as TransportResponse);
 									return resolveConnection();
 								}
 							}
 						}
 					});
-					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
-					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
-					const request = { jsonrpc: '2.0', id: `${this.__reqId++}`, method: 'wallet_createSession', params: sessionRequest };
 
 					dappClient.connect({ mode: 'trusted', initialPayload: request }).catch(rejectConnection);
 				});
@@ -226,25 +240,65 @@ export class MWPTransport implements ExtendedTransport {
 		return (this.dappClient as any).state === 'CONNECTED';
 	}
 
+	private async fetchCachedWalletSession(request: { jsonrpc: string; id: string } & TransportRequest): Promise<TransportResponse | undefined> {
+		if (request.method === 'wallet_getSession') {
+			const walletGetSession = await this.kvstore.get(SESSION_STORE_KEY);
+			if (walletGetSession) {
+				const walletSession = JSON.parse(walletGetSession);
+				return {
+					id: request.id,
+					jsonrpc: '2.0',
+					result: walletSession.params || walletSession.result,
+					method: request.method,
+				} as TransportResponse;
+			}
+		}
+	}
+
+	private async storeWalletSession(request: TransportRequest, response: TransportResponse): Promise<void> {
+		if (CACHED_METHOD_LIST.includes(request.method)) {
+			await this.kvstore.set(SESSION_STORE_KEY, JSON.stringify(response));
+		} else if (CACHED_RESET_METHOD_LIST.includes(request.method)) {
+			await this.kvstore.delete(SESSION_STORE_KEY);
+		}
+	}
+
 	/**
 	 * Sends a request through the Mobile Wallet Protocol
 	 */
 	async request<TRequest extends TransportRequest, TResponse extends TransportResponse>(payload: TRequest, options?: { timeout?: number }): Promise<TResponse> {
-		this.__reqId += 1;
-		const response = await new Promise<TResponse>((resolve, reject) => {
-			const request = {
-				jsonrpc: '2.0',
-				id: `${this.__reqId}`,
-				...payload,
-			};
+		const request = {
+			jsonrpc: '2.0',
+			id: `${this.__reqId++}`,
+			...payload,
+		};
+
+		const cachedWalletSession = await this.fetchCachedWalletSession(request);
+		if (cachedWalletSession) {
+			this.notifyCallbacks(cachedWalletSession);
+			return cachedWalletSession as TResponse;
+		}
+
+		return new Promise<TResponse>((resolve, reject) => {
 			const timeout = setTimeout(() => {
 				this.rejectRequest(request.id, new TransportTimeoutError());
 			}, options?.timeout ?? this.options.requestTimeout);
 
-			this.pendingRequests.set(request.id, { method: payload.method, resolve: resolve as (value: TransportResponse<unknown>) => void, reject, timeout });
+			this.pendingRequests.set(request.id, {
+				request,
+				method: request.method,
+				resolve: async (response: TransportResponse<unknown>) => {
+					if (CACHED_METHOD_LIST.includes(request.method)) {
+						await this.storeWalletSession(request, response);
+					}
+					return resolve(response as TResponse);
+				},
+				reject,
+				timeout,
+			});
+
 			this.dappClient.sendRequest(request).catch(reject);
 		});
-		return response;
 	}
 
 	/**
