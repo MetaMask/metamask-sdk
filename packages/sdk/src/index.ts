@@ -11,7 +11,7 @@ import {
 } from '@metamask/sdk-communication-layer';
 import { SDKProvider } from './provider/SDKProvider';
 import { MetaMaskSDK, MetaMaskSDKOptions } from './sdk';
-import { RpcUrlsMap } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import { PROVIDER_UPDATE_TYPE } from './types/ProviderUpdateType';
 
 import type { SDKLoggingOptions } from './types/SDKLoggingOptions';
@@ -26,7 +26,7 @@ export { StorageManagerAS } from './storage-manager/StorageManagerAS';
 /*#endif */
 
 export type {
-  RpcUrlsMap,
+  RPC_URLS_MAP,
   MetaMaskSDKOptions,
   SDKLoggingOptions,
   ServiceStatus,

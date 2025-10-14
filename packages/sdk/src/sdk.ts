@@ -22,7 +22,7 @@ import {
 import { connectAndSign } from './services/MetaMaskSDK/ConnectionManager/connectAndSign';
 import { connectWith } from './services/MetaMaskSDK/ConnectionManager/connectWith';
 import { initializeMetaMaskSDK } from './services/MetaMaskSDK/InitializerManager';
-import { RpcUrlsMap } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
+import { RPC_URLS_MAP } from './services/MetaMaskSDK/InitializerManager/setupReadOnlyRPCProviders';
 import {
   RemoteConnection,
   RemoteConnectionProps,
@@ -44,7 +44,7 @@ export interface MetaMaskSDKOptions {
   /**
    * A map of RPC URLs to use for read-only requests.
    */
-  readonlyRPCMap?: RpcUrlsMap;
+  readonlyRPCMap?: RPC_URLS_MAP;
 
   /**
    * If true, the SDK will inject the provider into the global `window` object.
