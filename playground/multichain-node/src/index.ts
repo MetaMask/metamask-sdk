@@ -84,6 +84,7 @@ const handleConnect = async () => {
   } catch (error: unknown) {
     if (state.spinner) {
       state.spinner.fail('Connection failed or was cancelled.');
+      state.spinner = null;
     } else {
       console.error(chalk.red('Connection failed or was cancelled.'), error instanceof Error ? error.message : String(error));
     }
