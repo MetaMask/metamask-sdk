@@ -1,7 +1,7 @@
 /* c8 ignore start */
-import type { RPC_URLS_MAP } from './types';
+import type { RpcUrlsMap } from './types';
 
-export const infuraRpcUrls: RPC_URLS_MAP = {
+export const infuraRpcUrls: RpcUrlsMap = {
 	// ###### Ethereum ######
 	// Mainnet
 	'eip155:1': 'https://mainnet.infura.io/v3/',
@@ -119,33 +119,50 @@ export const RPC_METHODS = {
 };
 
 /**
- * Configuration mapping for RPC methods that should be redirected to the wallet.
+ * Configuration mapping for EVM RPC methods that should be passed through to the provider.
  *
- * This constant defines which RPC methods require user interaction through
- * the wallet interface (true) versus those that can be handled locally (false).
- * Methods marked as true will redirect to the wallet for user approval.
+ * This constant defines which EVM RPC methods do not require user interaction through
+ * the wallet interface. Methods listed here will not redirect to the wallet for user approval.
  */
-export const METHODS_TO_REDIRECT: { [method: string]: boolean } = {
-	[RPC_METHODS.ETH_REQUESTACCOUNTS]: true,
-	[RPC_METHODS.ETH_SENDTRANSACTION]: true,
-	[RPC_METHODS.ETH_SIGNTRANSACTION]: true,
-	[RPC_METHODS.ETH_SIGN]: true,
-	[RPC_METHODS.PERSONAL_SIGN]: true,
-	// stop redirecting these as we are caching values in the provider
-	[RPC_METHODS.ETH_ACCOUNTS]: false,
-	[RPC_METHODS.ETH_CHAINID]: false,
-	//
-	[RPC_METHODS.ETH_SIGNTYPEDDATA]: true,
-	[RPC_METHODS.ETH_SIGNTYPEDDATA_V3]: true,
-	[RPC_METHODS.ETH_SIGNTYPEDDATA_V4]: true,
-	[RPC_METHODS.WALLET_REQUESTPERMISSIONS]: true,
-	[RPC_METHODS.WALLET_GETPERMISSIONS]: true,
-	[RPC_METHODS.WALLET_WATCHASSET]: true,
-	[RPC_METHODS.WALLET_ADDETHEREUMCHAIN]: true,
-	[RPC_METHODS.WALLET_SWITCHETHEREUMCHAIN]: true,
-	[RPC_METHODS.METAMASK_CONNECTSIGN]: true,
-	[RPC_METHODS.METAMASK_CONNECTWITH]: true,
-	[RPC_METHODS.PERSONAL_EC_RECOVER]: true,
-	[RPC_METHODS.METAMASK_BATCH]: true,
-	[RPC_METHODS.METAMASK_OPEN]: true,
-};
+
+export const EVM_RPC_PASSTHROUGH_METHODS = [
+	'eth_chainId', // cached
+	'eth_blockNumber',
+	'eth_gasPrice',
+	'eth_maxPriorityFeePerGas',
+	'eth_blobBaseFee',
+	'eth_feeHistory',
+	'eth_getBalance',
+	'eth_getCode',
+	'eth_getStorageAt',
+	'eth_call',
+	'eth_estimateGas',
+	'eth_getLogs',
+	'eth_getProof',
+	'eth_getTransactionCount',
+	'eth_getBlockByNumber',
+	'eth_getBlockByHash',
+	'eth_getBlockTransactionCountByNumber',
+	'eth_getBlockTransactionCountByHash',
+	'eth_getUncleCountByBlockNumber',
+	'eth_getUncleCountByBlockHash',
+	'eth_getTransactionByHash',
+	'eth_getTransactionByBlockNumberAndIndex',
+	'eth_getTransactionByBlockHashAndIndex',
+	'eth_getTransactionReceipt',
+	'eth_getUncleByBlockNumberAndIndex',
+	'eth_getUncleByBlockHashAndIndex',
+	'eth_accounts', // cached
+	'eth_coinbase', // cached, but shouldn't be callable via multichain-api
+	'eth_getFilterChanges',
+	'eth_getFilterLogs',
+	'eth_newBlockFilter',
+	'eth_newFilter',
+	'eth_newPendingTransactionFilter',
+	'eth_sendRawTransaction',
+	'eth_subscribe',
+	'eth_syncing',
+	'eth_uninstallFilter',
+	'eth_unsubscribe',
+	'web3_clientVersion',
+];

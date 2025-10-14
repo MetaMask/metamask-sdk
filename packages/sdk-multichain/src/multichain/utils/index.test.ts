@@ -299,17 +299,9 @@ t.describe('Utils', () => {
 		t.it('should return true when scopes and accounts match exactly', () => {
 			const currentScopes: Scope[] = ['eip155:1', 'eip155:137'];
 			const proposedScopes: Scope[] = ['eip155:1', 'eip155:137'];
-			const proposedCaipAccountIds = [
-				'eip155:1:0x1234567890123456789012345678901234567890',
-				'eip155:137:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-			] as CaipAccountId[];
+			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890', 'eip155:137:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});
@@ -317,16 +309,9 @@ t.describe('Utils', () => {
 		t.it('should return false when scopes do not match', () => {
 			const currentScopes: Scope[] = ['eip155:1', 'eip155:137'];
 			const proposedScopes: Scope[] = ['eip155:1', 'eip155:56']; // Different scope
-			const proposedCaipAccountIds = [
-				'eip155:1:0x1234567890123456789012345678901234567890',
-			] as CaipAccountId[];
+			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(false);
 		});
@@ -339,12 +324,7 @@ t.describe('Utils', () => {
 				'eip155:1:0x9999999999999999999999999999999999999999', // Not in session
 			] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(false);
 		});
@@ -356,12 +336,7 @@ t.describe('Utils', () => {
 				'eip155:1:0x1234567890123456789012345678901234567890', // Only one account
 			] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});
@@ -371,12 +346,7 @@ t.describe('Utils', () => {
 			const proposedScopes: Scope[] = ['eip155:1', 'eip155:137'];
 			const proposedCaipAccountIds: CaipAccountId[] = [];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			)
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});
@@ -387,12 +357,7 @@ t.describe('Utils', () => {
 			const proposedScopes: Scope[] = [];
 			const proposedCaipAccountIds: CaipAccountId[] = [];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				emptySession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, emptySession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});
@@ -412,12 +377,7 @@ t.describe('Utils', () => {
 			const proposedScopes: Scope[] = ['eip155:1'];
 			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				sessionWithoutAccounts,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, sessionWithoutAccounts, proposedCaipAccountIds);
 
 			t.expect(result).toBe(false);
 		});
@@ -437,12 +397,7 @@ t.describe('Utils', () => {
 			const proposedScopes: Scope[] = ['eip155:1'];
 			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				sessionWithEmptyAccounts,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, sessionWithEmptyAccounts, proposedCaipAccountIds);
 
 			t.expect(result).toBe(false);
 		});
@@ -450,17 +405,9 @@ t.describe('Utils', () => {
 		t.it('should return true when scopes have different order but same content', () => {
 			const currentScopes: Scope[] = ['eip155:1', 'eip155:137'];
 			const proposedScopes: Scope[] = ['eip155:137', 'eip155:1']; // Different order
-			const proposedCaipAccountIds = [
-				'eip155:1:0x1234567890123456789012345678901234567890',
-				'eip155:137:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-			] as CaipAccountId[];
+			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890', 'eip155:137:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				mockWalletSession,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, mockWalletSession, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});
@@ -471,26 +418,16 @@ t.describe('Utils', () => {
 					'eip155:1': {
 						methods: ['eth_sendTransaction'],
 						notifications: ['chainChanged'],
-						accounts: [
-							'eip155:1:0x1234567890123456789012345678901234567890',
-							'eip155:1:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
-						],
+						accounts: ['eip155:1:0x1234567890123456789012345678901234567890', 'eip155:1:0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'],
 					},
 				},
 			} as any;
 
 			const currentScopes: Scope[] = ['eip155:1'];
 			const proposedScopes: Scope[] = ['eip155:1'];
-			const proposedCaipAccountIds = [
-				'eip155:1:0x1234567890123456789012345678901234567890',
-			] as CaipAccountId[];
+			const proposedCaipAccountIds = ['eip155:1:0x1234567890123456789012345678901234567890'] as CaipAccountId[];
 
-			const result = utils.isSameScopesAndAccounts(
-				currentScopes,
-				proposedScopes,
-				sessionWithMultipleAccounts,
-				proposedCaipAccountIds,
-			);
+			const result = utils.isSameScopesAndAccounts(currentScopes, proposedScopes, sessionWithMultipleAccounts, proposedCaipAccountIds);
 
 			t.expect(result).toBe(true);
 		});

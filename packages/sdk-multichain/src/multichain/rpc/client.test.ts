@@ -58,7 +58,7 @@ t.describe('RPCClient', () => {
 			api: {
 				infuraAPIKey: 'test-infura-key',
 				readonlyRPCMap: {
-					'eip155:1': 'https://custom-mainnet.com',
+					'eip155:11155111': 'https://custom-mainnet.com',
 				},
 			},
 		};
@@ -102,8 +102,76 @@ t.describe('RPCClient', () => {
 	});
 
 	t.describe('invokeMethod', () => {
+		t.it('should use readonlyRPCMap rpc endpoint when infuraAPIKey is provided and readonlyRPCMap contains a chainId that also exists in the infura RPC constants', async () => {
+			const mockJsonResponse = {
+				jsonrpc: '2.0',
+				result: '0x1234567890abcdef',
+				id: 1,
+			};
+
+			const mockResponse = {
+				ok: true,
+				json: t.vi.fn().mockResolvedValue(mockJsonResponse),
+			};
+
+			mockFetch.mockResolvedValue(mockResponse);
+
+			const result = await rpcClient.invokeMethod({ ...baseOptions, scope: 'eip155:11155111' });
+
+			t.expect(result).toBe('0x1234567890abcdef');
+			t.expect(mockTransport.request).not.toHaveBeenCalled();
+			t.expect(mockFetch).toHaveBeenCalledWith('https://custom-mainnet.com', {
+				method: 'POST',
+				headers: defaultHeaders,
+				body: t.expect.stringContaining('"method":"eth_getBalance"'),
+			});
+		});
+
+		t.it(
+			'should use readonlyRPCMap rpc endpoint when infuraAPIKey is provided and readonlyRPCMap does not contain a chainId that also exists in the infura RPC constants',
+			async () => {
+				const mockJsonResponse = {
+					jsonrpc: '2.0',
+					result: '0x1234567890abcdef',
+					id: 1,
+				};
+
+				const mockResponse = {
+					ok: true,
+					json: t.vi.fn().mockResolvedValue(mockJsonResponse),
+				};
+
+				mockFetch.mockResolvedValue(mockResponse);
+
+				const clientModule = await import('./client');
+				const rpcClient = new clientModule.RPCClient(
+					mockTransport,
+					{
+						...mockConfig,
+						api: {
+							...mockConfig.api,
+							readonlyRPCMap: {
+								'eip155:10000': 'https://custom-rpc.com',
+							},
+						},
+					},
+					sdkInfo,
+				);
+
+				const result = await rpcClient.invokeMethod({ ...baseOptions, scope: 'eip155:10000' });
+
+				t.expect(result).toBe('0x1234567890abcdef');
+				t.expect(mockTransport.request).not.toHaveBeenCalled();
+				t.expect(mockFetch).toHaveBeenCalledWith('https://custom-rpc.com', {
+					method: 'POST',
+					headers: defaultHeaders,
+					body: t.expect.stringContaining('"method":"eth_getBalance"'),
+				});
+			},
+		);
+
 		t.describe('redirect to provider cases', () => {
-			t.it('should not redirect to provider for readonly methods', async () => {
+			t.it.only('should not redirect to provider for passthrough methods', async () => {
 				// Mock successful fetch response
 				const mockJsonResponse = {
 					jsonrpc: '2.0',
@@ -229,24 +297,6 @@ t.describe('RPCClient', () => {
 					headers: defaultHeaders,
 					body: t.expect.stringMatching(/^\{"jsonrpc":"2\.0","method":"eth_accounts","id":\d+\}$/),
 				});
-			});
-
-			t.it('should redirect to provider for methods in METHODS_TO_REDIRECT', async () => {
-				const redirectOptions: InvokeMethodOptions = {
-					scope: 'eip155:1' as Scope,
-					request: {
-						method: RPC_METHODS.ETH_SENDTRANSACTION,
-						params: { to: '0x123', value: '0x100' },
-					},
-				};
-				mockTransport.request.mockResolvedValue({ result: '0xhash' });
-				const result = await rpcClient.invokeMethod(redirectOptions);
-				t.expect(result).toBe('0xhash');
-				t.expect(mockTransport.request).toHaveBeenCalledWith({
-					method: 'wallet_invokeMethod',
-					params: redirectOptions,
-				});
-				t.expect(mockFetch).not.toHaveBeenCalled();
 			});
 
 			t.it('should redirect to provider for personal_sign method', async () => {

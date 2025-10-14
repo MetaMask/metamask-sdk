@@ -1,11 +1,11 @@
 import type { StoreClient } from '../store';
 import type { MultichainCore } from '.';
-import type { RPC_URLS_MAP, Scope } from './api/types';
+import type { RpcUrlsMap, Scope } from './api/types';
 import type { ModalFactory } from '../../ui';
 import type { SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import type { PlatformType } from '../platform';
 import type { Transport } from '@metamask/multichain-api-client';
-import type { CaipAccountId } from '@metamask/utils';
+import type { CaipAccountId, CaipChainId } from '@metamask/utils';
 
 export type { SessionData } from '@metamask/multichain-api-client';
 
@@ -44,7 +44,7 @@ export type MultichainOptions = {
 		/** The Infura API key to use for RPC requests */
 		infuraAPIKey?: string;
 		/** A map of RPC URLs to use for read-only requests */
-		readonlyRPCMap?: RPC_URLS_MAP;
+		readonlyRPCMap?: RpcUrlsMap;
 	};
 	/** Analytics configuration */
 	analytics?: { enabled: false } | { enabled: true; integrationType: string };

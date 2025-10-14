@@ -121,9 +121,9 @@ export class MWPTransport implements ExtendedTransport {
 			if (walletSession && options) {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
-        const proposedCaipAccountIds = options?.caipAccountIds ?? [];
-        const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
-        if (!hasSameScopesAndAccounts) {
+				const proposedCaipAccountIds = options?.caipAccountIds ?? [];
+				const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
+				if (!hasSameScopesAndAccounts) {
 					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });

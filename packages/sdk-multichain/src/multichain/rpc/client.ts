@@ -9,7 +9,7 @@ import {
 	isSecure,
 	METHODS_TO_REDIRECT,
 	type MultichainOptions,
-	type RPC_URLS_MAP,
+	type RpcUrlsMap,
 	type RPCAPI,
 	RPCHttpErr,
 	RPCInvokeMethodErr,
@@ -17,6 +17,7 @@ import {
 	RPCReadonlyResponseErr,
 	type RPCResponse,
 	type Scope,
+	EVM_RPC_PASSTHROUGH_METHODS,
 } from '../../domain';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';
 import { openDeeplink } from '../utils';
@@ -77,7 +78,7 @@ export class RPCClient {
 		return defaultHeaders;
 	}
 
-	private async runReadOnlyMethod(options: InvokeMethodOptions, rpcEndpoint: string) {
+	private async requestFromRpcEndpoint(options: InvokeMethodOptions, rpcEndpoint: string) {
 		const { request } = options;
 		const body = JSON.stringify({
 			jsonrpc: '2.0',
@@ -98,22 +99,22 @@ export class RPCClient {
 		const { preferDesktop = false, headless: _headless = false } = ui ?? {};
 		const { infuraAPIKey, readonlyRPCMap: readonlyRPCMapConfig } = api ?? {};
 
-		let readonlyRPCMap: RPC_URLS_MAP = readonlyRPCMapConfig ?? {};
+		let readonlyRPCMap: RpcUrlsMap = readonlyRPCMapConfig ?? {};
 		if (infuraAPIKey) {
 			const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
 			if (readonlyRPCMapConfig) {
 				readonlyRPCMap = {
-					...readonlyRPCMapConfig,
 					...urlsWithToken,
+					...readonlyRPCMapConfig,
 				};
 			} else {
 				readonlyRPCMap = urlsWithToken;
 			}
 		}
 		const rpcEndpoint = readonlyRPCMap[options.scope];
-		const isReadOnlyMethod = !METHODS_TO_REDIRECT[request.method];
-		if (rpcEndpoint && isReadOnlyMethod) {
-			const response = await this.runReadOnlyMethod(options, rpcEndpoint);
+		const isPassthroughMethod = EVM_RPC_PASSTHROUGH_METHODS.find((method) => method === request.method);
+		if (rpcEndpoint && isPassthroughMethod) {
+			const response = await this.requestFromRpcEndpoint(options, rpcEndpoint);
 			return response;
 		}
 		try {
