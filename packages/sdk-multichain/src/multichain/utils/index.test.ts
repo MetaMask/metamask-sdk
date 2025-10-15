@@ -71,8 +71,8 @@ t.describe('Utils', () => {
 		});
 	});
 
-	t.describe('getSDKVersion', () => {
-		t.it('should get SDK version', () => {
+	t.describe('getConnectVersion', () => {
+		t.it('should get MetaMask Connect Module version', () => {
 			t.expect(utils.getVersion()).toBe(packageJson.version);
 		});
 	});

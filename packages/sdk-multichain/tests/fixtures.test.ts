@@ -19,12 +19,12 @@ import './mocks';
 import * as t from 'vitest';
 import { vi } from 'vitest';
 import type { MultichainOptions } from '../src/domain';
-import { MultichainSDK } from '../src/multichain';
+import { MultichainConnect } from '../src/multichain';
 
-// Import createSDK functions for convenience
-import { createMetamaskSDK as createMetamaskSDKWeb } from '../src/index.browser';
-import { createMetamaskSDK as createMetamaskSDKRN } from '../src/index.native';
-import { createMetamaskSDK as createMetamaskSDKNode } from '../src/index.node';
+// Import createConnect functions for convenience
+import { createMetamaskConnect as createMetamaskConnectWeb } from '../src/index.browser';
+import { createMetamaskConnect as createMetamaskConnectRN } from '../src/index.native';
+import { createMetamaskConnect as createMetamaskConnectNode } from '../src/index.node';
 import type { NativeStorageStub, MockedData, TestSuiteOptions, CreateTestFN } from '../tests/types';
 
 import { getDefaultTransport, TransportResponse } from '@metamask/multichain-api-client';
@@ -40,7 +40,7 @@ export const TRANSPORT_REQUEST_RESPONSE_DELAY = 50;
 export const runTestsInNodeEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
 	return createTest({
 		platform: 'node',
-		createSDK: createMetamaskSDKNode,
+		createSDK: createMetamaskConnectNode,
 		options,
 		setupMocks: setupNodeMocks,
 		tests: testSuite,
@@ -50,7 +50,7 @@ export const runTestsInNodeEnv = <T extends MultichainOptions>(options: T, testS
 export const runTestsInRNEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void) => {
 	return createTest({
 		platform: 'rn',
-		createSDK: createMetamaskSDKRN,
+		createSDK: createMetamaskConnectRN,
 		options,
 		setupMocks: setupRNMocks,
 		tests: testSuite,
@@ -60,7 +60,7 @@ export const runTestsInRNEnv = <T extends MultichainOptions>(options: T, testSui
 export const runTestsInWebEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
 	return createTest({
 		platform: 'web',
-		createSDK: createMetamaskSDKWeb,
+		createSDK: createMetamaskConnectWeb,
 		options,
 		setupMocks: (nativeStorageStub) => setupWebMocks(nativeStorageStub, dappUrl),
 		tests: testSuite,
@@ -70,7 +70,7 @@ export const runTestsInWebEnv = <T extends MultichainOptions>(options: T, testSu
 export const runTestsInWebMobileEnv = <T extends MultichainOptions>(options: T, testSuite: (options: TestSuiteOptions<T>) => void, dappUrl?: string) => {
 	return createTest({
 		platform: 'web-mobile',
-		createSDK: createMetamaskSDKWeb,
+		createSDK: createMetamaskConnectWeb,
 		options,
 		setupMocks: (nativeStorageStub) => setupWebMobileMocks(nativeStorageStub, dappUrl),
 		tests: testSuite,
@@ -96,9 +96,9 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
       nativeStorageStub.data.clear();
     }),
   }
-	let setupAnalyticsSpy!: t.MockInstance<MultichainSDK['setupAnalytics']>;
-	let initSpy!: t.MockInstance<MultichainSDK['init']>;
-	let emitSpy!: t.MockInstance<MultichainSDK['emit']>;
+	let setupAnalyticsSpy!: t.MockInstance<MultichainConnect['setupAnalytics']>;
+	let initSpy!: t.MockInstance<MultichainConnect['init']>;
+	let emitSpy!: t.MockInstance<MultichainConnect['emit']>;
 	let showInstallModalSpy!: t.MockInstance<any>;
 	let mockLogger!: t.MockInstance<debug.Debugger>;
 	let mockDefaultTransport!: t.Mocked<any>;
@@ -200,13 +200,13 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
 			};
 
       // Set debug flag
-			nativeStorageStub.data.set('DEBUG', 'metamask-sdk:*');
+			nativeStorageStub.data.set('DEBUG', 'metamask-connect:*');
 
-			// Create spies for SDK methods
-			initSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'init');
-			setupAnalyticsSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'setupAnalytics');
-			emitSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'emit');
-			showInstallModalSpy = t.vi.spyOn(MultichainSDK.prototype as any, 'showInstallModal');
+			// Create spies for MetaMask Connect Module methods
+			initSpy = t.vi.spyOn(MultichainConnect.prototype as any, 'init');
+			setupAnalyticsSpy = t.vi.spyOn(MultichainConnect.prototype as any, 'setupAnalytics');
+			emitSpy = t.vi.spyOn(MultichainConnect.prototype as any, 'emit');
+			showInstallModalSpy = t.vi.spyOn(MultichainConnect.prototype as any, 'showInstallModal');
 
 
 			mwpCoreActual.__mockStorage = nativeStorageStub.data;
@@ -457,7 +457,7 @@ export const createTest: CreateTestFN = ({ platform, options, createSDK, setupMo
       createDappClientMock.mockImplementation(() => mockDappClient);
       defaultTransportMock.mockReturnValue(mockDefaultTransport);
 
-			t.vi.spyOn(MultichainSDK.prototype as any, 'createDappClient').mockImplementation(() => {
+			t.vi.spyOn(MultichainConnect.prototype as any, 'createDappClient').mockImplementation(() => {
 				return mockDappClient;
 			});
 

@@ -133,7 +133,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 			parentElement,
 			preferDesktop,
 			link: qrCodeLink,
-			sdkVersion: getVersion(),
+			connectVersion: getVersion(),
 			generateQRCode: async (request) => this.createDeeplink(request),
 			onClose: this.onCloseModal.bind(this),
 			startDesktopOnboarding: this.onStartDesktopOnboarding.bind(this),
@@ -158,7 +158,7 @@ export class ModalFactory<T extends FactoryModals = FactoryModals> {
 
 		const modal = new this.options.OTPCodeModal({
 			parentElement: container,
-			sdkVersion: getVersion(),
+			connectVersion: getVersion(),
 			otpCode,
 			onClose: this.onCloseModal.bind(this),
 			createOTPCode,

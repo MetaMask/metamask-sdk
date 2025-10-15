@@ -91,7 +91,7 @@ t.describe('WEB Modals', () => {
 			onStartDesktopOnboarding = vi.fn();
 
 			installModal = new WebModals.InstallModal({
-				sdkVersion: '1.0.0',
+				connectVersion: '1.0.0',
 				preferDesktop: false,
 				onClose,
 				startDesktopOnboarding: onStartDesktopOnboarding,
@@ -118,7 +118,7 @@ t.describe('WEB Modals', () => {
 			installModal.mount();
 			const modalElement = document.querySelector('mm-install-modal');
 			t.expect(modalElement?.preferDesktop).toBe(false);
-			t.expect(modalElement?.sdkVersion).toBe('1.0.0');
+			t.expect(modalElement?.connectVersion).toBe('1.0.0');
 		});
 
 		t.it('should handle close event', () => {

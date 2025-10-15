@@ -62,7 +62,7 @@ t.describe('Node Modals', () => {
 	t.it('should render QR code and expiration time to the console', async () => {
 		const expiresIn = (connectionRequest.sessionRequest.expiresAt - Date.now()) / 1000;
 		const installModal = new NodeModals.InstallModal({
-			sdkVersion: packageJson.version,
+			connectVersion: packageJson.version,
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
@@ -126,7 +126,7 @@ t.describe('Node Modals', () => {
 
 		const createConnectionRequestMock = vi.fn().mockResolvedValue(renewedConnectionRequest); // Only mock the renewal call
 		const installModal = new NodeModals.InstallModal({
-			sdkVersion: packageJson.version,
+			connectVersion: packageJson.version,
 			preferDesktop: false,
 			onClose: vi.fn(),
 			startDesktopOnboarding: vi.fn(),
@@ -176,7 +176,7 @@ t.describe('Node Modals', () => {
 			createOTPCode: vi.fn().mockResolvedValue(otpCode),
 			updateOTPCode: vi.fn() as any,
 			onDisconnect: vi.fn() as any,
-			sdkVersion: packageJson.version,
+			connectVersion: packageJson.version,
 		});
 
 		t.expect(otpCodeModal).toBeDefined();

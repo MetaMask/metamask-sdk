@@ -3,7 +3,7 @@ import type EIP155 from './eip155';
 /**
  * Represents a blockchain scope identifier in CAIP format.
  *
- * Scopes define which blockchain networks and standards the SDK
+ * Scopes define which blockchain networks and standards the MetaMask Connect Module
  * can interact with. The format follows CAIP standards for
  * blockchain identification.
  *

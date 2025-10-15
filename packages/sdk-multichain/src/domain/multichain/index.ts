@@ -1,11 +1,11 @@
 import type { MultichainApiClient, SessionData, Transport } from '@metamask/multichain-api-client';
 import type { CaipAccountId, Json } from '@metamask/utils';
-import { EventEmitter, type SDKEvents } from '../events';
+import { EventEmitter, type ConnectEvents } from '../events';
 import type { StoreClient } from '../store/client';
 import type { InvokeMethodOptions, RPCAPI, Scope } from './api/types';
 import type { MultichainOptions } from './types';
 
-export type SDKState = 'pending' | 'loaded' | 'disconnected' | 'connected' | 'connecting';
+export type ConnectState = 'pending' | 'loaded' | 'disconnected' | 'connected' | 'connecting';
 
 export enum TransportType {
 	Browser = 'browser',
@@ -14,14 +14,14 @@ export enum TransportType {
 }
 
 /**
- * Abstract base class for the Multichain SDK implementation.
+ * Abstract base class for the MetaMask Connect Module implementation.
  *
- * This class defines the core interface that all Multichain SDK implementations
+ * This class defines the core interface that all MetaMask Connect Module implementations
  * must provide, including session management, connection handling, and method invocation.
  */
-export abstract class MultichainCore extends EventEmitter<SDKEvents> {
+export abstract class MultichainCore extends EventEmitter<ConnectEvents> {
 	abstract storage: StoreClient;
-	abstract state: SDKState;
+	abstract state: ConnectState;
 	abstract provider: MultichainApiClient<RPCAPI>;
 	abstract transport: Transport;
 
