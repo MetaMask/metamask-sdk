@@ -10,7 +10,7 @@ import {
 
 import { createLogger } from '../../domain/logger';
 import { openDeeplink } from '../utils';
-import { getRpcHandlingStrategy, RpcHandlingStrategy } from './strategy';
+import { getRequestHandlingStrategy, RequestHandlingStrategy } from './strategy';
 
 const logger = createLogger('metamask-sdk:core');
 let rpcId = 1;
@@ -32,16 +32,16 @@ export class RPCClient {
 	 * for the request and delegating to the appropriate private handler.
 	 */
 	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
-		const strategy = getRpcHandlingStrategy(options.request.method);
+		const strategy = getRequestHandlingStrategy(options.request.method);
 
 		switch (strategy) {
-			case RpcHandlingStrategy.DIRECT_PASSTHROUGH:
-				return this.handleDirectPassthrough(options);
+			case RequestHandlingStrategy.WALLET:
+				return this.handleWithWallet(options);
 
-			case RpcHandlingStrategy.INTERCEPT_AND_ROUTE_TO_RPC_NODE:
+			case RequestHandlingStrategy.RPC:
 				return this.handleWithRpcNode(options);
 
-			case RpcHandlingStrategy.INTERCEPT_AND_RESPOND_FROM_SDK_STATE:
+			case RequestHandlingStrategy.SDK:
 				return this.handleWithSdkState(options);
 		}
 	}
@@ -49,7 +49,7 @@ export class RPCClient {
 	/**
 	 * Forwards the request directly to the wallet via the transport.
 	 */
-	private async handleDirectPassthrough(options: InvokeMethodOptions): Promise<Json> {
+	private async handleWithWallet(options: InvokeMethodOptions): Promise<Json> {
 		try {
 			const request = this.transport.request({
 				method: 'wallet_invokeMethod',
@@ -87,7 +87,7 @@ export class RPCClient {
 	private async handleWithRpcNode(options: InvokeMethodOptions): Promise<Json> {
 		// TODO: to be implemented
 		console.warn(`Method "${options.request.method}" is configured for RPC node handling, but this is not yet implemented. Falling back to wallet passthrough.`);
-		return this.handleDirectPassthrough(options);
+		return this.handleWithWallet(options);
 	}
 
 	/**
@@ -96,6 +96,6 @@ export class RPCClient {
 	private async handleWithSdkState(options: InvokeMethodOptions): Promise<Json> {
 		// TODO: to be implemented
 		console.warn(`Method "${options.request.method}" is configured for SDK state handling, but this is not yet implemented. Falling back to wallet passthrough.`);
-		return this.handleDirectPassthrough(options);
+		return this.handleWithWallet(options);
 	}
 }
