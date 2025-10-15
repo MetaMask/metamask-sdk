@@ -90,7 +90,6 @@ const detectionPromise: Promise<boolean> = (() => {
 		const providers: any[] = [];
 
 		const handler = (event: any) => {
-			console.log('EIP-6963: Announced provider:', event.detail.info);
 			providers.push(event.detail);
 		};
 
@@ -104,7 +103,6 @@ const detectionPromise: Promise<boolean> = (() => {
 				(p) => p.info.rdns === 'io.metamask',
 			);
 
-			console.log(`EIP-6963: MetaMask found? ${hasMetaMask}`);
 			resolve(hasMetaMask);
 		}, 100); // timeout as default
 	});
