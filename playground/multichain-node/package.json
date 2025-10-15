@@ -15,9 +15,12 @@
   },
   "dependencies": {
     "@metamask/multichain-sdk": "workspace:*",
-    "@metamask/sdk": "workspace:^"
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.4",
+    "ora": "^5.4.1"
   },
   "devDependencies": {
+    "@types/inquirer": "^8.2.1",
     "@types/node": "^20.4.1",
     "ts-node": "^10.9.1",
     "tsup": "^8.0.1",
