@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
@@ -16,6 +16,7 @@
     "@metamask/multichain-sdk": "workspace:^",
     "@metamask/utils": "^11.8.1",
     "@open-rpc/meta-schema": "^1.14.9",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-picker/picker": "^2.11.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/elements": "^2.3.8",
@@ -52,6 +53,7 @@
     "@metamask/api-specs": "^0.14.0",
     "@types/react": "~19.1.10",
     "@types/react-native-get-random-values": "^1.8.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "typescript": "~5.9.2"

@@ -89,13 +89,13 @@ export default function Page() {
 
 					{isConnecting && (
 						<>
-            <TouchableOpacity onPress={connect} style={sharedStyles.button} disabled>
-							<Text style={sharedStyles.buttonText}>Connecting...</Text>
-						</TouchableOpacity>
-            <TouchableOpacity onPress={disconnect} style={sharedStyles.buttonCancell}>
-							<Text style={sharedStyles.buttonText}>Cancell</Text>
-						</TouchableOpacity>
-            </>
+							<TouchableOpacity onPress={connect} style={sharedStyles.button} disabled>
+								<Text style={sharedStyles.buttonText}>Connecting...</Text>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={disconnect} style={sharedStyles.buttonCancel}>
+								<Text style={sharedStyles.buttonText}>Cancel</Text>
+							</TouchableOpacity>
+						</>
 					)}
 
 					{isDisconnected && (
