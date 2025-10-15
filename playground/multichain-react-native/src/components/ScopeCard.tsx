@@ -156,14 +156,14 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 			const params = extractRequestParams(finalRequestObject);
 			console.log(`📤 Calling invokeMethod with params:`, params);
 
-			const paramsArray = normalizeMethodParams(method, params);
-			console.log(`📤 Normalized params array:`, paramsArray);
+			const normalizedParams = normalizeMethodParams(method, params, scope);
+			console.log(`📤 Normalized params:`, normalizedParams);
 
 			const result = await invokeMethod({
 				scope,
 				request: {
 					method,
-					params: paramsArray,
+					params: normalizedParams,
 				},
 			});
 
