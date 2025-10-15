@@ -90,7 +90,9 @@ const detectionPromise: Promise<boolean> = (() => {
 		const providers: any[] = [];
 
 		const handler = (event: any) => {
-			providers.push(event.detail);
+			if (event?.detail?.info?.rdns) {
+				providers.push(event.detail);
+			}
 		};
 
 		window.addEventListener('eip6963:announceProvider', handler);
@@ -100,11 +102,11 @@ const detectionPromise: Promise<boolean> = (() => {
 			window.removeEventListener('eip6963:announceProvider', handler);
 
 			const hasMetaMask = providers.some(
-				(p) => p.info.rdns === 'io.metamask',
+				(p) => p?.info?.rdns === 'io.metamask',
 			);
 
 			resolve(hasMetaMask);
-		}, 100); // timeout as default
+		}, 300); // default timeout 
 	});
 })();
 
