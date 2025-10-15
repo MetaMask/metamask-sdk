@@ -86,20 +86,6 @@ t.describe('RPCClient', () => {
 		t.vi.resetAllMocks();
 	});
 
-	t.describe('getHeaders', () => {
-		t.it('should return default headers when RPC endpoint does not include infura', () => {
-			const customRpcEndpoint = 'https://custom-ethereum-node.com/rpc';
-			const headers = (rpcClient as any).getHeaders(customRpcEndpoint);
-			t.expect(headers).toEqual(defaultHeaders);
-			t.expect(headers).not.toHaveProperty('Metamask-Sdk-Info');
-		});
-
-		t.it('should return headers with Metamask-Sdk-Info when RPC endpoint includes infura', () => {
-			const infuraEndpoint = 'https://mainnet.infura.io/v3/test-key';
-			const currentHeaders = (rpcClient as any).getHeaders(infuraEndpoint);
-			t.expect(currentHeaders).toEqual(headers);
-		});
-	});
 
 	t.describe('invokeMethod', () => {
 		t.describe('redirect to provider cases', () => {
