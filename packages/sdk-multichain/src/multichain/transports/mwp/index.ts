@@ -1,10 +1,9 @@
-import { type CreateSessionParams, TransportTimeoutError, type TransportRequest, type TransportResponse } from '@metamask/multichain-api-client';
 import type { Session, SessionRequest } from '@metamask/mobile-wallet-protocol-core';
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 import type { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
-
-import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData, type StoreAdapter } from '../../../domain';
+import { type CreateSessionParams, type TransportRequest, type TransportResponse, TransportTimeoutError } from '@metamask/multichain-api-client';
 import type { CaipAccountId } from '@metamask/utils';
+import { createLogger, type ExtendedTransport, type RPCAPI, type Scope, type SessionData, type StoreAdapter } from '../../../domain';
 import { addValidAccounts, getOptionalScopes, getValidAccounts, isSameScopesAndAccounts } from '../../utils';
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
@@ -34,6 +33,7 @@ export class MWPTransport implements ExtendedTransport {
 	private __pendingRequests = new Map<string, PendingRequests>();
 	private notificationCallbacks = new Set<(data: unknown) => void>();
 	private currentSessionRequest: SessionRequest | undefined;
+	private windowFocusHandler: (() => void) | undefined;
 
 	get pendingRequests() {
 		return this.__pendingRequests;
@@ -54,7 +54,8 @@ export class MWPTransport implements ExtendedTransport {
 	) {
 		this.dappClient.on('message', this.handleMessage.bind(this));
 		if (typeof window !== 'undefined' && typeof window.addEventListener !== 'undefined') {
-			window.addEventListener('focus', this.onWindowFocus.bind(this));
+			this.windowFocusHandler = this.onWindowFocus.bind(this);
+			window.addEventListener('focus', this.windowFocusHandler);
 		}
 	}
 
@@ -121,9 +122,9 @@ export class MWPTransport implements ExtendedTransport {
 			if (walletSession && options) {
 				const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 				const proposedScopes = options?.scopes ?? [];
-        const proposedCaipAccountIds = options?.caipAccountIds ?? [];
-        const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
-        if (!hasSameScopesAndAccounts) {
+				const proposedCaipAccountIds = options?.caipAccountIds ?? [];
+				const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
+				if (!hasSameScopesAndAccounts) {
 					const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 					const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };
 					const response = await this.request({ method: 'wallet_createSession', params: sessionRequest });
@@ -169,7 +170,7 @@ export class MWPTransport implements ExtendedTransport {
 				logger('active session found', activeSession);
 				session = activeSession;
 			}
-		} catch {}
+		} catch { }
 
 		let timeout: NodeJS.Timeout;
 		const connectionPromise = new Promise<void>((resolve, reject) => {
@@ -229,6 +230,11 @@ export class MWPTransport implements ExtendedTransport {
 	 * Disconnects from the Mobile Wallet Protocol
 	 */
 	async disconnect(): Promise<void> {
+		// Clean up window focus event listener
+		if (typeof window !== 'undefined' && typeof window.removeEventListener !== 'undefined' && this.windowFocusHandler) {
+			window.removeEventListener('focus', this.windowFocusHandler);
+			this.windowFocusHandler = undefined;
+		}
 		return this.dappClient.disconnect();
 	}
 
