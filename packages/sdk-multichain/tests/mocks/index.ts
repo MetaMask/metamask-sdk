@@ -5,3 +5,4 @@ import './dappClient';
 import './uiPackage';
 import './ws';
 import './mwp';
+import './platform';
