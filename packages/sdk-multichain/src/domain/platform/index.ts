@@ -80,9 +80,36 @@ export function isSecure() {
 	return isReactNative() || platformType === PlatformType.MobileWeb;
 }
 
-export function hasExtension() {
-	if (typeof window !== 'undefined') {
-		return window.ethereum?.isMetaMask ?? false;
+// Immediately start MetaMask detection when module loads
+const detectionPromise: Promise<boolean> = (() => {
+	if (typeof window === 'undefined') {
+		return Promise.resolve(false);
 	}
-	return false;
+
+	return new Promise((resolve) => {
+		const providers: any[] = [];
+
+		const handler = (event: any) => {
+			console.log('EIP-6963: Announced provider:', event.detail.info);
+			providers.push(event.detail);
+		};
+
+		window.addEventListener('eip6963:announceProvider', handler);
+		window.dispatchEvent(new Event('eip6963:requestProvider'));
+
+		setTimeout(() => {
+			window.removeEventListener('eip6963:announceProvider', handler);
+
+			const hasMetaMask = providers.some(
+				(p) => p.info.rdns === 'io.metamask',
+			);
+
+			console.log(`EIP-6963: MetaMask found? ${hasMetaMask}`);
+			resolve(hasMetaMask);
+		}, 100); // timeout as default
+	});
+})();
+
+export function hasExtension(): Promise<boolean> {
+	return detectionPromise;
 }

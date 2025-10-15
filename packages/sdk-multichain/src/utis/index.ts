@@ -106,13 +106,3 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
 	}
 	return options;
 }
-
-/**
- * Check if MetaMask extension is installed
- */
-export function isMetaMaskInstalled(): boolean {
-	if (typeof window === 'undefined') {
-		return false;
-	}
-	return Boolean(window.ethereum?.isMetaMask);
-}

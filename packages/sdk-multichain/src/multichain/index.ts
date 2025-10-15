@@ -140,7 +140,7 @@ export class MultichainSDK extends MultichainCore {
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
 				//Check if the user still have the extension or not return the transport
-				if (hasExtension() && preferExtension) {
+				if ((await hasExtension()) && preferExtension) {
 					const apiTransport = new DefaultTransport();
 					this.__transport = apiTransport;
 					this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
@@ -409,7 +409,7 @@ export class MultichainSDK extends MultichainCore {
 			);
 		}
 
-		if (isWeb && hasExtension() && preferExtension) {
+		if (isWeb && (await hasExtension()) && preferExtension) {
 			//If metamask extension is available, connect to it
 			const defaultTransport = await this.setupDefaultTransport();
 			// Web transport has no initial payload
@@ -420,7 +420,7 @@ export class MultichainSDK extends MultichainCore {
 		await this.setupMWP();
 
 		// Determine preferred option for install modal
-		const isDesktopPreferred = hasExtension() ? preferDesktop : !preferExtension || preferDesktop;
+		const isDesktopPreferred = (await hasExtension()) ? preferDesktop : !preferExtension || preferDesktop;
 
 		if (secure && !isDesktopPreferred) {
 			// Desktop is not preferred option, so we use deeplinks (mobile web)
