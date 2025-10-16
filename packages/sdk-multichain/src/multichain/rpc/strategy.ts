@@ -56,17 +56,14 @@ const RPC_HANDLED_METHODS = new Set([
 	'eth_newFilter',
 	'eth_newPendingTransactionFilter',
 	'eth_sendRawTransaction',
-	'eth_subscribe',
 	'eth_syncing',
 	'eth_uninstallFilter',
-	'eth_unsubscribe',
 	'web3_clientVersion',
 ]);
 
 const SDK_HANDLED_METHODS = new Set([
 	'eth_accounts',
 	'eth_chainId',
-	'wallet_getPermissions', // not sure if this should be here. It's technically wallet state
 ]);
 
 /**
