@@ -63,3 +63,42 @@ export const infuraRpcUrls: RpcUrlsMap = {
 	// Alfajores Testnet
 	'eip155:44787': 'https://celo-alfajores.infura.io/v3/',
 };
+
+export const RPC_HANDLED_METHODS = new Set([
+	'eth_blockNumber',
+	'eth_gasPrice',
+	'eth_maxPriorityFeePerGas',
+	'eth_blobBaseFee',
+	'eth_feeHistory',
+	'eth_getBalance',
+	'eth_getCode',
+	'eth_getStorageAt',
+	'eth_call',
+	'eth_estimateGas',
+	'eth_getLogs',
+	'eth_getProof',
+	'eth_getTransactionCount',
+	'eth_getBlockByNumber',
+	'eth_getBlockByHash',
+	'eth_getBlockTransactionCountByNumber',
+	'eth_getBlockTransactionCountByHash',
+	'eth_getUncleCountByBlockNumber',
+	'eth_getUncleCountByBlockHash',
+	'eth_getTransactionByHash',
+	'eth_getTransactionByBlockNumberAndIndex',
+	'eth_getTransactionByBlockHashAndIndex',
+	'eth_getTransactionReceipt',
+	'eth_getUncleByBlockNumberAndIndex',
+	'eth_getUncleByBlockHashAndIndex',
+	'eth_getFilterChanges',
+	'eth_getFilterLogs',
+	'eth_newBlockFilter',
+	'eth_newFilter',
+	'eth_newPendingTransactionFilter',
+	'eth_sendRawTransaction',
+	'eth_syncing',
+	'eth_uninstallFilter',
+	'web3_clientVersion',
+]);
+
+export const SDK_HANDLED_METHODS = new Set(['eth_accounts', 'eth_chainId']);

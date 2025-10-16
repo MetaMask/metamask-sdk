@@ -1,12 +1,6 @@
 import type { Json } from '@metamask/utils';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from '../../config';
-import {
-	type ExtendedTransport,
-	type InvokeMethodOptions,
-	isSecure,
-	type MultichainOptions,
-	RPCInvokeMethodErr,
-} from '../../domain';
+import { type ExtendedTransport, type InvokeMethodOptions, isSecure, type MultichainOptions, RPC_HANDLED_METHODS, RPCInvokeMethodErr, SDK_HANDLED_METHODS } from '../../domain';
 
 import { openDeeplink } from '../utils';
 import { getRequestHandlingStrategy, RequestHandlingStrategy } from './strategy';
@@ -33,18 +27,14 @@ export class RequestRouter {
 	 * for the request and delegating to the appropriate private handler.
 	 */
 	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
-		const strategy = getRequestHandlingStrategy(options.request.method);
-
-		switch (strategy) {
-			case RequestHandlingStrategy.WALLET:
-				return this.handleWithWallet(options);
-
-			case RequestHandlingStrategy.RPC:
-				return this.handleWithRpcNode(options);
-
-			case RequestHandlingStrategy.SDK:
-				return this.handleWithSdkState(options);
+		const method = options.request.method;
+		if (RPC_HANDLED_METHODS.has(method)) {
+			return this.handleWithRpcNode(options);
 		}
+		if (SDK_HANDLED_METHODS.has(method)) {
+			return this.handleWithSdkState(options);
+		}
+		return this.handleWithWallet(options);
 	}
 
 	/**
