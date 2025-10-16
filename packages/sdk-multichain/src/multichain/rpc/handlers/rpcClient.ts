@@ -1,4 +1,5 @@
 import type { Json } from '@metamask/utils';
+import fetch from 'cross-fetch';
 import {
 	getInfuraRpcUrls,
 	type InvokeMethodOptions,
@@ -17,6 +18,8 @@ export function getNextRpcId() {
 	rpcId += 1;
 	return rpcId;
 }
+
+export class MissingRpcEndpointErr extends Error { };
 
 export class RpcClient {
 	constructor(
@@ -58,7 +61,7 @@ export class RpcClient {
 		}
 		const rpcEndpoint = readonlyRPCMap[scope];
 		if (!rpcEndpoint) {
-			throw new RPCReadonlyRequestErr(`No RPC endpoint found for scope ${scope}`);
+			throw new MissingRpcEndpointErr(`No RPC endpoint found for scope ${scope}`);
 		}
 		return rpcEndpoint;
 	}
