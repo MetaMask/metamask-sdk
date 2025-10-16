@@ -3,7 +3,6 @@ import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from '../../config'
 import { type ExtendedTransport, type InvokeMethodOptions, isSecure, type MultichainOptions, RPC_HANDLED_METHODS, RPCInvokeMethodErr, SDK_HANDLED_METHODS } from '../../domain';
 
 import { openDeeplink } from '../utils';
-import { getRequestHandlingStrategy, RequestHandlingStrategy } from './strategy';
 import { RpcClient } from './handlers/rpcClient';
 
 let rpcId = 1;
@@ -18,8 +17,7 @@ export class RequestRouter {
 		private readonly transport: ExtendedTransport,
 		private readonly rpcClient: RpcClient,
 		private readonly config: MultichainOptions,
-	) {
-	}
+	) {}
 
 	/**
 	 * The main entry point for invoking an RPC method.

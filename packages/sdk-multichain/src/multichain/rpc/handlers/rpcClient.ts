@@ -9,7 +9,7 @@ import {
 	RPCResponse,
 	RpcUrlsMap,
 	Scope,
-} from '../../../domain'
+} from '../../../domain';
 
 let rpcId = 1;
 
@@ -22,7 +22,7 @@ export class RpcClient {
 	constructor(
 		private readonly config: MultichainOptions,
 		private readonly sdkInfo: string,
-	) { }
+	) {}
 
 	/**
 	 * Routes the request to a configured RPC node.

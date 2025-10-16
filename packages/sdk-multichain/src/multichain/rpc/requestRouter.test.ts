@@ -1,11 +1,7 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
 import * as t from 'vitest';
-import {
-	type InvokeMethodOptions,
-	RPCInvokeMethodErr,
-	type Scope,
-} from '../../domain';
+import { type InvokeMethodOptions, RPCInvokeMethodErr, type Scope } from '../../domain';
 import type { RequestRouter } from './requestRouter';
 
 t.describe('RequestRouter', () => {
@@ -40,7 +36,6 @@ t.describe('RequestRouter', () => {
 		t.vi.clearAllMocks();
 		t.vi.resetAllMocks();
 	});
-
 
 	t.describe('invokeMethod', () => {
 		t.describe('when the request is a wallet request', () => {
@@ -89,7 +84,7 @@ t.describe('RequestRouter', () => {
 
 			t.it('should throw RPCInvokeMethodErr when response contains an error', async () => {
 				mockTransport.request.mockResolvedValue({
-					error: { code: -32603, message: 'Internal error' }
+					error: { code: -32603, message: 'Internal error' },
 				});
 
 				await t.expect(requestRouter.invokeMethod(baseOptions)).rejects.toBeInstanceOf(RPCInvokeMethodErr);
