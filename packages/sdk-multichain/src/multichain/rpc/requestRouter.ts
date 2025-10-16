@@ -3,7 +3,7 @@ import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from '../../config'
 import { type ExtendedTransport, type InvokeMethodOptions, isSecure, type MultichainOptions, RPC_HANDLED_METHODS, RPCInvokeMethodErr, SDK_HANDLED_METHODS } from '../../domain';
 
 import { openDeeplink } from '../utils';
-import { RpcClient } from './handlers/rpcClient';
+import { MissingRpcEndpointErr, RpcClient } from './handlers/rpcClient';
 
 let rpcId = 1;
 
@@ -74,7 +74,14 @@ export class RequestRouter {
 	 * Routes the request to a configured RPC node.
 	 */
 	private async handleWithRpcNode(options: InvokeMethodOptions): Promise<Json> {
-		return this.rpcClient.request(options);
+		try {
+			return await this.rpcClient.request(options);
+		} catch (error) {
+			if (error instanceof MissingRpcEndpointErr) {
+				return this.handleWithWallet(options);
+			}
+			throw error;
+		}
 	}
 
 	/**
