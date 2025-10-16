@@ -68,6 +68,10 @@ const SDK_HANDLED_METHODS = new Set([
 
 /**
  * Encapsulates the logic for determining the handling strategy for a given RPC method.
+ * Methods handled by the "RPC strategy" can be handled by a separately instantiated rpcClient rather 
+ * than having to roundtrip back to the wallet
+ * Methods handled by the "SDK strategy" can be handled with wallet state that is cached in the SDK layer
+ * All other methods need to go to the Wallet since they cannot be handled otherwise.
  *
  * @param method - The name of the RPC method (e.g., 'eth_accounts').
  * @returns The appropriate RequestHandlingStrategy.
