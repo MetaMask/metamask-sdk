@@ -1,26 +1,18 @@
-import type { InvokeMethodParams } from '@metamask/multichain-api-client';
 import type { Json } from '@metamask/utils';
-import fetch from 'cross-fetch';
-
+import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from '../../config';
 import {
 	type ExtendedTransport,
-	getInfuraRpcUrls,
 	type InvokeMethodOptions,
 	isSecure,
-	METHODS_TO_REDIRECT,
 	type MultichainOptions,
-	type RPC_URLS_MAP,
-	type RPCAPI,
-	RPCHttpErr,
 	RPCInvokeMethodErr,
-	RPCReadonlyRequestErr,
-	RPCReadonlyResponseErr,
-	type RPCResponse,
-	type Scope,
-} from '../../domain';
-import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from 'src/config';
-import { openDeeplink } from '../utils';
+} from '../../domain'
 
+import { createLogger } from '../../domain/logger';
+import { openDeeplink } from '../utils';
+import { getRequestHandlingStrategy, RequestHandlingStrategy } from './strategy';
+
+const logger = createLogger('metamask-sdk:core');
 let rpcId = 1;
 
 export function getNextRpcId() {
@@ -32,96 +24,40 @@ export class RPCClient {
 	constructor(
 		private readonly transport: ExtendedTransport,
 		private readonly config: MultichainOptions,
-		private readonly sdkInfo: string,
-	) {}
+	) { }
 
-	private async fetch(endpoint: string, body: string, method: string, headers: Record<string, string>) {
-		try {
-			const response = await fetch(endpoint, {
-				method,
-				headers,
-				body,
-			});
-			if (!response.ok) {
-				throw new RPCHttpErr(endpoint, method, response.status);
-			}
-			return response;
-		} catch (error) {
-			if (error instanceof RPCHttpErr) {
-				throw error;
-			}
-			throw new RPCReadonlyRequestErr(error.message);
+	/**
+	 * The main entry point for invoking an RPC method.
+	 * This method acts as a router, determining the correct handling strategy
+	 * for the request and delegating to the appropriate private handler.
+	 */
+	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
+		const strategy = getRequestHandlingStrategy(options.request.method);
+
+		switch (strategy) {
+			case RequestHandlingStrategy.WALLET:
+				return this.handleWithWallet(options);
+
+			case RequestHandlingStrategy.RPC:
+				return this.handleWithRpcNode(options);
+
+			case RequestHandlingStrategy.SDK:
+				return this.handleWithSdkState(options);
 		}
 	}
 
-	private async parseResponse(response: Response) {
-		try {
-			const rpcResponse = (await response.json()) as RPCResponse;
-			return rpcResponse.result as Json;
-		} catch (error) {
-			throw new RPCReadonlyResponseErr(error.message);
-		}
-	}
-
-	private getHeaders(rpcEndpoint: string) {
-		const defaultHeaders = {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		};
-		if (rpcEndpoint.includes('infura')) {
-			return {
-				...defaultHeaders,
-				'Metamask-Sdk-Info': this.sdkInfo,
-			};
-		}
-		return defaultHeaders;
-	}
-
-	private async runReadOnlyMethod(options: InvokeMethodOptions, rpcEndpoint: string) {
-		const { request } = options;
-		const body = JSON.stringify({
-			jsonrpc: '2.0',
-			method: request.method,
-			params: request.params,
-			id: getNextRpcId(),
-		});
-		const rpcRequest = await this.fetch(rpcEndpoint, body, 'POST', this.getHeaders(rpcEndpoint));
-		const response = await this.parseResponse(rpcRequest);
-		return response;
-	}
-
-	async invokeMethod(options: InvokeMethodOptions) {
-		const { config } = this;
-		const { request } = options;
-		const { api, ui, mobile } = config;
-
-		const { preferDesktop = false, headless: _headless = false } = ui ?? {};
-		const { infuraAPIKey, readonlyRPCMap: readonlyRPCMapConfig } = api ?? {};
-
-		let readonlyRPCMap: RPC_URLS_MAP = readonlyRPCMapConfig ?? {};
-		if (infuraAPIKey) {
-			const urlsWithToken = getInfuraRpcUrls(infuraAPIKey);
-			if (readonlyRPCMapConfig) {
-				readonlyRPCMap = {
-					...readonlyRPCMapConfig,
-					...urlsWithToken,
-				};
-			} else {
-				readonlyRPCMap = urlsWithToken;
-			}
-		}
-		const rpcEndpoint = readonlyRPCMap[options.scope];
-		const isReadOnlyMethod = !METHODS_TO_REDIRECT[request.method];
-		if (rpcEndpoint && isReadOnlyMethod) {
-			const response = await this.runReadOnlyMethod(options, rpcEndpoint);
-			return response;
-		}
+	/**
+	 * Forwards the request directly to the wallet via the transport.
+	 */
+	private async handleWithWallet(options: InvokeMethodOptions): Promise<Json> {
 		try {
 			const request = this.transport.request({
 				method: 'wallet_invokeMethod',
 				params: options,
 			});
 
+			const { ui, mobile } = this.config;
+			const { preferDesktop = false } = ui ?? {};
 			const secure = isSecure();
 			const shouldOpenDeeplink = secure && !preferDesktop;
 
@@ -132,16 +68,34 @@ export class RPCClient {
 					} else {
 						openDeeplink(this.config, METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
 					}
-				}, 250);
+				}, 10); // small delay to ensure the message encryption and dispatch completes
 			}
 
 			const response = await request;
 			if (response.error) {
 				throw new RPCInvokeMethodErr(`RPC Request failed with code ${response.error.code}: ${response.error.message}`);
 			}
-			return response.result;
+			return response.result as Json;
 		} catch (error) {
 			throw new RPCInvokeMethodErr(error.message);
 		}
+	}
+
+	/**
+	 * Routes the request to a configured RPC node.
+	 */
+	private async handleWithRpcNode(options: InvokeMethodOptions): Promise<Json> {
+		// TODO: to be implemented
+		console.warn(`Method "${options.request.method}" is configured for RPC node handling, but this is not yet implemented. Falling back to wallet passthrough.`);
+		return this.handleWithWallet(options);
+	}
+
+	/**
+	 * Responds directly from the SDK's session state.
+	 */
+	private async handleWithSdkState(options: InvokeMethodOptions): Promise<Json> {
+		// TODO: to be implemented
+		console.warn(`Method "${options.request.method}" is configured for SDK state handling, but this is not yet implemented. Falling back to wallet passthrough.`);
+		return this.handleWithWallet(options);
 	}
 }
