@@ -10,7 +10,7 @@ import type { CaipAccountId } from '@metamask/utils';
 export type { SessionData } from '@metamask/multichain-api-client';
 
 /**
- * Configuration settings for the dapp using the SDK.
+ * Configuration settings for the dapp using the MetaMask Connect Module.
  *
  * This type allows for two variants of dapp configuration:
  * - Using a regular icon URL
@@ -25,15 +25,15 @@ export type ConnectionRequest = {
 	sessionRequest: SessionRequest;
 	metadata: {
 		dapp: DappSettings;
-		sdk: { version: string; platform: PlatformType };
+		connect: { version: string; platform: PlatformType };
 	};
 };
 
 /**
- * Constructor options for creating a Multichain SDK instance.
+ * Constructor options for creating a MetaMask Connect Module instance.
  *
  * This type defines all the configuration options available when
- * initializing the SDK, including dapp settings, API configuration,
+ * initializing the MetaMask Connect Module, including dapp settings, API configuration,
  * analytics, storage, UI preferences, and transport options.
  */
 export type MultichainOptions = {
@@ -48,7 +48,7 @@ export type MultichainOptions = {
 	};
 	/** Analytics configuration */
 	analytics?: { enabled: false } | { enabled: true; integrationType: string };
-	/** Storage client for persisting SDK data */
+	/** Storage client for persisting MetaMask Connect data */
 	storage: StoreClient;
 	/** UI configuration options */
 	ui: {
@@ -60,9 +60,9 @@ export type MultichainOptions = {
 	mobile?: {
 		preferredOpenLink?: (deeplink: string, target?: string) => void;
 		/**
-		 * The `MetaMaskSDK` constructor option `useDeeplink: boolean` controls which type of link is used:
-		 * -   If `true`, the SDK will attempt to use the `metamask://` deeplink.
-		 * -   If `false` (the default for web), the SDK will use the `https://metamask.app.link` universal link.
+		 * The `MetaMaskConnect` constructor option `useDeeplink: boolean` controls which type of link is used:
+		 * -   If `true`, the MetaMask Connect Module will attempt to use the `metamask://` deeplink.
+		 * -   If `false` (the default for web), the MetaMask Connect Module will use the `https://metamask.app.link` universal link.
 		 */
 		useDeeplink?: boolean;
 	};
@@ -81,10 +81,10 @@ type MultiChainFNOptions = Omit<MultichainOptions, 'storage' | 'ui'> & {
 };
 
 /**
- * Complete options for Multichain SDK configuration.
+ * Complete options for MetaMask Connect Module configuration.
  *
  * This type extends the base options with storage configuration,
- * providing all necessary options for SDK initialization.
+ * providing all necessary options for MetaMask Connect Module initialization.
  */
 export type CreateMultichainFN = (options: MultiChainFNOptions) => Promise<MultichainCore>;
 

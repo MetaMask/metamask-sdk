@@ -1,6 +1,6 @@
 import { Component, Prop, h, Event, EventEmitter, State, Element } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
-import SDKVersion from '../misc/SDKVersion';
+import ConnectVersion from '../misc/ConnectVersion';
 import CloseButton from '../misc/CloseButton';
 import { SimpleI18n } from '../misc/simple-i18n';
 import InstallIcon from '../misc/InstallIcon';
@@ -16,7 +16,7 @@ export class OtpModal {
    */
   @Prop() displayOTP?: boolean;
 
-  @Prop() sdkVersion?: string;
+  @Prop() connectVersion?: string;
 
   private i18nInstance: SimpleI18n;
 
@@ -67,7 +67,7 @@ export class OtpModal {
     }
 
     const displayOTP = this.displayOTP ?? true;
-    const sdkVersion = this.sdkVersion
+    const connectVersion = this.connectVersion
     const t = (key: string) => this.i18nInstance.t(key);
 
     return (
@@ -132,7 +132,7 @@ export class OtpModal {
               </button>
             </div>
           </div>
-          <SDKVersion version={sdkVersion} />
+          <ConnectVersion version={connectVersion} />
         </div>
       </WidgetWrapper>
     )

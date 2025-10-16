@@ -3,10 +3,10 @@ import debug from 'debug';
 import type { StoreClient } from '../store/client';
 
 /**
- * Supported debug namespace types for the MetaMask SDK logger.
+ * Supported debug namespace types for the MetaMask Connect Module logger.
  * These namespaces help categorize and filter debug output.
  */
-export type LoggerNameSpaces = 'metamask-sdk' | 'metamask-sdk:core' | 'metamask-sdk:provider' | 'metamask-sdk:ui' | 'metamask-sdk:transport';
+export type LoggerNameSpaces = 'metamask-connect' | 'metamask-connect:core' | 'metamask-connect:provider' | 'metamask-connect:ui' | 'metamask-connect:transport';
 
 /**
  * Creates a debug logger instance with the specified namespace and color.
@@ -41,7 +41,7 @@ export const enableDebug = (namespace: LoggerNameSpaces = 'metamask-sdk') => {
  *
  * This function determines whether debug logging should be active for a namespace
  * by checking if the debug value contains the namespace, a wildcard pattern, or
- * the general MetaMask SDK wildcard.
+ * the general MetaMask Connect Module wildcard.
  *
  * @param debugValue - The debug configuration string (e.g., from environment or storage)
  * @param namespace - The namespace to check for enablement

@@ -27,7 +27,7 @@ const config = [
         file: packageJson.unpkg,
         format: 'umd',
         exports: 'named',
-        name: 'MetaMaskSDKInstallModal',
+        name: 'MetaMaskConnectInstallModal',
         sourcemap: true
       },
       {

@@ -1,5 +1,5 @@
 /**
- * This file mocks API Client package in the SDK
+ * This file mocks API Client package in the MetaMask Connect Module
  * We just wrap the getDefaultTransport to have the ability to mock it after in fixtures file
  */
 import * as t from 'vitest';

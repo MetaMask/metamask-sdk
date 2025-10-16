@@ -1,7 +1,7 @@
 import { Component, Prop, h, Event, EventEmitter, State, Element, Watch } from '@stencil/core';
 import { WidgetWrapper } from '../widget-wrapper/widget-wrapper';
 import InstallIcon from '../misc/InstallIcon';
-import SDKVersion from '../misc/SDKVersion';
+import ConnectVersion from '../misc/ConnectVersion';
 import CloseButton from '../misc/CloseButton';
 
 import QRCodeStyling, {
@@ -27,7 +27,7 @@ export class InstallModal {
 
   @Prop() expiresIn: number;
 
-  @Prop() sdkVersion?: string;
+  @Prop() connectVersion?: string;
 
   @Prop() preferDesktop: boolean;
 
@@ -215,7 +215,7 @@ export class InstallModal {
             )}
           </div>
 
-          <SDKVersion version={this.sdkVersion} />
+          <ConnectVersion version={this.connectVersion} />
         </div>
     </WidgetWrapper>
     )

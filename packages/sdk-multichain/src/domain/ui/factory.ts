@@ -13,7 +13,7 @@ export type ModalFactoryConnectOptions = {
 
 /**
  * Configuration options for the modal factory.
- * Combines mobile settings from SDK options with UI preferences and connection handling.
+ * Combines mobile settings from MetaMask Connect Module options with UI preferences and connection handling.
  */
 export type ModalFactoryOptions = Pick<MultichainOptions, 'mobile' | 'transport'> & {
 	ui: {

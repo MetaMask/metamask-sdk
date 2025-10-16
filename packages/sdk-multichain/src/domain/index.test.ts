@@ -3,7 +3,7 @@
 import Bowser from 'bowser';
 import * as t from 'vitest';
 
-import { createLogger, EventEmitter, enableDebug, getPlatformType, isEnabled, PlatformType, type SDKEvents } from './';
+import { createLogger, EventEmitter, enableDebug, getPlatformType, isEnabled, PlatformType, type ConnectEvents } from './';
 
 const parseMock = t.vi.fn();
 // Mock Bowser at the top level
@@ -319,8 +319,8 @@ t.describe('Logger', () => {
 
 t.describe('EventEmitter', () => {
 	t.describe('emit', () => {
-		t.describe('SDKEvents', () => {
-			let eventEmitter: EventEmitter<SDKEvents>;
+		t.describe('ConnectEvents', () => {
+			let eventEmitter: EventEmitter<ConnectEvents>;
 
 			t.beforeEach(() => {
 				eventEmitter = new EventEmitter();

@@ -1,16 +1,16 @@
-# MetaMask SDK Multichain
+# MetaMask Connect Multichain
 
-The MetaMask SDK Multichain is a protocol-based, domain-driven SDK that enables seamless integration with MetaMask wallets across multiple blockchain networks and platforms.
+The MetaMask Connect Multichain module is a protocol-based, domain-driven Connect that enables seamless integration with MetaMask wallets across multiple blockchain networks and platforms.
 
 ## Overview
 
-The SDK provides a unified interface for dapps to connect with MetaMask Extension or Mobile wallets, regardless of the platform (browser, mobile, or Node.js) or blockchain protocol. It automatically handles connection flows, deeplinks, and QR codes based on the user's environment.
+MetaMask Connect Multichain module provides a unified interface for dapps to connect with MetaMask Extension or Mobile wallets, regardless of the platform (browser, mobile, or Node.js) or blockchain protocol. It automatically handles connection flows, deeplinks, and QR codes based on the user's environment.
 
 ## Architecture
 
 ### Domain-Driven Design
 
-The SDK follows a clean domain-driven architecture with clear separation of concerns:
+MetaMask Connect Multichain module follows a clean domain-driven architecture with clear separation of concerns:
 
 ```
 src/

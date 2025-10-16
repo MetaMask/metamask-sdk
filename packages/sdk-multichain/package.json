@@ -1,7 +1,7 @@
 {
   "name": "@metamask/multichain-sdk",
   "version": "0.0.0",
-  "description": "Multichain package for MetaMask SDK",
+  "description": "Multichain package for MetaMask Connect",
   "main": "dist/node/cjs/multichain-sdk.js",
   "module": "dist/browser/es/multichain-sdk.mjs",
   "browser": "dist/browser/es/multichain-sdk.mjs",
