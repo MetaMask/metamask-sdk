@@ -170,7 +170,7 @@ export class MWPTransport implements ExtendedTransport {
 				logger('active session found', activeSession);
 				session = activeSession;
 			}
-		} catch { }
+		} catch {}
 
 		let timeout: NodeJS.Timeout;
 		const connectionPromise = new Promise<void>((resolve, reject) => {

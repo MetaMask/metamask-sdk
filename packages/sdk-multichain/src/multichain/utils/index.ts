@@ -16,7 +16,7 @@ function base64Encode(str: string): string {
 	} else if (typeof Buffer !== 'undefined') {
 		// Node.js
 		return Buffer.from(str).toString('base64');
-  }
+	}
 	throw new Error('No base64 encoding method available');
 }
 
@@ -31,7 +31,6 @@ export function compressString(str: string): string {
 	const binaryString = String.fromCharCode.apply(null, Array.from(compressed));
 	return base64Encode(binaryString);
 }
-
 
 export function getDappId(dapp?: DappSettings) {
 	if (typeof window === 'undefined' || typeof window.location === 'undefined') {
@@ -176,29 +175,20 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
  * @param proposedCaipAccountIds - Proposed account IDs from the connect options
  * @returns true if scopes and accounts match, false otherwise
  */
-export function isSameScopesAndAccounts(
-  currentScopes: Scope[],
-  proposedScopes: Scope[],
-  walletSession: SessionData,
-  proposedCaipAccountIds: CaipAccountId[],
-): boolean {
-  const isSameScopes =
-    currentScopes.every((scope) => proposedScopes.includes(scope)) &&
-    proposedScopes.every((scope) => currentScopes.includes(scope));
+export function isSameScopesAndAccounts(currentScopes: Scope[], proposedScopes: Scope[], walletSession: SessionData, proposedCaipAccountIds: CaipAccountId[]): boolean {
+	const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
 
-  if (!isSameScopes) {
-    return false;
-  }
+	if (!isSameScopes) {
+		return false;
+	}
 
-  const existingAccountIds: CaipAccountId[] = Object.values(walletSession.sessionScopes)
-	  .filter(({ accounts }) => Boolean(accounts))
-	  .flatMap(({ accounts }) => accounts ?? []);
+	const existingAccountIds: CaipAccountId[] = Object.values(walletSession.sessionScopes)
+		.filter(({ accounts }) => Boolean(accounts))
+		.flatMap(({ accounts }) => accounts ?? []);
 
-  const allProposedAccountsIncluded = proposedCaipAccountIds.every(
-    (proposedAccountId) => existingAccountIds.includes(proposedAccountId),
-  );
+	const allProposedAccountsIncluded = proposedCaipAccountIds.every((proposedAccountId) => existingAccountIds.includes(proposedAccountId));
 
-  return allProposedAccountsIncluded;
+	return allProposedAccountsIncluded;
 }
 
 export function getValidAccounts(caipAccountIds: CaipAccountId[]) {

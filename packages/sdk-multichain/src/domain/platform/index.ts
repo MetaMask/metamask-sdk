@@ -65,7 +65,6 @@ export function getPlatformType() {
 	return PlatformType.DesktopWeb;
 }
 
-
 export function isSecure() {
 	const platformType = getPlatformType();
 	return isReactNative() || platformType === PlatformType.MobileWeb;
@@ -93,12 +92,10 @@ const detectionPromise: Promise<boolean> = (() => {
 		setTimeout(() => {
 			window.removeEventListener('eip6963:announceProvider', handler);
 
-			const hasMetaMask = providers.some(
-				(p) => p?.info?.rdns === 'io.metamask',
-			);
+			const hasMetaMask = providers.some((p) => p?.info?.rdns === 'io.metamask');
 
 			resolve(hasMetaMask);
-		}, 300); // default timeout 
+		}, 300); // default timeout
 	});
 })();
 

@@ -5,18 +5,19 @@ import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
-import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
+import { MWP_RELAY_URL } from 'src/config';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
 import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
-import { RPCClient } from './rpc/client';
+import { RequestRouter } from './rpc/requestRouter';
 import { DefaultTransport } from './transports/default';
 
 import { MWPTransport } from './transports/mwp';
 import { keymanager } from './transports/mwp/KeyManager';
 import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
+import { RpcClient } from './rpc/handlers/rpcClient';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -456,11 +457,12 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async invokeMethod(request: InvokeMethodOptions): Promise<Json> {
-		const { sdkInfo, transport } = this;
+		const { sdkInfo, transport, options } = this;
 
 		this.__provider ??= getMultichainClient({ transport });
 
-		const client = new RPCClient(this.transport, this.options, sdkInfo);
-		return client.invokeMethod(request) as Promise<Json>;
+		const rpcClient = new RpcClient(options, sdkInfo);
+		const requestRouter = new RequestRouter(transport, rpcClient, options);
+		return requestRouter.invokeMethod(request) as Promise<Json>;
 	}
 }

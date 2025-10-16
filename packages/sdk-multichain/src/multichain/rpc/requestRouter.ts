@@ -1,18 +1,10 @@
 import type { Json } from '@metamask/utils';
 import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE } from '../../config';
-import {
-	type ExtendedTransport,
-	type InvokeMethodOptions,
-	isSecure,
-	type MultichainOptions,
-	RPCInvokeMethodErr,
-} from '../../domain'
+import { type ExtendedTransport, type InvokeMethodOptions, isSecure, type MultichainOptions, RPC_HANDLED_METHODS, RPCInvokeMethodErr, SDK_HANDLED_METHODS } from '../../domain';
 
-import { createLogger } from '../../domain/logger';
 import { openDeeplink } from '../utils';
-import { getRequestHandlingStrategy, RequestHandlingStrategy } from './strategy';
+import { MissingRpcEndpointErr, RpcClient } from './handlers/rpcClient';
 
-const logger = createLogger('metamask-sdk:core');
 let rpcId = 1;
 
 export function getNextRpcId() {
@@ -20,11 +12,12 @@ export function getNextRpcId() {
 	return rpcId;
 }
 
-export class RPCClient {
+export class RequestRouter {
 	constructor(
 		private readonly transport: ExtendedTransport,
+		private readonly rpcClient: RpcClient,
 		private readonly config: MultichainOptions,
-	) { }
+	) {}
 
 	/**
 	 * The main entry point for invoking an RPC method.
@@ -32,18 +25,14 @@ export class RPCClient {
 	 * for the request and delegating to the appropriate private handler.
 	 */
 	async invokeMethod(options: InvokeMethodOptions): Promise<Json> {
-		const strategy = getRequestHandlingStrategy(options.request.method);
-
-		switch (strategy) {
-			case RequestHandlingStrategy.WALLET:
-				return this.handleWithWallet(options);
-
-			case RequestHandlingStrategy.RPC:
-				return this.handleWithRpcNode(options);
-
-			case RequestHandlingStrategy.SDK:
-				return this.handleWithSdkState(options);
+		const method = options.request.method;
+		if (RPC_HANDLED_METHODS.has(method)) {
+			return this.handleWithRpcNode(options);
 		}
+		if (SDK_HANDLED_METHODS.has(method)) {
+			return this.handleWithSdkState(options);
+		}
+		return this.handleWithWallet(options);
 	}
 
 	/**
@@ -85,9 +74,14 @@ export class RPCClient {
 	 * Routes the request to a configured RPC node.
 	 */
 	private async handleWithRpcNode(options: InvokeMethodOptions): Promise<Json> {
-		// TODO: to be implemented
-		console.warn(`Method "${options.request.method}" is configured for RPC node handling, but this is not yet implemented. Falling back to wallet passthrough.`);
-		return this.handleWithWallet(options);
+		try {
+			return await this.rpcClient.request(options);
+		} catch (error) {
+			if (error instanceof MissingRpcEndpointErr) {
+				return this.handleWithWallet(options);
+			}
+			throw error;
+		}
 	}
 
 	/**

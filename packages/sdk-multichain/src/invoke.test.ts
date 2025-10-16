@@ -8,7 +8,7 @@ import { runTestsInNodeEnv, runTestsInRNEnv, runTestsInWebEnv, runTestsInWebMobi
 import { Store } from './store';
 import { mockSessionData, mockSessionRequestData } from '../tests/data';
 import type { TestSuiteOptions, MockedData } from '../tests/types';
-import { RPCClient } from './multichain/rpc/client';
+import { RequestRouter } from './multichain/rpc/requestRouter';
 
 vi.mock('cross-fetch', () => {
 	const mockFetch = vi.fn();
@@ -127,7 +127,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			t.expect(sdk.storage).toBeDefined();
 			t.expect(sdk.transport).toBeDefined();
 
-			const providerInvokeMethodSpy = t.vi.spyOn(RPCClient.prototype, 'invokeMethod');
+			const providerInvokeMethodSpy = t.vi.spyOn(RequestRouter.prototype, 'invokeMethod');
 			const options = {
 				id: 1,
 				scope: 'eip155:1',
@@ -144,7 +144,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 		});
 
 		t.it(
-			`${platform} should reject invoke in case of failure in RPCClient`,
+			`${platform} should reject invoke in case of failure in RequestRouter`,
 			async () => {
 				const scopes = ['eip155:1'] as Scope[];
 				const caipAccountIds = ['eip155:1:0x1234567890abcdef1234567890abcdef12345678'] as any;
@@ -176,7 +176,7 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			mockedData.mockWalletGetSession.mockImplementation(async () => mockSessionData);
 			mockedData.mockWalletCreateSession.mockImplementation(async () => mockSessionData);
 
-			// Mock the RPCClient response
+			// Mock the RequestRouter response
 			const mockJsonResponse = { result: 'success' };
 			const fetchModule = await import('cross-fetch');
 			const mockFetch = (fetchModule as any).__mockFetch;
