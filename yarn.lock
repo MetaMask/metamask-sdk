@@ -7623,6 +7623,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@epic-web/invariant@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@epic-web/invariant@npm:1.0.0"
+  checksum: 58e2029bd3362751f5afac2b3bdb6b4f6e38f888af7ee93a0d76e18c879586b130bf3b14588364fcf04a1423b5b917eacad5717d61224daac64350c7ae5fc95e
+  languageName: node
+  linkType: hard
+
 "@es-joy/jsdoccomment@npm:0.10.8":
   version: 0.10.8
   resolution: "@es-joy/jsdoccomment@npm:0.10.8"
@@ -16041,6 +16048,17 @@ __metadata:
   peerDependencies:
     react-native: ^0.0.0-0 || >=0.60 <1.0
   checksum: 7e56a2e97f48332f57c56ebf473b763c7ca2b1ef82f4b5f8e1c73350231ec91b8eafc4e4d1f972c4c1005da0d304816fa725dc6f07a8a7543e90f8bd16c22ab4
+  languageName: node
+  linkType: hard
+
+"@react-native-async-storage/async-storage@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
+  dependencies:
+    merge-options: ^3.0.4
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: efbb9c801fb7eecfad1568d6a5e9d247db420b8ba8f1789d5b783e679432567a53cf54c7e7b5e6f315276f33d1df297253549e0cefef2e683539df346d2a1f2d
   languageName: node
   linkType: hard
 
@@ -30258,6 +30276,19 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
+  languageName: node
+  linkType: hard
+
+"cross-env@npm:^10.1.0":
+  version: 10.1.0
+  resolution: "cross-env@npm:10.1.0"
+  dependencies:
+    "@epic-web/invariant": ^1.0.0
+    cross-spawn: ^7.0.6
+  bin:
+    cross-env: dist/bin/cross-env.js
+    cross-env-shell: dist/bin/cross-env-shell.js
+  checksum: bd7e013603df8dc3a5a2d259a84f43a62114486e141395668ea46e9c5d154b312ebf26486f30699ffe7ff8f275331e00e61d7a720d1593185fce685b0f1c3d9f
   languageName: node
   linkType: hard
 
@@ -47163,6 +47194,7 @@ __metadata:
     "@metamask/multichain-sdk": "workspace:^"
     "@metamask/utils": ^11.8.1
     "@open-rpc/meta-schema": ^1.14.9
+    "@react-native-async-storage/async-storage": ^2.2.0
     "@react-native-picker/picker": ^2.11.2
     "@react-navigation/bottom-tabs": ^7.3.10
     "@react-navigation/elements": ^2.3.8
@@ -47171,6 +47203,7 @@ __metadata:
     "@types/react": ~19.1.10
     "@types/react-native-get-random-values": ^1.8.2
     buffer: ^6.0.3
+    cross-env: ^10.1.0
     eciesjs: ^0.4.15
     eslint: ^9.25.0
     eslint-config-expo: ~10.0.0

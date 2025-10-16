@@ -3,19 +3,19 @@
 import { createMetamaskSDK, type SDKState, type InvokeMethodOptions, type Scope, type SessionData, type MultichainCore } from '@metamask/multichain-sdk';
 import type { CaipAccountId } from '@metamask/utils';
 import type React from 'react';
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { METAMASK_PROD_CHROME_ID } from '../constants';
 import { Linking } from 'react-native';
 
 const SDKContext = createContext<
 	| {
-			session: SessionData | undefined;
-			state: SDKState;
-			error: Error | null;
-			connect: (scopes: Scope[], caipAccountIds: CaipAccountId[]) => Promise<void>;
-			disconnect: () => Promise<void>;
-			invokeMethod: (options: InvokeMethodOptions) => Promise<any>;
-	  }
+		session: SessionData | undefined;
+		state: SDKState;
+		error: Error | null;
+		connect: (scopes: Scope[], caipAccountIds: CaipAccountId[]) => Promise<void>;
+		disconnect: () => Promise<void>;
+		invokeMethod: (options: InvokeMethodOptions) => Promise<any>;
+	}
 	| undefined
 >(undefined);
 
@@ -32,6 +32,11 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 				dapp: {
 					name: 'playground',
 					url: 'https://playground.metamask.io',
+				},
+				mobile: {
+					preferredOpenLink: (deeplink: string) => {
+						Linking.openURL(deeplink);
+					},
 				},
 				analytics: {
 					enabled: false,
@@ -72,7 +77,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 				const sdkInstance = await sdkRef.current;
 				await sdkInstance.connect(scopes, caipAccountIds);
 			} catch (error) {
-			setError(error as Error);
+				setError(error as Error);
 			}
 		},
 		[sdkRef.current],
@@ -87,7 +92,7 @@ export const SDKProvider = ({ children }: { children: React.ReactNode }) => {
 				const sdkInstance = await sdkRef.current;
 				return sdkInstance.invokeMethod(options);
 			} catch (error) {
-			setError(error as Error);
+				setError(error as Error);
 			}
 		},
 		[sdkRef.current],
