@@ -65,15 +65,6 @@ export function getPlatformType() {
 	return PlatformType.DesktopWeb;
 }
 
-/**
- * Check if MetaMask extension is installed
- */
-export function isMetamaskExtensionInstalled(): boolean {
-	if (typeof window === 'undefined') {
-		return false;
-	}
-	return Boolean(window.ethereum?.isMetaMask);
-}
 
 export function isSecure() {
 	const platformType = getPlatformType();
@@ -82,7 +73,8 @@ export function isSecure() {
 
 // Immediately start MetaMask detection when module loads
 const detectionPromise: Promise<boolean> = (() => {
-	if (typeof window === 'undefined') {
+	const pt = getPlatformType();
+	if (pt === PlatformType.NonBrowser || pt === PlatformType.ReactNative) {
 		return Promise.resolve(false);
 	}
 
