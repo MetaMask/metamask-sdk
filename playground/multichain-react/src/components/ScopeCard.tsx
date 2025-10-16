@@ -1,15 +1,15 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: ok */
 import MetaMaskOpenRPCDocument from '@metamask/api-specs';
 import type { Scope, SessionData } from '@metamask/multichain-sdk';
-import { type CaipAccountId, type CaipChainId, type CaipAccountAddress, parseCaipAccountId, type Json } from '@metamask/utils';
-import type { OpenrpcDocument, MethodObject } from '@open-rpc/meta-schema';
-import { useState, useCallback, useEffect } from 'react';
-import { METHODS_REQUIRING_PARAM_INJECTION, injectParams } from '../constants/methods';
+import { type CaipAccountAddress, type CaipAccountId, type CaipChainId, type Json, parseCaipAccountId } from '@metamask/utils';
+import type { MethodObject, OpenrpcDocument } from '@open-rpc/meta-schema';
+import { useCallback, useEffect, useState } from 'react';
+import { injectParams, METHODS_REQUIRING_PARAM_INJECTION } from '../constants/methods';
 import { getNetworkName } from '../constants/networks';
 import { escapeHtmlId } from '../helpers/IdHelpers';
 import { openRPCExampleToJSON, truncateJSON } from '../helpers/JsonHelpers';
-import { generateSolanaMethodExamples } from '../helpers/solana-method-signatures';
 import { extractRequestForStorage, extractRequestParams, normalizeMethodParams, updateInvokeMethodResults } from '../helpers/MethodInvocationHelpers';
+import { generateSolanaMethodExamples } from '../helpers/solana-method-signatures';
 import { useSDK } from '../sdk';
 
 const metamaskOpenrpcDocument: OpenrpcDocument = MetaMaskOpenRPCDocument;
@@ -154,14 +154,14 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 			const params = extractRequestParams(finalRequestObject);
 			console.log(`📤 Calling invokeMethod with params:`, params);
 
-			const paramsArray = normalizeMethodParams(method, params);
-			console.log(`📤 Normalized params array:`, paramsArray);
+			const normalizedParams = normalizeMethodParams(method, params, scope);
+			console.log(`📤 Normalized params:`, normalizedParams);
 
 			const result = await invokeMethod({
 				scope,
 				request: {
 					method,
-					params: paramsArray,
+					params: normalizedParams,
 				},
 			});
 
@@ -308,11 +308,10 @@ export function ScopeCard({ scope, details }: { scope: Scope; details: SessionDa
 				className={`
             w-full mt-4 px-6 py-3 rounded-lg font-medium text-white transition-all duration-200
             flex items-center justify-center gap-2
-            ${
-							!selectedMethods[scope] || !invokeMethodRequests[scope]
-								? 'bg-gray-300 cursor-not-allowed text-gray-500'
-								: 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer'
-						}
+            ${!selectedMethods[scope] || !invokeMethodRequests[scope]
+						? 'bg-gray-300 cursor-not-allowed text-gray-500'
+						: 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 hover:shadow-lg hover:scale-105 active:scale-95 cursor-pointer'
+					}
           `}
 			>
 				<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

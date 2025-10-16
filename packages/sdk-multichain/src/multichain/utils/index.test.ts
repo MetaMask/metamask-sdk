@@ -1,12 +1,13 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: Tests require it */
 /** biome-ignore-all lint/style/noNonNullAssertion: Tests require it */
+
+import type { CaipAccountId } from '@metamask/utils';
 import * as t from 'vitest';
 import { vi } from 'vitest';
-import type { CaipAccountId } from '@metamask/utils';
 import packageJson from '../../../package.json';
-import type { MultichainOptions } from '../../domain/multichain';
-import { getPlatformType, isMetamaskExtensionInstalled, PlatformType } from '../../domain/platform';
 import type { Scope } from '../../domain';
+import type { MultichainOptions } from '../../domain/multichain';
+import { getPlatformType, PlatformType } from '../../domain/platform';
 import * as utils from '.';
 
 vi.mock('../../domain/platform', async () => {
@@ -261,22 +262,6 @@ t.describe('Utils', () => {
 			await utils.setupDappMetadata(options);
 
 			t.expect((options.dapp as any).iconUrl).toBe('https://example.com/favicon.ico');
-		});
-	});
-
-	t.describe('isMetamaskExtensionInstalled', () => {
-		t.it('should return true if MetaMask is installed', () => {
-			t.vi.stubGlobal('window', {
-				ethereum: {
-					isMetaMask: true,
-				},
-			});
-			t.expect(isMetamaskExtensionInstalled()).toBe(true);
-		});
-
-		t.it('should return false if MetaMask is not installed', () => {
-			t.vi.stubGlobal('window', undefined);
-			t.expect(isMetamaskExtensionInstalled()).toBe(false);
 		});
 	});
 

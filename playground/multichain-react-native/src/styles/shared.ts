@@ -115,7 +115,7 @@ export const sharedStyles = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'center',
 	},
-  buttonCancell: {
+	buttonCancel: {
 		backgroundColor: colors.red600,
 		paddingVertical: 12,
 		paddingHorizontal: 20,
