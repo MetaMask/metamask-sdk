@@ -1,9 +1,5 @@
 /* eslint-disable camelcase */
-import {
-  EventEmitter,
-  MultichainCore,
-  SessionData,
-} from '@metamask/multichain-sdk';
+import { EventEmitter, MultichainCore } from '@metamask/multichain-sdk';
 
 export const EIP155 = 'eip155';
 

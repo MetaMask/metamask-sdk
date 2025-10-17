@@ -12957,7 +12957,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/multichain-sdk@0.0.2, @metamask/multichain-sdk@workspace:*, @metamask/multichain-sdk@workspace:^, @metamask/multichain-sdk@workspace:packages/sdk-multichain":
+"@metamask/multichain-sdk@npm:0.0.2":
+  version: 0.0.2
+  resolution: "@metamask/multichain-sdk@npm:0.0.2"
+  dependencies:
+    "@metamask/mobile-wallet-protocol-core": ^0.3.0
+    "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.1
+    "@metamask/multichain-api-client": ^0.8.0
+    "@metamask/onboarding": ^1.0.1
+    "@metamask/sdk-analytics": 0.0.5
+    "@metamask/sdk-multichain-ui": 0.0.1
+    "@metamask/utils": ^11.4.0
+    "@paulmillr/qr": ^0.2.1
+    bowser: ^2.11.0
+    cross-fetch: ^4.1.0
+    eciesjs: ^0.4.15
+    eventemitter3: ^5.0.1
+    pako: ^2.1.0
+    uuid: ^11.1.0
+    ws: ^8.18.3
+  peerDependencies:
+    "@react-native-async-storage/async-storage": ^1.23
+  checksum: 785d49d89f311709c931c2c8d262a8938d80528b102ab63fde388cc158db80cd5c970a59eef008ac818e361bab34dd6388f4b8c3b8f7839b09e0266e457e7864
+  languageName: node
+  linkType: hard
+
+"@metamask/multichain-sdk@workspace:*, @metamask/multichain-sdk@workspace:^, @metamask/multichain-sdk@workspace:packages/sdk-multichain":
   version: 0.0.0-use.local
   resolution: "@metamask/multichain-sdk@workspace:packages/sdk-multichain"
   dependencies:
@@ -12967,8 +12992,8 @@ __metadata:
     "@metamask/mobile-wallet-protocol-dapp-client": ^0.2.1
     "@metamask/multichain-api-client": ^0.8.0
     "@metamask/onboarding": ^1.0.1
-    "@metamask/sdk-analytics": 0.0.5
-    "@metamask/sdk-multichain-ui": 0.0.1
+    "@metamask/sdk-analytics": "workspace:^"
+    "@metamask/sdk-multichain-ui": "workspace:^"
     "@metamask/utils": ^11.4.0
     "@paulmillr/qr": ^0.2.1
     "@react-native-async-storage/async-storage": ^1.23.1
@@ -13207,7 +13232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@metamask/sdk-analytics@0.0.5, @metamask/sdk-analytics@workspace:*, @metamask/sdk-analytics@workspace:packages/sdk-analytics":
+"@metamask/sdk-analytics@0.0.5, @metamask/sdk-analytics@workspace:*, @metamask/sdk-analytics@workspace:^, @metamask/sdk-analytics@workspace:packages/sdk-analytics":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-analytics@workspace:packages/sdk-analytics"
   dependencies:
@@ -13440,13 +13465,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@metamask/sdk-multichain-ui@0.0.1, @metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui":
+"@metamask/sdk-multichain-ui@npm:0.0.1":
+  version: 0.0.1
+  resolution: "@metamask/sdk-multichain-ui@npm:0.0.1"
+  dependencies:
+    "@paulmillr/qr": ^0.2.1
+    qr-code-styling: ^1.9.2
+  checksum: cc15fd4fcac09c794adb5db4da5cbd7525ece0f8a614032ad72da59ad57f0bd4325ee6c4b4f22a43fa8ab039fee59ff9acd79dcb7ce9991bc2e92953f80bae63
+  languageName: node
+  linkType: hard
+
+"@metamask/sdk-multichain-ui@workspace:^, @metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui":
   version: 0.0.0-use.local
   resolution: "@metamask/sdk-multichain-ui@workspace:packages/sdk-multichain-ui"
   dependencies:
     "@lavamoat/allow-scripts": ^2.3.1
     "@metamask/auto-changelog": 3.1.0
-    "@metamask/multichain-sdk": "workspace:^"
     "@paulmillr/qr": ^0.2.1
     "@size-limit/preset-big-lib": ^11.0.2
     "@stencil/core": ^4.22.2

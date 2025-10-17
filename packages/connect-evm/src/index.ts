@@ -1,1 +1,1 @@
-export { createEVMLayer, MetamaskConnectEVM } from './layer';
+export { createEVMLayer, MetamaskConnectEVM } from './connect';
