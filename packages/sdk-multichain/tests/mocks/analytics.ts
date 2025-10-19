@@ -1,5 +1,5 @@
 /**
- * This file mocks Analytics package in the SDK
+ * This file mocks Analytics package in the MetaMask Connect Module
  * Allowing us to know if specific events triggered or not
  */
 import * as t from 'vitest';

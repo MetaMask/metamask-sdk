@@ -9,7 +9,7 @@ import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
-import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
+import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type ConnectState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
 import { DefaultTransport } from './transports/default';
@@ -19,20 +19,20 @@ import { keymanager } from './transports/mwp/KeyManager';
 import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
-const logger = createLogger('metamask-sdk:core');
+const logger = createLogger('metamask-connect:core');
 
-export class MultichainSDK extends MultichainCore {
+export class MultichainConnect extends MultichainCore {
 	private __provider: MultichainApiClient<RPCAPI> | undefined = undefined;
 	private __transport: ExtendedTransport | undefined = undefined;
 	private __dappClient: DappClient | undefined = undefined;
 	private __beforeUnloadListener: (() => void) | undefined;
-	public __state: SDKState = 'pending';
+	public __state: ConnectState = 'pending';
 	private listener: (() => void | Promise<void>) | undefined;
 
 	get state() {
 		return this.__state;
 	}
-	set state(value: SDKState) {
+	set state(value: ConnectState) {
 		this.__state = value;
 		this.options.transport?.onNotification?.({
 			method: 'stateChanged',
@@ -91,10 +91,10 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	static async create(options: MultichainOptions) {
-		const instance = new MultichainSDK(options);
-		const isEnabled = await isLoggerEnabled('metamask-sdk:core', instance.options.storage);
+		const instance = new MultichainConnect(options);
+		const isEnabled = await isLoggerEnabled('metamask-connect:core', instance.options.storage);
 		if (isEnabled) {
-			enableDebug('metamask-sdk:core');
+			enableDebug('metamask-connect:core');
 		}
 		await instance.init();
 		return instance;
@@ -184,7 +184,7 @@ export class MultichainSDK extends MultichainCore {
 	private async init() {
 		try {
 			if (typeof window !== 'undefined' && window.mmsdk?.isInitialized) {
-				logger('MetaMaskSDK: init already initialized');
+				logger('MetaMaskConnect: init already initialized');
 			} else {
 				await this.setupAnalytics();
 				await this.setupTransport();
@@ -196,7 +196,7 @@ export class MultichainSDK extends MultichainCore {
 		} catch (error) {
 			await this.storage.removeTransport();
 			this.state = 'pending';
-			logger('MetaMaskSDK error during initialization', error);
+			logger('MetaMaskConnect error during initialization', error);
 		}
 	}
 
@@ -258,7 +258,7 @@ export class MultichainSDK extends MultichainCore {
 								sessionRequest,
 								metadata: {
 									dapp: this.options.dapp,
-									sdk: {
+									connect: {
 										version: getVersion(),
 										platform: getPlatformType(),
 									},
@@ -341,7 +341,7 @@ export class MultichainSDK extends MultichainCore {
 						sessionRequest,
 						metadata: {
 							dapp: this.options.dapp,
-							sdk: { version: getVersion(), platform: getPlatformType() },
+							connect: { version: getVersion(), platform: getPlatformType() },
 						},
 					};
 					const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);

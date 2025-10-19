@@ -242,7 +242,7 @@ t.describe('ModalFactory', () => {
 						parentElement: mockContainer,
 						connectionRequest,
 						preferDesktop,
-						sdkVersion: packageJson.version,
+						connectVersion: packageJson.version,
 					}),
 				);
 				t.expect(mockModal.mount).toHaveBeenCalled();
@@ -329,7 +329,7 @@ t.describe('ModalFactory', () => {
 
 				await constructorArgs.onClose();
 
-				// Multichain SDK is what will close the modal instead
+				// MetaMask Connect Module is what will close the modal instead
 				t.expect(mockModal.unmount).toHaveBeenCalled();
 			});
 

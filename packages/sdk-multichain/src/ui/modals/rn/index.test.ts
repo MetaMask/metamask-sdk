@@ -37,7 +37,7 @@ t.describe('RN Modals', () => {
 
 	t.it('rendering InstallModal on RN', async () => {
 		const installModal = new RNModals.InstallModal({
-			sdkVersion: '1.0.0',
+			connectVersion: '1.0.0',
 			preferDesktop: false,
 			onClose: t.vi.fn(),
 			startDesktopOnboarding: t.vi.fn(),
@@ -58,7 +58,7 @@ t.describe('RN Modals', () => {
 	t.it('Rendering OTPCodeModal on RN', async () => {
 		//TODO: Modal is currently not doing much but will be a placeholder for the future 2fa modal
 		const otpCodeModal = new RNModals.OTPCodeModal({
-			sdkVersion: '1.0.0',
+			connectVersion: '1.0.0',
 			onClose: t.vi.fn(),
 			updateOTPCode: t.vi.fn(),
 			otpCode: '123456',

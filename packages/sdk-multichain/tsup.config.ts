@@ -92,7 +92,7 @@ export default defineConfig([
     format: 'iife',
     platform: 'browser',
     external: [...baseExternalDeps, ...peerDependencies],
-    globalName: 'MetaMaskSDK', // Matches rollup IIFE config
+    globalName: 'MetaMaskConnect', // Matches rollup IIFE config
     esbuildOptions: (options) => {
       options.metafile = true;
       options.outExtension = { ".js": '.js' };

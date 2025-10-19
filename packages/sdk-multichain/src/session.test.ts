@@ -11,9 +11,9 @@ import type { TestSuiteOptions, MockedData } from '../tests/types';
 import { mockSessionData, mockSessionRequestData } from '../tests/data';
 import { SessionStore } from '@metamask/mobile-wallet-protocol-core';
 
-function testSuite<T extends MultichainOptions>({ platform, createSDK, options: sdkOptions, ...options }: TestSuiteOptions<T>) {
+function testSuite<T extends MultichainOptions>({ platform, createSDK, options: connectOptions, ...options }: TestSuiteOptions<T>) {
 	const { beforeEach, afterEach } = options;
-	const originalSdkOptions = sdkOptions;
+	const originalConnectOptions = connectOptions;
 	let sdk: MultichainCore;
 
 	t.describe(`${platform} tests`, () => {
@@ -25,18 +25,18 @@ function testSuite<T extends MultichainOptions>({ platform, createSDK, options: 
 			const uiOptions: MultichainOptions['ui'] =
 				platform === 'web-mobile'
 					? {
-							...originalSdkOptions.ui,
+							...originalConnectOptions.ui,
 							preferDesktop: false,
 							preferExtension: false,
 						}
-					: originalSdkOptions.ui;
+					: originalConnectOptions.ui;
 			mockedData = await beforeEach();
 
 			// Set the transport type as a string in storage (this is how it's stored)
 			testOptions = {
-				...originalSdkOptions,
+				...originalConnectOptions,
 				analytics: {
-					...originalSdkOptions.analytics,
+					...originalConnectOptions.analytics,
 					enabled: platform !== 'node',
 					integrationType: 'test',
 				},
