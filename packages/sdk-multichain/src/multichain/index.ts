@@ -22,7 +22,6 @@ import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProv
 const logger = createLogger('metamask-sdk:core');
 
 export class MultichainSDK extends MultichainCore {
-	private __provider: MultichainApiClient<RPCAPI> | undefined = undefined;
 	private __transport: ExtendedTransport | undefined = undefined;
 	private __dappClient: DappClient | undefined = undefined;
 	private __beforeUnloadListener: (() => void) | undefined;
@@ -32,19 +31,13 @@ export class MultichainSDK extends MultichainCore {
 	get state() {
 		return this.__state;
 	}
+
 	set state(value: SDKState) {
 		this.__state = value;
 		this.options.transport?.onNotification?.({
 			method: 'stateChanged',
 			params: value,
 		});
-	}
-
-	get provider() {
-		if (!this.__provider) {
-			throw new Error('Provider not initialized, establish connection first');
-		}
-		return this.__provider;
 	}
 
 	get transport() {
@@ -451,16 +444,14 @@ export class MultichainSDK extends MultichainCore {
 		this.listener = undefined;
 		this.__beforeUnloadListener = undefined;
 		this.__transport = undefined;
-		this.__provider = undefined;
 		this.__dappClient = undefined;
 	}
 
 	async invokeMethod(request: InvokeMethodOptions): Promise<Json> {
-		const { sdkInfo, transport } = this;
-
-		this.__provider ??= getMultichainClient({ transport });
-
-		const client = new RPCClient(this.transport, this.options, sdkInfo);
+		if (!this.__transport) {
+			throw new Error('Transport not initialized, establish connection first');
+		}
+		const client = new RPCClient(this.__transport, this.options);
 		return client.invokeMethod(request) as Promise<Json>;
 	}
 }

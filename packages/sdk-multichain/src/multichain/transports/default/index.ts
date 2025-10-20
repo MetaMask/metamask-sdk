@@ -62,6 +62,14 @@ export class DefaultTransport implements ExtendedTransport {
 	}
 
 	async disconnect(): Promise<void> {
+		if (this.isConnected()) {
+			try {
+				await this.request({ method: 'wallet_revokeSession' }, this.#defaultRequestOptions);
+			} catch (error) {
+				console.error('Failed to revoke session, but disconnecting anyway.', error);
+			}
+		}
+
 		this.#notificationCallbacks.clear();
 		return this.#transport.disconnect();
 	}
