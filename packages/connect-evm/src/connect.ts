@@ -8,37 +8,22 @@ import {
 } from '@metamask/multichain-sdk';
 import { EIP1193Provider, EIP155 } from './provider';
 import { getEthAccounts } from './utils/get-eth-accounts';
-import { Address } from './types';
-
-type CaipAccountId = `${string}:${string}:${string}`;
-
-type MinimalEventEmitter = Pick<EIP1193Provider, 'on' | 'off' | 'emit'>;
-
-type EventHandlers = {
-  accountsChanged: (accounts: string[]) => void;
-  chainChanged: (chainId: string) => void;
-  connect: (result: { accounts: string[]; chainId: number }) => void;
-  disconnect: () => void;
-};
-
-type MetamaskConnectEVMOptions = {
-  core: MultichainCore;
-  eventEmitter?: MinimalEventEmitter;
-  eventHandlers?: EventHandlers;
-};
-
-type AddEthereumChainParameter = {
-  chainId?: string;
-  chainName?: string;
-  nativeCurrency?: {
-    name?: string;
-    symbol?: string;
-    decimals?: number;
-  };
-  rpcUrls?: string[];
-  blockExplorerUrls?: string[];
-  iconUrls?: string[];
-};
+import type {
+  AddEthereumChainParameter,
+  Address,
+  CaipAccountId,
+  EventHandlers,
+  MetamaskConnectEVMOptions,
+  MinimalEventEmitter,
+  ProviderRequest,
+  ProviderRequestInterceptor,
+} from './types';
+import { IGNORED_METHODS } from './constants';
+import {
+  isAddChainRequest,
+  isConnectRequest,
+  isSwitchChainRequest,
+} from './utils/type-guards';
 
 function toHex(value: number | string): string {
   return `0x${value.toString(16)}`;
@@ -48,6 +33,9 @@ export class MetamaskConnectEVM {
   /** The core instance of the Multichain SDK */
   private core: MultichainCore;
 
+  /** An instance of the EIP-1193 provider interface */
+  private provider: EIP1193Provider;
+
   /** The currently selected chain ID on the wallet */
   private currentChainId?: number;
 
@@ -56,9 +44,6 @@ export class MetamaskConnectEVM {
 
   /** The currently permitted accounts */
   accounts: Address[] = [];
-
-  /** An instance of the EIP-1193 provider interface */
-  private provider: EIP1193Provider;
 
   /** The session scopes currently permitted */
   private sessionScopes: SessionData['sessionScopes'] = {};
@@ -73,64 +58,61 @@ export class MetamaskConnectEVM {
   private metamaskProviderHandler: (event: MessageEvent) => void;
 
   /** The handler for the wallet_sessionChanged event */
-  private sessionChangedHandler: (session: SessionData) => void;
+  private sessionChangedHandler: (session?: SessionData) => void;
 
   constructor({ core, eventHandlers }: MetamaskConnectEVMOptions) {
-    console.log('MetamaskConnectEVM constructor starts');
     this.core = core;
-    this.provider = new EIP1193Provider(core);
+    this.provider = new EIP1193Provider(
+      core,
+      this.requestInterceptor.bind(this),
+    );
+
     this.eventHandlers = eventHandlers;
 
-    // Setup the event listeners for the wallet's EIP-1193 events
-    this.setupEventListeners();
-  }
-
-  private setupEventListeners() {
-    this.metamaskProviderHandler = (event: MessageEvent) => {
+    /**
+     * Sets up the handler for the wallet's internal EIP-1193 provider events.
+     * Also handles switch chain failures.
+     */
+    this.metamaskProviderHandler = (event) => {
       if (
         event?.data?.data?.name === 'metamask-provider' &&
         event.origin === location.origin
       ) {
         const data = event?.data?.data?.data;
 
-        console.log('message', data);
         if (data?.method === 'metamask_accountsChanged') {
           const accounts = data?.params;
-          console.log('metamask_accountsChanged', { accounts });
           this.currentAccount = accounts[0];
+          this.accounts = accounts;
           this.eventHandlers?.accountsChanged?.(accounts);
         }
 
         if (data?.method === 'metamask_chainChanged') {
           const chainId = Number(data?.params.chainId);
-          console.log('metamask_chainChanged', { chainId });
           this.currentChainId = chainId;
 
-          // TODO: (@wenfix): better setter
+          // TODO: (@wenfix): better setter?
           this.provider.currentChainId = chainId;
           this.provider.emit('chainChanged', { chainId });
           this.eventHandlers?.chainChanged?.(chainId.toString());
-
-          // If the chainId is the same as the latest chain configuration,
-          // we managed to set the chain correctly and can clear the configuration.
-          if (this.latestChainConfiguration?.chainId === chainId.toString()) {
-            this.latestChainConfiguration = null;
-          }
         }
 
+        // This error occurs when a chain switch failed because
+        // the target chain is not configured on the wallet.
         if (data?.error?.code === 4902) {
-          console.log('metamask_switchEthereumChain error', data?.error);
-
-          this.addEthereumChain({ chainId: this.currentChainId });
+          this.addEthereumChain();
         }
       }
     };
 
-    this.sessionChangedHandler = (session: SessionData) => {
-      console.log('sessionChanged', session);
+    /**
+     * Handles the wallet_sessionChanged event.
+     * Updates the internal connection state with the new session data.
+     * @param session - The session data
+     */
+    this.sessionChangedHandler = (session) => {
       this.sessionScopes = session?.sessionScopes ?? {};
 
-      console.log('sessionScopes', this.sessionScopes);
       const ethAccounts = getEthAccounts(this.sessionScopes);
       this.currentAccount = ethAccounts[0];
       this.accounts = ethAccounts;
@@ -138,10 +120,13 @@ export class MetamaskConnectEVM {
 
     window.addEventListener('message', this.metamaskProviderHandler);
 
-    this.core.on('wallet_sessionChanged', this.sessionChangedHandler);
+    this.core.on(
+      'wallet_sessionChanged',
+      this.sessionChangedHandler.bind(this),
+    );
   }
 
-  async connect({ chainId, account }: { chainId: number; account?: string }) {
+  async connect({ chainId, account }: { chainId?: number; account?: string }) {
     const caipChainId: Scope<RPCAPI>[] = chainId
       ? [`${EIP155}:${chainId}`]
       : [];
@@ -154,7 +139,7 @@ export class MetamaskConnectEVM {
     this.currentChainId = chainId;
 
     const result = {
-      accounts: [await this.getAccount()],
+      accounts: this.currentAccount ? [this.currentAccount] : [],
       chainId: this.currentChainId,
     };
 
@@ -201,32 +186,84 @@ export class MetamaskConnectEVM {
 
     // TODO: Check if approved scopes have the chain and early return
 
-    // Save the chain configuration in case it's not present in the wallet
+    // Save the chain configuration for adding in case
+    // the chain is not configured in the wallet.
     this.latestChainConfiguration = chainConfiguration;
-
-    const hexChainId = toHex(chainId);
 
     this.request({
       method: 'wallet_switchEthereumChain',
-      params: [{ chainId: hexChainId }],
+      params: [{ chainId: toHex(chainId) }],
     });
   }
 
-  // Legacy method for backward compatibility
+  /**
+   * Terminates the connection to the wallet
+   * @deprecated Use disconnect() instead
+   */
   async terminate() {
     this.disconnect();
   }
 
+  /**
+   * Gets the EIP-1193 provider instance
+   * @returns The EIP-1193 provider instance
+   */
   async getProvider(): Promise<EIP1193Provider> {
     return this.provider;
   }
 
+  /**
+   * Gets the currently selected chain ID on the wallet
+   * @returns The currently selected chain ID or undefined if no chain is selected
+   */
   async getChainId(): Promise<number | undefined> {
     return this.currentChainId;
   }
 
-  async getAccount(): Promise<string | undefined> {
+  /**
+   * Gets the currently selected account on the wallet
+   * @returns The currently selected account or undefined if no account is selected
+   */
+  async getAccount(): Promise<Address | undefined> {
     return this.currentAccount;
+  }
+
+  /**
+   * Handles several EIP-1193 requests that require special handling
+   * due the nature of the Multichain SDK.
+   *
+   * @param request - The request object containing the method and params
+   * @returns The result of the request or undefined if the request is ignored
+   */
+  private async requestInterceptor(
+    request: ProviderRequest,
+  ): ReturnType<ProviderRequestInterceptor> {
+    if (IGNORED_METHODS.includes(request.method)) {
+      return Promise.resolve(undefined);
+    }
+
+    if (request.method === 'wallet_revokePermissions') {
+      return this.disconnect();
+    }
+
+    if (isConnectRequest(request)) {
+      return this.connect({
+        chainId: request.params[0],
+        account: request.params[1],
+      });
+    }
+
+    if (isSwitchChainRequest(request)) {
+      return this.switchChain({
+        chainId: parseInt(request.params[0].chainId, 16),
+      });
+    }
+
+    if (isAddChainRequest(request)) {
+      return this.addEthereumChain(request.params[0]);
+    }
+
+    return Promise.resolve();
   }
 
   /**
@@ -242,8 +279,10 @@ export class MetamaskConnectEVM {
    * Adds an Ethereum chain using the latest chain configuration received from
    * a switchEthereumChain request
    */
-  private async addEthereumChain() {
-    if (!this.latestChainConfiguration) {
+  private async addEthereumChain(
+    chainConfiguration?: AddEthereumChainParameter,
+  ) {
+    if (!chainConfiguration && !this.latestChainConfiguration) {
       throw new Error('No chain configuration found.');
     }
 
@@ -285,7 +324,7 @@ export async function createEVMLayer(
       eventHandlers: options.eventHandlers,
     });
   } catch (error) {
-    console.error('Error creating core', error);
+    console.error('Error creating Metamask Connect/EVM', error);
     throw error;
   }
 }

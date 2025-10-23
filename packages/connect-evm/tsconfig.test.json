@@ -2,9 +2,9 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "types": ["jest"]
+    "types": ["jest"],
+    "noEmit": true
   },
-  "include": ["./src", "./src/__tests__"]
+  "include": ["./src/__tests__"],
+  "exclude": ["./src"]
 }
-
-

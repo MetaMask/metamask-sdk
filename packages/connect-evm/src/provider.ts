@@ -1,43 +1,47 @@
 /* eslint-disable camelcase */
+import type {
+  EIP1193ProviderEvents,
+  ProviderRequest,
+  ProviderRequestInterceptor,
+} from './types';
+
 import { EventEmitter, MultichainCore } from '@metamask/multichain-sdk';
-import { IGNORED_METHODS } from './constants';
+import { INTERCEPTABLE_METHODS } from './constants';
 
 export const EIP155 = 'eip155';
 
-type SDKEvents = {
-  connect: [{ chainId: number }];
-  disconnect: [];
-  accountsChanged: [{ account: string }];
-  chainChanged: [{ chainId: number }];
-};
-
 /**
- * Basic EIP-1193 Provider Implementation
+ * EIP-1193 Provider wrapper around the Multichain SDK.
  */
-export class EIP1193Provider extends EventEmitter<SDKEvents> {
+export class EIP1193Provider extends EventEmitter<EIP1193ProviderEvents> {
   /** The core instance of the Multichain SDK */
   private core: MultichainCore;
 
   /** The currently selected chain ID on the wallet */
   public currentChainId?: number;
 
-  constructor(core: MultichainCore) {
+  /** Interceptor function to handle specific methods */
+  private requestInterceptor: ProviderRequestInterceptor;
+
+  constructor(core: MultichainCore, interceptor: ProviderRequestInterceptor) {
     super();
     this.core = core;
+    this.requestInterceptor = interceptor;
   }
 
   /**
-   * Emulates a request to the EIP-1193 provider
+   * Performs a EIP-1193 request.
    * @param request - The request object containing the method and params
    */
-  request(request: {
-    method: string;
-    params: unknown;
-    chainId?: string;
-  }): Promise<unknown> {
+  async request(request: ProviderRequest): Promise<unknown> {
+    /* Some methods require special handling, so we intercept them here
+     * and handle them in MetamaskConnectEVM.requestInterceptor method.  */
+    if (INTERCEPTABLE_METHODS.includes(request.method)) {
+      return this.requestInterceptor?.(request);
+    }
+
     const _chainId = request.chainId ?? this.currentChainId;
 
-    // TODO (@wenfix): remap methods to wallet_createSession and wallet_getSession
     return this.core.invokeMethod({
       scope: `${EIP155}:${_chainId}`,
       request: {
@@ -45,15 +49,5 @@ export class EIP1193Provider extends EventEmitter<SDKEvents> {
         params: request.params,
       },
     });
-  }
-
-  private filterRequests(method: string) {
-    if (IGNORED_METHODS.includes(method)) {
-      return false;
-    }
-
-    if (method === 'wallet_requestPermissions') {
-      // Call connect to handle it
-    }
   }
 }
