@@ -54,6 +54,7 @@ export class MetamaskConnectEVM {
   /** The currently selected account on the wallet */
   private currentAccount?: Address;
 
+  /** The currently permitted accounts */
   accounts: Address[] = [];
 
   /** An instance of the EIP-1193 provider interface */
@@ -167,7 +168,7 @@ export class MetamaskConnectEVM {
     await this.core.disconnect();
 
     this.provider.emit('disconnect');
-    this.eventHandlers?.accountsChanged?.([undefined]);
+    this.eventHandlers?.accountsChanged?.([]);
     this.eventHandlers?.disconnect?.();
 
     this.clearConnectionState();
@@ -179,23 +180,6 @@ export class MetamaskConnectEVM {
     if (this.sessionChangedHandler) {
       this.core.off('wallet_sessionChanged', this.sessionChangedHandler);
     }
-  }
-
-  // Legacy method for backward compatibility
-  async terminate() {
-    this.disconnect();
-  }
-
-  async getProvider(): Promise<EIP1193Provider> {
-    return this.provider;
-  }
-
-  async getChainId(): Promise<number | undefined> {
-    return this.currentChainId;
-  }
-
-  async getAccount(): Promise<string | undefined> {
-    return this.currentAccount;
   }
 
   /**
@@ -228,6 +212,23 @@ export class MetamaskConnectEVM {
     });
   }
 
+  // Legacy method for backward compatibility
+  async terminate() {
+    this.disconnect();
+  }
+
+  async getProvider(): Promise<EIP1193Provider> {
+    return this.provider;
+  }
+
+  async getChainId(): Promise<number | undefined> {
+    return this.currentChainId;
+  }
+
+  async getAccount(): Promise<string | undefined> {
+    return this.currentAccount;
+  }
+
   /**
    * Clears the internal connection state: accounts and chainId
    */
@@ -235,19 +236,6 @@ export class MetamaskConnectEVM {
     this.accounts = [];
     this.currentAccount = undefined;
     this.currentChainId = undefined;
-  }
-
-  /**
-   * Switches the Ethereum chain
-   * @param chainId - The chain ID to switch to
-   */
-  private async switchEthereumChain({ chainId }: { chainId: number }) {
-    const hexChainId = toHex(chainId);
-
-    await this.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: hexChainId }],
-    });
   }
 
   /**

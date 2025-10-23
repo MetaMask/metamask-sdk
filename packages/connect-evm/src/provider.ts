@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { EventEmitter, MultichainCore } from '@metamask/multichain-sdk';
+import { IGNORED_METHODS } from './constants';
 
 export const EIP155 = 'eip155';
 
@@ -26,7 +27,7 @@ export class EIP1193Provider extends EventEmitter<SDKEvents> {
   }
 
   /**
-   * Submits a request to the EIP-1193 provider
+   * Emulates a request to the EIP-1193 provider
    * @param request - The request object containing the method and params
    */
   request(request: {
@@ -44,5 +45,15 @@ export class EIP1193Provider extends EventEmitter<SDKEvents> {
         params: request.params,
       },
     });
+  }
+
+  private filterRequests(method: string) {
+    if (IGNORED_METHODS.includes(method)) {
+      return false;
+    }
+
+    if (method === 'wallet_requestPermissions') {
+      // Call connect to handle it
+    }
   }
 }
