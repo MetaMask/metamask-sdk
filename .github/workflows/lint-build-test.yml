@@ -67,7 +67,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn --immutable
-      - run: yarn workspace ${{ matrix.package-name }} lint:changelog
+      - run: yarn workspace ${{ matrix.package-name }} changelog:validate
       - name: Require clean working directory
         shell: bash
         run: |
