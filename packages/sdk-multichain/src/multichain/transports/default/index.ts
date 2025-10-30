@@ -1,7 +1,7 @@
 import { type CreateSessionParams, getDefaultTransport, type Transport, type TransportRequest, type TransportResponse } from '@metamask/multichain-api-client';
 import type { CaipAccountId } from '@metamask/utils';
 import type { ExtendedTransport, RPCAPI, Scope, SessionData } from 'src/domain';
-import { addValidAccounts, getOptionalScopes, getValidAccounts } from 'src/multichain/utils';
+import { addValidAccounts, getOptionalScopes, getValidAccounts, isSameScopesAndAccounts } from 'src/multichain/utils';
 
 const DEFAULT_REQUEST_TIMEOUT = 60 * 1000;
 
@@ -34,8 +34,9 @@ export class DefaultTransport implements ExtendedTransport {
 		if (walletSession && options) {
 			const currentScopes = Object.keys(walletSession?.sessionScopes ?? {}) as Scope[];
 			const proposedScopes = options?.scopes ?? [];
-			const isSameScopes = currentScopes.every((scope) => proposedScopes.includes(scope)) && proposedScopes.every((scope) => currentScopes.includes(scope));
-			if (!isSameScopes) {
+			const proposedCaipAccountIds = options?.caipAccountIds ?? [];
+			const hasSameScopesAndAccounts = isSameScopesAndAccounts(currentScopes, proposedScopes, walletSession, proposedCaipAccountIds);
+			if (!hasSameScopesAndAccounts) {
 				await this.request({ method: 'wallet_revokeSession', params: walletSession }, this.#defaultRequestOptions);
 				const optionalScopes = addValidAccounts(getOptionalScopes(options?.scopes ?? []), getValidAccounts(options?.caipAccountIds ?? []));
 				const sessionRequest: CreateSessionParams<RPCAPI> = { optionalScopes };

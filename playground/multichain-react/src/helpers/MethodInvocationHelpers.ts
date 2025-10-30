@@ -1,18 +1,30 @@
 import type { SessionData } from '@metamask/multichain-sdk';
-import type { CaipChainId, Json, CaipAccountId } from '@metamask/utils';
+import type { CaipAccountId, CaipChainId, Json } from '@metamask/utils';
 import type { MethodObject } from '@open-rpc/meta-schema';
 import type { Dispatch, SetStateAction } from 'react';
 
 /**
- * Normalizes parameters for method invocation, ensuring they are always in array format
- * and applying special handling for specific methods.
+ * Normalizes parameters for method invocation.
+ * - For Solana methods: keeps params as an object
+ * - For EVM methods: ensures params are in array format
+ * - Applies special handling for specific methods.
  *
  * @param method - The method name being invoked.
  * @param params - The raw parameters.
- * @returns Normalized parameters array.
+ * @param scope - The scope/chain ID to determine the chain type.
+ * @returns Normalized parameters (array for EVM, object for Solana).
  */
-export const normalizeMethodParams = (method: string, params: Json): Json[] => {
-	// Ensure params is always an array for the SDK
+export const normalizeMethodParams = (method: string, params: Json, scope?: string): Json[] | Json => {
+	// Solana methods should keep params as objects, not arrays
+	const solanaMethodsThatUseObjects = ['signMessage', 'signTransaction', 'signAllTransactions', 'signAndSendTransaction', 'signIn'];
+
+	// Check if this is a Solana method that needs object params
+	if (solanaMethodsThatUseObjects.includes(method) || scope?.startsWith('solana:')) {
+		// For Solana, return params as-is (should be an object)
+		return params;
+	}
+
+	// For EVM methods, ensure params is always an array
 	let paramsArray = Array.isArray(params) ? params : [params];
 
 	// Special handling for eth_signTypedData_v3/v4: second parameter must be JSON string

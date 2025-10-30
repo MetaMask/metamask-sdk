@@ -1,5 +1,5 @@
-import { Transaction, PublicKey, SystemProgram, Connection } from '@solana/web3.js';
 import type { Commitment } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 
 import { FEATURED_NETWORKS } from '../constants/networks';
 

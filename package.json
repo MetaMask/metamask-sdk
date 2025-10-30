@@ -25,7 +25,8 @@
     "packages/playground-next",
     "packages/sdk-multichain",
     "playground/multichain-node",
-    "playground/multichain-react"
+    "playground/multichain-react",
+    "playground/multichain-react-native"
   ],
   "scripts": {
     "build": "yarn install && cd packages/sdk-socket-server-next && yarn install && cd ../.. && yarn workspaces foreach --verbose run build:pre-tsc && yarn workspaces foreach --verbose --topological --parallel --no-private run build && yarn workspaces foreach --verbose run build:post-tsc ",
@@ -116,8 +117,6 @@
     "ts-node": "^10.9.1"
   },
   "resolutions": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
     "secp256k1": "^5.0.1",
     "elliptic": "6.6.1"
   }

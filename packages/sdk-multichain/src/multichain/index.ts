@@ -1,20 +1,22 @@
+/** biome-ignore-all lint/suspicious/noAsyncPromiseExecutor: <explanation> */
+
+import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
+import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
 import { getMultichainClient, type MultichainApiClient, type SessionData } from '@metamask/multichain-api-client';
 import { analytics } from '@metamask/sdk-analytics';
 import type { CaipAccountId, Json } from '@metamask/utils';
+import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
 import packageJson from '../../package.json';
 import { type InvokeMethodOptions, type MultichainOptions, type RPCAPI, type Scope, TransportType } from '../domain';
 import { createLogger, enableDebug, isEnabled as isLoggerEnabled } from '../domain/logger';
 import { type ConnectionRequest, type ExtendedTransport, MultichainCore, type SDKState } from '../domain/multichain';
 import { getPlatformType, hasExtension, isSecure, PlatformType } from '../domain/platform';
 import { RPCClient } from './rpc/client';
-import { getDappId, getVersion, setupDappMetadata, setupInfuraProvider } from './utils';
-import { ErrorCode, ProtocolError, type SessionRequest, SessionStore, WebSocketTransport } from '@metamask/mobile-wallet-protocol-core';
-import { METAMASK_CONNECT_BASE_URL, METAMASK_DEEPLINK_BASE, MWP_RELAY_URL } from 'src/config';
-import { DappClient } from '@metamask/mobile-wallet-protocol-dapp-client';
+import { DefaultTransport } from './transports/default';
 
 import { MWPTransport } from './transports/mwp';
 import { keymanager } from './transports/mwp/KeyManager';
-import { DefaultTransport } from './transports/default';
+import { getDappId, getVersion, openDeeplink, setupDappMetadata, setupInfuraProvider } from './utils';
 
 //ENFORCE NAMESPACE THAT CAN BE DISABLED
 const logger = createLogger('metamask-sdk:core');
@@ -135,10 +137,11 @@ export class MultichainSDK extends MultichainCore {
 		const { ui } = this.options;
 		const { preferExtension = true, headless: _headless = false } = ui;
 		const transportType = await this.storage.getTransport();
+		const hasExtensionInstalled = await hasExtension();
 		if (transportType) {
 			if (transportType === TransportType.Browser) {
 				//Check if the user still have the extension or not return the transport
-				if (hasExtension() && preferExtension) {
+				if (hasExtensionInstalled && preferExtension) {
 					const apiTransport = new DefaultTransport();
 					this.__transport = apiTransport;
 					this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
@@ -153,6 +156,7 @@ export class MultichainSDK extends MultichainCore {
 				this.listener = apiTransport.onNotification(this.onTransportNotification.bind(this));
 				return apiTransport;
 			}
+
 			await this.storage.removeTransport();
 		}
 
@@ -167,6 +171,11 @@ export class MultichainSDK extends MultichainCore {
 				await this.transport.connect();
 			}
 			this.state = 'connected';
+			if (this.transport instanceof MWPTransport) {
+				await this.storage.setTransport(TransportType.MPW);
+			} else {
+				await this.storage.setTransport(TransportType.Browser);
+			}
 		} else {
 			this.state = 'loaded';
 		}
@@ -214,50 +223,24 @@ export class MultichainSDK extends MultichainCore {
 		await this.storage.setTransport(TransportType.MPW);
 	}
 
-	private openDeeplink(deeplink: string, universalLink: string) {
-		const { mobile } = this.options;
-		const useDeeplink = mobile && mobile.useDeeplink !== undefined ? mobile.useDeeplink : true;
-		if (useDeeplink) {
-			if (typeof window !== 'undefined') {
-				// We don't need to open a deeplink in a new tab
-				// It avoid the browser to display a blank page
-				window.location.href = deeplink;
-			}
-		} else if (typeof document !== 'undefined') {
-			// Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
-			// Using 'window.open' causes issues on iOS in non-Safari browsers and
-			// WebViews where a blank tab is left behind after connecting.
-			// This is especially bad in some WebView scenarios (e.g. following a
-			// link from Twitter) where the user doesn't have any mechanism for
-			// closing the blank tab.
-			// For whatever reason, links with a target of "_blank" don't suffer
-			// from this problem, and programmatically clicking a detached link
-			// element with the same attributes also avoids the issue.
-			const link = document.createElement('a');
-			link.href = universalLink;
-			link.target = '_self';
-			link.rel = 'noreferrer noopener';
-			link.click();
-		}
-	}
-
 	private async onBeforeUnload() {
-		if (this.options.ui.factory.modal) {
-			//Modal is still visible, remove storage to prevent glitch with "connecting" state
+		//Fixes glitch with "connecting" state when modal is still visible and we close screen or refresh
+		if (this.options.ui.factory.modal?.isMounted) {
 			await this.storage.removeTransport();
 		}
 	}
 
 	private createBeforeUnloadListener() {
-		if (typeof window !== 'undefined') {
+		if (typeof window !== 'undefined' && typeof window.addEventListener !== 'undefined') {
 			window.addEventListener('beforeunload', this.onBeforeUnload.bind(this));
 		}
 		return () => {
-			if (typeof window !== 'undefined') {
+			if (typeof window !== 'undefined' && typeof window.removeEventListener !== 'undefined') {
 				window.removeEventListener('beforeunload', this.onBeforeUnload.bind(this));
 			}
 		};
 	}
+
 	private async showInstallModal(desktopPreferred: boolean, scopes: Scope[], caipAccountIds: CaipAccountId[]) {
 		// create the listener only once to avoid memory leaks
 		this.__beforeUnloadListener ??= this.createBeforeUnloadListener();
@@ -289,6 +272,7 @@ export class MultichainSDK extends MultichainCore {
 								this.options.ui.factory.unload();
 								this.options.ui.factory.modal?.unmount();
 								this.state = 'connected';
+								return this.storage.setTransport(TransportType.MPW);
 							})
 							.catch((err) => {
 								if (err instanceof ProtocolError) {
@@ -328,7 +312,7 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	private async deeplinkConnect(scopes: Scope[], caipAccountIds: CaipAccountId[]) {
-		return new Promise<void>((resolve, reject) => {
+		return new Promise<void>(async (resolve, reject) => {
 			this.dappClient.on('message', (payload: any) => {
 				const data = payload.data as Record<string, unknown>;
 				if (typeof data === 'object' && data !== null) {
@@ -348,26 +332,50 @@ export class MultichainSDK extends MultichainCore {
 					}
 				}
 			});
-			this.dappClient.once('session_request', (sessionRequest: SessionRequest) => {
-				const connectionRequest = {
-					sessionRequest,
-					metadata: {
-						dapp: this.options.dapp,
-						sdk: {
-							version: getVersion(),
-							platform: getPlatformType(),
+
+			let timeout: NodeJS.Timeout | undefined;
+
+			if (!this.transport.isConnected()) {
+				this.dappClient.once('session_request', (sessionRequest: SessionRequest) => {
+					const connectionRequest = {
+						sessionRequest,
+						metadata: {
+							dapp: this.options.dapp,
+							sdk: { version: getVersion(), platform: getPlatformType() },
 						},
-					},
-				};
-				const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);
-				const universalLink = this.options.ui.factory.createUniversalLink(connectionRequest);
-				if (this.options.mobile?.preferredOpenLink) {
-					this.options.mobile.preferredOpenLink(deeplink, '_self');
-				} else {
-					this.openDeeplink(deeplink, universalLink);
-				}
-			});
-			this.transport.connect({ scopes, caipAccountIds }).then(resolve).catch(reject);
+					};
+					const deeplink = this.options.ui.factory.createDeeplink(connectionRequest);
+					const universalLink = this.options.ui.factory.createUniversalLink(connectionRequest);
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(deeplink, '_self');
+					} else {
+						openDeeplink(this.options, deeplink, universalLink);
+					}
+				});
+			} else {
+				timeout = setTimeout(() => {
+					const deeplink = this.options.ui.factory.createDeeplink();
+					const universalLink = this.options.ui.factory.createUniversalLink();
+					if (this.options.mobile?.preferredOpenLink) {
+						this.options.mobile.preferredOpenLink(deeplink, '_self');
+					} else {
+						openDeeplink(this.options, deeplink, universalLink);
+					}
+				}, 250);
+			}
+
+			this.transport
+				.connect({ scopes, caipAccountIds })
+				.then(resolve)
+				.catch((err) => {
+					this.storage.removeTransport();
+					reject(err);
+				})
+				.finally(() => {
+					if (timeout) {
+						clearTimeout(timeout);
+					}
+				});
 		});
 	}
 
@@ -388,12 +396,22 @@ export class MultichainSDK extends MultichainCore {
 		const platformType = getPlatformType();
 		const isWeb = platformType === PlatformType.MetaMaskMobileWebview || platformType === PlatformType.DesktopWeb;
 		const { preferExtension = true, preferDesktop = false, headless: _headless = false } = ui;
+		const secure = isSecure();
+		const hasExtensionInstalled = await hasExtension();
 
-		if (this.__transport?.isConnected()) {
-			return this.handleConnection(this.__transport.connect({ scopes, caipAccountIds }));
+		if (this.__transport?.isConnected() && !secure) {
+			return this.handleConnection(
+				this.__transport.connect({ scopes, caipAccountIds }).then(() => {
+					if (this.__transport instanceof MWPTransport) {
+						return this.storage.setTransport(TransportType.MPW);
+					} else {
+						return this.storage.setTransport(TransportType.Browser);
+					}
+				}),
+			);
 		}
 
-		if (isWeb && hasExtension() && preferExtension) {
+		if (isWeb && hasExtensionInstalled && preferExtension) {
 			//If metamask extension is available, connect to it
 			const defaultTransport = await this.setupDefaultTransport();
 			// Web transport has no initial payload
@@ -404,14 +422,8 @@ export class MultichainSDK extends MultichainCore {
 		await this.setupMWP();
 
 		// Determine preferred option for install modal
-		let isDesktopPreferred: boolean;
-		if (isWeb) {
-			isDesktopPreferred = hasExtension() ? preferDesktop : !preferExtension || preferDesktop;
-		} else {
-			isDesktopPreferred = preferDesktop;
-		}
+		const isDesktopPreferred = hasExtensionInstalled ? preferDesktop : !preferExtension || preferDesktop;
 
-		const secure = isSecure();
 		if (secure && !isDesktopPreferred) {
 			// Desktop is not preferred option, so we use deeplinks (mobile web)
 			return this.handleConnection(this.deeplinkConnect(scopes, caipAccountIds));
@@ -444,33 +456,11 @@ export class MultichainSDK extends MultichainCore {
 	}
 
 	async invokeMethod(request: InvokeMethodOptions): Promise<Json> {
-		const {
-			options: {
-				ui: { preferDesktop = false, headless: _headless = false },
-			},
-			sdkInfo,
-			transport,
-		} = this;
+		const { sdkInfo, transport } = this;
 
 		this.__provider ??= getMultichainClient({ transport });
 
-		const client = new RPCClient(this.transport, this.options.api, sdkInfo);
-		const secure = isSecure();
-
-		const shouldOpenDeeplink = secure && !preferDesktop;
-
-		// Call the client invoke method first
-		const invokePromise = client.invokeMethod(request);
-
-		// Schedule the deeplink to open 100ms after the invoke method is called
-		if (shouldOpenDeeplink) {
-			if (this.options.mobile?.preferredOpenLink) {
-				this.options.mobile.preferredOpenLink(METAMASK_DEEPLINK_BASE, '_self');
-			} else {
-				this.openDeeplink(METAMASK_DEEPLINK_BASE, METAMASK_CONNECT_BASE_URL);
-			}
-		}
-
-		return invokePromise as Promise<Json>;
+		const client = new RPCClient(this.transport, this.options, sdkInfo);
+		return client.invokeMethod(request) as Promise<Json>;
 	}
 }

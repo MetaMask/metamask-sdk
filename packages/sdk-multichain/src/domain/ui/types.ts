@@ -33,6 +33,10 @@ export abstract class Modal<Options, Data extends DataType = DataType> {
 
 	constructor(protected readonly options: Options) {}
 
+	get isMounted() {
+		return this.instance !== undefined;
+	}
+
 	get data() {
 		if (typeof this.options === 'object' && this.options && 'link' in this.options) {
 			return this.options.link as Data;

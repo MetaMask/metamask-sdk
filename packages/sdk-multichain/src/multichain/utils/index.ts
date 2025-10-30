@@ -1,8 +1,37 @@
+import { deflate } from 'pako';
 import { type CaipAccountId, type CaipChainId, parseCaipAccountId, parseCaipChainId } from '@metamask/utils';
 import packageJson from '../../../package.json';
 import { type DappSettings, getInfuraRpcUrls, getPlatformType, type MultichainOptions, PlatformType, type Scope, type SessionData } from '../../domain';
 
 export type OptionalScopes = Record<Scope, SessionData['sessionScopes'][Scope]>;
+
+/**
+ * Cross-platform base64 encoding
+ * Works in browser, Node.js, and React Native environments
+ */
+function base64Encode(str: string): string {
+	if (typeof btoa !== 'undefined') {
+		// Browser and React Native with polyfills
+		return btoa(str);
+	} else if (typeof Buffer !== 'undefined') {
+		// Node.js
+		return Buffer.from(str).toString('base64');
+  }
+	throw new Error('No base64 encoding method available');
+}
+
+/**
+ * Compress a string using pako (deflateRaw)
+ * Returns a base64-encoded compressed string
+ */
+export function compressString(str: string): string {
+	const compressed = deflate(str);
+
+	// Convert Uint8Array to string for base64 encoding
+	const binaryString = String.fromCharCode.apply(null, Array.from(compressed));
+	return base64Encode(binaryString);
+}
+
 
 export function getDappId(dapp?: DappSettings) {
 	if (typeof window === 'undefined' || typeof window.location === 'undefined') {
@@ -14,6 +43,33 @@ export function getDappId(dapp?: DappSettings) {
 
 export function getVersion() {
 	return packageJson.version;
+}
+
+export function openDeeplink(options: MultichainOptions, deeplink: string, universalLink: string) {
+	const { mobile } = options;
+	const useDeeplink = mobile && mobile.useDeeplink !== undefined ? mobile.useDeeplink : true;
+	if (useDeeplink) {
+		if (typeof window !== 'undefined') {
+			// We don't need to open a deeplink in a new tab
+			// It avoid the browser to display a blank page
+			window.location.href = deeplink;
+		}
+	} else if (typeof document !== 'undefined') {
+		// Workaround for https://github.com/rainbow-me/rainbowkit/issues/524.
+		// Using 'window.open' causes issues on iOS in non-Safari browsers and
+		// WebViews where a blank tab is left behind after connecting.
+		// This is especially bad in some WebView scenarios (e.g. following a
+		// link from Twitter) where the user doesn't have any mechanism for
+		// closing the blank tab.
+		// For whatever reason, links with a target of "_blank" don't suffer
+		// from this problem, and programmatically clicking a detached link
+		// element with the same attributes also avoids the issue.
+		const link = document.createElement('a');
+		link.href = universalLink;
+		link.target = '_self';
+		link.rel = 'noreferrer noopener';
+		link.click();
+	}
 }
 
 export function getOptionalScopes(scopes: Scope[]) {
@@ -110,6 +166,39 @@ export function setupDappMetadata(options: MultichainOptions): MultichainOptions
 		}
 	}
 	return options;
+}
+
+/**
+ * Enhanced scope checking function that validates both scopes and accounts
+ * @param currentScopes - Current scopes from the existing session
+ * @param proposedScopes - Proposed scopes from the connect options
+ * @param walletSession - The existing wallet session data
+ * @param proposedCaipAccountIds - Proposed account IDs from the connect options
+ * @returns true if scopes and accounts match, false otherwise
+ */
+export function isSameScopesAndAccounts(
+  currentScopes: Scope[],
+  proposedScopes: Scope[],
+  walletSession: SessionData,
+  proposedCaipAccountIds: CaipAccountId[],
+): boolean {
+  const isSameScopes =
+    currentScopes.every((scope) => proposedScopes.includes(scope)) &&
+    proposedScopes.every((scope) => currentScopes.includes(scope));
+
+  if (!isSameScopes) {
+    return false;
+  }
+
+  const existingAccountIds: CaipAccountId[] = Object.values(walletSession.sessionScopes)
+	  .filter(({ accounts }) => Boolean(accounts))
+	  .flatMap(({ accounts }) => accounts ?? []);
+
+  const allProposedAccountsIncluded = proposedCaipAccountIds.every(
+    (proposedAccountId) => existingAccountIds.includes(proposedAccountId),
+  );
+
+  return allProposedAccountsIncluded;
 }
 
 export function getValidAccounts(caipAccountIds: CaipAccountId[]) {
