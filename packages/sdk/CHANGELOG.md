@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.34.0]
+### Added
+- Introduces a new `hideReturnToAppNotification` option (default false) and passes it through to deeplink/QR URLs ([#1350](https://github.com/MetaMask/metamask-sdk/pull/1350))
+
 ## [0.33.1]
 ### Fixed
 - chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
