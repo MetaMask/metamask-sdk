@@ -6,10 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.34.0]
-### Added
-- Introduces a new `hideReturnToAppNotification` option (default false) and passes it through to deeplink/QR URLs ([#1350](https://github.com/MetaMask/metamask-sdk/pull/1350))
-
 ## [0.33.1]
 ### Fixed
 - chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
@@ -503,8 +499,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - [FEAT] improve logging + update examples ([#99](https://github.com/MetaMask/metamask-sdk/pull/99))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.34.0...HEAD
-[0.34.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.1...@metamask/sdk@0.34.0
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.1...HEAD
 [0.33.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.33.0...@metamask/sdk@0.33.1
 [0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.1...@metamask/sdk@0.33.0
 [0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk@0.32.0...@metamask/sdk@0.32.1
