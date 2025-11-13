@@ -1,5 +1,6 @@
 {
 	"name": "@metamask/sdk-multichain-react",
+	"private": true,
 	"publishConfig": {
 		"access": "restricted",
 		"registry": "https://registry.npmjs.org/"
