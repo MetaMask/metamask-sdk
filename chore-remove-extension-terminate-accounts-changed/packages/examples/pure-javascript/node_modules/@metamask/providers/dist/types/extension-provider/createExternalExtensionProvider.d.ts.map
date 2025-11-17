@@ -1,1 +1,0 @@
-{"version":3,"file":"createExternalExtensionProvider.d.ts","sourceRoot":"","sources":["../../../src/extension-provider/createExternalExtensionProvider.ts"],"names":[],"mappings":"AAOA,OAAO,EAAE,cAAc,EAAE,MAAM,mBAAmB,CAAC;AAKnD,oBAAY,aAAa,GAAG,QAAQ,GAAG,OAAO,GAAG,MAAM,GAAG,MAAM,CAAC;AAEjE;;;;;GAKG;AACH,wBAAgB,+BAA+B,CAC7C,QAAQ,GAAE,aAAwB,kBAyBnC"}

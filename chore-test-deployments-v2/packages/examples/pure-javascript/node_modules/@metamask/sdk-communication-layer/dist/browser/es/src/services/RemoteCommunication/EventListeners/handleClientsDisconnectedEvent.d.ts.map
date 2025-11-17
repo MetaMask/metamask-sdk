@@ -1,1 +1,0 @@
-{"version":3,"file":"handleClientsDisconnectedEvent.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/RemoteCommunication/EventListeners/handleClientsDisconnectedEvent.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,8BAA8B,CAAC;AAKnE;;;;;;;;;;;;GAYG;AACH,wBAAgB,8BAA8B,CAAC,QAAQ,EAAE,mBAAmB,eACvD,MAAM,UAkB1B"}

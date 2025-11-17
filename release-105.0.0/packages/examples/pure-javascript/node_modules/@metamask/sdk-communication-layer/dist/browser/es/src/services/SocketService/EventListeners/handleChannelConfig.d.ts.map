@@ -1,1 +1,0 @@
-{"version":3,"file":"handleChannelConfig.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/SocketService/EventListeners/handleChannelConfig.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,wBAAwB,CAAC;AAMvD,wBAAgB,mBAAmB,CACjC,QAAQ,EAAE,aAAa,EACvB,SAAS,EAAE,MAAM,YAEK;IAAE,WAAW,EAAE,OAAO,CAAC;IAAC,SAAS,EAAE,MAAM,CAAA;CAAE,mBAqDlE"}

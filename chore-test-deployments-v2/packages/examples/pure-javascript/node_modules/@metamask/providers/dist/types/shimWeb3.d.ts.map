@@ -1,1 +1,0 @@
-{"version":3,"file":"shimWeb3.d.ts","sourceRoot":"","sources":["../../src/shimWeb3.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,sBAAsB,EAAE,MAAM,0BAA0B,CAAC;AACvE,OAAO,KAAK,EAAE,WAAW,EAAE,MAAM,SAAS,CAAC;AAE3C;;;;;;GAMG;AACH,wBAAgB,QAAQ,CACtB,QAAQ,EAAE,sBAAsB,EAChC,GAAG,GAAE,WAAqB,GACzB,IAAI,CAsDN"}

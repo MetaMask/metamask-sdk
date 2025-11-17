@@ -1,1 +1,0 @@
-{"version":3,"file":"connectAndSign.d.ts","sourceRoot":"","sources":["../../../../../../../src/services/MetaMaskSDK/ConnectionManager/connectAndSign.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,WAAW,EAAE,MAAM,cAAc,CAAC;AAG3C;;;;;;;;;;GAUG;AACH,wBAAsB,cAAc,CAAC,EACnC,QAAQ,EACR,GAAG,GACJ,EAAE;IACD,QAAQ,EAAE,WAAW,CAAC;IACtB,GAAG,EAAE,MAAM,CAAC;CACb,0EA6BA"}

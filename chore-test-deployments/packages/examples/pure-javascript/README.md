@@ -1,1 +1,0 @@
-# Pure JavaScript SDK example

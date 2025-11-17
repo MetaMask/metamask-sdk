@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/constants.ts"],"sourcesContent":["// TOKEN STANDARDS\nexport const ERC721 = 'ERC721';\nexport const ERC1155 = 'ERC1155';\nexport const ERC20 = 'ERC20';\n"],"mappings":";AACO,IAAM,SAAS;AACf,IAAM,UAAU;AAChB,IAAM,QAAQ;","names":[]}
