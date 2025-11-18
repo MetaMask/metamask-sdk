@@ -87,7 +87,7 @@
     "expo": "^49.0.18",
     "https-browserify": "^1.0.0",
     "jest": "^29.6.4",
-    "next": "13.2.4",
+    "next": "14.2.32",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "postcss": "^8.4.31",
