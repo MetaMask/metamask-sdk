@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-analytics",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Analytics package for MetaMask SDK",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

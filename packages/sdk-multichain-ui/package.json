@@ -1,6 +1,6 @@
 {
   "name": "@metamask/sdk-multichain-ui",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "MetaMask SDK Install Modal for Web",
   "homepage": "https://github.com/MetaMask/metamask-sdk#readme",
   "bugs": {

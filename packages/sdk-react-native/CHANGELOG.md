@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.13]
+### Changed
+- Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
+- refactor: replace qr-code-styling with smaller library ([#1129](https://github.com/MetaMask/metamask-sdk/pull/1129))
+
 ## [0.3.12]
 ### Uncategorized
 - feat: bump versions for publishing ([#1068](https://github.com/MetaMask/metamask-sdk/pull/1068))
@@ -73,7 +78,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.12...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.13...HEAD
+[0.3.13]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.12...@metamask/sdk-react-native@0.3.13
 [0.3.12]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.11...@metamask/sdk-react-native@0.3.12
 [0.3.11]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.10...@metamask/sdk-react-native@0.3.11
 [0.3.10]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react-native@0.3.9...@metamask/sdk-react-native@0.3.10

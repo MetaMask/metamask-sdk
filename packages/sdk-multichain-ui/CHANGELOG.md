@@ -6,4 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/
+## [0.0.1]
+### Changed
+- Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
+
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-multichain-ui@0.0.1...HEAD
+[0.0.1]: https://github.com/MetaMask/metamask-sdk/releases/tag/@metamask/sdk-multichain-ui@0.0.1

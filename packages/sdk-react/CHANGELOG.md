@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.33.2]
+### Changed
+- Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
+
 ## [0.33.1]
 ### Fixed
 - chore: pin `debug` package to `4.3.4` due to npm compromise ([#1342](https://github.com/MetaMask/metamask-sdk/pull/1342))
@@ -320,7 +324,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [fix] publishing config ([#135](https://github.com/MetaMask/metamask-sdk/pull/135))
 - [feat] initial beta released
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.33.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.33.2...HEAD
+[0.33.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.33.1...@metamask/sdk-react@0.33.2
 [0.33.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.33.0...@metamask/sdk-react@0.33.1
 [0.33.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.32.1...@metamask/sdk-react@0.33.0
 [0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-react@0.32.0...@metamask/sdk-react@0.32.1

@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6]
+### Changed
+- Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
+- fix: missing export of esmodule on sdk-analytics ([#1334](https://github.com/MetaMask/metamask-sdk/pull/1334))
+
 ## [0.0.5]
 ### Fixed
 - Updates and Fixes to Analytics ([#1294](https://github.com/MetaMask/metamask-sdk/pull/1294))
@@ -30,7 +35,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.5...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.6...HEAD
+[0.0.6]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.5...@metamask/sdk-analytics@0.0.6
 [0.0.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.4...@metamask/sdk-analytics@0.0.5
 [0.0.4]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.3...@metamask/sdk-analytics@0.0.4
 [0.0.3]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-analytics@0.0.2...@metamask/sdk-analytics@0.0.3

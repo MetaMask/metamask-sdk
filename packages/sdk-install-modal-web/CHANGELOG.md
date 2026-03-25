@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.32.2]
+### Changed
+- Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
+- feat: adding mobile wallet protocol ([#1346](https://github.com/MetaMask/metamask-sdk/pull/1346))
+- Release 110.0.0 ([#1235](https://github.com/MetaMask/metamask-sdk/pull/1235))
+
 ## [0.32.1]
 ### Added
 - chore: updates assets ([#1220](https://github.com/MetaMask/metamask-sdk/pull/1220))
@@ -192,7 +198,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update GitHub actions workflows ([#102](https://github.com/MetaMask/metamask-sdk/pull/102))
 - [FEAT] Yarn v3 migration ([#100](https://github.com/MetaMask/metamask-sdk/pull/100))
 
-[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.32.1...HEAD
+[Unreleased]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.32.2...HEAD
+[0.32.2]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.32.1...@metamask/sdk-install-modal-web@0.32.2
 [0.32.1]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.32.0...@metamask/sdk-install-modal-web@0.32.1
 [0.32.0]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.5...@metamask/sdk-install-modal-web@0.32.0
 [0.31.5]: https://github.com/MetaMask/metamask-sdk/compare/@metamask/sdk-install-modal-web@0.31.2...@metamask/sdk-install-modal-web@0.31.5
