@@ -1,4 +1,17 @@
-# MetaMask SDK
+# MetaMask SDK (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> `@metamask/sdk` is deprecated and no longer actively maintained. It has been superseded by **MetaMask Connect**, which offers a streamlined API, direct wallet communication (no relay server), and first-class multichain support.
+>
+> **Migrate to:**
+>
+> - [`@metamask/connect-evm`](https://www.npmjs.com/package/@metamask/connect-evm) — drop-in EVM dapp integration (browser, Node.js, React Native)
+> - [`@metamask/connect-multichain`](https://www.npmjs.com/package/@metamask/connect-multichain) — multichain dapp integration (EVM + non-EVM)
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+
+---
 
 The MetaMask SDK enables developers to easily connect their dapps with a MetaMask wallet (Extension or Mobile) no matter the dapp environment or platform.
 

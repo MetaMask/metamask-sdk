@@ -1,4 +1,19 @@
-# MetaMask SDK
+# MetaMask SDK (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> This repository is deprecated and no longer actively maintained. MetaMask SDK has been superseded by **MetaMask Connect**, a ground-up rewrite with a streamlined API, direct wallet communication (no relay server), and multichain support out of the box.
+>
+> **Migrate to:**
+>
+> - [`@metamask/connect-evm`](https://www.npmjs.com/package/@metamask/connect-evm) — drop-in EVM dapp integration (browser, Node.js, React Native)
+> - [`@metamask/connect-multichain`](https://www.npmjs.com/package/@metamask/connect-multichain) — multichain dapp integration (EVM + non-EVM)
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+>
+> **New repo:** <https://github.com/MetaMask/connect-monorepo>
+
+---
 
 [![codecov](https://codecov.io/gh/MetaMask/metamask-sdk/graph/badge.svg?token=6B3Z3724OO)](https://codecov.io/gh/MetaMask/metamask-sdk)
 

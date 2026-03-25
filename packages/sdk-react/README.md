@@ -1,4 +1,17 @@
-# MetaMask SDK React
+# MetaMask SDK React (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> `@metamask/sdk-react` is deprecated and no longer actively maintained. It has been superseded by **MetaMask Connect**, which offers a streamlined API, direct wallet communication (no relay server), and first-class multichain support.
+>
+> **Migrate to:**
+>
+> - [`@metamask/connect-evm`](https://www.npmjs.com/package/@metamask/connect-evm) — drop-in EVM dapp integration (browser, Node.js, React Native)
+> - [`@metamask/connect-multichain`](https://www.npmjs.com/package/@metamask/connect-multichain) — multichain dapp integration (EVM + non-EVM)
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+
+---
 
 The MetaMask SDK React allows developer an easier integration to the MetaMask SDK on React-based apps.
 

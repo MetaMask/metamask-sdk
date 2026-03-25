@@ -1,4 +1,17 @@
-# MetaMask SDK Communication Layer
+# MetaMask SDK Communication Layer (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> `@metamask/sdk-communication-layer` is deprecated and no longer actively maintained. MetaMask Connect replaces the socket-based relay architecture with direct wallet communication via the Mobile Wallet Protocol, eliminating the need for a separate communication layer.
+>
+> **Migrate to:**
+>
+> - [`@metamask/connect-evm`](https://www.npmjs.com/package/@metamask/connect-evm) — drop-in EVM dapp integration
+> - [`@metamask/connect-multichain`](https://www.npmjs.com/package/@metamask/connect-multichain) — multichain dapp integration
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+
+---
 
 ## Installation
 

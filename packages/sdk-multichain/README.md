@@ -1,4 +1,17 @@
-# MetaMask SDK Multichain
+# MetaMask SDK Multichain (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> `@metamask/sdk-multichain` is deprecated and no longer actively maintained. Its functionality has been superseded by **MetaMask Connect**, which provides a cleaner multichain API, direct wallet communication (no relay server), and improved protocol support.
+>
+> **Migrate to:**
+>
+> - [`@metamask/connect-multichain`](https://www.npmjs.com/package/@metamask/connect-multichain) — the direct successor for multichain dapp integration
+> - [`@metamask/connect-evm`](https://www.npmjs.com/package/@metamask/connect-evm) — if you only need EVM chain support
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+
+---
 
 The MetaMask SDK Multichain is a protocol-based, domain-driven SDK that enables seamless integration with MetaMask wallets across multiple blockchain networks and platforms.
 

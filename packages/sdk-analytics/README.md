@@ -1,4 +1,12 @@
-# MetaMask SDK Analytics
+# MetaMask SDK Analytics (Deprecated)
+
+> **⚠️ DEPRECATED**
+>
+> `@metamask/sdk-analytics` is deprecated and no longer actively maintained. Analytics functionality is now provided by [`@metamask/connect-analytics`](https://github.com/MetaMask/connect-monorepo/tree/main/packages/analytics) in the MetaMask Connect monorepo.
+>
+> **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
+
+---
 
 ## Overview
 
