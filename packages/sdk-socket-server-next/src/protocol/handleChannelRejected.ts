@@ -1,4 +1,5 @@
 import { Server, Socket } from 'socket.io';
+import { validate } from 'uuid';
 import { pubClient } from '../analytics-api';
 import { config } from '../config';
 import { getLogger } from '../logger';
@@ -27,12 +28,37 @@ export const handleChannelRejected = async (
   const socketId = socket.id;
   const clientIp = socket.request.socket.remoteAddress;
 
+  if (!validate(channelId)) {
+    logger.warn(`[handleChannelRejected] ${channelId} invalid channelId`, {
+      channelId,
+      socketId,
+      clientIp,
+    });
+    callback?.('error_id', undefined);
+    return;
+  }
+
   // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
   const channelConfigKey = `channel_config:{${channelId}}`;
   const existingConfig = await pubClient.get(channelConfigKey);
   let channelConfig: ChannelConfig | null = existingConfig
     ? (JSON.parse(existingConfig) as ChannelConfig)
     : null;
+
+  const isInRoom = socket.rooms.has(channelId);
+  const isKnownWalletParticipant = Boolean(channelConfig?.clients?.wallet);
+  if (!isInRoom && !isKnownWalletParticipant) {
+    logger.warn(
+      `[handleChannelRejected] non-participant rejected request for ${channelId}`,
+      {
+        channelId,
+        socketId,
+        clientIp,
+      },
+    );
+    callback?.('not authorized', undefined);
+    return;
+  }
 
   if (channelConfig) {
     logger.debug(
