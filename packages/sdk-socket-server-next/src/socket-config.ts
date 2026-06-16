@@ -228,6 +228,17 @@ export const configureSocketServer = async (
         const start = Date.now();
         incrementAck();
 
+        // only ack if we are in the room (prevents non-member sockets from
+        // permanently deleting queued messages for arbitrary channels)
+        if (!socket.rooms.has(channelId)) {
+          logger.warn(`ack ${channelId} not in room`, {
+            channelId,
+            socketId,
+            clientIp,
+          });
+          return;
+        }
+
         const ackParams: ACKParams = {
           io,
           socket,
@@ -304,6 +315,17 @@ export const configureSocketServer = async (
       ) => {
         const start = Date.now();
         incrementPing();
+
+        // only ping if we are in the room (prevents non-member sockets from
+        // retrieving queued messages for arbitrary channels)
+        if (!socket.rooms.has(id)) {
+          logger.warn(`ping ${id} not in room`, {
+            channelId: id,
+            socketId,
+            clientIp,
+          });
+          return;
+        }
 
         handlePing({
           channelId: id,

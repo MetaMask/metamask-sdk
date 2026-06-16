@@ -114,7 +114,7 @@ export const handleMessage = async ({
       ackId = uuidv4();
       // Store in the correct message queue
       const otherQueue = clientType === 'dapp' ? 'wallet' : 'dapp';
-      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})  
+      // Force keys into the same hash slot in Redis Cluster, using a hash tag (a substring enclosed in curly braces {})
       const queueKey = `queue:{${channelId}}:${otherQueue}`;
       const persistedMsg: QueuedMessage = {
         message,
@@ -174,8 +174,7 @@ export const handleMessage = async ({
       clientIp,
     });
 
-    // emit an error message back to the client, if appropriate
-    socket.broadcast.emit(`message-${channelId}`, {
+    socket.broadcast.to(channelId).emit(`message-${channelId}`, {
       error: error instanceof Error ? error.message : 'Unknown error occurred',
     });
 
