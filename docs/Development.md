@@ -19,7 +19,7 @@ yarn
 cd packages/sdk-socket-server
 yarn debug
 
-# lauch one of the dev application playground, here for nextjs
+# launch one of the dev application playground, here for nextjs
 cd packages/devnext
 # if you use a local socket server you can configure it inside the .env file
 echo "NEXT_PUBLIC_COMM_SERVER_URL=http://YOUR_LOCAL_IP:4000/" > .env
