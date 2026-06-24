@@ -11,7 +11,7 @@
 >
 > **Migration guide & docs:** <https://docs.metamask.io/metamask-connect>
 >
-> **New repo:** <https://github.com/MetaMask/connect-monorepo>
+> **New repo:** <https://github.com/MetaMask/metamask-connect>
 
 ---
 
