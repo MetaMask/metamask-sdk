@@ -137,6 +137,7 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
         val ethereumRequests = mutableListOf<EthereumRequest>()
         for (i in 0 until reqArray.size()) {
             val req = reqArray.getMap(i)
+                ?: throw IllegalArgumentException("Request at index $i must be a map")
             val method = req.getString("method") ?: throw IllegalArgumentException("Method is required")
             val params: Any? = req.getDynamic("params").asAny()
             ethereumRequests.add(EthereumRequest(method = method, params = params))
@@ -179,8 +180,8 @@ class MetaMaskReactNativeSdkModule(reactContext: ReactApplicationContext) : Reac
             ReadableType.Boolean -> this.asBoolean()
             ReadableType.Number -> this.asDouble()
             ReadableType.String -> this.asString()
-            ReadableType.Map -> this.asMap().toHashMap()
-            ReadableType.Array -> this.asArray().toArrayList()
+            ReadableType.Map -> this.asMap()?.toHashMap()
+            ReadableType.Array -> this.asArray()?.toArrayList()
             else -> throw IllegalArgumentException("Unsupported type")
         }
     }
