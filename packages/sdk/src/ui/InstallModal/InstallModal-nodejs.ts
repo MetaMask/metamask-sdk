@@ -1,4 +1,4 @@
-import encodeQR from '@paulmillr/qr';
+import encodeQR from 'qr';
 import { logger } from '../../utils/logger';
 
 const InstallModal = ({ link }: { link: string; debug?: boolean }) => {

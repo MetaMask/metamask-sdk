@@ -1,6 +1,6 @@
 import { MetaMaskInpageProvider } from '@metamask/providers';
 
-declare module '@paulmillr/qr';
+declare module 'qr';
 
 declare global {
   interface Window {

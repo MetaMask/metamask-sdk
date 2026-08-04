@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: required in here */
-declare module '@paulmillr/qr';
+declare module 'qr';
 
 export declare const mmsdk: any;
 declare global {

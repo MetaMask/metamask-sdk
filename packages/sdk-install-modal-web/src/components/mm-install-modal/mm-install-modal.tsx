@@ -8,7 +8,7 @@ import InstallIcon from '../misc/InstallIcon';
 import SDKVersion from '../misc/SDKVersion';
 import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
-import encodeQR from '@paulmillr/qr';
+import encodeQR from 'qr';
 import { SimpleI18n } from '../misc/simple-i18n';
 import { TrackingEvents } from '../misc/tracking-events';
 
