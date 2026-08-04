@@ -129,8 +129,8 @@ table {
   border-spacing: 0;
 }
 
-#sdk-mm-qrcode {
-  svg {
-      width: 50%;
-  }
+#sdk-mm-qrcode svg {
+  width: 50%;
+  height: auto;
+  aspect-ratio: 1 / 1;
 }
