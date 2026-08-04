@@ -13014,7 +13014,6 @@ __metadata:
     bufferutil: ^4.0.8
     concurrently: ^9.1.2
     cross-fetch: ^4.0.0
-    date-fns: ^2.29.3
     debug: 4.3.4
     eciesjs: ^0.4.11
     eslint: ^7.30.0

@@ -22,7 +22,6 @@ const umdGlobals = {
   eciesjs: 'ECIES',
   debug: 'debug',
   uuid: 'uuid',
-  'date-fns': 'dateFns',
   buffer: 'Buffer',
   'readable-stream': 'ReadableStream',
   tslib: 'tslib',
