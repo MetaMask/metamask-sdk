@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- Fix Kotlin nullable-receiver compile errors on newer React Native versions ([#1398](https://github.com/MetaMask/metamask-sdk/pull/1398))
 
 ## [0.3.13]
 ### Changed
