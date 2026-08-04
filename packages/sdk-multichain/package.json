@@ -62,12 +62,12 @@
     "@metamask/sdk-analytics": "workspace:^",
     "@metamask/sdk-multichain-ui": "workspace:^",
     "@metamask/utils": "^11.4.0",
-    "@paulmillr/qr": "^0.2.1",
     "bowser": "^2.11.0",
     "cross-fetch": "^4.1.0",
     "eciesjs": "^0.4.15",
     "eventemitter3": "^5.0.1",
     "pako": "^2.1.0",
+    "qr": "^0.6.0",
     "uuid": "^11.1.0",
     "ws": "^8.18.3"
   }

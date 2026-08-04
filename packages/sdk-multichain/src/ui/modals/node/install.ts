@@ -1,4 +1,4 @@
-import encodeQR from '@paulmillr/qr';
+import encodeQR from 'qr';
 import { type ConnectionRequest, createLogger, type QRLink } from '../../../domain';
 import { AbstractInstallModal } from '../base/AbstractInstallModal';
 import { formatRemainingTime, shouldLogCountdown } from '../base/utils';

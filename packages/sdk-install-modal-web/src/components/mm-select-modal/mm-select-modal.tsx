@@ -5,7 +5,7 @@ import CloseButton from '../misc/CloseButton';
 import Logo from '../misc/Logo';
 import ConnectIcon from '../misc/ConnectIcon';
 import { MetamaskExtensionImage } from '../misc/MetamaskExtensionImage';
-import encodeQR from '@paulmillr/qr';
+import encodeQR from 'qr';
 import { SimpleI18n } from '../misc/simple-i18n';
 
 @Component({

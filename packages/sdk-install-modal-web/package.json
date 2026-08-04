@@ -87,6 +87,6 @@
     }
   },
   "dependencies": {
-    "@paulmillr/qr": "^0.2.1"
+    "qr": "^0.6.0"
   }
 }
