@@ -6,7 +6,7 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "build": "tsup",
     "lint": "eslint src --ext .ts,.tsx --ignore-pattern 'src/schema.ts'",
     "lint:fix": "eslint src --ext .ts,.tsx --fix --ignore-pattern 'src/schema.ts'",
     "lint:changelog": "../../scripts/validate-changelog.sh @metamask/sdk-analytics",
@@ -28,6 +28,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-promise": "^7.1.0",
     "nock": "^14.0.4",
+    "openapi-fetch": "^0.13.5",
     "prettier": "^3.3.3",
     "tsup": "^8.4.0",
     "typescript": "^5.8.3",
@@ -38,8 +39,5 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "license": "MIT",
-  "dependencies": {
-    "openapi-fetch": "^0.13.5"
-  }
+  "license": "MIT"
 }
