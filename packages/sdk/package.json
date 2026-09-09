@@ -69,6 +69,14 @@
     "util": "^0.12.4",
     "uuid": "^8.3.2"
   },
+  "peerDependencies": {
+    "@react-native-async-storage/async-storage": "^1.19.6"
+  },
+  "peerDependenciesMeta": {
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@jest/globals": "^29.3.1",
     "@lavamoat/allow-scripts": "^2.3.1",

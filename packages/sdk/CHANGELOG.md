@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Gate `@react-native-async-storage/async-storage` behind React Native builds and mark it as an optional peer dependency so web bundlers no longer warn about the missing module ([#1376](https://github.com/MetaMask/metamask-sdk/issues/1376))
+
 ## [0.34.1]
 ### Changed
 - Mark the package as deprecated in the README and direct consumers to MetaMask Connect migration docs and successor packages.
