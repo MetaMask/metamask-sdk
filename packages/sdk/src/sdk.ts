@@ -480,6 +480,12 @@ export class MetaMaskSDK extends EventEmitter2 {
   private async getReactNativeAnonId(): Promise<string> {
     const key = this.ANON_ID_STORAGE_KEY;
     try {
+      /* #if _WEB
+      // Web builds must not reference the RN-only module (bundlers warn otherwise).
+      return uuidv4();
+      //#elif _NODEJS
+      return uuidv4();
+      //#else */
       const AsyncStorage =
         // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-require-imports
         require('@react-native-async-storage/async-storage').default;
@@ -490,6 +496,7 @@ export class MetaMaskSDK extends EventEmitter2 {
       const newId = uuidv4();
       await AsyncStorage.setItem(key, newId);
       return newId;
+      // #endif
     } catch (e) {
       console.error(
         '[MetaMaskSDK: getReactNativeAnonId()] Error accessing AsyncStorage:',
